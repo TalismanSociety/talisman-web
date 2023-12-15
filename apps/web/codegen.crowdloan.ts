@@ -8,6 +8,9 @@ const config: CodegenConfig = {
     'generated/gql/crowdloan/gql/': {
       preset: 'client',
       plugins: [],
+      config: {
+        useTypeImports: true,
+      },
     },
   },
 }

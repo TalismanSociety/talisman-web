@@ -4,6 +4,9 @@ const extensions = outDir => ({
     generates: {
       [outDir]: {
         preset: 'client',
+        config: {
+          useTypeImports: true,
+        },
       },
     },
     hooks: { afterOneFileWrite: ['prettier --write'] },

@@ -1,113 +1,115 @@
 /* eslint-disable */
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core'
+import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core'
 export type Maybe<T> = T | null
 export type InputMaybe<T> = Maybe<T>
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] }
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> }
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> }
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never }
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never }
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string
-  String: string
-  Boolean: boolean
-  Int: number
-  Float: number
-  bigint: any
-  jsonb: any
-  numeric: any
-  smallint: any
-  timestamptz: any
+  ID: { input: string; output: string }
+  String: { input: string; output: string }
+  Boolean: { input: boolean; output: boolean }
+  Int: { input: number; output: number }
+  Float: { input: number; output: number }
+  bigint: { input: any; output: any }
+  jsonb: { input: any; output: any }
+  numeric: { input: any; output: any }
+  smallint: { input: any; output: any }
+  timestamptz: { input: any; output: any }
 }
 
 /** Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'. */
 export type Boolean_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['Boolean']>
-  _gt?: InputMaybe<Scalars['Boolean']>
-  _gte?: InputMaybe<Scalars['Boolean']>
-  _in?: InputMaybe<Array<Scalars['Boolean']>>
-  _is_null?: InputMaybe<Scalars['Boolean']>
-  _lt?: InputMaybe<Scalars['Boolean']>
-  _lte?: InputMaybe<Scalars['Boolean']>
-  _neq?: InputMaybe<Scalars['Boolean']>
-  _nin?: InputMaybe<Array<Scalars['Boolean']>>
+  _eq?: InputMaybe<Scalars['Boolean']['input']>
+  _gt?: InputMaybe<Scalars['Boolean']['input']>
+  _gte?: InputMaybe<Scalars['Boolean']['input']>
+  _in?: InputMaybe<Array<Scalars['Boolean']['input']>>
+  _is_null?: InputMaybe<Scalars['Boolean']['input']>
+  _lt?: InputMaybe<Scalars['Boolean']['input']>
+  _lte?: InputMaybe<Scalars['Boolean']['input']>
+  _neq?: InputMaybe<Scalars['Boolean']['input']>
+  _nin?: InputMaybe<Array<Scalars['Boolean']['input']>>
 }
 
 /** Boolean expression to compare columns of type "Float". All fields are combined with logical 'AND'. */
 export type Float_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['Float']>
-  _gt?: InputMaybe<Scalars['Float']>
-  _gte?: InputMaybe<Scalars['Float']>
-  _in?: InputMaybe<Array<Scalars['Float']>>
-  _is_null?: InputMaybe<Scalars['Boolean']>
-  _lt?: InputMaybe<Scalars['Float']>
-  _lte?: InputMaybe<Scalars['Float']>
-  _neq?: InputMaybe<Scalars['Float']>
-  _nin?: InputMaybe<Array<Scalars['Float']>>
+  _eq?: InputMaybe<Scalars['Float']['input']>
+  _gt?: InputMaybe<Scalars['Float']['input']>
+  _gte?: InputMaybe<Scalars['Float']['input']>
+  _in?: InputMaybe<Array<Scalars['Float']['input']>>
+  _is_null?: InputMaybe<Scalars['Boolean']['input']>
+  _lt?: InputMaybe<Scalars['Float']['input']>
+  _lte?: InputMaybe<Scalars['Float']['input']>
+  _neq?: InputMaybe<Scalars['Float']['input']>
+  _nin?: InputMaybe<Array<Scalars['Float']['input']>>
 }
 
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
 export type Int_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['Int']>
-  _gt?: InputMaybe<Scalars['Int']>
-  _gte?: InputMaybe<Scalars['Int']>
-  _in?: InputMaybe<Array<Scalars['Int']>>
-  _is_null?: InputMaybe<Scalars['Boolean']>
-  _lt?: InputMaybe<Scalars['Int']>
-  _lte?: InputMaybe<Scalars['Int']>
-  _neq?: InputMaybe<Scalars['Int']>
-  _nin?: InputMaybe<Array<Scalars['Int']>>
+  _eq?: InputMaybe<Scalars['Int']['input']>
+  _gt?: InputMaybe<Scalars['Int']['input']>
+  _gte?: InputMaybe<Scalars['Int']['input']>
+  _in?: InputMaybe<Array<Scalars['Int']['input']>>
+  _is_null?: InputMaybe<Scalars['Boolean']['input']>
+  _lt?: InputMaybe<Scalars['Int']['input']>
+  _lte?: InputMaybe<Scalars['Int']['input']>
+  _neq?: InputMaybe<Scalars['Int']['input']>
+  _nin?: InputMaybe<Array<Scalars['Int']['input']>>
 }
 
 /** Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'. */
 export type String_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['String']>
-  _gt?: InputMaybe<Scalars['String']>
-  _gte?: InputMaybe<Scalars['String']>
+  _eq?: InputMaybe<Scalars['String']['input']>
+  _gt?: InputMaybe<Scalars['String']['input']>
+  _gte?: InputMaybe<Scalars['String']['input']>
   /** does the column match the given case-insensitive pattern */
-  _ilike?: InputMaybe<Scalars['String']>
-  _in?: InputMaybe<Array<Scalars['String']>>
+  _ilike?: InputMaybe<Scalars['String']['input']>
+  _in?: InputMaybe<Array<Scalars['String']['input']>>
   /** does the column match the given POSIX regular expression, case insensitive */
-  _iregex?: InputMaybe<Scalars['String']>
-  _is_null?: InputMaybe<Scalars['Boolean']>
+  _iregex?: InputMaybe<Scalars['String']['input']>
+  _is_null?: InputMaybe<Scalars['Boolean']['input']>
   /** does the column match the given pattern */
-  _like?: InputMaybe<Scalars['String']>
-  _lt?: InputMaybe<Scalars['String']>
-  _lte?: InputMaybe<Scalars['String']>
-  _neq?: InputMaybe<Scalars['String']>
+  _like?: InputMaybe<Scalars['String']['input']>
+  _lt?: InputMaybe<Scalars['String']['input']>
+  _lte?: InputMaybe<Scalars['String']['input']>
+  _neq?: InputMaybe<Scalars['String']['input']>
   /** does the column NOT match the given case-insensitive pattern */
-  _nilike?: InputMaybe<Scalars['String']>
-  _nin?: InputMaybe<Array<Scalars['String']>>
+  _nilike?: InputMaybe<Scalars['String']['input']>
+  _nin?: InputMaybe<Array<Scalars['String']['input']>>
   /** does the column NOT match the given POSIX regular expression, case insensitive */
-  _niregex?: InputMaybe<Scalars['String']>
+  _niregex?: InputMaybe<Scalars['String']['input']>
   /** does the column NOT match the given pattern */
-  _nlike?: InputMaybe<Scalars['String']>
+  _nlike?: InputMaybe<Scalars['String']['input']>
   /** does the column NOT match the given POSIX regular expression, case sensitive */
-  _nregex?: InputMaybe<Scalars['String']>
+  _nregex?: InputMaybe<Scalars['String']['input']>
   /** does the column NOT match the given SQL regular expression */
-  _nsimilar?: InputMaybe<Scalars['String']>
+  _nsimilar?: InputMaybe<Scalars['String']['input']>
   /** does the column match the given POSIX regular expression, case sensitive */
-  _regex?: InputMaybe<Scalars['String']>
+  _regex?: InputMaybe<Scalars['String']['input']>
   /** does the column match the given SQL regular expression */
-  _similar?: InputMaybe<Scalars['String']>
+  _similar?: InputMaybe<Scalars['String']['input']>
 }
 
 /** columns and relationships of "base_themes" */
 export type Base_Themes = {
   __typename?: 'base_themes'
-  id: Scalars['String']
+  id: Scalars['String']['output']
   /** An array relationship */
   resources_base_themes: Array<Resources_Base_Themes>
-  theme_color_1?: Maybe<Scalars['String']>
-  theme_color_2?: Maybe<Scalars['String']>
-  theme_color_3?: Maybe<Scalars['String']>
-  theme_color_4?: Maybe<Scalars['String']>
+  theme_color_1?: Maybe<Scalars['String']['output']>
+  theme_color_2?: Maybe<Scalars['String']['output']>
+  theme_color_3?: Maybe<Scalars['String']['output']>
+  theme_color_4?: Maybe<Scalars['String']['output']>
 }
 
 /** columns and relationships of "base_themes" */
 export type Base_ThemesResources_Base_ThemesArgs = {
   distinct_on?: InputMaybe<Array<Resources_Base_Themes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Base_Themes_Order_By>>
   where?: InputMaybe<Resources_Base_Themes_Bool_Exp>
 }
@@ -152,27 +154,27 @@ export enum Base_Themes_Select_Column {
 /** columns and relationships of "bases" */
 export type Bases = {
   __typename?: 'bases'
-  block: Scalars['Int']
+  block: Scalars['Int']['output']
   /** An array relationship */
   changes: Array<Changes>
   /** An aggregate relationship */
   changes_aggregate: Changes_Aggregate
-  id: Scalars['String']
-  issuer: Scalars['String']
-  metadata?: Maybe<Scalars['String']>
+  id: Scalars['String']['output']
+  issuer: Scalars['String']['output']
+  metadata?: Maybe<Scalars['String']['output']>
   /** An array relationship */
   parts: Array<Parts>
   /** An aggregate relationship */
   parts_aggregate: Parts_Aggregate
-  symbol: Scalars['String']
-  type: Scalars['String']
+  symbol: Scalars['String']['output']
+  type: Scalars['String']['output']
 }
 
 /** columns and relationships of "bases" */
 export type BasesChangesArgs = {
   distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Changes_Order_By>>
   where?: InputMaybe<Changes_Bool_Exp>
 }
@@ -180,8 +182,8 @@ export type BasesChangesArgs = {
 /** columns and relationships of "bases" */
 export type BasesChanges_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Changes_Order_By>>
   where?: InputMaybe<Changes_Bool_Exp>
 }
@@ -189,8 +191,8 @@ export type BasesChanges_AggregateArgs = {
 /** columns and relationships of "bases" */
 export type BasesPartsArgs = {
   distinct_on?: InputMaybe<Array<Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Parts_Order_By>>
   where?: InputMaybe<Parts_Bool_Exp>
 }
@@ -198,8 +200,8 @@ export type BasesPartsArgs = {
 /** columns and relationships of "bases" */
 export type BasesParts_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Parts_Order_By>>
   where?: InputMaybe<Parts_Bool_Exp>
 }
@@ -215,7 +217,7 @@ export type Bases_Aggregate = {
 export type Bases_Aggregate_Fields = {
   __typename?: 'bases_aggregate_fields'
   avg?: Maybe<Bases_Avg_Fields>
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Bases_Max_Fields>
   min?: Maybe<Bases_Min_Fields>
   stddev?: Maybe<Bases_Stddev_Fields>
@@ -230,13 +232,13 @@ export type Bases_Aggregate_Fields = {
 /** aggregate fields of "bases" */
 export type Bases_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Bases_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** aggregate avg on columns */
 export type Bases_Avg_Fields = {
   __typename?: 'bases_avg_fields'
-  block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
 }
 
 /** Boolean expression to filter rows from the table "bases". All fields are combined with a logical 'AND'. */
@@ -257,23 +259,23 @@ export type Bases_Bool_Exp = {
 /** aggregate max on columns */
 export type Bases_Max_Fields = {
   __typename?: 'bases_max_fields'
-  block?: Maybe<Scalars['Int']>
-  id?: Maybe<Scalars['String']>
-  issuer?: Maybe<Scalars['String']>
-  metadata?: Maybe<Scalars['String']>
-  symbol?: Maybe<Scalars['String']>
-  type?: Maybe<Scalars['String']>
+  block?: Maybe<Scalars['Int']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  issuer?: Maybe<Scalars['String']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  symbol?: Maybe<Scalars['String']['output']>
+  type?: Maybe<Scalars['String']['output']>
 }
 
 /** aggregate min on columns */
 export type Bases_Min_Fields = {
   __typename?: 'bases_min_fields'
-  block?: Maybe<Scalars['Int']>
-  id?: Maybe<Scalars['String']>
-  issuer?: Maybe<Scalars['String']>
-  metadata?: Maybe<Scalars['String']>
-  symbol?: Maybe<Scalars['String']>
-  type?: Maybe<Scalars['String']>
+  block?: Maybe<Scalars['Int']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  issuer?: Maybe<Scalars['String']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  symbol?: Maybe<Scalars['String']['output']>
+  type?: Maybe<Scalars['String']['output']>
 }
 
 /** Ordering options when selecting data from "bases". */
@@ -307,80 +309,80 @@ export enum Bases_Select_Column {
 /** aggregate stddev on columns */
 export type Bases_Stddev_Fields = {
   __typename?: 'bases_stddev_fields'
-  block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate stddev_pop on columns */
 export type Bases_Stddev_Pop_Fields = {
   __typename?: 'bases_stddev_pop_fields'
-  block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate stddev_samp on columns */
 export type Bases_Stddev_Samp_Fields = {
   __typename?: 'bases_stddev_samp_fields'
-  block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate sum on columns */
 export type Bases_Sum_Fields = {
   __typename?: 'bases_sum_fields'
-  block?: Maybe<Scalars['Int']>
+  block?: Maybe<Scalars['Int']['output']>
 }
 
 /** aggregate var_pop on columns */
 export type Bases_Var_Pop_Fields = {
   __typename?: 'bases_var_pop_fields'
-  block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate var_samp on columns */
 export type Bases_Var_Samp_Fields = {
   __typename?: 'bases_var_samp_fields'
-  block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate variance on columns */
 export type Bases_Variance_Fields = {
   __typename?: 'bases_variance_fields'
-  block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
 }
 
 /** Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'. */
 export type Bigint_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['bigint']>
-  _gt?: InputMaybe<Scalars['bigint']>
-  _gte?: InputMaybe<Scalars['bigint']>
-  _in?: InputMaybe<Array<Scalars['bigint']>>
-  _is_null?: InputMaybe<Scalars['Boolean']>
-  _lt?: InputMaybe<Scalars['bigint']>
-  _lte?: InputMaybe<Scalars['bigint']>
-  _neq?: InputMaybe<Scalars['bigint']>
-  _nin?: InputMaybe<Array<Scalars['bigint']>>
+  _eq?: InputMaybe<Scalars['bigint']['input']>
+  _gt?: InputMaybe<Scalars['bigint']['input']>
+  _gte?: InputMaybe<Scalars['bigint']['input']>
+  _in?: InputMaybe<Array<Scalars['bigint']['input']>>
+  _is_null?: InputMaybe<Scalars['Boolean']['input']>
+  _lt?: InputMaybe<Scalars['bigint']['input']>
+  _lte?: InputMaybe<Scalars['bigint']['input']>
+  _neq?: InputMaybe<Scalars['bigint']['input']>
+  _nin?: InputMaybe<Array<Scalars['bigint']['input']>>
 }
 
 /** columns and relationships of "changes" */
 export type Changes = {
   __typename?: 'changes'
-  block: Scalars['Int']
-  caller: Scalars['String']
-  created_at: Scalars['timestamptz']
-  extraTransfers?: Maybe<Scalars['jsonb']>
-  field: Scalars['String']
-  id: Scalars['Int']
-  new: Scalars['String']
+  block: Scalars['Int']['output']
+  caller: Scalars['String']['output']
+  created_at: Scalars['timestamptz']['output']
+  extraTransfers?: Maybe<Scalars['jsonb']['output']>
+  field: Scalars['String']['output']
+  id: Scalars['Int']['output']
+  new: Scalars['String']['output']
   /** An object relationship */
   nft?: Maybe<Nfts>
   /** An object relationship */
   nftclass?: Maybe<Collections>
-  old: Scalars['String']
-  opType: Scalars['String']
-  ref_id: Scalars['String']
+  old: Scalars['String']['output']
+  opType: Scalars['String']['output']
+  ref_id: Scalars['String']['output']
 }
 
 /** columns and relationships of "changes" */
 export type ChangesExtraTransfersArgs = {
-  path?: InputMaybe<Scalars['String']>
+  path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** aggregated selection of "changes" */
@@ -394,7 +396,7 @@ export type Changes_Aggregate = {
 export type Changes_Aggregate_Fields = {
   __typename?: 'changes_aggregate_fields'
   avg?: Maybe<Changes_Avg_Fields>
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Changes_Max_Fields>
   min?: Maybe<Changes_Min_Fields>
   stddev?: Maybe<Changes_Stddev_Fields>
@@ -409,7 +411,7 @@ export type Changes_Aggregate_Fields = {
 /** aggregate fields of "changes" */
 export type Changes_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Changes_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** order by aggregate values of table "changes" */
@@ -430,8 +432,8 @@ export type Changes_Aggregate_Order_By = {
 /** aggregate avg on columns */
 export type Changes_Avg_Fields = {
   __typename?: 'changes_avg_fields'
-  block?: Maybe<Scalars['Float']>
-  id?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  id?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by avg() on columns of table "changes" */
@@ -462,17 +464,17 @@ export type Changes_Bool_Exp = {
 /** columns and relationships of "changes_collection" */
 export type Changes_Collection = {
   __typename?: 'changes_collection'
-  block: Scalars['Int']
-  caller: Scalars['String']
+  block: Scalars['Int']['output']
+  caller: Scalars['String']['output']
   /** An object relationship */
   collection?: Maybe<Collections>
-  created_at: Scalars['timestamptz']
-  field: Scalars['String']
-  id: Scalars['Int']
-  new: Scalars['String']
-  old: Scalars['String']
-  opType: Scalars['String']
-  ref_id: Scalars['String']
+  created_at: Scalars['timestamptz']['output']
+  field: Scalars['String']['output']
+  id: Scalars['Int']['output']
+  new: Scalars['String']['output']
+  old: Scalars['String']['output']
+  opType: Scalars['String']['output']
+  ref_id: Scalars['String']['output']
 }
 
 /** order by aggregate values of table "changes_collection" */
@@ -620,15 +622,15 @@ export type Changes_Collection_Variance_Order_By = {
 /** aggregate max on columns */
 export type Changes_Max_Fields = {
   __typename?: 'changes_max_fields'
-  block?: Maybe<Scalars['Int']>
-  caller?: Maybe<Scalars['String']>
-  created_at?: Maybe<Scalars['timestamptz']>
-  field?: Maybe<Scalars['String']>
-  id?: Maybe<Scalars['Int']>
-  new?: Maybe<Scalars['String']>
-  old?: Maybe<Scalars['String']>
-  opType?: Maybe<Scalars['String']>
-  ref_id?: Maybe<Scalars['String']>
+  block?: Maybe<Scalars['Int']['output']>
+  caller?: Maybe<Scalars['String']['output']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
+  field?: Maybe<Scalars['String']['output']>
+  id?: Maybe<Scalars['Int']['output']>
+  new?: Maybe<Scalars['String']['output']>
+  old?: Maybe<Scalars['String']['output']>
+  opType?: Maybe<Scalars['String']['output']>
+  ref_id?: Maybe<Scalars['String']['output']>
 }
 
 /** order by max() on columns of table "changes" */
@@ -647,15 +649,15 @@ export type Changes_Max_Order_By = {
 /** aggregate min on columns */
 export type Changes_Min_Fields = {
   __typename?: 'changes_min_fields'
-  block?: Maybe<Scalars['Int']>
-  caller?: Maybe<Scalars['String']>
-  created_at?: Maybe<Scalars['timestamptz']>
-  field?: Maybe<Scalars['String']>
-  id?: Maybe<Scalars['Int']>
-  new?: Maybe<Scalars['String']>
-  old?: Maybe<Scalars['String']>
-  opType?: Maybe<Scalars['String']>
-  ref_id?: Maybe<Scalars['String']>
+  block?: Maybe<Scalars['Int']['output']>
+  caller?: Maybe<Scalars['String']['output']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
+  field?: Maybe<Scalars['String']['output']>
+  id?: Maybe<Scalars['Int']['output']>
+  new?: Maybe<Scalars['String']['output']>
+  old?: Maybe<Scalars['String']['output']>
+  opType?: Maybe<Scalars['String']['output']>
+  ref_id?: Maybe<Scalars['String']['output']>
 }
 
 /** order by min() on columns of table "changes" */
@@ -714,8 +716,8 @@ export enum Changes_Select_Column {
 /** aggregate stddev on columns */
 export type Changes_Stddev_Fields = {
   __typename?: 'changes_stddev_fields'
-  block?: Maybe<Scalars['Float']>
-  id?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  id?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by stddev() on columns of table "changes" */
@@ -727,8 +729,8 @@ export type Changes_Stddev_Order_By = {
 /** aggregate stddev_pop on columns */
 export type Changes_Stddev_Pop_Fields = {
   __typename?: 'changes_stddev_pop_fields'
-  block?: Maybe<Scalars['Float']>
-  id?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  id?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by stddev_pop() on columns of table "changes" */
@@ -740,8 +742,8 @@ export type Changes_Stddev_Pop_Order_By = {
 /** aggregate stddev_samp on columns */
 export type Changes_Stddev_Samp_Fields = {
   __typename?: 'changes_stddev_samp_fields'
-  block?: Maybe<Scalars['Float']>
-  id?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  id?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by stddev_samp() on columns of table "changes" */
@@ -753,8 +755,8 @@ export type Changes_Stddev_Samp_Order_By = {
 /** aggregate sum on columns */
 export type Changes_Sum_Fields = {
   __typename?: 'changes_sum_fields'
-  block?: Maybe<Scalars['Int']>
-  id?: Maybe<Scalars['Int']>
+  block?: Maybe<Scalars['Int']['output']>
+  id?: Maybe<Scalars['Int']['output']>
 }
 
 /** order by sum() on columns of table "changes" */
@@ -766,8 +768,8 @@ export type Changes_Sum_Order_By = {
 /** aggregate var_pop on columns */
 export type Changes_Var_Pop_Fields = {
   __typename?: 'changes_var_pop_fields'
-  block?: Maybe<Scalars['Float']>
-  id?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  id?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by var_pop() on columns of table "changes" */
@@ -779,8 +781,8 @@ export type Changes_Var_Pop_Order_By = {
 /** aggregate var_samp on columns */
 export type Changes_Var_Samp_Fields = {
   __typename?: 'changes_var_samp_fields'
-  block?: Maybe<Scalars['Float']>
-  id?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  id?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by var_samp() on columns of table "changes" */
@@ -792,8 +794,8 @@ export type Changes_Var_Samp_Order_By = {
 /** aggregate variance on columns */
 export type Changes_Variance_Fields = {
   __typename?: 'changes_variance_fields'
-  block?: Maybe<Scalars['Float']>
-  id?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  id?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by variance() on columns of table "changes" */
@@ -807,9 +809,9 @@ export type Collection_Banners = {
   __typename?: 'collection_banners'
   /** An object relationship */
   collection?: Maybe<Collections>
-  collection_id: Scalars['String']
-  created_at: Scalars['timestamptz']
-  image: Scalars['String']
+  collection_id: Scalars['String']['output']
+  created_at: Scalars['timestamptz']['output']
+  image: Scalars['String']['output']
 }
 
 /** Boolean expression to filter rows from the table "collection_banners". All fields are combined with a logical 'AND'. */
@@ -846,17 +848,17 @@ export type Collections = {
   __typename?: 'collections'
   /** An object relationship */
   banners?: Maybe<Collection_Banners>
-  block: Scalars['Int']
+  block: Scalars['Int']['output']
   /** An array relationship */
   changes_collection: Array<Changes_Collection>
-  id: Scalars['String']
-  issuer: Scalars['String']
-  max: Scalars['Int']
-  metadata: Scalars['String']
-  metadata_content_type?: Maybe<Scalars['String']>
-  metadata_description?: Maybe<Scalars['String']>
-  metadata_image?: Maybe<Scalars['String']>
-  metadata_name?: Maybe<Scalars['String']>
+  id: Scalars['String']['output']
+  issuer: Scalars['String']['output']
+  max: Scalars['Int']['output']
+  metadata: Scalars['String']['output']
+  metadata_content_type?: Maybe<Scalars['String']['output']>
+  metadata_description?: Maybe<Scalars['String']['output']>
+  metadata_image?: Maybe<Scalars['String']['output']>
+  metadata_name?: Maybe<Scalars['String']['output']>
   /** An array relationship */
   nfts: Array<Nfts>
   /** An aggregate relationship */
@@ -879,14 +881,14 @@ export type Collections = {
   singular_verified_collections: Array<Singular_Verified_Collections>
   /** An aggregate relationship */
   singular_verified_collections_aggregate: Singular_Verified_Collections_Aggregate
-  symbol: Scalars['String']
+  symbol: Scalars['String']['output']
 }
 
 /** columns and relationships of "collections" */
 export type CollectionsChanges_CollectionArgs = {
   distinct_on?: InputMaybe<Array<Changes_Collection_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Changes_Collection_Order_By>>
   where?: InputMaybe<Changes_Collection_Bool_Exp>
 }
@@ -894,8 +896,8 @@ export type CollectionsChanges_CollectionArgs = {
 /** columns and relationships of "collections" */
 export type CollectionsNftsArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
@@ -903,8 +905,8 @@ export type CollectionsNftsArgs = {
 /** columns and relationships of "collections" */
 export type CollectionsNfts_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
@@ -912,8 +914,8 @@ export type CollectionsNfts_AggregateArgs = {
 /** columns and relationships of "collections" */
 export type CollectionsSingular_Blacklisted_AccountsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Blacklisted_Accounts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Blacklisted_Accounts_Order_By>>
   where?: InputMaybe<Singular_Blacklisted_Accounts_Bool_Exp>
 }
@@ -921,8 +923,8 @@ export type CollectionsSingular_Blacklisted_AccountsArgs = {
 /** columns and relationships of "collections" */
 export type CollectionsSingular_Blacklisted_CollectionsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Blacklisted_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Blacklisted_Collections_Order_By>>
   where?: InputMaybe<Singular_Blacklisted_Collections_Bool_Exp>
 }
@@ -930,8 +932,8 @@ export type CollectionsSingular_Blacklisted_CollectionsArgs = {
 /** columns and relationships of "collections" */
 export type CollectionsSingular_CuratedArgs = {
   distinct_on?: InputMaybe<Array<Singular_Curated_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Curated_Collections_Order_By>>
   where?: InputMaybe<Singular_Curated_Collections_Bool_Exp>
 }
@@ -939,8 +941,8 @@ export type CollectionsSingular_CuratedArgs = {
 /** columns and relationships of "collections" */
 export type CollectionsSingular_Curated_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Curated_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Curated_Collections_Order_By>>
   where?: InputMaybe<Singular_Curated_Collections_Bool_Exp>
 }
@@ -948,8 +950,8 @@ export type CollectionsSingular_Curated_AggregateArgs = {
 /** columns and relationships of "collections" */
 export type CollectionsSingular_Nsfw_CollectionsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Nsfw_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Nsfw_Collections_Order_By>>
   where?: InputMaybe<Singular_Nsfw_Collections_Bool_Exp>
 }
@@ -957,8 +959,8 @@ export type CollectionsSingular_Nsfw_CollectionsArgs = {
 /** columns and relationships of "collections" */
 export type CollectionsSingular_Nsfw_Collections_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Nsfw_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Nsfw_Collections_Order_By>>
   where?: InputMaybe<Singular_Nsfw_Collections_Bool_Exp>
 }
@@ -966,8 +968,8 @@ export type CollectionsSingular_Nsfw_Collections_AggregateArgs = {
 /** columns and relationships of "collections" */
 export type CollectionsSingular_Verified_CollectionsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Verified_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Verified_Collections_Order_By>>
   where?: InputMaybe<Singular_Verified_Collections_Bool_Exp>
 }
@@ -975,8 +977,8 @@ export type CollectionsSingular_Verified_CollectionsArgs = {
 /** columns and relationships of "collections" */
 export type CollectionsSingular_Verified_Collections_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Verified_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Verified_Collections_Order_By>>
   where?: InputMaybe<Singular_Verified_Collections_Bool_Exp>
 }
@@ -992,7 +994,7 @@ export type Collections_Aggregate = {
 export type Collections_Aggregate_Fields = {
   __typename?: 'collections_aggregate_fields'
   avg?: Maybe<Collections_Avg_Fields>
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Collections_Max_Fields>
   min?: Maybe<Collections_Min_Fields>
   stddev?: Maybe<Collections_Stddev_Fields>
@@ -1007,14 +1009,14 @@ export type Collections_Aggregate_Fields = {
 /** aggregate fields of "collections" */
 export type Collections_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Collections_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** aggregate avg on columns */
 export type Collections_Avg_Fields = {
   __typename?: 'collections_avg_fields'
-  block?: Maybe<Scalars['Float']>
-  max?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  max?: Maybe<Scalars['Float']['output']>
 }
 
 /** Boolean expression to filter rows from the table "collections". All fields are combined with a logical 'AND'. */
@@ -1046,31 +1048,31 @@ export type Collections_Bool_Exp = {
 /** aggregate max on columns */
 export type Collections_Max_Fields = {
   __typename?: 'collections_max_fields'
-  block?: Maybe<Scalars['Int']>
-  id?: Maybe<Scalars['String']>
-  issuer?: Maybe<Scalars['String']>
-  max?: Maybe<Scalars['Int']>
-  metadata?: Maybe<Scalars['String']>
-  metadata_content_type?: Maybe<Scalars['String']>
-  metadata_description?: Maybe<Scalars['String']>
-  metadata_image?: Maybe<Scalars['String']>
-  metadata_name?: Maybe<Scalars['String']>
-  symbol?: Maybe<Scalars['String']>
+  block?: Maybe<Scalars['Int']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  issuer?: Maybe<Scalars['String']['output']>
+  max?: Maybe<Scalars['Int']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  metadata_content_type?: Maybe<Scalars['String']['output']>
+  metadata_description?: Maybe<Scalars['String']['output']>
+  metadata_image?: Maybe<Scalars['String']['output']>
+  metadata_name?: Maybe<Scalars['String']['output']>
+  symbol?: Maybe<Scalars['String']['output']>
 }
 
 /** aggregate min on columns */
 export type Collections_Min_Fields = {
   __typename?: 'collections_min_fields'
-  block?: Maybe<Scalars['Int']>
-  id?: Maybe<Scalars['String']>
-  issuer?: Maybe<Scalars['String']>
-  max?: Maybe<Scalars['Int']>
-  metadata?: Maybe<Scalars['String']>
-  metadata_content_type?: Maybe<Scalars['String']>
-  metadata_description?: Maybe<Scalars['String']>
-  metadata_image?: Maybe<Scalars['String']>
-  metadata_name?: Maybe<Scalars['String']>
-  symbol?: Maybe<Scalars['String']>
+  block?: Maybe<Scalars['Int']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  issuer?: Maybe<Scalars['String']['output']>
+  max?: Maybe<Scalars['Int']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  metadata_content_type?: Maybe<Scalars['String']['output']>
+  metadata_description?: Maybe<Scalars['String']['output']>
+  metadata_image?: Maybe<Scalars['String']['output']>
+  metadata_name?: Maybe<Scalars['String']['output']>
+  symbol?: Maybe<Scalars['String']['output']>
 }
 
 /** Ordering options when selecting data from "collections". */
@@ -1123,97 +1125,97 @@ export enum Collections_Select_Column {
 /** aggregate stddev on columns */
 export type Collections_Stddev_Fields = {
   __typename?: 'collections_stddev_fields'
-  block?: Maybe<Scalars['Float']>
-  max?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  max?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate stddev_pop on columns */
 export type Collections_Stddev_Pop_Fields = {
   __typename?: 'collections_stddev_pop_fields'
-  block?: Maybe<Scalars['Float']>
-  max?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  max?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate stddev_samp on columns */
 export type Collections_Stddev_Samp_Fields = {
   __typename?: 'collections_stddev_samp_fields'
-  block?: Maybe<Scalars['Float']>
-  max?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  max?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate sum on columns */
 export type Collections_Sum_Fields = {
   __typename?: 'collections_sum_fields'
-  block?: Maybe<Scalars['Int']>
-  max?: Maybe<Scalars['Int']>
+  block?: Maybe<Scalars['Int']['output']>
+  max?: Maybe<Scalars['Int']['output']>
 }
 
 /** aggregate var_pop on columns */
 export type Collections_Var_Pop_Fields = {
   __typename?: 'collections_var_pop_fields'
-  block?: Maybe<Scalars['Float']>
-  max?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  max?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate var_samp on columns */
 export type Collections_Var_Samp_Fields = {
   __typename?: 'collections_var_samp_fields'
-  block?: Maybe<Scalars['Float']>
-  max?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  max?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate variance on columns */
 export type Collections_Variance_Fields = {
   __typename?: 'collections_variance_fields'
-  block?: Maybe<Scalars['Float']>
-  max?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  max?: Maybe<Scalars['Float']['output']>
 }
 
 /** columns and relationships of "distinct_kanaria_nfts" */
 export type Distinct_Kanaria_Nfts = {
   __typename?: 'distinct_kanaria_nfts'
-  block?: Maybe<Scalars['Int']>
-  burned?: Maybe<Scalars['String']>
+  block?: Maybe<Scalars['Int']['output']>
+  burned?: Maybe<Scalars['String']['output']>
   /** An array relationship */
   children: Array<Nfts>
   /** An aggregate relationship */
   children_aggregate: Nfts_Aggregate
   /** An object relationship */
   collection?: Maybe<Collections>
-  collectionId?: Maybe<Scalars['String']>
-  created_at?: Maybe<Scalars['timestamptz']>
-  equipped_id?: Maybe<Scalars['String']>
-  forsale?: Maybe<Scalars['bigint']>
-  id?: Maybe<Scalars['String']>
-  metadata?: Maybe<Scalars['String']>
-  metadata_description?: Maybe<Scalars['String']>
-  metadata_image?: Maybe<Scalars['String']>
-  metadata_name?: Maybe<Scalars['String']>
-  metadata_rarity?: Maybe<Scalars['String']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  owner?: Maybe<Scalars['String']>
-  pending?: Maybe<Scalars['Boolean']>
-  priority?: Maybe<Scalars['jsonb']>
-  properties?: Maybe<Scalars['jsonb']>
+  collectionId?: Maybe<Scalars['String']['output']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
+  equipped_id?: Maybe<Scalars['String']['output']>
+  forsale?: Maybe<Scalars['bigint']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  metadata_description?: Maybe<Scalars['String']['output']>
+  metadata_image?: Maybe<Scalars['String']['output']>
+  metadata_name?: Maybe<Scalars['String']['output']>
+  metadata_rarity?: Maybe<Scalars['String']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  owner?: Maybe<Scalars['String']['output']>
+  pending?: Maybe<Scalars['Boolean']['output']>
+  priority?: Maybe<Scalars['jsonb']['output']>
+  properties?: Maybe<Scalars['jsonb']['output']>
   /** An array relationship */
   resources: Array<Resources>
   /** An aggregate relationship */
   resources_aggregate: Resources_Aggregate
-  rootowner?: Maybe<Scalars['String']>
-  sn?: Maybe<Scalars['String']>
-  symbol?: Maybe<Scalars['String']>
-  transferable?: Maybe<Scalars['Int']>
-  tx_block?: Maybe<Scalars['Int']>
-  tx_caller?: Maybe<Scalars['String']>
-  tx_pending?: Maybe<Scalars['Boolean']>
-  updated_at?: Maybe<Scalars['timestamptz']>
+  rootowner?: Maybe<Scalars['String']['output']>
+  sn?: Maybe<Scalars['String']['output']>
+  symbol?: Maybe<Scalars['String']['output']>
+  transferable?: Maybe<Scalars['Int']['output']>
+  tx_block?: Maybe<Scalars['Int']['output']>
+  tx_caller?: Maybe<Scalars['String']['output']>
+  tx_pending?: Maybe<Scalars['Boolean']['output']>
+  updated_at?: Maybe<Scalars['timestamptz']['output']>
 }
 
 /** columns and relationships of "distinct_kanaria_nfts" */
 export type Distinct_Kanaria_NftsChildrenArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
@@ -1221,27 +1223,27 @@ export type Distinct_Kanaria_NftsChildrenArgs = {
 /** columns and relationships of "distinct_kanaria_nfts" */
 export type Distinct_Kanaria_NftsChildren_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
 
 /** columns and relationships of "distinct_kanaria_nfts" */
 export type Distinct_Kanaria_NftsPriorityArgs = {
-  path?: InputMaybe<Scalars['String']>
+  path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** columns and relationships of "distinct_kanaria_nfts" */
 export type Distinct_Kanaria_NftsPropertiesArgs = {
-  path?: InputMaybe<Scalars['String']>
+  path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** columns and relationships of "distinct_kanaria_nfts" */
 export type Distinct_Kanaria_NftsResourcesArgs = {
   distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Order_By>>
   where?: InputMaybe<Resources_Bool_Exp>
 }
@@ -1249,8 +1251,8 @@ export type Distinct_Kanaria_NftsResourcesArgs = {
 /** columns and relationships of "distinct_kanaria_nfts" */
 export type Distinct_Kanaria_NftsResources_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Order_By>>
   where?: InputMaybe<Resources_Bool_Exp>
 }
@@ -1266,7 +1268,7 @@ export type Distinct_Kanaria_Nfts_Aggregate = {
 export type Distinct_Kanaria_Nfts_Aggregate_Fields = {
   __typename?: 'distinct_kanaria_nfts_aggregate_fields'
   avg?: Maybe<Distinct_Kanaria_Nfts_Avg_Fields>
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Distinct_Kanaria_Nfts_Max_Fields>
   min?: Maybe<Distinct_Kanaria_Nfts_Min_Fields>
   stddev?: Maybe<Distinct_Kanaria_Nfts_Stddev_Fields>
@@ -1281,17 +1283,17 @@ export type Distinct_Kanaria_Nfts_Aggregate_Fields = {
 /** aggregate fields of "distinct_kanaria_nfts" */
 export type Distinct_Kanaria_Nfts_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Distinct_Kanaria_Nfts_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** aggregate avg on columns */
 export type Distinct_Kanaria_Nfts_Avg_Fields = {
   __typename?: 'distinct_kanaria_nfts_avg_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  tx_block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  tx_block?: Maybe<Scalars['Float']['output']>
 }
 
 /** Boolean expression to filter rows from the table "distinct_kanaria_nfts". All fields are combined with a logical 'AND'. */
@@ -1332,53 +1334,53 @@ export type Distinct_Kanaria_Nfts_Bool_Exp = {
 /** aggregate max on columns */
 export type Distinct_Kanaria_Nfts_Max_Fields = {
   __typename?: 'distinct_kanaria_nfts_max_fields'
-  block?: Maybe<Scalars['Int']>
-  burned?: Maybe<Scalars['String']>
-  collectionId?: Maybe<Scalars['String']>
-  created_at?: Maybe<Scalars['timestamptz']>
-  equipped_id?: Maybe<Scalars['String']>
-  forsale?: Maybe<Scalars['bigint']>
-  id?: Maybe<Scalars['String']>
-  metadata?: Maybe<Scalars['String']>
-  metadata_description?: Maybe<Scalars['String']>
-  metadata_image?: Maybe<Scalars['String']>
-  metadata_name?: Maybe<Scalars['String']>
-  metadata_rarity?: Maybe<Scalars['String']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  owner?: Maybe<Scalars['String']>
-  rootowner?: Maybe<Scalars['String']>
-  sn?: Maybe<Scalars['String']>
-  symbol?: Maybe<Scalars['String']>
-  transferable?: Maybe<Scalars['Int']>
-  tx_block?: Maybe<Scalars['Int']>
-  tx_caller?: Maybe<Scalars['String']>
-  updated_at?: Maybe<Scalars['timestamptz']>
+  block?: Maybe<Scalars['Int']['output']>
+  burned?: Maybe<Scalars['String']['output']>
+  collectionId?: Maybe<Scalars['String']['output']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
+  equipped_id?: Maybe<Scalars['String']['output']>
+  forsale?: Maybe<Scalars['bigint']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  metadata_description?: Maybe<Scalars['String']['output']>
+  metadata_image?: Maybe<Scalars['String']['output']>
+  metadata_name?: Maybe<Scalars['String']['output']>
+  metadata_rarity?: Maybe<Scalars['String']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  owner?: Maybe<Scalars['String']['output']>
+  rootowner?: Maybe<Scalars['String']['output']>
+  sn?: Maybe<Scalars['String']['output']>
+  symbol?: Maybe<Scalars['String']['output']>
+  transferable?: Maybe<Scalars['Int']['output']>
+  tx_block?: Maybe<Scalars['Int']['output']>
+  tx_caller?: Maybe<Scalars['String']['output']>
+  updated_at?: Maybe<Scalars['timestamptz']['output']>
 }
 
 /** aggregate min on columns */
 export type Distinct_Kanaria_Nfts_Min_Fields = {
   __typename?: 'distinct_kanaria_nfts_min_fields'
-  block?: Maybe<Scalars['Int']>
-  burned?: Maybe<Scalars['String']>
-  collectionId?: Maybe<Scalars['String']>
-  created_at?: Maybe<Scalars['timestamptz']>
-  equipped_id?: Maybe<Scalars['String']>
-  forsale?: Maybe<Scalars['bigint']>
-  id?: Maybe<Scalars['String']>
-  metadata?: Maybe<Scalars['String']>
-  metadata_description?: Maybe<Scalars['String']>
-  metadata_image?: Maybe<Scalars['String']>
-  metadata_name?: Maybe<Scalars['String']>
-  metadata_rarity?: Maybe<Scalars['String']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  owner?: Maybe<Scalars['String']>
-  rootowner?: Maybe<Scalars['String']>
-  sn?: Maybe<Scalars['String']>
-  symbol?: Maybe<Scalars['String']>
-  transferable?: Maybe<Scalars['Int']>
-  tx_block?: Maybe<Scalars['Int']>
-  tx_caller?: Maybe<Scalars['String']>
-  updated_at?: Maybe<Scalars['timestamptz']>
+  block?: Maybe<Scalars['Int']['output']>
+  burned?: Maybe<Scalars['String']['output']>
+  collectionId?: Maybe<Scalars['String']['output']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
+  equipped_id?: Maybe<Scalars['String']['output']>
+  forsale?: Maybe<Scalars['bigint']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  metadata_description?: Maybe<Scalars['String']['output']>
+  metadata_image?: Maybe<Scalars['String']['output']>
+  metadata_name?: Maybe<Scalars['String']['output']>
+  metadata_rarity?: Maybe<Scalars['String']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  owner?: Maybe<Scalars['String']['output']>
+  rootowner?: Maybe<Scalars['String']['output']>
+  sn?: Maybe<Scalars['String']['output']>
+  symbol?: Maybe<Scalars['String']['output']>
+  transferable?: Maybe<Scalars['Int']['output']>
+  tx_block?: Maybe<Scalars['Int']['output']>
+  tx_caller?: Maybe<Scalars['String']['output']>
+  updated_at?: Maybe<Scalars['timestamptz']['output']>
 }
 
 /** Ordering options when selecting data from "distinct_kanaria_nfts". */
@@ -1470,105 +1472,105 @@ export enum Distinct_Kanaria_Nfts_Select_Column {
 /** aggregate stddev on columns */
 export type Distinct_Kanaria_Nfts_Stddev_Fields = {
   __typename?: 'distinct_kanaria_nfts_stddev_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  tx_block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  tx_block?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate stddev_pop on columns */
 export type Distinct_Kanaria_Nfts_Stddev_Pop_Fields = {
   __typename?: 'distinct_kanaria_nfts_stddev_pop_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  tx_block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  tx_block?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate stddev_samp on columns */
 export type Distinct_Kanaria_Nfts_Stddev_Samp_Fields = {
   __typename?: 'distinct_kanaria_nfts_stddev_samp_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  tx_block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  tx_block?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate sum on columns */
 export type Distinct_Kanaria_Nfts_Sum_Fields = {
   __typename?: 'distinct_kanaria_nfts_sum_fields'
-  block?: Maybe<Scalars['Int']>
-  forsale?: Maybe<Scalars['bigint']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Int']>
-  tx_block?: Maybe<Scalars['Int']>
+  block?: Maybe<Scalars['Int']['output']>
+  forsale?: Maybe<Scalars['bigint']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Int']['output']>
+  tx_block?: Maybe<Scalars['Int']['output']>
 }
 
 /** aggregate var_pop on columns */
 export type Distinct_Kanaria_Nfts_Var_Pop_Fields = {
   __typename?: 'distinct_kanaria_nfts_var_pop_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  tx_block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  tx_block?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate var_samp on columns */
 export type Distinct_Kanaria_Nfts_Var_Samp_Fields = {
   __typename?: 'distinct_kanaria_nfts_var_samp_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  tx_block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  tx_block?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate variance on columns */
 export type Distinct_Kanaria_Nfts_Variance_Fields = {
   __typename?: 'distinct_kanaria_nfts_variance_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  tx_block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  tx_block?: Maybe<Scalars['Float']['output']>
 }
 
 /** columns and relationships of "distinct_nfts" */
 export type Distinct_Nfts = {
   __typename?: 'distinct_nfts'
-  block?: Maybe<Scalars['Int']>
-  burned?: Maybe<Scalars['String']>
+  block?: Maybe<Scalars['Int']['output']>
+  burned?: Maybe<Scalars['String']['output']>
   /** An array relationship */
   children: Array<Nfts>
   /** An aggregate relationship */
   children_aggregate: Nfts_Aggregate
   /** An object relationship */
   collection?: Maybe<Collections>
-  collectionId?: Maybe<Scalars['String']>
+  collectionId?: Maybe<Scalars['String']['output']>
   /** An object relationship */
   dutchie?: Maybe<Dutchie>
-  equipped_id?: Maybe<Scalars['String']>
-  forsale?: Maybe<Scalars['bigint']>
-  id?: Maybe<Scalars['String']>
-  metadata?: Maybe<Scalars['String']>
-  metadata_content_type?: Maybe<Scalars['String']>
-  metadata_image?: Maybe<Scalars['String']>
-  metadata_name?: Maybe<Scalars['String']>
-  metadata_rarity?: Maybe<Scalars['String']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  owner?: Maybe<Scalars['String']>
-  pending?: Maybe<Scalars['Boolean']>
-  priority?: Maybe<Scalars['jsonb']>
-  properties?: Maybe<Scalars['jsonb']>
+  equipped_id?: Maybe<Scalars['String']['output']>
+  forsale?: Maybe<Scalars['bigint']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  metadata_content_type?: Maybe<Scalars['String']['output']>
+  metadata_image?: Maybe<Scalars['String']['output']>
+  metadata_name?: Maybe<Scalars['String']['output']>
+  metadata_rarity?: Maybe<Scalars['String']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  owner?: Maybe<Scalars['String']['output']>
+  pending?: Maybe<Scalars['Boolean']['output']>
+  priority?: Maybe<Scalars['jsonb']['output']>
+  properties?: Maybe<Scalars['jsonb']['output']>
   /** An array relationship */
   resources: Array<Resources>
   /** An aggregate relationship */
   resources_aggregate: Resources_Aggregate
-  rootowner?: Maybe<Scalars['String']>
+  rootowner?: Maybe<Scalars['String']['output']>
   /** An array relationship */
   singular_curated: Array<Singular_Curated>
   /** An aggregate relationship */
@@ -1577,20 +1579,20 @@ export type Distinct_Nfts = {
   singular_nsfw: Array<Singular_Nsfw_Nfts>
   /** An aggregate relationship */
   singular_nsfw_aggregate: Singular_Nsfw_Nfts_Aggregate
-  sn?: Maybe<Scalars['String']>
-  symbol?: Maybe<Scalars['String']>
-  transferable?: Maybe<Scalars['Int']>
-  tx_block?: Maybe<Scalars['Int']>
-  tx_caller?: Maybe<Scalars['String']>
-  tx_pending?: Maybe<Scalars['Boolean']>
-  updated_at?: Maybe<Scalars['timestamptz']>
+  sn?: Maybe<Scalars['String']['output']>
+  symbol?: Maybe<Scalars['String']['output']>
+  transferable?: Maybe<Scalars['Int']['output']>
+  tx_block?: Maybe<Scalars['Int']['output']>
+  tx_caller?: Maybe<Scalars['String']['output']>
+  tx_pending?: Maybe<Scalars['Boolean']['output']>
+  updated_at?: Maybe<Scalars['timestamptz']['output']>
 }
 
 /** columns and relationships of "distinct_nfts" */
 export type Distinct_NftsChildrenArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
@@ -1598,27 +1600,27 @@ export type Distinct_NftsChildrenArgs = {
 /** columns and relationships of "distinct_nfts" */
 export type Distinct_NftsChildren_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
 
 /** columns and relationships of "distinct_nfts" */
 export type Distinct_NftsPriorityArgs = {
-  path?: InputMaybe<Scalars['String']>
+  path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** columns and relationships of "distinct_nfts" */
 export type Distinct_NftsPropertiesArgs = {
-  path?: InputMaybe<Scalars['String']>
+  path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** columns and relationships of "distinct_nfts" */
 export type Distinct_NftsResourcesArgs = {
   distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Order_By>>
   where?: InputMaybe<Resources_Bool_Exp>
 }
@@ -1626,8 +1628,8 @@ export type Distinct_NftsResourcesArgs = {
 /** columns and relationships of "distinct_nfts" */
 export type Distinct_NftsResources_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Order_By>>
   where?: InputMaybe<Resources_Bool_Exp>
 }
@@ -1635,8 +1637,8 @@ export type Distinct_NftsResources_AggregateArgs = {
 /** columns and relationships of "distinct_nfts" */
 export type Distinct_NftsSingular_CuratedArgs = {
   distinct_on?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Curated_Order_By>>
   where?: InputMaybe<Singular_Curated_Bool_Exp>
 }
@@ -1644,8 +1646,8 @@ export type Distinct_NftsSingular_CuratedArgs = {
 /** columns and relationships of "distinct_nfts" */
 export type Distinct_NftsSingular_Curated_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Curated_Order_By>>
   where?: InputMaybe<Singular_Curated_Bool_Exp>
 }
@@ -1653,8 +1655,8 @@ export type Distinct_NftsSingular_Curated_AggregateArgs = {
 /** columns and relationships of "distinct_nfts" */
 export type Distinct_NftsSingular_NsfwArgs = {
   distinct_on?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Nsfw_Nfts_Order_By>>
   where?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
 }
@@ -1662,8 +1664,8 @@ export type Distinct_NftsSingular_NsfwArgs = {
 /** columns and relationships of "distinct_nfts" */
 export type Distinct_NftsSingular_Nsfw_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Nsfw_Nfts_Order_By>>
   where?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
 }
@@ -1679,7 +1681,7 @@ export type Distinct_Nfts_Aggregate = {
 export type Distinct_Nfts_Aggregate_Fields = {
   __typename?: 'distinct_nfts_aggregate_fields'
   avg?: Maybe<Distinct_Nfts_Avg_Fields>
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Distinct_Nfts_Max_Fields>
   min?: Maybe<Distinct_Nfts_Min_Fields>
   stddev?: Maybe<Distinct_Nfts_Stddev_Fields>
@@ -1694,17 +1696,17 @@ export type Distinct_Nfts_Aggregate_Fields = {
 /** aggregate fields of "distinct_nfts" */
 export type Distinct_Nfts_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Distinct_Nfts_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** aggregate avg on columns */
 export type Distinct_Nfts_Avg_Fields = {
   __typename?: 'distinct_nfts_avg_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  tx_block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  tx_block?: Maybe<Scalars['Float']['output']>
 }
 
 /** Boolean expression to filter rows from the table "distinct_nfts". All fields are combined with a logical 'AND'. */
@@ -1747,51 +1749,51 @@ export type Distinct_Nfts_Bool_Exp = {
 /** aggregate max on columns */
 export type Distinct_Nfts_Max_Fields = {
   __typename?: 'distinct_nfts_max_fields'
-  block?: Maybe<Scalars['Int']>
-  burned?: Maybe<Scalars['String']>
-  collectionId?: Maybe<Scalars['String']>
-  equipped_id?: Maybe<Scalars['String']>
-  forsale?: Maybe<Scalars['bigint']>
-  id?: Maybe<Scalars['String']>
-  metadata?: Maybe<Scalars['String']>
-  metadata_content_type?: Maybe<Scalars['String']>
-  metadata_image?: Maybe<Scalars['String']>
-  metadata_name?: Maybe<Scalars['String']>
-  metadata_rarity?: Maybe<Scalars['String']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  owner?: Maybe<Scalars['String']>
-  rootowner?: Maybe<Scalars['String']>
-  sn?: Maybe<Scalars['String']>
-  symbol?: Maybe<Scalars['String']>
-  transferable?: Maybe<Scalars['Int']>
-  tx_block?: Maybe<Scalars['Int']>
-  tx_caller?: Maybe<Scalars['String']>
-  updated_at?: Maybe<Scalars['timestamptz']>
+  block?: Maybe<Scalars['Int']['output']>
+  burned?: Maybe<Scalars['String']['output']>
+  collectionId?: Maybe<Scalars['String']['output']>
+  equipped_id?: Maybe<Scalars['String']['output']>
+  forsale?: Maybe<Scalars['bigint']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  metadata_content_type?: Maybe<Scalars['String']['output']>
+  metadata_image?: Maybe<Scalars['String']['output']>
+  metadata_name?: Maybe<Scalars['String']['output']>
+  metadata_rarity?: Maybe<Scalars['String']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  owner?: Maybe<Scalars['String']['output']>
+  rootowner?: Maybe<Scalars['String']['output']>
+  sn?: Maybe<Scalars['String']['output']>
+  symbol?: Maybe<Scalars['String']['output']>
+  transferable?: Maybe<Scalars['Int']['output']>
+  tx_block?: Maybe<Scalars['Int']['output']>
+  tx_caller?: Maybe<Scalars['String']['output']>
+  updated_at?: Maybe<Scalars['timestamptz']['output']>
 }
 
 /** aggregate min on columns */
 export type Distinct_Nfts_Min_Fields = {
   __typename?: 'distinct_nfts_min_fields'
-  block?: Maybe<Scalars['Int']>
-  burned?: Maybe<Scalars['String']>
-  collectionId?: Maybe<Scalars['String']>
-  equipped_id?: Maybe<Scalars['String']>
-  forsale?: Maybe<Scalars['bigint']>
-  id?: Maybe<Scalars['String']>
-  metadata?: Maybe<Scalars['String']>
-  metadata_content_type?: Maybe<Scalars['String']>
-  metadata_image?: Maybe<Scalars['String']>
-  metadata_name?: Maybe<Scalars['String']>
-  metadata_rarity?: Maybe<Scalars['String']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  owner?: Maybe<Scalars['String']>
-  rootowner?: Maybe<Scalars['String']>
-  sn?: Maybe<Scalars['String']>
-  symbol?: Maybe<Scalars['String']>
-  transferable?: Maybe<Scalars['Int']>
-  tx_block?: Maybe<Scalars['Int']>
-  tx_caller?: Maybe<Scalars['String']>
-  updated_at?: Maybe<Scalars['timestamptz']>
+  block?: Maybe<Scalars['Int']['output']>
+  burned?: Maybe<Scalars['String']['output']>
+  collectionId?: Maybe<Scalars['String']['output']>
+  equipped_id?: Maybe<Scalars['String']['output']>
+  forsale?: Maybe<Scalars['bigint']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  metadata_content_type?: Maybe<Scalars['String']['output']>
+  metadata_image?: Maybe<Scalars['String']['output']>
+  metadata_name?: Maybe<Scalars['String']['output']>
+  metadata_rarity?: Maybe<Scalars['String']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  owner?: Maybe<Scalars['String']['output']>
+  rootowner?: Maybe<Scalars['String']['output']>
+  sn?: Maybe<Scalars['String']['output']>
+  symbol?: Maybe<Scalars['String']['output']>
+  transferable?: Maybe<Scalars['Int']['output']>
+  tx_block?: Maybe<Scalars['Int']['output']>
+  tx_caller?: Maybe<Scalars['String']['output']>
+  updated_at?: Maybe<Scalars['timestamptz']['output']>
 }
 
 /** Ordering options when selecting data from "distinct_nfts". */
@@ -1883,71 +1885,71 @@ export enum Distinct_Nfts_Select_Column {
 /** aggregate stddev on columns */
 export type Distinct_Nfts_Stddev_Fields = {
   __typename?: 'distinct_nfts_stddev_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  tx_block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  tx_block?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate stddev_pop on columns */
 export type Distinct_Nfts_Stddev_Pop_Fields = {
   __typename?: 'distinct_nfts_stddev_pop_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  tx_block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  tx_block?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate stddev_samp on columns */
 export type Distinct_Nfts_Stddev_Samp_Fields = {
   __typename?: 'distinct_nfts_stddev_samp_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  tx_block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  tx_block?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate sum on columns */
 export type Distinct_Nfts_Sum_Fields = {
   __typename?: 'distinct_nfts_sum_fields'
-  block?: Maybe<Scalars['Int']>
-  forsale?: Maybe<Scalars['bigint']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Int']>
-  tx_block?: Maybe<Scalars['Int']>
+  block?: Maybe<Scalars['Int']['output']>
+  forsale?: Maybe<Scalars['bigint']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Int']['output']>
+  tx_block?: Maybe<Scalars['Int']['output']>
 }
 
 /** aggregate var_pop on columns */
 export type Distinct_Nfts_Var_Pop_Fields = {
   __typename?: 'distinct_nfts_var_pop_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  tx_block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  tx_block?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate var_samp on columns */
 export type Distinct_Nfts_Var_Samp_Fields = {
   __typename?: 'distinct_nfts_var_samp_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  tx_block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  tx_block?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate variance on columns */
 export type Distinct_Nfts_Variance_Fields = {
   __typename?: 'distinct_nfts_variance_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  tx_block?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  tx_block?: Maybe<Scalars['Float']['output']>
 }
 
 /**
@@ -1959,19 +1961,19 @@ export type Distinct_Nfts_Variance_Fields = {
  */
 export type Dutchie = {
   __typename?: 'dutchie'
-  active: Scalars['Boolean']
-  current_price: Scalars['bigint']
-  id: Scalars['Int']
-  initial_price: Scalars['bigint']
-  interval?: Maybe<Scalars['smallint']>
-  min_price: Scalars['bigint']
+  active: Scalars['Boolean']['output']
+  current_price: Scalars['bigint']['output']
+  id: Scalars['Int']['output']
+  initial_price: Scalars['bigint']['output']
+  interval?: Maybe<Scalars['smallint']['output']>
+  min_price: Scalars['bigint']['output']
   /** An object relationship */
   nft?: Maybe<Nfts>
-  nft_id: Scalars['String']
-  reduction: Scalars['numeric']
-  sold: Scalars['Boolean']
-  start_time: Scalars['timestamptz']
-  tick: Scalars['Int']
+  nft_id: Scalars['String']['output']
+  reduction: Scalars['numeric']['output']
+  sold: Scalars['Boolean']['output']
+  start_time: Scalars['timestamptz']['output']
+  tick: Scalars['Int']['output']
 }
 
 /** Boolean expression to filter rows from the table "dutchie". All fields are combined with a logical 'AND'. */
@@ -2038,8 +2040,8 @@ export enum Dutchie_Select_Column {
 /** columns and relationships of "gems_enabled" */
 export type Gems_Enabled = {
   __typename?: 'gems_enabled'
-  enabled: Scalars['Boolean']
-  id: Scalars['String']
+  enabled: Scalars['Boolean']['output']
+  id: Scalars['String']['output']
   /** An object relationship */
   nft?: Maybe<Nfts>
 }
@@ -2069,18 +2071,14 @@ export enum Gems_Enabled_Select_Column {
   Id = 'id',
 }
 
-export type Get_By_Unicode_Args = {
-  nft?: InputMaybe<Scalars['String']>
-}
-
 export type Get_Ordered_Changes_Stats_Args = {
-  optype?: InputMaybe<Scalars['String']>
+  optype?: InputMaybe<Scalars['String']['input']>
 }
 
 /** columns and relationships of "hatched_birds" */
 export type Hatched_Birds = {
   __typename?: 'hatched_birds'
-  id: Scalars['String']
+  id: Scalars['String']['output']
 }
 
 /** Boolean expression to filter rows from the table "hatched_birds". All fields are combined with a logical 'AND'. */
@@ -2093,14 +2091,14 @@ export type Hatched_Birds_Bool_Exp = {
 
 /** input type for inserting data into table "hatched_birds" */
 export type Hatched_Birds_Insert_Input = {
-  id?: InputMaybe<Scalars['String']>
+  id?: InputMaybe<Scalars['String']['input']>
 }
 
 /** response of any mutation on the table "hatched_birds" */
 export type Hatched_Birds_Mutation_Response = {
   __typename?: 'hatched_birds_mutation_response'
   /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int']
+  affected_rows: Scalars['Int']['output']
   /** data from the rows affected by the mutation */
   returning: Array<Hatched_Birds>
 }
@@ -2119,24 +2117,24 @@ export enum Hatched_Birds_Select_Column {
 /** Boolean expression to compare columns of type "jsonb". All fields are combined with logical 'AND'. */
 export type Jsonb_Comparison_Exp = {
   /** is the column contained in the given json value */
-  _contained_in?: InputMaybe<Scalars['jsonb']>
+  _contained_in?: InputMaybe<Scalars['jsonb']['input']>
   /** does the column contain the given json value at the top level */
-  _contains?: InputMaybe<Scalars['jsonb']>
-  _eq?: InputMaybe<Scalars['jsonb']>
-  _gt?: InputMaybe<Scalars['jsonb']>
-  _gte?: InputMaybe<Scalars['jsonb']>
+  _contains?: InputMaybe<Scalars['jsonb']['input']>
+  _eq?: InputMaybe<Scalars['jsonb']['input']>
+  _gt?: InputMaybe<Scalars['jsonb']['input']>
+  _gte?: InputMaybe<Scalars['jsonb']['input']>
   /** does the string exist as a top-level key in the column */
-  _has_key?: InputMaybe<Scalars['String']>
+  _has_key?: InputMaybe<Scalars['String']['input']>
   /** do all of these strings exist as top-level keys in the column */
-  _has_keys_all?: InputMaybe<Array<Scalars['String']>>
+  _has_keys_all?: InputMaybe<Array<Scalars['String']['input']>>
   /** do any of these strings exist as top-level keys in the column */
-  _has_keys_any?: InputMaybe<Array<Scalars['String']>>
-  _in?: InputMaybe<Array<Scalars['jsonb']>>
-  _is_null?: InputMaybe<Scalars['Boolean']>
-  _lt?: InputMaybe<Scalars['jsonb']>
-  _lte?: InputMaybe<Scalars['jsonb']>
-  _neq?: InputMaybe<Scalars['jsonb']>
-  _nin?: InputMaybe<Array<Scalars['jsonb']>>
+  _has_keys_any?: InputMaybe<Array<Scalars['String']['input']>>
+  _in?: InputMaybe<Array<Scalars['jsonb']['input']>>
+  _is_null?: InputMaybe<Scalars['Boolean']['input']>
+  _lt?: InputMaybe<Scalars['jsonb']['input']>
+  _lte?: InputMaybe<Scalars['jsonb']['input']>
+  _neq?: InputMaybe<Scalars['jsonb']['input']>
+  _nin?: InputMaybe<Array<Scalars['jsonb']['input']>>
 }
 
 /** mutation root */
@@ -2161,8 +2159,8 @@ export type Mutation_RootInsert_Hatched_Birds_OneArgs = {
 /** columns and relationships of "nfts" */
 export type Nfts = {
   __typename?: 'nfts'
-  block: Scalars['Int']
-  burned: Scalars['String']
+  block: Scalars['Int']['output']
+  burned: Scalars['String']['output']
   /** An array relationship */
   changes: Array<Changes>
   /** An aggregate relationship */
@@ -2173,37 +2171,37 @@ export type Nfts = {
   children_aggregate: Nfts_Aggregate
   /** An object relationship */
   collection?: Maybe<Collections>
-  collectionId: Scalars['String']
-  created_at: Scalars['timestamptz']
+  collectionId: Scalars['String']['output']
+  created_at: Scalars['timestamptz']['output']
   /** An object relationship */
   dutchie?: Maybe<Dutchie>
   /** An object relationship */
   equipped?: Maybe<Parts>
-  equipped_id?: Maybe<Scalars['String']>
-  forsale: Scalars['bigint']
+  equipped_id?: Maybe<Scalars['String']['output']>
+  forsale: Scalars['bigint']['output']
   /** An object relationship */
   gem_enabled?: Maybe<Gems_Enabled>
-  id: Scalars['String']
-  id_md5?: Maybe<Scalars['String']>
-  metadata?: Maybe<Scalars['String']>
-  metadata_content_type?: Maybe<Scalars['String']>
-  metadata_description?: Maybe<Scalars['String']>
-  metadata_image?: Maybe<Scalars['String']>
-  metadata_name?: Maybe<Scalars['String']>
-  metadata_properties?: Maybe<Scalars['jsonb']>
-  metadata_rarity?: Maybe<Scalars['String']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  owner: Scalars['String']
+  id: Scalars['String']['output']
+  id_md5?: Maybe<Scalars['String']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  metadata_content_type?: Maybe<Scalars['String']['output']>
+  metadata_description?: Maybe<Scalars['String']['output']>
+  metadata_image?: Maybe<Scalars['String']['output']>
+  metadata_name?: Maybe<Scalars['String']['output']>
+  metadata_properties?: Maybe<Scalars['jsonb']['output']>
+  metadata_rarity?: Maybe<Scalars['String']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  owner: Scalars['String']['output']
   /** An object relationship */
   parent?: Maybe<Nfts>
-  pending?: Maybe<Scalars['Boolean']>
-  priority: Scalars['jsonb']
-  properties?: Maybe<Scalars['jsonb']>
+  pending?: Maybe<Scalars['Boolean']['output']>
+  priority: Scalars['jsonb']['output']
+  properties?: Maybe<Scalars['jsonb']['output']>
   /** An array relationship */
   resources: Array<Resources>
   /** An aggregate relationship */
   resources_aggregate: Resources_Aggregate
-  rootowner: Scalars['String']
+  rootowner: Scalars['String']['output']
   /** An array relationship */
   singular_curated: Array<Singular_Curated>
   /** An aggregate relationship */
@@ -2212,20 +2210,20 @@ export type Nfts = {
   singular_nsfw: Array<Singular_Nsfw_Nfts>
   /** An aggregate relationship */
   singular_nsfw_aggregate: Singular_Nsfw_Nfts_Aggregate
-  sn: Scalars['String']
-  symbol: Scalars['String']
-  transferable: Scalars['Int']
-  txBlock?: Maybe<Scalars['Int']>
-  txCaller?: Maybe<Scalars['String']>
-  txPending: Scalars['Boolean']
-  updated_at?: Maybe<Scalars['timestamptz']>
+  sn: Scalars['String']['output']
+  symbol: Scalars['String']['output']
+  transferable: Scalars['Int']['output']
+  txBlock?: Maybe<Scalars['Int']['output']>
+  txCaller?: Maybe<Scalars['String']['output']>
+  txPending: Scalars['Boolean']['output']
+  updated_at?: Maybe<Scalars['timestamptz']['output']>
 }
 
 /** columns and relationships of "nfts" */
 export type NftsChangesArgs = {
   distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Changes_Order_By>>
   where?: InputMaybe<Changes_Bool_Exp>
 }
@@ -2233,8 +2231,8 @@ export type NftsChangesArgs = {
 /** columns and relationships of "nfts" */
 export type NftsChanges_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Changes_Order_By>>
   where?: InputMaybe<Changes_Bool_Exp>
 }
@@ -2242,8 +2240,8 @@ export type NftsChanges_AggregateArgs = {
 /** columns and relationships of "nfts" */
 export type NftsChildrenArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
@@ -2251,32 +2249,32 @@ export type NftsChildrenArgs = {
 /** columns and relationships of "nfts" */
 export type NftsChildren_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
 
 /** columns and relationships of "nfts" */
 export type NftsMetadata_PropertiesArgs = {
-  path?: InputMaybe<Scalars['String']>
+  path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** columns and relationships of "nfts" */
 export type NftsPriorityArgs = {
-  path?: InputMaybe<Scalars['String']>
+  path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** columns and relationships of "nfts" */
 export type NftsPropertiesArgs = {
-  path?: InputMaybe<Scalars['String']>
+  path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** columns and relationships of "nfts" */
 export type NftsResourcesArgs = {
   distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Order_By>>
   where?: InputMaybe<Resources_Bool_Exp>
 }
@@ -2284,8 +2282,8 @@ export type NftsResourcesArgs = {
 /** columns and relationships of "nfts" */
 export type NftsResources_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Order_By>>
   where?: InputMaybe<Resources_Bool_Exp>
 }
@@ -2293,8 +2291,8 @@ export type NftsResources_AggregateArgs = {
 /** columns and relationships of "nfts" */
 export type NftsSingular_CuratedArgs = {
   distinct_on?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Curated_Order_By>>
   where?: InputMaybe<Singular_Curated_Bool_Exp>
 }
@@ -2302,8 +2300,8 @@ export type NftsSingular_CuratedArgs = {
 /** columns and relationships of "nfts" */
 export type NftsSingular_Curated_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Curated_Order_By>>
   where?: InputMaybe<Singular_Curated_Bool_Exp>
 }
@@ -2311,8 +2309,8 @@ export type NftsSingular_Curated_AggregateArgs = {
 /** columns and relationships of "nfts" */
 export type NftsSingular_NsfwArgs = {
   distinct_on?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Nsfw_Nfts_Order_By>>
   where?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
 }
@@ -2320,8 +2318,8 @@ export type NftsSingular_NsfwArgs = {
 /** columns and relationships of "nfts" */
 export type NftsSingular_Nsfw_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Nsfw_Nfts_Order_By>>
   where?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
 }
@@ -2337,7 +2335,7 @@ export type Nfts_Aggregate = {
 export type Nfts_Aggregate_Fields = {
   __typename?: 'nfts_aggregate_fields'
   avg?: Maybe<Nfts_Avg_Fields>
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Nfts_Max_Fields>
   min?: Maybe<Nfts_Min_Fields>
   stddev?: Maybe<Nfts_Stddev_Fields>
@@ -2352,7 +2350,7 @@ export type Nfts_Aggregate_Fields = {
 /** aggregate fields of "nfts" */
 export type Nfts_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Nfts_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** order by aggregate values of table "nfts" */
@@ -2373,11 +2371,11 @@ export type Nfts_Aggregate_Order_By = {
 /** aggregate avg on columns */
 export type Nfts_Avg_Fields = {
   __typename?: 'nfts_avg_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  txBlock?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  txBlock?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by avg() on columns of table "nfts" */
@@ -2437,29 +2435,29 @@ export type Nfts_Bool_Exp = {
 /** aggregate max on columns */
 export type Nfts_Max_Fields = {
   __typename?: 'nfts_max_fields'
-  block?: Maybe<Scalars['Int']>
-  burned?: Maybe<Scalars['String']>
-  collectionId?: Maybe<Scalars['String']>
-  created_at?: Maybe<Scalars['timestamptz']>
-  equipped_id?: Maybe<Scalars['String']>
-  forsale?: Maybe<Scalars['bigint']>
-  id?: Maybe<Scalars['String']>
-  id_md5?: Maybe<Scalars['String']>
-  metadata?: Maybe<Scalars['String']>
-  metadata_content_type?: Maybe<Scalars['String']>
-  metadata_description?: Maybe<Scalars['String']>
-  metadata_image?: Maybe<Scalars['String']>
-  metadata_name?: Maybe<Scalars['String']>
-  metadata_rarity?: Maybe<Scalars['String']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  owner?: Maybe<Scalars['String']>
-  rootowner?: Maybe<Scalars['String']>
-  sn?: Maybe<Scalars['String']>
-  symbol?: Maybe<Scalars['String']>
-  transferable?: Maybe<Scalars['Int']>
-  txBlock?: Maybe<Scalars['Int']>
-  txCaller?: Maybe<Scalars['String']>
-  updated_at?: Maybe<Scalars['timestamptz']>
+  block?: Maybe<Scalars['Int']['output']>
+  burned?: Maybe<Scalars['String']['output']>
+  collectionId?: Maybe<Scalars['String']['output']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
+  equipped_id?: Maybe<Scalars['String']['output']>
+  forsale?: Maybe<Scalars['bigint']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  id_md5?: Maybe<Scalars['String']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  metadata_content_type?: Maybe<Scalars['String']['output']>
+  metadata_description?: Maybe<Scalars['String']['output']>
+  metadata_image?: Maybe<Scalars['String']['output']>
+  metadata_name?: Maybe<Scalars['String']['output']>
+  metadata_rarity?: Maybe<Scalars['String']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  owner?: Maybe<Scalars['String']['output']>
+  rootowner?: Maybe<Scalars['String']['output']>
+  sn?: Maybe<Scalars['String']['output']>
+  symbol?: Maybe<Scalars['String']['output']>
+  transferable?: Maybe<Scalars['Int']['output']>
+  txBlock?: Maybe<Scalars['Int']['output']>
+  txCaller?: Maybe<Scalars['String']['output']>
+  updated_at?: Maybe<Scalars['timestamptz']['output']>
 }
 
 /** order by max() on columns of table "nfts" */
@@ -2492,29 +2490,29 @@ export type Nfts_Max_Order_By = {
 /** aggregate min on columns */
 export type Nfts_Min_Fields = {
   __typename?: 'nfts_min_fields'
-  block?: Maybe<Scalars['Int']>
-  burned?: Maybe<Scalars['String']>
-  collectionId?: Maybe<Scalars['String']>
-  created_at?: Maybe<Scalars['timestamptz']>
-  equipped_id?: Maybe<Scalars['String']>
-  forsale?: Maybe<Scalars['bigint']>
-  id?: Maybe<Scalars['String']>
-  id_md5?: Maybe<Scalars['String']>
-  metadata?: Maybe<Scalars['String']>
-  metadata_content_type?: Maybe<Scalars['String']>
-  metadata_description?: Maybe<Scalars['String']>
-  metadata_image?: Maybe<Scalars['String']>
-  metadata_name?: Maybe<Scalars['String']>
-  metadata_rarity?: Maybe<Scalars['String']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  owner?: Maybe<Scalars['String']>
-  rootowner?: Maybe<Scalars['String']>
-  sn?: Maybe<Scalars['String']>
-  symbol?: Maybe<Scalars['String']>
-  transferable?: Maybe<Scalars['Int']>
-  txBlock?: Maybe<Scalars['Int']>
-  txCaller?: Maybe<Scalars['String']>
-  updated_at?: Maybe<Scalars['timestamptz']>
+  block?: Maybe<Scalars['Int']['output']>
+  burned?: Maybe<Scalars['String']['output']>
+  collectionId?: Maybe<Scalars['String']['output']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
+  equipped_id?: Maybe<Scalars['String']['output']>
+  forsale?: Maybe<Scalars['bigint']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  id_md5?: Maybe<Scalars['String']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  metadata_content_type?: Maybe<Scalars['String']['output']>
+  metadata_description?: Maybe<Scalars['String']['output']>
+  metadata_image?: Maybe<Scalars['String']['output']>
+  metadata_name?: Maybe<Scalars['String']['output']>
+  metadata_rarity?: Maybe<Scalars['String']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  owner?: Maybe<Scalars['String']['output']>
+  rootowner?: Maybe<Scalars['String']['output']>
+  sn?: Maybe<Scalars['String']['output']>
+  symbol?: Maybe<Scalars['String']['output']>
+  transferable?: Maybe<Scalars['Int']['output']>
+  txBlock?: Maybe<Scalars['Int']['output']>
+  txCaller?: Maybe<Scalars['String']['output']>
+  updated_at?: Maybe<Scalars['timestamptz']['output']>
 }
 
 /** order by min() on columns of table "nfts" */
@@ -2586,151 +2584,6 @@ export type Nfts_Order_By = {
   updated_at?: InputMaybe<Order_By>
 }
 
-/** columns and relationships of "nfts_reactions_stats" */
-export type Nfts_Reactions_Stats = {
-  __typename?: 'nfts_reactions_stats'
-  count?: Maybe<Scalars['bigint']>
-  nft_id?: Maybe<Scalars['String']>
-  /** An array relationship */
-  nft_reaction_stats: Array<Reactions>
-  /** An aggregate relationship */
-  nft_reaction_stats_aggregate: Reactions_Aggregate
-}
-
-/** columns and relationships of "nfts_reactions_stats" */
-export type Nfts_Reactions_StatsNft_Reaction_StatsArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Order_By>>
-  where?: InputMaybe<Reactions_Bool_Exp>
-}
-
-/** columns and relationships of "nfts_reactions_stats" */
-export type Nfts_Reactions_StatsNft_Reaction_Stats_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Order_By>>
-  where?: InputMaybe<Reactions_Bool_Exp>
-}
-
-/** aggregated selection of "nfts_reactions_stats" */
-export type Nfts_Reactions_Stats_Aggregate = {
-  __typename?: 'nfts_reactions_stats_aggregate'
-  aggregate?: Maybe<Nfts_Reactions_Stats_Aggregate_Fields>
-  nodes: Array<Nfts_Reactions_Stats>
-}
-
-/** aggregate fields of "nfts_reactions_stats" */
-export type Nfts_Reactions_Stats_Aggregate_Fields = {
-  __typename?: 'nfts_reactions_stats_aggregate_fields'
-  avg?: Maybe<Nfts_Reactions_Stats_Avg_Fields>
-  count: Scalars['Int']
-  max?: Maybe<Nfts_Reactions_Stats_Max_Fields>
-  min?: Maybe<Nfts_Reactions_Stats_Min_Fields>
-  stddev?: Maybe<Nfts_Reactions_Stats_Stddev_Fields>
-  stddev_pop?: Maybe<Nfts_Reactions_Stats_Stddev_Pop_Fields>
-  stddev_samp?: Maybe<Nfts_Reactions_Stats_Stddev_Samp_Fields>
-  sum?: Maybe<Nfts_Reactions_Stats_Sum_Fields>
-  var_pop?: Maybe<Nfts_Reactions_Stats_Var_Pop_Fields>
-  var_samp?: Maybe<Nfts_Reactions_Stats_Var_Samp_Fields>
-  variance?: Maybe<Nfts_Reactions_Stats_Variance_Fields>
-}
-
-/** aggregate fields of "nfts_reactions_stats" */
-export type Nfts_Reactions_Stats_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Nfts_Reactions_Stats_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
-}
-
-/** aggregate avg on columns */
-export type Nfts_Reactions_Stats_Avg_Fields = {
-  __typename?: 'nfts_reactions_stats_avg_fields'
-  count?: Maybe<Scalars['Float']>
-}
-
-/** Boolean expression to filter rows from the table "nfts_reactions_stats". All fields are combined with a logical 'AND'. */
-export type Nfts_Reactions_Stats_Bool_Exp = {
-  _and?: InputMaybe<Array<Nfts_Reactions_Stats_Bool_Exp>>
-  _not?: InputMaybe<Nfts_Reactions_Stats_Bool_Exp>
-  _or?: InputMaybe<Array<Nfts_Reactions_Stats_Bool_Exp>>
-  count?: InputMaybe<Bigint_Comparison_Exp>
-  nft_id?: InputMaybe<String_Comparison_Exp>
-  nft_reaction_stats?: InputMaybe<Reactions_Bool_Exp>
-}
-
-/** aggregate max on columns */
-export type Nfts_Reactions_Stats_Max_Fields = {
-  __typename?: 'nfts_reactions_stats_max_fields'
-  count?: Maybe<Scalars['bigint']>
-  nft_id?: Maybe<Scalars['String']>
-}
-
-/** aggregate min on columns */
-export type Nfts_Reactions_Stats_Min_Fields = {
-  __typename?: 'nfts_reactions_stats_min_fields'
-  count?: Maybe<Scalars['bigint']>
-  nft_id?: Maybe<Scalars['String']>
-}
-
-/** Ordering options when selecting data from "nfts_reactions_stats". */
-export type Nfts_Reactions_Stats_Order_By = {
-  count?: InputMaybe<Order_By>
-  nft_id?: InputMaybe<Order_By>
-  nft_reaction_stats_aggregate?: InputMaybe<Reactions_Aggregate_Order_By>
-}
-
-/** select columns of table "nfts_reactions_stats" */
-export enum Nfts_Reactions_Stats_Select_Column {
-  /** column name */
-  Count = 'count',
-  /** column name */
-  NftId = 'nft_id',
-}
-
-/** aggregate stddev on columns */
-export type Nfts_Reactions_Stats_Stddev_Fields = {
-  __typename?: 'nfts_reactions_stats_stddev_fields'
-  count?: Maybe<Scalars['Float']>
-}
-
-/** aggregate stddev_pop on columns */
-export type Nfts_Reactions_Stats_Stddev_Pop_Fields = {
-  __typename?: 'nfts_reactions_stats_stddev_pop_fields'
-  count?: Maybe<Scalars['Float']>
-}
-
-/** aggregate stddev_samp on columns */
-export type Nfts_Reactions_Stats_Stddev_Samp_Fields = {
-  __typename?: 'nfts_reactions_stats_stddev_samp_fields'
-  count?: Maybe<Scalars['Float']>
-}
-
-/** aggregate sum on columns */
-export type Nfts_Reactions_Stats_Sum_Fields = {
-  __typename?: 'nfts_reactions_stats_sum_fields'
-  count?: Maybe<Scalars['bigint']>
-}
-
-/** aggregate var_pop on columns */
-export type Nfts_Reactions_Stats_Var_Pop_Fields = {
-  __typename?: 'nfts_reactions_stats_var_pop_fields'
-  count?: Maybe<Scalars['Float']>
-}
-
-/** aggregate var_samp on columns */
-export type Nfts_Reactions_Stats_Var_Samp_Fields = {
-  __typename?: 'nfts_reactions_stats_var_samp_fields'
-  count?: Maybe<Scalars['Float']>
-}
-
-/** aggregate variance on columns */
-export type Nfts_Reactions_Stats_Variance_Fields = {
-  __typename?: 'nfts_reactions_stats_variance_fields'
-  count?: Maybe<Scalars['Float']>
-}
-
 /** select columns of table "nfts" */
 export enum Nfts_Select_Column {
   /** column name */
@@ -2794,8 +2647,8 @@ export enum Nfts_Select_Column {
 /** columns and relationships of "nfts_stats" */
 export type Nfts_Stats = {
   __typename?: 'nfts_stats'
-  collection_id?: Maybe<Scalars['String']>
-  count?: Maybe<Scalars['bigint']>
+  collection_id?: Maybe<Scalars['String']['output']>
+  count?: Maybe<Scalars['bigint']['output']>
 }
 
 /** aggregated selection of "nfts_stats" */
@@ -2809,7 +2662,7 @@ export type Nfts_Stats_Aggregate = {
 export type Nfts_Stats_Aggregate_Fields = {
   __typename?: 'nfts_stats_aggregate_fields'
   avg?: Maybe<Nfts_Stats_Avg_Fields>
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Nfts_Stats_Max_Fields>
   min?: Maybe<Nfts_Stats_Min_Fields>
   stddev?: Maybe<Nfts_Stats_Stddev_Fields>
@@ -2824,13 +2677,13 @@ export type Nfts_Stats_Aggregate_Fields = {
 /** aggregate fields of "nfts_stats" */
 export type Nfts_Stats_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Nfts_Stats_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** aggregate avg on columns */
 export type Nfts_Stats_Avg_Fields = {
   __typename?: 'nfts_stats_avg_fields'
-  count?: Maybe<Scalars['Float']>
+  count?: Maybe<Scalars['Float']['output']>
 }
 
 /** Boolean expression to filter rows from the table "nfts_stats". All fields are combined with a logical 'AND'. */
@@ -2845,15 +2698,15 @@ export type Nfts_Stats_Bool_Exp = {
 /** aggregate max on columns */
 export type Nfts_Stats_Max_Fields = {
   __typename?: 'nfts_stats_max_fields'
-  collection_id?: Maybe<Scalars['String']>
-  count?: Maybe<Scalars['bigint']>
+  collection_id?: Maybe<Scalars['String']['output']>
+  count?: Maybe<Scalars['bigint']['output']>
 }
 
 /** aggregate min on columns */
 export type Nfts_Stats_Min_Fields = {
   __typename?: 'nfts_stats_min_fields'
-  collection_id?: Maybe<Scalars['String']>
-  count?: Maybe<Scalars['bigint']>
+  collection_id?: Maybe<Scalars['String']['output']>
+  count?: Maybe<Scalars['bigint']['output']>
 }
 
 /** Ordering options when selecting data from "nfts_stats". */
@@ -2873,53 +2726,53 @@ export enum Nfts_Stats_Select_Column {
 /** aggregate stddev on columns */
 export type Nfts_Stats_Stddev_Fields = {
   __typename?: 'nfts_stats_stddev_fields'
-  count?: Maybe<Scalars['Float']>
+  count?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate stddev_pop on columns */
 export type Nfts_Stats_Stddev_Pop_Fields = {
   __typename?: 'nfts_stats_stddev_pop_fields'
-  count?: Maybe<Scalars['Float']>
+  count?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate stddev_samp on columns */
 export type Nfts_Stats_Stddev_Samp_Fields = {
   __typename?: 'nfts_stats_stddev_samp_fields'
-  count?: Maybe<Scalars['Float']>
+  count?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate sum on columns */
 export type Nfts_Stats_Sum_Fields = {
   __typename?: 'nfts_stats_sum_fields'
-  count?: Maybe<Scalars['bigint']>
+  count?: Maybe<Scalars['bigint']['output']>
 }
 
 /** aggregate var_pop on columns */
 export type Nfts_Stats_Var_Pop_Fields = {
   __typename?: 'nfts_stats_var_pop_fields'
-  count?: Maybe<Scalars['Float']>
+  count?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate var_samp on columns */
 export type Nfts_Stats_Var_Samp_Fields = {
   __typename?: 'nfts_stats_var_samp_fields'
-  count?: Maybe<Scalars['Float']>
+  count?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate variance on columns */
 export type Nfts_Stats_Variance_Fields = {
   __typename?: 'nfts_stats_variance_fields'
-  count?: Maybe<Scalars['Float']>
+  count?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate stddev on columns */
 export type Nfts_Stddev_Fields = {
   __typename?: 'nfts_stddev_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  txBlock?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  txBlock?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by stddev() on columns of table "nfts" */
@@ -2934,11 +2787,11 @@ export type Nfts_Stddev_Order_By = {
 /** aggregate stddev_pop on columns */
 export type Nfts_Stddev_Pop_Fields = {
   __typename?: 'nfts_stddev_pop_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  txBlock?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  txBlock?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by stddev_pop() on columns of table "nfts" */
@@ -2953,11 +2806,11 @@ export type Nfts_Stddev_Pop_Order_By = {
 /** aggregate stddev_samp on columns */
 export type Nfts_Stddev_Samp_Fields = {
   __typename?: 'nfts_stddev_samp_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  txBlock?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  txBlock?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by stddev_samp() on columns of table "nfts" */
@@ -2972,11 +2825,11 @@ export type Nfts_Stddev_Samp_Order_By = {
 /** aggregate sum on columns */
 export type Nfts_Sum_Fields = {
   __typename?: 'nfts_sum_fields'
-  block?: Maybe<Scalars['Int']>
-  forsale?: Maybe<Scalars['bigint']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Int']>
-  txBlock?: Maybe<Scalars['Int']>
+  block?: Maybe<Scalars['Int']['output']>
+  forsale?: Maybe<Scalars['bigint']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Int']['output']>
+  txBlock?: Maybe<Scalars['Int']['output']>
 }
 
 /** order by sum() on columns of table "nfts" */
@@ -2991,11 +2844,11 @@ export type Nfts_Sum_Order_By = {
 /** aggregate var_pop on columns */
 export type Nfts_Var_Pop_Fields = {
   __typename?: 'nfts_var_pop_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  txBlock?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  txBlock?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by var_pop() on columns of table "nfts" */
@@ -3010,11 +2863,11 @@ export type Nfts_Var_Pop_Order_By = {
 /** aggregate var_samp on columns */
 export type Nfts_Var_Samp_Fields = {
   __typename?: 'nfts_var_samp_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  txBlock?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  txBlock?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by var_samp() on columns of table "nfts" */
@@ -3029,11 +2882,11 @@ export type Nfts_Var_Samp_Order_By = {
 /** aggregate variance on columns */
 export type Nfts_Variance_Fields = {
   __typename?: 'nfts_variance_fields'
-  block?: Maybe<Scalars['Float']>
-  forsale?: Maybe<Scalars['Float']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']>
-  transferable?: Maybe<Scalars['Float']>
-  txBlock?: Maybe<Scalars['Float']>
+  block?: Maybe<Scalars['Float']['output']>
+  forsale?: Maybe<Scalars['Float']['output']>
+  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
+  transferable?: Maybe<Scalars['Float']['output']>
+  txBlock?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by variance() on columns of table "nfts" */
@@ -3047,15 +2900,15 @@ export type Nfts_Variance_Order_By = {
 
 /** Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'. */
 export type Numeric_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['numeric']>
-  _gt?: InputMaybe<Scalars['numeric']>
-  _gte?: InputMaybe<Scalars['numeric']>
-  _in?: InputMaybe<Array<Scalars['numeric']>>
-  _is_null?: InputMaybe<Scalars['Boolean']>
-  _lt?: InputMaybe<Scalars['numeric']>
-  _lte?: InputMaybe<Scalars['numeric']>
-  _neq?: InputMaybe<Scalars['numeric']>
-  _nin?: InputMaybe<Array<Scalars['numeric']>>
+  _eq?: InputMaybe<Scalars['numeric']['input']>
+  _gt?: InputMaybe<Scalars['numeric']['input']>
+  _gte?: InputMaybe<Scalars['numeric']['input']>
+  _in?: InputMaybe<Array<Scalars['numeric']['input']>>
+  _is_null?: InputMaybe<Scalars['Boolean']['input']>
+  _lt?: InputMaybe<Scalars['numeric']['input']>
+  _lte?: InputMaybe<Scalars['numeric']['input']>
+  _neq?: InputMaybe<Scalars['numeric']['input']>
+  _nin?: InputMaybe<Array<Scalars['numeric']['input']>>
 }
 
 /** column ordering options */
@@ -3079,36 +2932,36 @@ export type Parts = {
   __typename?: 'parts'
   /** An object relationship */
   base: Bases
-  base_id: Scalars['String']
-  equippable?: Maybe<Scalars['jsonb']>
-  id: Scalars['String']
-  metadata?: Maybe<Scalars['String']>
+  base_id: Scalars['String']['output']
+  equippable?: Maybe<Scalars['jsonb']['output']>
+  id: Scalars['String']['output']
+  metadata?: Maybe<Scalars['String']['output']>
   /** An array relationship */
   nfts_equipped: Array<Nfts>
   /** An aggregate relationship */
   nfts_equipped_aggregate: Nfts_Aggregate
-  part_id: Scalars['String']
+  part_id: Scalars['String']['output']
   /** An array relationship */
   resources: Array<Resources>
   /** An aggregate relationship */
   resources_aggregate: Resources_Aggregate
   /** An object relationship */
   resources_part?: Maybe<Resources_Parts>
-  src?: Maybe<Scalars['String']>
-  type: Scalars['String']
-  z: Scalars['Int']
+  src?: Maybe<Scalars['String']['output']>
+  type: Scalars['String']['output']
+  z: Scalars['Int']['output']
 }
 
 /** columns and relationships of "parts" */
 export type PartsEquippableArgs = {
-  path?: InputMaybe<Scalars['String']>
+  path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** columns and relationships of "parts" */
 export type PartsNfts_EquippedArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
@@ -3116,8 +2969,8 @@ export type PartsNfts_EquippedArgs = {
 /** columns and relationships of "parts" */
 export type PartsNfts_Equipped_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
@@ -3125,8 +2978,8 @@ export type PartsNfts_Equipped_AggregateArgs = {
 /** columns and relationships of "parts" */
 export type PartsResourcesArgs = {
   distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Order_By>>
   where?: InputMaybe<Resources_Bool_Exp>
 }
@@ -3134,8 +2987,8 @@ export type PartsResourcesArgs = {
 /** columns and relationships of "parts" */
 export type PartsResources_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Order_By>>
   where?: InputMaybe<Resources_Bool_Exp>
 }
@@ -3151,7 +3004,7 @@ export type Parts_Aggregate = {
 export type Parts_Aggregate_Fields = {
   __typename?: 'parts_aggregate_fields'
   avg?: Maybe<Parts_Avg_Fields>
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Parts_Max_Fields>
   min?: Maybe<Parts_Min_Fields>
   stddev?: Maybe<Parts_Stddev_Fields>
@@ -3166,7 +3019,7 @@ export type Parts_Aggregate_Fields = {
 /** aggregate fields of "parts" */
 export type Parts_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Parts_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** order by aggregate values of table "parts" */
@@ -3187,7 +3040,7 @@ export type Parts_Aggregate_Order_By = {
 /** aggregate avg on columns */
 export type Parts_Avg_Fields = {
   __typename?: 'parts_avg_fields'
-  z?: Maybe<Scalars['Float']>
+  z?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by avg() on columns of table "parts" */
@@ -3217,13 +3070,13 @@ export type Parts_Bool_Exp = {
 /** aggregate max on columns */
 export type Parts_Max_Fields = {
   __typename?: 'parts_max_fields'
-  base_id?: Maybe<Scalars['String']>
-  id?: Maybe<Scalars['String']>
-  metadata?: Maybe<Scalars['String']>
-  part_id?: Maybe<Scalars['String']>
-  src?: Maybe<Scalars['String']>
-  type?: Maybe<Scalars['String']>
-  z?: Maybe<Scalars['Int']>
+  base_id?: Maybe<Scalars['String']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  part_id?: Maybe<Scalars['String']['output']>
+  src?: Maybe<Scalars['String']['output']>
+  type?: Maybe<Scalars['String']['output']>
+  z?: Maybe<Scalars['Int']['output']>
 }
 
 /** order by max() on columns of table "parts" */
@@ -3240,13 +3093,13 @@ export type Parts_Max_Order_By = {
 /** aggregate min on columns */
 export type Parts_Min_Fields = {
   __typename?: 'parts_min_fields'
-  base_id?: Maybe<Scalars['String']>
-  id?: Maybe<Scalars['String']>
-  metadata?: Maybe<Scalars['String']>
-  part_id?: Maybe<Scalars['String']>
-  src?: Maybe<Scalars['String']>
-  type?: Maybe<Scalars['String']>
-  z?: Maybe<Scalars['Int']>
+  base_id?: Maybe<Scalars['String']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  part_id?: Maybe<Scalars['String']['output']>
+  src?: Maybe<Scalars['String']['output']>
+  type?: Maybe<Scalars['String']['output']>
+  z?: Maybe<Scalars['Int']['output']>
 }
 
 /** order by min() on columns of table "parts" */
@@ -3299,7 +3152,7 @@ export enum Parts_Select_Column {
 /** aggregate stddev on columns */
 export type Parts_Stddev_Fields = {
   __typename?: 'parts_stddev_fields'
-  z?: Maybe<Scalars['Float']>
+  z?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by stddev() on columns of table "parts" */
@@ -3310,7 +3163,7 @@ export type Parts_Stddev_Order_By = {
 /** aggregate stddev_pop on columns */
 export type Parts_Stddev_Pop_Fields = {
   __typename?: 'parts_stddev_pop_fields'
-  z?: Maybe<Scalars['Float']>
+  z?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by stddev_pop() on columns of table "parts" */
@@ -3321,7 +3174,7 @@ export type Parts_Stddev_Pop_Order_By = {
 /** aggregate stddev_samp on columns */
 export type Parts_Stddev_Samp_Fields = {
   __typename?: 'parts_stddev_samp_fields'
-  z?: Maybe<Scalars['Float']>
+  z?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by stddev_samp() on columns of table "parts" */
@@ -3332,7 +3185,7 @@ export type Parts_Stddev_Samp_Order_By = {
 /** aggregate sum on columns */
 export type Parts_Sum_Fields = {
   __typename?: 'parts_sum_fields'
-  z?: Maybe<Scalars['Int']>
+  z?: Maybe<Scalars['Int']['output']>
 }
 
 /** order by sum() on columns of table "parts" */
@@ -3343,7 +3196,7 @@ export type Parts_Sum_Order_By = {
 /** aggregate var_pop on columns */
 export type Parts_Var_Pop_Fields = {
   __typename?: 'parts_var_pop_fields'
-  z?: Maybe<Scalars['Float']>
+  z?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by var_pop() on columns of table "parts" */
@@ -3354,7 +3207,7 @@ export type Parts_Var_Pop_Order_By = {
 /** aggregate var_samp on columns */
 export type Parts_Var_Samp_Fields = {
   __typename?: 'parts_var_samp_fields'
-  z?: Maybe<Scalars['Float']>
+  z?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by var_samp() on columns of table "parts" */
@@ -3365,7 +3218,7 @@ export type Parts_Var_Samp_Order_By = {
 /** aggregate variance on columns */
 export type Parts_Variance_Fields = {
   __typename?: 'parts_variance_fields'
-  z?: Maybe<Scalars['Float']>
+  z?: Maybe<Scalars['Float']['output']>
 }
 
 /** order by variance() on columns of table "parts" */
@@ -3421,10 +3274,6 @@ export type Query_Root = {
   gems_enabled: Array<Gems_Enabled>
   /** fetch data from the table: "gems_enabled" using primary key columns */
   gems_enabled_by_pk?: Maybe<Gems_Enabled>
-  /** execute function "get_by_unicode" which returns "reactions" */
-  get_by_unicode: Array<Reactions>
-  /** execute function "get_by_unicode" and query aggregates on result of table type "reactions" */
-  get_by_unicode_aggregate: Reactions_Aggregate
   /** execute function "get_newly_listed" which returns "nfts" */
   get_newly_listed: Array<Nfts>
   /** execute function "get_newly_listed" and query aggregates on result of table type "nfts" */
@@ -3447,10 +3296,6 @@ export type Query_Root = {
   nfts_aggregate: Nfts_Aggregate
   /** fetch data from the table: "nfts" using primary key columns */
   nfts_by_pk?: Maybe<Nfts>
-  /** fetch data from the table: "nfts_reactions_stats" */
-  nfts_reactions_stats: Array<Nfts_Reactions_Stats>
-  /** fetch aggregated fields from the table: "nfts_reactions_stats" */
-  nfts_reactions_stats_aggregate: Nfts_Reactions_Stats_Aggregate
   /** fetch data from the table: "nfts_stats" */
   nfts_stats: Array<Nfts_Stats>
   /** fetch aggregated fields from the table: "nfts_stats" */
@@ -3461,20 +3306,6 @@ export type Query_Root = {
   parts_aggregate: Parts_Aggregate
   /** fetch data from the table: "parts" using primary key columns */
   parts_by_pk?: Maybe<Parts>
-  /** fetch data from the table: "reactions" */
-  reactions: Array<Reactions>
-  /** fetch aggregated fields from the table: "reactions" */
-  reactions_aggregate: Reactions_Aggregate
-  /** fetch data from the table: "reactions" using primary key columns */
-  reactions_by_pk?: Maybe<Reactions>
-  /** An array relationship */
-  reactions_unicode: Array<Reactions_Unicode>
-  /** An aggregate relationship */
-  reactions_unicode_aggregate: Reactions_Unicode_Aggregate
-  /** fetch data from the table: "reactions_users" */
-  reactions_users: Array<Reactions_Users>
-  /** fetch aggregated fields from the table: "reactions_users" */
-  reactions_users_aggregate: Reactions_Users_Aggregate
   /** fetch data from the table: "recently_listed" */
   recently_listed: Array<Recently_Listed>
   /** fetch aggregated fields from the table: "recently_listed" */
@@ -3553,202 +3384,184 @@ export type Query_Root = {
 
 export type Query_RootBase_ThemesArgs = {
   distinct_on?: InputMaybe<Array<Base_Themes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Base_Themes_Order_By>>
   where?: InputMaybe<Base_Themes_Bool_Exp>
 }
 
 export type Query_RootBase_Themes_By_PkArgs = {
-  id: Scalars['String']
+  id: Scalars['String']['input']
 }
 
 export type Query_RootBasesArgs = {
   distinct_on?: InputMaybe<Array<Bases_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Bases_Order_By>>
   where?: InputMaybe<Bases_Bool_Exp>
 }
 
 export type Query_RootBases_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Bases_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Bases_Order_By>>
   where?: InputMaybe<Bases_Bool_Exp>
 }
 
 export type Query_RootBases_By_PkArgs = {
-  id: Scalars['String']
+  id: Scalars['String']['input']
 }
 
 export type Query_RootChangesArgs = {
   distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Changes_Order_By>>
   where?: InputMaybe<Changes_Bool_Exp>
 }
 
 export type Query_RootChanges_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Changes_Order_By>>
   where?: InputMaybe<Changes_Bool_Exp>
 }
 
 export type Query_RootChanges_By_PkArgs = {
-  id: Scalars['Int']
+  id: Scalars['Int']['input']
 }
 
 export type Query_RootChanges_CollectionArgs = {
   distinct_on?: InputMaybe<Array<Changes_Collection_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Changes_Collection_Order_By>>
   where?: InputMaybe<Changes_Collection_Bool_Exp>
 }
 
 export type Query_RootChanges_Collection_By_PkArgs = {
-  id: Scalars['Int']
+  id: Scalars['Int']['input']
 }
 
 export type Query_RootCollection_BannersArgs = {
   distinct_on?: InputMaybe<Array<Collection_Banners_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Collection_Banners_Order_By>>
   where?: InputMaybe<Collection_Banners_Bool_Exp>
 }
 
 export type Query_RootCollection_Banners_By_PkArgs = {
-  collection_id: Scalars['String']
+  collection_id: Scalars['String']['input']
 }
 
 export type Query_RootCollectionsArgs = {
   distinct_on?: InputMaybe<Array<Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Collections_Order_By>>
   where?: InputMaybe<Collections_Bool_Exp>
 }
 
 export type Query_RootCollections_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Collections_Order_By>>
   where?: InputMaybe<Collections_Bool_Exp>
 }
 
 export type Query_RootCollections_By_PkArgs = {
-  id: Scalars['String']
+  id: Scalars['String']['input']
 }
 
 export type Query_RootDistinct_Kanaria_NftsArgs = {
   distinct_on?: InputMaybe<Array<Distinct_Kanaria_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Distinct_Kanaria_Nfts_Order_By>>
   where?: InputMaybe<Distinct_Kanaria_Nfts_Bool_Exp>
 }
 
 export type Query_RootDistinct_Kanaria_Nfts_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Distinct_Kanaria_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Distinct_Kanaria_Nfts_Order_By>>
   where?: InputMaybe<Distinct_Kanaria_Nfts_Bool_Exp>
 }
 
 export type Query_RootDistinct_NftsArgs = {
   distinct_on?: InputMaybe<Array<Distinct_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Distinct_Nfts_Order_By>>
   where?: InputMaybe<Distinct_Nfts_Bool_Exp>
 }
 
 export type Query_RootDistinct_Nfts_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Distinct_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Distinct_Nfts_Order_By>>
   where?: InputMaybe<Distinct_Nfts_Bool_Exp>
 }
 
 export type Query_RootDutchieArgs = {
   distinct_on?: InputMaybe<Array<Dutchie_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Dutchie_Order_By>>
   where?: InputMaybe<Dutchie_Bool_Exp>
 }
 
 export type Query_RootDutchie_By_PkArgs = {
-  id: Scalars['Int']
+  id: Scalars['Int']['input']
 }
 
 export type Query_RootGems_EnabledArgs = {
   distinct_on?: InputMaybe<Array<Gems_Enabled_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Gems_Enabled_Order_By>>
   where?: InputMaybe<Gems_Enabled_Bool_Exp>
 }
 
 export type Query_RootGems_Enabled_By_PkArgs = {
-  id: Scalars['String']
-}
-
-export type Query_RootGet_By_UnicodeArgs = {
-  args: Get_By_Unicode_Args
-  distinct_on?: InputMaybe<Array<Reactions_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Order_By>>
-  where?: InputMaybe<Reactions_Bool_Exp>
-}
-
-export type Query_RootGet_By_Unicode_AggregateArgs = {
-  args: Get_By_Unicode_Args
-  distinct_on?: InputMaybe<Array<Reactions_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Order_By>>
-  where?: InputMaybe<Reactions_Bool_Exp>
+  id: Scalars['String']['input']
 }
 
 export type Query_RootGet_Newly_ListedArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
 
 export type Query_RootGet_Newly_Listed_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
 
 export type Query_RootGet_Newly_MintedArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
 
 export type Query_RootGet_Newly_Minted_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
@@ -3756,8 +3569,8 @@ export type Query_RootGet_Newly_Minted_AggregateArgs = {
 export type Query_RootGet_Ordered_Changes_StatsArgs = {
   args: Get_Ordered_Changes_Stats_Args
   distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Changes_Order_By>>
   where?: InputMaybe<Changes_Bool_Exp>
 }
@@ -3765,863 +3578,332 @@ export type Query_RootGet_Ordered_Changes_StatsArgs = {
 export type Query_RootGet_Ordered_Changes_Stats_AggregateArgs = {
   args: Get_Ordered_Changes_Stats_Args
   distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Changes_Order_By>>
   where?: InputMaybe<Changes_Bool_Exp>
 }
 
 export type Query_RootHatched_BirdsArgs = {
   distinct_on?: InputMaybe<Array<Hatched_Birds_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Hatched_Birds_Order_By>>
   where?: InputMaybe<Hatched_Birds_Bool_Exp>
 }
 
 export type Query_RootHatched_Birds_By_PkArgs = {
-  id: Scalars['String']
+  id: Scalars['String']['input']
 }
 
 export type Query_RootNftsArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
 
 export type Query_RootNfts_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
 
 export type Query_RootNfts_By_PkArgs = {
-  id: Scalars['String']
-}
-
-export type Query_RootNfts_Reactions_StatsArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Reactions_Stats_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Nfts_Reactions_Stats_Order_By>>
-  where?: InputMaybe<Nfts_Reactions_Stats_Bool_Exp>
-}
-
-export type Query_RootNfts_Reactions_Stats_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Reactions_Stats_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Nfts_Reactions_Stats_Order_By>>
-  where?: InputMaybe<Nfts_Reactions_Stats_Bool_Exp>
+  id: Scalars['String']['input']
 }
 
 export type Query_RootNfts_StatsArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Stats_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Stats_Order_By>>
   where?: InputMaybe<Nfts_Stats_Bool_Exp>
 }
 
 export type Query_RootNfts_Stats_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Stats_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Stats_Order_By>>
   where?: InputMaybe<Nfts_Stats_Bool_Exp>
 }
 
 export type Query_RootPartsArgs = {
   distinct_on?: InputMaybe<Array<Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Parts_Order_By>>
   where?: InputMaybe<Parts_Bool_Exp>
 }
 
 export type Query_RootParts_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Parts_Order_By>>
   where?: InputMaybe<Parts_Bool_Exp>
 }
 
 export type Query_RootParts_By_PkArgs = {
-  id: Scalars['String']
-}
-
-export type Query_RootReactionsArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Order_By>>
-  where?: InputMaybe<Reactions_Bool_Exp>
-}
-
-export type Query_RootReactions_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Order_By>>
-  where?: InputMaybe<Reactions_Bool_Exp>
-}
-
-export type Query_RootReactions_By_PkArgs = {
-  nft_id: Scalars['String']
-  owner: Scalars['String']
-  unicode: Scalars['String']
-}
-
-export type Query_RootReactions_UnicodeArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Unicode_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Unicode_Order_By>>
-  where?: InputMaybe<Reactions_Unicode_Bool_Exp>
-}
-
-export type Query_RootReactions_Unicode_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Unicode_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Unicode_Order_By>>
-  where?: InputMaybe<Reactions_Unicode_Bool_Exp>
-}
-
-export type Query_RootReactions_UsersArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Users_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Users_Order_By>>
-  where?: InputMaybe<Reactions_Users_Bool_Exp>
-}
-
-export type Query_RootReactions_Users_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Users_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Users_Order_By>>
-  where?: InputMaybe<Reactions_Users_Bool_Exp>
+  id: Scalars['String']['input']
 }
 
 export type Query_RootRecently_ListedArgs = {
   distinct_on?: InputMaybe<Array<Recently_Listed_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Recently_Listed_Order_By>>
   where?: InputMaybe<Recently_Listed_Bool_Exp>
 }
 
 export type Query_RootRecently_Listed_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Recently_Listed_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Recently_Listed_Order_By>>
   where?: InputMaybe<Recently_Listed_Bool_Exp>
 }
 
 export type Query_RootResourcesArgs = {
   distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Order_By>>
   where?: InputMaybe<Resources_Bool_Exp>
 }
 
 export type Query_RootResources_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Order_By>>
   where?: InputMaybe<Resources_Bool_Exp>
 }
 
 export type Query_RootResources_Base_ThemesArgs = {
   distinct_on?: InputMaybe<Array<Resources_Base_Themes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Base_Themes_Order_By>>
   where?: InputMaybe<Resources_Base_Themes_Bool_Exp>
 }
 
 export type Query_RootResources_Base_Themes_By_PkArgs = {
-  resource_id: Scalars['String']
-  theme_id: Scalars['String']
+  resource_id: Scalars['String']['input']
+  theme_id: Scalars['String']['input']
 }
 
 export type Query_RootResources_By_PkArgs = {
-  id: Scalars['String']
+  id: Scalars['String']['input']
 }
 
 export type Query_RootResources_PartsArgs = {
   distinct_on?: InputMaybe<Array<Resources_Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Parts_Order_By>>
   where?: InputMaybe<Resources_Parts_Bool_Exp>
 }
 
 export type Query_RootResources_Parts_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Resources_Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Parts_Order_By>>
   where?: InputMaybe<Resources_Parts_Bool_Exp>
 }
 
 export type Query_RootResources_Parts_By_PkArgs = {
-  part_id: Scalars['String']
-  resource_id: Scalars['String']
+  part_id: Scalars['String']['input']
+  resource_id: Scalars['String']['input']
 }
 
 export type Query_RootSalesArgs = {
   distinct_on?: InputMaybe<Array<Sales_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Sales_Order_By>>
   where?: InputMaybe<Sales_Bool_Exp>
 }
 
 export type Query_RootSingular_Blacklisted_AccountsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Blacklisted_Accounts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Blacklisted_Accounts_Order_By>>
   where?: InputMaybe<Singular_Blacklisted_Accounts_Bool_Exp>
 }
 
 export type Query_RootSingular_Blacklisted_Accounts_By_PkArgs = {
-  account: Scalars['String']
+  account: Scalars['String']['input']
 }
 
 export type Query_RootSingular_Blacklisted_CollectionsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Blacklisted_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Blacklisted_Collections_Order_By>>
   where?: InputMaybe<Singular_Blacklisted_Collections_Bool_Exp>
 }
 
 export type Query_RootSingular_Blacklisted_Collections_By_PkArgs = {
-  collection_id: Scalars['String']
+  collection_id: Scalars['String']['input']
 }
 
 export type Query_RootSingular_CuratedArgs = {
   distinct_on?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Curated_Order_By>>
   where?: InputMaybe<Singular_Curated_Bool_Exp>
 }
 
 export type Query_RootSingular_Curated_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Curated_Order_By>>
   where?: InputMaybe<Singular_Curated_Bool_Exp>
 }
 
 export type Query_RootSingular_Curated_By_PkArgs = {
-  nft_id: Scalars['String']
+  nft_id: Scalars['String']['input']
 }
 
 export type Query_RootSingular_Curated_CollectionsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Curated_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Curated_Collections_Order_By>>
   where?: InputMaybe<Singular_Curated_Collections_Bool_Exp>
 }
 
 export type Query_RootSingular_Curated_Collections_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Curated_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Curated_Collections_Order_By>>
   where?: InputMaybe<Singular_Curated_Collections_Bool_Exp>
 }
 
 export type Query_RootSingular_Curated_Collections_By_PkArgs = {
-  collection_id: Scalars['String']
+  collection_id: Scalars['String']['input']
 }
 
 export type Query_RootSingular_Hidden_CollectionsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Hidden_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Hidden_Collections_Order_By>>
   where?: InputMaybe<Singular_Hidden_Collections_Bool_Exp>
 }
 
 export type Query_RootSingular_Hidden_Collections_By_PkArgs = {
-  collection_id: Scalars['String']
+  collection_id: Scalars['String']['input']
 }
 
 export type Query_RootSingular_Nsfw_CollectionsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Nsfw_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Nsfw_Collections_Order_By>>
   where?: InputMaybe<Singular_Nsfw_Collections_Bool_Exp>
 }
 
 export type Query_RootSingular_Nsfw_Collections_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Nsfw_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Nsfw_Collections_Order_By>>
   where?: InputMaybe<Singular_Nsfw_Collections_Bool_Exp>
 }
 
 export type Query_RootSingular_Nsfw_Collections_By_PkArgs = {
-  collection_id: Scalars['String']
+  collection_id: Scalars['String']['input']
 }
 
 export type Query_RootSingular_Nsfw_NftsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Nsfw_Nfts_Order_By>>
   where?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
 }
 
 export type Query_RootSingular_Nsfw_Nfts_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Nsfw_Nfts_Order_By>>
   where?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
 }
 
 export type Query_RootSingular_Nsfw_Nfts_By_PkArgs = {
-  nft_id: Scalars['String']
+  nft_id: Scalars['String']['input']
 }
 
 export type Query_RootSingular_Verified_CollectionsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Verified_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Verified_Collections_Order_By>>
   where?: InputMaybe<Singular_Verified_Collections_Bool_Exp>
 }
 
 export type Query_RootSingular_Verified_Collections_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Verified_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Verified_Collections_Order_By>>
   where?: InputMaybe<Singular_Verified_Collections_Bool_Exp>
 }
 
 export type Query_RootSingular_Verified_Collections_By_PkArgs = {
-  collection_id: Scalars['String']
+  collection_id: Scalars['String']['input']
 }
 
 export type Query_RootSystemArgs = {
   distinct_on?: InputMaybe<Array<System_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<System_Order_By>>
   where?: InputMaybe<System_Bool_Exp>
 }
 
 export type Query_RootSystem_By_PkArgs = {
-  purchaseEnabled: Scalars['Boolean']
+  purchaseEnabled: Scalars['Boolean']['input']
 }
 
 export type Query_RootYuletide_Item_TrackArgs = {
   distinct_on?: InputMaybe<Array<Yuletide_Item_Track_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Yuletide_Item_Track_Order_By>>
   where?: InputMaybe<Yuletide_Item_Track_Bool_Exp>
 }
 
 export type Query_RootYuletide_Item_Track_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Yuletide_Item_Track_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Yuletide_Item_Track_Order_By>>
   where?: InputMaybe<Yuletide_Item_Track_Bool_Exp>
 }
 
 export type Query_RootYuletide_Item_Track_By_PkArgs = {
-  id: Scalars['String']
-}
-
-/** columns and relationships of "reactions" */
-export type Reactions = {
-  __typename?: 'reactions'
-  created_at: Scalars['timestamptz']
-  id: Scalars['Int']
-  nft_id: Scalars['String']
-  owner: Scalars['String']
-  /** An array relationship */
-  reactions_unicode: Array<Reactions_Unicode>
-  /** An aggregate relationship */
-  reactions_unicode_aggregate: Reactions_Unicode_Aggregate
-  /** An object relationship */
-  stats?: Maybe<Nfts_Reactions_Stats>
-  unicode: Scalars['String']
-  /** An array relationship */
-  user_reactions: Array<Reactions_Users>
-  /** An aggregate relationship */
-  user_reactions_aggregate: Reactions_Users_Aggregate
-}
-
-/** columns and relationships of "reactions" */
-export type ReactionsReactions_UnicodeArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Unicode_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Unicode_Order_By>>
-  where?: InputMaybe<Reactions_Unicode_Bool_Exp>
-}
-
-/** columns and relationships of "reactions" */
-export type ReactionsReactions_Unicode_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Unicode_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Unicode_Order_By>>
-  where?: InputMaybe<Reactions_Unicode_Bool_Exp>
-}
-
-/** columns and relationships of "reactions" */
-export type ReactionsUser_ReactionsArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Users_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Users_Order_By>>
-  where?: InputMaybe<Reactions_Users_Bool_Exp>
-}
-
-/** columns and relationships of "reactions" */
-export type ReactionsUser_Reactions_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Users_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Users_Order_By>>
-  where?: InputMaybe<Reactions_Users_Bool_Exp>
-}
-
-/** aggregated selection of "reactions" */
-export type Reactions_Aggregate = {
-  __typename?: 'reactions_aggregate'
-  aggregate?: Maybe<Reactions_Aggregate_Fields>
-  nodes: Array<Reactions>
-}
-
-/** aggregate fields of "reactions" */
-export type Reactions_Aggregate_Fields = {
-  __typename?: 'reactions_aggregate_fields'
-  avg?: Maybe<Reactions_Avg_Fields>
-  count: Scalars['Int']
-  max?: Maybe<Reactions_Max_Fields>
-  min?: Maybe<Reactions_Min_Fields>
-  stddev?: Maybe<Reactions_Stddev_Fields>
-  stddev_pop?: Maybe<Reactions_Stddev_Pop_Fields>
-  stddev_samp?: Maybe<Reactions_Stddev_Samp_Fields>
-  sum?: Maybe<Reactions_Sum_Fields>
-  var_pop?: Maybe<Reactions_Var_Pop_Fields>
-  var_samp?: Maybe<Reactions_Var_Samp_Fields>
-  variance?: Maybe<Reactions_Variance_Fields>
-}
-
-/** aggregate fields of "reactions" */
-export type Reactions_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Reactions_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
-}
-
-/** order by aggregate values of table "reactions" */
-export type Reactions_Aggregate_Order_By = {
-  avg?: InputMaybe<Reactions_Avg_Order_By>
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Reactions_Max_Order_By>
-  min?: InputMaybe<Reactions_Min_Order_By>
-  stddev?: InputMaybe<Reactions_Stddev_Order_By>
-  stddev_pop?: InputMaybe<Reactions_Stddev_Pop_Order_By>
-  stddev_samp?: InputMaybe<Reactions_Stddev_Samp_Order_By>
-  sum?: InputMaybe<Reactions_Sum_Order_By>
-  var_pop?: InputMaybe<Reactions_Var_Pop_Order_By>
-  var_samp?: InputMaybe<Reactions_Var_Samp_Order_By>
-  variance?: InputMaybe<Reactions_Variance_Order_By>
-}
-
-/** aggregate avg on columns */
-export type Reactions_Avg_Fields = {
-  __typename?: 'reactions_avg_fields'
-  id?: Maybe<Scalars['Float']>
-}
-
-/** order by avg() on columns of table "reactions" */
-export type Reactions_Avg_Order_By = {
-  id?: InputMaybe<Order_By>
-}
-
-/** Boolean expression to filter rows from the table "reactions". All fields are combined with a logical 'AND'. */
-export type Reactions_Bool_Exp = {
-  _and?: InputMaybe<Array<Reactions_Bool_Exp>>
-  _not?: InputMaybe<Reactions_Bool_Exp>
-  _or?: InputMaybe<Array<Reactions_Bool_Exp>>
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>
-  id?: InputMaybe<Int_Comparison_Exp>
-  nft_id?: InputMaybe<String_Comparison_Exp>
-  owner?: InputMaybe<String_Comparison_Exp>
-  reactions_unicode?: InputMaybe<Reactions_Unicode_Bool_Exp>
-  stats?: InputMaybe<Nfts_Reactions_Stats_Bool_Exp>
-  unicode?: InputMaybe<String_Comparison_Exp>
-  user_reactions?: InputMaybe<Reactions_Users_Bool_Exp>
-}
-
-/** aggregate max on columns */
-export type Reactions_Max_Fields = {
-  __typename?: 'reactions_max_fields'
-  created_at?: Maybe<Scalars['timestamptz']>
-  id?: Maybe<Scalars['Int']>
-  nft_id?: Maybe<Scalars['String']>
-  owner?: Maybe<Scalars['String']>
-  unicode?: Maybe<Scalars['String']>
-}
-
-/** order by max() on columns of table "reactions" */
-export type Reactions_Max_Order_By = {
-  created_at?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  nft_id?: InputMaybe<Order_By>
-  owner?: InputMaybe<Order_By>
-  unicode?: InputMaybe<Order_By>
-}
-
-/** aggregate min on columns */
-export type Reactions_Min_Fields = {
-  __typename?: 'reactions_min_fields'
-  created_at?: Maybe<Scalars['timestamptz']>
-  id?: Maybe<Scalars['Int']>
-  nft_id?: Maybe<Scalars['String']>
-  owner?: Maybe<Scalars['String']>
-  unicode?: Maybe<Scalars['String']>
-}
-
-/** order by min() on columns of table "reactions" */
-export type Reactions_Min_Order_By = {
-  created_at?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  nft_id?: InputMaybe<Order_By>
-  owner?: InputMaybe<Order_By>
-  unicode?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "reactions". */
-export type Reactions_Order_By = {
-  created_at?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  nft_id?: InputMaybe<Order_By>
-  owner?: InputMaybe<Order_By>
-  reactions_unicode_aggregate?: InputMaybe<Reactions_Unicode_Aggregate_Order_By>
-  stats?: InputMaybe<Nfts_Reactions_Stats_Order_By>
-  unicode?: InputMaybe<Order_By>
-  user_reactions_aggregate?: InputMaybe<Reactions_Users_Aggregate_Order_By>
-}
-
-/** select columns of table "reactions" */
-export enum Reactions_Select_Column {
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  NftId = 'nft_id',
-  /** column name */
-  Owner = 'owner',
-  /** column name */
-  Unicode = 'unicode',
-}
-
-/** aggregate stddev on columns */
-export type Reactions_Stddev_Fields = {
-  __typename?: 'reactions_stddev_fields'
-  id?: Maybe<Scalars['Float']>
-}
-
-/** order by stddev() on columns of table "reactions" */
-export type Reactions_Stddev_Order_By = {
-  id?: InputMaybe<Order_By>
-}
-
-/** aggregate stddev_pop on columns */
-export type Reactions_Stddev_Pop_Fields = {
-  __typename?: 'reactions_stddev_pop_fields'
-  id?: Maybe<Scalars['Float']>
-}
-
-/** order by stddev_pop() on columns of table "reactions" */
-export type Reactions_Stddev_Pop_Order_By = {
-  id?: InputMaybe<Order_By>
-}
-
-/** aggregate stddev_samp on columns */
-export type Reactions_Stddev_Samp_Fields = {
-  __typename?: 'reactions_stddev_samp_fields'
-  id?: Maybe<Scalars['Float']>
-}
-
-/** order by stddev_samp() on columns of table "reactions" */
-export type Reactions_Stddev_Samp_Order_By = {
-  id?: InputMaybe<Order_By>
-}
-
-/** aggregate sum on columns */
-export type Reactions_Sum_Fields = {
-  __typename?: 'reactions_sum_fields'
-  id?: Maybe<Scalars['Int']>
-}
-
-/** order by sum() on columns of table "reactions" */
-export type Reactions_Sum_Order_By = {
-  id?: InputMaybe<Order_By>
-}
-
-/** columns and relationships of "reactions_unicode" */
-export type Reactions_Unicode = {
-  __typename?: 'reactions_unicode'
-  nft_id?: Maybe<Scalars['String']>
-  owner?: Maybe<Scalars['String']>
-  /** An object relationship */
-  reactions_unicode?: Maybe<Reactions_Unicode>
-  unicode?: Maybe<Scalars['String']>
-}
-
-/** aggregated selection of "reactions_unicode" */
-export type Reactions_Unicode_Aggregate = {
-  __typename?: 'reactions_unicode_aggregate'
-  aggregate?: Maybe<Reactions_Unicode_Aggregate_Fields>
-  nodes: Array<Reactions_Unicode>
-}
-
-/** aggregate fields of "reactions_unicode" */
-export type Reactions_Unicode_Aggregate_Fields = {
-  __typename?: 'reactions_unicode_aggregate_fields'
-  count: Scalars['Int']
-  max?: Maybe<Reactions_Unicode_Max_Fields>
-  min?: Maybe<Reactions_Unicode_Min_Fields>
-}
-
-/** aggregate fields of "reactions_unicode" */
-export type Reactions_Unicode_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Reactions_Unicode_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
-}
-
-/** order by aggregate values of table "reactions_unicode" */
-export type Reactions_Unicode_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Reactions_Unicode_Max_Order_By>
-  min?: InputMaybe<Reactions_Unicode_Min_Order_By>
-}
-
-/** Boolean expression to filter rows from the table "reactions_unicode". All fields are combined with a logical 'AND'. */
-export type Reactions_Unicode_Bool_Exp = {
-  _and?: InputMaybe<Array<Reactions_Unicode_Bool_Exp>>
-  _not?: InputMaybe<Reactions_Unicode_Bool_Exp>
-  _or?: InputMaybe<Array<Reactions_Unicode_Bool_Exp>>
-  nft_id?: InputMaybe<String_Comparison_Exp>
-  owner?: InputMaybe<String_Comparison_Exp>
-  reactions_unicode?: InputMaybe<Reactions_Unicode_Bool_Exp>
-  unicode?: InputMaybe<String_Comparison_Exp>
-}
-
-/** aggregate max on columns */
-export type Reactions_Unicode_Max_Fields = {
-  __typename?: 'reactions_unicode_max_fields'
-  nft_id?: Maybe<Scalars['String']>
-  owner?: Maybe<Scalars['String']>
-  unicode?: Maybe<Scalars['String']>
-}
-
-/** order by max() on columns of table "reactions_unicode" */
-export type Reactions_Unicode_Max_Order_By = {
-  nft_id?: InputMaybe<Order_By>
-  owner?: InputMaybe<Order_By>
-  unicode?: InputMaybe<Order_By>
-}
-
-/** aggregate min on columns */
-export type Reactions_Unicode_Min_Fields = {
-  __typename?: 'reactions_unicode_min_fields'
-  nft_id?: Maybe<Scalars['String']>
-  owner?: Maybe<Scalars['String']>
-  unicode?: Maybe<Scalars['String']>
-}
-
-/** order by min() on columns of table "reactions_unicode" */
-export type Reactions_Unicode_Min_Order_By = {
-  nft_id?: InputMaybe<Order_By>
-  owner?: InputMaybe<Order_By>
-  unicode?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "reactions_unicode". */
-export type Reactions_Unicode_Order_By = {
-  nft_id?: InputMaybe<Order_By>
-  owner?: InputMaybe<Order_By>
-  reactions_unicode?: InputMaybe<Reactions_Unicode_Order_By>
-  unicode?: InputMaybe<Order_By>
-}
-
-/** select columns of table "reactions_unicode" */
-export enum Reactions_Unicode_Select_Column {
-  /** column name */
-  NftId = 'nft_id',
-  /** column name */
-  Owner = 'owner',
-  /** column name */
-  Unicode = 'unicode',
-}
-
-/** columns and relationships of "reactions_users" */
-export type Reactions_Users = {
-  __typename?: 'reactions_users'
-  nft_id?: Maybe<Scalars['String']>
-  owner?: Maybe<Scalars['String']>
-  unicode?: Maybe<Scalars['String']>
-  /** An object relationship */
-  user_reactions?: Maybe<Reactions_Users>
-}
-
-/** aggregated selection of "reactions_users" */
-export type Reactions_Users_Aggregate = {
-  __typename?: 'reactions_users_aggregate'
-  aggregate?: Maybe<Reactions_Users_Aggregate_Fields>
-  nodes: Array<Reactions_Users>
-}
-
-/** aggregate fields of "reactions_users" */
-export type Reactions_Users_Aggregate_Fields = {
-  __typename?: 'reactions_users_aggregate_fields'
-  count: Scalars['Int']
-  max?: Maybe<Reactions_Users_Max_Fields>
-  min?: Maybe<Reactions_Users_Min_Fields>
-}
-
-/** aggregate fields of "reactions_users" */
-export type Reactions_Users_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Reactions_Users_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
-}
-
-/** order by aggregate values of table "reactions_users" */
-export type Reactions_Users_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Reactions_Users_Max_Order_By>
-  min?: InputMaybe<Reactions_Users_Min_Order_By>
-}
-
-/** Boolean expression to filter rows from the table "reactions_users". All fields are combined with a logical 'AND'. */
-export type Reactions_Users_Bool_Exp = {
-  _and?: InputMaybe<Array<Reactions_Users_Bool_Exp>>
-  _not?: InputMaybe<Reactions_Users_Bool_Exp>
-  _or?: InputMaybe<Array<Reactions_Users_Bool_Exp>>
-  nft_id?: InputMaybe<String_Comparison_Exp>
-  owner?: InputMaybe<String_Comparison_Exp>
-  unicode?: InputMaybe<String_Comparison_Exp>
-  user_reactions?: InputMaybe<Reactions_Users_Bool_Exp>
-}
-
-/** aggregate max on columns */
-export type Reactions_Users_Max_Fields = {
-  __typename?: 'reactions_users_max_fields'
-  nft_id?: Maybe<Scalars['String']>
-  owner?: Maybe<Scalars['String']>
-  unicode?: Maybe<Scalars['String']>
-}
-
-/** order by max() on columns of table "reactions_users" */
-export type Reactions_Users_Max_Order_By = {
-  nft_id?: InputMaybe<Order_By>
-  owner?: InputMaybe<Order_By>
-  unicode?: InputMaybe<Order_By>
-}
-
-/** aggregate min on columns */
-export type Reactions_Users_Min_Fields = {
-  __typename?: 'reactions_users_min_fields'
-  nft_id?: Maybe<Scalars['String']>
-  owner?: Maybe<Scalars['String']>
-  unicode?: Maybe<Scalars['String']>
-}
-
-/** order by min() on columns of table "reactions_users" */
-export type Reactions_Users_Min_Order_By = {
-  nft_id?: InputMaybe<Order_By>
-  owner?: InputMaybe<Order_By>
-  unicode?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "reactions_users". */
-export type Reactions_Users_Order_By = {
-  nft_id?: InputMaybe<Order_By>
-  owner?: InputMaybe<Order_By>
-  unicode?: InputMaybe<Order_By>
-  user_reactions?: InputMaybe<Reactions_Users_Order_By>
-}
-
-/** select columns of table "reactions_users" */
-export enum Reactions_Users_Select_Column {
-  /** column name */
-  NftId = 'nft_id',
-  /** column name */
-  Owner = 'owner',
-  /** column name */
-  Unicode = 'unicode',
-}
-
-/** aggregate var_pop on columns */
-export type Reactions_Var_Pop_Fields = {
-  __typename?: 'reactions_var_pop_fields'
-  id?: Maybe<Scalars['Float']>
-}
-
-/** order by var_pop() on columns of table "reactions" */
-export type Reactions_Var_Pop_Order_By = {
-  id?: InputMaybe<Order_By>
-}
-
-/** aggregate var_samp on columns */
-export type Reactions_Var_Samp_Fields = {
-  __typename?: 'reactions_var_samp_fields'
-  id?: Maybe<Scalars['Float']>
-}
-
-/** order by var_samp() on columns of table "reactions" */
-export type Reactions_Var_Samp_Order_By = {
-  id?: InputMaybe<Order_By>
-}
-
-/** aggregate variance on columns */
-export type Reactions_Variance_Fields = {
-  __typename?: 'reactions_variance_fields'
-  id?: Maybe<Scalars['Float']>
-}
-
-/** order by variance() on columns of table "reactions" */
-export type Reactions_Variance_Order_By = {
-  id?: InputMaybe<Order_By>
+  id: Scalars['String']['input']
 }
 
 /** columns and relationships of "recently_listed" */
 export type Recently_Listed = {
   __typename?: 'recently_listed'
-  created_at?: Maybe<Scalars['timestamptz']>
-  forsale?: Maybe<Scalars['bigint']>
-  id?: Maybe<Scalars['String']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
+  forsale?: Maybe<Scalars['bigint']['output']>
+  id?: Maybe<Scalars['String']['output']>
   /** An object relationship */
   nft?: Maybe<Nfts>
 }
@@ -4637,7 +3919,7 @@ export type Recently_Listed_Aggregate = {
 export type Recently_Listed_Aggregate_Fields = {
   __typename?: 'recently_listed_aggregate_fields'
   avg?: Maybe<Recently_Listed_Avg_Fields>
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Recently_Listed_Max_Fields>
   min?: Maybe<Recently_Listed_Min_Fields>
   stddev?: Maybe<Recently_Listed_Stddev_Fields>
@@ -4652,13 +3934,13 @@ export type Recently_Listed_Aggregate_Fields = {
 /** aggregate fields of "recently_listed" */
 export type Recently_Listed_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Recently_Listed_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** aggregate avg on columns */
 export type Recently_Listed_Avg_Fields = {
   __typename?: 'recently_listed_avg_fields'
-  forsale?: Maybe<Scalars['Float']>
+  forsale?: Maybe<Scalars['Float']['output']>
 }
 
 /** Boolean expression to filter rows from the table "recently_listed". All fields are combined with a logical 'AND'. */
@@ -4675,17 +3957,17 @@ export type Recently_Listed_Bool_Exp = {
 /** aggregate max on columns */
 export type Recently_Listed_Max_Fields = {
   __typename?: 'recently_listed_max_fields'
-  created_at?: Maybe<Scalars['timestamptz']>
-  forsale?: Maybe<Scalars['bigint']>
-  id?: Maybe<Scalars['String']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
+  forsale?: Maybe<Scalars['bigint']['output']>
+  id?: Maybe<Scalars['String']['output']>
 }
 
 /** aggregate min on columns */
 export type Recently_Listed_Min_Fields = {
   __typename?: 'recently_listed_min_fields'
-  created_at?: Maybe<Scalars['timestamptz']>
-  forsale?: Maybe<Scalars['bigint']>
-  id?: Maybe<Scalars['String']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
+  forsale?: Maybe<Scalars['bigint']['output']>
+  id?: Maybe<Scalars['String']['output']>
 }
 
 /** Ordering options when selecting data from "recently_listed". */
@@ -4709,43 +3991,43 @@ export enum Recently_Listed_Select_Column {
 /** aggregate stddev on columns */
 export type Recently_Listed_Stddev_Fields = {
   __typename?: 'recently_listed_stddev_fields'
-  forsale?: Maybe<Scalars['Float']>
+  forsale?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate stddev_pop on columns */
 export type Recently_Listed_Stddev_Pop_Fields = {
   __typename?: 'recently_listed_stddev_pop_fields'
-  forsale?: Maybe<Scalars['Float']>
+  forsale?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate stddev_samp on columns */
 export type Recently_Listed_Stddev_Samp_Fields = {
   __typename?: 'recently_listed_stddev_samp_fields'
-  forsale?: Maybe<Scalars['Float']>
+  forsale?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate sum on columns */
 export type Recently_Listed_Sum_Fields = {
   __typename?: 'recently_listed_sum_fields'
-  forsale?: Maybe<Scalars['bigint']>
+  forsale?: Maybe<Scalars['bigint']['output']>
 }
 
 /** aggregate var_pop on columns */
 export type Recently_Listed_Var_Pop_Fields = {
   __typename?: 'recently_listed_var_pop_fields'
-  forsale?: Maybe<Scalars['Float']>
+  forsale?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate var_samp on columns */
 export type Recently_Listed_Var_Samp_Fields = {
   __typename?: 'recently_listed_var_samp_fields'
-  forsale?: Maybe<Scalars['Float']>
+  forsale?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate variance on columns */
 export type Recently_Listed_Variance_Fields = {
   __typename?: 'recently_listed_variance_fields'
-  forsale?: Maybe<Scalars['Float']>
+  forsale?: Maybe<Scalars['Float']['output']>
 }
 
 /** columns and relationships of "resources" */
@@ -4753,18 +4035,18 @@ export type Resources = {
   __typename?: 'resources'
   /** An object relationship */
   base?: Maybe<Bases>
-  base_id?: Maybe<Scalars['String']>
+  base_id?: Maybe<Scalars['String']['output']>
   /** An object relationship */
   base_theme?: Maybe<Resources_Base_Themes>
-  id: Scalars['String']
-  metadata?: Maybe<Scalars['String']>
-  metadata_content_type?: Maybe<Scalars['String']>
-  nft_id: Scalars['String']
+  id: Scalars['String']['output']
+  metadata?: Maybe<Scalars['String']['output']>
+  metadata_content_type?: Maybe<Scalars['String']['output']>
+  nft_id: Scalars['String']['output']
   /** An object relationship */
   nfts: Nfts
-  parts?: Maybe<Scalars['jsonb']>
-  pending: Scalars['Boolean']
-  replace?: Maybe<Scalars['String']>
+  parts?: Maybe<Scalars['jsonb']['output']>
+  pending: Scalars['Boolean']['output']
+  replace?: Maybe<Scalars['String']['output']>
   /** An object relationship */
   resources_part?: Maybe<Resources_Parts>
   /** An array relationship */
@@ -4773,22 +4055,22 @@ export type Resources = {
   resources_parts_aggregate: Resources_Parts_Aggregate
   /** An object relationship */
   slot?: Maybe<Parts>
-  slot_id?: Maybe<Scalars['String']>
-  src?: Maybe<Scalars['String']>
-  theme?: Maybe<Scalars['jsonb']>
-  thumb?: Maybe<Scalars['String']>
+  slot_id?: Maybe<Scalars['String']['output']>
+  src?: Maybe<Scalars['String']['output']>
+  theme?: Maybe<Scalars['jsonb']['output']>
+  thumb?: Maybe<Scalars['String']['output']>
 }
 
 /** columns and relationships of "resources" */
 export type ResourcesPartsArgs = {
-  path?: InputMaybe<Scalars['String']>
+  path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** columns and relationships of "resources" */
 export type ResourcesResources_PartsArgs = {
   distinct_on?: InputMaybe<Array<Resources_Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Parts_Order_By>>
   where?: InputMaybe<Resources_Parts_Bool_Exp>
 }
@@ -4796,15 +4078,15 @@ export type ResourcesResources_PartsArgs = {
 /** columns and relationships of "resources" */
 export type ResourcesResources_Parts_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Resources_Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Parts_Order_By>>
   where?: InputMaybe<Resources_Parts_Bool_Exp>
 }
 
 /** columns and relationships of "resources" */
 export type ResourcesThemeArgs = {
-  path?: InputMaybe<Scalars['String']>
+  path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** aggregated selection of "resources" */
@@ -4817,7 +4099,7 @@ export type Resources_Aggregate = {
 /** aggregate fields of "resources" */
 export type Resources_Aggregate_Fields = {
   __typename?: 'resources_aggregate_fields'
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Resources_Max_Fields>
   min?: Maybe<Resources_Min_Fields>
 }
@@ -4825,7 +4107,7 @@ export type Resources_Aggregate_Fields = {
 /** aggregate fields of "resources" */
 export type Resources_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Resources_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** order by aggregate values of table "resources" */
@@ -4838,10 +4120,10 @@ export type Resources_Aggregate_Order_By = {
 /** columns and relationships of "resources_base_themes" */
 export type Resources_Base_Themes = {
   __typename?: 'resources_base_themes'
-  resource_id: Scalars['String']
+  resource_id: Scalars['String']['output']
   /** An object relationship */
   theme: Base_Themes
-  theme_id: Scalars['String']
+  theme_id: Scalars['String']['output']
 }
 
 /** order by aggregate values of table "resources_base_themes" */
@@ -4916,15 +4198,15 @@ export type Resources_Bool_Exp = {
 /** aggregate max on columns */
 export type Resources_Max_Fields = {
   __typename?: 'resources_max_fields'
-  base_id?: Maybe<Scalars['String']>
-  id?: Maybe<Scalars['String']>
-  metadata?: Maybe<Scalars['String']>
-  metadata_content_type?: Maybe<Scalars['String']>
-  nft_id?: Maybe<Scalars['String']>
-  replace?: Maybe<Scalars['String']>
-  slot_id?: Maybe<Scalars['String']>
-  src?: Maybe<Scalars['String']>
-  thumb?: Maybe<Scalars['String']>
+  base_id?: Maybe<Scalars['String']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  metadata_content_type?: Maybe<Scalars['String']['output']>
+  nft_id?: Maybe<Scalars['String']['output']>
+  replace?: Maybe<Scalars['String']['output']>
+  slot_id?: Maybe<Scalars['String']['output']>
+  src?: Maybe<Scalars['String']['output']>
+  thumb?: Maybe<Scalars['String']['output']>
 }
 
 /** order by max() on columns of table "resources" */
@@ -4943,15 +4225,15 @@ export type Resources_Max_Order_By = {
 /** aggregate min on columns */
 export type Resources_Min_Fields = {
   __typename?: 'resources_min_fields'
-  base_id?: Maybe<Scalars['String']>
-  id?: Maybe<Scalars['String']>
-  metadata?: Maybe<Scalars['String']>
-  metadata_content_type?: Maybe<Scalars['String']>
-  nft_id?: Maybe<Scalars['String']>
-  replace?: Maybe<Scalars['String']>
-  slot_id?: Maybe<Scalars['String']>
-  src?: Maybe<Scalars['String']>
-  thumb?: Maybe<Scalars['String']>
+  base_id?: Maybe<Scalars['String']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  metadata_content_type?: Maybe<Scalars['String']['output']>
+  nft_id?: Maybe<Scalars['String']['output']>
+  replace?: Maybe<Scalars['String']['output']>
+  slot_id?: Maybe<Scalars['String']['output']>
+  src?: Maybe<Scalars['String']['output']>
+  thumb?: Maybe<Scalars['String']['output']>
 }
 
 /** order by min() on columns of table "resources" */
@@ -4994,10 +4276,10 @@ export type Resources_Parts = {
   __typename?: 'resources_parts'
   /** An object relationship */
   part: Parts
-  part_id: Scalars['String']
+  part_id: Scalars['String']['output']
   /** An object relationship */
   resource: Resources
-  resource_id: Scalars['String']
+  resource_id: Scalars['String']['output']
 }
 
 /** aggregated selection of "resources_parts" */
@@ -5010,7 +4292,7 @@ export type Resources_Parts_Aggregate = {
 /** aggregate fields of "resources_parts" */
 export type Resources_Parts_Aggregate_Fields = {
   __typename?: 'resources_parts_aggregate_fields'
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Resources_Parts_Max_Fields>
   min?: Maybe<Resources_Parts_Min_Fields>
 }
@@ -5018,7 +4300,7 @@ export type Resources_Parts_Aggregate_Fields = {
 /** aggregate fields of "resources_parts" */
 export type Resources_Parts_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Resources_Parts_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** order by aggregate values of table "resources_parts" */
@@ -5042,8 +4324,8 @@ export type Resources_Parts_Bool_Exp = {
 /** aggregate max on columns */
 export type Resources_Parts_Max_Fields = {
   __typename?: 'resources_parts_max_fields'
-  part_id?: Maybe<Scalars['String']>
-  resource_id?: Maybe<Scalars['String']>
+  part_id?: Maybe<Scalars['String']['output']>
+  resource_id?: Maybe<Scalars['String']['output']>
 }
 
 /** order by max() on columns of table "resources_parts" */
@@ -5055,8 +4337,8 @@ export type Resources_Parts_Max_Order_By = {
 /** aggregate min on columns */
 export type Resources_Parts_Min_Fields = {
   __typename?: 'resources_parts_min_fields'
-  part_id?: Maybe<Scalars['String']>
-  resource_id?: Maybe<Scalars['String']>
+  part_id?: Maybe<Scalars['String']['output']>
+  resource_id?: Maybe<Scalars['String']['output']>
 }
 
 /** order by min() on columns of table "resources_parts" */
@@ -5112,10 +4394,10 @@ export enum Resources_Select_Column {
 /** columns and relationships of "sales" */
 export type Sales = {
   __typename?: 'sales'
-  day?: Maybe<Scalars['numeric']>
-  month?: Maybe<Scalars['numeric']>
-  month3?: Maybe<Scalars['numeric']>
-  week?: Maybe<Scalars['numeric']>
+  day?: Maybe<Scalars['numeric']['output']>
+  month?: Maybe<Scalars['numeric']['output']>
+  month3?: Maybe<Scalars['numeric']['output']>
+  week?: Maybe<Scalars['numeric']['output']>
 }
 
 /** Boolean expression to filter rows from the table "sales". All fields are combined with a logical 'AND'. */
@@ -5152,8 +4434,8 @@ export enum Sales_Select_Column {
 /** columns and relationships of "singular_blacklisted_accounts" */
 export type Singular_Blacklisted_Accounts = {
   __typename?: 'singular_blacklisted_accounts'
-  account: Scalars['String']
-  created_at: Scalars['timestamptz']
+  account: Scalars['String']['output']
+  created_at: Scalars['timestamptz']['output']
 }
 
 /** order by aggregate values of table "singular_blacklisted_accounts" */
@@ -5203,8 +4485,8 @@ export type Singular_Blacklisted_Collections = {
   __typename?: 'singular_blacklisted_collections'
   /** An object relationship */
   collection?: Maybe<Collections>
-  collection_id: Scalars['String']
-  created_at: Scalars['timestamptz']
+  collection_id: Scalars['String']['output']
+  created_at: Scalars['timestamptz']['output']
 }
 
 /** order by aggregate values of table "singular_blacklisted_collections" */
@@ -5254,8 +4536,8 @@ export enum Singular_Blacklisted_Collections_Select_Column {
 /** columns and relationships of "singular_curated" */
 export type Singular_Curated = {
   __typename?: 'singular_curated'
-  created_at: Scalars['timestamptz']
-  nft_id: Scalars['String']
+  created_at: Scalars['timestamptz']['output']
+  nft_id: Scalars['String']['output']
 }
 
 /** aggregated selection of "singular_curated" */
@@ -5268,7 +4550,7 @@ export type Singular_Curated_Aggregate = {
 /** aggregate fields of "singular_curated" */
 export type Singular_Curated_Aggregate_Fields = {
   __typename?: 'singular_curated_aggregate_fields'
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Singular_Curated_Max_Fields>
   min?: Maybe<Singular_Curated_Min_Fields>
 }
@@ -5276,7 +4558,7 @@ export type Singular_Curated_Aggregate_Fields = {
 /** aggregate fields of "singular_curated" */
 export type Singular_Curated_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** order by aggregate values of table "singular_curated" */
@@ -5298,8 +4580,8 @@ export type Singular_Curated_Bool_Exp = {
 /** columns and relationships of "singular_curated_collections" */
 export type Singular_Curated_Collections = {
   __typename?: 'singular_curated_collections'
-  collection_id: Scalars['String']
-  created_at: Scalars['timestamptz']
+  collection_id: Scalars['String']['output']
+  created_at: Scalars['timestamptz']['output']
 }
 
 /** aggregated selection of "singular_curated_collections" */
@@ -5312,7 +4594,7 @@ export type Singular_Curated_Collections_Aggregate = {
 /** aggregate fields of "singular_curated_collections" */
 export type Singular_Curated_Collections_Aggregate_Fields = {
   __typename?: 'singular_curated_collections_aggregate_fields'
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Singular_Curated_Collections_Max_Fields>
   min?: Maybe<Singular_Curated_Collections_Min_Fields>
 }
@@ -5320,7 +4602,7 @@ export type Singular_Curated_Collections_Aggregate_Fields = {
 /** aggregate fields of "singular_curated_collections" */
 export type Singular_Curated_Collections_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Singular_Curated_Collections_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** order by aggregate values of table "singular_curated_collections" */
@@ -5342,8 +4624,8 @@ export type Singular_Curated_Collections_Bool_Exp = {
 /** aggregate max on columns */
 export type Singular_Curated_Collections_Max_Fields = {
   __typename?: 'singular_curated_collections_max_fields'
-  collection_id?: Maybe<Scalars['String']>
-  created_at?: Maybe<Scalars['timestamptz']>
+  collection_id?: Maybe<Scalars['String']['output']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
 }
 
 /** order by max() on columns of table "singular_curated_collections" */
@@ -5355,8 +4637,8 @@ export type Singular_Curated_Collections_Max_Order_By = {
 /** aggregate min on columns */
 export type Singular_Curated_Collections_Min_Fields = {
   __typename?: 'singular_curated_collections_min_fields'
-  collection_id?: Maybe<Scalars['String']>
-  created_at?: Maybe<Scalars['timestamptz']>
+  collection_id?: Maybe<Scalars['String']['output']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
 }
 
 /** order by min() on columns of table "singular_curated_collections" */
@@ -5382,8 +4664,8 @@ export enum Singular_Curated_Collections_Select_Column {
 /** aggregate max on columns */
 export type Singular_Curated_Max_Fields = {
   __typename?: 'singular_curated_max_fields'
-  created_at?: Maybe<Scalars['timestamptz']>
-  nft_id?: Maybe<Scalars['String']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
+  nft_id?: Maybe<Scalars['String']['output']>
 }
 
 /** order by max() on columns of table "singular_curated" */
@@ -5395,8 +4677,8 @@ export type Singular_Curated_Max_Order_By = {
 /** aggregate min on columns */
 export type Singular_Curated_Min_Fields = {
   __typename?: 'singular_curated_min_fields'
-  created_at?: Maybe<Scalars['timestamptz']>
-  nft_id?: Maybe<Scalars['String']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
+  nft_id?: Maybe<Scalars['String']['output']>
 }
 
 /** order by min() on columns of table "singular_curated" */
@@ -5422,8 +4704,8 @@ export enum Singular_Curated_Select_Column {
 /** columns and relationships of "singular_hidden_collections" */
 export type Singular_Hidden_Collections = {
   __typename?: 'singular_hidden_collections'
-  collection_id: Scalars['String']
-  created_at: Scalars['timestamptz']
+  collection_id: Scalars['String']['output']
+  created_at: Scalars['timestamptz']['output']
 }
 
 /** Boolean expression to filter rows from the table "singular_hidden_collections". All fields are combined with a logical 'AND'. */
@@ -5454,14 +4736,14 @@ export type Singular_Nsfw_Collections = {
   __typename?: 'singular_nsfw_collections'
   /** An object relationship */
   collection?: Maybe<Collections>
-  collection_id: Scalars['String']
-  created_at: Scalars['timestamptz']
-  reason?: Maybe<Scalars['jsonb']>
+  collection_id: Scalars['String']['output']
+  created_at: Scalars['timestamptz']['output']
+  reason?: Maybe<Scalars['jsonb']['output']>
 }
 
 /** columns and relationships of "singular_nsfw_collections" */
 export type Singular_Nsfw_CollectionsReasonArgs = {
-  path?: InputMaybe<Scalars['String']>
+  path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** aggregated selection of "singular_nsfw_collections" */
@@ -5474,7 +4756,7 @@ export type Singular_Nsfw_Collections_Aggregate = {
 /** aggregate fields of "singular_nsfw_collections" */
 export type Singular_Nsfw_Collections_Aggregate_Fields = {
   __typename?: 'singular_nsfw_collections_aggregate_fields'
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Singular_Nsfw_Collections_Max_Fields>
   min?: Maybe<Singular_Nsfw_Collections_Min_Fields>
 }
@@ -5482,7 +4764,7 @@ export type Singular_Nsfw_Collections_Aggregate_Fields = {
 /** aggregate fields of "singular_nsfw_collections" */
 export type Singular_Nsfw_Collections_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Singular_Nsfw_Collections_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** order by aggregate values of table "singular_nsfw_collections" */
@@ -5506,8 +4788,8 @@ export type Singular_Nsfw_Collections_Bool_Exp = {
 /** aggregate max on columns */
 export type Singular_Nsfw_Collections_Max_Fields = {
   __typename?: 'singular_nsfw_collections_max_fields'
-  collection_id?: Maybe<Scalars['String']>
-  created_at?: Maybe<Scalars['timestamptz']>
+  collection_id?: Maybe<Scalars['String']['output']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
 }
 
 /** order by max() on columns of table "singular_nsfw_collections" */
@@ -5519,8 +4801,8 @@ export type Singular_Nsfw_Collections_Max_Order_By = {
 /** aggregate min on columns */
 export type Singular_Nsfw_Collections_Min_Fields = {
   __typename?: 'singular_nsfw_collections_min_fields'
-  collection_id?: Maybe<Scalars['String']>
-  created_at?: Maybe<Scalars['timestamptz']>
+  collection_id?: Maybe<Scalars['String']['output']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
 }
 
 /** order by min() on columns of table "singular_nsfw_collections" */
@@ -5550,16 +4832,16 @@ export enum Singular_Nsfw_Collections_Select_Column {
 /** columns and relationships of "singular_nsfw_nfts" */
 export type Singular_Nsfw_Nfts = {
   __typename?: 'singular_nsfw_nfts'
-  created_at: Scalars['timestamptz']
+  created_at: Scalars['timestamptz']['output']
   /** An object relationship */
   nft: Nfts
-  nft_id: Scalars['String']
-  reason?: Maybe<Scalars['jsonb']>
+  nft_id: Scalars['String']['output']
+  reason?: Maybe<Scalars['jsonb']['output']>
 }
 
 /** columns and relationships of "singular_nsfw_nfts" */
 export type Singular_Nsfw_NftsReasonArgs = {
-  path?: InputMaybe<Scalars['String']>
+  path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** aggregated selection of "singular_nsfw_nfts" */
@@ -5572,7 +4854,7 @@ export type Singular_Nsfw_Nfts_Aggregate = {
 /** aggregate fields of "singular_nsfw_nfts" */
 export type Singular_Nsfw_Nfts_Aggregate_Fields = {
   __typename?: 'singular_nsfw_nfts_aggregate_fields'
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Singular_Nsfw_Nfts_Max_Fields>
   min?: Maybe<Singular_Nsfw_Nfts_Min_Fields>
 }
@@ -5580,7 +4862,7 @@ export type Singular_Nsfw_Nfts_Aggregate_Fields = {
 /** aggregate fields of "singular_nsfw_nfts" */
 export type Singular_Nsfw_Nfts_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** order by aggregate values of table "singular_nsfw_nfts" */
@@ -5604,8 +4886,8 @@ export type Singular_Nsfw_Nfts_Bool_Exp = {
 /** aggregate max on columns */
 export type Singular_Nsfw_Nfts_Max_Fields = {
   __typename?: 'singular_nsfw_nfts_max_fields'
-  created_at?: Maybe<Scalars['timestamptz']>
-  nft_id?: Maybe<Scalars['String']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
+  nft_id?: Maybe<Scalars['String']['output']>
 }
 
 /** order by max() on columns of table "singular_nsfw_nfts" */
@@ -5617,8 +4899,8 @@ export type Singular_Nsfw_Nfts_Max_Order_By = {
 /** aggregate min on columns */
 export type Singular_Nsfw_Nfts_Min_Fields = {
   __typename?: 'singular_nsfw_nfts_min_fields'
-  created_at?: Maybe<Scalars['timestamptz']>
-  nft_id?: Maybe<Scalars['String']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
+  nft_id?: Maybe<Scalars['String']['output']>
 }
 
 /** order by min() on columns of table "singular_nsfw_nfts" */
@@ -5648,8 +4930,8 @@ export enum Singular_Nsfw_Nfts_Select_Column {
 /** columns and relationships of "singular_verified_collections" */
 export type Singular_Verified_Collections = {
   __typename?: 'singular_verified_collections'
-  collection_id: Scalars['String']
-  created_at: Scalars['timestamptz']
+  collection_id: Scalars['String']['output']
+  created_at: Scalars['timestamptz']['output']
 }
 
 /** aggregated selection of "singular_verified_collections" */
@@ -5662,7 +4944,7 @@ export type Singular_Verified_Collections_Aggregate = {
 /** aggregate fields of "singular_verified_collections" */
 export type Singular_Verified_Collections_Aggregate_Fields = {
   __typename?: 'singular_verified_collections_aggregate_fields'
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Singular_Verified_Collections_Max_Fields>
   min?: Maybe<Singular_Verified_Collections_Min_Fields>
 }
@@ -5670,7 +4952,7 @@ export type Singular_Verified_Collections_Aggregate_Fields = {
 /** aggregate fields of "singular_verified_collections" */
 export type Singular_Verified_Collections_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Singular_Verified_Collections_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** order by aggregate values of table "singular_verified_collections" */
@@ -5692,8 +4974,8 @@ export type Singular_Verified_Collections_Bool_Exp = {
 /** aggregate max on columns */
 export type Singular_Verified_Collections_Max_Fields = {
   __typename?: 'singular_verified_collections_max_fields'
-  collection_id?: Maybe<Scalars['String']>
-  created_at?: Maybe<Scalars['timestamptz']>
+  collection_id?: Maybe<Scalars['String']['output']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
 }
 
 /** order by max() on columns of table "singular_verified_collections" */
@@ -5705,8 +4987,8 @@ export type Singular_Verified_Collections_Max_Order_By = {
 /** aggregate min on columns */
 export type Singular_Verified_Collections_Min_Fields = {
   __typename?: 'singular_verified_collections_min_fields'
-  collection_id?: Maybe<Scalars['String']>
-  created_at?: Maybe<Scalars['timestamptz']>
+  collection_id?: Maybe<Scalars['String']['output']>
+  created_at?: Maybe<Scalars['timestamptz']['output']>
 }
 
 /** order by min() on columns of table "singular_verified_collections" */
@@ -5731,15 +5013,15 @@ export enum Singular_Verified_Collections_Select_Column {
 
 /** Boolean expression to compare columns of type "smallint". All fields are combined with logical 'AND'. */
 export type Smallint_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['smallint']>
-  _gt?: InputMaybe<Scalars['smallint']>
-  _gte?: InputMaybe<Scalars['smallint']>
-  _in?: InputMaybe<Array<Scalars['smallint']>>
-  _is_null?: InputMaybe<Scalars['Boolean']>
-  _lt?: InputMaybe<Scalars['smallint']>
-  _lte?: InputMaybe<Scalars['smallint']>
-  _neq?: InputMaybe<Scalars['smallint']>
-  _nin?: InputMaybe<Array<Scalars['smallint']>>
+  _eq?: InputMaybe<Scalars['smallint']['input']>
+  _gt?: InputMaybe<Scalars['smallint']['input']>
+  _gte?: InputMaybe<Scalars['smallint']['input']>
+  _in?: InputMaybe<Array<Scalars['smallint']['input']>>
+  _is_null?: InputMaybe<Scalars['Boolean']['input']>
+  _lt?: InputMaybe<Scalars['smallint']['input']>
+  _lte?: InputMaybe<Scalars['smallint']['input']>
+  _neq?: InputMaybe<Scalars['smallint']['input']>
+  _nin?: InputMaybe<Array<Scalars['smallint']['input']>>
 }
 
 export type Subscription_Root = {
@@ -5790,10 +5072,6 @@ export type Subscription_Root = {
   gems_enabled: Array<Gems_Enabled>
   /** fetch data from the table: "gems_enabled" using primary key columns */
   gems_enabled_by_pk?: Maybe<Gems_Enabled>
-  /** execute function "get_by_unicode" which returns "reactions" */
-  get_by_unicode: Array<Reactions>
-  /** execute function "get_by_unicode" and query aggregates on result of table type "reactions" */
-  get_by_unicode_aggregate: Reactions_Aggregate
   /** execute function "get_newly_listed" which returns "nfts" */
   get_newly_listed: Array<Nfts>
   /** execute function "get_newly_listed" and query aggregates on result of table type "nfts" */
@@ -5816,10 +5094,6 @@ export type Subscription_Root = {
   nfts_aggregate: Nfts_Aggregate
   /** fetch data from the table: "nfts" using primary key columns */
   nfts_by_pk?: Maybe<Nfts>
-  /** fetch data from the table: "nfts_reactions_stats" */
-  nfts_reactions_stats: Array<Nfts_Reactions_Stats>
-  /** fetch aggregated fields from the table: "nfts_reactions_stats" */
-  nfts_reactions_stats_aggregate: Nfts_Reactions_Stats_Aggregate
   /** fetch data from the table: "nfts_stats" */
   nfts_stats: Array<Nfts_Stats>
   /** fetch aggregated fields from the table: "nfts_stats" */
@@ -5830,20 +5104,6 @@ export type Subscription_Root = {
   parts_aggregate: Parts_Aggregate
   /** fetch data from the table: "parts" using primary key columns */
   parts_by_pk?: Maybe<Parts>
-  /** fetch data from the table: "reactions" */
-  reactions: Array<Reactions>
-  /** fetch aggregated fields from the table: "reactions" */
-  reactions_aggregate: Reactions_Aggregate
-  /** fetch data from the table: "reactions" using primary key columns */
-  reactions_by_pk?: Maybe<Reactions>
-  /** An array relationship */
-  reactions_unicode: Array<Reactions_Unicode>
-  /** An aggregate relationship */
-  reactions_unicode_aggregate: Reactions_Unicode_Aggregate
-  /** fetch data from the table: "reactions_users" */
-  reactions_users: Array<Reactions_Users>
-  /** fetch aggregated fields from the table: "reactions_users" */
-  reactions_users_aggregate: Reactions_Users_Aggregate
   /** fetch data from the table: "recently_listed" */
   recently_listed: Array<Recently_Listed>
   /** fetch aggregated fields from the table: "recently_listed" */
@@ -5922,202 +5182,184 @@ export type Subscription_Root = {
 
 export type Subscription_RootBase_ThemesArgs = {
   distinct_on?: InputMaybe<Array<Base_Themes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Base_Themes_Order_By>>
   where?: InputMaybe<Base_Themes_Bool_Exp>
 }
 
 export type Subscription_RootBase_Themes_By_PkArgs = {
-  id: Scalars['String']
+  id: Scalars['String']['input']
 }
 
 export type Subscription_RootBasesArgs = {
   distinct_on?: InputMaybe<Array<Bases_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Bases_Order_By>>
   where?: InputMaybe<Bases_Bool_Exp>
 }
 
 export type Subscription_RootBases_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Bases_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Bases_Order_By>>
   where?: InputMaybe<Bases_Bool_Exp>
 }
 
 export type Subscription_RootBases_By_PkArgs = {
-  id: Scalars['String']
+  id: Scalars['String']['input']
 }
 
 export type Subscription_RootChangesArgs = {
   distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Changes_Order_By>>
   where?: InputMaybe<Changes_Bool_Exp>
 }
 
 export type Subscription_RootChanges_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Changes_Order_By>>
   where?: InputMaybe<Changes_Bool_Exp>
 }
 
 export type Subscription_RootChanges_By_PkArgs = {
-  id: Scalars['Int']
+  id: Scalars['Int']['input']
 }
 
 export type Subscription_RootChanges_CollectionArgs = {
   distinct_on?: InputMaybe<Array<Changes_Collection_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Changes_Collection_Order_By>>
   where?: InputMaybe<Changes_Collection_Bool_Exp>
 }
 
 export type Subscription_RootChanges_Collection_By_PkArgs = {
-  id: Scalars['Int']
+  id: Scalars['Int']['input']
 }
 
 export type Subscription_RootCollection_BannersArgs = {
   distinct_on?: InputMaybe<Array<Collection_Banners_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Collection_Banners_Order_By>>
   where?: InputMaybe<Collection_Banners_Bool_Exp>
 }
 
 export type Subscription_RootCollection_Banners_By_PkArgs = {
-  collection_id: Scalars['String']
+  collection_id: Scalars['String']['input']
 }
 
 export type Subscription_RootCollectionsArgs = {
   distinct_on?: InputMaybe<Array<Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Collections_Order_By>>
   where?: InputMaybe<Collections_Bool_Exp>
 }
 
 export type Subscription_RootCollections_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Collections_Order_By>>
   where?: InputMaybe<Collections_Bool_Exp>
 }
 
 export type Subscription_RootCollections_By_PkArgs = {
-  id: Scalars['String']
+  id: Scalars['String']['input']
 }
 
 export type Subscription_RootDistinct_Kanaria_NftsArgs = {
   distinct_on?: InputMaybe<Array<Distinct_Kanaria_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Distinct_Kanaria_Nfts_Order_By>>
   where?: InputMaybe<Distinct_Kanaria_Nfts_Bool_Exp>
 }
 
 export type Subscription_RootDistinct_Kanaria_Nfts_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Distinct_Kanaria_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Distinct_Kanaria_Nfts_Order_By>>
   where?: InputMaybe<Distinct_Kanaria_Nfts_Bool_Exp>
 }
 
 export type Subscription_RootDistinct_NftsArgs = {
   distinct_on?: InputMaybe<Array<Distinct_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Distinct_Nfts_Order_By>>
   where?: InputMaybe<Distinct_Nfts_Bool_Exp>
 }
 
 export type Subscription_RootDistinct_Nfts_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Distinct_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Distinct_Nfts_Order_By>>
   where?: InputMaybe<Distinct_Nfts_Bool_Exp>
 }
 
 export type Subscription_RootDutchieArgs = {
   distinct_on?: InputMaybe<Array<Dutchie_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Dutchie_Order_By>>
   where?: InputMaybe<Dutchie_Bool_Exp>
 }
 
 export type Subscription_RootDutchie_By_PkArgs = {
-  id: Scalars['Int']
+  id: Scalars['Int']['input']
 }
 
 export type Subscription_RootGems_EnabledArgs = {
   distinct_on?: InputMaybe<Array<Gems_Enabled_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Gems_Enabled_Order_By>>
   where?: InputMaybe<Gems_Enabled_Bool_Exp>
 }
 
 export type Subscription_RootGems_Enabled_By_PkArgs = {
-  id: Scalars['String']
-}
-
-export type Subscription_RootGet_By_UnicodeArgs = {
-  args: Get_By_Unicode_Args
-  distinct_on?: InputMaybe<Array<Reactions_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Order_By>>
-  where?: InputMaybe<Reactions_Bool_Exp>
-}
-
-export type Subscription_RootGet_By_Unicode_AggregateArgs = {
-  args: Get_By_Unicode_Args
-  distinct_on?: InputMaybe<Array<Reactions_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Order_By>>
-  where?: InputMaybe<Reactions_Bool_Exp>
+  id: Scalars['String']['input']
 }
 
 export type Subscription_RootGet_Newly_ListedArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
 
 export type Subscription_RootGet_Newly_Listed_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
 
 export type Subscription_RootGet_Newly_MintedArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
 
 export type Subscription_RootGet_Newly_Minted_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
@@ -6125,8 +5367,8 @@ export type Subscription_RootGet_Newly_Minted_AggregateArgs = {
 export type Subscription_RootGet_Ordered_Changes_StatsArgs = {
   args: Get_Ordered_Changes_Stats_Args
   distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Changes_Order_By>>
   where?: InputMaybe<Changes_Bool_Exp>
 }
@@ -6134,400 +5376,330 @@ export type Subscription_RootGet_Ordered_Changes_StatsArgs = {
 export type Subscription_RootGet_Ordered_Changes_Stats_AggregateArgs = {
   args: Get_Ordered_Changes_Stats_Args
   distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Changes_Order_By>>
   where?: InputMaybe<Changes_Bool_Exp>
 }
 
 export type Subscription_RootHatched_BirdsArgs = {
   distinct_on?: InputMaybe<Array<Hatched_Birds_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Hatched_Birds_Order_By>>
   where?: InputMaybe<Hatched_Birds_Bool_Exp>
 }
 
 export type Subscription_RootHatched_Birds_By_PkArgs = {
-  id: Scalars['String']
+  id: Scalars['String']['input']
 }
 
 export type Subscription_RootNftsArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
 
 export type Subscription_RootNfts_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Order_By>>
   where?: InputMaybe<Nfts_Bool_Exp>
 }
 
 export type Subscription_RootNfts_By_PkArgs = {
-  id: Scalars['String']
-}
-
-export type Subscription_RootNfts_Reactions_StatsArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Reactions_Stats_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Nfts_Reactions_Stats_Order_By>>
-  where?: InputMaybe<Nfts_Reactions_Stats_Bool_Exp>
-}
-
-export type Subscription_RootNfts_Reactions_Stats_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Reactions_Stats_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Nfts_Reactions_Stats_Order_By>>
-  where?: InputMaybe<Nfts_Reactions_Stats_Bool_Exp>
+  id: Scalars['String']['input']
 }
 
 export type Subscription_RootNfts_StatsArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Stats_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Stats_Order_By>>
   where?: InputMaybe<Nfts_Stats_Bool_Exp>
 }
 
 export type Subscription_RootNfts_Stats_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Nfts_Stats_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Nfts_Stats_Order_By>>
   where?: InputMaybe<Nfts_Stats_Bool_Exp>
 }
 
 export type Subscription_RootPartsArgs = {
   distinct_on?: InputMaybe<Array<Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Parts_Order_By>>
   where?: InputMaybe<Parts_Bool_Exp>
 }
 
 export type Subscription_RootParts_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Parts_Order_By>>
   where?: InputMaybe<Parts_Bool_Exp>
 }
 
 export type Subscription_RootParts_By_PkArgs = {
-  id: Scalars['String']
-}
-
-export type Subscription_RootReactionsArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Order_By>>
-  where?: InputMaybe<Reactions_Bool_Exp>
-}
-
-export type Subscription_RootReactions_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Order_By>>
-  where?: InputMaybe<Reactions_Bool_Exp>
-}
-
-export type Subscription_RootReactions_By_PkArgs = {
-  nft_id: Scalars['String']
-  owner: Scalars['String']
-  unicode: Scalars['String']
-}
-
-export type Subscription_RootReactions_UnicodeArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Unicode_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Unicode_Order_By>>
-  where?: InputMaybe<Reactions_Unicode_Bool_Exp>
-}
-
-export type Subscription_RootReactions_Unicode_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Unicode_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Unicode_Order_By>>
-  where?: InputMaybe<Reactions_Unicode_Bool_Exp>
-}
-
-export type Subscription_RootReactions_UsersArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Users_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Users_Order_By>>
-  where?: InputMaybe<Reactions_Users_Bool_Exp>
-}
-
-export type Subscription_RootReactions_Users_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Reactions_Users_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
-  order_by?: InputMaybe<Array<Reactions_Users_Order_By>>
-  where?: InputMaybe<Reactions_Users_Bool_Exp>
+  id: Scalars['String']['input']
 }
 
 export type Subscription_RootRecently_ListedArgs = {
   distinct_on?: InputMaybe<Array<Recently_Listed_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Recently_Listed_Order_By>>
   where?: InputMaybe<Recently_Listed_Bool_Exp>
 }
 
 export type Subscription_RootRecently_Listed_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Recently_Listed_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Recently_Listed_Order_By>>
   where?: InputMaybe<Recently_Listed_Bool_Exp>
 }
 
 export type Subscription_RootResourcesArgs = {
   distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Order_By>>
   where?: InputMaybe<Resources_Bool_Exp>
 }
 
 export type Subscription_RootResources_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Order_By>>
   where?: InputMaybe<Resources_Bool_Exp>
 }
 
 export type Subscription_RootResources_Base_ThemesArgs = {
   distinct_on?: InputMaybe<Array<Resources_Base_Themes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Base_Themes_Order_By>>
   where?: InputMaybe<Resources_Base_Themes_Bool_Exp>
 }
 
 export type Subscription_RootResources_Base_Themes_By_PkArgs = {
-  resource_id: Scalars['String']
-  theme_id: Scalars['String']
+  resource_id: Scalars['String']['input']
+  theme_id: Scalars['String']['input']
 }
 
 export type Subscription_RootResources_By_PkArgs = {
-  id: Scalars['String']
+  id: Scalars['String']['input']
 }
 
 export type Subscription_RootResources_PartsArgs = {
   distinct_on?: InputMaybe<Array<Resources_Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Parts_Order_By>>
   where?: InputMaybe<Resources_Parts_Bool_Exp>
 }
 
 export type Subscription_RootResources_Parts_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Resources_Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Resources_Parts_Order_By>>
   where?: InputMaybe<Resources_Parts_Bool_Exp>
 }
 
 export type Subscription_RootResources_Parts_By_PkArgs = {
-  part_id: Scalars['String']
-  resource_id: Scalars['String']
+  part_id: Scalars['String']['input']
+  resource_id: Scalars['String']['input']
 }
 
 export type Subscription_RootSalesArgs = {
   distinct_on?: InputMaybe<Array<Sales_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Sales_Order_By>>
   where?: InputMaybe<Sales_Bool_Exp>
 }
 
 export type Subscription_RootSingular_Blacklisted_AccountsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Blacklisted_Accounts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Blacklisted_Accounts_Order_By>>
   where?: InputMaybe<Singular_Blacklisted_Accounts_Bool_Exp>
 }
 
 export type Subscription_RootSingular_Blacklisted_Accounts_By_PkArgs = {
-  account: Scalars['String']
+  account: Scalars['String']['input']
 }
 
 export type Subscription_RootSingular_Blacklisted_CollectionsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Blacklisted_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Blacklisted_Collections_Order_By>>
   where?: InputMaybe<Singular_Blacklisted_Collections_Bool_Exp>
 }
 
 export type Subscription_RootSingular_Blacklisted_Collections_By_PkArgs = {
-  collection_id: Scalars['String']
+  collection_id: Scalars['String']['input']
 }
 
 export type Subscription_RootSingular_CuratedArgs = {
   distinct_on?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Curated_Order_By>>
   where?: InputMaybe<Singular_Curated_Bool_Exp>
 }
 
 export type Subscription_RootSingular_Curated_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Curated_Order_By>>
   where?: InputMaybe<Singular_Curated_Bool_Exp>
 }
 
 export type Subscription_RootSingular_Curated_By_PkArgs = {
-  nft_id: Scalars['String']
+  nft_id: Scalars['String']['input']
 }
 
 export type Subscription_RootSingular_Curated_CollectionsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Curated_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Curated_Collections_Order_By>>
   where?: InputMaybe<Singular_Curated_Collections_Bool_Exp>
 }
 
 export type Subscription_RootSingular_Curated_Collections_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Curated_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Curated_Collections_Order_By>>
   where?: InputMaybe<Singular_Curated_Collections_Bool_Exp>
 }
 
 export type Subscription_RootSingular_Curated_Collections_By_PkArgs = {
-  collection_id: Scalars['String']
+  collection_id: Scalars['String']['input']
 }
 
 export type Subscription_RootSingular_Hidden_CollectionsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Hidden_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Hidden_Collections_Order_By>>
   where?: InputMaybe<Singular_Hidden_Collections_Bool_Exp>
 }
 
 export type Subscription_RootSingular_Hidden_Collections_By_PkArgs = {
-  collection_id: Scalars['String']
+  collection_id: Scalars['String']['input']
 }
 
 export type Subscription_RootSingular_Nsfw_CollectionsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Nsfw_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Nsfw_Collections_Order_By>>
   where?: InputMaybe<Singular_Nsfw_Collections_Bool_Exp>
 }
 
 export type Subscription_RootSingular_Nsfw_Collections_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Nsfw_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Nsfw_Collections_Order_By>>
   where?: InputMaybe<Singular_Nsfw_Collections_Bool_Exp>
 }
 
 export type Subscription_RootSingular_Nsfw_Collections_By_PkArgs = {
-  collection_id: Scalars['String']
+  collection_id: Scalars['String']['input']
 }
 
 export type Subscription_RootSingular_Nsfw_NftsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Nsfw_Nfts_Order_By>>
   where?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
 }
 
 export type Subscription_RootSingular_Nsfw_Nfts_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Nsfw_Nfts_Order_By>>
   where?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
 }
 
 export type Subscription_RootSingular_Nsfw_Nfts_By_PkArgs = {
-  nft_id: Scalars['String']
+  nft_id: Scalars['String']['input']
 }
 
 export type Subscription_RootSingular_Verified_CollectionsArgs = {
   distinct_on?: InputMaybe<Array<Singular_Verified_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Verified_Collections_Order_By>>
   where?: InputMaybe<Singular_Verified_Collections_Bool_Exp>
 }
 
 export type Subscription_RootSingular_Verified_Collections_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Singular_Verified_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Singular_Verified_Collections_Order_By>>
   where?: InputMaybe<Singular_Verified_Collections_Bool_Exp>
 }
 
 export type Subscription_RootSingular_Verified_Collections_By_PkArgs = {
-  collection_id: Scalars['String']
+  collection_id: Scalars['String']['input']
 }
 
 export type Subscription_RootSystemArgs = {
   distinct_on?: InputMaybe<Array<System_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<System_Order_By>>
   where?: InputMaybe<System_Bool_Exp>
 }
 
 export type Subscription_RootSystem_By_PkArgs = {
-  purchaseEnabled: Scalars['Boolean']
+  purchaseEnabled: Scalars['Boolean']['input']
 }
 
 export type Subscription_RootYuletide_Item_TrackArgs = {
   distinct_on?: InputMaybe<Array<Yuletide_Item_Track_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Yuletide_Item_Track_Order_By>>
   where?: InputMaybe<Yuletide_Item_Track_Bool_Exp>
 }
 
 export type Subscription_RootYuletide_Item_Track_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Yuletide_Item_Track_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<Array<Yuletide_Item_Track_Order_By>>
   where?: InputMaybe<Yuletide_Item_Track_Bool_Exp>
 }
 
 export type Subscription_RootYuletide_Item_Track_By_PkArgs = {
-  id: Scalars['String']
+  id: Scalars['String']['input']
 }
 
 /** columns and relationships of "system" */
 export type System = {
   __typename?: 'system'
-  purchaseEnabled: Scalars['Boolean']
+  purchaseEnabled: Scalars['Boolean']['output']
 }
 
 /** Boolean expression to filter rows from the table "system". All fields are combined with a logical 'AND'. */
@@ -6551,15 +5723,15 @@ export enum System_Select_Column {
 
 /** Boolean expression to compare columns of type "timestamptz". All fields are combined with logical 'AND'. */
 export type Timestamptz_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['timestamptz']>
-  _gt?: InputMaybe<Scalars['timestamptz']>
-  _gte?: InputMaybe<Scalars['timestamptz']>
-  _in?: InputMaybe<Array<Scalars['timestamptz']>>
-  _is_null?: InputMaybe<Scalars['Boolean']>
-  _lt?: InputMaybe<Scalars['timestamptz']>
-  _lte?: InputMaybe<Scalars['timestamptz']>
-  _neq?: InputMaybe<Scalars['timestamptz']>
-  _nin?: InputMaybe<Array<Scalars['timestamptz']>>
+  _eq?: InputMaybe<Scalars['timestamptz']['input']>
+  _gt?: InputMaybe<Scalars['timestamptz']['input']>
+  _gte?: InputMaybe<Scalars['timestamptz']['input']>
+  _in?: InputMaybe<Array<Scalars['timestamptz']['input']>>
+  _is_null?: InputMaybe<Scalars['Boolean']['input']>
+  _lt?: InputMaybe<Scalars['timestamptz']['input']>
+  _lte?: InputMaybe<Scalars['timestamptz']['input']>
+  _neq?: InputMaybe<Scalars['timestamptz']['input']>
+  _nin?: InputMaybe<Array<Scalars['timestamptz']['input']>>
 }
 
 /**
@@ -6571,8 +5743,8 @@ export type Timestamptz_Comparison_Exp = {
  */
 export type Yuletide_Item_Track = {
   __typename?: 'yuletide_item_track'
-  id: Scalars['String']
-  item_count: Scalars['Int']
+  id: Scalars['String']['output']
+  item_count: Scalars['Int']['output']
 }
 
 /** aggregated selection of "yuletide_item_track" */
@@ -6586,7 +5758,7 @@ export type Yuletide_Item_Track_Aggregate = {
 export type Yuletide_Item_Track_Aggregate_Fields = {
   __typename?: 'yuletide_item_track_aggregate_fields'
   avg?: Maybe<Yuletide_Item_Track_Avg_Fields>
-  count: Scalars['Int']
+  count: Scalars['Int']['output']
   max?: Maybe<Yuletide_Item_Track_Max_Fields>
   min?: Maybe<Yuletide_Item_Track_Min_Fields>
   stddev?: Maybe<Yuletide_Item_Track_Stddev_Fields>
@@ -6601,13 +5773,13 @@ export type Yuletide_Item_Track_Aggregate_Fields = {
 /** aggregate fields of "yuletide_item_track" */
 export type Yuletide_Item_Track_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Yuletide_Item_Track_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']>
+  distinct?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 /** aggregate avg on columns */
 export type Yuletide_Item_Track_Avg_Fields = {
   __typename?: 'yuletide_item_track_avg_fields'
-  item_count?: Maybe<Scalars['Float']>
+  item_count?: Maybe<Scalars['Float']['output']>
 }
 
 /** Boolean expression to filter rows from the table "yuletide_item_track". All fields are combined with a logical 'AND'. */
@@ -6622,15 +5794,15 @@ export type Yuletide_Item_Track_Bool_Exp = {
 /** aggregate max on columns */
 export type Yuletide_Item_Track_Max_Fields = {
   __typename?: 'yuletide_item_track_max_fields'
-  id?: Maybe<Scalars['String']>
-  item_count?: Maybe<Scalars['Int']>
+  id?: Maybe<Scalars['String']['output']>
+  item_count?: Maybe<Scalars['Int']['output']>
 }
 
 /** aggregate min on columns */
 export type Yuletide_Item_Track_Min_Fields = {
   __typename?: 'yuletide_item_track_min_fields'
-  id?: Maybe<Scalars['String']>
-  item_count?: Maybe<Scalars['Int']>
+  id?: Maybe<Scalars['String']['output']>
+  item_count?: Maybe<Scalars['Int']['output']>
 }
 
 /** Ordering options when selecting data from "yuletide_item_track". */
@@ -6650,49 +5822,49 @@ export enum Yuletide_Item_Track_Select_Column {
 /** aggregate stddev on columns */
 export type Yuletide_Item_Track_Stddev_Fields = {
   __typename?: 'yuletide_item_track_stddev_fields'
-  item_count?: Maybe<Scalars['Float']>
+  item_count?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate stddev_pop on columns */
 export type Yuletide_Item_Track_Stddev_Pop_Fields = {
   __typename?: 'yuletide_item_track_stddev_pop_fields'
-  item_count?: Maybe<Scalars['Float']>
+  item_count?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate stddev_samp on columns */
 export type Yuletide_Item_Track_Stddev_Samp_Fields = {
   __typename?: 'yuletide_item_track_stddev_samp_fields'
-  item_count?: Maybe<Scalars['Float']>
+  item_count?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate sum on columns */
 export type Yuletide_Item_Track_Sum_Fields = {
   __typename?: 'yuletide_item_track_sum_fields'
-  item_count?: Maybe<Scalars['Int']>
+  item_count?: Maybe<Scalars['Int']['output']>
 }
 
 /** aggregate var_pop on columns */
 export type Yuletide_Item_Track_Var_Pop_Fields = {
   __typename?: 'yuletide_item_track_var_pop_fields'
-  item_count?: Maybe<Scalars['Float']>
+  item_count?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate var_samp on columns */
 export type Yuletide_Item_Track_Var_Samp_Fields = {
   __typename?: 'yuletide_item_track_var_samp_fields'
-  item_count?: Maybe<Scalars['Float']>
+  item_count?: Maybe<Scalars['Float']['output']>
 }
 
 /** aggregate variance on columns */
 export type Yuletide_Item_Track_Variance_Fields = {
   __typename?: 'yuletide_item_track_variance_fields'
-  item_count?: Maybe<Scalars['Float']>
+  item_count?: Maybe<Scalars['Float']['output']>
 }
 
 export type NftsQueryVariables = Exact<{
-  addresses?: InputMaybe<Array<Scalars['String']> | Scalars['String']>
-  limit?: InputMaybe<Scalars['Int']>
-  offset?: InputMaybe<Scalars['Int']>
+  addresses?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
 }>
 
 export type NftsQuery = {
