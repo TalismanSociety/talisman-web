@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { ReactComponent as IconLoading } from '@assets/icons/loader.svg'
+import IconLoading from '@assets/icons/loader.svg?react'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { omit } from 'lodash'

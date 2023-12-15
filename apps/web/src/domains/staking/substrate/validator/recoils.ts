@@ -2,7 +2,7 @@ import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { useSubstrateApiEndpoint } from '@domains/common'
 import { selectorFamily } from 'recoil'
 import { Thread, spawn } from 'threads'
-import { type WorkerFunction } from './worker'
+import type { WorkerFunction } from './worker'
 
 export const stakersRewardState = selectorFamily({
   key: 'StakersRewardState',

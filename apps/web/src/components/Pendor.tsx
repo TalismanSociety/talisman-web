@@ -1,4 +1,4 @@
-import { ReactComponent as Loader } from '@icons/loader.svg'
+import Loader from '@icons/loader.svg?react'
 import { type PropsWithChildren, type ReactElement } from 'react'
 
 export type PendorProps = {

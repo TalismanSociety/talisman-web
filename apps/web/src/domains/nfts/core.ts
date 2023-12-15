@@ -5,7 +5,7 @@ import { atomFamily, selectorFamily } from 'recoil'
 import { bufferTime, filter, last, Observable, scan, tap } from 'rxjs'
 import { spawn, Thread } from 'threads'
 import { favoriteNftIdsState, hiddenNftIdsState, nftsByTagState } from './tags'
-import { type SubscribeNfts } from './worker'
+import type { SubscribeNfts } from './worker'
 
 export type NftTag = 'favorite' | 'hidden'
 
