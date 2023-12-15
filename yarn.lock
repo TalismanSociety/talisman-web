@@ -8500,7 +8500,7 @@ __metadata:
     "@polkadot/api": "npm:^10.9.1"
     "@talismn/eslint-config": "workspace:^"
     "@talismn/tsconfig": "workspace:^"
-    "@types/react": "npm:^18.2.7"
+    "@types/react": "npm:^18.0.28"
     typescript: "npm:^5.0.4"
   peerDependencies:
     "@polkadot/api": ">= 9.x"
@@ -8608,7 +8608,7 @@ __metadata:
   resolution: "@talismn/utils@workspace:packages/utils"
   dependencies:
     "@talismn/tsconfig": "workspace:^"
-    "@types/react": "npm:^18.2.0"
+    "@types/react": "npm:^18.0.28"
     typescript: "npm:^5.0.4"
   languageName: unknown
   linkType: soft
@@ -8660,7 +8660,7 @@ __metadata:
     "@types/lodash": "npm:^4.14.191"
     "@types/md5": "npm:^2.3.2"
     "@types/node": "npm:^18.11.19"
-    "@types/react": "npm:^18.0.27"
+    "@types/react": "npm:^18.0.28"
     "@types/react-dom": "npm:^18.0.10"
     "@types/react-infinite-scroller": "npm:^1.2.3"
     "@types/react-router-dom": "npm:^5.3.3"
@@ -9485,7 +9485,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:>=16, @types/react@npm:^18.0.27, @types/react@npm:^18.0.28, @types/react@npm:^18.2.0":
+"@types/react@npm:*, @types/react@npm:>=16, @types/react@npm:^18.0.28":
   version: 18.0.28
   resolution: "@types/react@npm:18.0.28"
   dependencies:
@@ -9493,17 +9493,6 @@ __metadata:
     "@types/scheduler": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 7a752e6c5e76139f258bc14827d2c574bb76d6e7eb1b240f24f79b269153cb88668c34ba7078d3de99ec1973b7022e1f788e71117bd52a287f382d24bb80be40
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^18.2.7":
-  version: 18.2.7
-  resolution: "@types/react@npm:18.2.7"
-  dependencies:
-    "@types/prop-types": "npm:*"
-    "@types/scheduler": "npm:*"
-    csstype: "npm:^3.0.2"
-  checksum: d0a6ce8a4036a61f3085a100a9bda92e677581b1ecf401739269ddb4abcd9e05201597bf32972b1cf8641908c13bf5b4099ea9048f5b505c0770a51f3209794a
   languageName: node
   linkType: hard
 
