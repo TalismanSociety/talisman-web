@@ -1,6 +1,6 @@
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { chainsState, nativeTokenPriceState } from '@domains/chains/recoils'
-import { chainQueryState, substrateApiState } from '@domains/common'
+import { chainDeriveState, chainQueryState, substrateApiState } from '@domains/common'
 import { Decimal } from '@talismn/math'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll, waitForAny } from 'recoil'
@@ -15,7 +15,7 @@ export const useSubstrateFiatTotalStaked = () => {
 
   const [validatorStakes, poolStakes] = useRecoilValue(
     waitForAny([
-      waitForAny(chains.map(x => chainQueryState(x.rpc, 'staking', 'ledger.multi', addresses))),
+      waitForAny(chains.map(x => chainDeriveState(x.rpc, 'staking', 'accounts', [addresses, undefined]))),
       waitForAny(chains.map(x => chainQueryState(x.rpc, 'nominationPools', 'poolMembers.multi', addresses))),
     ])
   )
@@ -32,7 +32,7 @@ export const useSubstrateFiatTotalStaked = () => {
             decimals: x.decimals,
             amount:
               x.loadable.state === 'hasValue'
-                ? x.loadable.contents.reduce((prev, curr) => prev + curr.unwrapOrDefault().active.toBigInt(), 0n)
+                ? x.loadable.contents.reduce((prev, curr) => prev + curr.stakingLedger.active.toBigInt(), 0n)
                 : 0n,
           }))
           .map(x => Decimal.fromPlanck(x.amount, x.decimals).toNumber() * x.price)
