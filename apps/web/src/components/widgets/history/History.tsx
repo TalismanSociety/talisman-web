@@ -30,7 +30,7 @@ type HistoryProps = {
 }
 
 // TODO: lots of repetitive account look up using `encodeAnyAddress`
-const InnerHistory = (props: HistoryProps) => {
+const _History = (props: HistoryProps) => {
   const allAccounts = useRecoilValue(accountsState)
 
   const [items, setItems] = useState<ExtrinsicNode[]>([])
@@ -316,13 +316,16 @@ const InnerHistory = (props: HistoryProps) => {
 }
 
 const History = (props: HistoryProps) => {
-  const selectedAccounts = useRecoilValue(selectedAccountsState)
-  const accountsToSearch = props.accounts ?? selectedAccounts
-
   // To invalidate component after query changes
-  const key = useMemo(() => JSON.stringify({ ...props, accounts: accountsToSearch }), [accountsToSearch, props])
+  const key = useMemo(() => JSON.stringify(props), [props])
 
-  return <InnerHistory key={key} {...props} accounts={accountsToSearch} />
+  return <_History key={key} {...props} />
 }
 
 export default History
+
+export const SelectedAccountsHistory = (props: Omit<HistoryProps, 'accounts'>) => {
+  const accountsToSearch = useRecoilValue(selectedAccountsState)
+
+  return <History {...props} accounts={accountsToSearch} />
+}

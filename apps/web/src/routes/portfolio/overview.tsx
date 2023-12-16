@@ -6,7 +6,7 @@ import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import PortfolioAllocationGraph from '@components/widgets/PortfolioAllocationGraph'
-import History from '@components/widgets/history/History'
+import { SelectedAccountsHistory } from '@components/widgets/history/History'
 import Stakes from '@components/widgets/staking/Stakes'
 import { Eye, EyeOff } from '@talismn/icons'
 import { Button, IconButton } from '@talismn/ui'
@@ -111,9 +111,9 @@ const AssetsOverview = () => {
 }
 
 const HistoryOverview = () => (
-  <div css>
+  <div>
     <SectionHeader headlineText="History" />
-    <History maxCount={8} />
+    <SelectedAccountsHistory maxCount={8} />
     <div css={{ display: 'flex' }}>
       <Button variant="secondary" as={Link} to="history" css={{ marginTop: '1.8rem', marginLeft: 'auto' }}>
         View all history
