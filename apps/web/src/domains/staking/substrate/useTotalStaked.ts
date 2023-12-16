@@ -1,13 +1,12 @@
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { chains } from '@domains/chains'
-import { nativeTokenPriceState } from '@domains/chains/recoils'
+import { chainsState, nativeTokenPriceState } from '@domains/chains/recoils'
 import { chainQueryState, substrateApiState } from '@domains/common'
 import { Decimal } from '@talismn/math'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll, waitForAny } from 'recoil'
 
 export const useSubstrateFiatTotalStaked = () => {
-  const accounts = useRecoilValue(selectedSubstrateAccountsState)
+  const [chains, accounts] = useRecoilValue(waitForAll([chainsState, selectedSubstrateAccountsState]))
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
   const nativeTokenPrices = useRecoilValue(waitForAll(chains.map(chain => nativeTokenPriceState({ chain }))))
 
@@ -33,7 +32,7 @@ export const useSubstrateFiatTotalStaked = () => {
             decimals: x.decimals,
             amount:
               x.loadable.state === 'hasValue'
-                ? x.loadable.contents.reduce((prev, curr) => prev + curr.unwrapOrDefault().total.toBigInt(), 0n)
+                ? x.loadable.contents.reduce((prev, curr) => prev + curr.unwrapOrDefault().active.toBigInt(), 0n)
                 : 0n,
           }))
           .map(x => Decimal.fromPlanck(x.amount, x.decimals).toNumber() * x.price)
@@ -53,7 +52,7 @@ export const useSubstrateFiatTotalStaked = () => {
               x.loadable.state === 'hasValue'
                 ? x.loadable.contents
                     .map(x => x.unwrapOrDefault())
-                    .flatMap(x => [x.points, ...Array.from(x.unbondingEras.values())])
+                    .flatMap(x => x.points)
                     .map(x => x.toBigInt())
                     .reduce((prev, curr) => prev + curr, 0n)
                 : 0n,
