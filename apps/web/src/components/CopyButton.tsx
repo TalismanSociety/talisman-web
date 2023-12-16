@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { ReactComponent as Copy } from '@icons/copy.svg'
+import Copy from '@icons/copy.svg?react'
 
 type CopyButtonProps = {
   className?: string

@@ -50,11 +50,11 @@ export type Extrinsic = {
   error?: Maybe<Scalars['JSON']['output']>
   fee?: Maybe<TokenAmount>
   hash: Scalars['String']['output']
-  id: Scalars['String']['output']
   rewards: RewardsConnection
   signature?: Maybe<Scalars['JSON']['output']>
   signer?: Maybe<Scalars['String']['output']>
   subscanLink?: Maybe<SubscanLink>
+  subsquidId: Scalars['String']['output']
   success: Scalars['Boolean']['output']
   transfers: TransferConnection
 }
@@ -88,6 +88,7 @@ export type ExtrinsicWhereInput = {
   chainEq?: InputMaybe<Scalars['String']['input']>
   hashEq?: InputMaybe<Scalars['String']['input']>
   moduleEq?: InputMaybe<Scalars['String']['input']>
+  signerIn?: InputMaybe<Array<Scalars['String']['input']>>
   timestampGte?: InputMaybe<Scalars['DateTime']['input']>
   timestampLte?: InputMaybe<Scalars['DateTime']['input']>
 }

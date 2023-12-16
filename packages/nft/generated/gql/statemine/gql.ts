@@ -1,6 +1,6 @@
 /* eslint-disable */
 import * as types from './graphql.js'
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core'
+import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core'
 
 /**
  * Map of all GraphQL operations in the project.
@@ -10,7 +10,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * 2. It is not minifiable, so the string of a GraphQL query will be multiple times inside the bundle.
  * 3. It does not support dead code elimination, so it will add unused operations.
  *
- * Therefore it is highly recommended to use the babel-plugin for production.
+ * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
   '\n          query nfts($addresses: [String!], $after: String, $first: Int) {\n            uniqueInstancesConnection(\n              orderBy: id_ASC\n              after: $after\n              first: $first\n              where: { owner: { id_in: $addresses } }\n            ) {\n              edges {\n                node {\n                  id\n                  innerID\n                  metadata\n                  price\n                  uniqueClass {\n                    id\n                    metadata\n                    maxSupply\n                  }\n                }\n              }\n              pageInfo {\n                endCursor\n                hasNextPage\n              }\n            }\n          }\n        ':
@@ -23,7 +23,7 @@ const documents = {
  *
  * @example
  * ```ts
- * const query = gql(`query GetUser($id: ID!) { user(id: $id) { name } }`);
+ * const query = graphql(`query GetUser($id: ID!) { user(id: $id) { name } }`);
  * ```
  *
  * The query argument is unknown!

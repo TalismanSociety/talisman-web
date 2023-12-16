@@ -1,6 +1,6 @@
-import { type ResultOf, type DocumentTypeDecoration, type TypedDocumentNode } from '@graphql-typed-document-node/core'
-import { type FragmentDefinitionNode } from 'graphql'
-import { type Incremental } from './graphql'
+import type { ResultOf, DocumentTypeDecoration, TypedDocumentNode } from '@graphql-typed-document-node/core'
+import type { FragmentDefinitionNode } from 'graphql'
+import type { Incremental } from './graphql'
 
 export type FragmentType<TDocumentType extends DocumentTypeDecoration<any, any>> =
   TDocumentType extends DocumentTypeDecoration<infer TType, any>
@@ -25,12 +25,12 @@ export function useFragment<TType>(
 export function useFragment<TType>(
   _documentNode: DocumentTypeDecoration<TType, any>,
   fragmentType: ReadonlyArray<FragmentType<DocumentTypeDecoration<TType, any>>>
-): readonly TType[]
+): ReadonlyArray<TType>
 // return array of nullable if `fragmentType` is array of nullable
 export function useFragment<TType>(
   _documentNode: DocumentTypeDecoration<TType, any>,
   fragmentType: ReadonlyArray<FragmentType<DocumentTypeDecoration<TType, any>>> | null | undefined
-): readonly TType[] | null | undefined
+): ReadonlyArray<TType> | null | undefined
 export function useFragment<TType>(
   _documentNode: DocumentTypeDecoration<TType, any>,
   fragmentType:
@@ -38,7 +38,7 @@ export function useFragment<TType>(
     | ReadonlyArray<FragmentType<DocumentTypeDecoration<TType, any>>>
     | null
     | undefined
-): TType | readonly TType[] | null | undefined {
+): TType | ReadonlyArray<TType> | null | undefined {
   return fragmentType as any
 }
 
@@ -53,7 +53,7 @@ export function isFragmentReady<TQuery, TFrag>(
   fragmentNode: TypedDocumentNode<TFrag>,
   data: FragmentType<TypedDocumentNode<Incremental<TFrag>, any>> | null | undefined
 ): data is FragmentType<typeof fragmentNode> {
-  const deferredFields = (queryNode as { __meta__?: { deferredFields: Record<string, Array<keyof TFrag>> } }).__meta__
+  const deferredFields = (queryNode as { __meta__?: { deferredFields: Record<string, (keyof TFrag)[]> } }).__meta__
     ?.deferredFields
 
   if (!deferredFields) return true

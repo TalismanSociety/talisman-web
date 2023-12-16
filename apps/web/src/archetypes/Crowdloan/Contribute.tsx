@@ -1,5 +1,5 @@
 import { Parachain } from '@archetypes'
-import { ReactComponent as XCircle } from '@assets/icons/x-circle.svg'
+import XCircle from '@assets/icons/x-circle.svg?react'
 import { Button, DesktopRequired, Field, MaterialLoader, useModal } from '@components'
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'

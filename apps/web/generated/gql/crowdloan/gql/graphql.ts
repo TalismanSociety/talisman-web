@@ -169,6 +169,10 @@ export enum ContributionOrderByInput {
   CrowdloanParaIdAscNullsFirst = 'crowdloan_paraId_ASC_NULLS_FIRST',
   CrowdloanParaIdDesc = 'crowdloan_paraId_DESC',
   CrowdloanParaIdDescNullsLast = 'crowdloan_paraId_DESC_NULLS_LAST',
+  CrowdloanRefundedAsc = 'crowdloan_refunded_ASC',
+  CrowdloanRefundedAscNullsFirst = 'crowdloan_refunded_ASC_NULLS_FIRST',
+  CrowdloanRefundedDesc = 'crowdloan_refunded_DESC',
+  CrowdloanRefundedDescNullsLast = 'crowdloan_refunded_DESC_NULLS_LAST',
   IdAsc = 'id_ASC',
   IdAscNullsFirst = 'id_ASC_NULLS_FIRST',
   IdDesc = 'id_DESC',
@@ -264,6 +268,7 @@ export type Crowdloan = {
   lastBlock?: Maybe<Scalars['Int']['output']>
   lastPeriod?: Maybe<Scalars['Int']['output']>
   paraId: Scalars['Int']['output']
+  refunded: Scalars['Boolean']['output']
 }
 
 export type CrowdloanContributionsArgs = {
@@ -340,6 +345,10 @@ export enum CrowdloanOrderByInput {
   ParaIdAscNullsFirst = 'paraId_ASC_NULLS_FIRST',
   ParaIdDesc = 'paraId_DESC',
   ParaIdDescNullsLast = 'paraId_DESC_NULLS_LAST',
+  RefundedAsc = 'refunded_ASC',
+  RefundedAscNullsFirst = 'refunded_ASC_NULLS_FIRST',
+  RefundedDesc = 'refunded_DESC',
+  RefundedDescNullsLast = 'refunded_DESC_NULLS_LAST',
 }
 
 export type CrowdloanWhereInput = {
@@ -501,6 +510,9 @@ export type CrowdloanWhereInput = {
   paraId_lte?: InputMaybe<Scalars['Int']['input']>
   paraId_not_eq?: InputMaybe<Scalars['Int']['input']>
   paraId_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  refunded_eq?: InputMaybe<Scalars['Boolean']['input']>
+  refunded_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  refunded_not_eq?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 export type CrowdloansConnection = {

@@ -1,8 +1,8 @@
-import { ReactComponent as IconClear } from '@assets/icons/x-circle.svg'
+import IconClear from '@assets/icons/x-circle.svg?react'
 import { Pill } from '@components'
 import styled from '@emotion/styled'
-import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
-import { ReactComponent as SearchIcon } from '@icons/search.svg'
+import ChevronDown from '@icons/chevron-down.svg?react'
+import SearchIcon from '@icons/search.svg?react'
 import { useBoolean } from '@util/hooks'
 import { useEffect } from 'react'
 

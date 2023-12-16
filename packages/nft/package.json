@@ -10,12 +10,12 @@
   },
   "dependencies": {
     "graphql": "^16.8.1",
-    "graphql-request": "^5.2.0",
+    "graphql-request": "^6.1.0",
     "multiformats": "^11.0.2"
   },
   "devDependencies": {
     "@acala-network/types": "^5.1.1",
-    "@graphql-codegen/cli": "^3.2.2",
+    "@graphql-codegen/cli": "^5.0.0",
     "@polkadot/api": "^10.9.1",
     "prettier": "^2.8.8",
     "typescript": "^5.0.2",

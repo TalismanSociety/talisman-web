@@ -33,7 +33,7 @@
     "@storybook/blocks": "^7.0.12",
     "@storybook/manager-api": "^7.0.12",
     "@storybook/react": "^7.0.12",
-    "@storybook/react-vite": "^7.0.12",
+    "@storybook/react-vite": "^7.6.4",
     "@storybook/testing-library": "^0.0.14-next.2",
     "@talismn/development": "workspace:^",
     "@talismn/eslint-config": "workspace:^",
