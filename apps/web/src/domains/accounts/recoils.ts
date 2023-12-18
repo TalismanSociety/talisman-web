@@ -24,7 +24,7 @@ export const lookupAccountAddressState = atom<string | undefined>({
   default: new URLSearchParams(globalThis.location.search).get(lookupAddressSearchKey) ?? undefined,
   effects: [
     // Add lookup address to search params on change
-    ({ onSet }) =>
+    ({ onSet, getPromise }) => {
       onSet(newValue => {
         const searchParams = new URLSearchParams(globalThis.location.search)
 
@@ -35,7 +35,20 @@ export const lookupAccountAddressState = atom<string | undefined>({
         }
 
         void router.navigate('?' + searchParams.toString(), { replace: true })
-      }),
+      })
+
+      // Persist lookup address between navigation
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      router.subscribe(async state => {
+        const search = new URLSearchParams(state.location.search)
+        const currentValue = await getPromise(lookupAccountAddressState)
+
+        if (!search.has(lookupAddressSearchKey) && currentValue !== undefined) {
+          search.set(lookupAddressSearchKey, currentValue)
+          void router.navigate('?' + search.toString(), { replace: true })
+        }
+      })
+    },
   ],
 })
 
