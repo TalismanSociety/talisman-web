@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/react'
 import { type Nft as BaseNft } from '@talismn/nft'
 import { toast } from '@talismn/ui'
-import { atomFamily, selectorFamily } from 'recoil'
+import { DefaultValue, atomFamily, selectorFamily, waitForNone } from 'recoil'
 import { bufferTime, filter, last, Observable, scan, tap } from 'rxjs'
 import { spawn, Thread } from 'threads'
 import { favoriteNftIdsState, hiddenNftIdsState, nftsByTagState } from './tags'
@@ -13,16 +13,18 @@ export type Nft = BaseNft & {
   tags: Set<NftTag>
 }
 
-const _nftsState = atomFamily<BaseNft[], string>({
+type NftsProgress = { nfts: BaseNft[]; hasMore: boolean }
+
+const _nftsState = atomFamily<NftsProgress, string>({
   key: '_Nfts',
   effects: (address: string) => [
     ({ setSelf }) => {
       const batchSize = 100
 
-      let initialResolve = (_value: BaseNft[]) => {}
+      let initialResolve = (_value: NftsProgress) => {}
       let initialReject = (_reason?: any) => {}
 
-      const initialPromise = new Promise<BaseNft[]>((resolve, reject) => {
+      const initialPromise = new Promise<NftsProgress>((resolve, reject) => {
         initialResolve = resolve
         initialReject = reject
       })
@@ -48,8 +50,8 @@ const _nftsState = atomFamily<BaseNft[], string>({
               { nfts: [] as BaseNft[], errors: [] as unknown[] }
             ),
             tap(({ nfts }) => {
-              initialResolve(nfts)
-              setSelf(nfts)
+              initialResolve({ nfts, hasMore: true })
+              setSelf({ nfts, hasMore: true })
             }),
             last(null, { nfts: [], errors: [] }),
             tap(({ errors }) => {
@@ -68,7 +70,8 @@ const _nftsState = atomFamily<BaseNft[], string>({
           )
           .subscribe({
             complete: () => {
-              initialResolve([])
+              initialResolve({ nfts: [], hasMore: false })
+              setSelf(x => (x instanceof DefaultValue ? { nfts: [], hasMore: false } : { ...x, hasMore: false }))
               void Thread.terminate(worker)
             },
             error: error => {
@@ -92,7 +95,7 @@ export const nftsState = selectorFamily({
   get:
     (address: string) =>
     ({ get }): Nft[] =>
-      [...get(_nftsState(address))]
+      [...get(_nftsState(address)).nfts]
         .map(x => {
           const tags = new Set<'favorite' | 'hidden'>()
 
@@ -112,6 +115,14 @@ export const nftsState = selectorFamily({
             (a.name ?? '').localeCompare(b.name ?? '')
         ),
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
+})
+
+export const nftsLoadingState = selectorFamily({
+  key: 'NftsLoading',
+  get:
+    (address: string) =>
+    ({ get }) =>
+      get(waitForNone([_nftsState(address)]))[0].valueMaybe()?.hasMore ?? true,
 })
 
 type Type = string
