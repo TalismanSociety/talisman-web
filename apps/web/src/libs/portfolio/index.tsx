@@ -80,6 +80,7 @@ export function calculateGqlCrowdloanPortfolioAmounts(
   Object.entries(byAddress).forEach(([address, contributions]) => {
     const tags: Tag[] = ['USD', 'Crowdloans', { Address: address }]
     contributions.forEach(contribution => {
+      if (contribution.returned) return
       const contributionTokens = planckToTokens(contribution.amount, tokenDecimals)
       const contributionUsd = new BigNumber(contributionTokens ?? 0).times(tokenPrice ?? 0).toString()
       amounts.push({ tags, amount: contributionUsd })

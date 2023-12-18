@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import crowdloanDataState, { type CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
-import { selectedSubstrateAccountsState } from '@domains/accounts'
 import type { AccountId } from '@polkadot/types/interfaces'
-import { stringToU8a, u8aConcat, u8aToHex, u8aEq } from '@polkadot/util'
-import { decodeAnyAddress, planckToTokens } from '@talismn/util'
+import { stringToU8a, u8aConcat, u8aEq } from '@polkadot/util'
+import { planckToTokens } from '@talismn/util'
 import BN from 'bn.js'
 import { find, get } from 'lodash'
 import { useContext as _useContext, createContext, useEffect, useMemo, useState, type PropsWithChildren } from 'react'
@@ -48,21 +47,8 @@ export type Crowdloan = {
   lockedSeconds?: number
 }
 
-type Return = {
-  timestamp: string
-  block: number
-  crowdloanAccount: string
-  userAccount: string
-  amount: {
-    value: string
-    decimals: number
-    symbol: string
-  }
-}
-
 type ContextProps = {
   crowdloans: Crowdloan[]
-  returns: Return[]
   hydrated: boolean
 }
 
@@ -140,11 +126,6 @@ export const useCrowdloanAggregateStats = () => {
     contributors,
     hydrated,
   }
-}
-
-export const useCrowdloanReturns = () => {
-  const { returns } = useCrowdloans()
-  return returns
 }
 
 const CROWD_PREFIX = stringToU8a('modlpy/cfund')
@@ -260,40 +241,7 @@ export const Provider = ({ children }: PropsWithChildren) => {
     }
   }, [loadable.contents, loadable.state])
 
-  const allAccounts = useRecoilValue(selectedSubstrateAccountsState)
-  const [returns, setReturns] = useState<Return[]>([])
-  useEffect(() => {
-    let cancelled = false
-
-    const getReturns = async () =>
-      (
-        await Promise.allSettled(
-          allAccounts
-            .map(account => u8aToHex(decodeAnyAddress(account.address)))
-            .map(async address => {
-              const prefix1 = address.slice(2, 3)
-              const prefix2 = address.slice(3, 4)
-              const result = await fetch(
-                `https://talismansociety.github.io/crowdloan-stats/returnsByUserAccount/${prefix1}/${prefix2}/${address}.json`
-              )
-              return (await result.json()) as Return[]
-            })
-        )
-      ).flatMap(settled => (settled.status === 'fulfilled' ? settled.value : []))
-
-    getReturns()
-      .then(returns => {
-        if (cancelled) return
-        setReturns(returns)
-      })
-      .catch(error => console.warn('Failed to fetch returned crowdloan contributions', error))
-
-    return () => {
-      cancelled = true
-    }
-  }, [allAccounts])
-
-  const value = useMemo(() => ({ crowdloans, hydrated, returns }), [crowdloans, hydrated, returns])
+  const value = useMemo(() => ({ crowdloans, hydrated }), [crowdloans, hydrated])
 
   return <Context.Provider value={value}>{children}</Context.Provider>
 }

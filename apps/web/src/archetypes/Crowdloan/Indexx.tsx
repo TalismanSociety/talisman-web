@@ -88,7 +88,7 @@ const FilterBar = styled(
 const Index = styled(({ withFilter, className }: { withFilter: boolean; className?: string }) => {
   const { t } = useTranslation()
   const { crowdloans, count, loading, filterProps } = Crowdloan.useFilter()
-  const { contributions } = useCrowdloanContributions()
+  const { gqlContributions } = useCrowdloanContributions()
 
   return (
     <div className={`crowdloan-index ${className ?? ''}`}>
@@ -102,7 +102,7 @@ const Index = styled(({ withFilter, className }: { withFilter: boolean; classNam
         <NoResults require={count?.filtered > 0} subtitle={t('noCrowdloans.text')} text={t('noCrowdloans.subtext')}>
           <Grid>
             {crowdloans.map(({ id }) => (
-              <Crowdloan.Teaser key={id} id={id} contributed={contributions.find(x => x.id === id) !== undefined} />
+              <Crowdloan.Teaser key={id} id={id} contributed={gqlContributions.find(x => x.id === id) !== undefined} />
             ))}
           </Grid>
         </NoResults>

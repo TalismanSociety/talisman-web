@@ -15,7 +15,7 @@ export const CrowdloanDetail = styled(({ className }: { className?: string }) =>
   const { banner } = useParachainAssets(parachainDetails?.id)
 
   const { crowdloan: { id, uiStatus } = {} } = useCrowdloanByParachainId(parachainDetails?.id)
-  const { contributions } = useCrowdloanContributions()
+  const { gqlContributions } = useCrowdloanContributions()
 
   const { openModal } = useModal()
 
@@ -40,7 +40,7 @@ export const CrowdloanDetail = styled(({ className }: { className?: string }) =>
         <aside>
           <Panel>
             <PanelSection title={t('Raised')}>
-              <Crowdloan.Raised id={id ?? ''} contributed={contributions.find(x => x.id === id) !== undefined} />
+              <Crowdloan.Raised id={id ?? ''} contributed={gqlContributions.find(x => x.id === id) !== undefined} />
             </PanelSection>
             <PanelSection title={t('Ends in')}>
               <Crowdloan.Countdown id={id} />

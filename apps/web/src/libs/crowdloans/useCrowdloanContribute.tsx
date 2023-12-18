@@ -651,10 +651,11 @@ function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: Dis
   // (if accounts is [] then useCrowdloanContributions will skip the query)
   const contributionsProps =
     stateDeps !== false && stateDeps.account !== undefined && Moonbeam.is(stateDeps.relayChainId, stateDeps.parachainId)
-      ? { accounts: [stateDeps.account], crowdloans: [stateDeps.crowdloanId] }
-      : { accounts: [], crowdloans: [] }
+      ? { accounts: [stateDeps.account], crowdloanId: stateDeps.crowdloanId }
+      : { accounts: [], crowdloanId: undefined }
 
-  const { contributions, hydrated: contributionsHydrated } = useCrowdloanContributions(contributionsProps)
+  const { gqlContributions, hydrated: contributionsHydrated } = useCrowdloanContributions(contributionsProps.accounts)
+  const moonbeamContributions = gqlContributions.filter(c => c.crowdloan.id === contributionsProps.crowdloanId)
 
   useEffect(() => {
     if (!stateDeps) return
@@ -726,7 +727,7 @@ function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: Dis
 
       // get verificationSignature from moonbeam api
       const guid = uuidv4()
-      const previousTotalContributions = contributions
+      const previousTotalContributions = moonbeamContributions
         .reduce((total, contribution) => new BigNumber(total).plus(contribution.amount), new BigNumber(0))
         .toString()
       const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
@@ -748,7 +749,7 @@ function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: Dis
 
       dispatch(ContributeEvent.setVerifierSignature({ sr25519: signature as string }))
     })()
-  }, [dispatch, contributions, contributionsHydrated, stateDeps]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [dispatch, moonbeamContributions, contributionsHydrated, stateDeps]) // eslint-disable-line react-hooks/exhaustive-deps
 }
 
 function useMoonbeamRegisterUserThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
