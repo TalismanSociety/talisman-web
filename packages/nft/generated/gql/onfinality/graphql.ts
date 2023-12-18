@@ -3938,7 +3938,7 @@ export const NftsDocument = {
                         fields: [
                           {
                             kind: 'ObjectField',
-                            name: { kind: 'Name', value: 'equalToInsensitive' },
+                            name: { kind: 'Name', value: 'equalTo' },
                             value: { kind: 'Variable', name: { kind: 'Name', value: 'address' } },
                           },
                         ],

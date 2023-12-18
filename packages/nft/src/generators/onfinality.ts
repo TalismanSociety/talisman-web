@@ -10,7 +10,7 @@ export const createOnfinalityNftGenerator: CreateNftAsyncGenerator<Nft<'erc721' 
         'https://nft-beta.api.onfinality.io/public',
         graphql(`
           query nfts($address: String!, $after: Cursor, $first: Int) {
-            nfts(after: $after, first: $first, filter: { currentOwner: { equalToInsensitive: $address } }) {
+            nfts(after: $after, first: $first, filter: { currentOwner: { equalTo: $address } }) {
               edges {
                 node {
                   id
@@ -38,7 +38,7 @@ export const createOnfinalityNftGenerator: CreateNftAsyncGenerator<Nft<'erc721' 
           }
         `),
         {
-          address: address,
+          address: address.toLowerCase(),
           // @ts-expect-error
           after,
           first: batchSize,
