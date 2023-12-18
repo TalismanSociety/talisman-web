@@ -5,29 +5,23 @@ import SectionHeader from '@components/molecules/SectionHeader'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { WithdrawCrowdloanWidget } from '@components/widgets/WithdrawCrowdloanWidget'
-import { accountsState, selectedAccountsState, selectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { selectedAccountsState, selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { chains } from '@domains/chains'
 import { tokenPriceState } from '@domains/chains/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import { css, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import crowdloanDataState from '@libs/@talisman-crowdloans/provider'
-import { useCrowdloanContributions, type CrowdloanContribution, type GqlContribution } from '@libs/crowdloans'
-import {
-  calculateCrowdloanPortfolioAmounts,
-  calculateGqlCrowdloanPortfolioAmounts,
-  useTaggedAmountsInPortfolio,
-} from '@libs/portfolio'
-import { useChainmetaValue, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
-import { useCrowdloanReturns, useCrowdloans } from '@libs/talisman/crowdloan'
+import { useCrowdloanContributions, type GqlContribution } from '@libs/crowdloans'
+import { calculateGqlCrowdloanPortfolioAmounts, useTaggedAmountsInPortfolio } from '@libs/portfolio'
+import { useChainmetaValue, useParachainDetailsById } from '@libs/talisman'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { Clock, Eye, Lock } from '@talismn/icons'
 import { Chip, ListItem, Text } from '@talismn/ui'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
 import { formatCommas, truncateAddress } from '@util/helpers'
-import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { Suspense, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
@@ -253,252 +247,13 @@ const GqlCrowdloanItem = styled(
   }
 )``
 
-const CrowdloanItem = styled(
-  ({ contribution, className }: { contribution: CrowdloanContribution; className?: string }) => {
-    const { t } = useTranslation()
-    const theme = useTheme()
-
-    const accounts = useRecoilValue(accountsState)
-    const account = useMemo(
-      () => accounts.find(account => encodeAnyAddress(account.address) === encodeAnyAddress(contribution.account)),
-      [accounts, contribution.account]
-    )
-
-    const id = contribution.parachain.paraId
-
-    const crowdloans = useRecoilValue(crowdloanDataState)
-    const returns = useCrowdloanReturns()
-
-    const relayChainId = contribution.parachain.paraId.split('-')[0]
-    const paraId = contribution.parachain.paraId.split('-')[1]
-    const relayChain = Maybe.of(relayChainId).mapOrUndefined(x => SupportedRelaychains[x])
-    const chain = crowdloans.find(x => x.id === id)
-
-    const { tokenSymbol: relayNativeToken, coingeckoId, tokenDecimals: relayTokenDecimals } = relayChain ?? {}
-    const { name } = chain ?? {}
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const priceLoadable = useRecoilValueLoadable(tokenPriceState({ coingeckoId: coingeckoId! }))
-
-    const relayTokenPrice = priceLoadable.valueMaybe()?.toString()
-    const relayPriceLoading = priceLoadable.state === 'loading'
-
-    const relayTokenSymbol = relayNativeToken ?? 'Planck'
-    const contributedTokens = planckToTokens(contribution.amount, relayTokenDecimals ?? 0)
-    const contributedUsd = new BigNumber(contributedTokens).times(relayTokenPrice ?? 0).toString()
-
-    const portfolioAmounts = useMemo(
-      () => calculateCrowdloanPortfolioAmounts([contribution], relayTokenDecimals, relayTokenPrice),
-      [contribution, relayTokenDecimals, relayTokenPrice]
-    )
-
-    useTaggedAmountsInPortfolio(portfolioAmounts)
-
-    const { crowdloan } = useCrowdloanById(contribution.id)
-    const parachainId = crowdloan?.parachain?.paraId
-    const { parachainDetails } = useParachainDetailsById(parachainId)
-    const linkToCrowdloan = parachainDetails?.slug ? `/crowdloans/${parachainDetails?.slug}` : `/crowdloans`
-
-    const blockNumber = useChainmetaValue(relayChain?.id ?? NaN, 'blockNumber')
-    const blockPeriod = useChainmetaValue(relayChain?.id ?? NaN, 'blockPeriod')
-
-    const lockedSeconds = ((crowdloan?.fundLeaseEndBlock ?? 0) - (blockNumber ?? 0)) * (blockPeriod ?? 6)
-
-    const isLocked = (lockedSeconds ?? 0) > 0
-    const isUnlockingSoon = (lockedSeconds ?? 0) <= 60 * 60 * 72 // 72 hours
-
-    // TODO: Get from squid (can be included in contributions squid ezpz)
-    const isFundsReturned = returns.some(r => r.crowdloanAccount === crowdloan?.stash)
-
-    const navigate = useNavigate()
-    const goToStaking = useCallback(() => {
-      const relayChainId = chains.find(({ genesisHash }) => genesisHash === relayChain?.genesisHash)?.id
-      if (relayChainId && account?.address)
-        navigate(`/staking?action=stake&chain=${relayChainId}&account=${account.address}`)
-    }, [account?.address, navigate, relayChain?.genesisHash])
-
-    // hide returned contributions which were unlocked more than 30 days ago
-    const oldAndReturned = isFundsReturned && lockedSeconds < -60 * 60 * 24 * 30
-    if (blockNumber === null || oldAndReturned) return null
-
-    const actions = (() => {
-      if (isLocked) return null
-      if (account?.readonly)
-        return (
-          <>
-            <div
-              css={css`
-                display: flex;
-                align-items: center;
-                gap: 0.5em;
-                color: color-mix(in srgb, #fafafa, transparent 30%);
-              `}
-            >
-              <Eye size="1em" />
-              <div>{t('Followed account')}</div>
-            </div>
-            <div css={{ flexGrow: '1' }} />
-            {isFundsReturned && <div css={{ color: 'rgb(90, 90, 90)' }}>{t('Withdrawn')}</div>}
-          </>
-        )
-
-      if (isFundsReturned)
-        return (
-          <>
-            <Chip
-              containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
-              contentColor={theme.color.primary}
-              onClick={goToStaking}
-            >
-              {t('Stake')}
-            </Chip>
-            <div css={{ flexGrow: '1' }} />
-            <div css={{ color: 'rgb(90, 90, 90)' }}>{t('Withdrawn')}</div>
-          </>
-        )
-
-      return (
-        <>
-          <WithdrawCrowdloanWidget
-            stakeAfterWithdrawn
-            {...{
-              account,
-              paraId,
-              relayChain,
-              goToStaking,
-              amount: contributedTokens,
-            }}
-          >
-            {({ onToggleOpen }) => (
-              <Chip
-                containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
-                contentColor={theme.color.primary}
-                onClick={onToggleOpen}
-              >
-                {t('Withdraw & Stake')}
-              </Chip>
-            )}
-          </WithdrawCrowdloanWidget>
-          <WithdrawCrowdloanWidget
-            {...{
-              account,
-              paraId,
-              relayChain,
-              amount: contributedTokens,
-            }}
-          >
-            {({ onToggleOpen }) => <Chip onClick={onToggleOpen}>{t('Withdraw')}</Chip>}
-          </WithdrawCrowdloanWidget>
-        </>
-      )
-    })()
-
-    return (
-      <article className={className} css={{ borderRadius: '0.8rem', overflow: 'hidden' }}>
-        <Link to={linkToCrowdloan} className={className}>
-          <ListItem
-            leadingContent={<Parachain.Asset id={parachainId ?? ''} type="logo" size={4} />}
-            headlineText={
-              name ?? [relayChain?.name, t('Parachain'), parachainId?.split('-')?.[1]].filter(Boolean).join(' ')
-            }
-            supportingText={
-              <>
-                <Text.Body css={{ display: 'flex', alignItems: 'center', gap: '0.25em' }}>
-                  {account && <AccountIcon account={account} size="1em" />}
-                  <Text.Body css={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {account?.name ??
-                      truncateAddress(encodeAnyAddress(contribution.account, relayChain?.accountPrefix ?? 42))}
-                  </Text.Body>
-                </Text.Body>
-              </>
-            }
-            trailingContent={
-              <>
-                {isLocked && (
-                  <div css={{ display: 'flex', alignItems: 'center', marginRight: '3rem' }}>
-                    <div
-                      css={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '0.5em',
-                        padding: '0.4rem 0.6rem',
-                        fontSize: '1.2rem',
-                        color: isUnlockingSoon ? 'rgb(244, 143, 69)' : 'rgb(165, 165, 165)',
-                        backgroundColor: isUnlockingSoon ? 'rgba(244, 143, 69, 0.2)' : 'rgb(47, 47, 47)',
-                        borderRadius: '1.2rem',
-                      }}
-                    >
-                      <Clock css={{ width: '1em', height: '1em' }} />{' '}
-                      <Countdown seconds={lockedSeconds ?? 0} showSeconds={(lockedSeconds ?? 0) < 60} />
-                    </div>
-                  </div>
-                )}
-                <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                  <Text.BodyLarge as="div" css={{ fontWeight: 'bold' }}>
-                    <RedactableBalance>
-                      {contributedTokens && formatCommas(Number(contributedTokens))} {relayTokenSymbol}
-                    </RedactableBalance>{' '}
-                    <Lock size="1em" />
-                  </Text.BodyLarge>
-                  <Text.BodyLarge as="div">
-                    <Pendor prefix={!contributedUsd && '-'} require={!relayPriceLoading}>
-                      <RedactableBalance>
-                        {contributedUsd && <AnimatedFiatNumber end={Number(contributedUsd)} />}
-                      </RedactableBalance>
-                    </Pendor>
-                  </Text.BodyLarge>
-                </div>
-              </>
-            }
-            css={{ backgroundColor: theme.color.surface }}
-          />
-        </Link>
-        <div
-          css={[
-            {
-              display: 'flex',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '0.5rem',
-              padding: '0.8rem 1.6rem',
-              backgroundColor: theme.color.foreground,
-              fontSize: '1.2rem',
-            },
-            !actions && { display: 'none' },
-          ]}
-        >
-          {actions}
-        </div>
-      </article>
-    )
-  }
-)``
-
 const SuspendableCrowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
-  // TODO: Get from squid (on-chain contributions are deleted once they've been refunded)
-  const {
-    contributions: onChainContributions,
-    gqlContributions,
-    hydrated: contributionsHydrated,
-  } = useCrowdloanContributions({
-    accounts: useMemo(() => accounts.map(x => x.address), [accounts]),
-  })
+  const { gqlContributions, hydrated: contributionsHydrated } = useCrowdloanContributions(
+    useMemo(() => accounts.map(x => x.address), [accounts])
+  )
   const crowdloansUsd = useTotalCrowdloanTotalFiatAmount()
-
-  const { crowdloans } = useCrowdloans()
-  const sortedOnChainContributions = useMemo<CrowdloanContribution[]>(() => {
-    const crowdloanByParaId = new Map(crowdloans.map(crowdloan => [crowdloan.parachain.paraId, crowdloan]))
-    return onChainContributions.slice().sort((a, b) => {
-      return (
-        (crowdloanByParaId.get(a.parachain.paraId)?.fundLeaseEndBlock ?? Number.MAX_SAFE_INTEGER) -
-        (crowdloanByParaId.get(b.parachain.paraId)?.fundLeaseEndBlock ?? Number.MAX_SAFE_INTEGER)
-      )
-    })
-  }, [crowdloans, onChainContributions])
 
   const sortedGqlContributions = useMemo(() => {
     return gqlContributions.slice().sort((a, b) => {
@@ -521,48 +276,8 @@ const SuspendableCrowdloans = ({ className }: { className?: string }) => {
     })
   }, [accounts, gqlContributions])
 
-  const latestDotBlock = useChainmetaValue(0, 'blockNumber')
-  const latestKsmBlock = useChainmetaValue(2, 'blockNumber')
-  const [recentDotBlock, setRecentDotBlock] = useState<number | null>(latestDotBlock)
-  const [recentKsmBlock, setRecentKsmBlock] = useState<number | null>(latestKsmBlock)
-  useEffect(() => {
-    setRecentDotBlock(dotBlock => (dotBlock !== null ? dotBlock : latestDotBlock))
-    setRecentKsmBlock(ksmBlock => (ksmBlock !== null ? ksmBlock : latestKsmBlock))
-  }, [latestDotBlock, latestKsmBlock])
-
-  const mergedContributions = useMemo(() => {
-    const crowdloanByParaId = new Map(crowdloans.map(crowdloan => [crowdloan.parachain.paraId, crowdloan]))
-
-    return [
-      ...sortedGqlContributions.map(c => ({ type: 'gql-contribution' as const, contribution: c })),
-      ...sortedOnChainContributions
-        // only include kusama onchain contributions, polkadot we fetch from a squid
-        .filter(c => c.parachain.paraId.startsWith('2-'))
-        .map(c => ({ type: 'onchain-contribution' as const, contribution: c })),
-    ].sort((a, b) => {
-      if (a.type === b.type) return 0
-
-      const getEnd = (c: typeof a) => {
-        const endBlock =
-          c.type === 'gql-contribution'
-            ? c.contribution.crowdloan.lastBlock ?? Number.MAX_SAFE_INTEGER
-            : crowdloanByParaId.get(c.contribution.parachain.paraId)?.fundLeaseEndBlock ?? Number.MAX_SAFE_INTEGER
-        const relayId =
-          c.type === 'gql-contribution'
-            ? Object.values(SupportedRelaychains).find(chain => chain.genesisHash === c.contribution.relay.genesisHash)
-                ?.id
-            : crowdloanByParaId.get(c.contribution.parachain.paraId)?.relayChainId
-        const relayBlock = relayId === 2 ? recentKsmBlock : recentDotBlock
-
-        return endBlock - (relayBlock ?? 0)
-      }
-
-      return getEnd(a) - getEnd(b)
-    })
-  }, [crowdloans, recentDotBlock, recentKsmBlock, sortedGqlContributions, sortedOnChainContributions])
-
   // Temporary disable crowdloan skeleton
-  if (!contributionsHydrated || mergedContributions.length === 0) {
+  if (!contributionsHydrated || sortedGqlContributions.length === 0) {
     return null
   }
 
@@ -574,17 +289,15 @@ const SuspendableCrowdloans = ({ className }: { className?: string }) => {
           <div>{t('Summoning Crowdloan Contributions...')}</div>
           <Pendor />
         </PanelSection>
-      ) : mergedContributions.length < 1 ? (
+      ) : sortedGqlContributions.length < 1 ? (
         <PanelSection comingSoon>{t('You have not contributed to any recent Crowdloans')}</PanelSection>
       ) : (
         <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
-          {mergedContributions.map(({ type, contribution }) =>
-            type === 'gql-contribution' ? (
+          {sortedGqlContributions.map(contribution => (
+            <>
               <GqlCrowdloanItem key={`${contribution.id}`} contribution={contribution} />
-            ) : (
-              <CrowdloanItem key={`${contribution.id}${contribution.account}`} contribution={contribution} />
-            )
-          )}
+            </>
+          ))}
         </div>
       )}
     </section>
