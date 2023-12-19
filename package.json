@@ -15,7 +15,7 @@
     "lint": "yarn turbo run lint",
     "check-types": "yarn turbo run check-types",
     "e2e": "yarn turbo run e2e",
-    "storybook": "yarn turbo run storybook",
+    "storybook": "yarn turbo run storybook --concurrency 11",
     "build-storybook": "yarn turbo run storybook"
   },
   "devDependencies": {
