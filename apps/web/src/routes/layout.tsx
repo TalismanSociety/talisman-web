@@ -26,9 +26,9 @@ import {
   NavigationRail,
   SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR,
   Scaffold,
+  SearchBar,
   Select,
   Text,
-  TextInput,
   TopAppBar,
   createPortal,
 } from '@talismn/ui'
@@ -90,7 +90,7 @@ const AddressSearch = () => {
   return (
     <div css={{ display: 'flex', justifyContent: 'center' }}>
       <div css={{ flex: 1, [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { maxWidth: '45rem' } }}>
-        <TextInput
+        <SearchBar
           placeholder="Search by account"
           value={address ?? ''}
           onChange={event => setAddress(event.target.value)}
