@@ -65,6 +65,7 @@ export const lookupAccountState = selector<Account | undefined>({
             address: resultingAddress,
             readonly: true,
             partOfPortfolio: false,
+            type: isEvmAddress(resultingAddress) ? ('ethereum' as const) : undefined,
           }
     }),
 })
