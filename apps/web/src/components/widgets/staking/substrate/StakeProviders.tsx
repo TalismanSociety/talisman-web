@@ -1,5 +1,6 @@
 import StakeProvider from '@components/recipes/StakeProvider'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
+import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedSubstrateAccountsState } from '@domains/accounts'
 import { ChainContext, ChainProvider, chainsState } from '@domains/chains'
@@ -114,9 +115,11 @@ const StakeProviders = () => {
   return (
     <>
       {useRecoilValue(chainsState).map((chain, index) => (
-        <ChainProvider key={index} chain={chain}>
-          <StakeProviderItem />
-        </ChainProvider>
+        <ErrorBoundary key={index} orientation="horizontal">
+          <ChainProvider chain={chain}>
+            <StakeProviderItem />
+          </ChainProvider>
+        </ErrorBoundary>
       ))}
     </>
   )

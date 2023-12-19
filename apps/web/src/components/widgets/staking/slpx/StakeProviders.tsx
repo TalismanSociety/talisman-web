@@ -1,5 +1,6 @@
 import StakeProvider from '@components/recipes/StakeProvider'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
+import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedBalancesState, selectedCurrencyState } from '@domains/balances'
 import { slpxPairsState, type SlpxPair } from '@domains/staking/slpx'
@@ -77,43 +78,45 @@ const StakeProviders = () => {
   return (
     <>
       {slpxPairs.map((slpxPair, index) => (
-        <PolkadotApiIdProvider key={index} id={slpxPair.substrateEndpoint}>
-          <StakeProvider
-            symbol={slpxPair.nativeToken.symbol}
-            logo={githubChainLogoUrl('moonbeam')}
-            chain={slpxPair.chain.name}
-            apr={
-              <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                <Apr slpxPair={slpxPair} />
-              </Suspense>
-            }
-            type="Liquid staking"
-            provider="Bifrost SLPx"
-            unbondingPeriod={
-              <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                <UnlockDuration slpxPair={slpxPair} />
-              </Suspense>
-            }
-            availableBalance={
-              <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                <AvailableBalance slpxPair={slpxPair} />
-              </Suspense>
-            }
-            availableFiatBalance={
-              <Suspense>
-                <AvailableFiatBalance slpxPair={slpxPair} />
-              </Suspense>
-            }
-            stakePercentage={
-              <Suspense fallback={<StakeProvider.StakePercentage loading />}>
-                <StakePercentage slpxPair={slpxPair} />
-              </Suspense>
-            }
-            stakeButton={
-              <StakeProvider.StakeButton as={Link} to={`?action=stake&type=slpx&contract-address=${slpxPair.splx}`} />
-            }
-          />
-        </PolkadotApiIdProvider>
+        <ErrorBoundary key={index} orientation="horizontal">
+          <PolkadotApiIdProvider id={slpxPair.substrateEndpoint}>
+            <StakeProvider
+              symbol={slpxPair.nativeToken.symbol}
+              logo={githubChainLogoUrl('moonbeam')}
+              chain={slpxPair.chain.name}
+              apr={
+                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                  <Apr slpxPair={slpxPair} />
+                </Suspense>
+              }
+              type="Liquid staking"
+              provider="Bifrost SLPx"
+              unbondingPeriod={
+                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                  <UnlockDuration slpxPair={slpxPair} />
+                </Suspense>
+              }
+              availableBalance={
+                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                  <AvailableBalance slpxPair={slpxPair} />
+                </Suspense>
+              }
+              availableFiatBalance={
+                <Suspense>
+                  <AvailableFiatBalance slpxPair={slpxPair} />
+                </Suspense>
+              }
+              stakePercentage={
+                <Suspense fallback={<StakeProvider.StakePercentage loading />}>
+                  <StakePercentage slpxPair={slpxPair} />
+                </Suspense>
+              }
+              stakeButton={
+                <StakeProvider.StakeButton as={Link} to={`?action=stake&type=slpx&contract-address=${slpxPair.splx}`} />
+              }
+            />
+          </PolkadotApiIdProvider>
+        </ErrorBoundary>
       ))}
     </>
   )
