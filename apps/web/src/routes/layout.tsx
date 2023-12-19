@@ -111,6 +111,16 @@ const AddressSearch = () => {
     }
   }, [address])
 
+  useEffect(() => {
+    if (
+      searchBarRef.current !== null &&
+      searchBarRef.current !== document.activeElement &&
+      isNilOrWhitespace(address)
+    ) {
+      setRevealed(false)
+    }
+  }, [address])
+
   return (
     <LayoutGroup>
       {revealed ? (
