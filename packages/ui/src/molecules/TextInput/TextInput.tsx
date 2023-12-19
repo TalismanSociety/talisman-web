@@ -24,6 +24,7 @@ export type TextInputProps = Omit<
   trailingSupportingText?: ReactNode
   leadingSupportingText?: ReactNode
   containerClassName?: string
+  inputContainerClassName?: string
   onChangeText?: (value: string) => unknown
   /** @deprecated */
   isError?: boolean
@@ -42,6 +43,7 @@ const TextInput = Object.assign(
         trailingSupportingText,
         leadingSupportingText,
         containerClassName,
+        inputContainerClassName,
         onChangeText,
         isError,
         ...props
@@ -74,10 +76,11 @@ const TextInput = Object.assign(
             </div>
           )}
           <Surface
+            className={inputContainerClassName}
             css={{
               display: 'flex',
               alignItems: 'center',
-              padding: '1.5rem',
+              padding: '1.156rem 1.5rem',
               borderRadius: '1.25rem',
               gap: '1rem',
             }}
@@ -98,6 +101,7 @@ const TextInput = Object.assign(
                   'width': props.width ?? '20rem',
                   'background': 'transparent',
                   'border': 'none',
+                  'padding': 0,
                   '&[type=number]': {
                     '::-webkit-outer-spin-button': { display: 'none' },
                     '::-webkit-inner-spin-button': { display: 'none' },
