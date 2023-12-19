@@ -3,6 +3,7 @@ import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { array, jsonParser, object, optional, string } from '@recoiljs/refine'
 import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { Maybe } from '@util/monads'
+import { isNilOrWhitespace } from '@util/nil'
 import { uniqBy } from 'lodash'
 import { useUpdateEffect } from 'react-use'
 import { atom, selector, useRecoilValue, useSetRecoilState, waitForAll } from 'recoil'
@@ -43,7 +44,7 @@ export const lookupAccountAddressState = atom<string | undefined>({
         const search = new URLSearchParams(state.location.search)
         const currentValue = await getPromise(lookupAccountAddressState)
 
-        if (!search.has(lookupAddressSearchKey) && currentValue !== undefined) {
+        if (!search.has(lookupAddressSearchKey) && !isNilOrWhitespace(currentValue)) {
           search.set(lookupAddressSearchKey, currentValue)
           void router.navigate('?' + search.toString(), { replace: true })
         }
