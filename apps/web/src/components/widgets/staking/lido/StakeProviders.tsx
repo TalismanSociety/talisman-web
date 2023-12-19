@@ -1,5 +1,6 @@
 import StakeProvider from '@components/recipes/StakeProvider'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
+import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedBalancesState, selectedCurrencyState } from '@domains/balances'
 import { type LidoSuite } from '@domains/staking/lido'
@@ -85,41 +86,42 @@ const StakeProviders = () => {
   return (
     <>
       {lidoSuites.map((lidoSuite, index) => (
-        <StakeProvider
-          key={index}
-          symbol={lidoSuite.chain.nativeCurrency.symbol}
-          logo={githubChainLogoUrl('1')}
-          chain={lidoSuite.chain.name}
-          apr={
-            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-              <Apr lidoSuite={lidoSuite} />
-            </Suspense>
-          }
-          type="Liquid staking"
-          provider="Lido"
-          unbondingPeriod="1-5 day(s)"
-          availableBalance={
-            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-              <AvailableBalance lidoSuite={lidoSuite} />
-            </Suspense>
-          }
-          availableFiatBalance={
-            <Suspense>
-              <AvailableFiatBalance lidoSuite={lidoSuite} />
-            </Suspense>
-          }
-          stakePercentage={
-            <Suspense fallback={<StakeProvider.StakePercentage loading />}>
-              <StakePercentage lidoSuite={lidoSuite} />
-            </Suspense>
-          }
-          stakeButton={
-            <StakeProvider.StakeButton
-              as={Link}
-              to={`?action=stake&type=lido&token-address=${lidoSuite.token.address}`}
-            />
-          }
-        />
+        <ErrorBoundary key={index} orientation="horizontal">
+          <StakeProvider
+            symbol={lidoSuite.chain.nativeCurrency.symbol}
+            logo={githubChainLogoUrl('1')}
+            chain={lidoSuite.chain.name}
+            apr={
+              <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                <Apr lidoSuite={lidoSuite} />
+              </Suspense>
+            }
+            type="Liquid staking"
+            provider="Lido"
+            unbondingPeriod="1-5 day(s)"
+            availableBalance={
+              <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                <AvailableBalance lidoSuite={lidoSuite} />
+              </Suspense>
+            }
+            availableFiatBalance={
+              <Suspense>
+                <AvailableFiatBalance lidoSuite={lidoSuite} />
+              </Suspense>
+            }
+            stakePercentage={
+              <Suspense fallback={<StakeProvider.StakePercentage loading />}>
+                <StakePercentage lidoSuite={lidoSuite} />
+              </Suspense>
+            }
+            stakeButton={
+              <StakeProvider.StakeButton
+                as={Link}
+                to={`?action=stake&type=lido&token-address=${lidoSuite.token.address}`}
+              />
+            }
+          />
+        </ErrorBoundary>
       ))}
     </>
   )
