@@ -71,8 +71,7 @@ const AssetsOverview = () => {
             }
             css={{ marginBottom: 0 }}
           />
-          <SearchBar
-            placeholder="Search"
+          <div
             css={{
               'marginTop': '2rem',
               'width': '100%',
@@ -81,9 +80,18 @@ const AssetsOverview = () => {
                 width: '35%',
               },
             }}
-            value={search}
-            onChangeText={setSearch}
-          />
+          >
+            <SearchBar
+              placeholder="Search"
+              value={search}
+              onChangeText={setSearch}
+              css={{
+                '@media (min-width: 1024px)': {
+                  width: 0,
+                },
+              }}
+            />
+          </div>
         </div>
         <AssetsList isLoading={isLoading}>
           {tokens?.map(token => (
