@@ -2,7 +2,9 @@ import request from 'graphql-request'
 import { graphql } from '../../generated/gql/onfinality/index.js'
 import type { CreateNftAsyncGenerator, Nft } from '../types.js'
 
-export const createOnfinalityNftGenerator: CreateNftAsyncGenerator<Nft<'erc721' | 'erc1155', string>> =
+export const createOnfinalityNftGenerator: (options?: {
+  chaindataUrl: string
+}) => CreateNftAsyncGenerator<Nft<'erc721' | 'erc1155', string>> = options =>
   async function* (address, { batchSize }) {
     let after: string
     while (true) {
@@ -45,31 +47,64 @@ export const createOnfinalityNftGenerator: CreateNftAsyncGenerator<Nft<'erc721' 
         }
       )
 
-      yield* response.nfts?.edges
-        .map(x => x.node)
-        .filter((x): x is NonNullable<typeof x> => x !== null && x !== undefined)
-        .map(
-          nft =>
-            ({
-              id: `${nft.collection?.contractType}-${nft.collection?.networkId}-${nft.collection?.contractAddress}-${nft.tokenId}`.toLowerCase(),
-              type: nft.collection?.contractType.toLowerCase() ?? '',
-              chain: nft.collection?.networkId ?? '',
+      const chainEtherscan = new Map<string, string | undefined>()
+      const getEtherscanUrl = async (chainId: string, contractAddress: string, tokenId: string) => {
+        chainEtherscan.set(
+          chainId,
+          chainEtherscan.get(chainId) ??
+            (await fetch(
+              new URL(
+                `./evmNetworks/byId/${chainId}.json`,
+                options?.chaindataUrl ?? 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/dist/'
+              )
+            )
+              .then(x => x.json())
+              .then(x => x.explorerUrl as string | undefined)
+              .catch())
+        )
+
+        if (!chainEtherscan.has(chainId)) {
+          return
+        }
+
+        return new URL(`./nft/${contractAddress}/${tokenId}`, chainEtherscan.get(chainId)).toString()
+      }
+
+      yield* await Promise.all(
+        response.nfts?.edges
+          .map(x => x.node)
+          .filter(
+            (
+              x
+            ): x is Omit<NonNullable<typeof x>, 'collection'> & {
+              collection: NonNullable<NonNullable<typeof x>['collection']>
+            } => x !== null && x !== undefined && x.collection !== null && x.collection !== undefined
+          )
+          .map(async nft => {
+            const etherscanUrl = await getEtherscanUrl(
+              nft.collection.networkId,
+              nft.collection.contractAddress,
+              nft.tokenId
+            )
+            return {
+              id: `${nft.collection.contractType}-${nft.collection.networkId}-${nft.collection.contractAddress}-${nft.tokenId}`.toLowerCase(),
+              type: nft.collection.contractType.toLowerCase() ?? '',
+              chain: nft.collection.networkId ?? '',
               name: nft.metadata?.name ?? undefined,
               description: nft.metadata?.description ?? undefined,
               media: nft.metadata?.imageUri ?? undefined,
               thumbnail: nft.metadata?.imageUri ?? undefined,
               serialNumber: Number(nft.tokenId),
               properties: undefined,
-              externalLinks: undefined,
-              collection: !nft.collection
-                ? undefined
-                : {
-                    id: nft.collection.id,
-                    name: nft.collection.name,
-                    totalSupply: Number(nft.collection.totalSupply),
-                  },
-            } as Nft<'erc721' | 'erc1155', string>)
-        ) ?? []
+              externalLinks: etherscanUrl === undefined ? undefined : [{ name: 'Etherscan', url: etherscanUrl }],
+              collection: {
+                id: nft.collection.contractAddress,
+                name: nft.collection.name,
+                totalSupply: Number(nft.collection.totalSupply),
+              },
+            } as Nft<'erc721' | 'erc1155', string>
+          }) ?? []
+      )
 
       if (!response.nfts?.pageInfo.hasNextPage) {
         break
