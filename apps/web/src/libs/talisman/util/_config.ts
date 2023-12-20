@@ -1,4 +1,5 @@
-import { chains } from '@domains/chains'
+import { chainState } from '@domains/chains'
+import { selector, waitForAll } from 'recoil'
 
 export const statusOptions = {
   INITIALIZED: 'INITIALIZED',
@@ -21,36 +22,38 @@ export type Relaychain = {
 }
 
 // https://wiki.polkadot.network/docs/build-ss58-registry
-export const SupportedRelaychains: Record<number | string, Relaychain> = {
-  0: {
+const SupportedRelaychains: Array<Pick<Relaychain, 'id' | 'genesisHash' | 'blockPeriod'>> = [
+  {
     id: 0,
-    name: 'Polkadot',
-    accountPrefix: 0,
-    rpc:
-      chains.find(chain => chain.genesisHash === '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3')
-        ?.rpc ?? '',
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
-    subscanUrl: 'https://polkadot.subscan.io',
-    tokenDecimals: 10,
-    tokenSymbol: 'DOT',
-    coingeckoId: 'polkadot',
     blockPeriod: 6,
   },
-  2: {
+  {
     id: 2,
-    name: 'Kusama',
-    accountPrefix: 2,
-    rpc:
-      chains.find(chain => chain.genesisHash === '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe')
-        ?.rpc ?? '',
     genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
-    subscanUrl: 'https://kusama.subscan.io',
-    tokenDecimals: 12,
-    tokenSymbol: 'KSM',
-    coingeckoId: 'kusama',
     blockPeriod: 6,
   },
-}
+]
+
+export const supportedRelayChainsState = selector({
+  key: 'Crowdloans/SupportedRelayChains',
+  get: ({ get }) =>
+    get(waitForAll(SupportedRelaychains.map(x => chainState({ genesisHash: x.genesisHash })))).map((x): Relaychain => {
+      const base = SupportedRelaychains.find(y => y.genesisHash === x.genesisHash)
+      return {
+        id: base?.id ?? 0,
+        name: x.name ?? '',
+        accountPrefix: x.prefix ?? 0,
+        rpc: x.rpcs?.at(0)?.url ?? '',
+        genesisHash: x.genesisHash,
+        subscanUrl: x.subscanUrl ?? '',
+        tokenDecimals: x.nativeToken?.decimals ?? 0,
+        tokenSymbol: x.nativeToken?.symbol ?? '',
+        coingeckoId: x.nativeToken?.coingeckoId ?? '',
+        blockPeriod: base?.blockPeriod ?? 6,
+      }
+    }),
+})
 
 export type ParachainDetails = {
   id: string

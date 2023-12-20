@@ -10,14 +10,14 @@ import {
 import { Observable } from 'rxjs'
 import { expose } from 'threads/worker'
 
-const subscribeNfts = (address: string, options: { batchSize: number }) =>
+const subscribeNfts = (address: string, options: { batchSize: number; acalaRpc: string; bitcountryRpc: string }) =>
   new Observable<Nft | { error: unknown }>(observer => {
     const promises = (
       address.startsWith('0x')
         ? [createEvmNftAsyncGenerator]
         : [
-            createAcalaNftAsyncGenerator,
-            createBitCountryNftAsyncGenerator,
+            createAcalaNftAsyncGenerator({ rpc: options.acalaRpc }),
+            createBitCountryNftAsyncGenerator({ rpc: options.bitcountryRpc }),
             createRmrk2NftAsyncGenerator,
             createStatemineNftAsyncGenerator,
             createUniqueNetworkNftAsyncGenerator,

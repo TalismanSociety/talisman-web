@@ -1,10 +1,10 @@
 import { type ApiPromise } from '@polkadot/api'
 import { type AddressOrPair, type SubmittableExtrinsic } from '@polkadot/api/types'
 import { type ISubmittableResult } from '@polkadot/types/types'
-import { useContext, useMemo, useState } from 'react'
-import { useRecoilCallback } from 'recoil'
+import { useMemo, useState } from 'react'
+import { useRecoilCallback, useRecoilValue } from 'recoil'
 
-import { ChainContext } from '@domains/chains'
+import { useChainState } from '@domains/chains'
 import { useConnectedSubstrateWallet } from '@domains/extension'
 import { substrateApiState, useSubstrateApiEndpoint } from '..'
 import { skipErrorReporting } from '../consts'
@@ -53,7 +53,7 @@ export function useExtrinsic(
   section?: string,
   params: unknown[] = []
 ): ExtrinsicLoadable | undefined {
-  const chain = useContext(ChainContext)
+  const chain = useRecoilValue(useChainState())
   const endpoint = useSubstrateApiEndpoint()
   const wallet = useConnectedSubstrateWallet()
 

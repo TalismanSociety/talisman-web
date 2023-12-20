@@ -2,7 +2,7 @@ import AccountIcon from '@components/molecules/AccountIcon'
 import type { StakeStatus } from '@components/recipes/StakeStatusIndicator'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import type { Account } from '@domains/accounts'
-import { ChainContext, useNativeTokenDecimalState } from '@domains/chains'
+import { useChainState, useNativeTokenDecimalState } from '@domains/chains'
 import { useEraEtaFormatter, useSubstrateApiState, useTokenAmountFromPlanck } from '@domains/common'
 import {
   mostRecentPoolPayoutsState,
@@ -26,7 +26,7 @@ import {
 } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { eachDayOfInterval, isSameDay, subDays } from 'date-fns'
-import { useContext, useMemo, type ReactNode, Suspense } from 'react'
+import { Suspense, useMemo, type ReactNode } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryTooltip } from 'victory'
 
@@ -270,14 +270,14 @@ const Stats = (props: {
 
 // TODO: Extract to reuseable recipe component
 const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: DerivedPool }) => {
-  const chain = useContext(ChainContext)
+  const chain = useRecoilValue(useChainState())
 
   const today = useMemo(() => new Date(), [])
 
   const payoutsStateParams = {
     account: props.account.address,
     poolId: props.pool.poolMember.poolId.toNumber(),
-    chain: useContext(ChainContext),
+    chain,
     fromDate: subDays(today, 15),
     toDate: today,
   }

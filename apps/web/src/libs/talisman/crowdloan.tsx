@@ -9,7 +9,7 @@ import { useContext as _useContext, createContext, useEffect, useMemo, useState,
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import { substrateApiState } from '@domains/common'
-import { SupportedRelaychains } from './util/_config'
+import { supportedRelayChainsState } from './util/_config'
 
 export type Crowdloan = {
   // graphql fields
@@ -138,17 +138,15 @@ export const Provider = ({ children }: PropsWithChildren) => {
   const [crowdloans, setCrowdloans] = useState<Crowdloan[]>([])
   const [hydrated, setHydrated] = useState(false)
 
+  const relayChains = useRecoilValue(supportedRelayChainsState)
   const loadable = useRecoilValueLoadable(
-    waitForAll([
-      crowdloanDataState,
-      ...Object.values(SupportedRelaychains).map(relayChain => substrateApiState(relayChain.rpc)),
-    ])
+    waitForAll([crowdloanDataState, ...relayChains.map(relayChain => substrateApiState(relayChain.rpc))])
   )
 
   useEffect(() => {
     if (loadable.state === 'hasValue') {
       const [crowdloanData, ...chainApis] = loadable.contents
-      const promises = Object.values(SupportedRelaychains)
+      const promises = relayChains
         .map((chain, index) => ({ api: chainApis[index]!, chain }))
         .map(async ({ api, chain }) => {
           const bestNumber = await api.derive.chain.bestNumber()
@@ -239,7 +237,7 @@ export const Provider = ({ children }: PropsWithChildren) => {
         setHydrated(true)
       })
     }
-  }, [loadable.contents, loadable.state])
+  }, [loadable.contents, loadable.state, relayChains])
 
   const value = useMemo(() => ({ crowdloans, hydrated }), [crowdloans, hydrated])
 

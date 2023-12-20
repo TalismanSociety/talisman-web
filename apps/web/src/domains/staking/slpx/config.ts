@@ -3,7 +3,7 @@ import type { SlpxPair } from './types'
 
 export const glmrSlpxPair = {
   chain: moonbeam,
-  substrateEndpoint: 'wss://hk.p.bifrost-rpc.liebi.com/ws',
+  substrateChainGenesisHash: '0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b',
   splx: '0xF1d4797E51a4640a76769A50b57abE7479ADd3d8',
   etherscanUrl: moonbeam.blockExplorers.etherscan.url,
   nativeToken: {

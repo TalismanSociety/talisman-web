@@ -37,19 +37,13 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/setup
 
-      - if: inputs.environmentVariableSecrets != ''
-        uses: oNaiPs/secrets-to-env-action@v1
+      - uses: ./.github/actions/load-environment-variables
         with:
-          secrets: ${{ toJSON(secrets) }}
-          include: ${{ inputs.environmentVariableSecrets }}
-          prefix: ${{ inputs.environmentVariablePrefix }}
-
-      - if: inputs.environmentVariableVariables != ''
-        uses: oNaiPs/secrets-to-env-action@v1
-        with:
-          secrets: ${{ toJSON(vars) }}
-          include: ${{ inputs.environmentVariableVariables }}
-          prefix: ${{ inputs.environmentVariablePrefix }}
+          secrets: ${{ toJson(secrets) }}
+          vars: ${{ toJson(vars) }}
+          environmentVariableSecrets: ${{ inputs.environmentVariableSecrets }}
+          environmentVariableVariables: ${{ inputs.environmentVariableVariables }}
+          environmentVariablePrefix: ${{ inputs.environmentVariablePrefix }}
 
       - run: ${{ inputs.buildCommand }}
 

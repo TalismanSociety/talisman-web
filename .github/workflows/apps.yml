@@ -13,6 +13,7 @@ concurrency:
 jobs:
   qa:
     uses: ./.github/workflows/qa.yml
+    secrets: inherit
 
   deploy-ui-storybook:
     needs: [qa]
@@ -46,6 +47,7 @@ jobs:
       outputDirectory: apps/web/build
       sentryReleaseVersion: ${{ github.sha }}
       environmentVariableSecrets: >-
+        CHAINDATA,
         ONFINALITY_API_KEY,
         SENTRY_DSN,
         POSTHOG_AUTH_TOKEN,

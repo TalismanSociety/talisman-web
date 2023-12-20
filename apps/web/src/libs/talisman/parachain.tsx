@@ -1,4 +1,4 @@
-import { chains } from '@domains/chains'
+import { chainsState } from '@domains/chains'
 import { substrateApiState } from '@domains/common'
 import crowdloanDataState, { type CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
 import { find } from 'lodash'
@@ -79,9 +79,9 @@ export const Provider = ({ children }: PropsWithChildren) => {
   const [parachains, setParachains] = useState<CrowdloanDetail[]>([])
 
   const crowdloans = useRecoilValue(crowdloanDataState)
-
+  const chains = useRecoilValue(chainsState)
   const apisLoadable = useRecoilValueLoadable(
-    waitForAll([substrateApiState(chains[0].rpc), substrateApiState(chains[1].rpc)])
+    waitForAll([substrateApiState(chains[0]?.rpc), substrateApiState(chains[1]?.rpc)])
   )
 
   useEffect(

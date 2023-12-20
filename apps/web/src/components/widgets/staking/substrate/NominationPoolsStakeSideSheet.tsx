@@ -1,5 +1,5 @@
 import StakeDialogComponent from '@components/recipes/StakeDialog'
-import { chainsState } from '@domains/chains/recoils'
+import { chainsState, type ChainInfo } from '@domains/chains/recoils'
 import { useEraEtaFormatter } from '@domains/common/hooks'
 import { useInflation } from '@domains/staking/substrate/nominationPools/hooks'
 import { CircularProgressIndicator } from '@talismn/ui'
@@ -9,9 +9,9 @@ import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 import StakeForm from '@components/recipes/StakeForm/StakeForm'
-import { type Chain, ChainProvider } from '@domains/chains'
-import { AssetSelect, ControlledStakeForm } from './StakeForm'
+import { ChainProvider } from '@domains/chains'
 import ErrorBoundary from '../../ErrorBoundary'
+import { AssetSelect, ControlledStakeForm } from './StakeForm'
 
 const Rewards = () => {
   const { stakedReturn } = useInflation()
@@ -30,9 +30,13 @@ const InnerStakeDialog = () => {
   const account = searchParams.get('account') ?? undefined
 
   const chains = useRecoilValue(chainsState)
-  const [chain, setChain] = useState<Chain>(chains.find(x => x.id === initialChain) ?? chains[0])
+  const [chain, setChain] = useState<ChainInfo | undefined>(chains.find(x => x.id === initialChain) ?? chains[0])
 
   const [inTransition, startTransition] = useTransition()
+
+  if (chain === undefined) {
+    throw new Error(`Missing chain configs`)
+  }
 
   if (!open) {
     return null

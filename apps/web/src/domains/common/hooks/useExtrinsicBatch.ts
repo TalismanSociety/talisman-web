@@ -1,10 +1,10 @@
-import { ChainContext } from '@domains/chains'
+import { useChainState } from '@domains/chains'
 import { useConnectedSubstrateWallet } from '@domains/extension'
 import { type ApiPromise } from '@polkadot/api'
 import { type AddressOrPair } from '@polkadot/api/types'
 import { type ISubmittableResult } from '@polkadot/types/types'
-import { useCallback, useContext, useState } from 'react'
-import { useRecoilCallback } from 'recoil'
+import { useCallback, useState } from 'react'
+import { useRecoilCallback, useRecoilValue } from 'recoil'
 import { substrateApiState, useSubstrateApiEndpoint } from '..'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
@@ -32,7 +32,7 @@ export const useExtrinsicBatch = <
 >(
   extrinsics: TExtrinsics
 ) => {
-  const chain = useContext(ChainContext)
+  const chain = useRecoilValue(useChainState())
   const apiEndpoint = useSubstrateApiEndpoint()
   const wallet = useConnectedSubstrateWallet()
 

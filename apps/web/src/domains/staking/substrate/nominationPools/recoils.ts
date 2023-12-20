@@ -1,5 +1,5 @@
 import { substrateAccountsState } from '@domains/accounts/recoils'
-import { chainsState, type Chain } from '@domains/chains'
+import { chainsState, type ChainInfo } from '@domains/chains'
 import { useSubstrateApiEndpoint } from '@domains/common'
 import { chainReadIdState, substrateApiState } from '@domains/common/recoils'
 import type { AnyNumber } from '@polkadot/types-codec/types'
@@ -126,7 +126,7 @@ type SubscanNominationPoolRewardsResponse = {
 
 const subscanPoolPayoutsState = selectorFamily<
   readonly SubscanPayout[],
-  { account: string; poolId: number; chain: Chain; fromDate?: Date; toDate?: Date }
+  { account: string; poolId: number; chain: ChainInfo; fromDate?: Date; toDate?: Date }
 >({
   key: 'SubscanPayouts',
   get:
@@ -134,13 +134,18 @@ const subscanPoolPayoutsState = selectorFamily<
     async ({ get }) => {
       const api = get(substrateApiState(chain.rpc))
 
+      const subscanUrl = chain.subscanUrl
+      if (subscanUrl === undefined) {
+        return []
+      }
+
       const createPayoutsGenerator = async function* () {
         const limit = 100
         let page = 0
 
         while (true) {
           const response: SubscanNominationPoolRewardsResponse = await fetch(
-            new URL('api/scan/nomination_pool/rewards', chain.subscanUrl.replace('subscan', 'api.subscan')),
+            new URL('api/scan/nomination_pool/rewards', subscanUrl.replace('subscan', 'api.subscan')),
             {
               method: 'POST',
               headers: { 'X-API-Key': '6543451cf4d8429f9767c6b5026b349d' },
@@ -199,7 +204,7 @@ const subscanPoolPayoutsState = selectorFamily<
 const _poolPayoutsState = selectorFamily({
   key: 'Payouts',
   get:
-    (params: { account: string; poolId: number; chain: Chain; fromDate?: Date; toDate?: Date }) =>
+    (params: { account: string; poolId: number; chain: ChainInfo; fromDate?: Date; toDate?: Date }) =>
     ({ get }) => {
       const [api, response] = get(waitForAll([substrateApiState(params.chain.rpc), subscanPoolPayoutsState(params)]))
 
@@ -216,7 +221,7 @@ const _poolPayoutsState = selectorFamily({
 export const poolPayoutsState = (params: {
   account: string
   poolId: number
-  chain: Chain
+  chain: ChainInfo
   fromDate: Date
   toDate: Date
 }) => _poolPayoutsState({ ...params, fromDate: startOfDay(params.fromDate), toDate: startOfDay(params.toDate) })
@@ -224,7 +229,7 @@ export const poolPayoutsState = (params: {
 export const totalPoolPayoutsState = selectorFamily({
   key: 'TotalPayouts',
   get:
-    (params: { account: string; poolId: number; chain: Chain; fromDate: Date; toDate: Date }) =>
+    (params: { account: string; poolId: number; chain: ChainInfo; fromDate: Date; toDate: Date }) =>
     ({ get }) => {
       const [api, payouts] = get(waitForAll([substrateApiState(params.chain.rpc), poolPayoutsState(params)]))
 
@@ -246,5 +251,5 @@ export const mostRecentPoolPayoutsState = ({
 }: {
   account: string
   poolId: number
-  chain: Chain
+  chain: ChainInfo
 }) => _poolPayoutsState({ account, poolId, chain })

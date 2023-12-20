@@ -1,9 +1,10 @@
+import { chainState } from '@domains/chains'
 import * as Sentry from '@sentry/react'
 import { type Nft as BaseNft } from '@talismn/nft'
 import { toast } from '@talismn/ui'
 import { atomFamily, selectorFamily } from 'recoil'
-import { bufferTime, filter, last, Observable, scan, tap } from 'rxjs'
-import { spawn, Thread } from 'threads'
+import { Observable, bufferTime, filter, last, scan, tap } from 'rxjs'
+import { Thread, spawn } from 'threads'
 import { favoriteNftIdsState, hiddenNftIdsState, nftsByTagState } from './tags'
 import type { SubscribeNfts } from './worker'
 
@@ -16,7 +17,7 @@ export type Nft = BaseNft & {
 const _nftsState = atomFamily<BaseNft[], string>({
   key: '_Nfts',
   effects: (address: string) => [
-    ({ setSelf }) => {
+    ({ setSelf, getPromise }) => {
       const batchSize = 100
 
       let initialResolve = (_value: BaseNft[]) => {}
@@ -29,54 +30,75 @@ const _nftsState = atomFamily<BaseNft[], string>({
 
       setSelf(initialPromise)
 
+      const acalaPromise = getPromise(
+        chainState({ genesisHash: '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c' })
+      )
+      const bitcountryPromise = getPromise(
+        chainState({ genesisHash: '0xf22b7850cdd5a7657bbfd90ac86441275bbc57ace3d2698a740c7b0ec4de5ec3' })
+      )
       const workerPromise = spawn<SubscribeNfts>(new Worker(new URL('./worker', import.meta.url), { type: 'module' }))
 
-      const subscriptionPromise = workerPromise.then(worker =>
-        new Observable<BaseNft | { error: unknown }>(observer => worker(address, { batchSize }).subscribe(observer))
-          .pipe(
-            bufferTime(1000, null, batchSize),
-            filter(nfts => nfts.length > 0),
-            scan(
-              (prev, nftsOrErrors) => {
-                const errors = nftsOrErrors.filter((nft): nft is { error: unknown } => 'error' in nft).map(x => x.error)
-                const nfts = nftsOrErrors.filter((nft): nft is BaseNft => !('error' in nft))
+      const subscriptionPromise = Promise.all([workerPromise, acalaPromise, bitcountryPromise]).then(
+        ([worker, acala, bitcountry]) =>
+          new Observable<BaseNft | { error: unknown }>(observer => {
+            if (acala.rpc === undefined) {
+              throw new Error('No RPC available for fetching Acala NFTs')
+            }
 
-                errors.forEach(error => Sentry.captureException(error))
+            if (bitcountry.rpc === undefined) {
+              throw new Error('No RPC available for fetching Bitcountry NFTs')
+            }
 
-                return { nfts: [...prev.nfts, ...nfts], errors: [...prev.errors, ...errors] }
-              },
-              { nfts: [] as BaseNft[], errors: [] as unknown[] }
-            ),
-            tap(({ nfts }) => {
-              initialResolve(nfts)
-              setSelf(nfts)
-            }),
-            last(null, { nfts: [], errors: [] }),
-            tap(({ errors }) => {
-              if (errors.length > 0) {
-                toast.error('Failed to fetch some NFTs', {
-                  // Prevent spamming of toasts when multiple accounts fail to fetch NFTs
-                  id: 'nfts-fetching-error',
-                })
-              }
-
-              errors.forEach(error => {
-                console.error(error)
-                Sentry.captureException(error)
-              })
-            })
-          )
-          .subscribe({
-            complete: () => {
-              initialResolve([])
-              void Thread.terminate(worker)
-            },
-            error: error => {
-              Sentry.captureException(error)
-              initialReject(error)
-              void Thread.terminate(worker)
-            },
+            return worker(address, { batchSize, acalaRpc: acala.rpc, bitcountryRpc: bitcountry.rpc }).subscribe(
+              observer
+            )
           })
+            .pipe(
+              bufferTime(1000, null, batchSize),
+              filter(nfts => nfts.length > 0),
+              scan(
+                (prev, nftsOrErrors) => {
+                  const errors = nftsOrErrors
+                    .filter((nft): nft is { error: unknown } => 'error' in nft)
+                    .map(x => x.error)
+                  const nfts = nftsOrErrors.filter((nft): nft is BaseNft => !('error' in nft))
+
+                  errors.forEach(error => Sentry.captureException(error))
+
+                  return { nfts: [...prev.nfts, ...nfts], errors: [...prev.errors, ...errors] }
+                },
+                { nfts: [] as BaseNft[], errors: [] as unknown[] }
+              ),
+              tap(({ nfts }) => {
+                initialResolve(nfts)
+                setSelf(nfts)
+              }),
+              last(null, { nfts: [], errors: [] }),
+              tap(({ errors }) => {
+                if (errors.length > 0) {
+                  toast.error('Failed to fetch some NFTs', {
+                    // Prevent spamming of toasts when multiple accounts fail to fetch NFTs
+                    id: 'nfts-fetching-error',
+                  })
+                }
+
+                errors.forEach(error => {
+                  console.error(error)
+                  Sentry.captureException(error)
+                })
+              })
+            )
+            .subscribe({
+              complete: () => {
+                initialResolve([])
+                void Thread.terminate(worker)
+              },
+              error: error => {
+                Sentry.captureException(error)
+                initialReject(error)
+                void Thread.terminate(worker)
+              },
+            })
       )
 
       return () => {

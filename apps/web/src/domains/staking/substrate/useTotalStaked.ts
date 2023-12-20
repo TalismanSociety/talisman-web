@@ -8,7 +8,9 @@ import { useRecoilValue, waitForAll, waitForAny } from 'recoil'
 export const useSubstrateFiatTotalStaked = () => {
   const [chains, accounts] = useRecoilValue(waitForAll([chainsState, selectedSubstrateAccountsState]))
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
-  const nativeTokenPrices = useRecoilValue(waitForAll(chains.map(chain => nativeTokenPriceState({ chain }))))
+  const nativeTokenPrices = useRecoilValue(
+    waitForAll(chains.map(chain => nativeTokenPriceState({ genesisHash: chain.genesisHash })))
+  )
 
   const apis = useRecoilValue(waitForAll(chains.map(x => substrateApiState(x.rpc))))
   const decimals = apis.map(x => x.registry.chainDecimals.at(0) ?? 0)

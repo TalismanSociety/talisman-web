@@ -12,40 +12,42 @@ const parseCid = (bytes: Bytes) => {
   }
 }
 
-export const createAcalaNftAsyncGenerator = createOrmlNftAsyncGenerator({
-  chain: 'acala',
-  provider: new WsProvider('wss://acala-rpc.dwellir.com'),
-  getMetadata: async (_, __, metadata) => {
-    const ipfsCid = parseCid(metadata)
+export const createAcalaNftAsyncGenerator = (options: { rpc: string }) =>
+  createOrmlNftAsyncGenerator({
+    chain: 'acala',
+    provider: new WsProvider(options.rpc),
+    getMetadata: async (_, __, metadata) => {
+      const ipfsCid = parseCid(metadata)
 
-    if (!ipfsCid) {
-      return
-    }
+      if (!ipfsCid) {
+        return
+      }
 
-    return fetch(new URL(ipfsCid.toString() + '/metadata.json', 'https://talisman.mypinata.cloud/ipfs/')).then(res =>
-      res.json()
-    )
-  },
-  getExternalLinks: (_, __) => [{ name: 'Acala', url: 'https://apps.acala.network/' }],
-})
+      return fetch(new URL(ipfsCid.toString() + '/metadata.json', 'https://talisman.mypinata.cloud/ipfs/')).then(res =>
+        res.json()
+      )
+    },
+    getExternalLinks: (_, __) => [{ name: 'Acala', url: 'https://apps.acala.network/' }],
+  })
 
-export const createBitCountryNftAsyncGenerator = createOrmlNftAsyncGenerator({
-  chain: 'bit-country',
-  provider: new WsProvider('wss://pioneer-rpc-3.bit.country/wss'),
-  getMetadata: async (classId, tokenId, metadata) => {
-    const ipfsCid = parseCid(metadata)
+export const createBitCountryNftAsyncGenerator = (options: { rpc: string }) =>
+  createOrmlNftAsyncGenerator({
+    chain: 'bit-country',
+    provider: new WsProvider(options.rpc),
+    getMetadata: async (classId, tokenId, metadata) => {
+      const ipfsCid = parseCid(metadata)
 
-    if (!ipfsCid) {
-      return fetch(
-        `https://pioneer-api.bit.country/metadata/landTokenUriPioneer/${classId}/${tokenId}/metadata.json`
-      ).then(x => x.json())
-    }
+      if (!ipfsCid) {
+        return fetch(
+          `https://pioneer-api.bit.country/metadata/landTokenUriPioneer/${classId}/${tokenId}/metadata.json`
+        ).then(x => x.json())
+      }
 
-    return fetch(new URL(ipfsCid.toString(), 'https://ipfs-cdn.bit.country'))
-      .then(res => res.json())
-      .then(x => ({ ...x, image: x.image_url ? `https://ipfs-cdn.bit.country/${x.image_url}` : undefined }))
-  },
-  getExternalLinks: (classId, __) => [
-    { name: 'Pioneer', url: `https://pioneer.bit.country/marketplace/browse?collection=${classId}` },
-  ],
-})
+      return fetch(new URL(ipfsCid.toString(), 'https://ipfs-cdn.bit.country'))
+        .then(res => res.json())
+        .then(x => ({ ...x, image: x.image_url ? `https://ipfs-cdn.bit.country/${x.image_url}` : undefined }))
+    },
+    getExternalLinks: (classId, __) => [
+      { name: 'Pioneer', url: `https://pioneer.bit.country/marketplace/browse?collection=${classId}` },
+    ],
+  })

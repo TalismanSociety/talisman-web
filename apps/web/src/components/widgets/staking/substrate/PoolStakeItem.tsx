@@ -1,11 +1,10 @@
 import StakePosition from '@components/recipes/StakePosition'
-import { useEraEtaFormatter, useExtrinsic, useSubmittableResultLoadableState } from '@domains/common'
-import { useCallback, useContext, useState } from 'react'
-import { useRecoilValue, waitForAll } from 'recoil'
-
 import { type Account } from '@domains/accounts'
-import { ChainContext, useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
+import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
+import { useEraEtaFormatter, useExtrinsic, useSubmittableResultLoadableState } from '@domains/common'
 import { type usePoolStakes } from '@domains/staking/substrate/nominationPools'
+import { useCallback, useState } from 'react'
+import { useRecoilValue, waitForAll } from 'recoil'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import RedactableBalance from '../../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
@@ -14,8 +13,8 @@ import NominationPoolsStatisticsSideSheet from './NominationPoolsStatisticsSideS
 import UnstakeDialog from './UnstakeDialog'
 
 const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account[]>>[number] }) => {
-  const [decimal, nativeTokenPrice] = useRecoilValue(
-    waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState()])
+  const [chain, decimal, nativeTokenPrice] = useRecoilValue(
+    waitForAll([useChainState(), useNativeTokenDecimalState(), useNativeTokenPriceState()])
   )
 
   const [isUnstaking, setIsUnstaking] = useState(false)
@@ -33,15 +32,13 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
     eta: eraEtaFormatter(x.erasTilWithdrawable),
   }))
 
-  const chain = useContext(ChainContext)
-
   const [statsDialogOpen, setStatsDialogOpen] = useState(false)
 
   return (
     <>
       <StakePosition
         chain={chain.name}
-        symbol={chain.nativeToken.symbol}
+        symbol={chain.nativeToken?.symbol}
         readonly={item.account?.readonly}
         stakeStatus={item.status}
         account={item.account}

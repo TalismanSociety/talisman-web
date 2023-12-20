@@ -1,7 +1,7 @@
-import { find, get } from 'lodash'
+import { get } from 'lodash'
 import { useEffect, useState } from 'react'
 
-import { statusOptions as baseStatusOptions, SupportedRelaychains } from './_config'
+import { statusOptions as baseStatusOptions } from './_config'
 
 export const useStatus = (props: { status?: string; message?: string | null; customOptions?: any } = {}) => {
   const { status = baseStatusOptions.INITIALIZED, message = null, customOptions = {} } = props
@@ -49,8 +49,4 @@ export const useAwaitObjectValue = (object: any, key: string, cb = (_value: any)
     }, timeout)
     return () => clearInterval(_id)
   }, [get(object, key)]) // eslint-disable-line
-}
-
-export const useChainByGenesis = (genesisHash: any) => {
-  return find(SupportedRelaychains, { genesisHash }) ?? { id: undefined }
 }
