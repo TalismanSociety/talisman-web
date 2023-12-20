@@ -13,7 +13,7 @@ type Config<T> = {
     classId: u32,
     tokenId: u64,
     metadata: Bytes
-  ) => Promise<(IpfsMetadata & { mimeType: string | undefined }) | undefined>
+  ) => Promise<(IpfsMetadata & { mimeType: string | undefined; thumbnail: string | undefined }) | undefined>
   getExternalLinks: (classId: u32, tokenId: u64) => Array<{ name: string; url: string }>
 }
 
@@ -79,7 +79,7 @@ export const createOrmlNftAsyncGenerator = <const T extends string>({
               description: tokenMetadata?.name || classMetadata?.name,
               media: tokenMetadata?.image || classMetadata?.image,
               mediaMimeType: tokenMetadata?.mimeType,
-              thumbnail: tokenMetadata?.image || classMetadata?.image,
+              thumbnail: tokenMetadata?.thumbnail || tokenMetadata?.image || classMetadata?.image,
               serialNumber: tokenId.toNumber(),
               properties: undefined,
               externalLinks: getExternalLink(classId, tokenId),

@@ -115,7 +115,7 @@ const NftCard = ({ nft }: { nft: Nft }) => {
               toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH }),
               toIpfsCompatibleUrl(x),
             ])}
-            type={nft.mediaMimeType?.split('/').at(0) as any}
+            type={nft.thumbnail !== undefined ? undefined : (nft.mediaMimeType?.split('/').at(0) as any)}
             fetchMime
           />
         }
