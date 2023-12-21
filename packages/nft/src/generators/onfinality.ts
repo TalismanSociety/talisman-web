@@ -47,8 +47,8 @@ export const createOnfinalityNftGenerator: (options?: {
         }
       )
 
-      const chainEtherscan = new Map<string, string | undefined>()
-      const getEtherscanUrl = async (chainId: string, contractAddress: string, tokenId: string) => {
+      const chainEtherscan = new Map<string, { name: string; explorerUrl: string | undefined } | undefined>()
+      const getNftChainInfo = async (chainId: string, contractAddress: string, tokenId: string) => {
         chainEtherscan.set(
           chainId,
           chainEtherscan.get(chainId) ??
@@ -59,7 +59,6 @@ export const createOnfinalityNftGenerator: (options?: {
               )
             )
               .then(x => x.json())
-              .then(x => x.explorerUrl as string | undefined)
               .catch())
         )
 
@@ -67,7 +66,13 @@ export const createOnfinalityNftGenerator: (options?: {
           return
         }
 
-        return new URL(`./nft/${contractAddress}/${tokenId}`, chainEtherscan.get(chainId)).toString()
+        return {
+          name: chainEtherscan.get(chainId)?.name ?? '',
+          etherscanUrl: new URL(
+            `./nft/${contractAddress}/${tokenId}`,
+            chainEtherscan.get(chainId)?.explorerUrl
+          ).toString(),
+        }
       }
 
       yield* await Promise.all(
@@ -81,7 +86,7 @@ export const createOnfinalityNftGenerator: (options?: {
             } => x !== null && x !== undefined && x.collection !== null && x.collection !== undefined
           )
           .map(async nft => {
-            const etherscanUrl = await getEtherscanUrl(
+            const nftChainInfo = await getNftChainInfo(
               nft.collection.networkId,
               nft.collection.contractAddress,
               nft.tokenId
@@ -89,14 +94,15 @@ export const createOnfinalityNftGenerator: (options?: {
             return {
               id: `${nft.collection.contractType}-${nft.collection.networkId}-${nft.collection.contractAddress}-${nft.tokenId}`.toLowerCase(),
               type: nft.collection.contractType.toLowerCase() ?? '',
-              chain: nft.collection.networkId ?? '',
+              chain: nftChainInfo?.name,
               name: nft.metadata?.name ?? undefined,
               description: nft.metadata?.description ?? undefined,
               media: nft.metadata?.imageUri ?? undefined,
               thumbnail: nft.metadata?.imageUri ?? undefined,
               serialNumber: Number(nft.tokenId),
               properties: undefined,
-              externalLinks: etherscanUrl === undefined ? undefined : [{ name: 'Etherscan', url: etherscanUrl }],
+              externalLinks:
+                nftChainInfo === undefined ? undefined : [{ name: 'Etherscan', url: nftChainInfo.etherscanUrl }],
               collection: {
                 id: nft.collection.contractAddress,
                 name: nft.collection.name,
