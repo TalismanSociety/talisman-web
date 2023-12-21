@@ -144,6 +144,7 @@ const Grid = (props: PropsWithChildren<{ className?: string }>) => (
         'divider divider divider'
         'balance actions actions'
       `,
+      'gridTemplateColumns': 'repeat(2, minmax(0, 1fr)) min-content',
       'gap': '0.6rem',
       '@container (min-width: 100rem)': {
         alignItems: 'center',
