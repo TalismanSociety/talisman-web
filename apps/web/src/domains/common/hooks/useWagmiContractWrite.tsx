@@ -5,6 +5,23 @@ import { type Abi } from 'abitype'
 import { usePostHog } from 'posthog-js/react'
 import { useContractWrite, useNetwork, useSwitchNetwork, type UseContractWriteConfig } from 'wagmi'
 
+/**
+ * PostHog can't handle BigInt
+ */
+const sanitizePostHogProperties = (object: unknown) => {
+  if (typeof object === 'bigint') {
+    return object.toString()
+  }
+
+  if (typeof object !== 'object' || object === null) {
+    return object
+  }
+
+  return Object.fromEntries(
+    Object.entries(object).map(([key, value]): [any, any] => [key, sanitizePostHogProperties(value)])
+  )
+}
+
 export const useWagmiContractWrite = <
   TAbi extends Abi | readonly unknown[],
   TFunctionName extends string,
@@ -70,10 +87,8 @@ export const useWagmiContractWrite = <
           hash: result.hash,
           contractAddress: config.address,
           functionName: config.functionName,
-          // @ts-expect-error
-          args: config.args,
-          // @ts-expect-error
-          value: config.value,
+          ...('args' in config ? { args: sanitizePostHogProperties(config.args) } : undefined),
+          ...('value' in config ? { value: sanitizePostHogProperties(config.value) } : undefined),
         })
       )
 
