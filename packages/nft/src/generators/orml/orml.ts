@@ -77,9 +77,9 @@ export const createOrmlNftAsyncGenerator = <const T extends string>({
               id: `${type}-${chain}-${classId.toString()}-${tokenId.toString()}`,
               name: tokenMetadata?.name || classMetadata?.name,
               description: tokenMetadata?.name || classMetadata?.name,
-              media: tokenMetadata?.image || classMetadata?.image,
-              mediaMimeType: tokenMetadata?.mimeType,
-              thumbnail: tokenMetadata?.thumbnail || tokenMetadata?.image || classMetadata?.image,
+              media: { url: tokenMetadata?.image || classMetadata?.image, mimeType: tokenMetadata?.mimeType },
+              thumbnail:
+                tokenMetadata?.thumbnail || classMetadata?.thumbnail || tokenMetadata?.image || classMetadata?.image,
               serialNumber: tokenId.toNumber(),
               properties: undefined,
               externalLinks: getExternalLink(classId, tokenId),
