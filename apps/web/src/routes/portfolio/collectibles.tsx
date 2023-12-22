@@ -183,11 +183,15 @@ const NftCard = ({ nft }: { nft: Nft }) => {
               {(nft.externalLinks?.length ?? 0) > 0 && (
                 <article>
                   <Text.BodyLarge as="div">View on</Text.BodyLarge>
-                  {nft.externalLinks?.map((link, index) => (
-                    <Text.BodyLarge.A key={index} target="_blank" href={link.url}>
-                      {link.name} <ExternalLink size="1em" css={{ verticalAlign: 'middle' }} />
-                    </Text.BodyLarge.A>
-                  ))}
+                  <div css={{ display: 'flex', flexDirection: 'column', gap: '0.125em' }}>
+                    {nft.externalLinks?.map((link, index) => (
+                      <div key={index}>
+                        <Text.BodyLarge.A target="_blank" href={link.url}>
+                          {link.name} <ExternalLink size="1em" css={{ verticalAlign: 'middle' }} />
+                        </Text.BodyLarge.A>
+                      </div>
+                    ))}
+                  </div>
                 </article>
               )}
               {nft.serialNumber !== undefined && (

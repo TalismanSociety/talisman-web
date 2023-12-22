@@ -71,6 +71,7 @@ export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Nft<'rmrk2', 
               .filter((x): x is NonNullable<typeof x> => x !== undefined)
               .join('/')}`,
           },
+          { name: 'Kodadot', url: `https://kodadot.xyz/ksm/gallery/${nft.id}` },
         ],
         collection: !nft.collection
           ? undefined
