@@ -146,7 +146,16 @@ const MediaDialog = Object.assign(
               <X size="2.4rem" />
             </Button>
           </div>
-          <div css={{ gridArea: 'media', aspectRatio: '1 / 1' }}>{media}</div>
+          <div
+            css={{
+              gridArea: 'media',
+              // Block display for some reason has children not stretching to the last ~3 pixels
+              display: 'flex',
+              aspectRatio: '1 / 1',
+            }}
+          >
+            {media}
+          </div>
           <div css={{ gridArea: 'content', display: 'flex', flexDirection: 'column' }}>
             <div css={{ 'padding': '2.4rem', '@media(min-width: 1024px)': { flex: '1 1 0', overflow: 'auto' } }}>
               {content}
