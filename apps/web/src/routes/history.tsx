@@ -95,7 +95,7 @@ const History = () => {
         >
           <LabelledInput>
             <SearchBar
-              placeholder="Search for TX hash or account address"
+              placeholder="Paste account address or TX hash"
               value={search}
               onChangeText={setSearch}
               leadingSupportingText={<TextInput.ErrorLabel>{searchValidationError}</TextInput.ErrorLabel>}
