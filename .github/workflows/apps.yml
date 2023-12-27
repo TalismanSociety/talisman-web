@@ -29,7 +29,7 @@ jobs:
     with:
       projectName: ${{ vars.PORTAL_STORYBOOK_PROJECT_NAME }}
       buildCommand: >-
-        NODE_OPTIONS=--max_old_space_size=4096
+        NODE_OPTIONS=--max_old_space_size=5120
         yarn turbo run build-storybook --filter=web
       outputDirectory: apps/web/storybook-static
     secrets: inherit

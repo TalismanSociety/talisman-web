@@ -13,11 +13,22 @@ import WalletConnectionSideSheet, {
 import LidoStakeSideSheet from '@components/widgets/staking/lido/StakeSideSheet'
 import SlpxStakeSideSheet from '@components/widgets/staking/slpx/StakeSideSheet'
 import NominationPoolsStakeSideSheet from '@components/widgets/staking/substrate/NominationPoolsStakeSideSheet'
-import { selectedAccountsState } from '@domains/accounts/recoils'
+import { lookupAccountAddressState, selectedAccountsState } from '@domains/accounts'
 import { currencyConfig, selectedCurrencyState } from '@domains/balances'
 import { useHasActiveWalletConnection } from '@domains/extension'
 import { useTheme } from '@emotion/react'
-import { Compass, CreditCard, Eye, FileText, MoreHorizontal, RefreshCcw, Star, TalismanHand, Zap } from '@talismn/icons'
+import {
+  Compass,
+  CreditCard,
+  Eye,
+  FileText,
+  MoreHorizontal,
+  RefreshCcw,
+  Search,
+  Star,
+  TalismanHand,
+  Zap,
+} from '@talismn/icons'
 import {
   Button,
   IconButton,
@@ -26,13 +37,17 @@ import {
   NavigationRail,
   SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR,
   Scaffold,
+  SearchBar,
   Select,
+  SurfaceIconButton,
   Text,
   TopAppBar,
   createPortal,
 } from '@talismn/ui'
+import { isNilOrWhitespace } from '@util/nil'
+import { LayoutGroup, motion } from 'framer-motion'
 import { usePostHog } from 'posthog-js/react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
@@ -82,6 +97,58 @@ const WalletConnectionButton = () => {
     </Button>
   )
 }
+
+const MotionSearch = motion(Search)
+
+const AddressSearch = () => {
+  const searchBarRef = useRef<HTMLInputElement>(null)
+  const [address, setAddress] = useRecoilState(lookupAccountAddressState)
+  const [revealed, setRevealed] = useState(false)
+
+  useEffect(() => {
+    if (!isNilOrWhitespace(address)) {
+      setRevealed(true)
+    }
+  }, [address])
+
+  useEffect(() => {
+    if (
+      searchBarRef.current !== null &&
+      searchBarRef.current !== document.activeElement &&
+      isNilOrWhitespace(address)
+    ) {
+      setRevealed(false)
+    }
+  }, [address])
+
+  return (
+    <LayoutGroup>
+      {revealed ? (
+        <motion.div layoutId="address-search">
+          <SearchBar
+            autoFocus
+            ref={searchBarRef}
+            placeholder="Search any account address"
+            value={address ?? ''}
+            onChange={event => setAddress(event.target.value)}
+            onBlur={() => {
+              if (isNilOrWhitespace(address)) {
+                setRevealed(false)
+              }
+            }}
+          />
+        </motion.div>
+      ) : (
+        <motion.div layoutId="address-search">
+          <SurfaceIconButton onClick={() => setRevealed(true)} css={{ borderRadius: '0.8rem' }}>
+            <MotionSearch layout />
+          </SurfaceIconButton>
+        </motion.div>
+      )}
+    </LayoutGroup>
+  )
+}
+
 const [TitlePortalProvider, TitlePortal, TitlePortalElement] = createPortal()
 export { TitlePortal }
 
@@ -104,14 +171,15 @@ const Header = () => {
           justifyContent: 'space-between',
           flexWrap: 'wrap-reverse',
           gap: '0.8rem',
+          marginTop: '2.4rem',
           marginBottom: '0.8rem',
-          [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { marginTop: '4rem' },
         }}
       >
         <Text.H2 css={{ marginBottom: 0 }}>
           <TitlePortalElement />
         </Text.H2>
-        <div css={{ display: 'flex', gap: '0.8rem' }}>
+        <div css={{ display: 'flex', justifyContent: 'flex-end', gap: '0.8rem', flexWrap: 'wrap' }}>
+          <AddressSearch />
           <CurrencySelect />
           <div css={{ display: 'none', [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { display: 'contents' } }}>
             <WalletConnectionButton />

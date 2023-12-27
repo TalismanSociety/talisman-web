@@ -3,10 +3,11 @@ import { Crowdloan } from '@archetypes'
 import { Await, Field, Grid, NoResults } from '@components'
 import styled from '@emotion/styled'
 import { useCrowdloanContributions } from '@libs/crowdloans'
+import { TitlePortal } from '@routes/layout'
+import { SearchBar } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import { RootNav } from './RootNav'
-import { TitlePortal } from '@routes/layout'
 
 const FilterBar = styled(
   ({
@@ -30,11 +31,10 @@ const FilterBar = styled(
     const { t } = useTranslation()
     return (
       <div className={`${className as string} filterbar`} {...rest}>
-        <Field.Search
-          className="searchbar"
+        <SearchBar
           value={search}
           placeholder={t('Search Crowdloans')}
-          onChange={(search: any) => {
+          onChangeText={(search: any) => {
             setSearch(search)
           }}
         />

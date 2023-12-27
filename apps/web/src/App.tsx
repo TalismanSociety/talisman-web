@@ -5,6 +5,7 @@ import FairyBreadBanner from '@archetypes/FairyBreadBanner'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import Development from '@components/widgets/development'
+import { AccountWatcher } from '@domains/accounts'
 import { LegacyBalancesWatcher } from '@domains/balances'
 import { chainDeriveState, chainQueryMultiState, chainQueryState } from '@domains/common/recoils/query'
 import { ExtensionWatcher, TalismanExtensionSynchronizer } from '@domains/extension'
@@ -58,6 +59,7 @@ const App = () => (
                 <Portfolio.Provider>
                   <TalismanProvider>
                     <ExtensionWatcher />
+                    <AccountWatcher />
                     <TalismanExtensionSynchronizer />
                     <LegacyBalancesWatcher />
                     <RouterProvider router={router} />

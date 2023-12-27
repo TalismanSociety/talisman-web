@@ -1,8 +1,7 @@
 import { Card, CardLoading, TagLoading } from '@archetypes/Explore'
-import { type Dapp, useFetchDapps } from '@archetypes/Explore/hooks'
-import { Search } from '@components/Field'
+import { useFetchDapps, type Dapp } from '@archetypes/Explore/hooks'
 import styled from '@emotion/styled'
-import { HiddenDetails, Text } from '@talismn/ui'
+import { HiddenDetails, SearchBar, Text } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 import { useState } from 'react'
 import { useDebounce } from 'react-use'
@@ -45,7 +44,7 @@ const ExploreGrid = ({ className }: { className?: string }) => {
               },
             }}
           >
-            <Search
+            <SearchBar
               placeholder="Search"
               css={{
                 'width': '100%',
@@ -55,7 +54,7 @@ const ExploreGrid = ({ className }: { className?: string }) => {
                 },
               }}
               value={searchQuery}
-              onChange={setSearchQuery}
+              onChangeText={setSearchQuery}
             />
             <div className="tags">
               {tags.map(tag => (
