@@ -227,6 +227,20 @@ export const selectedAccountsState = selector({
   },
 })
 
+// unlike `selectedAccountsState`, this inclues watched accounts
+export const allSelectedAccountsState = selector({
+  key: 'AllSelectedAccounts',
+  get: ({ get }) => {
+    const [accounts, selectedAddresses, lookupAccount] = get(
+      waitForAll([accountsState, selectedAccountAddressesState, lookupAccountState])
+    )
+
+    if (lookupAccount !== undefined) return [lookupAccount]
+    if (selectedAddresses === undefined) return accounts
+    return accounts.filter(({ address }) => selectedAddresses.includes(address))
+  },
+})
+
 // For legacy components that only support single account selection
 export const legacySelectedAccountState = selector({
   key: 'LegacySelectedAccounts',
@@ -243,6 +257,13 @@ export const selectedSubstrateAccountsState = selector({
   key: 'SelectedSubstrateAccounts',
   get: ({ get }) => {
     return get(selectedAccountsState).filter(x => x.type !== 'ethereum')
+  },
+})
+
+export const allSelectedSubstrateAccountsState = selector({
+  key: 'AllSelectedSubstrateAccounts',
+  get: ({ get }) => {
+    return get(allSelectedAccountsState).filter(x => x.type !== 'ethereum')
   },
 })
 

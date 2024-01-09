@@ -5,7 +5,7 @@ import SectionHeader from '@components/molecules/SectionHeader'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { WithdrawCrowdloanWidget } from '@components/widgets/WithdrawCrowdloanWidget'
-import { selectedAccountsState, selectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { allSelectedAccountsState, allSelectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { chains } from '@domains/chains'
 import { tokenPriceState } from '@domains/chains/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
@@ -14,10 +14,10 @@ import styled from '@emotion/styled'
 import crowdloanDataState from '@libs/@talisman-crowdloans/provider'
 import { useCrowdloanContributions, type GqlContribution } from '@libs/crowdloans'
 import { calculateGqlCrowdloanPortfolioAmounts, useTaggedAmountsInPortfolio } from '@libs/portfolio'
-import { useChainmetaValue, useParachainDetailsById } from '@libs/talisman'
+import { useParachainDetailsById } from '@libs/talisman'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { Clock, Eye, Lock } from '@talismn/icons'
-import { Chip, ListItem, Text } from '@talismn/ui'
+import { Chip, ListItem, Skeleton, Text, type SkeletonProps } from '@talismn/ui'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
 import { formatCommas, truncateAddress } from '@util/helpers'
 import BigNumber from 'bignumber.js'
@@ -31,7 +31,7 @@ const GqlCrowdloanItem = styled(
     const { t } = useTranslation()
     const theme = useTheme()
 
-    const accounts = useRecoilValue(selectedAccountsState)
+    const accounts = useRecoilValue(allSelectedAccountsState)
     const account = useMemo(
       () => accounts.find(account => encodeAnyAddress(account.address) === encodeAnyAddress(contribution.account.id)),
       [accounts, contribution.account]
@@ -69,16 +69,6 @@ const GqlCrowdloanItem = styled(
     const { parachainDetails } = useParachainDetailsById(parachainId)
     const linkToCrowdloan = parachainDetails?.slug ? `/crowdloans/${parachainDetails?.slug}` : `/crowdloans`
 
-    const blockNumber = useChainmetaValue(relayChain?.id ?? NaN, 'blockNumber')
-    const blockPeriod = useChainmetaValue(relayChain?.id ?? NaN, 'blockPeriod')
-
-    const lockedSeconds = ((contribution.crowdloan.lastBlock ?? 0) - (blockNumber ?? 0)) * (blockPeriod ?? 6)
-
-    const isLocked = (lockedSeconds ?? 0) > 0
-    const isUnlockingSoon = (lockedSeconds ?? 0) <= 60 * 60 * 72 // 72 hours
-
-    const isFundsReturned = contribution.returned || contribution.crowdloan.dissolved
-
     const navigate = useNavigate()
     const goToStaking = useCallback(() => {
       const relayChainId = chains.find(({ genesisHash }) => genesisHash === relayChain?.genesisHash)?.id
@@ -87,11 +77,10 @@ const GqlCrowdloanItem = styled(
     }, [account?.address, contributedTokens, navigate, relayChain?.genesisHash])
 
     // hide returned contributions which were unlocked more than 30 days ago
-    const oldAndReturned = isFundsReturned && lockedSeconds < -60 * 60 * 24 * 30
-    if (blockNumber === null || oldAndReturned) return null
+    if (contribution.blockNumber === null || contribution.oldAndReturned) return null
 
     const actions = (() => {
-      if (isLocked) return null
+      if (contribution.isLocked) return null
       if (account?.readonly)
         return (
           <>
@@ -107,11 +96,11 @@ const GqlCrowdloanItem = styled(
               <div>{t('Followed account')}</div>
             </div>
             <div css={{ flexGrow: '1' }} />
-            {isFundsReturned && <div css={{ color: 'rgb(90, 90, 90)' }}>{t('Withdrawn')}</div>}
+            {contribution.isFundsReturned && <div css={{ color: 'rgb(90, 90, 90)' }}>{t('Withdrawn')}</div>}
           </>
         )
 
-      if (isFundsReturned)
+      if (contribution.isFundsReturned)
         return (
           <>
             <Chip
@@ -185,7 +174,7 @@ const GqlCrowdloanItem = styled(
             }
             trailingContent={
               <>
-                {isLocked && (
+                {contribution.isLocked && (
                   <div css={{ display: 'flex', alignItems: 'center', marginRight: '3rem' }}>
                     <div
                       css={{
@@ -195,13 +184,16 @@ const GqlCrowdloanItem = styled(
                         gap: '0.5em',
                         padding: '0.4rem 0.6rem',
                         fontSize: '1.2rem',
-                        color: isUnlockingSoon ? 'rgb(244, 143, 69)' : 'rgb(165, 165, 165)',
-                        backgroundColor: isUnlockingSoon ? 'rgba(244, 143, 69, 0.2)' : 'rgb(47, 47, 47)',
+                        color: contribution.isUnlockingSoon ? 'rgb(244, 143, 69)' : 'rgb(165, 165, 165)',
+                        backgroundColor: contribution.isUnlockingSoon ? 'rgba(244, 143, 69, 0.2)' : 'rgb(47, 47, 47)',
                         borderRadius: '1.2rem',
                       }}
                     >
                       <Clock css={{ width: '1em', height: '1em' }} />{' '}
-                      <Countdown seconds={lockedSeconds ?? 0} showSeconds={(lockedSeconds ?? 0) < 60} />
+                      <Countdown
+                        seconds={contribution.lockedSeconds ?? 0}
+                        showSeconds={(contribution.lockedSeconds ?? 0) < 60}
+                      />
                     </div>
                   </div>
                 )}
@@ -247,56 +239,61 @@ const GqlCrowdloanItem = styled(
   }
 )``
 
+const GqlCrowdloanItemSkeleton = (props: SkeletonProps) => {
+  const theme = useTheme()
+  return (
+    <Skeleton.Surface
+      {...props}
+      animate={props.animate}
+      css={{
+        borderRadius: '0.8rem',
+        backgroundColor: theme.color.surface,
+      }}
+    >
+      <ListItem
+        leadingContent={<Skeleton.Foreground css={{ width: '4rem', height: '4rem', borderRadius: '2rem' }} />}
+        headlineText={
+          <Text.Body>
+            <Skeleton.Foreground css={{ height: '0.75em', marginBottom: '0.25em', width: 80 }} />
+          </Text.Body>
+        }
+        supportingText={
+          <Text.Body>
+            <Skeleton.Foreground css={{ height: '0.75em', width: 240 }} />
+          </Text.Body>
+        }
+        trailingContent={
+          <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+            <Text.BodyLarge as="div" css={{ fontWeight: 'bold' }}>
+              <Skeleton.Foreground css={{ height: '0.75em', marginBottom: '0.25em', width: 80 }} />
+            </Text.BodyLarge>
+            <Skeleton.Foreground css={{ height: '0.75em', width: 60 }} />
+          </div>
+        }
+      />
+    </Skeleton.Surface>
+  )
+}
+
 const SuspendableCrowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
-  const accounts = useRecoilValue(selectedSubstrateAccountsState)
-  const { gqlContributions, hydrated: contributionsHydrated } = useCrowdloanContributions(
+  const accounts = useRecoilValue(allSelectedSubstrateAccountsState)
+  const { sortedGqlContributions, hydrated: contributionsHydrated } = useCrowdloanContributions(
     useMemo(() => accounts.map(x => x.address), [accounts])
   )
   const crowdloansUsd = useTotalCrowdloanTotalFiatAmount()
-
-  const sortedGqlContributions = useMemo(() => {
-    return gqlContributions.slice().sort((a, b) => {
-      if ((a.crowdloan.lastBlock ?? Number.MAX_SAFE_INTEGER) !== (b.crowdloan.lastBlock ?? Number.MAX_SAFE_INTEGER))
-        return (a.crowdloan.lastBlock ?? Number.MAX_SAFE_INTEGER) - (b.crowdloan.lastBlock ?? Number.MAX_SAFE_INTEGER)
-
-      if (a.crowdloan.fundIndex !== b.crowdloan.fundIndex) return a.crowdloan.fundIndex - b.crowdloan.fundIndex
-
-      let aAccountIndex = accounts.findIndex(
-        account => encodeAnyAddress(account.address) === encodeAnyAddress(a.account.id)
-      )
-      if (aAccountIndex === -1) aAccountIndex = Number.MAX_SAFE_INTEGER
-      let bAccountIndex = accounts.findIndex(
-        account => encodeAnyAddress(account.address) === encodeAnyAddress(b.account.id)
-      )
-      if (bAccountIndex === -1) bAccountIndex = Number.MAX_SAFE_INTEGER
-      if (aAccountIndex !== bAccountIndex) return aAccountIndex - bAccountIndex
-
-      return a.timestamp - b.timestamp
-    })
-  }, [accounts, gqlContributions])
-
-  // Temporary disable crowdloan skeleton
-  if (!contributionsHydrated || sortedGqlContributions.length === 0) {
-    return null
-  }
 
   return (
     <section className={className ?? ''} css={{ marginBottom: '2rem' }}>
       <SectionHeader headlineText={t('Crowdloans')} supportingText={<AnimatedFiatNumber end={crowdloansUsd} />} />
       {!contributionsHydrated ? (
-        <PanelSection comingSoon>
-          <div>{t('Summoning Crowdloan Contributions...')}</div>
-          <Pendor />
-        </PanelSection>
+        <GqlCrowdloanItemSkeleton />
       ) : sortedGqlContributions.length < 1 ? (
-        <PanelSection comingSoon>{t('You have not contributed to any recent Crowdloans')}</PanelSection>
+        <PanelSection comingSoon>{t('You have not contributed to any recent crowdloans')}</PanelSection>
       ) : (
         <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
           {sortedGqlContributions.map(contribution => (
-            <>
-              <GqlCrowdloanItem key={`${contribution.id}`} contribution={contribution} />
-            </>
+            <GqlCrowdloanItem key={`${contribution.id}`} contribution={contribution} />
           ))}
         </div>
       )}
