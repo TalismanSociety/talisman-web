@@ -1,13 +1,14 @@
 import { useDeriveState } from '@talismn/react-polkadot-api'
+import { Maybe } from '@util/monads'
 import BN from 'bn.js'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { useCallback } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 import { useSubstrateApiState } from '..'
-import { expectedBlockTime } from '../utils/substratePolyfills'
+import { expectedBlockTime, expectedSessionTime } from '../utils/substratePolyfills'
 
-const erasToMilliseconds = (eras: BN, eraLength: BN, eraProgress: BN, expectedBlockTime: BN) =>
-  eras.subn(1).mul(eraLength).add(eraLength).sub(eraProgress).mul(expectedBlockTime).toNumber()
+const erasOrSessionsRemaining = (current: BN, length: BN, progress: BN) =>
+  current.subn(1).mul(length).add(length).sub(progress)
 
 export const useEraEtaFormatter = () => {
   const [api, sessionProgress] = useRecoilValue(
@@ -15,22 +16,20 @@ export const useEraEtaFormatter = () => {
   )
 
   return useCallback(
-    (era: BN | number) => {
+    (erasOrSessions: BN | number) => {
+      const remaining = erasOrSessionsRemaining(
+        new BN(erasOrSessions),
+        sessionProgress.eraLength,
+        sessionProgress.eraProgress
+      )
+
       if (!sessionProgress.isEpoch) {
-        return `${new BN(era).mul(sessionProgress.eraLength).toString()} sessions`
+        return Maybe.of(expectedSessionTime(api)).mapOr(`${remaining.toString()} sessions`, sessionLength =>
+          formatDistanceToNow(addMilliseconds(new Date(), remaining.muln(sessionLength).toNumber()))
+        )
       }
 
-      return formatDistanceToNow(
-        addMilliseconds(
-          new Date(),
-          erasToMilliseconds(
-            new BN(era),
-            sessionProgress.eraLength,
-            sessionProgress.eraProgress,
-            expectedBlockTime(api)
-          )
-        )
-      )
+      return formatDistanceToNow(addMilliseconds(new Date(), remaining.mul(expectedBlockTime(api)).toNumber()))
     },
     [api, sessionProgress.eraLength, sessionProgress.eraProgress, sessionProgress.isEpoch]
   )

@@ -3,7 +3,7 @@ import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import HistoryWidget from '@components/widgets/history/History'
 import { selectedAccountsState } from '@domains/accounts'
 import { Codepen, Globe } from '@talismn/icons'
-import { DateInput, Select, Text, TextInput } from '@talismn/ui'
+import { DateInput, SearchBar, Select, Text, TextInput } from '@talismn/ui'
 import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { Maybe } from '@util/monads'
 import { endOfDay, startOfDay } from 'date-fns'
@@ -94,10 +94,10 @@ const History = () => {
           }}
         >
           <LabelledInput>
-            <TextInput
-              placeholder="Search for TX hash or account address"
+            <SearchBar
+              placeholder="Paste account address or TX hash"
               value={search}
-              onChange={event => setSearch(event.target.value)}
+              onChangeText={setSearch}
               leadingSupportingText={<TextInput.ErrorLabel>{searchValidationError}</TextInput.ErrorLabel>}
             />
           </LabelledInput>

@@ -5,6 +5,7 @@ import {
   nftCollectionItemsState,
   nftCollectionsState,
   nftsByTagState,
+  nftsLoadingState,
   useSetFavoriteNft,
   useSetHiddenNft,
   type CollectionKey,
@@ -17,6 +18,7 @@ import { ChevronLeft, ChevronRight, ExternalLink, Eye, EyeOff, Heart } from '@ta
 import {
   Button,
   Card,
+  CircularProgressIndicator,
   FloatingActionButton,
   Hr,
   ListItem,
@@ -41,7 +43,7 @@ import {
   type RefCallback,
 } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, waitForAll } from 'recoil'
 
 const COLLECTION_KEY = 'collectionKey'
 
@@ -66,11 +68,18 @@ const toIpfsCompatibleUrl = (url: string, options?: { imgWidth?: number }) => {
   return gatewayUrl.toString()
 }
 
-const AccountHeader = (props: { className?: string; account: Account }) => (
+const AccountHeader = (props: { className?: string; account: Account; loading?: boolean }) => (
   <ListItem
     className={props.className}
     leadingContent={<AccountIcon account={props.account} size="4rem" />}
-    headlineText={props.account.name ?? shortenAddress(props.account.address)}
+    headlineText={
+      <>
+        {props.account.name ?? shortenAddress(props.account.address)}{' '}
+        <CircularProgressIndicator
+          css={[{ verticalAlign: 'text-bottom' }, !props.loading && { visibility: 'hidden' }]}
+        />
+      </>
+    }
   />
 )
 
@@ -174,11 +183,15 @@ const NftCard = ({ nft }: { nft: Nft }) => {
               {(nft.externalLinks?.length ?? 0) > 0 && (
                 <article>
                   <Text.BodyLarge as="div">View on</Text.BodyLarge>
-                  {nft.externalLinks?.map((link, index) => (
-                    <Text.BodyLarge.A key={index} target="_blank" href={link.url}>
-                      {link.name} <ExternalLink size="1em" css={{ verticalAlign: 'middle' }} />
-                    </Text.BodyLarge.A>
-                  ))}
+                  <div css={{ display: 'flex', flexDirection: 'column', gap: '0.125em' }}>
+                    {nft.externalLinks?.map((link, index) => (
+                      <div key={index}>
+                        <Text.BodyLarge.A target="_blank" href={link.url}>
+                          {link.name} <ExternalLink size="1em" css={{ verticalAlign: 'middle' }} />
+                        </Text.BodyLarge.A>
+                      </div>
+                    ))}
+                  </div>
                 </article>
               )}
               {nft.serialNumber !== undefined && (
@@ -242,14 +255,17 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
   const view = collectionKey !== null ? ('items' as const) : props.view
 
   const nftTag = useContext(NftTagContext)
-  const nftsOrCollections = useRecoilValue<ReadonlyArray<NftCollection | Nft>>(
-    view === 'collections'
-      ? nftCollectionsState(props.account.address)
-      : collectionKey !== null
-      ? nftCollectionItemsState({ address: props.account.address, collectionKey })
-      : nftTag === 'hidden'
-      ? nftsByTagState({ address: props.account.address, whitelist: 'hidden' })
-      : nftsByTagState({ address: props.account.address, whitelist: nftTag, blacklist: 'hidden' })
+  const [nftsOrCollections, nftsLoading] = useRecoilValue<[ReadonlyArray<NftCollection | Nft>, boolean]>(
+    waitForAll([
+      view === 'collections'
+        ? nftCollectionsState(props.account.address)
+        : collectionKey !== null
+        ? nftCollectionItemsState({ address: props.account.address, collectionKey })
+        : nftTag === 'hidden'
+        ? nftsByTagState({ address: props.account.address, whitelist: 'hidden' })
+        : nftsByTagState({ address: props.account.address, whitelist: nftTag, blacklist: 'hidden' }),
+      nftsLoadingState(props.account.address),
+    ])
   )
 
   const [items, { page, pageCount, previous, next }] = usePagination(nftsOrCollections, { limit }, [
@@ -274,7 +290,7 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
         }}
       >
         {showAccount ? (
-          <AccountHeader account={props.account} css={{ flex: 1, padding: 0 }} />
+          <AccountHeader account={props.account} css={{ flex: 1, padding: 0 }} loading={nftsLoading} />
         ) : (
           <div css={{ flex: 1 }} />
         )}
@@ -305,7 +321,7 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
         </div>
       </header>
     ),
-    [next, page, pageCount, previous, props.account]
+    [next, nftsLoading, page, pageCount, previous, props.account]
   )
 
   if (items.length === 0) {
@@ -397,7 +413,7 @@ const Nfts = () => {
             <Suspense
               fallback={
                 <div>
-                  <AccountHeader account={account} />
+                  <AccountHeader account={account} loading />
                   <NftGrid>
                     <Card.Skeleton />
                   </NftGrid>

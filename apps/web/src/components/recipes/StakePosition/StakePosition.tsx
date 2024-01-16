@@ -144,6 +144,7 @@ const Grid = (props: PropsWithChildren<{ className?: string }>) => (
         'divider divider divider'
         'balance actions actions'
       `,
+      'gridTemplateColumns': 'repeat(2, minmax(0, 1fr)) min-content',
       'gap': '0.6rem',
       '@container (min-width: 100rem)': {
         alignItems: 'center',
@@ -183,10 +184,10 @@ const StakePosition = Object.assign(
                         props.provider
                       ) : (
                         <>
-                          <div css={{ 'display': 'none', '@container (min-width: 40rem)': { display: 'contents' } }}>
+                          <div css={{ 'display': 'none', '@container (min-width: 50rem)': { display: 'contents' } }}>
                             {props.provider}
                           </div>
-                          <div css={{ 'display': 'contents', '@container (min-width: 40rem)': { display: 'none' } }}>
+                          <div css={{ 'display': 'contents', '@container (min-width: 50rem)': { display: 'none' } }}>
                             {props.shortProvider}
                           </div>
                         </>

@@ -63,7 +63,17 @@ const AccountValueInfo = ({ account, balance }: AccountValueInfoProps) => {
           </Text.Body>
           <ChevronDown />
         </div>
-        <Text.H3 css={{ margin: '0', fontSize: '2em' }}>{balance}</Text.H3>
+        <Text.H3
+          css={{
+            'margin': '0',
+            'fontSize': '1.5em',
+            '@media(min-width: 42rem)': {
+              fontSize: '2em',
+            },
+          }}
+        >
+          {balance}
+        </Text.H3>
       </section>
     </section>
   )

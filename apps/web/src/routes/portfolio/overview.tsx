@@ -1,6 +1,5 @@
 import useAssets, { useAssetsFiltered } from '@archetypes/Portfolio/Assets'
 import { Crowdloans } from '@archetypes/Wallet'
-import { Search } from '@components/Field'
 import SectionHeader from '@components/molecules/SectionHeader'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
@@ -9,7 +8,7 @@ import PortfolioAllocationGraph from '@components/widgets/PortfolioAllocationGra
 import { SelectedAccountsHistory } from '@components/widgets/history/History'
 import Stakes from '@components/widgets/staking/Stakes'
 import { Eye, EyeOff } from '@talismn/icons'
-import { Button, IconButton } from '@talismn/ui'
+import { Button, IconButton, SearchBar } from '@talismn/ui'
 import { redactBalanceState } from '@talismn/web/src/components/widgets/RedactableBalance'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -72,8 +71,7 @@ const AssetsOverview = () => {
             }
             css={{ marginBottom: 0 }}
           />
-          <Search
-            placeholder="Search"
+          <div
             css={{
               'marginTop': '2rem',
               'width': '100%',
@@ -82,9 +80,18 @@ const AssetsOverview = () => {
                 width: '35%',
               },
             }}
-            value={search}
-            onChange={setSearch}
-          />
+          >
+            <SearchBar
+              placeholder="Search"
+              value={search}
+              onChangeText={setSearch}
+              css={{
+                '@media (min-width: 1024px)': {
+                  width: 0,
+                },
+              }}
+            />
+          </div>
         </div>
         <AssetsList isLoading={isLoading}>
           {tokens?.map(token => (

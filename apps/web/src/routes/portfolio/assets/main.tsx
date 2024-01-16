@@ -1,11 +1,11 @@
 import useAssets, { useAssetsFiltered } from '@archetypes/Portfolio/Assets'
 import { Total } from '@archetypes/Wallet'
-import { Search } from '@components/Field'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
+import { ClassNames } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ChevronLeft } from '@talismn/icons'
-import { Button, InfoCard } from '@talismn/ui'
+import { Button, InfoCard, SearchBar } from '@talismn/ui'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -32,7 +32,17 @@ const Assets = () => {
           marginBottom: '2rem',
         }}
       >
-        <Search value={search} onChange={setSearch} placeholder="Search for an Asset" />
+        <ClassNames>
+          {({ css }) => (
+            <SearchBar
+              value={search}
+              onChangeText={setSearch}
+              placeholder="Search for an Asset"
+              containerClassName={css({ flex: 1, maxWidth: '37rem' })}
+              css={{ width: 0 }}
+            />
+          )}
+        </ClassNames>
         <div
           css={{
             display: 'flex',

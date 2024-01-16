@@ -2,6 +2,7 @@ import { keyframes } from '@emotion/react'
 import { Loader } from '@talismn/icons'
 
 export type CircularProgressIndicatorProps = {
+  className?: string
   size?: string | number
 }
 
@@ -12,6 +13,7 @@ const fade = keyframes`
 
 const CircularProgressIndicator = (props: CircularProgressIndicatorProps) => (
   <Loader
+    className={props.className}
     size={props.size}
     css={{
       path: {

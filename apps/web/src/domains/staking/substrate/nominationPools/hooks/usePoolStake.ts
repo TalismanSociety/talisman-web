@@ -3,7 +3,7 @@ import { type Account } from '@domains/accounts/recoils'
 import { useSubstrateApiState } from '@domains/common'
 import { useDeriveState, useQueryState } from '@talismn/react-polkadot-api'
 import { useMemo } from 'react'
-import { useRecoilValue, useRecoilValue_TRANSITION_SUPPORT_UNSTABLE, waitForAll } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 import { useAllPendingRewardsState, useEraStakersState } from '../recoils'
 import { createAccounts, getPoolUnbonding } from '../utils'
 
@@ -11,16 +11,21 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
   const accounts = useMemo(() => (Array.isArray(account) ? (account as Account[]) : [account as Account]), [account])
 
-  const [api, pendingRewards] = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    waitForAll([useSubstrateApiState(), useAllPendingRewardsState()])
-  )
+  // TODO: recoil freeze if we use `useRecoilValue_TRANSITION_SUPPORT_UNSTABLE` here
+  // and perform a stake operation inside the staking dialog & wait for the transition to finish
+  // try again with next recoil version or when recoil transition hook is stable
+  const pendingRewardsLoadable = useRecoilValueLoadable(useAllPendingRewardsState())
+  const pendingRewards = useMemo(() => pendingRewardsLoadable.valueMaybe() ?? [], [pendingRewardsLoadable])
 
-  const _poolMembers = useRecoilValue(
-    useQueryState(
-      'nominationPools',
-      'poolMembers.multi',
-      accounts.map(({ address }) => address)
-    )
+  const [api, _poolMembers] = useRecoilValue(
+    waitForAll([
+      useSubstrateApiState(),
+      useQueryState(
+        'nominationPools',
+        'poolMembers.multi',
+        accounts.map(({ address }) => address)
+      ),
+    ])
   )
   const accountPools = useMemo(
     () =>

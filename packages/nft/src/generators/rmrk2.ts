@@ -64,7 +64,15 @@ export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Nft<'rmrk2', 
         thumbnail: nft.resources[0]?.thumb || nft.metadata_image || undefined,
         serialNumber: Number(nft.sn),
         properties: nft.metadata_properties,
-        externalLinks: [{ name: 'Singular', url: `https://singular.app/collectibles/${nft.id}` }],
+        externalLinks: [
+          {
+            name: 'Singular',
+            url: `https://singular.app/collectibles/kusama/${[nft.collection?.id, nft.id]
+              .filter((x): x is NonNullable<typeof x> => x !== undefined)
+              .join('/')}`,
+          },
+          { name: 'Kodadot', url: `https://kodadot.xyz/ksm/gallery/${nft.id}` },
+        ],
         collection: !nft.collection
           ? undefined
           : {
