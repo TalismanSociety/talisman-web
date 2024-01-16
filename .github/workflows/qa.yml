@@ -21,11 +21,34 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
 
+    environment: ${{ vars.PORTAL_PROJECT_NAME }} (${{ fromJSON('["Preview", "Production"]')[github.ref_name == github.event.repository.default_branch] }})
+
     permissions:
+      actions: read
       contents: read
 
     steps:
       - uses: actions/checkout@v3
+
+      - uses: ./.github/actions/load-environment-variables
+        with:
+          secrets: ${{ toJson(secrets) }}
+          vars: ${{ toJson(vars) }}
+          environmentVariableSecrets: >-
+            CHAINDATA,
+            ONFINALITY_API_KEY,
+            SENTRY_DSN,
+            POSTHOG_AUTH_TOKEN,
+            EX_HISTORY_INDEXER,
+            DOT_CROWDLOAN_INDEXER,
+            KSM_CROWDLOAN_INDEXER,
+            BASEROW_EXPLORE_AUTH,
+            BASEROW_CROWDLOANS_AUTH,
+            LIDO_REWARDS_ADDRESS
+          environmentVariableVariables: >-
+            APPLICATION_NAME
+          environmentVariablePrefix: REACT_APP_
+
       - uses: ./.github/actions/setup
       - run: npx playwright install --with-deps
       - run: yarn e2e

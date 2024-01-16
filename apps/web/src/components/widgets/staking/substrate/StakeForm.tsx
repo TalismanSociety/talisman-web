@@ -2,7 +2,13 @@ import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import StakeFormComponent from '@components/recipes/StakeForm'
 import { type StakeStatus } from '@components/recipes/StakeStatusIndicator'
 import { writeableSubstrateAccountsState, type Account } from '@domains/accounts/recoils'
-import { ChainContext, ChainProvider, chainsState, useNativeTokenDecimalState, type Chain } from '@domains/chains'
+import {
+  ChainProvider,
+  chainsState,
+  useChainState as useChainRecoilState,
+  useNativeTokenDecimalState,
+  type ChainInfo,
+} from '@domains/chains'
 import {
   useChainState,
   useEraEtaFormatter,
@@ -23,7 +29,6 @@ import {
   Suspense,
   memo,
   useCallback,
-  useContext,
   useDeferredValue,
   useEffect,
   useMemo,
@@ -35,8 +40,8 @@ import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 import { useAccountSelector } from '../../AccountSelector'
 import AddStakeDialog from './AddStakeDialog'
-import UnstakeDialog from './UnstakeDialog'
 import ClaimStakeDialog from './ClaimStakeDialog'
+import UnstakeDialog from './UnstakeDialog'
 
 const ExistingPool = (props: { account: Account }) => {
   const pool = usePoolStakes({ address: props.account.address })
@@ -128,10 +133,9 @@ const PoolSelector = (props: {
   onChangePoolId: (poolId: number) => unknown
   onDismiss: () => unknown
 }) => {
-  const currentChain = useContext(ChainContext)
   const [newPoolId, setNewPoolId] = useState<number>()
-  const [recommendedPools, nativeTokenDecimal] = useRecoilValue(
-    waitForAll([useRecommendedPoolsState(), useNativeTokenDecimalState()])
+  const [chain, recommendedPools, nativeTokenDecimal] = useRecoilValue(
+    waitForAll([useChainRecoilState(), useRecommendedPoolsState(), useNativeTokenDecimalState()])
   )
 
   return (
@@ -157,9 +161,9 @@ const PoolSelector = (props: {
           talismanRecommended={index === 0}
           poolName={pool.name ?? ''}
           poolDetailUrl={
-            currentChain.subscanUrl === null
+            chain.subscanUrl === null
               ? undefined
-              : new URL(`nomination_pool/${pool.poolId}`, currentChain.subscanUrl).toString()
+              : new URL(`nomination_pool/${pool.poolId}`, chain.subscanUrl).toString()
           }
           stakedAmount={`${nativeTokenDecimal.fromPlanck(pool.bondedPool.points).toHuman()} staked`}
           rating={3}
@@ -172,9 +176,9 @@ const PoolSelector = (props: {
 }
 
 export const AssetSelect = (props: {
-  selectedChain: Chain
-  onSelectChain: (chain: Chain) => unknown
-  chains: readonly Chain[]
+  selectedChain: ChainInfo
+  onSelectChain: (chain: ChainInfo) => unknown
+  chains: readonly ChainInfo[]
   inTransition: boolean
   iconSize?: string | number
 }) => (
@@ -186,7 +190,7 @@ export const AssetSelect = (props: {
         ? id => (
             <Select.Option
               leadingIcon={<CircularProgressIndicator size={props.iconSize ?? '2.4rem'} />}
-              headlineText={props.chains.find(x => x.id === id)?.nativeToken.symbol}
+              headlineText={props.chains.find(x => x.id === id)?.nativeToken?.symbol}
             />
           )
         : undefined
@@ -204,12 +208,12 @@ export const AssetSelect = (props: {
         value={x.id}
         leadingIcon={
           <img
-            alt={x.nativeToken.symbol}
-            src={x.nativeToken.logo}
+            alt={x.nativeToken?.symbol}
+            src={x.nativeToken?.logo}
             css={{ width: props.iconSize ?? '2.4rem', height: props.iconSize ?? '2.4rem' }}
           />
         }
-        headlineText={x.nativeToken.symbol}
+        headlineText={x.nativeToken?.symbol}
       />
     ))}
   </Select>
@@ -240,8 +244,6 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 
   const location = useLocation()
 
-  const currentChain = useContext(ChainContext)
-
   const poolIdFromSearch = useMemo(
     () =>
       Maybe.of(new URLSearchParams(location.search).get('poolId')).mapOrUndefined(x => {
@@ -256,7 +258,9 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 
   const apiEndpoint = useSubstrateApiEndpoint()
 
-  const [api, recommendedPools] = useRecoilValue(waitForAll([useSubstrateApiState(), useRecommendedPoolsState()]))
+  const [chain, api, recommendedPools] = useRecoilValue(
+    waitForAll([useChainRecoilState(), useSubstrateApiState(), useRecommendedPoolsState()])
+  )
 
   const initialPoolId = poolIdFromSearch ?? recommendedPools[0]?.poolId
 
@@ -391,7 +395,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
             totalStaked={poolTotalStaked?.toHuman() ?? ''}
             memberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}
             onRequestPoolChange={() => setShowPoolSelector(true)}
-            chain={currentChain.id.toString() ?? ''}
+            chain={chain.id.toString() ?? ''}
           />
         }
         estimatedYield={
@@ -432,7 +436,8 @@ const StakeForm = () => {
   const chains = useRecoilValue(chainsState)
 
   const [inTransition, startTransition] = useTransition()
-  const [selectedChain, setSelectedChain] = useState<Chain>(chains[0])
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const [selectedChain, setSelectedChain] = useState(chains[0]!)
 
   return (
     <ChainProvider chain={selectedChain}>

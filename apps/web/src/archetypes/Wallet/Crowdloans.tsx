@@ -6,8 +6,7 @@ import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { WithdrawCrowdloanWidget } from '@components/widgets/WithdrawCrowdloanWidget'
 import { allSelectedAccountsState, allSelectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { chains } from '@domains/chains'
-import { tokenPriceState } from '@domains/chains/recoils'
+import { chainsState, tokenPriceState } from '@domains/chains/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import { css, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
@@ -15,7 +14,7 @@ import crowdloanDataState from '@libs/@talisman-crowdloans/provider'
 import { useCrowdloanContributions, type GqlContribution } from '@libs/crowdloans'
 import { calculateGqlCrowdloanPortfolioAmounts, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useParachainDetailsById } from '@libs/talisman'
-import { SupportedRelaychains } from '@libs/talisman/util/_config'
+import { supportedRelayChainsState } from '@libs/talisman/util/_config'
 import { Clock, Eye, Lock } from '@talismn/icons'
 import { Chip, ListItem, Skeleton, Text, type SkeletonProps } from '@talismn/ui'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
@@ -40,9 +39,8 @@ const GqlCrowdloanItem = styled(
     const crowdloans = useRecoilValue(crowdloanDataState)
 
     const paraId = contribution.crowdloan.paraId
-    const relayChain = Object.values(SupportedRelaychains).find(
-      chain => chain.genesisHash === contribution.relay.genesisHash
-    )
+    const relayChains = useRecoilValue(supportedRelayChainsState)
+    const relayChain = relayChains.find(chain => chain.genesisHash === contribution.relay.genesisHash)
     const chain = crowdloans.find(x => x.id === `${relayChain?.id ?? NaN}-${paraId}`)
 
     const { tokenSymbol: relayNativeToken, coingeckoId, tokenDecimals: relayTokenDecimals } = relayChain ?? {}
@@ -70,11 +68,12 @@ const GqlCrowdloanItem = styled(
     const linkToCrowdloan = parachainDetails?.slug ? `/crowdloans/${parachainDetails?.slug}` : `/crowdloans`
 
     const navigate = useNavigate()
+    const chains = useRecoilValue(chainsState)
     const goToStaking = useCallback(() => {
       const relayChainId = chains.find(({ genesisHash }) => genesisHash === relayChain?.genesisHash)?.id
       if (relayChainId && account?.address)
         navigate(`/staking?action=stake&chain=${relayChainId}&account=${account.address}&amount=${contributedTokens}`)
-    }, [account?.address, contributedTokens, navigate, relayChain?.genesisHash])
+    }, [account?.address, chains, contributedTokens, navigate, relayChain?.genesisHash])
 
     // hide returned contributions which were unlocked more than 30 days ago
     if (contribution.blockNumber === null || contribution.oldAndReturned) return null

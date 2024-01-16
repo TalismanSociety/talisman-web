@@ -3,10 +3,10 @@ import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedBalancesState, selectedCurrencyState } from '@domains/balances'
+import { ChainProvider, defaultParams } from '@domains/chains'
 import { slpxPairsState, type SlpxPair } from '@domains/staking/slpx'
 import { githubChainLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
-import { PolkadotApiIdProvider } from '@talismn/react-polkadot-api'
 import { CircularProgressIndicator } from '@talismn/ui'
 import BigNumber from 'bignumber.js'
 import { Suspense, useMemo } from 'react'
@@ -79,7 +79,13 @@ const StakeProviders = () => {
     <>
       {slpxPairs.map((slpxPair, index) => (
         <ErrorBoundary key={index} orientation="horizontal">
-          <PolkadotApiIdProvider id={slpxPair.substrateEndpoint}>
+          <ChainProvider
+            chain={{
+              genesisHash: slpxPair.substrateChainGenesisHash,
+              parameters: defaultParams,
+              priorityPool: undefined,
+            }}
+          >
             <StakeProvider
               symbol={slpxPair.nativeToken.symbol}
               logo={githubChainLogoUrl('moonbeam')}
@@ -115,7 +121,7 @@ const StakeProviders = () => {
                 <StakeProvider.StakeButton as={Link} to={`?action=stake&type=slpx&contract-address=${slpxPair.splx}`} />
               }
             />
-          </PolkadotApiIdProvider>
+          </ChainProvider>
         </ErrorBoundary>
       ))}
     </>

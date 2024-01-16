@@ -1,7 +1,8 @@
 import FastUnstakeDialog from '@components/recipes/FastUnstakeDialog'
 import { ValidatorStakeItem as ValidatorStakeItemComponent } from '@components/recipes/StakeItem'
+import StakePosition from '@components/recipes/StakePosition'
 import { type Account } from '@domains/accounts/recoils'
-import { ChainContext, useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
+import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
 import { useSubstrateApiState } from '@domains/common'
 import { useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
 import { useEraEtaFormatter } from '@domains/common/hooks/useEraEta'
@@ -10,12 +11,11 @@ import { type DeriveStakingAccount } from '@polkadot/api-derive/types'
 import { useDeriveState } from '@talismn/react-polkadot-api'
 import { CircularProgressIndicator } from '@talismn/ui'
 import BN from 'bn.js'
-import { useContext, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import RedactableBalance from '../../RedactableBalance'
 import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
-import StakePosition from '@components/recipes/StakePosition'
 
 const ValidatorStakeItem = (props: {
   account: Account
@@ -35,8 +35,9 @@ const ValidatorStakeItem = (props: {
 
   const lockDuration = useLocalizedLockDuration()
 
-  const [api, balances, decimal, nativeTokenPrice] = useRecoilValue(
+  const [chain, api, balances, decimal, nativeTokenPrice] = useRecoilValue(
     waitForAll([
+      useChainState(),
       useSubstrateApiState(),
       useDeriveState('balances', 'all', [props.account.address]),
       useNativeTokenDecimalState(),
@@ -79,13 +80,11 @@ const ValidatorStakeItem = (props: {
     }
   }
 
-  const chain = useContext(ChainContext)
-
   return (
     <>
       <StakePosition
         chain={chain.name}
-        symbol={chain.nativeToken.symbol}
+        symbol={chain.nativeToken?.symbol}
         provider="Validator staking"
         stakeStatus={
           props.reward === undefined ? undefined : props.reward === 0n ? 'not_earning_rewards' : 'earning_rewards'

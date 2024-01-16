@@ -5,7 +5,6 @@ import { type PropsWithChildren } from 'react'
 import * as Chainmeta from './chainmeta'
 import * as Crowdloan from './crowdloan'
 import * as Parachain from './parachain'
-import { useChainByGenesis as _useChainByGenesis } from './util/hooks'
 
 /* publically exposed hooks */
 
@@ -29,9 +28,6 @@ export {
   useParachainsDetails,
   useParachainsDetailsIndexedById,
 } from './parachain'
-
-// helpers
-export const useChainByGenesis = _useChainByGenesis
 
 /* publically exposed provider */
 const Provider = ({ children }: PropsWithChildren) => (

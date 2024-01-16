@@ -5,6 +5,7 @@
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface ImportMetaEnv {
   REACT_APP_APPLICATION_NAME: string
+  REACT_APP_CHAINDATA: string
   REACT_APP_ONFINALITY_API_KEY?: string
   REACT_APP_SENTRY_DSN: string
   REACT_APP_SENTRY_RELEASE?: string

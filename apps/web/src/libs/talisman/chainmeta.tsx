@@ -1,15 +1,15 @@
 import { WsProvider } from '@polkadot/api'
 import { get } from 'lodash'
 import {
-  useReducer,
-  type PropsWithChildren,
   useContext as _useContext,
   createContext,
   useEffect,
+  useReducer,
   useState,
+  type PropsWithChildren,
 } from 'react'
-
-import { SupportedRelaychains } from './util/_config'
+import { useRecoilValue } from 'recoil'
+import { supportedRelayChainsState } from './util/_config'
 
 //
 // Types
@@ -99,12 +99,13 @@ export const Provider = ({ children }: PropsWithChildren) => {
     })
   }
 
+  const relayChains = useRecoilValue(supportedRelayChainsState)
   useEffect(() => {
-    Object.values(SupportedRelaychains).forEach(chain => {
+    relayChains.forEach(chain => {
       dispatch(chain)
       void hydrateBlock(chain)
     })
-  }, [])
+  }, [relayChains])
 
   return <Context.Provider value={chains}>{children}</Context.Provider>
 }

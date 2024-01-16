@@ -10,7 +10,7 @@ export type SlpxToken = {
 
 export type SlpxPair = {
   chain: Chain
-  substrateEndpoint: string
+  substrateChainGenesisHash: `0x${string}`
   splx: `0x${string}`
   nativeToken: SlpxToken
   vToken: SlpxToken

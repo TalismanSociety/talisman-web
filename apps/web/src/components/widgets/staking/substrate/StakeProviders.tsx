@@ -3,14 +3,14 @@ import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedSubstrateAccountsState } from '@domains/accounts'
-import { ChainContext, ChainProvider, chainsState } from '@domains/chains'
+import { ChainProvider, chainsState, useChainState } from '@domains/chains'
 import { chainDeriveState, substrateApiState, useTokenAmountFromPlanck } from '@domains/common'
 import { useInflation, useLocalizedLockDuration } from '@domains/staking/substrate/nominationPools'
 import { Decimal } from '@talismn/math'
 import { usePolkadotApiId, useQueryState } from '@talismn/react-polkadot-api'
 import { CircularProgressIndicator } from '@talismn/ui'
 import BigNumber from 'bignumber.js'
-import { Suspense, useContext, useMemo } from 'react'
+import { Suspense, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 
@@ -73,11 +73,11 @@ const StakePercentage = () => {
 }
 
 const StakeProviderItem = () => {
-  const chain = useContext(ChainContext)
+  const chain = useRecoilValue(useChainState())
   return (
     <StakeProvider
-      symbol={chain.nativeToken.symbol}
-      logo={chain.nativeToken.logo}
+      symbol={chain.nativeToken?.symbol}
+      logo={chain.nativeToken?.logo ?? ''}
       chain={chain.name}
       apr={
         <Suspense fallback={<CircularProgressIndicator size="1em" />}>

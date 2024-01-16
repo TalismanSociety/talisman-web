@@ -1,9 +1,9 @@
 import { SlpxAddStakeForm } from '@components/recipes/AddStakeDialog'
 import { useAccountSelector } from '@components/widgets/AccountSelector'
 import { evmSignableAccountsState } from '@domains/accounts'
+import { ChainProvider, defaultParams } from '@domains/chains'
 import { slpxPairsState, useMintForm, type SlpxPair } from '@domains/staking/slpx'
 import { Zap } from '@talismn/icons'
-import { PolkadotApiIdProvider } from '@talismn/react-polkadot-api'
 import {
   CircularProgressIndicator,
   InfoCard,
@@ -130,7 +130,13 @@ export default () => {
   }
 
   return (
-    <PolkadotApiIdProvider id={slpxPair.substrateEndpoint}>
+    <ChainProvider
+      chain={{
+        genesisHash: slpxPair.substrateChainGenesisHash,
+        parameters: defaultParams,
+        priorityPool: undefined,
+      }}
+    >
       <AddStakeSideSheet
         slpxPair={slpxPair}
         onRequestDismiss={() =>
@@ -142,6 +148,6 @@ export default () => {
           })
         }
       />
-    </PolkadotApiIdProvider>
+    </ChainProvider>
   )
 }

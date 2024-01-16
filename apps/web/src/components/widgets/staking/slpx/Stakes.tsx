@@ -2,11 +2,11 @@ import StakePosition from '@components/recipes/StakePosition'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { selectedEvmAccountsState } from '@domains/accounts'
 import { useStakes } from '@domains/staking/slpx/core'
-import { PolkadotApiIdProvider } from '@talismn/react-polkadot-api'
 import { useState } from 'react'
 
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'
+import { ChainProvider, defaultParams } from '@domains/chains'
 import { slpxPairsState } from '@domains/staking/slpx'
 import type { SlpxPair } from '@domains/staking/slpx/types'
 import { useRecoilValue } from 'recoil'
@@ -79,9 +79,16 @@ const Stakes = () => {
   return (
     <>
       {slpxPairs.map((slpxPair, index) => (
-        <PolkadotApiIdProvider key={index} id={slpxPair.substrateEndpoint}>
+        <ChainProvider
+          key={index}
+          chain={{
+            genesisHash: slpxPair.substrateChainGenesisHash,
+            parameters: defaultParams,
+            priorityPool: undefined,
+          }}
+        >
           <SlpxStakes slpxPair={slpxPair} />
-        </PolkadotApiIdProvider>
+        </ChainProvider>
       ))}
     </>
   )
