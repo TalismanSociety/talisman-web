@@ -1,5 +1,6 @@
 import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
 import {
+  lookupAccountAddressState,
   portfolioAccountsState,
   readOnlyAccountsState,
   selectedAccountAddressesState,
@@ -24,7 +25,7 @@ import {
 import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
 import { useMemo, type ElementType, type ReactNode } from 'react'
-import { useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable, useResetRecoilState, useSetRecoilState } from 'recoil'
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
 import AnimatedFiatNumber from './AnimatedFiatNumber'
 import RemoveWatchedAccountConfirmationDialog from './RemoveWatchedAccountConfirmationDialog'
@@ -80,6 +81,9 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
   const totalBalance = useRecoilValueLoadable(totalPortfolioFiatBalance)
 
   const setSelectedAccountAddresses = useSetRecoilState(selectedAccountAddressesState)
+  const resetSelectedAccountAddresses = useResetRecoilState(selectedAccountAddressesState)
+  const resetLookupAccountAddress = useResetRecoilState(lookupAccountAddressState)
+
   const portfolioAccounts = useRecoilValue(portfolioAccountsState)
   const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
 
@@ -87,7 +91,12 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
 
   const leadingMenuItem = useMemo(() => {
     return (
-      <Menu.Item onClick={() => setSelectedAccountAddresses(undefined)}>
+      <Menu.Item
+        onClick={() => {
+          resetSelectedAccountAddresses()
+          resetLookupAccountAddress()
+        }}
+      >
         <ListItem
           headlineText={Maybe.of(totalBalance.valueMaybe()).mapOr(<CircularProgressIndicator size="1em" />, amount => (
             <AnimatedFiatNumber end={amount} />
@@ -101,7 +110,13 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
         />
       </Menu.Item>
     )
-  }, [setSelectedAccountAddresses, theme.color.foreground, theme.color.primary, totalBalance])
+  }, [
+    resetLookupAccountAddress,
+    resetSelectedAccountAddresses,
+    theme.color.foreground,
+    theme.color.primary,
+    totalBalance,
+  ])
 
   return (
     <Menu>
