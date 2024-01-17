@@ -55,7 +55,7 @@ const stateDataState = selector({
     const balances = get(selectedBalancesState)
     const fiatSum = balances?.sum.fiat(get(selectedCurrencyState))
 
-    return { transferable: fiatSum?.transferable, reserved: fiatSum?.reserved, locked: fiatSum?.locked }
+    return { transferable: fiatSum.transferable, locked: fiatSum.reserved + fiatSum.locked }
   },
 })
 
@@ -84,10 +84,9 @@ const SuspendablePortfolioAllocationGraph = () => {
     () =>
       [
         { label: 'Available', value: stateData.transferable ?? 0, renderValue: renderFiat, color: '#FD8FFF' },
-        { label: 'Reserved', value: stateData.reserved ?? 0, renderValue: renderFiat, color: '#FD4848' },
-        { label: 'Locked', value: stateData.locked ?? 0, renderValue: renderFiat, color: '#D5FF5C' },
+        { label: 'Locked', value: stateData.locked ?? 0, renderValue: renderFiat, color: '#FD4848' },
       ].filter(x => x.value > 0),
-    [stateData.locked, stateData.reserved, stateData.transferable]
+    [stateData.locked, stateData.transferable]
   )
 
   return (
