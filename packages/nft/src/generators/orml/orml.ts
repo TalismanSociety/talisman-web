@@ -9,7 +9,11 @@ import type { CreateNftAsyncGenerator, IpfsMetadata, Nft } from '../../types.js'
 type Config<T> = {
   chain: T
   provider: ProviderInterface
-  getMetadata: (classId: u32, tokenId: u64, metadata: Bytes) => Promise<IpfsMetadata | undefined>
+  getMetadata: (
+    classId: u32,
+    tokenId: u64,
+    metadata: Bytes
+  ) => Promise<(IpfsMetadata & { mimeType: string | undefined; thumbnail: string | undefined }) | undefined>
   getExternalLinks: (classId: u32, tokenId: u64) => Array<{ name: string; url: string }>
 }
 
@@ -73,8 +77,9 @@ export const createOrmlNftAsyncGenerator = <const T extends string>({
               id: `${type}-${chain}-${classId.toString()}-${tokenId.toString()}`,
               name: tokenMetadata?.name || classMetadata?.name,
               description: tokenMetadata?.name || classMetadata?.name,
-              media: tokenMetadata?.image || classMetadata?.image,
-              thumbnail: tokenMetadata?.image || classMetadata?.image,
+              media: { url: tokenMetadata?.image || classMetadata?.image, mimeType: tokenMetadata?.mimeType },
+              thumbnail:
+                tokenMetadata?.thumbnail || classMetadata?.thumbnail || tokenMetadata?.image || classMetadata?.image,
               serialNumber: tokenId.toNumber(),
               properties: undefined,
               externalLinks: getExternalLink(classId, tokenId),

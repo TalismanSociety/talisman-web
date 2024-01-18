@@ -111,10 +111,11 @@ const NftCard = ({ nft }: { nft: Nft }) => {
       <Card
         media={
           <Card.Preview
-            src={Maybe.of(nft.thumbnail ?? nft.media).mapOrUndefined(x => [
+            src={Maybe.of(nft.thumbnail ?? nft.media.url).mapOrUndefined(x => [
               toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH }),
               toIpfsCompatibleUrl(x),
             ])}
+            type={nft.thumbnail !== undefined ? undefined : (nft.media.mimeType?.split('/').at(0) as any)}
             fetchMime
           />
         }
@@ -159,7 +160,12 @@ const NftCard = ({ nft }: { nft: Nft }) => {
         onRequestDismiss={() => setDialogOpen(false)}
         title={nft.name}
         overline={nft.collection?.name}
-        media={<MediaDialog.Player src={Maybe.of(nft.media).mapOrUndefined(toIpfsCompatibleUrl)} />}
+        media={
+          <MediaDialog.Player
+            src={Maybe.of(nft.media.url).mapOrUndefined(toIpfsCompatibleUrl)}
+            type={nft.media.mimeType?.split('/').at(0) as any}
+          />
+        }
         content={
           <div>
             <Text.Body as="p" css={{ whiteSpace: 'pre-wrap' }}>
@@ -220,7 +226,7 @@ const NftCollectionCard = ({ collection }: { collection: NftCollection }) => (
             .map(nft => (
               <Card.Preview
                 key={nft.id}
-                src={Maybe.of(nft.thumbnail ?? nft.media).mapOrUndefined(x => [
+                src={Maybe.of(nft.thumbnail ?? nft.media.url).mapOrUndefined(x => [
                   toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH / 4 }),
                   toIpfsCompatibleUrl(x),
                 ])}

@@ -4,7 +4,7 @@ export type Nft<TType extends string, TChain extends string> = {
   chain: TChain
   name: string | undefined
   description: string | undefined
-  media: string | undefined
+  media: { url: string | undefined; mimeType?: string | undefined }
   thumbnail: string | undefined
   serialNumber: number | undefined
   properties: Record<string, unknown> | undefined

@@ -99,7 +99,7 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'erc721', s
                   id: `${type}-${chainId}-${erc721Address}-${tokenId.toString()}`,
                   name: metadata?.name,
                   description: metadata?.description,
-                  media: metadata?.animation_url || metadata?.image || undefined,
+                  media: { url: metadata?.animation_url || metadata?.image || undefined },
                   thumbnail: metadata?.image || undefined,
                   serialNumber: Number(tokenId),
                   properties: !metadata?.attributes
