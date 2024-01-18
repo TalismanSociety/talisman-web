@@ -5,7 +5,7 @@ import SectionHeader from '@components/molecules/SectionHeader'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { WithdrawCrowdloanWidget } from '@components/widgets/WithdrawCrowdloanWidget'
-import { allSelectedAccountsState, allSelectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { selectedSubstrateAccountsState, substrateAccountsState } from '@domains/accounts/recoils'
 import { chainsState, tokenPriceState } from '@domains/chains/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import { css, useTheme } from '@emotion/react'
@@ -30,7 +30,7 @@ const GqlCrowdloanItem = styled(
     const { t } = useTranslation()
     const theme = useTheme()
 
-    const accounts = useRecoilValue(allSelectedAccountsState)
+    const accounts = useRecoilValue(substrateAccountsState)
     const account = useMemo(
       () => accounts.find(account => encodeAnyAddress(account.address) === encodeAnyAddress(contribution.account.id)),
       [accounts, contribution.account]
@@ -276,7 +276,7 @@ const GqlCrowdloanItemSkeleton = (props: SkeletonProps) => {
 
 const SuspendableCrowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
-  const accounts = useRecoilValue(allSelectedSubstrateAccountsState)
+  const accounts = useRecoilValue(selectedSubstrateAccountsState)
   const { sortedGqlContributions, hydrated: contributionsHydrated } = useCrowdloanContributions(
     useMemo(() => accounts.map(x => x.address), [accounts])
   )
