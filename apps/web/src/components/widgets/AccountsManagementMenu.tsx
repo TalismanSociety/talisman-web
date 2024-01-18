@@ -101,7 +101,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
           headlineText={Maybe.of(totalBalance.valueMaybe()).mapOr(<CircularProgressIndicator size="1em" />, amount => (
             <AnimatedFiatNumber end={amount} />
           ))}
-          overlineText="All accounts"
+          overlineText="My accounts"
           leadingContent={
             <SurfaceIconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
               <Users />

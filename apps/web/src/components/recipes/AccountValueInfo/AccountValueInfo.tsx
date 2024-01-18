@@ -59,7 +59,7 @@ const AccountValueInfo = ({ account, balance }: AccountValueInfoProps) => {
           css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.8rem', width: '100%' }}
         >
           <Text.Body css={{ fontSize: '1em' }}>
-            {account === undefined ? 'All accounts' : account.name ?? shortenAddress(account.address)}
+            {account === undefined ? 'My accounts' : account.name ?? shortenAddress(account.address)}
           </Text.Body>
           <ChevronDown />
         </div>
