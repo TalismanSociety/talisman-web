@@ -4,7 +4,7 @@ import {
 } from '@components/recipes/ExtrinsicDetailsSideSheet'
 import TransactionLineItem, { TransactionList } from '@components/recipes/TransactionLineItem'
 import { accountsState, selectedAccountsState, type Account } from '@domains/accounts'
-import { CircularProgressIndicator, Text } from '@talismn/ui'
+import { CircularProgressIndicator, Surface, Text } from '@talismn/ui'
 import { encodeAnyAddress } from '@talismn/util'
 import { Maybe } from '@util/monads'
 import request from 'graphql-request'
@@ -319,7 +319,25 @@ const History = (props: HistoryProps) => {
   // To invalidate component after query changes
   const key = useMemo(() => JSON.stringify(props), [props])
 
-  return <_History key={key} {...props} />
+  return (
+    <div>
+      <Surface
+        css={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: '1.2rem',
+          padding: '1.2rem',
+          borderRadius: '1.2rem',
+        }}
+      >
+        <Text.BodyLarge css={{ textAlign: 'center' }}>
+          TX History is going away soon <Text.Noop.A>learn more</Text.Noop.A>
+        </Text.BodyLarge>
+      </Surface>
+      <_History key={key} {...props} />
+    </div>
+  )
 }
 
 export default History
