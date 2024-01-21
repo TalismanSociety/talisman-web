@@ -3,6 +3,7 @@
   "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/esm/tsconfig.json"],
   "compilerOptions": {
     "target": "ESNext",
+    "module": "NodeNext",
     "moduleResolution": "nodenext",
     "skipLibCheck": true,
     "declaration": true

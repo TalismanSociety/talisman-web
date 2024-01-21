@@ -1,0 +1,31 @@
+{
+  "private": true,
+  "name": "@talismn/astar-types",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "require": "./build/index.js",
+      "default": "./build/index.js"
+    },
+    "./*": {
+      "types": "./build/*.d.ts",
+      "require": "./build/*.js",
+      "default": "./build/*.js"
+    }
+  },
+  "scripts": {
+    "dev": "tsc --build --watch tsconfig.json",
+    "build": "rm -rf build && tsc --build tsconfig.json",
+    "download-metadata": "curl -s -H \"Content-Type: application/json\" -d '{\"id\":\"1\", \"jsonrpc\":\"2.0\", \"method\": \"state_getMetadata\", \"params\":[]}' https://shibuya-rpc.dwellir.com > metadata.json",
+    "codegen": "yarn download-metadata && yarn codegen:defs && yarn codegen:meta",
+    "codegen:defs": "node --experimental-specifier-resolution=node --loader ts-node/esm ../../node_modules/.bin/polkadot-types-from-defs --package @talismn/astar-types/interfaces --endpoint ./metadata.json --input ./src/interfaces",
+    "codegen:meta": "node --experimental-specifier-resolution=node --loader ts-node/esm ../../node_modules/.bin/polkadot-types-from-chain --package @talismn/astar-types/interfaces --endpoint ./metadata.json  --output ./src/interfaces"
+  },
+  "devDependencies": {
+    "@polkadot/typegen": "^10.11.2",
+    "@talismn/tsconfig": "workspace:^",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

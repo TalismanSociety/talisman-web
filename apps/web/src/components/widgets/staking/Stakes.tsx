@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 import AnimatedFiatNumber from '../AnimatedFiatNumber'
 import ErrorBoundary from '../ErrorBoundary'
+import DappStakes from './dappStaking/Stakes'
 import LidoStakes from './lido/Stakes'
 import SlpxStakes from './slpx/Stakes'
 import PoolStakes from './substrate/PoolStakes'
@@ -92,6 +93,11 @@ const Stakes = (props: { hideHeader?: boolean }) => {
             </ChainProvider>
           </Fragment>
         ))}
+        <ErrorBoundary orientation="horizontal">
+          <SuspenseSkeleton>
+            <DappStakes />
+          </SuspenseSkeleton>
+        </ErrorBoundary>
         <ErrorBoundary orientation="horizontal">
           <SuspenseSkeleton>
             <SlpxStakes />

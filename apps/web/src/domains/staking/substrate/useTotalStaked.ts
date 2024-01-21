@@ -5,7 +5,7 @@ import { Decimal } from '@talismn/math'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll, waitForAny } from 'recoil'
 
-export const useSubstrateFiatTotalStaked = () => {
+export const useTotalStaked = () => {
   const [chains, accounts] = useRecoilValue(waitForAll([chainsState, selectedSubstrateAccountsState]))
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
   const nativeTokenPrices = useRecoilValue(
