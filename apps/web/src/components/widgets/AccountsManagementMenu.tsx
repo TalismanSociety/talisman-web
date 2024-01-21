@@ -6,7 +6,7 @@ import {
   selectedAccountAddressesState,
   selectedAccountsState,
 } from '@domains/accounts/recoils'
-import { fiatBalancesState, totalPortfolioFiatBalance } from '@domains/balances'
+import { fiatBalanceGetterState, portfolioBalancesFiatSumState } from '@domains/balances'
 import { copyAddressToClipboard } from '@domains/common/utils'
 import { useTheme } from '@emotion/react'
 import { Copy, Ethereum, Eye, EyePlus, TalismanHand, Trash2, Users, X } from '@talismn/icons'
@@ -78,7 +78,7 @@ const AccountsManagementSurfaceIconButton = (props: { size?: number | string }) 
 const AccountsManagementMenu = (props: { button: ReactNode }) => {
   const theme = useTheme()
 
-  const totalBalance = useRecoilValueLoadable(totalPortfolioFiatBalance)
+  const portfolioBalanceLoadable = useRecoilValueLoadable(portfolioBalancesFiatSumState)
 
   const setSelectedAccountAddresses = useSetRecoilState(selectedAccountAddressesState)
   const resetSelectedAccountAddresses = useResetRecoilState(selectedAccountAddressesState)
@@ -87,7 +87,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
   const portfolioAccounts = useRecoilValue(portfolioAccountsState)
   const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
 
-  const fiatBalances = useRecoilValueLoadable(fiatBalancesState)
+  const getFiatBalanceLoadable = useRecoilValueLoadable(fiatBalanceGetterState)
 
   const leadingMenuItem = useMemo(() => {
     return (
@@ -98,9 +98,12 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
         }}
       >
         <ListItem
-          headlineText={Maybe.of(totalBalance.valueMaybe()).mapOr(<CircularProgressIndicator size="1em" />, amount => (
-            <AnimatedFiatNumber end={amount} />
-          ))}
+          headlineText={Maybe.of(portfolioBalanceLoadable.valueMaybe()).mapOr(
+            <CircularProgressIndicator size="1em" />,
+            amount => (
+              <AnimatedFiatNumber end={amount.total} />
+            )
+          )}
           overlineText="My accounts"
           leadingContent={
             <SurfaceIconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
@@ -115,7 +118,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
     resetSelectedAccountAddresses,
     theme.color.foreground,
     theme.color.primary,
-    totalBalance,
+    portfolioBalanceLoadable,
   ])
 
   return (
@@ -148,10 +151,10 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
               {portfolioAccounts.map((x, index) => (
                 <Menu.Item key={index} onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                   <ListItem
-                    headlineText={Maybe.of(fiatBalances.valueMaybe()).mapOr(
+                    headlineText={Maybe.of(getFiatBalanceLoadable.valueMaybe()?.(x.address)).mapOr(
                       <CircularProgressIndicator size="1em" />,
-                      balances => (
-                        <AnimatedFiatNumber end={balances[x.address] ?? 0} />
+                      balance => (
+                        <AnimatedFiatNumber end={balance.total} />
                       )
                     )}
                     overlineText={
@@ -208,10 +211,10 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                   {({ onToggleOpen: toggleRemoveDialog }) => (
                     <Menu.Item onClick={() => setSelectedAccountAddresses(() => [account.address])}>
                       <ListItem
-                        headlineText={Maybe.of(fiatBalances.valueMaybe()).mapOr(
+                        headlineText={Maybe.of(getFiatBalanceLoadable.valueMaybe()?.(account.address)).mapOr(
                           <CircularProgressIndicator size="1em" />,
-                          balances => (
-                            <AnimatedFiatNumber end={balances[account.address] ?? 0} />
+                          balance => (
+                            <AnimatedFiatNumber end={balance.total} />
                           )
                         )}
                         overlineText={account.name ?? shortenAddress(account.address)}

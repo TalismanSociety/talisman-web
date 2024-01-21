@@ -1,11 +1,6 @@
 // TODO: nuke everything and re-write balances lib integration
 
-import {
-  accountsState,
-  substrateInjectedAccountsState,
-  portfolioAccountsState,
-  selectedAccountsState,
-} from '@domains/accounts/recoils'
+import { accountsState, portfolioAccountsState, selectedAccountsState } from '@domains/accounts/recoils'
 import { Balances } from '@talismn/balances'
 import { useBalances as _useBalances, useAllAddresses, useChaindata, useTokens } from '@talismn/balances-react'
 import { type ChaindataProvider, type TokenList } from '@talismn/chaindata-provider'
@@ -42,59 +37,41 @@ export const balancesState = atom<Balances>({
   dangerouslyAllowMutability: true,
 })
 
-export const injectedBalancesState = selector({
-  key: 'InjectedBalances',
+export const fiatBalanceGetterState = selector({
+  key: 'FiatBalanceGetter',
   get: ({ get }) => {
-    const injectedAddresses = get(substrateInjectedAccountsState).map(x => x.address)
-    return new Balances(get(balancesState).each.filter(x => injectedAddresses.includes(x.address)))
+    const balances = get(balancesState)
+    const currency = get(selectedCurrencyState)
+    return (address: string) => balances.find({ address }).sum.fiat(currency)
   },
-  dangerouslyAllowMutability: true,
-})
-
-export const injectedNominationPoolBalances = selector({
-  key: 'InjectedNominationPoolFiatBalance',
-  get: ({ get }) =>
-    get(injectedBalancesState).find(
-      balance => balance.source === 'substrate-native' && balance.toJSON().subSource === 'nompools-staking'
-    ),
-  dangerouslyAllowMutability: true,
 })
 
 export const selectedBalancesState = selector({
   key: 'SelectedBalances',
   get: ({ get }) => {
-    const selectedAddresses = get(selectedAccountsState).map(x => x.address)
-    return new Balances(get(balancesState).sorted.filter(x => selectedAddresses.includes(x.address)))
+    const accounts = get(selectedAccountsState).map(x => x.address)
+    return new Balances(get(balancesState).sorted.filter(x => accounts.includes(x.address)))
   },
   dangerouslyAllowMutability: true,
 })
 
-export const fiatBalancesState = atom<Record<string, number>>({
-  key: 'FiatBalances',
+export const selectedBalancesFiatSumState = selector({
+  key: 'SelectedBalancesFiatSum',
+  get: ({ get }) => get(selectedBalancesState).sum.fiat(get(selectedCurrencyState)),
 })
 
-export const totalPortfolioFiatBalance = selector({
-  key: 'TotalPortfolioFiatBalance',
+export const portfolioBalancesState = selector({
+  key: 'PortfolioBalances',
   get: ({ get }) => {
     const accounts = get(portfolioAccountsState).map(x => x.address)
-    const fiatBalances = get(fiatBalancesState)
-
-    return Object.entries(fiatBalances)
-      .filter(([key]) => accounts.includes(key))
-      .reduce((previous, current) => previous + current[1], 0)
+    return new Balances(get(balancesState).sorted.filter(x => accounts.includes(x.address)))
   },
+  dangerouslyAllowMutability: true,
 })
 
-export const totalSelectedAccountsFiatBalance = selector({
-  key: 'TotalSelectedAccountsFiatBalance',
-  get: ({ get }) => {
-    const selecteds = get(selectedAccountsState).map(x => x.address)
-    const fiatBalances = get(fiatBalancesState)
-
-    return Object.entries(fiatBalances)
-      .filter(([key]) => selecteds.includes(key))
-      .reduce((previous, current) => previous + current[1], 0)
-  },
+export const portfolioBalancesFiatSumState = selector({
+  key: 'PortfolioBalancesFiatSum',
+  get: ({ get }) => get(portfolioBalancesState).sum.fiat(get(selectedCurrencyState)),
 })
 
 export const LegacyBalancesWatcher = () => {
@@ -164,24 +141,6 @@ export const LegacyBalancesWatcher = () => {
   useEffect(() => {
     setLegacyBalances(value)
   }, [setLegacyBalances, value])
-
-  const setFiatBalances = useSetRecoilState(fiatBalancesState)
-
-  const addressesFiatBalance = useMemo(
-    () =>
-      Object.fromEntries(
-        accounts.map(x => [x.address, balances.find({ address: x.address }).sum.fiat(currency).total])
-      ),
-    [accounts, balances, currency]
-  )
-
-  useEffect(() => {
-    if (balances === undefined) {
-      return
-    }
-
-    setFiatBalances(addressesFiatBalance)
-  }, [addressesFiatBalance, balances, setFiatBalances])
 
   return null
 }

@@ -1,5 +1,5 @@
 import PortfolioAllocationGraphComponent from '@components/recipes/PortfolioAllocationGraph'
-import { selectedBalancesState, selectedCurrencyState, totalSelectedAccountsFiatBalance } from '@domains/balances'
+import { selectedBalancesFiatSumState, selectedBalancesState, selectedCurrencyState } from '@domains/balances'
 import { HiddenDetails, Text } from '@talismn/ui'
 import { groupBy } from 'lodash'
 import { Suspense, useCallback, useMemo, useState } from 'react'
@@ -29,12 +29,12 @@ const assetDataState = selector({
         color: value[0]?.color,
         total: value.reduce((previous, current) => previous + current.total, 0),
       }))
-      .map(x => ({ ...x, percent: x.total / get(totalSelectedAccountsFiatBalance) }))
+      .map(x => ({ ...x, percent: x.total / get(selectedBalancesFiatSumState).total }))
 
     const displayableBalance = nonZeroBalance?.filter(x => x.percent > 0.05).sort((a, b) => b.total - a.total)
     const displayableBalanceTotal = displayableBalance?.reduce((previous, current) => previous + current.total, 0)
-    const otherBalanceTotal = get(totalSelectedAccountsFiatBalance) - (displayableBalanceTotal ?? 0)
-    const otherBalancePercent = otherBalanceTotal / get(totalSelectedAccountsFiatBalance)
+    const otherBalanceTotal = get(selectedBalancesFiatSumState).total - (displayableBalanceTotal ?? 0)
+    const otherBalancePercent = otherBalanceTotal / get(selectedBalancesFiatSumState).total
 
     if (displayableBalance === undefined || displayableBalanceTotal === undefined) {
       return []
