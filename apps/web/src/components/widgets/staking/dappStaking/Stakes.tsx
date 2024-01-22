@@ -1,15 +1,19 @@
 import StakePosition from '@components/recipes/StakePosition'
+import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { selectedSubstrateAccountsState, type Account } from '@domains/accounts'
-import { ChainProvider, defaultParams, useChainState } from '@domains/chains'
+import { ChainProvider, dappStakingEnabledChainsState, useChainState } from '@domains/chains'
 import { useTokenAmountFromPlanck } from '@domains/common'
-import { useStake } from '@domains/staking/dappStaking'
+import { useClaimAllRewardsExtrinsic, useStake } from '@domains/staking/dappStaking'
 import { useRecoilValue } from 'recoil'
 
 const Stake = ({ account }: { account: Account }) => {
   const chain = useRecoilValue(useChainState())
   const stake = useStake(account)
 
+  const claimAllRewardsExtrinsic = useClaimAllRewardsExtrinsic(stake)
+
   const balance = useTokenAmountFromPlanck(stake.totalStaked)
+  const totalRewards = useTokenAmountFromPlanck(stake.totalRewards)
 
   if (!stake.active) {
     return null
@@ -26,30 +30,37 @@ const Stake = ({ account }: { account: Account }) => {
       fiatBalance={balance.localizedFiatAmount}
       increaseStakeButton={<StakePosition.IncreaseStakeButton />}
       unstakeButton={<StakePosition.UnstakeButton />}
+      claimButton={
+        !totalRewards.decimalAmount.planck.isZero() && (
+          <StakePosition.ClaimButton
+            amount={totalRewards.decimalAmount.toHuman()}
+            onClick={() => {
+              void claimAllRewardsExtrinsic.signAndSend(account.address)
+            }}
+          />
+        )
+      }
     />
   )
 }
 
 const Stakes = () => {
+  const chains = useRecoilValue(dappStakingEnabledChainsState)
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
 
   return (
     <>
-      {accounts.map((account, index) => (
-        <Stake key={index} account={account} />
+      {chains.map((chain, index) => (
+        <ErrorBoundary key={index} orientation="horizontal">
+          <ChainProvider chain={chain}>
+            {accounts.map((account, index) => (
+              <Stake key={index} account={account} />
+            ))}
+          </ChainProvider>
+        </ErrorBoundary>
       ))}
     </>
   )
 }
 
-export default () => (
-  <ChainProvider
-    chain={{
-      genesisHash: '0xddb89973361a170839f80f152d2e9e38a376a5a7eccefcade763f46a8e567019',
-      parameters: defaultParams,
-      priorityPool: undefined,
-    }}
-  >
-    <Stakes />
-  </ChainProvider>
-)
+export default Stakes

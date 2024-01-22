@@ -1,6 +1,6 @@
 import SectionHeader from '@components/molecules/SectionHeader'
 import StakePosition, { StakePositionList } from '@components/recipes/StakePosition'
-import { ChainProvider, chainsState } from '@domains/chains'
+import { ChainProvider, nominationPoolsEnabledChainsState } from '@domains/chains'
 import { useTotalStaked } from '@domains/staking'
 import { Button, HiddenDetails, Text } from '@talismn/ui'
 import { Fragment, Suspense, type PropsWithChildren } from 'react'
@@ -67,7 +67,7 @@ const SuspenseSkeleton = (props: PropsWithChildren) => (
 )
 
 const Stakes = (props: { hideHeader?: boolean }) => {
-  const chains = useRecoilValue(chainsState)
+  const chains = useRecoilValue(nominationPoolsEnabledChainsState)
 
   return (
     <div id="staking">

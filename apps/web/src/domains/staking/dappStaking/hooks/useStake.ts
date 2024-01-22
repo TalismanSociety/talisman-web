@@ -1,6 +1,7 @@
 import type { Account } from '@domains/accounts'
 import { useSubstrateApiEndpoint, useSubstrateApiState } from '@domains/common'
 import { useQueryState } from '@talismn/react-polkadot-api'
+import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
 import { range } from 'lodash'
 import { useMemo } from 'react'
@@ -8,9 +9,13 @@ import { useRecoilValue, waitForAll } from 'recoil'
 import { stakedDappsState } from '../recoils'
 
 export const useStake = (account: Account) => {
-  const [api, activeProtocol, ledger, stakedDapps] = useRecoilValue(
+  // Can't put this in the same waitForAll below
+  // else an infinite loop will happen
+  // highly likely a recoil bug
+  const api = useRecoilValue(useSubstrateApiState())
+
+  const [activeProtocol, ledger, stakedDapps] = useRecoilValue(
     waitForAll([
-      useSubstrateApiState(),
       useQueryState('dappStaking', 'activeProtocolState', []),
       useQueryState('dappStaking', 'ledger', [account.address]),
       stakedDappsState({ endpoint: useSubstrateApiEndpoint(), address: account.address }),
@@ -50,28 +55,32 @@ export const useStake = (account: Account) => {
           range(span.firstEra.toNumber(), span.lastEra.toNumber() + 1)
             .map(era => {
               const stakedEligibleForRewards = ledger.staked.era.unwrap().gtn(era)
-                ? new BN(0)
-                : ledger.staked.voting.unwrap().add(ledger.staked.buildAndEarn.unwrap())
+                ? 0n
+                : ledger.staked.voting.unwrap().toBigInt() + ledger.staked.buildAndEarn.unwrap().toBigInt()
 
               const stakedFutureEligibleRewards = ledger.stakedFuture.isNone
-                ? new BN(0)
-                : ledger.stakedFuture.unwrapOrDefault().era.unwrap().gtn(era)
-                ? new BN(0)
-                : ledger.stakedFuture
-                    .unwrapOrDefault()
-                    .voting.unwrap()
-                    .add(ledger.stakedFuture.unwrapOrDefault().buildAndEarn.unwrap())
+                ? 0n
+                : ledger.stakedFuture.unwrapOrDefault().era.unwrap().toBigInt() > era
+                ? 0n
+                : ledger.stakedFuture.unwrapOrDefault().voting.unwrap().toBigInt() +
+                  ledger.stakedFuture.unwrapOrDefault().buildAndEarn.unwrap().toBigInt()
 
-              const totalStakedEligibleForRewards = stakedEligibleForRewards.add(stakedFutureEligibleRewards)
-              const eraSpan = span.span[era]
+              const totalStakedEligibleForRewards = stakedEligibleForRewards + stakedFutureEligibleRewards
+              const eraSpan = span.span[era - span.firstEra.toNumber()]
 
-              return eraSpan === undefined
-                ? new BN(0)
-                : eraSpan.stakerRewardPool.unwrap().mul(totalStakedEligibleForRewards.div(eraSpan.staked.unwrap()))
+              return eraSpan === undefined || eraSpan.staked.unwrap().isZero()
+                ? 0n
+                : BigInt(
+                    new BigNumber(eraSpan.stakerRewardPool.unwrap().toString())
+                      .times(totalStakedEligibleForRewards.toString())
+                      .div(eraSpan.staked.unwrap().toString())
+                      .integerValue()
+                      .toString()
+                  )
             })
-            .reduce((prev, curr) => prev.add(curr), new BN(0))
+            .reduce((prev, curr) => prev + curr, 0n)
         )
-        .reduce((prev, curr) => prev.add(curr), new BN(0)),
+        .reduce((prev, curr) => prev + curr, 0n),
     [eraRewardsSpans, ledger.staked.buildAndEarn, ledger.staked.era, ledger.staked.voting, ledger.stakedFuture]
   )
 
@@ -113,36 +122,40 @@ export const useStake = (account: Account) => {
 
           return {
             dapp: x[0].args[1],
-            rewards: periodEnd.bonusRewardPool
-              .unwrap()
-              .mul(x[1].staked.voting.unwrap().div(periodEnd.totalVpStake.unwrap())),
+            rewards: BigInt(
+              new BigNumber(periodEnd.bonusRewardPool.toString())
+                .times(x[1].staked.voting.unwrap().toString())
+                .div(periodEnd.totalVpStake.unwrap().toString())
+                .integerValue()
+                .toString()
+            ),
           }
         })
         .filter((x): x is NonNullable<typeof x> => x !== undefined),
     [bonusRewardsPeriodEnds, eligibleBonusRewards]
   )
 
-  const totalBonusRewards = useMemo(
-    () => bonusRewards.reduce((prev, curr) => prev.add(curr.rewards), new BN(0)),
-    [bonusRewards]
-  )
+  const totalBonusRewards = useMemo(() => bonusRewards.reduce((prev, curr) => prev + curr.rewards, 0n), [bonusRewards])
 
-  const totalStaked = ledger.staked.voting
-    .unwrap()
-    .add(ledger.staked.buildAndEarn.unwrap())
-    .add(ledger.stakedFuture.unwrapOrDefault().voting.unwrap())
-    .add(ledger.stakedFuture.unwrapOrDefault().buildAndEarn.unwrap())
+  const totalStaked = BigInt(
+    ledger.staked.voting
+      .unwrap()
+      .add(ledger.staked.buildAndEarn.unwrap())
+      .add(ledger.stakedFuture.unwrapOrDefault().voting.unwrap())
+      .add(ledger.stakedFuture.unwrapOrDefault().buildAndEarn.unwrap())
+      .toString()
+  )
 
   return {
     active: !ledger.contractStakeCount.unwrap().isZero() || ledger.unlocking.length > 0,
-    earningRewards: !totalStaked.isZero() && !totalStaked.isNeg(),
+    earningRewards: totalStaked > 0,
     account,
     ledger,
     totalStaked,
     stakeRewards,
     bonusRewards,
     totalBonusRewards,
-    totalRewards: stakeRewards.add(totalBonusRewards),
+    totalRewards: stakeRewards + totalBonusRewards,
   }
 }
 

@@ -4,7 +4,7 @@ import { type StakeStatus } from '@components/recipes/StakeStatusIndicator'
 import { writeableSubstrateAccountsState, type Account } from '@domains/accounts/recoils'
 import {
   ChainProvider,
-  chainsState,
+  nominationPoolsEnabledChainsState,
   useChainState as useChainRecoilState,
   useNativeTokenDecimalState,
   type ChainInfo,
@@ -175,10 +175,10 @@ const PoolSelector = (props: {
   )
 }
 
-export const AssetSelect = (props: {
-  selectedChain: ChainInfo
-  onSelectChain: (chain: ChainInfo) => unknown
-  chains: readonly ChainInfo[]
+export const AssetSelect = <T extends ChainInfo>(props: {
+  selectedChain: T
+  onSelectChain: (chain: T) => unknown
+  chains: readonly T[]
   inTransition: boolean
   iconSize?: string | number
 }) => (
@@ -433,7 +433,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 }
 
 const StakeForm = () => {
-  const chains = useRecoilValue(chainsState)
+  const chains = useRecoilValue(nominationPoolsEnabledChainsState)
 
   const [inTransition, startTransition] = useTransition()
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

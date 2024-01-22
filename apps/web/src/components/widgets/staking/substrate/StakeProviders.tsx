@@ -3,7 +3,7 @@ import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedSubstrateAccountsState } from '@domains/accounts'
-import { ChainProvider, chainsState, useChainState } from '@domains/chains'
+import { ChainProvider, nominationPoolsEnabledChainsState, useChainState } from '@domains/chains'
 import { chainDeriveState, substrateApiState, useTokenAmountFromPlanck } from '@domains/common'
 import { useApr, useLocalizedLockDuration } from '@domains/staking/substrate/nominationPools'
 import { Decimal } from '@talismn/math'
@@ -114,7 +114,7 @@ const StakeProviderItem = () => {
 const StakeProviders = () => {
   return (
     <>
-      {useRecoilValue(chainsState).map((chain, index) => (
+      {useRecoilValue(nominationPoolsEnabledChainsState).map((chain, index) => (
         <ErrorBoundary key={index} orientation="horizontal">
           <ChainProvider chain={chain}>
             <StakeProviderItem />
