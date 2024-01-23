@@ -1,68 +1,26 @@
-import { type CrowdloanContribution, type GqlContribution } from '@libs/crowdloans'
-import type { BalanceWithTokensWithPrice } from '@talismn/api-react-hooks'
-import { groupBalancesByAddress } from '@talismn/api-react-hooks'
+import { type GqlContribution } from '@libs/crowdloans'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
 import useUniqueId from '@util/useUniqueId'
 import BigNumber from 'bignumber.js'
 import {
-  type PropsWithChildren,
   useContext as _useContext,
   createContext,
   useCallback,
   useEffect,
   useMemo,
   useState,
+  type PropsWithChildren,
 } from 'react'
 
-// TODO: Replace this lib with an @talismn/api wrapper or redesign.
-//       Currently we get balances from the api, then convert and aggregate them all
+// TODO: Replace this lib with an @talismn/balances-react wrapper or redesign.
+//       Currently we get balances from the lib, then convert and aggregate them all
 //       downstream. This means we have to keep track of all the converted and aggregated
 //       values in order to provide useful summaries to the user (e.g. totalUsd, totalUsdByAddress, etc).
 //
-//       Soon we should just provide methods for these summaries directly via @talismn/api,
+//       Soon we should just provide methods for these summaries directly via @talismn/balances-react,
 //       which will take care of fetching and updating the underlying balances as appropriate for us.
 
 // Helpers (exported)
-export function calculateAssetPortfolioAmounts(
-  balances: Array<BalanceWithTokensWithPrice | null>
-): Array<{ tags: Tag[]; amount: string | undefined }> {
-  const amounts: Array<{ tags: Tag[]; amount: string | undefined }> = []
-
-  const byAddress = groupBalancesByAddress(balances)
-
-  Object.entries(byAddress).forEach(([address, balances]) => {
-    const tags: Tag[] = ['USD', 'Assets', { Address: address }]
-    balances.forEach(balance => amounts.push({ tags, amount: balance.usd }))
-  })
-
-  return amounts
-}
-
-export function calculateCrowdloanPortfolioAmounts(
-  contributions: CrowdloanContribution[],
-  tokenDecimals?: number,
-  tokenPrice?: string
-): Array<{ tags: Tag[]; amount: string | undefined }> {
-  const amounts: Array<{ tags: Tag[]; amount: string | undefined }> = []
-
-  const byAddress: Record<string, CrowdloanContribution[]> = {}
-  contributions.forEach(contribution => {
-    if (!byAddress[encodeAnyAddress(contribution.account, 42)])
-      byAddress[encodeAnyAddress(contribution.account, 42)] = []
-    byAddress[encodeAnyAddress(contribution.account, 42)]?.push(contribution)
-  })
-
-  Object.entries(byAddress).forEach(([address, contributions]) => {
-    const tags: Tag[] = ['USD', 'Crowdloans', { Address: address }]
-    contributions.forEach(contribution => {
-      const contributionTokens = planckToTokens(contribution.amount, tokenDecimals)
-      const contributionUsd = new BigNumber(contributionTokens ?? 0).times(tokenPrice ?? 0).toString()
-      amounts.push({ tags, amount: contributionUsd })
-    })
-  })
-
-  return amounts
-}
 export function calculateGqlCrowdloanPortfolioAmounts(
   contributions: GqlContribution[],
   tokenDecimals?: number,

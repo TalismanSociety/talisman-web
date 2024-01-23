@@ -7,8 +7,7 @@ import {
   writeableAccountsState,
 } from '@domains/accounts/recoils'
 import { Balances } from '@talismn/balances'
-import { useBalances as _useBalances, useAllAddresses, useTokens } from '@talismn/balances-react'
-import { isNil } from 'lodash'
+import { useBalances as _useBalances, useSetBalancesAddresses } from '@talismn/balances-react'
 import { useEffect, useMemo } from 'react'
 import { atom, selector, useRecoilCallback, useRecoilValue } from 'recoil'
 import { selectedCurrencyState } from '.'
@@ -75,34 +74,10 @@ export const writeableBalancesState = selector({
 export const BalancesWatcher = () => {
   const accounts = useRecoilValue(accountsState)
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
+  useSetBalancesAddresses(addresses)
 
-  const [, setAllAddresses] = useAllAddresses()
-  useEffect(() => setAllAddresses(addresses ?? []), [addresses, setAllAddresses])
-
-  const tokens = useTokens()
-  const tokenIds = useMemo(() => Object.values(tokens).map(({ id }) => id), [tokens])
-
-  const addressesByToken = useMemo(
-    () => {
-      if (isNil(addresses)) return {}
-      return Object.fromEntries(tokenIds.map(tokenId => [tokenId, addresses]))
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(addresses), JSON.stringify(tokenIds)]
-  )
-
-  const unfilteredBalances = _useBalances(addressesByToken)
-  const balances = useMemo(
-    () =>
-      unfilteredBalances
-        .filterNonZero('total')
-        .filterMirrorTokens()
-        // TODO: This is to remove native custom token coming from the extension with newer id
-        // remove once we update balances lib
-        // @ts-expect-error
-        .find(x => !x.tokenId.endsWith('evm-native') && !x.tokenId.endsWith('substrate-native')),
-    [unfilteredBalances]
-  )
+  const unfilteredBalances = _useBalances()
+  const balances = useMemo(() => unfilteredBalances.filterNonZero('total').filterMirrorTokens(), [unfilteredBalances])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(
