@@ -1,4 +1,4 @@
-import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
+import { PoolSelectorDialog } from '@components/recipes/StakeTargetSelectorDialog'
 import StakeFormComponent from '@components/recipes/StakeForm'
 import { type StakeStatus } from '@components/recipes/StakeStatusIndicator'
 import { writeableSubstrateAccountsState, type Account } from '@domains/accounts/recoils'
@@ -159,15 +159,15 @@ const PoolSelector = (props: {
           selected={props.selectedPoolId !== undefined && pool.poolId === props.selectedPoolId}
           highlighted={newPoolId !== undefined && pool.poolId === newPoolId}
           talismanRecommended={index === 0}
-          poolName={pool.name ?? ''}
-          poolDetailUrl={
+          name={pool.name ?? ''}
+          detailUrl={
             chain.subscanUrl === null
               ? undefined
               : new URL(`nomination_pool/${pool.poolId}`, chain.subscanUrl).toString()
           }
-          stakedAmount={`${nativeTokenDecimal.fromPlanck(pool.bondedPool.points).toHuman()} staked`}
+          balance={`${nativeTokenDecimal.fromPlanck(pool.bondedPool.points).toHuman()} staked`}
           rating={3}
-          memberCount={pool.bondedPool.memberCounter.toString()}
+          count={pool.bondedPool.memberCounter.toString()}
           onClick={() => setNewPoolId(pool.poolId)}
         />
       ))}

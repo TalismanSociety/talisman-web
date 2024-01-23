@@ -1,20 +1,21 @@
 import { useTheme } from '@emotion/react'
 import { ExternalLink, TalismanHand, User } from '@talismn/icons'
 import { Button, Text, Tooltip } from '@talismn/ui'
+import type { ReactNode } from 'react'
 
-export type PoolSelectorItemProps = {
+export type StakeTargetSelectorItemProps = {
   selected?: boolean
   highlighted?: boolean
-  poolName: string
-  poolDetailUrl?: string
-  stakedAmount: string
+  name: string
+  detailUrl?: string
+  balance: string
   talismanRecommended: boolean
   rating: 0 | 1 | 2 | 3
-  memberCount: number | string
+  count: ReactNode
   onClick?: () => unknown
 }
 
-const PoolSelectorItem = (props: PoolSelectorItemProps) => {
+const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => {
   const theme = useTheme()
   const alpha = props.selected || props.highlighted ? 'high' : 'disabled'
   return (
@@ -46,7 +47,7 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
           marginBottom: '0.6rem',
         }}
       >
-        <Tooltip content={props.poolName}>
+        <Tooltip content={props.name}>
           <Text.Body
             alpha={alpha}
             css={{
@@ -58,17 +59,17 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
               textOverflow: 'ellipsis',
             }}
           >
-            {props.poolName}
+            {props.name}
           </Text.Body>
         </Tooltip>
-        {props.poolDetailUrl !== undefined && (
-          <Button as="a" variant="noop" href={props.poolDetailUrl} target="_blank">
+        {props.detailUrl !== undefined && (
+          <Button as="a" variant="noop" href={props.detailUrl} target="_blank">
             <ExternalLink size="1.4rem" />
           </Button>
         )}
       </header>
       <Tooltip content="Total staked in this pool">
-        <Text.Body alpha={alpha}>{props.stakedAmount}</Text.Body>
+        <Text.Body alpha={alpha}>{props.balance}</Text.Body>
       </Tooltip>
       <Text.Body
         as="div"
@@ -94,7 +95,7 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
                   marginRight: '0.4rem',
                 }}
               >
-                {props.memberCount}
+                {props.count}
               </Text.Body>
               <User size="1.4rem" />
             </div>
@@ -110,4 +111,6 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
   )
 }
 
-export default PoolSelectorItem
+export const PoolSelectorItem = StakeTargetSelectorItem
+
+export default StakeTargetSelectorItem
