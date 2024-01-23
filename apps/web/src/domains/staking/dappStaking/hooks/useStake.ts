@@ -1,6 +1,6 @@
 import type { Account } from '@domains/accounts'
 import { useSubstrateApiEndpoint, useSubstrateApiState } from '@domains/common'
-import { useQueryState } from '@talismn/react-polkadot-api'
+import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
 import { range } from 'lodash'
@@ -14,10 +14,9 @@ export const useStake = (account: Account) => {
   // highly likely a recoil bug
   const api = useRecoilValue(useSubstrateApiState())
 
-  const [activeProtocol, ledger, stakedDapps] = useRecoilValue(
+  const [[activeProtocol, ledger], stakedDapps] = useRecoilValue(
     waitForAll([
-      useQueryState('dappStaking', 'activeProtocolState', []),
-      useQueryState('dappStaking', 'ledger', [account.address]),
+      useQueryMultiState(['dappStaking.activeProtocolState', ['dappStaking.ledger', account.address]]),
       stakedDappsState({ endpoint: useSubstrateApiEndpoint(), address: account.address }),
     ])
   )
@@ -137,13 +136,18 @@ export const useStake = (account: Account) => {
 
   const totalBonusRewards = useMemo(() => bonusRewards.reduce((prev, curr) => prev + curr.rewards, 0n), [bonusRewards])
 
-  const totalStaked = BigInt(
-    ledger.staked.voting
-      .unwrap()
-      .add(ledger.staked.buildAndEarn.unwrap())
-      .add(ledger.stakedFuture.unwrapOrDefault().voting.unwrap())
-      .add(ledger.stakedFuture.unwrapOrDefault().buildAndEarn.unwrap())
-      .toString()
+  const totalStaked = useMemo(
+    () =>
+      BigInt(
+        ledger.stakedFuture.isSome
+          ? ledger.stakedFuture
+              .unwrapOrDefault()
+              .voting.unwrap()
+              .add(ledger.stakedFuture.unwrapOrDefault().buildAndEarn.unwrap())
+              .toString()
+          : ledger.staked.voting.unwrap().add(ledger.staked.buildAndEarn.unwrap()).toString()
+      ),
+    [ledger.staked.buildAndEarn, ledger.staked.voting, ledger.stakedFuture]
   )
 
   return {
@@ -156,6 +160,7 @@ export const useStake = (account: Account) => {
     bonusRewards,
     totalBonusRewards,
     totalRewards: stakeRewards + totalBonusRewards,
+    dapps: stakedDapps.map(x => [x[0].args[1], x[1]] as const),
   }
 }
 

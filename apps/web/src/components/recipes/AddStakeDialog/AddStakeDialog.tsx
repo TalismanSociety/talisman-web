@@ -8,7 +8,7 @@ export type AddStakeFormProps = {
   amount: string
   rate?: string
   fiatAmount: string
-  newAmount: string
+  newAmount: ReactNode
   newFiatAmount: ReactNode
   onRequestMaxAmount: () => unknown
   onChangeAmount: (amount: string) => unknown
@@ -19,7 +19,7 @@ export type AddStakeFormProps = {
 
 export type AddStakeDialogProps = AddStakeFormProps & {
   message: ReactNode
-  open: boolean
+  open?: boolean
   onDismiss: () => unknown
 }
 
@@ -87,7 +87,7 @@ const AddStakeDialog = (props: AddStakeDialogProps) => (
   />
 )
 
-export type NominationPoolsAddStakeDialogProps = Omit<AddStakeDialogProps, 'message' | 'rate' | 'buttonText'>
+export type NominationPoolsAddStakeDialogProps = Omit<AddStakeDialogProps, 'message' | 'rate'>
 
 export const NominationPoolsAddStakeDialog = (props: NominationPoolsAddStakeDialogProps) => (
   <AddStakeDialog
@@ -98,12 +98,10 @@ export const NominationPoolsAddStakeDialog = (props: NominationPoolsAddStakeDial
 
 export type SlpxAddStakeFormProps = Omit<AddStakeFormProps, 'buttonText'> & {
   rate: string
-  approvalNeed?: boolean
 }
 
-export type SlpxAddStakeDialogProps = Omit<AddStakeDialogProps, 'message' | 'buttonText'> & {
+export type SlpxAddStakeDialogProps = Omit<AddStakeDialogProps, 'message'> & {
   rate: string
-  approvalNeed?: boolean
 }
 
 export const SlpxAddStakeForm = (props: SlpxAddStakeFormProps) => <AddStakeForm {...props} />
@@ -112,6 +110,15 @@ export const SlpxAddStakeDialog = (props: SlpxAddStakeDialogProps) => (
   <AddStakeDialog
     {...props}
     message="Increase your stake below. Talisman will automatically stake this using Bifrost liquid staking for you."
+  />
+)
+
+export type DappStakingAddStakeDialogProps = Omit<AddStakeDialogProps, 'message'>
+
+export const DappStakingAddStakeDialog = (props: DappStakingAddStakeDialogProps) => (
+  <AddStakeDialog
+    {...props}
+    message="Increase your stake below. Talisman will automatically stake this toward your chosen DApp for you."
   />
 )
 

@@ -13,6 +13,8 @@ import { toastExtrinsic } from '../utils'
 import { signetAccountState } from '@domains/accounts'
 import { useSignetSdk } from '@talismn/signet-apps-sdk'
 
+type Promisable<T> = T | PromiseLike<T>
+
 export type SubmittableResultLoadable =
   | { state: 'idle'; contents: undefined }
   | { state: 'loading'; contents: ISubmittableResult | undefined }
@@ -39,7 +41,7 @@ export function useExtrinsic<T extends SubmittableExtrinsic<'promise', ISubmitta
   chainGenesisHash?: `0x${string}`
 ): T extends undefined ? ExtrinsicLoadable | undefined : ExtrinsicLoadable
 export function useExtrinsic(
-  createSubmittable: (api: ApiPromise) => SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
+  createSubmittable: (api: ApiPromise) => Promisable<SubmittableExtrinsic<'promise', ISubmittableResult> | undefined>
 ): ExtrinsicLoadable
 export function useExtrinsic<
   TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
@@ -61,7 +63,7 @@ export function useExtrinsic(
   moduleOrSubmittable:
     | string
     | SubmittableExtrinsic<'promise', ISubmittableResult>
-    | ((api: ApiPromise) => SubmittableExtrinsic<'promise', ISubmittableResult> | undefined)
+    | ((api: ApiPromise) => Promisable<SubmittableExtrinsic<'promise', ISubmittableResult> | undefined>)
     | undefined,
   sectionOrGenesisHash?: string | `0x${string}`,
   params: unknown[] = []
@@ -92,7 +94,7 @@ export function useExtrinsic(
             }
             case 'function':
               return [
-                moduleOrSubmittable(await callbackInterface.snapshot.getPromise(substrateApiState(endpoint))),
+                await moduleOrSubmittable(await callbackInterface.snapshot.getPromise(substrateApiState(endpoint))),
                 contextChain,
               ] as const
             default:

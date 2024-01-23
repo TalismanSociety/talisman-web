@@ -4,107 +4,217 @@ import {
   useExtrinsic,
   useSubstrateApiEndpoint,
   useSubstrateApiState,
-  useTokenAmountState,
+  useTokenAmount,
+  useTokenAmountFromPlanck,
 } from '@domains/common'
+import type { ApiPromise } from '@polkadot/api'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
-import { useQueryState } from '@talismn/react-polkadot-api'
+import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import { Maybe } from '@util/monads'
 import BN from 'bn.js'
-import { useMemo } from 'react'
-import { useRecoilValue, waitForAll } from 'recoil'
+import { useCallback, useDeferredValue, useMemo, useState } from 'react'
+import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+import { getAllRewardsClaimExtrinsics, type Stake } from '.'
 
-const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.25
+const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.5
 
-export const useDappStakingAddForm = (
+export const useAddStakeForm = (
   account: Account,
+  stake: Stake,
   dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
 ) => {
-  const [input, setAmount] = useTokenAmountState('')
+  const [amount, setAmount] = useState('')
+  const deferredAmount = useDeferredValue(amount)
+  const input = useTokenAmount(deferredAmount)
+  const inTransition = amount !== deferredAmount
 
-  const [api, accountInfo, ledger] = useRecoilValue(
+  const [api, [accountInfo, stakerInfo]] = useRecoilValue(
     waitForAll([
       useSubstrateApiState(),
-      useQueryState('system', 'account', [account.address]),
-      useQueryState('dappStaking', 'ledger', [account.address]),
+      useQueryMultiState([
+        ['system.account', account.address],
+        ['dappStaking.stakerInfo', [account.address, dapp]],
+      ]),
     ])
   )
 
   const transferable = accountInfo.data.free.sub(accountInfo.data.frozen)
-  const locked = ledger.locked.unwrap()
+  const lockedAvailableForStake = useMemo(
+    () => stake.ledger.locked.unwrap().sub(new BN(stake.totalStaked.toString())),
+    [stake.ledger.locked, stake.totalStaked]
+  )
 
-  const amountToLock = Maybe.of(input.decimalAmount?.planck).mapOrUndefined(x => x.sub(locked))
+  const availableBeforeFee = useTokenAmountFromPlanck(
+    useMemo(
+      () => transferable.sub(api.consts.balances.existentialDeposit).add(lockedAvailableForStake),
+      [api.consts.balances.existentialDeposit, lockedAvailableForStake, transferable]
+    )
+  )
 
-  const submittable = useMemo(() => {
+  const maxSubmittable = useMemo(() => {
+    const amountToLock = BN.max(availableBeforeFee.decimalAmount.planck.sub(lockedAvailableForStake), new BN(0))
+
     if (amountToLock?.isZero()) {
-      return api.tx.dappStaking.stake(dapp, input.decimalAmount?.planck ?? 0)
+      return api.tx.dappStaking.stake(dapp, availableBeforeFee.decimalAmount.planck)
     }
 
     return api.tx.utility.batchAll([
+      ...getAllRewardsClaimExtrinsics(api, stake),
       api.tx.dappStaking.lock(amountToLock ?? 0),
-      api.tx.dappStaking.stake(dapp, input.decimalAmount?.planck ?? 0),
+      api.tx.dappStaking.stake(dapp, availableBeforeFee.decimalAmount.planck),
     ])
-  }, [amountToLock, api.tx.dappStaking, api.tx.utility, dapp, input.decimalAmount?.planck])
+  }, [api, availableBeforeFee.decimalAmount.planck, dapp, lockedAvailableForStake, stake])
 
-  const extrinsic = useExtrinsic(submittable)
-  const paymentInfo = useRecoilValue(
+  // This will change after staking n will retrigger suspense
+  // if we use `useRecoilValue`
+  const paymentInfoLoadable = useRecoilValueLoadable(
     paymentInfoState([
       useSubstrateApiEndpoint(),
       // @ts-expect-error
-      submittable.method.section,
+      maxSubmittable.method.section,
       // @ts-expect-error
-      submittable.method.method,
-      // @ts-expect-error
-      submittable.args,
+      maxSubmittable.method.method,
+      account.address,
+      ...maxSubmittable.args,
     ])
   )
 
-  return {
-    ready: input.decimalAmount !== undefined,
-    input,
-    setAmount,
-    available: useMemo(
+  const available = useTokenAmountFromPlanck(
+    useMemo(
       () =>
-        transferable
-          .sub(api.consts.balances.existentialDeposit)
-          .add(locked)
-          .sub(paymentInfo?.partialFee.muln(ESTIMATED_FEE_MARGIN_OF_ERROR) ?? new BN(0)),
-      [api.consts.balances.existentialDeposit, locked, paymentInfo?.partialFee, transferable]
+        availableBeforeFee.decimalAmount.planck.sub(
+          paymentInfoLoadable.valueMaybe()?.partialFee.muln(ESTIMATED_FEE_MARGIN_OF_ERROR) ?? new BN(0)
+        ),
+      [availableBeforeFee.decimalAmount.planck, paymentInfoLoadable]
+    )
+  )
+
+  const minimum = useTokenAmountFromPlanck(api.consts.dappStaking.minimumStakeAmount)
+
+  const error = useMemo(() => {
+    if (deferredAmount.trim() === '' || inTransition) return
+
+    if (input.decimalAmount?.planck.gt(available.decimalAmount.planck)) {
+      return new Error('Insufficient balance')
+    }
+
+    if (input.decimalAmount?.planck.lt(minimum.decimalAmount.planck)) {
+      return new Error(`Minimum ${minimum.decimalAmount.toHuman()} needed`)
+    }
+
+    return undefined
+  }, [deferredAmount, available.decimalAmount.planck, inTransition, input.decimalAmount?.planck, minimum.decimalAmount])
+
+  return {
+    ready:
+      paymentInfoLoadable.state === 'hasValue' &&
+      deferredAmount.trim() !== '' &&
+      input.decimalAmount !== undefined &&
+      error === undefined &&
+      !inTransition,
+    input: { ...input, amount },
+    setAmount,
+    available,
+    resulting: useTokenAmountFromPlanck(
+      useMemo(
+        () =>
+          inTransition
+            ? undefined
+            : stakerInfo
+                .unwrapOrDefault()
+                .staked.voting.unwrap()
+                .add(stakerInfo.unwrapOrDefault().staked.buildAndEarn.unwrap())
+                .add(input.decimalAmount?.planck ?? new BN(0)),
+        [inTransition, input.decimalAmount?.planck, stakerInfo]
+      )
     ),
-    extrinsic,
+    error,
+    extrinsic: useExtrinsic(
+      useCallback(
+        (api: ApiPromise) => {
+          const amountToLock = Maybe.of(input.decimalAmount?.planck).mapOrUndefined(x =>
+            BN.max(x.sub(lockedAvailableForStake), new BN(0))
+          )
+
+          const exs = [
+            ...getAllRewardsClaimExtrinsics(api, stake),
+            ...(amountToLock?.isZero() ?? true ? [] : [api.tx.dappStaking.lock(amountToLock ?? 0)]),
+            api.tx.dappStaking.stake(dapp, input.decimalAmount?.planck ?? 0),
+          ]
+
+          return exs.length <= 1 ? exs.at(0) : api.tx.utility.batchAll(exs)
+        },
+        [dapp, input.decimalAmount?.planck, lockedAvailableForStake, stake]
+      )
+    ),
   }
 }
 
-export const useDappStakingUnstakeForm = (
+export const useUnstakeForm = (
   account: Account,
+  stake: Stake,
   dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
 ) => {
-  const [input, setAmount] = useTokenAmountState('')
+  const [amount, setAmount] = useState('')
+  const deferredAmount = useDeferredValue(amount)
+  const input = useTokenAmount(deferredAmount)
+  const inTransition = amount !== deferredAmount
 
-  const [api, stakerInfo] = useRecoilValue(
-    waitForAll([useSubstrateApiState(), useQueryState('dappStaking', 'stakerInfo', [account.address, dapp])])
+  const stakerInfo = useRecoilValue(useQueryState('dappStaking', 'stakerInfo', [account.address, dapp]))
+
+  const extrinsic = useExtrinsic(
+    useCallback(
+      (api: ApiPromise) =>
+        api.tx.utility.batchAll([
+          ...getAllRewardsClaimExtrinsics(api, stake),
+          api.tx.dappStaking.unstake(dapp, input.decimalAmount?.planck ?? 0),
+          api.tx.dappStaking.unlock(input.decimalAmount?.planck ?? 0),
+        ]),
+      [dapp, input.decimalAmount?.planck, stake]
+    )
   )
 
-  const submittable = useMemo(() => {
-    return api.tx.utility.batchAll([
-      api.tx.dappStaking.unstake(dapp, input.decimalAmount?.planck ?? 0),
-      api.tx.dappStaking.unlock(input.decimalAmount?.planck ?? 0),
-    ])
-  }, [api.tx.dappStaking, api.tx.utility, dapp, input.decimalAmount?.planck])
-
-  const extrinsic = useExtrinsic(submittable)
-
-  return {
-    ready: input.decimalAmount !== undefined,
-    input,
-    setAmount,
-    available: useMemo(
+  const available = useTokenAmountFromPlanck(
+    useMemo(
       () =>
         stakerInfo
           .unwrapOrDefault()
           .staked.voting.unwrap()
           .add(stakerInfo.unwrapOrDefault().staked.buildAndEarn.unwrap()),
       [stakerInfo]
+    )
+  )
+
+  const error = useMemo(() => {
+    if (amount.trim() === '' || inTransition) return
+
+    if (input.decimalAmount?.planck.gt(available.decimalAmount.planck)) {
+      return new Error('Insufficient balance')
+    }
+
+    return undefined
+  }, [amount, available.decimalAmount.planck, inTransition, input.decimalAmount?.planck])
+
+  return {
+    ready: input.decimalAmount !== undefined && error === undefined && !inTransition,
+    input: { ...input, amount },
+    setAmount,
+    available,
+    resulting: useTokenAmountFromPlanck(
+      useMemo(
+        () =>
+          BN.max(
+            new BN(0),
+            stakerInfo
+              .unwrapOrDefault()
+              .staked.voting.unwrap()
+              .add(stakerInfo.unwrapOrDefault().staked.buildAndEarn.unwrap())
+              .sub(input.decimalAmount?.planck ?? new BN(0))
+          ),
+        [input.decimalAmount?.planck, stakerInfo]
+      )
     ),
+    error,
     extrinsic,
   }
 }

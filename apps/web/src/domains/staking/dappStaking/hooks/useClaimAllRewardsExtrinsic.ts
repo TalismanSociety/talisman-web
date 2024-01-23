@@ -3,16 +3,28 @@ import type { ApiPromise } from '@polkadot/api'
 import { useCallback } from 'react'
 import type { Stake } from './useStake'
 
+export const getAllRewardsClaimExtrinsics = (api: ApiPromise, stake: Stake) =>
+  stake.totalRewards <= 0n
+    ? []
+    : [
+        api.tx.dappStaking.claimStakerRewards(),
+        ...stake.bonusRewards.map(x => api.tx.dappStaking.claimBonusReward(x.dapp)),
+      ]
+
 export const useClaimAllRewardsExtrinsic = (stake: Stake) =>
   useExtrinsic(
     useCallback(
-      (api: ApiPromise) =>
-        stake.bonusRewards.length <= 0
-          ? api.tx.dappStaking.claimStakerRewards()
-          : api.tx.utility.batchAll([
-              api.tx.dappStaking.claimStakerRewards(),
-              ...stake.bonusRewards.map(x => api.tx.dappStaking.claimBonusReward(x.dapp)),
-            ]),
-      [stake.bonusRewards]
+      (api: ApiPromise) => {
+        const exs = getAllRewardsClaimExtrinsics(api, stake)
+
+        if (exs.length === 0) {
+          return undefined
+        } else if (exs.length === 1) {
+          return exs.at(0)
+        } else {
+          return api.tx.utility.batchAll(exs)
+        }
+      },
+      [stake]
     )
   )
