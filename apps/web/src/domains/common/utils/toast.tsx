@@ -60,8 +60,8 @@ export const toastExtrinsic = (
         </>
       ),
       error: error => {
-        const rawErrorMsg = (error as RpcError)?.data ?? (error as Error)?.message
-        const errorMsg = rawErrorMsg.startsWith('Inability to pay some fees') ? (
+        const rawErrorMsg = (error as RpcError)?.data ?? (error as Error | undefined)?.message
+        const errorMsg = rawErrorMsg?.startsWith('Inability to pay some fees') ? (
           <Text.Body>
             Unable to pay some fees (e.g. low account balance
             <br />
