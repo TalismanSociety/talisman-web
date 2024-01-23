@@ -32,6 +32,9 @@ export const useSubmittableResultLoadableState = () =>
 export function useExtrinsic<T extends SubmittableExtrinsic<'promise', ISubmittableResult> | undefined>(
   submittable: T
 ): T extends undefined ? ExtrinsicLoadable | undefined : ExtrinsicLoadable
+export function useExtrinsic(
+  createSubmittable: (api: ApiPromise) => SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
+): ExtrinsicLoadable
 export function useExtrinsic<
   TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
   TSection extends keyof PickKnownKeys<ApiPromise['tx'][TModule]>
@@ -49,7 +52,11 @@ export function useExtrinsic<
   TSection extends keyof PickKnownKeys<ApiPromise['tx'][TModule]>
 >(module: TModule, section: TSection, params: Parameters<ApiPromise['tx'][TModule][TSection]>): ExtrinsicLoadable
 export function useExtrinsic(
-  moduleOrSubmittable: string | SubmittableExtrinsic<'promise', ISubmittableResult> | undefined,
+  moduleOrSubmittable:
+    | string
+    | SubmittableExtrinsic<'promise', ISubmittableResult>
+    | ((api: ApiPromise) => SubmittableExtrinsic<'promise', ISubmittableResult> | undefined)
+    | undefined,
   section?: string,
   params: unknown[] = []
 ): ExtrinsicLoadable | undefined {
@@ -63,19 +70,23 @@ export function useExtrinsic(
     callbackInterface =>
       async (account: AddressOrPair, ...innerParams: unknown[]) => {
         const submittable = await (async () => {
-          if (typeof moduleOrSubmittable === 'string') {
-            const api = await callbackInterface.snapshot.getPromise(substrateApiState(endpoint))
-            const submittable = api.tx[moduleOrSubmittable]?.[section ?? '']?.(
-              ...(innerParams.length > 0 ? innerParams : params)
-            )
+          switch (typeof moduleOrSubmittable) {
+            case 'string': {
+              const api = await callbackInterface.snapshot.getPromise(substrateApiState(endpoint))
+              const submittable = api.tx[moduleOrSubmittable]?.[section ?? '']?.(
+                ...(innerParams.length > 0 ? innerParams : params)
+              )
 
-            if (submittable === undefined) {
-              throw new Error(`Unable to construct extrinsic ${moduleOrSubmittable}:${section ?? ''}`)
+              if (submittable === undefined) {
+                throw new Error(`Unable to construct extrinsic ${moduleOrSubmittable}:${section ?? ''}`)
+              }
+
+              return submittable
             }
-
-            return submittable
-          } else {
-            return moduleOrSubmittable
+            case 'function':
+              return moduleOrSubmittable(await callbackInterface.snapshot.getPromise(substrateApiState(endpoint)))
+            default:
+              return moduleOrSubmittable
           }
         })()
 

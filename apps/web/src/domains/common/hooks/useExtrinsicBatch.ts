@@ -21,6 +21,7 @@ type ExtrinsicParametersMap = {
 }
 
 /**
+ * @deprecated use `useExtrinsic` instead
  * Mostly a copy of `useExtrinsic`
  * TODO: share code between to 2 hooks
  * @param extrinsics
