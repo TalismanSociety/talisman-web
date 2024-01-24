@@ -21,11 +21,10 @@ const DappPickerDialog = (props: DappPickerDialogProps) => {
   const [dappInTransition, setDappInTransition] = useState<AstarPrimitivesDappStakingSmartContract>()
   const [inTransition, startTransition] = useTransition()
 
-  const selectDapp = (dapp: AstarPrimitivesDappStakingSmartContract) =>
-    startTransition(() => {
-      setDappInTransition(dapp)
-      props.onSelect(dapp)
-    })
+  const selectDapp = (dapp: AstarPrimitivesDappStakingSmartContract) => {
+    setDappInTransition(dapp)
+    startTransition(() => props.onSelect(dapp))
+  }
 
   return (
     <AlertDialog title="Select a DApp" onRequestDismiss={props.onRequestDismiss} width="45rem">
@@ -58,10 +57,13 @@ const DappPickerDialog = (props: DappPickerDialogProps) => {
                 }}
               >
                 <div css={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
-                  <img src={registeredDapp?.iconUrl} css={{ width: '4rem', aspectRatio: '1 / 1' }} />
+                  {inTransition && dappInTransition === dapp ? (
+                    <CircularProgressIndicator size="4rem" />
+                  ) : (
+                    <img src={registeredDapp?.iconUrl} css={{ width: '4rem', aspectRatio: '1 / 1' }} />
+                  )}
                   <Text.BodyLarge as="div" alpha="high" css={{ fontWeight: 'bold' }}>
                     {registeredDapp?.name ?? shortenAddress(address)}{' '}
-                    {inTransition && dappInTransition === dapp && <CircularProgressIndicator size="1em" />}
                   </Text.BodyLarge>
                 </div>
                 <div>
