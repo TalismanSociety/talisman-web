@@ -21,7 +21,7 @@ const StakeItemSkeleton = (props: SkeletonProps) => {
         }
         supportingText={
           <Text.Body>
-            <Skeleton.Foreground css={{ height: '0.75em', width: 240 }} />
+            <Skeleton.Foreground css={{ height: '0.75em', width: 'min(100%, 24rem)' }} />
           </Text.Body>
         }
         trailingContent={
