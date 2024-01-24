@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
 import { range } from 'lodash'
 import { useMemo } from 'react'
-import { useRecoilValue, waitForAll } from 'recoil'
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue, waitForAll } from 'recoil'
 import { stakedDappsState } from '../recoils'
 
 export const useStake = (account: Account) => {

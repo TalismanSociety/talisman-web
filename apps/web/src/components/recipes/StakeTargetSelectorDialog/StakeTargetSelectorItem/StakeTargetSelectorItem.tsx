@@ -10,7 +10,7 @@ export type StakeTargetSelectorItemProps = {
   detailUrl?: string
   balance: string
   talismanRecommended: boolean
-  rating: 0 | 1 | 2 | 3
+  rating?: 0 | 1 | 2 | 3
   count: ReactNode
   onClick?: () => unknown
 }

@@ -42,7 +42,7 @@ const AccountSelector = (props: AccountSelectorProps) => {
       placeholder={
         <Select.Option
           leadingIcon={
-            <Identicon value="placeholder" size="4em" css={{ visibility: 'hidden', pointerEvents: 'none' }} />
+            <Identicon value="placeholder" size="4em" css={{ visibility: 'hidden', pointerEvents: 'none', width: 0 }} />
           }
           headlineText="Select an account"
         />

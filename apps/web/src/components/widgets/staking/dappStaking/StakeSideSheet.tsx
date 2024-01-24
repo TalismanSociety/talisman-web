@@ -1,0 +1,249 @@
+import { TalismanHandLoader } from '@components/TalismanHandLoader'
+import DappStakingForm, { DappStakingFormSideSheet } from '@components/recipes/DappStakingForm'
+import { DappSelectorDialog as DappSelectorDialogComponent } from '@components/recipes/StakeTargetSelectorDialog'
+import { useAccountSelector } from '@components/widgets/AccountSelector'
+import { substrateAccountsState, type Account } from '@domains/accounts'
+import {
+  ChainProvider,
+  dappStakingEnabledChainsState,
+  useChainState,
+  useNativeTokenDecimalState,
+  type ChainInfo,
+} from '@domains/chains'
+import { useRegisteredDappsState, type DappInfo } from '@domains/staking/dappStaking'
+import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
+import { useQueryState } from '@talismn/react-polkadot-api'
+import { Select } from '@talismn/ui'
+import { Maybe } from '@util/monads'
+import { Suspense, useMemo, useState, useTransition, type ReactNode } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { useRecoilValue, waitForAll } from 'recoil'
+
+type DappSelectorDialogProps = {
+  selectedDapp?: DappInfo
+  onRequestDismiss: () => unknown
+  onConfirm: (dapp: DappInfo) => unknown
+}
+
+const DappSelectorDialog = (props: DappSelectorDialogProps) => {
+  const [dapps, decimal] = useRecoilValue(waitForAll([useRegisteredDappsState(), useNativeTokenDecimalState()]))
+
+  const [highlightedDapp, setHighlightedDapp] = useState(dapps[0])
+
+  const dappInfos = useRecoilValue(
+    useQueryState(
+      'dappStaking',
+      'integratedDApps.multi',
+      useMemo(() => dapps.map(x => (x.address.startsWith('0x') ? { Evm: x.address } : { Wasm: x.address })), [dapps])
+    )
+  )
+
+  const dappStakes = useRecoilValue(
+    useQueryState(
+      'dappStaking',
+      'contractStake.multi',
+      useMemo(() => dappInfos.map(x => x.unwrapOrDefault().id.unwrap()), [dappInfos])
+    )
+  )
+
+  const dappsWithStake = dapps.map((dapp, index) => {
+    const staked = Maybe.of(dappStakes.at(index))
+      .map(x => x.stakedFuture.unwrapOr(x.staked))
+      .mapOr(decimal.fromPlanck(0), x => decimal.fromPlanck(x.voting.toBigInt() + x.buildAndEarn.toBigInt()))
+    return { ...dapp, staked }
+  })
+
+  return (
+    <DappSelectorDialogComponent
+      {...props}
+      onConfirm={() => {
+        if (highlightedDapp !== undefined) {
+          props.onConfirm(highlightedDapp)
+        }
+      }}
+    >
+      {dappsWithStake.map((dapp, index) => (
+        <DappSelectorDialogComponent.Item
+          key={dapp.address}
+          selected={dapp.address === props.selectedDapp?.address}
+          highlighted={dapp.address === highlightedDapp?.address}
+          name={dapp.name}
+          balance={dapp.staked.toHuman()}
+          count={dapp.stakerCount}
+          talismanRecommended={index === 0}
+          onClick={() => setHighlightedDapp(dapp)}
+        />
+      ))}
+    </DappSelectorDialogComponent>
+  )
+}
+
+type IncompleteStakeFormProps = {
+  accountSelector: ReactNode
+  assetSelector: ReactNode
+  selectedDAppName?: ReactNode
+  selectedDAppLogo?: string
+  onRequestDappChange: () => unknown
+}
+
+const InCompleteSelectionStakeForm = (props: IncompleteStakeFormProps) => (
+  <DappStakingForm
+    accountSelector={props.accountSelector}
+    assetSelector={props.assetSelector}
+    selectedDappName={props.selectedDAppName}
+    selectedDappLogo={props.selectedDAppLogo}
+    onRequestDappChange={props.onRequestDappChange}
+    stakeButton={<DappStakingForm.StakeButton />}
+  />
+)
+
+type StakeFormProps = IncompleteStakeFormProps & {
+  account: Account
+  dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
+}
+
+const StakeForm = (props: StakeFormProps) => {
+  // const stake = useStake(props.account)
+  // const {} = useAddStakeForm(props.account, stake, props.dapp)
+
+  return (
+    <DappStakingForm
+      accountSelector={props.accountSelector}
+      assetSelector={props.assetSelector}
+      selectedDappName={props.selectedDAppName}
+      selectedDappLogo={props.selectedDAppLogo}
+      onRequestDappChange={props.onRequestDappChange}
+      stakeButton={<DappStakingForm.StakeButton />}
+    />
+  )
+}
+
+type StakeSideSheetProps = {
+  chains: Array<Extract<ChainInfo, { hasDappStaking: true }>>
+  onChangeChain: (chain: Extract<ChainInfo, { hasDappStaking: true }>) => unknown
+  onRequestDismiss: () => unknown
+}
+
+const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismiss'>) => {
+  const [chain, dapps] = useRecoilValue(waitForAll([useChainState(), useRegisteredDappsState()]))
+  const [[account], accountSelector] = useAccountSelector(useRecoilValue(substrateAccountsState), 0)
+  const [dapp, setDapp] = useState(dapps.at(0))
+
+  const [dappSelectorDialogOpen, setDappSelectorDialogOpen] = useState(false)
+  const [_dappSelectorDialogInTransition, startDappSelectorDialogTransition] = useTransition()
+  const openDappSelectorDialog = () => startDappSelectorDialogTransition(() => setDappSelectorDialogOpen(true))
+
+  const assetSelector = useMemo(
+    () => (
+      <Select
+        value={chain.id}
+        onChange={id => {
+          const chain = props.chains.find(x => x.id === id)
+          if (chain !== undefined) {
+            props.onChangeChain(chain)
+          }
+        }}
+      >
+        {props.chains.map(x => (
+          <Select.Option
+            key={x.id}
+            value={x.id}
+            headlineText={x.nativeToken?.symbol ?? x.name}
+            leadingIcon={<img src={x.nativeToken?.logo ?? x.logo} />}
+          />
+        ))}
+      </Select>
+    ),
+    [chain.id, props]
+  )
+
+  return (
+    <>
+      {account !== undefined && dapp !== undefined ? (
+        <StakeForm
+          account={account}
+          dapp={dapp.address}
+          accountSelector={accountSelector}
+          assetSelector={assetSelector}
+          selectedDAppName={dapp.name}
+          selectedDAppLogo={dapp.iconUrl}
+          onRequestDappChange={openDappSelectorDialog}
+        />
+      ) : (
+        <InCompleteSelectionStakeForm
+          accountSelector={accountSelector}
+          assetSelector={assetSelector}
+          selectedDAppName={dapp?.name}
+          selectedDAppLogo={dapp?.iconUrl}
+          onRequestDappChange={openDappSelectorDialog}
+        />
+      )}
+      {dappSelectorDialogOpen && (
+        <DappSelectorDialog
+          selectedDapp={dapp}
+          onRequestDismiss={() => setDappSelectorDialogOpen(false)}
+          onConfirm={setDapp}
+        />
+      )}
+    </>
+  )
+}
+
+const StakeSideSheet = (props: StakeSideSheetProps) => {
+  return (
+    <DappStakingFormSideSheet onRequestDismiss={props.onRequestDismiss}>
+      <Suspense
+        fallback={
+          <div>
+            {/* Dummy spacer */}
+            <div css={{ visibility: 'hidden', height: 0, overflow: 'hidden' }}>
+              <InCompleteSelectionStakeForm
+                accountSelector={<Select />}
+                assetSelector={<Select />}
+                onRequestDappChange={() => {}}
+              />
+            </div>
+            <div css={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <TalismanHandLoader />
+            </div>
+          </div>
+        }
+      >
+        <StakeSideSheetContent {...props} />
+      </Suspense>
+    </DappStakingFormSideSheet>
+  )
+}
+
+export default () => {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const open = searchParams.get('action') === 'stake' && searchParams.get('type') === 'dapp-staking'
+  const initialChain = searchParams.get('chain')
+
+  const chains = useRecoilValue(dappStakingEnabledChainsState)
+
+  const [chain, setChain] = useState(
+    Maybe.of(initialChain).mapOrUndefined(x => chains.find(y => y.id === x)) ?? chains.at(0)
+  )
+
+  if (chain === undefined || !open) {
+    return null
+  }
+
+  return (
+    <ChainProvider chain={chain}>
+      <StakeSideSheet
+        chains={chains}
+        onChangeChain={setChain}
+        onRequestDismiss={() =>
+          setSearchParams(sp => {
+            sp.delete('action')
+            sp.delete('type')
+            sp.delete('chain')
+            return sp
+          })
+        }
+      />
+    </ChainProvider>
+  )
+}

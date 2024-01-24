@@ -130,3 +130,52 @@ export const nativeTokenDecimalState = selectorFamily({
 })
 
 export const useNativeTokenDecimalState = () => nativeTokenDecimalState(useSubstrateApiEndpoint())
+
+export const nativeTokenAmountState = selectorFamily({
+  key: 'NativeTokenAmount',
+  get:
+    (params: { apiEndpoint: string; genesisHash: string }) =>
+    ({ get }) => {
+      const [decimal, price, currency] = get(
+        waitForAll([
+          nativeTokenDecimalState(params.apiEndpoint),
+          nativeTokenPriceState({ genesisHash: params.genesisHash }),
+          selectedCurrencyState,
+        ])
+      )
+
+      return {
+        fromPlanck: (value: string | number | bigint | BN | ToBn | undefined) => {
+          const decimalAmount = decimal.fromPlanck(value)
+          const fiatAmount = decimalAmount.toNumber() * price
+          const localizedFiatAmount = fiatAmount.toLocaleString(undefined, {
+            style: 'currency',
+            currency,
+          })
+
+          return {
+            decimalAmount,
+            fiatAmount,
+            localizedFiatAmount,
+          }
+        },
+        fromUserInput: (input: string) => {
+          const decimalAmount = decimal.fromUserInput(input)
+          const fiatAmount = decimalAmount.toNumber() * price
+          const localizedFiatAmount = fiatAmount.toLocaleString(undefined, {
+            style: 'currency',
+            currency,
+          })
+
+          return {
+            decimalAmount,
+            fiatAmount,
+            localizedFiatAmount,
+          }
+        },
+      }
+    },
+})
+
+export const useNativeTokenAmountState = () =>
+  nativeTokenAmountState({ apiEndpoint: useSubstrateApiEndpoint(), genesisHash: useContext(ChainContext).genesisHash })

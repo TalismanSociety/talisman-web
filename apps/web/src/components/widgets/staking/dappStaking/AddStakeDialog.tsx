@@ -32,7 +32,7 @@ const DappAddStakeDialog = (props: DappAddStakeDialogProps) => {
 
   return (
     <DappStakingAddStakeDialog
-      confirmState={!ready ? 'disabled' : extrinsic.state === 'loading' ? 'pending' : undefined}
+      confirmState={extrinsic.state === 'loading' ? 'pending' : !ready ? 'disabled' : undefined}
       isError={error !== undefined}
       availableToStake={available.decimalAmount.toHuman()}
       amount={input.amount}

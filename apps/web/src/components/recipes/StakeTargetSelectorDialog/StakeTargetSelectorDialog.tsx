@@ -6,7 +6,7 @@ import React, { useState, type ReactElement, type ReactNode } from 'react'
 import StakeTargetSelectorItem, { PoolSelectorItem, type StakeTargetSelectorItemProps } from './StakeTargetSelectorItem'
 
 export type StakeTargetSelectorDialogProps = {
-  open: boolean
+  open?: boolean
   title: ReactNode
   currentSelectionLabel: ReactNode
   selectionLabel: ReactNode
@@ -108,7 +108,13 @@ const StakeTargetSelectorDialog = Object.assign(
           </Button>
         }
         confirmButton={
-          <Button onClick={props.onConfirm} disabled={highlightedItems.length === 0}>
+          <Button
+            onClick={() => {
+              props.onConfirm()
+              props.onRequestDismiss()
+            }}
+            disabled={highlightedItems.length === 0}
+          >
             Swap pool
           </Button>
         }

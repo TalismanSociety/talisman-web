@@ -60,6 +60,7 @@ const Stake = ({ account }: { account: Account }) => {
         claimButton={
           !totalRewards.decimalAmount.planck.isZero() && (
             <StakePosition.ClaimButton
+              loading={claimAllRewardsExtrinsic.state === 'loading'}
               amount={totalRewards.decimalAmount.toHuman()}
               onClick={() => {
                 void claimAllRewardsExtrinsic.signAndSend(account.address)

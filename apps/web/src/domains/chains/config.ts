@@ -9,6 +9,8 @@ type ChainWithNominationPools = {
 
 type ChainWithDappStaking = {
   hasDappStaking: true
+  dappStakingApi: string
+  priorityDapp: string | undefined
 }
 
 export type ChainConfig = BaseChain | (BaseChain & (ChainWithNominationPools | ChainWithDappStaking))
@@ -48,5 +50,7 @@ export const chainConfigs: ChainConfig[] = [
   {
     genesisHash: '0xddb89973361a170839f80f152d2e9e38a376a5a7eccefcade763f46a8e567019',
     hasDappStaking: true,
+    dappStakingApi: 'https://api.astar.network/api/v3/shibuya/dapps-staking/',
+    priorityDapp: undefined,
   },
 ]

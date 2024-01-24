@@ -32,7 +32,7 @@ const DappUnstakeDialog = (props: DappUnstakeDialogProps) => {
 
   return (
     <UnstakeDialogComponent
-      confirmState={!ready ? 'disabled' : extrinsic.state === 'loading' ? 'pending' : undefined}
+      confirmState={extrinsic.state === 'loading' ? 'pending' : !ready ? 'disabled' : undefined}
       isError={error !== undefined}
       availableAmount={available.decimalAmount.toHuman()}
       amount={input.amount}
