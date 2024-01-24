@@ -28,11 +28,12 @@ export const useAddStakeForm = (
   const input = useTokenAmount(deferredAmount)
   const inTransition = amount !== deferredAmount
 
-  const [api, [accountInfo, stakerInfo]] = useRecoilValue(
+  const [api, [accountInfo, activeProtocol, stakerInfo]] = useRecoilValue(
     waitForAll([
       useSubstrateApiState(),
       useQueryMultiState([
         ['system.account', account.address],
+        ['dappStaking.activeProtocolState'],
         ['dappStaking.stakerInfo', [account.address, dapp]],
       ]),
     ])
@@ -102,8 +103,25 @@ export const useAddStakeForm = (
       return new Error(`Minimum ${minimum.decimalAmount.toHuman()} needed`)
     }
 
+    const isBeforeLastPeriod =
+      activeProtocol.periodInfo.subperiod.type === 'BuildAndEarn' &&
+      activeProtocol.periodInfo.nextSubperiodStartEra.toBigInt() <= activeProtocol.era.toBigInt() + 1n
+
+    if (isBeforeLastPeriod) {
+      return new Error('Not possible to stake in the last era of a period.')
+    }
+
     return undefined
-  }, [deferredAmount, available.decimalAmount.planck, inTransition, input.decimalAmount?.planck, minimum.decimalAmount])
+  }, [
+    deferredAmount,
+    inTransition,
+    input.decimalAmount?.planck,
+    available.decimalAmount.planck,
+    minimum.decimalAmount,
+    activeProtocol.periodInfo.subperiod.type,
+    activeProtocol.periodInfo.nextSubperiodStartEra,
+    activeProtocol.era,
+  ])
 
   return {
     ready:
