@@ -1,3 +1,4 @@
+import { noopStorage } from '@wagmi/core'
 import '@wagmi/core/window'
 import type { PropsWithChildren } from 'react'
 import { WagmiConfig, configureChains, createConfig, createStorage, type WindowProvider } from 'wagmi'
@@ -17,7 +18,7 @@ const config = createConfig({
   autoConnect: true,
   publicClient,
   webSocketPublicClient,
-  storage: createStorage({ storage: globalThis.sessionStorage }),
+  storage: createStorage({ storage: noopStorage }),
 })
 
 export const WagmiProvider = (props: PropsWithChildren) => <WagmiConfig config={config}>{props.children}</WagmiConfig>
