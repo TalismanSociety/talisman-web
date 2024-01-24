@@ -103,11 +103,10 @@ export const useAddStakeForm = (
       return new Error(`Minimum ${minimum.decimalAmount.toHuman()} needed`)
     }
 
-    const isBeforeLastPeriod =
+    if (
       activeProtocol.periodInfo.subperiod.type === 'BuildAndEarn' &&
       activeProtocol.periodInfo.nextSubperiodStartEra.toBigInt() <= activeProtocol.era.toBigInt() + 1n
-
-    if (isBeforeLastPeriod) {
+    ) {
       return new Error('Not possible to stake in the last era of a period.')
     }
 
