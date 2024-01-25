@@ -1,8 +1,10 @@
 import type { Account } from '@domains/accounts'
+import { useNativeTokenAmountState } from '@domains/chains'
 import { useSubstrateApiEndpoint, useSubstrateApiState } from '@domains/common'
-import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
+import { useDeriveState, useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
+import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { range } from 'lodash'
 import { useMemo } from 'react'
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue, waitForAll } from 'recoil'
@@ -14,10 +16,12 @@ export const useStake = (account: Account) => {
   // highly likely a recoil bug
   const api = useRecoilValue(useSubstrateApiState())
 
-  const [[activeProtocol, ledger], stakedDapps] = useRecoilValue(
+  const [[activeProtocol, ledger], bestNumber, stakedDapps, nativeTokenAmount] = useRecoilValue(
     waitForAll([
       useQueryMultiState(['dappStaking.activeProtocolState', ['dappStaking.ledger', account.address]]),
+      useDeriveState('chain', 'bestNumber', []),
       stakedDappsState({ endpoint: useSubstrateApiEndpoint(), address: account.address }),
+      useNativeTokenAmountState(),
     ])
   )
 
@@ -47,40 +51,49 @@ export const useStake = (account: Account) => {
 
   const stakeRewards = useMemo(
     () =>
-      eraRewardsSpans
-        .filter(span => span.isSome)
-        .map(span => span.unwrapOrDefault())
-        .map(span =>
-          range(span.firstEra.toNumber(), span.lastEra.toNumber() + 1)
-            .map(era => {
-              const stakedEligibleForRewards = ledger.staked.era.unwrap().gtn(era)
-                ? 0n
-                : ledger.staked.voting.unwrap().toBigInt() + ledger.staked.buildAndEarn.unwrap().toBigInt()
+      nativeTokenAmount.fromPlanck(
+        eraRewardsSpans
+          .filter(span => span.isSome)
+          .map(span => span.unwrapOrDefault())
+          .map(span =>
+            range(span.firstEra.toNumber(), span.lastEra.toNumber() + 1)
+              .map(era => {
+                const stakedEligibleForRewards = ledger.staked.era.unwrap().gtn(era)
+                  ? 0n
+                  : ledger.staked.voting.unwrap().toBigInt() + ledger.staked.buildAndEarn.unwrap().toBigInt()
 
-              const stakedFutureEligibleRewards = ledger.stakedFuture.isNone
-                ? 0n
-                : ledger.stakedFuture.unwrapOrDefault().era.unwrap().toBigInt() > era
-                ? 0n
-                : ledger.stakedFuture.unwrapOrDefault().voting.unwrap().toBigInt() +
-                  ledger.stakedFuture.unwrapOrDefault().buildAndEarn.unwrap().toBigInt()
+                const stakedFutureEligibleRewards = ledger.stakedFuture.isNone
+                  ? 0n
+                  : ledger.stakedFuture.unwrapOrDefault().era.unwrap().toBigInt() > era
+                  ? 0n
+                  : ledger.stakedFuture.unwrapOrDefault().voting.unwrap().toBigInt() +
+                    ledger.stakedFuture.unwrapOrDefault().buildAndEarn.unwrap().toBigInt()
 
-              const totalStakedEligibleForRewards = stakedEligibleForRewards + stakedFutureEligibleRewards
-              const eraSpan = span.span[era - span.firstEra.toNumber()]
+                const totalStakedEligibleForRewards = stakedEligibleForRewards + stakedFutureEligibleRewards
+                const eraSpan = span.span[era - span.firstEra.toNumber()]
 
-              return eraSpan === undefined || eraSpan.staked.unwrap().isZero()
-                ? 0n
-                : BigInt(
-                    new BigNumber(eraSpan.stakerRewardPool.unwrap().toString())
-                      .times(totalStakedEligibleForRewards.toString())
-                      .div(eraSpan.staked.unwrap().toString())
-                      .integerValue()
-                      .toString()
-                  )
-            })
-            .reduce((prev, curr) => prev + curr, 0n)
-        )
-        .reduce((prev, curr) => prev + curr, 0n),
-    [eraRewardsSpans, ledger.staked.buildAndEarn, ledger.staked.era, ledger.staked.voting, ledger.stakedFuture]
+                return eraSpan === undefined || eraSpan.staked.unwrap().isZero()
+                  ? 0n
+                  : BigInt(
+                      new BigNumber(eraSpan.stakerRewardPool.unwrap().toString())
+                        .times(totalStakedEligibleForRewards.toString())
+                        .div(eraSpan.staked.unwrap().toString())
+                        .integerValue()
+                        .toString()
+                    )
+              })
+              .reduce((prev, curr) => prev + curr, 0n)
+          )
+          .reduce((prev, curr) => prev + curr, 0n)
+      ),
+    [
+      eraRewardsSpans,
+      ledger.staked.buildAndEarn,
+      ledger.staked.era,
+      ledger.staked.voting,
+      ledger.stakedFuture,
+      nativeTokenAmount,
+    ]
   )
 
   const eligibleBonusRewards = useMemo(
@@ -134,32 +147,81 @@ export const useStake = (account: Account) => {
     [bonusRewardsPeriodEnds, eligibleBonusRewards]
   )
 
-  const totalBonusRewards = useMemo(() => bonusRewards.reduce((prev, curr) => prev + curr.rewards, 0n), [bonusRewards])
+  const totalBonusRewards = useMemo(
+    () => nativeTokenAmount.fromPlanck(bonusRewards.reduce((prev, curr) => prev + curr.rewards, 0n)),
+    [bonusRewards, nativeTokenAmount]
+  )
 
   const totalStaked = useMemo(
     () =>
-      BigInt(
-        ledger.stakedFuture.isSome
-          ? ledger.stakedFuture
-              .unwrapOrDefault()
-              .voting.unwrap()
-              .add(ledger.stakedFuture.unwrapOrDefault().buildAndEarn.unwrap())
-              .toString()
-          : ledger.staked.voting.unwrap().add(ledger.staked.buildAndEarn.unwrap()).toString()
+      nativeTokenAmount.fromPlanck(
+        BigInt(
+          ledger.stakedFuture.isSome
+            ? ledger.stakedFuture
+                .unwrapOrDefault()
+                .voting.unwrap()
+                .add(ledger.stakedFuture.unwrapOrDefault().buildAndEarn.unwrap())
+                .toString()
+            : ledger.staked.voting.unwrap().add(ledger.staked.buildAndEarn.unwrap()).toString()
+        )
       ),
-    [ledger.staked.buildAndEarn, ledger.staked.voting, ledger.stakedFuture]
+    [ledger.staked.buildAndEarn, ledger.staked.voting, ledger.stakedFuture, nativeTokenAmount]
+  )
+
+  // TODO: create actual estimation
+  const averageBlockTime = 12_000
+  const unlocking = useMemo(
+    () =>
+      ledger.unlocking
+        .filter(x => x.unlockBlock.toBigInt() > bestNumber.toBigInt())
+        .map(x => ({
+          amount: nativeTokenAmount.fromPlanck(x.amount.unwrap()),
+          eta: formatDistanceToNow(
+            addMilliseconds(
+              new Date(),
+              Number(x.unlockBlock.unwrap().toBigInt() - bestNumber.toBigInt()) * averageBlockTime
+            )
+          ),
+        })),
+    [bestNumber, ledger.unlocking, nativeTokenAmount]
+  )
+
+  const totalUnlocking = useMemo(
+    () =>
+      nativeTokenAmount.fromPlanck(
+        ledger.unlocking
+          .filter(x => x.unlockBlock.toBigInt() > bestNumber.toBigInt())
+          .reduce((prev, curr) => prev + curr.amount.toBigInt(), 0n)
+      ),
+    [bestNumber, ledger.unlocking, nativeTokenAmount]
+  )
+
+  const withdrawable = useMemo(
+    () =>
+      nativeTokenAmount.fromPlanck(
+        ledger.unlocking
+          .filter(x => x.unlockBlock.toBigInt() <= bestNumber.toBigInt())
+          .reduce((prev, curr) => prev + curr.amount.toBigInt(), 0n)
+      ),
+    [bestNumber, ledger.unlocking, nativeTokenAmount]
   )
 
   return {
     active: !ledger.contractStakeCount.unwrap().isZero() || ledger.unlocking.length > 0,
-    earningRewards: totalStaked > 0,
+    earningRewards: totalStaked.decimalAmount.planck.gtn(0),
     account,
     ledger,
     totalStaked,
     stakeRewards,
     bonusRewards,
     totalBonusRewards,
-    totalRewards: stakeRewards + totalBonusRewards,
+    totalRewards: useMemo(
+      () => nativeTokenAmount.fromPlanck(totalBonusRewards.decimalAmount.planck.add(stakeRewards.decimalAmount.planck)),
+      [nativeTokenAmount, stakeRewards, totalBonusRewards.decimalAmount.planck]
+    ),
+    unlocking,
+    totalUnlocking,
+    withdrawable,
     dapps: stakedDapps.map(x => [x[0].args[1], x[1]] as const),
   }
 }

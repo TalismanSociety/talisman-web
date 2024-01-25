@@ -2,7 +2,7 @@ import StakePosition from '@components/recipes/StakePosition'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { selectedSubstrateAccountsState, type Account } from '@domains/accounts'
 import { ChainProvider, dappStakingEnabledChainsState, useChainState } from '@domains/chains'
-import { useTokenAmountFromPlanck } from '@domains/common'
+import { useExtrinsic } from '@domains/common'
 import { useClaimAllRewardsExtrinsic, useStake } from '@domains/staking/dappStaking'
 import { useState, useTransition } from 'react'
 import { useRecoilValue } from 'recoil'
@@ -14,9 +14,7 @@ const Stake = ({ account }: { account: Account }) => {
   const stake = useStake(account)
 
   const claimAllRewardsExtrinsic = useClaimAllRewardsExtrinsic(stake)
-
-  const balance = useTokenAmountFromPlanck(stake.totalStaked)
-  const totalRewards = useTokenAmountFromPlanck(stake.totalRewards)
+  const withdrawExtrinsic = useExtrinsic('dappStaking', 'withdrawUnbonded')
 
   const [addStakeDialogOpen, _setAddStakeDialogOpen] = useState(false)
   const [addStakeDialogInTransition, startAddStakeDialogTransition] = useTransition()
@@ -39,8 +37,8 @@ const Stake = ({ account }: { account: Account }) => {
         account={account}
         provider="DApp staking"
         stakeStatus={stake.earningRewards ? 'earning_rewards' : 'not_earning_rewards'}
-        balance={balance.decimalAmount.toHuman()}
-        fiatBalance={balance.localizedFiatAmount}
+        balance={stake.totalStaked.decimalAmount.toHuman()}
+        fiatBalance={stake.totalStaked.localizedFiatAmount}
         increaseStakeButton={
           stake.dapps.length > 0 && (
             <StakePosition.IncreaseStakeButton
@@ -58,13 +56,32 @@ const Stake = ({ account }: { account: Account }) => {
           )
         }
         claimButton={
-          !totalRewards.decimalAmount.planck.isZero() && (
+          !stake.totalRewards.decimalAmount.planck.isZero() && (
             <StakePosition.ClaimButton
               loading={claimAllRewardsExtrinsic.state === 'loading'}
-              amount={totalRewards.decimalAmount.toHuman()}
+              amount={stake.totalRewards.decimalAmount.toHuman()}
               onClick={() => {
                 void claimAllRewardsExtrinsic.signAndSend(account.address)
               }}
+            />
+          )
+        }
+        withdrawButton={
+          stake.withdrawable.decimalAmount.planck.gtn(0) && (
+            <StakePosition.WithdrawButton
+              loading={withdrawExtrinsic.state === 'loading'}
+              amount={stake.withdrawable.decimalAmount.toHuman()}
+              onClick={() => {
+                void withdrawExtrinsic.signAndSend(account.address)
+              }}
+            />
+          )
+        }
+        status={
+          stake.unlocking.length > 0 && (
+            <StakePosition.UnstakingStatus
+              amount={stake.totalUnlocking.decimalAmount.toHuman()}
+              unlocks={stake.unlocking.map(x => ({ amount: x.amount.decimalAmount.toHuman(), eta: x.eta }))}
             />
           )
         }

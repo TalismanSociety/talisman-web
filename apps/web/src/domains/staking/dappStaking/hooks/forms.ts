@@ -41,7 +41,7 @@ export const useAddStakeForm = (
 
   const transferable = accountInfo.data.free.sub(accountInfo.data.frozen)
   const lockedAvailableForStake = useMemo(
-    () => stake.ledger.locked.unwrap().sub(new BN(stake.totalStaked.toString())),
+    () => stake.ledger.locked.unwrap().sub(new BN(stake.totalStaked.decimalAmount.planck.toString())),
     [stake.ledger.locked, stake.totalStaked]
   )
 
