@@ -7,7 +7,7 @@ export const getAllRewardsClaimExtrinsics = (api: ApiPromise, stake: Stake) =>
   stake.totalRewards.decimalAmount.planck.ltn(0)
     ? []
     : [
-        api.tx.dappStaking.claimStakerRewards(),
+        ...(stake.stakeRewards.decimalAmount.planck.isZero() ? [] : [api.tx.dappStaking.claimStakerRewards()]),
         ...stake.bonusRewards.map(x => api.tx.dappStaking.claimBonusReward(x.dapp)),
       ]
 
