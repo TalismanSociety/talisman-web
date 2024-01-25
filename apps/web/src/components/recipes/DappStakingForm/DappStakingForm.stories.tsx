@@ -16,10 +16,19 @@ export const Default: Story = {
         <Select.Option headlineText="foo" />
       </Select>
     ),
-    assetSelector: (
-      <Select placeholder="DOT">
-        <Select.Option headlineText="ASTAR" />
-      </Select>
+    amountInput: (
+      <DappStakingForm.AmountInput
+        amount="2 ASTAR"
+        fiatAmount="$1.00"
+        availableToStake="1 ASTAR"
+        onChangeAmount={() => {}}
+        onRequestMaxAmount={() => {}}
+        assetSelector={
+          <Select placeholder="DOT">
+            <Select.Option headlineText="ASTAR" />
+          </Select>
+        }
+      />
     ),
     selectedDappName: 'Talisman Portal',
     selectedDappLogo:

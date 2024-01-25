@@ -2,7 +2,8 @@ import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import DappStakingForm, { DappStakingFormSideSheet } from '@components/recipes/DappStakingForm'
 import { DappSelectorDialog as DappSelectorDialogComponent } from '@components/recipes/StakeTargetSelectorDialog'
 import { useAccountSelector } from '@components/widgets/AccountSelector'
-import { substrateAccountsState, type Account } from '@domains/accounts'
+import ErrorBoundary from '@components/widgets/ErrorBoundary'
+import { writeableSubstrateAccountsState, type Account } from '@domains/accounts'
 import {
   ChainProvider,
   dappStakingEnabledChainsState,
@@ -10,7 +11,7 @@ import {
   useNativeTokenDecimalState,
   type ChainInfo,
 } from '@domains/chains'
-import { useRegisteredDappsState, type DappInfo } from '@domains/staking/dappStaking'
+import { useAddStakeForm, useRegisteredDappsState, useStake, type DappInfo } from '@domains/staking/dappStaking'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
 import { useQueryState } from '@talismn/react-polkadot-api'
 import { Select } from '@talismn/ui'
@@ -89,11 +90,11 @@ type IncompleteStakeFormProps = {
 const InCompleteSelectionStakeForm = (props: IncompleteStakeFormProps) => (
   <DappStakingForm
     accountSelector={props.accountSelector}
-    assetSelector={props.assetSelector}
+    amountInput={<DappStakingForm.AmountInput assetSelector={props.assetSelector} disabled />}
     selectedDappName={props.selectedDAppName}
     selectedDappLogo={props.selectedDAppLogo}
     onRequestDappChange={props.onRequestDappChange}
-    stakeButton={<DappStakingForm.StakeButton />}
+    stakeButton={<DappStakingForm.StakeButton disabled />}
   />
 )
 
@@ -103,17 +104,35 @@ type StakeFormProps = IncompleteStakeFormProps & {
 }
 
 const StakeForm = (props: StakeFormProps) => {
-  // const stake = useStake(props.account)
-  // const {} = useAddStakeForm(props.account, stake, props.dapp)
+  const stake = useStake(props.account)
+  const { input, setAmount, available, extrinsic, ready, error } = useAddStakeForm(props.account, stake, props.dapp)
 
   return (
     <DappStakingForm
       accountSelector={props.accountSelector}
-      assetSelector={props.assetSelector}
+      amountInput={
+        <DappStakingForm.AmountInput
+          amount={input.amount}
+          fiatAmount={input.localizedFiatAmount}
+          onChangeAmount={setAmount}
+          onRequestMaxAmount={() => setAmount(available.decimalAmount.toString())}
+          availableToStake={available.decimalAmount.toHuman()}
+          assetSelector={props.assetSelector}
+          error={error?.message}
+        />
+      }
       selectedDappName={props.selectedDAppName}
       selectedDappLogo={props.selectedDAppLogo}
       onRequestDappChange={props.onRequestDappChange}
-      stakeButton={<DappStakingForm.StakeButton />}
+      stakeButton={
+        <DappStakingForm.StakeButton
+          disabled={!ready}
+          loading={extrinsic.state === 'loading'}
+          onClick={() => {
+            void extrinsic.signAndSend(props.account.address)
+          }}
+        />
+      }
     />
   )
 }
@@ -126,7 +145,7 @@ type StakeSideSheetProps = {
 
 const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismiss'>) => {
   const [chain, dapps] = useRecoilValue(waitForAll([useChainState(), useRegisteredDappsState()]))
-  const [[account], accountSelector] = useAccountSelector(useRecoilValue(substrateAccountsState), 0)
+  const [[account], accountSelector] = useAccountSelector(useRecoilValue(writeableSubstrateAccountsState), 0)
   const [dapp, setDapp] = useState(dapps.at(0))
 
   const [dappSelectorDialogOpen, setDappSelectorDialogOpen] = useState(false)
@@ -162,7 +181,7 @@ const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismis
       {account !== undefined && dapp !== undefined ? (
         <StakeForm
           account={account}
-          dapp={dapp.address}
+          dapp={dapp.address.startsWith('0x') ? { Evm: dapp.address } : { Wasm: dapp.address }}
           accountSelector={accountSelector}
           assetSelector={assetSelector}
           selectedDAppName={dapp.name}
@@ -192,25 +211,27 @@ const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismis
 const StakeSideSheet = (props: StakeSideSheetProps) => {
   return (
     <DappStakingFormSideSheet onRequestDismiss={props.onRequestDismiss}>
-      <Suspense
-        fallback={
-          <div>
-            {/* Dummy spacer */}
-            <div css={{ visibility: 'hidden', height: 0, overflow: 'hidden' }}>
-              <InCompleteSelectionStakeForm
-                accountSelector={<Select />}
-                assetSelector={<Select />}
-                onRequestDappChange={() => {}}
-              />
+      <ErrorBoundary orientation="vertical">
+        <Suspense
+          fallback={
+            <div>
+              {/* Dummy spacer */}
+              <div css={{ visibility: 'hidden', height: 0, overflow: 'hidden' }}>
+                <InCompleteSelectionStakeForm
+                  accountSelector={<Select />}
+                  assetSelector={<Select />}
+                  onRequestDappChange={() => {}}
+                />
+              </div>
+              <div css={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <TalismanHandLoader />
+              </div>
             </div>
-            <div css={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <TalismanHandLoader />
-            </div>
-          </div>
-        }
-      >
-        <StakeSideSheetContent {...props} />
-      </Suspense>
+          }
+        >
+          <StakeSideSheetContent {...props} />
+        </Suspense>
+      </ErrorBoundary>
     </DappStakingFormSideSheet>
   )
 }

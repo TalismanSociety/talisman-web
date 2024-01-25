@@ -4,20 +4,71 @@ import {
   Button,
   DescriptionList,
   ListItem,
+  SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR,
   Select,
   SideSheet,
   Surface,
   Text,
   TextInput,
-  type SideSheetProps,
   type ButtonProps,
-  SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR,
+  type SideSheetProps,
 } from '@talismn/ui'
+import { Maybe } from '@util/monads'
 import type { ReactNode } from 'react'
+
+type AmountInputProps =
+  | {
+      disabled?: false
+      amount: string
+      onChangeAmount: (amount: string) => unknown
+      onRequestMaxAmount: () => unknown
+      assetSelector: ReactNode
+      fiatAmount: ReactNode
+      availableToStake: ReactNode
+      error?: string
+    }
+  | {
+      disabled: true
+      assetSelector: ReactNode
+    }
+
+const AmountInput = (props: AmountInputProps) => {
+  const theme = useTheme()
+  return (
+    <TextInput
+      disabled={props.disabled}
+      type="number"
+      inputMode="decimal"
+      placeholder="0.00"
+      value={props.disabled ? undefined : props.amount}
+      onChangeText={props.disabled ? undefined : props.onChangeAmount}
+      leadingLabel="Available to stake"
+      trailingLabel={props.disabled ? '...' : props.availableToStake}
+      trailingIcon={props.assetSelector}
+      leadingSupportingText={
+        props.disabled
+          ? ''
+          : Maybe.of(props.error).mapOr(props.fiatAmount, x => <TextInput.ErrorLabel>{x}</TextInput.ErrorLabel>)
+      }
+      trailingSupportingText={
+        <Button
+          disabled={props.disabled}
+          variant="surface"
+          css={{ fontSize: theme.typography.bodySmall.fontSize, padding: '0.3rem 0.8rem' }}
+          onClick={props.disabled ? undefined : props.onRequestMaxAmount}
+        >
+          Max
+        </Button>
+      }
+      width="10rem"
+      css={{ fontSize: '3rem' }}
+    />
+  )
+}
 
 export type DappStakingFormProps = {
   accountSelector: ReactNode
-  assetSelector: ReactNode
+  amountInput: ReactNode
   selectedDappName?: ReactNode
   selectedDappLogo?: string
   onRequestDappChange: () => unknown
@@ -26,7 +77,6 @@ export type DappStakingFormProps = {
 
 const DappStakingForm = Object.assign(
   (props: DappStakingFormProps) => {
-    const theme = useTheme()
     return (
       <Surface
         css={{
@@ -39,20 +89,7 @@ const DappStakingForm = Object.assign(
         }}
       >
         {props.accountSelector}
-        <TextInput
-          type="number"
-          inputMode="decimal"
-          placeholder="0.00"
-          leadingLabel="Available to stake"
-          trailingIcon={props.assetSelector}
-          trailingSupportingText={
-            <Button variant="surface" css={{ fontSize: theme.typography.bodySmall.fontSize, padding: '0.3rem 0.8rem' }}>
-              Max
-            </Button>
-          }
-          width="10rem"
-          css={{ fontSize: '3rem' }}
-        />
+        {props.amountInput}
         <div css={{ cursor: 'pointer' }} onClick={props.onRequestDappChange}>
           <label css={{ pointerEvents: 'none' }}>
             <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
@@ -83,11 +120,12 @@ const DappStakingForm = Object.assign(
             <DescriptionList.Details>0 ASTAR</DescriptionList.Details>
           </DescriptionList.Description>
         </DescriptionList>
-        <Button css={{ marginTop: '1.6rem', width: 'auto' }}>Stake</Button>
+        {props.stakeButton}
       </Surface>
     )
   },
   {
+    AmountInput,
     StakeButton: (props: Omit<ButtonProps, 'children'>) => (
       <Button {...props} css={{ marginTop: '1.6rem', width: 'auto' }}>
         Stake
@@ -109,20 +147,22 @@ export const DappStakingFormSideSheet = ({ children: form, ...props }: DappStaki
       }
       subtitle="Astar DApp staking"
     >
-      <div css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '42rem' } }}>{form}</div>
-      <Text.Body as="p" css={{ marginTop: '6.4rem' }}>
-        The minimum amount to stake for users is 500 ASTR.
-        <br />
-        <br />
-        You need to claim to receive your rewards, we recommend claiming for your staking rewards once a week.
-        <br />
-        <br />
-        There is a unbonding period for around 10 days on Astar.
-        <br />
-        <br />
-        Please note that this is based on a perfect block production of 12s. In case of any delay, your unbonding period
-        can be a little longer.
-      </Text.Body>
+      <div css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '42rem' } }}>
+        {form}
+        <Text.Body as="p" css={{ marginTop: '6.4rem' }}>
+          The minimum amount to stake for users is 500 ASTR.
+          <br />
+          <br />
+          You need to claim to receive your rewards, we recommend claiming for your staking rewards once a week.
+          <br />
+          <br />
+          There is a unbonding period for around 10 days on Astar.
+          <br />
+          <br />
+          Please note that this is based on a perfect block production of 12s. In case of any delay, your unbonding
+          period can be a little longer.
+        </Text.Body>
+      </div>
     </SideSheet>
   )
 }
