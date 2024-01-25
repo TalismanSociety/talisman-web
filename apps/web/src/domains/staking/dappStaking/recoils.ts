@@ -1,7 +1,33 @@
 import { ChainContext, dappStakingEnabledChainsState } from '@domains/chains'
-import { chainReadIdState, substrateApiState } from '@domains/common'
+import { chainReadIdState, substrateApiState, useSubstrateApiEndpoint } from '@domains/common'
+import type { Bytes } from '@polkadot/types'
+import { u8aToNumber } from '@polkadot/util'
 import { useContext } from 'react'
 import { selectorFamily, type RecoilValue } from 'recoil'
+
+export const eraLengthState = selectorFamily({
+  key: 'DappStaking/EraLength',
+  get:
+    (endpoint: string) =>
+    async ({ get }) => {
+      const getNumber = (bytes: Bytes): number => u8aToNumber(bytes.toU8a().slice(1, 4))
+      const api = get(substrateApiState(endpoint))
+
+      const [erasPerBuildAndEarn, erasPerVoting, eraLength] = await Promise.all([
+        api.rpc.state.call('DappStakingApi_eras_per_build_and_earn_subperiod', ''),
+        api.rpc.state.call('DappStakingApi_eras_per_voting_subperiod', ''),
+        api.rpc.state.call('DappStakingApi_blocks_per_era', ''),
+      ])
+
+      return {
+        standardErasPerBuildAndEarnPeriod: getNumber(erasPerBuildAndEarn),
+        standardErasPerVotingPeriod: getNumber(erasPerVoting),
+        standardEraLength: getNumber(eraLength),
+      }
+    },
+})
+
+export const useEraLengthState = () => eraLengthState(useSubstrateApiEndpoint())
 
 export const stakedDappsState = selectorFamily({
   key: 'DappStaking/StakedDApps',

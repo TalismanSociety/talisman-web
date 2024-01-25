@@ -4,6 +4,7 @@ import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedSubstrateAccountsState } from '@domains/accounts'
 import { ChainProvider, dappStakingEnabledChainsState, useChainState } from '@domains/chains'
 import { chainDeriveState, substrateApiState, useTokenAmountFromPlanck } from '@domains/common'
+import { useApr } from '@domains/staking/dappStaking'
 import { Decimal } from '@talismn/math'
 import { usePolkadotApiId, useQueryState } from '@talismn/react-polkadot-api'
 import { CircularProgressIndicator } from '@talismn/ui'
@@ -11,6 +12,15 @@ import BigNumber from 'bignumber.js'
 import { Suspense, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
+
+const Apr = () => (
+  <>
+    {useApr().totalApr.toLocaleString(undefined, {
+      style: 'percent',
+      maximumFractionDigits: 2,
+    })}
+  </>
+)
 
 const useAvailableBalance = () => {
   const apiId = usePolkadotApiId()
@@ -76,7 +86,11 @@ const StakeProviderItem = () => {
       symbol={chain.nativeToken?.symbol}
       logo={chain.nativeToken?.logo ?? ''}
       chain={chain.name}
-      apr=""
+      apr={
+        <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+          <Apr />
+        </Suspense>
+      }
       type="DApp staking"
       provider={chain.name}
       unbondingPeriod=""
