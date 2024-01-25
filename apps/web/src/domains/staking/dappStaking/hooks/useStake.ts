@@ -143,7 +143,7 @@ export const useStake = (account: Account) => {
             ),
           }
         })
-        .filter((x): x is NonNullable<typeof x> => x !== undefined),
+        .filter((x): x is NonNullable<typeof x> => x !== undefined && x.rewards > 0),
     [bonusRewardsPeriodEnds, eligibleBonusRewards]
   )
 
