@@ -5,7 +5,7 @@ import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedSubstrateAccountsState } from '@domains/accounts'
 import { ChainProvider, nominationPoolsEnabledChainsState, useChainState } from '@domains/chains'
 import { chainDeriveState, substrateApiState, useTokenAmountFromPlanck } from '@domains/common'
-import { useApr, useLocalizedLockDuration } from '@domains/staking/substrate/nominationPools'
+import { useApr, useLocalizedUnlockDuration } from '@domains/staking/substrate/nominationPools'
 import { Decimal } from '@talismn/math'
 import { usePolkadotApiId, useQueryState } from '@talismn/react-polkadot-api'
 import { CircularProgressIndicator } from '@talismn/ui'
@@ -46,7 +46,7 @@ const AvailableFiatBalance = () => (
   <AnimatedFiatNumber end={useTokenAmountFromPlanck(useAvailableBalance().planck).fiatAmount} />
 )
 
-const UnlockDuration = () => <>{useLocalizedLockDuration()}</>
+const UnlockDuration = () => <>{useLocalizedUnlockDuration()}</>
 
 const StakePercentage = () => {
   const apiId = usePolkadotApiId()

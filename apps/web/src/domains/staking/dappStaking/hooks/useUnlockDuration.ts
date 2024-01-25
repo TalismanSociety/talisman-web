@@ -1,15 +1,15 @@
-import { expectedBlockTime, expectedSessionTime, useSubstrateApiState } from '@domains/common'
+import { useSubstrateApiState, expectedSessionTime, expectedBlockTime } from '@domains/common'
 import { useDeriveState } from '@talismn/react-polkadot-api'
 import { Maybe } from '@util/monads'
 import { formatDistance } from 'date-fns'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-export const useLocalizedLockDuration = () => {
+export const useLocalizedUnlockDuration = () => {
   const [api, sessionProgress] = useRecoilValue(
     waitForAll([useSubstrateApiState(), useDeriveState('session', 'progress', [])])
   )
 
-  const erasOrSessions = sessionProgress.eraLength.mul(api.consts.staking.bondingDuration)
+  const erasOrSessions = sessionProgress.eraLength.mul(api.consts.dappStaking.unlockingPeriod)
 
   if (!sessionProgress.isEpoch) {
     return Maybe.of(expectedSessionTime(api)).mapOr(`${erasOrSessions.toString()} sessions`, sessionLength =>

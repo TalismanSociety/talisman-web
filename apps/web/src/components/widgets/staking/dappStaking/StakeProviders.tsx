@@ -12,6 +12,7 @@ import BigNumber from 'bignumber.js'
 import { Suspense, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
+import UnlockDuration from './UnlockDuration'
 
 const Apr = () => (
   <>
@@ -93,7 +94,11 @@ const StakeProviderItem = () => {
       }
       type="DApp staking"
       provider={chain.name}
-      unbondingPeriod=""
+      unbondingPeriod={
+        <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+          <UnlockDuration />
+        </Suspense>
+      }
       availableBalance={
         <Suspense fallback={<CircularProgressIndicator size="1em" />}>
           <AvailableBalance />
