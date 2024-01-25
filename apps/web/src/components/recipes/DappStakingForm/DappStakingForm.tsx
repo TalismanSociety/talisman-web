@@ -71,6 +71,8 @@ export type DappStakingFormProps = {
   amountInput: ReactNode
   selectedDappName?: ReactNode
   selectedDappLogo?: string
+  estimatedRewards: ReactNode
+  currentStakedBalance?: ReactNode
   onRequestDappChange: () => unknown
   stakeButton: ReactNode
 }
@@ -113,12 +115,14 @@ const DappStakingForm = Object.assign(
         <DescriptionList>
           <DescriptionList.Description>
             <DescriptionList.Term>Estimated earning</DescriptionList.Term>
-            <DescriptionList.Details>0.021 ASTR / Year ($23.04)</DescriptionList.Details>
+            <DescriptionList.Details>{props.estimatedRewards}</DescriptionList.Details>
           </DescriptionList.Description>
-          <DescriptionList.Description>
-            <DescriptionList.Term>Staked balance</DescriptionList.Term>
-            <DescriptionList.Details>0 ASTAR</DescriptionList.Details>
-          </DescriptionList.Description>
+          {props.currentStakedBalance !== undefined && (
+            <DescriptionList.Description>
+              <DescriptionList.Term>Staked balance</DescriptionList.Term>
+              <DescriptionList.Details>{props.currentStakedBalance}</DescriptionList.Details>
+            </DescriptionList.Description>
+          )}
         </DescriptionList>
         {props.stakeButton}
       </Surface>

@@ -8,13 +8,14 @@ import {
   ChainProvider,
   dappStakingEnabledChainsState,
   useChainState,
+  useNativeTokenAmountState,
   useNativeTokenDecimalState,
   type ChainInfo,
 } from '@domains/chains'
-import { useAddStakeForm, useRegisteredDappsState, useStake, type DappInfo } from '@domains/staking/dappStaking'
+import { useAddStakeForm, useApr, useRegisteredDappsState, useStake, type DappInfo } from '@domains/staking/dappStaking'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
 import { useQueryState } from '@talismn/react-polkadot-api'
-import { Select } from '@talismn/ui'
+import { CircularProgressIndicator, Select } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { Suspense, useMemo, useState, useTransition, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
@@ -95,8 +96,24 @@ const InCompleteSelectionStakeForm = (props: IncompleteStakeFormProps) => (
     selectedDappLogo={props.selectedDAppLogo}
     onRequestDappChange={props.onRequestDappChange}
     stakeButton={<DappStakingForm.StakeButton disabled />}
+    estimatedRewards="..."
   />
 )
+
+const EstimatedRewards = (props: { amount: string }) => {
+  const tokenAmount = useRecoilValue(useNativeTokenAmountState())
+  const apr = useApr()
+  const amount = useMemo(
+    () => tokenAmount.fromPlanck(tokenAmount.fromUserInput(props.amount).decimalAmount.planck.muln(apr.totalApr)),
+    [apr.totalApr, props.amount, tokenAmount]
+  )
+
+  return (
+    <>
+      {amount.decimalAmount.toHuman()} / Year ({amount.localizedFiatAmount})
+    </>
+  )
+}
 
 type StakeFormProps = IncompleteStakeFormProps & {
   account: Account
@@ -132,6 +149,14 @@ const StakeForm = (props: StakeFormProps) => {
             void extrinsic.signAndSend(props.account.address)
           }}
         />
+      }
+      estimatedRewards={
+        <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+          <EstimatedRewards amount={input.amount} />
+        </Suspense>
+      }
+      currentStakedBalance={
+        stake.totalStaked.decimalAmount.planck.gtn(0) ? stake.totalStaked.decimalAmount.toHuman() : undefined
       }
     />
   )
