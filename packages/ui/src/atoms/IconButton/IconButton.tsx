@@ -1,14 +1,18 @@
-import { type ElementType } from 'react'
+import { type ElementType, type PropsWithChildren } from 'react'
 import type { IconProps } from '../Icon'
 import Icon, { SurfaceIcon, TonalIcon } from '../Icon'
 import { useTheme } from '@emotion/react'
+import { CircularProgressIndicator } from '..'
 
 type IconButtonElementType = Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>
 
-export type IconButtonProps<T extends IconButtonElementType = 'button'> = IconProps<T> & {
-  disabledContainerColor?: string
-  disabledContentColor?: string
-}
+export type IconButtonProps<T extends IconButtonElementType = 'button'> = PropsWithChildren<
+  IconProps<T> & {
+    loading?: boolean
+    disabledContainerColor?: string
+    disabledContentColor?: string
+  }
+>
 
 const BaseIconButtonFactory =
   (Element: any) =>
@@ -32,7 +36,9 @@ const BaseIconButtonFactory =
             cursor: 'not-allowed',
           },
         ]}
-      />
+      >
+        {props.loading ? <CircularProgressIndicator /> : props.children}
+      </Element>
     )
   }
 

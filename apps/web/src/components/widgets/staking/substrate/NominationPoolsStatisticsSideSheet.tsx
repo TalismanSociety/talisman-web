@@ -26,7 +26,7 @@ import {
 } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { eachDayOfInterval, isSameDay, subDays } from 'date-fns'
-import { Suspense, useMemo, type ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryTooltip } from 'victory'
 
@@ -356,8 +356,4 @@ const NominationPoolsStatisticsSideSheet = (props: NominationPoolsStatisticsSide
   return <ExistingPool {...props} pool={pool} />
 }
 
-export default (props: NominationPoolsStatisticsSideSheetProps) => (
-  <Suspense>
-    <NominationPoolsStatisticsSideSheet {...props} />
-  </Suspense>
-)
+export default NominationPoolsStatisticsSideSheet
