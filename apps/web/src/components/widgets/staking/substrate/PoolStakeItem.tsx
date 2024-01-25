@@ -3,7 +3,7 @@ import { type Account } from '@domains/accounts'
 import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
 import { useEraEtaFormatter, useExtrinsic, useSubmittableResultLoadableState } from '@domains/common'
 import { type usePoolStakes } from '@domains/staking/substrate/nominationPools'
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useTransition } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import RedactableBalance from '../../RedactableBalance'
@@ -33,6 +33,7 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
   }))
 
   const [statsDialogOpen, setStatsDialogOpen] = useState(false)
+  const [statsDialogInTransition, startStatsDialogTransition] = useTransition()
 
   return (
     <>
@@ -82,7 +83,12 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
             />
           )
         }
-        statisticsButton={<StakePosition.StatisticsButton onClick={() => setStatsDialogOpen(true)} />}
+        statisticsButton={
+          <StakePosition.StatisticsButton
+            loading={statsDialogInTransition}
+            onClick={() => startStatsDialogTransition(() => setStatsDialogOpen(true))}
+          />
+        }
         status={
           item.totalUnlocking > 0n && (
             <StakePosition.UnstakingStatus
