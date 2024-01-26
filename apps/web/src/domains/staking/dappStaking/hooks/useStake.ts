@@ -203,8 +203,16 @@ export const useStake = (account: Account) => {
     [bestNumber, ledger.unlocking, nativeTokenAmount]
   )
 
+  const dapps = useMemo(
+    () =>
+      stakedDapps
+        .map(x => [x[0].args[1], x[1]] as const)
+        .filter(x => x[1].staked.period.unwrap().eq(activeProtocol.periodInfo.number.unwrap())),
+    [activeProtocol.periodInfo.number, stakedDapps]
+  )
+
   return {
-    active: !ledger.contractStakeCount.unwrap().isZero() || ledger.unlocking.length > 0,
+    active: dapps.length > 0 || ledger.unlocking.length > 0,
     earningRewards: totalStaked.decimalAmount.planck.gtn(0),
     account,
     ledger,
@@ -219,9 +227,7 @@ export const useStake = (account: Account) => {
     unlocking,
     totalUnlocking,
     withdrawable,
-    dapps: stakedDapps
-      .map(x => [x[0].args[1], x[1]] as const)
-      .filter(x => x[1].staked.period.unwrap().eq(activeProtocol.periodInfo.number.unwrap())),
+    dapps,
   }
 }
 
