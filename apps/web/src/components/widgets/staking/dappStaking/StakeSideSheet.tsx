@@ -20,6 +20,8 @@ import { Maybe } from '@util/monads'
 import { Suspense, useMemo, useState, useTransition, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
+import UnlockDuration from './UnlockDuration'
+import { useSubstrateApiState, useTokenAmountFromPlanck } from '@domains/common'
 
 type DappSelectorDialogProps = {
   selectedDapp?: DappInfo
@@ -246,9 +248,22 @@ const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismis
   )
 }
 
+const MinimumStake = () => (
+  <>
+    {useTokenAmountFromPlanck(
+      useRecoilValue(useSubstrateApiState()).consts.dappStaking.minimumStakeAmount
+    ).decimalAmount.toHuman()}
+  </>
+)
+
 const StakeSideSheet = (props: StakeSideSheetProps) => {
   return (
-    <DappStakingFormSideSheet onRequestDismiss={props.onRequestDismiss}>
+    <DappStakingFormSideSheet
+      onRequestDismiss={props.onRequestDismiss}
+      chainName={useRecoilValue(useChainState()).chainName}
+      minimumStake={<MinimumStake />}
+      unbondingPeriod={<UnlockDuration />}
+    >
       <ErrorBoundary orientation="vertical">
         <Suspense
           fallback={

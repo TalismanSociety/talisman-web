@@ -12,5 +12,8 @@ type Story = StoryObj<typeof DappStakingFormSideSheet>
 export const Default: Story = {
   args: {
     children: <DappStakingForm {...(DappStakingFormDefault.args as any)} />,
+    chainName: 'Astar',
+    minimumStake: '5 ASTAR',
+    unbondingPeriod: '10 days',
   },
 }

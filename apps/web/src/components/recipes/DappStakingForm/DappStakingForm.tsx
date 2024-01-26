@@ -12,9 +12,10 @@ import {
   TextInput,
   type ButtonProps,
   type SideSheetProps,
+  CircularProgressIndicator,
 } from '@talismn/ui'
 import { Maybe } from '@util/monads'
-import type { ReactNode } from 'react'
+import { Suspense, type ReactNode } from 'react'
 
 type AmountInputProps =
   | {
@@ -145,9 +146,18 @@ const DappStakingForm = Object.assign(
   }
 )
 
-export type DappStakingFormSideSheetProps = Omit<SideSheetProps, 'title'> & { children: ReactNode }
+export type DappStakingFormSideSheetProps = Omit<SideSheetProps, 'title'> & {
+  chainName: ReactNode
+  minimumStake: ReactNode
+  unbondingPeriod: ReactNode
+}
 
-export const DappStakingFormSideSheet = ({ children: form, ...props }: DappStakingFormSideSheetProps) => {
+export const DappStakingFormSideSheet = ({
+  children: form,
+  minimumStake,
+  unbondingPeriod,
+  ...props
+}: DappStakingFormSideSheetProps) => {
   return (
     <SideSheet
       {...props}
@@ -161,13 +171,21 @@ export const DappStakingFormSideSheet = ({ children: form, ...props }: DappStaki
       <div css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '42rem' } }}>
         {form}
         <Text.Body as="p" css={{ marginTop: '6.4rem' }}>
-          The minimum amount to stake for users is 500 ASTR.
+          The <Text.Body alpha="high">minimum amount</Text.Body> to stake for users is{' '}
+          <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+            <Text.Body alpha="high">{minimumStake}</Text.Body>
+          </Suspense>
+          .
           <br />
           <br />
           You need to claim to receive your rewards, we recommend claiming for your staking rewards once a week.
           <br />
           <br />
-          There is a unbonding period for around 10 days on Astar.
+          There is a <Text.Body alpha="high">unbonding period</Text.Body> for around{' '}
+          <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+            <Text.Body alpha="high">{unbondingPeriod}</Text.Body>
+          </Suspense>{' '}
+          on <Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.chainName}</Suspense>.
           <br />
           <br />
           Please note that this is based on a perfect block production of 12s. In case of any delay, your unbonding
