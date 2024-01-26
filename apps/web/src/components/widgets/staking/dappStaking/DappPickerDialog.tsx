@@ -4,10 +4,11 @@ import { useRegisteredDappsState } from '@domains/staking/dappStaking/recoils'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
 import { AlertDialog, CircularProgressIndicator, Clickable, Surface, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import { useState, useTransition } from 'react'
+import { useState, useTransition, type ReactNode } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 type DappPickerDialogProps = {
+  title: ReactNode
   stake: Stake
   onSelect: (dapp: AstarPrimitivesDappStakingSmartContract) => void
   onRequestDismiss: () => void
@@ -27,7 +28,7 @@ const DappPickerDialog = (props: DappPickerDialogProps) => {
   }
 
   return (
-    <AlertDialog title="Select a DApp" onRequestDismiss={props.onRequestDismiss} width="45rem">
+    <AlertDialog title={props.title} onRequestDismiss={props.onRequestDismiss} width="45rem">
       <div css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
         {props.stake.dapps.map(([dapp, info]) => {
           const total = tokenAmount.fromPlanck(

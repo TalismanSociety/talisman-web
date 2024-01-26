@@ -61,7 +61,12 @@ const MultiDappAddStakeDialog = (props: MultiDappsAddStakeDialogProps) => {
 
   return (
     <>
-      <DappPickerDialog stake={props.stake} onSelect={setDapp} onRequestDismiss={props.onRequestDismiss} />
+      <DappPickerDialog
+        title="Select a DApp to increase stake"
+        stake={props.stake}
+        onSelect={setDapp}
+        onRequestDismiss={props.onRequestDismiss}
+      />
       {dapp !== undefined && (
         <DappAddStakeDialog
           account={props.account}

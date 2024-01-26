@@ -61,7 +61,12 @@ const MultiDappUnstakeDialog = (props: MultiDappsUnstakeDialogProps) => {
 
   return (
     <>
-      <DappPickerDialog stake={props.stake} onSelect={setDapp} onRequestDismiss={props.onRequestDismiss} />
+      <DappPickerDialog
+        title="Select a DApp to unstake from"
+        stake={props.stake}
+        onSelect={setDapp}
+        onRequestDismiss={props.onRequestDismiss}
+      />
       {dapp !== undefined && (
         <DappUnstakeDialog
           account={props.account}
