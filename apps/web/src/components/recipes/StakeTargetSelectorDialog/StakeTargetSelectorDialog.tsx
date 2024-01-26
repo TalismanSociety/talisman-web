@@ -3,7 +3,11 @@ import { AlertDialog, Button, Text } from '@talismn/ui'
 import { motion } from 'framer-motion'
 import React, { useState, type ReactElement, type ReactNode } from 'react'
 
-import StakeTargetSelectorItem, { PoolSelectorItem, type StakeTargetSelectorItemProps } from './StakeTargetSelectorItem'
+import StakeTargetSelectorItem, {
+  DappSelectorItem,
+  PoolSelectorItem,
+  type StakeTargetSelectorItemProps,
+} from './StakeTargetSelectorItem'
 
 export type StakeTargetSelectorDialogProps = {
   open?: boolean
@@ -147,7 +151,7 @@ export const DappSelectorDialog = Object.assign(
       selectionLabel="New DApp"
     />
   ),
-  { Item: PoolSelectorItem }
+  { Item: DappSelectorItem }
 )
 
 export default StakeTargetSelectorDialog

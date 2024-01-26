@@ -10,9 +10,12 @@ export type StakeTargetSelectorItemProps = {
   logo?: string
   detailUrl?: string
   balance: string
+  balanceDescription: string
   talismanRecommended: boolean
+  talismanRecommendedDescription: string
   rating?: 0 | 1 | 2 | 3
   count: ReactNode
+  countDescription: string
   onClick?: () => unknown
 }
 
@@ -78,7 +81,7 @@ const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => {
           </Button>
         )}
       </header>
-      <Tooltip content="Total staked in this pool">
+      <Tooltip content={props.balanceDescription}>
         <Text.Body alpha={alpha}>{props.balance}</Text.Body>
       </Tooltip>
       <Text.Body
@@ -96,7 +99,7 @@ const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => {
                   ))}
               </div>
           </Tooltip> */}
-          <Tooltip content="Number of pool members">
+          <Tooltip content={props.countDescription}>
             <div css={{ display: 'flex', alignItems: 'center' }}>
               <Text.Body
                 alpha={alpha}
@@ -112,7 +115,7 @@ const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => {
           </Tooltip>
         </div>
         {props.talismanRecommended && (
-          <Tooltip content="Talisman top recommended pool">
+          <Tooltip content={props.talismanRecommendedDescription}>
             <TalismanHand size="1.4rem" />
           </Tooltip>
         )}
@@ -121,6 +124,32 @@ const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => {
   )
 }
 
-export const PoolSelectorItem = StakeTargetSelectorItem
+export const PoolSelectorItem = (
+  props: Omit<
+    StakeTargetSelectorItemProps,
+    'balanceDescription' | 'countDescription' | 'talismanRecommendedDescription'
+  >
+) => (
+  <StakeTargetSelectorItem
+    {...props}
+    balanceDescription="Total staked in this pool"
+    countDescription="Number of pool members"
+    talismanRecommendedDescription="Talisman top recommended pool"
+  />
+)
+
+export const DappSelectorItem = (
+  props: Omit<
+    StakeTargetSelectorItemProps,
+    'balanceDescription' | 'countDescription' | 'talismanRecommendedDescription'
+  >
+) => (
+  <StakeTargetSelectorItem
+    {...props}
+    balanceDescription="Total staked with this DApp"
+    countDescription="Number of DApp stakers"
+    talismanRecommendedDescription="Talisman top recommended DApp"
+  />
+)
 
 export default StakeTargetSelectorItem
