@@ -13,6 +13,7 @@ import { Suspense, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 import UnlockDuration from './UnlockDuration'
+import { Maybe } from '@util/monads'
 
 const Apr = () => (
   <>
@@ -59,14 +60,25 @@ const StakePercentage = () => {
     waitForAll(addresses.map(address => chainDeriveState(apiId, 'balances', 'all', [address])))
   )
   const total = useMemo(() => balances.reduce((prev, curr) => prev + curr.freeBalance.toBigInt(), 0n), [balances])
-  const ledgers = useRecoilValue(useQueryState('dappStaking', 'ledger.multi', addresses))
+  const [activeProtocol, ledgers] = useRecoilValue(
+    waitForAll([
+      useQueryState('dappStaking', 'activeProtocolState', []),
+      useQueryState('dappStaking', 'ledger.multi', addresses),
+    ])
+  )
   const staked = useMemo(
     () =>
-      ledgers.reduce((prev, curr) => {
-        const staked = curr.stakedFuture.unwrapOr(curr.staked)
-        return prev + staked.voting.unwrap().toBigInt() + staked.buildAndEarn.unwrap().toBigInt()
-      }, 0n),
-    [ledgers]
+      ledgers.reduce(
+        (prev, curr) =>
+          prev +
+          Maybe.of(
+            [curr.stakedFuture.unwrapOrDefault(), curr.staked].find(x =>
+              x.period.unwrap().eq(activeProtocol.periodInfo.number.unwrap())
+            )
+          ).mapOr(0n, x => x.voting.toBigInt() + x.buildAndEarn.toBigInt()),
+        0n
+      ),
+    [activeProtocol.periodInfo.number, ledgers]
   )
 
   return (

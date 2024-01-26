@@ -32,12 +32,15 @@ const DappSelectorDialog = (props: DappSelectorDialogProps) => {
 
   const [highlightedDapp, setHighlightedDapp] = useState(dapps[0])
 
-  const dappInfos = useRecoilValue(
-    useQueryState(
-      'dappStaking',
-      'integratedDApps.multi',
-      useMemo(() => dapps.map(x => (x.address.startsWith('0x') ? { Evm: x.address } : { Wasm: x.address })), [dapps])
-    )
+  const [dappInfos, activeProtocol] = useRecoilValue(
+    waitForAll([
+      useQueryState(
+        'dappStaking',
+        'integratedDApps.multi',
+        useMemo(() => dapps.map(x => (x.address.startsWith('0x') ? { Evm: x.address } : { Wasm: x.address })), [dapps])
+      ),
+      useQueryState('dappStaking', 'activeProtocolState', []),
+    ])
   )
 
   const dappStakes = useRecoilValue(
@@ -49,9 +52,15 @@ const DappSelectorDialog = (props: DappSelectorDialogProps) => {
   )
 
   const dappsWithStake = dapps.map((dapp, index) => {
-    const staked = Maybe.of(dappStakes.at(index))
-      .map(x => x.stakedFuture.unwrapOr(x.staked))
-      .mapOr(decimal.fromPlanck(0), x => decimal.fromPlanck(x.voting.toBigInt() + x.buildAndEarn.toBigInt()))
+    const staked = Maybe.of(dappStakes.at(index)).mapOr(decimal.fromPlanck(0), x =>
+      decimal.fromPlanck(
+        Maybe.of(
+          [x.stakedFuture.unwrapOrDefault(), x.staked].find(y =>
+            y.period.unwrap().eq(activeProtocol.periodInfo.number.unwrap())
+          )
+        ).mapOr(0n, y => y.voting.toBigInt() + y.buildAndEarn.toBigInt())
+      )
+    )
     return { ...dapp, staked }
   })
 

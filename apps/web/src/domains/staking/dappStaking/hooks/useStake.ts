@@ -9,6 +9,7 @@ import { range } from 'lodash'
 import { useMemo } from 'react'
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue, waitForAll } from 'recoil'
 import { stakedDappsState } from '../recoils'
+import { Maybe } from '@util/monads'
 
 export const useStake = (account: Account) => {
   // Can't put this in the same waitForAll below
@@ -155,17 +156,13 @@ export const useStake = (account: Account) => {
   const totalStaked = useMemo(
     () =>
       nativeTokenAmount.fromPlanck(
-        BigInt(
-          ledger.stakedFuture.isSome
-            ? ledger.stakedFuture
-                .unwrapOrDefault()
-                .voting.unwrap()
-                .add(ledger.stakedFuture.unwrapOrDefault().buildAndEarn.unwrap())
-                .toString()
-            : ledger.staked.voting.unwrap().add(ledger.staked.buildAndEarn.unwrap()).toString()
-        )
+        Maybe.of(
+          [ledger.stakedFuture.unwrapOrDefault(), ledger.staked].find(x =>
+            x.period.unwrap().eq(activeProtocol.periodInfo.number.unwrap())
+          )
+        ).mapOrUndefined(x => x.voting.toBigInt() + x.buildAndEarn.toBigInt())
       ),
-    [ledger.staked.buildAndEarn, ledger.staked.voting, ledger.stakedFuture, nativeTokenAmount]
+    [activeProtocol.periodInfo.number, ledger.staked, ledger.stakedFuture, nativeTokenAmount]
   )
 
   // TODO: create actual estimation
