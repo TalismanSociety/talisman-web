@@ -1,30 +1,56 @@
+import { selectedSubstrateAccountsState } from '@domains/accounts'
+import { dappStakingEnabledChainsState, nativeTokenAmountState } from '@domains/chains'
+import { chainQueryState } from '@domains/common'
+import { Maybe } from '@util/monads'
+import { useMemo } from 'react'
+import { useRecoilValue, waitForAll, waitForAny } from 'recoil'
+
 export const useTotalStaked = () => {
-  return 0
-  // const [accounts, decimal, price] = useRecoilValue(
-  //   waitForAll([selectedSubstrateAccountsState, useNativeTokenDecimalState(), useNativeTokenPriceState()])
-  // )
+  const [chains, accounts] = useRecoilValue(waitForAll([dappStakingEnabledChainsState, selectedSubstrateAccountsState]))
 
-  // const ledgers = useRecoilValue(
-  //   useQueryState(
-  //     'dappStaking',
-  //     'ledger.multi',
-  //     useMemo(() => accounts.map(x => x.address), [accounts])
-  //   )
-  // )
+  const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
 
-  // const total = useMemo(
-  //   () =>
-  //     ledgers
-  //       .map(x =>
-  //         x.staked.voting
-  //           .unwrap()
-  //           .add(x.staked.buildAndEarn.unwrap())
-  //           .add(x.stakedFuture.unwrapOrDefault().voting.unwrap())
-  //           .add(x.stakedFuture.unwrapOrDefault().buildAndEarn.unwrap())
-  //       )
-  //       .reduce((prev, curr) => prev.add(curr), new BN(0)),
-  //   [ledgers]
-  // )
+  const [nativeTokenAmounts, ledgerLoadables] = useRecoilValue(
+    waitForAll([
+      waitForAny(
+        chains.map(chain =>
+          nativeTokenAmountState({
+            genesisHash: chain.genesisHash,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            apiEndpoint: chain.rpc!,
+          })
+        )
+      ),
+      waitForAny(
+        chains.map(chain =>
+          waitForAll([
+            chainQueryState(chain.rpc, 'dappStaking', 'activeProtocolState', []),
+            chainQueryState(chain.rpc, 'dappStaking', 'ledger.multi', addresses),
+          ])
+        )
+      ),
+    ])
+  )
 
-  // return useMemo(() => decimal.fromPlanck(total).toNumber() * price, [decimal, price, total])
+  return ledgerLoadables
+    .map((x, chainIndex) => {
+      if (x.state !== 'hasValue') {
+        return 0
+      }
+
+      return (
+        x.contents[1]
+          .map(y => {
+            const staked = Maybe.of(
+              [y.stakedFuture.unwrapOrDefault(), y.staked].find(z =>
+                z.period.unwrap().eq(x.contents[0].periodInfo.number.unwrap())
+              )
+            ).mapOr(0n, z => z.voting.toBigInt() + z.buildAndEarn.toBigInt())
+
+            return nativeTokenAmounts.at(chainIndex)?.valueMaybe()?.fromPlanck(staked).fiatAmount ?? 0
+          })
+          .reduce((prev, curr) => prev + curr, 0) ?? 0
+      )
+    })
+    .reduce((prev, curr) => prev + curr, 0)
 }
