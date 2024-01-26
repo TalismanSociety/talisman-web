@@ -59,7 +59,9 @@ const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => {
               gap: '0.8rem',
             }}
           >
-            {props.logo && <img src={props.logo} css={{ width: '1.6rem', aspectRatio: '1 / 1' }} />}
+            {props.logo && (
+              <img src={props.logo} css={{ borderRadius: '0.8rem', width: '1.6rem', aspectRatio: '1 / 1' }} />
+            )}
             <Text.Body
               alpha={alpha}
               css={{

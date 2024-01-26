@@ -105,7 +105,12 @@ const DappStakingForm = Object.assign(
                 props.selectedDappName === undefined ? undefined : (
                   <ListItem
                     headlineText={props.selectedDappName}
-                    leadingContent={<img src={props.selectedDappLogo} css={{ width: '1.6rem' }} />}
+                    leadingContent={
+                      <img
+                        src={props.selectedDappLogo}
+                        css={{ borderRadius: '0.8rem', width: '1.6rem', aspectRatio: '1 / 1' }}
+                      />
+                    }
                     css={{ padding: '0.8rem', paddingLeft: 0 }}
                   />
                 )

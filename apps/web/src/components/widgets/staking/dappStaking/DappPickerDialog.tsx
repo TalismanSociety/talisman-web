@@ -61,7 +61,10 @@ const DappPickerDialog = (props: DappPickerDialogProps) => {
                   {inTransition && dappInTransition === dapp ? (
                     <CircularProgressIndicator size="4rem" />
                   ) : (
-                    <img src={registeredDapp?.iconUrl} css={{ width: '4rem', aspectRatio: '1 / 1' }} />
+                    <img
+                      src={registeredDapp?.iconUrl}
+                      css={{ borderRadius: '2rem', width: '4rem', aspectRatio: '1 / 1' }}
+                    />
                   )}
                   <Text.BodyLarge as="div" alpha="high" css={{ fontWeight: 'bold' }}>
                     {registeredDapp?.name ?? shortenAddress(address)}{' '}
