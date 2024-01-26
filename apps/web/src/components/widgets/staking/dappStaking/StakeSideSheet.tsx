@@ -93,8 +93,9 @@ const DappSelectorDialog = (props: DappSelectorDialogProps) => {
 type IncompleteStakeFormProps = {
   accountSelector: ReactNode
   assetSelector: ReactNode
-  selectedDAppName?: ReactNode
-  selectedDAppLogo?: string
+  dappSelectionInProgress?: boolean
+  selectedDappName?: ReactNode
+  selectedDappLogo?: string
   onRequestDappChange: () => unknown
 }
 
@@ -102,8 +103,8 @@ const InCompleteSelectionStakeForm = (props: IncompleteStakeFormProps) => (
   <DappStakingForm
     accountSelector={props.accountSelector}
     amountInput={<DappStakingForm.AmountInput assetSelector={props.assetSelector} disabled />}
-    selectedDappName={props.selectedDAppName}
-    selectedDappLogo={props.selectedDAppLogo}
+    selectedDappName={props.selectedDappName}
+    selectedDappLogo={props.selectedDappLogo}
     onRequestDappChange={props.onRequestDappChange}
     stakeButton={<DappStakingForm.StakeButton disabled />}
     estimatedRewards="..."
@@ -148,8 +149,9 @@ const StakeForm = (props: StakeFormProps) => {
           error={error?.message}
         />
       }
-      selectedDappName={props.selectedDAppName}
-      selectedDappLogo={props.selectedDAppLogo}
+      dappSelectionInProgress={props.dappSelectionInProgress}
+      selectedDappName={props.selectedDappName}
+      selectedDappLogo={props.selectedDappLogo}
       onRequestDappChange={props.onRequestDappChange}
       stakeButton={
         <DappStakingForm.StakeButton
@@ -184,7 +186,7 @@ const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismis
   const [dapp, setDapp] = useState(dapps.at(0))
 
   const [dappSelectorDialogOpen, setDappSelectorDialogOpen] = useState(false)
-  const [_dappSelectorDialogInTransition, startDappSelectorDialogTransition] = useTransition()
+  const [dappSelectorDialogInTransition, startDappSelectorDialogTransition] = useTransition()
   const openDappSelectorDialog = () => startDappSelectorDialogTransition(() => setDappSelectorDialogOpen(true))
 
   const assetSelector = useMemo(
@@ -219,16 +221,17 @@ const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismis
           dapp={dapp.address.startsWith('0x') ? { Evm: dapp.address } : { Wasm: dapp.address }}
           accountSelector={accountSelector}
           assetSelector={assetSelector}
-          selectedDAppName={dapp.name}
-          selectedDAppLogo={dapp.iconUrl}
+          dappSelectionInProgress={dappSelectorDialogInTransition}
+          selectedDappName={dapp.name}
+          selectedDappLogo={dapp.iconUrl}
           onRequestDappChange={openDappSelectorDialog}
         />
       ) : (
         <InCompleteSelectionStakeForm
           accountSelector={accountSelector}
           assetSelector={assetSelector}
-          selectedDAppName={dapp?.name}
-          selectedDAppLogo={dapp?.iconUrl}
+          selectedDappName={dapp?.name}
+          selectedDappLogo={dapp?.iconUrl}
           onRequestDappChange={openDappSelectorDialog}
         />
       )}

@@ -69,11 +69,12 @@ const AmountInput = (props: AmountInputProps) => {
 export type DappStakingFormProps = {
   accountSelector: ReactNode
   amountInput: ReactNode
+  dappSelectionInProgress?: boolean
   selectedDappName?: ReactNode
   selectedDappLogo?: string
+  onRequestDappChange: () => unknown
   estimatedRewards: ReactNode
   currentStakedBalance?: ReactNode
-  onRequestDappChange: () => unknown
   stakeButton: ReactNode
 }
 
@@ -98,8 +99,8 @@ const DappStakingForm = Object.assign(
               Select DApp
             </Text.BodySmall>
             <Select
+              loading={props.dappSelectionInProgress}
               placeholder="Select a DApp"
-              css={{ width: '100%' }}
               renderSelected={() =>
                 props.selectedDappName === undefined ? undefined : (
                   <ListItem
@@ -109,6 +110,7 @@ const DappStakingForm = Object.assign(
                   />
                 )
               }
+              css={{ width: '100%' }}
             />
           </label>
         </div>
