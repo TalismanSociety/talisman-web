@@ -7,6 +7,7 @@ export type StakeTargetSelectorItemProps = {
   selected?: boolean
   highlighted?: boolean
   name: string
+  logo?: string
   detailUrl?: string
   balance: string
   talismanRecommended: boolean
@@ -48,19 +49,28 @@ const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => {
         }}
       >
         <Tooltip content={props.name}>
-          <Text.Body
-            alpha={alpha}
+          <div
             css={{
-              flex: 1,
-              fontWeight: 'bold',
-              margin: 0,
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
+              display: 'flex',
+              alignItems: 'baseline',
+              gap: '0.8rem',
             }}
           >
-            {props.name}
-          </Text.Body>
+            {props.logo && <img src={props.logo} css={{ width: '1.6rem', aspectRatio: '1 / 1' }} />}
+            <Text.Body
+              alpha={alpha}
+              css={{
+                flex: 1,
+                fontWeight: 'bold',
+                margin: 0,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {props.name}
+            </Text.Body>
+          </div>
         </Tooltip>
         {props.detailUrl !== undefined && (
           <Button as="a" variant="noop" href={props.detailUrl} target="_blank">

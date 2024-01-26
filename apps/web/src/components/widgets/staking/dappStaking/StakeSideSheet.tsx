@@ -79,6 +79,7 @@ const DappSelectorDialog = (props: DappSelectorDialogProps) => {
           selected={dapp.address === props.selectedDapp?.address}
           highlighted={dapp.address === highlightedDapp?.address}
           name={dapp.name}
+          logo={dapp.iconUrl}
           balance={dapp.staked.toHuman()}
           count={dapp.stakerCount}
           talismanRecommended={index === 0}
