@@ -222,7 +222,9 @@ export const useStake = (account: Account) => {
     unlocking,
     totalUnlocking,
     withdrawable,
-    dapps: stakedDapps.map(x => [x[0].args[1], x[1]] as const),
+    dapps: stakedDapps
+      .map(x => [x[0].args[1], x[1]] as const)
+      .filter(x => x[1].staked.period.unwrap().eq(activeProtocol.periodInfo.number.unwrap())),
   }
 }
 
