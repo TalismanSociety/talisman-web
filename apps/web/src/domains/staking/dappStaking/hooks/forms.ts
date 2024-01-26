@@ -95,19 +95,23 @@ export const useAddStakeForm = (
   const error = useMemo(() => {
     if (deferredAmount.trim() === '' || inTransition) return
 
+    if (
+      activeProtocol.periodInfo.subperiod.type === 'BuildAndEarn' &&
+      activeProtocol.periodInfo.nextSubperiodStartEra.toBigInt() <= activeProtocol.era.toBigInt() + 1n
+    ) {
+      return new Error('Not possible to stake in the last era of a period')
+    }
+
+    if (stake.ledger.contractStakeCount.unwrap().gte(api.consts.dappStaking.maxNumberOfStakedContracts)) {
+      return new Error('Too many contract stake entries for the account')
+    }
+
     if (input.decimalAmount?.planck.gt(available.decimalAmount.planck)) {
       return new Error('Insufficient balance')
     }
 
     if (input.decimalAmount?.planck.lt(minimum.decimalAmount.planck)) {
       return new Error(`Minimum ${minimum.decimalAmount.toHuman()} needed`)
-    }
-
-    if (
-      activeProtocol.periodInfo.subperiod.type === 'BuildAndEarn' &&
-      activeProtocol.periodInfo.nextSubperiodStartEra.toBigInt() <= activeProtocol.era.toBigInt() + 1n
-    ) {
-      return new Error('Not possible to stake in the last era of a period.')
     }
 
     return undefined
@@ -120,6 +124,8 @@ export const useAddStakeForm = (
     activeProtocol.periodInfo.subperiod.type,
     activeProtocol.periodInfo.nextSubperiodStartEra,
     activeProtocol.era,
+    stake.ledger.contractStakeCount,
+    api.consts.dappStaking.maxNumberOfStakedContracts,
   ])
 
   return {
