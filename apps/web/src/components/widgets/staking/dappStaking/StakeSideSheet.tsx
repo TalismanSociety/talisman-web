@@ -202,7 +202,7 @@ const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismis
             key={x.id}
             value={x.id}
             headlineText={x.nativeToken?.symbol ?? x.name}
-            leadingIcon={<img src={x.nativeToken?.logo ?? x.logo} />}
+            leadingIcon={<img src={x.nativeToken?.logo ?? x.logo} css={{ width: '2.4rem', aspectRatio: '1 / 1' }} />}
           />
         ))}
       </Select>
