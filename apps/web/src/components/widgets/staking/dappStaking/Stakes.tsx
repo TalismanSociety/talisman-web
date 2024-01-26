@@ -8,13 +8,18 @@ import { useState, useTransition } from 'react'
 import { useRecoilValue } from 'recoil'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
+import DappStakingLockedAmountDialog from '@components/recipes/DappStakingLockedAmountDialog'
+import { useNavigate } from 'react-router-dom'
 
 const Stake = ({ account }: { account: Account }) => {
+  const navigate = useNavigate()
+
   const chain = useRecoilValue(useChainState())
   const stake = useStake(account)
 
   const claimAllRewardsExtrinsic = useClaimAllRewardsExtrinsic(stake)
   const withdrawExtrinsic = useExtrinsic('dappStaking', 'withdrawUnbonded')
+  const unlockExtrinsic = useExtrinsic('dappStaking', 'unlock')
 
   const [addStakeDialogOpen, _setAddStakeDialogOpen] = useState(false)
   const [addStakeDialogInTransition, startAddStakeDialogTransition] = useTransition()
@@ -23,6 +28,9 @@ const Stake = ({ account }: { account: Account }) => {
   const [unstakeDialogOpen, _setUnstakeDialogOpen] = useState(false)
   const [unstakeDialogInTransition, startUnstakeDialogTransition] = useTransition()
   const setUnstakeDialogOpen = (value: boolean) => startUnstakeDialogTransition(() => _setUnstakeDialogOpen(value))
+
+  const [lockedDialogOpen, setLockedDialogOpen] = useState(false)
+  const [requestReStakeInTransition, startRequestRestakeTransition] = useTransition()
 
   if (!stake.active) {
     return null
@@ -52,6 +60,15 @@ const Stake = ({ account }: { account: Account }) => {
             <StakePosition.UnstakeButton
               loading={unstakeDialogInTransition}
               onClick={() => setUnstakeDialogOpen(true)}
+            />
+          )
+        }
+        lockedButton={
+          !stake.locked.decimalAmount.planck.isZero() && (
+            <StakePosition.LockedButton
+              loading={unlockExtrinsic.state === 'loading'}
+              amount={stake.locked.decimalAmount.toHuman()}
+              onClick={() => setLockedDialogOpen(true)}
             />
           )
         }
@@ -91,6 +108,28 @@ const Stake = ({ account }: { account: Account }) => {
       )}
       {unstakeDialogOpen && (
         <UnstakeDialog account={account} stake={stake} onRequestDismiss={() => setUnstakeDialogOpen(false)} />
+      )}
+      {lockedDialogOpen && (
+        <DappStakingLockedAmountDialog
+          amount={stake.locked.decimalAmount.toHuman()}
+          fiatAmount={stake.locked.localizedFiatAmount}
+          onRequestDismiss={() => setLockedDialogOpen(false)}
+          onRequestReStake={() => {
+            startRequestRestakeTransition(() => {
+              if (stake.dapps.length > 0) {
+                setAddStakeDialogOpen(true)
+              } else {
+                navigate(`?action=stake&type=dapp-staking&chain=${chain.id}`)
+              }
+              setLockedDialogOpen(false)
+            })
+          }}
+          requestReStakeInTransition={requestReStakeInTransition}
+          onRequestUnlock={() => {
+            void unlockExtrinsic.signAndSend(account.address, stake.locked.decimalAmount.planck)
+            setLockedDialogOpen(false)
+          }}
+        />
       )}
     </>
   )

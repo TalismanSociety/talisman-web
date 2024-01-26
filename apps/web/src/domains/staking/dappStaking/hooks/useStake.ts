@@ -216,6 +216,7 @@ export const useStake = (account: Account) => {
     earningRewards: totalStaked.decimalAmount.planck.gtn(0),
     account,
     ledger,
+    locked: useMemo(() => nativeTokenAmount.fromPlanck(ledger.locked.unwrap()), [ledger.locked, nativeTokenAmount]),
     totalStaked,
     stakeRewards,
     bonusRewards,

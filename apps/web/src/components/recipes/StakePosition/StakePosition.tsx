@@ -34,6 +34,7 @@ export type StakePositionProps = {
   status?: ReactNode
   increaseStakeButton?: ReactNode
   unstakeButton?: ReactNode
+  lockedButton?: ReactNode
   statisticsButton?: ReactNode
   claimButton?: ReactNode
   withdrawButton?: ReactNode
@@ -92,6 +93,18 @@ const WithdrawButton = (props: Omit<ChipProps, 'children'> & { amount: ReactNode
         <SurfaceChip {...props} disabled={readonly} css={{ '@container (min-width: 100rem)': { height: '4rem' } }}>
           Withdraw {props.amount}
         </SurfaceChip>
+      </Tooltip>
+    )}
+  </StakePositionContext.Consumer>
+)
+
+const LockedButton = (props: Omit<ChipProps, 'children'> & { amount: ReactNode }) => (
+  <StakePositionContext.Consumer>
+    {({ readonly }) => (
+      <Tooltip content="Account is readonly" disabled={!readonly}>
+        <Chip {...props} disabled={readonly} css={{ '@container (min-width: 100rem)': { height: '4rem' } }}>
+          {props.amount} locked
+        </Chip>
       </Tooltip>
     )}
   </StakePositionContext.Consumer>
@@ -250,6 +263,7 @@ const StakePosition = Object.assign(
               }}
             >
               {props.status}
+              {props.lockedButton}
               {props.claimButton}
               {props.withdrawButton}
             </div>
@@ -264,6 +278,7 @@ const StakePosition = Object.assign(
     StatisticsButton,
     ClaimButton,
     WithdrawButton,
+    LockedButton,
     UnstakingStatus,
     FastUnstakingStatus,
     Skeleton: StakePositionSkeleton,
