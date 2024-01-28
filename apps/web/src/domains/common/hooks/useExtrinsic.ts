@@ -4,7 +4,7 @@ import { type ISubmittableResult } from '@polkadot/types/types'
 import { useMemo, useState } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
 
-import { useChainState } from '@domains/chains'
+import { chainState, useChainState } from '@domains/chains'
 import { useConnectedSubstrateWallet } from '@domains/extension'
 import { substrateApiState, useSubstrateApiEndpoint } from '..'
 import { skipErrorReporting } from '../consts'
@@ -29,8 +29,12 @@ export type ExtrinsicLoadable = (
 export const useSubmittableResultLoadableState = () =>
   useState<SubmittableResultLoadable>({ state: 'idle', contents: undefined })
 
+/**
+ * @param chainGenesisHash For getting chain info for toast & analytics when extrinsic is built from externally created ApiPromise
+ */
 export function useExtrinsic<T extends SubmittableExtrinsic<'promise', ISubmittableResult> | undefined>(
-  submittable: T
+  submittable: T,
+  chainGenesisHash?: `0x${string}`
 ): T extends undefined ? ExtrinsicLoadable | undefined : ExtrinsicLoadable
 export function useExtrinsic(
   createSubmittable: (api: ApiPromise) => SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
@@ -57,10 +61,10 @@ export function useExtrinsic(
     | SubmittableExtrinsic<'promise', ISubmittableResult>
     | ((api: ApiPromise) => SubmittableExtrinsic<'promise', ISubmittableResult> | undefined)
     | undefined,
-  section?: string,
+  sectionOrGenesisHash?: string | `0x${string}`,
   params: unknown[] = []
 ): ExtrinsicLoadable | undefined {
-  const chain = useRecoilValue(useChainState())
+  const contextChain = useRecoilValue(useChainState())
   const endpoint = useSubstrateApiEndpoint()
   const wallet = useConnectedSubstrateWallet()
 
@@ -69,24 +73,32 @@ export function useExtrinsic(
   const signAndSend = useRecoilCallback(
     callbackInterface =>
       async (account: AddressOrPair, ...innerParams: unknown[]) => {
-        const submittable = await (async () => {
+        const [submittable, chain] = await (async () => {
           switch (typeof moduleOrSubmittable) {
             case 'string': {
               const api = await callbackInterface.snapshot.getPromise(substrateApiState(endpoint))
-              const submittable = api.tx[moduleOrSubmittable]?.[section ?? '']?.(
+              const submittable = api.tx[moduleOrSubmittable]?.[sectionOrGenesisHash ?? '']?.(
                 ...(innerParams.length > 0 ? innerParams : params)
               )
 
               if (submittable === undefined) {
-                throw new Error(`Unable to construct extrinsic ${moduleOrSubmittable}:${section ?? ''}`)
+                throw new Error(`Unable to construct extrinsic ${moduleOrSubmittable}:${sectionOrGenesisHash ?? ''}`)
               }
 
-              return submittable
+              return [submittable, contextChain] as const
             }
             case 'function':
-              return moduleOrSubmittable(await callbackInterface.snapshot.getPromise(substrateApiState(endpoint)))
+              return [
+                moduleOrSubmittable(await callbackInterface.snapshot.getPromise(substrateApiState(endpoint))),
+                contextChain,
+              ] as const
             default:
-              return moduleOrSubmittable
+              return [
+                moduleOrSubmittable,
+                sectionOrGenesisHash === undefined
+                  ? contextChain
+                  : await callbackInterface.snapshot.getPromise(chainState({ genesisHash: sectionOrGenesisHash })),
+              ]
           }
         })()
 
@@ -151,7 +163,16 @@ export function useExtrinsic(
         }
       },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [chain.id, chain.subscanUrl, endpoint, moduleOrSubmittable, JSON.stringify(params), section, setLoadable]
+    [
+      contextChain,
+      endpoint,
+      moduleOrSubmittable,
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      JSON.stringify(params),
+      sectionOrGenesisHash,
+      setLoadable,
+      wallet?.signer,
+    ]
   )
 
   return useMemo(

@@ -289,7 +289,8 @@ const TransportForm = () => {
         token,
         address: recipient.address,
       }) as SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
-    }, [adapterLoadable, decimalAmount, fromEvm, recipient, sender?.type, toChain, toEvm, token])
+    }, [adapterLoadable, decimalAmount, fromEvm, recipient, sender?.type, toChain, toEvm, token]),
+    adapterLoadable.valueMaybe()?.getApi()?.genesisHash.toHex()
   )
 
   return (
