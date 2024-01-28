@@ -35,7 +35,11 @@ export const useStake = (account: Account) => {
 
   const lastStakedPeriod = BN.max(ledger.staked.period.unwrap(), ledger.stakedFuture.unwrapOrDefault().period.unwrap())
   const lastStakedPeriodEnd = useRecoilValue(useQueryState('dappStaking', 'periodEnd', [lastStakedPeriod]))
-  const lastStakedEra = lastStakedPeriodEnd.unwrapOrDefault().finalEra.unwrap()
+  const lastStakedEra = lastStakedPeriod.eq(currentPeriod)
+    ? // Final era from the current period
+      activeProtocol.era.unwrap().subn(1)
+    : // Final era from the past period
+      lastStakedPeriodEnd.unwrapOrDefault().finalEra.unwrap()
 
   const rewardsExpired = lastStakedPeriod.lte(currentPeriod.sub(rewardRetentionInPeriods))
 
