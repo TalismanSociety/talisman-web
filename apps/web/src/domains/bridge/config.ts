@@ -2,7 +2,7 @@ import { type ChainId } from '@polkawallet/bridge'
 import { AcalaAdapter, KaruraAdapter } from '@polkawallet/bridge/adapters/acala'
 import { AstarAdapter, ShidenAdapter } from '@polkawallet/bridge/adapters/astar'
 import { BifrostAdapter } from '@polkawallet/bridge/adapters/bifrost'
-import { AltairAdapter, CentrifugeAdapter } from '@polkawallet/bridge/adapters/centrifuge'
+import { AltairAdapter } from '@polkawallet/bridge/adapters/centrifuge'
 import { ShadowAdapter } from '@polkawallet/bridge/adapters/crust'
 import { CrabAdapter } from '@polkawallet/bridge/adapters/darwinia'
 import { BasiliskAdapter, HydraDxAdapter } from '@polkawallet/bridge/adapters/hydradx'
@@ -11,15 +11,17 @@ import { InterlayAdapter, KintsugiAdapter } from '@polkawallet/bridge/adapters/i
 import { CalamariAdapter } from '@polkawallet/bridge/adapters/manta'
 import { MoonbeamAdapter, MoonriverAdapter } from '@polkawallet/bridge/adapters/moonbeam'
 import { TuringAdapter } from '@polkawallet/bridge/adapters/oak'
-import { HeikoAdapter, ParallelAdapter } from '@polkawallet/bridge/adapters/parallel'
+import { HeikoAdapter } from '@polkawallet/bridge/adapters/parallel'
 import { KhalaAdapter } from '@polkawallet/bridge/adapters/phala'
 import { KusamaAdapter, PolkadotAdapter } from '@polkawallet/bridge/adapters/polkadot'
 import { RobonomicsAdapter } from '@polkawallet/bridge/adapters/robonomics'
-import { StatemineAdapter, StatemintAdapter } from '@polkawallet/bridge/adapters/statemint'
+import { StatemineAdapter } from '@polkawallet/bridge/adapters/statemint'
 import { TinkernetAdapter } from '@polkawallet/bridge/adapters/tinkernet'
 import { QuartzAdapter, UniqueAdapter } from '@polkawallet/bridge/adapters/unique'
 import { ZeitgeistAdapter } from '@polkawallet/bridge/adapters/zeitgeist'
 import { type BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
+
+import { ExtendedStatemintAdapter, ExtendedCentrifugeAdapter, ExtendedParallelAdapter } from './extendedRoutes'
 
 export const bridgeConfig = {
   polkadot: {
@@ -60,7 +62,7 @@ export const bridgeConfig = {
   },
   centrifuge: {
     genesisHash: '0xb3db41421702df9a7fcac62b53ffeac85f7853cc4e689e0b93aeb3db18c09d82',
-    adapter: new CentrifugeAdapter(),
+    adapter: new ExtendedCentrifugeAdapter(),
   },
   crab: {
     genesisHash: '0x86e49c195aeae7c5c4a86ced251f1a28c67b3c35d8289c387ede1776cdd88b24',
@@ -102,7 +104,7 @@ export const bridgeConfig = {
   },
   parallel: {
     genesisHash: '0xe61a41c53f5dcd0beb09df93b34402aada44cb05117b71059cce40a2723a4e97',
-    adapter: new ParallelAdapter(),
+    adapter: new ExtendedParallelAdapter(),
   },
   pichiu: undefined,
   quartz: {
@@ -127,7 +129,7 @@ export const bridgeConfig = {
   },
   statemint: {
     genesisHash: '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f',
-    adapter: new StatemintAdapter(),
+    adapter: new ExtendedStatemintAdapter(),
   },
   tinkernet: {
     genesisHash: '0xd42e9606a995dfe433dc7955dc2a70f495f350f373daa200098ae84437816ad2',
