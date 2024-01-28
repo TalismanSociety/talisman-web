@@ -234,18 +234,12 @@ const TransportForm = () => {
     () =>
       inputConfigLoadable?.map(x => ({
         ...x,
-        estimateFee: Decimal.fromPlanck(
-          x.estimateFee,
-          // @ts-expect-error
-          adapterLoadable.valueMaybe()?.api?.registry.chainDecimals[0] ?? 0,
-          // @ts-expect-error
-          adapterLoadable.valueMaybe()?.api?.registry.chainTokens[0]
-        ),
+        estimateFee: fixedPointNumberToDecimal(x.estimateFee.balance, x.estimateFee.token),
         minInput: fixedPointNumberToDecimal(x.minInput, token),
         maxInput: fixedPointNumberToDecimal(x.maxInput, token),
         destFee: fixedPointNumberToDecimal(x.destFee.balance, x.destFee.token),
       })),
-    [adapterLoadable, inputConfigLoadable, token]
+    [inputConfigLoadable, token]
   )
 
   const inputError = useMemo(() => {
