@@ -1,6 +1,6 @@
 import type { Account } from '@domains/accounts'
 import { useNativeTokenAmountState } from '@domains/chains'
-import { useSubstrateApiEndpoint, useSubstrateApiState } from '@domains/common'
+import { expectedBlockTime, useSubstrateApiEndpoint, useSubstrateApiState } from '@domains/common'
 import { useDeriveState, useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
@@ -165,8 +165,6 @@ export const useStake = (account: Account) => {
     [activeProtocol.periodInfo.number, ledger.staked, ledger.stakedFuture, nativeTokenAmount]
   )
 
-  // TODO: create actual estimation
-  const averageBlockTime = 12_000
   const unlocking = useMemo(
     () =>
       ledger.unlocking
@@ -176,11 +174,11 @@ export const useStake = (account: Account) => {
           eta: formatDistanceToNow(
             addMilliseconds(
               new Date(),
-              Number(x.unlockBlock.unwrap().toBigInt() - bestNumber.toBigInt()) * averageBlockTime
+              Number(x.unlockBlock.unwrap().toBigInt() - bestNumber.toBigInt()) * expectedBlockTime(api).toNumber()
             )
           ),
         })),
-    [bestNumber, ledger.unlocking, nativeTokenAmount]
+    [api, bestNumber, ledger.unlocking, nativeTokenAmount]
   )
 
   const totalUnlocking = useMemo(
