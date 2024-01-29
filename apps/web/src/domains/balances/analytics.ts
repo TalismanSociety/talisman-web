@@ -1,7 +1,7 @@
 import { usePostHog } from 'posthog-js/react'
 import { useEffect } from 'react'
 import { useRecoilValue } from 'recoil'
-import { portfolioBalancesState } from '.'
+import { writeableBalancesState } from '.'
 
 const digestMessage = async (message: string) => {
   const msgUint8 = new TextEncoder().encode(message)
@@ -10,9 +10,9 @@ const digestMessage = async (message: string) => {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
-export const usePortfolioBalancesReportEffect = () => {
+export const useBalancesReportEffect = () => {
   const postHog = usePostHog()
-  const balances = useRecoilValue(portfolioBalancesState)
+  const balances = useRecoilValue(writeableBalancesState)
 
   useEffect(() => {
     void (async () => {
