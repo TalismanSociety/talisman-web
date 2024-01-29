@@ -55,7 +55,7 @@ const Scaffold = (props: ScaffoldProps) => (
           gridTemplateAreas: `
             'side   main'
             'side   main'
-            'footer footer'
+            'side footer'
           `,
         },
       },
@@ -76,7 +76,17 @@ const Scaffold = (props: ScaffoldProps) => (
       {props.topBar}
     </div>
     <div css={[{ gridArea: 'side' }, breakpointToCss(props.breakpoints?.sideBar)]}>
-      <div css={{ position: 'sticky', top: '2.4rem', marginLeft: '2.4rem' }}>{props.sideBar}</div>
+      <div
+        css={css`
+          position: sticky;
+          top: 0;
+          padding: 2.4rem;
+          height: 100vh; /* fallback for devices which don't support dvh */
+          height: 100dvh; /* fixes height on iOS safari (uses the viewport height - i.e. excludes the area covered by browser UI elements) */
+        `}
+      >
+        {props.sideBar}
+      </div>
     </div>
     <main
       css={{
