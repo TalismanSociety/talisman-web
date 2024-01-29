@@ -20,10 +20,10 @@ import { useTheme } from '@emotion/react'
 import {
   Compass,
   CreditCard,
-  Eye,
+  PieChart,
   FileText,
   MoreHorizontal,
-  RefreshCcw,
+  Repeat,
   Search,
   Star,
   TalismanHand,
@@ -254,13 +254,13 @@ const Layout = () => {
       bottomBar={
         <NavigationBar>
           <Link to="/portfolio">
-            <NavigationBar.Item label="Portfolio" icon={<Eye />} />
+            <NavigationBar.Item label="Portfolio" icon={<PieChart />} />
           </Link>
           <Link to="/staking">
             <NavigationBar.Item label="Staking" icon={<Zap />} />
           </Link>
           <Link to="/transfer">
-            <NavigationBar.Item label="Transfer" icon={<RefreshCcw />} />
+            <NavigationBar.Item label="Transport" icon={<Repeat />} />
           </Link>
           <Link to="/crowdloans/participated">
             <NavigationBar.Item label="Crowdloans" icon={<Star />} />
@@ -279,13 +279,13 @@ const Layout = () => {
           }
         >
           <Link to="/portfolio">
-            <NavigationRail.Item label="Portfolio" icon={<Eye />} />
+            <NavigationRail.Item label="Portfolio" icon={<PieChart />} />
           </Link>
           <Link to="/staking">
             <NavigationRail.Item label="Staking" icon={<Zap />} />
           </Link>
           <Link to="/transfer">
-            <NavigationRail.Item label="Transfer" icon={<RefreshCcw />} />
+            <NavigationRail.Item label="Transport" icon={<Repeat />} />
           </Link>
           <Link to="/explore">
             <NavigationRail.Item label="Explore" icon={<Compass />} />
@@ -344,13 +344,13 @@ const Layout = () => {
           }
         >
           <Link to="/portfolio">
-            <NavigationDrawer.Item label="Portfolio" icon={<Eye />} />
+            <NavigationDrawer.Item label="Portfolio" icon={<PieChart />} />
           </Link>
           <Link to="/staking">
             <NavigationDrawer.Item label="Staking" icon={<Zap />} />
           </Link>
           <Link to="/transfer">
-            <NavigationDrawer.Item label="Transfer" icon={<RefreshCcw />} />
+            <NavigationDrawer.Item label="Transport" icon={<Repeat />} />
           </Link>
           <Link to="/crowdloans/participated">
             <NavigationDrawer.Item label="Crowdloans" icon={<Star />} />
