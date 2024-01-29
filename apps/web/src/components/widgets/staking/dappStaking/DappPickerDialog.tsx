@@ -40,11 +40,11 @@ const DappPickerDialog = (props: DappPickerDialogProps) => {
               case 'Evm':
                 return dapp.asEvm.toHex()
               case 'Wasm':
-                return dapp.asWasm.toUtf8()
+                return dapp.asWasm.toString()
             }
           })()
 
-          const registeredDapp = registeredDapps.find(x => x.address.toLowerCase() === address)
+          const registeredDapp = registeredDapps.find(x => x.address.toLowerCase() === address.toLowerCase())
 
           return (
             <Clickable.WithFeedback key={dapp.toString()} onClick={() => selectDapp(dapp)}>
