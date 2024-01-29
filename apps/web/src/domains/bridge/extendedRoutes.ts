@@ -1,40 +1,65 @@
 import { StatemintAdapter } from '@polkawallet/bridge/adapters/statemint'
 import { ParallelAdapter } from '@polkawallet/bridge/adapters/parallel'
 import { CentrifugeAdapter } from '@polkawallet/bridge/adapters/centrifuge'
+import { type BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 
 import BN from 'bn.js'
 
-function createRouteConfigs(from, routes) {
+type RouteConfig = {
+  to: string
+  token: string
+  xcm: {
+    fee: { token: string; amount: string }
+    weightLimit: string
+  }
+}
+
+type TokenConfig = {
+  name: string
+  symbol: string
+  decimals: number
+  ed: string
+  toRaw: () => BN | number | string
+}
+
+type ExtendedAdapter<T extends new (...args: any[]) => BaseCrossChainAdapter> = new () => InstanceType<T> &
+  BaseCrossChainAdapter
+
+function createRouteConfigs(from: string, routes: RouteConfig[]): RouteConfig[] {
   return routes.map(route => ({ ...route, from }))
 }
 
-function extendAdapter(AdapterClass, additionalRoutes, additionalTokens) {
+function extendAdapter<T extends typeof StatemintAdapter | typeof ParallelAdapter | typeof CentrifugeAdapter>(
+  AdapterClass: T,
+  additionalRoutes: RouteConfig[],
+  additionalTokens: Record<string, TokenConfig>
+): ExtendedAdapter<T> {
   return class ExtendedAdapter extends AdapterClass {
+    routers: RouteConfig[] | undefined
+    tokens: Record<string, TokenConfig> | undefined
+
     constructor() {
       super()
       this.addRouters()
       this.addTokens()
-      console.log('balanceAdapter', this.balanceAdapter)
     }
 
     addRouters() {
       // TODO: check for additionalRoutes already existing. If so, don't add.
-      const newRoutes = createRouteConfigs('statemint', additionalRoutes)
-      const existingRoutes = this.routers || []
+      const newRoutes = createRouteConfigs('extended', additionalRoutes)
+      const existingRoutes = this.routers ?? []
       this.routers = [...existingRoutes, ...newRoutes]
     }
 
     addTokens() {
-      console.log('yeeeeet', this.tokens)
       // TODO: check for additionalTokens already existing. If so, don't add.
-      const existingTokens = this.tokens || {}
+      const existingTokens = this.tokens ?? {}
       this.tokens = { ...existingTokens, ...additionalTokens }
-      console.log('yeeeet2', this.tokens)
     }
-  }
+  } as unknown as ExtendedAdapter<T>
 }
 
-const newStatemintRoutes = [
+const newStatemintRoutes: RouteConfig[] = [
   {
     to: 'parallel',
     token: 'USDT',
@@ -53,7 +78,7 @@ const newStatemintRoutes = [
   },
 ]
 
-const newStatemintTokens = {
+const newStatemintTokens: Record<string, TokenConfig> = {
   USDC: {
     name: 'USD Coin',
     symbol: 'USDC',
@@ -63,7 +88,7 @@ const newStatemintTokens = {
   },
 }
 
-const newParallelRoutes = [
+const newParallelRoutes: RouteConfig[] = [
   {
     to: 'statemint',
     token: 'USDT',
@@ -74,7 +99,7 @@ const newParallelRoutes = [
   },
 ]
 
-const newParallelTokens = {
+const newParallelTokens: Record<string, TokenConfig> = {
   USDT: {
     name: 'USDT',
     symbol: 'USDT',
@@ -84,13 +109,12 @@ const newParallelTokens = {
   },
 }
 
-const newCentrifugeTokens = {
+const newCentrifugeTokens: Record<string, TokenConfig> = {
   USDC: {
     name: 'USD Coin',
     symbol: 'USDC',
     decimals: 6,
     ed: '700000',
-    // toRaw: () => new BN(6),
     toRaw: () => 'USDC',
   },
 }
