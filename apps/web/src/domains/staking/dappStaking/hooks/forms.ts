@@ -39,15 +39,19 @@ export const useAddStakeForm = (
     ])
   )
 
-  const transferable = accountInfo.data.free.sub(accountInfo.data.frozen)
+  const transferable = useMemo(
+    () => BN.max(new BN(0), accountInfo.data.free.sub(accountInfo.data.frozen)),
+    [accountInfo.data.free, accountInfo.data.frozen]
+  )
   const lockedAvailableForStake = useMemo(
-    () => stake.ledger.locked.unwrap().sub(new BN(stake.totalStaked.decimalAmount.planck.toString())),
+    () =>
+      BN.max(new BN(0), stake.ledger.locked.unwrap().sub(new BN(stake.totalStaked.decimalAmount.planck.toString()))),
     [stake.ledger.locked, stake.totalStaked]
   )
 
   const availableBeforeFee = useTokenAmountFromPlanck(
     useMemo(
-      () => transferable.sub(api.consts.balances.existentialDeposit).add(lockedAvailableForStake),
+      () => BN.max(new BN(0), transferable.sub(api.consts.balances.existentialDeposit).add(lockedAvailableForStake)),
       [api.consts.balances.existentialDeposit, lockedAvailableForStake, transferable]
     )
   )
@@ -83,8 +87,11 @@ export const useAddStakeForm = (
   const available = useTokenAmountFromPlanck(
     useMemo(
       () =>
-        availableBeforeFee.decimalAmount.planck.sub(
-          paymentInfoLoadable.valueMaybe()?.partialFee.muln(ESTIMATED_FEE_MARGIN_OF_ERROR) ?? new BN(0)
+        BN.max(
+          new BN(0),
+          availableBeforeFee.decimalAmount.planck.sub(
+            paymentInfoLoadable.valueMaybe()?.partialFee.muln(ESTIMATED_FEE_MARGIN_OF_ERROR) ?? new BN(0)
+          )
         ),
       [availableBeforeFee.decimalAmount.planck, paymentInfoLoadable]
     )
