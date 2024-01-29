@@ -1,13 +1,19 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { atomFamily } from 'recoil'
 
-import { useSubstrateApiEndpoint } from '..'
+import { useSubstrateChainGenesisHash } from '..'
+import { chainState } from '@domains/chains'
 
-export const substrateApiState = atomFamily<ApiPromise, string | undefined>({
+export const substrateApiState = atomFamily<ApiPromise, `0x${string}`>({
   key: 'SubstrateApiState',
-  effects: endpoint => [
-    ({ setSelf }) => {
-      const apiPromise = ApiPromise.create({ provider: new WsProvider(endpoint) })
+  effects: genesisHash => [
+    ({ setSelf, getPromise }) => {
+      const getApi = async () => {
+        const chain = await getPromise(chainState({ genesisHash }))
+        return await ApiPromise.create({ provider: new WsProvider(chain.rpcs?.map(x => x.url)) })
+      }
+
+      const apiPromise = getApi()
 
       setSelf(apiPromise)
 
@@ -19,4 +25,4 @@ export const substrateApiState = atomFamily<ApiPromise, string | undefined>({
   dangerouslyAllowMutability: true,
 })
 
-export const useSubstrateApiState = () => substrateApiState(useSubstrateApiEndpoint())
+export const useSubstrateApiState = () => substrateApiState(useSubstrateChainGenesisHash())

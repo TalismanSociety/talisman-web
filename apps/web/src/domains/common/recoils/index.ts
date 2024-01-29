@@ -15,9 +15,9 @@ export const paymentInfoState = selectorFamily({
       TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
       TSection extends keyof PickKnownKeys<ApiPromise['tx'][TModule]>,
       TParams extends Parameters<ApiPromise['tx'][TModule][TSection]>
-    >([endpoint, module, section, account, ...params]: [string, TModule, TSection, string, ...TParams]) =>
+    >([genesisHash, module, section, account, ...params]: [`0x${string}`, TModule, TSection, string, ...TParams]) =>
     async ({ get }) => {
-      const api = get(substrateApiState(endpoint))
+      const api = get(substrateApiState(genesisHash))
       const extension = get(connectedSubstrateWalletState)
 
       return await api.tx[module]?.[section]?.(...params).paymentInfo(account, { signer: extension?.signer })

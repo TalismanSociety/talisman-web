@@ -4,7 +4,12 @@ import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedSubstrateAccountsState } from '@domains/accounts'
 import { ChainProvider, chainsState, useChainState } from '@domains/chains'
-import { chainDeriveState, substrateApiState, useTokenAmountFromPlanck } from '@domains/common'
+import {
+  chainDeriveState,
+  useSubstrateApiState,
+  useSubstrateChainGenesisHash,
+  useTokenAmountFromPlanck,
+} from '@domains/common'
 import { useInflation, useLocalizedLockDuration } from '@domains/staking/substrate/nominationPools'
 import { Decimal } from '@talismn/math'
 import { usePolkadotApiId, useQueryState } from '@talismn/react-polkadot-api'
@@ -19,8 +24,8 @@ const Apr = () => {
 }
 
 const useAvailableBalance = () => {
-  const apiId = usePolkadotApiId()
-  const api = useRecoilValue(substrateApiState(apiId as any))
+  const apiId = useSubstrateChainGenesisHash()
+  const api = useRecoilValue(useSubstrateApiState())
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
 

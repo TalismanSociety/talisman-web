@@ -5,7 +5,7 @@ import { type AddressOrPair } from '@polkadot/api/types'
 import { type ISubmittableResult } from '@polkadot/types/types'
 import { useCallback, useState } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
-import { substrateApiState, useSubstrateApiEndpoint } from '..'
+import { substrateApiState, useSubstrateChainGenesisHash } from '..'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
 
@@ -34,7 +34,7 @@ export const useExtrinsicBatch = <
   extrinsics: TExtrinsics
 ) => {
   const chain = useRecoilValue(useChainState())
-  const apiEndpoint = useSubstrateApiEndpoint()
+  const genesisHash = useSubstrateChainGenesisHash()
   const wallet = useConnectedSubstrateWallet()
 
   const [loadable, setLoadable] = useState<
@@ -51,7 +51,7 @@ export const useExtrinsicBatch = <
       const { snapshot } = callbackInterface
 
       const promiseFunc = async () => {
-        const [api] = await Promise.all([snapshot.getPromise(substrateApiState(apiEndpoint))])
+        const [api] = await Promise.all([snapshot.getPromise(substrateApiState(genesisHash))])
 
         let resolve = (_value: ISubmittableResult) => {}
         let reject = (_value: unknown) => {}

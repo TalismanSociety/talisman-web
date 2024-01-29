@@ -13,7 +13,7 @@ export type Relaychain = {
   name: string
   accountPrefix: number
   rpc: string
-  genesisHash: string
+  genesisHash: `0x${string}`
   subscanUrl: string
   tokenDecimals: number
   tokenSymbol: string

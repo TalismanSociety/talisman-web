@@ -1,4 +1,4 @@
-import { useSubstrateApiEndpoint, useTokenAmountFromPlanck, useTokenAmountState } from '@domains/common/hooks'
+import { useSubstrateChainGenesisHash, useTokenAmountFromPlanck, useTokenAmountState } from '@domains/common/hooks'
 import { paymentInfoState, useSubstrateApiState } from '@domains/common/recoils'
 import { BN } from '@polkadot/util'
 import { useDeriveState, useQueryMultiState } from '@talismn/react-polkadot-api'
@@ -11,7 +11,7 @@ const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.25
 
 export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) => {
   const api = useRecoilValue(useSubstrateApiState())
-  const apiEndpoint = useSubstrateApiEndpoint()
+  const genesisHash = useSubstrateChainGenesisHash()
 
   const prevAccount = usePrevious(account)
 
@@ -32,14 +32,14 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
       ? constSelector(undefined)
       : action === 'bondExtra'
       ? paymentInfoState([
-          apiEndpoint,
+          genesisHash,
           'nominationPools',
           'bondExtra',
           account,
           { FreeBalance: balancesLoadable.contents?.availableBalance },
         ])
       : paymentInfoState([
-          apiEndpoint,
+          genesisHash,
           'nominationPools',
           'join',
           account,

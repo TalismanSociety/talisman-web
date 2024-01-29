@@ -9,7 +9,7 @@ export type WorkerFunction = typeof getExposure
 export type ExposureRecord = Record<number, Record<string, boolean>>
 
 const generateExposure = async function* (
-  endpoint: string,
+  endpoint: string[],
   activeEra: number,
   addresses: readonly string[],
   precomputedExposure?: ExposureRecord
@@ -49,7 +49,7 @@ const generateExposure = async function* (
 }
 
 const getExposure = (
-  endpoint: string,
+  endpoint: string[],
   activeEra: number,
   addresses: readonly string[],
   precomputedExposure?: ExposureRecord

@@ -140,7 +140,7 @@ export const Provider = ({ children }: PropsWithChildren) => {
 
   const relayChains = useRecoilValue(supportedRelayChainsState)
   const loadable = useRecoilValueLoadable(
-    waitForAll([crowdloanDataState, ...relayChains.map(relayChain => substrateApiState(relayChain.rpc))])
+    waitForAll([crowdloanDataState, ...relayChains.map(relayChain => substrateApiState(relayChain.genesisHash))])
   )
 
   useEffect(() => {

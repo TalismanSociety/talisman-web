@@ -26,7 +26,7 @@ export const WithdrawCrowdloanWidget = ({
 }: WithdrawCrowdloanWidgetProps) => {
   const [open, setOpen] = useState(false)
 
-  const apiLoadable = useRecoilValueLoadable(substrateApiState(relayChain?.rpc))
+  const apiLoadable = useRecoilValueLoadable(substrateApiState(relayChain?.genesisHash))
 
   const tx = useExtrinsic(
     useMemo(() => {

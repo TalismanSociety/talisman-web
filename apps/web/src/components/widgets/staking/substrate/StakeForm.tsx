@@ -14,7 +14,7 @@ import {
   useEraEtaFormatter,
   useExtrinsic,
   useSubmittableResultLoadableState,
-  useSubstrateApiEndpoint,
+  useSubstrateChainGenesisHash,
   useSubstrateApiState,
   useTokenAmountFromPlanck,
 } from '@domains/common'
@@ -256,7 +256,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
     [location.search]
   )
 
-  const apiEndpoint = useSubstrateApiEndpoint()
+  const genesisHash = useSubstrateChainGenesisHash()
 
   const [chain, api, recommendedPools] = useRecoilValue(
     waitForAll([useChainRecoilState(), useSubstrateApiState(), useRecommendedPoolsState()])
@@ -299,7 +299,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
   const eraStakersLoadable = useRecoilValueLoadable(
     activeEraLoadable.state !== 'hasValue'
       ? constSelector(undefined)
-      : eraStakersState({ endpoint: apiEndpoint, era: activeEraLoadable.contents.unwrapOrDefault().index })
+      : eraStakersState({ genesisHash: genesisHash, era: activeEraLoadable.contents.unwrapOrDefault().index })
   ).map(value => new Set(value?.map(x => x[0].args[1].toHuman())))
 
   const existingPool =

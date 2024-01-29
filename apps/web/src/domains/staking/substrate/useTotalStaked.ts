@@ -12,7 +12,7 @@ export const useSubstrateFiatTotalStaked = () => {
     waitForAll(chains.map(chain => nativeTokenPriceState({ genesisHash: chain.genesisHash })))
   )
 
-  const apis = useRecoilValue(waitForAll(chains.map(x => substrateApiState(x.rpc))))
+  const apis = useRecoilValue(waitForAll(chains.map(x => substrateApiState(x.genesisHash))))
   const decimals = apis.map(x => x.registry.chainDecimals.at(0) ?? 0)
 
   const [validatorStakes, poolStakes] = useRecoilValue(

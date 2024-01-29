@@ -8,7 +8,7 @@ export const { queryState: chainQueryState, deriveState: chainDeriveState } = qu
       throw new Error('Only accept endpoint as ID')
     }
 
-    return substrateApiState(id)
+    return substrateApiState(id as `0x${string}`)
   },
 })
 
@@ -19,6 +19,6 @@ export const chainQueryMultiState = queryMultiAtomFamily({
       throw new Error('Only accept endpoint as ID')
     }
 
-    return substrateApiState(id)
+    return substrateApiState(id as `0x${string}`)
   },
 })

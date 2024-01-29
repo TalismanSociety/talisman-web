@@ -1,5 +1,6 @@
 import { writeableSubstrateAccountsState } from '@domains/accounts/recoils'
-import { useSubstrateApiEndpoint, useSubstrateApiState } from '@domains/common'
+import { chainState } from '@domains/chains'
+import { useSubstrateApiState } from '@domains/common'
 import { encodeAddress } from '@polkadot/util-crypto'
 import { bool, coercion, jsonParser, writableDict } from '@recoiljs/refine'
 import { useQueryState } from '@talismn/react-polkadot-api'
@@ -17,12 +18,12 @@ const exposureJsonParser = jsonParser(exposureChecker)
 
 const unexposedAddressesState = atomFamily<
   Record<string, boolean | undefined>,
-  { endpoint: string; genesisHash: string; activeEra: number; bondingDuration: number; addresses: string[] }
+  { genesisHash: `0x${string}`; activeEra: number; bondingDuration: number; addresses: string[] }
 >({
   default: ({ addresses }) => Object.fromEntries(addresses.map(x => [x, undefined])),
   key: 'UnexposedAddresses',
-  effects: ({ endpoint, genesisHash, activeEra, bondingDuration, addresses }) => [
-    ({ setSelf }) => {
+  effects: ({ genesisHash, activeEra, bondingDuration, addresses }) => [
+    ({ setSelf, getPromise }) => {
       if (addresses.length === 0) {
         return
       }
@@ -50,8 +51,13 @@ const unexposedAddressesState = atomFamily<
 
       const subscriptionPromise = spawn<WorkerFunction>(
         new Worker(new URL('./worker', import.meta.url), { type: 'module' })
-      ).then(worker =>
-        worker(endpoint, activeEra, addresses, exposure).subscribe({
+      ).then(async worker =>
+        worker(
+          (await getPromise(chainState({ genesisHash }))).rpcs?.map(x => x.url) ?? [],
+          activeEra,
+          addresses,
+          exposure
+        ).subscribe({
           next: ({ era, address, exposed }) => {
             if (exposed) {
               setSelf(x => ({ ...x, [encodeAddress(address)]: !exposed }))
@@ -112,7 +118,6 @@ export const useInjectedAccountFastUnstakeEligibility = () => {
     ),
     ...useRecoilValue(
       unexposedAddressesState({
-        endpoint: useSubstrateApiEndpoint(),
         genesisHash: api.genesisHash.toHex(),
         activeEra: useRecoilValue(useQueryState('staking', 'activeEra', [])).unwrapOrDefault().index.toNumber(),
         bondingDuration: api.consts.staking.bondingDuration.toNumber(),

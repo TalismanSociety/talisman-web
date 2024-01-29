@@ -6,7 +6,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil'
 
 import { chainState, useChainState } from '@domains/chains'
 import { useConnectedSubstrateWallet } from '@domains/extension'
-import { substrateApiState, useSubstrateApiEndpoint } from '..'
+import { substrateApiState, useSubstrateChainGenesisHash } from '..'
 import { skipErrorReporting } from '../consts'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
@@ -65,7 +65,7 @@ export function useExtrinsic(
   params: unknown[] = []
 ): ExtrinsicLoadable | undefined {
   const contextChain = useRecoilValue(useChainState())
-  const endpoint = useSubstrateApiEndpoint()
+  const genesisHash = useSubstrateChainGenesisHash()
   const wallet = useConnectedSubstrateWallet()
 
   const [loadable, setLoadable] = useSubmittableResultLoadableState()
@@ -76,7 +76,7 @@ export function useExtrinsic(
         const [submittable, chain] = await (async () => {
           switch (typeof moduleOrSubmittable) {
             case 'string': {
-              const api = await callbackInterface.snapshot.getPromise(substrateApiState(endpoint))
+              const api = await callbackInterface.snapshot.getPromise(substrateApiState(genesisHash))
               const submittable = api.tx[moduleOrSubmittable]?.[sectionOrGenesisHash ?? '']?.(
                 ...(innerParams.length > 0 ? innerParams : params)
               )
@@ -89,7 +89,7 @@ export function useExtrinsic(
             }
             case 'function':
               return [
-                moduleOrSubmittable(await callbackInterface.snapshot.getPromise(substrateApiState(endpoint))),
+                moduleOrSubmittable(await callbackInterface.snapshot.getPromise(substrateApiState(genesisHash))),
                 contextChain,
               ] as const
             default:
@@ -165,7 +165,7 @@ export function useExtrinsic(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       contextChain,
-      endpoint,
+      genesisHash,
       moduleOrSubmittable,
       // eslint-disable-next-line react-hooks/exhaustive-deps
       JSON.stringify(params),

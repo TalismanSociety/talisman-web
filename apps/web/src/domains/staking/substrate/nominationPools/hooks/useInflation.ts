@@ -1,5 +1,5 @@
 import { ChainContext } from '@domains/chains'
-import { chainQueryState, useSubstrateApiEndpoint, useSubstrateApiState } from '@domains/common'
+import { chainQueryState, useSubstrateChainGenesisHash, useSubstrateApiState } from '@domains/common'
 import { BN } from '@polkadot/util'
 import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import BigNumber from 'bignumber.js'
@@ -8,13 +8,13 @@ import { constSelector, useRecoilValue } from 'recoil'
 
 export const useInflation = () => {
   const chain = useContext(ChainContext)
-  const endpoint = useSubstrateApiEndpoint()
+  const genesisHash = useSubstrateChainGenesisHash()
   const api = useRecoilValue(useSubstrateApiState())
 
   const activeEra = useRecoilValue(useQueryState('staking', 'activeEra', []))
   const auctionCounter = useRecoilValue(
     api.query.auctions !== undefined
-      ? chainQueryState(endpoint, 'auctions', 'auctionCounter', [])
+      ? chainQueryState(genesisHash, 'auctions', 'auctionCounter', [])
       : constSelector(undefined)
   )
 

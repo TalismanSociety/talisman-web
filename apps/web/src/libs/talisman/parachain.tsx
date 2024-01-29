@@ -81,7 +81,7 @@ export const Provider = ({ children }: PropsWithChildren) => {
   const crowdloans = useRecoilValue(crowdloanDataState)
   const chains = useRecoilValue(chainsState)
   const apisLoadable = useRecoilValueLoadable(
-    waitForAll([substrateApiState(chains[0]?.rpc), substrateApiState(chains[1]?.rpc)])
+    waitForAll([substrateApiState(chains[0]?.genesisHash), substrateApiState(chains[1]?.genesisHash)])
   )
 
   useEffect(

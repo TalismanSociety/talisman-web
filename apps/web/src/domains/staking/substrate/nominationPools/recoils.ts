@@ -1,6 +1,6 @@
 import { substrateAccountsState } from '@domains/accounts/recoils'
 import { chainsState, type ChainInfo } from '@domains/chains'
-import { useSubstrateApiEndpoint } from '@domains/common'
+import { useSubstrateChainGenesisHash } from '@domains/common'
 import { chainReadIdState, substrateApiState } from '@domains/common/recoils'
 import type { AnyNumber } from '@polkadot/types-codec/types'
 import { encodeAddress } from '@polkadot/util-crypto'
@@ -13,11 +13,11 @@ import { selectorFamily, waitForAll, type SerializableParam } from 'recoil'
 export const allPendingPoolRewardsState = selectorFamily({
   key: 'AllPendingRewards',
   get:
-    (endpoint: string) =>
+    (genesisHash: `0x${string}`) =>
     async ({ get }) => {
       get(chainReadIdState)
 
-      const api = get(substrateApiState(endpoint))
+      const api = get(substrateApiState(genesisHash))
       const accounts = get(substrateAccountsState)
 
       return await Promise.all(
@@ -33,15 +33,15 @@ export const allPendingPoolRewardsState = selectorFamily({
   dangerouslyAllowMutability: true,
 })
 
-export const useAllPendingRewardsState = () => allPendingPoolRewardsState(useSubstrateApiEndpoint())
+export const useAllPendingRewardsState = () => allPendingPoolRewardsState(useSubstrateChainGenesisHash())
 
 // TODO: refactor to selector that can read all storage entries
 export const eraStakersState = selectorFamily({
   key: 'EraStakers',
   get:
-    ({ endpoint, era }: { endpoint: string; era: Extract<AnyNumber, SerializableParam> }) =>
+    ({ genesisHash, era }: { genesisHash: `0x${string}`; era: Extract<AnyNumber, SerializableParam> }) =>
     async ({ get }) => {
-      const api = get(substrateApiState(endpoint))
+      const api = get(substrateApiState(genesisHash))
 
       return await api.query.staking.erasStakers.entries(era)
     },
@@ -52,15 +52,15 @@ export const eraStakersState = selectorFamily({
 })
 
 export const useEraStakersState = (era: Extract<AnyNumber, SerializableParam>) =>
-  eraStakersState({ endpoint: useSubstrateApiEndpoint(), era })
+  eraStakersState({ genesisHash: useSubstrateChainGenesisHash(), era })
 
 export const recommendedPoolsState = selectorFamily({
   key: 'Staking/BondedPools',
   get:
-    (endpoint: string) =>
+    (genesisHash: `0x${string}`) =>
     async ({ get }) => {
       const chains = get(chainsState)
-      const api = get(substrateApiState(endpoint))
+      const api = get(substrateApiState(genesisHash))
 
       const chain = chains.find(x => x.genesisHash === api.genesisHash.toHex())
 
@@ -99,7 +99,7 @@ export const recommendedPoolsState = selectorFamily({
   dangerouslyAllowMutability: true,
 })
 
-export const useRecommendedPoolsState = () => recommendedPoolsState(useSubstrateApiEndpoint())
+export const useRecommendedPoolsState = () => recommendedPoolsState(useSubstrateChainGenesisHash())
 
 type SubscanPayout = {
   pool_id: number
@@ -132,7 +132,7 @@ const subscanPoolPayoutsState = selectorFamily<
   get:
     ({ account, poolId, chain, fromDate, toDate }) =>
     async ({ get }) => {
-      const api = get(substrateApiState(chain.rpc))
+      const api = get(substrateApiState(chain.genesisHash))
 
       const subscanUrl = chain.subscanUrl
       if (subscanUrl === undefined) {
@@ -206,7 +206,9 @@ const _poolPayoutsState = selectorFamily({
   get:
     (params: { account: string; poolId: number; chain: ChainInfo; fromDate?: Date; toDate?: Date }) =>
     ({ get }) => {
-      const [api, response] = get(waitForAll([substrateApiState(params.chain.rpc), subscanPoolPayoutsState(params)]))
+      const [api, response] = get(
+        waitForAll([substrateApiState(params.chain.genesisHash), subscanPoolPayoutsState(params)])
+      )
 
       return response.map(x => ({
         date: fromUnixTime(x.block_timestamp),
@@ -231,7 +233,7 @@ export const totalPoolPayoutsState = selectorFamily({
   get:
     (params: { account: string; poolId: number; chain: ChainInfo; fromDate: Date; toDate: Date }) =>
     ({ get }) => {
-      const [api, payouts] = get(waitForAll([substrateApiState(params.chain.rpc), poolPayoutsState(params)]))
+      const [api, payouts] = get(waitForAll([substrateApiState(params.chain.genesisHash), poolPayoutsState(params)]))
 
       return Decimal.fromPlanck(
         payouts.reduce((prev, curr) => prev.add(curr.amount.planck), new BN(0)),

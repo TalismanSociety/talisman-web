@@ -1,4 +1,3 @@
-import { chainState } from '@domains/chains'
 import { substrateApiState } from '@domains/common'
 import { Bridge, type ChainId } from '@polkawallet/bridge'
 import { selector, selectorFamily } from 'recoil'
@@ -31,7 +30,7 @@ export const bridgeAdapterState = selectorFamily({
         throw new Error(`Unable to find genesis hash for chain: ${chainId}`)
       }
 
-      const api = get(substrateApiState(get(chainState({ genesisHash })).rpc))
+      const api = get(substrateApiState(genesisHash))
       const adapter = get(bridgeState).findAdapter(chainId)
       await adapter.init(api)
 

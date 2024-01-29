@@ -7,7 +7,7 @@ import type {
 } from '@polkadot/api/types'
 import { RecoilLoadable, constSelector, useRecoilValueLoadable, type Loadable } from 'recoil'
 import { type Observable } from 'rxjs'
-import { useSubstrateApiEndpoint } from '.'
+import { useSubstrateChainGenesisHash } from '.'
 import { chainQueryState } from '../recoils/query'
 
 /**
@@ -44,18 +44,18 @@ export const useChainState = <
       : Result[]
     : never
 
-  const endpoint = useSubstrateApiEndpoint()
+  const genesisHash = useSubstrateChainGenesisHash()
 
   const loadable = useRecoilValueLoadable<TResult>(
     typeName === 'query'
       ? !options.enabled
         ? (constSelector(undefined) as any)
         : // @ts-expect-error
-          chainQueryState(endpoint, moduleName, sectionName, params)
+          chainQueryState(genesisHash, moduleName, sectionName, params)
       : !options.enabled
       ? (constSelector(undefined) as any)
       : // @ts-expect-error
-        chainDeriveState(endpoint, moduleName, sectionName, params)
+        chainDeriveState(genesisHash, moduleName, sectionName, params)
   )
 
   return !options.enabled ? (RecoilLoadable.loading() as Loadable<TResult>) : loadable

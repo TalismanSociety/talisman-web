@@ -1,5 +1,5 @@
 import { selectedCurrencyState } from '@domains/balances'
-import { substrateApiState, useSubstrateApiEndpoint } from '@domains/common'
+import { substrateApiState, useSubstrateChainGenesisHash } from '@domains/common'
 import { type BN } from '@polkadot/util'
 import { type ToBn } from '@polkadot/util/types'
 import { type Chain as ChainData, type IToken } from '@talismn/chaindata-provider'
@@ -96,9 +96,9 @@ export const useNativeTokenPriceState = () =>
 export const nativeTokenDecimalState = selectorFamily({
   key: 'NativeTokenDecimal',
   get:
-    (apiEndpoint: string) =>
+    (genesisHash: `0x${string}`) =>
     ({ get }) => {
-      const api = get(substrateApiState(apiEndpoint))
+      const api = get(substrateApiState(genesisHash))
       return {
         fromPlanck: (value: string | number | bigint | BN | ToBn | undefined) =>
           Decimal.fromPlanck(value, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
@@ -108,4 +108,4 @@ export const nativeTokenDecimalState = selectorFamily({
     },
 })
 
-export const useNativeTokenDecimalState = () => nativeTokenDecimalState(useSubstrateApiEndpoint())
+export const useNativeTokenDecimalState = () => nativeTokenDecimalState(useSubstrateChainGenesisHash())
