@@ -10,7 +10,7 @@ import { encodeAnyAddress, planckToTokens, tokensToPlanck } from '@talismn/util'
 import customRpcs from '@util/customRpcs'
 import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import { makeTaggedUnion, none, type MemberType } from 'safety-match'
 import { v4 as uuidv4 } from 'uuid'
@@ -655,7 +655,13 @@ function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: Dis
       ? { accounts: [stateDeps.account], crowdloanId: stateDeps.crowdloanId }
       : { accounts: [], crowdloanId: undefined }
 
-  const { gqlContributions, hydrated: contributionsHydrated } = useCrowdloanContributions(contributionsProps.accounts)
+  const { gqlContributions, hydrated: contributionsHydrated } = useCrowdloanContributions(
+    // memoize to prevent infinite loop
+    useMemo(
+      () => contributionsProps.accounts,
+      [JSON.stringify(contributionsProps.accounts)] // eslint-disable-line react-hooks/exhaustive-deps
+    )
+  )
   const moonbeamContributions = gqlContributions.filter(c => c.crowdloan.id === contributionsProps.crowdloanId)
 
   useEffect(() => {
