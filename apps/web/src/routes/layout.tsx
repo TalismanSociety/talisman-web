@@ -20,10 +20,10 @@ import { useTheme } from '@emotion/react'
 import {
   Compass,
   CreditCard,
-  Eye,
+  PieChart,
   FileText,
   MoreHorizontal,
-  RefreshCcw,
+  Repeat,
   Search,
   Star,
   TalismanHand,
@@ -254,13 +254,13 @@ const Layout = () => {
       bottomBar={
         <NavigationBar>
           <Link to="/portfolio">
-            <NavigationBar.Item label="Portfolio" icon={<Eye />} />
+            <NavigationBar.Item label="Portfolio" icon={<PieChart />} />
           </Link>
           <Link to="/staking">
             <NavigationBar.Item label="Staking" icon={<Zap />} />
           </Link>
           <Link to="/transfer">
-            <NavigationBar.Item label="Transfer" icon={<RefreshCcw />} />
+            <NavigationBar.Item label="Transport" icon={<Repeat />} />
           </Link>
           <Link to="/crowdloans/participated">
             <NavigationBar.Item label="Crowdloans" icon={<Star />} />
@@ -279,13 +279,13 @@ const Layout = () => {
           }
         >
           <Link to="/portfolio">
-            <NavigationRail.Item label="Portfolio" icon={<Eye />} />
+            <NavigationRail.Item label="Portfolio" icon={<PieChart />} />
           </Link>
           <Link to="/staking">
             <NavigationRail.Item label="Staking" icon={<Zap />} />
           </Link>
           <Link to="/transfer">
-            <NavigationRail.Item label="Transfer" icon={<RefreshCcw />} />
+            <NavigationRail.Item label="Transport" icon={<Repeat />} />
           </Link>
           <Link to="/explore">
             <NavigationRail.Item label="Explore" icon={<Compass />} />
@@ -344,13 +344,13 @@ const Layout = () => {
           }
         >
           <Link to="/portfolio">
-            <NavigationDrawer.Item label="Portfolio" icon={<Eye />} />
+            <NavigationDrawer.Item label="Portfolio" icon={<PieChart />} />
           </Link>
           <Link to="/staking">
             <NavigationDrawer.Item label="Staking" icon={<Zap />} />
           </Link>
           <Link to="/transfer">
-            <NavigationDrawer.Item label="Transfer" icon={<RefreshCcw />} />
+            <NavigationDrawer.Item label="Transport" icon={<Repeat />} />
           </Link>
           <Link to="/crowdloans/participated">
             <NavigationDrawer.Item label="Crowdloans" icon={<Star />} />
@@ -367,41 +367,41 @@ const Layout = () => {
         </NavigationDrawer>
       }
       footer={
-        <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 2.4rem' }}>
-          <Text.BodyLarge>Talisman Portal</Text.BodyLarge>
-          <ul
-            css={theme => ({
-              display: 'flex',
-              gap: '3.2rem',
-              a: { 'opacity': theme.contentAlpha.medium, ':hover': { opacity: theme.contentAlpha.high } },
-            })}
+        <div
+          css={theme => ({
+            display: 'flex',
+            justifyContent: 'end',
+            alignItems: 'center',
+            gap: '3.2rem',
+            padding: '2.4rem 2.4rem 2.4rem 0',
+            a: { 'opacity': theme.contentAlpha.medium, ':hover': { opacity: theme.contentAlpha.high } },
+          })}
+        >
+          <Text.BodyLarge alpha="high" as="a" href="https://twitter.com/wearetalisman" target="_blank">
+            Twitter
+          </Text.BodyLarge>
+          <Text.BodyLarge alpha="high" as="a" href="https://discord.gg/talisman" target="_blank">
+            Discord
+          </Text.BodyLarge>
+          <Text.BodyLarge alpha="high" as="a" href="https://docs.talisman.xyz" target="_blank">
+            Docs
+          </Text.BodyLarge>
+          <Text.BodyLarge
+            alpha="high"
+            as="a"
+            href="https://docs.talisman.xyz/talisman/legal-and-security/terms-of-use"
+            target="_blank"
           >
-            <Text.BodyLarge alpha="high" as="a" href="https://twitter.com/wearetalisman" target="_blank">
-              Twitter
-            </Text.BodyLarge>
-            <Text.BodyLarge alpha="high" as="a" href="https://discord.gg/talisman" target="_blank">
-              Discord
-            </Text.BodyLarge>
-            <Text.BodyLarge alpha="high" as="a" href="https://docs.talisman.xyz" target="_blank">
-              Docs
-            </Text.BodyLarge>
-            <Text.BodyLarge
-              alpha="high"
-              as="a"
-              href="https://docs.talisman.xyz/talisman/legal-and-security/terms-of-use"
-              target="_blank"
-            >
-              Terms
-            </Text.BodyLarge>
-            <Text.BodyLarge
-              alpha="high"
-              as="a"
-              href="https://docs.talisman.xyz/talisman/legal-and-security/privacy-policy"
-              target="_blank"
-            >
-              Privacy
-            </Text.BodyLarge>
-          </ul>
+            Terms
+          </Text.BodyLarge>
+          <Text.BodyLarge
+            alpha="high"
+            as="a"
+            href="https://docs.talisman.xyz/talisman/legal-and-security/privacy-policy"
+            target="_blank"
+          >
+            Privacy
+          </Text.BodyLarge>
         </div>
       }
     >
