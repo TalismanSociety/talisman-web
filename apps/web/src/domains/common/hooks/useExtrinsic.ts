@@ -10,6 +10,8 @@ import { substrateApiState, useSubstrateApiEndpoint } from '..'
 import { skipErrorReporting } from '../consts'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
+import { signetAccountState } from '@domains/accounts'
+import { useSignetSdk } from '@talismn/signet-apps-sdk'
 
 export type SubmittableResultLoadable =
   | { state: 'idle'; contents: undefined }
@@ -63,7 +65,8 @@ export function useExtrinsic(
   const chain = useRecoilValue(useChainState())
   const endpoint = useSubstrateApiEndpoint()
   const wallet = useConnectedSubstrateWallet()
-
+  const signetAccount = useRecoilValue(signetAccountState)
+  const { sdk } = useSignetSdk()
   const [loadable, setLoadable] = useSubmittableResultLoadableState()
 
   const signAndSend = useRecoilCallback(
@@ -90,6 +93,8 @@ export function useExtrinsic(
           }
         })()
 
+        const signingWithSignet = signetAccount.address === account
+
         const promiseFunc = async () => {
           let resolve = (_value: ISubmittableResult) => {}
           let reject = (_value: unknown) => {}
@@ -100,6 +105,12 @@ export function useExtrinsic(
           })
 
           try {
+            if (signingWithSignet && submittable) {
+              const { ok, error, receipt } = await sdk.send(submittable.method.toHex())
+              // this doesnt matter because signet will redirect users away after every transaction
+              if (ok && receipt) reject(new Error('Please ignore this message.'))
+              if (error) reject(new Error(error))
+            }
             const unsubscribe = await submittable?.signAndSend(account, { signer: wallet?.signer }, result => {
               extrinsicMiddleware(chain.id, submittable, result, callbackInterface)
 
@@ -132,7 +143,9 @@ export function useExtrinsic(
           contents: loadable.state === 'loading' ? loadable.contents : undefined,
         }))
 
-        if (submittable !== undefined) {
+        // dont toast if using signet sdk because signet cant resolve full ISubmittableResult
+        // also signet already handles toasting in its UI
+        if (submittable !== undefined && !signingWithSignet) {
           toastExtrinsic([[submittable.method.section, submittable.method.method]], promise, chain.subscanUrl)
         }
 
@@ -151,7 +164,18 @@ export function useExtrinsic(
         }
       },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [chain.id, chain.subscanUrl, endpoint, moduleOrSubmittable, JSON.stringify(params), section, setLoadable]
+    [
+      chain.id,
+      chain.subscanUrl,
+      endpoint,
+      moduleOrSubmittable,
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      JSON.stringify(params),
+      section,
+      setLoadable,
+      signetAccount,
+      sdk,
+    ]
   )
 
   return useMemo(

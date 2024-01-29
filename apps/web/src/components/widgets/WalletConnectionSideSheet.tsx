@@ -13,6 +13,7 @@ import { Suspense, useEffect, useState, type ButtonHTMLAttributes, type Detailed
 import { atom, useRecoilState } from 'recoil'
 import { useAccount } from 'wagmi'
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
+import { useSignetSdk } from '@talismn/signet-apps-sdk'
 
 const talismanInstalled = 'talismanEth' in globalThis
 
@@ -63,6 +64,7 @@ type WalletConnectionProps = {
   connected?: boolean
   onConnectRequest: () => unknown
   onDisconnectRequest: () => unknown
+  nonInteractive?: boolean
 }
 
 const itemStyle = () => ({
@@ -85,9 +87,9 @@ const WalletConnection = (props: WalletConnectionProps) => {
         )
       }
       headlineText={<Text.BodyLarge alpha="high">{props.name}</Text.BodyLarge>}
-      trailingContent={<ConnectionChip connected={props.connected} hovered={hovered} />}
+      trailingContent={<ConnectionChip connected={props.connected} hovered={!props.nonInteractive && hovered} />}
       onClick={props.connected ? props.onDisconnectRequest : props.onConnectRequest}
-      onMouseEnter={() => setHovered(true)}
+      onMouseEnter={() => setHovered(!props.nonInteractive)}
       onMouseLeave={() => setHovered(false)}
       css={itemStyle}
     />
@@ -195,6 +197,7 @@ type WalletConnectionSideSheetProps = {
 }
 
 export const WalletConnectionSideSheetComponent = (props: WalletConnectionSideSheetProps) => {
+  const { inSignet } = useSignetSdk()
   return (
     <ClassNames>
       {({ css }) => (
@@ -203,27 +206,41 @@ export const WalletConnectionSideSheetComponent = (props: WalletConnectionSideSh
           headerClassName={css({ marginBottom: '3.2rem' })}
           onRequestDismiss={props.onRequestDismiss}
         >
-          <Text.Body as="h3" css={{ marginBottom: '3.2rem' }}>
-            Select the wallet to connect to Talisman Portal
-          </Text.Body>
-          <div css={{ display: 'flex', flexDirection: 'column', gap: '2.4rem' }}>
-            <Suspense fallback={<div css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '40rem' } }} />}>
-              <SubstrateWalletConnection />
-              <EvmWalletConnections />
-            </Suspense>
-            <div>
-              <Hr css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }}>Don't want to connect a wallet?</Hr>
-              <AddReadOnlyAccountDialog>
-                {({ onToggleOpen }) => (
-                  <button css={{ display: 'contents', cursor: 'pointer' }} onClick={onToggleOpen}>
-                    <Text.BodyLarge as="div" alpha="high" css={{ textAlign: 'center' }}>
-                      <Eye size="2rem" css={{ verticalAlign: 'text-top' }} /> Add watched account
-                    </Text.BodyLarge>
-                  </button>
-                )}
-              </AddReadOnlyAccountDialog>
+          {!inSignet && (
+            <Text.Body as="h3" css={{ marginBottom: '3.2rem' }}>
+              Select the wallet to connect to Talisman Portal
+            </Text.Body>
+          )}
+          {inSignet ? (
+            <WalletConnection
+              name="Signet"
+              // TODO: update to signet official domain for logo
+              iconUrl="https://legendary-griffin-27eef8.netlify.app/logo192.png"
+              connected
+              nonInteractive
+              onConnectRequest={() => {}}
+              onDisconnectRequest={() => {}}
+            />
+          ) : (
+            <div css={{ display: 'flex', flexDirection: 'column', gap: '2.4rem' }}>
+              <Suspense fallback={<div css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '40rem' } }} />}>
+                <SubstrateWalletConnection />
+                <EvmWalletConnections />
+              </Suspense>
+              <div>
+                <Hr css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }}>Don't want to connect a wallet?</Hr>
+                <AddReadOnlyAccountDialog>
+                  {({ onToggleOpen }) => (
+                    <button css={{ display: 'contents', cursor: 'pointer' }} onClick={onToggleOpen}>
+                      <Text.BodyLarge as="div" alpha="high" css={{ textAlign: 'center' }}>
+                        <Eye size="2rem" css={{ verticalAlign: 'text-top' }} /> Add watched account
+                      </Text.BodyLarge>
+                    </button>
+                  )}
+                </AddReadOnlyAccountDialog>
+              </div>
             </div>
-          </div>
+          )}
         </SideSheet>
       )}
     </ClassNames>
