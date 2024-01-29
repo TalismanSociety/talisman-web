@@ -59,23 +59,20 @@ type MultiDappsUnstakeDialogProps = {
 const MultiDappUnstakeDialog = (props: MultiDappsUnstakeDialogProps) => {
   const [dapp, setDapp] = useState<AstarPrimitivesDappStakingSmartContract>()
 
-  return (
-    <>
-      <DappPickerDialog
-        title="Select a DApp to unstake from"
-        stake={props.stake}
-        onSelect={setDapp}
-        onRequestDismiss={props.onRequestDismiss}
-      />
-      {dapp !== undefined && (
-        <DappUnstakeDialog
-          account={props.account}
-          stake={props.stake}
-          dapp={dapp}
-          onRequestDismiss={props.onRequestDismiss}
-        />
-      )}
-    </>
+  return dapp === undefined ? (
+    <DappPickerDialog
+      title="Select a DApp to unstake from"
+      stake={props.stake}
+      onSelect={setDapp}
+      onRequestDismiss={props.onRequestDismiss}
+    />
+  ) : (
+    <DappUnstakeDialog
+      account={props.account}
+      stake={props.stake}
+      dapp={dapp}
+      onRequestDismiss={props.onRequestDismiss}
+    />
   )
 }
 

@@ -59,23 +59,20 @@ type MultiDappsAddStakeDialogProps = {
 const MultiDappAddStakeDialog = (props: MultiDappsAddStakeDialogProps) => {
   const [dapp, setDapp] = useState<AstarPrimitivesDappStakingSmartContract>()
 
-  return (
-    <>
-      <DappPickerDialog
-        title="Select a DApp to increase stake"
-        stake={props.stake}
-        onSelect={setDapp}
-        onRequestDismiss={props.onRequestDismiss}
-      />
-      {dapp !== undefined && (
-        <DappAddStakeDialog
-          account={props.account}
-          stake={props.stake}
-          dapp={dapp}
-          onRequestDismiss={props.onRequestDismiss}
-        />
-      )}
-    </>
+  return dapp === undefined ? (
+    <DappPickerDialog
+      title="Select a DApp to increase stake"
+      stake={props.stake}
+      onSelect={setDapp}
+      onRequestDismiss={props.onRequestDismiss}
+    />
+  ) : (
+    <DappAddStakeDialog
+      account={props.account}
+      stake={props.stake}
+      dapp={dapp}
+      onRequestDismiss={props.onRequestDismiss}
+    />
   )
 }
 
