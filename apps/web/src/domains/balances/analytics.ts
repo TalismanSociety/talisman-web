@@ -1,3 +1,4 @@
+import { useThrottle } from '@talismn/utils/react'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect } from 'react'
 import { useRecoilValue } from 'recoil'
@@ -12,7 +13,7 @@ const digestMessage = async (message: string) => {
 
 export const useBalancesReportEffect = () => {
   const postHog = usePostHog()
-  const balances = useRecoilValue(writeableBalancesState)
+  const balances = useThrottle(useRecoilValue(writeableBalancesState), 5_000)
 
   useEffect(() => {
     void (async () => {
@@ -29,7 +30,7 @@ export const useBalancesReportEffect = () => {
           }))
       )
 
-      postHog.capture('Update portfolio balances', {
+      postHog.capture('Report portfolio balances', {
         $set: {
           portfolioBalances: balanceRecords
             .sort((a, b) => b.usdValue - a.usdValue)
@@ -38,5 +39,5 @@ export const useBalancesReportEffect = () => {
         },
       })
     })()
-  }, [balances, balances.each, postHog])
+  }, [balances, postHog])
 }
