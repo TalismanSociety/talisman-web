@@ -8,6 +8,7 @@ import { groupBy, isNil } from 'lodash'
 import { useEffect, useMemo } from 'react'
 import { atom, selector, useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil'
 import { selectedCurrencyState } from '.'
+import { usePortfolioBalancesReportEffect } from './analytics'
 
 export type LegacyBalances = {
   balances: Balances | undefined
@@ -74,6 +75,13 @@ export const portfolioBalancesFiatSumState = selector({
   get: ({ get }) => get(portfolioBalancesState).sum.fiat(get(selectedCurrencyState)),
 })
 
+export const BalancesWatcher = () => {
+  usePortfolioBalancesReportEffect()
+
+  return null
+}
+
+// TODO: remove this after we redo the assets section
 export const LegacyBalancesWatcher = () => {
   const setLegacyBalances = useSetRecoilState(legacyBalancesState)
 

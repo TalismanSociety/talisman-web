@@ -1,5 +1,4 @@
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
-import { isKeyringPair } from '@polkadot/api/util'
 import { type ISubmittableResult } from '@polkadot/types/types'
 import posthog from 'posthog-js'
 import { startTransition } from 'react'
@@ -26,7 +25,6 @@ export const posthogMiddleware: ExtrinsicMiddleware = (chain, extrinsic, result)
       chainProperties: extrinsic.registry.getChainProperties()?.toHuman(),
       module: extrinsic.method.section,
       section: extrinsic.method.method,
-      signer: isKeyringPair(extrinsic.signer) ? extrinsic.signer.address : extrinsic.signer.toString(),
       args: Object.fromEntries(
         extrinsic.meta.args.map((x, index) => [x.name.toPrimitive(), extrinsic.args[index]?.toHuman()])
       ),
