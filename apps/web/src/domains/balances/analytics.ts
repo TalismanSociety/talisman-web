@@ -1,6 +1,6 @@
 import { useThrottle } from '@talismn/utils/react'
 import { usePostHog } from 'posthog-js/react'
-import { useEffect } from 'react'
+import { useUpdateEffect } from 'react-use'
 import { useRecoilValue } from 'recoil'
 import { writeableBalancesState } from '.'
 
@@ -15,7 +15,9 @@ export const useBalancesReportEffect = () => {
   const postHog = usePostHog()
   const balances = useThrottle(useRecoilValue(writeableBalancesState), 5_000)
 
-  useEffect(() => {
+  // TODO: use normal effect after we redo balances section with proper suspense support
+  // right now the first received balance value will be a default empty one
+  useUpdateEffect(() => {
     void (async () => {
       const balanceRecords = await Promise.all(
         balances
