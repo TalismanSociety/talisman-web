@@ -6,7 +6,7 @@ import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import Development from '@components/widgets/development'
 import { AccountWatcher, SignetWatcher } from '@domains/accounts'
-import { LegacyBalancesWatcher } from '@domains/balances'
+import { BalancesWatcher, LegacyBalancesWatcher } from '@domains/balances'
 import { chainDeriveState, chainQueryMultiState, chainQueryState } from '@domains/common/recoils/query'
 import { ExtensionWatcher, TalismanExtensionSynchronizer } from '@domains/extension'
 import { WagmiProvider } from '@domains/extension/wagmi'
@@ -62,6 +62,7 @@ const App = () => (
                     <AccountWatcher />
                     <SignetWatcher />
                     <TalismanExtensionSynchronizer />
+                    <BalancesWatcher />
                     <LegacyBalancesWatcher />
                     <RouterProvider router={router} />
                     <FairyBreadBanner />

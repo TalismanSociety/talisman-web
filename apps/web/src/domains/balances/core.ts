@@ -1,6 +1,11 @@
 // TODO: nuke everything and re-write balances lib integration
 
-import { accountsState, portfolioAccountsState, selectedAccountsState } from '@domains/accounts/recoils'
+import {
+  accountsState,
+  portfolioAccountsState,
+  selectedAccountsState,
+  writeableAccountsState,
+} from '@domains/accounts/recoils'
 import { Balances } from '@talismn/balances'
 import { useBalances as _useBalances, useAllAddresses, useChaindata, useTokens } from '@talismn/balances-react'
 import { type ChaindataProvider, type TokenList } from '@talismn/chaindata-provider'
@@ -8,6 +13,7 @@ import { groupBy, isNil } from 'lodash'
 import { useEffect, useMemo } from 'react'
 import { atom, selector, useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil'
 import { selectedCurrencyState } from '.'
+import { useBalancesReportEffect } from './analytics'
 
 export type LegacyBalances = {
   balances: Balances | undefined
@@ -74,6 +80,22 @@ export const portfolioBalancesFiatSumState = selector({
   get: ({ get }) => get(portfolioBalancesState).sum.fiat(get(selectedCurrencyState)),
 })
 
+export const writeableBalancesState = selector({
+  key: 'WritableBalances',
+  get: ({ get }) => {
+    const accounts = get(writeableAccountsState).map(x => x.address)
+    return new Balances(get(balancesState).sorted.filter(x => accounts.includes(x.address)))
+  },
+  dangerouslyAllowMutability: true,
+})
+
+export const BalancesWatcher = () => {
+  useBalancesReportEffect()
+
+  return null
+}
+
+// TODO: remove this after we redo the assets section
 export const LegacyBalancesWatcher = () => {
   const setLegacyBalances = useSetRecoilState(legacyBalancesState)
 

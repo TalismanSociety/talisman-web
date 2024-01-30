@@ -51,27 +51,25 @@ const NavigationRail = Object.assign(
             padding: '4.8rem 2.2rem',
             backgroundColor: theme.color.surface,
             width: 'fit-content',
-            minHeight: '70vh',
-            maxHeight: '90vh',
+            height: '100%',
+            overflowY: 'auto',
           },
           props.header === undefined && {
-            minHeight: 'unset',
+            justifyContent: 'center',
           },
         ]}
       >
-        <header>{props.header}</header>
-        <ul
+        {props.header ? <header css={{ marginTop: '3rem' }}>{props.header}</header> : null}
+        <div
           css={{
-            listStyle: 'none',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             gap: '1.2rem',
-            padding: 0,
           }}
         >
           {props.children}
-        </ul>
+        </div>
       </nav>
     )
   },

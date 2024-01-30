@@ -1,5 +1,5 @@
 import { type ComponentMeta, type Story } from '@storybook/react'
-import { Compass, CreditCard, Eye, RefreshCcw, Zap } from '@talismn/icons'
+import { Compass, CreditCard, PieChart, Repeat, Zap } from '@talismn/icons'
 
 import NavigationBar, { NavigationBarItem, type NavigationBarProps } from './NavigationBar'
 
@@ -25,9 +25,9 @@ export const Default: Story<NavigationBarProps> = args => <NavigationBar {...arg
 
 Default.args = {
   children: [
-    <NavigationBar.Item key={0} label="Portfolio" icon={<Eye />} />,
+    <NavigationBar.Item key={0} label="Portfolio" icon={<PieChart />} />,
     <NavigationBar.Item key={1} label="Staking" icon={<Zap />} />,
-    <NavigationBar.Item key={2} label="Transfer" icon={<RefreshCcw />} />,
+    <NavigationBar.Item key={2} label="Transport" icon={<Repeat />} />,
     <NavigationBar.Item key={3} label="Explore" icon={<Compass />} />,
     <NavigationBar.Item key={4} label="Buy" icon={<CreditCard />} />,
   ],
