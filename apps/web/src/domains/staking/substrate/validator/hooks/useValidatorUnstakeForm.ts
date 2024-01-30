@@ -7,12 +7,13 @@ export const useValidatorUnstakeForm = (account?: string) => {
   const queriesLoadable = useQueryMulti(['staking.minNominatorBond', ['staking.ledger', account]], {
     enabled: account !== undefined,
   })
-  const activeStake = useMemo(() => queriesLoadable.valueMaybe()?.[1]?.unwrapOrDefault().active, [queriesLoadable])
+  const stake = useMemo(() => queriesLoadable.valueMaybe()?.[1], [queriesLoadable])
   const unbondExtrinsic = useExtrinsic('staking', 'unbond')
   const unbondAllExtrinsic = useExtrinsic(
     useCallback(
-      (api: ApiPromise) => api.tx.utility.batch([api.tx.staking.chill(), api.tx.staking.unbond(activeStake ?? 0)]),
-      [activeStake]
+      (api: ApiPromise) =>
+        api.tx.utility.batch([api.tx.staking.chill(), api.tx.staking.unbond(stake?.unwrapOrDefault().active ?? 0)]),
+      [stake]
     )
   )
 
@@ -73,7 +74,7 @@ export const useValidatorUnstakeForm = (account?: string) => {
       // maybe create a hook or function to combine status of multiple distinct extrinsic
       state: unbondExtrinsic.state === 'loading' || unbondAllExtrinsic.state === 'loading' ? 'loading' : 'idle',
       unbondAll: async (account: string) => {
-        if (activeStake === undefined) {
+        if (stake === undefined) {
           throw new Error('Extrinsic not ready yet')
         }
 
