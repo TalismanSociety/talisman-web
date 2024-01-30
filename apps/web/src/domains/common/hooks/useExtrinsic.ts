@@ -105,7 +105,7 @@ export function useExtrinsic(
           }
         })()
 
-        const signingWithSignet = signetAccount.address === account
+        const signingWithSignet = signetAccount !== undefined && signetAccount.address === account
 
         const promiseFunc = async () => {
           let resolve = (_value: ISubmittableResult) => {}

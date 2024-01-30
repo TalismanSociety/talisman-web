@@ -273,7 +273,7 @@ export const AccountWatcher = () => {
   return null
 }
 
-export const signetAccountState = atom<InjectedAccount>({
+export const signetAccountState = atom<InjectedAccount | undefined>({
   key: 'SignetAccount',
   default: undefined,
 })
