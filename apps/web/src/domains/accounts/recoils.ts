@@ -130,7 +130,7 @@ export const accountsState = selector({
   key: 'Accounts',
   get: ({ get }) => {
     const signetAccount = get(signetAccountState)
-    if (signetAccount) return [{ ...signetAccount, readonly: false, partOfPortfolio: true }]
+    if (signetAccount !== undefined) return [{ ...signetAccount, readonly: false, partOfPortfolio: true }]
 
     const substrateInjecteds = get(substrateInjectedAccountsState)
     // Hack to retrieve name from that is only available from substrate injected accounts
@@ -203,7 +203,7 @@ export const selectedAccountsState = selector({
   key: 'SelectedAccounts',
   get: ({ get }) => {
     const signetAccount = get(signetAccountState)
-    if (signetAccount) return [signetAccount]
+    if (signetAccount !== undefined) return [signetAccount]
 
     const [accounts, portfolioAccounts, readOnlyAccounts, selectedAddresses, lookupAccount] = get(
       waitForAll([
@@ -274,7 +274,7 @@ export const AccountWatcher = () => {
 }
 
 export const signetAccountState = atom<InjectedAccount>({
-  key: 'SignetAccountState',
+  key: 'SignetAccount',
   default: undefined,
 })
 
@@ -283,7 +283,7 @@ export const SignetWatcher = () => {
   const setSignetVaultAccount = useSetRecoilState(signetAccountState)
 
   useEffect(() => {
-    if (inSignet && sdk) {
+    if (inSignet) {
       sdk
         .getAccount()
         .then(vault => {

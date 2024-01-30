@@ -119,9 +119,9 @@ export function useExtrinsic(
           try {
             if (signingWithSignet && submittable) {
               const { ok, error, receipt } = await sdk.send(submittable.method.toHex())
-              // this doesnt matter because signet will redirect users away after every transaction
+              // both rejects dont matter because signet will toast corresponding message after every transaction
               if (ok && receipt) reject(new Error('Please ignore this message.'))
-              if (error) reject(new Error(error))
+              if (error) reject(new Error('Failed to approve transation in Signet', { cause: error }))
             }
             const unsubscribe = await submittable?.signAndSend(account, { signer: wallet?.signer }, result => {
               extrinsicMiddleware(chain.id, submittable, result, callbackInterface)
