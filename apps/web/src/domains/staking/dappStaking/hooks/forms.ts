@@ -191,7 +191,9 @@ export const useUnstakeForm = (
   const input = useTokenAmount(deferredAmount)
   const inTransition = amount !== deferredAmount
 
-  const stakerInfo = useRecoilValue(useQueryState('dappStaking', 'stakerInfo', [account.address, dapp]))
+  const [api, stakerInfo] = useRecoilValue(
+    waitForAll([useSubstrateApiState(), useQueryState('dappStaking', 'stakerInfo', [account.address, dapp])])
+  )
 
   const extrinsic = useExtrinsic(
     useCallback(
@@ -216,6 +218,8 @@ export const useUnstakeForm = (
     )
   )
 
+  const minimum = useTokenAmountFromPlanck(api.consts.dappStaking.minimumStakeAmount)
+
   const error = useMemo(() => {
     if (amount.trim() === '' || inTransition) return
 
@@ -223,8 +227,16 @@ export const useUnstakeForm = (
       return new Error('Insufficient balance')
     }
 
+    if (
+      input.decimalAmount !== undefined &&
+      available.decimalAmount.planck.sub(input.decimalAmount.planck).gtn(0) &&
+      available.decimalAmount.planck.sub(input.decimalAmount.planck).lt(minimum.decimalAmount.planck)
+    ) {
+      return new Error(`Need ${minimum.decimalAmount.toHuman()} to keep staking`)
+    }
+
     return undefined
-  }, [amount, available.decimalAmount.planck, inTransition, input.decimalAmount?.planck])
+  }, [amount, available.decimalAmount.planck, inTransition, input.decimalAmount, minimum.decimalAmount])
 
   return {
     ready:
