@@ -140,6 +140,7 @@ export const useAddStakeForm = (
       paymentInfoLoadable.state === 'hasValue' &&
       deferredAmount.trim() !== '' &&
       input.decimalAmount !== undefined &&
+      !input.decimalAmount.planck.isZero() &&
       error === undefined &&
       !inTransition,
     input: { ...input, amount },
@@ -226,7 +227,12 @@ export const useUnstakeForm = (
   }, [amount, available.decimalAmount.planck, inTransition, input.decimalAmount?.planck])
 
   return {
-    ready: input.decimalAmount !== undefined && error === undefined && !inTransition,
+    ready:
+      deferredAmount.trim() !== '' &&
+      input.decimalAmount !== undefined &&
+      !input.decimalAmount.planck.isZero() &&
+      error === undefined &&
+      !inTransition,
     input: { ...input, amount },
     setAmount,
     available,
