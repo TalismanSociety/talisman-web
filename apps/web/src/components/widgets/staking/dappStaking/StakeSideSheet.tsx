@@ -117,7 +117,10 @@ const EstimatedRewards = (props: { amount: string }) => {
   const tokenAmount = useRecoilValue(useNativeTokenAmountState())
   const apr = useApr()
   const amount = useMemo(
-    () => tokenAmount.fromPlanck(tokenAmount.fromUserInput(props.amount).decimalAmount.planck.muln(apr.totalApr)),
+    () =>
+      tokenAmount.fromPlanck(
+        tokenAmount.fromUserInputOrUndefined(props.amount).decimalAmount?.planck.muln(apr.totalApr)
+      ),
     [apr.totalApr, props.amount, tokenAmount]
   )
 

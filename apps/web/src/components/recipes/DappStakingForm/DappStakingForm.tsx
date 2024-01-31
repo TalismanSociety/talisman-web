@@ -123,7 +123,7 @@ const DappStakingForm = Object.assign(
         <DescriptionList>
           <DescriptionList.Description>
             <DescriptionList.Term>Estimated earning</DescriptionList.Term>
-            <DescriptionList.Details>{props.estimatedRewards}</DescriptionList.Details>
+            <DescriptionList.Details css={{ wordBreak: 'break-all' }}>{props.estimatedRewards}</DescriptionList.Details>
           </DescriptionList.Description>
           {props.currentStakedBalance !== undefined && (
             <DescriptionList.Description>

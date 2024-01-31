@@ -125,6 +125,12 @@ export const nativeTokenDecimalState = selectorFamily({
           Decimal.fromPlanck(value, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
         fromUserInput: (input: string) =>
           Decimal.fromUserInput(input, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
+        fromUserInputOrUndefined: (input: string) =>
+          Decimal.fromUserInputOrUndefined(
+            input,
+            api.registry.chainDecimals[0] ?? 0,
+            api.registry.chainTokens[0] ?? ''
+          ),
       }
     },
 })
@@ -144,35 +150,27 @@ export const nativeTokenAmountState = selectorFamily({
         ])
       )
 
+      const fromValue =
+        <T, T1 extends Decimal | undefined>(transformFn: (value: T) => T1) =>
+        (value: T) => {
+          const decimalAmount = transformFn(value)
+          const fiatAmount = (decimalAmount?.toNumber() ?? 0) * price
+          const localizedFiatAmount = fiatAmount.toLocaleString(undefined, {
+            style: 'currency',
+            currency,
+          })
+
+          return {
+            decimalAmount,
+            fiatAmount,
+            localizedFiatAmount,
+          }
+        }
+
       return {
-        fromPlanck: (value: string | number | bigint | BN | ToBn | undefined) => {
-          const decimalAmount = decimal.fromPlanck(value)
-          const fiatAmount = decimalAmount.toNumber() * price
-          const localizedFiatAmount = fiatAmount.toLocaleString(undefined, {
-            style: 'currency',
-            currency,
-          })
-
-          return {
-            decimalAmount,
-            fiatAmount,
-            localizedFiatAmount,
-          }
-        },
-        fromUserInput: (input: string) => {
-          const decimalAmount = decimal.fromUserInput(input)
-          const fiatAmount = decimalAmount.toNumber() * price
-          const localizedFiatAmount = fiatAmount.toLocaleString(undefined, {
-            style: 'currency',
-            currency,
-          })
-
-          return {
-            decimalAmount,
-            fiatAmount,
-            localizedFiatAmount,
-          }
-        },
+        fromPlanck: fromValue(decimal.fromPlanck),
+        fromUserInput: fromValue(decimal.fromUserInput),
+        fromUserInputOrUndefined: fromValue(decimal.fromUserInputOrUndefined),
       }
     },
 })
