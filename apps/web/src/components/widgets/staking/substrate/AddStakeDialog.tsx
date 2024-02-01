@@ -1,7 +1,6 @@
 import { NominationPoolsAddStakeDialog } from '@components/recipes/AddStakeDialog'
-import { useExtrinsic } from '@domains/common'
+import { useExtrinsic, useExtrinsicInBlockOrErrorEffect } from '@domains/common'
 import { usePoolAddForm } from '@domains/staking/substrate/nominationPools/hooks'
-import { useEffect } from 'react'
 
 const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) => {
   const {
@@ -19,15 +18,9 @@ const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) =
     },
   ])
 
-  useEffect(
-    () => {
-      if (bondExtraExtrinsic.state === 'loading' && bondExtraExtrinsic.contents?.status.isInBlock) {
-        props.onDismiss()
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [bondExtraExtrinsic.contents?.status?.isInBlock]
-  )
+  useExtrinsicInBlockOrErrorEffect(() => {
+    props.onDismiss()
+  }, bondExtraExtrinsic)
 
   return (
     <NominationPoolsAddStakeDialog

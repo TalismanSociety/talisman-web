@@ -23,7 +23,7 @@ const BaseIconButtonFactory =
       <Element
         {...props}
         css={[
-          props['onClick'] !== undefined && {
+          {
             'cursor': 'pointer',
             ':hover': {
               filter: 'brightness(1.2)',

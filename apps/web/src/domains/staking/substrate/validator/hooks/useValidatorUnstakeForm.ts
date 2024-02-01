@@ -72,7 +72,9 @@ export const useValidatorUnstakeForm = (account?: string) => {
       ...unbondExtrinsic,
       // TODO: clean up this dirty hack
       // maybe create a hook or function to combine status of multiple distinct extrinsic
-      state: unbondExtrinsic.state === 'loading' || unbondAllExtrinsic.state === 'loading' ? 'loading' : 'idle',
+      state: (unbondExtrinsic.state === 'loading' || unbondAllExtrinsic.state === 'loading'
+        ? ('loading' as const)
+        : ('idle' as const)) as any,
       unbondAll: async (account: string) => {
         if (stake === undefined) {
           throw new Error('Extrinsic not ready yet')

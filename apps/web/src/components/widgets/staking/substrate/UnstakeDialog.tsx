@@ -1,7 +1,8 @@
 import { NominationPoolsUnstakeDialog } from '@components/recipes/UnstakeDialog'
+import { useExtrinsicInBlockOrErrorEffect } from '@domains/common'
 import { usePoolUnstakeForm } from '@domains/staking/substrate/nominationPools/hooks'
 import { useLocalizedUnlockDuration } from '@domains/staking/substrate/nominationPools/hooks/useUnlockDuration'
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 
 const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) => {
   const lockDuration = useLocalizedUnlockDuration()
@@ -17,15 +18,9 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
     error: inputError,
   } = usePoolUnstakeForm(props.account)
 
-  useEffect(
-    () => {
-      if (unbondExtrinsic.state === 'loading' && unbondExtrinsic.contents?.status.isInBlock) {
-        props.onDismiss()
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [unbondExtrinsic.contents?.status?.isInBlock]
-  )
+  useExtrinsicInBlockOrErrorEffect(() => {
+    props.onDismiss()
+  }, unbondExtrinsic)
 
   return (
     <NominationPoolsUnstakeDialog
