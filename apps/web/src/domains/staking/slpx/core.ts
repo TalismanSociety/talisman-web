@@ -129,6 +129,10 @@ export const useSlpxSwapForm = (
   }, [decimalAmount, destToken?.decimals, destToken?.symbol, rateLoadable.contents, rateLoadable.state])
 
   const newOriginTokenAmount = useMemo(() => {
+    if (existingOriginTokenAmount.isFetched && decimalAmount === undefined) {
+      return Decimal.fromPlanck(existingOriginTokenAmount.data ?? 0n, originToken?.decimals ?? 0, originToken?.symbol)
+    }
+
     if (!existingOriginTokenAmount.isFetched || decimalAmount === undefined) {
       return undefined
     }
@@ -147,6 +151,10 @@ export const useSlpxSwapForm = (
   ])
 
   const newDestTokenAmount = useMemo(() => {
+    if (existingDestTokenAmount.isFetched && receivingAmount === undefined) {
+      return Decimal.fromPlanck(existingDestTokenAmount.data ?? 0n, destToken?.decimals ?? 0, destToken?.symbol)
+    }
+
     if (!existingDestTokenAmount.isFetched || receivingAmount === undefined) {
       return undefined
     }
