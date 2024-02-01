@@ -22,7 +22,8 @@ export const useBalancesReportEffect = () => {
       const balanceRecords = await Promise.all(
         balances
           .find(balance => balance.status !== 'stale')
-          .each.map(async balance => ({
+          .each.filter(balance => balance.chain === null || !('isCustom' in balance.chain && balance.chain.isCustom))
+          .map(async balance => ({
             addressDigest: await digestMessage(balance.address),
             chainId: balance.chainId,
             evmNetworkId: balance.evmNetworkId,
