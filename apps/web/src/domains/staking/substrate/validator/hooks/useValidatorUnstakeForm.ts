@@ -1,15 +1,21 @@
 import { useExtrinsic, useQueryMulti, useTokenAmountFromPlanck, useTokenAmountState } from '@domains/common/hooks'
-import useExtrinsicBatch from '@domains/common/hooks/useExtrinsicBatch'
+import type { ApiPromise } from '@polkadot/api'
 import { BN } from '@polkadot/util'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 export const useValidatorUnstakeForm = (account?: string) => {
-  const unbondExtrinsic = useExtrinsic('staking', 'unbond')
-  const unbondAllExtrinsic = useExtrinsicBatch(['staking.chill', 'staking.unbond'])
-
   const queriesLoadable = useQueryMulti(['staking.minNominatorBond', ['staking.ledger', account]], {
     enabled: account !== undefined,
   })
+  const stake = useMemo(() => queriesLoadable.valueMaybe()?.[1], [queriesLoadable])
+  const unbondExtrinsic = useExtrinsic('staking', 'unbond')
+  const unbondAllExtrinsic = useExtrinsic(
+    useCallback(
+      (api: ApiPromise) =>
+        api.tx.utility.batch([api.tx.staking.chill(), api.tx.staking.unbond(stake?.unwrapOrDefault().active ?? 0)]),
+      [stake]
+    )
+  )
 
   const [input, setAmount] = useTokenAmountState('')
 
@@ -68,17 +74,11 @@ export const useValidatorUnstakeForm = (account?: string) => {
       // maybe create a hook or function to combine status of multiple distinct extrinsic
       state: unbondExtrinsic.state === 'loading' || unbondAllExtrinsic.state === 'loading' ? 'loading' : 'idle',
       unbondAll: async (account: string) => {
-        const stake = queriesLoadable.valueMaybe()?.[1]
-
         if (stake === undefined) {
           throw new Error('Extrinsic not ready yet')
         }
 
-        return await unbondAllExtrinsic.signAndSend(account, [
-          [],
-          // Internal @polkadot type error
-          [queriesLoadable.valueMaybe()?.[1].unwrapOrDefault().active ?? 0],
-        ])
+        return await unbondAllExtrinsic.signAndSend(account)
       },
     },
     input,

@@ -8089,6 +8089,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@talismn/signet-apps-sdk@npm:0.0.7":
+  version: 0.0.7
+  resolution: "@talismn/signet-apps-sdk@npm:0.0.7"
+  dependencies:
+    react: "npm:^18.2.0"
+  checksum: 38b628bdbf73035507d533ab0b8e6a8e5b22b5f147f137109a4de7fd99ceba44c582762b9172eb09a53c27a9d4a8177373efb9a4d0a22db8ee069d88db058c6a
+  languageName: node
+  linkType: hard
+
 "@talismn/token-rates@npm:0.0.0-pr1199-20231219213830":
   version: 0.0.0-pr1199-20231219213830
   resolution: "@talismn/token-rates@npm:0.0.0-pr1199-20231219213830"
@@ -8233,6 +8242,7 @@ __metadata:
     "@talismn/math": "workspace:^"
     "@talismn/nft": "workspace:^"
     "@talismn/react-polkadot-api": "workspace:^"
+    "@talismn/signet-apps-sdk": "npm:0.0.7"
     "@talismn/tsconfig": "workspace:^"
     "@talismn/ui": "workspace:^"
     "@talismn/util": "npm:^0.2.0"

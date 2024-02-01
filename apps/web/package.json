@@ -40,6 +40,7 @@
     "@talismn/math": "workspace:^",
     "@talismn/nft": "workspace:^",
     "@talismn/react-polkadot-api": "workspace:^",
+    "@talismn/signet-apps-sdk": "0.0.7",
     "@talismn/ui": "workspace:^",
     "@talismn/util": "^0.2.0",
     "@talismn/utils": "workspace:^",

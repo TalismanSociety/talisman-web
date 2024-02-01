@@ -1,5 +1,6 @@
 import { storageEffect } from '@domains/common/effects'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
+import { useSignetSdk } from '@talismn/signet-apps-sdk'
 import { array, jsonParser, object, optional, string } from '@recoiljs/refine'
 import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { Maybe } from '@util/monads'
@@ -9,6 +10,7 @@ import { useUpdateEffect } from 'react-use'
 import { atom, selector, useRecoilValue, useSetRecoilState, waitForAll } from 'recoil'
 import { isAddress as isEvmAddress } from 'viem'
 import router from '../../routes'
+import { useEffect } from 'react'
 
 type AccountWithOrigin = InjectedAccount & { origin?: 'injected' | 'local' }
 
@@ -127,6 +129,9 @@ export const wagmiAccountsState = atom<Account[]>({
 export const accountsState = selector({
   key: 'Accounts',
   get: ({ get }) => {
+    const signetAccount = get(signetAccountState)
+    if (signetAccount !== undefined) return [{ ...signetAccount, readonly: false, partOfPortfolio: true }]
+
     const substrateInjecteds = get(substrateInjectedAccountsState)
     // Hack to retrieve name from that is only available from substrate injected accounts
     const wagmiInjected = get(wagmiAccountsState).map(x => ({
@@ -197,6 +202,9 @@ export const selectedAccountAddressesState = atom<string[] | undefined>({
 export const selectedAccountsState = selector({
   key: 'SelectedAccounts',
   get: ({ get }) => {
+    const signetAccount = get(signetAccountState)
+    if (signetAccount !== undefined) return [signetAccount]
+
     const [accounts, portfolioAccounts, readOnlyAccounts, selectedAddresses, lookupAccount] = get(
       waitForAll([
         accountsState,
@@ -261,6 +269,35 @@ export const AccountWatcher = () => {
   useUpdateEffect(() => {
     setLookupAccountAddress(undefined)
   }, [selectedAddresses])
+
+  return null
+}
+
+export const signetAccountState = atom<InjectedAccount | undefined>({
+  key: 'SignetAccount',
+  default: undefined,
+})
+
+export const SignetWatcher = () => {
+  const { inSignet, sdk } = useSignetSdk()
+  const setSignetVaultAccount = useSetRecoilState(signetAccountState)
+
+  useEffect(() => {
+    if (inSignet) {
+      sdk
+        .getAccount()
+        .then(vault => {
+          setSignetVaultAccount({
+            address: vault.vaultAddress,
+            genesisHash: vault.chain.genesisHash,
+            name: vault.name,
+          })
+        })
+        .catch(e => {
+          console.error('Failed to inject Signet account', e)
+        })
+    }
+  }, [inSignet, sdk, setSignetVaultAccount])
 
   return null
 }
