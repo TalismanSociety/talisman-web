@@ -13,6 +13,7 @@ export const bridgeState = selector({
       adapters: Object.values(bridgeConfig)
         .filter((x): x is NonNullable<typeof x> => x !== undefined)
         .map(x => x.adapter),
+      disabledRouters: [{ from: 'kusama', to: 'statemine' }],
     })
     await bridge.isReady
     return bridge
