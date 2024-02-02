@@ -2,7 +2,9 @@ import { useTheme } from '@emotion/react'
 import { Zap } from '@talismn/icons'
 import {
   Button,
+  CircularProgressIndicator,
   DescriptionList,
+  InfoCard,
   ListItem,
   SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR,
   Select,
@@ -12,7 +14,6 @@ import {
   TextInput,
   type ButtonProps,
   type SideSheetProps,
-  CircularProgressIndicator,
 } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { Suspense, type ReactNode } from 'react'
@@ -146,18 +147,20 @@ const DappStakingForm = Object.assign(
   }
 )
 
-export type DappStakingFormSideSheetProps = Omit<SideSheetProps, 'title'> & {
+export type DappStakingSideSheetProps = Omit<SideSheetProps, 'title'> & {
   chainName: ReactNode
+  rewards: ReactNode
+  nextEraEta: ReactNode
   minimumStake: ReactNode
   unbondingPeriod: ReactNode
 }
 
-export const DappStakingFormSideSheet = ({
+export const DappStakingSideSheet = ({
   children: form,
   minimumStake,
   unbondingPeriod,
   ...props
-}: DappStakingFormSideSheetProps) => {
+}: DappStakingSideSheetProps) => {
   return (
     <SideSheet
       {...props}
@@ -169,6 +172,24 @@ export const DappStakingFormSideSheet = ({
       subtitle="Astar DApp staking"
     >
       <div css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '42rem' } }}>
+        <section
+          css={{
+            'display': 'flex',
+            'alignItems': 'center',
+            'gap': '1.6rem',
+            'marginBottom': '1.6rem',
+            '> *': { flex: 1 },
+          }}
+        >
+          <InfoCard
+            headlineText="Rewards"
+            text={<Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.rewards}</Suspense>}
+          />
+          <InfoCard
+            headlineText="Current era ends"
+            text={<Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.nextEraEta}</Suspense>}
+          />
+        </section>
         {form}
         <Text.Body as="p" css={{ marginTop: '6.4rem' }}>
           The <Text.Body alpha="high">minimum amount</Text.Body> to stake for users is{' '}

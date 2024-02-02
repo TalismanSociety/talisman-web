@@ -1,5 +1,5 @@
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
-import DappStakingForm, { DappStakingFormSideSheet } from '@components/recipes/DappStakingForm'
+import DappStakingForm, { DappStakingSideSheet } from '@components/recipes/DappStakingForm'
 import { DappSelectorDialog as DappSelectorDialogComponent } from '@components/recipes/StakeTargetSelectorDialog'
 import { useAccountSelector } from '@components/widgets/AccountSelector'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
@@ -12,6 +12,7 @@ import {
   useNativeTokenDecimalState,
   type ChainInfo,
 } from '@domains/chains'
+import { useEraEta, useSubstrateApiState, useTokenAmountFromPlanck } from '@domains/common'
 import { useAddStakeForm, useApr, useRegisteredDappsState, useStake, type DappInfo } from '@domains/staking/dappStaking'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
 import { useQueryState } from '@talismn/react-polkadot-api'
@@ -21,7 +22,6 @@ import { Suspense, useMemo, useState, useTransition, type ReactNode } from 'reac
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 import UnlockDuration from './UnlockDuration'
-import { useSubstrateApiState, useTokenAmountFromPlanck } from '@domains/common'
 
 type DappSelectorDialogProps = {
   selectedDapp?: DappInfo
@@ -251,6 +251,10 @@ const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismis
   )
 }
 
+const Rewards = () => <>{useApr().totalApr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</>
+
+const NextEraEta = () => <>{useEraEta(1)}</>
+
 const MinimumStake = () => (
   <>
     {useTokenAmountFromPlanck(
@@ -261,9 +265,11 @@ const MinimumStake = () => (
 
 const StakeSideSheet = (props: StakeSideSheetProps) => {
   return (
-    <DappStakingFormSideSheet
+    <DappStakingSideSheet
       onRequestDismiss={props.onRequestDismiss}
       chainName={useRecoilValue(useChainState()).chainName}
+      rewards={<Rewards />}
+      nextEraEta={<NextEraEta />}
       minimumStake={<MinimumStake />}
       unbondingPeriod={<UnlockDuration />}
     >
@@ -288,7 +294,7 @@ const StakeSideSheet = (props: StakeSideSheetProps) => {
           <StakeSideSheetContent {...props} />
         </Suspense>
       </ErrorBoundary>
-    </DappStakingFormSideSheet>
+    </DappStakingSideSheet>
   )
 }
 
