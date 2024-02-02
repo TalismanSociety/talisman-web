@@ -26,7 +26,10 @@ const PermissionOption = (props: PermissionOptionProps) => {
           padding: '1.6rem',
           cursor: 'pointer',
         },
-        !props.checked && { opacity: theme.contentAlpha.disabled / 2 },
+        !props.checked && {
+          'opacity': theme.contentAlpha.disabled / 2,
+          ':hover': { opacity: theme.contentAlpha.medium },
+        },
       ]}
     >
       <header css={{ marginBottom: '1.6rem' }}>
@@ -48,6 +51,7 @@ type PoolClaimPermissionFormProps = {
   onSubmit: () => unknown
   submitPending?: boolean
   onRequestDismiss?: () => unknown
+  isTalismanPool: boolean
   loading?: boolean
 }
 
@@ -63,7 +67,7 @@ const PoolClaimPermissionForm = (props: PoolClaimPermissionFormProps) => {
             checked={props.permission !== undefined}
             onChange={event => props.onChangePermission(event.target.checked ? 'compound' : undefined)}
           />{' '}
-          Enable permissionless claiming
+          {props.isTalismanPool ? 'Enable auto claiming' : 'Enable permissionless claiming'}
         </label>{' '}
         <Tooltip content="foo">
           <Info size="1em" />
@@ -82,20 +86,32 @@ const PoolClaimPermissionForm = (props: PoolClaimPermissionFormProps) => {
         }}
       >
         <PermissionOption
-          name="Allow compound"
-          description="Allow anyone to compound rewards on your behalf"
+          name={props.isTalismanPool ? 'Auto compound' : 'Allow compound'}
+          description={
+            props.isTalismanPool
+              ? 'Your rewards will be re-staked every week for you'
+              : 'Allow anyone to compound rewards on your behalf'
+          }
           checked={props.permission === 'compound'}
           onCheck={() => props.onChangePermission('compound')}
         />
         <PermissionOption
-          name="Allow withdraw"
-          description="Allow anyone to withdraw rewards on your behalf"
+          name={props.isTalismanPool ? 'Auto withdraw' : 'Allow withdraw'}
+          description={
+            props.isTalismanPool
+              ? 'Your rewards will be redistributed to your account every week'
+              : 'Allow anyone to withdraw rewards on your behalf'
+          }
           checked={props.permission === 'withdraw'}
           onCheck={() => props.onChangePermission('withdraw')}
         />
         <PermissionOption
-          name="Allow all"
-          description="Allow anyone to compound or withdraw rewards on your behalf"
+          name={props.isTalismanPool ? 'Let Talisman decide' : 'Allow all'}
+          description={
+            props.isTalismanPool
+              ? 'Right now this is the same as the "Auto compound" option'
+              : 'Allow anyone to withdraw rewards on your behalf'
+          }
           checked={props.permission === 'all'}
           onCheck={() => props.onChangePermission('all')}
         />
@@ -137,6 +153,7 @@ export const PoolClaimPermissionDialog = (props: PoolClaimPermissionDialogProps)
               onChangePermission={() => {}}
               onSubmit={() => {}}
               onRequestDismiss={props.onRequestDismiss}
+              isTalismanPool={false}
             />
           </HiddenDetails>
         </Context.Provider>

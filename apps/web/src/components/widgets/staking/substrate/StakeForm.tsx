@@ -385,6 +385,18 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
     'Permissioned' | 'PermissionlessCompound' | 'PermissionlessWithdraw' | 'PermissionlessAll'
   >('Permissioned')
 
+  useEffect(
+    () => {
+      if (selectedPoolId !== undefined && chain.talismanPools?.includes(selectedPoolId)) {
+        setClaimPermission('PermissionlessCompound')
+      } else {
+        setClaimPermission('Permissioned')
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedPoolId]
+  )
+
   const joinPoolExtrinsic = useExtrinsic(
     useCallback(
       (api: ApiPromise) => {
@@ -417,6 +429,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
         <PoolClaimPermissionControlledDialog
           permission={claimPermission}
           onChangePermission={setClaimPermission}
+          poolId={selectedPoolId}
           onRequestDismiss={() => setClaimPermisssionDialogOpen(false)}
         />
       )}

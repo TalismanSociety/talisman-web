@@ -2,8 +2,9 @@ import PoolClaimPermissionFormComponent, {
   PoolClaimPermissionDialog as PoolClaimPermissionDialogComponent,
 } from '@components/recipes/PoolClaimPermissionForm'
 import type { Account } from '@domains/accounts'
+import { useChainState } from '@domains/chains'
 import { useExtrinsic, useExtrinsicInBlockOrErrorEffect } from '@domains/common'
-import { useQueryState } from '@talismn/react-polkadot-api'
+import { useQueryMultiState } from '@talismn/react-polkadot-api'
 import { useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
@@ -43,7 +44,13 @@ const toSubstratePermission = (permission: 'compound' | 'withdraw' | 'all' | und
 }
 
 const PoolClaimPermissionForm = (props: { account: Account; onRequestDismiss: () => unknown }) => {
-  const claimPermission = useRecoilValue(useQueryState('nominationPools', 'claimPermissions', [props.account.address]))
+  const chain = useRecoilValue(useChainState())
+  const [poolMember, claimPermission] = useRecoilValue(
+    useQueryMultiState([
+      ['nominationPools.poolMembers', props.account.address],
+      ['nominationPools.claimPermissions', props.account.address],
+    ])
+  )
 
   const [permission, setPermission] = useState<PoolClaimPermission>(claimPermission.type)
 
@@ -61,6 +68,9 @@ const PoolClaimPermissionForm = (props: { account: Account; onRequestDismiss: ()
         void extrinsic.signAndSend(props.account.address)
       }}
       submitPending={extrinsic.state === 'loading'}
+      isTalismanPool={
+        poolMember.isSome && (chain.talismanPools?.includes(poolMember.unwrapOrDefault().poolId.toNumber()) ?? false)
+      }
     />
   )
 }
@@ -74,10 +84,12 @@ const PoolClaimPermissionDialog = (props: PoolClaimPermissionDialogProps) => (
 type PoolClaimPermissionControlledDialogProps = {
   permission: PoolClaimPermission
   onChangePermission: (permission: PoolClaimPermission) => unknown
+  poolId?: number
   onRequestDismiss: () => unknown
 }
 
 export const PoolClaimPermissionControlledDialog = (props: PoolClaimPermissionControlledDialogProps) => {
+  const chain = useRecoilValue(useChainState())
   const [permission, setPermission] = useState<PoolClaimPermission>(props.permission)
 
   return (
@@ -89,6 +101,7 @@ export const PoolClaimPermissionControlledDialog = (props: PoolClaimPermissionCo
           props.onChangePermission(permission)
           props.onRequestDismiss()
         }}
+        isTalismanPool={props.poolId !== undefined && (chain.talismanPools?.includes(props.poolId) ?? false)}
       />
     </PoolClaimPermissionDialogComponent>
   )

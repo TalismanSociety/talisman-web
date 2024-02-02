@@ -157,9 +157,9 @@ const ClaimPermission = (props: ClaimPermissionProps) => (
       padding: '0.8rem 1.6rem',
     }}
   >
-    <div>
+    <Text.Body as="div">
       Claim permission:{' '}
-      <TonalChip size="sm" contentColor="#38D448">
+      <TonalChip size="sm" contentColor={props.permission === undefined ? '#F48F45' : '#38D448'}>
         {(() => {
           switch (props.permission) {
             case undefined:
@@ -173,7 +173,7 @@ const ClaimPermission = (props: ClaimPermissionProps) => (
           }
         })()}
       </TonalChip>
-    </div>
+    </Text.Body>
     <SurfaceChip
       contentAlpha="high"
       size="lg"

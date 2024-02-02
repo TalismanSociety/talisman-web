@@ -13,10 +13,19 @@ export default {
 type Story = StoryObj<typeof PoolClaimPermissionForm>
 
 export const Default: Story = {
-  args: {},
-  render: () => {
+  args: {
+    isTalismanPool: false,
+  },
+  render: args => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [permission, setPermission] = useState<'compound' | 'withdraw' | 'all' | undefined>()
-    return <PoolClaimPermissionForm permission={permission} onChangePermission={setPermission} onSubmit={() => {}} />
+    return (
+      <PoolClaimPermissionForm
+        {...args}
+        permission={permission}
+        onChangePermission={setPermission}
+        onSubmit={() => {}}
+      />
+    )
   },
 }
