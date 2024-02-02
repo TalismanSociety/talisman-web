@@ -44,7 +44,7 @@ const _NominationPoolsRewardsClaim = () => {
 
         const exs = poolMembersToClaim
           .map((x, index) => {
-            if (rewards[index] === undefined || rewards[index]?.ltn(0)) {
+            if (rewards[index] === undefined || rewards[index]?.lten(0)) {
               return undefined
             }
 
