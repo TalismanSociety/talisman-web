@@ -106,7 +106,7 @@ export const useStake = (account: Account) => {
       rewardsExpired
         ? []
         : stakedDapps
-            .filter(x => x[1].loyalStaker)
+            .filter(x => x[1].loyalStaker.isTrue)
             .filter(
               x =>
                 x[1].staked.period.unwrap().lt(activeProtocol.periodInfo.number.unwrap()) &&
