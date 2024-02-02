@@ -5,7 +5,6 @@ import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import PortfolioAllocationGraph from '@components/widgets/PortfolioAllocationGraph'
-import { SelectedAccountsHistory } from '@components/widgets/history/History'
 import Stakes from '@components/widgets/staking/Stakes'
 import { Eye, EyeOff } from '@talismn/icons'
 import { Button, IconButton, SearchBar } from '@talismn/ui'
@@ -117,17 +116,17 @@ const AssetsOverview = () => {
   )
 }
 
-const HistoryOverview = () => (
-  <div>
-    <SectionHeader headlineText="History" />
-    <SelectedAccountsHistory maxCount={8} />
-    <div css={{ display: 'flex' }}>
-      <Button variant="secondary" as={Link} to="history" css={{ marginTop: '1.8rem', marginLeft: 'auto' }}>
-        View all history
-      </Button>
-    </div>
-  </div>
-)
+// const HistoryOverview = () => (
+//   <div>
+//     <SectionHeader headlineText="History" />
+//     <SelectedAccountsHistory maxCount={8} />
+//     <div css={{ display: 'flex' }}>
+//       <Button variant="secondary" as={Link} to="history" css={{ marginTop: '1.8rem', marginLeft: 'auto' }}>
+//         View all history
+//       </Button>
+//     </div>
+//   </div>
+// )
 
 const Overview = () => (
   <div
@@ -161,11 +160,11 @@ const Overview = () => (
           <AssetsOverview />
         </ErrorBoundary>
       </div>
-      <div css={{ order: 4 }}>
+      {/* <div css={{ order: 4 }}>
         <ErrorBoundary>
           <HistoryOverview />
         </ErrorBoundary>
-      </div>
+      </div> */}
     </div>
     <div
       css={{
