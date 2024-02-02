@@ -1,7 +1,7 @@
-import { StatemintAdapter } from '@polkawallet/bridge/adapters/statemint'
-import { ParallelAdapter } from '@polkawallet/bridge/adapters/parallel'
 import { CentrifugeAdapter } from '@polkawallet/bridge/adapters/centrifuge'
-import { type BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
+import { ParallelAdapter } from '@polkawallet/bridge/adapters/parallel'
+import { StatemintAdapter } from '@polkawallet/bridge/adapters/statemint'
+import type { BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 
 import BN from 'bn.js'
 
@@ -25,19 +25,12 @@ type TokenConfig = {
 type ExtendedAdapter<T extends new (...args: any[]) => BaseCrossChainAdapter> = new () => InstanceType<T> &
   BaseCrossChainAdapter
 
-function createRouteConfigs(from: string, routes: RouteConfig[]): RouteConfig[] {
-  return routes.map(route => ({ ...route, from }))
-}
-
 function extendAdapter<T extends typeof StatemintAdapter | typeof ParallelAdapter | typeof CentrifugeAdapter>(
   AdapterClass: T,
   additionalRoutes: RouteConfig[],
   additionalTokens: Record<string, TokenConfig>
 ): ExtendedAdapter<T> {
   return class ExtendedAdapter extends AdapterClass {
-    routers: RouteConfig[] | undefined
-    tokens: Record<string, TokenConfig> | undefined
-
     constructor() {
       super()
       this.addRouters()
@@ -46,15 +39,16 @@ function extendAdapter<T extends typeof StatemintAdapter | typeof ParallelAdapte
 
     addRouters() {
       // TODO: check for additionalRoutes already existing. If so, don't add.
-      const newRoutes = createRouteConfigs('extended', additionalRoutes)
+      // @ts-expect-error
       const existingRoutes = this.routers ?? []
-      this.routers = [...existingRoutes, ...newRoutes]
+      Object.assign(this, { routers: [...existingRoutes, ...additionalRoutes] })
     }
 
     addTokens() {
       // TODO: check for additionalTokens already existing. If so, don't add.
+      // @ts-expect-error
       const existingTokens = this.tokens ?? {}
-      this.tokens = { ...existingTokens, ...additionalTokens }
+      Object.assign(this, { tokens: { ...existingTokens, ...additionalTokens } })
     }
   } as unknown as ExtendedAdapter<T>
 }
@@ -123,4 +117,4 @@ const ExtendedStatemintAdapter = extendAdapter(StatemintAdapter, newStatemintRou
 const ExtendedParallelAdapter = extendAdapter(ParallelAdapter, newParallelRoutes, newParallelTokens)
 const ExtendedCentrifugeAdapter = extendAdapter(CentrifugeAdapter, [], newCentrifugeTokens)
 
-export { ExtendedStatemintAdapter, ExtendedParallelAdapter, ExtendedCentrifugeAdapter }
+export { ExtendedCentrifugeAdapter, ExtendedParallelAdapter, ExtendedStatemintAdapter }
