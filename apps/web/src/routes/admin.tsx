@@ -28,9 +28,10 @@ const _NominationPoolsRewardsClaim = () => {
     useCallback(
       async (api: ApiPromise) => {
         const poolMembers = await api.query.nominationPools.poolMembers.entries()
-        const poolMembersToClaim = poolMembers.filter(
-          x => x[1].isSome && poolIds.includes(x[1].unwrap().poolId.toNumber())
-        )
+        const poolMembersToClaim =
+          poolIds.length === 0
+            ? poolMembers
+            : poolMembers.filter(x => x[1].isSome && poolIds.includes(x[1].unwrap().poolId.toNumber()))
 
         toast(`Found ${poolMembersToClaim.length} members in selected pools`)
 
@@ -44,7 +45,8 @@ const _NominationPoolsRewardsClaim = () => {
 
         const exs = poolMembersToClaim
           .map((x, index) => {
-            if (rewards[index] === undefined || rewards[index]?.lten(0)) {
+            const claimable = rewards[index]
+            if (claimable === undefined || claimable.lten(0)) {
               return undefined
             }
 
@@ -64,7 +66,7 @@ const _NominationPoolsRewardsClaim = () => {
 
         toast(`Found ${exs.length} members to claim on behalf of`)
 
-        return api.tx.utility.batch(exs)
+        return api.tx.utility.forceBatch(exs.slice(0, api.consts.utility.batchedCallsLimit.toNumber()))
       },
       [poolIds]
     )
@@ -88,7 +90,7 @@ const _NominationPoolsRewardsClaim = () => {
         onChangeText={setPoolIdsInput}
       />
       <Button
-        disabled={account === undefined || poolIds.length <= 0}
+        disabled={account === undefined}
         loading={extrinsic.state === 'loading'}
         onClick={() => {
           if (account !== undefined) {
