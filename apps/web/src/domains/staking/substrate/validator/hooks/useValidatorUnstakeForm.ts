@@ -12,7 +12,7 @@ export const useValidatorUnstakeForm = (account?: string) => {
   const unbondAllExtrinsic = useExtrinsic(
     useCallback(
       (api: ApiPromise) =>
-        api.tx.utility.batch([api.tx.staking.chill(), api.tx.staking.unbond(stake?.unwrapOrDefault().active ?? 0)]),
+        api.tx.utility.batchAll([api.tx.staking.chill(), api.tx.staking.unbond(stake?.unwrapOrDefault().active ?? 0)]),
       [stake]
     )
   )
