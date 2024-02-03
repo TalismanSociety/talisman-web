@@ -273,8 +273,8 @@ const Layout = () => {
       sideBar={
         <NavigationRail
           header={
-            <IconButton as={Link} to="/">
-              <TalismanHand />
+            <IconButton as={Link} to="/" size="4rem">
+              <TalismanHand size="4rem" />
             </IconButton>
           }
         >
