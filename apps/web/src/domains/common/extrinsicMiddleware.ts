@@ -44,7 +44,10 @@ export const posthogMiddleware: ExtrinsicMiddleware = (chain, extrinsic, result)
             args: Object.fromEntries(
               call.meta.args.map((x, index) => [x.name.toPrimitive(), call.args[index]?.toHuman()])
             ),
-            parentCall: rootCall,
+            parentCall: {
+              module: rootCall.module,
+              section: rootCall.section,
+            },
           })
         )
       )
