@@ -21,7 +21,7 @@ const combineMiddleware =
 
 export const posthogMiddleware: ExtrinsicMiddleware = (chain, extrinsic, result) => {
   if (result.status.isInBlock && result.dispatchError === undefined) {
-    posthog.capture('Extrinsic in block', {
+    const rootCall = {
       chain,
       chainProperties: extrinsic.registry.getChainProperties()?.toHuman(),
       module: extrinsic.method.section,
@@ -29,7 +29,9 @@ export const posthogMiddleware: ExtrinsicMiddleware = (chain, extrinsic, result)
       args: Object.fromEntries(
         extrinsic.meta.args.map((x, index) => [x.name.toPrimitive(), extrinsic.args[index]?.toHuman()])
       ),
-    })
+    }
+
+    posthog.capture('Extrinsic in block', rootCall)
 
     if (extrinsic.method.section === 'utility' && extrinsic.method.method.includes('batch')) {
       ;(extrinsic.args as Array<Vec<GenericCall>>).forEach(calls =>
@@ -42,6 +44,7 @@ export const posthogMiddleware: ExtrinsicMiddleware = (chain, extrinsic, result)
             args: Object.fromEntries(
               call.meta.args.map((x, index) => [x.name.toPrimitive(), call.args[index]?.toHuman()])
             ),
+            parentCall: rootCall,
           })
         )
       )
