@@ -99,6 +99,21 @@ export const useAddStakeForm = (
 
   const minimum = useTokenAmountFromPlanck(api.consts.dappStaking.minimumStakeAmount)
 
+  const maxStakeEntriesReached = useMemo(
+    () => stake.ledger.contractStakeCount.unwrap().gte(api.consts.dappStaking.maxNumberOfStakedContracts),
+    [api.consts.dappStaking.maxNumberOfStakedContracts, stake.ledger.contractStakeCount]
+  )
+
+  const maxStakedDappsReached = useMemo(
+    () => stake.dapps.length >= api.consts.dappStaking.maxNumberOfStakedContracts.toBigInt(),
+    [api.consts.dappStaking.maxNumberOfStakedContracts, stake.dapps.length]
+  )
+
+  const canCleanUpEntriesToMakeSpace = useMemo(
+    () => !maxStakedDappsReached || stakerInfo.isSome,
+    [maxStakedDappsReached, stakerInfo.isSome]
+  )
+
   const error = useMemo(() => {
     if (deferredAmount.trim() === '' || inTransition) return
 
@@ -109,8 +124,8 @@ export const useAddStakeForm = (
       return new Error('Not possible to stake in the last era of a period')
     }
 
-    if (stake.ledger.contractStakeCount.unwrap().gte(api.consts.dappStaking.maxNumberOfStakedContracts)) {
-      return new Error('Too many contract stake entries for the account')
+    if (maxStakeEntriesReached && !canCleanUpEntriesToMakeSpace) {
+      return new Error('Too many staked contracts for the account')
     }
 
     if (input.decimalAmount?.planck.gt(available.decimalAmount.planck)) {
@@ -123,16 +138,16 @@ export const useAddStakeForm = (
 
     return undefined
   }, [
+    activeProtocol.era,
+    activeProtocol.periodInfo.nextSubperiodStartEra,
+    activeProtocol.periodInfo.subperiod.type,
+    available.decimalAmount.planck,
+    canCleanUpEntriesToMakeSpace,
     deferredAmount,
     inTransition,
     input.decimalAmount?.planck,
-    available.decimalAmount.planck,
+    maxStakeEntriesReached,
     minimum.decimalAmount,
-    activeProtocol.periodInfo.subperiod.type,
-    activeProtocol.periodInfo.nextSubperiodStartEra,
-    activeProtocol.era,
-    stake.ledger.contractStakeCount,
-    api.consts.dappStaking.maxNumberOfStakedContracts,
   ])
 
   return {
@@ -170,12 +185,22 @@ export const useAddStakeForm = (
           const exs = [
             ...getAllRewardsClaimExtrinsics(api, stake),
             ...(amountToLock?.isZero() ?? true ? [] : [api.tx.dappStaking.lock(amountToLock ?? 0)]),
+            ...(maxStakeEntriesReached && canCleanUpEntriesToMakeSpace
+              ? [api.tx.dappStaking.cleanupExpiredEntries()]
+              : []),
             api.tx.dappStaking.stake(dapp, input.decimalAmount?.planck ?? 0),
           ]
 
           return exs.length <= 1 ? exs.at(0) : api.tx.utility.batchAll(exs)
         },
-        [dapp, input.decimalAmount?.planck, lockedAvailableForStake, stake]
+        [
+          canCleanUpEntriesToMakeSpace,
+          dapp,
+          input.decimalAmount?.planck,
+          lockedAvailableForStake,
+          maxStakeEntriesReached,
+          stake,
+        ]
       )
     ),
   }
