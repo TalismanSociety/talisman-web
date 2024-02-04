@@ -3,7 +3,7 @@ import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedBalancesState, selectedCurrencyState } from '@domains/balances'
-import { ChainProvider, defaultParams } from '@domains/chains'
+import { ChainProvider } from '@domains/chains'
 import { slpxPairsState, type SlpxPair } from '@domains/staking/slpx'
 import { githubChainLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
@@ -82,7 +82,6 @@ const StakeProviders = () => {
           <ChainProvider
             chain={{
               genesisHash: slpxPair.substrateChainGenesisHash,
-              parameters: defaultParams,
               priorityPool: undefined,
             }}
           >

@@ -5,7 +5,7 @@ import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedSubstrateAccountsState } from '@domains/accounts'
 import { ChainProvider, chainsState, useChainState } from '@domains/chains'
 import { chainDeriveState, substrateApiState, useTokenAmountFromPlanck } from '@domains/common'
-import { useInflation, useLocalizedLockDuration } from '@domains/staking/substrate/nominationPools'
+import { useApr, useLocalizedLockDuration } from '@domains/staking/substrate/nominationPools'
 import { Decimal } from '@talismn/math'
 import { usePolkadotApiId, useQueryState } from '@talismn/react-polkadot-api'
 import { CircularProgressIndicator } from '@talismn/ui'
@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 const Apr = () => {
-  return <>{useInflation().stakedReturn.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</>
+  return <>{useApr().toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</>
 }
 
 const useAvailableBalance = () => {

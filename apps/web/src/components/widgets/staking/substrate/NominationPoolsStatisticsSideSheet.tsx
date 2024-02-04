@@ -8,7 +8,7 @@ import {
   mostRecentPoolPayoutsState,
   poolPayoutsState,
   totalPoolPayoutsState,
-  useInflation,
+  useApr,
   usePoolStakes,
   type DerivedPool,
 } from '@domains/staking/substrate/nominationPools'
@@ -284,7 +284,7 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
 
   const eraEtaFormatter = useEraEtaFormatter()
 
-  const { stakedReturn } = useInflation()
+  const stakedReturn = useApr()
 
   const [api, decimal, last15DaysPayouts, last15DaysTotalPayouts, mostRecentPayouts] = useRecoilValue(
     waitForAll([

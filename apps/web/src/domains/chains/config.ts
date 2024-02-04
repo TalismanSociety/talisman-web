@@ -1,29 +1,5 @@
-export type ChainParameters = {
-  auctionAdjust: number
-  auctionMax: number
-  falloff: number
-  maxInflation: number
-  minInflation: number
-  stakeTarget: number
-  yearlyInflationInTokens?: number
-}
-
-/**
- * Values from Parity Dashboard
- * https://github.com/paritytech/polkadot-staking-dashboard/blob/8c136141141e6a74ddd838aa20df48a20a35749e/src/config/networks.ts
- */
-export const defaultParams: ChainParameters = {
-  auctionAdjust: 0,
-  auctionMax: 0,
-  falloff: 0.05,
-  maxInflation: 0.1,
-  minInflation: 0.025,
-  stakeTarget: 0.5,
-}
-
 export type ChainConfig = {
   genesisHash: `0x${string}`
-  parameters: ChainParameters
   priorityPool: number | undefined
 }
 
@@ -31,47 +7,26 @@ export const chainConfigs = [
   // Polkadot
   {
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
-    /**
-     * Values from Parity Dashboard
-     * https://github.com/paritytech/polkadot-staking-dashboard/blob/8c136141141e6a74ddd838aa20df48a20a35749e/src/config/networks.ts
-     */
-    parameters: { ...defaultParams, stakeTarget: 0.75 },
     priorityPool: 16,
   },
   // Kusama
   {
     genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
-    /**
-     * Values from Parity Dashboard
-     * https://github.com/paritytech/polkadot-staking-dashboard/blob/8c136141141e6a74ddd838aa20df48a20a35749e/src/config/networks.ts
-     */
-    parameters: { ...defaultParams, auctionAdjust: 0.3 / 60, auctionMax: 60, stakeTarget: 0.75 },
     priorityPool: 15,
   },
   // Aleph0
   {
     genesisHash: '0x70255b4d28de0fc4e1a193d7e175ad1ccef431598211c55538f1018651a0344e',
-    parameters: {
-      ...defaultParams,
-      stakeTarget: 0.5,
-      yearlyInflationInTokens: 30_000_000,
-    },
     priorityPool: 47,
   },
   // Vara
   {
     genesisHash: '0xfe1b4c55fd4d668101126434206571a7838a8b6b93a6d1b95d607e78e6c53763',
-    parameters: { ...defaultParams, stakeTarget: 0.8 },
     priorityPool: 8,
   },
   // Westend
   {
     genesisHash: '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
-    /**
-     * Values from Parity Dashboard
-     * https://github.com/paritytech/polkadot-staking-dashboard/blob/8c136141141e6a74ddd838aa20df48a20a35749e/src/config/networks.ts
-     */
-    parameters: { ...defaultParams, stakeTarget: 0.75 },
     priorityPool: undefined,
   },
 ] as const satisfies readonly ChainConfig[]

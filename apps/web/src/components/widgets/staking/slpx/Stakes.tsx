@@ -6,7 +6,7 @@ import { useState } from 'react'
 
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'
-import { ChainProvider, defaultParams } from '@domains/chains'
+import { ChainProvider } from '@domains/chains'
 import { slpxPairsState } from '@domains/staking/slpx'
 import type { SlpxPair } from '@domains/staking/slpx/types'
 import { useRecoilValue } from 'recoil'
@@ -83,7 +83,6 @@ const Stakes = () => {
           key={index}
           chain={{
             genesisHash: slpxPair.substrateChainGenesisHash,
-            parameters: defaultParams,
             priorityPool: undefined,
           }}
         >

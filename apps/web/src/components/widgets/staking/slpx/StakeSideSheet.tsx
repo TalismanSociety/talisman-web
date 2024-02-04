@@ -1,7 +1,7 @@
 import { SlpxAddStakeForm } from '@components/recipes/AddStakeDialog'
 import { useAccountSelector } from '@components/widgets/AccountSelector'
 import { evmSignableAccountsState } from '@domains/accounts'
-import { ChainProvider, defaultParams } from '@domains/chains'
+import { ChainProvider } from '@domains/chains'
 import { slpxPairsState, useMintForm, type SlpxPair } from '@domains/staking/slpx'
 import { Zap } from '@talismn/icons'
 import {
@@ -133,7 +133,6 @@ export default () => {
     <ChainProvider
       chain={{
         genesisHash: slpxPair.substrateChainGenesisHash,
-        parameters: defaultParams,
         priorityPool: undefined,
       }}
     >
