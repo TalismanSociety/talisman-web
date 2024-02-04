@@ -1,7 +1,6 @@
 import StakeDialogComponent from '@components/recipes/StakeDialog'
 import { chainsState, type ChainInfo } from '@domains/chains/recoils'
 import { useEraEtaFormatter } from '@domains/common/hooks'
-import { useInflation } from '@domains/staking/substrate/nominationPools/hooks'
 import { CircularProgressIndicator } from '@talismn/ui'
 import BN from 'bn.js'
 import { Suspense, useState, useTransition } from 'react'
@@ -10,12 +9,12 @@ import { useRecoilValue } from 'recoil'
 
 import StakeForm from '@components/recipes/StakeForm/StakeForm'
 import { ChainProvider } from '@domains/chains'
+import { useApr } from '@domains/staking/substrate/nominationPools'
 import ErrorBoundary from '../../ErrorBoundary'
 import { AssetSelect, ControlledStakeForm } from './StakeForm'
 
 const Rewards = () => {
-  const { stakedReturn } = useInflation()
-  return <>{stakedReturn.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</>
+  return <>{useApr().toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</>
 }
 
 const EraEta = () => {

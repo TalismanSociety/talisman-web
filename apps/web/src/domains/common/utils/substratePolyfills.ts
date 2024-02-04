@@ -30,6 +30,16 @@ export const expectedSessionTime = (api: ApiPromise) => {
     case '0x70255b4d28de0fc4e1a193d7e175ad1ccef431598211c55538f1018651a0344e':
       return minutesToMilliseconds(15)
     default:
-      return undefined
+      return (
+        (api.consts.babe?.epochDuration.toNumber() ?? api.registry.createType('u64', 1).toNumber()) *
+        expectedBlockTime(api).toNumber()
+      )
   }
+}
+
+export const expectedEraTime = (api: ApiPromise) => {
+  const sessionsPerEra = api.consts.staking?.sessionsPerEra ?? api.registry.createType('SessionIndex', 1)
+  const sessionTime = expectedSessionTime(api)
+
+  return sessionsPerEra.muln(sessionTime).toNumber()
 }

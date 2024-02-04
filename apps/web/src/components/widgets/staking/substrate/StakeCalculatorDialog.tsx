@@ -1,7 +1,7 @@
 import StakeCalculatorDialogComponent from '@components/recipes/StakeCalculatorDialog'
 import { ChainProvider, chainsState, useChainState } from '@domains/chains'
 import { useTokenAmount, useTokenAmountFromPlanck } from '@domains/common'
-import { useInflation } from '@domains/staking/substrate/nominationPools'
+import { useApr } from '@domains/staking/substrate/nominationPools'
 import { Suspense, useDeferredValue, useMemo, useState, useTransition } from 'react'
 import { useRecoilValue } from 'recoil'
 import ErrorBoundary from '../../ErrorBoundary'
@@ -10,7 +10,7 @@ import { AssetSelect } from './StakeForm'
 type StakeCalculatorDialogProps = { open?: boolean; onRequestDismiss: () => unknown }
 
 const EstimatedYield = (props: { amount: string }) => {
-  const { stakedReturn } = useInflation()
+  const stakedReturn = useApr()
 
   const amount = useTokenAmount(props.amount)
 

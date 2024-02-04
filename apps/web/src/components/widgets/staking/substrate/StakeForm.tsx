@@ -18,7 +18,7 @@ import {
   useSubstrateApiState,
   useTokenAmountFromPlanck,
 } from '@domains/common'
-import { useInflation, usePoolAddForm, usePoolStakes } from '@domains/staking/substrate/nominationPools/hooks'
+import { useApr, usePoolAddForm, usePoolStakes } from '@domains/staking/substrate/nominationPools/hooks'
 import { eraStakersState, useRecommendedPoolsState } from '@domains/staking/substrate/nominationPools/recoils'
 import { createAccounts } from '@domains/staking/substrate/nominationPools/utils'
 import { type Decimal } from '@talismn/math'
@@ -221,7 +221,7 @@ export const AssetSelect = (props: {
 
 const EstimatedYield = memo(
   (props: { amount: Decimal }) => {
-    const { stakedReturn } = useInflation()
+    const stakedReturn = useApr()
     const annualReturn = useMemo(() => props.amount.planck.muln(stakedReturn), [props.amount.planck, stakedReturn])
     const parsedAnnualReturn = useTokenAmountFromPlanck(annualReturn)
 
