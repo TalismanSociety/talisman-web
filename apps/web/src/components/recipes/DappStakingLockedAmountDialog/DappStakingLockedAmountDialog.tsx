@@ -1,9 +1,10 @@
-import { AlertDialog, Button, Text } from '@talismn/ui'
-import type { ReactNode } from 'react'
+import { AlertDialog, Button, CircularProgressIndicator, Text } from '@talismn/ui'
+import { Suspense, type ReactNode } from 'react'
 
 export type DappStakingLockedAmountDialogProps = {
   amount: ReactNode
   fiatAmount: ReactNode
+  unlockDuration: ReactNode
   onRequestUnlock?: () => unknown
   onRequestReStake?: () => unknown
   requestReStakeInTransition?: boolean
@@ -31,8 +32,17 @@ const DappStakingLockedAmountDialog = (props: DappStakingLockedAmountDialogProps
       <Text.Body alpha="high">
         {props.amount} ({props.fiatAmount})
       </Text.Body>{' '}
-      means the tokens are locked however they are not staked. We encourage users to stake all locked tokens at least to
-      maximize your staking rewards.
+      means the tokens are locked however they are not staked.
+      <br />
+      <br />
+      Re-staking is instant and will help you maximize your staking rewards.
+      <br />
+      <br />
+      <Text.Body alpha="high">IMPORTANT:</Text.Body> unlocking will take{' '}
+      <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+        <Text.Body alpha="high">{props.unlockDuration}</Text.Body>
+      </Suspense>{' '}
+      to complete.
     </Text.Body>
   </AlertDialog>
 )

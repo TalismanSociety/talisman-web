@@ -9,6 +9,7 @@ import { useState, useTransition } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import AddStakeDialog from './AddStakeDialog'
+import UnlockDuration from './UnlockDuration'
 import UnstakeDialog from './UnstakeDialog'
 
 const Stake = ({ account }: { account: Account }) => {
@@ -116,6 +117,7 @@ const Stake = ({ account }: { account: Account }) => {
         <DappStakingLockedAmountDialog
           amount={stake.locked.decimalAmount.toHuman()}
           fiatAmount={stake.locked.localizedFiatAmount}
+          unlockDuration={<UnlockDuration />}
           onRequestDismiss={() => setLockedDialogOpen(false)}
           onRequestReStake={() => {
             startRequestRestakeTransition(() => {

@@ -15,4 +15,5 @@ export const Default: Story<DappStakingLockedAmountDialogProps> = args => <DappS
 Default.args = {
   amount: '120 DOT',
   fiatAmount: '$420.00',
+  unlockDuration: '1 day',
 }
