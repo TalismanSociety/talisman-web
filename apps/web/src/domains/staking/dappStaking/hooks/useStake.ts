@@ -2,6 +2,7 @@ import type { Account } from '@domains/accounts'
 import { useNativeTokenAmountState } from '@domains/chains'
 import { expectedBlockTime, useSubstrateApiEndpoint, useSubstrateApiState } from '@domains/common'
 import { useDeriveState, useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
+import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
@@ -9,7 +10,6 @@ import { range } from 'lodash'
 import { useMemo } from 'react'
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue, waitForAll } from 'recoil'
 import { stakedDappsState } from '../recoils'
-import { Maybe } from '@util/monads'
 
 export const useStake = (account: Account) => {
   // Can't put this in the same waitForAll below
@@ -54,7 +54,7 @@ export const useStake = (account: Account) => {
     )
   )
 
-  const stakeRewards = useMemo(
+  const stakerRewards = useMemo(
     () =>
       nativeTokenAmount.fromPlanck(
         eraRewardsSpans
@@ -99,6 +99,13 @@ export const useStake = (account: Account) => {
       ledger.stakedFuture,
       nativeTokenAmount,
     ]
+  )
+
+  const claimableSpanCount = useMemo(
+    () =>
+      (lastSpanIndex.toNumber() - firstSpanIndex.toNumber()) / api.consts.dappStaking.eraRewardSpanLength.toNumber() +
+      1,
+    [api.consts.dappStaking.eraRewardSpanLength, firstSpanIndex, lastSpanIndex]
   )
 
   const eligibleBonusRewards = useMemo(
@@ -223,12 +230,14 @@ export const useStake = (account: Account) => {
       [ledger.locked, nativeTokenAmount, totalStaked.decimalAmount.planck]
     ),
     totalStaked,
-    stakeRewards,
+    stakerRewards,
+    claimableSpanCount,
     bonusRewards,
     totalBonusRewards,
     totalRewards: useMemo(
-      () => nativeTokenAmount.fromPlanck(totalBonusRewards.decimalAmount.planck.add(stakeRewards.decimalAmount.planck)),
-      [nativeTokenAmount, stakeRewards, totalBonusRewards.decimalAmount.planck]
+      () =>
+        nativeTokenAmount.fromPlanck(totalBonusRewards.decimalAmount.planck.add(stakerRewards.decimalAmount.planck)),
+      [nativeTokenAmount, stakerRewards, totalBonusRewards.decimalAmount.planck]
     ),
     unlocking,
     totalUnlocking,
