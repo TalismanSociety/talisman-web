@@ -57,6 +57,7 @@ const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => {
               display: 'flex',
               alignItems: 'baseline',
               gap: '0.8rem',
+              overflow: 'hidden',
             }}
           >
             {props.logo && (
