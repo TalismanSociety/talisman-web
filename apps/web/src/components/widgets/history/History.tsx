@@ -181,7 +181,14 @@ const _History = (props: HistoryProps) => {
     return (
       <div css={{ textAlign: 'center', marginTop: '5.6rem' }}>
         <Text.H3>No results found.</Text.H3>
-        <Text.Body>Connect a valid address to load its transaction history.</Text.Body>
+        <Text.Body>
+          Connect a valid address to load its transaction history.
+          <br />
+          For help and support please visit our{' '}
+          <Text.Noop.A href="https://twitter.com/wearetalisman/status/1754729161103462504" target="_blank">
+            Discord
+          </Text.Noop.A>
+        </Text.Body>
       </div>
     )
   }

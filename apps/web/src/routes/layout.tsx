@@ -1,4 +1,5 @@
 import { Total } from '@archetypes/Wallet'
+import Discord from '@assets/icons/discord-header.svg?react'
 import GitHub from '@assets/icons/github-header.svg?react'
 import Medium from '@assets/icons/medium-header.svg?react'
 import Twitter from '@assets/icons/twitter-header.svg?react'
@@ -307,6 +308,11 @@ const Layout = () => {
           headerIcon={<TalismanHand />}
           footer={
             <NavigationDrawer.Footer>
+              <Link to="https://twitter.com/wearetalisman/status/1754729161103462504" target="_blank">
+                <NavigationDrawer.Footer.Icon>
+                  <Discord width="2.4rem" height="2.4rem" />
+                </NavigationDrawer.Footer.Icon>
+              </Link>
               <Link to="https://github.com/TalismanSociety/talisman-web" target="_blank">
                 <NavigationDrawer.Footer.Icon>
                   <GitHub width="2.4rem" height="2.4rem" />
@@ -373,6 +379,14 @@ const Layout = () => {
         >
           <Text.BodyLarge alpha="high" as="a" href="https://twitter.com/wearetalisman" target="_blank">
             Twitter
+          </Text.BodyLarge>
+          <Text.BodyLarge
+            alpha="high"
+            as="a"
+            href="https://twitter.com/wearetalisman/status/1754729161103462504"
+            target="_blank"
+          >
+            Discord
           </Text.BodyLarge>
           <Text.BodyLarge alpha="high" as="a" href="https://docs.talisman.xyz" target="_blank">
             Docs
