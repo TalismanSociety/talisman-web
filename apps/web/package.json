@@ -8,7 +8,7 @@
   "bugs": "https://github.com/TalismanSociety/talisman-web/issues",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "lint": "eslint src",
     "check-types": "tsc --noEmit",
