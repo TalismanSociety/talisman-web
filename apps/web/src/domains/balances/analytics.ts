@@ -22,7 +22,11 @@ export const useBalancesReportEffect = () => {
       const balanceRecords = await Promise.all(
         balances
           .find(balance => balance.status !== 'stale')
-          .each.filter(balance => balance.chain === null || !('isCustom' in balance.chain && balance.chain.isCustom))
+          .each.filter(
+            balance =>
+              (balance.chain === null || !('isCustom' in balance.chain && balance.chain.isCustom)) &&
+              (balance.token === null || !('isCustom' in balance.token && balance.token.isCustom))
+          )
           .map(async balance => ({
             addressDigest: await digestMessage(balance.address),
             chainId: balance.chainId,
