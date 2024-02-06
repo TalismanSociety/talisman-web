@@ -119,7 +119,16 @@ export const LegacyBalancesWatcher = () => {
   )
 
   const unfilteredBalances = _useBalances(addressesByToken)
-  const balances = useMemo(() => unfilteredBalances.filterNonZero('total').filterMirrorTokens(), [unfilteredBalances])
+  const balances = useMemo(
+    () =>
+      unfilteredBalances
+        .filterNonZero('total')
+        .filterMirrorTokens()
+        // TODO: This is to remove native custom token coming from the extension with newer id
+        // remove once we update balances lib
+        .find(x => !x.tokenId.endsWith('evm-native') && !x.tokenId.endsWith('substrate-native')),
+    [unfilteredBalances]
+  )
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(
