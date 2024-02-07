@@ -90,12 +90,16 @@ const useAssets = (customAddress?: string) => {
   const tokens = assetBalances.map(token => {
     const tokenBalances = balances.find({ tokenId: token.id })
 
-    const planckAmount = tokenBalances.sum.planck.transferable
-    const planckAmountFormatted = formatDecimals(new BalanceFormatter(planckAmount, token.decimals).tokens)
+    const totalAmount = tokenBalances.sum.planck.total
+    const totalAmountFormatted = formatDecimals(new BalanceFormatter(totalAmount, token.decimals).tokens)
+    const totalFiatAmount = tokenBalances.sum.fiat(currency).total
+    const totalFiatAmountFormatted = getFiatString(totalFiatAmount, currency)
 
-    const fiatAmount = tokenBalances.sum.fiat(currency).transferable
+    const transferableAmount = tokenBalances.sum.planck.transferable
+    const transferableAmountFormatted = formatDecimals(new BalanceFormatter(transferableAmount, token.decimals).tokens)
 
-    const fiatAmountFormatted = getFiatString(fiatAmount, currency)
+    const transferableFiatAmount = tokenBalances.sum.fiat(currency).transferable
+    const transferableFiatAmountFormatted = getFiatString(transferableFiatAmount, currency)
 
     const lockedAmount = tokenBalances.sum.planck.locked
     const lockedAmountFormatted = formatDecimals(new BalanceFormatter(lockedAmount, token.decimals).tokens)
@@ -112,15 +116,19 @@ const useAssets = (customAddress?: string) => {
 
     return {
       locked,
-      unformattedLockedAmount: lockedAmount,
-      lockedAmount: lockedAmountFormatted,
+      totalAmount,
+      totalAmountFormatted,
+      totalFiatAmount,
+      totalFiatAmountFormatted,
+      lockedAmount,
+      lockedAmountFormatted,
       lockedFiatAmount,
       lockedFiatAmountFormatted,
-      unformattedPlanckAmount: planckAmount,
-      amount: planckAmountFormatted,
+      transferableAmount,
+      transferableAmountFormatted,
+      transferableFiatAmount,
+      transferableFiatAmountFormatted,
       rate: rates[token.id]?.[currency] ?? undefined,
-      fiatAmount,
-      fiatAmountFormatted,
       tokenDetails: {
         ...token,
         chain: token.chain ? chains[token.chain.id] : token.evmNetwork ? evmNetworks[token.evmNetwork.id] : undefined,
@@ -184,33 +192,45 @@ const useAssets = (customAddress?: string) => {
 
   const balancesWithNonNativeTokens = groupedTokensWithNonNativeTokens.map(token => {
     if (token && token.nonNativeTokens.length > 0) {
-      const nonNativeLockedAmount = token.nonNativeTokens.reduce(
-        (sum, token) => sum + token.unformattedLockedAmount,
-        0n
-      )
-      const nonNativePlanckAmount = token.nonNativeTokens.reduce(
-        (sum, token) => sum + token.unformattedPlanckAmount,
+      const nonNativeTotalAmount = token.nonNativeTokens.reduce((prev, curr) => prev + curr.totalAmount, 0n)
+
+      const nonNativeTransferableAmount = token.nonNativeTokens.reduce(
+        (sum, token) => sum + token.transferableAmount,
         0n
       )
 
-      const overallTokenAmount = formatDecimals(
-        new BalanceFormatter(token.unformattedPlanckAmount + nonNativePlanckAmount, token.tokenDetails.decimals).tokens
+      const nonNativeLockedAmount = token.nonNativeTokens.reduce((sum, token) => sum + token.lockedAmount, 0n)
+
+      const overallTotalAmount = formatDecimals(
+        new BalanceFormatter(token.totalAmount + nonNativeTotalAmount, token.tokenDetails.decimals).tokens
       )
+
+      const overallTransferableAmount = formatDecimals(
+        new BalanceFormatter(token.transferableAmount + nonNativeTransferableAmount, token.tokenDetails.decimals).tokens
+      )
+
       const overallLockedAmount = formatDecimals(
-        new BalanceFormatter(token.unformattedLockedAmount + nonNativeLockedAmount, token.tokenDetails.decimals).tokens
+        new BalanceFormatter(token.lockedAmount + nonNativeLockedAmount, token.tokenDetails.decimals).tokens
       )
+
+      const overallTotalFiatAmount =
+        token.totalFiatAmount + token.nonNativeTokens.reduce((prev, curr) => prev + curr.totalFiatAmount, 0)
 
       const overallLockedFiatAmount =
         token.lockedFiatAmount + token.nonNativeTokens.reduce((sum, token) => sum + token.lockedFiatAmount, 0)
-      const overallFiatAmount =
-        token.fiatAmount + token.nonNativeTokens.reduce((sum, token) => sum + token.fiatAmount, 0)
+
+      const overallTransferableFiatAmount =
+        token.transferableFiatAmount +
+        token.nonNativeTokens.reduce((sum, token) => sum + token.transferableFiatAmount, 0)
 
       const locked = token.locked || token.nonNativeTokens.some(token => token.locked)
 
       return {
         ...token,
-        overallTokenAmount,
-        overallFiatAmount,
+        overallTotalAmount,
+        overallTotalFiatAmount,
+        overallTransferableAmount,
+        overallTransferableFiatAmount,
         overallLockedAmount,
         overallLockedFiatAmount,
         locked,
@@ -219,9 +239,11 @@ const useAssets = (customAddress?: string) => {
 
     return {
       ...token,
-      overallTokenAmount: token.amount,
-      overallFiatAmount: token.fiatAmount,
-      overallLockedAmount: token.lockedAmount,
+      overallTotalAmount: token.totalAmountFormatted,
+      overallTotalFiatAmount: token.totalFiatAmount,
+      overallTransferableAmount: token.transferableAmountFormatted,
+      overallTransferableFiatAmount: token.transferableFiatAmount,
+      overallLockedAmount: token.lockedAmountFormatted,
       overallLockedFiatAmount: token.lockedFiatAmount,
     }
   })
@@ -313,7 +335,10 @@ export const useAssetsFiltered = ({ size, search, address }: Filter) => {
   )
 
   const sortedTokens = useMemo(
-    () => filteredTokensBySize.sort((a, b) => (b.overallFiatAmount ?? 0) - (a.overallFiatAmount ?? 0)),
+    () =>
+      filteredTokensBySize.sort(
+        (a, b) => (b.overallTransferableFiatAmount ?? 0) - (a.overallTransferableFiatAmount ?? 0)
+      ),
     [filteredTokensBySize]
   )
 

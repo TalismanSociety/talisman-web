@@ -6,6 +6,7 @@ import { startCase } from 'lodash'
 
 import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
 import { AssetBalance } from '../Asset'
+import type { PortfolioToken } from '@archetypes/Portfolio/Assets'
 
 const slideDown = keyframes`
     from {
@@ -18,7 +19,7 @@ const slideDown = keyframes`
     }
 `
 
-export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?: boolean }) => {
+export const AssetBreakdownRowHeader = ({ token }: { token: PortfolioToken }) => {
   return (
     <AssetRow>
       <div
@@ -37,7 +38,7 @@ export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?
           <Tooltip content={token.tokenDetails.chain?.name}>
             <img
               src={token.tokenDetails.chain?.logo ?? undefined}
-              alt={token.tokenDetails.chain?.name}
+              alt={token.tokenDetails.chain?.name ?? undefined}
               css={{
                 width: '2em',
                 height: '2em',
@@ -67,8 +68,8 @@ export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?
         <td align="right">
           {token?.locked && (
             <AssetBalance
-              fiat={!isOrml ? token?.overallLockedFiatAmount : token?.lockedFiatAmount}
-              planck={!isOrml ? token?.overallLockedAmount : token?.lockedAmount}
+              fiat={token?.lockedFiatAmount}
+              planck={token?.lockedAmountFormatted}
               locked={token?.locked}
               symbol={token?.tokenDetails?.symbol}
             />
@@ -76,8 +77,8 @@ export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?
         </td>
         <td align="right">
           <AssetBalance
-            fiat={!isOrml ? token?.overallFiatAmount : token?.fiatAmount}
-            planck={!isOrml ? token?.overallTokenAmount : token?.amount}
+            fiat={token?.transferableFiatAmount}
+            planck={token?.transferableAmountFormatted}
             symbol={token?.tokenDetails?.symbol}
           />
         </td>

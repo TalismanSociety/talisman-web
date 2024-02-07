@@ -112,10 +112,10 @@ const AssetItem = () => {
                 }
                 text={
                   <RedactableBalance>
-                    {token.overallTokenAmount ?? ''} {token.tokenDetails.symbol ?? ''}
+                    {token.overallTotalAmount ?? ''} {token.tokenDetails.symbol ?? ''}
                   </RedactableBalance>
                 }
-                supportingText={<AnimatedFiatNumber end={token.overallFiatAmount ?? 0} />}
+                supportingText={<AnimatedFiatNumber end={token.overallTotalFiatAmount ?? 0} />}
               />
               <InfoCard
                 headlineText={
@@ -152,10 +152,10 @@ const AssetItem = () => {
                 }
                 text={
                   <RedactableBalance>
-                    {token.amount ?? ''} {token.tokenDetails.symbol ?? ''}
+                    {token.overallTransferableAmount ?? ''} {token.tokenDetails.symbol ?? ''}
                   </RedactableBalance>
                 }
-                supportingText={<AnimatedFiatNumber end={token.fiatAmount ?? 0} />}
+                supportingText={<AnimatedFiatNumber end={token.transferableFiatAmount ?? 0} />}
               />
             </div>
 
@@ -168,7 +168,8 @@ const AssetItem = () => {
             {/* Then if any, the ORML tokens */}
             {token.nonNativeTokens.map((ormlToken, index) => {
               return (
-                <AssetBreakdownList key={index} token={ormlToken} isLoading={isLoading} balances={balances} isOrml />
+                // @ts-expect-error
+                <AssetBreakdownList key={index} token={ormlToken} isLoading={isLoading} balances={balances} />
               )
             })}
           </div>
