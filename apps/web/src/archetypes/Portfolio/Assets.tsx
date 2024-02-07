@@ -1,6 +1,4 @@
-import { legacySelectedAccountState } from '@domains/accounts/recoils'
-import { selectedCurrencyState } from '@domains/balances'
-import { useLegacyBalances } from '@domains/balances/hooks'
+import { balancesState, selectedBalancesState, selectedCurrencyState } from '@domains/balances'
 import { BalanceFormatter } from '@talismn/balances'
 import { useChains, useEvmNetworks, useTokenRates, useTokens } from '@talismn/balances-react'
 import { formatDecimals } from '@talismn/util'
@@ -9,7 +7,8 @@ import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 const useFetchAssets = (address: string | undefined) => {
-  const { balances, assetsOverallValue } = useLegacyBalances()
+  const _balances = useRecoilValue(address === undefined ? selectedBalancesState : balancesState)
+  const balances = address === undefined ? _balances : _balances.find({ address })
 
   const currency = useRecoilValue(selectedCurrencyState)
 
@@ -21,15 +20,9 @@ const useFetchAssets = (address: string | undefined) => {
     return isEmpty(chains) || isEmpty(evmNetworks) || isEmpty(tokens) || isNil(balances)
   }, [chains, evmNetworks, tokens, balances])
 
-  const fiatTotal =
-    address !== undefined ? balances?.find({ address }).sum.fiat(currency).total ?? 0 : assetsOverallValue
-
-  const lockedTotal =
-    address !== undefined
-      ? balances?.find({ address }).sum.fiat(currency).locked ?? 0
-      : balances?.sum.fiat(currency).locked ?? 0
-
-  const value = balances?.find({ address }).sum.fiat(currency).transferable
+  const fiatTotal = balances.sum.fiat(currency).total
+  const lockedTotal = balances.sum.fiat(currency).locked
+  const transferable = balances.sum.fiat(currency).transferable
 
   const assetBalances = useMemo(
     () =>
@@ -67,7 +60,7 @@ const useFetchAssets = (address: string | undefined) => {
     [chains, evmNetworks, tokens]
   )
 
-  return { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading }
+  return { assetBalances, fiatTotal, lockedTotal, value: transferable, balances, chains, evmNetworks, isLoading }
 }
 
 export const getFiatString = (value: any, currency: string) => {
@@ -80,10 +73,8 @@ export const getFiatString = (value: any, currency: string) => {
 }
 
 const useAssets = (customAddress?: string) => {
-  const address = useRecoilValue(legacySelectedAccountState)?.address
-  const { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading } = useFetchAssets(
-    customAddress ?? address
-  )
+  const { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading } =
+    useFetchAssets(customAddress)
   const currency = useRecoilValue(selectedCurrencyState)
   const rates = useTokenRates()
 
@@ -97,31 +88,18 @@ const useAssets = (customAddress?: string) => {
     }
 
   const tokens = assetBalances.map(token => {
-    const tokenBalances =
-      address !== undefined ? balances?.find([{ address, tokenId: token.id }]) : balances?.find({ tokenId: token.id })
-    if (!tokenBalances) return undefined
+    const tokenBalances = balances.find({ tokenId: token.id })
 
-    const totalPlanckAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.total.planck, 0n)
-
-    if (totalPlanckAmount === 0n) {
-      return undefined
-    }
-
-    const planckAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.transferable.planck, 0n)
+    const planckAmount = tokenBalances.sum.planck.transferable
     const planckAmountFormatted = formatDecimals(new BalanceFormatter(planckAmount, token.decimals).tokens)
 
-    const fiatAmount =
-      address !== undefined
-        ? balances?.find([{ address, tokenId: token.id }]).sum.fiat(currency).transferable ?? 0
-        : address === undefined
-        ? balances?.find({ tokenId: token.id }).sum.fiat(currency).transferable ?? 0
-        : 0
+    const fiatAmount = tokenBalances.sum.fiat(currency).transferable
 
     const fiatAmountFormatted = getFiatString(fiatAmount, currency)
 
-    const lockedAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.locked.planck, 0n)
+    const lockedAmount = tokenBalances.sum.planck.locked
     const lockedAmountFormatted = formatDecimals(new BalanceFormatter(lockedAmount, token.decimals).tokens)
-    const lockedFiatAmount = balances?.find({ tokenId: token.id }).sum.fiat(currency).locked ?? 0
+    const lockedFiatAmount = tokenBalances.sum.fiat(currency).locked ?? 0
     const lockedFiatAmountFormatted = getFiatString(lockedFiatAmount, currency)
 
     if (tokenBalances.sorted[0] === undefined) {
@@ -138,7 +116,7 @@ const useAssets = (customAddress?: string) => {
       lockedAmount: lockedAmountFormatted,
       lockedFiatAmount,
       lockedFiatAmountFormatted,
-      unformattedPlancAmount: planckAmount,
+      unformattedPlanckAmount: planckAmount,
       amount: planckAmountFormatted,
       rate: rates[token.id]?.[currency] ?? undefined,
       fiatAmount,
@@ -210,10 +188,13 @@ const useAssets = (customAddress?: string) => {
         (sum, token) => sum + token.unformattedLockedAmount,
         0n
       )
-      const nonNativePlanckAmount = token.nonNativeTokens.reduce((sum, token) => sum + token.unformattedPlancAmount, 0n)
+      const nonNativePlanckAmount = token.nonNativeTokens.reduce(
+        (sum, token) => sum + token.unformattedPlanckAmount,
+        0n
+      )
 
       const overallTokenAmount = formatDecimals(
-        new BalanceFormatter(token.unformattedPlancAmount + nonNativePlanckAmount, token.tokenDetails.decimals).tokens
+        new BalanceFormatter(token.unformattedPlanckAmount + nonNativePlanckAmount, token.tokenDetails.decimals).tokens
       )
       const overallLockedAmount = formatDecimals(
         new BalanceFormatter(token.unformattedLockedAmount + nonNativeLockedAmount, token.tokenDetails.decimals).tokens
