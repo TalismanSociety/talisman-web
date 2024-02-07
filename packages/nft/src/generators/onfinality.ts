@@ -97,7 +97,7 @@ export const createOnfinalityNftGenerator: (options?: {
               chain: nftChainInfo?.name,
               name: nft.metadata?.name ?? undefined,
               description: nft.metadata?.description ?? undefined,
-              media: nft.metadata?.imageUri ?? undefined,
+              media: { url: nft.metadata?.imageUri ?? undefined },
               thumbnail: nft.metadata?.imageUri ?? undefined,
               serialNumber: Number(nft.tokenId),
               properties: undefined,
