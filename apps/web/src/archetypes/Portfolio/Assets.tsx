@@ -313,7 +313,7 @@ export const useAssetsFiltered = ({ size, search, address }: Filter) => {
   )
 
   const sortedTokens = useMemo(
-    () => filteredTokensBySize.sort((a, b) => (b.fiatAmount ?? 0) - (a.fiatAmount ?? 0)),
+    () => filteredTokensBySize.sort((a, b) => (b.overallFiatAmount ?? 0) - (a.overallFiatAmount ?? 0)),
     [filteredTokensBySize]
   )
 
