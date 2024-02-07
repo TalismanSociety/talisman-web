@@ -4,8 +4,9 @@ import { BalanceFormatter, type Balances } from '@talismn/balances'
 import { formatDecimals } from '@talismn/util'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { AssetBreakdownRow, AssetBreakdownRowHeader } from './AssetBreakdownRow'
+import type { PortfolioToken } from '@archetypes/Portfolio/Assets'
 import { selectedCurrencyState } from '@domains/balances'
+import { AssetBreakdownRow, AssetBreakdownRowHeader } from './AssetBreakdownRow'
 
 const Table = styled.table`
   width: 100%;
@@ -68,8 +69,7 @@ export const AssetBreakdownListHeader = () => (
 type AssetBreakdownListProps = {
   isLoading?: boolean
   balances?: Balances
-  isOrml?: boolean
-  token: any
+  token: PortfolioToken
 }
 
 export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
@@ -79,7 +79,7 @@ export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
   return (
     <Table>
       <tbody>
-        <AssetBreakdownRowHeader token={token} isOrml />
+        <AssetBreakdownRowHeader token={token} />
         {accounts.map((account, index) => {
           const tokenBalance = balances?.find({ tokenId: token?.tokenDetails?.id, address: account.address })
 

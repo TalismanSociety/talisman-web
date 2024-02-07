@@ -235,18 +235,6 @@ export const selectedAccountsState = selector({
   },
 })
 
-// For legacy components that only support single account selection
-export const legacySelectedAccountState = selector({
-  key: 'LegacySelectedAccounts',
-  get: ({ get }) => {
-    const [accounts, selectedAddresses] = get(waitForAll([accountsState, selectedAccountAddressesState]))
-
-    if (selectedAddresses === undefined) return undefined
-
-    return accounts.filter(({ address }) => selectedAddresses.includes(address))[0]
-  },
-})
-
 export const selectedSubstrateAccountsState = selector({
   key: 'SelectedSubstrateAccounts',
   get: ({ get }) => {

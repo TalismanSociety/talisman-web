@@ -294,8 +294,8 @@ const Asset = Object.assign((props: AssetProps) => {
         }}
       >
         <AssetBalance
-          fiat={lockedAsset ? token.overallLockedFiatAmount : token.overallFiatAmount}
-          planck={lockedAsset ? token.overallLockedAmount : token.overallTokenAmount}
+          fiat={lockedAsset ? token.overallLockedFiatAmount : token.overallTransferableFiatAmount}
+          planck={lockedAsset ? token.overallLockedAmount : token.overallTransferableAmount}
           symbol={token.tokenDetails.symbol}
         />
       </td>
