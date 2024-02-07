@@ -185,7 +185,7 @@ const _History = (props: HistoryProps) => {
           Connect a valid address to load its transaction history.
           <br />
           For help and support please visit our{' '}
-          <Text.Noop.A href="https://twitter.com/wearetalisman/status/1754729161103462504" target="_blank">
+          <Text.Noop.A href="https://discord.gg/talisman" target="_blank">
             Discord
           </Text.Noop.A>
         </Text.Body>

@@ -308,7 +308,7 @@ const Layout = () => {
           headerIcon={<TalismanHand />}
           footer={
             <NavigationDrawer.Footer>
-              <Link to="https://twitter.com/wearetalisman/status/1754729161103462504" target="_blank">
+              <Link to="https://discord.gg/talisman" target="_blank">
                 <NavigationDrawer.Footer.Icon>
                   <Discord width="2.4rem" height="2.4rem" />
                 </NavigationDrawer.Footer.Icon>
@@ -380,12 +380,7 @@ const Layout = () => {
           <Text.BodyLarge alpha="high" as="a" href="https://twitter.com/wearetalisman" target="_blank">
             Twitter
           </Text.BodyLarge>
-          <Text.BodyLarge
-            alpha="high"
-            as="a"
-            href="https://twitter.com/wearetalisman/status/1754729161103462504"
-            target="_blank"
-          >
+          <Text.BodyLarge alpha="high" as="a" href="https://discord.gg/talisman" target="_blank">
             Discord
           </Text.BodyLarge>
           <Text.BodyLarge alpha="high" as="a" href="https://docs.talisman.xyz" target="_blank">
