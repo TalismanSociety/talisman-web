@@ -12,5 +12,3 @@ node_modules
 .dir-locals.el
 .DS_Store
 ._.DS_Store
-
-build
