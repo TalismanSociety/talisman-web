@@ -249,7 +249,10 @@ const useAssets = (customAddress?: string) => {
   })
 
   return {
-    tokens: balancesWithNonNativeTokens,
+    tokens: balancesWithNonNativeTokens.map(x => ({
+      ...x,
+      nonNativeTokens: x.nonNativeTokens.sort((a, b) => b.totalFiatAmount - a.totalFiatAmount),
+    })),
     fiatTotal,
     lockedTotal,
     balances,
@@ -335,10 +338,7 @@ export const useAssetsFiltered = ({ size, search, address }: Filter) => {
   )
 
   const sortedTokens = useMemo(
-    () =>
-      filteredTokensBySize.sort(
-        (a, b) => (b.overallTransferableFiatAmount ?? 0) - (a.overallTransferableFiatAmount ?? 0)
-      ),
+    () => filteredTokensBySize.sort((a, b) => b.overallTotalFiatAmount - a.overallTotalFiatAmount),
     [filteredTokensBySize]
   )
 
