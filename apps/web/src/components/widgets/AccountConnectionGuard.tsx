@@ -1,14 +1,9 @@
 import Welcome from '@components/recipes/Welcome'
-import {
-  lookupAccountAddressState,
-  popularAccounts,
-  useAddReadonlyAccountForm,
-  useSetReadonlyAccounts,
-} from '@domains/accounts'
+import { lookupAccountAddressState, popularAccounts } from '@domains/accounts'
 import { readOnlyAccountsState } from '@domains/accounts/recoils'
 import { useHadPreviouslyConnectedWallet } from '@domains/extension'
 import { shortenAddress } from '@util/format'
-import { type PropsWithChildren } from 'react'
+import { useState, type PropsWithChildren } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
 
@@ -26,13 +21,8 @@ const AccountConnectionGuard = (props: AccountConnectionGuardProps) => {
   const shouldShowGuard = useShouldShowAccountConnectionGuard()
   const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
 
-  const { add } = useSetReadonlyAccounts()
-
-  const {
-    address: [address, setAddress],
-    confirmState,
-    submit,
-  } = useAddReadonlyAccountForm()
+  const [addressInput, setAddressInput] = useState('')
+  const setLookupAddress = useSetRecoilState(lookupAccountAddressState)
 
   if (!shouldShowGuard) {
     return <>{props.children}</>
@@ -42,17 +32,15 @@ const AccountConnectionGuard = (props: AccountConnectionGuardProps) => {
     <div css={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center' }}>
       <Welcome
         walletButton={<Welcome.WalletButton onClick={() => setWalletConnectionSideSheetOpen(true)} />}
-        addressInput={<Welcome.AddressInput value={address} onChange={event => setAddress(event.target.value)} />}
-        addressInputConfirmButton={
-          <Welcome.AddressInputConfirmButton disabled={confirmState === 'disabled'} onClick={submit} />
-        }
+        addressInput={<Welcome.AddressInput value={addressInput} onChangeText={setAddressInput} />}
+        addressInputConfirmButton={<Welcome.AddressInputConfirmButton onClick={() => setLookupAddress(addressInput)} />}
         popularAccounts={popularAccounts.map((x, index) => (
           <Welcome.PopularAccount
             key={index}
             name={x.name ?? shortenAddress(x.address)}
             address={x.address}
             description={x.description}
-            onClick={() => add(x)}
+            onClick={() => setLookupAddress(x.address)}
           />
         ))}
         css={{ flex: 1, margin: 'auto' }}
