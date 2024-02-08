@@ -3,7 +3,7 @@ import { dappStakingEnabledChainsState, nativeTokenAmountState } from '@domains/
 import { chainQueryState } from '@domains/common'
 import { Maybe } from '@util/monads'
 import { useMemo } from 'react'
-import { useRecoilValue, waitForAll, waitForAny } from 'recoil'
+import { constSelector, useRecoilValue, waitForAll, waitForAny } from 'recoil'
 
 export const useTotalStaked = () => {
   const [chains, accounts] = useRecoilValue(waitForAll([dappStakingEnabledChainsState, selectedSubstrateAccountsState]))
@@ -11,26 +11,32 @@ export const useTotalStaked = () => {
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
 
   const [nativeTokenAmounts, ledgerLoadables] = useRecoilValue(
-    waitForAll([
-      waitForAny(
-        chains.map(chain =>
-          nativeTokenAmountState({
-            genesisHash: chain.genesisHash,
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            apiEndpoint: chain.rpc!,
-          })
-        )
-      ),
-      waitForAny(
-        chains.map(chain =>
-          waitForAll([
-            chainQueryState(chain.rpc, 'dappStaking', 'activeProtocolState', []),
-            chainQueryState(chain.rpc, 'dappStaking', 'ledger.multi', addresses),
-          ])
-        )
-      ),
-    ])
-  )
+    chains.length <= 0
+      ? constSelector(undefined)
+      : waitForAll([
+          waitForAny(
+            chains.map(chain =>
+              nativeTokenAmountState({
+                genesisHash: chain.genesisHash,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                apiEndpoint: chain.rpc!,
+              })
+            )
+          ),
+          waitForAny(
+            chains.map(chain =>
+              waitForAll([
+                chainQueryState(chain.rpc, 'dappStaking', 'activeProtocolState', []),
+                chainQueryState(chain.rpc, 'dappStaking', 'ledger.multi', addresses),
+              ])
+            )
+          ),
+        ])
+  ) ?? [undefined, undefined]
+
+  if (nativeTokenAmounts === undefined || ledgerLoadables === undefined) {
+    return 0
+  }
 
   return ledgerLoadables
     .map((x, chainIndex) => {
