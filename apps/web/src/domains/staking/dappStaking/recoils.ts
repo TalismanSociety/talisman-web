@@ -1,4 +1,4 @@
-import { ChainContext, dappStakingEnabledChainsState } from '@domains/chains'
+import { ChainContext, assertChain, dappStakingEnabledChainsState } from '@domains/chains'
 import { chainReadIdState, substrateApiState, useSubstrateApiEndpoint } from '@domains/common'
 import type { Bytes } from '@polkadot/types'
 import { u8aToNumber } from '@polkadot/util'
@@ -103,9 +103,7 @@ export type DappInfo = (ReturnType<typeof registeredDappsState> extends RecoilVa
 export const useRegisteredDappsState = () => {
   const chain = useContext(ChainContext)
 
-  if (!('hasDappStaking' in chain)) {
-    throw new Error(`Chain ${chain.genesisHash} does not have DApp staking`)
-  }
+  assertChain(chain, { hasDappStaking: true })
 
   return registeredDappsState({ genesisHash: chain.genesisHash, dappStakingApiEndpoint: chain.dappStakingApi })
 }

@@ -1,9 +1,10 @@
 import UnstakeDialogComponent from '@components/recipes/UnstakeDialog'
 import type { Account } from '@domains/accounts'
+import { useExtrinsicInBlockOrErrorEffect } from '@domains/common'
 import { useUnstakeForm, type Stake } from '@domains/staking/dappStaking'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
 import { CircularProgressIndicator } from '@talismn/ui'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import DappPickerDialog from './DappPickerDialog'
 
 type DappUnstakeDialogProps = {
@@ -20,15 +21,7 @@ const DappUnstakeDialog = (props: DappUnstakeDialogProps) => {
     props.dapp
   )
 
-  useEffect(
-    () => {
-      if (extrinsic.state === 'loading' && extrinsic.contents?.status.isInBlock) {
-        props.onRequestDismiss()
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [extrinsic.contents?.status?.isInBlock]
-  )
+  useExtrinsicInBlockOrErrorEffect(() => props.onRequestDismiss(), extrinsic)
 
   return (
     <UnstakeDialogComponent

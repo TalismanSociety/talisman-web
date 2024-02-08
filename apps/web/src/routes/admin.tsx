@@ -1,6 +1,6 @@
 import { useAccountSelector } from '@components/widgets/AccountSelector'
 import { writeableSubstrateAccountsState } from '@domains/accounts'
-import { ChainProvider, chainsState, useChainState } from '@domains/chains'
+import { ChainProvider, assertChain, chainsState, useChainState } from '@domains/chains'
 import { useExtrinsic, useSubstrateApiState } from '@domains/common'
 import type { ApiPromise } from '@polkadot/api'
 import { Button, Surface, Text, TextInput, toast } from '@talismn/ui'
@@ -9,6 +9,9 @@ import { useRecoilValue } from 'recoil'
 
 const _NominationPoolsRewardsClaim = () => {
   const chain = useRecoilValue(useChainState())
+
+  assertChain(chain, { hasNominationPools: true })
+
   const [[account], accountSelector] = useAccountSelector(useRecoilValue(writeableSubstrateAccountsState), 0)
 
   const [poolIdsInput, setPoolIdsInput] = useState(chain.talismanPools?.join(',') ?? '')

@@ -1,9 +1,10 @@
-import { PoolSelectorDialog } from '@components/recipes/StakeTargetSelectorDialog'
 import StakeFormComponent from '@components/recipes/StakeForm'
 import { type StakeStatus } from '@components/recipes/StakeStatusIndicator'
+import { PoolSelectorDialog } from '@components/recipes/StakeTargetSelectorDialog'
 import { writeableSubstrateAccountsState, type Account } from '@domains/accounts/recoils'
 import {
   ChainProvider,
+  assertChain,
   nominationPoolsEnabledChainsState,
   useChainState as useChainRecoilState,
   useNativeTokenDecimalState,
@@ -41,11 +42,11 @@ import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 import { useAccountSelector } from '../../AccountSelector'
 import AddStakeDialog from './AddStakeDialog'
+import ClaimStakeDialog from './ClaimStakeDialog'
 import PoolClaimPermissionDialog, {
   PoolClaimPermissionControlledDialog,
   toUiPermission,
 } from './PoolClaimPermissionDialog'
-import ClaimStakeDialog from './ClaimStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
 
 const ExistingPool = (props: { account: Account }) => {
@@ -278,6 +279,8 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
   const [chain, api, recommendedPools] = useRecoilValue(
     waitForAll([useChainRecoilState(), useSubstrateApiState(), useRecommendedPoolsState()])
   )
+
+  assertChain(chain, { hasNominationPools: true })
 
   const initialPoolId = poolIdFromSearch ?? recommendedPools[0]?.poolId
 

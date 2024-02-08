@@ -2,7 +2,7 @@ import PoolClaimPermissionFormComponent, {
   PoolClaimPermissionDialog as PoolClaimPermissionDialogComponent,
 } from '@components/recipes/PoolClaimPermissionForm'
 import type { Account } from '@domains/accounts'
-import { useChainState } from '@domains/chains'
+import { assertChain, useChainState } from '@domains/chains'
 import { useExtrinsic, useExtrinsicInBlockOrErrorEffect } from '@domains/common'
 import { useQueryMultiState } from '@talismn/react-polkadot-api'
 import { useState } from 'react'
@@ -45,6 +45,9 @@ const toSubstratePermission = (permission: 'compound' | 'withdraw' | 'all' | und
 
 const PoolClaimPermissionForm = (props: { account: Account; onRequestDismiss: () => unknown }) => {
   const chain = useRecoilValue(useChainState())
+
+  assertChain(chain, { hasNominationPools: true })
+
   const [poolMember, claimPermission] = useRecoilValue(
     useQueryMultiState([
       ['nominationPools.poolMembers', props.account.address],
@@ -90,6 +93,9 @@ type PoolClaimPermissionControlledDialogProps = {
 
 export const PoolClaimPermissionControlledDialog = (props: PoolClaimPermissionControlledDialogProps) => {
   const chain = useRecoilValue(useChainState())
+
+  assertChain(chain, { hasNominationPools: true })
+
   const [permission, setPermission] = useState<PoolClaimPermission>(props.permission)
 
   return (
