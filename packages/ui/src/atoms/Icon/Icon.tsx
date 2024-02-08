@@ -16,8 +16,8 @@ type PolymorphicIconProps<T extends IconElementType> = {
 export type IconProps<T extends IconElementType> = PolymorphicIconProps<T> &
   Omit<ComponentPropsWithoutRef<T>, keyof PolymorphicIconProps<T>>
 
-const Icon = <T extends IconElementType = 'button'>({
-  as = 'button' as T,
+const Icon = <T extends IconElementType = 'figure'>({
+  as = 'figure' as T,
   size = '4rem',
   containerColor = 'transparent',
   contentColor,

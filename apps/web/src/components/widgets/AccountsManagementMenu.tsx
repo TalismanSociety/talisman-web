@@ -17,14 +17,13 @@ import {
   IconButton,
   ListItem,
   Menu,
+  SurfaceIcon,
   Text,
   Tooltip,
-  useSurfaceColor,
-  type IconButtonProps,
 } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
-import { useMemo, type ElementType, type ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, useResetRecoilState, useSetRecoilState } from 'recoil'
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
 import AnimatedFiatNumber from './AnimatedFiatNumber'
@@ -47,11 +46,6 @@ const EvmChip = () => {
   )
 }
 
-// TODO: probably have this as part of the UI lib
-const SurfaceIconButton = <T extends Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>>(
-  props: IconButtonProps<T>
-) => <IconButton {...props} containerColor={useSurfaceColor()} />
-
 const AccountsManagementSurfaceIconButton = (props: { size?: number | string }) => {
   const theme = useTheme()
   const selectedAccounts = useRecoilValue(selectedAccountsState)
@@ -64,15 +58,9 @@ const AccountsManagementSurfaceIconButton = (props: { size?: number | string }) 
   }
 
   return (
-    <SurfaceIconButton
-      as="figure"
-      size={props.size}
-      containerColor={theme.color.foreground}
-      contentColor={theme.color.primary}
-      css={{ cursor: 'pointer' }}
-    >
+    <SurfaceIcon size={props.size} contentColor={theme.color.primary} css={{ cursor: 'pointer' }}>
       <Users />
-    </SurfaceIconButton>
+    </SurfaceIcon>
   )
 }
 
@@ -99,9 +87,9 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
           <ListItem
             headlineText="Connect wallet"
             leadingContent={
-              <SurfaceIconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+              <SurfaceIcon contentColor={theme.color.primary}>
                 <Wallet />
-              </SurfaceIconButton>
+              </SurfaceIcon>
             }
           />
         </Menu.Item>
@@ -124,9 +112,9 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
           )}
           overlineText="My accounts"
           leadingContent={
-            <SurfaceIconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+            <SurfaceIcon contentColor={theme.color.primary}>
               <Users />
-            </SurfaceIconButton>
+            </SurfaceIcon>
           }
         />
       </Menu.Item>
@@ -137,7 +125,6 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
     resetLookupAccountAddress,
     resetSelectedAccountAddresses,
     setWalletConnectionSideSheetOpen,
-    theme.color.foreground,
     theme.color.primary,
   ])
 
@@ -195,9 +182,8 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                     leadingContent={<AccountIcon account={x} size="4rem" />}
                     revealTrailingContentOnHover
                     trailingContent={
-                      <SurfaceIconButton
+                      <SurfaceIcon
                         size="3.5rem"
-                        containerColor={theme.color.foreground}
                         onClick={(event: any) => {
                           event.stopPropagation()
                           void copyAddressToClipboard(x.address)
@@ -205,7 +191,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                         css={{ cursor: 'copy' }}
                       >
                         <Copy />
-                      </SurfaceIconButton>
+                      </SurfaceIcon>
                     }
                   />
                 </Menu.Item>
@@ -242,9 +228,8 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                         revealTrailingContentOnHover
                         trailingContent={
                           <div css={{ display: 'flex' }}>
-                            <SurfaceIconButton
+                            <SurfaceIcon
                               size="3.5rem"
-                              containerColor={theme.color.foreground}
                               onClick={(event: any) => {
                                 event.stopPropagation()
                                 void copyAddressToClipboard(account.address)
@@ -252,15 +237,14 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                               css={{ cursor: 'copy' }}
                             >
                               <Copy />
-                            </SurfaceIconButton>
+                            </SurfaceIcon>
                             <Tooltip
                               content="This account can be managed via the extension"
                               disabled={account.origin === 'local'}
                             >
                               <div>
-                                <SurfaceIconButton
+                                <SurfaceIcon
                                   size="3.5rem"
-                                  containerColor={theme.color.foreground}
                                   onClick={(event: any) => {
                                     event.stopPropagation()
                                     toggleRemoveDialog()
@@ -268,7 +252,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                                   disabled={account.origin !== 'local'}
                                 >
                                   <Trash2 />
-                                </SurfaceIconButton>
+                                </SurfaceIcon>
                               </div>
                             </Tooltip>
                           </div>
@@ -284,9 +268,9 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                     <ListItem
                       headlineText="Follow account"
                       leadingContent={
-                        <SurfaceIconButton as="figure" containerColor={theme.color.foreground}>
+                        <SurfaceIcon>
                           <EyePlus />
-                        </SurfaceIconButton>
+                        </SurfaceIcon>
                       }
                     />
                   </Menu.Item>
