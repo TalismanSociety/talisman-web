@@ -4,7 +4,7 @@ import { Maybe } from '@util/monads'
 import { formatDistance } from 'date-fns'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-export const useLocalizedLockDuration = () => {
+export const useLocalizedUnlockDuration = () => {
   const [api, sessionProgress] = useRecoilValue(
     waitForAll([useSubstrateApiState(), useDeriveState('session', 'progress', [])])
   )

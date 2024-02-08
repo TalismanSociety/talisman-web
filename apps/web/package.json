@@ -88,6 +88,7 @@
     "@storybook/react": "^7.6.5",
     "@storybook/react-vite": "^7.6.5",
     "@storybook/testing-library": "^0.2.2",
+    "@talismn/astar-types": "TalismanSociety/astar-types",
     "@talismn/development": "workspace:^",
     "@talismn/eslint-config": "workspace:^",
     "@talismn/tsconfig": "workspace:^",

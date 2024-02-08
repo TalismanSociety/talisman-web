@@ -82,7 +82,6 @@ const StakeProviders = () => {
           <ChainProvider
             chain={{
               genesisHash: slpxPair.substrateChainGenesisHash,
-              priorityPool: undefined,
             }}
           >
             <StakeProvider

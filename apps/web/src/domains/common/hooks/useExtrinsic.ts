@@ -13,6 +13,8 @@ import { toastExtrinsic } from '../utils'
 import { signetAccountState } from '@domains/accounts'
 import { useSignetSdk } from '@talismn/signet-apps-sdk'
 
+type Promisable<T> = T | PromiseLike<T>
+
 export type SubmittableResultLoadable =
   | { state: 'idle'; contents: undefined }
   | { state: 'loading'; contents: ISubmittableResult | undefined }
@@ -39,7 +41,7 @@ export function useExtrinsic<T extends SubmittableExtrinsic<'promise', ISubmitta
   chainGenesisHash?: `0x${string}`
 ): T extends undefined ? ExtrinsicLoadable | undefined : ExtrinsicLoadable
 export function useExtrinsic(
-  createSubmittable: (api: ApiPromise) => SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
+  createSubmittable: (api: ApiPromise) => Promisable<SubmittableExtrinsic<'promise', ISubmittableResult> | undefined>
 ): ExtrinsicLoadable
 export function useExtrinsic<
   TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
@@ -61,7 +63,7 @@ export function useExtrinsic(
   moduleOrSubmittable:
     | string
     | SubmittableExtrinsic<'promise', ISubmittableResult>
-    | ((api: ApiPromise) => SubmittableExtrinsic<'promise', ISubmittableResult> | undefined)
+    | ((api: ApiPromise) => Promisable<SubmittableExtrinsic<'promise', ISubmittableResult> | undefined>)
     | undefined,
   sectionOrGenesisHash?: string | `0x${string}`,
   params: unknown[] = []
@@ -76,92 +78,99 @@ export function useExtrinsic(
   const signAndSend = useRecoilCallback(
     callbackInterface =>
       async (account: AddressOrPair, ...innerParams: unknown[]) => {
-        const [submittable, chain] = await (async () => {
-          switch (typeof moduleOrSubmittable) {
-            case 'string': {
-              const api = await callbackInterface.snapshot.getPromise(substrateApiState(endpoint))
-              const submittable = api.tx[moduleOrSubmittable]?.[sectionOrGenesisHash ?? '']?.(
-                ...(innerParams.length > 0 ? innerParams : params)
-              )
-
-              if (submittable === undefined) {
-                throw new Error(`Unable to construct extrinsic ${moduleOrSubmittable}:${sectionOrGenesisHash ?? ''}`)
-              }
-
-              return [submittable, contextChain] as const
-            }
-            case 'function':
-              return [
-                moduleOrSubmittable(await callbackInterface.snapshot.getPromise(substrateApiState(endpoint))),
-                contextChain,
-              ] as const
-            default:
-              return [
-                moduleOrSubmittable,
-                sectionOrGenesisHash === undefined
-                  ? contextChain
-                  : await callbackInterface.snapshot.getPromise(chainState({ genesisHash: sectionOrGenesisHash })),
-              ]
-          }
-        })()
-
-        const signingWithSignet = signetAccount?.address === account
-
-        const promiseFunc = async () => {
-          let resolve = (_value: ISubmittableResult) => {}
-          let reject = (_value: unknown) => {}
-
-          const deferred = new Promise<ISubmittableResult>((_resolve, _reject) => {
-            resolve = _resolve
-            reject = _reject
-          })
-
-          try {
-            if (signingWithSignet && submittable) {
-              const { ok, error, receipt } = await sdk.send(submittable.method.toHex())
-              // both rejects dont matter because signet will toast corresponding message after every transaction
-              if (ok && receipt) reject(new Error('Please ignore this message.'))
-              if (error) reject(new Error('Failed to approve transation in Signet', { cause: error }))
-            }
-            const unsubscribe = await submittable?.signAndSend(account, { signer: wallet?.signer }, result => {
-              extrinsicMiddleware(chain.id, submittable, result, callbackInterface)
-
-              if (result.isError) {
-                unsubscribe?.()
-                reject(result)
-              } else if (result.isFinalized) {
-                unsubscribe?.()
-
-                if (result.dispatchError !== undefined) {
-                  reject(result)
-                } else {
-                  resolve(result)
-                }
-              } else {
-                setLoadable({ state: 'loading', contents: result })
-              }
-            })
-          } catch (error) {
-            reject(error)
-          }
-
-          return await deferred
-        }
-
-        const promise = promiseFunc()
-
-        setLoadable(loadable => ({
-          state: 'loading',
-          contents: loadable.state === 'loading' ? loadable.contents : undefined,
-        }))
-
-        // dont toast if using signet sdk because signet cant resolve full ISubmittableResult
-        // also signet already handles toasting in its UI
-        if (submittable !== undefined && !signingWithSignet) {
-          toastExtrinsic([[submittable.method.section, submittable.method.method]], promise, chain.subscanUrl)
-        }
-
         try {
+          setLoadable(loadable => ({
+            state: 'loading',
+            contents: loadable.state === 'loading' ? loadable.contents : undefined,
+          }))
+
+          const [submittable, chain] = await (async () => {
+            switch (typeof moduleOrSubmittable) {
+              case 'string': {
+                const api = await callbackInterface.snapshot.getPromise(substrateApiState(endpoint))
+                const submittable = api.tx[moduleOrSubmittable]?.[sectionOrGenesisHash ?? '']?.(
+                  ...(innerParams.length > 0 ? innerParams : params)
+                )
+
+                if (submittable === undefined) {
+                  throw new Error(`Unable to construct extrinsic ${moduleOrSubmittable}:${sectionOrGenesisHash ?? ''}`)
+                }
+
+                return [submittable, contextChain] as const
+              }
+              case 'function':
+                return [
+                  await moduleOrSubmittable(await callbackInterface.snapshot.getPromise(substrateApiState(endpoint))),
+                  contextChain,
+                ] as const
+              default:
+                return [
+                  moduleOrSubmittable,
+                  sectionOrGenesisHash === undefined
+                    ? contextChain
+                    : await callbackInterface.snapshot.getPromise(chainState({ genesisHash: sectionOrGenesisHash })),
+                ]
+            }
+          })()
+
+          const signingWithSignet = signetAccount?.address === account
+
+          const promiseFunc = async () => {
+            let resolve = (_value: ISubmittableResult) => {}
+            let reject = (_value: unknown) => {}
+
+            const deferred = new Promise<ISubmittableResult>((_resolve, _reject) => {
+              resolve = _resolve
+              reject = _reject
+            })
+
+            try {
+              if (signingWithSignet && submittable) {
+                const { ok, error, receipt } = await sdk.send(submittable.method.toHex())
+
+                // both rejects don't matter because signet will toast corresponding message after every transaction
+                if (ok && receipt !== undefined) {
+                  reject(new Error('Please ignore this message'))
+                }
+
+                if (error !== undefined) {
+                  reject(new Error('Failed to approve transaction in Signet', { cause: error }))
+                }
+              }
+
+              const unsubscribe = await submittable?.signAndSend(account, { signer: wallet?.signer }, result => {
+                extrinsicMiddleware(chain.id, submittable, result, callbackInterface)
+
+                if (result.isError) {
+                  unsubscribe?.()
+                  reject(result)
+                } else if (result.isFinalized) {
+                  unsubscribe?.()
+
+                  if (result.dispatchError !== undefined) {
+                    reject(result)
+                  } else {
+                    resolve(result)
+                  }
+                } else {
+                  setLoadable({ state: 'loading', contents: result })
+                }
+              })
+            } catch (error) {
+              reject(error)
+            }
+
+            return await deferred
+          }
+
+          const promise = promiseFunc()
+
+          // Don't toast if using signet sdk because signet cant resolve full ISubmittableResult
+          // also signet already handles toasting in its UI
+          if (submittable !== undefined && !signingWithSignet) {
+            toastExtrinsic([[submittable.method.section, submittable.method.method]], promise, chain.subscanUrl)
+          }
+
           const result = await promise
           setLoadable({ state: 'hasValue', contents: result })
           return result

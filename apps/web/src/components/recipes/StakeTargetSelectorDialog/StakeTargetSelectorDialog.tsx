@@ -1,22 +1,29 @@
 import { ChevronLeft, ChevronRight } from '@talismn/icons'
 import { AlertDialog, Button, Text } from '@talismn/ui'
 import { motion } from 'framer-motion'
-import React, { type ReactElement, useState } from 'react'
+import React, { useState, type ReactElement, type ReactNode } from 'react'
 
-import PoolSelectorItem, { type PoolSelectorItemProps } from '../PoolSelectorItem/PoolSelectorItem'
+import StakeTargetSelectorItem, {
+  DappSelectorItem,
+  PoolSelectorItem,
+  type StakeTargetSelectorItemProps,
+} from './StakeTargetSelectorItem'
 
-export type PoolSelectorDialogProps = {
-  open: boolean
+export type StakeTargetSelectorDialogProps = {
+  open?: boolean
+  title: ReactNode
+  currentSelectionLabel: ReactNode
+  selectionLabel: ReactNode
   onRequestDismiss: () => unknown
   onConfirm: () => unknown
-  children: ReactElement<PoolSelectorItemProps> | Array<ReactElement<PoolSelectorItemProps>>
+  children: ReactElement<StakeTargetSelectorItemProps> | Array<ReactElement<StakeTargetSelectorItemProps>>
 }
 
 const ITEMS_PER_PAGE = 9
 
-const PoolSelectorDialog = Object.assign(
-  (props: PoolSelectorDialogProps) => {
-    const items = React.Children.toArray(props.children) as Array<ReactElement<PoolSelectorItemProps>>
+const StakeTargetSelectorDialog = Object.assign(
+  (props: StakeTargetSelectorDialogProps) => {
+    const items = React.Children.toArray(props.children) as Array<ReactElement<StakeTargetSelectorItemProps>>
     const selectedItems = items.filter(item => item.props.selected)
     const nonSelectedItems = items.filter(item => !item.props.selected)
     const highlightedItems = items.filter(item => item.props.highlighted)
@@ -28,12 +35,12 @@ const PoolSelectorDialog = Object.assign(
     return (
       <AlertDialog
         open={props.open}
-        title="Select a pool"
+        title={props.title}
         width="83rem"
         content={
           <div>
             <Text.Body as="h3" css={{ marginBottom: '0.6rem' }}>
-              Current pool
+              {props.currentSelectionLabel}
             </Text.Body>
             <div
               css={{
@@ -51,7 +58,7 @@ const PoolSelectorDialog = Object.assign(
             </div>
             <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Text.Body as="h3" css={{ marginTop: '1.6rem', marginBottom: '0.6rem' }}>
-                New pool
+                {props.selectionLabel}
               </Text.Body>
               <div css={{ display: 'flex' }}>
                 <Button variant="noop" onClick={() => setPage(page => page - 1)} hidden={!hasPreviousPage}>
@@ -105,7 +112,13 @@ const PoolSelectorDialog = Object.assign(
           </Button>
         }
         confirmButton={
-          <Button onClick={props.onConfirm} disabled={highlightedItems.length === 0}>
+          <Button
+            onClick={() => {
+              props.onConfirm()
+              props.onRequestDismiss()
+            }}
+            disabled={highlightedItems.length === 0}
+          >
             Swap pool
           </Button>
         }
@@ -114,7 +127,31 @@ const PoolSelectorDialog = Object.assign(
       />
     )
   },
+  { Item: StakeTargetSelectorItem }
+)
+
+export const PoolSelectorDialog = Object.assign(
+  (props: Omit<StakeTargetSelectorDialogProps, 'title' | 'currentSelectionLabel' | 'selectionLabel'>) => (
+    <StakeTargetSelectorDialog
+      {...props}
+      title="Select a pool"
+      currentSelectionLabel="Current pool"
+      selectionLabel="New pool"
+    />
+  ),
   { Item: PoolSelectorItem }
 )
 
-export default PoolSelectorDialog
+export const DappSelectorDialog = Object.assign(
+  (props: Omit<StakeTargetSelectorDialogProps, 'title' | 'currentSelectionLabel' | 'selectionLabel'>) => (
+    <StakeTargetSelectorDialog
+      {...props}
+      title="Select a DApp"
+      currentSelectionLabel="Selected DApp"
+      selectionLabel="New DApp"
+    />
+  ),
+  { Item: DappSelectorItem }
+)
+
+export default StakeTargetSelectorDialog

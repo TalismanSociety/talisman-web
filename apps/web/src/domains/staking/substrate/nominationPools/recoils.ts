@@ -1,5 +1,5 @@
 import { substrateAccountsState } from '@domains/accounts/recoils'
-import { chainsState, type ChainInfo } from '@domains/chains'
+import { nominationPoolsEnabledChainsState, type ChainInfo } from '@domains/chains'
 import { useSubstrateApiEndpoint } from '@domains/common'
 import { chainReadIdState, substrateApiState } from '@domains/common/recoils'
 import type { AnyNumber } from '@polkadot/types-codec/types'
@@ -59,7 +59,7 @@ export const recommendedPoolsState = selectorFamily({
   get:
     (endpoint: string) =>
     async ({ get }) => {
-      const chains = get(chainsState)
+      const chains = get(nominationPoolsEnabledChainsState)
       const api = get(substrateApiState(endpoint))
 
       const chain = chains.find(x => x.genesisHash === api.genesisHash.toHex())

@@ -24,7 +24,7 @@ import React, {
   type ReactElement,
   type ReactNode,
 } from 'react'
-import { Surface, Text, useSurfaceColor } from '../../atoms'
+import { CircularProgressIndicator, Surface, Text, useSurfaceColor } from '../../atoms'
 import FloatingPortal from '../../atoms/FloatingPortal'
 
 export type SelectProps<TValue extends string | number, TClear extends boolean = false> = {
@@ -34,6 +34,7 @@ export type SelectProps<TValue extends string | number, TClear extends boolean =
   placeholder?: ReactNode
   children?: ReactNode
   onChange?: (value: TClear extends false ? TValue : TValue | undefined) => unknown
+  loading?: boolean
   clearRequired?: TClear
   detached?: boolean
 }
@@ -63,6 +64,7 @@ const Select = Object.assign(
   <TValue extends string | number, TClear extends boolean = false>({
     children,
     renderSelected,
+    loading,
     clearRequired: _clearRequired,
     detached,
     ...props
@@ -220,7 +222,9 @@ const Select = Object.assign(
           <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none' }}>
             {selectedChild ?? <Text.Body alpha="disabled">{props.placeholder}</Text.Body>}
           </Text.Body>
-          {clearRequired ? (
+          {loading ? (
+            <CircularProgressIndicator />
+          ) : clearRequired ? (
             <X />
           ) : (
             <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />

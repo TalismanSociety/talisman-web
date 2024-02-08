@@ -1,5 +1,5 @@
 import StakeDialogComponent from '@components/recipes/StakeDialog'
-import { chainsState, type ChainInfo } from '@domains/chains/recoils'
+import { nominationPoolsEnabledChainsState, type ChainInfo } from '@domains/chains/recoils'
 import { useEraEtaFormatter } from '@domains/common/hooks'
 import { CircularProgressIndicator } from '@talismn/ui'
 import BN from 'bn.js'
@@ -28,7 +28,7 @@ const InnerStakeDialog = () => {
   const initialChain = searchParams.get('chain')
   const account = searchParams.get('account') ?? undefined
 
-  const chains = useRecoilValue(chainsState)
+  const chains = useRecoilValue(nominationPoolsEnabledChainsState)
   const [chain, setChain] = useState<ChainInfo | undefined>(chains.find(x => x.id === initialChain) ?? chains[0])
 
   const [inTransition, startTransition] = useTransition()

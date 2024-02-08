@@ -1,4 +1,3 @@
-import { Global } from '@emotion/react'
 import React, { useEffect, useState } from 'react'
 
 export type DialogProps = Omit<
@@ -67,21 +66,27 @@ export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function 
   }
 
   return (
-    <>
-      {open && <Global styles={{ body: { overflow: 'hidden' } }} />}
-      <dialog
-        ref={element => {
-          if (typeof ref === 'function') {
-            ref(element)
-          } else if (ref !== null) {
-            ref.current = element
-          }
+    // NOTE: can't do the following because of this issue https://github.com/emotion-js/emotion/issues/3038
+    // {open && <Global styles={{ body: { overflow: 'hidden' } }} />}
+    <dialog
+      ref={element => {
+        if (typeof ref === 'function') {
+          ref(element)
+        } else if (ref !== null) {
+          ref.current = element
+        }
 
-          setElement(element)
-        }}
-        {...props}
-      />
-    </>
+        setElement(element)
+      }}
+      // https://github.com/whatwg/html/issues/7732
+      css={{
+        'overscrollBehavior': 'contain',
+        '::backdrop': {
+          overscrollBehavior: 'contain',
+        },
+      }}
+      {...props}
+    />
   )
 })
 

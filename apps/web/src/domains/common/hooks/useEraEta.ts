@@ -34,3 +34,5 @@ export const useEraEtaFormatter = () => {
     [api, sessionProgress.eraLength, sessionProgress.eraProgress, sessionProgress.isEpoch]
   )
 }
+
+export const useEraEta = (era: number) => useEraEtaFormatter()(era)

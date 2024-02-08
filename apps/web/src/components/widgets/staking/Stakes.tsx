@@ -1,6 +1,6 @@
 import SectionHeader from '@components/molecules/SectionHeader'
 import StakePosition, { StakePositionList } from '@components/recipes/StakePosition'
-import { ChainProvider, chainsState } from '@domains/chains'
+import { ChainProvider, nominationPoolsEnabledChainsState } from '@domains/chains'
 import { useTotalStaked } from '@domains/staking'
 import { Button, HiddenDetails, Text } from '@talismn/ui'
 import { Fragment, Suspense, type PropsWithChildren } from 'react'
@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 import AnimatedFiatNumber from '../AnimatedFiatNumber'
 import ErrorBoundary from '../ErrorBoundary'
+import DappStakes from './dappStaking/Stakes'
 import LidoStakes from './lido/Stakes'
 import SlpxStakes from './slpx/Stakes'
 import PoolStakes from './substrate/PoolStakes'
@@ -66,7 +67,7 @@ const SuspenseSkeleton = (props: PropsWithChildren) => (
 )
 
 const Stakes = (props: { hideHeader?: boolean }) => {
-  const chains = useRecoilValue(chainsState)
+  const chains = useRecoilValue(nominationPoolsEnabledChainsState)
 
   return (
     <div id="staking">
@@ -92,6 +93,11 @@ const Stakes = (props: { hideHeader?: boolean }) => {
             </ChainProvider>
           </Fragment>
         ))}
+        <ErrorBoundary orientation="horizontal">
+          <SuspenseSkeleton>
+            <DappStakes />
+          </SuspenseSkeleton>
+        </ErrorBoundary>
         <ErrorBoundary orientation="horizontal">
           <SuspenseSkeleton>
             <SlpxStakes />

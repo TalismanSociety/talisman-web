@@ -83,7 +83,6 @@ const Stakes = () => {
           key={index}
           chain={{
             genesisHash: slpxPair.substrateChainGenesisHash,
-            priorityPool: undefined,
           }}
         >
           <SlpxStakes slpxPair={slpxPair} />

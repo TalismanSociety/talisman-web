@@ -4,7 +4,8 @@ import { useRecoilValue } from 'recoil'
 import { chainState } from '.'
 import { chainConfigs, type ChainConfig } from './config'
 
-export const ChainContext = createContext<ChainConfig>(chainConfigs[0])
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+export const ChainContext = createContext<ChainConfig>(chainConfigs[0]!)
 
 export const ChainProvider = (props: PropsWithChildren<{ chain: ChainConfig }>) => (
   <ChainContext.Provider value={props.chain}>

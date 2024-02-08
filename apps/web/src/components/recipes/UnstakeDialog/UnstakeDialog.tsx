@@ -2,7 +2,7 @@ import { AlertDialog, Button, Text, TextInput } from '@talismn/ui'
 import type { ReactNode } from 'react'
 
 export type UnstakeDialogProps = {
-  open: boolean
+  open?: boolean
   onDismiss: () => unknown
   onConfirm: () => unknown
   confirmState?: 'pending' | 'disabled'

@@ -10,6 +10,7 @@ import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import WalletConnectionSideSheet, {
   walletConnectionSideSheetOpenState,
 } from '@components/widgets/WalletConnectionSideSheet'
+import DappStakingStakeSideSheet from '@components/widgets/staking/dappStaking/StakeSideSheet'
 import LidoStakeSideSheet from '@components/widgets/staking/lido/StakeSideSheet'
 import SlpxStakeSideSheet from '@components/widgets/staking/slpx/StakeSideSheet'
 import NominationPoolsStakeSideSheet from '@components/widgets/staking/substrate/NominationPoolsStakeSideSheet'
@@ -412,6 +413,7 @@ const Layout = () => {
             <Header />
             <Outlet />
             <NominationPoolsStakeSideSheet />
+            <DappStakingStakeSideSheet />
             <SlpxStakeSideSheet />
             <LidoStakeSideSheet />
             <WalletConnectionSideSheet />
