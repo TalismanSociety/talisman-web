@@ -107,6 +107,7 @@ export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
             account,
             symbol: token?.tokenDetails?.symbol,
             variant: 'available',
+            stale: tokenBalance.each.some(x => x.status === 'stale'),
           }
 
           return <AssetBreakdownRow key={index} assetSummary={assetSummary} />
@@ -136,6 +137,7 @@ export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
             account,
             symbol: token?.tokenDetails?.symbol,
             variant: 'locked',
+            stale: tokenBalance.each.some(x => x.status === 'stale'),
           }
 
           return <AssetBreakdownRow key={index} assetSummary={assetSummary} />

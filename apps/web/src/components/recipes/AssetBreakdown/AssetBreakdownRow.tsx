@@ -70,8 +70,9 @@ export const AssetBreakdownRowHeader = ({ token }: { token: PortfolioToken }) =>
             <AssetBalance
               fiat={token?.lockedFiatAmount}
               planck={token?.lockedAmountFormatted}
-              locked={token?.locked}
               symbol={token?.tokenDetails?.symbol}
+              locked={token?.locked}
+              stale={token.stale}
             />
           )}
         </td>
@@ -80,6 +81,7 @@ export const AssetBreakdownRowHeader = ({ token }: { token: PortfolioToken }) =>
             fiat={token?.transferableFiatAmount}
             planck={token?.transferableAmountFormatted}
             symbol={token?.tokenDetails?.symbol}
+            stale={token.stale}
           />
         </td>
       </div>
@@ -94,11 +96,12 @@ type AssetBreakdownProps = {
     account: Account
     symbol: string
     variant: string
+    stale?: boolean
   }
 }
 
 export const AssetBreakdownRow = ({ assetSummary }: AssetBreakdownProps) => {
-  const { planckAmount, fiatAmount, account, symbol, variant } = assetSummary
+  const { planckAmount, fiatAmount, account, symbol, variant, stale } = assetSummary
 
   return (
     <AssetRow
@@ -149,7 +152,7 @@ export const AssetBreakdownRow = ({ assetSummary }: AssetBreakdownProps) => {
           </div>
         </td>
         <td align="right">
-          <AssetBalance fiat={fiatAmount} planck={planckAmount} locked={false} symbol={symbol} />
+          <AssetBalance fiat={fiatAmount} planck={planckAmount} symbol={symbol} locked={false} stale={stale} />
         </td>
       </div>
     </AssetRow>

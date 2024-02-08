@@ -4,21 +4,22 @@ import RedactableBalance from '@components/widgets/RedactableBalance'
 import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { type Balances } from '@talismn/balances'
-import { Lock } from '@talismn/icons'
+import { AlertTriangle, Lock } from '@talismn/icons'
 import { HiddenDetails, Text, Tooltip } from '@talismn/ui'
 import { isEmpty, startCase } from 'lodash'
 import { Children, type ReactElement, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 type AssetBalanceProps = {
-  locked?: boolean
   planck: string
   fiat: number
   tooltip?: ReactNode
   symbol: string
+  locked?: boolean
+  stale?: boolean
 }
 
-export const AssetBalance = ({ locked, planck, fiat, symbol }: AssetBalanceProps) => {
+export const AssetBalance = ({ planck, fiat, symbol, locked, stale }: AssetBalanceProps) => {
   return (
     <div
       css={{
@@ -45,6 +46,22 @@ export const AssetBalance = ({ locked, planck, fiat, symbol }: AssetBalanceProps
           }}
         >
           <RedactableBalance>{planck ? `${planck} ${symbol} ` : '- ' + symbol}</RedactableBalance>
+          {stale && (
+            <>
+              {' '}
+              <Tooltip
+                content={
+                  <>
+                    Latest balance not available.
+                    <br />
+                    Displayed value may be out of date.
+                  </>
+                }
+              >
+                <AlertTriangle size="0.75em" css={{ color: '#FD8FFF', verticalAlign: 'baseline' }} />
+              </Tooltip>
+            </>
+          )}
         </Text.Body>
         {locked ? <Lock css={{ width: '16px', height: '16px' }} /> : ''}
       </div>
@@ -279,8 +296,9 @@ const Asset = Object.assign((props: AssetProps) => {
           <AssetBalance
             fiat={token.overallLockedFiatAmount}
             planck={token.overallLockedAmount}
-            locked={token.locked}
             symbol={token.tokenDetails.symbol}
+            locked={token.locked}
+            stale={token.stale}
           />
         )}
       </td>
@@ -297,6 +315,7 @@ const Asset = Object.assign((props: AssetProps) => {
           fiat={lockedAsset ? token.overallLockedFiatAmount : token.overallTransferableFiatAmount}
           planck={lockedAsset ? token.overallLockedAmount : token.overallTransferableAmount}
           symbol={token.tokenDetails.symbol}
+          stale={token.stale}
         />
       </td>
     </tr>

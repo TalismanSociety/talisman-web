@@ -115,6 +115,7 @@ const useAssets = (customAddress?: string) => {
     const tokenDisplayName = startCase(token.coingeckoId)
 
     return {
+      stale: tokenBalances.each.some(x => x.status === 'stale'),
       locked,
       totalAmount,
       totalAmountFormatted,
