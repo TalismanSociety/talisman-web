@@ -33,7 +33,7 @@ const AddressInput = (props: Omit<TextInputProps, 'placeholder' | 'width' | 'noL
 
 const AddressInputConfirmButton = (props: Omit<ButtonProps, 'variant' | 'children'>) => (
   <Button {...props} variant="outlined" css={{ flex: 0, paddingRight: '5.4rem', paddingLeft: '5.4rem' }}>
-    Add
+    Search
   </Button>
 )
 

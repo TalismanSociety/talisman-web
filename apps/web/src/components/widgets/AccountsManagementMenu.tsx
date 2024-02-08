@@ -9,7 +9,7 @@ import {
 import { fiatBalanceGetterState, portfolioBalancesFiatSumState } from '@domains/balances'
 import { copyAddressToClipboard } from '@domains/common/utils'
 import { useTheme } from '@emotion/react'
-import { Copy, Ethereum, Eye, EyePlus, TalismanHand, Trash2, Users, X } from '@talismn/icons'
+import { Copy, Ethereum, Eye, EyePlus, TalismanHand, Trash2, Users, Wallet, X } from '@talismn/icons'
 import {
   Chip,
   CircularProgressIndicator,
@@ -29,6 +29,7 @@ import { useRecoilValue, useRecoilValueLoadable, useResetRecoilState, useSetReco
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
 import AnimatedFiatNumber from './AnimatedFiatNumber'
 import RemoveWatchedAccountConfirmationDialog from './RemoveWatchedAccountConfirmationDialog'
+import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
 
 const EvmChip = () => {
   const theme = useTheme()
@@ -84,12 +85,29 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
   const resetSelectedAccountAddresses = useResetRecoilState(selectedAccountAddressesState)
   const resetLookupAccountAddress = useResetRecoilState(lookupAccountAddressState)
 
+  const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
+
   const portfolioAccounts = useRecoilValue(portfolioAccountsState)
   const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
 
   const getFiatBalanceLoadable = useRecoilValueLoadable(fiatBalanceGetterState)
 
   const leadingMenuItem = useMemo(() => {
+    if (portfolioAccounts.length <= 0) {
+      return (
+        <Menu.Item onClick={() => setWalletConnectionSideSheetOpen(true)}>
+          <ListItem
+            headlineText="Connect wallet"
+            leadingContent={
+              <SurfaceIconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+                <Wallet />
+              </SurfaceIconButton>
+            }
+          />
+        </Menu.Item>
+      )
+    }
+
     return (
       <Menu.Item
         onClick={() => {
@@ -114,11 +132,13 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
       </Menu.Item>
     )
   }, [
+    portfolioAccounts.length,
+    portfolioBalanceLoadable,
     resetLookupAccountAddress,
     resetSelectedAccountAddresses,
+    setWalletConnectionSideSheetOpen,
     theme.color.foreground,
     theme.color.primary,
-    portfolioBalanceLoadable,
   ])
 
   return (
