@@ -10,6 +10,7 @@ import { useContext } from 'react'
 import { atom, selector, selectorFamily, waitForAll, type RecoilValueReadOnly } from 'recoil'
 import { ChainContext } from '.'
 import { chainConfigs } from './config'
+import { storageEffect } from '@domains/common/effects'
 
 export const chainState = selectorFamily({
   key: 'Chain',
@@ -43,11 +44,31 @@ export const _chainsState = selector({
   get: ({ get }) => get(waitForAll(chainConfigs.map(({ genesisHash }) => chainState({ genesisHash })))),
 })
 
-export const enableTestnetsState = atom({ key: 'EnableTestnets', default: false })
+export const enableTestnetsState = atom({
+  key: 'EnableTestnets',
+  default: false,
+  effects: [storageEffect(sessionStorage)],
+})
 
 export const chainsState = selector({
   key: 'Chains',
   get: ({ get }) => (get(enableTestnetsState) ? get(_chainsState) : get(_chainsState).filter(x => !x.isTestnet)),
+})
+
+export const nominationPoolsEnabledChainsState = selector({
+  key: 'NominationPoolsEnabledChains',
+  get: ({ get }) =>
+    get(chainsState).filter(
+      (x): x is Extract<typeof x, { hasNominationPools: true }> => 'hasNominationPools' in x && x.hasNominationPools
+    ),
+})
+
+export const dappStakingEnabledChainsState = selector({
+  key: 'DappStakingEnabledChains',
+  get: ({ get }) =>
+    get(chainsState).filter(
+      (x): x is Extract<typeof x, { hasDappStaking: true }> => 'hasDappStaking' in x && x.hasDappStaking
+    ),
 })
 
 export const tokenPriceState = selectorFamily({
@@ -104,8 +125,55 @@ export const nativeTokenDecimalState = selectorFamily({
           Decimal.fromPlanck(value, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
         fromUserInput: (input: string) =>
           Decimal.fromUserInput(input, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
+        fromUserInputOrUndefined: (input: string) =>
+          Decimal.fromUserInputOrUndefined(
+            input,
+            api.registry.chainDecimals[0] ?? 0,
+            api.registry.chainTokens[0] ?? ''
+          ),
       }
     },
 })
 
 export const useNativeTokenDecimalState = () => nativeTokenDecimalState(useSubstrateApiEndpoint())
+
+export const nativeTokenAmountState = selectorFamily({
+  key: 'NativeTokenAmount',
+  get:
+    (params: { apiEndpoint: string; genesisHash: string }) =>
+    ({ get }) => {
+      const [decimal, price, currency] = get(
+        waitForAll([
+          nativeTokenDecimalState(params.apiEndpoint),
+          nativeTokenPriceState({ genesisHash: params.genesisHash }),
+          selectedCurrencyState,
+        ])
+      )
+
+      const fromValue =
+        <T, T1 extends Decimal | undefined>(transformFn: (value: T) => T1) =>
+        (value: T) => {
+          const decimalAmount = transformFn(value)
+          const fiatAmount = (decimalAmount?.toNumber() ?? 0) * price
+          const localizedFiatAmount = fiatAmount.toLocaleString(undefined, {
+            style: 'currency',
+            currency,
+          })
+
+          return {
+            decimalAmount,
+            fiatAmount,
+            localizedFiatAmount,
+          }
+        }
+
+      return {
+        fromPlanck: fromValue(decimal.fromPlanck),
+        fromUserInput: fromValue(decimal.fromUserInput),
+        fromUserInputOrUndefined: fromValue(decimal.fromUserInputOrUndefined),
+      }
+    },
+})
+
+export const useNativeTokenAmountState = () =>
+  nativeTokenAmountState({ apiEndpoint: useSubstrateApiEndpoint(), genesisHash: useContext(ChainContext).genesisHash })

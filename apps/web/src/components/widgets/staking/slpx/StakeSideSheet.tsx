@@ -133,7 +133,6 @@ export default () => {
     <ChainProvider
       chain={{
         genesisHash: slpxPair.substrateChainGenesisHash,
-        priorityPool: undefined,
       }}
     >
       <AddStakeSideSheet

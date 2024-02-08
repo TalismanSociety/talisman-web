@@ -1,20 +1,25 @@
 import { useTheme } from '@emotion/react'
 import { ExternalLink, TalismanHand, User } from '@talismn/icons'
 import { Button, Text, Tooltip } from '@talismn/ui'
+import type { ReactNode } from 'react'
 
-export type PoolSelectorItemProps = {
+export type StakeTargetSelectorItemProps = {
   selected?: boolean
   highlighted?: boolean
-  poolName: string
-  poolDetailUrl?: string
-  stakedAmount: string
+  name: string
+  logo?: string
+  detailUrl?: string
+  balance: string
+  balanceDescription: string
   talismanRecommended: boolean
-  rating: 0 | 1 | 2 | 3
-  memberCount: number | string
+  talismanRecommendedDescription: string
+  rating?: 0 | 1 | 2 | 3
+  count: ReactNode
+  countDescription: string
   onClick?: () => unknown
 }
 
-const PoolSelectorItem = (props: PoolSelectorItemProps) => {
+const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => {
   const theme = useTheme()
   const alpha = props.selected || props.highlighted ? 'high' : 'disabled'
   return (
@@ -46,29 +51,41 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
           marginBottom: '0.6rem',
         }}
       >
-        <Tooltip content={props.poolName}>
-          <Text.Body
-            alpha={alpha}
+        <Tooltip content={props.name}>
+          <div
             css={{
-              flex: 1,
-              fontWeight: 'bold',
-              margin: 0,
+              display: 'flex',
+              alignItems: 'baseline',
+              gap: '0.8rem',
               overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
             }}
           >
-            {props.poolName}
-          </Text.Body>
+            {props.logo && (
+              <img src={props.logo} css={{ borderRadius: '0.8rem', width: '1.6rem', aspectRatio: '1 / 1' }} />
+            )}
+            <Text.Body
+              alpha={alpha}
+              css={{
+                flex: 1,
+                fontWeight: 'bold',
+                margin: 0,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {props.name}
+            </Text.Body>
+          </div>
         </Tooltip>
-        {props.poolDetailUrl !== undefined && (
-          <Button as="a" variant="noop" href={props.poolDetailUrl} target="_blank">
+        {props.detailUrl !== undefined && (
+          <Button as="a" variant="noop" href={props.detailUrl} target="_blank">
             <ExternalLink size="1.4rem" />
           </Button>
         )}
       </header>
-      <Tooltip content="Total staked in this pool">
-        <Text.Body alpha={alpha}>{props.stakedAmount}</Text.Body>
+      <Tooltip content={props.balanceDescription}>
+        <Text.Body alpha={alpha}>{props.balance}</Text.Body>
       </Tooltip>
       <Text.Body
         as="div"
@@ -85,7 +102,7 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
                   ))}
               </div>
           </Tooltip> */}
-          <Tooltip content="Number of pool members">
+          <Tooltip content={props.countDescription}>
             <div css={{ display: 'flex', alignItems: 'center' }}>
               <Text.Body
                 alpha={alpha}
@@ -94,14 +111,14 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
                   marginRight: '0.4rem',
                 }}
               >
-                {props.memberCount}
+                {props.count}
               </Text.Body>
               <User size="1.4rem" />
             </div>
           </Tooltip>
         </div>
         {props.talismanRecommended && (
-          <Tooltip content="Talisman top recommended pool">
+          <Tooltip content={props.talismanRecommendedDescription}>
             <TalismanHand size="1.4rem" />
           </Tooltip>
         )}
@@ -110,4 +127,32 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
   )
 }
 
-export default PoolSelectorItem
+export const PoolSelectorItem = (
+  props: Omit<
+    StakeTargetSelectorItemProps,
+    'balanceDescription' | 'countDescription' | 'talismanRecommendedDescription'
+  >
+) => (
+  <StakeTargetSelectorItem
+    {...props}
+    balanceDescription="Total staked in this pool"
+    countDescription="Number of pool members"
+    talismanRecommendedDescription="Talisman top recommended pool"
+  />
+)
+
+export const DappSelectorItem = (
+  props: Omit<
+    StakeTargetSelectorItemProps,
+    'balanceDescription' | 'countDescription' | 'talismanRecommendedDescription'
+  >
+) => (
+  <StakeTargetSelectorItem
+    {...props}
+    balanceDescription="Total staked with this DApp"
+    countDescription="Number of DApp stakers"
+    talismanRecommendedDescription="Talisman top recommended DApp"
+  />
+)
+
+export default StakeTargetSelectorItem

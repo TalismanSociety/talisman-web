@@ -1,5 +1,5 @@
 import StakeCalculatorDialogComponent from '@components/recipes/StakeCalculatorDialog'
-import { ChainProvider, chainsState, useChainState } from '@domains/chains'
+import { ChainProvider, nominationPoolsEnabledChainsState, useChainState } from '@domains/chains'
 import { useTokenAmount, useTokenAmountFromPlanck } from '@domains/common'
 import { useApr } from '@domains/staking/substrate/nominationPools'
 import { Suspense, useDeferredValue, useMemo, useState, useTransition } from 'react'
@@ -42,7 +42,7 @@ const EstimatedYield = (props: { amount: string }) => {
 
 const StakeCalculatorDialog = (props: StakeCalculatorDialogProps) => {
   const [inTransition, startTransition] = useTransition()
-  const chains = useRecoilValue(chainsState)
+  const chains = useRecoilValue(nominationPoolsEnabledChainsState)
   const [chain, setChain] = useState(useRecoilValue(useChainState()) ?? chains[0])
   const [amount, setAmount] = useState('')
 

@@ -1,10 +1,10 @@
 import BaseUnstakeDialog from '@components/recipes/UnstakeDialog'
-import { useLocalizedLockDuration } from '@domains/staking/substrate/nominationPools/hooks/useLockDuration'
+import { useLocalizedUnlockDuration } from '@domains/staking/substrate/nominationPools/hooks/useUnlockDuration'
 import { useValidatorUnstakeForm } from '@domains/staking/substrate/validator/hooks'
 import { useCallback, useEffect } from 'react'
 
 const ValidatorUnstakeDialog = (props: { accountAddress: string; open: boolean; onRequestDismiss: () => unknown }) => {
-  const lockDuration = useLocalizedLockDuration()
+  const lockDuration = useLocalizedUnlockDuration()
 
   const {
     extrinsic: unbondExtrinsic,

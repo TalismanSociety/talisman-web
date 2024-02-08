@@ -7713,6 +7713,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@talismn/astar-types@TalismanSociety/astar-types":
+  version: 0.0.0
+  resolution: "@talismn/astar-types@https://github.com/TalismanSociety/astar-types.git#commit=60052c3146ca90e72db6cfd2dcce4f22356789e2"
+  checksum: 6ce3309d5099172fc301a6e0251be15416fdf39f8d71774e91c4f51a2ea6f6ce37ea9b9f7b501845381c9ccf754cb6525c0d817b7e1dd471b498565794c4e15d
+  languageName: node
+  linkType: hard
+
 "@talismn/balances-default-modules@npm:0.0.0-pr1199-20231219213830":
   version: 0.0.0-pr1199-20231219213830
   resolution: "@talismn/balances-default-modules@npm:0.0.0-pr1199-20231219213830"
@@ -8232,6 +8239,7 @@ __metadata:
     "@storybook/testing-library": "npm:^0.2.2"
     "@substrate/txwrapper-core": "npm:^5.0.0"
     "@talismn/api-react-hooks": "npm:^0.0.25"
+    "@talismn/astar-types": TalismanSociety/astar-types
     "@talismn/balances-default-modules": "npm:0.0.0-pr1199-20231219213830"
     "@talismn/balances-react": "npm:0.0.0-pr1199-20231219213830"
     "@talismn/chaindata-provider": "npm:0.0.0-pr1199-20231219213830"

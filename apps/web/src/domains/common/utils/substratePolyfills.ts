@@ -29,6 +29,9 @@ export const expectedSessionTime = (api: ApiPromise) => {
     // Aleph Zero
     case '0x70255b4d28de0fc4e1a193d7e175ad1ccef431598211c55538f1018651a0344e':
       return minutesToMilliseconds(15)
+    // Shibuya
+    case '0xddb89973361a170839f80f152d2e9e38a376a5a7eccefcade763f46a8e567019':
+      return expectedBlockTime(api).muln(1800).toNumber()
     default:
       return (
         (api.consts.babe?.epochDuration.toNumber() ?? api.registry.createType('u64', 1).toNumber()) *

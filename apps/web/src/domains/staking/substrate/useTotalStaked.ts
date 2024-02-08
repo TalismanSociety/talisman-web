@@ -1,12 +1,14 @@
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { chainsState, nativeTokenPriceState } from '@domains/chains/recoils'
+import { nativeTokenPriceState, nominationPoolsEnabledChainsState } from '@domains/chains/recoils'
 import { chainDeriveState, chainQueryState, substrateApiState } from '@domains/common'
 import { Decimal } from '@talismn/math'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll, waitForAny } from 'recoil'
 
-export const useSubstrateFiatTotalStaked = () => {
-  const [chains, accounts] = useRecoilValue(waitForAll([chainsState, selectedSubstrateAccountsState]))
+export const useTotalStaked = () => {
+  const [chains, accounts] = useRecoilValue(
+    waitForAll([nominationPoolsEnabledChainsState, selectedSubstrateAccountsState])
+  )
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
   const nativeTokenPrices = useRecoilValue(
     waitForAll(chains.map(chain => nativeTokenPriceState({ genesisHash: chain.genesisHash })))

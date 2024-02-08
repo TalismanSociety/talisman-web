@@ -1,5 +1,7 @@
 import '@polkadot/api-augment/polkadot'
 import '@polkadot/api-augment/substrate'
+import '@talismn/astar-types/augment-api'
+import '@talismn/astar-types/types-lookup'
 
 import FairyBreadBanner from '@archetypes/FairyBreadBanner'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
