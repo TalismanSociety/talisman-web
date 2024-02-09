@@ -1,10 +1,11 @@
 import AccountIcon from '@components/molecules/AccountIcon'
 import type { Account } from '@domains/accounts'
-import { BarChart2, Clock, ZapOff, ZapPlus } from '@talismn/icons'
+import { Clock, MoreHorizontal, ZapOff, ZapPlus } from '@talismn/icons'
 import {
   Chip,
   CircularProgressIndicator,
   Hr,
+  Menu,
   Surface,
   SurfaceChip,
   SurfaceIconButton,
@@ -35,7 +36,7 @@ export type StakePositionProps = {
   increaseStakeButton?: ReactNode
   unstakeButton?: ReactNode
   lockedButton?: ReactNode
-  statisticsButton?: ReactNode
+  menuButton?: ReactNode
   claimButton?: ReactNode
   withdrawButton?: ReactNode
 }
@@ -66,12 +67,18 @@ const UnstakeButton = (props: Omit<ButtonProps, 'children'>) => (
   </StakePositionContext.Consumer>
 )
 
-const StatisticsButton = (props: Omit<ButtonProps, 'children'>) => (
-  <Tooltip content="Statistics">
-    <SurfaceIconButton {...props}>
-      <BarChart2 />
-    </SurfaceIconButton>
-  </Tooltip>
+const MenuButton = Object.assign(
+  (props: PropsWithChildren) => (
+    <Menu>
+      <Menu.Button>
+        <SurfaceIconButton>
+          <MoreHorizontal />
+        </SurfaceIconButton>
+      </Menu.Button>
+      <Menu.Items>{props.children}</Menu.Items>
+    </Menu>
+  ),
+  { Item: Menu.Item }
 )
 
 const ClaimButton = (props: Omit<ChipProps, 'children'> & { amount: ReactNode }) => (
@@ -221,7 +228,7 @@ const StakePosition = Object.assign(
             >
               {props.increaseStakeButton}
               {props.unstakeButton}
-              {props.statisticsButton}
+              {props.menuButton}
             </div>
             <div
               css={{ 'gridArea': 'asset', 'display': 'none', '@container (min-width: 100rem)': { display: 'revert' } }}
@@ -275,7 +282,7 @@ const StakePosition = Object.assign(
   {
     IncreaseStakeButton,
     UnstakeButton,
-    StatisticsButton,
+    MenuButton,
     ClaimButton,
     WithdrawButton,
     LockedButton,

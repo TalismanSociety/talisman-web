@@ -2,6 +2,7 @@ import AccountConnectionGuard from '@components/widgets/AccountConnectionGuard'
 import { RouteErrorElement } from '@components/widgets/ErrorBoundary'
 import * as Sentry from '@sentry/react'
 import { Navigate, createBrowserRouter } from 'react-router-dom'
+import Admin from './admin'
 import crowdloanRoutes from './crowdloans'
 import dexRoutes from './dex'
 import Explore from './explore'
@@ -39,6 +40,7 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
       { path: 'staking', ...stakingRoutes },
       // TODO: remove once link on extension side is updated
       { path: '/portfolio/history', element: <Navigate to="/history" /> },
+      { path: '/admin', element: <Admin /> },
     ],
   },
   { path: '*', element: <Navigate to="/" /> },

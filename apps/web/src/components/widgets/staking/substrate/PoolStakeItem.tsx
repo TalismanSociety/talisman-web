@@ -11,6 +11,8 @@ import AddStakeDialog from './AddStakeDialog'
 import ClaimStakeDialog from './ClaimStakeDialog'
 import NominationPoolsStatisticsSideSheet from './NominationPoolsStatisticsSideSheet'
 import UnstakeDialog from './UnstakeDialog'
+import { CircularProgressIndicator, ListItem } from '@talismn/ui'
+import PoolClaimPermissionDialog from './PoolClaimPermissionDialog'
 
 const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account[]>>[number] }) => {
   const [chain, decimal, nativeTokenPrice] = useRecoilValue(
@@ -34,6 +36,8 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
 
   const [statsDialogOpen, setStatsDialogOpen] = useState(false)
   const [statsDialogInTransition, startStatsDialogTransition] = useTransition()
+
+  const [claimPermissionDialogOpen, setClaimPermissionDialogOpen] = useState(false)
 
   return (
     <>
@@ -83,11 +87,22 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
             />
           )
         }
-        statisticsButton={
-          <StakePosition.StatisticsButton
-            loading={statsDialogInTransition}
-            onClick={() => startStatsDialogTransition(() => setStatsDialogOpen(true))}
-          />
+        menuButton={
+          <StakePosition.MenuButton>
+            <StakePosition.MenuButton.Item
+              dismissAfterSelection={false}
+              onClick={() => startStatsDialogTransition(() => setStatsDialogOpen(true))}
+              inTransition={statsDialogInTransition}
+            >
+              <ListItem
+                headlineText="Statistics"
+                trailingContent={statsDialogInTransition && <CircularProgressIndicator size="1em" />}
+              />
+            </StakePosition.MenuButton.Item>
+            <StakePosition.MenuButton.Item onClick={() => setClaimPermissionDialogOpen(true)}>
+              <ListItem headlineText="Claim settings" />
+            </StakePosition.MenuButton.Item>
+          </StakePosition.MenuButton>
         }
         status={
           item.totalUnlocking > 0n && (
@@ -115,6 +130,12 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
       />
       {statsDialogOpen && (
         <NominationPoolsStatisticsSideSheet account={item.account} onRequestDismiss={() => setStatsDialogOpen(false)} />
+      )}
+      {claimPermissionDialogOpen && (
+        <PoolClaimPermissionDialog
+          account={item.account}
+          onRequestDismiss={() => setClaimPermissionDialogOpen(false)}
+        />
       )}
     </>
   )

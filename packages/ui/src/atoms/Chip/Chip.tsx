@@ -47,7 +47,7 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
       css={[
         {
           lineHeight: '1em',
-          display: 'flex',
+          display: 'inline-flex',
           alignItems: 'center',
           gap: '0.25em',
           border: 'none',

@@ -27,9 +27,11 @@ import {
   type HTMLProps,
   type ReactElement,
   type ReactNode,
+  useEffect,
 } from 'react'
 import { Surface, useSurfaceColor } from '../..'
 import FloatingPortal from '../../atoms/FloatingPortal'
+import { usePrevious } from '../../utils'
 
 export const MENU_OFFSET = 12
 
@@ -47,6 +49,7 @@ export type MenuItemsProps = Omit<DetailedHTMLProps<HTMLAttributes<HTMLElement>,
 
 export type MenuItemProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   dismissAfterSelection?: boolean
+  inTransition?: boolean
 }
 
 const MenuContext = createContext<{
@@ -78,7 +81,7 @@ const MenuContext = createContext<{
 const MenuButton = ({ children, ...props }: MenuButtonProps) => {
   const { refs, getReferenceProps, open } = useContext(MenuContext)
   return (
-    <div ref={refs.setReference} {...getReferenceProps(props)} css={{ width: 'fit-content' }}>
+    <div ref={refs.setReference} {...getReferenceProps(props)} css={{ width: 'fit-content', cursor: 'pointer' }}>
       {typeof children === 'function' ? children({ open }) : children}
     </div>
   )
@@ -157,8 +160,17 @@ const MenuItems = (props: MenuItemsProps) => {
   )
 }
 
-const MenuItem = ({ dismissAfterSelection = true, ...props }: MenuItemProps) => {
+const MenuItem = ({ dismissAfterSelection = true, inTransition, ...props }: MenuItemProps) => {
   const { getItemProps, setOpen } = useContext(MenuContext)
+
+  const prevInTransition = usePrevious(inTransition)
+
+  useEffect(() => {
+    if (inTransition === false && prevInTransition === true) {
+      setOpen(false)
+    }
+  }, [inTransition, prevInTransition, setOpen])
+
   return (
     <motion.div
       variants={{

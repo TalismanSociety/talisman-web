@@ -49,6 +49,7 @@ Default.args = {
     />
   ),
   estimatedYield: <StakeForm.EstimatedYield amount="63.33 DOT / Year" fiatAmount="$369.42" />,
+  claimPermission: <StakeForm.ClaimPermission permission="all" onChangeRequest={() => {}} />,
   stakeButton: <StakeForm.StakeButton />,
   existingPool: (
     <StakeForm.ExistingPool
@@ -63,6 +64,7 @@ Default.args = {
       unlocking="1 KSM"
       unlockingFiatAmount="$1.1234"
       withdrawChip={<StakeForm.ExistingPool.WithdrawChip />}
+      claimPermission={<StakeForm.ClaimPermission permission="all" onChangeRequest={() => {}} />}
       addButton={<StakeForm.ExistingPool.AddButton />}
       unstakeButton={<StakeForm.ExistingPool.UnstakeButton />}
     />

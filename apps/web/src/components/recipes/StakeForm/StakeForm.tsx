@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { ChevronRight, Clock, Info } from '@talismn/icons'
+import { ChevronRight, Clock, Info, Settings } from '@talismn/icons'
 import {
   Button,
   DescriptionList,
@@ -16,6 +16,7 @@ import {
 import { isNilOrWhitespace } from '@util/nil'
 import { LayoutGroup, motion } from 'framer-motion'
 import { createContext, useContext, useId, useState, type ReactNode } from 'react'
+import type { PoolClaimPermission } from '../PoolClaimPermissionForm'
 import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
 import StakeFormSkeleton from './StakeForm.skeleton'
 
@@ -141,6 +142,50 @@ const PoolInfo = (props: PoolInfoProps) => {
   )
 }
 
+type ClaimPermissionProps = {
+  permission: PoolClaimPermission
+  onChangeRequest: () => unknown
+}
+
+const ClaimPermission = (props: ClaimPermissionProps) => (
+  <Surface
+    css={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderRadius: '0.8rem',
+      padding: '0.8rem 1.6rem',
+    }}
+  >
+    <Text.Body as="div">
+      Claim permission:{' '}
+      <TonalChip size="sm" contentColor={props.permission === undefined ? '#F48F45' : '#38D448'}>
+        {(() => {
+          switch (props.permission) {
+            case undefined:
+              return 'None'
+            case 'compound':
+              return 'Compound'
+            case 'withdraw':
+              return 'Withdraw'
+            case 'all':
+              return 'All'
+          }
+        })()}
+      </TonalChip>
+    </Text.Body>
+    <SurfaceChip
+      contentAlpha="high"
+      size="lg"
+      leadingContent={<Settings />}
+      css={{ padding: '0.6rem 0.8rem' }}
+      onClick={props.onChangeRequest}
+    >
+      Manage
+    </SurfaceChip>
+  </Surface>
+)
+
 type EstimatedYieldProps = {
   amount: ReactNode
   fiatAmount: ReactNode
@@ -172,6 +217,7 @@ type ExistingPoolProps = {
   withdrawable?: ReactNode
   withdrawableFiatAmount?: ReactNode
   withdrawChip: ReactNode
+  claimPermission: ReactNode
   addButton: ReactNode
   unstakeButton: ReactNode
   readonly?: boolean
@@ -256,6 +302,7 @@ const ExistingPool = Object.assign(
           </DescriptionList.Description>
         )}
       </DescriptionList>
+      {props.claimPermission && <div css={{ marginBottom: '1.6rem' }}>{props.claimPermission}</div>}
       {!props.readonly && (
         <div css={{ display: 'flex', gap: '0.8rem' }}>
           {props.addButton}
@@ -286,6 +333,7 @@ export type StakeFormProps = {
   amountInput: ReactNode
   poolInfo: ReactNode
   estimatedYield: ReactNode
+  claimPermission: ReactNode
   stakeButton: ReactNode
   existingPool: ReactNode
 }
@@ -314,6 +362,7 @@ const StakeForm = Object.assign(
                 {props.amountInput}
                 {props.poolInfo}
                 {props.estimatedYield}
+                {props.claimPermission}
                 {props.stakeButton}
               </>
             )}
@@ -332,6 +381,7 @@ const StakeForm = Object.assign(
       </Button>
     ),
     ExistingPool,
+    ClaimPermission,
     Skeleton: StakeFormSkeleton,
   }
 )

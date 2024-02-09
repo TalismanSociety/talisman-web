@@ -1,9 +1,10 @@
-import { PoolSelectorDialog } from '@components/recipes/StakeTargetSelectorDialog'
 import StakeFormComponent from '@components/recipes/StakeForm'
 import { type StakeStatus } from '@components/recipes/StakeStatusIndicator'
+import { PoolSelectorDialog } from '@components/recipes/StakeTargetSelectorDialog'
 import { writeableSubstrateAccountsState, type Account } from '@domains/accounts/recoils'
 import {
   ChainProvider,
+  assertChain,
   nominationPoolsEnabledChainsState,
   useChainState as useChainRecoilState,
   useNativeTokenDecimalState,
@@ -21,6 +22,7 @@ import {
 import { useApr, usePoolAddForm, usePoolStakes } from '@domains/staking/substrate/nominationPools/hooks'
 import { eraStakersState, useRecommendedPoolsState } from '@domains/staking/substrate/nominationPools/recoils'
 import { createAccounts } from '@domains/staking/substrate/nominationPools/utils'
+import type { ApiPromise } from '@polkadot/api'
 import { type Decimal } from '@talismn/math'
 import { CircularProgressIndicator, Select } from '@talismn/ui'
 import { Maybe } from '@util/monads'
@@ -41,6 +43,10 @@ import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } fro
 import { useAccountSelector } from '../../AccountSelector'
 import AddStakeDialog from './AddStakeDialog'
 import ClaimStakeDialog from './ClaimStakeDialog'
+import PoolClaimPermissionDialog, {
+  PoolClaimPermissionControlledDialog,
+  toUiPermission,
+} from './PoolClaimPermissionDialog'
 import UnstakeDialog from './UnstakeDialog'
 
 const ExistingPool = (props: { account: Account }) => {
@@ -57,6 +63,8 @@ const ExistingPool = (props: { account: Account }) => {
 
   const [unstakeDialogAddress, setUnstakeDialogAddress] = useState<string>()
   const withdrawExtrinsic = useExtrinsic('nominationPools', 'withdrawUnbonded')
+
+  const [claimPermissionDialogOpen, setClaimPermissionDialogOpen] = useState(false)
 
   const decimal = useRecoilValue(useNativeTokenDecimalState())
   const eraEtaFormatter = useEraEtaFormatter()
@@ -98,6 +106,12 @@ const ExistingPool = (props: { account: Account }) => {
             loading={withdrawExtrinsic.state === 'loading'}
           />
         }
+        claimPermission={
+          <StakeFormComponent.ClaimPermission
+            permission={toUiPermission(pool?.claimPermission?.type ?? 'Permissioned')}
+            onChangeRequest={() => setClaimPermissionDialogOpen(true)}
+          />
+        }
         addButton={
           // Fully unbonding pool can't be interacted with
           !pool?.poolMember.points.isZero() && (
@@ -123,6 +137,12 @@ const ExistingPool = (props: { account: Account }) => {
         onChangeRestakeLoadable={setRestakeLoadable}
       />
       <UnstakeDialog account={unstakeDialogAddress} onDismiss={() => setUnstakeDialogAddress(undefined)} />
+      {claimPermissionDialogOpen && (
+        <PoolClaimPermissionDialog
+          account={props.account}
+          onRequestDismiss={() => setClaimPermissionDialogOpen(false)}
+        />
+      )}
     </>
   )
 }
@@ -240,8 +260,6 @@ const DeferredEstimatedYield = (props: { amount: Decimal }) => (
 )
 
 export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?: string }) => {
-  const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
-
   const location = useLocation()
 
   const poolIdFromSearch = useMemo(
@@ -261,6 +279,8 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
   const [chain, api, recommendedPools] = useRecoilValue(
     waitForAll([useChainRecoilState(), useSubstrateApiState(), useRecommendedPoolsState()])
   )
+
+  assertChain(chain, { hasNominationPools: true })
 
   const initialPoolId = poolIdFromSearch ?? recommendedPools[0]?.poolId
 
@@ -363,6 +383,43 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
     setSelectedPoolId(initialPoolId)
   }, [initialPoolId, recommendedPools])
 
+  const [claimPermissionDialogOpen, setClaimPermisssionDialogOpen] = useState(false)
+  const [claimPermission, setClaimPermission] = useState<
+    'Permissioned' | 'PermissionlessCompound' | 'PermissionlessWithdraw' | 'PermissionlessAll'
+  >('Permissioned')
+
+  useEffect(
+    () => {
+      if (selectedPoolId !== undefined && chain.talismanPools?.includes(selectedPoolId)) {
+        setClaimPermission('PermissionlessCompound')
+      } else {
+        setClaimPermission('Permissioned')
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedPoolId]
+  )
+
+  const joinPoolExtrinsic = useExtrinsic(
+    useCallback(
+      (api: ApiPromise) => {
+        if (decimalAmount === undefined || selectedPoolId === undefined) {
+          return undefined
+        }
+
+        if (claimPermission === undefined) {
+          return api.tx.nominationPools.join(decimalAmount.planck, selectedPoolId)
+        } else {
+          return api.tx.utility.batchAll([
+            api.tx.nominationPools.join(decimalAmount.planck, selectedPoolId),
+            api.tx.nominationPools.setClaimPermission(claimPermission),
+          ])
+        }
+      },
+      [claimPermission, decimalAmount, selectedPoolId]
+    )
+  )
+
   return (
     <>
       <PoolSelector
@@ -371,6 +428,14 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
         onChangePoolId={setSelectedPoolId}
         onDismiss={() => setShowPoolSelector(false)}
       />
+      {claimPermissionDialogOpen && (
+        <PoolClaimPermissionControlledDialog
+          permission={claimPermission}
+          onChangePermission={setClaimPermission}
+          poolId={selectedPoolId}
+          onRequestDismiss={() => setClaimPermisssionDialogOpen(false)}
+        />
+      )}
       <StakeFormComponent
         assetSelector={props.assetSelector}
         accountSelector={accountSelector}
@@ -405,6 +470,12 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
             </Suspense>
           )
         }
+        claimPermission={
+          <StakeFormComponent.ClaimPermission
+            permission={toUiPermission(claimPermission)}
+            onChangeRequest={() => setClaimPermisssionDialogOpen(true)}
+          />
+        }
         stakeButton={
           <StakeFormComponent.StakeButton
             loading={joinPoolExtrinsic.state === 'loading'}
@@ -415,11 +486,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
                 decimalAmount?.planck !== undefined &&
                 selectedPoolId !== undefined
               ) {
-                void joinPoolExtrinsic.signAndSend(
-                  selectedAccount.address,
-                  decimalAmount.planck.toString(),
-                  selectedPoolId
-                )
+                void joinPoolExtrinsic.signAndSend(selectedAccount.address)
               }
             }}
           />

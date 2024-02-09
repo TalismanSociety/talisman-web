@@ -46,7 +46,7 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
     [api, accountPools]
   )
 
-  const [poolNominators, slashingSpans, poolMetadatum, activeEra, sessionProgress] = useRecoilValue(
+  const [poolNominators, slashingSpans, poolMetadatum, claimPermissions, activeEra, sessionProgress] = useRecoilValue(
     waitForAll([
       useQueryState('staking', 'nominators.multi', stashIds),
       useQueryState('staking', 'slashingSpans.multi', stashIds),
@@ -54,6 +54,11 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
         'nominationPools',
         'metadata.multi',
         useMemo(() => accountPools.map(x => x.poolMember.poolId), [accountPools])
+      ),
+      useQueryState(
+        'nominationPools',
+        'claimPermissions.multi',
+        useMemo(() => accountPools.map(x => x.account.address), [accountPools])
       ),
       useQueryState('staking', 'activeEra', []),
       useDeriveState('session', 'progress', []),
@@ -97,9 +102,10 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
             poolMember,
             totalUnlocking: rest.unlockings.reduce((previous, current) => previous + current.amount, 0n),
             slashingSpan,
+            claimPermission: claimPermissions[index],
           }
         }),
-    [eraStakers, accountPools, poolMetadatum, poolNominators, sessionProgress, slashingSpans]
+    [accountPools, claimPermissions, eraStakers, poolMetadatum, poolNominators, sessionProgress, slashingSpans]
   )
 
   type Result = typeof pools

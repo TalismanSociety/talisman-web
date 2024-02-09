@@ -15,7 +15,6 @@ export const Default: Story = {
     provider: 'Talisman pool 1',
     increaseStakeButton: <StakePosition.IncreaseStakeButton />,
     unstakeButton: <StakePosition.UnstakeButton />,
-    statisticsButton: <StakePosition.StatisticsButton />,
     claimButton: <StakePosition.ClaimButton amount="1 DOT" />,
     withdrawButton: <StakePosition.WithdrawButton amount="1 DOT" />,
     status: (
