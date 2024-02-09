@@ -31,6 +31,13 @@ export const chainConfigs: ChainConfig[] = [
     priorityPool: 15,
     talismanPools: [15],
   },
+  // Astar
+  {
+    genesisHash: '0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6',
+    hasDappStaking: true,
+    dappStakingApi: 'https://api.astar.network/api/v3/astar/dapps-staking/',
+    priorityDapp: 'ZdpeaiK28o6DzkdVJardFTZEJTAHKG3HgJn5ZPgsPh345Hg',
+  },
   // Aleph0
   {
     genesisHash: '0x70255b4d28de0fc4e1a193d7e175ad1ccef431598211c55538f1018651a0344e',
