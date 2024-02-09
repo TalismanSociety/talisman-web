@@ -1,10 +1,11 @@
+import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { useAccountSelector } from '@components/widgets/AccountSelector'
 import { writeableSubstrateAccountsState } from '@domains/accounts'
 import { ChainProvider, assertChain, chainsState, useChainState, useNativeTokenPriceState } from '@domains/chains'
 import { useExtrinsic, useSubstrateApiState, useTokenAmountState } from '@domains/common'
 import type { ApiPromise } from '@polkadot/api'
 import { Button, Surface, Text, TextInput, toast } from '@talismn/ui'
-import { useCallback, useMemo, useState } from 'react'
+import { Suspense, useCallback, useMemo, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
 const _NominationPoolsRewardsClaim = () => {
@@ -157,7 +158,9 @@ const Admin = () => {
     <div css={{ display: 'flex', flexDirection: 'column', gap: '4.6rem', maxWidth: 768, margin: 'auto' }}>
       {chains.map(chain => (
         <ChainProvider key={chain.genesisHash} chain={chain}>
-          <ChainAdmin />
+          <Suspense fallback={<TalismanHandLoader css={{ margin: 'auto' }} />}>
+            <ChainAdmin />
+          </Suspense>
         </ChainProvider>
       ))}
     </div>
