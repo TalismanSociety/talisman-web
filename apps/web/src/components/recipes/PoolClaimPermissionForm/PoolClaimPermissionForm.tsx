@@ -69,8 +69,16 @@ const PoolClaimPermissionForm = (props: PoolClaimPermissionFormProps) => {
           />{' '}
           {props.isTalismanPool ? 'Enable auto claiming' : 'Enable permissionless claiming'}
         </label>{' '}
-        <Tooltip content="foo">
-          <Info size="1em" />
+        <Tooltip
+          content={
+            <>
+              Allow others to re-stake on your behalf, powering your stake with auto-compounding.
+              <br />
+              Permissionless claiming is only guaranteed for members of Talisman pools that opt-in.
+            </>
+          }
+        >
+          <Info size="1em" css={{ verticalAlign: 'middle' }} />
         </Tooltip>
       </div>
       <Surface
@@ -138,7 +146,7 @@ export const PoolClaimPermissionDialog = (props: PoolClaimPermissionDialogProps)
   <AlertDialog
     title={
       <>
-        <Calculate /> Claim method
+        <Calculate css={{ verticalAlign: 'bottom' }} /> Claim method
       </>
     }
     width="77rem"
