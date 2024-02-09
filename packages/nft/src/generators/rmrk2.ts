@@ -61,7 +61,7 @@ export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Nft<'rmrk2', 
       break
     }
 
-    yield* response.nfts.map(nft => {
+    yield* response.nfts.map((nft): Nft<'rmrk2', 'kusama'> => {
       const type = 'rmrk2' as const
       const chain = 'kusama' as const
 
