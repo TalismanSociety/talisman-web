@@ -97,7 +97,7 @@ const PoolClaimPermissionForm = (props: PoolClaimPermissionFormProps) => {
           name={props.isTalismanPool ? 'Auto compound' : 'Allow compound'}
           description={
             props.isTalismanPool
-              ? 'Your rewards will be re-staked every week for you'
+              ? 'Your rewards will be re-staked for you daily'
               : 'Allow anyone to compound rewards on your behalf'
           }
           checked={props.permission === 'compound'}
@@ -107,7 +107,7 @@ const PoolClaimPermissionForm = (props: PoolClaimPermissionFormProps) => {
           name={props.isTalismanPool ? 'Auto withdraw' : 'Allow withdraw'}
           description={
             props.isTalismanPool
-              ? 'Your rewards will be redistributed to your account every week'
+              ? 'Your rewards will be redistributed to your account everyday'
               : 'Allow anyone to withdraw rewards on your behalf'
           }
           checked={props.permission === 'withdraw'}
