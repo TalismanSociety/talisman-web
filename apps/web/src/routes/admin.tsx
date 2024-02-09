@@ -1,7 +1,7 @@
 import { useAccountSelector } from '@components/widgets/AccountSelector'
 import { writeableSubstrateAccountsState } from '@domains/accounts'
-import { ChainProvider, assertChain, chainsState, useChainState } from '@domains/chains'
-import { useExtrinsic, useSubstrateApiState } from '@domains/common'
+import { ChainProvider, assertChain, chainsState, useChainState, useNativeTokenPriceState } from '@domains/chains'
+import { useExtrinsic, useSubstrateApiState, useTokenAmountState } from '@domains/common'
 import type { ApiPromise } from '@polkadot/api'
 import { Button, Surface, Text, TextInput, toast } from '@talismn/ui'
 import { useCallback, useMemo, useState } from 'react'
@@ -27,6 +27,12 @@ const _NominationPoolsRewardsClaim = () => {
     [poolIdsInput]
   )
 
+  const nativeTokenPrice = useRecoilValue(useNativeTokenPriceState('usd'))
+
+  const [minClaim, setMinAmountToClaim] = useTokenAmountState(
+    (5 / nativeTokenPrice).toFixed(chain.nativeToken?.decimals ?? 0)
+  )
+
   const extrinsic = useExtrinsic(
     useCallback(
       async (api: ApiPromise) => {
@@ -49,7 +55,13 @@ const _NominationPoolsRewardsClaim = () => {
         const exs = poolMembersToClaim
           .map((x, index) => {
             const claimable = rewards[index]
-            if (claimable === undefined || claimable.lten(0)) {
+            if (
+              claimable === undefined ||
+              claimable.lten(0) ||
+              (minClaim.decimalAmount !== undefined &&
+                !minClaim.decimalAmount.planck.isZero() &&
+                claimable.lt(minClaim.decimalAmount.planck))
+            ) {
               return undefined
             }
 
@@ -71,7 +83,7 @@ const _NominationPoolsRewardsClaim = () => {
 
         return api.tx.utility.forceBatch(exs.slice(0, api.consts.utility.batchedCallsLimit.toNumber()))
       },
-      [poolIds]
+      [minClaim.decimalAmount, poolIds]
     )
   )
 
@@ -91,6 +103,14 @@ const _NominationPoolsRewardsClaim = () => {
         placeholder="Pool ids separated by comma"
         value={poolIdsInput}
         onChangeText={setPoolIdsInput}
+      />
+      <TextInput
+        type="number"
+        inputMode="decimal"
+        leadingLabel="Minimum amount to claim"
+        placeholder={`Amount in ${chain.nativeToken?.symbol ?? ''}`}
+        value={minClaim.amount}
+        onChangeText={setMinAmountToClaim}
       />
       <Button
         disabled={account === undefined}

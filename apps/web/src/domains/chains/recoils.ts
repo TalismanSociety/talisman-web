@@ -74,9 +74,9 @@ export const dappStakingEnabledChainsState = selector({
 export const tokenPriceState = selectorFamily({
   key: 'TokenPrice',
   get:
-    ({ coingeckoId }: { coingeckoId: string }) =>
+    ({ coingeckoId, ...params }: { coingeckoId: string; currency?: string }) =>
     async ({ get }) => {
-      const currency = get(selectedCurrencyState)
+      const currency = params.currency ?? get(selectedCurrencyState)
       try {
         const result = await fetch(
           `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoId}&vs_currencies=${currency}`
@@ -94,7 +94,7 @@ export const tokenPriceState = selectorFamily({
 export const nativeTokenPriceState = selectorFamily({
   key: 'NativeTokenPrice',
   get:
-    ({ genesisHash }: { genesisHash: string }) =>
+    ({ genesisHash, currency }: { genesisHash: string; currency?: string }) =>
     async ({ get }) => {
       const chain = get(chainState({ genesisHash }))
       if (chain.isTestnet) {
@@ -107,12 +107,12 @@ export const nativeTokenPriceState = selectorFamily({
         throw new Error('Chain missing CoinGecko id')
       }
 
-      return get(tokenPriceState({ coingeckoId }))
+      return get(tokenPriceState({ coingeckoId, currency }))
     },
 })
 
-export const useNativeTokenPriceState = () =>
-  nativeTokenPriceState({ genesisHash: useContext(ChainContext).genesisHash })
+export const useNativeTokenPriceState = (currency?: string) =>
+  nativeTokenPriceState({ genesisHash: useContext(ChainContext).genesisHash, currency })
 
 export const nativeTokenDecimalState = selectorFamily({
   key: 'NativeTokenDecimal',
