@@ -14,5913 +14,3030 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean }
   Int: { input: number; output: number }
   Float: { input: number; output: number }
-  bigint: { input: any; output: any }
-  jsonb: { input: any; output: any }
-  numeric: { input: any; output: any }
-  smallint: { input: any; output: any }
-  timestamptz: { input: any; output: any }
+  /** Big number integer */
+  BigInt: { input: any; output: any }
+  /** A date-time string in simplified extended ISO 8601 format (YYYY-MM-DDTHH:mm:ss.sssZ) */
+  DateTime: { input: any; output: any }
 }
 
-/** Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'. */
-export type Boolean_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['Boolean']['input']>
-  _gt?: InputMaybe<Scalars['Boolean']['input']>
-  _gte?: InputMaybe<Scalars['Boolean']['input']>
-  _in?: InputMaybe<Array<Scalars['Boolean']['input']>>
-  _is_null?: InputMaybe<Scalars['Boolean']['input']>
-  _lt?: InputMaybe<Scalars['Boolean']['input']>
-  _lte?: InputMaybe<Scalars['Boolean']['input']>
-  _neq?: InputMaybe<Scalars['Boolean']['input']>
-  _nin?: InputMaybe<Array<Scalars['Boolean']['input']>>
+export type Attribute = {
+  __typename?: 'Attribute'
+  display?: Maybe<Scalars['String']['output']>
+  trait?: Maybe<Scalars['String']['output']>
+  value: Scalars['String']['output']
 }
 
-/** Boolean expression to compare columns of type "Float". All fields are combined with logical 'AND'. */
-export type Float_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['Float']['input']>
-  _gt?: InputMaybe<Scalars['Float']['input']>
-  _gte?: InputMaybe<Scalars['Float']['input']>
-  _in?: InputMaybe<Array<Scalars['Float']['input']>>
-  _is_null?: InputMaybe<Scalars['Boolean']['input']>
-  _lt?: InputMaybe<Scalars['Float']['input']>
-  _lte?: InputMaybe<Scalars['Float']['input']>
-  _neq?: InputMaybe<Scalars['Float']['input']>
-  _nin?: InputMaybe<Array<Scalars['Float']['input']>>
-}
-
-/** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
-export type Int_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['Int']['input']>
-  _gt?: InputMaybe<Scalars['Int']['input']>
-  _gte?: InputMaybe<Scalars['Int']['input']>
-  _in?: InputMaybe<Array<Scalars['Int']['input']>>
-  _is_null?: InputMaybe<Scalars['Boolean']['input']>
-  _lt?: InputMaybe<Scalars['Int']['input']>
-  _lte?: InputMaybe<Scalars['Int']['input']>
-  _neq?: InputMaybe<Scalars['Int']['input']>
-  _nin?: InputMaybe<Array<Scalars['Int']['input']>>
-}
-
-/** Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'. */
-export type String_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['String']['input']>
-  _gt?: InputMaybe<Scalars['String']['input']>
-  _gte?: InputMaybe<Scalars['String']['input']>
-  /** does the column match the given case-insensitive pattern */
-  _ilike?: InputMaybe<Scalars['String']['input']>
-  _in?: InputMaybe<Array<Scalars['String']['input']>>
-  /** does the column match the given POSIX regular expression, case insensitive */
-  _iregex?: InputMaybe<Scalars['String']['input']>
-  _is_null?: InputMaybe<Scalars['Boolean']['input']>
-  /** does the column match the given pattern */
-  _like?: InputMaybe<Scalars['String']['input']>
-  _lt?: InputMaybe<Scalars['String']['input']>
-  _lte?: InputMaybe<Scalars['String']['input']>
-  _neq?: InputMaybe<Scalars['String']['input']>
-  /** does the column NOT match the given case-insensitive pattern */
-  _nilike?: InputMaybe<Scalars['String']['input']>
-  _nin?: InputMaybe<Array<Scalars['String']['input']>>
-  /** does the column NOT match the given POSIX regular expression, case insensitive */
-  _niregex?: InputMaybe<Scalars['String']['input']>
-  /** does the column NOT match the given pattern */
-  _nlike?: InputMaybe<Scalars['String']['input']>
-  /** does the column NOT match the given POSIX regular expression, case sensitive */
-  _nregex?: InputMaybe<Scalars['String']['input']>
-  /** does the column NOT match the given SQL regular expression */
-  _nsimilar?: InputMaybe<Scalars['String']['input']>
-  /** does the column match the given POSIX regular expression, case sensitive */
-  _regex?: InputMaybe<Scalars['String']['input']>
-  /** does the column match the given SQL regular expression */
-  _similar?: InputMaybe<Scalars['String']['input']>
-}
-
-/** columns and relationships of "base_themes" */
-export type Base_Themes = {
-  __typename?: 'base_themes'
-  id: Scalars['String']['output']
-  /** An array relationship */
-  resources_base_themes: Array<Resources_Base_Themes>
-  theme_color_1?: Maybe<Scalars['String']['output']>
-  theme_color_2?: Maybe<Scalars['String']['output']>
-  theme_color_3?: Maybe<Scalars['String']['output']>
-  theme_color_4?: Maybe<Scalars['String']['output']>
-}
-
-/** columns and relationships of "base_themes" */
-export type Base_ThemesResources_Base_ThemesArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Base_Themes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Base_Themes_Order_By>>
-  where?: InputMaybe<Resources_Base_Themes_Bool_Exp>
-}
-
-/** Boolean expression to filter rows from the table "base_themes". All fields are combined with a logical 'AND'. */
-export type Base_Themes_Bool_Exp = {
-  _and?: InputMaybe<Array<Base_Themes_Bool_Exp>>
-  _not?: InputMaybe<Base_Themes_Bool_Exp>
-  _or?: InputMaybe<Array<Base_Themes_Bool_Exp>>
-  id?: InputMaybe<String_Comparison_Exp>
-  resources_base_themes?: InputMaybe<Resources_Base_Themes_Bool_Exp>
-  theme_color_1?: InputMaybe<String_Comparison_Exp>
-  theme_color_2?: InputMaybe<String_Comparison_Exp>
-  theme_color_3?: InputMaybe<String_Comparison_Exp>
-  theme_color_4?: InputMaybe<String_Comparison_Exp>
-}
-
-/** Ordering options when selecting data from "base_themes". */
-export type Base_Themes_Order_By = {
-  id?: InputMaybe<Order_By>
-  resources_base_themes_aggregate?: InputMaybe<Resources_Base_Themes_Aggregate_Order_By>
-  theme_color_1?: InputMaybe<Order_By>
-  theme_color_2?: InputMaybe<Order_By>
-  theme_color_3?: InputMaybe<Order_By>
-  theme_color_4?: InputMaybe<Order_By>
-}
-
-/** select columns of table "base_themes" */
-export enum Base_Themes_Select_Column {
-  /** column name */
-  Id = 'id',
-  /** column name */
-  ThemeColor_1 = 'theme_color_1',
-  /** column name */
-  ThemeColor_2 = 'theme_color_2',
-  /** column name */
-  ThemeColor_3 = 'theme_color_3',
-  /** column name */
-  ThemeColor_4 = 'theme_color_4',
-}
-
-/** columns and relationships of "bases" */
-export type Bases = {
-  __typename?: 'bases'
-  block: Scalars['Int']['output']
-  /** An array relationship */
-  changes: Array<Changes>
-  /** An aggregate relationship */
-  changes_aggregate: Changes_Aggregate
+export type Base = {
+  __typename?: 'Base'
+  currentOwner: Scalars['String']['output']
   id: Scalars['String']['output']
   issuer: Scalars['String']['output']
+  meta?: Maybe<MetadataEntity>
   metadata?: Maybe<Scalars['String']['output']>
-  /** An array relationship */
-  parts: Array<Parts>
-  /** An aggregate relationship */
-  parts_aggregate: Parts_Aggregate
   symbol: Scalars['String']['output']
-  type: Scalars['String']['output']
-}
-
-/** columns and relationships of "bases" */
-export type BasesChangesArgs = {
-  distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Changes_Order_By>>
-  where?: InputMaybe<Changes_Bool_Exp>
-}
-
-/** columns and relationships of "bases" */
-export type BasesChanges_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Changes_Order_By>>
-  where?: InputMaybe<Changes_Bool_Exp>
-}
-
-/** columns and relationships of "bases" */
-export type BasesPartsArgs = {
-  distinct_on?: InputMaybe<Array<Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Parts_Order_By>>
-  where?: InputMaybe<Parts_Bool_Exp>
-}
-
-/** columns and relationships of "bases" */
-export type BasesParts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Parts_Order_By>>
-  where?: InputMaybe<Parts_Bool_Exp>
-}
-
-/** aggregated selection of "bases" */
-export type Bases_Aggregate = {
-  __typename?: 'bases_aggregate'
-  aggregate?: Maybe<Bases_Aggregate_Fields>
-  nodes: Array<Bases>
-}
-
-/** aggregate fields of "bases" */
-export type Bases_Aggregate_Fields = {
-  __typename?: 'bases_aggregate_fields'
-  avg?: Maybe<Bases_Avg_Fields>
-  count: Scalars['Int']['output']
-  max?: Maybe<Bases_Max_Fields>
-  min?: Maybe<Bases_Min_Fields>
-  stddev?: Maybe<Bases_Stddev_Fields>
-  stddev_pop?: Maybe<Bases_Stddev_Pop_Fields>
-  stddev_samp?: Maybe<Bases_Stddev_Samp_Fields>
-  sum?: Maybe<Bases_Sum_Fields>
-  var_pop?: Maybe<Bases_Var_Pop_Fields>
-  var_samp?: Maybe<Bases_Var_Samp_Fields>
-  variance?: Maybe<Bases_Variance_Fields>
-}
-
-/** aggregate fields of "bases" */
-export type Bases_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Bases_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** aggregate avg on columns */
-export type Bases_Avg_Fields = {
-  __typename?: 'bases_avg_fields'
-  block?: Maybe<Scalars['Float']['output']>
-}
-
-/** Boolean expression to filter rows from the table "bases". All fields are combined with a logical 'AND'. */
-export type Bases_Bool_Exp = {
-  _and?: InputMaybe<Array<Bases_Bool_Exp>>
-  _not?: InputMaybe<Bases_Bool_Exp>
-  _or?: InputMaybe<Array<Bases_Bool_Exp>>
-  block?: InputMaybe<Int_Comparison_Exp>
-  changes?: InputMaybe<Changes_Bool_Exp>
-  id?: InputMaybe<String_Comparison_Exp>
-  issuer?: InputMaybe<String_Comparison_Exp>
-  metadata?: InputMaybe<String_Comparison_Exp>
-  parts?: InputMaybe<Parts_Bool_Exp>
-  symbol?: InputMaybe<String_Comparison_Exp>
-  type?: InputMaybe<String_Comparison_Exp>
-}
-
-/** aggregate max on columns */
-export type Bases_Max_Fields = {
-  __typename?: 'bases_max_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  issuer?: Maybe<Scalars['String']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  symbol?: Maybe<Scalars['String']['output']>
-  type?: Maybe<Scalars['String']['output']>
-}
-
-/** aggregate min on columns */
-export type Bases_Min_Fields = {
-  __typename?: 'bases_min_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  issuer?: Maybe<Scalars['String']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  symbol?: Maybe<Scalars['String']['output']>
-  type?: Maybe<Scalars['String']['output']>
-}
-
-/** Ordering options when selecting data from "bases". */
-export type Bases_Order_By = {
-  block?: InputMaybe<Order_By>
-  changes_aggregate?: InputMaybe<Changes_Aggregate_Order_By>
-  id?: InputMaybe<Order_By>
-  issuer?: InputMaybe<Order_By>
-  metadata?: InputMaybe<Order_By>
-  parts_aggregate?: InputMaybe<Parts_Aggregate_Order_By>
-  symbol?: InputMaybe<Order_By>
-  type?: InputMaybe<Order_By>
-}
-
-/** select columns of table "bases" */
-export enum Bases_Select_Column {
-  /** column name */
-  Block = 'block',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Issuer = 'issuer',
-  /** column name */
-  Metadata = 'metadata',
-  /** column name */
-  Symbol = 'symbol',
-  /** column name */
-  Type = 'type',
-}
-
-/** aggregate stddev on columns */
-export type Bases_Stddev_Fields = {
-  __typename?: 'bases_stddev_fields'
-  block?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate stddev_pop on columns */
-export type Bases_Stddev_Pop_Fields = {
-  __typename?: 'bases_stddev_pop_fields'
-  block?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate stddev_samp on columns */
-export type Bases_Stddev_Samp_Fields = {
-  __typename?: 'bases_stddev_samp_fields'
-  block?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate sum on columns */
-export type Bases_Sum_Fields = {
-  __typename?: 'bases_sum_fields'
-  block?: Maybe<Scalars['Int']['output']>
-}
-
-/** aggregate var_pop on columns */
-export type Bases_Var_Pop_Fields = {
-  __typename?: 'bases_var_pop_fields'
-  block?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate var_samp on columns */
-export type Bases_Var_Samp_Fields = {
-  __typename?: 'bases_var_samp_fields'
-  block?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate variance on columns */
-export type Bases_Variance_Fields = {
-  __typename?: 'bases_variance_fields'
-  block?: Maybe<Scalars['Float']['output']>
-}
-
-/** Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'. */
-export type Bigint_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['bigint']['input']>
-  _gt?: InputMaybe<Scalars['bigint']['input']>
-  _gte?: InputMaybe<Scalars['bigint']['input']>
-  _in?: InputMaybe<Array<Scalars['bigint']['input']>>
-  _is_null?: InputMaybe<Scalars['Boolean']['input']>
-  _lt?: InputMaybe<Scalars['bigint']['input']>
-  _lte?: InputMaybe<Scalars['bigint']['input']>
-  _neq?: InputMaybe<Scalars['bigint']['input']>
-  _nin?: InputMaybe<Array<Scalars['bigint']['input']>>
-}
-
-/** columns and relationships of "changes" */
-export type Changes = {
-  __typename?: 'changes'
-  block: Scalars['Int']['output']
-  caller: Scalars['String']['output']
-  created_at: Scalars['timestamptz']['output']
-  extraTransfers?: Maybe<Scalars['jsonb']['output']>
-  field: Scalars['String']['output']
-  id: Scalars['Int']['output']
-  new: Scalars['String']['output']
-  /** An object relationship */
-  nft?: Maybe<Nfts>
-  /** An object relationship */
-  nftclass?: Maybe<Collections>
-  old: Scalars['String']['output']
-  opType: Scalars['String']['output']
-  ref_id: Scalars['String']['output']
-}
-
-/** columns and relationships of "changes" */
-export type ChangesExtraTransfersArgs = {
-  path?: InputMaybe<Scalars['String']['input']>
-}
-
-/** aggregated selection of "changes" */
-export type Changes_Aggregate = {
-  __typename?: 'changes_aggregate'
-  aggregate?: Maybe<Changes_Aggregate_Fields>
-  nodes: Array<Changes>
-}
-
-/** aggregate fields of "changes" */
-export type Changes_Aggregate_Fields = {
-  __typename?: 'changes_aggregate_fields'
-  avg?: Maybe<Changes_Avg_Fields>
-  count: Scalars['Int']['output']
-  max?: Maybe<Changes_Max_Fields>
-  min?: Maybe<Changes_Min_Fields>
-  stddev?: Maybe<Changes_Stddev_Fields>
-  stddev_pop?: Maybe<Changes_Stddev_Pop_Fields>
-  stddev_samp?: Maybe<Changes_Stddev_Samp_Fields>
-  sum?: Maybe<Changes_Sum_Fields>
-  var_pop?: Maybe<Changes_Var_Pop_Fields>
-  var_samp?: Maybe<Changes_Var_Samp_Fields>
-  variance?: Maybe<Changes_Variance_Fields>
-}
-
-/** aggregate fields of "changes" */
-export type Changes_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Changes_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** order by aggregate values of table "changes" */
-export type Changes_Aggregate_Order_By = {
-  avg?: InputMaybe<Changes_Avg_Order_By>
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Changes_Max_Order_By>
-  min?: InputMaybe<Changes_Min_Order_By>
-  stddev?: InputMaybe<Changes_Stddev_Order_By>
-  stddev_pop?: InputMaybe<Changes_Stddev_Pop_Order_By>
-  stddev_samp?: InputMaybe<Changes_Stddev_Samp_Order_By>
-  sum?: InputMaybe<Changes_Sum_Order_By>
-  var_pop?: InputMaybe<Changes_Var_Pop_Order_By>
-  var_samp?: InputMaybe<Changes_Var_Samp_Order_By>
-  variance?: InputMaybe<Changes_Variance_Order_By>
-}
-
-/** aggregate avg on columns */
-export type Changes_Avg_Fields = {
-  __typename?: 'changes_avg_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  id?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by avg() on columns of table "changes" */
-export type Changes_Avg_Order_By = {
-  block?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-}
-
-/** Boolean expression to filter rows from the table "changes". All fields are combined with a logical 'AND'. */
-export type Changes_Bool_Exp = {
-  _and?: InputMaybe<Array<Changes_Bool_Exp>>
-  _not?: InputMaybe<Changes_Bool_Exp>
-  _or?: InputMaybe<Array<Changes_Bool_Exp>>
-  block?: InputMaybe<Int_Comparison_Exp>
-  caller?: InputMaybe<String_Comparison_Exp>
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>
-  extraTransfers?: InputMaybe<Jsonb_Comparison_Exp>
-  field?: InputMaybe<String_Comparison_Exp>
-  id?: InputMaybe<Int_Comparison_Exp>
-  new?: InputMaybe<String_Comparison_Exp>
-  nft?: InputMaybe<Nfts_Bool_Exp>
-  nftclass?: InputMaybe<Collections_Bool_Exp>
-  old?: InputMaybe<String_Comparison_Exp>
-  opType?: InputMaybe<String_Comparison_Exp>
-  ref_id?: InputMaybe<String_Comparison_Exp>
-}
-
-/** columns and relationships of "changes_collection" */
-export type Changes_Collection = {
-  __typename?: 'changes_collection'
-  block: Scalars['Int']['output']
-  caller: Scalars['String']['output']
-  /** An object relationship */
-  collection?: Maybe<Collections>
-  created_at: Scalars['timestamptz']['output']
-  field: Scalars['String']['output']
-  id: Scalars['Int']['output']
-  new: Scalars['String']['output']
-  old: Scalars['String']['output']
-  opType: Scalars['String']['output']
-  ref_id: Scalars['String']['output']
-}
-
-/** order by aggregate values of table "changes_collection" */
-export type Changes_Collection_Aggregate_Order_By = {
-  avg?: InputMaybe<Changes_Collection_Avg_Order_By>
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Changes_Collection_Max_Order_By>
-  min?: InputMaybe<Changes_Collection_Min_Order_By>
-  stddev?: InputMaybe<Changes_Collection_Stddev_Order_By>
-  stddev_pop?: InputMaybe<Changes_Collection_Stddev_Pop_Order_By>
-  stddev_samp?: InputMaybe<Changes_Collection_Stddev_Samp_Order_By>
-  sum?: InputMaybe<Changes_Collection_Sum_Order_By>
-  var_pop?: InputMaybe<Changes_Collection_Var_Pop_Order_By>
-  var_samp?: InputMaybe<Changes_Collection_Var_Samp_Order_By>
-  variance?: InputMaybe<Changes_Collection_Variance_Order_By>
-}
-
-/** order by avg() on columns of table "changes_collection" */
-export type Changes_Collection_Avg_Order_By = {
-  block?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-}
-
-/** Boolean expression to filter rows from the table "changes_collection". All fields are combined with a logical 'AND'. */
-export type Changes_Collection_Bool_Exp = {
-  _and?: InputMaybe<Array<Changes_Collection_Bool_Exp>>
-  _not?: InputMaybe<Changes_Collection_Bool_Exp>
-  _or?: InputMaybe<Array<Changes_Collection_Bool_Exp>>
-  block?: InputMaybe<Int_Comparison_Exp>
-  caller?: InputMaybe<String_Comparison_Exp>
-  collection?: InputMaybe<Collections_Bool_Exp>
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>
-  field?: InputMaybe<String_Comparison_Exp>
-  id?: InputMaybe<Int_Comparison_Exp>
-  new?: InputMaybe<String_Comparison_Exp>
-  old?: InputMaybe<String_Comparison_Exp>
-  opType?: InputMaybe<String_Comparison_Exp>
-  ref_id?: InputMaybe<String_Comparison_Exp>
-}
-
-/** order by max() on columns of table "changes_collection" */
-export type Changes_Collection_Max_Order_By = {
-  block?: InputMaybe<Order_By>
-  caller?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-  field?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  new?: InputMaybe<Order_By>
-  old?: InputMaybe<Order_By>
-  opType?: InputMaybe<Order_By>
-  ref_id?: InputMaybe<Order_By>
-}
-
-/** order by min() on columns of table "changes_collection" */
-export type Changes_Collection_Min_Order_By = {
-  block?: InputMaybe<Order_By>
-  caller?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-  field?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  new?: InputMaybe<Order_By>
-  old?: InputMaybe<Order_By>
-  opType?: InputMaybe<Order_By>
-  ref_id?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "changes_collection". */
-export type Changes_Collection_Order_By = {
-  block?: InputMaybe<Order_By>
-  caller?: InputMaybe<Order_By>
-  collection?: InputMaybe<Collections_Order_By>
-  created_at?: InputMaybe<Order_By>
-  field?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  new?: InputMaybe<Order_By>
-  old?: InputMaybe<Order_By>
-  opType?: InputMaybe<Order_By>
-  ref_id?: InputMaybe<Order_By>
-}
-
-/** select columns of table "changes_collection" */
-export enum Changes_Collection_Select_Column {
-  /** column name */
-  Block = 'block',
-  /** column name */
-  Caller = 'caller',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Field = 'field',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  New = 'new',
-  /** column name */
-  Old = 'old',
-  /** column name */
-  OpType = 'opType',
-  /** column name */
-  RefId = 'ref_id',
-}
-
-/** order by stddev() on columns of table "changes_collection" */
-export type Changes_Collection_Stddev_Order_By = {
-  block?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-}
-
-/** order by stddev_pop() on columns of table "changes_collection" */
-export type Changes_Collection_Stddev_Pop_Order_By = {
-  block?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-}
-
-/** order by stddev_samp() on columns of table "changes_collection" */
-export type Changes_Collection_Stddev_Samp_Order_By = {
-  block?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-}
-
-/** order by sum() on columns of table "changes_collection" */
-export type Changes_Collection_Sum_Order_By = {
-  block?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-}
-
-/** order by var_pop() on columns of table "changes_collection" */
-export type Changes_Collection_Var_Pop_Order_By = {
-  block?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-}
-
-/** order by var_samp() on columns of table "changes_collection" */
-export type Changes_Collection_Var_Samp_Order_By = {
-  block?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-}
-
-/** order by variance() on columns of table "changes_collection" */
-export type Changes_Collection_Variance_Order_By = {
-  block?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-}
-
-/** aggregate max on columns */
-export type Changes_Max_Fields = {
-  __typename?: 'changes_max_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  caller?: Maybe<Scalars['String']['output']>
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-  field?: Maybe<Scalars['String']['output']>
-  id?: Maybe<Scalars['Int']['output']>
-  new?: Maybe<Scalars['String']['output']>
-  old?: Maybe<Scalars['String']['output']>
-  opType?: Maybe<Scalars['String']['output']>
-  ref_id?: Maybe<Scalars['String']['output']>
-}
-
-/** order by max() on columns of table "changes" */
-export type Changes_Max_Order_By = {
-  block?: InputMaybe<Order_By>
-  caller?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-  field?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  new?: InputMaybe<Order_By>
-  old?: InputMaybe<Order_By>
-  opType?: InputMaybe<Order_By>
-  ref_id?: InputMaybe<Order_By>
-}
-
-/** aggregate min on columns */
-export type Changes_Min_Fields = {
-  __typename?: 'changes_min_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  caller?: Maybe<Scalars['String']['output']>
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-  field?: Maybe<Scalars['String']['output']>
-  id?: Maybe<Scalars['Int']['output']>
-  new?: Maybe<Scalars['String']['output']>
-  old?: Maybe<Scalars['String']['output']>
-  opType?: Maybe<Scalars['String']['output']>
-  ref_id?: Maybe<Scalars['String']['output']>
-}
-
-/** order by min() on columns of table "changes" */
-export type Changes_Min_Order_By = {
-  block?: InputMaybe<Order_By>
-  caller?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-  field?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  new?: InputMaybe<Order_By>
-  old?: InputMaybe<Order_By>
-  opType?: InputMaybe<Order_By>
-  ref_id?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "changes". */
-export type Changes_Order_By = {
-  block?: InputMaybe<Order_By>
-  caller?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-  extraTransfers?: InputMaybe<Order_By>
-  field?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  new?: InputMaybe<Order_By>
-  nft?: InputMaybe<Nfts_Order_By>
-  nftclass?: InputMaybe<Collections_Order_By>
-  old?: InputMaybe<Order_By>
-  opType?: InputMaybe<Order_By>
-  ref_id?: InputMaybe<Order_By>
-}
-
-/** select columns of table "changes" */
-export enum Changes_Select_Column {
-  /** column name */
-  Block = 'block',
-  /** column name */
-  Caller = 'caller',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  ExtraTransfers = 'extraTransfers',
-  /** column name */
-  Field = 'field',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  New = 'new',
-  /** column name */
-  Old = 'old',
-  /** column name */
-  OpType = 'opType',
-  /** column name */
-  RefId = 'ref_id',
-}
-
-/** aggregate stddev on columns */
-export type Changes_Stddev_Fields = {
-  __typename?: 'changes_stddev_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  id?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by stddev() on columns of table "changes" */
-export type Changes_Stddev_Order_By = {
-  block?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-}
-
-/** aggregate stddev_pop on columns */
-export type Changes_Stddev_Pop_Fields = {
-  __typename?: 'changes_stddev_pop_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  id?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by stddev_pop() on columns of table "changes" */
-export type Changes_Stddev_Pop_Order_By = {
-  block?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-}
-
-/** aggregate stddev_samp on columns */
-export type Changes_Stddev_Samp_Fields = {
-  __typename?: 'changes_stddev_samp_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  id?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by stddev_samp() on columns of table "changes" */
-export type Changes_Stddev_Samp_Order_By = {
-  block?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-}
-
-/** aggregate sum on columns */
-export type Changes_Sum_Fields = {
-  __typename?: 'changes_sum_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  id?: Maybe<Scalars['Int']['output']>
-}
-
-/** order by sum() on columns of table "changes" */
-export type Changes_Sum_Order_By = {
-  block?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-}
-
-/** aggregate var_pop on columns */
-export type Changes_Var_Pop_Fields = {
-  __typename?: 'changes_var_pop_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  id?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by var_pop() on columns of table "changes" */
-export type Changes_Var_Pop_Order_By = {
-  block?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-}
-
-/** aggregate var_samp on columns */
-export type Changes_Var_Samp_Fields = {
-  __typename?: 'changes_var_samp_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  id?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by var_samp() on columns of table "changes" */
-export type Changes_Var_Samp_Order_By = {
-  block?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-}
-
-/** aggregate variance on columns */
-export type Changes_Variance_Fields = {
-  __typename?: 'changes_variance_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  id?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by variance() on columns of table "changes" */
-export type Changes_Variance_Order_By = {
-  block?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-}
-
-/** columns and relationships of "collection_banners" */
-export type Collection_Banners = {
-  __typename?: 'collection_banners'
-  /** An object relationship */
-  collection?: Maybe<Collections>
-  collection_id: Scalars['String']['output']
-  created_at: Scalars['timestamptz']['output']
-  image: Scalars['String']['output']
-}
-
-/** Boolean expression to filter rows from the table "collection_banners". All fields are combined with a logical 'AND'. */
-export type Collection_Banners_Bool_Exp = {
-  _and?: InputMaybe<Array<Collection_Banners_Bool_Exp>>
-  _not?: InputMaybe<Collection_Banners_Bool_Exp>
-  _or?: InputMaybe<Array<Collection_Banners_Bool_Exp>>
-  collection?: InputMaybe<Collections_Bool_Exp>
-  collection_id?: InputMaybe<String_Comparison_Exp>
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>
-  image?: InputMaybe<String_Comparison_Exp>
-}
-
-/** Ordering options when selecting data from "collection_banners". */
-export type Collection_Banners_Order_By = {
-  collection?: InputMaybe<Collections_Order_By>
-  collection_id?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-  image?: InputMaybe<Order_By>
-}
-
-/** select columns of table "collection_banners" */
-export enum Collection_Banners_Select_Column {
-  /** column name */
-  CollectionId = 'collection_id',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Image = 'image',
-}
-
-/** columns and relationships of "collections" */
-export type Collections = {
-  __typename?: 'collections'
-  /** An object relationship */
-  banners?: Maybe<Collection_Banners>
-  block: Scalars['Int']['output']
-  /** An array relationship */
-  changes_collection: Array<Changes_Collection>
+  type: BaseType
+}
+
+export type BaseEdge = {
+  __typename?: 'BaseEdge'
+  cursor: Scalars['String']['output']
+  node: Base
+}
+
+export enum BaseOrderByInput {
+  CurrentOwnerAsc = 'currentOwner_ASC',
+  CurrentOwnerDesc = 'currentOwner_DESC',
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  IssuerAsc = 'issuer_ASC',
+  IssuerDesc = 'issuer_DESC',
+  MetaAnimationUrlAsc = 'meta_animationUrl_ASC',
+  MetaAnimationUrlDesc = 'meta_animationUrl_DESC',
+  MetaDescriptionAsc = 'meta_description_ASC',
+  MetaDescriptionDesc = 'meta_description_DESC',
+  MetaIdAsc = 'meta_id_ASC',
+  MetaIdDesc = 'meta_id_DESC',
+  MetaImageAsc = 'meta_image_ASC',
+  MetaImageDesc = 'meta_image_DESC',
+  MetaNameAsc = 'meta_name_ASC',
+  MetaNameDesc = 'meta_name_DESC',
+  MetaTypeAsc = 'meta_type_ASC',
+  MetaTypeDesc = 'meta_type_DESC',
+  MetadataAsc = 'metadata_ASC',
+  MetadataDesc = 'metadata_DESC',
+  SymbolAsc = 'symbol_ASC',
+  SymbolDesc = 'symbol_DESC',
+  TypeAsc = 'type_ASC',
+  TypeDesc = 'type_DESC',
+}
+
+export enum BaseType {
+  Audio = 'audio',
+  Mixed = 'mixed',
+  Png = 'png',
+  Svg = 'svg',
+  Video = 'video',
+}
+
+export type BaseWhereInput = {
+  AND?: InputMaybe<Array<BaseWhereInput>>
+  OR?: InputMaybe<Array<BaseWhereInput>>
+  currentOwner_contains?: InputMaybe<Scalars['String']['input']>
+  currentOwner_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  currentOwner_endsWith?: InputMaybe<Scalars['String']['input']>
+  currentOwner_eq?: InputMaybe<Scalars['String']['input']>
+  currentOwner_gt?: InputMaybe<Scalars['String']['input']>
+  currentOwner_gte?: InputMaybe<Scalars['String']['input']>
+  currentOwner_in?: InputMaybe<Array<Scalars['String']['input']>>
+  currentOwner_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  currentOwner_lt?: InputMaybe<Scalars['String']['input']>
+  currentOwner_lte?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_contains?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_eq?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  currentOwner_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  currentOwner_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_contains?: InputMaybe<Scalars['String']['input']>
+  id_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_eq?: InputMaybe<Scalars['String']['input']>
+  id_gt?: InputMaybe<Scalars['String']['input']>
+  id_gte?: InputMaybe<Scalars['String']['input']>
+  id_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  id_lt?: InputMaybe<Scalars['String']['input']>
+  id_lte?: InputMaybe<Scalars['String']['input']>
+  id_not_contains?: InputMaybe<Scalars['String']['input']>
+  id_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_not_eq?: InputMaybe<Scalars['String']['input']>
+  id_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_startsWith?: InputMaybe<Scalars['String']['input']>
+  issuer_contains?: InputMaybe<Scalars['String']['input']>
+  issuer_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  issuer_endsWith?: InputMaybe<Scalars['String']['input']>
+  issuer_eq?: InputMaybe<Scalars['String']['input']>
+  issuer_gt?: InputMaybe<Scalars['String']['input']>
+  issuer_gte?: InputMaybe<Scalars['String']['input']>
+  issuer_in?: InputMaybe<Array<Scalars['String']['input']>>
+  issuer_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  issuer_lt?: InputMaybe<Scalars['String']['input']>
+  issuer_lte?: InputMaybe<Scalars['String']['input']>
+  issuer_not_contains?: InputMaybe<Scalars['String']['input']>
+  issuer_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  issuer_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  issuer_not_eq?: InputMaybe<Scalars['String']['input']>
+  issuer_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  issuer_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  issuer_startsWith?: InputMaybe<Scalars['String']['input']>
+  meta?: InputMaybe<MetadataEntityWhereInput>
+  meta_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  metadata_contains?: InputMaybe<Scalars['String']['input']>
+  metadata_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  metadata_endsWith?: InputMaybe<Scalars['String']['input']>
+  metadata_eq?: InputMaybe<Scalars['String']['input']>
+  metadata_gt?: InputMaybe<Scalars['String']['input']>
+  metadata_gte?: InputMaybe<Scalars['String']['input']>
+  metadata_in?: InputMaybe<Array<Scalars['String']['input']>>
+  metadata_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  metadata_lt?: InputMaybe<Scalars['String']['input']>
+  metadata_lte?: InputMaybe<Scalars['String']['input']>
+  metadata_not_contains?: InputMaybe<Scalars['String']['input']>
+  metadata_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  metadata_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  metadata_not_eq?: InputMaybe<Scalars['String']['input']>
+  metadata_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  metadata_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  metadata_startsWith?: InputMaybe<Scalars['String']['input']>
+  symbol_contains?: InputMaybe<Scalars['String']['input']>
+  symbol_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  symbol_endsWith?: InputMaybe<Scalars['String']['input']>
+  symbol_eq?: InputMaybe<Scalars['String']['input']>
+  symbol_gt?: InputMaybe<Scalars['String']['input']>
+  symbol_gte?: InputMaybe<Scalars['String']['input']>
+  symbol_in?: InputMaybe<Array<Scalars['String']['input']>>
+  symbol_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  symbol_lt?: InputMaybe<Scalars['String']['input']>
+  symbol_lte?: InputMaybe<Scalars['String']['input']>
+  symbol_not_contains?: InputMaybe<Scalars['String']['input']>
+  symbol_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  symbol_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  symbol_not_eq?: InputMaybe<Scalars['String']['input']>
+  symbol_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  symbol_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  symbol_startsWith?: InputMaybe<Scalars['String']['input']>
+  type_eq?: InputMaybe<BaseType>
+  type_in?: InputMaybe<Array<BaseType>>
+  type_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  type_not_eq?: InputMaybe<BaseType>
+  type_not_in?: InputMaybe<Array<BaseType>>
+}
+
+export type BasesConnection = {
+  __typename?: 'BasesConnection'
+  edges: Array<BaseEdge>
+  pageInfo: PageInfo
+  totalCount: Scalars['Int']['output']
+}
+
+export type CacheStatus = {
+  __typename?: 'CacheStatus'
   id: Scalars['String']['output']
-  issuer: Scalars['String']['output']
+  lastBlockTimestamp: Scalars['DateTime']['output']
+}
+
+export type CacheStatusEdge = {
+  __typename?: 'CacheStatusEdge'
+  cursor: Scalars['String']['output']
+  node: CacheStatus
+}
+
+export enum CacheStatusOrderByInput {
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  LastBlockTimestampAsc = 'lastBlockTimestamp_ASC',
+  LastBlockTimestampDesc = 'lastBlockTimestamp_DESC',
+}
+
+export type CacheStatusWhereInput = {
+  AND?: InputMaybe<Array<CacheStatusWhereInput>>
+  OR?: InputMaybe<Array<CacheStatusWhereInput>>
+  id_contains?: InputMaybe<Scalars['String']['input']>
+  id_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_eq?: InputMaybe<Scalars['String']['input']>
+  id_gt?: InputMaybe<Scalars['String']['input']>
+  id_gte?: InputMaybe<Scalars['String']['input']>
+  id_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  id_lt?: InputMaybe<Scalars['String']['input']>
+  id_lte?: InputMaybe<Scalars['String']['input']>
+  id_not_contains?: InputMaybe<Scalars['String']['input']>
+  id_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_not_eq?: InputMaybe<Scalars['String']['input']>
+  id_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_startsWith?: InputMaybe<Scalars['String']['input']>
+  lastBlockTimestamp_eq?: InputMaybe<Scalars['DateTime']['input']>
+  lastBlockTimestamp_gt?: InputMaybe<Scalars['DateTime']['input']>
+  lastBlockTimestamp_gte?: InputMaybe<Scalars['DateTime']['input']>
+  lastBlockTimestamp_in?: InputMaybe<Array<Scalars['DateTime']['input']>>
+  lastBlockTimestamp_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  lastBlockTimestamp_lt?: InputMaybe<Scalars['DateTime']['input']>
+  lastBlockTimestamp_lte?: InputMaybe<Scalars['DateTime']['input']>
+  lastBlockTimestamp_not_eq?: InputMaybe<Scalars['DateTime']['input']>
+  lastBlockTimestamp_not_in?: InputMaybe<Array<Scalars['DateTime']['input']>>
+}
+
+export type CacheStatusesConnection = {
+  __typename?: 'CacheStatusesConnection'
+  edges: Array<CacheStatusEdge>
+  pageInfo: PageInfo
+  totalCount: Scalars['Int']['output']
+}
+
+export type ChartEntity = {
+  __typename?: 'ChartEntity'
+  average?: Maybe<Scalars['BigInt']['output']>
+  count?: Maybe<Scalars['Float']['output']>
+  date: Scalars['DateTime']['output']
+  value?: Maybe<Scalars['BigInt']['output']>
+}
+
+export type CollectionEntitiesConnection = {
+  __typename?: 'CollectionEntitiesConnection'
+  edges: Array<CollectionEntityEdge>
+  pageInfo: PageInfo
+  totalCount: Scalars['Int']['output']
+}
+
+export type CollectionEntity = {
+  __typename?: 'CollectionEntity'
+  blockNumber?: Maybe<Scalars['BigInt']['output']>
+  createdAt: Scalars['DateTime']['output']
+  currentOwner?: Maybe<Scalars['String']['output']>
+  events?: Maybe<Array<CollectionEvent>>
+  hash: Scalars['String']['output']
+  id: Scalars['String']['output']
+  image?: Maybe<Scalars['String']['output']>
+  issuer?: Maybe<Scalars['String']['output']>
   max: Scalars['Int']['output']
-  metadata: Scalars['String']['output']
-  metadata_content_type?: Maybe<Scalars['String']['output']>
-  metadata_description?: Maybe<Scalars['String']['output']>
-  metadata_image?: Maybe<Scalars['String']['output']>
-  metadata_name?: Maybe<Scalars['String']['output']>
-  /** An array relationship */
-  nfts: Array<Nfts>
-  /** An aggregate relationship */
-  nfts_aggregate: Nfts_Aggregate
-  /** An object relationship */
-  nfts_stats?: Maybe<Nfts_Stats>
-  /** An array relationship */
-  singular_blacklisted_accounts: Array<Singular_Blacklisted_Accounts>
-  /** An array relationship */
-  singular_blacklisted_collections: Array<Singular_Blacklisted_Collections>
-  /** An array relationship */
-  singular_curated: Array<Singular_Curated_Collections>
-  /** An aggregate relationship */
-  singular_curated_aggregate: Singular_Curated_Collections_Aggregate
-  /** An array relationship */
-  singular_nsfw_collections: Array<Singular_Nsfw_Collections>
-  /** An aggregate relationship */
-  singular_nsfw_collections_aggregate: Singular_Nsfw_Collections_Aggregate
-  /** An array relationship */
-  singular_verified_collections: Array<Singular_Verified_Collections>
-  /** An aggregate relationship */
-  singular_verified_collections_aggregate: Singular_Verified_Collections_Aggregate
+  media?: Maybe<Scalars['String']['output']>
+  meta?: Maybe<MetadataEntity>
+  metadata?: Maybe<Scalars['String']['output']>
+  name?: Maybe<Scalars['String']['output']>
+  nftCount: Scalars['Int']['output']
+  nfts: Array<NftEntity>
+  supply: Scalars['Int']['output']
   symbol: Scalars['String']['output']
+  updatedAt: Scalars['DateTime']['output']
+  version: Scalars['String']['output']
 }
 
-/** columns and relationships of "collections" */
-export type CollectionsChanges_CollectionArgs = {
-  distinct_on?: InputMaybe<Array<Changes_Collection_Select_Column>>
+export type CollectionEntityNftsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Changes_Collection_Order_By>>
-  where?: InputMaybe<Changes_Collection_Bool_Exp>
-}
-
-/** columns and relationships of "collections" */
-export type CollectionsNftsArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-/** columns and relationships of "collections" */
-export type CollectionsNfts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-/** columns and relationships of "collections" */
-export type CollectionsSingular_Blacklisted_AccountsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Blacklisted_Accounts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Blacklisted_Accounts_Order_By>>
-  where?: InputMaybe<Singular_Blacklisted_Accounts_Bool_Exp>
-}
-
-/** columns and relationships of "collections" */
-export type CollectionsSingular_Blacklisted_CollectionsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Blacklisted_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Blacklisted_Collections_Order_By>>
-  where?: InputMaybe<Singular_Blacklisted_Collections_Bool_Exp>
-}
-
-/** columns and relationships of "collections" */
-export type CollectionsSingular_CuratedArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Curated_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Curated_Collections_Order_By>>
-  where?: InputMaybe<Singular_Curated_Collections_Bool_Exp>
-}
-
-/** columns and relationships of "collections" */
-export type CollectionsSingular_Curated_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Curated_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Curated_Collections_Order_By>>
-  where?: InputMaybe<Singular_Curated_Collections_Bool_Exp>
-}
-
-/** columns and relationships of "collections" */
-export type CollectionsSingular_Nsfw_CollectionsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Nsfw_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Nsfw_Collections_Order_By>>
-  where?: InputMaybe<Singular_Nsfw_Collections_Bool_Exp>
-}
-
-/** columns and relationships of "collections" */
-export type CollectionsSingular_Nsfw_Collections_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Nsfw_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Nsfw_Collections_Order_By>>
-  where?: InputMaybe<Singular_Nsfw_Collections_Bool_Exp>
-}
-
-/** columns and relationships of "collections" */
-export type CollectionsSingular_Verified_CollectionsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Verified_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Verified_Collections_Order_By>>
-  where?: InputMaybe<Singular_Verified_Collections_Bool_Exp>
-}
-
-/** columns and relationships of "collections" */
-export type CollectionsSingular_Verified_Collections_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Verified_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Verified_Collections_Order_By>>
-  where?: InputMaybe<Singular_Verified_Collections_Bool_Exp>
-}
-
-/** aggregated selection of "collections" */
-export type Collections_Aggregate = {
-  __typename?: 'collections_aggregate'
-  aggregate?: Maybe<Collections_Aggregate_Fields>
-  nodes: Array<Collections>
-}
-
-/** aggregate fields of "collections" */
-export type Collections_Aggregate_Fields = {
-  __typename?: 'collections_aggregate_fields'
-  avg?: Maybe<Collections_Avg_Fields>
-  count: Scalars['Int']['output']
-  max?: Maybe<Collections_Max_Fields>
-  min?: Maybe<Collections_Min_Fields>
-  stddev?: Maybe<Collections_Stddev_Fields>
-  stddev_pop?: Maybe<Collections_Stddev_Pop_Fields>
-  stddev_samp?: Maybe<Collections_Stddev_Samp_Fields>
-  sum?: Maybe<Collections_Sum_Fields>
-  var_pop?: Maybe<Collections_Var_Pop_Fields>
-  var_samp?: Maybe<Collections_Var_Samp_Fields>
-  variance?: Maybe<Collections_Variance_Fields>
-}
-
-/** aggregate fields of "collections" */
-export type Collections_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Collections_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** aggregate avg on columns */
-export type Collections_Avg_Fields = {
-  __typename?: 'collections_avg_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  max?: Maybe<Scalars['Float']['output']>
-}
-
-/** Boolean expression to filter rows from the table "collections". All fields are combined with a logical 'AND'. */
-export type Collections_Bool_Exp = {
-  _and?: InputMaybe<Array<Collections_Bool_Exp>>
-  _not?: InputMaybe<Collections_Bool_Exp>
-  _or?: InputMaybe<Array<Collections_Bool_Exp>>
-  banners?: InputMaybe<Collection_Banners_Bool_Exp>
-  block?: InputMaybe<Int_Comparison_Exp>
-  changes_collection?: InputMaybe<Changes_Collection_Bool_Exp>
-  id?: InputMaybe<String_Comparison_Exp>
-  issuer?: InputMaybe<String_Comparison_Exp>
-  max?: InputMaybe<Int_Comparison_Exp>
-  metadata?: InputMaybe<String_Comparison_Exp>
-  metadata_content_type?: InputMaybe<String_Comparison_Exp>
-  metadata_description?: InputMaybe<String_Comparison_Exp>
-  metadata_image?: InputMaybe<String_Comparison_Exp>
-  metadata_name?: InputMaybe<String_Comparison_Exp>
-  nfts?: InputMaybe<Nfts_Bool_Exp>
-  nfts_stats?: InputMaybe<Nfts_Stats_Bool_Exp>
-  singular_blacklisted_accounts?: InputMaybe<Singular_Blacklisted_Accounts_Bool_Exp>
-  singular_blacklisted_collections?: InputMaybe<Singular_Blacklisted_Collections_Bool_Exp>
-  singular_curated?: InputMaybe<Singular_Curated_Collections_Bool_Exp>
-  singular_nsfw_collections?: InputMaybe<Singular_Nsfw_Collections_Bool_Exp>
-  singular_verified_collections?: InputMaybe<Singular_Verified_Collections_Bool_Exp>
-  symbol?: InputMaybe<String_Comparison_Exp>
-}
-
-/** aggregate max on columns */
-export type Collections_Max_Fields = {
-  __typename?: 'collections_max_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  issuer?: Maybe<Scalars['String']['output']>
-  max?: Maybe<Scalars['Int']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  metadata_content_type?: Maybe<Scalars['String']['output']>
-  metadata_description?: Maybe<Scalars['String']['output']>
-  metadata_image?: Maybe<Scalars['String']['output']>
-  metadata_name?: Maybe<Scalars['String']['output']>
-  symbol?: Maybe<Scalars['String']['output']>
-}
-
-/** aggregate min on columns */
-export type Collections_Min_Fields = {
-  __typename?: 'collections_min_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  issuer?: Maybe<Scalars['String']['output']>
-  max?: Maybe<Scalars['Int']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  metadata_content_type?: Maybe<Scalars['String']['output']>
-  metadata_description?: Maybe<Scalars['String']['output']>
-  metadata_image?: Maybe<Scalars['String']['output']>
-  metadata_name?: Maybe<Scalars['String']['output']>
-  symbol?: Maybe<Scalars['String']['output']>
-}
-
-/** Ordering options when selecting data from "collections". */
-export type Collections_Order_By = {
-  banners?: InputMaybe<Collection_Banners_Order_By>
-  block?: InputMaybe<Order_By>
-  changes_collection_aggregate?: InputMaybe<Changes_Collection_Aggregate_Order_By>
-  id?: InputMaybe<Order_By>
-  issuer?: InputMaybe<Order_By>
-  max?: InputMaybe<Order_By>
-  metadata?: InputMaybe<Order_By>
-  metadata_content_type?: InputMaybe<Order_By>
-  metadata_description?: InputMaybe<Order_By>
-  metadata_image?: InputMaybe<Order_By>
-  metadata_name?: InputMaybe<Order_By>
-  nfts_aggregate?: InputMaybe<Nfts_Aggregate_Order_By>
-  nfts_stats?: InputMaybe<Nfts_Stats_Order_By>
-  singular_blacklisted_accounts_aggregate?: InputMaybe<Singular_Blacklisted_Accounts_Aggregate_Order_By>
-  singular_blacklisted_collections_aggregate?: InputMaybe<Singular_Blacklisted_Collections_Aggregate_Order_By>
-  singular_curated_aggregate?: InputMaybe<Singular_Curated_Collections_Aggregate_Order_By>
-  singular_nsfw_collections_aggregate?: InputMaybe<Singular_Nsfw_Collections_Aggregate_Order_By>
-  singular_verified_collections_aggregate?: InputMaybe<Singular_Verified_Collections_Aggregate_Order_By>
-  symbol?: InputMaybe<Order_By>
-}
-
-/** select columns of table "collections" */
-export enum Collections_Select_Column {
-  /** column name */
-  Block = 'block',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Issuer = 'issuer',
-  /** column name */
-  Max = 'max',
-  /** column name */
-  Metadata = 'metadata',
-  /** column name */
-  MetadataContentType = 'metadata_content_type',
-  /** column name */
-  MetadataDescription = 'metadata_description',
-  /** column name */
-  MetadataImage = 'metadata_image',
-  /** column name */
-  MetadataName = 'metadata_name',
-  /** column name */
-  Symbol = 'symbol',
-}
-
-/** aggregate stddev on columns */
-export type Collections_Stddev_Fields = {
-  __typename?: 'collections_stddev_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  max?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate stddev_pop on columns */
-export type Collections_Stddev_Pop_Fields = {
-  __typename?: 'collections_stddev_pop_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  max?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate stddev_samp on columns */
-export type Collections_Stddev_Samp_Fields = {
-  __typename?: 'collections_stddev_samp_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  max?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate sum on columns */
-export type Collections_Sum_Fields = {
-  __typename?: 'collections_sum_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  max?: Maybe<Scalars['Int']['output']>
-}
-
-/** aggregate var_pop on columns */
-export type Collections_Var_Pop_Fields = {
-  __typename?: 'collections_var_pop_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  max?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate var_samp on columns */
-export type Collections_Var_Samp_Fields = {
-  __typename?: 'collections_var_samp_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  max?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate variance on columns */
-export type Collections_Variance_Fields = {
-  __typename?: 'collections_variance_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  max?: Maybe<Scalars['Float']['output']>
-}
-
-/** columns and relationships of "distinct_kanaria_nfts" */
-export type Distinct_Kanaria_Nfts = {
-  __typename?: 'distinct_kanaria_nfts'
-  block?: Maybe<Scalars['Int']['output']>
-  burned?: Maybe<Scalars['String']['output']>
-  /** An array relationship */
-  children: Array<Nfts>
-  /** An aggregate relationship */
-  children_aggregate: Nfts_Aggregate
-  /** An object relationship */
-  collection?: Maybe<Collections>
-  collectionId?: Maybe<Scalars['String']['output']>
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-  equipped_id?: Maybe<Scalars['String']['output']>
-  forsale?: Maybe<Scalars['bigint']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  metadata_description?: Maybe<Scalars['String']['output']>
-  metadata_image?: Maybe<Scalars['String']['output']>
-  metadata_name?: Maybe<Scalars['String']['output']>
-  metadata_rarity?: Maybe<Scalars['String']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  owner?: Maybe<Scalars['String']['output']>
-  pending?: Maybe<Scalars['Boolean']['output']>
-  priority?: Maybe<Scalars['jsonb']['output']>
-  properties?: Maybe<Scalars['jsonb']['output']>
-  /** An array relationship */
-  resources: Array<Resources>
-  /** An aggregate relationship */
-  resources_aggregate: Resources_Aggregate
-  rootowner?: Maybe<Scalars['String']['output']>
-  sn?: Maybe<Scalars['String']['output']>
-  symbol?: Maybe<Scalars['String']['output']>
-  transferable?: Maybe<Scalars['Int']['output']>
-  tx_block?: Maybe<Scalars['Int']['output']>
-  tx_caller?: Maybe<Scalars['String']['output']>
-  tx_pending?: Maybe<Scalars['Boolean']['output']>
-  updated_at?: Maybe<Scalars['timestamptz']['output']>
-}
-
-/** columns and relationships of "distinct_kanaria_nfts" */
-export type Distinct_Kanaria_NftsChildrenArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-/** columns and relationships of "distinct_kanaria_nfts" */
-export type Distinct_Kanaria_NftsChildren_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-/** columns and relationships of "distinct_kanaria_nfts" */
-export type Distinct_Kanaria_NftsPriorityArgs = {
-  path?: InputMaybe<Scalars['String']['input']>
-}
-
-/** columns and relationships of "distinct_kanaria_nfts" */
-export type Distinct_Kanaria_NftsPropertiesArgs = {
-  path?: InputMaybe<Scalars['String']['input']>
-}
-
-/** columns and relationships of "distinct_kanaria_nfts" */
-export type Distinct_Kanaria_NftsResourcesArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Order_By>>
-  where?: InputMaybe<Resources_Bool_Exp>
-}
-
-/** columns and relationships of "distinct_kanaria_nfts" */
-export type Distinct_Kanaria_NftsResources_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Order_By>>
-  where?: InputMaybe<Resources_Bool_Exp>
-}
-
-/** aggregated selection of "distinct_kanaria_nfts" */
-export type Distinct_Kanaria_Nfts_Aggregate = {
-  __typename?: 'distinct_kanaria_nfts_aggregate'
-  aggregate?: Maybe<Distinct_Kanaria_Nfts_Aggregate_Fields>
-  nodes: Array<Distinct_Kanaria_Nfts>
-}
-
-/** aggregate fields of "distinct_kanaria_nfts" */
-export type Distinct_Kanaria_Nfts_Aggregate_Fields = {
-  __typename?: 'distinct_kanaria_nfts_aggregate_fields'
-  avg?: Maybe<Distinct_Kanaria_Nfts_Avg_Fields>
-  count: Scalars['Int']['output']
-  max?: Maybe<Distinct_Kanaria_Nfts_Max_Fields>
-  min?: Maybe<Distinct_Kanaria_Nfts_Min_Fields>
-  stddev?: Maybe<Distinct_Kanaria_Nfts_Stddev_Fields>
-  stddev_pop?: Maybe<Distinct_Kanaria_Nfts_Stddev_Pop_Fields>
-  stddev_samp?: Maybe<Distinct_Kanaria_Nfts_Stddev_Samp_Fields>
-  sum?: Maybe<Distinct_Kanaria_Nfts_Sum_Fields>
-  var_pop?: Maybe<Distinct_Kanaria_Nfts_Var_Pop_Fields>
-  var_samp?: Maybe<Distinct_Kanaria_Nfts_Var_Samp_Fields>
-  variance?: Maybe<Distinct_Kanaria_Nfts_Variance_Fields>
-}
-
-/** aggregate fields of "distinct_kanaria_nfts" */
-export type Distinct_Kanaria_Nfts_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Distinct_Kanaria_Nfts_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** aggregate avg on columns */
-export type Distinct_Kanaria_Nfts_Avg_Fields = {
-  __typename?: 'distinct_kanaria_nfts_avg_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  tx_block?: Maybe<Scalars['Float']['output']>
-}
-
-/** Boolean expression to filter rows from the table "distinct_kanaria_nfts". All fields are combined with a logical 'AND'. */
-export type Distinct_Kanaria_Nfts_Bool_Exp = {
-  _and?: InputMaybe<Array<Distinct_Kanaria_Nfts_Bool_Exp>>
-  _not?: InputMaybe<Distinct_Kanaria_Nfts_Bool_Exp>
-  _or?: InputMaybe<Array<Distinct_Kanaria_Nfts_Bool_Exp>>
-  block?: InputMaybe<Int_Comparison_Exp>
-  burned?: InputMaybe<String_Comparison_Exp>
-  children?: InputMaybe<Nfts_Bool_Exp>
-  collection?: InputMaybe<Collections_Bool_Exp>
-  collectionId?: InputMaybe<String_Comparison_Exp>
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>
-  equipped_id?: InputMaybe<String_Comparison_Exp>
-  forsale?: InputMaybe<Bigint_Comparison_Exp>
-  id?: InputMaybe<String_Comparison_Exp>
-  metadata?: InputMaybe<String_Comparison_Exp>
-  metadata_description?: InputMaybe<String_Comparison_Exp>
-  metadata_image?: InputMaybe<String_Comparison_Exp>
-  metadata_name?: InputMaybe<String_Comparison_Exp>
-  metadata_rarity?: InputMaybe<String_Comparison_Exp>
-  metadata_rarity_percentage?: InputMaybe<Float_Comparison_Exp>
-  owner?: InputMaybe<String_Comparison_Exp>
-  pending?: InputMaybe<Boolean_Comparison_Exp>
-  priority?: InputMaybe<Jsonb_Comparison_Exp>
-  properties?: InputMaybe<Jsonb_Comparison_Exp>
-  resources?: InputMaybe<Resources_Bool_Exp>
-  rootowner?: InputMaybe<String_Comparison_Exp>
-  sn?: InputMaybe<String_Comparison_Exp>
-  symbol?: InputMaybe<String_Comparison_Exp>
-  transferable?: InputMaybe<Int_Comparison_Exp>
-  tx_block?: InputMaybe<Int_Comparison_Exp>
-  tx_caller?: InputMaybe<String_Comparison_Exp>
-  tx_pending?: InputMaybe<Boolean_Comparison_Exp>
-  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>
-}
-
-/** aggregate max on columns */
-export type Distinct_Kanaria_Nfts_Max_Fields = {
-  __typename?: 'distinct_kanaria_nfts_max_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  burned?: Maybe<Scalars['String']['output']>
-  collectionId?: Maybe<Scalars['String']['output']>
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-  equipped_id?: Maybe<Scalars['String']['output']>
-  forsale?: Maybe<Scalars['bigint']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  metadata_description?: Maybe<Scalars['String']['output']>
-  metadata_image?: Maybe<Scalars['String']['output']>
-  metadata_name?: Maybe<Scalars['String']['output']>
-  metadata_rarity?: Maybe<Scalars['String']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  owner?: Maybe<Scalars['String']['output']>
-  rootowner?: Maybe<Scalars['String']['output']>
-  sn?: Maybe<Scalars['String']['output']>
-  symbol?: Maybe<Scalars['String']['output']>
-  transferable?: Maybe<Scalars['Int']['output']>
-  tx_block?: Maybe<Scalars['Int']['output']>
-  tx_caller?: Maybe<Scalars['String']['output']>
-  updated_at?: Maybe<Scalars['timestamptz']['output']>
-}
-
-/** aggregate min on columns */
-export type Distinct_Kanaria_Nfts_Min_Fields = {
-  __typename?: 'distinct_kanaria_nfts_min_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  burned?: Maybe<Scalars['String']['output']>
-  collectionId?: Maybe<Scalars['String']['output']>
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-  equipped_id?: Maybe<Scalars['String']['output']>
-  forsale?: Maybe<Scalars['bigint']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  metadata_description?: Maybe<Scalars['String']['output']>
-  metadata_image?: Maybe<Scalars['String']['output']>
-  metadata_name?: Maybe<Scalars['String']['output']>
-  metadata_rarity?: Maybe<Scalars['String']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  owner?: Maybe<Scalars['String']['output']>
-  rootowner?: Maybe<Scalars['String']['output']>
-  sn?: Maybe<Scalars['String']['output']>
-  symbol?: Maybe<Scalars['String']['output']>
-  transferable?: Maybe<Scalars['Int']['output']>
-  tx_block?: Maybe<Scalars['Int']['output']>
-  tx_caller?: Maybe<Scalars['String']['output']>
-  updated_at?: Maybe<Scalars['timestamptz']['output']>
-}
-
-/** Ordering options when selecting data from "distinct_kanaria_nfts". */
-export type Distinct_Kanaria_Nfts_Order_By = {
-  block?: InputMaybe<Order_By>
-  burned?: InputMaybe<Order_By>
-  children_aggregate?: InputMaybe<Nfts_Aggregate_Order_By>
-  collection?: InputMaybe<Collections_Order_By>
-  collectionId?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-  equipped_id?: InputMaybe<Order_By>
-  forsale?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  metadata?: InputMaybe<Order_By>
-  metadata_description?: InputMaybe<Order_By>
-  metadata_image?: InputMaybe<Order_By>
-  metadata_name?: InputMaybe<Order_By>
-  metadata_rarity?: InputMaybe<Order_By>
-  metadata_rarity_percentage?: InputMaybe<Order_By>
-  owner?: InputMaybe<Order_By>
-  pending?: InputMaybe<Order_By>
-  priority?: InputMaybe<Order_By>
-  properties?: InputMaybe<Order_By>
-  resources_aggregate?: InputMaybe<Resources_Aggregate_Order_By>
-  rootowner?: InputMaybe<Order_By>
-  sn?: InputMaybe<Order_By>
-  symbol?: InputMaybe<Order_By>
-  transferable?: InputMaybe<Order_By>
-  tx_block?: InputMaybe<Order_By>
-  tx_caller?: InputMaybe<Order_By>
-  tx_pending?: InputMaybe<Order_By>
-  updated_at?: InputMaybe<Order_By>
-}
-
-/** select columns of table "distinct_kanaria_nfts" */
-export enum Distinct_Kanaria_Nfts_Select_Column {
-  /** column name */
-  Block = 'block',
-  /** column name */
-  Burned = 'burned',
-  /** column name */
-  CollectionId = 'collectionId',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  EquippedId = 'equipped_id',
-  /** column name */
-  Forsale = 'forsale',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Metadata = 'metadata',
-  /** column name */
-  MetadataDescription = 'metadata_description',
-  /** column name */
-  MetadataImage = 'metadata_image',
-  /** column name */
-  MetadataName = 'metadata_name',
-  /** column name */
-  MetadataRarity = 'metadata_rarity',
-  /** column name */
-  MetadataRarityPercentage = 'metadata_rarity_percentage',
-  /** column name */
-  Owner = 'owner',
-  /** column name */
-  Pending = 'pending',
-  /** column name */
-  Priority = 'priority',
-  /** column name */
-  Properties = 'properties',
-  /** column name */
-  Rootowner = 'rootowner',
-  /** column name */
-  Sn = 'sn',
-  /** column name */
-  Symbol = 'symbol',
-  /** column name */
-  Transferable = 'transferable',
-  /** column name */
-  TxBlock = 'tx_block',
-  /** column name */
-  TxCaller = 'tx_caller',
-  /** column name */
-  TxPending = 'tx_pending',
-  /** column name */
-  UpdatedAt = 'updated_at',
-}
-
-/** aggregate stddev on columns */
-export type Distinct_Kanaria_Nfts_Stddev_Fields = {
-  __typename?: 'distinct_kanaria_nfts_stddev_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  tx_block?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate stddev_pop on columns */
-export type Distinct_Kanaria_Nfts_Stddev_Pop_Fields = {
-  __typename?: 'distinct_kanaria_nfts_stddev_pop_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  tx_block?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate stddev_samp on columns */
-export type Distinct_Kanaria_Nfts_Stddev_Samp_Fields = {
-  __typename?: 'distinct_kanaria_nfts_stddev_samp_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  tx_block?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate sum on columns */
-export type Distinct_Kanaria_Nfts_Sum_Fields = {
-  __typename?: 'distinct_kanaria_nfts_sum_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  forsale?: Maybe<Scalars['bigint']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Int']['output']>
-  tx_block?: Maybe<Scalars['Int']['output']>
-}
-
-/** aggregate var_pop on columns */
-export type Distinct_Kanaria_Nfts_Var_Pop_Fields = {
-  __typename?: 'distinct_kanaria_nfts_var_pop_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  tx_block?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate var_samp on columns */
-export type Distinct_Kanaria_Nfts_Var_Samp_Fields = {
-  __typename?: 'distinct_kanaria_nfts_var_samp_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  tx_block?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate variance on columns */
-export type Distinct_Kanaria_Nfts_Variance_Fields = {
-  __typename?: 'distinct_kanaria_nfts_variance_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  tx_block?: Maybe<Scalars['Float']['output']>
-}
-
-/** columns and relationships of "distinct_nfts" */
-export type Distinct_Nfts = {
-  __typename?: 'distinct_nfts'
-  block?: Maybe<Scalars['Int']['output']>
-  burned?: Maybe<Scalars['String']['output']>
-  /** An array relationship */
-  children: Array<Nfts>
-  /** An aggregate relationship */
-  children_aggregate: Nfts_Aggregate
-  /** An object relationship */
-  collection?: Maybe<Collections>
-  collectionId?: Maybe<Scalars['String']['output']>
-  /** An object relationship */
-  dutchie?: Maybe<Dutchie>
-  equipped_id?: Maybe<Scalars['String']['output']>
-  forsale?: Maybe<Scalars['bigint']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  metadata_content_type?: Maybe<Scalars['String']['output']>
-  metadata_image?: Maybe<Scalars['String']['output']>
-  metadata_name?: Maybe<Scalars['String']['output']>
-  metadata_rarity?: Maybe<Scalars['String']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  owner?: Maybe<Scalars['String']['output']>
-  pending?: Maybe<Scalars['Boolean']['output']>
-  priority?: Maybe<Scalars['jsonb']['output']>
-  properties?: Maybe<Scalars['jsonb']['output']>
-  /** An array relationship */
-  resources: Array<Resources>
-  /** An aggregate relationship */
-  resources_aggregate: Resources_Aggregate
-  rootowner?: Maybe<Scalars['String']['output']>
-  /** An array relationship */
-  singular_curated: Array<Singular_Curated>
-  /** An aggregate relationship */
-  singular_curated_aggregate: Singular_Curated_Aggregate
-  /** An array relationship */
-  singular_nsfw: Array<Singular_Nsfw_Nfts>
-  /** An aggregate relationship */
-  singular_nsfw_aggregate: Singular_Nsfw_Nfts_Aggregate
-  sn?: Maybe<Scalars['String']['output']>
-  symbol?: Maybe<Scalars['String']['output']>
-  transferable?: Maybe<Scalars['Int']['output']>
-  tx_block?: Maybe<Scalars['Int']['output']>
-  tx_caller?: Maybe<Scalars['String']['output']>
-  tx_pending?: Maybe<Scalars['Boolean']['output']>
-  updated_at?: Maybe<Scalars['timestamptz']['output']>
-}
-
-/** columns and relationships of "distinct_nfts" */
-export type Distinct_NftsChildrenArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-/** columns and relationships of "distinct_nfts" */
-export type Distinct_NftsChildren_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-/** columns and relationships of "distinct_nfts" */
-export type Distinct_NftsPriorityArgs = {
-  path?: InputMaybe<Scalars['String']['input']>
-}
-
-/** columns and relationships of "distinct_nfts" */
-export type Distinct_NftsPropertiesArgs = {
-  path?: InputMaybe<Scalars['String']['input']>
-}
-
-/** columns and relationships of "distinct_nfts" */
-export type Distinct_NftsResourcesArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Order_By>>
-  where?: InputMaybe<Resources_Bool_Exp>
-}
-
-/** columns and relationships of "distinct_nfts" */
-export type Distinct_NftsResources_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Order_By>>
-  where?: InputMaybe<Resources_Bool_Exp>
-}
-
-/** columns and relationships of "distinct_nfts" */
-export type Distinct_NftsSingular_CuratedArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Curated_Order_By>>
-  where?: InputMaybe<Singular_Curated_Bool_Exp>
-}
-
-/** columns and relationships of "distinct_nfts" */
-export type Distinct_NftsSingular_Curated_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Curated_Order_By>>
-  where?: InputMaybe<Singular_Curated_Bool_Exp>
-}
-
-/** columns and relationships of "distinct_nfts" */
-export type Distinct_NftsSingular_NsfwArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Nsfw_Nfts_Order_By>>
-  where?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
-}
-
-/** columns and relationships of "distinct_nfts" */
-export type Distinct_NftsSingular_Nsfw_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Nsfw_Nfts_Order_By>>
-  where?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
-}
-
-/** aggregated selection of "distinct_nfts" */
-export type Distinct_Nfts_Aggregate = {
-  __typename?: 'distinct_nfts_aggregate'
-  aggregate?: Maybe<Distinct_Nfts_Aggregate_Fields>
-  nodes: Array<Distinct_Nfts>
-}
-
-/** aggregate fields of "distinct_nfts" */
-export type Distinct_Nfts_Aggregate_Fields = {
-  __typename?: 'distinct_nfts_aggregate_fields'
-  avg?: Maybe<Distinct_Nfts_Avg_Fields>
-  count: Scalars['Int']['output']
-  max?: Maybe<Distinct_Nfts_Max_Fields>
-  min?: Maybe<Distinct_Nfts_Min_Fields>
-  stddev?: Maybe<Distinct_Nfts_Stddev_Fields>
-  stddev_pop?: Maybe<Distinct_Nfts_Stddev_Pop_Fields>
-  stddev_samp?: Maybe<Distinct_Nfts_Stddev_Samp_Fields>
-  sum?: Maybe<Distinct_Nfts_Sum_Fields>
-  var_pop?: Maybe<Distinct_Nfts_Var_Pop_Fields>
-  var_samp?: Maybe<Distinct_Nfts_Var_Samp_Fields>
-  variance?: Maybe<Distinct_Nfts_Variance_Fields>
-}
-
-/** aggregate fields of "distinct_nfts" */
-export type Distinct_Nfts_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Distinct_Nfts_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** aggregate avg on columns */
-export type Distinct_Nfts_Avg_Fields = {
-  __typename?: 'distinct_nfts_avg_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  tx_block?: Maybe<Scalars['Float']['output']>
-}
-
-/** Boolean expression to filter rows from the table "distinct_nfts". All fields are combined with a logical 'AND'. */
-export type Distinct_Nfts_Bool_Exp = {
-  _and?: InputMaybe<Array<Distinct_Nfts_Bool_Exp>>
-  _not?: InputMaybe<Distinct_Nfts_Bool_Exp>
-  _or?: InputMaybe<Array<Distinct_Nfts_Bool_Exp>>
-  block?: InputMaybe<Int_Comparison_Exp>
-  burned?: InputMaybe<String_Comparison_Exp>
-  children?: InputMaybe<Nfts_Bool_Exp>
-  collection?: InputMaybe<Collections_Bool_Exp>
-  collectionId?: InputMaybe<String_Comparison_Exp>
-  dutchie?: InputMaybe<Dutchie_Bool_Exp>
-  equipped_id?: InputMaybe<String_Comparison_Exp>
-  forsale?: InputMaybe<Bigint_Comparison_Exp>
-  id?: InputMaybe<String_Comparison_Exp>
-  metadata?: InputMaybe<String_Comparison_Exp>
-  metadata_content_type?: InputMaybe<String_Comparison_Exp>
-  metadata_image?: InputMaybe<String_Comparison_Exp>
-  metadata_name?: InputMaybe<String_Comparison_Exp>
-  metadata_rarity?: InputMaybe<String_Comparison_Exp>
-  metadata_rarity_percentage?: InputMaybe<Float_Comparison_Exp>
-  owner?: InputMaybe<String_Comparison_Exp>
-  pending?: InputMaybe<Boolean_Comparison_Exp>
-  priority?: InputMaybe<Jsonb_Comparison_Exp>
-  properties?: InputMaybe<Jsonb_Comparison_Exp>
-  resources?: InputMaybe<Resources_Bool_Exp>
-  rootowner?: InputMaybe<String_Comparison_Exp>
-  singular_curated?: InputMaybe<Singular_Curated_Bool_Exp>
-  singular_nsfw?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
-  sn?: InputMaybe<String_Comparison_Exp>
-  symbol?: InputMaybe<String_Comparison_Exp>
-  transferable?: InputMaybe<Int_Comparison_Exp>
-  tx_block?: InputMaybe<Int_Comparison_Exp>
-  tx_caller?: InputMaybe<String_Comparison_Exp>
-  tx_pending?: InputMaybe<Boolean_Comparison_Exp>
-  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>
-}
-
-/** aggregate max on columns */
-export type Distinct_Nfts_Max_Fields = {
-  __typename?: 'distinct_nfts_max_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  burned?: Maybe<Scalars['String']['output']>
-  collectionId?: Maybe<Scalars['String']['output']>
-  equipped_id?: Maybe<Scalars['String']['output']>
-  forsale?: Maybe<Scalars['bigint']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  metadata_content_type?: Maybe<Scalars['String']['output']>
-  metadata_image?: Maybe<Scalars['String']['output']>
-  metadata_name?: Maybe<Scalars['String']['output']>
-  metadata_rarity?: Maybe<Scalars['String']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  owner?: Maybe<Scalars['String']['output']>
-  rootowner?: Maybe<Scalars['String']['output']>
-  sn?: Maybe<Scalars['String']['output']>
-  symbol?: Maybe<Scalars['String']['output']>
-  transferable?: Maybe<Scalars['Int']['output']>
-  tx_block?: Maybe<Scalars['Int']['output']>
-  tx_caller?: Maybe<Scalars['String']['output']>
-  updated_at?: Maybe<Scalars['timestamptz']['output']>
-}
-
-/** aggregate min on columns */
-export type Distinct_Nfts_Min_Fields = {
-  __typename?: 'distinct_nfts_min_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  burned?: Maybe<Scalars['String']['output']>
-  collectionId?: Maybe<Scalars['String']['output']>
-  equipped_id?: Maybe<Scalars['String']['output']>
-  forsale?: Maybe<Scalars['bigint']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  metadata_content_type?: Maybe<Scalars['String']['output']>
-  metadata_image?: Maybe<Scalars['String']['output']>
-  metadata_name?: Maybe<Scalars['String']['output']>
-  metadata_rarity?: Maybe<Scalars['String']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  owner?: Maybe<Scalars['String']['output']>
-  rootowner?: Maybe<Scalars['String']['output']>
-  sn?: Maybe<Scalars['String']['output']>
-  symbol?: Maybe<Scalars['String']['output']>
-  transferable?: Maybe<Scalars['Int']['output']>
-  tx_block?: Maybe<Scalars['Int']['output']>
-  tx_caller?: Maybe<Scalars['String']['output']>
-  updated_at?: Maybe<Scalars['timestamptz']['output']>
-}
-
-/** Ordering options when selecting data from "distinct_nfts". */
-export type Distinct_Nfts_Order_By = {
-  block?: InputMaybe<Order_By>
-  burned?: InputMaybe<Order_By>
-  children_aggregate?: InputMaybe<Nfts_Aggregate_Order_By>
-  collection?: InputMaybe<Collections_Order_By>
-  collectionId?: InputMaybe<Order_By>
-  dutchie?: InputMaybe<Dutchie_Order_By>
-  equipped_id?: InputMaybe<Order_By>
-  forsale?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  metadata?: InputMaybe<Order_By>
-  metadata_content_type?: InputMaybe<Order_By>
-  metadata_image?: InputMaybe<Order_By>
-  metadata_name?: InputMaybe<Order_By>
-  metadata_rarity?: InputMaybe<Order_By>
-  metadata_rarity_percentage?: InputMaybe<Order_By>
-  owner?: InputMaybe<Order_By>
-  pending?: InputMaybe<Order_By>
-  priority?: InputMaybe<Order_By>
-  properties?: InputMaybe<Order_By>
-  resources_aggregate?: InputMaybe<Resources_Aggregate_Order_By>
-  rootowner?: InputMaybe<Order_By>
-  singular_curated_aggregate?: InputMaybe<Singular_Curated_Aggregate_Order_By>
-  singular_nsfw_aggregate?: InputMaybe<Singular_Nsfw_Nfts_Aggregate_Order_By>
-  sn?: InputMaybe<Order_By>
-  symbol?: InputMaybe<Order_By>
-  transferable?: InputMaybe<Order_By>
-  tx_block?: InputMaybe<Order_By>
-  tx_caller?: InputMaybe<Order_By>
-  tx_pending?: InputMaybe<Order_By>
-  updated_at?: InputMaybe<Order_By>
-}
-
-/** select columns of table "distinct_nfts" */
-export enum Distinct_Nfts_Select_Column {
-  /** column name */
-  Block = 'block',
-  /** column name */
-  Burned = 'burned',
-  /** column name */
-  CollectionId = 'collectionId',
-  /** column name */
-  EquippedId = 'equipped_id',
-  /** column name */
-  Forsale = 'forsale',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Metadata = 'metadata',
-  /** column name */
-  MetadataContentType = 'metadata_content_type',
-  /** column name */
-  MetadataImage = 'metadata_image',
-  /** column name */
-  MetadataName = 'metadata_name',
-  /** column name */
-  MetadataRarity = 'metadata_rarity',
-  /** column name */
-  MetadataRarityPercentage = 'metadata_rarity_percentage',
-  /** column name */
-  Owner = 'owner',
-  /** column name */
-  Pending = 'pending',
-  /** column name */
-  Priority = 'priority',
-  /** column name */
-  Properties = 'properties',
-  /** column name */
-  Rootowner = 'rootowner',
-  /** column name */
-  Sn = 'sn',
-  /** column name */
-  Symbol = 'symbol',
-  /** column name */
-  Transferable = 'transferable',
-  /** column name */
-  TxBlock = 'tx_block',
-  /** column name */
-  TxCaller = 'tx_caller',
-  /** column name */
-  TxPending = 'tx_pending',
-  /** column name */
-  UpdatedAt = 'updated_at',
-}
-
-/** aggregate stddev on columns */
-export type Distinct_Nfts_Stddev_Fields = {
-  __typename?: 'distinct_nfts_stddev_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  tx_block?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate stddev_pop on columns */
-export type Distinct_Nfts_Stddev_Pop_Fields = {
-  __typename?: 'distinct_nfts_stddev_pop_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  tx_block?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate stddev_samp on columns */
-export type Distinct_Nfts_Stddev_Samp_Fields = {
-  __typename?: 'distinct_nfts_stddev_samp_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  tx_block?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate sum on columns */
-export type Distinct_Nfts_Sum_Fields = {
-  __typename?: 'distinct_nfts_sum_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  forsale?: Maybe<Scalars['bigint']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Int']['output']>
-  tx_block?: Maybe<Scalars['Int']['output']>
-}
-
-/** aggregate var_pop on columns */
-export type Distinct_Nfts_Var_Pop_Fields = {
-  __typename?: 'distinct_nfts_var_pop_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  tx_block?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate var_samp on columns */
-export type Distinct_Nfts_Var_Samp_Fields = {
-  __typename?: 'distinct_nfts_var_samp_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  tx_block?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate variance on columns */
-export type Distinct_Nfts_Variance_Fields = {
-  __typename?: 'distinct_nfts_variance_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  tx_block?: Maybe<Scalars['Float']['output']>
-}
-
-/**
- * nfts dutchi auction table
- *
- *
- * columns and relationships of "dutchie"
- *
- */
-export type Dutchie = {
-  __typename?: 'dutchie'
-  active: Scalars['Boolean']['output']
-  current_price: Scalars['bigint']['output']
-  id: Scalars['Int']['output']
-  initial_price: Scalars['bigint']['output']
-  interval?: Maybe<Scalars['smallint']['output']>
-  min_price: Scalars['bigint']['output']
-  /** An object relationship */
-  nft?: Maybe<Nfts>
-  nft_id: Scalars['String']['output']
-  reduction: Scalars['numeric']['output']
-  sold: Scalars['Boolean']['output']
-  start_time: Scalars['timestamptz']['output']
-  tick: Scalars['Int']['output']
-}
-
-/** Boolean expression to filter rows from the table "dutchie". All fields are combined with a logical 'AND'. */
-export type Dutchie_Bool_Exp = {
-  _and?: InputMaybe<Array<Dutchie_Bool_Exp>>
-  _not?: InputMaybe<Dutchie_Bool_Exp>
-  _or?: InputMaybe<Array<Dutchie_Bool_Exp>>
-  active?: InputMaybe<Boolean_Comparison_Exp>
-  current_price?: InputMaybe<Bigint_Comparison_Exp>
-  id?: InputMaybe<Int_Comparison_Exp>
-  initial_price?: InputMaybe<Bigint_Comparison_Exp>
-  interval?: InputMaybe<Smallint_Comparison_Exp>
-  min_price?: InputMaybe<Bigint_Comparison_Exp>
-  nft?: InputMaybe<Nfts_Bool_Exp>
-  nft_id?: InputMaybe<String_Comparison_Exp>
-  reduction?: InputMaybe<Numeric_Comparison_Exp>
-  sold?: InputMaybe<Boolean_Comparison_Exp>
-  start_time?: InputMaybe<Timestamptz_Comparison_Exp>
-  tick?: InputMaybe<Int_Comparison_Exp>
-}
-
-/** Ordering options when selecting data from "dutchie". */
-export type Dutchie_Order_By = {
-  active?: InputMaybe<Order_By>
-  current_price?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  initial_price?: InputMaybe<Order_By>
-  interval?: InputMaybe<Order_By>
-  min_price?: InputMaybe<Order_By>
-  nft?: InputMaybe<Nfts_Order_By>
-  nft_id?: InputMaybe<Order_By>
-  reduction?: InputMaybe<Order_By>
-  sold?: InputMaybe<Order_By>
-  start_time?: InputMaybe<Order_By>
-  tick?: InputMaybe<Order_By>
-}
-
-/** select columns of table "dutchie" */
-export enum Dutchie_Select_Column {
-  /** column name */
-  Active = 'active',
-  /** column name */
-  CurrentPrice = 'current_price',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  InitialPrice = 'initial_price',
-  /** column name */
-  Interval = 'interval',
-  /** column name */
-  MinPrice = 'min_price',
-  /** column name */
-  NftId = 'nft_id',
-  /** column name */
-  Reduction = 'reduction',
-  /** column name */
-  Sold = 'sold',
-  /** column name */
-  StartTime = 'start_time',
-  /** column name */
-  Tick = 'tick',
-}
-
-/** columns and relationships of "gems_enabled" */
-export type Gems_Enabled = {
-  __typename?: 'gems_enabled'
-  enabled: Scalars['Boolean']['output']
+  orderBy?: InputMaybe<Array<NftEntityOrderByInput>>
+  where?: InputMaybe<NftEntityWhereInput>
+}
+
+export type CollectionEntityEdge = {
+  __typename?: 'CollectionEntityEdge'
+  cursor: Scalars['String']['output']
+  node: CollectionEntity
+}
+
+export enum CollectionEntityOrderByInput {
+  BlockNumberAsc = 'blockNumber_ASC',
+  BlockNumberDesc = 'blockNumber_DESC',
+  CreatedAtAsc = 'createdAt_ASC',
+  CreatedAtDesc = 'createdAt_DESC',
+  CurrentOwnerAsc = 'currentOwner_ASC',
+  CurrentOwnerDesc = 'currentOwner_DESC',
+  HashAsc = 'hash_ASC',
+  HashDesc = 'hash_DESC',
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  ImageAsc = 'image_ASC',
+  ImageDesc = 'image_DESC',
+  IssuerAsc = 'issuer_ASC',
+  IssuerDesc = 'issuer_DESC',
+  MaxAsc = 'max_ASC',
+  MaxDesc = 'max_DESC',
+  MediaAsc = 'media_ASC',
+  MediaDesc = 'media_DESC',
+  MetaAnimationUrlAsc = 'meta_animationUrl_ASC',
+  MetaAnimationUrlDesc = 'meta_animationUrl_DESC',
+  MetaDescriptionAsc = 'meta_description_ASC',
+  MetaDescriptionDesc = 'meta_description_DESC',
+  MetaIdAsc = 'meta_id_ASC',
+  MetaIdDesc = 'meta_id_DESC',
+  MetaImageAsc = 'meta_image_ASC',
+  MetaImageDesc = 'meta_image_DESC',
+  MetaNameAsc = 'meta_name_ASC',
+  MetaNameDesc = 'meta_name_DESC',
+  MetaTypeAsc = 'meta_type_ASC',
+  MetaTypeDesc = 'meta_type_DESC',
+  MetadataAsc = 'metadata_ASC',
+  MetadataDesc = 'metadata_DESC',
+  NameAsc = 'name_ASC',
+  NameDesc = 'name_DESC',
+  NftCountAsc = 'nftCount_ASC',
+  NftCountDesc = 'nftCount_DESC',
+  SupplyAsc = 'supply_ASC',
+  SupplyDesc = 'supply_DESC',
+  SymbolAsc = 'symbol_ASC',
+  SymbolDesc = 'symbol_DESC',
+  UpdatedAtAsc = 'updatedAt_ASC',
+  UpdatedAtDesc = 'updatedAt_DESC',
+  VersionAsc = 'version_ASC',
+  VersionDesc = 'version_DESC',
+}
+
+export type CollectionEntityWhereInput = {
+  AND?: InputMaybe<Array<CollectionEntityWhereInput>>
+  OR?: InputMaybe<Array<CollectionEntityWhereInput>>
+  blockNumber_eq?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  blockNumber_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_not_eq?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  createdAt_eq?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt_gt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt_gte?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt_in?: InputMaybe<Array<Scalars['DateTime']['input']>>
+  createdAt_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  createdAt_lt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt_lte?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt_not_eq?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt_not_in?: InputMaybe<Array<Scalars['DateTime']['input']>>
+  currentOwner_contains?: InputMaybe<Scalars['String']['input']>
+  currentOwner_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  currentOwner_endsWith?: InputMaybe<Scalars['String']['input']>
+  currentOwner_eq?: InputMaybe<Scalars['String']['input']>
+  currentOwner_gt?: InputMaybe<Scalars['String']['input']>
+  currentOwner_gte?: InputMaybe<Scalars['String']['input']>
+  currentOwner_in?: InputMaybe<Array<Scalars['String']['input']>>
+  currentOwner_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  currentOwner_lt?: InputMaybe<Scalars['String']['input']>
+  currentOwner_lte?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_contains?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_eq?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  currentOwner_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  currentOwner_startsWith?: InputMaybe<Scalars['String']['input']>
+  events_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  hash_contains?: InputMaybe<Scalars['String']['input']>
+  hash_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  hash_endsWith?: InputMaybe<Scalars['String']['input']>
+  hash_eq?: InputMaybe<Scalars['String']['input']>
+  hash_gt?: InputMaybe<Scalars['String']['input']>
+  hash_gte?: InputMaybe<Scalars['String']['input']>
+  hash_in?: InputMaybe<Array<Scalars['String']['input']>>
+  hash_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  hash_lt?: InputMaybe<Scalars['String']['input']>
+  hash_lte?: InputMaybe<Scalars['String']['input']>
+  hash_not_contains?: InputMaybe<Scalars['String']['input']>
+  hash_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  hash_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  hash_not_eq?: InputMaybe<Scalars['String']['input']>
+  hash_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  hash_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  hash_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_contains?: InputMaybe<Scalars['String']['input']>
+  id_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_eq?: InputMaybe<Scalars['String']['input']>
+  id_gt?: InputMaybe<Scalars['String']['input']>
+  id_gte?: InputMaybe<Scalars['String']['input']>
+  id_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  id_lt?: InputMaybe<Scalars['String']['input']>
+  id_lte?: InputMaybe<Scalars['String']['input']>
+  id_not_contains?: InputMaybe<Scalars['String']['input']>
+  id_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_not_eq?: InputMaybe<Scalars['String']['input']>
+  id_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_startsWith?: InputMaybe<Scalars['String']['input']>
+  image_contains?: InputMaybe<Scalars['String']['input']>
+  image_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  image_endsWith?: InputMaybe<Scalars['String']['input']>
+  image_eq?: InputMaybe<Scalars['String']['input']>
+  image_gt?: InputMaybe<Scalars['String']['input']>
+  image_gte?: InputMaybe<Scalars['String']['input']>
+  image_in?: InputMaybe<Array<Scalars['String']['input']>>
+  image_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  image_lt?: InputMaybe<Scalars['String']['input']>
+  image_lte?: InputMaybe<Scalars['String']['input']>
+  image_not_contains?: InputMaybe<Scalars['String']['input']>
+  image_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  image_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  image_not_eq?: InputMaybe<Scalars['String']['input']>
+  image_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  image_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  image_startsWith?: InputMaybe<Scalars['String']['input']>
+  issuer_contains?: InputMaybe<Scalars['String']['input']>
+  issuer_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  issuer_endsWith?: InputMaybe<Scalars['String']['input']>
+  issuer_eq?: InputMaybe<Scalars['String']['input']>
+  issuer_gt?: InputMaybe<Scalars['String']['input']>
+  issuer_gte?: InputMaybe<Scalars['String']['input']>
+  issuer_in?: InputMaybe<Array<Scalars['String']['input']>>
+  issuer_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  issuer_lt?: InputMaybe<Scalars['String']['input']>
+  issuer_lte?: InputMaybe<Scalars['String']['input']>
+  issuer_not_contains?: InputMaybe<Scalars['String']['input']>
+  issuer_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  issuer_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  issuer_not_eq?: InputMaybe<Scalars['String']['input']>
+  issuer_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  issuer_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  issuer_startsWith?: InputMaybe<Scalars['String']['input']>
+  max_eq?: InputMaybe<Scalars['Int']['input']>
+  max_gt?: InputMaybe<Scalars['Int']['input']>
+  max_gte?: InputMaybe<Scalars['Int']['input']>
+  max_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  max_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  max_lt?: InputMaybe<Scalars['Int']['input']>
+  max_lte?: InputMaybe<Scalars['Int']['input']>
+  max_not_eq?: InputMaybe<Scalars['Int']['input']>
+  max_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  media_contains?: InputMaybe<Scalars['String']['input']>
+  media_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  media_endsWith?: InputMaybe<Scalars['String']['input']>
+  media_eq?: InputMaybe<Scalars['String']['input']>
+  media_gt?: InputMaybe<Scalars['String']['input']>
+  media_gte?: InputMaybe<Scalars['String']['input']>
+  media_in?: InputMaybe<Array<Scalars['String']['input']>>
+  media_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  media_lt?: InputMaybe<Scalars['String']['input']>
+  media_lte?: InputMaybe<Scalars['String']['input']>
+  media_not_contains?: InputMaybe<Scalars['String']['input']>
+  media_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  media_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  media_not_eq?: InputMaybe<Scalars['String']['input']>
+  media_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  media_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  media_startsWith?: InputMaybe<Scalars['String']['input']>
+  meta?: InputMaybe<MetadataEntityWhereInput>
+  meta_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  metadata_contains?: InputMaybe<Scalars['String']['input']>
+  metadata_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  metadata_endsWith?: InputMaybe<Scalars['String']['input']>
+  metadata_eq?: InputMaybe<Scalars['String']['input']>
+  metadata_gt?: InputMaybe<Scalars['String']['input']>
+  metadata_gte?: InputMaybe<Scalars['String']['input']>
+  metadata_in?: InputMaybe<Array<Scalars['String']['input']>>
+  metadata_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  metadata_lt?: InputMaybe<Scalars['String']['input']>
+  metadata_lte?: InputMaybe<Scalars['String']['input']>
+  metadata_not_contains?: InputMaybe<Scalars['String']['input']>
+  metadata_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  metadata_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  metadata_not_eq?: InputMaybe<Scalars['String']['input']>
+  metadata_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  metadata_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  metadata_startsWith?: InputMaybe<Scalars['String']['input']>
+  name_contains?: InputMaybe<Scalars['String']['input']>
+  name_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  name_endsWith?: InputMaybe<Scalars['String']['input']>
+  name_eq?: InputMaybe<Scalars['String']['input']>
+  name_gt?: InputMaybe<Scalars['String']['input']>
+  name_gte?: InputMaybe<Scalars['String']['input']>
+  name_in?: InputMaybe<Array<Scalars['String']['input']>>
+  name_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  name_lt?: InputMaybe<Scalars['String']['input']>
+  name_lte?: InputMaybe<Scalars['String']['input']>
+  name_not_contains?: InputMaybe<Scalars['String']['input']>
+  name_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  name_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  name_not_eq?: InputMaybe<Scalars['String']['input']>
+  name_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  name_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  name_startsWith?: InputMaybe<Scalars['String']['input']>
+  nftCount_eq?: InputMaybe<Scalars['Int']['input']>
+  nftCount_gt?: InputMaybe<Scalars['Int']['input']>
+  nftCount_gte?: InputMaybe<Scalars['Int']['input']>
+  nftCount_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  nftCount_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  nftCount_lt?: InputMaybe<Scalars['Int']['input']>
+  nftCount_lte?: InputMaybe<Scalars['Int']['input']>
+  nftCount_not_eq?: InputMaybe<Scalars['Int']['input']>
+  nftCount_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  nfts_every?: InputMaybe<NftEntityWhereInput>
+  nfts_none?: InputMaybe<NftEntityWhereInput>
+  nfts_some?: InputMaybe<NftEntityWhereInput>
+  supply_eq?: InputMaybe<Scalars['Int']['input']>
+  supply_gt?: InputMaybe<Scalars['Int']['input']>
+  supply_gte?: InputMaybe<Scalars['Int']['input']>
+  supply_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  supply_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  supply_lt?: InputMaybe<Scalars['Int']['input']>
+  supply_lte?: InputMaybe<Scalars['Int']['input']>
+  supply_not_eq?: InputMaybe<Scalars['Int']['input']>
+  supply_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  symbol_contains?: InputMaybe<Scalars['String']['input']>
+  symbol_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  symbol_endsWith?: InputMaybe<Scalars['String']['input']>
+  symbol_eq?: InputMaybe<Scalars['String']['input']>
+  symbol_gt?: InputMaybe<Scalars['String']['input']>
+  symbol_gte?: InputMaybe<Scalars['String']['input']>
+  symbol_in?: InputMaybe<Array<Scalars['String']['input']>>
+  symbol_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  symbol_lt?: InputMaybe<Scalars['String']['input']>
+  symbol_lte?: InputMaybe<Scalars['String']['input']>
+  symbol_not_contains?: InputMaybe<Scalars['String']['input']>
+  symbol_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  symbol_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  symbol_not_eq?: InputMaybe<Scalars['String']['input']>
+  symbol_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  symbol_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  symbol_startsWith?: InputMaybe<Scalars['String']['input']>
+  updatedAt_eq?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt_gt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt_gte?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt_in?: InputMaybe<Array<Scalars['DateTime']['input']>>
+  updatedAt_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  updatedAt_lt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt_lte?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt_not_eq?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt_not_in?: InputMaybe<Array<Scalars['DateTime']['input']>>
+  version_contains?: InputMaybe<Scalars['String']['input']>
+  version_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  version_endsWith?: InputMaybe<Scalars['String']['input']>
+  version_eq?: InputMaybe<Scalars['String']['input']>
+  version_gt?: InputMaybe<Scalars['String']['input']>
+  version_gte?: InputMaybe<Scalars['String']['input']>
+  version_in?: InputMaybe<Array<Scalars['String']['input']>>
+  version_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  version_lt?: InputMaybe<Scalars['String']['input']>
+  version_lte?: InputMaybe<Scalars['String']['input']>
+  version_not_contains?: InputMaybe<Scalars['String']['input']>
+  version_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  version_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  version_not_eq?: InputMaybe<Scalars['String']['input']>
+  version_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  version_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  version_startsWith?: InputMaybe<Scalars['String']['input']>
+}
+
+export type CollectionEvent = {
+  __typename?: 'CollectionEvent'
+  blockNumber?: Maybe<Scalars['String']['output']>
+  caller: Scalars['String']['output']
+  interaction: Scalars['String']['output']
+  meta: Scalars['String']['output']
+  timestamp?: Maybe<Scalars['DateTime']['output']>
+}
+
+export type Collector = {
+  __typename?: 'Collector'
+  average?: Maybe<Scalars['Float']['output']>
+  collections: Scalars['Int']['output']
   id: Scalars['String']['output']
-  /** An object relationship */
-  nft?: Maybe<Nfts>
+  max?: Maybe<Scalars['BigInt']['output']>
+  name: Scalars['String']['output']
+  total: Scalars['Int']['output']
+  unique: Scalars['Int']['output']
+  uniqueCollectors: Scalars['Int']['output']
+  volume?: Maybe<Scalars['BigInt']['output']>
 }
 
-/** Boolean expression to filter rows from the table "gems_enabled". All fields are combined with a logical 'AND'. */
-export type Gems_Enabled_Bool_Exp = {
-  _and?: InputMaybe<Array<Gems_Enabled_Bool_Exp>>
-  _not?: InputMaybe<Gems_Enabled_Bool_Exp>
-  _or?: InputMaybe<Array<Gems_Enabled_Bool_Exp>>
-  enabled?: InputMaybe<Boolean_Comparison_Exp>
-  id?: InputMaybe<String_Comparison_Exp>
-  nft?: InputMaybe<Nfts_Bool_Exp>
+export type CollectorEdge = {
+  __typename?: 'CollectorEdge'
+  cursor: Scalars['String']['output']
+  node: Collector
 }
 
-/** Ordering options when selecting data from "gems_enabled". */
-export type Gems_Enabled_Order_By = {
-  enabled?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  nft?: InputMaybe<Nfts_Order_By>
+export enum CollectorOrderByInput {
+  AverageAsc = 'average_ASC',
+  AverageDesc = 'average_DESC',
+  CollectionsAsc = 'collections_ASC',
+  CollectionsDesc = 'collections_DESC',
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  MaxAsc = 'max_ASC',
+  MaxDesc = 'max_DESC',
+  NameAsc = 'name_ASC',
+  NameDesc = 'name_DESC',
+  TotalAsc = 'total_ASC',
+  TotalDesc = 'total_DESC',
+  UniqueCollectorsAsc = 'uniqueCollectors_ASC',
+  UniqueCollectorsDesc = 'uniqueCollectors_DESC',
+  UniqueAsc = 'unique_ASC',
+  UniqueDesc = 'unique_DESC',
+  VolumeAsc = 'volume_ASC',
+  VolumeDesc = 'volume_DESC',
 }
 
-/** select columns of table "gems_enabled" */
-export enum Gems_Enabled_Select_Column {
-  /** column name */
-  Enabled = 'enabled',
-  /** column name */
-  Id = 'id',
+export type CollectorWhereInput = {
+  AND?: InputMaybe<Array<CollectorWhereInput>>
+  OR?: InputMaybe<Array<CollectorWhereInput>>
+  average_eq?: InputMaybe<Scalars['Float']['input']>
+  average_gt?: InputMaybe<Scalars['Float']['input']>
+  average_gte?: InputMaybe<Scalars['Float']['input']>
+  average_in?: InputMaybe<Array<Scalars['Float']['input']>>
+  average_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  average_lt?: InputMaybe<Scalars['Float']['input']>
+  average_lte?: InputMaybe<Scalars['Float']['input']>
+  average_not_eq?: InputMaybe<Scalars['Float']['input']>
+  average_not_in?: InputMaybe<Array<Scalars['Float']['input']>>
+  collections_eq?: InputMaybe<Scalars['Int']['input']>
+  collections_gt?: InputMaybe<Scalars['Int']['input']>
+  collections_gte?: InputMaybe<Scalars['Int']['input']>
+  collections_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  collections_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  collections_lt?: InputMaybe<Scalars['Int']['input']>
+  collections_lte?: InputMaybe<Scalars['Int']['input']>
+  collections_not_eq?: InputMaybe<Scalars['Int']['input']>
+  collections_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  id_contains?: InputMaybe<Scalars['String']['input']>
+  id_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_eq?: InputMaybe<Scalars['String']['input']>
+  id_gt?: InputMaybe<Scalars['String']['input']>
+  id_gte?: InputMaybe<Scalars['String']['input']>
+  id_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  id_lt?: InputMaybe<Scalars['String']['input']>
+  id_lte?: InputMaybe<Scalars['String']['input']>
+  id_not_contains?: InputMaybe<Scalars['String']['input']>
+  id_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_not_eq?: InputMaybe<Scalars['String']['input']>
+  id_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_startsWith?: InputMaybe<Scalars['String']['input']>
+  max_eq?: InputMaybe<Scalars['BigInt']['input']>
+  max_gt?: InputMaybe<Scalars['BigInt']['input']>
+  max_gte?: InputMaybe<Scalars['BigInt']['input']>
+  max_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  max_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  max_lt?: InputMaybe<Scalars['BigInt']['input']>
+  max_lte?: InputMaybe<Scalars['BigInt']['input']>
+  max_not_eq?: InputMaybe<Scalars['BigInt']['input']>
+  max_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  name_contains?: InputMaybe<Scalars['String']['input']>
+  name_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  name_endsWith?: InputMaybe<Scalars['String']['input']>
+  name_eq?: InputMaybe<Scalars['String']['input']>
+  name_gt?: InputMaybe<Scalars['String']['input']>
+  name_gte?: InputMaybe<Scalars['String']['input']>
+  name_in?: InputMaybe<Array<Scalars['String']['input']>>
+  name_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  name_lt?: InputMaybe<Scalars['String']['input']>
+  name_lte?: InputMaybe<Scalars['String']['input']>
+  name_not_contains?: InputMaybe<Scalars['String']['input']>
+  name_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  name_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  name_not_eq?: InputMaybe<Scalars['String']['input']>
+  name_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  name_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  name_startsWith?: InputMaybe<Scalars['String']['input']>
+  total_eq?: InputMaybe<Scalars['Int']['input']>
+  total_gt?: InputMaybe<Scalars['Int']['input']>
+  total_gte?: InputMaybe<Scalars['Int']['input']>
+  total_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  total_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  total_lt?: InputMaybe<Scalars['Int']['input']>
+  total_lte?: InputMaybe<Scalars['Int']['input']>
+  total_not_eq?: InputMaybe<Scalars['Int']['input']>
+  total_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  uniqueCollectors_eq?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_gt?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_gte?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  uniqueCollectors_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  uniqueCollectors_lt?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_lte?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_not_eq?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  unique_eq?: InputMaybe<Scalars['Int']['input']>
+  unique_gt?: InputMaybe<Scalars['Int']['input']>
+  unique_gte?: InputMaybe<Scalars['Int']['input']>
+  unique_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  unique_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  unique_lt?: InputMaybe<Scalars['Int']['input']>
+  unique_lte?: InputMaybe<Scalars['Int']['input']>
+  unique_not_eq?: InputMaybe<Scalars['Int']['input']>
+  unique_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  volume_eq?: InputMaybe<Scalars['BigInt']['input']>
+  volume_gt?: InputMaybe<Scalars['BigInt']['input']>
+  volume_gte?: InputMaybe<Scalars['BigInt']['input']>
+  volume_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  volume_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  volume_lt?: InputMaybe<Scalars['BigInt']['input']>
+  volume_lte?: InputMaybe<Scalars['BigInt']['input']>
+  volume_not_eq?: InputMaybe<Scalars['BigInt']['input']>
+  volume_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
 }
 
-export type Get_Ordered_Changes_Stats_Args = {
-  optype?: InputMaybe<Scalars['String']['input']>
+export type CollectorsConnection = {
+  __typename?: 'CollectorsConnection'
+  edges: Array<CollectorEdge>
+  pageInfo: PageInfo
+  totalCount: Scalars['Int']['output']
 }
 
-/** columns and relationships of "hatched_birds" */
-export type Hatched_Birds = {
-  __typename?: 'hatched_birds'
+export type Emote = {
+  __typename?: 'Emote'
+  caller: Scalars['String']['output']
+  id: Scalars['String']['output']
+  nft: NftEntity
+  value: Scalars['String']['output']
+  version: Scalars['String']['output']
+}
+
+export type EmoteCountEntity = {
+  __typename?: 'EmoteCountEntity'
+  id: Scalars['String']['output']
+  value: Scalars['Float']['output']
+}
+
+export type EmoteCountMapEntity = {
+  __typename?: 'EmoteCountMapEntity'
+  counts: Scalars['String']['output']
+}
+
+export type EmoteEdge = {
+  __typename?: 'EmoteEdge'
+  cursor: Scalars['String']['output']
+  node: Emote
+}
+
+export enum EmoteOrderByInput {
+  CallerAsc = 'caller_ASC',
+  CallerDesc = 'caller_DESC',
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  NftBlockNumberAsc = 'nft_blockNumber_ASC',
+  NftBlockNumberDesc = 'nft_blockNumber_DESC',
+  NftBurnedAsc = 'nft_burned_ASC',
+  NftBurnedDesc = 'nft_burned_DESC',
+  NftCreatedAtAsc = 'nft_createdAt_ASC',
+  NftCreatedAtDesc = 'nft_createdAt_DESC',
+  NftCurrentOwnerAsc = 'nft_currentOwner_ASC',
+  NftCurrentOwnerDesc = 'nft_currentOwner_DESC',
+  NftEmoteCountAsc = 'nft_emoteCount_ASC',
+  NftEmoteCountDesc = 'nft_emoteCount_DESC',
+  NftHashAsc = 'nft_hash_ASC',
+  NftHashDesc = 'nft_hash_DESC',
+  NftIdAsc = 'nft_id_ASC',
+  NftIdDesc = 'nft_id_DESC',
+  NftImageAsc = 'nft_image_ASC',
+  NftImageDesc = 'nft_image_DESC',
+  NftInstanceAsc = 'nft_instance_ASC',
+  NftInstanceDesc = 'nft_instance_DESC',
+  NftIssuerAsc = 'nft_issuer_ASC',
+  NftIssuerDesc = 'nft_issuer_DESC',
+  NftMediaAsc = 'nft_media_ASC',
+  NftMediaDesc = 'nft_media_DESC',
+  NftMetadataAsc = 'nft_metadata_ASC',
+  NftMetadataDesc = 'nft_metadata_DESC',
+  NftNameAsc = 'nft_name_ASC',
+  NftNameDesc = 'nft_name_DESC',
+  NftPendingAsc = 'nft_pending_ASC',
+  NftPendingDesc = 'nft_pending_DESC',
+  NftPriceAsc = 'nft_price_ASC',
+  NftPriceDesc = 'nft_price_DESC',
+  NftRecipientAsc = 'nft_recipient_ASC',
+  NftRecipientDesc = 'nft_recipient_DESC',
+  NftRoyaltyAsc = 'nft_royalty_ASC',
+  NftRoyaltyDesc = 'nft_royalty_DESC',
+  NftSnAsc = 'nft_sn_ASC',
+  NftSnDesc = 'nft_sn_DESC',
+  NftTransferableAsc = 'nft_transferable_ASC',
+  NftTransferableDesc = 'nft_transferable_DESC',
+  NftUpdatedAtAsc = 'nft_updatedAt_ASC',
+  NftUpdatedAtDesc = 'nft_updatedAt_DESC',
+  NftVersionAsc = 'nft_version_ASC',
+  NftVersionDesc = 'nft_version_DESC',
+  ValueAsc = 'value_ASC',
+  ValueDesc = 'value_DESC',
+  VersionAsc = 'version_ASC',
+  VersionDesc = 'version_DESC',
+}
+
+export type EmoteWhereInput = {
+  AND?: InputMaybe<Array<EmoteWhereInput>>
+  OR?: InputMaybe<Array<EmoteWhereInput>>
+  caller_contains?: InputMaybe<Scalars['String']['input']>
+  caller_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  caller_endsWith?: InputMaybe<Scalars['String']['input']>
+  caller_eq?: InputMaybe<Scalars['String']['input']>
+  caller_gt?: InputMaybe<Scalars['String']['input']>
+  caller_gte?: InputMaybe<Scalars['String']['input']>
+  caller_in?: InputMaybe<Array<Scalars['String']['input']>>
+  caller_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  caller_lt?: InputMaybe<Scalars['String']['input']>
+  caller_lte?: InputMaybe<Scalars['String']['input']>
+  caller_not_contains?: InputMaybe<Scalars['String']['input']>
+  caller_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  caller_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  caller_not_eq?: InputMaybe<Scalars['String']['input']>
+  caller_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  caller_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  caller_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_contains?: InputMaybe<Scalars['String']['input']>
+  id_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_eq?: InputMaybe<Scalars['String']['input']>
+  id_gt?: InputMaybe<Scalars['String']['input']>
+  id_gte?: InputMaybe<Scalars['String']['input']>
+  id_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  id_lt?: InputMaybe<Scalars['String']['input']>
+  id_lte?: InputMaybe<Scalars['String']['input']>
+  id_not_contains?: InputMaybe<Scalars['String']['input']>
+  id_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_not_eq?: InputMaybe<Scalars['String']['input']>
+  id_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_startsWith?: InputMaybe<Scalars['String']['input']>
+  nft?: InputMaybe<NftEntityWhereInput>
+  nft_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  value_contains?: InputMaybe<Scalars['String']['input']>
+  value_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  value_endsWith?: InputMaybe<Scalars['String']['input']>
+  value_eq?: InputMaybe<Scalars['String']['input']>
+  value_gt?: InputMaybe<Scalars['String']['input']>
+  value_gte?: InputMaybe<Scalars['String']['input']>
+  value_in?: InputMaybe<Array<Scalars['String']['input']>>
+  value_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  value_lt?: InputMaybe<Scalars['String']['input']>
+  value_lte?: InputMaybe<Scalars['String']['input']>
+  value_not_contains?: InputMaybe<Scalars['String']['input']>
+  value_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  value_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  value_not_eq?: InputMaybe<Scalars['String']['input']>
+  value_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  value_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  value_startsWith?: InputMaybe<Scalars['String']['input']>
+  version_contains?: InputMaybe<Scalars['String']['input']>
+  version_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  version_endsWith?: InputMaybe<Scalars['String']['input']>
+  version_eq?: InputMaybe<Scalars['String']['input']>
+  version_gt?: InputMaybe<Scalars['String']['input']>
+  version_gte?: InputMaybe<Scalars['String']['input']>
+  version_in?: InputMaybe<Array<Scalars['String']['input']>>
+  version_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  version_lt?: InputMaybe<Scalars['String']['input']>
+  version_lte?: InputMaybe<Scalars['String']['input']>
+  version_not_contains?: InputMaybe<Scalars['String']['input']>
+  version_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  version_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  version_not_eq?: InputMaybe<Scalars['String']['input']>
+  version_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  version_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  version_startsWith?: InputMaybe<Scalars['String']['input']>
+}
+
+export type EmotesConnection = {
+  __typename?: 'EmotesConnection'
+  edges: Array<EmoteEdge>
+  pageInfo: PageInfo
+  totalCount: Scalars['Int']['output']
+}
+
+export type Event = EventType & {
+  __typename?: 'Event'
+  blockNumber?: Maybe<Scalars['BigInt']['output']>
+  caller: Scalars['String']['output']
+  currentOwner: Scalars['String']['output']
+  id: Scalars['String']['output']
+  interaction: Interaction
+  meta: Scalars['String']['output']
+  nft: NftEntity
+  timestamp: Scalars['DateTime']['output']
+  version: Scalars['String']['output']
+}
+
+export type EventEdge = {
+  __typename?: 'EventEdge'
+  cursor: Scalars['String']['output']
+  node: Event
+}
+
+export type EventEntity = {
+  __typename?: 'EventEntity'
+  count?: Maybe<Scalars['Float']['output']>
+  date: Scalars['DateTime']['output']
+  max?: Maybe<Scalars['BigInt']['output']>
+}
+
+export enum EventOrderByInput {
+  BlockNumberAsc = 'blockNumber_ASC',
+  BlockNumberDesc = 'blockNumber_DESC',
+  CallerAsc = 'caller_ASC',
+  CallerDesc = 'caller_DESC',
+  CurrentOwnerAsc = 'currentOwner_ASC',
+  CurrentOwnerDesc = 'currentOwner_DESC',
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  InteractionAsc = 'interaction_ASC',
+  InteractionDesc = 'interaction_DESC',
+  MetaAsc = 'meta_ASC',
+  MetaDesc = 'meta_DESC',
+  NftBlockNumberAsc = 'nft_blockNumber_ASC',
+  NftBlockNumberDesc = 'nft_blockNumber_DESC',
+  NftBurnedAsc = 'nft_burned_ASC',
+  NftBurnedDesc = 'nft_burned_DESC',
+  NftCreatedAtAsc = 'nft_createdAt_ASC',
+  NftCreatedAtDesc = 'nft_createdAt_DESC',
+  NftCurrentOwnerAsc = 'nft_currentOwner_ASC',
+  NftCurrentOwnerDesc = 'nft_currentOwner_DESC',
+  NftEmoteCountAsc = 'nft_emoteCount_ASC',
+  NftEmoteCountDesc = 'nft_emoteCount_DESC',
+  NftHashAsc = 'nft_hash_ASC',
+  NftHashDesc = 'nft_hash_DESC',
+  NftIdAsc = 'nft_id_ASC',
+  NftIdDesc = 'nft_id_DESC',
+  NftImageAsc = 'nft_image_ASC',
+  NftImageDesc = 'nft_image_DESC',
+  NftInstanceAsc = 'nft_instance_ASC',
+  NftInstanceDesc = 'nft_instance_DESC',
+  NftIssuerAsc = 'nft_issuer_ASC',
+  NftIssuerDesc = 'nft_issuer_DESC',
+  NftMediaAsc = 'nft_media_ASC',
+  NftMediaDesc = 'nft_media_DESC',
+  NftMetadataAsc = 'nft_metadata_ASC',
+  NftMetadataDesc = 'nft_metadata_DESC',
+  NftNameAsc = 'nft_name_ASC',
+  NftNameDesc = 'nft_name_DESC',
+  NftPendingAsc = 'nft_pending_ASC',
+  NftPendingDesc = 'nft_pending_DESC',
+  NftPriceAsc = 'nft_price_ASC',
+  NftPriceDesc = 'nft_price_DESC',
+  NftRecipientAsc = 'nft_recipient_ASC',
+  NftRecipientDesc = 'nft_recipient_DESC',
+  NftRoyaltyAsc = 'nft_royalty_ASC',
+  NftRoyaltyDesc = 'nft_royalty_DESC',
+  NftSnAsc = 'nft_sn_ASC',
+  NftSnDesc = 'nft_sn_DESC',
+  NftTransferableAsc = 'nft_transferable_ASC',
+  NftTransferableDesc = 'nft_transferable_DESC',
+  NftUpdatedAtAsc = 'nft_updatedAt_ASC',
+  NftUpdatedAtDesc = 'nft_updatedAt_DESC',
+  NftVersionAsc = 'nft_version_ASC',
+  NftVersionDesc = 'nft_version_DESC',
+  TimestampAsc = 'timestamp_ASC',
+  TimestampDesc = 'timestamp_DESC',
+  VersionAsc = 'version_ASC',
+  VersionDesc = 'version_DESC',
+}
+
+export type EventType = {
+  blockNumber?: Maybe<Scalars['BigInt']['output']>
+  caller: Scalars['String']['output']
+  currentOwner?: Maybe<Scalars['String']['output']>
+  id: Scalars['String']['output']
+  interaction: Interaction
+  meta: Scalars['String']['output']
+  timestamp: Scalars['DateTime']['output']
+  version: Scalars['String']['output']
+}
+
+export type EventWhereInput = {
+  AND?: InputMaybe<Array<EventWhereInput>>
+  OR?: InputMaybe<Array<EventWhereInput>>
+  blockNumber_eq?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  blockNumber_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_not_eq?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  caller_contains?: InputMaybe<Scalars['String']['input']>
+  caller_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  caller_endsWith?: InputMaybe<Scalars['String']['input']>
+  caller_eq?: InputMaybe<Scalars['String']['input']>
+  caller_gt?: InputMaybe<Scalars['String']['input']>
+  caller_gte?: InputMaybe<Scalars['String']['input']>
+  caller_in?: InputMaybe<Array<Scalars['String']['input']>>
+  caller_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  caller_lt?: InputMaybe<Scalars['String']['input']>
+  caller_lte?: InputMaybe<Scalars['String']['input']>
+  caller_not_contains?: InputMaybe<Scalars['String']['input']>
+  caller_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  caller_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  caller_not_eq?: InputMaybe<Scalars['String']['input']>
+  caller_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  caller_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  caller_startsWith?: InputMaybe<Scalars['String']['input']>
+  currentOwner_contains?: InputMaybe<Scalars['String']['input']>
+  currentOwner_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  currentOwner_endsWith?: InputMaybe<Scalars['String']['input']>
+  currentOwner_eq?: InputMaybe<Scalars['String']['input']>
+  currentOwner_gt?: InputMaybe<Scalars['String']['input']>
+  currentOwner_gte?: InputMaybe<Scalars['String']['input']>
+  currentOwner_in?: InputMaybe<Array<Scalars['String']['input']>>
+  currentOwner_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  currentOwner_lt?: InputMaybe<Scalars['String']['input']>
+  currentOwner_lte?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_contains?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_eq?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  currentOwner_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  currentOwner_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_contains?: InputMaybe<Scalars['String']['input']>
+  id_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_eq?: InputMaybe<Scalars['String']['input']>
+  id_gt?: InputMaybe<Scalars['String']['input']>
+  id_gte?: InputMaybe<Scalars['String']['input']>
+  id_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  id_lt?: InputMaybe<Scalars['String']['input']>
+  id_lte?: InputMaybe<Scalars['String']['input']>
+  id_not_contains?: InputMaybe<Scalars['String']['input']>
+  id_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_not_eq?: InputMaybe<Scalars['String']['input']>
+  id_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_startsWith?: InputMaybe<Scalars['String']['input']>
+  interaction_eq?: InputMaybe<Interaction>
+  interaction_in?: InputMaybe<Array<Interaction>>
+  interaction_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  interaction_not_eq?: InputMaybe<Interaction>
+  interaction_not_in?: InputMaybe<Array<Interaction>>
+  meta_contains?: InputMaybe<Scalars['String']['input']>
+  meta_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  meta_endsWith?: InputMaybe<Scalars['String']['input']>
+  meta_eq?: InputMaybe<Scalars['String']['input']>
+  meta_gt?: InputMaybe<Scalars['String']['input']>
+  meta_gte?: InputMaybe<Scalars['String']['input']>
+  meta_in?: InputMaybe<Array<Scalars['String']['input']>>
+  meta_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  meta_lt?: InputMaybe<Scalars['String']['input']>
+  meta_lte?: InputMaybe<Scalars['String']['input']>
+  meta_not_contains?: InputMaybe<Scalars['String']['input']>
+  meta_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  meta_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  meta_not_eq?: InputMaybe<Scalars['String']['input']>
+  meta_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  meta_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  meta_startsWith?: InputMaybe<Scalars['String']['input']>
+  nft?: InputMaybe<NftEntityWhereInput>
+  nft_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  timestamp_eq?: InputMaybe<Scalars['DateTime']['input']>
+  timestamp_gt?: InputMaybe<Scalars['DateTime']['input']>
+  timestamp_gte?: InputMaybe<Scalars['DateTime']['input']>
+  timestamp_in?: InputMaybe<Array<Scalars['DateTime']['input']>>
+  timestamp_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  timestamp_lt?: InputMaybe<Scalars['DateTime']['input']>
+  timestamp_lte?: InputMaybe<Scalars['DateTime']['input']>
+  timestamp_not_eq?: InputMaybe<Scalars['DateTime']['input']>
+  timestamp_not_in?: InputMaybe<Array<Scalars['DateTime']['input']>>
+  version_contains?: InputMaybe<Scalars['String']['input']>
+  version_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  version_endsWith?: InputMaybe<Scalars['String']['input']>
+  version_eq?: InputMaybe<Scalars['String']['input']>
+  version_gt?: InputMaybe<Scalars['String']['input']>
+  version_gte?: InputMaybe<Scalars['String']['input']>
+  version_in?: InputMaybe<Array<Scalars['String']['input']>>
+  version_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  version_lt?: InputMaybe<Scalars['String']['input']>
+  version_lte?: InputMaybe<Scalars['String']['input']>
+  version_not_contains?: InputMaybe<Scalars['String']['input']>
+  version_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  version_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  version_not_eq?: InputMaybe<Scalars['String']['input']>
+  version_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  version_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  version_startsWith?: InputMaybe<Scalars['String']['input']>
+}
+
+export type EventsConnection = {
+  __typename?: 'EventsConnection'
+  edges: Array<EventEdge>
+  pageInfo: PageInfo
+  totalCount: Scalars['Int']['output']
+}
+
+export type Hello = {
+  __typename?: 'Hello'
+  greeting: Scalars['String']['output']
+}
+
+export type HistoryEntity = {
+  __typename?: 'HistoryEntity'
+  count: Scalars['Float']['output']
+  date: Scalars['DateTime']['output']
   id: Scalars['String']['output']
 }
 
-/** Boolean expression to filter rows from the table "hatched_birds". All fields are combined with a logical 'AND'. */
-export type Hatched_Birds_Bool_Exp = {
-  _and?: InputMaybe<Array<Hatched_Birds_Bool_Exp>>
-  _not?: InputMaybe<Hatched_Birds_Bool_Exp>
-  _or?: InputMaybe<Array<Hatched_Birds_Bool_Exp>>
-  id?: InputMaybe<String_Comparison_Exp>
-}
-
-/** input type for inserting data into table "hatched_birds" */
-export type Hatched_Birds_Insert_Input = {
-  id?: InputMaybe<Scalars['String']['input']>
-}
-
-/** response of any mutation on the table "hatched_birds" */
-export type Hatched_Birds_Mutation_Response = {
-  __typename?: 'hatched_birds_mutation_response'
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int']['output']
-  /** data from the rows affected by the mutation */
-  returning: Array<Hatched_Birds>
-}
-
-/** Ordering options when selecting data from "hatched_birds". */
-export type Hatched_Birds_Order_By = {
-  id?: InputMaybe<Order_By>
-}
-
-/** select columns of table "hatched_birds" */
-export enum Hatched_Birds_Select_Column {
-  /** column name */
-  Id = 'id',
-}
-
-/** Boolean expression to compare columns of type "jsonb". All fields are combined with logical 'AND'. */
-export type Jsonb_Comparison_Exp = {
-  /** is the column contained in the given json value */
-  _contained_in?: InputMaybe<Scalars['jsonb']['input']>
-  /** does the column contain the given json value at the top level */
-  _contains?: InputMaybe<Scalars['jsonb']['input']>
-  _eq?: InputMaybe<Scalars['jsonb']['input']>
-  _gt?: InputMaybe<Scalars['jsonb']['input']>
-  _gte?: InputMaybe<Scalars['jsonb']['input']>
-  /** does the string exist as a top-level key in the column */
-  _has_key?: InputMaybe<Scalars['String']['input']>
-  /** do all of these strings exist as top-level keys in the column */
-  _has_keys_all?: InputMaybe<Array<Scalars['String']['input']>>
-  /** do any of these strings exist as top-level keys in the column */
-  _has_keys_any?: InputMaybe<Array<Scalars['String']['input']>>
-  _in?: InputMaybe<Array<Scalars['jsonb']['input']>>
-  _is_null?: InputMaybe<Scalars['Boolean']['input']>
-  _lt?: InputMaybe<Scalars['jsonb']['input']>
-  _lte?: InputMaybe<Scalars['jsonb']['input']>
-  _neq?: InputMaybe<Scalars['jsonb']['input']>
-  _nin?: InputMaybe<Array<Scalars['jsonb']['input']>>
-}
-
-/** mutation root */
-export type Mutation_Root = {
-  __typename?: 'mutation_root'
-  /** insert data into the table: "hatched_birds" */
-  insert_hatched_birds?: Maybe<Hatched_Birds_Mutation_Response>
-  /** insert a single row into the table: "hatched_birds" */
-  insert_hatched_birds_one?: Maybe<Hatched_Birds>
-}
-
-/** mutation root */
-export type Mutation_RootInsert_Hatched_BirdsArgs = {
-  objects: Array<Hatched_Birds_Insert_Input>
-}
-
-/** mutation root */
-export type Mutation_RootInsert_Hatched_Birds_OneArgs = {
-  object: Hatched_Birds_Insert_Input
-}
-
-/** columns and relationships of "nfts" */
-export type Nfts = {
-  __typename?: 'nfts'
-  block: Scalars['Int']['output']
-  burned: Scalars['String']['output']
-  /** An array relationship */
-  changes: Array<Changes>
-  /** An aggregate relationship */
-  changes_aggregate: Changes_Aggregate
-  /** An array relationship */
-  children: Array<Nfts>
-  /** An aggregate relationship */
-  children_aggregate: Nfts_Aggregate
-  /** An object relationship */
-  collection?: Maybe<Collections>
+export type HotNftEntity = {
+  __typename?: 'HotNFTEntity'
   collectionId: Scalars['String']['output']
-  created_at: Scalars['timestamptz']['output']
-  /** An object relationship */
-  dutchie?: Maybe<Dutchie>
-  /** An object relationship */
-  equipped?: Maybe<Parts>
-  equipped_id?: Maybe<Scalars['String']['output']>
-  forsale: Scalars['bigint']['output']
-  /** An object relationship */
-  gem_enabled?: Maybe<Gems_Enabled>
+  collectionName: Scalars['String']['output']
+  meta?: Maybe<Scalars['String']['output']>
+  timestamp: Scalars['DateTime']['output']
+}
+
+export enum Interaction {
+  Accept = 'ACCEPT',
+  Base = 'BASE',
+  Burn = 'BURN',
+  Buy = 'BUY',
+  Changeissuer = 'CHANGEISSUER',
+  Create = 'CREATE',
+  Destroy = 'DESTROY',
+  Emote = 'EMOTE',
+  Equip = 'EQUIP',
+  Equippable = 'EQUIPPABLE',
+  List = 'LIST',
+  Lock = 'LOCK',
+  Mint = 'MINT',
+  PayRoyalty = 'PAY_ROYALTY',
+  Resadd = 'RESADD',
+  Royalty = 'ROYALTY',
+  Send = 'SEND',
+  Setpriority = 'SETPRIORITY',
+  Setproperty = 'SETPROPERTY',
+  Themeadd = 'THEMEADD',
+  Unlist = 'UNLIST',
+}
+
+export type LastEventEntity = {
+  __typename?: 'LastEventEntity'
+  animationUrl?: Maybe<Scalars['String']['output']>
+  collectionId: Scalars['String']['output']
+  collectionName: Scalars['String']['output']
+  currentOwner: Scalars['String']['output']
   id: Scalars['String']['output']
-  id_md5?: Maybe<Scalars['String']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  metadata_content_type?: Maybe<Scalars['String']['output']>
-  metadata_description?: Maybe<Scalars['String']['output']>
-  metadata_image?: Maybe<Scalars['String']['output']>
-  metadata_name?: Maybe<Scalars['String']['output']>
-  metadata_properties?: Maybe<Scalars['jsonb']['output']>
-  metadata_rarity?: Maybe<Scalars['String']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  owner: Scalars['String']['output']
-  /** An object relationship */
-  parent?: Maybe<Nfts>
-  pending?: Maybe<Scalars['Boolean']['output']>
-  priority: Scalars['jsonb']['output']
-  properties?: Maybe<Scalars['jsonb']['output']>
-  /** An array relationship */
-  resources: Array<Resources>
-  /** An aggregate relationship */
-  resources_aggregate: Resources_Aggregate
-  rootowner: Scalars['String']['output']
-  /** An array relationship */
-  singular_curated: Array<Singular_Curated>
-  /** An aggregate relationship */
-  singular_curated_aggregate: Singular_Curated_Aggregate
-  /** An array relationship */
-  singular_nsfw: Array<Singular_Nsfw_Nfts>
-  /** An aggregate relationship */
-  singular_nsfw_aggregate: Singular_Nsfw_Nfts_Aggregate
-  sn: Scalars['String']['output']
-  symbol: Scalars['String']['output']
-  transferable: Scalars['Int']['output']
-  txBlock?: Maybe<Scalars['Int']['output']>
-  txCaller?: Maybe<Scalars['String']['output']>
-  txPending: Scalars['Boolean']['output']
-  updated_at?: Maybe<Scalars['timestamptz']['output']>
+  image?: Maybe<Scalars['String']['output']>
+  issuer: Scalars['String']['output']
+  metadata: Scalars['String']['output']
+  name: Scalars['String']['output']
+  resources?: Maybe<Array<Resource>>
+  timestamp: Scalars['DateTime']['output']
+  value: Scalars['String']['output']
 }
 
-/** columns and relationships of "nfts" */
-export type NftsChangesArgs = {
-  distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Changes_Order_By>>
-  where?: InputMaybe<Changes_Bool_Exp>
+export type MetadataEntitiesConnection = {
+  __typename?: 'MetadataEntitiesConnection'
+  edges: Array<MetadataEntityEdge>
+  pageInfo: PageInfo
+  totalCount: Scalars['Int']['output']
 }
 
-/** columns and relationships of "nfts" */
-export type NftsChanges_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Changes_Order_By>>
-  where?: InputMaybe<Changes_Bool_Exp>
-}
-
-/** columns and relationships of "nfts" */
-export type NftsChildrenArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-/** columns and relationships of "nfts" */
-export type NftsChildren_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-/** columns and relationships of "nfts" */
-export type NftsMetadata_PropertiesArgs = {
-  path?: InputMaybe<Scalars['String']['input']>
-}
-
-/** columns and relationships of "nfts" */
-export type NftsPriorityArgs = {
-  path?: InputMaybe<Scalars['String']['input']>
-}
-
-/** columns and relationships of "nfts" */
-export type NftsPropertiesArgs = {
-  path?: InputMaybe<Scalars['String']['input']>
-}
-
-/** columns and relationships of "nfts" */
-export type NftsResourcesArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Order_By>>
-  where?: InputMaybe<Resources_Bool_Exp>
-}
-
-/** columns and relationships of "nfts" */
-export type NftsResources_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Order_By>>
-  where?: InputMaybe<Resources_Bool_Exp>
-}
-
-/** columns and relationships of "nfts" */
-export type NftsSingular_CuratedArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Curated_Order_By>>
-  where?: InputMaybe<Singular_Curated_Bool_Exp>
-}
-
-/** columns and relationships of "nfts" */
-export type NftsSingular_Curated_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Curated_Order_By>>
-  where?: InputMaybe<Singular_Curated_Bool_Exp>
-}
-
-/** columns and relationships of "nfts" */
-export type NftsSingular_NsfwArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Nsfw_Nfts_Order_By>>
-  where?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
-}
-
-/** columns and relationships of "nfts" */
-export type NftsSingular_Nsfw_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Nsfw_Nfts_Order_By>>
-  where?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
-}
-
-/** aggregated selection of "nfts" */
-export type Nfts_Aggregate = {
-  __typename?: 'nfts_aggregate'
-  aggregate?: Maybe<Nfts_Aggregate_Fields>
-  nodes: Array<Nfts>
-}
-
-/** aggregate fields of "nfts" */
-export type Nfts_Aggregate_Fields = {
-  __typename?: 'nfts_aggregate_fields'
-  avg?: Maybe<Nfts_Avg_Fields>
-  count: Scalars['Int']['output']
-  max?: Maybe<Nfts_Max_Fields>
-  min?: Maybe<Nfts_Min_Fields>
-  stddev?: Maybe<Nfts_Stddev_Fields>
-  stddev_pop?: Maybe<Nfts_Stddev_Pop_Fields>
-  stddev_samp?: Maybe<Nfts_Stddev_Samp_Fields>
-  sum?: Maybe<Nfts_Sum_Fields>
-  var_pop?: Maybe<Nfts_Var_Pop_Fields>
-  var_samp?: Maybe<Nfts_Var_Samp_Fields>
-  variance?: Maybe<Nfts_Variance_Fields>
-}
-
-/** aggregate fields of "nfts" */
-export type Nfts_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Nfts_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** order by aggregate values of table "nfts" */
-export type Nfts_Aggregate_Order_By = {
-  avg?: InputMaybe<Nfts_Avg_Order_By>
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Nfts_Max_Order_By>
-  min?: InputMaybe<Nfts_Min_Order_By>
-  stddev?: InputMaybe<Nfts_Stddev_Order_By>
-  stddev_pop?: InputMaybe<Nfts_Stddev_Pop_Order_By>
-  stddev_samp?: InputMaybe<Nfts_Stddev_Samp_Order_By>
-  sum?: InputMaybe<Nfts_Sum_Order_By>
-  var_pop?: InputMaybe<Nfts_Var_Pop_Order_By>
-  var_samp?: InputMaybe<Nfts_Var_Samp_Order_By>
-  variance?: InputMaybe<Nfts_Variance_Order_By>
-}
-
-/** aggregate avg on columns */
-export type Nfts_Avg_Fields = {
-  __typename?: 'nfts_avg_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  txBlock?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by avg() on columns of table "nfts" */
-export type Nfts_Avg_Order_By = {
-  block?: InputMaybe<Order_By>
-  forsale?: InputMaybe<Order_By>
-  metadata_rarity_percentage?: InputMaybe<Order_By>
-  transferable?: InputMaybe<Order_By>
-  txBlock?: InputMaybe<Order_By>
-}
-
-/** Boolean expression to filter rows from the table "nfts". All fields are combined with a logical 'AND'. */
-export type Nfts_Bool_Exp = {
-  _and?: InputMaybe<Array<Nfts_Bool_Exp>>
-  _not?: InputMaybe<Nfts_Bool_Exp>
-  _or?: InputMaybe<Array<Nfts_Bool_Exp>>
-  block?: InputMaybe<Int_Comparison_Exp>
-  burned?: InputMaybe<String_Comparison_Exp>
-  changes?: InputMaybe<Changes_Bool_Exp>
-  children?: InputMaybe<Nfts_Bool_Exp>
-  collection?: InputMaybe<Collections_Bool_Exp>
-  collectionId?: InputMaybe<String_Comparison_Exp>
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>
-  dutchie?: InputMaybe<Dutchie_Bool_Exp>
-  equipped?: InputMaybe<Parts_Bool_Exp>
-  equipped_id?: InputMaybe<String_Comparison_Exp>
-  forsale?: InputMaybe<Bigint_Comparison_Exp>
-  gem_enabled?: InputMaybe<Gems_Enabled_Bool_Exp>
-  id?: InputMaybe<String_Comparison_Exp>
-  id_md5?: InputMaybe<String_Comparison_Exp>
-  metadata?: InputMaybe<String_Comparison_Exp>
-  metadata_content_type?: InputMaybe<String_Comparison_Exp>
-  metadata_description?: InputMaybe<String_Comparison_Exp>
-  metadata_image?: InputMaybe<String_Comparison_Exp>
-  metadata_name?: InputMaybe<String_Comparison_Exp>
-  metadata_properties?: InputMaybe<Jsonb_Comparison_Exp>
-  metadata_rarity?: InputMaybe<String_Comparison_Exp>
-  metadata_rarity_percentage?: InputMaybe<Float_Comparison_Exp>
-  owner?: InputMaybe<String_Comparison_Exp>
-  parent?: InputMaybe<Nfts_Bool_Exp>
-  pending?: InputMaybe<Boolean_Comparison_Exp>
-  priority?: InputMaybe<Jsonb_Comparison_Exp>
-  properties?: InputMaybe<Jsonb_Comparison_Exp>
-  resources?: InputMaybe<Resources_Bool_Exp>
-  rootowner?: InputMaybe<String_Comparison_Exp>
-  singular_curated?: InputMaybe<Singular_Curated_Bool_Exp>
-  singular_nsfw?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
-  sn?: InputMaybe<String_Comparison_Exp>
-  symbol?: InputMaybe<String_Comparison_Exp>
-  transferable?: InputMaybe<Int_Comparison_Exp>
-  txBlock?: InputMaybe<Int_Comparison_Exp>
-  txCaller?: InputMaybe<String_Comparison_Exp>
-  txPending?: InputMaybe<Boolean_Comparison_Exp>
-  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>
-}
-
-/** aggregate max on columns */
-export type Nfts_Max_Fields = {
-  __typename?: 'nfts_max_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  burned?: Maybe<Scalars['String']['output']>
-  collectionId?: Maybe<Scalars['String']['output']>
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-  equipped_id?: Maybe<Scalars['String']['output']>
-  forsale?: Maybe<Scalars['bigint']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  id_md5?: Maybe<Scalars['String']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  metadata_content_type?: Maybe<Scalars['String']['output']>
-  metadata_description?: Maybe<Scalars['String']['output']>
-  metadata_image?: Maybe<Scalars['String']['output']>
-  metadata_name?: Maybe<Scalars['String']['output']>
-  metadata_rarity?: Maybe<Scalars['String']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  owner?: Maybe<Scalars['String']['output']>
-  rootowner?: Maybe<Scalars['String']['output']>
-  sn?: Maybe<Scalars['String']['output']>
-  symbol?: Maybe<Scalars['String']['output']>
-  transferable?: Maybe<Scalars['Int']['output']>
-  txBlock?: Maybe<Scalars['Int']['output']>
-  txCaller?: Maybe<Scalars['String']['output']>
-  updated_at?: Maybe<Scalars['timestamptz']['output']>
-}
-
-/** order by max() on columns of table "nfts" */
-export type Nfts_Max_Order_By = {
-  block?: InputMaybe<Order_By>
-  burned?: InputMaybe<Order_By>
-  collectionId?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-  equipped_id?: InputMaybe<Order_By>
-  forsale?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  id_md5?: InputMaybe<Order_By>
-  metadata?: InputMaybe<Order_By>
-  metadata_content_type?: InputMaybe<Order_By>
-  metadata_description?: InputMaybe<Order_By>
-  metadata_image?: InputMaybe<Order_By>
-  metadata_name?: InputMaybe<Order_By>
-  metadata_rarity?: InputMaybe<Order_By>
-  metadata_rarity_percentage?: InputMaybe<Order_By>
-  owner?: InputMaybe<Order_By>
-  rootowner?: InputMaybe<Order_By>
-  sn?: InputMaybe<Order_By>
-  symbol?: InputMaybe<Order_By>
-  transferable?: InputMaybe<Order_By>
-  txBlock?: InputMaybe<Order_By>
-  txCaller?: InputMaybe<Order_By>
-  updated_at?: InputMaybe<Order_By>
-}
-
-/** aggregate min on columns */
-export type Nfts_Min_Fields = {
-  __typename?: 'nfts_min_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  burned?: Maybe<Scalars['String']['output']>
-  collectionId?: Maybe<Scalars['String']['output']>
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-  equipped_id?: Maybe<Scalars['String']['output']>
-  forsale?: Maybe<Scalars['bigint']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  id_md5?: Maybe<Scalars['String']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  metadata_content_type?: Maybe<Scalars['String']['output']>
-  metadata_description?: Maybe<Scalars['String']['output']>
-  metadata_image?: Maybe<Scalars['String']['output']>
-  metadata_name?: Maybe<Scalars['String']['output']>
-  metadata_rarity?: Maybe<Scalars['String']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  owner?: Maybe<Scalars['String']['output']>
-  rootowner?: Maybe<Scalars['String']['output']>
-  sn?: Maybe<Scalars['String']['output']>
-  symbol?: Maybe<Scalars['String']['output']>
-  transferable?: Maybe<Scalars['Int']['output']>
-  txBlock?: Maybe<Scalars['Int']['output']>
-  txCaller?: Maybe<Scalars['String']['output']>
-  updated_at?: Maybe<Scalars['timestamptz']['output']>
-}
-
-/** order by min() on columns of table "nfts" */
-export type Nfts_Min_Order_By = {
-  block?: InputMaybe<Order_By>
-  burned?: InputMaybe<Order_By>
-  collectionId?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-  equipped_id?: InputMaybe<Order_By>
-  forsale?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  id_md5?: InputMaybe<Order_By>
-  metadata?: InputMaybe<Order_By>
-  metadata_content_type?: InputMaybe<Order_By>
-  metadata_description?: InputMaybe<Order_By>
-  metadata_image?: InputMaybe<Order_By>
-  metadata_name?: InputMaybe<Order_By>
-  metadata_rarity?: InputMaybe<Order_By>
-  metadata_rarity_percentage?: InputMaybe<Order_By>
-  owner?: InputMaybe<Order_By>
-  rootowner?: InputMaybe<Order_By>
-  sn?: InputMaybe<Order_By>
-  symbol?: InputMaybe<Order_By>
-  transferable?: InputMaybe<Order_By>
-  txBlock?: InputMaybe<Order_By>
-  txCaller?: InputMaybe<Order_By>
-  updated_at?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "nfts". */
-export type Nfts_Order_By = {
-  block?: InputMaybe<Order_By>
-  burned?: InputMaybe<Order_By>
-  changes_aggregate?: InputMaybe<Changes_Aggregate_Order_By>
-  children_aggregate?: InputMaybe<Nfts_Aggregate_Order_By>
-  collection?: InputMaybe<Collections_Order_By>
-  collectionId?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-  dutchie?: InputMaybe<Dutchie_Order_By>
-  equipped?: InputMaybe<Parts_Order_By>
-  equipped_id?: InputMaybe<Order_By>
-  forsale?: InputMaybe<Order_By>
-  gem_enabled?: InputMaybe<Gems_Enabled_Order_By>
-  id?: InputMaybe<Order_By>
-  id_md5?: InputMaybe<Order_By>
-  metadata?: InputMaybe<Order_By>
-  metadata_content_type?: InputMaybe<Order_By>
-  metadata_description?: InputMaybe<Order_By>
-  metadata_image?: InputMaybe<Order_By>
-  metadata_name?: InputMaybe<Order_By>
-  metadata_properties?: InputMaybe<Order_By>
-  metadata_rarity?: InputMaybe<Order_By>
-  metadata_rarity_percentage?: InputMaybe<Order_By>
-  owner?: InputMaybe<Order_By>
-  parent?: InputMaybe<Nfts_Order_By>
-  pending?: InputMaybe<Order_By>
-  priority?: InputMaybe<Order_By>
-  properties?: InputMaybe<Order_By>
-  resources_aggregate?: InputMaybe<Resources_Aggregate_Order_By>
-  rootowner?: InputMaybe<Order_By>
-  singular_curated_aggregate?: InputMaybe<Singular_Curated_Aggregate_Order_By>
-  singular_nsfw_aggregate?: InputMaybe<Singular_Nsfw_Nfts_Aggregate_Order_By>
-  sn?: InputMaybe<Order_By>
-  symbol?: InputMaybe<Order_By>
-  transferable?: InputMaybe<Order_By>
-  txBlock?: InputMaybe<Order_By>
-  txCaller?: InputMaybe<Order_By>
-  txPending?: InputMaybe<Order_By>
-  updated_at?: InputMaybe<Order_By>
-}
-
-/** select columns of table "nfts" */
-export enum Nfts_Select_Column {
-  /** column name */
-  Block = 'block',
-  /** column name */
-  Burned = 'burned',
-  /** column name */
-  CollectionId = 'collectionId',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  EquippedId = 'equipped_id',
-  /** column name */
-  Forsale = 'forsale',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  IdMd5 = 'id_md5',
-  /** column name */
-  Metadata = 'metadata',
-  /** column name */
-  MetadataContentType = 'metadata_content_type',
-  /** column name */
-  MetadataDescription = 'metadata_description',
-  /** column name */
-  MetadataImage = 'metadata_image',
-  /** column name */
-  MetadataName = 'metadata_name',
-  /** column name */
-  MetadataProperties = 'metadata_properties',
-  /** column name */
-  MetadataRarity = 'metadata_rarity',
-  /** column name */
-  MetadataRarityPercentage = 'metadata_rarity_percentage',
-  /** column name */
-  Owner = 'owner',
-  /** column name */
-  Pending = 'pending',
-  /** column name */
-  Priority = 'priority',
-  /** column name */
-  Properties = 'properties',
-  /** column name */
-  Rootowner = 'rootowner',
-  /** column name */
-  Sn = 'sn',
-  /** column name */
-  Symbol = 'symbol',
-  /** column name */
-  Transferable = 'transferable',
-  /** column name */
-  TxBlock = 'txBlock',
-  /** column name */
-  TxCaller = 'txCaller',
-  /** column name */
-  TxPending = 'txPending',
-  /** column name */
-  UpdatedAt = 'updated_at',
-}
-
-/** columns and relationships of "nfts_stats" */
-export type Nfts_Stats = {
-  __typename?: 'nfts_stats'
-  collection_id?: Maybe<Scalars['String']['output']>
-  count?: Maybe<Scalars['bigint']['output']>
-}
-
-/** aggregated selection of "nfts_stats" */
-export type Nfts_Stats_Aggregate = {
-  __typename?: 'nfts_stats_aggregate'
-  aggregate?: Maybe<Nfts_Stats_Aggregate_Fields>
-  nodes: Array<Nfts_Stats>
-}
-
-/** aggregate fields of "nfts_stats" */
-export type Nfts_Stats_Aggregate_Fields = {
-  __typename?: 'nfts_stats_aggregate_fields'
-  avg?: Maybe<Nfts_Stats_Avg_Fields>
-  count: Scalars['Int']['output']
-  max?: Maybe<Nfts_Stats_Max_Fields>
-  min?: Maybe<Nfts_Stats_Min_Fields>
-  stddev?: Maybe<Nfts_Stats_Stddev_Fields>
-  stddev_pop?: Maybe<Nfts_Stats_Stddev_Pop_Fields>
-  stddev_samp?: Maybe<Nfts_Stats_Stddev_Samp_Fields>
-  sum?: Maybe<Nfts_Stats_Sum_Fields>
-  var_pop?: Maybe<Nfts_Stats_Var_Pop_Fields>
-  var_samp?: Maybe<Nfts_Stats_Var_Samp_Fields>
-  variance?: Maybe<Nfts_Stats_Variance_Fields>
-}
-
-/** aggregate fields of "nfts_stats" */
-export type Nfts_Stats_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Nfts_Stats_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** aggregate avg on columns */
-export type Nfts_Stats_Avg_Fields = {
-  __typename?: 'nfts_stats_avg_fields'
-  count?: Maybe<Scalars['Float']['output']>
-}
-
-/** Boolean expression to filter rows from the table "nfts_stats". All fields are combined with a logical 'AND'. */
-export type Nfts_Stats_Bool_Exp = {
-  _and?: InputMaybe<Array<Nfts_Stats_Bool_Exp>>
-  _not?: InputMaybe<Nfts_Stats_Bool_Exp>
-  _or?: InputMaybe<Array<Nfts_Stats_Bool_Exp>>
-  collection_id?: InputMaybe<String_Comparison_Exp>
-  count?: InputMaybe<Bigint_Comparison_Exp>
-}
-
-/** aggregate max on columns */
-export type Nfts_Stats_Max_Fields = {
-  __typename?: 'nfts_stats_max_fields'
-  collection_id?: Maybe<Scalars['String']['output']>
-  count?: Maybe<Scalars['bigint']['output']>
-}
-
-/** aggregate min on columns */
-export type Nfts_Stats_Min_Fields = {
-  __typename?: 'nfts_stats_min_fields'
-  collection_id?: Maybe<Scalars['String']['output']>
-  count?: Maybe<Scalars['bigint']['output']>
-}
-
-/** Ordering options when selecting data from "nfts_stats". */
-export type Nfts_Stats_Order_By = {
-  collection_id?: InputMaybe<Order_By>
-  count?: InputMaybe<Order_By>
-}
-
-/** select columns of table "nfts_stats" */
-export enum Nfts_Stats_Select_Column {
-  /** column name */
-  CollectionId = 'collection_id',
-  /** column name */
-  Count = 'count',
-}
-
-/** aggregate stddev on columns */
-export type Nfts_Stats_Stddev_Fields = {
-  __typename?: 'nfts_stats_stddev_fields'
-  count?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate stddev_pop on columns */
-export type Nfts_Stats_Stddev_Pop_Fields = {
-  __typename?: 'nfts_stats_stddev_pop_fields'
-  count?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate stddev_samp on columns */
-export type Nfts_Stats_Stddev_Samp_Fields = {
-  __typename?: 'nfts_stats_stddev_samp_fields'
-  count?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate sum on columns */
-export type Nfts_Stats_Sum_Fields = {
-  __typename?: 'nfts_stats_sum_fields'
-  count?: Maybe<Scalars['bigint']['output']>
-}
-
-/** aggregate var_pop on columns */
-export type Nfts_Stats_Var_Pop_Fields = {
-  __typename?: 'nfts_stats_var_pop_fields'
-  count?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate var_samp on columns */
-export type Nfts_Stats_Var_Samp_Fields = {
-  __typename?: 'nfts_stats_var_samp_fields'
-  count?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate variance on columns */
-export type Nfts_Stats_Variance_Fields = {
-  __typename?: 'nfts_stats_variance_fields'
-  count?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate stddev on columns */
-export type Nfts_Stddev_Fields = {
-  __typename?: 'nfts_stddev_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  txBlock?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by stddev() on columns of table "nfts" */
-export type Nfts_Stddev_Order_By = {
-  block?: InputMaybe<Order_By>
-  forsale?: InputMaybe<Order_By>
-  metadata_rarity_percentage?: InputMaybe<Order_By>
-  transferable?: InputMaybe<Order_By>
-  txBlock?: InputMaybe<Order_By>
-}
-
-/** aggregate stddev_pop on columns */
-export type Nfts_Stddev_Pop_Fields = {
-  __typename?: 'nfts_stddev_pop_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  txBlock?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by stddev_pop() on columns of table "nfts" */
-export type Nfts_Stddev_Pop_Order_By = {
-  block?: InputMaybe<Order_By>
-  forsale?: InputMaybe<Order_By>
-  metadata_rarity_percentage?: InputMaybe<Order_By>
-  transferable?: InputMaybe<Order_By>
-  txBlock?: InputMaybe<Order_By>
-}
-
-/** aggregate stddev_samp on columns */
-export type Nfts_Stddev_Samp_Fields = {
-  __typename?: 'nfts_stddev_samp_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  txBlock?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by stddev_samp() on columns of table "nfts" */
-export type Nfts_Stddev_Samp_Order_By = {
-  block?: InputMaybe<Order_By>
-  forsale?: InputMaybe<Order_By>
-  metadata_rarity_percentage?: InputMaybe<Order_By>
-  transferable?: InputMaybe<Order_By>
-  txBlock?: InputMaybe<Order_By>
-}
-
-/** aggregate sum on columns */
-export type Nfts_Sum_Fields = {
-  __typename?: 'nfts_sum_fields'
-  block?: Maybe<Scalars['Int']['output']>
-  forsale?: Maybe<Scalars['bigint']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Int']['output']>
-  txBlock?: Maybe<Scalars['Int']['output']>
-}
-
-/** order by sum() on columns of table "nfts" */
-export type Nfts_Sum_Order_By = {
-  block?: InputMaybe<Order_By>
-  forsale?: InputMaybe<Order_By>
-  metadata_rarity_percentage?: InputMaybe<Order_By>
-  transferable?: InputMaybe<Order_By>
-  txBlock?: InputMaybe<Order_By>
-}
-
-/** aggregate var_pop on columns */
-export type Nfts_Var_Pop_Fields = {
-  __typename?: 'nfts_var_pop_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  txBlock?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by var_pop() on columns of table "nfts" */
-export type Nfts_Var_Pop_Order_By = {
-  block?: InputMaybe<Order_By>
-  forsale?: InputMaybe<Order_By>
-  metadata_rarity_percentage?: InputMaybe<Order_By>
-  transferable?: InputMaybe<Order_By>
-  txBlock?: InputMaybe<Order_By>
-}
-
-/** aggregate var_samp on columns */
-export type Nfts_Var_Samp_Fields = {
-  __typename?: 'nfts_var_samp_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  txBlock?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by var_samp() on columns of table "nfts" */
-export type Nfts_Var_Samp_Order_By = {
-  block?: InputMaybe<Order_By>
-  forsale?: InputMaybe<Order_By>
-  metadata_rarity_percentage?: InputMaybe<Order_By>
-  transferable?: InputMaybe<Order_By>
-  txBlock?: InputMaybe<Order_By>
-}
-
-/** aggregate variance on columns */
-export type Nfts_Variance_Fields = {
-  __typename?: 'nfts_variance_fields'
-  block?: Maybe<Scalars['Float']['output']>
-  forsale?: Maybe<Scalars['Float']['output']>
-  metadata_rarity_percentage?: Maybe<Scalars['Float']['output']>
-  transferable?: Maybe<Scalars['Float']['output']>
-  txBlock?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by variance() on columns of table "nfts" */
-export type Nfts_Variance_Order_By = {
-  block?: InputMaybe<Order_By>
-  forsale?: InputMaybe<Order_By>
-  metadata_rarity_percentage?: InputMaybe<Order_By>
-  transferable?: InputMaybe<Order_By>
-  txBlock?: InputMaybe<Order_By>
-}
-
-/** Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'. */
-export type Numeric_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['numeric']['input']>
-  _gt?: InputMaybe<Scalars['numeric']['input']>
-  _gte?: InputMaybe<Scalars['numeric']['input']>
-  _in?: InputMaybe<Array<Scalars['numeric']['input']>>
-  _is_null?: InputMaybe<Scalars['Boolean']['input']>
-  _lt?: InputMaybe<Scalars['numeric']['input']>
-  _lte?: InputMaybe<Scalars['numeric']['input']>
-  _neq?: InputMaybe<Scalars['numeric']['input']>
-  _nin?: InputMaybe<Array<Scalars['numeric']['input']>>
-}
-
-/** column ordering options */
-export enum Order_By {
-  /** in ascending order, nulls last */
-  Asc = 'asc',
-  /** in ascending order, nulls first */
-  AscNullsFirst = 'asc_nulls_first',
-  /** in ascending order, nulls last */
-  AscNullsLast = 'asc_nulls_last',
-  /** in descending order, nulls first */
-  Desc = 'desc',
-  /** in descending order, nulls first */
-  DescNullsFirst = 'desc_nulls_first',
-  /** in descending order, nulls last */
-  DescNullsLast = 'desc_nulls_last',
-}
-
-/** columns and relationships of "parts" */
-export type Parts = {
-  __typename?: 'parts'
-  /** An object relationship */
-  base: Bases
-  base_id: Scalars['String']['output']
-  equippable?: Maybe<Scalars['jsonb']['output']>
+export type MetadataEntity = {
+  __typename?: 'MetadataEntity'
+  animationUrl?: Maybe<Scalars['String']['output']>
+  attributes?: Maybe<Array<Attribute>>
+  description?: Maybe<Scalars['String']['output']>
   id: Scalars['String']['output']
-  metadata?: Maybe<Scalars['String']['output']>
-  /** An array relationship */
-  nfts_equipped: Array<Nfts>
-  /** An aggregate relationship */
-  nfts_equipped_aggregate: Nfts_Aggregate
-  part_id: Scalars['String']['output']
-  /** An array relationship */
-  resources: Array<Resources>
-  /** An aggregate relationship */
-  resources_aggregate: Resources_Aggregate
-  /** An object relationship */
-  resources_part?: Maybe<Resources_Parts>
-  src?: Maybe<Scalars['String']['output']>
-  type: Scalars['String']['output']
-  z: Scalars['Int']['output']
-}
-
-/** columns and relationships of "parts" */
-export type PartsEquippableArgs = {
-  path?: InputMaybe<Scalars['String']['input']>
-}
-
-/** columns and relationships of "parts" */
-export type PartsNfts_EquippedArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-/** columns and relationships of "parts" */
-export type PartsNfts_Equipped_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-/** columns and relationships of "parts" */
-export type PartsResourcesArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Order_By>>
-  where?: InputMaybe<Resources_Bool_Exp>
-}
-
-/** columns and relationships of "parts" */
-export type PartsResources_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Order_By>>
-  where?: InputMaybe<Resources_Bool_Exp>
-}
-
-/** aggregated selection of "parts" */
-export type Parts_Aggregate = {
-  __typename?: 'parts_aggregate'
-  aggregate?: Maybe<Parts_Aggregate_Fields>
-  nodes: Array<Parts>
-}
-
-/** aggregate fields of "parts" */
-export type Parts_Aggregate_Fields = {
-  __typename?: 'parts_aggregate_fields'
-  avg?: Maybe<Parts_Avg_Fields>
-  count: Scalars['Int']['output']
-  max?: Maybe<Parts_Max_Fields>
-  min?: Maybe<Parts_Min_Fields>
-  stddev?: Maybe<Parts_Stddev_Fields>
-  stddev_pop?: Maybe<Parts_Stddev_Pop_Fields>
-  stddev_samp?: Maybe<Parts_Stddev_Samp_Fields>
-  sum?: Maybe<Parts_Sum_Fields>
-  var_pop?: Maybe<Parts_Var_Pop_Fields>
-  var_samp?: Maybe<Parts_Var_Samp_Fields>
-  variance?: Maybe<Parts_Variance_Fields>
-}
-
-/** aggregate fields of "parts" */
-export type Parts_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Parts_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** order by aggregate values of table "parts" */
-export type Parts_Aggregate_Order_By = {
-  avg?: InputMaybe<Parts_Avg_Order_By>
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Parts_Max_Order_By>
-  min?: InputMaybe<Parts_Min_Order_By>
-  stddev?: InputMaybe<Parts_Stddev_Order_By>
-  stddev_pop?: InputMaybe<Parts_Stddev_Pop_Order_By>
-  stddev_samp?: InputMaybe<Parts_Stddev_Samp_Order_By>
-  sum?: InputMaybe<Parts_Sum_Order_By>
-  var_pop?: InputMaybe<Parts_Var_Pop_Order_By>
-  var_samp?: InputMaybe<Parts_Var_Samp_Order_By>
-  variance?: InputMaybe<Parts_Variance_Order_By>
-}
-
-/** aggregate avg on columns */
-export type Parts_Avg_Fields = {
-  __typename?: 'parts_avg_fields'
-  z?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by avg() on columns of table "parts" */
-export type Parts_Avg_Order_By = {
-  z?: InputMaybe<Order_By>
-}
-
-/** Boolean expression to filter rows from the table "parts". All fields are combined with a logical 'AND'. */
-export type Parts_Bool_Exp = {
-  _and?: InputMaybe<Array<Parts_Bool_Exp>>
-  _not?: InputMaybe<Parts_Bool_Exp>
-  _or?: InputMaybe<Array<Parts_Bool_Exp>>
-  base?: InputMaybe<Bases_Bool_Exp>
-  base_id?: InputMaybe<String_Comparison_Exp>
-  equippable?: InputMaybe<Jsonb_Comparison_Exp>
-  id?: InputMaybe<String_Comparison_Exp>
-  metadata?: InputMaybe<String_Comparison_Exp>
-  nfts_equipped?: InputMaybe<Nfts_Bool_Exp>
-  part_id?: InputMaybe<String_Comparison_Exp>
-  resources?: InputMaybe<Resources_Bool_Exp>
-  resources_part?: InputMaybe<Resources_Parts_Bool_Exp>
-  src?: InputMaybe<String_Comparison_Exp>
-  type?: InputMaybe<String_Comparison_Exp>
-  z?: InputMaybe<Int_Comparison_Exp>
-}
-
-/** aggregate max on columns */
-export type Parts_Max_Fields = {
-  __typename?: 'parts_max_fields'
-  base_id?: Maybe<Scalars['String']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  part_id?: Maybe<Scalars['String']['output']>
-  src?: Maybe<Scalars['String']['output']>
+  image?: Maybe<Scalars['String']['output']>
+  name?: Maybe<Scalars['String']['output']>
   type?: Maybe<Scalars['String']['output']>
-  z?: Maybe<Scalars['Int']['output']>
 }
 
-/** order by max() on columns of table "parts" */
-export type Parts_Max_Order_By = {
-  base_id?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  metadata?: InputMaybe<Order_By>
-  part_id?: InputMaybe<Order_By>
-  src?: InputMaybe<Order_By>
-  type?: InputMaybe<Order_By>
-  z?: InputMaybe<Order_By>
-}
-
-/** aggregate min on columns */
-export type Parts_Min_Fields = {
-  __typename?: 'parts_min_fields'
-  base_id?: Maybe<Scalars['String']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  part_id?: Maybe<Scalars['String']['output']>
-  src?: Maybe<Scalars['String']['output']>
-  type?: Maybe<Scalars['String']['output']>
-  z?: Maybe<Scalars['Int']['output']>
-}
-
-/** order by min() on columns of table "parts" */
-export type Parts_Min_Order_By = {
-  base_id?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  metadata?: InputMaybe<Order_By>
-  part_id?: InputMaybe<Order_By>
-  src?: InputMaybe<Order_By>
-  type?: InputMaybe<Order_By>
-  z?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "parts". */
-export type Parts_Order_By = {
-  base?: InputMaybe<Bases_Order_By>
-  base_id?: InputMaybe<Order_By>
-  equippable?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  metadata?: InputMaybe<Order_By>
-  nfts_equipped_aggregate?: InputMaybe<Nfts_Aggregate_Order_By>
-  part_id?: InputMaybe<Order_By>
-  resources_aggregate?: InputMaybe<Resources_Aggregate_Order_By>
-  resources_part?: InputMaybe<Resources_Parts_Order_By>
-  src?: InputMaybe<Order_By>
-  type?: InputMaybe<Order_By>
-  z?: InputMaybe<Order_By>
-}
-
-/** select columns of table "parts" */
-export enum Parts_Select_Column {
-  /** column name */
-  BaseId = 'base_id',
-  /** column name */
-  Equippable = 'equippable',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Metadata = 'metadata',
-  /** column name */
-  PartId = 'part_id',
-  /** column name */
-  Src = 'src',
-  /** column name */
-  Type = 'type',
-  /** column name */
-  Z = 'z',
-}
-
-/** aggregate stddev on columns */
-export type Parts_Stddev_Fields = {
-  __typename?: 'parts_stddev_fields'
-  z?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by stddev() on columns of table "parts" */
-export type Parts_Stddev_Order_By = {
-  z?: InputMaybe<Order_By>
-}
-
-/** aggregate stddev_pop on columns */
-export type Parts_Stddev_Pop_Fields = {
-  __typename?: 'parts_stddev_pop_fields'
-  z?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by stddev_pop() on columns of table "parts" */
-export type Parts_Stddev_Pop_Order_By = {
-  z?: InputMaybe<Order_By>
-}
-
-/** aggregate stddev_samp on columns */
-export type Parts_Stddev_Samp_Fields = {
-  __typename?: 'parts_stddev_samp_fields'
-  z?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by stddev_samp() on columns of table "parts" */
-export type Parts_Stddev_Samp_Order_By = {
-  z?: InputMaybe<Order_By>
-}
-
-/** aggregate sum on columns */
-export type Parts_Sum_Fields = {
-  __typename?: 'parts_sum_fields'
-  z?: Maybe<Scalars['Int']['output']>
-}
-
-/** order by sum() on columns of table "parts" */
-export type Parts_Sum_Order_By = {
-  z?: InputMaybe<Order_By>
-}
-
-/** aggregate var_pop on columns */
-export type Parts_Var_Pop_Fields = {
-  __typename?: 'parts_var_pop_fields'
-  z?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by var_pop() on columns of table "parts" */
-export type Parts_Var_Pop_Order_By = {
-  z?: InputMaybe<Order_By>
-}
-
-/** aggregate var_samp on columns */
-export type Parts_Var_Samp_Fields = {
-  __typename?: 'parts_var_samp_fields'
-  z?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by var_samp() on columns of table "parts" */
-export type Parts_Var_Samp_Order_By = {
-  z?: InputMaybe<Order_By>
-}
-
-/** aggregate variance on columns */
-export type Parts_Variance_Fields = {
-  __typename?: 'parts_variance_fields'
-  z?: Maybe<Scalars['Float']['output']>
-}
-
-/** order by variance() on columns of table "parts" */
-export type Parts_Variance_Order_By = {
-  z?: InputMaybe<Order_By>
-}
-
-export type Query_Root = {
-  __typename?: 'query_root'
-  /** fetch data from the table: "base_themes" */
-  base_themes: Array<Base_Themes>
-  /** fetch data from the table: "base_themes" using primary key columns */
-  base_themes_by_pk?: Maybe<Base_Themes>
-  /** fetch data from the table: "bases" */
-  bases: Array<Bases>
-  /** fetch aggregated fields from the table: "bases" */
-  bases_aggregate: Bases_Aggregate
-  /** fetch data from the table: "bases" using primary key columns */
-  bases_by_pk?: Maybe<Bases>
-  /** An array relationship */
-  changes: Array<Changes>
-  /** An aggregate relationship */
-  changes_aggregate: Changes_Aggregate
-  /** fetch data from the table: "changes" using primary key columns */
-  changes_by_pk?: Maybe<Changes>
-  /** An array relationship */
-  changes_collection: Array<Changes_Collection>
-  /** fetch data from the table: "changes_collection" using primary key columns */
-  changes_collection_by_pk?: Maybe<Changes_Collection>
-  /** fetch data from the table: "collection_banners" */
-  collection_banners: Array<Collection_Banners>
-  /** fetch data from the table: "collection_banners" using primary key columns */
-  collection_banners_by_pk?: Maybe<Collection_Banners>
-  /** fetch data from the table: "collections" */
-  collections: Array<Collections>
-  /** fetch aggregated fields from the table: "collections" */
-  collections_aggregate: Collections_Aggregate
-  /** fetch data from the table: "collections" using primary key columns */
-  collections_by_pk?: Maybe<Collections>
-  /** fetch data from the table: "distinct_kanaria_nfts" */
-  distinct_kanaria_nfts: Array<Distinct_Kanaria_Nfts>
-  /** fetch aggregated fields from the table: "distinct_kanaria_nfts" */
-  distinct_kanaria_nfts_aggregate: Distinct_Kanaria_Nfts_Aggregate
-  /** fetch data from the table: "distinct_nfts" */
-  distinct_nfts: Array<Distinct_Nfts>
-  /** fetch aggregated fields from the table: "distinct_nfts" */
-  distinct_nfts_aggregate: Distinct_Nfts_Aggregate
-  /** fetch data from the table: "dutchie" */
-  dutchie: Array<Dutchie>
-  /** fetch data from the table: "dutchie" using primary key columns */
-  dutchie_by_pk?: Maybe<Dutchie>
-  /** fetch data from the table: "gems_enabled" */
-  gems_enabled: Array<Gems_Enabled>
-  /** fetch data from the table: "gems_enabled" using primary key columns */
-  gems_enabled_by_pk?: Maybe<Gems_Enabled>
-  /** execute function "get_newly_listed" which returns "nfts" */
-  get_newly_listed: Array<Nfts>
-  /** execute function "get_newly_listed" and query aggregates on result of table type "nfts" */
-  get_newly_listed_aggregate: Nfts_Aggregate
-  /** execute function "get_newly_minted" which returns "nfts" */
-  get_newly_minted: Array<Nfts>
-  /** execute function "get_newly_minted" and query aggregates on result of table type "nfts" */
-  get_newly_minted_aggregate: Nfts_Aggregate
-  /** execute function "get_ordered_changes_stats" which returns "changes" */
-  get_ordered_changes_stats: Array<Changes>
-  /** execute function "get_ordered_changes_stats" and query aggregates on result of table type "changes" */
-  get_ordered_changes_stats_aggregate: Changes_Aggregate
-  /** fetch data from the table: "hatched_birds" */
-  hatched_birds: Array<Hatched_Birds>
-  /** fetch data from the table: "hatched_birds" using primary key columns */
-  hatched_birds_by_pk?: Maybe<Hatched_Birds>
-  /** An array relationship */
-  nfts: Array<Nfts>
-  /** An aggregate relationship */
-  nfts_aggregate: Nfts_Aggregate
-  /** fetch data from the table: "nfts" using primary key columns */
-  nfts_by_pk?: Maybe<Nfts>
-  /** fetch data from the table: "nfts_stats" */
-  nfts_stats: Array<Nfts_Stats>
-  /** fetch aggregated fields from the table: "nfts_stats" */
-  nfts_stats_aggregate: Nfts_Stats_Aggregate
-  /** An array relationship */
-  parts: Array<Parts>
-  /** An aggregate relationship */
-  parts_aggregate: Parts_Aggregate
-  /** fetch data from the table: "parts" using primary key columns */
-  parts_by_pk?: Maybe<Parts>
-  /** fetch data from the table: "recently_listed" */
-  recently_listed: Array<Recently_Listed>
-  /** fetch aggregated fields from the table: "recently_listed" */
-  recently_listed_aggregate: Recently_Listed_Aggregate
-  /** An array relationship */
-  resources: Array<Resources>
-  /** An aggregate relationship */
-  resources_aggregate: Resources_Aggregate
-  /** An array relationship */
-  resources_base_themes: Array<Resources_Base_Themes>
-  /** fetch data from the table: "resources_base_themes" using primary key columns */
-  resources_base_themes_by_pk?: Maybe<Resources_Base_Themes>
-  /** fetch data from the table: "resources" using primary key columns */
-  resources_by_pk?: Maybe<Resources>
-  /** An array relationship */
-  resources_parts: Array<Resources_Parts>
-  /** An aggregate relationship */
-  resources_parts_aggregate: Resources_Parts_Aggregate
-  /** fetch data from the table: "resources_parts" using primary key columns */
-  resources_parts_by_pk?: Maybe<Resources_Parts>
-  /** fetch data from the table: "sales" */
-  sales: Array<Sales>
-  /** An array relationship */
-  singular_blacklisted_accounts: Array<Singular_Blacklisted_Accounts>
-  /** fetch data from the table: "singular_blacklisted_accounts" using primary key columns */
-  singular_blacklisted_accounts_by_pk?: Maybe<Singular_Blacklisted_Accounts>
-  /** An array relationship */
-  singular_blacklisted_collections: Array<Singular_Blacklisted_Collections>
-  /** fetch data from the table: "singular_blacklisted_collections" using primary key columns */
-  singular_blacklisted_collections_by_pk?: Maybe<Singular_Blacklisted_Collections>
-  /** An array relationship */
-  singular_curated: Array<Singular_Curated>
-  /** An aggregate relationship */
-  singular_curated_aggregate: Singular_Curated_Aggregate
-  /** fetch data from the table: "singular_curated" using primary key columns */
-  singular_curated_by_pk?: Maybe<Singular_Curated>
-  /** fetch data from the table: "singular_curated_collections" */
-  singular_curated_collections: Array<Singular_Curated_Collections>
-  /** fetch aggregated fields from the table: "singular_curated_collections" */
-  singular_curated_collections_aggregate: Singular_Curated_Collections_Aggregate
-  /** fetch data from the table: "singular_curated_collections" using primary key columns */
-  singular_curated_collections_by_pk?: Maybe<Singular_Curated_Collections>
-  /** fetch data from the table: "singular_hidden_collections" */
-  singular_hidden_collections: Array<Singular_Hidden_Collections>
-  /** fetch data from the table: "singular_hidden_collections" using primary key columns */
-  singular_hidden_collections_by_pk?: Maybe<Singular_Hidden_Collections>
-  /** An array relationship */
-  singular_nsfw_collections: Array<Singular_Nsfw_Collections>
-  /** An aggregate relationship */
-  singular_nsfw_collections_aggregate: Singular_Nsfw_Collections_Aggregate
-  /** fetch data from the table: "singular_nsfw_collections" using primary key columns */
-  singular_nsfw_collections_by_pk?: Maybe<Singular_Nsfw_Collections>
-  /** fetch data from the table: "singular_nsfw_nfts" */
-  singular_nsfw_nfts: Array<Singular_Nsfw_Nfts>
-  /** fetch aggregated fields from the table: "singular_nsfw_nfts" */
-  singular_nsfw_nfts_aggregate: Singular_Nsfw_Nfts_Aggregate
-  /** fetch data from the table: "singular_nsfw_nfts" using primary key columns */
-  singular_nsfw_nfts_by_pk?: Maybe<Singular_Nsfw_Nfts>
-  /** An array relationship */
-  singular_verified_collections: Array<Singular_Verified_Collections>
-  /** An aggregate relationship */
-  singular_verified_collections_aggregate: Singular_Verified_Collections_Aggregate
-  /** fetch data from the table: "singular_verified_collections" using primary key columns */
-  singular_verified_collections_by_pk?: Maybe<Singular_Verified_Collections>
-  /** fetch data from the table: "system" */
-  system: Array<System>
-  /** fetch data from the table: "system" using primary key columns */
-  system_by_pk?: Maybe<System>
-  /** fetch data from the table: "yuletide_item_track" */
-  yuletide_item_track: Array<Yuletide_Item_Track>
-  /** fetch aggregated fields from the table: "yuletide_item_track" */
-  yuletide_item_track_aggregate: Yuletide_Item_Track_Aggregate
-  /** fetch data from the table: "yuletide_item_track" using primary key columns */
-  yuletide_item_track_by_pk?: Maybe<Yuletide_Item_Track>
-}
-
-export type Query_RootBase_ThemesArgs = {
-  distinct_on?: InputMaybe<Array<Base_Themes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Base_Themes_Order_By>>
-  where?: InputMaybe<Base_Themes_Bool_Exp>
-}
-
-export type Query_RootBase_Themes_By_PkArgs = {
-  id: Scalars['String']['input']
-}
-
-export type Query_RootBasesArgs = {
-  distinct_on?: InputMaybe<Array<Bases_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Bases_Order_By>>
-  where?: InputMaybe<Bases_Bool_Exp>
-}
-
-export type Query_RootBases_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Bases_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Bases_Order_By>>
-  where?: InputMaybe<Bases_Bool_Exp>
-}
-
-export type Query_RootBases_By_PkArgs = {
-  id: Scalars['String']['input']
-}
-
-export type Query_RootChangesArgs = {
-  distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Changes_Order_By>>
-  where?: InputMaybe<Changes_Bool_Exp>
-}
-
-export type Query_RootChanges_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Changes_Order_By>>
-  where?: InputMaybe<Changes_Bool_Exp>
-}
-
-export type Query_RootChanges_By_PkArgs = {
-  id: Scalars['Int']['input']
-}
-
-export type Query_RootChanges_CollectionArgs = {
-  distinct_on?: InputMaybe<Array<Changes_Collection_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Changes_Collection_Order_By>>
-  where?: InputMaybe<Changes_Collection_Bool_Exp>
-}
-
-export type Query_RootChanges_Collection_By_PkArgs = {
-  id: Scalars['Int']['input']
-}
-
-export type Query_RootCollection_BannersArgs = {
-  distinct_on?: InputMaybe<Array<Collection_Banners_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Collection_Banners_Order_By>>
-  where?: InputMaybe<Collection_Banners_Bool_Exp>
-}
-
-export type Query_RootCollection_Banners_By_PkArgs = {
-  collection_id: Scalars['String']['input']
-}
-
-export type Query_RootCollectionsArgs = {
-  distinct_on?: InputMaybe<Array<Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Collections_Order_By>>
-  where?: InputMaybe<Collections_Bool_Exp>
-}
-
-export type Query_RootCollections_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Collections_Order_By>>
-  where?: InputMaybe<Collections_Bool_Exp>
-}
-
-export type Query_RootCollections_By_PkArgs = {
-  id: Scalars['String']['input']
-}
-
-export type Query_RootDistinct_Kanaria_NftsArgs = {
-  distinct_on?: InputMaybe<Array<Distinct_Kanaria_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Distinct_Kanaria_Nfts_Order_By>>
-  where?: InputMaybe<Distinct_Kanaria_Nfts_Bool_Exp>
-}
-
-export type Query_RootDistinct_Kanaria_Nfts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Distinct_Kanaria_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Distinct_Kanaria_Nfts_Order_By>>
-  where?: InputMaybe<Distinct_Kanaria_Nfts_Bool_Exp>
-}
-
-export type Query_RootDistinct_NftsArgs = {
-  distinct_on?: InputMaybe<Array<Distinct_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Distinct_Nfts_Order_By>>
-  where?: InputMaybe<Distinct_Nfts_Bool_Exp>
-}
-
-export type Query_RootDistinct_Nfts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Distinct_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Distinct_Nfts_Order_By>>
-  where?: InputMaybe<Distinct_Nfts_Bool_Exp>
-}
-
-export type Query_RootDutchieArgs = {
-  distinct_on?: InputMaybe<Array<Dutchie_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Dutchie_Order_By>>
-  where?: InputMaybe<Dutchie_Bool_Exp>
-}
-
-export type Query_RootDutchie_By_PkArgs = {
-  id: Scalars['Int']['input']
-}
-
-export type Query_RootGems_EnabledArgs = {
-  distinct_on?: InputMaybe<Array<Gems_Enabled_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Gems_Enabled_Order_By>>
-  where?: InputMaybe<Gems_Enabled_Bool_Exp>
-}
-
-export type Query_RootGems_Enabled_By_PkArgs = {
-  id: Scalars['String']['input']
-}
-
-export type Query_RootGet_Newly_ListedArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-export type Query_RootGet_Newly_Listed_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-export type Query_RootGet_Newly_MintedArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-export type Query_RootGet_Newly_Minted_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-export type Query_RootGet_Ordered_Changes_StatsArgs = {
-  args: Get_Ordered_Changes_Stats_Args
-  distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Changes_Order_By>>
-  where?: InputMaybe<Changes_Bool_Exp>
-}
-
-export type Query_RootGet_Ordered_Changes_Stats_AggregateArgs = {
-  args: Get_Ordered_Changes_Stats_Args
-  distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Changes_Order_By>>
-  where?: InputMaybe<Changes_Bool_Exp>
-}
-
-export type Query_RootHatched_BirdsArgs = {
-  distinct_on?: InputMaybe<Array<Hatched_Birds_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Hatched_Birds_Order_By>>
-  where?: InputMaybe<Hatched_Birds_Bool_Exp>
-}
-
-export type Query_RootHatched_Birds_By_PkArgs = {
-  id: Scalars['String']['input']
-}
-
-export type Query_RootNftsArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-export type Query_RootNfts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-export type Query_RootNfts_By_PkArgs = {
-  id: Scalars['String']['input']
-}
-
-export type Query_RootNfts_StatsArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Stats_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Stats_Order_By>>
-  where?: InputMaybe<Nfts_Stats_Bool_Exp>
-}
-
-export type Query_RootNfts_Stats_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Stats_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Stats_Order_By>>
-  where?: InputMaybe<Nfts_Stats_Bool_Exp>
-}
-
-export type Query_RootPartsArgs = {
-  distinct_on?: InputMaybe<Array<Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Parts_Order_By>>
-  where?: InputMaybe<Parts_Bool_Exp>
-}
-
-export type Query_RootParts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Parts_Order_By>>
-  where?: InputMaybe<Parts_Bool_Exp>
-}
-
-export type Query_RootParts_By_PkArgs = {
-  id: Scalars['String']['input']
-}
-
-export type Query_RootRecently_ListedArgs = {
-  distinct_on?: InputMaybe<Array<Recently_Listed_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Recently_Listed_Order_By>>
-  where?: InputMaybe<Recently_Listed_Bool_Exp>
-}
-
-export type Query_RootRecently_Listed_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Recently_Listed_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Recently_Listed_Order_By>>
-  where?: InputMaybe<Recently_Listed_Bool_Exp>
-}
-
-export type Query_RootResourcesArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Order_By>>
-  where?: InputMaybe<Resources_Bool_Exp>
-}
-
-export type Query_RootResources_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Order_By>>
-  where?: InputMaybe<Resources_Bool_Exp>
-}
-
-export type Query_RootResources_Base_ThemesArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Base_Themes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Base_Themes_Order_By>>
-  where?: InputMaybe<Resources_Base_Themes_Bool_Exp>
-}
-
-export type Query_RootResources_Base_Themes_By_PkArgs = {
-  resource_id: Scalars['String']['input']
-  theme_id: Scalars['String']['input']
-}
-
-export type Query_RootResources_By_PkArgs = {
-  id: Scalars['String']['input']
-}
-
-export type Query_RootResources_PartsArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Parts_Order_By>>
-  where?: InputMaybe<Resources_Parts_Bool_Exp>
-}
-
-export type Query_RootResources_Parts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Parts_Order_By>>
-  where?: InputMaybe<Resources_Parts_Bool_Exp>
-}
-
-export type Query_RootResources_Parts_By_PkArgs = {
-  part_id: Scalars['String']['input']
-  resource_id: Scalars['String']['input']
-}
-
-export type Query_RootSalesArgs = {
-  distinct_on?: InputMaybe<Array<Sales_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Sales_Order_By>>
-  where?: InputMaybe<Sales_Bool_Exp>
-}
-
-export type Query_RootSingular_Blacklisted_AccountsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Blacklisted_Accounts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Blacklisted_Accounts_Order_By>>
-  where?: InputMaybe<Singular_Blacklisted_Accounts_Bool_Exp>
-}
-
-export type Query_RootSingular_Blacklisted_Accounts_By_PkArgs = {
-  account: Scalars['String']['input']
-}
-
-export type Query_RootSingular_Blacklisted_CollectionsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Blacklisted_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Blacklisted_Collections_Order_By>>
-  where?: InputMaybe<Singular_Blacklisted_Collections_Bool_Exp>
-}
-
-export type Query_RootSingular_Blacklisted_Collections_By_PkArgs = {
-  collection_id: Scalars['String']['input']
-}
-
-export type Query_RootSingular_CuratedArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Curated_Order_By>>
-  where?: InputMaybe<Singular_Curated_Bool_Exp>
-}
-
-export type Query_RootSingular_Curated_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Curated_Order_By>>
-  where?: InputMaybe<Singular_Curated_Bool_Exp>
-}
-
-export type Query_RootSingular_Curated_By_PkArgs = {
-  nft_id: Scalars['String']['input']
-}
-
-export type Query_RootSingular_Curated_CollectionsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Curated_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Curated_Collections_Order_By>>
-  where?: InputMaybe<Singular_Curated_Collections_Bool_Exp>
-}
-
-export type Query_RootSingular_Curated_Collections_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Curated_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Curated_Collections_Order_By>>
-  where?: InputMaybe<Singular_Curated_Collections_Bool_Exp>
-}
-
-export type Query_RootSingular_Curated_Collections_By_PkArgs = {
-  collection_id: Scalars['String']['input']
-}
-
-export type Query_RootSingular_Hidden_CollectionsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Hidden_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Hidden_Collections_Order_By>>
-  where?: InputMaybe<Singular_Hidden_Collections_Bool_Exp>
-}
-
-export type Query_RootSingular_Hidden_Collections_By_PkArgs = {
-  collection_id: Scalars['String']['input']
-}
-
-export type Query_RootSingular_Nsfw_CollectionsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Nsfw_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Nsfw_Collections_Order_By>>
-  where?: InputMaybe<Singular_Nsfw_Collections_Bool_Exp>
-}
-
-export type Query_RootSingular_Nsfw_Collections_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Nsfw_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Nsfw_Collections_Order_By>>
-  where?: InputMaybe<Singular_Nsfw_Collections_Bool_Exp>
-}
-
-export type Query_RootSingular_Nsfw_Collections_By_PkArgs = {
-  collection_id: Scalars['String']['input']
-}
-
-export type Query_RootSingular_Nsfw_NftsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Nsfw_Nfts_Order_By>>
-  where?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
-}
-
-export type Query_RootSingular_Nsfw_Nfts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Nsfw_Nfts_Order_By>>
-  where?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
-}
-
-export type Query_RootSingular_Nsfw_Nfts_By_PkArgs = {
-  nft_id: Scalars['String']['input']
-}
-
-export type Query_RootSingular_Verified_CollectionsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Verified_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Verified_Collections_Order_By>>
-  where?: InputMaybe<Singular_Verified_Collections_Bool_Exp>
-}
-
-export type Query_RootSingular_Verified_Collections_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Verified_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Verified_Collections_Order_By>>
-  where?: InputMaybe<Singular_Verified_Collections_Bool_Exp>
-}
-
-export type Query_RootSingular_Verified_Collections_By_PkArgs = {
-  collection_id: Scalars['String']['input']
-}
-
-export type Query_RootSystemArgs = {
-  distinct_on?: InputMaybe<Array<System_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<System_Order_By>>
-  where?: InputMaybe<System_Bool_Exp>
-}
-
-export type Query_RootSystem_By_PkArgs = {
-  purchaseEnabled: Scalars['Boolean']['input']
-}
-
-export type Query_RootYuletide_Item_TrackArgs = {
-  distinct_on?: InputMaybe<Array<Yuletide_Item_Track_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Yuletide_Item_Track_Order_By>>
-  where?: InputMaybe<Yuletide_Item_Track_Bool_Exp>
-}
-
-export type Query_RootYuletide_Item_Track_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Yuletide_Item_Track_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Yuletide_Item_Track_Order_By>>
-  where?: InputMaybe<Yuletide_Item_Track_Bool_Exp>
-}
-
-export type Query_RootYuletide_Item_Track_By_PkArgs = {
-  id: Scalars['String']['input']
-}
-
-/** columns and relationships of "recently_listed" */
-export type Recently_Listed = {
-  __typename?: 'recently_listed'
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-  forsale?: Maybe<Scalars['bigint']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  /** An object relationship */
-  nft?: Maybe<Nfts>
-}
-
-/** aggregated selection of "recently_listed" */
-export type Recently_Listed_Aggregate = {
-  __typename?: 'recently_listed_aggregate'
-  aggregate?: Maybe<Recently_Listed_Aggregate_Fields>
-  nodes: Array<Recently_Listed>
-}
-
-/** aggregate fields of "recently_listed" */
-export type Recently_Listed_Aggregate_Fields = {
-  __typename?: 'recently_listed_aggregate_fields'
-  avg?: Maybe<Recently_Listed_Avg_Fields>
-  count: Scalars['Int']['output']
-  max?: Maybe<Recently_Listed_Max_Fields>
-  min?: Maybe<Recently_Listed_Min_Fields>
-  stddev?: Maybe<Recently_Listed_Stddev_Fields>
-  stddev_pop?: Maybe<Recently_Listed_Stddev_Pop_Fields>
-  stddev_samp?: Maybe<Recently_Listed_Stddev_Samp_Fields>
-  sum?: Maybe<Recently_Listed_Sum_Fields>
-  var_pop?: Maybe<Recently_Listed_Var_Pop_Fields>
-  var_samp?: Maybe<Recently_Listed_Var_Samp_Fields>
-  variance?: Maybe<Recently_Listed_Variance_Fields>
-}
-
-/** aggregate fields of "recently_listed" */
-export type Recently_Listed_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Recently_Listed_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** aggregate avg on columns */
-export type Recently_Listed_Avg_Fields = {
-  __typename?: 'recently_listed_avg_fields'
-  forsale?: Maybe<Scalars['Float']['output']>
-}
-
-/** Boolean expression to filter rows from the table "recently_listed". All fields are combined with a logical 'AND'. */
-export type Recently_Listed_Bool_Exp = {
-  _and?: InputMaybe<Array<Recently_Listed_Bool_Exp>>
-  _not?: InputMaybe<Recently_Listed_Bool_Exp>
-  _or?: InputMaybe<Array<Recently_Listed_Bool_Exp>>
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>
-  forsale?: InputMaybe<Bigint_Comparison_Exp>
-  id?: InputMaybe<String_Comparison_Exp>
-  nft?: InputMaybe<Nfts_Bool_Exp>
-}
-
-/** aggregate max on columns */
-export type Recently_Listed_Max_Fields = {
-  __typename?: 'recently_listed_max_fields'
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-  forsale?: Maybe<Scalars['bigint']['output']>
-  id?: Maybe<Scalars['String']['output']>
-}
-
-/** aggregate min on columns */
-export type Recently_Listed_Min_Fields = {
-  __typename?: 'recently_listed_min_fields'
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-  forsale?: Maybe<Scalars['bigint']['output']>
-  id?: Maybe<Scalars['String']['output']>
-}
-
-/** Ordering options when selecting data from "recently_listed". */
-export type Recently_Listed_Order_By = {
-  created_at?: InputMaybe<Order_By>
-  forsale?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  nft?: InputMaybe<Nfts_Order_By>
-}
-
-/** select columns of table "recently_listed" */
-export enum Recently_Listed_Select_Column {
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Forsale = 'forsale',
-  /** column name */
-  Id = 'id',
-}
-
-/** aggregate stddev on columns */
-export type Recently_Listed_Stddev_Fields = {
-  __typename?: 'recently_listed_stddev_fields'
-  forsale?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate stddev_pop on columns */
-export type Recently_Listed_Stddev_Pop_Fields = {
-  __typename?: 'recently_listed_stddev_pop_fields'
-  forsale?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate stddev_samp on columns */
-export type Recently_Listed_Stddev_Samp_Fields = {
-  __typename?: 'recently_listed_stddev_samp_fields'
-  forsale?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate sum on columns */
-export type Recently_Listed_Sum_Fields = {
-  __typename?: 'recently_listed_sum_fields'
-  forsale?: Maybe<Scalars['bigint']['output']>
-}
-
-/** aggregate var_pop on columns */
-export type Recently_Listed_Var_Pop_Fields = {
-  __typename?: 'recently_listed_var_pop_fields'
-  forsale?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate var_samp on columns */
-export type Recently_Listed_Var_Samp_Fields = {
-  __typename?: 'recently_listed_var_samp_fields'
-  forsale?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate variance on columns */
-export type Recently_Listed_Variance_Fields = {
-  __typename?: 'recently_listed_variance_fields'
-  forsale?: Maybe<Scalars['Float']['output']>
-}
-
-/** columns and relationships of "resources" */
-export type Resources = {
-  __typename?: 'resources'
-  /** An object relationship */
-  base?: Maybe<Bases>
-  base_id?: Maybe<Scalars['String']['output']>
-  /** An object relationship */
-  base_theme?: Maybe<Resources_Base_Themes>
+export type MetadataEntityEdge = {
+  __typename?: 'MetadataEntityEdge'
+  cursor: Scalars['String']['output']
+  node: MetadataEntity
+}
+
+export enum MetadataEntityOrderByInput {
+  AnimationUrlAsc = 'animationUrl_ASC',
+  AnimationUrlDesc = 'animationUrl_DESC',
+  DescriptionAsc = 'description_ASC',
+  DescriptionDesc = 'description_DESC',
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  ImageAsc = 'image_ASC',
+  ImageDesc = 'image_DESC',
+  NameAsc = 'name_ASC',
+  NameDesc = 'name_DESC',
+  TypeAsc = 'type_ASC',
+  TypeDesc = 'type_DESC',
+}
+
+export type MetadataEntityWhereInput = {
+  AND?: InputMaybe<Array<MetadataEntityWhereInput>>
+  OR?: InputMaybe<Array<MetadataEntityWhereInput>>
+  animationUrl_contains?: InputMaybe<Scalars['String']['input']>
+  animationUrl_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  animationUrl_endsWith?: InputMaybe<Scalars['String']['input']>
+  animationUrl_eq?: InputMaybe<Scalars['String']['input']>
+  animationUrl_gt?: InputMaybe<Scalars['String']['input']>
+  animationUrl_gte?: InputMaybe<Scalars['String']['input']>
+  animationUrl_in?: InputMaybe<Array<Scalars['String']['input']>>
+  animationUrl_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  animationUrl_lt?: InputMaybe<Scalars['String']['input']>
+  animationUrl_lte?: InputMaybe<Scalars['String']['input']>
+  animationUrl_not_contains?: InputMaybe<Scalars['String']['input']>
+  animationUrl_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  animationUrl_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  animationUrl_not_eq?: InputMaybe<Scalars['String']['input']>
+  animationUrl_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  animationUrl_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  animationUrl_startsWith?: InputMaybe<Scalars['String']['input']>
+  attributes_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  description_contains?: InputMaybe<Scalars['String']['input']>
+  description_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  description_endsWith?: InputMaybe<Scalars['String']['input']>
+  description_eq?: InputMaybe<Scalars['String']['input']>
+  description_gt?: InputMaybe<Scalars['String']['input']>
+  description_gte?: InputMaybe<Scalars['String']['input']>
+  description_in?: InputMaybe<Array<Scalars['String']['input']>>
+  description_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  description_lt?: InputMaybe<Scalars['String']['input']>
+  description_lte?: InputMaybe<Scalars['String']['input']>
+  description_not_contains?: InputMaybe<Scalars['String']['input']>
+  description_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  description_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  description_not_eq?: InputMaybe<Scalars['String']['input']>
+  description_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  description_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  description_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_contains?: InputMaybe<Scalars['String']['input']>
+  id_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_eq?: InputMaybe<Scalars['String']['input']>
+  id_gt?: InputMaybe<Scalars['String']['input']>
+  id_gte?: InputMaybe<Scalars['String']['input']>
+  id_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  id_lt?: InputMaybe<Scalars['String']['input']>
+  id_lte?: InputMaybe<Scalars['String']['input']>
+  id_not_contains?: InputMaybe<Scalars['String']['input']>
+  id_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_not_eq?: InputMaybe<Scalars['String']['input']>
+  id_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_startsWith?: InputMaybe<Scalars['String']['input']>
+  image_contains?: InputMaybe<Scalars['String']['input']>
+  image_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  image_endsWith?: InputMaybe<Scalars['String']['input']>
+  image_eq?: InputMaybe<Scalars['String']['input']>
+  image_gt?: InputMaybe<Scalars['String']['input']>
+  image_gte?: InputMaybe<Scalars['String']['input']>
+  image_in?: InputMaybe<Array<Scalars['String']['input']>>
+  image_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  image_lt?: InputMaybe<Scalars['String']['input']>
+  image_lte?: InputMaybe<Scalars['String']['input']>
+  image_not_contains?: InputMaybe<Scalars['String']['input']>
+  image_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  image_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  image_not_eq?: InputMaybe<Scalars['String']['input']>
+  image_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  image_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  image_startsWith?: InputMaybe<Scalars['String']['input']>
+  name_contains?: InputMaybe<Scalars['String']['input']>
+  name_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  name_endsWith?: InputMaybe<Scalars['String']['input']>
+  name_eq?: InputMaybe<Scalars['String']['input']>
+  name_gt?: InputMaybe<Scalars['String']['input']>
+  name_gte?: InputMaybe<Scalars['String']['input']>
+  name_in?: InputMaybe<Array<Scalars['String']['input']>>
+  name_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  name_lt?: InputMaybe<Scalars['String']['input']>
+  name_lte?: InputMaybe<Scalars['String']['input']>
+  name_not_contains?: InputMaybe<Scalars['String']['input']>
+  name_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  name_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  name_not_eq?: InputMaybe<Scalars['String']['input']>
+  name_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  name_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  name_startsWith?: InputMaybe<Scalars['String']['input']>
+  type_contains?: InputMaybe<Scalars['String']['input']>
+  type_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  type_endsWith?: InputMaybe<Scalars['String']['input']>
+  type_eq?: InputMaybe<Scalars['String']['input']>
+  type_gt?: InputMaybe<Scalars['String']['input']>
+  type_gte?: InputMaybe<Scalars['String']['input']>
+  type_in?: InputMaybe<Array<Scalars['String']['input']>>
+  type_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  type_lt?: InputMaybe<Scalars['String']['input']>
+  type_lte?: InputMaybe<Scalars['String']['input']>
+  type_not_contains?: InputMaybe<Scalars['String']['input']>
+  type_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  type_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  type_not_eq?: InputMaybe<Scalars['String']['input']>
+  type_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  type_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  type_startsWith?: InputMaybe<Scalars['String']['input']>
+}
+
+export type NftEntitiesConnection = {
+  __typename?: 'NFTEntitiesConnection'
+  edges: Array<NftEntityEdge>
+  pageInfo: PageInfo
+  totalCount: Scalars['Int']['output']
+}
+
+export type NftEntity = {
+  __typename?: 'NFTEntity'
+  blockNumber?: Maybe<Scalars['BigInt']['output']>
+  burned: Scalars['Boolean']['output']
+  collection: CollectionEntity
+  createdAt: Scalars['DateTime']['output']
+  currentOwner?: Maybe<Scalars['String']['output']>
+  emoteCount: Scalars['Int']['output']
+  emotes: Array<Emote>
+  events: Array<Event>
+  hash: Scalars['String']['output']
   id: Scalars['String']['output']
+  image?: Maybe<Scalars['String']['output']>
+  instance?: Maybe<Scalars['String']['output']>
+  issuer?: Maybe<Scalars['String']['output']>
+  media?: Maybe<Scalars['String']['output']>
+  meta?: Maybe<MetadataEntity>
   metadata?: Maybe<Scalars['String']['output']>
-  metadata_content_type?: Maybe<Scalars['String']['output']>
-  nft_id: Scalars['String']['output']
-  /** An object relationship */
-  nfts: Nfts
-  parts?: Maybe<Scalars['jsonb']['output']>
+  name?: Maybe<Scalars['String']['output']>
+  parent?: Maybe<NftEntity>
   pending: Scalars['Boolean']['output']
-  replace?: Maybe<Scalars['String']['output']>
-  /** An object relationship */
-  resources_part?: Maybe<Resources_Parts>
-  /** An array relationship */
-  resources_parts: Array<Resources_Parts>
-  /** An aggregate relationship */
-  resources_parts_aggregate: Resources_Parts_Aggregate
-  /** An object relationship */
-  slot?: Maybe<Parts>
-  slot_id?: Maybe<Scalars['String']['output']>
-  src?: Maybe<Scalars['String']['output']>
-  theme?: Maybe<Scalars['jsonb']['output']>
-  thumb?: Maybe<Scalars['String']['output']>
+  price: Scalars['BigInt']['output']
+  recipient?: Maybe<Scalars['String']['output']>
+  resources: Array<Resource>
+  royalty?: Maybe<Scalars['Float']['output']>
+  sn?: Maybe<Scalars['String']['output']>
+  transferable?: Maybe<Scalars['Int']['output']>
+  updatedAt: Scalars['DateTime']['output']
+  version: Scalars['String']['output']
 }
 
-/** columns and relationships of "resources" */
-export type ResourcesPartsArgs = {
-  path?: InputMaybe<Scalars['String']['input']>
-}
-
-/** columns and relationships of "resources" */
-export type ResourcesResources_PartsArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Parts_Select_Column>>
+export type NftEntityEmotesArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Parts_Order_By>>
-  where?: InputMaybe<Resources_Parts_Bool_Exp>
+  orderBy?: InputMaybe<Array<EmoteOrderByInput>>
+  where?: InputMaybe<EmoteWhereInput>
 }
 
-/** columns and relationships of "resources" */
-export type ResourcesResources_Parts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Parts_Select_Column>>
+export type NftEntityEventsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Parts_Order_By>>
-  where?: InputMaybe<Resources_Parts_Bool_Exp>
+  orderBy?: InputMaybe<Array<EventOrderByInput>>
+  where?: InputMaybe<EventWhereInput>
 }
 
-/** columns and relationships of "resources" */
-export type ResourcesThemeArgs = {
-  path?: InputMaybe<Scalars['String']['input']>
-}
-
-/** aggregated selection of "resources" */
-export type Resources_Aggregate = {
-  __typename?: 'resources_aggregate'
-  aggregate?: Maybe<Resources_Aggregate_Fields>
-  nodes: Array<Resources>
-}
-
-/** aggregate fields of "resources" */
-export type Resources_Aggregate_Fields = {
-  __typename?: 'resources_aggregate_fields'
-  count: Scalars['Int']['output']
-  max?: Maybe<Resources_Max_Fields>
-  min?: Maybe<Resources_Min_Fields>
-}
-
-/** aggregate fields of "resources" */
-export type Resources_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Resources_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** order by aggregate values of table "resources" */
-export type Resources_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Resources_Max_Order_By>
-  min?: InputMaybe<Resources_Min_Order_By>
-}
-
-/** columns and relationships of "resources_base_themes" */
-export type Resources_Base_Themes = {
-  __typename?: 'resources_base_themes'
-  resource_id: Scalars['String']['output']
-  /** An object relationship */
-  theme: Base_Themes
-  theme_id: Scalars['String']['output']
-}
-
-/** order by aggregate values of table "resources_base_themes" */
-export type Resources_Base_Themes_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Resources_Base_Themes_Max_Order_By>
-  min?: InputMaybe<Resources_Base_Themes_Min_Order_By>
-}
-
-/** Boolean expression to filter rows from the table "resources_base_themes". All fields are combined with a logical 'AND'. */
-export type Resources_Base_Themes_Bool_Exp = {
-  _and?: InputMaybe<Array<Resources_Base_Themes_Bool_Exp>>
-  _not?: InputMaybe<Resources_Base_Themes_Bool_Exp>
-  _or?: InputMaybe<Array<Resources_Base_Themes_Bool_Exp>>
-  resource_id?: InputMaybe<String_Comparison_Exp>
-  theme?: InputMaybe<Base_Themes_Bool_Exp>
-  theme_id?: InputMaybe<String_Comparison_Exp>
-}
-
-/** order by max() on columns of table "resources_base_themes" */
-export type Resources_Base_Themes_Max_Order_By = {
-  resource_id?: InputMaybe<Order_By>
-  theme_id?: InputMaybe<Order_By>
-}
-
-/** order by min() on columns of table "resources_base_themes" */
-export type Resources_Base_Themes_Min_Order_By = {
-  resource_id?: InputMaybe<Order_By>
-  theme_id?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "resources_base_themes". */
-export type Resources_Base_Themes_Order_By = {
-  resource_id?: InputMaybe<Order_By>
-  theme?: InputMaybe<Base_Themes_Order_By>
-  theme_id?: InputMaybe<Order_By>
-}
-
-/** select columns of table "resources_base_themes" */
-export enum Resources_Base_Themes_Select_Column {
-  /** column name */
-  ResourceId = 'resource_id',
-  /** column name */
-  ThemeId = 'theme_id',
-}
-
-/** Boolean expression to filter rows from the table "resources". All fields are combined with a logical 'AND'. */
-export type Resources_Bool_Exp = {
-  _and?: InputMaybe<Array<Resources_Bool_Exp>>
-  _not?: InputMaybe<Resources_Bool_Exp>
-  _or?: InputMaybe<Array<Resources_Bool_Exp>>
-  base?: InputMaybe<Bases_Bool_Exp>
-  base_id?: InputMaybe<String_Comparison_Exp>
-  base_theme?: InputMaybe<Resources_Base_Themes_Bool_Exp>
-  id?: InputMaybe<String_Comparison_Exp>
-  metadata?: InputMaybe<String_Comparison_Exp>
-  metadata_content_type?: InputMaybe<String_Comparison_Exp>
-  nft_id?: InputMaybe<String_Comparison_Exp>
-  nfts?: InputMaybe<Nfts_Bool_Exp>
-  parts?: InputMaybe<Jsonb_Comparison_Exp>
-  pending?: InputMaybe<Boolean_Comparison_Exp>
-  replace?: InputMaybe<String_Comparison_Exp>
-  resources_part?: InputMaybe<Resources_Parts_Bool_Exp>
-  resources_parts?: InputMaybe<Resources_Parts_Bool_Exp>
-  slot?: InputMaybe<Parts_Bool_Exp>
-  slot_id?: InputMaybe<String_Comparison_Exp>
-  src?: InputMaybe<String_Comparison_Exp>
-  theme?: InputMaybe<Jsonb_Comparison_Exp>
-  thumb?: InputMaybe<String_Comparison_Exp>
-}
-
-/** aggregate max on columns */
-export type Resources_Max_Fields = {
-  __typename?: 'resources_max_fields'
-  base_id?: Maybe<Scalars['String']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  metadata_content_type?: Maybe<Scalars['String']['output']>
-  nft_id?: Maybe<Scalars['String']['output']>
-  replace?: Maybe<Scalars['String']['output']>
-  slot_id?: Maybe<Scalars['String']['output']>
-  src?: Maybe<Scalars['String']['output']>
-  thumb?: Maybe<Scalars['String']['output']>
-}
-
-/** order by max() on columns of table "resources" */
-export type Resources_Max_Order_By = {
-  base_id?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  metadata?: InputMaybe<Order_By>
-  metadata_content_type?: InputMaybe<Order_By>
-  nft_id?: InputMaybe<Order_By>
-  replace?: InputMaybe<Order_By>
-  slot_id?: InputMaybe<Order_By>
-  src?: InputMaybe<Order_By>
-  thumb?: InputMaybe<Order_By>
-}
-
-/** aggregate min on columns */
-export type Resources_Min_Fields = {
-  __typename?: 'resources_min_fields'
-  base_id?: Maybe<Scalars['String']['output']>
-  id?: Maybe<Scalars['String']['output']>
-  metadata?: Maybe<Scalars['String']['output']>
-  metadata_content_type?: Maybe<Scalars['String']['output']>
-  nft_id?: Maybe<Scalars['String']['output']>
-  replace?: Maybe<Scalars['String']['output']>
-  slot_id?: Maybe<Scalars['String']['output']>
-  src?: Maybe<Scalars['String']['output']>
-  thumb?: Maybe<Scalars['String']['output']>
-}
-
-/** order by min() on columns of table "resources" */
-export type Resources_Min_Order_By = {
-  base_id?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  metadata?: InputMaybe<Order_By>
-  metadata_content_type?: InputMaybe<Order_By>
-  nft_id?: InputMaybe<Order_By>
-  replace?: InputMaybe<Order_By>
-  slot_id?: InputMaybe<Order_By>
-  src?: InputMaybe<Order_By>
-  thumb?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "resources". */
-export type Resources_Order_By = {
-  base?: InputMaybe<Bases_Order_By>
-  base_id?: InputMaybe<Order_By>
-  base_theme?: InputMaybe<Resources_Base_Themes_Order_By>
-  id?: InputMaybe<Order_By>
-  metadata?: InputMaybe<Order_By>
-  metadata_content_type?: InputMaybe<Order_By>
-  nft_id?: InputMaybe<Order_By>
-  nfts?: InputMaybe<Nfts_Order_By>
-  parts?: InputMaybe<Order_By>
-  pending?: InputMaybe<Order_By>
-  replace?: InputMaybe<Order_By>
-  resources_part?: InputMaybe<Resources_Parts_Order_By>
-  resources_parts_aggregate?: InputMaybe<Resources_Parts_Aggregate_Order_By>
-  slot?: InputMaybe<Parts_Order_By>
-  slot_id?: InputMaybe<Order_By>
-  src?: InputMaybe<Order_By>
-  theme?: InputMaybe<Order_By>
-  thumb?: InputMaybe<Order_By>
-}
-
-/** columns and relationships of "resources_parts" */
-export type Resources_Parts = {
-  __typename?: 'resources_parts'
-  /** An object relationship */
-  part: Parts
-  part_id: Scalars['String']['output']
-  /** An object relationship */
-  resource: Resources
-  resource_id: Scalars['String']['output']
-}
-
-/** aggregated selection of "resources_parts" */
-export type Resources_Parts_Aggregate = {
-  __typename?: 'resources_parts_aggregate'
-  aggregate?: Maybe<Resources_Parts_Aggregate_Fields>
-  nodes: Array<Resources_Parts>
-}
-
-/** aggregate fields of "resources_parts" */
-export type Resources_Parts_Aggregate_Fields = {
-  __typename?: 'resources_parts_aggregate_fields'
-  count: Scalars['Int']['output']
-  max?: Maybe<Resources_Parts_Max_Fields>
-  min?: Maybe<Resources_Parts_Min_Fields>
-}
-
-/** aggregate fields of "resources_parts" */
-export type Resources_Parts_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Resources_Parts_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** order by aggregate values of table "resources_parts" */
-export type Resources_Parts_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Resources_Parts_Max_Order_By>
-  min?: InputMaybe<Resources_Parts_Min_Order_By>
-}
-
-/** Boolean expression to filter rows from the table "resources_parts". All fields are combined with a logical 'AND'. */
-export type Resources_Parts_Bool_Exp = {
-  _and?: InputMaybe<Array<Resources_Parts_Bool_Exp>>
-  _not?: InputMaybe<Resources_Parts_Bool_Exp>
-  _or?: InputMaybe<Array<Resources_Parts_Bool_Exp>>
-  part?: InputMaybe<Parts_Bool_Exp>
-  part_id?: InputMaybe<String_Comparison_Exp>
-  resource?: InputMaybe<Resources_Bool_Exp>
-  resource_id?: InputMaybe<String_Comparison_Exp>
-}
-
-/** aggregate max on columns */
-export type Resources_Parts_Max_Fields = {
-  __typename?: 'resources_parts_max_fields'
-  part_id?: Maybe<Scalars['String']['output']>
-  resource_id?: Maybe<Scalars['String']['output']>
-}
-
-/** order by max() on columns of table "resources_parts" */
-export type Resources_Parts_Max_Order_By = {
-  part_id?: InputMaybe<Order_By>
-  resource_id?: InputMaybe<Order_By>
-}
-
-/** aggregate min on columns */
-export type Resources_Parts_Min_Fields = {
-  __typename?: 'resources_parts_min_fields'
-  part_id?: Maybe<Scalars['String']['output']>
-  resource_id?: Maybe<Scalars['String']['output']>
-}
-
-/** order by min() on columns of table "resources_parts" */
-export type Resources_Parts_Min_Order_By = {
-  part_id?: InputMaybe<Order_By>
-  resource_id?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "resources_parts". */
-export type Resources_Parts_Order_By = {
-  part?: InputMaybe<Parts_Order_By>
-  part_id?: InputMaybe<Order_By>
-  resource?: InputMaybe<Resources_Order_By>
-  resource_id?: InputMaybe<Order_By>
-}
-
-/** select columns of table "resources_parts" */
-export enum Resources_Parts_Select_Column {
-  /** column name */
-  PartId = 'part_id',
-  /** column name */
-  ResourceId = 'resource_id',
-}
-
-/** select columns of table "resources" */
-export enum Resources_Select_Column {
-  /** column name */
-  BaseId = 'base_id',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  Metadata = 'metadata',
-  /** column name */
-  MetadataContentType = 'metadata_content_type',
-  /** column name */
-  NftId = 'nft_id',
-  /** column name */
-  Parts = 'parts',
-  /** column name */
-  Pending = 'pending',
-  /** column name */
-  Replace = 'replace',
-  /** column name */
-  SlotId = 'slot_id',
-  /** column name */
-  Src = 'src',
-  /** column name */
-  Theme = 'theme',
-  /** column name */
-  Thumb = 'thumb',
-}
-
-/** columns and relationships of "sales" */
-export type Sales = {
-  __typename?: 'sales'
-  day?: Maybe<Scalars['numeric']['output']>
-  month?: Maybe<Scalars['numeric']['output']>
-  month3?: Maybe<Scalars['numeric']['output']>
-  week?: Maybe<Scalars['numeric']['output']>
-}
-
-/** Boolean expression to filter rows from the table "sales". All fields are combined with a logical 'AND'. */
-export type Sales_Bool_Exp = {
-  _and?: InputMaybe<Array<Sales_Bool_Exp>>
-  _not?: InputMaybe<Sales_Bool_Exp>
-  _or?: InputMaybe<Array<Sales_Bool_Exp>>
-  day?: InputMaybe<Numeric_Comparison_Exp>
-  month?: InputMaybe<Numeric_Comparison_Exp>
-  month3?: InputMaybe<Numeric_Comparison_Exp>
-  week?: InputMaybe<Numeric_Comparison_Exp>
-}
-
-/** Ordering options when selecting data from "sales". */
-export type Sales_Order_By = {
-  day?: InputMaybe<Order_By>
-  month?: InputMaybe<Order_By>
-  month3?: InputMaybe<Order_By>
-  week?: InputMaybe<Order_By>
-}
-
-/** select columns of table "sales" */
-export enum Sales_Select_Column {
-  /** column name */
-  Day = 'day',
-  /** column name */
-  Month = 'month',
-  /** column name */
-  Month3 = 'month3',
-  /** column name */
-  Week = 'week',
-}
-
-/** columns and relationships of "singular_blacklisted_accounts" */
-export type Singular_Blacklisted_Accounts = {
-  __typename?: 'singular_blacklisted_accounts'
-  account: Scalars['String']['output']
-  created_at: Scalars['timestamptz']['output']
-}
-
-/** order by aggregate values of table "singular_blacklisted_accounts" */
-export type Singular_Blacklisted_Accounts_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Singular_Blacklisted_Accounts_Max_Order_By>
-  min?: InputMaybe<Singular_Blacklisted_Accounts_Min_Order_By>
-}
-
-/** Boolean expression to filter rows from the table "singular_blacklisted_accounts". All fields are combined with a logical 'AND'. */
-export type Singular_Blacklisted_Accounts_Bool_Exp = {
-  _and?: InputMaybe<Array<Singular_Blacklisted_Accounts_Bool_Exp>>
-  _not?: InputMaybe<Singular_Blacklisted_Accounts_Bool_Exp>
-  _or?: InputMaybe<Array<Singular_Blacklisted_Accounts_Bool_Exp>>
-  account?: InputMaybe<String_Comparison_Exp>
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>
-}
-
-/** order by max() on columns of table "singular_blacklisted_accounts" */
-export type Singular_Blacklisted_Accounts_Max_Order_By = {
-  account?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-}
-
-/** order by min() on columns of table "singular_blacklisted_accounts" */
-export type Singular_Blacklisted_Accounts_Min_Order_By = {
-  account?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "singular_blacklisted_accounts". */
-export type Singular_Blacklisted_Accounts_Order_By = {
-  account?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-}
-
-/** select columns of table "singular_blacklisted_accounts" */
-export enum Singular_Blacklisted_Accounts_Select_Column {
-  /** column name */
-  Account = 'account',
-  /** column name */
-  CreatedAt = 'created_at',
-}
-
-/** columns and relationships of "singular_blacklisted_collections" */
-export type Singular_Blacklisted_Collections = {
-  __typename?: 'singular_blacklisted_collections'
-  /** An object relationship */
-  collection?: Maybe<Collections>
-  collection_id: Scalars['String']['output']
-  created_at: Scalars['timestamptz']['output']
-}
-
-/** order by aggregate values of table "singular_blacklisted_collections" */
-export type Singular_Blacklisted_Collections_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Singular_Blacklisted_Collections_Max_Order_By>
-  min?: InputMaybe<Singular_Blacklisted_Collections_Min_Order_By>
-}
-
-/** Boolean expression to filter rows from the table "singular_blacklisted_collections". All fields are combined with a logical 'AND'. */
-export type Singular_Blacklisted_Collections_Bool_Exp = {
-  _and?: InputMaybe<Array<Singular_Blacklisted_Collections_Bool_Exp>>
-  _not?: InputMaybe<Singular_Blacklisted_Collections_Bool_Exp>
-  _or?: InputMaybe<Array<Singular_Blacklisted_Collections_Bool_Exp>>
-  collection?: InputMaybe<Collections_Bool_Exp>
-  collection_id?: InputMaybe<String_Comparison_Exp>
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>
-}
-
-/** order by max() on columns of table "singular_blacklisted_collections" */
-export type Singular_Blacklisted_Collections_Max_Order_By = {
-  collection_id?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-}
-
-/** order by min() on columns of table "singular_blacklisted_collections" */
-export type Singular_Blacklisted_Collections_Min_Order_By = {
-  collection_id?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "singular_blacklisted_collections". */
-export type Singular_Blacklisted_Collections_Order_By = {
-  collection?: InputMaybe<Collections_Order_By>
-  collection_id?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-}
-
-/** select columns of table "singular_blacklisted_collections" */
-export enum Singular_Blacklisted_Collections_Select_Column {
-  /** column name */
-  CollectionId = 'collection_id',
-  /** column name */
-  CreatedAt = 'created_at',
-}
-
-/** columns and relationships of "singular_curated" */
-export type Singular_Curated = {
-  __typename?: 'singular_curated'
-  created_at: Scalars['timestamptz']['output']
-  nft_id: Scalars['String']['output']
-}
-
-/** aggregated selection of "singular_curated" */
-export type Singular_Curated_Aggregate = {
-  __typename?: 'singular_curated_aggregate'
-  aggregate?: Maybe<Singular_Curated_Aggregate_Fields>
-  nodes: Array<Singular_Curated>
-}
-
-/** aggregate fields of "singular_curated" */
-export type Singular_Curated_Aggregate_Fields = {
-  __typename?: 'singular_curated_aggregate_fields'
-  count: Scalars['Int']['output']
-  max?: Maybe<Singular_Curated_Max_Fields>
-  min?: Maybe<Singular_Curated_Min_Fields>
-}
-
-/** aggregate fields of "singular_curated" */
-export type Singular_Curated_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** order by aggregate values of table "singular_curated" */
-export type Singular_Curated_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Singular_Curated_Max_Order_By>
-  min?: InputMaybe<Singular_Curated_Min_Order_By>
-}
-
-/** Boolean expression to filter rows from the table "singular_curated". All fields are combined with a logical 'AND'. */
-export type Singular_Curated_Bool_Exp = {
-  _and?: InputMaybe<Array<Singular_Curated_Bool_Exp>>
-  _not?: InputMaybe<Singular_Curated_Bool_Exp>
-  _or?: InputMaybe<Array<Singular_Curated_Bool_Exp>>
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>
-  nft_id?: InputMaybe<String_Comparison_Exp>
-}
-
-/** columns and relationships of "singular_curated_collections" */
-export type Singular_Curated_Collections = {
-  __typename?: 'singular_curated_collections'
-  collection_id: Scalars['String']['output']
-  created_at: Scalars['timestamptz']['output']
-}
-
-/** aggregated selection of "singular_curated_collections" */
-export type Singular_Curated_Collections_Aggregate = {
-  __typename?: 'singular_curated_collections_aggregate'
-  aggregate?: Maybe<Singular_Curated_Collections_Aggregate_Fields>
-  nodes: Array<Singular_Curated_Collections>
-}
-
-/** aggregate fields of "singular_curated_collections" */
-export type Singular_Curated_Collections_Aggregate_Fields = {
-  __typename?: 'singular_curated_collections_aggregate_fields'
-  count: Scalars['Int']['output']
-  max?: Maybe<Singular_Curated_Collections_Max_Fields>
-  min?: Maybe<Singular_Curated_Collections_Min_Fields>
-}
-
-/** aggregate fields of "singular_curated_collections" */
-export type Singular_Curated_Collections_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Singular_Curated_Collections_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** order by aggregate values of table "singular_curated_collections" */
-export type Singular_Curated_Collections_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Singular_Curated_Collections_Max_Order_By>
-  min?: InputMaybe<Singular_Curated_Collections_Min_Order_By>
-}
-
-/** Boolean expression to filter rows from the table "singular_curated_collections". All fields are combined with a logical 'AND'. */
-export type Singular_Curated_Collections_Bool_Exp = {
-  _and?: InputMaybe<Array<Singular_Curated_Collections_Bool_Exp>>
-  _not?: InputMaybe<Singular_Curated_Collections_Bool_Exp>
-  _or?: InputMaybe<Array<Singular_Curated_Collections_Bool_Exp>>
-  collection_id?: InputMaybe<String_Comparison_Exp>
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>
-}
-
-/** aggregate max on columns */
-export type Singular_Curated_Collections_Max_Fields = {
-  __typename?: 'singular_curated_collections_max_fields'
-  collection_id?: Maybe<Scalars['String']['output']>
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-}
-
-/** order by max() on columns of table "singular_curated_collections" */
-export type Singular_Curated_Collections_Max_Order_By = {
-  collection_id?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-}
-
-/** aggregate min on columns */
-export type Singular_Curated_Collections_Min_Fields = {
-  __typename?: 'singular_curated_collections_min_fields'
-  collection_id?: Maybe<Scalars['String']['output']>
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-}
-
-/** order by min() on columns of table "singular_curated_collections" */
-export type Singular_Curated_Collections_Min_Order_By = {
-  collection_id?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "singular_curated_collections". */
-export type Singular_Curated_Collections_Order_By = {
-  collection_id?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-}
-
-/** select columns of table "singular_curated_collections" */
-export enum Singular_Curated_Collections_Select_Column {
-  /** column name */
-  CollectionId = 'collection_id',
-  /** column name */
-  CreatedAt = 'created_at',
-}
-
-/** aggregate max on columns */
-export type Singular_Curated_Max_Fields = {
-  __typename?: 'singular_curated_max_fields'
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-  nft_id?: Maybe<Scalars['String']['output']>
-}
-
-/** order by max() on columns of table "singular_curated" */
-export type Singular_Curated_Max_Order_By = {
-  created_at?: InputMaybe<Order_By>
-  nft_id?: InputMaybe<Order_By>
-}
-
-/** aggregate min on columns */
-export type Singular_Curated_Min_Fields = {
-  __typename?: 'singular_curated_min_fields'
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-  nft_id?: Maybe<Scalars['String']['output']>
-}
-
-/** order by min() on columns of table "singular_curated" */
-export type Singular_Curated_Min_Order_By = {
-  created_at?: InputMaybe<Order_By>
-  nft_id?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "singular_curated". */
-export type Singular_Curated_Order_By = {
-  created_at?: InputMaybe<Order_By>
-  nft_id?: InputMaybe<Order_By>
-}
-
-/** select columns of table "singular_curated" */
-export enum Singular_Curated_Select_Column {
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  NftId = 'nft_id',
-}
-
-/** columns and relationships of "singular_hidden_collections" */
-export type Singular_Hidden_Collections = {
-  __typename?: 'singular_hidden_collections'
-  collection_id: Scalars['String']['output']
-  created_at: Scalars['timestamptz']['output']
-}
-
-/** Boolean expression to filter rows from the table "singular_hidden_collections". All fields are combined with a logical 'AND'. */
-export type Singular_Hidden_Collections_Bool_Exp = {
-  _and?: InputMaybe<Array<Singular_Hidden_Collections_Bool_Exp>>
-  _not?: InputMaybe<Singular_Hidden_Collections_Bool_Exp>
-  _or?: InputMaybe<Array<Singular_Hidden_Collections_Bool_Exp>>
-  collection_id?: InputMaybe<String_Comparison_Exp>
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>
-}
-
-/** Ordering options when selecting data from "singular_hidden_collections". */
-export type Singular_Hidden_Collections_Order_By = {
-  collection_id?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-}
-
-/** select columns of table "singular_hidden_collections" */
-export enum Singular_Hidden_Collections_Select_Column {
-  /** column name */
-  CollectionId = 'collection_id',
-  /** column name */
-  CreatedAt = 'created_at',
-}
-
-/** columns and relationships of "singular_nsfw_collections" */
-export type Singular_Nsfw_Collections = {
-  __typename?: 'singular_nsfw_collections'
-  /** An object relationship */
-  collection?: Maybe<Collections>
-  collection_id: Scalars['String']['output']
-  created_at: Scalars['timestamptz']['output']
-  reason?: Maybe<Scalars['jsonb']['output']>
-}
-
-/** columns and relationships of "singular_nsfw_collections" */
-export type Singular_Nsfw_CollectionsReasonArgs = {
-  path?: InputMaybe<Scalars['String']['input']>
-}
-
-/** aggregated selection of "singular_nsfw_collections" */
-export type Singular_Nsfw_Collections_Aggregate = {
-  __typename?: 'singular_nsfw_collections_aggregate'
-  aggregate?: Maybe<Singular_Nsfw_Collections_Aggregate_Fields>
-  nodes: Array<Singular_Nsfw_Collections>
-}
-
-/** aggregate fields of "singular_nsfw_collections" */
-export type Singular_Nsfw_Collections_Aggregate_Fields = {
-  __typename?: 'singular_nsfw_collections_aggregate_fields'
-  count: Scalars['Int']['output']
-  max?: Maybe<Singular_Nsfw_Collections_Max_Fields>
-  min?: Maybe<Singular_Nsfw_Collections_Min_Fields>
-}
-
-/** aggregate fields of "singular_nsfw_collections" */
-export type Singular_Nsfw_Collections_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Singular_Nsfw_Collections_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** order by aggregate values of table "singular_nsfw_collections" */
-export type Singular_Nsfw_Collections_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Singular_Nsfw_Collections_Max_Order_By>
-  min?: InputMaybe<Singular_Nsfw_Collections_Min_Order_By>
-}
-
-/** Boolean expression to filter rows from the table "singular_nsfw_collections". All fields are combined with a logical 'AND'. */
-export type Singular_Nsfw_Collections_Bool_Exp = {
-  _and?: InputMaybe<Array<Singular_Nsfw_Collections_Bool_Exp>>
-  _not?: InputMaybe<Singular_Nsfw_Collections_Bool_Exp>
-  _or?: InputMaybe<Array<Singular_Nsfw_Collections_Bool_Exp>>
-  collection?: InputMaybe<Collections_Bool_Exp>
-  collection_id?: InputMaybe<String_Comparison_Exp>
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>
-  reason?: InputMaybe<Jsonb_Comparison_Exp>
-}
-
-/** aggregate max on columns */
-export type Singular_Nsfw_Collections_Max_Fields = {
-  __typename?: 'singular_nsfw_collections_max_fields'
-  collection_id?: Maybe<Scalars['String']['output']>
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-}
-
-/** order by max() on columns of table "singular_nsfw_collections" */
-export type Singular_Nsfw_Collections_Max_Order_By = {
-  collection_id?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-}
-
-/** aggregate min on columns */
-export type Singular_Nsfw_Collections_Min_Fields = {
-  __typename?: 'singular_nsfw_collections_min_fields'
-  collection_id?: Maybe<Scalars['String']['output']>
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-}
-
-/** order by min() on columns of table "singular_nsfw_collections" */
-export type Singular_Nsfw_Collections_Min_Order_By = {
-  collection_id?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "singular_nsfw_collections". */
-export type Singular_Nsfw_Collections_Order_By = {
-  collection?: InputMaybe<Collections_Order_By>
-  collection_id?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-  reason?: InputMaybe<Order_By>
-}
-
-/** select columns of table "singular_nsfw_collections" */
-export enum Singular_Nsfw_Collections_Select_Column {
-  /** column name */
-  CollectionId = 'collection_id',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Reason = 'reason',
-}
-
-/** columns and relationships of "singular_nsfw_nfts" */
-export type Singular_Nsfw_Nfts = {
-  __typename?: 'singular_nsfw_nfts'
-  created_at: Scalars['timestamptz']['output']
-  /** An object relationship */
-  nft: Nfts
-  nft_id: Scalars['String']['output']
-  reason?: Maybe<Scalars['jsonb']['output']>
-}
-
-/** columns and relationships of "singular_nsfw_nfts" */
-export type Singular_Nsfw_NftsReasonArgs = {
-  path?: InputMaybe<Scalars['String']['input']>
-}
-
-/** aggregated selection of "singular_nsfw_nfts" */
-export type Singular_Nsfw_Nfts_Aggregate = {
-  __typename?: 'singular_nsfw_nfts_aggregate'
-  aggregate?: Maybe<Singular_Nsfw_Nfts_Aggregate_Fields>
-  nodes: Array<Singular_Nsfw_Nfts>
-}
-
-/** aggregate fields of "singular_nsfw_nfts" */
-export type Singular_Nsfw_Nfts_Aggregate_Fields = {
-  __typename?: 'singular_nsfw_nfts_aggregate_fields'
-  count: Scalars['Int']['output']
-  max?: Maybe<Singular_Nsfw_Nfts_Max_Fields>
-  min?: Maybe<Singular_Nsfw_Nfts_Min_Fields>
-}
-
-/** aggregate fields of "singular_nsfw_nfts" */
-export type Singular_Nsfw_Nfts_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** order by aggregate values of table "singular_nsfw_nfts" */
-export type Singular_Nsfw_Nfts_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Singular_Nsfw_Nfts_Max_Order_By>
-  min?: InputMaybe<Singular_Nsfw_Nfts_Min_Order_By>
-}
-
-/** Boolean expression to filter rows from the table "singular_nsfw_nfts". All fields are combined with a logical 'AND'. */
-export type Singular_Nsfw_Nfts_Bool_Exp = {
-  _and?: InputMaybe<Array<Singular_Nsfw_Nfts_Bool_Exp>>
-  _not?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
-  _or?: InputMaybe<Array<Singular_Nsfw_Nfts_Bool_Exp>>
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>
-  nft?: InputMaybe<Nfts_Bool_Exp>
-  nft_id?: InputMaybe<String_Comparison_Exp>
-  reason?: InputMaybe<Jsonb_Comparison_Exp>
-}
-
-/** aggregate max on columns */
-export type Singular_Nsfw_Nfts_Max_Fields = {
-  __typename?: 'singular_nsfw_nfts_max_fields'
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-  nft_id?: Maybe<Scalars['String']['output']>
-}
-
-/** order by max() on columns of table "singular_nsfw_nfts" */
-export type Singular_Nsfw_Nfts_Max_Order_By = {
-  created_at?: InputMaybe<Order_By>
-  nft_id?: InputMaybe<Order_By>
-}
-
-/** aggregate min on columns */
-export type Singular_Nsfw_Nfts_Min_Fields = {
-  __typename?: 'singular_nsfw_nfts_min_fields'
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-  nft_id?: Maybe<Scalars['String']['output']>
-}
-
-/** order by min() on columns of table "singular_nsfw_nfts" */
-export type Singular_Nsfw_Nfts_Min_Order_By = {
-  created_at?: InputMaybe<Order_By>
-  nft_id?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "singular_nsfw_nfts". */
-export type Singular_Nsfw_Nfts_Order_By = {
-  created_at?: InputMaybe<Order_By>
-  nft?: InputMaybe<Nfts_Order_By>
-  nft_id?: InputMaybe<Order_By>
-  reason?: InputMaybe<Order_By>
-}
-
-/** select columns of table "singular_nsfw_nfts" */
-export enum Singular_Nsfw_Nfts_Select_Column {
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  NftId = 'nft_id',
-  /** column name */
-  Reason = 'reason',
-}
-
-/** columns and relationships of "singular_verified_collections" */
-export type Singular_Verified_Collections = {
-  __typename?: 'singular_verified_collections'
-  collection_id: Scalars['String']['output']
-  created_at: Scalars['timestamptz']['output']
-}
-
-/** aggregated selection of "singular_verified_collections" */
-export type Singular_Verified_Collections_Aggregate = {
-  __typename?: 'singular_verified_collections_aggregate'
-  aggregate?: Maybe<Singular_Verified_Collections_Aggregate_Fields>
-  nodes: Array<Singular_Verified_Collections>
-}
-
-/** aggregate fields of "singular_verified_collections" */
-export type Singular_Verified_Collections_Aggregate_Fields = {
-  __typename?: 'singular_verified_collections_aggregate_fields'
-  count: Scalars['Int']['output']
-  max?: Maybe<Singular_Verified_Collections_Max_Fields>
-  min?: Maybe<Singular_Verified_Collections_Min_Fields>
-}
-
-/** aggregate fields of "singular_verified_collections" */
-export type Singular_Verified_Collections_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Singular_Verified_Collections_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** order by aggregate values of table "singular_verified_collections" */
-export type Singular_Verified_Collections_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Singular_Verified_Collections_Max_Order_By>
-  min?: InputMaybe<Singular_Verified_Collections_Min_Order_By>
-}
-
-/** Boolean expression to filter rows from the table "singular_verified_collections". All fields are combined with a logical 'AND'. */
-export type Singular_Verified_Collections_Bool_Exp = {
-  _and?: InputMaybe<Array<Singular_Verified_Collections_Bool_Exp>>
-  _not?: InputMaybe<Singular_Verified_Collections_Bool_Exp>
-  _or?: InputMaybe<Array<Singular_Verified_Collections_Bool_Exp>>
-  collection_id?: InputMaybe<String_Comparison_Exp>
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>
-}
-
-/** aggregate max on columns */
-export type Singular_Verified_Collections_Max_Fields = {
-  __typename?: 'singular_verified_collections_max_fields'
-  collection_id?: Maybe<Scalars['String']['output']>
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-}
-
-/** order by max() on columns of table "singular_verified_collections" */
-export type Singular_Verified_Collections_Max_Order_By = {
-  collection_id?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-}
-
-/** aggregate min on columns */
-export type Singular_Verified_Collections_Min_Fields = {
-  __typename?: 'singular_verified_collections_min_fields'
-  collection_id?: Maybe<Scalars['String']['output']>
-  created_at?: Maybe<Scalars['timestamptz']['output']>
-}
-
-/** order by min() on columns of table "singular_verified_collections" */
-export type Singular_Verified_Collections_Min_Order_By = {
-  collection_id?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-}
-
-/** Ordering options when selecting data from "singular_verified_collections". */
-export type Singular_Verified_Collections_Order_By = {
-  collection_id?: InputMaybe<Order_By>
-  created_at?: InputMaybe<Order_By>
-}
-
-/** select columns of table "singular_verified_collections" */
-export enum Singular_Verified_Collections_Select_Column {
-  /** column name */
-  CollectionId = 'collection_id',
-  /** column name */
-  CreatedAt = 'created_at',
-}
-
-/** Boolean expression to compare columns of type "smallint". All fields are combined with logical 'AND'. */
-export type Smallint_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['smallint']['input']>
-  _gt?: InputMaybe<Scalars['smallint']['input']>
-  _gte?: InputMaybe<Scalars['smallint']['input']>
-  _in?: InputMaybe<Array<Scalars['smallint']['input']>>
-  _is_null?: InputMaybe<Scalars['Boolean']['input']>
-  _lt?: InputMaybe<Scalars['smallint']['input']>
-  _lte?: InputMaybe<Scalars['smallint']['input']>
-  _neq?: InputMaybe<Scalars['smallint']['input']>
-  _nin?: InputMaybe<Array<Scalars['smallint']['input']>>
-}
-
-export type Subscription_Root = {
-  __typename?: 'subscription_root'
-  /** fetch data from the table: "base_themes" */
-  base_themes: Array<Base_Themes>
-  /** fetch data from the table: "base_themes" using primary key columns */
-  base_themes_by_pk?: Maybe<Base_Themes>
-  /** fetch data from the table: "bases" */
-  bases: Array<Bases>
-  /** fetch aggregated fields from the table: "bases" */
-  bases_aggregate: Bases_Aggregate
-  /** fetch data from the table: "bases" using primary key columns */
-  bases_by_pk?: Maybe<Bases>
-  /** An array relationship */
-  changes: Array<Changes>
-  /** An aggregate relationship */
-  changes_aggregate: Changes_Aggregate
-  /** fetch data from the table: "changes" using primary key columns */
-  changes_by_pk?: Maybe<Changes>
-  /** An array relationship */
-  changes_collection: Array<Changes_Collection>
-  /** fetch data from the table: "changes_collection" using primary key columns */
-  changes_collection_by_pk?: Maybe<Changes_Collection>
-  /** fetch data from the table: "collection_banners" */
-  collection_banners: Array<Collection_Banners>
-  /** fetch data from the table: "collection_banners" using primary key columns */
-  collection_banners_by_pk?: Maybe<Collection_Banners>
-  /** fetch data from the table: "collections" */
-  collections: Array<Collections>
-  /** fetch aggregated fields from the table: "collections" */
-  collections_aggregate: Collections_Aggregate
-  /** fetch data from the table: "collections" using primary key columns */
-  collections_by_pk?: Maybe<Collections>
-  /** fetch data from the table: "distinct_kanaria_nfts" */
-  distinct_kanaria_nfts: Array<Distinct_Kanaria_Nfts>
-  /** fetch aggregated fields from the table: "distinct_kanaria_nfts" */
-  distinct_kanaria_nfts_aggregate: Distinct_Kanaria_Nfts_Aggregate
-  /** fetch data from the table: "distinct_nfts" */
-  distinct_nfts: Array<Distinct_Nfts>
-  /** fetch aggregated fields from the table: "distinct_nfts" */
-  distinct_nfts_aggregate: Distinct_Nfts_Aggregate
-  /** fetch data from the table: "dutchie" */
-  dutchie: Array<Dutchie>
-  /** fetch data from the table: "dutchie" using primary key columns */
-  dutchie_by_pk?: Maybe<Dutchie>
-  /** fetch data from the table: "gems_enabled" */
-  gems_enabled: Array<Gems_Enabled>
-  /** fetch data from the table: "gems_enabled" using primary key columns */
-  gems_enabled_by_pk?: Maybe<Gems_Enabled>
-  /** execute function "get_newly_listed" which returns "nfts" */
-  get_newly_listed: Array<Nfts>
-  /** execute function "get_newly_listed" and query aggregates on result of table type "nfts" */
-  get_newly_listed_aggregate: Nfts_Aggregate
-  /** execute function "get_newly_minted" which returns "nfts" */
-  get_newly_minted: Array<Nfts>
-  /** execute function "get_newly_minted" and query aggregates on result of table type "nfts" */
-  get_newly_minted_aggregate: Nfts_Aggregate
-  /** execute function "get_ordered_changes_stats" which returns "changes" */
-  get_ordered_changes_stats: Array<Changes>
-  /** execute function "get_ordered_changes_stats" and query aggregates on result of table type "changes" */
-  get_ordered_changes_stats_aggregate: Changes_Aggregate
-  /** fetch data from the table: "hatched_birds" */
-  hatched_birds: Array<Hatched_Birds>
-  /** fetch data from the table: "hatched_birds" using primary key columns */
-  hatched_birds_by_pk?: Maybe<Hatched_Birds>
-  /** An array relationship */
-  nfts: Array<Nfts>
-  /** An aggregate relationship */
-  nfts_aggregate: Nfts_Aggregate
-  /** fetch data from the table: "nfts" using primary key columns */
-  nfts_by_pk?: Maybe<Nfts>
-  /** fetch data from the table: "nfts_stats" */
-  nfts_stats: Array<Nfts_Stats>
-  /** fetch aggregated fields from the table: "nfts_stats" */
-  nfts_stats_aggregate: Nfts_Stats_Aggregate
-  /** An array relationship */
-  parts: Array<Parts>
-  /** An aggregate relationship */
-  parts_aggregate: Parts_Aggregate
-  /** fetch data from the table: "parts" using primary key columns */
-  parts_by_pk?: Maybe<Parts>
-  /** fetch data from the table: "recently_listed" */
-  recently_listed: Array<Recently_Listed>
-  /** fetch aggregated fields from the table: "recently_listed" */
-  recently_listed_aggregate: Recently_Listed_Aggregate
-  /** An array relationship */
-  resources: Array<Resources>
-  /** An aggregate relationship */
-  resources_aggregate: Resources_Aggregate
-  /** An array relationship */
-  resources_base_themes: Array<Resources_Base_Themes>
-  /** fetch data from the table: "resources_base_themes" using primary key columns */
-  resources_base_themes_by_pk?: Maybe<Resources_Base_Themes>
-  /** fetch data from the table: "resources" using primary key columns */
-  resources_by_pk?: Maybe<Resources>
-  /** An array relationship */
-  resources_parts: Array<Resources_Parts>
-  /** An aggregate relationship */
-  resources_parts_aggregate: Resources_Parts_Aggregate
-  /** fetch data from the table: "resources_parts" using primary key columns */
-  resources_parts_by_pk?: Maybe<Resources_Parts>
-  /** fetch data from the table: "sales" */
-  sales: Array<Sales>
-  /** An array relationship */
-  singular_blacklisted_accounts: Array<Singular_Blacklisted_Accounts>
-  /** fetch data from the table: "singular_blacklisted_accounts" using primary key columns */
-  singular_blacklisted_accounts_by_pk?: Maybe<Singular_Blacklisted_Accounts>
-  /** An array relationship */
-  singular_blacklisted_collections: Array<Singular_Blacklisted_Collections>
-  /** fetch data from the table: "singular_blacklisted_collections" using primary key columns */
-  singular_blacklisted_collections_by_pk?: Maybe<Singular_Blacklisted_Collections>
-  /** An array relationship */
-  singular_curated: Array<Singular_Curated>
-  /** An aggregate relationship */
-  singular_curated_aggregate: Singular_Curated_Aggregate
-  /** fetch data from the table: "singular_curated" using primary key columns */
-  singular_curated_by_pk?: Maybe<Singular_Curated>
-  /** fetch data from the table: "singular_curated_collections" */
-  singular_curated_collections: Array<Singular_Curated_Collections>
-  /** fetch aggregated fields from the table: "singular_curated_collections" */
-  singular_curated_collections_aggregate: Singular_Curated_Collections_Aggregate
-  /** fetch data from the table: "singular_curated_collections" using primary key columns */
-  singular_curated_collections_by_pk?: Maybe<Singular_Curated_Collections>
-  /** fetch data from the table: "singular_hidden_collections" */
-  singular_hidden_collections: Array<Singular_Hidden_Collections>
-  /** fetch data from the table: "singular_hidden_collections" using primary key columns */
-  singular_hidden_collections_by_pk?: Maybe<Singular_Hidden_Collections>
-  /** An array relationship */
-  singular_nsfw_collections: Array<Singular_Nsfw_Collections>
-  /** An aggregate relationship */
-  singular_nsfw_collections_aggregate: Singular_Nsfw_Collections_Aggregate
-  /** fetch data from the table: "singular_nsfw_collections" using primary key columns */
-  singular_nsfw_collections_by_pk?: Maybe<Singular_Nsfw_Collections>
-  /** fetch data from the table: "singular_nsfw_nfts" */
-  singular_nsfw_nfts: Array<Singular_Nsfw_Nfts>
-  /** fetch aggregated fields from the table: "singular_nsfw_nfts" */
-  singular_nsfw_nfts_aggregate: Singular_Nsfw_Nfts_Aggregate
-  /** fetch data from the table: "singular_nsfw_nfts" using primary key columns */
-  singular_nsfw_nfts_by_pk?: Maybe<Singular_Nsfw_Nfts>
-  /** An array relationship */
-  singular_verified_collections: Array<Singular_Verified_Collections>
-  /** An aggregate relationship */
-  singular_verified_collections_aggregate: Singular_Verified_Collections_Aggregate
-  /** fetch data from the table: "singular_verified_collections" using primary key columns */
-  singular_verified_collections_by_pk?: Maybe<Singular_Verified_Collections>
-  /** fetch data from the table: "system" */
-  system: Array<System>
-  /** fetch data from the table: "system" using primary key columns */
-  system_by_pk?: Maybe<System>
-  /** fetch data from the table: "yuletide_item_track" */
-  yuletide_item_track: Array<Yuletide_Item_Track>
-  /** fetch aggregated fields from the table: "yuletide_item_track" */
-  yuletide_item_track_aggregate: Yuletide_Item_Track_Aggregate
-  /** fetch data from the table: "yuletide_item_track" using primary key columns */
-  yuletide_item_track_by_pk?: Maybe<Yuletide_Item_Track>
-}
-
-export type Subscription_RootBase_ThemesArgs = {
-  distinct_on?: InputMaybe<Array<Base_Themes_Select_Column>>
+export type NftEntityResourcesArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Base_Themes_Order_By>>
-  where?: InputMaybe<Base_Themes_Bool_Exp>
+  orderBy?: InputMaybe<Array<ResourceOrderByInput>>
+  where?: InputMaybe<ResourceWhereInput>
 }
 
-export type Subscription_RootBase_Themes_By_PkArgs = {
+export type NftEntityEdge = {
+  __typename?: 'NFTEntityEdge'
+  cursor: Scalars['String']['output']
+  node: NftEntity
+}
+
+export enum NftEntityOrderByInput {
+  BlockNumberAsc = 'blockNumber_ASC',
+  BlockNumberDesc = 'blockNumber_DESC',
+  BurnedAsc = 'burned_ASC',
+  BurnedDesc = 'burned_DESC',
+  CollectionBlockNumberAsc = 'collection_blockNumber_ASC',
+  CollectionBlockNumberDesc = 'collection_blockNumber_DESC',
+  CollectionCreatedAtAsc = 'collection_createdAt_ASC',
+  CollectionCreatedAtDesc = 'collection_createdAt_DESC',
+  CollectionCurrentOwnerAsc = 'collection_currentOwner_ASC',
+  CollectionCurrentOwnerDesc = 'collection_currentOwner_DESC',
+  CollectionHashAsc = 'collection_hash_ASC',
+  CollectionHashDesc = 'collection_hash_DESC',
+  CollectionIdAsc = 'collection_id_ASC',
+  CollectionIdDesc = 'collection_id_DESC',
+  CollectionImageAsc = 'collection_image_ASC',
+  CollectionImageDesc = 'collection_image_DESC',
+  CollectionIssuerAsc = 'collection_issuer_ASC',
+  CollectionIssuerDesc = 'collection_issuer_DESC',
+  CollectionMaxAsc = 'collection_max_ASC',
+  CollectionMaxDesc = 'collection_max_DESC',
+  CollectionMediaAsc = 'collection_media_ASC',
+  CollectionMediaDesc = 'collection_media_DESC',
+  CollectionMetadataAsc = 'collection_metadata_ASC',
+  CollectionMetadataDesc = 'collection_metadata_DESC',
+  CollectionNameAsc = 'collection_name_ASC',
+  CollectionNameDesc = 'collection_name_DESC',
+  CollectionNftCountAsc = 'collection_nftCount_ASC',
+  CollectionNftCountDesc = 'collection_nftCount_DESC',
+  CollectionSupplyAsc = 'collection_supply_ASC',
+  CollectionSupplyDesc = 'collection_supply_DESC',
+  CollectionSymbolAsc = 'collection_symbol_ASC',
+  CollectionSymbolDesc = 'collection_symbol_DESC',
+  CollectionUpdatedAtAsc = 'collection_updatedAt_ASC',
+  CollectionUpdatedAtDesc = 'collection_updatedAt_DESC',
+  CollectionVersionAsc = 'collection_version_ASC',
+  CollectionVersionDesc = 'collection_version_DESC',
+  CreatedAtAsc = 'createdAt_ASC',
+  CreatedAtDesc = 'createdAt_DESC',
+  CurrentOwnerAsc = 'currentOwner_ASC',
+  CurrentOwnerDesc = 'currentOwner_DESC',
+  EmoteCountAsc = 'emoteCount_ASC',
+  EmoteCountDesc = 'emoteCount_DESC',
+  HashAsc = 'hash_ASC',
+  HashDesc = 'hash_DESC',
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  ImageAsc = 'image_ASC',
+  ImageDesc = 'image_DESC',
+  InstanceAsc = 'instance_ASC',
+  InstanceDesc = 'instance_DESC',
+  IssuerAsc = 'issuer_ASC',
+  IssuerDesc = 'issuer_DESC',
+  MediaAsc = 'media_ASC',
+  MediaDesc = 'media_DESC',
+  MetaAnimationUrlAsc = 'meta_animationUrl_ASC',
+  MetaAnimationUrlDesc = 'meta_animationUrl_DESC',
+  MetaDescriptionAsc = 'meta_description_ASC',
+  MetaDescriptionDesc = 'meta_description_DESC',
+  MetaIdAsc = 'meta_id_ASC',
+  MetaIdDesc = 'meta_id_DESC',
+  MetaImageAsc = 'meta_image_ASC',
+  MetaImageDesc = 'meta_image_DESC',
+  MetaNameAsc = 'meta_name_ASC',
+  MetaNameDesc = 'meta_name_DESC',
+  MetaTypeAsc = 'meta_type_ASC',
+  MetaTypeDesc = 'meta_type_DESC',
+  MetadataAsc = 'metadata_ASC',
+  MetadataDesc = 'metadata_DESC',
+  NameAsc = 'name_ASC',
+  NameDesc = 'name_DESC',
+  ParentBlockNumberAsc = 'parent_blockNumber_ASC',
+  ParentBlockNumberDesc = 'parent_blockNumber_DESC',
+  ParentBurnedAsc = 'parent_burned_ASC',
+  ParentBurnedDesc = 'parent_burned_DESC',
+  ParentCreatedAtAsc = 'parent_createdAt_ASC',
+  ParentCreatedAtDesc = 'parent_createdAt_DESC',
+  ParentCurrentOwnerAsc = 'parent_currentOwner_ASC',
+  ParentCurrentOwnerDesc = 'parent_currentOwner_DESC',
+  ParentEmoteCountAsc = 'parent_emoteCount_ASC',
+  ParentEmoteCountDesc = 'parent_emoteCount_DESC',
+  ParentHashAsc = 'parent_hash_ASC',
+  ParentHashDesc = 'parent_hash_DESC',
+  ParentIdAsc = 'parent_id_ASC',
+  ParentIdDesc = 'parent_id_DESC',
+  ParentImageAsc = 'parent_image_ASC',
+  ParentImageDesc = 'parent_image_DESC',
+  ParentInstanceAsc = 'parent_instance_ASC',
+  ParentInstanceDesc = 'parent_instance_DESC',
+  ParentIssuerAsc = 'parent_issuer_ASC',
+  ParentIssuerDesc = 'parent_issuer_DESC',
+  ParentMediaAsc = 'parent_media_ASC',
+  ParentMediaDesc = 'parent_media_DESC',
+  ParentMetadataAsc = 'parent_metadata_ASC',
+  ParentMetadataDesc = 'parent_metadata_DESC',
+  ParentNameAsc = 'parent_name_ASC',
+  ParentNameDesc = 'parent_name_DESC',
+  ParentPendingAsc = 'parent_pending_ASC',
+  ParentPendingDesc = 'parent_pending_DESC',
+  ParentPriceAsc = 'parent_price_ASC',
+  ParentPriceDesc = 'parent_price_DESC',
+  ParentRecipientAsc = 'parent_recipient_ASC',
+  ParentRecipientDesc = 'parent_recipient_DESC',
+  ParentRoyaltyAsc = 'parent_royalty_ASC',
+  ParentRoyaltyDesc = 'parent_royalty_DESC',
+  ParentSnAsc = 'parent_sn_ASC',
+  ParentSnDesc = 'parent_sn_DESC',
+  ParentTransferableAsc = 'parent_transferable_ASC',
+  ParentTransferableDesc = 'parent_transferable_DESC',
+  ParentUpdatedAtAsc = 'parent_updatedAt_ASC',
+  ParentUpdatedAtDesc = 'parent_updatedAt_DESC',
+  ParentVersionAsc = 'parent_version_ASC',
+  ParentVersionDesc = 'parent_version_DESC',
+  PendingAsc = 'pending_ASC',
+  PendingDesc = 'pending_DESC',
+  PriceAsc = 'price_ASC',
+  PriceDesc = 'price_DESC',
+  RecipientAsc = 'recipient_ASC',
+  RecipientDesc = 'recipient_DESC',
+  RoyaltyAsc = 'royalty_ASC',
+  RoyaltyDesc = 'royalty_DESC',
+  SnAsc = 'sn_ASC',
+  SnDesc = 'sn_DESC',
+  TransferableAsc = 'transferable_ASC',
+  TransferableDesc = 'transferable_DESC',
+  UpdatedAtAsc = 'updatedAt_ASC',
+  UpdatedAtDesc = 'updatedAt_DESC',
+  VersionAsc = 'version_ASC',
+  VersionDesc = 'version_DESC',
+}
+
+export type NftEntityWhereInput = {
+  AND?: InputMaybe<Array<NftEntityWhereInput>>
+  OR?: InputMaybe<Array<NftEntityWhereInput>>
+  blockNumber_eq?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  blockNumber_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_not_eq?: InputMaybe<Scalars['BigInt']['input']>
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  burned_eq?: InputMaybe<Scalars['Boolean']['input']>
+  burned_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  burned_not_eq?: InputMaybe<Scalars['Boolean']['input']>
+  collection?: InputMaybe<CollectionEntityWhereInput>
+  collection_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  createdAt_eq?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt_gt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt_gte?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt_in?: InputMaybe<Array<Scalars['DateTime']['input']>>
+  createdAt_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  createdAt_lt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt_lte?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt_not_eq?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt_not_in?: InputMaybe<Array<Scalars['DateTime']['input']>>
+  currentOwner_contains?: InputMaybe<Scalars['String']['input']>
+  currentOwner_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  currentOwner_endsWith?: InputMaybe<Scalars['String']['input']>
+  currentOwner_eq?: InputMaybe<Scalars['String']['input']>
+  currentOwner_gt?: InputMaybe<Scalars['String']['input']>
+  currentOwner_gte?: InputMaybe<Scalars['String']['input']>
+  currentOwner_in?: InputMaybe<Array<Scalars['String']['input']>>
+  currentOwner_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  currentOwner_lt?: InputMaybe<Scalars['String']['input']>
+  currentOwner_lte?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_contains?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_eq?: InputMaybe<Scalars['String']['input']>
+  currentOwner_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  currentOwner_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  currentOwner_startsWith?: InputMaybe<Scalars['String']['input']>
+  emoteCount_eq?: InputMaybe<Scalars['Int']['input']>
+  emoteCount_gt?: InputMaybe<Scalars['Int']['input']>
+  emoteCount_gte?: InputMaybe<Scalars['Int']['input']>
+  emoteCount_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  emoteCount_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  emoteCount_lt?: InputMaybe<Scalars['Int']['input']>
+  emoteCount_lte?: InputMaybe<Scalars['Int']['input']>
+  emoteCount_not_eq?: InputMaybe<Scalars['Int']['input']>
+  emoteCount_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  emotes_every?: InputMaybe<EmoteWhereInput>
+  emotes_none?: InputMaybe<EmoteWhereInput>
+  emotes_some?: InputMaybe<EmoteWhereInput>
+  events_every?: InputMaybe<EventWhereInput>
+  events_none?: InputMaybe<EventWhereInput>
+  events_some?: InputMaybe<EventWhereInput>
+  hash_contains?: InputMaybe<Scalars['String']['input']>
+  hash_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  hash_endsWith?: InputMaybe<Scalars['String']['input']>
+  hash_eq?: InputMaybe<Scalars['String']['input']>
+  hash_gt?: InputMaybe<Scalars['String']['input']>
+  hash_gte?: InputMaybe<Scalars['String']['input']>
+  hash_in?: InputMaybe<Array<Scalars['String']['input']>>
+  hash_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  hash_lt?: InputMaybe<Scalars['String']['input']>
+  hash_lte?: InputMaybe<Scalars['String']['input']>
+  hash_not_contains?: InputMaybe<Scalars['String']['input']>
+  hash_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  hash_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  hash_not_eq?: InputMaybe<Scalars['String']['input']>
+  hash_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  hash_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  hash_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_contains?: InputMaybe<Scalars['String']['input']>
+  id_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_eq?: InputMaybe<Scalars['String']['input']>
+  id_gt?: InputMaybe<Scalars['String']['input']>
+  id_gte?: InputMaybe<Scalars['String']['input']>
+  id_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  id_lt?: InputMaybe<Scalars['String']['input']>
+  id_lte?: InputMaybe<Scalars['String']['input']>
+  id_not_contains?: InputMaybe<Scalars['String']['input']>
+  id_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_not_eq?: InputMaybe<Scalars['String']['input']>
+  id_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_startsWith?: InputMaybe<Scalars['String']['input']>
+  image_contains?: InputMaybe<Scalars['String']['input']>
+  image_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  image_endsWith?: InputMaybe<Scalars['String']['input']>
+  image_eq?: InputMaybe<Scalars['String']['input']>
+  image_gt?: InputMaybe<Scalars['String']['input']>
+  image_gte?: InputMaybe<Scalars['String']['input']>
+  image_in?: InputMaybe<Array<Scalars['String']['input']>>
+  image_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  image_lt?: InputMaybe<Scalars['String']['input']>
+  image_lte?: InputMaybe<Scalars['String']['input']>
+  image_not_contains?: InputMaybe<Scalars['String']['input']>
+  image_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  image_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  image_not_eq?: InputMaybe<Scalars['String']['input']>
+  image_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  image_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  image_startsWith?: InputMaybe<Scalars['String']['input']>
+  instance_contains?: InputMaybe<Scalars['String']['input']>
+  instance_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  instance_endsWith?: InputMaybe<Scalars['String']['input']>
+  instance_eq?: InputMaybe<Scalars['String']['input']>
+  instance_gt?: InputMaybe<Scalars['String']['input']>
+  instance_gte?: InputMaybe<Scalars['String']['input']>
+  instance_in?: InputMaybe<Array<Scalars['String']['input']>>
+  instance_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  instance_lt?: InputMaybe<Scalars['String']['input']>
+  instance_lte?: InputMaybe<Scalars['String']['input']>
+  instance_not_contains?: InputMaybe<Scalars['String']['input']>
+  instance_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  instance_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  instance_not_eq?: InputMaybe<Scalars['String']['input']>
+  instance_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  instance_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  instance_startsWith?: InputMaybe<Scalars['String']['input']>
+  issuer_contains?: InputMaybe<Scalars['String']['input']>
+  issuer_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  issuer_endsWith?: InputMaybe<Scalars['String']['input']>
+  issuer_eq?: InputMaybe<Scalars['String']['input']>
+  issuer_gt?: InputMaybe<Scalars['String']['input']>
+  issuer_gte?: InputMaybe<Scalars['String']['input']>
+  issuer_in?: InputMaybe<Array<Scalars['String']['input']>>
+  issuer_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  issuer_lt?: InputMaybe<Scalars['String']['input']>
+  issuer_lte?: InputMaybe<Scalars['String']['input']>
+  issuer_not_contains?: InputMaybe<Scalars['String']['input']>
+  issuer_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  issuer_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  issuer_not_eq?: InputMaybe<Scalars['String']['input']>
+  issuer_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  issuer_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  issuer_startsWith?: InputMaybe<Scalars['String']['input']>
+  media_contains?: InputMaybe<Scalars['String']['input']>
+  media_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  media_endsWith?: InputMaybe<Scalars['String']['input']>
+  media_eq?: InputMaybe<Scalars['String']['input']>
+  media_gt?: InputMaybe<Scalars['String']['input']>
+  media_gte?: InputMaybe<Scalars['String']['input']>
+  media_in?: InputMaybe<Array<Scalars['String']['input']>>
+  media_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  media_lt?: InputMaybe<Scalars['String']['input']>
+  media_lte?: InputMaybe<Scalars['String']['input']>
+  media_not_contains?: InputMaybe<Scalars['String']['input']>
+  media_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  media_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  media_not_eq?: InputMaybe<Scalars['String']['input']>
+  media_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  media_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  media_startsWith?: InputMaybe<Scalars['String']['input']>
+  meta?: InputMaybe<MetadataEntityWhereInput>
+  meta_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  metadata_contains?: InputMaybe<Scalars['String']['input']>
+  metadata_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  metadata_endsWith?: InputMaybe<Scalars['String']['input']>
+  metadata_eq?: InputMaybe<Scalars['String']['input']>
+  metadata_gt?: InputMaybe<Scalars['String']['input']>
+  metadata_gte?: InputMaybe<Scalars['String']['input']>
+  metadata_in?: InputMaybe<Array<Scalars['String']['input']>>
+  metadata_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  metadata_lt?: InputMaybe<Scalars['String']['input']>
+  metadata_lte?: InputMaybe<Scalars['String']['input']>
+  metadata_not_contains?: InputMaybe<Scalars['String']['input']>
+  metadata_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  metadata_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  metadata_not_eq?: InputMaybe<Scalars['String']['input']>
+  metadata_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  metadata_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  metadata_startsWith?: InputMaybe<Scalars['String']['input']>
+  name_contains?: InputMaybe<Scalars['String']['input']>
+  name_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  name_endsWith?: InputMaybe<Scalars['String']['input']>
+  name_eq?: InputMaybe<Scalars['String']['input']>
+  name_gt?: InputMaybe<Scalars['String']['input']>
+  name_gte?: InputMaybe<Scalars['String']['input']>
+  name_in?: InputMaybe<Array<Scalars['String']['input']>>
+  name_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  name_lt?: InputMaybe<Scalars['String']['input']>
+  name_lte?: InputMaybe<Scalars['String']['input']>
+  name_not_contains?: InputMaybe<Scalars['String']['input']>
+  name_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  name_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  name_not_eq?: InputMaybe<Scalars['String']['input']>
+  name_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  name_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  name_startsWith?: InputMaybe<Scalars['String']['input']>
+  parent?: InputMaybe<NftEntityWhereInput>
+  parent_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  pending_eq?: InputMaybe<Scalars['Boolean']['input']>
+  pending_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  pending_not_eq?: InputMaybe<Scalars['Boolean']['input']>
+  price_eq?: InputMaybe<Scalars['BigInt']['input']>
+  price_gt?: InputMaybe<Scalars['BigInt']['input']>
+  price_gte?: InputMaybe<Scalars['BigInt']['input']>
+  price_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  price_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  price_lt?: InputMaybe<Scalars['BigInt']['input']>
+  price_lte?: InputMaybe<Scalars['BigInt']['input']>
+  price_not_eq?: InputMaybe<Scalars['BigInt']['input']>
+  price_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  recipient_contains?: InputMaybe<Scalars['String']['input']>
+  recipient_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  recipient_endsWith?: InputMaybe<Scalars['String']['input']>
+  recipient_eq?: InputMaybe<Scalars['String']['input']>
+  recipient_gt?: InputMaybe<Scalars['String']['input']>
+  recipient_gte?: InputMaybe<Scalars['String']['input']>
+  recipient_in?: InputMaybe<Array<Scalars['String']['input']>>
+  recipient_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  recipient_lt?: InputMaybe<Scalars['String']['input']>
+  recipient_lte?: InputMaybe<Scalars['String']['input']>
+  recipient_not_contains?: InputMaybe<Scalars['String']['input']>
+  recipient_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  recipient_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  recipient_not_eq?: InputMaybe<Scalars['String']['input']>
+  recipient_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  recipient_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  recipient_startsWith?: InputMaybe<Scalars['String']['input']>
+  resources_every?: InputMaybe<ResourceWhereInput>
+  resources_none?: InputMaybe<ResourceWhereInput>
+  resources_some?: InputMaybe<ResourceWhereInput>
+  royalty_eq?: InputMaybe<Scalars['Float']['input']>
+  royalty_gt?: InputMaybe<Scalars['Float']['input']>
+  royalty_gte?: InputMaybe<Scalars['Float']['input']>
+  royalty_in?: InputMaybe<Array<Scalars['Float']['input']>>
+  royalty_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  royalty_lt?: InputMaybe<Scalars['Float']['input']>
+  royalty_lte?: InputMaybe<Scalars['Float']['input']>
+  royalty_not_eq?: InputMaybe<Scalars['Float']['input']>
+  royalty_not_in?: InputMaybe<Array<Scalars['Float']['input']>>
+  sn_contains?: InputMaybe<Scalars['String']['input']>
+  sn_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  sn_endsWith?: InputMaybe<Scalars['String']['input']>
+  sn_eq?: InputMaybe<Scalars['String']['input']>
+  sn_gt?: InputMaybe<Scalars['String']['input']>
+  sn_gte?: InputMaybe<Scalars['String']['input']>
+  sn_in?: InputMaybe<Array<Scalars['String']['input']>>
+  sn_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  sn_lt?: InputMaybe<Scalars['String']['input']>
+  sn_lte?: InputMaybe<Scalars['String']['input']>
+  sn_not_contains?: InputMaybe<Scalars['String']['input']>
+  sn_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  sn_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  sn_not_eq?: InputMaybe<Scalars['String']['input']>
+  sn_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  sn_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  sn_startsWith?: InputMaybe<Scalars['String']['input']>
+  transferable_eq?: InputMaybe<Scalars['Int']['input']>
+  transferable_gt?: InputMaybe<Scalars['Int']['input']>
+  transferable_gte?: InputMaybe<Scalars['Int']['input']>
+  transferable_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  transferable_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  transferable_lt?: InputMaybe<Scalars['Int']['input']>
+  transferable_lte?: InputMaybe<Scalars['Int']['input']>
+  transferable_not_eq?: InputMaybe<Scalars['Int']['input']>
+  transferable_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  updatedAt_eq?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt_gt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt_gte?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt_in?: InputMaybe<Array<Scalars['DateTime']['input']>>
+  updatedAt_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  updatedAt_lt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt_lte?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt_not_eq?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt_not_in?: InputMaybe<Array<Scalars['DateTime']['input']>>
+  version_contains?: InputMaybe<Scalars['String']['input']>
+  version_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  version_endsWith?: InputMaybe<Scalars['String']['input']>
+  version_eq?: InputMaybe<Scalars['String']['input']>
+  version_gt?: InputMaybe<Scalars['String']['input']>
+  version_gte?: InputMaybe<Scalars['String']['input']>
+  version_in?: InputMaybe<Array<Scalars['String']['input']>>
+  version_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  version_lt?: InputMaybe<Scalars['String']['input']>
+  version_lte?: InputMaybe<Scalars['String']['input']>
+  version_not_contains?: InputMaybe<Scalars['String']['input']>
+  version_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  version_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  version_not_eq?: InputMaybe<Scalars['String']['input']>
+  version_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  version_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  version_startsWith?: InputMaybe<Scalars['String']['input']>
+}
+
+export type PageInfo = {
+  __typename?: 'PageInfo'
+  endCursor: Scalars['String']['output']
+  hasNextPage: Scalars['Boolean']['output']
+  hasPreviousPage: Scalars['Boolean']['output']
+  startCursor: Scalars['String']['output']
+}
+
+export type PassionFeedEntity = {
+  __typename?: 'PassionFeedEntity'
+  id: Scalars['String']['output']
+}
+
+export type Query = {
+  __typename?: 'Query'
+  baseById?: Maybe<Base>
+  /** @deprecated Use baseById */
+  baseByUniqueInput?: Maybe<Base>
+  bases: Array<Base>
+  basesConnection: BasesConnection
+  cacheStatusById?: Maybe<CacheStatus>
+  /** @deprecated Use cacheStatusById */
+  cacheStatusByUniqueInput?: Maybe<CacheStatus>
+  cacheStatuses: Array<CacheStatus>
+  cacheStatusesConnection: CacheStatusesConnection
+  collectionBuyChartById: Array<ChartEntity>
+  collectionBuyEventStatsById: Array<EventEntity>
+  collectionEntities: Array<CollectionEntity>
+  collectionEntitiesConnection: CollectionEntitiesConnection
+  collectionEntityById?: Maybe<CollectionEntity>
+  /** @deprecated Use collectionEntityById */
+  collectionEntityByUniqueInput?: Maybe<CollectionEntity>
+  collectionListChartById: Array<ChartEntity>
+  collectorById?: Maybe<Collector>
+  /** @deprecated Use collectorById */
+  collectorByUniqueInput?: Maybe<Collector>
+  collectors: Array<Collector>
+  collectorsConnection: CollectorsConnection
+  emoteById?: Maybe<Emote>
+  /** @deprecated Use emoteById */
+  emoteByUniqueInput?: Maybe<Emote>
+  emoteListByNftId: Array<EmoteCountEntity>
+  emoteMapByNftId: Scalars['String']['output']
+  emotes: Array<Emote>
+  emotesConnection: EmotesConnection
+  eventById?: Maybe<Event>
+  /** @deprecated Use eventById */
+  eventByUniqueInput?: Maybe<Event>
+  events: Array<Event>
+  eventsConnection: EventsConnection
+  hello: Hello
+  hotDashboard: Array<HotNftEntity>
+  lastEvent: Array<LastEventEntity>
+  metadataEntities: Array<MetadataEntity>
+  metadataEntitiesConnection: MetadataEntitiesConnection
+  metadataEntityById?: Maybe<MetadataEntity>
+  /** @deprecated Use metadataEntityById */
+  metadataEntityByUniqueInput?: Maybe<MetadataEntity>
+  nftEntities: Array<NftEntity>
+  nftEntitiesConnection: NftEntitiesConnection
+  nftEntityById?: Maybe<NftEntity>
+  /** @deprecated Use nftEntityById */
+  nftEntityByUniqueInput?: Maybe<NftEntity>
+  passionFeed: Array<PassionFeedEntity>
+  resourceById?: Maybe<Resource>
+  /** @deprecated Use resourceById */
+  resourceByUniqueInput?: Maybe<Resource>
+  resources: Array<Resource>
+  resourcesConnection: ResourcesConnection
+  salesFeed: Array<SaleNftEntity>
+  series: Array<Series>
+  seriesById?: Maybe<Series>
+  /** @deprecated Use seriesById */
+  seriesByUniqueInput?: Maybe<Series>
+  seriesConnection: SeriesConnection
+  seriesInsightBuyHistory: Array<HistoryEntity>
+  seriesInsightTable: Array<SeriesEntity>
+  spotlightById?: Maybe<Spotlight>
+  /** @deprecated Use spotlightById */
+  spotlightByUniqueInput?: Maybe<Spotlight>
+  spotlightTable: Array<SpotlightEntity>
+  spotlights: Array<Spotlight>
+  spotlightsConnection: SpotlightsConnection
+  squidStatus?: Maybe<SquidStatus>
+  totalCollections: Scalars['Float']['output']
+  totalTokens: Scalars['Float']['output']
+}
+
+export type QueryBaseByIdArgs = {
   id: Scalars['String']['input']
 }
 
-export type Subscription_RootBasesArgs = {
-  distinct_on?: InputMaybe<Array<Bases_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Bases_Order_By>>
-  where?: InputMaybe<Bases_Bool_Exp>
+export type QueryBaseByUniqueInputArgs = {
+  where: WhereIdInput
 }
 
-export type Subscription_RootBases_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Bases_Select_Column>>
+export type QueryBasesArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Bases_Order_By>>
-  where?: InputMaybe<Bases_Bool_Exp>
+  orderBy?: InputMaybe<Array<BaseOrderByInput>>
+  where?: InputMaybe<BaseWhereInput>
 }
 
-export type Subscription_RootBases_By_PkArgs = {
+export type QueryBasesConnectionArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  orderBy: Array<BaseOrderByInput>
+  where?: InputMaybe<BaseWhereInput>
+}
+
+export type QueryCacheStatusByIdArgs = {
   id: Scalars['String']['input']
 }
 
-export type Subscription_RootChangesArgs = {
-  distinct_on?: InputMaybe<Array<Changes_Select_Column>>
+export type QueryCacheStatusByUniqueInputArgs = {
+  where: WhereIdInput
+}
+
+export type QueryCacheStatusesArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Changes_Order_By>>
-  where?: InputMaybe<Changes_Bool_Exp>
+  orderBy?: InputMaybe<Array<CacheStatusOrderByInput>>
+  where?: InputMaybe<CacheStatusWhereInput>
 }
 
-export type Subscription_RootChanges_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Changes_Order_By>>
-  where?: InputMaybe<Changes_Bool_Exp>
+export type QueryCacheStatusesConnectionArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  orderBy: Array<CacheStatusOrderByInput>
+  where?: InputMaybe<CacheStatusWhereInput>
 }
 
-export type Subscription_RootChanges_By_PkArgs = {
-  id: Scalars['Int']['input']
-}
-
-export type Subscription_RootChanges_CollectionArgs = {
-  distinct_on?: InputMaybe<Array<Changes_Collection_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Changes_Collection_Order_By>>
-  where?: InputMaybe<Changes_Collection_Bool_Exp>
-}
-
-export type Subscription_RootChanges_Collection_By_PkArgs = {
-  id: Scalars['Int']['input']
-}
-
-export type Subscription_RootCollection_BannersArgs = {
-  distinct_on?: InputMaybe<Array<Collection_Banners_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Collection_Banners_Order_By>>
-  where?: InputMaybe<Collection_Banners_Bool_Exp>
-}
-
-export type Subscription_RootCollection_Banners_By_PkArgs = {
-  collection_id: Scalars['String']['input']
-}
-
-export type Subscription_RootCollectionsArgs = {
-  distinct_on?: InputMaybe<Array<Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Collections_Order_By>>
-  where?: InputMaybe<Collections_Bool_Exp>
-}
-
-export type Subscription_RootCollections_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Collections_Order_By>>
-  where?: InputMaybe<Collections_Bool_Exp>
-}
-
-export type Subscription_RootCollections_By_PkArgs = {
+export type QueryCollectionBuyChartByIdArgs = {
   id: Scalars['String']['input']
 }
 
-export type Subscription_RootDistinct_Kanaria_NftsArgs = {
-  distinct_on?: InputMaybe<Array<Distinct_Kanaria_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Distinct_Kanaria_Nfts_Order_By>>
-  where?: InputMaybe<Distinct_Kanaria_Nfts_Bool_Exp>
-}
-
-export type Subscription_RootDistinct_Kanaria_Nfts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Distinct_Kanaria_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Distinct_Kanaria_Nfts_Order_By>>
-  where?: InputMaybe<Distinct_Kanaria_Nfts_Bool_Exp>
-}
-
-export type Subscription_RootDistinct_NftsArgs = {
-  distinct_on?: InputMaybe<Array<Distinct_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Distinct_Nfts_Order_By>>
-  where?: InputMaybe<Distinct_Nfts_Bool_Exp>
-}
-
-export type Subscription_RootDistinct_Nfts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Distinct_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Distinct_Nfts_Order_By>>
-  where?: InputMaybe<Distinct_Nfts_Bool_Exp>
-}
-
-export type Subscription_RootDutchieArgs = {
-  distinct_on?: InputMaybe<Array<Dutchie_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Dutchie_Order_By>>
-  where?: InputMaybe<Dutchie_Bool_Exp>
-}
-
-export type Subscription_RootDutchie_By_PkArgs = {
-  id: Scalars['Int']['input']
-}
-
-export type Subscription_RootGems_EnabledArgs = {
-  distinct_on?: InputMaybe<Array<Gems_Enabled_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Gems_Enabled_Order_By>>
-  where?: InputMaybe<Gems_Enabled_Bool_Exp>
-}
-
-export type Subscription_RootGems_Enabled_By_PkArgs = {
+export type QueryCollectionBuyEventStatsByIdArgs = {
   id: Scalars['String']['input']
 }
 
-export type Subscription_RootGet_Newly_ListedArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
+export type QueryCollectionEntitiesArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
+  orderBy?: InputMaybe<Array<CollectionEntityOrderByInput>>
+  where?: InputMaybe<CollectionEntityWhereInput>
 }
 
-export type Subscription_RootGet_Newly_Listed_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
+export type QueryCollectionEntitiesConnectionArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  orderBy: Array<CollectionEntityOrderByInput>
+  where?: InputMaybe<CollectionEntityWhereInput>
 }
 
-export type Subscription_RootGet_Newly_MintedArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-export type Subscription_RootGet_Newly_Minted_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-export type Subscription_RootGet_Ordered_Changes_StatsArgs = {
-  args: Get_Ordered_Changes_Stats_Args
-  distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Changes_Order_By>>
-  where?: InputMaybe<Changes_Bool_Exp>
-}
-
-export type Subscription_RootGet_Ordered_Changes_Stats_AggregateArgs = {
-  args: Get_Ordered_Changes_Stats_Args
-  distinct_on?: InputMaybe<Array<Changes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Changes_Order_By>>
-  where?: InputMaybe<Changes_Bool_Exp>
-}
-
-export type Subscription_RootHatched_BirdsArgs = {
-  distinct_on?: InputMaybe<Array<Hatched_Birds_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Hatched_Birds_Order_By>>
-  where?: InputMaybe<Hatched_Birds_Bool_Exp>
-}
-
-export type Subscription_RootHatched_Birds_By_PkArgs = {
+export type QueryCollectionEntityByIdArgs = {
   id: Scalars['String']['input']
 }
 
-export type Subscription_RootNftsArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
+export type QueryCollectionEntityByUniqueInputArgs = {
+  where: WhereIdInput
 }
 
-export type Subscription_RootNfts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Order_By>>
-  where?: InputMaybe<Nfts_Bool_Exp>
-}
-
-export type Subscription_RootNfts_By_PkArgs = {
+export type QueryCollectionListChartByIdArgs = {
   id: Scalars['String']['input']
 }
 
-export type Subscription_RootNfts_StatsArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Stats_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Stats_Order_By>>
-  where?: InputMaybe<Nfts_Stats_Bool_Exp>
-}
-
-export type Subscription_RootNfts_Stats_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Nfts_Stats_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Nfts_Stats_Order_By>>
-  where?: InputMaybe<Nfts_Stats_Bool_Exp>
-}
-
-export type Subscription_RootPartsArgs = {
-  distinct_on?: InputMaybe<Array<Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Parts_Order_By>>
-  where?: InputMaybe<Parts_Bool_Exp>
-}
-
-export type Subscription_RootParts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Parts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Parts_Order_By>>
-  where?: InputMaybe<Parts_Bool_Exp>
-}
-
-export type Subscription_RootParts_By_PkArgs = {
+export type QueryCollectorByIdArgs = {
   id: Scalars['String']['input']
 }
 
-export type Subscription_RootRecently_ListedArgs = {
-  distinct_on?: InputMaybe<Array<Recently_Listed_Select_Column>>
+export type QueryCollectorByUniqueInputArgs = {
+  where: WhereIdInput
+}
+
+export type QueryCollectorsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Recently_Listed_Order_By>>
-  where?: InputMaybe<Recently_Listed_Bool_Exp>
+  orderBy?: InputMaybe<Array<CollectorOrderByInput>>
+  where?: InputMaybe<CollectorWhereInput>
 }
 
-export type Subscription_RootRecently_Listed_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Recently_Listed_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Recently_Listed_Order_By>>
-  where?: InputMaybe<Recently_Listed_Bool_Exp>
+export type QueryCollectorsConnectionArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  orderBy: Array<CollectorOrderByInput>
+  where?: InputMaybe<CollectorWhereInput>
 }
 
-export type Subscription_RootResourcesArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Order_By>>
-  where?: InputMaybe<Resources_Bool_Exp>
-}
-
-export type Subscription_RootResources_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Order_By>>
-  where?: InputMaybe<Resources_Bool_Exp>
-}
-
-export type Subscription_RootResources_Base_ThemesArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Base_Themes_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Base_Themes_Order_By>>
-  where?: InputMaybe<Resources_Base_Themes_Bool_Exp>
-}
-
-export type Subscription_RootResources_Base_Themes_By_PkArgs = {
-  resource_id: Scalars['String']['input']
-  theme_id: Scalars['String']['input']
-}
-
-export type Subscription_RootResources_By_PkArgs = {
+export type QueryEmoteByIdArgs = {
   id: Scalars['String']['input']
 }
 
-export type Subscription_RootResources_PartsArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Parts_Select_Column>>
+export type QueryEmoteByUniqueInputArgs = {
+  where: WhereIdInput
+}
+
+export type QueryEmoteListByNftIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type QueryEmoteMapByNftIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type QueryEmotesArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Parts_Order_By>>
-  where?: InputMaybe<Resources_Parts_Bool_Exp>
+  orderBy?: InputMaybe<Array<EmoteOrderByInput>>
+  where?: InputMaybe<EmoteWhereInput>
 }
 
-export type Subscription_RootResources_Parts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Resources_Parts_Select_Column>>
+export type QueryEmotesConnectionArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  orderBy: Array<EmoteOrderByInput>
+  where?: InputMaybe<EmoteWhereInput>
+}
+
+export type QueryEventByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type QueryEventByUniqueInputArgs = {
+  where: WhereIdInput
+}
+
+export type QueryEventsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Resources_Parts_Order_By>>
-  where?: InputMaybe<Resources_Parts_Bool_Exp>
+  orderBy?: InputMaybe<Array<EventOrderByInput>>
+  where?: InputMaybe<EventWhereInput>
 }
 
-export type Subscription_RootResources_Parts_By_PkArgs = {
-  part_id: Scalars['String']['input']
-  resource_id: Scalars['String']['input']
+export type QueryEventsConnectionArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  orderBy: Array<EventOrderByInput>
+  where?: InputMaybe<EventWhereInput>
 }
 
-export type Subscription_RootSalesArgs = {
-  distinct_on?: InputMaybe<Array<Sales_Select_Column>>
+export type QueryHotDashboardArgs = {
+  dateRange?: Scalars['String']['input']
+}
+
+export type QueryLastEventArgs = {
+  interaction?: InputMaybe<Scalars['String']['input']>
+  limit?: InputMaybe<Scalars['Float']['input']>
+  offset?: InputMaybe<Scalars['Float']['input']>
+  passionAccount?: InputMaybe<Scalars['String']['input']>
+}
+
+export type QueryMetadataEntitiesArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Sales_Order_By>>
-  where?: InputMaybe<Sales_Bool_Exp>
+  orderBy?: InputMaybe<Array<MetadataEntityOrderByInput>>
+  where?: InputMaybe<MetadataEntityWhereInput>
 }
 
-export type Subscription_RootSingular_Blacklisted_AccountsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Blacklisted_Accounts_Select_Column>>
+export type QueryMetadataEntitiesConnectionArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  orderBy: Array<MetadataEntityOrderByInput>
+  where?: InputMaybe<MetadataEntityWhereInput>
+}
+
+export type QueryMetadataEntityByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type QueryMetadataEntityByUniqueInputArgs = {
+  where: WhereIdInput
+}
+
+export type QueryNftEntitiesArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Blacklisted_Accounts_Order_By>>
-  where?: InputMaybe<Singular_Blacklisted_Accounts_Bool_Exp>
+  orderBy?: InputMaybe<Array<NftEntityOrderByInput>>
+  where?: InputMaybe<NftEntityWhereInput>
 }
 
-export type Subscription_RootSingular_Blacklisted_Accounts_By_PkArgs = {
+export type QueryNftEntitiesConnectionArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  orderBy: Array<NftEntityOrderByInput>
+  where?: InputMaybe<NftEntityWhereInput>
+}
+
+export type QueryNftEntityByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type QueryNftEntityByUniqueInputArgs = {
+  where: WhereIdInput
+}
+
+export type QueryPassionFeedArgs = {
   account: Scalars['String']['input']
 }
 
-export type Subscription_RootSingular_Blacklisted_CollectionsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Blacklisted_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Blacklisted_Collections_Order_By>>
-  where?: InputMaybe<Singular_Blacklisted_Collections_Bool_Exp>
-}
-
-export type Subscription_RootSingular_Blacklisted_Collections_By_PkArgs = {
-  collection_id: Scalars['String']['input']
-}
-
-export type Subscription_RootSingular_CuratedArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Curated_Order_By>>
-  where?: InputMaybe<Singular_Curated_Bool_Exp>
-}
-
-export type Subscription_RootSingular_Curated_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Curated_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Curated_Order_By>>
-  where?: InputMaybe<Singular_Curated_Bool_Exp>
-}
-
-export type Subscription_RootSingular_Curated_By_PkArgs = {
-  nft_id: Scalars['String']['input']
-}
-
-export type Subscription_RootSingular_Curated_CollectionsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Curated_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Curated_Collections_Order_By>>
-  where?: InputMaybe<Singular_Curated_Collections_Bool_Exp>
-}
-
-export type Subscription_RootSingular_Curated_Collections_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Curated_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Curated_Collections_Order_By>>
-  where?: InputMaybe<Singular_Curated_Collections_Bool_Exp>
-}
-
-export type Subscription_RootSingular_Curated_Collections_By_PkArgs = {
-  collection_id: Scalars['String']['input']
-}
-
-export type Subscription_RootSingular_Hidden_CollectionsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Hidden_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Hidden_Collections_Order_By>>
-  where?: InputMaybe<Singular_Hidden_Collections_Bool_Exp>
-}
-
-export type Subscription_RootSingular_Hidden_Collections_By_PkArgs = {
-  collection_id: Scalars['String']['input']
-}
-
-export type Subscription_RootSingular_Nsfw_CollectionsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Nsfw_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Nsfw_Collections_Order_By>>
-  where?: InputMaybe<Singular_Nsfw_Collections_Bool_Exp>
-}
-
-export type Subscription_RootSingular_Nsfw_Collections_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Nsfw_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Nsfw_Collections_Order_By>>
-  where?: InputMaybe<Singular_Nsfw_Collections_Bool_Exp>
-}
-
-export type Subscription_RootSingular_Nsfw_Collections_By_PkArgs = {
-  collection_id: Scalars['String']['input']
-}
-
-export type Subscription_RootSingular_Nsfw_NftsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Nsfw_Nfts_Order_By>>
-  where?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
-}
-
-export type Subscription_RootSingular_Nsfw_Nfts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Nsfw_Nfts_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Nsfw_Nfts_Order_By>>
-  where?: InputMaybe<Singular_Nsfw_Nfts_Bool_Exp>
-}
-
-export type Subscription_RootSingular_Nsfw_Nfts_By_PkArgs = {
-  nft_id: Scalars['String']['input']
-}
-
-export type Subscription_RootSingular_Verified_CollectionsArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Verified_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Verified_Collections_Order_By>>
-  where?: InputMaybe<Singular_Verified_Collections_Bool_Exp>
-}
-
-export type Subscription_RootSingular_Verified_Collections_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Singular_Verified_Collections_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Singular_Verified_Collections_Order_By>>
-  where?: InputMaybe<Singular_Verified_Collections_Bool_Exp>
-}
-
-export type Subscription_RootSingular_Verified_Collections_By_PkArgs = {
-  collection_id: Scalars['String']['input']
-}
-
-export type Subscription_RootSystemArgs = {
-  distinct_on?: InputMaybe<Array<System_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<System_Order_By>>
-  where?: InputMaybe<System_Bool_Exp>
-}
-
-export type Subscription_RootSystem_By_PkArgs = {
-  purchaseEnabled: Scalars['Boolean']['input']
-}
-
-export type Subscription_RootYuletide_Item_TrackArgs = {
-  distinct_on?: InputMaybe<Array<Yuletide_Item_Track_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Yuletide_Item_Track_Order_By>>
-  where?: InputMaybe<Yuletide_Item_Track_Bool_Exp>
-}
-
-export type Subscription_RootYuletide_Item_Track_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Yuletide_Item_Track_Select_Column>>
-  limit?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Yuletide_Item_Track_Order_By>>
-  where?: InputMaybe<Yuletide_Item_Track_Bool_Exp>
-}
-
-export type Subscription_RootYuletide_Item_Track_By_PkArgs = {
+export type QueryResourceByIdArgs = {
   id: Scalars['String']['input']
 }
 
-/** columns and relationships of "system" */
-export type System = {
-  __typename?: 'system'
-  purchaseEnabled: Scalars['Boolean']['output']
+export type QueryResourceByUniqueInputArgs = {
+  where: WhereIdInput
 }
 
-/** Boolean expression to filter rows from the table "system". All fields are combined with a logical 'AND'. */
-export type System_Bool_Exp = {
-  _and?: InputMaybe<Array<System_Bool_Exp>>
-  _not?: InputMaybe<System_Bool_Exp>
-  _or?: InputMaybe<Array<System_Bool_Exp>>
-  purchaseEnabled?: InputMaybe<Boolean_Comparison_Exp>
-}
-
-/** Ordering options when selecting data from "system". */
-export type System_Order_By = {
-  purchaseEnabled?: InputMaybe<Order_By>
-}
-
-/** select columns of table "system" */
-export enum System_Select_Column {
-  /** column name */
-  PurchaseEnabled = 'purchaseEnabled',
-}
-
-/** Boolean expression to compare columns of type "timestamptz". All fields are combined with logical 'AND'. */
-export type Timestamptz_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['timestamptz']['input']>
-  _gt?: InputMaybe<Scalars['timestamptz']['input']>
-  _gte?: InputMaybe<Scalars['timestamptz']['input']>
-  _in?: InputMaybe<Array<Scalars['timestamptz']['input']>>
-  _is_null?: InputMaybe<Scalars['Boolean']['input']>
-  _lt?: InputMaybe<Scalars['timestamptz']['input']>
-  _lte?: InputMaybe<Scalars['timestamptz']['input']>
-  _neq?: InputMaybe<Scalars['timestamptz']['input']>
-  _nin?: InputMaybe<Array<Scalars['timestamptz']['input']>>
-}
-
-/**
- * track how many yuletide items an account owns
- *
- *
- * columns and relationships of "yuletide_item_track"
- *
- */
-export type Yuletide_Item_Track = {
-  __typename?: 'yuletide_item_track'
-  id: Scalars['String']['output']
-  item_count: Scalars['Int']['output']
-}
-
-/** aggregated selection of "yuletide_item_track" */
-export type Yuletide_Item_Track_Aggregate = {
-  __typename?: 'yuletide_item_track_aggregate'
-  aggregate?: Maybe<Yuletide_Item_Track_Aggregate_Fields>
-  nodes: Array<Yuletide_Item_Track>
-}
-
-/** aggregate fields of "yuletide_item_track" */
-export type Yuletide_Item_Track_Aggregate_Fields = {
-  __typename?: 'yuletide_item_track_aggregate_fields'
-  avg?: Maybe<Yuletide_Item_Track_Avg_Fields>
-  count: Scalars['Int']['output']
-  max?: Maybe<Yuletide_Item_Track_Max_Fields>
-  min?: Maybe<Yuletide_Item_Track_Min_Fields>
-  stddev?: Maybe<Yuletide_Item_Track_Stddev_Fields>
-  stddev_pop?: Maybe<Yuletide_Item_Track_Stddev_Pop_Fields>
-  stddev_samp?: Maybe<Yuletide_Item_Track_Stddev_Samp_Fields>
-  sum?: Maybe<Yuletide_Item_Track_Sum_Fields>
-  var_pop?: Maybe<Yuletide_Item_Track_Var_Pop_Fields>
-  var_samp?: Maybe<Yuletide_Item_Track_Var_Samp_Fields>
-  variance?: Maybe<Yuletide_Item_Track_Variance_Fields>
-}
-
-/** aggregate fields of "yuletide_item_track" */
-export type Yuletide_Item_Track_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Yuletide_Item_Track_Select_Column>>
-  distinct?: InputMaybe<Scalars['Boolean']['input']>
-}
-
-/** aggregate avg on columns */
-export type Yuletide_Item_Track_Avg_Fields = {
-  __typename?: 'yuletide_item_track_avg_fields'
-  item_count?: Maybe<Scalars['Float']['output']>
-}
-
-/** Boolean expression to filter rows from the table "yuletide_item_track". All fields are combined with a logical 'AND'. */
-export type Yuletide_Item_Track_Bool_Exp = {
-  _and?: InputMaybe<Array<Yuletide_Item_Track_Bool_Exp>>
-  _not?: InputMaybe<Yuletide_Item_Track_Bool_Exp>
-  _or?: InputMaybe<Array<Yuletide_Item_Track_Bool_Exp>>
-  id?: InputMaybe<String_Comparison_Exp>
-  item_count?: InputMaybe<Int_Comparison_Exp>
-}
-
-/** aggregate max on columns */
-export type Yuletide_Item_Track_Max_Fields = {
-  __typename?: 'yuletide_item_track_max_fields'
-  id?: Maybe<Scalars['String']['output']>
-  item_count?: Maybe<Scalars['Int']['output']>
-}
-
-/** aggregate min on columns */
-export type Yuletide_Item_Track_Min_Fields = {
-  __typename?: 'yuletide_item_track_min_fields'
-  id?: Maybe<Scalars['String']['output']>
-  item_count?: Maybe<Scalars['Int']['output']>
-}
-
-/** Ordering options when selecting data from "yuletide_item_track". */
-export type Yuletide_Item_Track_Order_By = {
-  id?: InputMaybe<Order_By>
-  item_count?: InputMaybe<Order_By>
-}
-
-/** select columns of table "yuletide_item_track" */
-export enum Yuletide_Item_Track_Select_Column {
-  /** column name */
-  Id = 'id',
-  /** column name */
-  ItemCount = 'item_count',
-}
-
-/** aggregate stddev on columns */
-export type Yuletide_Item_Track_Stddev_Fields = {
-  __typename?: 'yuletide_item_track_stddev_fields'
-  item_count?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate stddev_pop on columns */
-export type Yuletide_Item_Track_Stddev_Pop_Fields = {
-  __typename?: 'yuletide_item_track_stddev_pop_fields'
-  item_count?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate stddev_samp on columns */
-export type Yuletide_Item_Track_Stddev_Samp_Fields = {
-  __typename?: 'yuletide_item_track_stddev_samp_fields'
-  item_count?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate sum on columns */
-export type Yuletide_Item_Track_Sum_Fields = {
-  __typename?: 'yuletide_item_track_sum_fields'
-  item_count?: Maybe<Scalars['Int']['output']>
-}
-
-/** aggregate var_pop on columns */
-export type Yuletide_Item_Track_Var_Pop_Fields = {
-  __typename?: 'yuletide_item_track_var_pop_fields'
-  item_count?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate var_samp on columns */
-export type Yuletide_Item_Track_Var_Samp_Fields = {
-  __typename?: 'yuletide_item_track_var_samp_fields'
-  item_count?: Maybe<Scalars['Float']['output']>
-}
-
-/** aggregate variance on columns */
-export type Yuletide_Item_Track_Variance_Fields = {
-  __typename?: 'yuletide_item_track_variance_fields'
-  item_count?: Maybe<Scalars['Float']['output']>
-}
-
-export type NftsQueryVariables = Exact<{
-  addresses?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>
+export type QueryResourcesArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<ResourceOrderByInput>>
+  where?: InputMaybe<ResourceWhereInput>
+}
+
+export type QueryResourcesConnectionArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  orderBy: Array<ResourceOrderByInput>
+  where?: InputMaybe<ResourceWhereInput>
+}
+
+export type QuerySeriesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<SeriesOrderByInput>>
+  where?: InputMaybe<SeriesWhereInput>
+}
+
+export type QuerySeriesByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type QuerySeriesByUniqueInputArgs = {
+  where: WhereIdInput
+}
+
+export type QuerySeriesConnectionArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  orderBy: Array<SeriesOrderByInput>
+  where?: InputMaybe<SeriesWhereInput>
+}
+
+export type QuerySeriesInsightBuyHistoryArgs = {
+  dateRange?: Scalars['String']['input']
+  ids: Array<Scalars['String']['input']>
+}
+
+export type QuerySeriesInsightTableArgs = {
+  dateRange?: Scalars['String']['input']
+  limit?: InputMaybe<Scalars['Float']['input']>
+  offset?: InputMaybe<Scalars['String']['input']>
+  orderBy?: InputMaybe<Scalars['String']['input']>
+  orderDirection?: InputMaybe<Scalars['String']['input']>
+}
+
+export type QuerySpotlightByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type QuerySpotlightByUniqueInputArgs = {
+  where: WhereIdInput
+}
+
+export type QuerySpotlightTableArgs = {
+  limit?: InputMaybe<Scalars['Float']['input']>
+  offset?: InputMaybe<Scalars['String']['input']>
+  orderBy?: InputMaybe<Scalars['String']['input']>
+  orderDirection?: InputMaybe<Scalars['String']['input']>
+}
+
+export type QuerySpotlightsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<SpotlightOrderByInput>>
+  where?: InputMaybe<SpotlightWhereInput>
+}
+
+export type QuerySpotlightsConnectionArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+  orderBy: Array<SpotlightOrderByInput>
+  where?: InputMaybe<SpotlightWhereInput>
+}
+
+export type Resource = {
+  __typename?: 'Resource'
+  id: Scalars['String']['output']
+  meta?: Maybe<MetadataEntity>
+  metadata?: Maybe<Scalars['String']['output']>
+  nft: NftEntity
+  pending: Scalars['Boolean']['output']
+  priority: Scalars['Int']['output']
+  slot?: Maybe<Scalars['String']['output']>
+  src?: Maybe<Scalars['String']['output']>
+  thumb?: Maybe<Scalars['String']['output']>
+}
+
+export type ResourceEdge = {
+  __typename?: 'ResourceEdge'
+  cursor: Scalars['String']['output']
+  node: Resource
+}
+
+export enum ResourceOrderByInput {
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  MetaAnimationUrlAsc = 'meta_animationUrl_ASC',
+  MetaAnimationUrlDesc = 'meta_animationUrl_DESC',
+  MetaDescriptionAsc = 'meta_description_ASC',
+  MetaDescriptionDesc = 'meta_description_DESC',
+  MetaIdAsc = 'meta_id_ASC',
+  MetaIdDesc = 'meta_id_DESC',
+  MetaImageAsc = 'meta_image_ASC',
+  MetaImageDesc = 'meta_image_DESC',
+  MetaNameAsc = 'meta_name_ASC',
+  MetaNameDesc = 'meta_name_DESC',
+  MetaTypeAsc = 'meta_type_ASC',
+  MetaTypeDesc = 'meta_type_DESC',
+  MetadataAsc = 'metadata_ASC',
+  MetadataDesc = 'metadata_DESC',
+  NftBlockNumberAsc = 'nft_blockNumber_ASC',
+  NftBlockNumberDesc = 'nft_blockNumber_DESC',
+  NftBurnedAsc = 'nft_burned_ASC',
+  NftBurnedDesc = 'nft_burned_DESC',
+  NftCreatedAtAsc = 'nft_createdAt_ASC',
+  NftCreatedAtDesc = 'nft_createdAt_DESC',
+  NftCurrentOwnerAsc = 'nft_currentOwner_ASC',
+  NftCurrentOwnerDesc = 'nft_currentOwner_DESC',
+  NftEmoteCountAsc = 'nft_emoteCount_ASC',
+  NftEmoteCountDesc = 'nft_emoteCount_DESC',
+  NftHashAsc = 'nft_hash_ASC',
+  NftHashDesc = 'nft_hash_DESC',
+  NftIdAsc = 'nft_id_ASC',
+  NftIdDesc = 'nft_id_DESC',
+  NftImageAsc = 'nft_image_ASC',
+  NftImageDesc = 'nft_image_DESC',
+  NftInstanceAsc = 'nft_instance_ASC',
+  NftInstanceDesc = 'nft_instance_DESC',
+  NftIssuerAsc = 'nft_issuer_ASC',
+  NftIssuerDesc = 'nft_issuer_DESC',
+  NftMediaAsc = 'nft_media_ASC',
+  NftMediaDesc = 'nft_media_DESC',
+  NftMetadataAsc = 'nft_metadata_ASC',
+  NftMetadataDesc = 'nft_metadata_DESC',
+  NftNameAsc = 'nft_name_ASC',
+  NftNameDesc = 'nft_name_DESC',
+  NftPendingAsc = 'nft_pending_ASC',
+  NftPendingDesc = 'nft_pending_DESC',
+  NftPriceAsc = 'nft_price_ASC',
+  NftPriceDesc = 'nft_price_DESC',
+  NftRecipientAsc = 'nft_recipient_ASC',
+  NftRecipientDesc = 'nft_recipient_DESC',
+  NftRoyaltyAsc = 'nft_royalty_ASC',
+  NftRoyaltyDesc = 'nft_royalty_DESC',
+  NftSnAsc = 'nft_sn_ASC',
+  NftSnDesc = 'nft_sn_DESC',
+  NftTransferableAsc = 'nft_transferable_ASC',
+  NftTransferableDesc = 'nft_transferable_DESC',
+  NftUpdatedAtAsc = 'nft_updatedAt_ASC',
+  NftUpdatedAtDesc = 'nft_updatedAt_DESC',
+  NftVersionAsc = 'nft_version_ASC',
+  NftVersionDesc = 'nft_version_DESC',
+  PendingAsc = 'pending_ASC',
+  PendingDesc = 'pending_DESC',
+  PriorityAsc = 'priority_ASC',
+  PriorityDesc = 'priority_DESC',
+  SlotAsc = 'slot_ASC',
+  SlotDesc = 'slot_DESC',
+  SrcAsc = 'src_ASC',
+  SrcDesc = 'src_DESC',
+  ThumbAsc = 'thumb_ASC',
+  ThumbDesc = 'thumb_DESC',
+}
+
+export type ResourceWhereInput = {
+  AND?: InputMaybe<Array<ResourceWhereInput>>
+  OR?: InputMaybe<Array<ResourceWhereInput>>
+  id_contains?: InputMaybe<Scalars['String']['input']>
+  id_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_eq?: InputMaybe<Scalars['String']['input']>
+  id_gt?: InputMaybe<Scalars['String']['input']>
+  id_gte?: InputMaybe<Scalars['String']['input']>
+  id_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  id_lt?: InputMaybe<Scalars['String']['input']>
+  id_lte?: InputMaybe<Scalars['String']['input']>
+  id_not_contains?: InputMaybe<Scalars['String']['input']>
+  id_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_not_eq?: InputMaybe<Scalars['String']['input']>
+  id_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_startsWith?: InputMaybe<Scalars['String']['input']>
+  meta?: InputMaybe<MetadataEntityWhereInput>
+  meta_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  metadata_contains?: InputMaybe<Scalars['String']['input']>
+  metadata_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  metadata_endsWith?: InputMaybe<Scalars['String']['input']>
+  metadata_eq?: InputMaybe<Scalars['String']['input']>
+  metadata_gt?: InputMaybe<Scalars['String']['input']>
+  metadata_gte?: InputMaybe<Scalars['String']['input']>
+  metadata_in?: InputMaybe<Array<Scalars['String']['input']>>
+  metadata_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  metadata_lt?: InputMaybe<Scalars['String']['input']>
+  metadata_lte?: InputMaybe<Scalars['String']['input']>
+  metadata_not_contains?: InputMaybe<Scalars['String']['input']>
+  metadata_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  metadata_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  metadata_not_eq?: InputMaybe<Scalars['String']['input']>
+  metadata_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  metadata_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  metadata_startsWith?: InputMaybe<Scalars['String']['input']>
+  nft?: InputMaybe<NftEntityWhereInput>
+  nft_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  pending_eq?: InputMaybe<Scalars['Boolean']['input']>
+  pending_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  pending_not_eq?: InputMaybe<Scalars['Boolean']['input']>
+  priority_eq?: InputMaybe<Scalars['Int']['input']>
+  priority_gt?: InputMaybe<Scalars['Int']['input']>
+  priority_gte?: InputMaybe<Scalars['Int']['input']>
+  priority_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  priority_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  priority_lt?: InputMaybe<Scalars['Int']['input']>
+  priority_lte?: InputMaybe<Scalars['Int']['input']>
+  priority_not_eq?: InputMaybe<Scalars['Int']['input']>
+  priority_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  slot_contains?: InputMaybe<Scalars['String']['input']>
+  slot_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  slot_endsWith?: InputMaybe<Scalars['String']['input']>
+  slot_eq?: InputMaybe<Scalars['String']['input']>
+  slot_gt?: InputMaybe<Scalars['String']['input']>
+  slot_gte?: InputMaybe<Scalars['String']['input']>
+  slot_in?: InputMaybe<Array<Scalars['String']['input']>>
+  slot_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  slot_lt?: InputMaybe<Scalars['String']['input']>
+  slot_lte?: InputMaybe<Scalars['String']['input']>
+  slot_not_contains?: InputMaybe<Scalars['String']['input']>
+  slot_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  slot_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  slot_not_eq?: InputMaybe<Scalars['String']['input']>
+  slot_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  slot_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  slot_startsWith?: InputMaybe<Scalars['String']['input']>
+  src_contains?: InputMaybe<Scalars['String']['input']>
+  src_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  src_endsWith?: InputMaybe<Scalars['String']['input']>
+  src_eq?: InputMaybe<Scalars['String']['input']>
+  src_gt?: InputMaybe<Scalars['String']['input']>
+  src_gte?: InputMaybe<Scalars['String']['input']>
+  src_in?: InputMaybe<Array<Scalars['String']['input']>>
+  src_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  src_lt?: InputMaybe<Scalars['String']['input']>
+  src_lte?: InputMaybe<Scalars['String']['input']>
+  src_not_contains?: InputMaybe<Scalars['String']['input']>
+  src_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  src_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  src_not_eq?: InputMaybe<Scalars['String']['input']>
+  src_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  src_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  src_startsWith?: InputMaybe<Scalars['String']['input']>
+  thumb_contains?: InputMaybe<Scalars['String']['input']>
+  thumb_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  thumb_endsWith?: InputMaybe<Scalars['String']['input']>
+  thumb_eq?: InputMaybe<Scalars['String']['input']>
+  thumb_gt?: InputMaybe<Scalars['String']['input']>
+  thumb_gte?: InputMaybe<Scalars['String']['input']>
+  thumb_in?: InputMaybe<Array<Scalars['String']['input']>>
+  thumb_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  thumb_lt?: InputMaybe<Scalars['String']['input']>
+  thumb_lte?: InputMaybe<Scalars['String']['input']>
+  thumb_not_contains?: InputMaybe<Scalars['String']['input']>
+  thumb_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  thumb_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  thumb_not_eq?: InputMaybe<Scalars['String']['input']>
+  thumb_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  thumb_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  thumb_startsWith?: InputMaybe<Scalars['String']['input']>
+}
+
+export type ResourcesConnection = {
+  __typename?: 'ResourcesConnection'
+  edges: Array<ResourceEdge>
+  pageInfo: PageInfo
+  totalCount: Scalars['Int']['output']
+}
+
+export type SaleNftEntity = {
+  __typename?: 'SaleNftEntity'
+  blockNumber: Scalars['String']['output']
+  buyer: Scalars['String']['output']
+  collectionId: Scalars['String']['output']
+  collectionName: Scalars['String']['output']
+  id: Scalars['String']['output']
+  image?: Maybe<Scalars['String']['output']>
+  issuer: Scalars['String']['output']
+  name: Scalars['String']['output']
+  salePrice: Scalars['BigInt']['output']
+  timestamp: Scalars['String']['output']
+}
+
+export type Series = {
+  __typename?: 'Series'
+  averagePrice?: Maybe<Scalars['Float']['output']>
+  buys?: Maybe<Scalars['Int']['output']>
+  emoteCount?: Maybe<Scalars['Int']['output']>
+  floorPrice?: Maybe<Scalars['BigInt']['output']>
+  highestSale?: Maybe<Scalars['BigInt']['output']>
+  id: Scalars['String']['output']
+  image?: Maybe<Scalars['String']['output']>
+  issuer?: Maybe<Scalars['String']['output']>
+  metadata?: Maybe<Scalars['String']['output']>
+  name: Scalars['String']['output']
+  sold: Scalars['Int']['output']
+  total: Scalars['Int']['output']
+  unique: Scalars['Int']['output']
+  uniqueCollectors: Scalars['Int']['output']
+  volume?: Maybe<Scalars['BigInt']['output']>
+}
+
+export type SeriesConnection = {
+  __typename?: 'SeriesConnection'
+  edges: Array<SeriesEdge>
+  pageInfo: PageInfo
+  totalCount: Scalars['Int']['output']
+}
+
+export type SeriesEdge = {
+  __typename?: 'SeriesEdge'
+  cursor: Scalars['String']['output']
+  node: Series
+}
+
+export type SeriesEntity = {
+  __typename?: 'SeriesEntity'
+  averagePrice?: Maybe<Scalars['BigInt']['output']>
+  buys?: Maybe<Scalars['Float']['output']>
+  floorPrice?: Maybe<Scalars['BigInt']['output']>
+  highestSale?: Maybe<Scalars['BigInt']['output']>
+  id: Scalars['String']['output']
+  image?: Maybe<Scalars['String']['output']>
+  issuer: Scalars['String']['output']
+  metadata?: Maybe<Scalars['String']['output']>
+  name: Scalars['String']['output']
+  sold: Scalars['Float']['output']
+  total: Scalars['Float']['output']
+  unique: Scalars['Float']['output']
+  uniqueCollectors: Scalars['Float']['output']
+  volume?: Maybe<Scalars['BigInt']['output']>
+}
+
+export enum SeriesOrderByInput {
+  AveragePriceAsc = 'averagePrice_ASC',
+  AveragePriceDesc = 'averagePrice_DESC',
+  BuysAsc = 'buys_ASC',
+  BuysDesc = 'buys_DESC',
+  EmoteCountAsc = 'emoteCount_ASC',
+  EmoteCountDesc = 'emoteCount_DESC',
+  FloorPriceAsc = 'floorPrice_ASC',
+  FloorPriceDesc = 'floorPrice_DESC',
+  HighestSaleAsc = 'highestSale_ASC',
+  HighestSaleDesc = 'highestSale_DESC',
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  ImageAsc = 'image_ASC',
+  ImageDesc = 'image_DESC',
+  IssuerAsc = 'issuer_ASC',
+  IssuerDesc = 'issuer_DESC',
+  MetadataAsc = 'metadata_ASC',
+  MetadataDesc = 'metadata_DESC',
+  NameAsc = 'name_ASC',
+  NameDesc = 'name_DESC',
+  SoldAsc = 'sold_ASC',
+  SoldDesc = 'sold_DESC',
+  TotalAsc = 'total_ASC',
+  TotalDesc = 'total_DESC',
+  UniqueCollectorsAsc = 'uniqueCollectors_ASC',
+  UniqueCollectorsDesc = 'uniqueCollectors_DESC',
+  UniqueAsc = 'unique_ASC',
+  UniqueDesc = 'unique_DESC',
+  VolumeAsc = 'volume_ASC',
+  VolumeDesc = 'volume_DESC',
+}
+
+export type SeriesWhereInput = {
+  AND?: InputMaybe<Array<SeriesWhereInput>>
+  OR?: InputMaybe<Array<SeriesWhereInput>>
+  averagePrice_eq?: InputMaybe<Scalars['Float']['input']>
+  averagePrice_gt?: InputMaybe<Scalars['Float']['input']>
+  averagePrice_gte?: InputMaybe<Scalars['Float']['input']>
+  averagePrice_in?: InputMaybe<Array<Scalars['Float']['input']>>
+  averagePrice_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  averagePrice_lt?: InputMaybe<Scalars['Float']['input']>
+  averagePrice_lte?: InputMaybe<Scalars['Float']['input']>
+  averagePrice_not_eq?: InputMaybe<Scalars['Float']['input']>
+  averagePrice_not_in?: InputMaybe<Array<Scalars['Float']['input']>>
+  buys_eq?: InputMaybe<Scalars['Int']['input']>
+  buys_gt?: InputMaybe<Scalars['Int']['input']>
+  buys_gte?: InputMaybe<Scalars['Int']['input']>
+  buys_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  buys_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  buys_lt?: InputMaybe<Scalars['Int']['input']>
+  buys_lte?: InputMaybe<Scalars['Int']['input']>
+  buys_not_eq?: InputMaybe<Scalars['Int']['input']>
+  buys_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  emoteCount_eq?: InputMaybe<Scalars['Int']['input']>
+  emoteCount_gt?: InputMaybe<Scalars['Int']['input']>
+  emoteCount_gte?: InputMaybe<Scalars['Int']['input']>
+  emoteCount_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  emoteCount_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  emoteCount_lt?: InputMaybe<Scalars['Int']['input']>
+  emoteCount_lte?: InputMaybe<Scalars['Int']['input']>
+  emoteCount_not_eq?: InputMaybe<Scalars['Int']['input']>
+  emoteCount_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  floorPrice_eq?: InputMaybe<Scalars['BigInt']['input']>
+  floorPrice_gt?: InputMaybe<Scalars['BigInt']['input']>
+  floorPrice_gte?: InputMaybe<Scalars['BigInt']['input']>
+  floorPrice_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  floorPrice_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  floorPrice_lt?: InputMaybe<Scalars['BigInt']['input']>
+  floorPrice_lte?: InputMaybe<Scalars['BigInt']['input']>
+  floorPrice_not_eq?: InputMaybe<Scalars['BigInt']['input']>
+  floorPrice_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  highestSale_eq?: InputMaybe<Scalars['BigInt']['input']>
+  highestSale_gt?: InputMaybe<Scalars['BigInt']['input']>
+  highestSale_gte?: InputMaybe<Scalars['BigInt']['input']>
+  highestSale_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  highestSale_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  highestSale_lt?: InputMaybe<Scalars['BigInt']['input']>
+  highestSale_lte?: InputMaybe<Scalars['BigInt']['input']>
+  highestSale_not_eq?: InputMaybe<Scalars['BigInt']['input']>
+  highestSale_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  id_contains?: InputMaybe<Scalars['String']['input']>
+  id_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_eq?: InputMaybe<Scalars['String']['input']>
+  id_gt?: InputMaybe<Scalars['String']['input']>
+  id_gte?: InputMaybe<Scalars['String']['input']>
+  id_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  id_lt?: InputMaybe<Scalars['String']['input']>
+  id_lte?: InputMaybe<Scalars['String']['input']>
+  id_not_contains?: InputMaybe<Scalars['String']['input']>
+  id_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_not_eq?: InputMaybe<Scalars['String']['input']>
+  id_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_startsWith?: InputMaybe<Scalars['String']['input']>
+  image_contains?: InputMaybe<Scalars['String']['input']>
+  image_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  image_endsWith?: InputMaybe<Scalars['String']['input']>
+  image_eq?: InputMaybe<Scalars['String']['input']>
+  image_gt?: InputMaybe<Scalars['String']['input']>
+  image_gte?: InputMaybe<Scalars['String']['input']>
+  image_in?: InputMaybe<Array<Scalars['String']['input']>>
+  image_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  image_lt?: InputMaybe<Scalars['String']['input']>
+  image_lte?: InputMaybe<Scalars['String']['input']>
+  image_not_contains?: InputMaybe<Scalars['String']['input']>
+  image_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  image_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  image_not_eq?: InputMaybe<Scalars['String']['input']>
+  image_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  image_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  image_startsWith?: InputMaybe<Scalars['String']['input']>
+  issuer_contains?: InputMaybe<Scalars['String']['input']>
+  issuer_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  issuer_endsWith?: InputMaybe<Scalars['String']['input']>
+  issuer_eq?: InputMaybe<Scalars['String']['input']>
+  issuer_gt?: InputMaybe<Scalars['String']['input']>
+  issuer_gte?: InputMaybe<Scalars['String']['input']>
+  issuer_in?: InputMaybe<Array<Scalars['String']['input']>>
+  issuer_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  issuer_lt?: InputMaybe<Scalars['String']['input']>
+  issuer_lte?: InputMaybe<Scalars['String']['input']>
+  issuer_not_contains?: InputMaybe<Scalars['String']['input']>
+  issuer_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  issuer_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  issuer_not_eq?: InputMaybe<Scalars['String']['input']>
+  issuer_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  issuer_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  issuer_startsWith?: InputMaybe<Scalars['String']['input']>
+  metadata_contains?: InputMaybe<Scalars['String']['input']>
+  metadata_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  metadata_endsWith?: InputMaybe<Scalars['String']['input']>
+  metadata_eq?: InputMaybe<Scalars['String']['input']>
+  metadata_gt?: InputMaybe<Scalars['String']['input']>
+  metadata_gte?: InputMaybe<Scalars['String']['input']>
+  metadata_in?: InputMaybe<Array<Scalars['String']['input']>>
+  metadata_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  metadata_lt?: InputMaybe<Scalars['String']['input']>
+  metadata_lte?: InputMaybe<Scalars['String']['input']>
+  metadata_not_contains?: InputMaybe<Scalars['String']['input']>
+  metadata_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  metadata_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  metadata_not_eq?: InputMaybe<Scalars['String']['input']>
+  metadata_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  metadata_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  metadata_startsWith?: InputMaybe<Scalars['String']['input']>
+  name_contains?: InputMaybe<Scalars['String']['input']>
+  name_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  name_endsWith?: InputMaybe<Scalars['String']['input']>
+  name_eq?: InputMaybe<Scalars['String']['input']>
+  name_gt?: InputMaybe<Scalars['String']['input']>
+  name_gte?: InputMaybe<Scalars['String']['input']>
+  name_in?: InputMaybe<Array<Scalars['String']['input']>>
+  name_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  name_lt?: InputMaybe<Scalars['String']['input']>
+  name_lte?: InputMaybe<Scalars['String']['input']>
+  name_not_contains?: InputMaybe<Scalars['String']['input']>
+  name_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  name_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  name_not_eq?: InputMaybe<Scalars['String']['input']>
+  name_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  name_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  name_startsWith?: InputMaybe<Scalars['String']['input']>
+  sold_eq?: InputMaybe<Scalars['Int']['input']>
+  sold_gt?: InputMaybe<Scalars['Int']['input']>
+  sold_gte?: InputMaybe<Scalars['Int']['input']>
+  sold_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  sold_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  sold_lt?: InputMaybe<Scalars['Int']['input']>
+  sold_lte?: InputMaybe<Scalars['Int']['input']>
+  sold_not_eq?: InputMaybe<Scalars['Int']['input']>
+  sold_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  total_eq?: InputMaybe<Scalars['Int']['input']>
+  total_gt?: InputMaybe<Scalars['Int']['input']>
+  total_gte?: InputMaybe<Scalars['Int']['input']>
+  total_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  total_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  total_lt?: InputMaybe<Scalars['Int']['input']>
+  total_lte?: InputMaybe<Scalars['Int']['input']>
+  total_not_eq?: InputMaybe<Scalars['Int']['input']>
+  total_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  uniqueCollectors_eq?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_gt?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_gte?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  uniqueCollectors_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  uniqueCollectors_lt?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_lte?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_not_eq?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  unique_eq?: InputMaybe<Scalars['Int']['input']>
+  unique_gt?: InputMaybe<Scalars['Int']['input']>
+  unique_gte?: InputMaybe<Scalars['Int']['input']>
+  unique_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  unique_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  unique_lt?: InputMaybe<Scalars['Int']['input']>
+  unique_lte?: InputMaybe<Scalars['Int']['input']>
+  unique_not_eq?: InputMaybe<Scalars['Int']['input']>
+  unique_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  volume_eq?: InputMaybe<Scalars['BigInt']['input']>
+  volume_gt?: InputMaybe<Scalars['BigInt']['input']>
+  volume_gte?: InputMaybe<Scalars['BigInt']['input']>
+  volume_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  volume_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  volume_lt?: InputMaybe<Scalars['BigInt']['input']>
+  volume_lte?: InputMaybe<Scalars['BigInt']['input']>
+  volume_not_eq?: InputMaybe<Scalars['BigInt']['input']>
+  volume_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+}
+
+export type Spotlight = {
+  __typename?: 'Spotlight'
+  average?: Maybe<Scalars['Float']['output']>
+  collections: Scalars['Int']['output']
+  id: Scalars['String']['output']
+  sold: Scalars['Int']['output']
+  total: Scalars['Int']['output']
+  unique: Scalars['Int']['output']
+  uniqueCollectors: Scalars['Int']['output']
+  volume?: Maybe<Scalars['BigInt']['output']>
+}
+
+export type SpotlightEdge = {
+  __typename?: 'SpotlightEdge'
+  cursor: Scalars['String']['output']
+  node: Spotlight
+}
+
+export type SpotlightEntity = {
+  __typename?: 'SpotlightEntity'
+  average?: Maybe<Scalars['BigInt']['output']>
+  collections: Scalars['Float']['output']
+  id: Scalars['String']['output']
+  sold: Scalars['Float']['output']
+  soldHistory: Array<HistoryEntity>
+  total: Scalars['Float']['output']
+  unique: Scalars['Float']['output']
+  uniqueCollectors: Scalars['Float']['output']
+  volume?: Maybe<Scalars['BigInt']['output']>
+}
+
+export enum SpotlightOrderByInput {
+  AverageAsc = 'average_ASC',
+  AverageDesc = 'average_DESC',
+  CollectionsAsc = 'collections_ASC',
+  CollectionsDesc = 'collections_DESC',
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  SoldAsc = 'sold_ASC',
+  SoldDesc = 'sold_DESC',
+  TotalAsc = 'total_ASC',
+  TotalDesc = 'total_DESC',
+  UniqueCollectorsAsc = 'uniqueCollectors_ASC',
+  UniqueCollectorsDesc = 'uniqueCollectors_DESC',
+  UniqueAsc = 'unique_ASC',
+  UniqueDesc = 'unique_DESC',
+  VolumeAsc = 'volume_ASC',
+  VolumeDesc = 'volume_DESC',
+}
+
+export type SpotlightWhereInput = {
+  AND?: InputMaybe<Array<SpotlightWhereInput>>
+  OR?: InputMaybe<Array<SpotlightWhereInput>>
+  average_eq?: InputMaybe<Scalars['Float']['input']>
+  average_gt?: InputMaybe<Scalars['Float']['input']>
+  average_gte?: InputMaybe<Scalars['Float']['input']>
+  average_in?: InputMaybe<Array<Scalars['Float']['input']>>
+  average_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  average_lt?: InputMaybe<Scalars['Float']['input']>
+  average_lte?: InputMaybe<Scalars['Float']['input']>
+  average_not_eq?: InputMaybe<Scalars['Float']['input']>
+  average_not_in?: InputMaybe<Array<Scalars['Float']['input']>>
+  collections_eq?: InputMaybe<Scalars['Int']['input']>
+  collections_gt?: InputMaybe<Scalars['Int']['input']>
+  collections_gte?: InputMaybe<Scalars['Int']['input']>
+  collections_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  collections_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  collections_lt?: InputMaybe<Scalars['Int']['input']>
+  collections_lte?: InputMaybe<Scalars['Int']['input']>
+  collections_not_eq?: InputMaybe<Scalars['Int']['input']>
+  collections_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  id_contains?: InputMaybe<Scalars['String']['input']>
+  id_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_eq?: InputMaybe<Scalars['String']['input']>
+  id_gt?: InputMaybe<Scalars['String']['input']>
+  id_gte?: InputMaybe<Scalars['String']['input']>
+  id_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  id_lt?: InputMaybe<Scalars['String']['input']>
+  id_lte?: InputMaybe<Scalars['String']['input']>
+  id_not_contains?: InputMaybe<Scalars['String']['input']>
+  id_not_containsInsensitive?: InputMaybe<Scalars['String']['input']>
+  id_not_endsWith?: InputMaybe<Scalars['String']['input']>
+  id_not_eq?: InputMaybe<Scalars['String']['input']>
+  id_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  id_not_startsWith?: InputMaybe<Scalars['String']['input']>
+  id_startsWith?: InputMaybe<Scalars['String']['input']>
+  sold_eq?: InputMaybe<Scalars['Int']['input']>
+  sold_gt?: InputMaybe<Scalars['Int']['input']>
+  sold_gte?: InputMaybe<Scalars['Int']['input']>
+  sold_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  sold_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  sold_lt?: InputMaybe<Scalars['Int']['input']>
+  sold_lte?: InputMaybe<Scalars['Int']['input']>
+  sold_not_eq?: InputMaybe<Scalars['Int']['input']>
+  sold_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  total_eq?: InputMaybe<Scalars['Int']['input']>
+  total_gt?: InputMaybe<Scalars['Int']['input']>
+  total_gte?: InputMaybe<Scalars['Int']['input']>
+  total_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  total_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  total_lt?: InputMaybe<Scalars['Int']['input']>
+  total_lte?: InputMaybe<Scalars['Int']['input']>
+  total_not_eq?: InputMaybe<Scalars['Int']['input']>
+  total_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  uniqueCollectors_eq?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_gt?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_gte?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  uniqueCollectors_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  uniqueCollectors_lt?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_lte?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_not_eq?: InputMaybe<Scalars['Int']['input']>
+  uniqueCollectors_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  unique_eq?: InputMaybe<Scalars['Int']['input']>
+  unique_gt?: InputMaybe<Scalars['Int']['input']>
+  unique_gte?: InputMaybe<Scalars['Int']['input']>
+  unique_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  unique_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  unique_lt?: InputMaybe<Scalars['Int']['input']>
+  unique_lte?: InputMaybe<Scalars['Int']['input']>
+  unique_not_eq?: InputMaybe<Scalars['Int']['input']>
+  unique_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  volume_eq?: InputMaybe<Scalars['BigInt']['input']>
+  volume_gt?: InputMaybe<Scalars['BigInt']['input']>
+  volume_gte?: InputMaybe<Scalars['BigInt']['input']>
+  volume_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  volume_isNull?: InputMaybe<Scalars['Boolean']['input']>
+  volume_lt?: InputMaybe<Scalars['BigInt']['input']>
+  volume_lte?: InputMaybe<Scalars['BigInt']['input']>
+  volume_not_eq?: InputMaybe<Scalars['BigInt']['input']>
+  volume_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+}
+
+export type SpotlightsConnection = {
+  __typename?: 'SpotlightsConnection'
+  edges: Array<SpotlightEdge>
+  pageInfo: PageInfo
+  totalCount: Scalars['Int']['output']
+}
+
+export type SquidStatus = {
+  __typename?: 'SquidStatus'
+  /** The height of the processed part of the chain */
+  height?: Maybe<Scalars['Int']['output']>
+}
+
+export type Subscription = {
+  __typename?: 'Subscription'
+  baseById?: Maybe<Base>
+  bases: Array<Base>
+  cacheStatusById?: Maybe<CacheStatus>
+  cacheStatuses: Array<CacheStatus>
+  collectionEntities: Array<CollectionEntity>
+  collectionEntityById?: Maybe<CollectionEntity>
+  collectorById?: Maybe<Collector>
+  collectors: Array<Collector>
+  emoteById?: Maybe<Emote>
+  emotes: Array<Emote>
+  eventById?: Maybe<Event>
+  events: Array<Event>
+  metadataEntities: Array<MetadataEntity>
+  metadataEntityById?: Maybe<MetadataEntity>
+  nftEntities: Array<NftEntity>
+  nftEntityById?: Maybe<NftEntity>
+  resourceById?: Maybe<Resource>
+  resources: Array<Resource>
+  series: Array<Series>
+  seriesById?: Maybe<Series>
+  spotlightById?: Maybe<Spotlight>
+  spotlights: Array<Spotlight>
+}
+
+export type SubscriptionBaseByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type SubscriptionBasesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<BaseOrderByInput>>
+  where?: InputMaybe<BaseWhereInput>
+}
+
+export type SubscriptionCacheStatusByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type SubscriptionCacheStatusesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<CacheStatusOrderByInput>>
+  where?: InputMaybe<CacheStatusWhereInput>
+}
+
+export type SubscriptionCollectionEntitiesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<CollectionEntityOrderByInput>>
+  where?: InputMaybe<CollectionEntityWhereInput>
+}
+
+export type SubscriptionCollectionEntityByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type SubscriptionCollectorByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type SubscriptionCollectorsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<CollectorOrderByInput>>
+  where?: InputMaybe<CollectorWhereInput>
+}
+
+export type SubscriptionEmoteByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type SubscriptionEmotesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<EmoteOrderByInput>>
+  where?: InputMaybe<EmoteWhereInput>
+}
+
+export type SubscriptionEventByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type SubscriptionEventsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<EventOrderByInput>>
+  where?: InputMaybe<EventWhereInput>
+}
+
+export type SubscriptionMetadataEntitiesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<MetadataEntityOrderByInput>>
+  where?: InputMaybe<MetadataEntityWhereInput>
+}
+
+export type SubscriptionMetadataEntityByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type SubscriptionNftEntitiesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<NftEntityOrderByInput>>
+  where?: InputMaybe<NftEntityWhereInput>
+}
+
+export type SubscriptionNftEntityByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type SubscriptionResourceByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type SubscriptionResourcesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<ResourceOrderByInput>>
+  where?: InputMaybe<ResourceWhereInput>
+}
+
+export type SubscriptionSeriesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<SeriesOrderByInput>>
+  where?: InputMaybe<SeriesWhereInput>
+}
+
+export type SubscriptionSeriesByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type SubscriptionSpotlightByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type SubscriptionSpotlightsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<SpotlightOrderByInput>>
+  where?: InputMaybe<SpotlightWhereInput>
+}
+
+export type WhereIdInput = {
+  id: Scalars['String']['input']
+}
+
+export type NftListWithSearchQueryVariables = Exact<{
+  first: Scalars['Int']['input']
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Array<NftEntityOrderByInput> | NftEntityOrderByInput>
+  search?: InputMaybe<Array<NftEntityWhereInput> | NftEntityWhereInput>
 }>
 
-export type NftsQuery = {
-  __typename?: 'query_root'
+export type NftListWithSearchQuery = {
+  __typename?: 'Query'
   nfts: Array<{
-    __typename?: 'nfts'
+    __typename?: 'NFTEntity'
     id: string
-    symbol: string
-    metadata?: string | null
-    metadata_name?: string | null
-    metadata_description?: string | null
-    metadata_image?: string | null
-    sn: string
-    metadata_properties?: any | null
-    children: Array<{
-      __typename?: 'nfts'
-      id: string
-      metadata_name?: string | null
-      metadata_image?: string | null
-      sn: string
-    }>
-    resources: Array<{
-      __typename?: 'resources'
-      metadata_content_type?: string | null
-      thumb?: string | null
-      src?: string | null
-    }>
-    collection?: { __typename?: 'collections'; id: string; metadata_name?: string | null; max: number } | null
+    sn?: string | null
+    currentOwner?: string | null
+    collection: { __typename?: 'CollectionEntity'; id: string; name?: string | null; max: number }
+    meta?: {
+      __typename?: 'MetadataEntity'
+      name?: string | null
+      description?: string | null
+      image?: string | null
+      attributes?: Array<{ __typename?: 'Attribute'; trait?: string | null; value: string }> | null
+    } | null
+    resources: Array<{ __typename?: 'Resource'; thumb?: string | null }>
   }>
 }
 
-export const NftsDocument = {
+export const NftListWithSearchDocument = {
   kind: 'Document',
   definitions: [
     {
       kind: 'OperationDefinition',
       operation: 'query',
-      name: { kind: 'Name', value: 'nfts' },
+      name: { kind: 'Name', value: 'nftListWithSearch' },
       variableDefinitions: [
         {
           kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'addresses' } },
-          type: {
-            kind: 'ListType',
-            type: { kind: 'NonNullType', type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } } },
-          },
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
-          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'first' } },
+          type: { kind: 'NonNullType', type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } } },
         },
         {
           kind: 'VariableDefinition',
           variable: { kind: 'Variable', name: { kind: 'Name', value: 'offset' } },
           type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'orderBy' } },
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NonNullType',
+              type: { kind: 'NamedType', name: { kind: 'Name', value: 'NFTEntityOrderByInput' } },
+            },
+          },
+          defaultValue: { kind: 'ListValue', values: [{ kind: 'EnumValue', value: 'blockNumber_DESC' }] },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'search' } },
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NonNullType',
+              type: { kind: 'NamedType', name: { kind: 'Name', value: 'NFTEntityWhereInput' } },
+            },
+          },
         },
       ],
       selectionSet: {
@@ -5928,17 +3045,23 @@ export const NftsDocument = {
         selections: [
           {
             kind: 'Field',
-            name: { kind: 'Name', value: 'nfts' },
+            alias: { kind: 'Name', value: 'nfts' },
+            name: { kind: 'Name', value: 'nftEntities' },
             arguments: [
               {
                 kind: 'Argument',
                 name: { kind: 'Name', value: 'limit' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'first' } },
               },
               {
                 kind: 'Argument',
                 name: { kind: 'Name', value: 'offset' },
                 value: { kind: 'Variable', name: { kind: 'Name', value: 'offset' } },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'orderBy' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'orderBy' } },
               },
               {
                 kind: 'Argument',
@@ -5948,31 +3071,18 @@ export const NftsDocument = {
                   fields: [
                     {
                       kind: 'ObjectField',
-                      name: { kind: 'Name', value: 'owner' },
-                      value: {
-                        kind: 'ObjectValue',
-                        fields: [
-                          {
-                            kind: 'ObjectField',
-                            name: { kind: 'Name', value: '_in' },
-                            value: { kind: 'Variable', name: { kind: 'Name', value: 'addresses' } },
-                          },
-                        ],
-                      },
+                      name: { kind: 'Name', value: 'burned_eq' },
+                      value: { kind: 'BooleanValue', value: false },
                     },
                     {
                       kind: 'ObjectField',
-                      name: { kind: 'Name', value: 'burned' },
-                      value: {
-                        kind: 'ObjectValue',
-                        fields: [
-                          {
-                            kind: 'ObjectField',
-                            name: { kind: 'Name', value: '_eq' },
-                            value: { kind: 'StringValue', value: '', block: false },
-                          },
-                        ],
-                      },
+                      name: { kind: 'Name', value: 'metadata_not_eq' },
+                      value: { kind: 'StringValue', value: '', block: false },
+                    },
+                    {
+                      kind: 'ObjectField',
+                      name: { kind: 'Name', value: 'AND' },
+                      value: { kind: 'Variable', name: { kind: 'Name', value: 'search' } },
                     },
                   ],
                 },
@@ -5982,21 +3092,40 @@ export const NftsDocument = {
               kind: 'SelectionSet',
               selections: [
                 { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'symbol' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'metadata' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'metadata_name' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'metadata_description' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'metadata_image' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'sn' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'currentOwner' } },
                 {
                   kind: 'Field',
-                  name: { kind: 'Name', value: 'children' },
+                  name: { kind: 'Name', value: 'collection' },
                   selectionSet: {
                     kind: 'SelectionSet',
                     selections: [
                       { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                      { kind: 'Field', name: { kind: 'Name', value: 'metadata_name' } },
-                      { kind: 'Field', name: { kind: 'Name', value: 'metadata_image' } },
-                      { kind: 'Field', name: { kind: 'Name', value: 'sn' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'max' } },
+                    ],
+                  },
+                },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'meta' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'description' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'image' } },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'attributes' },
+                        selectionSet: {
+                          kind: 'SelectionSet',
+                          selections: [
+                            { kind: 'Field', name: { kind: 'Name', value: 'trait' } },
+                            { kind: 'Field', name: { kind: 'Name', value: 'value' } },
+                          ],
+                        },
+                      },
                     ],
                   },
                 },
@@ -6005,25 +3134,7 @@ export const NftsDocument = {
                   name: { kind: 'Name', value: 'resources' },
                   selectionSet: {
                     kind: 'SelectionSet',
-                    selections: [
-                      { kind: 'Field', name: { kind: 'Name', value: 'metadata_content_type' } },
-                      { kind: 'Field', name: { kind: 'Name', value: 'thumb' } },
-                      { kind: 'Field', name: { kind: 'Name', value: 'src' } },
-                    ],
-                  },
-                },
-                { kind: 'Field', name: { kind: 'Name', value: 'sn' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'metadata_properties' } },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'collection' },
-                  selectionSet: {
-                    kind: 'SelectionSet',
-                    selections: [
-                      { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                      { kind: 'Field', name: { kind: 'Name', value: 'metadata_name' } },
-                      { kind: 'Field', name: { kind: 'Name', value: 'max' } },
-                    ],
+                    selections: [{ kind: 'Field', name: { kind: 'Name', value: 'thumb' } }],
                   },
                 },
               ],
@@ -6033,4 +3144,4 @@ export const NftsDocument = {
       },
     },
   ],
-} as unknown as DocumentNode<NftsQuery, NftsQueryVariables>
+} as unknown as DocumentNode<NftListWithSearchQuery, NftListWithSearchQueryVariables>

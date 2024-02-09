@@ -24,7 +24,7 @@ module.exports = {
     },
     rmrk2: {
       overwrite: true,
-      schema: 'https://gql-rmrk2-prod.graphcdn.app/',
+      schema: 'https://squid.subsquid.io/marck/v/v2/graphql',
       documents: 'src/generators/rmrk2.ts',
       extensions: extensions('generated/gql/rmrk2/'),
     },
