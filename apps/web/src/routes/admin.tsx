@@ -31,7 +31,7 @@ const _NominationPoolsRewardsClaim = () => {
   const nativeTokenPrice = useRecoilValue(useNativeTokenPriceState('usd'))
 
   const [minClaim, setMinAmountToClaim] = useTokenAmountState(
-    (5 / nativeTokenPrice).toFixed(chain.nativeToken?.decimals ?? 0)
+    (1 / nativeTokenPrice).toFixed(chain.nativeToken?.decimals ?? 0)
   )
 
   const extrinsic = useExtrinsic(
