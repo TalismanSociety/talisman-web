@@ -5,6 +5,7 @@ import { ChainProvider, assertChain, chainsState, useChainState, useNativeTokenP
 import { useExtrinsic, useSubstrateApiState, useTokenAmountState } from '@domains/common'
 import type { ApiPromise } from '@polkadot/api'
 import { Button, Surface, Text, TextInput, toast } from '@talismn/ui'
+import { chunk } from 'lodash'
 import { Suspense, useCallback, useMemo, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
@@ -45,9 +46,14 @@ const _NominationPoolsRewardsClaim = () => {
 
         toast(`Found ${poolMembersToClaim.length} members in selected pools`)
 
-        const claimPermissions = await api.query.nominationPools.claimPermissions.multi(
-          poolMembersToClaim.map(x => x[0].args[0])
-        )
+        const claimPermissions = (
+          await Promise.all(
+            chunk(
+              poolMembersToClaim.map(x => x[0].args[0]),
+              25
+            ).map(async x => await api.query.nominationPools.claimPermissions.multi(x))
+          )
+        ).flat()
 
         const rewards = await Promise.all(
           poolMembersToClaim.map(async x => await api.call.nominationPoolsApi.pendingRewards(x[0].args[0]))
