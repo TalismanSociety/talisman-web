@@ -48,6 +48,7 @@ jobs:
       sentryReleaseVersion: ${{ github.sha }}
       environmentVariableSecrets: >-
         CHAINDATA,
+        COIN_GECKO_API,
         ONFINALITY_API_KEY,
         SENTRY_DSN,
         POSTHOG_AUTH_TOKEN,

@@ -35,6 +35,15 @@ const Provider = ({ children }: PropsWithChildren) => (
     <BalancesProvider
       balanceModules={balanceModules}
       onfinalityApiKey={import.meta.env.REACT_APP_ONFINALITY_API_KEY ?? undefined}
+      coingeckoApiUrl={import.meta.env.REACT_APP_COIN_GECKO_API}
+      coingeckoApiKeyValue={import.meta.env.REACT_APP_COIN_GECKO_API_KEY}
+      coingeckoApiKeyName={
+        import.meta.env.REACT_APP_COIN_GECKO_API_TIER === 'pro'
+          ? 'x-cg-pro-api-key'
+          : import.meta.env.REACT_APP_COIN_GECKO_API_TIER === 'demo'
+          ? 'x-cg-demo-api-key'
+          : undefined
+      }
     >
       <Parachain.Provider>
         <Crowdloan.Provider>{children}</Crowdloan.Provider>
