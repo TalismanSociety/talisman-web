@@ -10,6 +10,11 @@ import { constSelector, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.25
 
 export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) => {
+  // Double for join action since batching with set claim permission is possible
+  // TODO: implement proper batch fee estimation
+  const estimatedFeeMarginOfError =
+    action === 'bondExtra' ? ESTIMATED_FEE_MARGIN_OF_ERROR : ESTIMATED_FEE_MARGIN_OF_ERROR * 2
+
   const api = useRecoilValue(useSubstrateApiState())
   const apiEndpoint = useSubstrateApiEndpoint()
 
@@ -57,14 +62,14 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
           .valueMaybe()
           ?.availableBalance.lt(
             api.consts.balances.existentialDeposit.add(
-              paymentInfoLoadable.contents.partialFee.muln(1 + ESTIMATED_FEE_MARGIN_OF_ERROR)
+              paymentInfoLoadable.contents.partialFee.muln(1 + estimatedFeeMarginOfError)
             )
           )
       ? new BN(0)
       : balancesLoadable
           .valueMaybe()
           ?.availableBalance.sub(api.consts.balances.existentialDeposit)
-          .sub(paymentInfoLoadable.contents.partialFee.muln(1 + ESTIMATED_FEE_MARGIN_OF_ERROR))
+          .sub(paymentInfoLoadable.contents.partialFee.muln(1 + estimatedFeeMarginOfError))
   )
 
   const resulting = useTokenAmountFromPlanck(
