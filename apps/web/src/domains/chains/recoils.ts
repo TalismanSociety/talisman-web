@@ -78,9 +78,20 @@ export const tokenPriceState = selectorFamily({
     async ({ get }) => {
       const currency = params.currency ?? get(selectedCurrencyState)
       try {
-        const result = await fetch(
-          `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoId}&vs_currencies=${currency}`
-        ).then(async x => await x.json())
+        const url = new URL('/api/v3/simple/price', import.meta.env.REACT_APP_COIN_GECKO_API)
+        url.searchParams.set('ids', coingeckoId)
+        url.searchParams.set('vs_currencies', currency)
+
+        const result = await fetch(url, {
+          headers:
+            import.meta.env.REACT_APP_COIN_GECKO_API_KEY === undefined
+              ? undefined
+              : import.meta.env.REACT_APP_COIN_GECKO_API_TIER === 'pro'
+              ? { 'x-cg-pro-api-key': import.meta.env.REACT_APP_COIN_GECKO_API_KEY }
+              : import.meta.env.REACT_APP_COIN_GECKO_API_TIER === 'demo'
+              ? { 'x-cg-demo-api-key': import.meta.env.REACT_APP_COIN_GECKO_API_KEY }
+              : undefined,
+        }).then(async x => await x.json())
 
         return result[coingeckoId][currency] as number
       } catch {
