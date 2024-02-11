@@ -7,14 +7,9 @@ import { useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { constSelector, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
-const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.25
+const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.5
 
 export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) => {
-  // Double for join action since batching with set claim permission is possible
-  // TODO: implement proper batch fee estimation
-  const estimatedFeeMarginOfError =
-    action === 'bondExtra' ? ESTIMATED_FEE_MARGIN_OF_ERROR : ESTIMATED_FEE_MARGIN_OF_ERROR * 2
-
   const api = useRecoilValue(useSubstrateApiState())
   const apiEndpoint = useSubstrateApiEndpoint()
 
@@ -31,25 +26,30 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
     })
   )
 
-  // TODO: using estimated fee for adding to existing pool for now
+  // TODO: have hook return extrinsic as well
+  const maxSubmittableForFeeEstimation = useMemo(() => {
+    switch (action) {
+      case 'bondExtra':
+        return api.tx.nominationPools.bondExtra({ FreeBalance: balancesLoadable.valueMaybe()?.availableBalance ?? 0 })
+      case 'join':
+        return api.tx.utility.batchAll([
+          api.tx.nominationPools.join(balancesLoadable.valueMaybe()?.availableBalance ?? 0, 0),
+          api.tx.nominationPools.setClaimPermission('PermissionlessCompound'),
+        ])
+    }
+  }, [action, api.tx.nominationPools, api.tx.utility, balancesLoadable])
+
   const paymentInfoLoadable = useRecoilValueLoadable(
     account === undefined || balancesLoadable.state !== 'hasValue'
       ? constSelector(undefined)
-      : action === 'bondExtra'
-      ? paymentInfoState([
-          apiEndpoint,
-          'nominationPools',
-          'bondExtra',
-          account,
-          { FreeBalance: balancesLoadable.contents?.availableBalance },
-        ])
       : paymentInfoState([
           apiEndpoint,
-          'nominationPools',
-          'join',
+          // @ts-expect-error
+          maxSubmittableForFeeEstimation.method.section,
+          // @ts-expect-error
+          maxSubmittableForFeeEstimation.method.method,
           account,
-          balancesLoadable.contents?.availableBalance ?? 0,
-          0,
+          ...maxSubmittableForFeeEstimation.args,
         ])
   )
 
@@ -62,14 +62,14 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
           .valueMaybe()
           ?.availableBalance.lt(
             api.consts.balances.existentialDeposit.add(
-              paymentInfoLoadable.contents.partialFee.muln(1 + estimatedFeeMarginOfError)
+              paymentInfoLoadable.contents.partialFee.muln(1 + ESTIMATED_FEE_MARGIN_OF_ERROR)
             )
           )
       ? new BN(0)
       : balancesLoadable
           .valueMaybe()
           ?.availableBalance.sub(api.consts.balances.existentialDeposit)
-          .sub(paymentInfoLoadable.contents.partialFee.muln(1 + estimatedFeeMarginOfError))
+          .sub(paymentInfoLoadable.contents.partialFee.muln(1 + ESTIMATED_FEE_MARGIN_OF_ERROR))
   )
 
   const resulting = useTokenAmountFromPlanck(
@@ -123,6 +123,7 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
       setAmount(defaultAmount ?? '')
     }
   }, [account, defaultAmount, prevAccount, setAmount])
+
   useEffect(() => {
     //
     // When an `amount` is prefilled via the querystring variable `amount`, we should
