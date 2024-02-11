@@ -107,7 +107,7 @@ const PoolClaimPermissionForm = (props: PoolClaimPermissionFormProps) => {
           name={props.isTalismanPool ? 'Auto withdraw' : 'Allow withdraw'}
           description={
             props.isTalismanPool
-              ? 'Your rewards will be redistributed to your account everyday'
+              ? 'Your rewards will be paid to your account daily'
               : 'Allow anyone to withdraw rewards on your behalf'
           }
           checked={props.permission === 'withdraw'}
