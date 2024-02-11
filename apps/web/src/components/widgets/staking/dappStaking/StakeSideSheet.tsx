@@ -186,8 +186,15 @@ type StakeSideSheetProps = {
 }
 
 const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismiss'>) => {
+  const [searchParams] = useSearchParams()
+
   const [chain, dapps] = useRecoilValue(waitForAll([useChainState(), useRegisteredDappsState()]))
-  const [[account], accountSelector] = useAccountSelector(useRecoilValue(writeableSubstrateAccountsState), 0)
+  const [[account], accountSelector] = useAccountSelector(
+    useRecoilValue(writeableSubstrateAccountsState),
+    searchParams.get('account') === null
+      ? 0
+      : accounts => accounts?.find(x => x.address === searchParams.get('account'))
+  )
   const [dapp, setDapp] = useState(dapps.at(0))
 
   const [dappSelectorDialogOpen, setDappSelectorDialogOpen] = useState(false)
@@ -323,6 +330,7 @@ export default () => {
             sp.delete('action')
             sp.delete('type')
             sp.delete('chain')
+            sp.delete('account')
             return sp
           })
         }
