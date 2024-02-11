@@ -124,7 +124,7 @@ const Stake = ({ account }: { account: Account }) => {
               if (stake.dapps.length > 0) {
                 setAddStakeDialogOpen(true)
               } else {
-                navigate(`?action=stake&type=dapp-staking&chain=${chain.id}`)
+                navigate(`?action=stake&type=dapp-staking&chain=${chain.id}&account=${account.address}`)
               }
               setLockedDialogOpen(false)
             })
