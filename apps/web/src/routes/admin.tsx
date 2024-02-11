@@ -4,6 +4,7 @@ import { writeableSubstrateAccountsState } from '@domains/accounts'
 import { ChainProvider, assertChain, chainsState, useChainState, useNativeTokenPriceState } from '@domains/chains'
 import { useExtrinsic, useSubstrateApiState, useTokenAmountState } from '@domains/common'
 import type { ApiPromise } from '@polkadot/api'
+import type { Balance } from '@polkadot/types/interfaces'
 import { Button, Surface, Text, TextInput, toast } from '@talismn/ui'
 import { chunk } from 'lodash'
 import { Suspense, useCallback, useMemo, useState } from 'react'
@@ -46,18 +47,26 @@ const _NominationPoolsRewardsClaim = () => {
 
         toast(`Found ${poolMembersToClaim.length} members in selected pools`)
 
-        const claimPermissions = (
-          await Promise.all(
-            chunk(
-              poolMembersToClaim.map(x => x[0].args[0]),
-              25
-            ).map(async x => await api.query.nominationPools.claimPermissions.multi(x))
-          )
-        ).flat()
-
-        const rewards = await Promise.all(
-          poolMembersToClaim.map(async x => await api.call.nominationPoolsApi.pendingRewards(x[0].args[0]))
+        const claimPermissions = await api.query.nominationPools.claimPermissions.multi(
+          poolMembersToClaim.map(x => x[0].args[0])
         )
+
+        // To avoid getting rate limited by Vara RPC
+        // https://substrate.stackexchange.com/questions/7677/failed-to-instantiate-a-new-wasm-module-instance-limit-of-32-concurrent-instanc
+        let rewards: Balance[] = []
+        for (const members of chunk(
+          poolMembersToClaim,
+          chain.genesisHash === '0xfe1b4c55fd4d668101126434206571a7838a8b6b93a6d1b95d607e78e6c53763'
+            ? 32
+            : poolMembersToClaim.length
+        )) {
+          rewards = [
+            ...rewards,
+            ...(await Promise.all(
+              members.map(async x => await api.call.nominationPoolsApi.pendingRewards(x[0].args[0]))
+            )),
+          ]
+        }
 
         const exs = poolMembersToClaim
           .map((x, index) => {
@@ -90,7 +99,7 @@ const _NominationPoolsRewardsClaim = () => {
 
         return api.tx.utility.forceBatch(exs.slice(0, api.consts.utility.batchedCallsLimit.toNumber()))
       },
-      [minClaim.decimalAmount, poolIds]
+      [chain.genesisHash, minClaim.decimalAmount, poolIds]
     )
   )
 
