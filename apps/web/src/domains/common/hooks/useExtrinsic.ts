@@ -1,7 +1,7 @@
 import { type ApiPromise } from '@polkadot/api'
 import { type AddressOrPair, type SubmittableExtrinsic } from '@polkadot/api/types'
 import { type ISubmittableResult } from '@polkadot/types/types'
-import { useMemo, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
 
 import { chainState, useChainState } from '@domains/chains'
@@ -12,6 +12,7 @@ import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
 import { signetAccountState } from '@domains/accounts'
 import { useSignetSdk } from '@talismn/signet-apps-sdk'
+import { AnalyticsContext } from '../analytics'
 
 type Promisable<T> = T | PromiseLike<T>
 
@@ -68,6 +69,7 @@ export function useExtrinsic(
   sectionOrGenesisHash?: string | `0x${string}`,
   params: unknown[] = []
 ): ExtrinsicLoadable | undefined {
+  const analytics = useContext(AnalyticsContext)
   const contextChain = useRecoilValue(useChainState())
   const endpoint = useSubstrateApiEndpoint()
   const wallet = useConnectedSubstrateWallet()
@@ -139,7 +141,9 @@ export function useExtrinsic(
               }
 
               const unsubscribe = await submittable?.signAndSend(account, { signer: wallet?.signer }, result => {
-                extrinsicMiddleware(chain.id, submittable, result, callbackInterface)
+                extrinsicMiddleware(chain.id, submittable, result, callbackInterface, {
+                  blacklist: analytics.enabled ? [] : ['analytics'],
+                })
 
                 if (result.isError) {
                   unsubscribe?.()
