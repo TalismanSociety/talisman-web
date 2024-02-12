@@ -3,6 +3,7 @@ import { useAccountSelector } from '@components/widgets/AccountSelector'
 import { writeableSubstrateAccountsState } from '@domains/accounts'
 import { ChainProvider, assertChain, chainsState, useChainState, useNativeTokenPriceState } from '@domains/chains'
 import { useExtrinsic, useSubstrateApiState, useTokenAmountState } from '@domains/common'
+import { AnalyticsContext } from '@domains/common/analytics'
 import type { ApiPromise } from '@polkadot/api'
 import type { Balance } from '@polkadot/types/interfaces'
 import { Button, Surface, Text, TextInput, toast } from '@talismn/ui'
@@ -170,15 +171,17 @@ const ChainAdmin = () => {
 const Admin = () => {
   const chains = useRecoilValue(chainsState)
   return (
-    <div css={{ display: 'flex', flexDirection: 'column', gap: '4.6rem', maxWidth: 768, margin: 'auto' }}>
-      {chains.map(chain => (
-        <ChainProvider key={chain.genesisHash} chain={chain}>
-          <Suspense fallback={<TalismanHandLoader css={{ margin: 'auto' }} />}>
-            <ChainAdmin />
-          </Suspense>
-        </ChainProvider>
-      ))}
-    </div>
+    <AnalyticsContext.Provider value={{ enabled: false }}>
+      <div css={{ display: 'flex', flexDirection: 'column', gap: '4.6rem', maxWidth: 768, margin: 'auto' }}>
+        {chains.map(chain => (
+          <ChainProvider key={chain.genesisHash} chain={chain}>
+            <Suspense fallback={<TalismanHandLoader css={{ margin: 'auto' }} />}>
+              <ChainAdmin />
+            </Suspense>
+          </ChainProvider>
+        ))}
+      </div>
+    </AnalyticsContext.Provider>
   )
 }
 

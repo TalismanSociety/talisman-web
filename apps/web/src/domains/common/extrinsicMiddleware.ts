@@ -7,11 +7,16 @@ import { startTransition } from 'react'
 import type { CallbackInterface } from 'recoil'
 import { chainReadIdState } from './recoils'
 
+type Tag = 'analytics'
+
 export type ExtrinsicMiddleware = (
   chainId: string,
   extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult> | SubmittableExtrinsic<'rxjs', ISubmittableResult>,
   result: ISubmittableResult,
-  callbackInterface: CallbackInterface
+  callbackInterface: CallbackInterface,
+  options?: {
+    blacklist?: Tag[]
+  }
 ) => unknown
 
 const combineMiddleware =
@@ -19,7 +24,11 @@ const combineMiddleware =
   (...parameters) =>
     middleware.forEach(middleware => middleware(...parameters))
 
-export const posthogMiddleware: ExtrinsicMiddleware = (chain, extrinsic, result) => {
+export const posthogMiddleware: ExtrinsicMiddleware = (chain, extrinsic, result, _, options) => {
+  if (options?.blacklist?.includes('analytics')) {
+    return
+  }
+
   if (result.status.isInBlock && result.dispatchError === undefined) {
     const rootCall = {
       chain,
