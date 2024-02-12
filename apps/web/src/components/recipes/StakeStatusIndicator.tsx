@@ -32,7 +32,7 @@ export const StakeStatusIndicator = (props: StakeStatusIndicatorProps) => (
         case 'not_nominating':
           return 'Not nominating'
         case 'not_earning_rewards':
-          return 'Not earing rewards'
+          return 'Not earning rewards'
         case undefined:
           return '...'
       }
