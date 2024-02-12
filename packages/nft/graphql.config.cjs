@@ -34,5 +34,11 @@ module.exports = {
       documents: 'src/generators/unique.ts',
       extensions: extensions('generated/gql/unique/'),
     },
+    onfinality: {
+      overwrite: true,
+      schema: 'https://nft-beta.api.onfinality.io/public',
+      documents: 'src/generators/onfinality.ts',
+      extensions: extensions('generated/gql/onfinality/'),
+    },
   },
 }
