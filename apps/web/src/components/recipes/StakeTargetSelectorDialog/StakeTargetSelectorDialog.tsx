@@ -15,6 +15,7 @@ export type StakeTargetSelectorDialogProps = {
   currentSelectionLabel: ReactNode
   selectionLabel: ReactNode
   onRequestDismiss: () => unknown
+  confirmButtonContent: ReactNode
   onConfirm: () => unknown
   children: ReactElement<StakeTargetSelectorItemProps> | Array<ReactElement<StakeTargetSelectorItemProps>>
 }
@@ -119,7 +120,7 @@ const StakeTargetSelectorDialog = Object.assign(
             }}
             disabled={highlightedItems.length === 0}
           >
-            Swap pool
+            {props.confirmButtonContent}
           </Button>
         }
         onRequestDismiss={props.onRequestDismiss}
@@ -131,24 +132,36 @@ const StakeTargetSelectorDialog = Object.assign(
 )
 
 export const PoolSelectorDialog = Object.assign(
-  (props: Omit<StakeTargetSelectorDialogProps, 'title' | 'currentSelectionLabel' | 'selectionLabel'>) => (
+  (
+    props: Omit<
+      StakeTargetSelectorDialogProps,
+      'title' | 'currentSelectionLabel' | 'selectionLabel' | 'confirmButtonContent'
+    >
+  ) => (
     <StakeTargetSelectorDialog
       {...props}
       title="Select a pool"
       currentSelectionLabel="Current pool"
       selectionLabel="New pool"
+      confirmButtonContent="Swap pool"
     />
   ),
   { Item: PoolSelectorItem }
 )
 
 export const DappSelectorDialog = Object.assign(
-  (props: Omit<StakeTargetSelectorDialogProps, 'title' | 'currentSelectionLabel' | 'selectionLabel'>) => (
+  (
+    props: Omit<
+      StakeTargetSelectorDialogProps,
+      'title' | 'currentSelectionLabel' | 'selectionLabel' | 'confirmButtonContent'
+    >
+  ) => (
     <StakeTargetSelectorDialog
       {...props}
       title="Select a DApp"
       currentSelectionLabel="Selected DApp"
       selectionLabel="New DApp"
+      confirmButtonContent="Swap DApp"
     />
   ),
   { Item: DappSelectorItem }
