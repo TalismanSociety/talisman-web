@@ -3,12 +3,12 @@
   "type": "module",
   "exports": "./build/src/index.js",
   "scripts": {
-    "codegen:statemine": "yarn graphql-codegen --config graphql.config.cjs --project statemine",
     "codegen:rmrk2": "yarn graphql-codegen --config graphql.config.cjs --project rmrk2",
-    "codegen:polkadot-asset-hub": "yarn graphql-codegen --config graphql.config.cjs --project polkadot-asset-hub",
-    "codegen:kusama-asset-hub": "yarn graphql-codegen --config graphql.config.cjs --project kusama-asset-hub",
+    "codegen:statemine": "yarn graphql-codegen --config graphql.config.cjs --project statemine",
+    "codegen:substrate-nft-kusama-asset-hub": "yarn graphql-codegen --config graphql.config.cjs --project substrate-nft-kusama-asset-hub",
+    "codegen:substrate-nft-polkadot-asset-hub": "yarn graphql-codegen --config graphql.config.cjs --project substrate-nft-polkadot-asset-hub",
     "codegen:unique": "yarn graphql-codegen --config graphql.config.cjs --project unique",
-    "codegen": "yarn codegen:statemine && yarn codegen:rmrk2 && yarn codegen:polkadot-asset-hub && yarn codegen:kusama-asset-hub && yarn codegen:unique",
+    "codegen": "yarn codegen:rmrk2 && yarn codegen:statemine && yarn codegen:substrate-nft-kusama-asset-hub && yarn codegen:substrate-nft-polkadot-asset-hub && yarn codegen:unique",
     "dev": "tsc --build --watch",
     "build": "rm -rf build && yarn tsc --build",
     "check-types": "yarn tsc --build"
