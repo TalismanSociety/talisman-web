@@ -13,57 +13,72 @@ export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Nft<'rmrk2', 
 
   while (true) {
     const response = await request(
-      'https://gql-rmrk2-prod.graphcdn.app',
+      'https://squid.subsquid.io/marck/v/v2/graphql',
       graphql(`
-        query nfts($addresses: [String!], $limit: Int, $offset: Int) {
-          nfts(limit: $limit, offset: $offset, where: { owner: { _in: $addresses }, burned: { _eq: "" } }) {
+        query nftListWithSearch(
+          $first: Int!
+          $offset: Int
+          $orderBy: [NFTEntityOrderByInput!] = [blockNumber_DESC]
+          $search: [NFTEntityWhereInput!]
+        ) {
+          nfts: nftEntities(
+            limit: $first
+            offset: $offset
+            orderBy: $orderBy
+            where: { burned_eq: false, metadata_not_eq: "", AND: $search }
+          ) {
             id
-            symbol
-            metadata
-            metadata_name
-            metadata_description
-            metadata_image
-            children {
-              id
-              metadata_name
-              metadata_image
-              sn
-            }
-            resources {
-              metadata_content_type
-              thumb
-              src
-            }
             sn
-            metadata_properties
+            currentOwner
             collection {
               id
-              metadata_name
+              name
               max
+            }
+            meta {
+              name
+              description
+              image
+              attributes {
+                trait
+                value
+              }
+            }
+            resources {
+              thumb
             }
           }
         }
       `),
-      { addresses: [encodeAddress(address, 2)], limit: batchSize, offset }
+      {
+        first: batchSize,
+        offset,
+        search: [{ currentOwner_eq: encodeAddress(address, 2) }],
+      }
     )
 
     if (response.nfts.length === 0) {
       break
     }
 
-    yield* response.nfts.map(nft => {
+    yield* response.nfts.map((nft): Nft<'rmrk2', 'kusama'> => {
       const type = 'rmrk2' as const
       const chain = 'kusama' as const
+
       return {
         type,
         chain,
         id: `${type}-${chain}-${nft.id}`,
-        name: nft.metadata_name ?? undefined,
-        description: nft.metadata_description ?? undefined,
-        media: { url: nft.metadata_image || nft.resources[0]?.thumb || undefined },
-        thumbnail: nft.resources[0]?.thumb || nft.metadata_image || undefined,
+        name: nft.meta?.name ?? undefined,
+        description: nft.meta?.description ?? undefined,
+        media: { url: nft.meta?.image || nft.resources[0]?.thumb || undefined },
+        thumbnail: nft.resources[0]?.thumb || nft.meta?.image || undefined,
         serialNumber: Number(nft.sn),
-        properties: nft.metadata_properties,
+        properties: nft.meta?.attributes
+          ? Object.fromEntries(
+              (nft.meta?.attributes ?? []).flatMap(({ trait, value }) => (trait ? [[trait, value]] : []))
+            )
+          : undefined,
         externalLinks: [
           {
             name: 'Singular',
@@ -77,7 +92,7 @@ export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Nft<'rmrk2', 
           ? undefined
           : {
               id: nft.collection.id,
-              name: nft.collection.metadata_name ?? undefined,
+              name: nft.collection.name ?? undefined,
               totalSupply: nft.collection.max,
             },
       }

@@ -1,5 +1,7 @@
 export { createEvmNftAsyncGenerator } from './evm/index.js'
 export { createAcalaNftAsyncGenerator, createBitCountryNftAsyncGenerator } from './orml/index.js'
+export { createPolkadotAssetHubNftAsyncGenerator } from './polkadot-asset-hub.js'
+export { createKusamaAssetHubNftAsyncGenerator } from './kusama-asset-hub.js'
 export { createRmrk2NftAsyncGenerator } from './rmrk2.js'
 export { createStatemineNftAsyncGenerator } from './statemine.js'
 export { createUniqueNetworkNftAsyncGenerator } from './unique.js'
