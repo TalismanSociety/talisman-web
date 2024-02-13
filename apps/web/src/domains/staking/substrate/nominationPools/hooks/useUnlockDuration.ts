@@ -13,7 +13,7 @@ export const useLocalizedUnlockDuration = () => {
 
   if (!sessionProgress.isEpoch) {
     return Maybe.of(expectedSessionTime(api)).mapOr(`${erasOrSessions.toString()} sessions`, sessionLength =>
-      formatDistance(0, erasOrSessions.muln(sessionLength).toNumber())
+      formatDistance(0, erasOrSessions.mul(sessionLength).toNumber())
     )
   }
 
