@@ -8,9 +8,8 @@ import { chainDeriveState, substrateApiState, useTokenAmountFromPlanck } from '@
 import { useApr, useLocalizedUnlockDuration } from '@domains/staking/substrate/nominationPools'
 import { Decimal } from '@talismn/math'
 import { usePolkadotApiId, useQueryState } from '@talismn/react-polkadot-api'
-import { CircularProgressIndicator } from '@talismn/ui'
 import BigNumber from 'bignumber.js'
-import { Suspense, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 
@@ -79,33 +78,13 @@ const StakeProviderItem = () => {
       symbol={chain.nativeToken?.symbol}
       logo={chain.nativeToken?.logo ?? ''}
       chain={chain.name}
-      apr={
-        <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-          <Apr />
-        </Suspense>
-      }
+      apr={<Apr />}
       type="Nomination pool"
       provider={chain.name}
-      unbondingPeriod={
-        <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-          <UnlockDuration />
-        </Suspense>
-      }
-      availableBalance={
-        <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-          <AvailableBalance />
-        </Suspense>
-      }
-      availableFiatBalance={
-        <Suspense>
-          <AvailableFiatBalance />
-        </Suspense>
-      }
-      stakePercentage={
-        <Suspense fallback={<StakeProvider.StakePercentage loading />}>
-          <StakePercentage />
-        </Suspense>
-      }
+      unbondingPeriod={<UnlockDuration />}
+      availableBalance={<AvailableBalance />}
+      availableFiatBalance={<AvailableFiatBalance />}
+      stakePercentage={<StakePercentage />}
       stakeButton={<StakeProvider.StakeButton as={Link} to={`?action=stake&type=nomination-pools&chain=${chain.id}`} />}
     />
   )

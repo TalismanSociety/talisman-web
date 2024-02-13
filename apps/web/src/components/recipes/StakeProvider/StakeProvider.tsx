@@ -7,7 +7,7 @@ import {
   type ButtonProps,
   CircularProgressIndicator,
 } from '@talismn/ui'
-import type { ElementType, PropsWithChildren, ReactNode } from 'react'
+import { Suspense, type ElementType, type PropsWithChildren, type ReactNode } from 'react'
 
 export type StakeProviderProps = {
   logo: string
@@ -125,7 +125,7 @@ const StakeProvider = Object.assign(
               Unbonding period
             </Text.BodySmall>
             <Text.Body as="div" alpha="high">
-              {props.unbondingPeriod}
+              <Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.unbondingPeriod}</Suspense>
             </Text.Body>
           </div>
           <div
@@ -136,10 +136,10 @@ const StakeProvider = Object.assign(
             }}
           >
             <Text.Body as="div" alpha="high">
-              {props.availableBalance}
+              <Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.availableBalance}</Suspense>
             </Text.Body>
             <Text.BodySmall as="div" css={{ display: 'none', '@container (min-width: 100rem)': { display: 'revert' } }}>
-              {props.availableFiatBalance}
+              <Suspense>{props.availableFiatBalance}</Suspense>
             </Text.BodySmall>
           </div>
           <div
@@ -149,7 +149,7 @@ const StakeProvider = Object.assign(
               '@container (min-width: 100rem)': { display: 'revert' },
             }}
           >
-            {props.stakePercentage}
+            <Suspense fallback={<StakeProvider.StakePercentage loading />}>{props.stakePercentage}</Suspense>
           </div>
           <Surface
             css={{
@@ -163,7 +163,7 @@ const StakeProvider = Object.assign(
               Est. return
             </Text.BodySmall>
             <Text.Body as="div" alpha="high">
-              {props.apr}
+              <Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.apr}</Suspense>
             </Text.Body>
           </div>
         </Grid>
