@@ -270,7 +270,7 @@ const MinimumStake = () => (
   </>
 )
 
-const StakeSideSheet = (props: StakeSideSheetProps) => {
+const _StakeSideSheet = (props: StakeSideSheetProps) => {
   return (
     <DappStakingSideSheet
       onRequestDismiss={props.onRequestDismiss}
@@ -305,9 +305,8 @@ const StakeSideSheet = (props: StakeSideSheetProps) => {
   )
 }
 
-export default () => {
+const StakeSideSheet = () => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const open = searchParams.get('action') === 'stake' && searchParams.get('type') === 'dapp-staking'
   const initialChain = searchParams.get('chain')
 
   const chains = useRecoilValue(dappStakingEnabledChainsState)
@@ -316,13 +315,13 @@ export default () => {
     Maybe.of(initialChain).mapOrUndefined(x => chains.find(y => y.id === x)) ?? chains.at(0)
   )
 
-  if (chain === undefined || !open) {
-    return null
+  if (chain === undefined) {
+    throw new Error(`Missing chain configs`)
   }
 
   return (
     <ChainProvider chain={chain}>
-      <StakeSideSheet
+      <_StakeSideSheet
         chains={chains}
         onChangeChain={setChain}
         onRequestDismiss={() =>
@@ -337,4 +336,15 @@ export default () => {
       />
     </ChainProvider>
   )
+}
+
+export default () => {
+  const [searchParams] = useSearchParams()
+  const open = searchParams.get('action') === 'stake' && searchParams.get('type') === 'dapp-staking'
+
+  if (!open) {
+    return null
+  }
+
+  return <StakeSideSheet />
 }
