@@ -13,16 +13,18 @@ export const eraLengthState = selectorFamily({
       const getNumber = (bytes: Bytes): number => u8aToNumber(bytes.toU8a().slice(1, 4))
       const api = get(substrateApiState(endpoint))
 
-      const [erasPerBuildAndEarn, erasPerVoting, eraLength] = await Promise.all([
+      const [erasPerBuildAndEarn, erasPerVoting, eraLength, periodsPerCycle] = await Promise.all([
         api.rpc.state.call('DappStakingApi_eras_per_build_and_earn_subperiod', ''),
         api.rpc.state.call('DappStakingApi_eras_per_voting_subperiod', ''),
         api.rpc.state.call('DappStakingApi_blocks_per_era', ''),
+        api.rpc.state.call('DappStakingApi_periods_per_cycle', ''),
       ])
 
       return {
         standardErasPerBuildAndEarnPeriod: getNumber(erasPerBuildAndEarn),
         standardErasPerVotingPeriod: getNumber(erasPerVoting),
         standardEraLength: getNumber(eraLength),
+        periodsPerCycle: getNumber(periodsPerCycle),
       }
     },
 })
