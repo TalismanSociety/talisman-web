@@ -29,12 +29,13 @@ export const useStake = (account: Account) => {
   const rewardRetentionInPeriods = api.consts.dappStaking.rewardRetentionInPeriods
   const currentPeriod = activeProtocol.periodInfo.number.unwrap()
 
-  const firstStakedEra = new BN(
-    Math.min(
+  const firstStakedEra = useMemo(() => {
+    const value = Math.min(
       ledger.staked.era.unwrap().gtn(0) ? ledger.staked.era.toNumber() : Infinity,
       ledger.stakedFuture.unwrapOr(undefined)?.era.toNumber() ?? Infinity
     )
-  )
+    return new BN(value === Infinity ? 0 : value)
+  }, [ledger.staked.era, ledger.stakedFuture])
 
   const lastStakedPeriod = BN.max(ledger.staked.period.unwrap(), ledger.stakedFuture.unwrapOrDefault().period.unwrap())
   const lastStakedPeriodEnd = useRecoilValue(useQueryState('dappStaking', 'periodEnd', [lastStakedPeriod]))
