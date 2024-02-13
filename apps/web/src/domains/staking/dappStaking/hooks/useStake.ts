@@ -29,9 +29,12 @@ export const useStake = (account: Account) => {
   const rewardRetentionInPeriods = api.consts.dappStaking.rewardRetentionInPeriods
   const currentPeriod = activeProtocol.periodInfo.number.unwrap()
 
-  const firstStakedEra = ledger.stakedFuture.isNone
-    ? ledger.staked.era.unwrap()
-    : BN.min(ledger.staked.era.unwrap(), ledger.stakedFuture.unwrapOrDefault().era.unwrap())
+  const firstStakedEra = new BN(
+    Math.min(
+      ledger.staked.era.unwrap().gtn(0) ? ledger.staked.era.toNumber() : Infinity,
+      ledger.stakedFuture.unwrapOr(undefined)?.era.toNumber() ?? Infinity
+    )
+  )
 
   const lastStakedPeriod = BN.max(ledger.staked.period.unwrap(), ledger.stakedFuture.unwrapOrDefault().period.unwrap())
   const lastStakedPeriodEnd = useRecoilValue(useQueryState('dappStaking', 'periodEnd', [lastStakedPeriod]))
@@ -103,9 +106,12 @@ export const useStake = (account: Account) => {
 
   const claimableSpanCount = useMemo(
     () =>
-      (lastSpanIndex.toNumber() - firstSpanIndex.toNumber()) / api.consts.dappStaking.eraRewardSpanLength.toNumber() +
-      1,
-    [api.consts.dappStaking.eraRewardSpanLength, firstSpanIndex, lastSpanIndex]
+      rewardsExpired
+        ? 0
+        : (lastSpanIndex.toNumber() - firstSpanIndex.toNumber()) /
+            api.consts.dappStaking.eraRewardSpanLength.toNumber() +
+          1,
+    [api.consts.dappStaking.eraRewardSpanLength, firstSpanIndex, lastSpanIndex, rewardsExpired]
   )
 
   const eligibleBonusRewards = useMemo(
