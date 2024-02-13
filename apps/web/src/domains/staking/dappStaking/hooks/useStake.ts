@@ -30,11 +30,22 @@ export const useStake = (account: Account) => {
   const currentPeriod = activeProtocol.periodInfo.number.unwrap()
 
   const firstStakedEra = useMemo(() => {
-    const value = Math.min(
-      ledger.staked.era.unwrap().gtn(0) ? ledger.staked.era.toNumber() : Infinity,
-      ledger.stakedFuture.unwrapOr(undefined)?.era.toNumber() ?? Infinity
-    )
-    return new BN(value === Infinity ? 0 : value)
+    const stakedEra = ledger.staked.era.unwrap().isZero() ? undefined : ledger.staked.era.unwrap()
+    const stakedFutureEra = ledger.stakedFuture.unwrapOr(undefined)?.era.unwrap()
+
+    if (stakedEra === undefined && stakedFutureEra === undefined) {
+      return undefined
+    }
+
+    if (stakedEra === undefined) {
+      return stakedFutureEra
+    }
+
+    if (stakedFutureEra === undefined) {
+      return stakedEra
+    }
+
+    return BN.min(stakedEra, stakedFutureEra)
   }, [ledger.staked.era, ledger.stakedFuture])
 
   const lastStakedPeriod = BN.max(ledger.staked.period.unwrap(), ledger.stakedFuture.unwrapOrDefault().period.unwrap())
@@ -47,14 +58,19 @@ export const useStake = (account: Account) => {
 
   const rewardsExpired = lastStakedPeriod.lte(currentPeriod.sub(rewardRetentionInPeriods))
 
-  const firstSpanIndex = firstStakedEra.sub(firstStakedEra.mod(api.consts.dappStaking.eraRewardSpanLength))
+  const firstSpanIndex =
+    firstStakedEra === undefined
+      ? undefined
+      : firstStakedEra.sub(firstStakedEra.mod(api.consts.dappStaking.eraRewardSpanLength))
   const lastSpanIndex = lastStakedEra.sub(lastStakedEra.mod(api.consts.dappStaking.eraRewardSpanLength))
 
   const eraRewardsSpans = useRecoilValue(
     useQueryState(
       'dappStaking',
       'eraRewards.multi',
-      rewardsExpired ? [] : range(firstSpanIndex.toNumber(), lastSpanIndex.toNumber() + 1)
+      rewardsExpired || firstSpanIndex === undefined
+        ? []
+        : range(firstSpanIndex.toNumber(), lastSpanIndex.toNumber() + 1)
     )
   )
 
@@ -107,7 +123,7 @@ export const useStake = (account: Account) => {
 
   const claimableSpanCount = useMemo(
     () =>
-      rewardsExpired
+      rewardsExpired || firstSpanIndex === undefined
         ? 0
         : (lastSpanIndex.toNumber() - firstSpanIndex.toNumber()) /
             api.consts.dappStaking.eraRewardSpanLength.toNumber() +
