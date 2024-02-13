@@ -44,7 +44,7 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
       <StakePosition
         chain={chain.name}
         symbol={chain.nativeToken?.symbol}
-        readonly={item.account?.readonly}
+        readonly={item.account.readonly}
         stakeStatus={item.status}
         account={item.account}
         balance={<RedactableBalance>{decimal.fromPlanck(item.poolMember.points).toHuman()}</RedactableBalance>}
@@ -99,9 +99,11 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
                 trailingContent={statsDialogInTransition && <CircularProgressIndicator size="1em" />}
               />
             </StakePosition.MenuButton.Item>
-            <StakePosition.MenuButton.Item onClick={() => setClaimPermissionDialogOpen(true)}>
-              <ListItem headlineText="Claim settings" />
-            </StakePosition.MenuButton.Item>
+            {!item.account.readonly && (
+              <StakePosition.MenuButton.Item onClick={() => setClaimPermissionDialogOpen(true)}>
+                <ListItem headlineText="Claim settings" />
+              </StakePosition.MenuButton.Item>
+            )}
           </StakePosition.MenuButton>
         }
         status={
