@@ -7,13 +7,12 @@ import { chainDeriveState, substrateApiState, useTokenAmountFromPlanck } from '@
 import { useApr } from '@domains/staking/dappStaking'
 import { Decimal } from '@talismn/math'
 import { usePolkadotApiId, useQueryState } from '@talismn/react-polkadot-api'
-import { CircularProgressIndicator } from '@talismn/ui'
+import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
-import { Suspense, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 import UnlockDuration from './UnlockDuration'
-import { Maybe } from '@util/monads'
 
 const Apr = () => (
   <>
@@ -99,33 +98,13 @@ const StakeProviderItem = () => {
       symbol={chain.nativeToken?.symbol}
       logo={chain.nativeToken?.logo ?? ''}
       chain={chain.name}
-      apr={
-        <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-          <Apr />
-        </Suspense>
-      }
+      apr={<Apr />}
       type="DApp staking"
       provider={chain.name}
-      unbondingPeriod={
-        <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-          <UnlockDuration />
-        </Suspense>
-      }
-      availableBalance={
-        <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-          <AvailableBalance />
-        </Suspense>
-      }
-      availableFiatBalance={
-        <Suspense>
-          <AvailableFiatBalance />
-        </Suspense>
-      }
-      stakePercentage={
-        <Suspense fallback={<StakeProvider.StakePercentage loading />}>
-          <StakePercentage />
-        </Suspense>
-      }
+      unbondingPeriod={<UnlockDuration />}
+      availableBalance={<AvailableBalance />}
+      availableFiatBalance={<AvailableFiatBalance />}
+      stakePercentage={<StakePercentage />}
       stakeButton={<StakeProvider.StakeButton as={Link} to={`?action=stake&type=dapp-staking&chain=${chain.id}`} />}
     />
   )

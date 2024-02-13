@@ -7,9 +7,8 @@ import { ChainProvider } from '@domains/chains'
 import { slpxPairsState, type SlpxPair } from '@domains/staking/slpx'
 import { githubChainLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
-import { CircularProgressIndicator } from '@talismn/ui'
 import BigNumber from 'bignumber.js'
-import { Suspense, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 import { useToken } from 'wagmi'
@@ -88,33 +87,13 @@ const StakeProviders = () => {
               symbol={slpxPair.nativeToken.symbol}
               logo={githubChainLogoUrl('moonbeam')}
               chain={slpxPair.chain.name}
-              apr={
-                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                  <Apr slpxPair={slpxPair} />
-                </Suspense>
-              }
+              apr={<Apr slpxPair={slpxPair} />}
               type="Liquid staking"
               provider="Bifrost SLPx"
-              unbondingPeriod={
-                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                  <UnlockDuration slpxPair={slpxPair} />
-                </Suspense>
-              }
-              availableBalance={
-                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                  <AvailableBalance slpxPair={slpxPair} />
-                </Suspense>
-              }
-              availableFiatBalance={
-                <Suspense>
-                  <AvailableFiatBalance slpxPair={slpxPair} />
-                </Suspense>
-              }
-              stakePercentage={
-                <Suspense fallback={<StakeProvider.StakePercentage loading />}>
-                  <StakePercentage slpxPair={slpxPair} />
-                </Suspense>
-              }
+              unbondingPeriod={<UnlockDuration slpxPair={slpxPair} />}
+              availableBalance={<AvailableBalance slpxPair={slpxPair} />}
+              availableFiatBalance={<AvailableFiatBalance slpxPair={slpxPair} />}
+              stakePercentage={<StakePercentage slpxPair={slpxPair} />}
               stakeButton={
                 <StakeProvider.StakeButton as={Link} to={`?action=stake&type=slpx&contract-address=${slpxPair.splx}`} />
               }
