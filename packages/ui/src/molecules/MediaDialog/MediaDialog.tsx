@@ -86,24 +86,24 @@ const MediaDialog = Object.assign(
           onClose={onRequestDismiss}
           onCancel={onRequestDismiss}
           css={{
-            'display': 'grid',
-            'gridTemplateAreas': `
+            display: 'grid',
+            gridTemplateAreas: `
             'media'
             'header'
             'content'
           `,
-            'gridTemplateRows': 'repeat(3, min-content)',
-            'margin': 0,
-            'width': 'auto',
-            'maxWidth': '100%',
-            'height': 'auto',
-            'maxHeight': '100%',
-            'border': 'none',
-            'padding': 0,
-            'background': theme.color.surface,
-            'overflow': 'auto',
+            gridTemplateRows: 'repeat(3, min-content)',
+            margin: 0,
+            width: 'auto',
+            maxWidth: '100%',
+            height: 'auto',
+            maxHeight: '100%',
+            border: 'none',
+            padding: 0,
+            background: theme.color.surface,
+            overflow: 'auto',
             '&[open]': {
-              'animation': `${show} .5s ease`,
+              animation: `${show} .5s ease`,
               '::backdrop': {
                 background: 'rgba(0,0,0,0.6)',
                 backdropFilter: 'blur(16px)',
@@ -157,7 +157,7 @@ const MediaDialog = Object.assign(
             {media}
           </div>
           <div css={{ gridArea: 'content', display: 'flex', flexDirection: 'column' }}>
-            <div css={{ 'padding': '2.4rem', '@media(min-width: 1024px)': { flex: '1 1 0', overflow: 'auto' } }}>
+            <div css={{ padding: '2.4rem', '@media(min-width: 1024px)': { flex: '1 1 0', overflow: 'auto' } }}>
               {content}
             </div>
           </div>

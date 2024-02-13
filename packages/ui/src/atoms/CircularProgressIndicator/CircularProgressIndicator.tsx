@@ -17,7 +17,7 @@ const CircularProgressIndicator = (props: CircularProgressIndicatorProps) => (
     size={props.size}
     css={{
       path: {
-        'animation': `${fade} 1s linear infinite`,
+        animation: `${fade} 1s linear infinite`,
         '&:nth-child(1)': {},
         '&:nth-child(8)': {
           animationDelay: '0.125s',

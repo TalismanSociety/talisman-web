@@ -26,11 +26,11 @@ const EstimatedYield = (props: EstimatedYieldProps) => (
     </Text.Body>
     <div
       css={{
-        'display': 'grid',
+        display: 'grid',
         '@container(min-width: 40rem)': {
           gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
         },
-        'gap': '3.2rem',
+        gap: '3.2rem',
       }}
     >
       <ListItem
@@ -75,8 +75,8 @@ const StakeCalculatorDialog = Object.assign(
         <div css={{ containerType: 'inline-size' }}>
           <section
             css={{
-              'display': 'grid',
-              'gap': '1.2rem',
+              display: 'grid',
+              gap: '1.2rem',
               '@container(min-width: 40rem)': {
                 '> label': {
                   display: 'flex',

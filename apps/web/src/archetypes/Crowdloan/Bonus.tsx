@@ -27,14 +27,14 @@ const Bonus = ({ id, short, full, info, prefix }: BonusProps) => {
     <span
       className={`crowdloan-bonus type-${type}`}
       css={{
-        'fontSize': '1em',
-        'display': 'flex',
-        'alignItems': 'center',
-        'backgroundColor': 'var(--color-activeBackground)',
-        'padding': '0.5rem 1.25rem',
-        'borderRadius': '1.5rem',
-        'width': 'max-content',
-        'a': {
+        fontSize: '1em',
+        display: 'flex',
+        alignItems: 'center',
+        backgroundColor: 'var(--color-activeBackground)',
+        padding: '0.5rem 1.25rem',
+        borderRadius: '1.5rem',
+        width: 'max-content',
+        a: {
           textDecoration: 'underline',
         },
         '> *': {
@@ -47,7 +47,7 @@ const Bonus = ({ id, short, full, info, prefix }: BonusProps) => {
             display: 'inline-block',
           },
           '.popup': {
-            'marginLeft': '0.4rem',
+            marginLeft: '0.4rem',
             '.icon-help': {
               color: 'var(--color-primary)',
             },

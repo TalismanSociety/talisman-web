@@ -38,8 +38,8 @@ export type ExtrinsicDetailsSideSheetProps = {
 const Table = (props: PropsWithChildren) => (
   <table
     css={{
-      'width': '100%',
-      'borderCollapse': 'collapse',
+      width: '100%',
+      borderCollapse: 'collapse',
       'tbody > tr:not(:last-child)': { borderBottom: `1px solid ${useSurfaceColorAtElevation(x => x + 1)}` },
       '*:is(th,td)': { textAlign: 'start', padding: '0.8rem' },
       '*:is(th,td):last-child': { textAlign: 'end' },

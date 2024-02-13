@@ -215,8 +215,8 @@ export const TransactionList = <T,>(props: TransactionListProps<T>) => {
       </div>
       <Surface
         css={{
-          'borderRadius': '1.2rem',
-          'overflow': 'hidden',
+          borderRadius: '1.2rem',
+          overflow: 'hidden',
           '> *': { animation: `${slideDown} 0.3s ease-in-out` },
           '> *:hover': { backdropFilter: 'brightness(1.2)' },
           '> *:not(:last-child)': { borderBottom: `1px solid ${borderColor}` },

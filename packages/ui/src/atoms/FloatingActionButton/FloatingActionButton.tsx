@@ -62,7 +62,7 @@ const FloatingActionButton = <T extends FloatingActionButtonElementType = 'butto
           transition: '.25s',
         },
         !props.disabled && {
-          'cursor': 'pointer',
+          cursor: 'pointer',
           ':hover': {
             backgroundColor: hoverContainerColor,
             color: hoverContentColor,

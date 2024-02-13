@@ -49,19 +49,19 @@ const Button = <T extends ButtonElementType = 'button'>({
     switch (variant) {
       case 'surface':
         return {
-          'backgroundColor': surfaceColor,
-          'color': theme.color.onSurface,
+          backgroundColor: surfaceColor,
+          color: theme.color.onSurface,
           ':hover': {
             opacity: 0.6,
           },
         }
       case 'outlined':
         return {
-          'backgroundColor': 'transparent',
-          'color': theme.color.onBackground,
-          'borderStyle': 'solid',
-          'borderColor': theme.color.onBackground,
-          'borderWidth': 1,
+          backgroundColor: 'transparent',
+          color: theme.color.onBackground,
+          borderStyle: 'solid',
+          borderColor: theme.color.onBackground,
+          borderWidth: 1,
           ':hover': {
             color: theme.color.background,
             backgroundColor: theme.color.onBackground,
@@ -69,27 +69,27 @@ const Button = <T extends ButtonElementType = 'button'>({
         }
       case 'noop':
         return {
-          'padding': 'none',
-          'margin': 'none',
-          'background': 'none',
-          'border': 'none',
-          'outline': 'none',
+          padding: 'none',
+          margin: 'none',
+          background: 'none',
+          border: 'none',
+          outline: 'none',
           ':hover': {
             filter: 'brightness(1.5)',
           },
         }
       case 'secondary':
         return {
-          'backgroundColor': '#1B1B1B',
-          'color': '#A5A5A5',
+          backgroundColor: '#1B1B1B',
+          color: '#A5A5A5',
           ':hover': {
             filter: 'brightness(1.5)',
           },
         }
       case undefined:
         return {
-          'backgroundColor': theme.color.primary,
-          'color': theme.color.onPrimary,
+          backgroundColor: theme.color.primary,
+          color: theme.color.onPrimary,
           ':hover': {
             opacity: 0.6,
           },

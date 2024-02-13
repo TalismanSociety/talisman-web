@@ -94,10 +94,10 @@ const DevMenu = () => {
       onHide={useCallback(() => setHidden(true), [setHidden])}
       onClose={useCallback(() => sessionStorage.setItem('development', JSON.stringify(false)), [])}
       className="modern"
-      css={{ 'colorScheme': 'dark', '.wb-body': { padding: '1.6rem', backgroundColor: theme.color.surface } }}
+      css={{ colorScheme: 'dark', '.wb-body': { padding: '1.6rem', backgroundColor: theme.color.surface } }}
     >
       <form
-        css={{ 'label': { display: 'block' }, 'label + label': { marginTop: '1.6rem' } }}
+        css={{ label: { display: 'block' }, 'label + label': { marginTop: '1.6rem' } }}
         onSubmit={event => event.preventDefault()}
       >
         <label>

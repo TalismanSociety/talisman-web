@@ -49,9 +49,7 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
       onRequestDismiss={props.onRequestDismiss}
       css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { width: '48rem' } }}
     >
-      <div
-        css={{ 'display': 'flex', 'gap': '1.6rem', 'marginBottom': '1.6rem', 'flexWrap': 'wrap', '> *': { flex: 1 } }}
-      >
+      <div css={{ display: 'flex', gap: '1.6rem', marginBottom: '1.6rem', flexWrap: 'wrap', '> *': { flex: 1 } }}>
         <InfoCard
           headlineText="Rewards"
           text={

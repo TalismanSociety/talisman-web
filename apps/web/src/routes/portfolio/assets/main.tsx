@@ -58,13 +58,13 @@ const Assets = () => {
       {/* Lower Section */}
       <section
         css={{
-          'display': 'flex',
-          'flexDirection': 'column',
-          'gap': '3rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '3rem',
 
           // only show the last table on mobile
           '> table:last-of-type': {
-            'display': 'table',
+            display: 'table',
 
             '@media (min-width: 1024px)': {
               display: 'none',

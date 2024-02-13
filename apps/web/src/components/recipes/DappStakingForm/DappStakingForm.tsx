@@ -174,10 +174,10 @@ export const DappStakingSideSheet = ({
       <div css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '42rem' } }}>
         <section
           css={{
-            'display': 'flex',
-            'alignItems': 'center',
-            'gap': '1.6rem',
-            'marginBottom': '1.6rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1.6rem',
+            marginBottom: '1.6rem',
             '> *': { flex: 1 },
           }}
         >

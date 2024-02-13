@@ -19,9 +19,9 @@ type FaqLayoutProps = {
 export const FaqLayout = (props: FaqLayoutProps) => (
   <div
     css={{
-      'display': 'flex',
-      'flexDirection': 'column',
-      'gap': '5rem',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '5rem',
       '@media(min-width: 768px)': {
         flexDirection: 'row',
         maxWidth: 1250,

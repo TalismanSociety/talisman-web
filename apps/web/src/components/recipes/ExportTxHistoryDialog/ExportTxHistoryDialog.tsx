@@ -64,7 +64,7 @@ const ExportTxHistoryDialog = ({
               ))}
             </Select>
           </div>
-          <div css={{ 'display': 'flex', 'gap': '0.8rem', '> *': { flex: 1 } }}>
+          <div css={{ display: 'flex', gap: '0.8rem', '> *': { flex: 1 } }}>
             <Text.Body as="div" css={{ fontSize: '1.12rem' }}>
               <div css={{ marginBottom: '0.8rem' }}>Start date</div>
               <DateInput

@@ -56,14 +56,14 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
           background: containerColor,
         },
         props.onClick && {
-          'cursor': 'pointer',
-          'transition': 'ease',
+          cursor: 'pointer',
+          transition: 'ease',
           ':hover': { opacity: 0.8 },
         },
         loading && { cursor: 'progress' },
         props.disabled && {
-          'opacity': theme.contentAlpha.disabled,
-          'cursor': 'not-allowed',
+          opacity: theme.contentAlpha.disabled,
+          cursor: 'not-allowed',
           ':hover': { opacity: theme.contentAlpha.disabled },
         },
         hasLeadingContent && {

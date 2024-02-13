@@ -108,7 +108,7 @@ const Stakes = (props: { hideHeader?: boolean }) => {
             <LidoStakes />
           </SuspenseSkeleton>
         </ErrorBoundary>
-        <NoStakePrompt css={{ 'display': 'none', ':only-child': { display: 'revert' } }} />
+        <NoStakePrompt css={{ display: 'none', ':only-child': { display: 'revert' } }} />
       </StakePositionList>
     </div>
   )

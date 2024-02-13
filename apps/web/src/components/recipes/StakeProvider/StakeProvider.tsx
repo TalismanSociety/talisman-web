@@ -53,16 +53,16 @@ const Grid = (props: PropsWithChildren<{ className?: string }>) => (
   <Surface
     as="article"
     css={{
-      'borderRadius': '0.8rem',
-      'padding': '1.6rem',
-      'display': 'grid',
-      'gridTemplateAreas': `
+      borderRadius: '0.8rem',
+      padding: '1.6rem',
+      display: 'grid',
+      gridTemplateAreas: `
         'asset   action'
         'divider divider'
         'apr     type'
       `,
-      'gridTemplateColumns': `repeat(2, minmax(0, 1fr))`,
-      'gap': '0.6rem',
+      gridTemplateColumns: `repeat(2, minmax(0, 1fr))`,
+      gap: '0.6rem',
       '@container (min-width: 100rem)': {
         alignItems: 'center',
         gridTemplateAreas: `'asset apr type provider unbonding-period available-balance stake-percentage action'`,
@@ -106,9 +106,7 @@ const StakeProvider = Object.assign(
               {props.type}
             </Text.Body>
           </div>
-          <div
-            css={{ 'gridArea': 'provider', 'display': 'none', '@container (min-width: 100rem)': { display: 'revert' } }}
-          >
+          <div css={{ gridArea: 'provider', display: 'none', '@container (min-width: 100rem)': { display: 'revert' } }}>
             <Text.BodySmall as="div" css={{ '@container (min-width: 100rem)': { display: 'none' } }}>
               Provider
             </Text.BodySmall>
@@ -118,8 +116,8 @@ const StakeProvider = Object.assign(
           </div>
           <div
             css={{
-              'gridArea': 'unbonding-period',
-              'display': 'none',
+              gridArea: 'unbonding-period',
+              display: 'none',
               '@container (min-width: 100rem)': { display: 'revert' },
             }}
           >
@@ -132,25 +130,22 @@ const StakeProvider = Object.assign(
           </div>
           <div
             css={{
-              'gridArea': 'available-balance',
-              'display': 'none',
+              gridArea: 'available-balance',
+              display: 'none',
               '@container (min-width: 100rem)': { display: 'revert' },
             }}
           >
             <Text.Body as="div" alpha="high">
               {props.availableBalance}
             </Text.Body>
-            <Text.BodySmall
-              as="div"
-              css={{ 'display': 'none', '@container (min-width: 100rem)': { display: 'revert' } }}
-            >
+            <Text.BodySmall as="div" css={{ display: 'none', '@container (min-width: 100rem)': { display: 'revert' } }}>
               {props.availableFiatBalance}
             </Text.BodySmall>
           </div>
           <div
             css={{
-              'gridArea': 'stake-percentage',
-              'display': 'none',
+              gridArea: 'stake-percentage',
+              display: 'none',
               '@container (min-width: 100rem)': { display: 'revert' },
             }}
           >
@@ -158,8 +153,8 @@ const StakeProvider = Object.assign(
           </div>
           <Surface
             css={{
-              'gridArea': 'divider',
-              'height': 1,
+              gridArea: 'divider',
+              height: 1,
               '@container (min-width: 100rem)': { display: 'none' },
             }}
           />
@@ -183,8 +178,8 @@ export const StakeProviderList = (props: PropsWithChildren<{ className?: string 
     <div css={{ containerType: 'inline-size' }}>
       <header
         css={{
-          'display': 'none',
-          'marginBottom': '1.2rem',
+          display: 'none',
+          marginBottom: '1.2rem',
           '@container (min-width: 100rem)': { display: 'revert' },
         }}
       >

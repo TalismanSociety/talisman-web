@@ -36,9 +36,9 @@ declare module '@emotion/react' {
 // status color defs
 const statusColors = {
   '21C91D': ['ok', 'success', 'online', 'positive'],
-  'FFCF96': ['concern', 'warning'],
-  'F34A4A': ['failure', 'error', 'negative'],
-  'B9D9FF': ['neutral', 'default'],
+  FFCF96: ['concern', 'warning'],
+  F34A4A: ['failure', 'error', 'negative'],
+  B9D9FF: ['neutral', 'default'],
 }
 
 // font size defs

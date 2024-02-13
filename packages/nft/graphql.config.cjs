@@ -16,13 +16,13 @@ const extensions = outDir => ({
 /** @type {import('graphql-config').IGraphQLConfig } */
 module.exports = {
   projects: {
-    'rmrk2': {
+    rmrk2: {
       overwrite: true,
       schema: 'https://squid.subsquid.io/marck/v/v2/graphql',
       documents: 'src/generators/rmrk2.ts',
       extensions: extensions('generated/gql/rmrk2/'),
     },
-    'statemine': {
+    statemine: {
       overwrite: true,
       schema: 'https://squid.subsquid.io/statemine-uniques/v/3/graphql',
       documents: 'src/generators/statemine.ts',
@@ -40,7 +40,7 @@ module.exports = {
       documents: 'src/generators/substrate-nft-polkadot-asset-hub.ts',
       extensions: extensions('generated/gql/substrate-nft-polkadot-asset-hub/'),
     },
-    'unique': {
+    unique: {
       overwrite: true,
       schema: 'https://api-unique.uniquescan.io/v1/graphql',
       documents: 'src/generators/unique.ts',

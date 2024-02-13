@@ -14,18 +14,18 @@ const StakeBanner = (props: StakeBannerProps) => (
   <div className={props.className} css={{ containerType: 'inline-size' }}>
     <div
       css={{
-        'display': 'grid',
-        'gridAutoColumns': 'fit-content',
-        'gridTemplateAreas': `
+        display: 'grid',
+        gridAutoColumns: 'fit-content',
+        gridTemplateAreas: `
           'header        actions'
           'stake-balance rewards'
         `,
-        'justifyContent': 'space-between',
-        'gap': '2.4rem',
-        'borderRadius': '1.6rem',
-        'background': 'rgba(0, 0, 0, 0.55) linear-gradient(125deg, #182F4F, #445587, #C36A9B, #974570)',
-        'backgroundBlendMode': 'darken',
-        'padding': '2.4rem',
+        justifyContent: 'space-between',
+        gap: '2.4rem',
+        borderRadius: '1.6rem',
+        background: 'rgba(0, 0, 0, 0.55) linear-gradient(125deg, #182F4F, #445587, #C36A9B, #974570)',
+        backgroundBlendMode: 'darken',
+        padding: '2.4rem',
         '@container(min-width: 60rem)': {
           gridTemplateAreas: `
             'header        header  header'
@@ -38,27 +38,25 @@ const StakeBanner = (props: StakeBannerProps) => (
     >
       <header>
         <Text.H2 css={{ gridArea: 'header', marginBottom: 0 }}>Staking</Text.H2>
-        <Text.Body css={{ 'display': 'none', '@container(min-width: 60rem)': { display: 'revert' } }}>
+        <Text.Body css={{ display: 'none', '@container(min-width: 60rem)': { display: 'revert' } }}>
           Stake your favorite assets in one click and start earning rewards
         </Text.Body>
       </header>
       <div
         css={{
-          'gridArea': 'actions',
-          'placeSelf': 'start end',
-          'display': 'flex',
-          'justifyContent': 'flex-end',
-          'alignItems': 'center',
-          'gap': '0.8rem',
-          'flexWrap': 'wrap-reverse',
+          gridArea: 'actions',
+          placeSelf: 'start end',
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          gap: '0.8rem',
+          flexWrap: 'wrap-reverse',
           '@container(min-width: 60rem)': { placeSelf: 'end' },
         }}
       >
         <Button variant="outlined" leadingIcon={<Calculate />} onClick={props.onClickSimulateRewards}>
           <span css={{ '@container(min-width: 60rem)': { display: 'none' } }}>Calculate</span>
-          <span css={{ 'display': 'none', '@container(min-width: 60rem)': { display: 'revert' } }}>
-            Simulate rewards
-          </span>
+          <span css={{ display: 'none', '@container(min-width: 60rem)': { display: 'revert' } }}>Simulate rewards</span>
         </Button>
         <Button leadingIcon={<Zap />} onClick={props.onClickStake}>
           Stake
@@ -67,7 +65,7 @@ const StakeBanner = (props: StakeBannerProps) => (
       <ListItem
         css={{ gridArea: 'stake-balance', padding: 0, visibility: props.balance ? 'visible' : 'hidden' }}
         leadingContent={
-          <TonalIcon size="5.6rem" css={{ 'display': 'none', '@container(min-width: 60rem)': { display: 'flex' } }}>
+          <TonalIcon size="5.6rem" css={{ display: 'none', '@container(min-width: 60rem)': { display: 'flex' } }}>
             <Zap />
           </TonalIcon>
         }
@@ -79,7 +77,7 @@ const StakeBanner = (props: StakeBannerProps) => (
         headlineText={
           <Text.H3
             css={{
-              'marginBottom': 0,
+              marginBottom: 0,
               ':empty::after': {
                 content: `"\u200B"`,
               },
@@ -100,7 +98,7 @@ const StakeBanner = (props: StakeBannerProps) => (
         headlineText={
           <Text.H3
             css={{
-              'marginBottom': 0,
+              marginBottom: 0,
               ':empty::after': {
                 content: `"\u200B"`,
               },

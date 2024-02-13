@@ -27,11 +27,11 @@ const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => {
       onClick={props.onClick}
       css={[
         {
-          'padding': '0.8rem 1.6rem',
-          'borderRadius': '0.8rem',
-          'border': '1px solid transparent',
-          'backgroundColor': theme.color.foreground,
-          'cursor': 'pointer',
+          padding: '0.8rem 1.6rem',
+          borderRadius: '0.8rem',
+          border: '1px solid transparent',
+          backgroundColor: theme.color.foreground,
+          cursor: 'pointer',
           ':hover': {
             filter: 'brightness(1.8)',
           },

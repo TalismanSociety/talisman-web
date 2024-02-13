@@ -100,11 +100,11 @@ const Scaffold = (props: ScaffoldProps) => (
         {props.children}
         <div
           css={{
-            'position': 'sticky',
+            position: 'sticky',
             // Take into account fixed bottom bar
-            'bottom': 'calc(2.4rem + 8rem)',
-            'width': 'max-content',
-            'marginLeft': 'auto',
+            bottom: 'calc(2.4rem + 8rem)',
+            width: 'max-content',
+            marginLeft: 'auto',
             [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: {
               bottom: '2.4rem',
             },

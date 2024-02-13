@@ -68,12 +68,12 @@ const Details = Object.assign(
             className={props.className}
             onClick={onClick}
             css={{
-              'listStyle': 'none',
-              'display': 'flex',
-              'alignItems': 'center',
-              'gap': '1.6rem',
-              'padding': '2.2rem 3.2rem',
-              'cursor': 'pointer',
+              listStyle: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1.6rem',
+              padding: '2.2rem 3.2rem',
+              cursor: 'pointer',
               '::-webkit-details-marker': {
                 display: 'none',
               },
@@ -107,13 +107,13 @@ export const OrderedDetailsList = (props: DetailedHTMLProps<HTMLAttributes<HTMLU
   <ul
     {...props}
     css={{
-      'counterReset': 'details-list',
-      'margin': 0,
-      'padding': 0,
+      counterReset: 'details-list',
+      margin: 0,
+      padding: 0,
       '> * + *': {
         marginTop: '1.6rem',
       },
-      'summary': {
+      summary: {
         '::before': {
           counterIncrement: 'details-list',
           content: 'counter(details-list)',

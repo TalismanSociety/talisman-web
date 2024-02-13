@@ -107,7 +107,7 @@ export const AssetBreakdownRow = ({ assetSummary }: AssetBreakdownProps) => {
     <AssetRow
       css={{
         '& > div': {
-          'gridTemplateColumns': '8fr 2fr !important',
+          gridTemplateColumns: '8fr 2fr !important',
 
           '> td': {
             display: 'table-cell !important',

@@ -44,8 +44,8 @@ const BaseText = <T extends React.ElementType = 'span'>({
     <Component
       {...props}
       css={{
-        'color': useAlpha(color, typeof alpha === 'function' ? alpha({ hover: false }) : alpha),
-        'fontFamily': "'Surt', sans-serif",
+        color: useAlpha(color, typeof alpha === 'function' ? alpha({ hover: false }) : alpha),
+        fontFamily: "'Surt', sans-serif",
         ':hover': {
           color: useAlpha(color, typeof alpha === 'function' ? alpha({ hover: true }) : alpha),
         },
@@ -75,10 +75,10 @@ const decorateText = <T extends object>(typographyClass: keyof Theme['typography
         css={theme => [
           typographyClass === undefined ? {} : theme.typography[typographyClass],
           {
-            'color': 'transparent',
-            'borderRadius': '0.5em',
-            'background': 'radial-gradient(rgba(200, 200, 200, 0.1), rgba(0, 0, 0, 0.1))',
-            'filter': 'contrast(0.5) brightness(1.5)',
+            color: 'transparent',
+            borderRadius: '0.5em',
+            background: 'radial-gradient(rgba(200, 200, 200, 0.1), rgba(0, 0, 0, 0.1))',
+            filter: 'contrast(0.5) brightness(1.5)',
             ':hover': {
               color: 'transparent',
             },

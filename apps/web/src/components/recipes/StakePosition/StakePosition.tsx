@@ -156,16 +156,16 @@ const Grid = (props: PropsWithChildren<{ className?: string }>) => (
   <Surface
     as="article"
     css={{
-      'borderRadius': '0.8rem',
-      'padding': '0.8rem 1.2rem',
-      'display': 'grid',
-      'gridTemplateAreas': `
+      borderRadius: '0.8rem',
+      padding: '0.8rem 1.2rem',
+      display: 'grid',
+      gridTemplateAreas: `
         'account account quick-actions'
         'divider divider divider'
         'balance actions actions'
       `,
-      'gridTemplateColumns': 'repeat(2, minmax(0, 1fr)) min-content',
-      'gap': '0.6rem',
+      gridTemplateColumns: 'repeat(2, minmax(0, 1fr)) min-content',
+      gap: '0.6rem',
       '@container (min-width: 100rem)': {
         alignItems: 'center',
         gridTemplateAreas: `'account asset balance actions quick-actions'`,
@@ -193,8 +193,8 @@ const StakePosition = Object.assign(
                   <Tooltip content={props.provider}>
                     <Text.BodySmall
                       css={{
-                        'overflow': 'hidden',
-                        'textOverflow': 'ellipsis',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
                         '@container (min-width: 100rem)': {
                           whiteSpace: 'nowrap',
                         },
@@ -204,10 +204,10 @@ const StakePosition = Object.assign(
                         props.provider
                       ) : (
                         <>
-                          <div css={{ 'display': 'none', '@container (min-width: 50rem)': { display: 'contents' } }}>
+                          <div css={{ display: 'none', '@container (min-width: 50rem)': { display: 'contents' } }}>
                             {props.provider}
                           </div>
-                          <div css={{ 'display': 'contents', '@container (min-width: 50rem)': { display: 'none' } }}>
+                          <div css={{ display: 'contents', '@container (min-width: 50rem)': { display: 'none' } }}>
                             {props.shortProvider}
                           </div>
                         </>
@@ -230,9 +230,7 @@ const StakePosition = Object.assign(
               {props.unstakeButton}
               {props.menuButton}
             </div>
-            <div
-              css={{ 'gridArea': 'asset', 'display': 'none', '@container (min-width: 100rem)': { display: 'revert' } }}
-            >
+            <div css={{ gridArea: 'asset', display: 'none', '@container (min-width: 100rem)': { display: 'revert' } }}>
               <Text.BodySmall as="div" alpha="high">
                 {props.symbol}
               </Text.BodySmall>
@@ -240,12 +238,12 @@ const StakePosition = Object.assign(
             </div>
             <Surface
               css={{
-                'gridArea': 'divider',
-                'height': 1,
+                gridArea: 'divider',
+                height: 1,
                 '@container (min-width: 100rem)': { display: 'none' },
               }}
             />
-            <div css={{ 'gridArea': 'balance', '@container (min-width: 100rem)': { textAlign: 'end' } }}>
+            <div css={{ gridArea: 'balance', '@container (min-width: 100rem)': { textAlign: 'end' } }}>
               <Text.BodySmall as="div" css={{ '@container (min-width: 100rem)': { display: 'none' } }}>
                 Total staked
               </Text.BodySmall>
@@ -254,7 +252,7 @@ const StakePosition = Object.assign(
               </Text.Body>
               <Text.BodySmall
                 as="div"
-                css={{ 'display': 'none', '@container (min-width: 100rem)': { display: 'revert' } }}
+                css={{ display: 'none', '@container (min-width: 100rem)': { display: 'revert' } }}
               >
                 {props.fiatBalance}
               </Text.BodySmall>
@@ -297,8 +295,8 @@ export const StakePositionList = (props: PropsWithChildren<{ className?: string 
     <div css={{ containerType: 'inline-size' }}>
       <header
         css={{
-          'display': 'none',
-          'marginBottom': '1.2rem',
+          display: 'none',
+          marginBottom: '1.2rem',
           '@container (min-width: 100rem)': { display: 'revert' },
         }}
       >

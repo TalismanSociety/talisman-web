@@ -58,10 +58,10 @@ const TextInput = Object.assign(
           {(hasLabel || leadingLabel || trailingLabel) && (
             <div
               css={{
-                'display': 'flex',
-                'justifyContent': 'space-between',
-                'alignItems': 'center',
-                'marginBottom': '0.8rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '0.8rem',
                 '> *:empty::after': {
                   content: `"\u200B"`,
                 },
@@ -97,11 +97,11 @@ const TextInput = Object.assign(
               css={[
                 theme.typography.body,
                 {
-                  'flex': 1,
-                  'width': props.width ?? '20rem',
-                  'background': 'transparent',
-                  'border': 'none',
-                  'padding': 0,
+                  flex: 1,
+                  width: props.width ?? '20rem',
+                  background: 'transparent',
+                  border: 'none',
+                  padding: 0,
                   '&[type=number]': {
                     '::-webkit-outer-spin-button': { display: 'none' },
                     '::-webkit-inner-spin-button': { display: 'none' },
@@ -115,10 +115,10 @@ const TextInput = Object.assign(
           {(hasSupportingText || leadingSupportingText || trailingSupportingText) && (
             <div
               css={{
-                'display': 'flex',
-                'justifyContent': 'space-between',
-                'alignItems': 'center',
-                'marginTop': '0.8rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginTop: '0.8rem',
                 '> *:empty::after': {
                   content: `"\u200B"`,
                 },
@@ -144,10 +144,10 @@ const TextInput = Object.assign(
       <Clickable.WithFeedback
         {...props}
         css={{
-          'padding': '0.6rem 1.6rem',
-          'border': `1px solid ${useSurfaceColorAtElevation(x => x + 8)}`,
-          'borderRadius': '20rem',
-          'cursor': 'pointer',
+          padding: '0.6rem 1.6rem',
+          border: `1px solid ${useSurfaceColorAtElevation(x => x + 8)}`,
+          borderRadius: '20rem',
+          cursor: 'pointer',
           ':hover': {
             filter: 'brightness(1.4)',
           },

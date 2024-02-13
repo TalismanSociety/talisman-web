@@ -30,7 +30,7 @@ Default.args = {
     ),
     createdAt: Date.now(),
     pauseDuration: 0,
-    ariaProps: { 'role': 'status', 'aria-live': 'assertive' },
+    ariaProps: { role: 'status', 'aria-live': 'assertive' },
   },
 }
 

@@ -94,9 +94,9 @@ const StakeDetails = Object.assign(
             />
             <div
               css={{
-                'display': 'flex',
-                'flexWrap': 'wrap',
-                'gap': '0.8rem',
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '0.8rem',
                 '@container(min-width: 80rem)': { justifySelf: 'end' },
               }}
               style={{ display: props.readonly ? 'none' : undefined }}

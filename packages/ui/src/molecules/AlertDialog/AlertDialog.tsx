@@ -59,19 +59,19 @@ const AlertDialog = ({
         onClose={onRequestDismiss}
         onCancel={onRequestDismiss}
         css={{
-          'padding': ALERT_DIALOG_PADDING,
-          'background': theme.color.surface,
-          'border': 'none',
-          'borderRadius': '1.6rem',
+          padding: ALERT_DIALOG_PADDING,
+          background: theme.color.surface,
+          border: 'none',
+          borderRadius: '1.6rem',
           '&[open]': {
-            'animation': `${show} .5s ease`,
+            animation: `${show} .5s ease`,
             '::backdrop': {
               background: 'rgba(0,0,0,0.6)',
               backdropFilter: 'blur(16px)',
               animation: `${backdropKeyframes} .5s ease forwards`,
             },
           },
-          'width': 'auto',
+          width: 'auto',
           '@media (min-width: 768px)': {
             width: width ?? 'revert',
           },
@@ -89,9 +89,9 @@ const AlertDialog = ({
         {(dismissButton || confirmButton) && (
           <div
             css={{
-              'display': 'flex',
-              'gap': '1.6rem',
-              'marginTop': '4.6rem',
+              display: 'flex',
+              gap: '1.6rem',
+              marginTop: '4.6rem',
               '> *': {
                 flex: 1,
               },

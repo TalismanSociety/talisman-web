@@ -16,13 +16,13 @@ const AccountValueInfo = ({ account, balance }: AccountValueInfoProps) => {
   return (
     <section
       css={{
-        'display': 'flex',
-        'flexDirection': 'row',
-        'borderRadius': '1.2rem',
-        'width': 'fit-content',
-        'padding': '1.6rem 2.4rem',
-        'backgroundColor': theme.color.background,
-        'cursor': 'pointer',
+        display: 'flex',
+        flexDirection: 'row',
+        borderRadius: '1.2rem',
+        width: 'fit-content',
+        padding: '1.6rem 2.4rem',
+        backgroundColor: theme.color.background,
+        cursor: 'pointer',
         ':hover': {
           backgroundColor: theme.color.surface,
         },
@@ -65,8 +65,8 @@ const AccountValueInfo = ({ account, balance }: AccountValueInfoProps) => {
         </div>
         <Text.H3
           css={{
-            'margin': '0',
-            'fontSize': '1.5em',
+            margin: '0',
+            fontSize: '1.5em',
             '@media(min-width: 42rem)': {
               fontSize: '2em',
             },

@@ -20,15 +20,15 @@ const FairyBreadBanner = (props: FairyBreadBannerProps) => {
         <motion.form
           onSubmit={event => event.preventDefault()}
           css={{
-            'position': 'relative',
-            'display': 'flex',
-            'alignItems': 'center',
-            'flexWrap': 'wrap',
-            'gap': '2rem 1rem',
-            'border': `solid 1px ${theme.color.onBackground}`,
-            'borderRadius': '1.2rem',
-            'padding': '2.4rem 3.2rem',
-            'backgroundColor': theme.color.background,
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '2rem 1rem',
+            border: `solid 1px ${theme.color.onBackground}`,
+            borderRadius: '1.2rem',
+            padding: '2.4rem 3.2rem',
+            backgroundColor: theme.color.background,
             '@media(min-width: 1024px)': {
               flexWrap: 'nowrap',
             },
@@ -51,9 +51,9 @@ const FairyBreadBanner = (props: FairyBreadBannerProps) => {
             variant="noop"
             onClick={props.onDismiss}
             css={{
-              'position': 'absolute',
-              'top': '0.8rem',
-              'right': '0.8rem',
+              position: 'absolute',
+              top: '0.8rem',
+              right: '0.8rem',
               '@media(min-width: 1024px)': {
                 position: 'relative',
                 top: 'unset',
