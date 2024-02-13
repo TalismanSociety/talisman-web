@@ -1,7 +1,13 @@
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { useAccountSelector } from '@components/widgets/AccountSelector'
 import { writeableSubstrateAccountsState } from '@domains/accounts'
-import { ChainProvider, assertChain, chainsState, useChainState, useNativeTokenPriceState } from '@domains/chains'
+import {
+  ChainProvider,
+  assertChain,
+  nominationPoolsEnabledChainsState,
+  useChainState,
+  useNativeTokenPriceState,
+} from '@domains/chains'
 import { useExtrinsic, useSubstrateApiState, useTokenAmountState } from '@domains/common'
 import { AnalyticsContext } from '@domains/common/analytics'
 import type { ApiPromise } from '@polkadot/api'
@@ -169,7 +175,7 @@ const ChainAdmin = () => {
 }
 
 const Admin = () => {
-  const chains = useRecoilValue(chainsState)
+  const chains = useRecoilValue(nominationPoolsEnabledChainsState)
   return (
     <AnalyticsContext.Provider value={{ enabled: false }}>
       <div css={{ display: 'flex', flexDirection: 'column', gap: '4.6rem', maxWidth: 768, margin: 'auto' }}>
