@@ -1,4 +1,3 @@
-import { useChainState } from '@domains/chains'
 import type { Perquintill } from '@polkadot/types/interfaces/runtime'
 import { useQueryMultiState } from '@talismn/react-polkadot-api'
 import BigNumber from 'bignumber.js'
@@ -8,12 +7,10 @@ import { useEraLengthState } from '..'
 
 export const useApr = () => {
   const [
-    chain,
-    { standardEraLength, standardErasPerBuildAndEarnPeriod, standardErasPerVotingPeriod },
+    { standardEraLength, standardErasPerBuildAndEarnPeriod, standardErasPerVotingPeriod, periodsPerCycle },
     [activeProtocolState, currentEraInfo, totalIssuance, inflationParams, activeInflationConfig],
   ] = useRecoilValue(
     waitForAll([
-      useChainState(),
       useEraLengthState(),
       useQueryMultiState([
         'dappStaking.activeProtocolState',
@@ -24,9 +21,6 @@ export const useApr = () => {
       ]),
     ])
   )
-
-  // Todo: fetch it via API
-  const periodsPerCycle = chain.isTestnet ? 2 : 4
 
   const cyclesPerYear = useMemo(() => {
     const secBlockProductionRate = 12
