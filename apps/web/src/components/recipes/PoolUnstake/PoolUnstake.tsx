@@ -23,11 +23,11 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
   return (
     <article
       css={{
-        'display': 'flex',
-        'flexDirection': 'column',
-        'padding': '1.6rem',
-        'borderRadius': '1.6rem',
-        'backgroundColor': theme.color.surface,
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '1.6rem',
+        borderRadius: '1.6rem',
+        backgroundColor: theme.color.surface,
         '@media (min-width: 1024px)': {
           flexDirection: 'row',
           alignItems: 'center',
@@ -38,24 +38,24 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
       <dl
         css={[
           {
-            'display': 'flex',
-            'flexDirection': 'column',
-            'gap': '2rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '2rem',
             '> div': {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
             },
-            'dd': {
+            dd: {
               textAlign: 'right',
             },
             '@media (min-width: 1024px)': {
-              'flex': 1,
-              'flexDirection': 'row',
-              'alignItems': 'flex-start',
-              'margin': 0,
-              'overflow': 'hidden',
-              'span': {
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'flex-start',
+              margin: 0,
+              overflow: 'hidden',
+              span: {
                 display: 'block',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
@@ -75,14 +75,14 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
                 overflow: 'hidden',
                 justifyContent: props.timeTilWithdrawable === undefined ? 'flex-start' : undefined,
               },
-              'dt': {
+              dt: {
                 display: 'none',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
               },
-              'dd': {
-                'marginLeft': '2rem',
-                'overflow': 'hidden',
+              dd: {
+                marginLeft: '2rem',
+                overflow: 'hidden',
                 '> div': {
                   overflow: 'hidden',
                 },
@@ -142,9 +142,9 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
       {props.timeTilWithdrawable === undefined && (
         <section
           css={{
-            'display': 'flex',
-            'gap': '1rem',
-            'marginTop': '2.5rem',
+            display: 'flex',
+            gap: '1rem',
+            marginTop: '2.5rem',
             '> *': {
               flex: 1,
             },
@@ -183,7 +183,7 @@ export const PoolUnstakeList = (props: PoolUnstakeListProps) => (
     {props.showHeader !== false && (
       <div
         css={{
-          'display': 'none',
+          display: 'none',
           '@media (min-width: 1024px)': {
             display: React.Children.count(props.children) === 0 ? 'none' : 'block',
             margin: '0.5rem 1rem',
@@ -204,7 +204,7 @@ export const ValidatorUnstakeList = (props: PoolUnstakeListProps) => (
     {props.showHeader !== false && (
       <div
         css={{
-          'display': 'none',
+          display: 'none',
           '@media (min-width: 1024px)': {
             display: React.Children.count(props.children) === 0 ? 'none' : 'block',
             margin: '0.5rem 1rem',

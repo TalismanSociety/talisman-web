@@ -32,14 +32,14 @@ const AssetsOverview = () => {
     <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1.6rem' }}>
       <section
         css={{
-          'width': '100%',
-          'display': 'flex',
-          'flexDirection': 'column',
-          'gap': '1.8rem',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1.8rem',
 
           // last table
           '> table:last-of-type': {
-            'display': 'table',
+            display: 'table',
 
             '@media (min-width: 1024px)': {
               display: 'none',
@@ -50,10 +50,10 @@ const AssetsOverview = () => {
       >
         <div
           css={{
-            'display': 'flex',
-            'flexDirection': 'column',
-            'justifyContent': 'space-between',
-            'alignItems': 'stretch',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            alignItems: 'stretch',
             '@media (min-width: 1024px)': {
               flexDirection: 'row',
               alignItems: 'center',
@@ -72,8 +72,8 @@ const AssetsOverview = () => {
           />
           <div
             css={{
-              'marginTop': '2rem',
-              'width': '100%',
+              marginTop: '2rem',
+              width: '100%',
               '@media (min-width: 1024px)': {
                 margin: 0,
                 width: '35%',
@@ -131,9 +131,9 @@ const AssetsOverview = () => {
 const Overview = () => (
   <div
     css={{
-      'display': 'grid',
-      'gap': '4.8rem 2.3rem',
-      'gridTemplateRows': 'auto',
+      display: 'grid',
+      gap: '4.8rem 2.3rem',
+      gridTemplateRows: 'auto',
       '@media(min-width: 1024px)': {
         gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
         gridTemplateAreas: `
@@ -146,8 +146,8 @@ const Overview = () => (
   >
     <div
       css={{
-        'display': 'contents',
-        'gridArea': 'left',
+        display: 'contents',
+        gridArea: 'left',
         '@media(min-width: 1024px)': {
           display: 'flex',
           flexDirection: 'column',
@@ -168,8 +168,8 @@ const Overview = () => (
     </div>
     <div
       css={{
-        'display': 'contents',
-        'gridArea': 'right',
+        display: 'contents',
+        gridArea: 'right',
         '@media(min-width: 1024px)': {
           display: 'flex',
           flexDirection: 'column',
@@ -187,7 +187,7 @@ const Overview = () => (
           <Stakes />
         </ErrorBoundary>
       </div>
-      <div css={{ 'order': 3, ':empty': { display: 'none' } }}>
+      <div css={{ order: 3, ':empty': { display: 'none' } }}>
         <ErrorBoundary>
           <Crowdloans />
         </ErrorBoundary>

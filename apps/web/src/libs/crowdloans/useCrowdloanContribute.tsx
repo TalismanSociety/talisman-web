@@ -742,9 +742,9 @@ function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: Dis
         method: 'POST',
         headers: Moonbeam.apiKey ? { 'x-api-key': Moonbeam.apiKey } : undefined,
         body: JSON.stringify({
-          'address': encodeAnyAddress(account, relayChainId),
+          address: encodeAnyAddress(account, relayChainId),
           'previous-total-contribution': previousTotalContributions,
-          'contribution': contributionPlanck,
+          contribution: contributionPlanck,
           guid,
         }),
       })
@@ -1289,7 +1289,7 @@ async function buildAcalaTx({
     const response = await fetch(`${Acala.api}/transfer`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${Acala.apiBearerToken}`,
+        Authorization: `Bearer ${Acala.apiBearerToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({

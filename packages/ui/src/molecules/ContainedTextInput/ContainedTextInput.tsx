@@ -43,9 +43,9 @@ const ContainedTextInput = Object.assign(
         {(leadingLabel || trailingLabel) && (
           <div
             css={{
-              'display': 'flex',
-              'justifyContent': 'space-between',
-              'alignItems': 'center',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               '> *:empty::after': {
                 content: `"\u200B"`,
               },
@@ -73,13 +73,13 @@ const ContainedTextInput = Object.assign(
             id={inputId}
             alpha="high"
             css={{
-              'flex': 1,
+              flex: 1,
               // If container width is defined set width to 0 to expand with flex
-              'width': width !== undefined ? 0 : '20rem',
-              'border': 'none',
-              'background': 'transparent',
-              'fontSize': '3.2rem',
-              'textAlign': 'end',
+              width: width !== undefined ? 0 : '20rem',
+              border: 'none',
+              background: 'transparent',
+              fontSize: '3.2rem',
+              textAlign: 'end',
               '&[type=number]': {
                 '::-webkit-outer-spin-button': { display: 'none' },
                 '::-webkit-inner-spin-button': { display: 'none' },
@@ -92,9 +92,9 @@ const ContainedTextInput = Object.assign(
         {(hasSupportingText || leadingSupportingText || trailingSupportingText) && (
           <div
             css={{
-              'display': 'flex',
-              'justifyContent': 'space-between',
-              'alignItems': 'center',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               '> *:empty::after': {
                 content: `"\u200B"`,
               },

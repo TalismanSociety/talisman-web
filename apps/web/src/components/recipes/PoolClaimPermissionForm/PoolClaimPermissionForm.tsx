@@ -27,7 +27,7 @@ const PermissionOption = (props: PermissionOptionProps) => {
           cursor: 'pointer',
         },
         !props.checked && {
-          'opacity': theme.contentAlpha.disabled / 2,
+          opacity: theme.contentAlpha.disabled / 2,
           ':hover': { opacity: theme.contentAlpha.medium },
         },
       ]}
@@ -83,11 +83,11 @@ const PoolClaimPermissionForm = (props: PoolClaimPermissionFormProps) => {
       </div>
       <Surface
         css={{
-          'display': 'flex',
-          'flexDirection': 'column',
-          'gap': '1.6rem',
-          'borderRadius': '1.6rem',
-          'padding': '1.6rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1.6rem',
+          borderRadius: '1.6rem',
+          padding: '1.6rem',
           '@media(min-width: 768px)': {
             flexDirection: 'row',
           },
@@ -124,7 +124,7 @@ const PoolClaimPermissionForm = (props: PoolClaimPermissionFormProps) => {
           onCheck={() => props.onChangePermission('all')}
         />
       </Surface>
-      <div css={{ 'display': 'flex', 'gap': '1.6rem', 'marginTop': '4.6rem', '> *': { flex: 1 } }}>
+      <div css={{ display: 'flex', gap: '1.6rem', marginTop: '4.6rem', '> *': { flex: 1 } }}>
         {onRequestDismiss && (
           <Button disabled={context.isSkeleton} variant="outlined" onClick={onRequestDismiss}>
             Cancel

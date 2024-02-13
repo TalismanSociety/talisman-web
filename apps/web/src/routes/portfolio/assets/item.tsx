@@ -50,20 +50,20 @@ const AssetItem = () => {
             <div
               css={{
                 // Display grid but the first item is full width and the second is half width
-                'display': 'grid',
-                'gridTemplateColumns': '1fr 1fr',
-                'gap': '2rem',
-                'width': '100%',
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '2rem',
+                width: '100%',
 
                 '> :first-child': {
                   gridColumn: '1 / 3',
                 },
 
                 '@media (min-width: 768px)': {
-                  'display': 'flex',
-                  'flexDirection': 'row',
-                  'gap': '2rem',
-                  'width': '100%',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  gap: '2rem',
+                  width: '100%',
                   '> article': {
                     minWidth: '20rem',
                   },
@@ -197,11 +197,11 @@ const AssetItemSkeleton = ({ noToken }: { noToken?: boolean }) => {
       <div
         css={{
           // Display grid but the first item is full width and the second is half width
-          'display': 'grid',
-          'gridTemplateColumns': '1fr 1fr',
-          'gap': '2rem',
-          'width': '100%',
-          'animation': `${slideDown} 0.5s ease-in-out`,
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '2rem',
+          width: '100%',
+          animation: `${slideDown} 0.5s ease-in-out`,
 
           '> :first-child': {
             gridColumn: '1 / 3',
@@ -218,10 +218,10 @@ const AssetItemSkeleton = ({ noToken }: { noToken?: boolean }) => {
           },
 
           '@media (min-width: 768px)': {
-            'display': 'flex',
-            'flexDirection': 'row',
-            'gap': '2rem',
-            'width': '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '2rem',
+            width: '100%',
             '> article': {
               minWidth: '20rem',
             },

@@ -12,11 +12,11 @@ const Switch = (props: SwitchProps) => {
       elevation={x => x + 3}
       css={[
         {
-          'display': 'inline-flex',
-          'width': '3.3rem',
-          'borderRadius': 'calc(1.8rem / 2)',
-          'padding': '0.2rem',
-          'cursor': 'pointer',
+          display: 'inline-flex',
+          width: '3.3rem',
+          borderRadius: 'calc(1.8rem / 2)',
+          padding: '0.2rem',
+          cursor: 'pointer',
           ':has(input:checked)': {
             '> div': {
               backgroundColor: theme.color.primary,

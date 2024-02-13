@@ -375,7 +375,7 @@ const Layout = () => {
             alignItems: 'center',
             gap: '3.2rem',
             padding: '2.4rem 2.4rem 2.4rem 0',
-            a: { 'opacity': theme.contentAlpha.medium, ':hover': { opacity: theme.contentAlpha.high } },
+            a: { opacity: theme.contentAlpha.medium, ':hover': { opacity: theme.contentAlpha.high } },
           })}
         >
           <Text.BodyLarge alpha="high" as="a" href="https://twitter.com/wearetalisman" target="_blank">

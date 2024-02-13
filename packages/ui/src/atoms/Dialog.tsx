@@ -80,7 +80,7 @@ export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function 
       }}
       // https://github.com/whatwg/html/issues/7732
       css={{
-        'overscrollBehavior': 'contain',
+        overscrollBehavior: 'contain',
         '::backdrop': {
           overscrollBehavior: 'contain',
         },

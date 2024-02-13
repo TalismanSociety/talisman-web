@@ -55,22 +55,22 @@ const NavigationDrawerItem = (props: NavigationDrawerItemProps) => {
         context.onRequestDismiss?.()
       }, [context, props])}
       css={{
-        'border': 'none',
-        'borderRadius': '2.4rem',
-        'boxShadow': '0px 2px 2px rgba(0, 0, 0, 0.25)',
-        'width': '100%',
-        'padding': '2.4rem 4rem',
-        'backgroundColor': `color-mix(in srgb, ${theme.color.foregroundVariant}, transparent 60%)`,
-        'cursor': 'pointer',
+        border: 'none',
+        borderRadius: '2.4rem',
+        boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.25)',
+        width: '100%',
+        padding: '2.4rem 4rem',
+        backgroundColor: `color-mix(in srgb, ${theme.color.foregroundVariant}, transparent 60%)`,
+        cursor: 'pointer',
         ':hover': { filter: 'brightness(1.2)' },
       }}
     >
       <Text.BodyLarge
         alpha="high"
         css={{
-          'display': 'flex',
-          'alignItems': 'center',
-          'gap': '3.7rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '3.7rem',
           '@media(min-width: 375px)': { fontSize: '2.4rem' },
         }}
       >
@@ -115,14 +115,14 @@ const NavigationDrawer = Object.assign(
       open={props.open}
       onClickBackdrop={props.onRequestDismiss}
       css={{
-        'width': '100%',
-        'maxWidth': '100%',
-        'height': '100%',
-        'maxHeight': '100%',
-        'border': 'none',
-        'margin': 0,
-        'padding': 0,
-        'backgroundColor': 'transparent',
+        width: '100%',
+        maxWidth: '100%',
+        height: '100%',
+        maxHeight: '100%',
+        border: 'none',
+        margin: 0,
+        padding: 0,
+        backgroundColor: 'transparent',
         '&[open]': {
           '::backdrop': {
             background: 'rgba(18,18,18,0.9)',

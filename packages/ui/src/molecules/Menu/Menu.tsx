@@ -178,7 +178,7 @@ const MenuItem = ({ dismissAfterSelection = true, inTransition, ...props }: Menu
         false: { opacity: 0, transform: 'translateY(20px)', transition: { duration: 0.1 } },
       }}
       css={{
-        'cursor': 'pointer',
+        cursor: 'pointer',
         ':hover': {
           backgroundColor: useSurfaceColor(),
         },

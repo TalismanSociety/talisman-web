@@ -14,9 +14,9 @@ const StakeDashboard = (props: StakeDashboardProps) => (
   <div css={{ containerType: 'inline-size' }}>
     <main
       css={{
-        'display': 'grid',
-        'gap': '3.2rem',
-        'gridTemplateAreas': `
+        display: 'grid',
+        gap: '3.2rem',
+        gridTemplateAreas: `
           'banner'
           'selector'
           'details'

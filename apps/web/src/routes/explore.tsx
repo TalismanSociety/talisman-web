@@ -32,12 +32,12 @@ const ExploreGrid = ({ className }: { className?: string }) => {
         <>
           <section
             css={{
-              'display': 'flex',
-              'flexDirection': 'column',
-              'justifyContent': 'space-between',
-              'alignItems': 'center',
-              'marginBottom': '2rem',
-              'gap': '2rem',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '2rem',
+              gap: '2rem',
               '@media (min-width: 1024px)': {
                 flexDirection: 'row-reverse',
                 gap: 0,
@@ -47,7 +47,7 @@ const ExploreGrid = ({ className }: { className?: string }) => {
             <SearchBar
               placeholder="Search"
               css={{
-                'width': '100%',
+                width: '100%',
                 '@media (min-width: 1024px)': {
                   width: '46.7%',
                   margin: 0,

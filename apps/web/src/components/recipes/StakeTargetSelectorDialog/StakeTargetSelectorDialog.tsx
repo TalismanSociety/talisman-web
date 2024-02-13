@@ -45,9 +45,9 @@ const StakeTargetSelectorDialog = Object.assign(
             </Text.Body>
             <div
               css={{
-                'display': 'grid',
-                'gridTemplateColumns': 'minmax(0, 1fr)',
-                'gap': '1.6rem',
+                display: 'grid',
+                gridTemplateColumns: 'minmax(0, 1fr)',
+                gap: '1.6rem',
                 '@media (min-width: 768px)': {
                   display: 'grid',
                   gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr)',
@@ -72,9 +72,9 @@ const StakeTargetSelectorDialog = Object.assign(
             </div>
             <motion.div
               css={{
-                'display': 'grid',
-                'gridTemplateColumns': 'minmax(0, 1fr)',
-                'gap': '1.6rem',
+                display: 'grid',
+                gridTemplateColumns: 'minmax(0, 1fr)',
+                gap: '1.6rem',
                 '@media (min-width: 768px)': {
                   display: 'grid',
                   gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr)',

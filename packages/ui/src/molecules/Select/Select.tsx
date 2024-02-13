@@ -251,13 +251,13 @@ const Select = Object.assign(
             }}
             css={[
               {
-                'margin': 0,
-                'padding': 0,
-                'backgroundColor': surfaceColor,
-                'listStyle': 'none',
-                'li': {
-                  'padding': '1.5rem 1.25rem',
-                  'backgroundColor': surfaceColor,
+                margin: 0,
+                padding: 0,
+                backgroundColor: surfaceColor,
+                listStyle: 'none',
+                li: {
+                  padding: '1.5rem 1.25rem',
+                  backgroundColor: surfaceColor,
                   ':last-child': {
                     padding: '1.5rem 1.25rem 1rem 1.25rem',
                   },

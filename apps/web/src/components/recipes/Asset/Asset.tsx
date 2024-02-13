@@ -131,8 +131,8 @@ const AssetSkeleton = ({ loading = true }: { loading?: boolean }) => {
             />
             <div
               css={{
-                'display': 'flex',
-                'flexDirection': 'row',
+                display: 'flex',
+                flexDirection: 'row',
                 // if not first child margin negative left
                 '& > :not(:first-child)': {
                   marginLeft: '-0.2em',
@@ -156,7 +156,7 @@ const AssetSkeleton = ({ loading = true }: { loading?: boolean }) => {
         align="right"
         valign="middle"
         css={{
-          'display': 'none',
+          display: 'none',
           '@media (min-width: 1024px)': {
             display: 'table-cell',
           },
@@ -244,8 +244,8 @@ const Asset = Object.assign((props: AssetProps) => {
               </Text.Body>
               <div
                 css={{
-                  'display': 'flex',
-                  'flexDirection': 'row',
+                  display: 'flex',
+                  flexDirection: 'row',
                   // if not first child margin negative left
                   '& > :not(:first-child)': {
                     marginLeft: '-0.2em',
@@ -286,7 +286,7 @@ const Asset = Object.assign((props: AssetProps) => {
         align="right"
         valign="middle"
         css={{
-          'display': 'none',
+          display: 'none',
           '@media (min-width: 1024px)': {
             display: 'table-cell',
           },
@@ -434,7 +434,7 @@ export const AssetsList = (props: AssetsListProps) => {
             <th
               align="right"
               css={{
-                'display': 'none',
+                display: 'none',
                 '@media (min-width: 1024px)': {
                   display: 'table-cell',
                 },

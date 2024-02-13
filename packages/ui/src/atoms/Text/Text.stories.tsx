@@ -16,7 +16,7 @@ export const Default: Story<TextProps<'span'>> = (args: any) => (
         },
       },
       td: {
-        'padding': '1rem',
+        padding: '1rem',
         '> *': {
           margin: 0,
         },

@@ -106,7 +106,7 @@ const TransportForm = Object.assign(
           css={[
             { display: 'flex', alignItems: 'center', gap: '1rem' },
             {
-              'flexDirection': 'column',
+              flexDirection: 'column',
               '@media(min-width: 600px)': {
                 justifyContent: 'space-between',
                 flexDirection: 'row',

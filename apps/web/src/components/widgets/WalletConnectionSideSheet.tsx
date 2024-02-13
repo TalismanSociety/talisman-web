@@ -68,8 +68,8 @@ type WalletConnectionProps = {
 }
 
 const itemStyle = () => ({
-  'borderRadius': '1.2rem',
-  'cursor': 'pointer',
+  borderRadius: '1.2rem',
+  cursor: 'pointer',
   ':hover': { filter: 'brightness(1.2)' },
   [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '40rem' },
 })

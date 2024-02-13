@@ -111,7 +111,7 @@ const Toaster = ({
             onHeightUpdate={handlers.updateHeight}
             css={[
               t.visible && {
-                'zIndex': 9999,
+                zIndex: 9999,
                 '> *': {
                   pointerEvents: 'auto',
                 },

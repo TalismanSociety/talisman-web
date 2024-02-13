@@ -57,9 +57,9 @@ const Welcome = Object.assign(
       <section css={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Text.H1
           css={{
-            'fontSize': '3.6rem',
-            'textAlign': 'center',
-            'marginBottom': '2.4rem',
+            fontSize: '3.6rem',
+            textAlign: 'center',
+            marginBottom: '2.4rem',
             '@media (min-width: 1024px)': {
               fontSize: '4.6rem',
             },
@@ -80,9 +80,9 @@ const Welcome = Object.assign(
           <form
             onSubmit={event => event.preventDefault()}
             css={{
-              'display': 'flex',
-              'flexDirection': 'column',
-              'gap': '1.6rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.6rem',
               '@media (min-width: 1024px)': {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
@@ -100,9 +100,9 @@ const Welcome = Object.assign(
           </Text.Body>
           <div
             css={{
-              'display': 'grid',
-              'gridTemplateColumns': `repeat(1, minmax(0, 1fr))`,
-              'gap': '1.6rem 2.4rem',
+              display: 'grid',
+              gridTemplateColumns: `repeat(1, minmax(0, 1fr))`,
+              gap: '1.6rem 2.4rem',
               '@media(min-width: 562px)': {
                 gridTemplateColumns: `repeat(2, minmax(0, 1fr))`,
               },

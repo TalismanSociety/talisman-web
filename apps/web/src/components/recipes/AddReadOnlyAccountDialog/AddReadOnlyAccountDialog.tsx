@@ -77,9 +77,9 @@ const AddReadOnlyAccountDialog = Object.assign(
             <Hr css={{ marginTop: '3.2rem', marginBottom: '3.2rem' }}>Or add one of the popular accounts</Hr>
             <div
               css={{
-                'display': 'grid',
-                'gridTemplateColumns': `repeat(1, minmax(0, 1fr))`,
-                'gap': '1.6rem',
+                display: 'grid',
+                gridTemplateColumns: `repeat(1, minmax(0, 1fr))`,
+                gap: '1.6rem',
                 '@media(min-width: 562px)': {
                   gridTemplateColumns: `repeat(2, minmax(0, 1fr))`,
                 },

@@ -24,7 +24,7 @@ const BaseIconButtonFactory =
         {...props}
         css={[
           {
-            'cursor': 'pointer',
+            cursor: 'pointer',
             ':hover': {
               filter: 'brightness(1.2)',
             },

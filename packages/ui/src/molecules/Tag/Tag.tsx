@@ -11,16 +11,16 @@ const Tag = (props: TagProps) => {
   return (
     <article
       css={{
-        'display': 'flex',
-        'flexDirection': 'column',
-        'alignItems': 'flex-start',
-        'justifyContent': 'center',
-        'padding': '.5em',
-        'borderRadius': '.5em',
-        'backgroundColor': '#262626',
-        'color': '#fff',
-        'width': 'fit-content',
-        'maxWidth': '200px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        padding: '.5em',
+        borderRadius: '.5em',
+        backgroundColor: '#262626',
+        color: '#fff',
+        width: 'fit-content',
+        maxWidth: '200px',
         '> *': {
           textOverflow: 'ellipsis',
           overflow: 'hidden',

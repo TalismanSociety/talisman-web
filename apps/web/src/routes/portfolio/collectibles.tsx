@@ -87,8 +87,8 @@ const NftGrid = (props: PropsWithChildren) => (
   <div
     {...props}
     css={{
-      'display': 'grid',
-      'gap': '2.4rem',
+      display: 'grid',
+      gap: '2.4rem',
       '@media(min-width: 425px)': {
         gridTemplateColumns: `repeat(auto-fill, minmax(${NFT_CARD_WIDTH}px, 1fr))`,
       },

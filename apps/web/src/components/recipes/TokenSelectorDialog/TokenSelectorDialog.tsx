@@ -23,11 +23,11 @@ export const TokenSelectorItem = (props: TokenSelectorItemProps) => {
       aria-disabled={props.disabled}
       onClick={props.disabled ? undefined : props.onClick}
       css={{
-        'display': 'flex',
-        'justifyContent': 'space-between',
-        'alignItems': 'center',
-        'padding': '1.4rem 1.8rem',
-        'cursor': 'pointer',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '1.4rem 1.8rem',
+        cursor: 'pointer',
         '&[aria-disabled="true"]': { opacity: 0.3, cursor: 'not-allowed' },
         ':hover': { backgroundColor: theme.color.foreground },
       }}
@@ -73,8 +73,8 @@ const TokenSelectorDialog = Object.assign(
             <Hr css={{ marginBottom: 0 }} />
             <ul
               css={{
-                'margin': 0,
-                'padding': 0,
+                margin: 0,
+                padding: 0,
                 '@media (min-width: 768px)': {
                   maxHeight: '35vh',
                   overflow: 'auto',

@@ -47,15 +47,15 @@ const SideSheet = ({ title, children, ...props }: SideSheetProps) => {
       {...props}
       onClickBackdrop={props.onRequestDismiss}
       css={{
-        'background': theme.color.background,
-        'border': 'none',
-        'width': '100%',
-        'maxWidth': '100%',
-        'height': '100%',
-        'maxHeight': '100%',
-        'padding': 0,
+        background: theme.color.background,
+        border: 'none',
+        width: '100%',
+        maxWidth: '100%',
+        height: '100%',
+        maxHeight: '100%',
+        padding: 0,
         '&[open]': {
-          'animation': `${slideUp} .5s`,
+          animation: `${slideUp} .5s`,
           '::backdrop': {
             background: 'rgba(0,0,0,0.6)',
             backdropFilter: 'blur(16px)',
@@ -63,9 +63,9 @@ const SideSheet = ({ title, children, ...props }: SideSheetProps) => {
           },
         },
         [`${SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR}`]: {
-          'width': 'min-content',
-          'marginLeft': 'auto',
-          'marginRight': 0,
+          width: 'min-content',
+          marginLeft: 'auto',
+          marginRight: 0,
           '&[open]': {
             animation: `${slideInRight} .5s`,
           },

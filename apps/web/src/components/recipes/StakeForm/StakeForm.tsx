@@ -105,7 +105,7 @@ const PoolInfo = (props: PoolInfoProps) => {
             '> div': {
               display: 'flex',
             },
-            'dd': {
+            dd: {
               marginLeft: '1.6rem',
             },
           }}

@@ -12,11 +12,11 @@ const RadioButton = (props: RadioButtonProps) => {
       type="radio"
       checked={props.checked}
       css={{
-        'appearance': 'none',
-        'display': 'inline-flex',
-        'borderRadius': '0.8rem',
-        'width': '1.6rem',
-        'height': '1.6rem',
+        appearance: 'none',
+        display: 'inline-flex',
+        borderRadius: '0.8rem',
+        width: '1.6rem',
+        height: '1.6rem',
         ':checked': {
           ':before': {
             content: '""',
