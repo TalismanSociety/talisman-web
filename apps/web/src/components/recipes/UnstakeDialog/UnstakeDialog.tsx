@@ -1,5 +1,5 @@
-import { AlertDialog, Button, Text, TextInput } from '@talismn/ui'
-import type { ReactNode } from 'react'
+import { AlertDialog, Button, CircularProgressIndicator, Text, TextInput } from '@talismn/ui'
+import { Suspense, type ReactNode } from 'react'
 
 export type UnstakeDialogProps = {
   open?: boolean
@@ -68,7 +68,7 @@ const UnstakeDialog = (props: UnstakeDialogProps) => (
             <Text.Body alpha="high">Unbonding period</Text.Body>
             <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
               <Text.Body as="div" alpha="high">
-                {props.lockDuration}
+                <Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.lockDuration}</Suspense>
               </Text.Body>
             </div>
           </div>

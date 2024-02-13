@@ -6,6 +6,7 @@ import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lo
 import { CircularProgressIndicator } from '@talismn/ui'
 import { useState } from 'react'
 import DappPickerDialog from './DappPickerDialog'
+import UnlockDuration from './UnlockDuration'
 
 type DappUnstakeDialogProps = {
   account: Account
@@ -39,6 +40,7 @@ const DappUnstakeDialog = (props: DappUnstakeDialogProps) => {
       }}
       inputSupportingText={error?.message}
       onDismiss={props.onRequestDismiss}
+      lockDuration={<UnlockDuration />}
     />
   )
 }
