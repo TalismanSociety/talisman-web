@@ -25,7 +25,7 @@ export const useEraEtaFormatter = () => {
 
       if (!sessionProgress.isEpoch) {
         return Maybe.of(expectedSessionTime(api)).mapOr(`${remaining.toString()} sessions`, sessionLength =>
-          formatDistanceToNow(addMilliseconds(new Date(), remaining.muln(sessionLength).toNumber()))
+          formatDistanceToNow(addMilliseconds(new Date(), remaining.mul(sessionLength).toNumber()))
         )
       }
 
