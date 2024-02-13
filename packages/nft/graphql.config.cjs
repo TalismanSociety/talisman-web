@@ -16,29 +16,29 @@ const extensions = outDir => ({
 /** @type {import('graphql-config').IGraphQLConfig } */
 module.exports = {
   projects: {
-    'statemine': {
-      overwrite: true,
-      schema: 'https://squid.subsquid.io/statemine-uniques/v/3/graphql',
-      documents: 'src/generators/statemine.ts',
-      extensions: extensions('generated/gql/statemine/'),
-    },
     'rmrk2': {
       overwrite: true,
       schema: 'https://squid.subsquid.io/marck/v/v2/graphql',
       documents: 'src/generators/rmrk2.ts',
       extensions: extensions('generated/gql/rmrk2/'),
     },
-    'polkadot-asset-hub': {
+    'statemine': {
       overwrite: true,
-      schema: 'https://squid.subsquid.io/speck/graphql',
-      documents: 'src/generators/polkadot-asset-hub.ts',
-      extensions: extensions('generated/gql/polkadot-asset-hub/'),
+      schema: 'https://squid.subsquid.io/statemine-uniques/v/3/graphql',
+      documents: 'src/generators/statemine.ts',
+      extensions: extensions('generated/gql/statemine/'),
     },
-    'kusama-asset-hub': {
+    'substrate-nft-kusama-asset-hub': {
       overwrite: true,
       schema: 'https://query-stick.stellate.sh/',
-      documents: 'src/generators/kusama-asset-hub.ts',
-      extensions: extensions('generated/gql/kusama-asset-hub/'),
+      documents: 'src/generators/substrate-nft-kusama-asset-hub.ts',
+      extensions: extensions('generated/gql/substrate-nft-kusama-asset-hub/'),
+    },
+    'substrate-nft-polkadot-asset-hub': {
+      overwrite: true,
+      schema: 'https://squid.subsquid.io/speck/graphql',
+      documents: 'src/generators/substrate-nft-polkadot-asset-hub.ts',
+      extensions: extensions('generated/gql/substrate-nft-polkadot-asset-hub/'),
     },
     'unique': {
       overwrite: true,

@@ -2,10 +2,10 @@ import {
   createAcalaNftAsyncGenerator,
   createBitCountryNftAsyncGenerator,
   createEvmNftAsyncGenerator,
-  createPolkadotAssetHubNftAsyncGenerator,
-  createKusamaAssetHubNftAsyncGenerator,
   createRmrk2NftAsyncGenerator,
   createStatemineNftAsyncGenerator,
+  createSubstrateNftKusamaAssetHubNftAsyncGenerator,
+  createSubstrateNftPolkadotAssetHubNftAsyncGenerator,
   createUniqueNetworkNftAsyncGenerator,
   type Nft,
 } from '@talismn/nft'
@@ -20,10 +20,10 @@ const subscribeNfts = (address: string, options: { batchSize: number; acalaRpc: 
         : [
             createAcalaNftAsyncGenerator({ rpc: options.acalaRpc }),
             createBitCountryNftAsyncGenerator({ rpc: options.bitcountryRpc }),
-            createPolkadotAssetHubNftAsyncGenerator,
-            createKusamaAssetHubNftAsyncGenerator,
             createRmrk2NftAsyncGenerator,
             createStatemineNftAsyncGenerator,
+            createSubstrateNftKusamaAssetHubNftAsyncGenerator,
+            createSubstrateNftPolkadotAssetHubNftAsyncGenerator,
             createUniqueNetworkNftAsyncGenerator,
           ]
     ).map(async createNftAsyncGenerator => {
