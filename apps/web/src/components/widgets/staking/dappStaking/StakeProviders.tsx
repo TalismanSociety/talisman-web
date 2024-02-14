@@ -84,7 +84,7 @@ const StakePercentage = () => {
   return (
     <StakeProvider.StakePercentage
       percentage={useMemo(
-        () => (staked === 0n ? 0 : new BigNumber(staked.toString()).div((total + staked).toString()).toNumber()),
+        () => (staked === 0n ? 0 : new BigNumber(staked.toString()).div(total.toString()).toNumber()),
         [staked, total]
       )}
     />
