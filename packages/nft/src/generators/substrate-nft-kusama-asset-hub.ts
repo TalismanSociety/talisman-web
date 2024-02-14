@@ -76,7 +76,7 @@ export const createSubstrateNftKusamaAssetHubNftAsyncGenerator: CreateNftAsyncGe
                 (nft.meta?.attributes ?? []).flatMap(({ trait, value }) => (trait ? [[trait, value]] : []))
               )
             : undefined,
-          externalLinks: [{ name: 'Kodadot', url: `https://kodadot.xyz/ksm/gallery/${nft.id}` }],
+          externalLinks: [{ name: 'Kodadot', url: `https://kodadot.xyz/ahk/gallery/${nft.id}` }],
           collection: !collection
             ? undefined
             : {
