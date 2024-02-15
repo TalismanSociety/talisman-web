@@ -195,14 +195,14 @@ const Select = Object.assign(
               border: `solid ${theme.color.border}`,
               borderWidth: '1px 1px 0 1px',
               transitionEnd: {
-                borderBottomLeftRadius: detached ? '0.8rem' : 0,
-                borderBottomRightRadius: detached ? '0.8rem' : 0,
+                borderBottomLeftRadius: detached ? '2rem' : 0,
+                borderBottomRightRadius: detached ? '2rem' : 0,
               },
             },
             false: {
               border: 'solid transparent',
               borderWidth: '1px 1px 0 1px',
-              transitionEnd: { borderBottomLeftRadius: '0.8rem', borderBottomRightRadius: '0.8rem' },
+              transitionEnd: { borderBottomLeftRadius: '2rem', borderBottomRightRadius: '2rem' },
             },
           }}
           css={{
@@ -213,7 +213,7 @@ const Select = Object.assign(
             gap: '1.6rem',
             textAlign: 'start',
             padding: '0.75rem 1.25rem',
-            borderRadius: '0.8rem',
+            borderRadius: '2rem',
             cursor: 'pointer',
             width: '100%',
           }}
@@ -273,8 +273,8 @@ const Select = Object.assign(
                 },
               },
               detached
-                ? { borderRadius: '0.5rem' }
-                : { borderBottomLeftRadius: '0.5rem', borderBottomRightRadius: '0.5rem' },
+                ? { borderRadius: '1.7rem' }
+                : { borderBottomLeftRadius: '1.7rem', borderBottomRightRadius: '1.7rem' },
             ]}
             {...getFloatingProps({
               style: {

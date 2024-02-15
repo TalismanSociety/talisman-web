@@ -133,7 +133,7 @@ const Button = <T extends ButtonElementType = 'button'>({
           padding: '1.156rem 2.4rem',
           width: 'fit-content',
           border: 'none',
-          borderRadius: '1rem',
+          borderRadius: '2rem',
           cursor: 'pointer',
           transition: '.25s',
           ...variantStyle,

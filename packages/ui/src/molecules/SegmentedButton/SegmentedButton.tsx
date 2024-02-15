@@ -35,7 +35,7 @@ const ButtonSegment = (props: ButtonSegmentProps) => {
               css={{
                 position: 'absolute',
                 inset: 0,
-                borderRadius: '1.2rem',
+                borderRadius: '1.8rem',
                 backgroundColor: theme.color.primary,
               }}
             />
@@ -72,7 +72,7 @@ const SegmentedButton = Object.assign(
       <Surface
         as="section"
         className={props.className}
-        css={{ display: 'inline-block', borderRadius: '1.4rem', padding: '0.4rem' }}
+        css={{ display: 'inline-block', borderRadius: '2rem', padding: '0.4rem' }}
       >
         {props.children}
       </Surface>

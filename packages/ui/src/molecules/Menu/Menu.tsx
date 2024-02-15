@@ -35,7 +35,7 @@ import { usePrevious } from '../../utils'
 
 export const MENU_OFFSET = 12
 
-export const MENU_BORDER_RADIUS = '1.2rem'
+export const MENU_BORDER_RADIUS = '2rem'
 
 export type MenuProps = {
   children: [ReactElement<MenuButtonProps>, ReactElement<MenuItemsProps>]
