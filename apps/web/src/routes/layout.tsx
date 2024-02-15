@@ -141,7 +141,7 @@ const AddressSearch = () => {
         </motion.div>
       ) : (
         <motion.div layoutId="address-search">
-          <SurfaceIconButton onClick={() => setRevealed(true)} css={{ borderRadius: '0.8rem' }}>
+          <SurfaceIconButton onClick={() => setRevealed(true)}>
             <MotionSearch layout />
           </SurfaceIconButton>
         </motion.div>
