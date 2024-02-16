@@ -66,10 +66,7 @@ export const toastExtrinsic = (
             Unable to pay some fees (e.g. low account balance
             <br />
             or approaching polkadot existential deposit limit, read{' '}
-            <Text.Noop.A
-              href="https://docs.talisman.xyz/talisman/navigating-the-paraverse/substrate-features/existential-deposit"
-              target="_blank"
-            >
+            <Text.Noop.A href="https://docs.talisman.xyz/talisman/help-and-support/troubleshooting/ed" target="_blank">
               more
             </Text.Noop.A>
             )
