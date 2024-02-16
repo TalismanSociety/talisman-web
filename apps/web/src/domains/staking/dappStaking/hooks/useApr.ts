@@ -53,7 +53,8 @@ export const useApr = () => {
     const stakerRewardPercent = baseStakersPart + adjustableStakersPart * Math.min(1, stakedPercent / idealStakingRate)
 
     const stakerApr = ((yearlyInflation * stakerRewardPercent) / stakedPercent) * cyclesPerYear
-    return stakerApr
+
+    return Number.isFinite(stakerApr) ? stakerApr : 0
   }, [
     activeProtocolState.periodInfo.subperiod.type,
     currentEraInfo.currentStakeAmount.buildAndEarn,
@@ -85,7 +86,8 @@ export const useApr = () => {
     const periodsPerYear = periodsPerCycle * cyclesPerYear
     const simulatedBonusAmountPerYear = simulatedBonusPerPeriod * periodsPerYear
     const bonusApr = simulatedBonusAmountPerYear / simulatedVoteAmount
-    return bonusApr
+
+    return Number.isFinite(bonusApr) ? bonusApr : 0
   }, [
     activeInflationConfig.bonusRewardPoolPerPeriod,
     activeProtocolState.periodInfo.subperiod.type,
