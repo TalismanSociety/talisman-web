@@ -23,6 +23,7 @@ import StakePositionSkeleton from './StakePosition.skeleton'
 export type StakePositionProps = {
   readonly?: boolean
   account: Account
+  showAccountIcon?: boolean
   provider: ReactNode
   shortProvider?: ReactNode
   stakeStatus: StakeStatus
@@ -183,7 +184,7 @@ const StakePosition = Object.assign(
         <div css={{ containerType: 'inline-size' }}>
           <Grid>
             <div css={{ gridArea: 'account', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-              <AccountIcon account={props.account} size="3.5rem" />
+              {props.showAccountIcon === false ? undefined : <AccountIcon account={props.account} size="3.5rem" />}
               <div css={{ overflow: 'hidden' }}>
                 <Text.Body alpha="high" css={{ paddingRight: '1.6rem' }}>
                   {props.account.name ?? shortenAddress(props.account.address)}

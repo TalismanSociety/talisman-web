@@ -21,6 +21,7 @@ import { Maybe } from '@util/monads'
 import { Suspense, useMemo, useState, useTransition, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
+import Stakes from './Stakes'
 import UnlockDuration from './UnlockDuration'
 
 type DappSelectorDialogProps = {
@@ -172,9 +173,6 @@ const StakeForm = (props: StakeFormProps) => {
           <EstimatedRewards amount={input.amount} />
         </Suspense>
       }
-      currentStakedBalance={
-        stake.totalStaked.decimalAmount.planck.gtn(0) ? stake.totalStaked.decimalAmount.toHuman() : undefined
-      }
     />
   )
 }
@@ -185,16 +183,11 @@ type StakeSideSheetProps = {
   onRequestDismiss: () => unknown
 }
 
-const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismiss'>) => {
-  const [searchParams] = useSearchParams()
-
+const StakeSideSheetContent = (
+  props: Omit<StakeSideSheetProps, 'onRequestDismiss'> & { account?: Account; accountSelector: ReactNode }
+) => {
   const [chain, dapps] = useRecoilValue(waitForAll([useChainState(), useRegisteredDappsState()]))
-  const [[account], accountSelector] = useAccountSelector(
-    useRecoilValue(writeableSubstrateAccountsState),
-    searchParams.get('account') === null
-      ? 0
-      : accounts => accounts?.find(x => x.address === searchParams.get('account'))
-  )
+
   const [dapp, setDapp] = useState(dapps.at(0))
 
   const [dappSelectorDialogOpen, setDappSelectorDialogOpen] = useState(false)
@@ -227,11 +220,11 @@ const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismis
 
   return (
     <>
-      {account !== undefined && dapp !== undefined ? (
+      {props.account !== undefined && dapp !== undefined ? (
         <StakeForm
-          account={account}
+          account={props.account}
           dapp={dapp.address.startsWith('0x') ? { Evm: dapp.address } : { Wasm: dapp.address }}
-          accountSelector={accountSelector}
+          accountSelector={props.accountSelector}
           assetSelector={assetSelector}
           dappSelectionInProgress={dappSelectorDialogInTransition}
           selectedDappName={dapp.name}
@@ -240,7 +233,7 @@ const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismis
         />
       ) : (
         <InCompleteSelectionStakeForm
-          accountSelector={accountSelector}
+          accountSelector={props.accountSelector}
           assetSelector={assetSelector}
           selectedDappName={dapp?.name}
           selectedDappLogo={dapp?.iconUrl}
@@ -271,6 +264,14 @@ const MinimumStake = () => (
 )
 
 const _StakeSideSheet = (props: StakeSideSheetProps) => {
+  const [searchParams] = useSearchParams()
+  const [[account], accountSelector] = useAccountSelector(
+    useRecoilValue(writeableSubstrateAccountsState),
+    searchParams.get('account') === null
+      ? 0
+      : accounts => accounts?.find(x => x.address === searchParams.get('account'))
+  )
+
   return (
     <DappStakingSideSheet
       onRequestDismiss={props.onRequestDismiss}
@@ -279,6 +280,11 @@ const _StakeSideSheet = (props: StakeSideSheetProps) => {
       nextEraEta={<NextEraEta />}
       minimumStake={<MinimumStake />}
       unbondingPeriod={<UnlockDuration />}
+      currentPosition={
+        <ErrorBoundary orientation="vertical">
+          <Stakes account={account} showAccountIcon={false} />
+        </ErrorBoundary>
+      }
     >
       <ErrorBoundary orientation="vertical">
         <Suspense
@@ -298,7 +304,7 @@ const _StakeSideSheet = (props: StakeSideSheetProps) => {
             </div>
           }
         >
-          <StakeSideSheetContent {...props} />
+          <StakeSideSheetContent {...props} account={account} accountSelector={accountSelector} />
         </Suspense>
       </ErrorBoundary>
     </DappStakingSideSheet>

@@ -12,7 +12,7 @@ import AddStakeDialog from './AddStakeDialog'
 import UnlockDuration from './UnlockDuration'
 import UnstakeDialog from './UnstakeDialog'
 
-const Stake = ({ account }: { account: Account }) => {
+const Stake = ({ account, ...props }: { account: Account; showAccountIcon?: boolean }) => {
   // Pre-load potentially heavy query
   useRecoilValueLoadable(useRegisteredDappsState())
 
@@ -47,6 +47,7 @@ const Stake = ({ account }: { account: Account }) => {
         chain={chain.name}
         symbol={chain.nativeToken?.symbol ?? ''}
         account={account}
+        showAccountIcon={props.showAccountIcon}
         provider="DApp staking"
         stakeStatus={stake.earningRewards ? 'earning_rewards' : 'not_earning_rewards'}
         balance={stake.totalStaked.decimalAmount.toHuman()}
@@ -140,9 +141,10 @@ const Stake = ({ account }: { account: Account }) => {
   )
 }
 
-const Stakes = () => {
+const Stakes = (props: { account?: Account; showAccountIcon?: boolean }) => {
   const chains = useRecoilValue(dappStakingEnabledChainsState)
-  const accounts = useRecoilValue(selectedSubstrateAccountsState)
+  const _accounts = useRecoilValue(selectedSubstrateAccountsState)
+  const accounts = props.account === undefined ? _accounts : [props.account]
 
   return (
     <>
@@ -150,7 +152,7 @@ const Stakes = () => {
         <ErrorBoundary key={index} orientation="horizontal">
           <ChainProvider chain={chain}>
             {accounts.map((account, index) => (
-              <Stake key={index} account={account} />
+              <Stake key={index} account={account} showAccountIcon={props.showAccountIcon} />
             ))}
           </ChainProvider>
         </ErrorBoundary>

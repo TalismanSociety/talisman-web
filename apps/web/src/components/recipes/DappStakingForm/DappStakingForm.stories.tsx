@@ -34,7 +34,6 @@ export const Default: Story = {
     selectedDappLogo:
       'https://815904063-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/collections%2FDcs3btJSMUg5Al36ckpm%2Ficon%2FA9YrhMPNYCFEGw78veFN%2Ftalisman_icon_red.svg?alt=media&token=50981c0a-a3c6-453c-8a2a-4f61bd93f426',
     estimatedRewards: '0.021 ASTR / Year ($23.04)',
-    currentStakedBalance: '2 ASTAR',
     stakeButton: <DappStakingForm.StakeButton />,
   },
 }

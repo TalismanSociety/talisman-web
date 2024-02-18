@@ -76,7 +76,6 @@ export type DappStakingFormProps = {
   selectedDappLogo?: string
   onRequestDappChange: () => unknown
   estimatedRewards: ReactNode
-  currentStakedBalance?: ReactNode
   stakeButton: ReactNode
 }
 
@@ -126,12 +125,6 @@ const DappStakingForm = Object.assign(
             <DescriptionList.Term>Estimated earning</DescriptionList.Term>
             <DescriptionList.Details css={{ wordBreak: 'break-all' }}>{props.estimatedRewards}</DescriptionList.Details>
           </DescriptionList.Description>
-          {props.currentStakedBalance !== undefined && (
-            <DescriptionList.Description>
-              <DescriptionList.Term>Staked balance</DescriptionList.Term>
-              <DescriptionList.Details>{props.currentStakedBalance}</DescriptionList.Details>
-            </DescriptionList.Description>
-          )}
         </DescriptionList>
         {props.stakeButton}
       </Surface>
@@ -153,12 +146,16 @@ export type DappStakingSideSheetProps = Omit<SideSheetProps, 'title'> & {
   nextEraEta: ReactNode
   minimumStake: ReactNode
   unbondingPeriod: ReactNode
+  currentPosition?: ReactNode
 }
 
 export const DappStakingSideSheet = ({
   children: form,
+  rewards,
+  nextEraEta,
   minimumStake,
   unbondingPeriod,
+  currentPosition,
   ...props
 }: DappStakingSideSheetProps) => {
   return (
@@ -183,14 +180,17 @@ export const DappStakingSideSheet = ({
         >
           <InfoCard
             headlineText="Rewards"
-            text={<Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.rewards}</Suspense>}
+            text={<Suspense fallback={<CircularProgressIndicator size="1em" />}>{rewards}</Suspense>}
           />
           <InfoCard
             headlineText="Current era ends"
-            text={<Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.nextEraEta}</Suspense>}
+            text={<Suspense fallback={<CircularProgressIndicator size="1em" />}>{nextEraEta}</Suspense>}
           />
         </section>
         {form}
+        <Suspense>
+          <div css={{ marginTop: '1.6rem' }}>{currentPosition}</div>
+        </Suspense>
         <Text.Body as="p" css={{ marginTop: '6.4rem' }}>
           The <Text.Body alpha="high">minimum amount</Text.Body> to stake for users is{' '}
           <Suspense fallback={<CircularProgressIndicator size="1em" />}>
@@ -199,7 +199,7 @@ export const DappStakingSideSheet = ({
           .
           <br />
           <br />
-          You need to claim to receive your rewards, we recommend claiming for your staking rewards once a week.
+          You need to claim to receive your rewards.
           <br />
           <br />
           There is a <Text.Body alpha="high">unbonding period</Text.Body> for around{' '}
@@ -211,6 +211,14 @@ export const DappStakingSideSheet = ({
           <br />
           Please note that this is based on a perfect block production of 12s. In case of any delay, your unbonding
           period can be a little longer.
+          <br />
+          <br />
+          <Text.Noop.A
+            href="https://astar.network/blog/dapp-staking-v3-explained-48693?ref=parachains-info"
+            target="_blank"
+          >
+            Learn more
+          </Text.Noop.A>
         </Text.Body>
       </div>
     </SideSheet>
