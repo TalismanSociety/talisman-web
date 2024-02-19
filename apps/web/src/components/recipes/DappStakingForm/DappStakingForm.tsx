@@ -199,7 +199,7 @@ export const DappStakingSideSheet = ({
           .
           <br />
           <br />
-          You need to claim to receive your rewards, we recommend claiming for your staking rewards once a week.
+          You need to claim to receive your rewards.
           <br />
           <br />
           There is a <Text.Body alpha="high">unbonding period</Text.Body> for around{' '}
@@ -209,8 +209,13 @@ export const DappStakingSideSheet = ({
           on <Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.chainName}</Suspense>.
           <br />
           <br />
-          Please note that this is based on a perfect block production of 12s. In case of any delay, your unbonding
-          period can be a little longer.
+          Please note that this is based on a perfect block production of <Text.Body alpha="high">12s</Text.Body>. In
+          case of any delay, your unbonding period can be a little longer.
+          <br />
+          <br />
+          <Text.Noop.A href="https://astar.network/blog/dapp-staking-v3-explained-48693" target="_blank">
+            Learn more
+          </Text.Noop.A>
         </Text.Body>
       </div>
     </SideSheet>
