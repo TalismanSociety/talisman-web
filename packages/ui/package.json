@@ -23,8 +23,10 @@
     "@floating-ui/react": "^0.26.3",
     "@google/model-viewer": "^3.1.1",
     "@lottiefiles/react-lottie-player": "^3.5.2",
+    "@polkadot/util-crypto": "^12.6.2",
     "@talismn/web-icons": "workspace:^",
     "colorjs.io": "^0.4.4-patch.1",
+    "md5": "^2.3.0",
     "mime": "^3.0.0",
     "react-countup": "^6.5.0",
     "react-hot-toast": "^2.4.0"
