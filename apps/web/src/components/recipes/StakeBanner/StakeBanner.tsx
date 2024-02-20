@@ -1,4 +1,4 @@
-import { Calculate, Zap } from '@talismn/icons'
+import { Calculate, Zap } from '@talismn/web-icons'
 import { Button, ListItem, Text, TonalIcon } from '@talismn/ui'
 import type { ReactNode } from 'react'
 

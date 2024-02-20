@@ -1,5 +1,5 @@
 import { Global, keyframes, useTheme } from '@emotion/react'
-import { Volume2, X } from '@talismn/icons'
+import { Volume2, X } from '@talismn/web-icons'
 import { type ReactNode } from 'react'
 import { Button, Dialog, Text, type DialogProps } from '../../atoms'
 import { useMimeType, type MimeTypeSubType, type MimeTypeType } from '../../utils'

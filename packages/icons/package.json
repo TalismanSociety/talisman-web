@@ -1,12 +1,14 @@
 {
-  "private": true,
-  "name": "@talismn/icons",
-  "packageManager": "yarn@3.4.1",
+  "name": "@talismn/web-icons",
+  "version": "0.0.0",
   "main": "build/commonjs/index.js",
   "exports": {
     ".": "./build/index.js",
     "./utils": "./build/utils.js"
   },
+  "files": [
+    "build"
+  ],
   "scripts": {
     "dev": "tsc --build --watch tsconfig.json",
     "build": "rm -rf build && tsc --build tsconfig.json",

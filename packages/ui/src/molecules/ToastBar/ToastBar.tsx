@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { Check, X } from '@talismn/icons'
+import { Check, X } from '@talismn/web-icons'
 import { formatDistanceToNowStrict } from 'date-fns'
 import { motion } from 'framer-motion'
 import React, { Fragment, useEffect, useMemo, useState } from 'react'

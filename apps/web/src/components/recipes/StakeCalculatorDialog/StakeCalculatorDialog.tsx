@@ -1,5 +1,5 @@
 import { ClassNames } from '@emotion/react'
-import { Calculate, Earn } from '@talismn/icons'
+import { Calculate, Earn } from '@talismn/web-icons'
 import { AlertDialog, Hr, ListItem, Text, TextInput, TonalIcon } from '@talismn/ui'
 import type { ReactNode } from 'react'
 

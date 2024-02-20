@@ -1,4 +1,5 @@
 {
   "private": true,
-  "name": "@talismn/development"
+  "name": "@talismn/development",
+  "version": "0.0.0"
 }

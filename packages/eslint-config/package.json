@@ -1,6 +1,7 @@
 {
-  "name": "@talismn/eslint-config",
   "private": true,
+  "name": "@talismn/eslint-config",
+  "version": "0.0.0",
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "eslint-config-prettier": "^8.8.0",

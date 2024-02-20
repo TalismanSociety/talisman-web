@@ -1,6 +1,6 @@
 import { type ComponentMeta, type Story } from '@storybook/react'
 
-import { EyeOff, Heart } from '@talismn/icons'
+import { EyeOff, Heart } from '@talismn/web-icons'
 import { FloatingActionButton, theme } from '../..'
 import Card, { type CardProps } from './Card'
 

@@ -1,12 +1,16 @@
 {
-  "private": true,
   "name": "@talismn/ui",
+  "version": "0.0.0",
   "type": "module",
   "main": "build/commonjs/index.js",
   "exports": {
     ".": "./build/index.js",
     "./assets/css/talismn.css": "./assets/css/talismn.css"
   },
+  "files": [
+    "build",
+    "assets"
+  ],
   "scripts": {
     "dev": "tsc --build --watch tsconfig.build.json",
     "build": "rm -rf build && tsc --build tsconfig.build.json",
@@ -19,7 +23,7 @@
     "@floating-ui/react": "^0.26.3",
     "@google/model-viewer": "^3.1.1",
     "@lottiefiles/react-lottie-player": "^3.5.2",
-    "@talismn/icons": "workspace:^",
+    "@talismn/web-icons": "workspace:^",
     "colorjs.io": "^0.4.4-patch.1",
     "mime": "^3.0.0",
     "react-hot-toast": "^2.4.0"
@@ -54,7 +58,7 @@
   },
   "peerDependencies": {
     "@emotion/react": "11.x",
-    "@talismn/icons": "*",
+    "@talismn/web-icons": "*",
     "framer-motion": "10.x",
     "react": "18.x"
   }

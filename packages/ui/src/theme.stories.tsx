@@ -1,5 +1,5 @@
 import { type ComponentMeta, type Story } from '@storybook/react'
-import { TalismanHand } from '@talismn/icons'
+import { TalismanHand } from '@talismn/web-icons'
 import { type JSXElementConstructor } from 'react'
 
 import { Text } from './atoms'

@@ -1,0 +1,45 @@
+name: Packages
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  publish-snapshot:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # https://github.com/yarnpkg/berry/issues/4014
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup
+
+      - run: yarn turbo run build --filter="./packages/*"
+
+      - run: yarn workspaces foreach -At --no-private version 0.0.0-snapshot.$(git rev-parse --short HEAD) --immediate
+
+      - run: yarn workspaces foreach -At --no-private npm publish --access public --tag snapshot
+        env:
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-pr-snapshot:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # https://github.com/yarnpkg/berry/issues/4014
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup
+
+      - run: yarn turbo run build --filter="./packages/*"
+
+      - run: yarn workspaces foreach -At --no-private version 0.0.0-pr${{ github.event.pull_request.number }}.$(git rev-parse --short HEAD) --immediate
+
+      - run: yarn workspaces foreach -At --no-private npm publish --access public --tag pr${{ github.event.pull_request.number }}
+        env:
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

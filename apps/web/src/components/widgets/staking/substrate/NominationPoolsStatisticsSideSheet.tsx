@@ -14,7 +14,7 @@ import {
 } from '@domains/staking/substrate/nominationPools'
 import { useTheme } from '@emotion/react'
 import { encodeAddress } from '@polkadot/util-crypto'
-import { BarChart, Clock, Earn, ExternalLink, Percent, Zap } from '@talismn/icons'
+import { BarChart, Clock, Earn, ExternalLink, Percent, Zap } from '@talismn/web-icons'
 import {
   DescriptionList,
   ListItem,

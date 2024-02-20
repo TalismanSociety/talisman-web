@@ -1,6 +1,6 @@
 import type { Account } from '@domains/accounts'
 import { useTheme } from '@emotion/react'
-import { Eye } from '@talismn/icons'
+import { Eye } from '@talismn/web-icons'
 import { Badge, BadgedBox, Identicon, useSurfaceColorAtElevation, type IdenticonProps, Tooltip } from '@talismn/ui'
 
 export type AccountIconProps = Omit<IdenticonProps, 'value'> & { account: Pick<Account, 'readonly' | 'address'> }

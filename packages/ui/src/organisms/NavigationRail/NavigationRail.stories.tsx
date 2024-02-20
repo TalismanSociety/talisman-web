@@ -1,5 +1,5 @@
 import { type ComponentMeta, type Story } from '@storybook/react'
-import { Compass, CreditCard, PieChart, Repeat, Union, Zap } from '@talismn/icons'
+import { Compass, CreditCard, PieChart, Repeat, Union, Zap } from '@talismn/web-icons'
 
 import { IconButton } from '../../atoms'
 import NavigationRail, { NavigationRailItem, type NavigationRailProps } from './NavigationRail'

@@ -1,5 +1,5 @@
 import { keyframes } from '@emotion/react'
-import { Loader } from '@talismn/icons'
+import { Loader } from '@talismn/web-icons'
 
 export type CircularProgressIndicatorProps = {
   className?: string

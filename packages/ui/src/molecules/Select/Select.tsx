@@ -12,7 +12,7 @@ import {
   useRole,
   useTypeahead,
 } from '@floating-ui/react'
-import { ChevronDown, X } from '@talismn/icons'
+import { ChevronDown, X } from '@talismn/web-icons'
 import { motion } from 'framer-motion'
 import React, {
   forwardRef,

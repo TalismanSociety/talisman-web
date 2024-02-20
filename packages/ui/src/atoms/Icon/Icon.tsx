@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { IconContext } from '@talismn/icons/utils'
+import { IconContext } from '@talismn/web-icons/utils'
 import { type ComponentPropsWithoutRef, type ElementType } from 'react'
 import { useSurfaceColor } from '..'
 

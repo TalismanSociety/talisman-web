@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
 import { type ComponentMeta, type Story } from '@storybook/react'
-import * as Icon from '@talismn/icons'
+import * as Icon from '@talismn/web-icons'
 
 export default {
   title: 'Atoms/Icons',

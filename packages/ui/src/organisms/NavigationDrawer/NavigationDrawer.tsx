@@ -1,6 +1,6 @@
 import { keyframes, useTheme } from '@emotion/react'
-import { X } from '@talismn/icons'
-import { IconContext } from '@talismn/icons/utils'
+import { X } from '@talismn/web-icons'
+import { IconContext } from '@talismn/web-icons/utils'
 import {
   createContext,
   useCallback,

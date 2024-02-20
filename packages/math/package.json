@@ -1,5 +1,7 @@
 {
+  "private": true,
   "name": "@talismn/math",
+  "version": "0.0.0",
   "exports": "./build/index.js",
   "type": "module",
   "scripts": {

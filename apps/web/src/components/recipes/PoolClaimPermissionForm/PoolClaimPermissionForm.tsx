@@ -1,6 +1,6 @@
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { useTheme } from '@emotion/react'
-import { Calculate, Info } from '@talismn/icons'
+import { Calculate, Info } from '@talismn/web-icons'
 import { AlertDialog, Button, HiddenDetails, RadioButton, Surface, Switch, Text, Tooltip } from '@talismn/ui'
 import { Suspense, type PropsWithChildren, createContext, useContext } from 'react'
 

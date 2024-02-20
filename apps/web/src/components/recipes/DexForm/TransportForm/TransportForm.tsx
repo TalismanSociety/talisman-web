@@ -1,6 +1,6 @@
 import Cryptoticon from '@components/recipes/Cryptoticon'
 import { useTheme } from '@emotion/react'
-import { ArrowDown, Repeat } from '@talismn/icons'
+import { ArrowDown, Repeat } from '@talismn/web-icons'
 import {
   Button,
   CircularProgressIndicator,

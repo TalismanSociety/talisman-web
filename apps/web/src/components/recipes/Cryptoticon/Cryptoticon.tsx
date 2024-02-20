@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react'
 import { useTokens } from '@talismn/balances-react'
 import { CircularProgressIndicator } from '@talismn/ui'
 import { type PropsWithChildren, createContext, useContext } from 'react'
-import { IconContext } from '@talismn/icons/utils'
+import { IconContext } from '@talismn/web-icons/utils'
 
 export type CryptoticonProps = {
   src?: string

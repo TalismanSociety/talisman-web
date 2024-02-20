@@ -15,7 +15,7 @@ import { useCrowdloanContributions, type GqlContribution } from '@libs/crowdloan
 import { calculateGqlCrowdloanPortfolioAmounts, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useParachainDetailsById } from '@libs/talisman'
 import { supportedRelayChainsState } from '@libs/talisman/util/_config'
-import { Clock, Eye, Lock } from '@talismn/icons'
+import { Clock, Eye, Lock } from '@talismn/web-icons'
 import { Chip, ListItem, Skeleton, Text, type SkeletonProps } from '@talismn/ui'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
 import { formatCommas, truncateAddress } from '@util/helpers'

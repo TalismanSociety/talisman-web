@@ -1,5 +1,7 @@
 {
+  "private": true,
   "name": "@talismn/utils",
+  "version": "0.0.0",
   "exports": {
     ".": "./build/index.js",
     "./react": "./build/react/index.js"

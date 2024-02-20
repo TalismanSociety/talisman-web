@@ -1,5 +1,7 @@
 {
+  "private": true,
   "name": "@talismn/react-polkadot-api",
+  "version": "0.0.0",
   "type": "module",
   "exports": "./build/index.js",
   "scripts": {

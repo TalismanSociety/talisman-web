@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { Zap } from '@talismn/icons'
+import { Zap } from '@talismn/web-icons'
 import {
   Button,
   CircularProgressIndicator,

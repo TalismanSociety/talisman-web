@@ -1,4 +1,4 @@
-import { Search, XCircle } from '@talismn/icons'
+import { Search, XCircle } from '@talismn/web-icons'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { TextInput, type TextInputProps } from '..'
 

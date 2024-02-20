@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { Lock } from '@talismn/icons'
+import { Lock } from '@talismn/web-icons'
 import { Button, Identicon, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import React, { type ReactElement } from 'react'

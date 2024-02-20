@@ -1,4 +1,4 @@
-import { ArrowDown } from '@talismn/icons'
+import { ArrowDown } from '@talismn/web-icons'
 import {
   Button,
   Clickable,

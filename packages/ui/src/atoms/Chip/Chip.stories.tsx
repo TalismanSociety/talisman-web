@@ -1,5 +1,5 @@
 import { type ComponentMeta, type Story } from '@storybook/react'
-import { Union } from '@talismn/icons'
+import { Union } from '@talismn/web-icons'
 
 import Chip, { SurfaceChip, TonalChip, type ChipProps } from './Chip'
 

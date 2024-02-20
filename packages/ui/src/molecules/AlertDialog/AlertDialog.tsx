@@ -1,5 +1,5 @@
 import { keyframes, useTheme } from '@emotion/react'
-import { X } from '@talismn/icons'
+import { X } from '@talismn/web-icons'
 import { type ReactNode } from 'react'
 
 import { Button, Dialog, Surface, Text, type DialogProps } from '../../atoms'
