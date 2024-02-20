@@ -40,29 +40,29 @@ Default.args = {
     <Menu.Items key={1}>
       <Menu.Item>
         <ListItem
-          headlineText="Polkadot.js import"
-          overlineText="$356,120.32"
+          headlineContent="Polkadot.js import"
+          overlineContent="$356,120.32"
           leadingContent={<Identicon value="1YmEYgtfPbwx5Jos1PjKDWRpuJWSpTzytwZgYan6kgiquNS" size="4rem" />}
         />
       </Menu.Item>
       <Menu.Item>
         <ListItem
-          headlineText="Polkadot.js import"
-          overlineText="$356,120.32"
+          headlineContent="Polkadot.js import"
+          overlineContent="$356,120.32"
           leadingContent={<Identicon value="1YmEYgtfPbwx5Jos1PjKDWRpuJWSpTzytwZgYan6kgiquNS" size="4rem" />}
         />
       </Menu.Item>
       <Menu.Item>
         <ListItem
-          headlineText="Polkadot.js import"
-          overlineText="$356,120.32"
+          headlineContent="Polkadot.js import"
+          overlineContent="$356,120.32"
           leadingContent={<Identicon value="1YmEYgtfPbwx5Jos1PjKDWRpuJWSpTzytwZgYan6kgiquNS" size="4rem" />}
         />
       </Menu.Item>
       <Menu.Item>
         <ListItem
-          headlineText="Polkadot.js import"
-          overlineText="$356,120.32"
+          headlineContent="Polkadot.js import"
+          overlineContent="$356,120.32"
           leadingContent={<Identicon value="1YmEYgtfPbwx5Jos1PjKDWRpuJWSpTzytwZgYan6kgiquNS" size="4rem" />}
         />
       </Menu.Item>

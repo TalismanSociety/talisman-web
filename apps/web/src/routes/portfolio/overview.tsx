@@ -61,9 +61,9 @@ const AssetsOverview = () => {
           }}
         >
           <SectionHeader
-            headlineText="Assets"
-            supportingText={<AnimatedFiatNumber end={fiatTotal} animate={false} />}
-            supportingTextIcon={
+            headlineContent="Assets"
+            supportingContent={<AnimatedFiatNumber end={fiatTotal} animate={false} />}
+            supportingContentIcon={
               <IconButton size="1.25em" onClick={() => setRedactBalance(x => !x)}>
                 {redactBalance ? <Eye /> : <EyeOff />}
               </IconButton>
@@ -118,7 +118,7 @@ const AssetsOverview = () => {
 
 // const HistoryOverview = () => (
 //   <div>
-//     <SectionHeader headlineText="History" />
+//     <SectionHeader headlineContent="History" />
 //     <SelectedAccountsHistory maxCount={8} />
 //     <div css={{ display: 'flex' }}>
 //       <Button variant="secondary" as={Link} to="history" css={{ marginTop: '1.8rem', marginLeft: 'auto' }}>

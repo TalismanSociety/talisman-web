@@ -106,7 +106,7 @@ const DappStakingForm = Object.assign(
               renderSelected={() =>
                 props.selectedDappName === undefined ? undefined : (
                   <ListItem
-                    headlineText={props.selectedDappName}
+                    headlineContent={props.selectedDappName}
                     leadingContent={
                       <img
                         src={props.selectedDappLogo}
@@ -182,12 +182,14 @@ export const DappStakingSideSheet = ({
           }}
         >
           <InfoCard
-            headlineText="Rewards"
-            text={<Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.rewards}</Suspense>}
+            overlineContent="Rewards"
+            headlineContent={<Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.rewards}</Suspense>}
           />
           <InfoCard
-            headlineText="Current era ends"
-            text={<Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.nextEraEta}</Suspense>}
+            overlineContent="Current era ends"
+            headlineContent={
+              <Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.nextEraEta}</Suspense>
+            }
           />
         </section>
         {form}

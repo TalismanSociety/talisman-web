@@ -132,7 +132,7 @@ const TransportForm = Object.assign(
                   <Select.Option
                     key={index}
                     value={index}
-                    headlineText={network.name}
+                    headlineContent={network.name}
                     leadingIcon={
                       props.selectedFromChainInitializing ? (
                         <CircularProgressIndicator size="2rem" />
@@ -169,7 +169,7 @@ const TransportForm = Object.assign(
                   <Select.Option
                     key={index}
                     value={index}
-                    headlineText={network.name}
+                    headlineContent={network.name}
                     leadingIcon={<Cryptoticon src={network.logoSrc} alt={network.name} size="2rem" />}
                   />
                 ))}

@@ -93,8 +93,8 @@ const StakeItem = Object.assign(
       <article css={{ borderRadius: '0.8rem', overflow: 'hidden' }}>
         <ListItem
           leadingContent={<AccountIcon account={props.account} size="4rem" />}
-          headlineText={props.account.name ?? shortenAddress(props.account.address)}
-          supportingText={
+          headlineContent={props.account.name ?? shortenAddress(props.account.address)}
+          supportingContent={
             <Text.Body css={{ display: 'flex', alignItems: 'center', gap: '0.25em' }}>
               <StakeStatusIndicator status={props.stakeStatus} />
               <Text.Body css={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

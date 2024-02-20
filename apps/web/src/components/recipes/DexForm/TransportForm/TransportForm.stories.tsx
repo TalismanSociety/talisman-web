@@ -16,12 +16,12 @@ export const Default: Story<TransportFormProps> = args => <TransportForm {...arg
 Default.args = {
   accountSelector: (
     <Select css={{ width: '100%' }} placeholder="Select account">
-      <Select.Option headlineText="foo" />
+      <Select.Option headlineContent="foo" />
     </Select>
   ),
   destAccountSelector: (
     <Select css={{ width: '100%' }} placeholder="Select account">
-      <Select.Option headlineText="foo" />
+      <Select.Option headlineContent="foo" />
     </Select>
   ),
   fromChains: [

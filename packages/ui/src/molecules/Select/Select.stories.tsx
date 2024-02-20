@@ -30,26 +30,26 @@ export const Default: Story<Partial<SelectProps<string>>> = props => {
       <Select.Option
         value={0}
         leadingIcon={<Identicon value="5CcU6DRpocLUWYJHuNLjB4gGyHJrkWuruQD5XFbRYffCfSAP" size={40} />}
-        headlineText="Polkadot.js Import"
-        supportingText="420 DOT"
+        headlineContent="Polkadot.js Import"
+        supportingContent="420 DOT"
       />
       <Select.Option
         value={1}
         leadingIcon={<Identicon value="143wN4e1nTTWJZHy1CFVXDHpAg6YJsNn2jDN52J2Xfjf8MWs" size={40} />}
-        headlineText="Yeet Account"
-        supportingText="35 DOT"
+        headlineContent="Yeet Account"
+        supportingContent="35 DOT"
       />
       <Select.Option
         value={2}
         leadingIcon={<Identicon value="1YmEYgtfPbwx5Jos1PjKDWRpuJWSpTzytwZgYan6kgiquNS" size={40} />}
-        headlineText="My Porkydot Account"
-        supportingText="2,443.33 DOT"
+        headlineContent="My Porkydot Account"
+        supportingContent="2,443.33 DOT"
       />
       <Select.Option
         value={3}
         leadingIcon={<Identicon value="16JfrnmcA7ncfANSXnyAzH9LRZ2gPRQhXforwKtdDhY4edpt" size={40} />}
-        headlineText="My Porkydot Account"
-        supportingText="2,443.33 DOT"
+        headlineContent="My Porkydot Account"
+        supportingContent="2,443.33 DOT"
       />
     </Select>
   )
@@ -63,26 +63,26 @@ export const Detached: Story<Partial<SelectProps<string>>> = props => {
       <Select.Option
         value={0}
         leadingIcon={<Identicon value="5CcU6DRpocLUWYJHuNLjB4gGyHJrkWuruQD5XFbRYffCfSAP" size={40} />}
-        headlineText="Polkadot.js Import"
-        supportingText="420 DOT"
+        headlineContent="Polkadot.js Import"
+        supportingContent="420 DOT"
       />
       <Select.Option
         value={1}
         leadingIcon={<Identicon value="143wN4e1nTTWJZHy1CFVXDHpAg6YJsNn2jDN52J2Xfjf8MWs" size={40} />}
-        headlineText="Yeet Account"
-        supportingText="35 DOT"
+        headlineContent="Yeet Account"
+        supportingContent="35 DOT"
       />
       <Select.Option
         value={2}
         leadingIcon={<Identicon value="1YmEYgtfPbwx5Jos1PjKDWRpuJWSpTzytwZgYan6kgiquNS" size={40} />}
-        headlineText="My Porkydot Account"
-        supportingText="2,443.33 DOT"
+        headlineContent="My Porkydot Account"
+        supportingContent="2,443.33 DOT"
       />
       <Select.Option
         value={3}
         leadingIcon={<Identicon value="16JfrnmcA7ncfANSXnyAzH9LRZ2gPRQhXforwKtdDhY4edpt" size={40} />}
-        headlineText="My Porkydot Account"
-        supportingText="2,443.33 DOT"
+        headlineContent="My Porkydot Account"
+        supportingContent="2,443.33 DOT"
       />
     </Select>
   )
@@ -96,26 +96,26 @@ export const ClearRequired = () => {
       <Select.Option
         value={0}
         leadingIcon={<Identicon value="5CcU6DRpocLUWYJHuNLjB4gGyHJrkWuruQD5XFbRYffCfSAP" size={40} />}
-        headlineText="Polkadot.js Import"
-        supportingText="420 DOT"
+        headlineContent="Polkadot.js Import"
+        supportingContent="420 DOT"
       />
       <Select.Option
         value={1}
         leadingIcon={<Identicon value="143wN4e1nTTWJZHy1CFVXDHpAg6YJsNn2jDN52J2Xfjf8MWs" size={40} />}
-        headlineText="Yeet Account"
-        supportingText="35 DOT"
+        headlineContent="Yeet Account"
+        supportingContent="35 DOT"
       />
       <Select.Option
         value={2}
         leadingIcon={<Identicon value="1YmEYgtfPbwx5Jos1PjKDWRpuJWSpTzytwZgYan6kgiquNS" size={40} />}
-        headlineText="My Porkydot Account"
-        supportingText="2,443.33 DOT"
+        headlineContent="My Porkydot Account"
+        supportingContent="2,443.33 DOT"
       />
       <Select.Option
         value={3}
         leadingIcon={<Identicon value="16JfrnmcA7ncfANSXnyAzH9LRZ2gPRQhXforwKtdDhY4edpt" size={40} />}
-        headlineText="My Porkydot Account"
-        supportingText="2,443.33 DOT"
+        headlineContent="My Porkydot Account"
+        supportingContent="2,443.33 DOT"
       />
     </Select>
   )
@@ -133,8 +133,8 @@ export const Overflow = () => {
               key={index}
               value={index}
               leadingIcon={<Identicon value="5CcU6DRpocLUWYJHuNLjB4gGyHJrkWuruQD5XFbRYffCfSAP" size={40} />}
-              headlineText="Polkadot.js Import"
-              supportingText="420 DOT"
+              headlineContent="Polkadot.js Import"
+              supportingContent="420 DOT"
             />
           ))}
         </Select>

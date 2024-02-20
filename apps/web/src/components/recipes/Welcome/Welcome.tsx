@@ -43,8 +43,8 @@ const PopularAccount = (props: { address: string; name: string; description?: st
     <Clickable.WithFeedback onClick={props.onClick}>
       <ListItem
         leadingContent={<Identicon value={props.address} size="3.2rem" />}
-        headlineText={props.name}
-        supportingText={props.description ?? shortenAddress(props.address)}
+        headlineContent={props.name}
+        supportingContent={props.description ?? shortenAddress(props.address)}
         css={{ borderRadius: '1.2rem', backgroundColor: theme.color.foreground }}
       />
     </Clickable.WithFeedback>

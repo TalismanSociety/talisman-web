@@ -14,12 +14,12 @@ const StakeItemSkeleton = (props: SkeletonProps) => {
     >
       <ListItem
         leadingContent={<Skeleton.Foreground css={{ width: '4rem', height: '4rem', borderRadius: '2rem' }} />}
-        headlineText={
+        headlineContent={
           <Text.Body>
             <Skeleton.Foreground css={{ height: '0.75em', marginBottom: '0.25em', width: 80 }} />
           </Text.Body>
         }
-        supportingText={
+        supportingContent={
           <Text.Body>
             <Skeleton.Foreground css={{ height: '0.75em', width: 'min(100%, 24rem)' }} />
           </Text.Body>

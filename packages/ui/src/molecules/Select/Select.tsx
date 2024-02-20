@@ -42,8 +42,8 @@ export type SelectProps<TValue extends string | number, TClear extends boolean =
 type SelectItemProps = {
   value?: string | number
   leadingIcon?: ReactNode
-  headlineText: ReactNode
-  supportingText?: ReactNode
+  headlineContent: ReactNode
+  supportingContent?: ReactNode
 }
 
 const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
@@ -54,8 +54,8 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
       </figure>
     )}
     <div>
-      <Text.Body as="div">{props.headlineText}</Text.Body>
-      <Text.Body as="div">{props.supportingText}</Text.Body>
+      <Text.Body as="div">{props.headlineContent}</Text.Body>
+      <Text.Body as="div">{props.supportingContent}</Text.Body>
     </div>
   </div>
 ))

@@ -210,7 +210,7 @@ export const AssetSelect = <T extends ChainInfo>(props: {
         ? id => (
             <Select.Option
               leadingIcon={<CircularProgressIndicator size={props.iconSize ?? '2.4rem'} />}
-              headlineText={props.chains.find(x => x.id === id)?.nativeToken?.symbol}
+              headlineContent={props.chains.find(x => x.id === id)?.nativeToken?.symbol}
             />
           )
         : undefined
@@ -233,7 +233,7 @@ export const AssetSelect = <T extends ChainInfo>(props: {
             css={{ width: props.iconSize ?? '2.4rem', height: props.iconSize ?? '2.4rem' }}
           />
         }
-        headlineText={x.nativeToken?.symbol}
+        headlineContent={x.nativeToken?.symbol}
       />
     ))}
   </Select>

@@ -20,7 +20,7 @@ Default.args = {
   rate: '1 MOVR = 0.861629 vMOVR',
   accountSelector: (
     <Select css={{ width: '100%' }} placeholder="Select account">
-      <Select.Option headlineText="foo" />
+      <Select.Option headlineContent="foo" />
     </Select>
   ),
 }

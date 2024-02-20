@@ -58,8 +58,8 @@ const ExportTxHistoryDialog = ({
                   key={index}
                   value={index}
                   leadingIcon={<AccountIcon account={account} size={40} />}
-                  headlineText={account.name}
-                  supportingText={account.balance}
+                  headlineContent={account.name}
+                  supportingContent={account.balance}
                 />
               ))}
             </Select>

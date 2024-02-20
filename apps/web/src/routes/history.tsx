@@ -111,7 +111,7 @@ import { Text } from '@talismn/ui'
 //                         css={{ width: '1.6rem', height: '1.6rem' }}
 //                       />
 //                     }
-//                     headlineText={x.name}
+//                     headlineContent={x.name}
 //                   />
 //                 ))}
 //               </Select>
@@ -129,7 +129,7 @@ import { Text } from '@talismn/ui'
 //                 detached
 //               >
 //                 {modules.map(x => (
-//                   <Select.Option key={x} value={x} headlineText={x} />
+//                   <Select.Option key={x} value={x} headlineContent={x} />
 //                 ))}
 //               </Select>
 //             </LabelledInput>
@@ -154,8 +154,8 @@ import { Text } from '@talismn/ui'
 //             <div>
 //               <LabelledInput label="Order by">
 //                 <Select value={dateOrder} onChange={setDateOrder}>
-//                   <Select.Option value="desc" headlineText="Newest" />
-//                   <Select.Option value="asc" headlineText="Oldest" />
+//                   <Select.Option value="desc" headlineContent="Newest" />
+//                   <Select.Option value="asc" headlineContent="Oldest" />
 //                 </Select>
 //               </LabelledInput>
 //             </div>

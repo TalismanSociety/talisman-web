@@ -13,7 +13,7 @@ export default {
 export const Default: Story<InfoCardProps> = (args: any) => <InfoCard {...args} />
 
 Default.args = {
-  headlineText: 'Available to Stake',
-  text: '1450.22 DOT',
-  supportingText: '$9,030.00',
+  overlineContent: 'Available to Stake',
+  headlineContent: '1450.22 DOT',
+  supportingContent: '$9,030.00',
 }

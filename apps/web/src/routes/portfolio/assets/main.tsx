@@ -51,8 +51,12 @@ const Assets = () => {
             gap: '2rem',
           }}
         >
-          <InfoCard headlineText={'Total Portfolio Value'} text={<Total />} minWidth={'150px'} />
-          <InfoCard headlineText={'Locked Value'} text={<AnimatedFiatNumber end={lockedTotal} />} minWidth={'150px'} />
+          <InfoCard overlineContent={'Total Portfolio Value'} headlineContent={<Total />} css={{ minWidth: '15rem' }} />
+          <InfoCard
+            overlineContent={'Locked Value'}
+            headlineContent={<AnimatedFiatNumber end={lockedTotal} />}
+            css={{ minWidth: '15rem' }}
+          />
         </div>
       </section>
       {/* Lower Section */}

@@ -155,10 +155,10 @@ const GqlCrowdloanItem = styled(
         <Link to={linkToCrowdloan} className={className}>
           <ListItem
             leadingContent={<Parachain.Asset id={parachainId ?? ''} type="logo" size={4} />}
-            headlineText={
+            headlineContent={
               name ?? [relayChain?.name, t('Parachain'), parachainId?.split('-')?.[1]].filter(Boolean).join(' ')
             }
-            supportingText={
+            supportingContent={
               <>
                 <Text.Body css={{ display: 'flex', alignItems: 'center', gap: '0.25em' }}>
                   {account && <AccountIcon account={account} size="1em" />}
@@ -251,12 +251,12 @@ const GqlCrowdloanItemSkeleton = (props: SkeletonProps) => {
     >
       <ListItem
         leadingContent={<Skeleton.Foreground css={{ width: '4rem', height: '4rem', borderRadius: '2rem' }} />}
-        headlineText={
+        headlineContent={
           <Text.Body>
             <Skeleton.Foreground css={{ height: '0.75em', marginBottom: '0.25em', width: 80 }} />
           </Text.Body>
         }
-        supportingText={
+        supportingContent={
           <Text.Body>
             <Skeleton.Foreground css={{ height: '0.75em', width: 'min(100%, 24rem)' }} />
           </Text.Body>
@@ -284,7 +284,7 @@ const SuspendableCrowdloans = ({ className }: { className?: string }) => {
 
   return (
     <section className={className ?? ''} css={{ marginBottom: '2rem' }}>
-      <SectionHeader headlineText={t('Crowdloans')} supportingText={<AnimatedFiatNumber end={crowdloansUsd} />} />
+      <SectionHeader headlineContent={t('Crowdloans')} supportingContent={<AnimatedFiatNumber end={crowdloansUsd} />} />
       {!contributionsHydrated ? (
         <GqlCrowdloanItemSkeleton />
       ) : sortedGqlContributions.length < 1 ? (

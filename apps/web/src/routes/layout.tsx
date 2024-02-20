@@ -61,7 +61,7 @@ const CurrencySelect = () => {
           key={currency}
           value={currency}
           leadingIcon={config.unicodeCharacter}
-          headlineText={config.name}
+          headlineContent={config.name}
         />
       ))}
     </Select>

@@ -15,8 +15,8 @@ export default {
 export const Default: Story<ListItemProps> = (args: any) => <ListItem {...args} />
 
 Default.args = {
-  overlineText: 'Polkadot.js import',
-  headlineText: '$356,120.32',
+  overlineContent: 'Polkadot.js import',
+  headlineContent: '$356,120.32',
   leadingContent: <Identicon value="1YmEYgtfPbwx5Jos1PjKDWRpuJWSpTzytwZgYan6kgiquNS" size="4rem" />,
   trailingContent: <Trash />,
 }

@@ -51,16 +51,16 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
     >
       <div css={{ display: 'flex', gap: '1.6rem', marginBottom: '1.6rem', flexWrap: 'wrap', '> *': { flex: 1 } }}>
         <InfoCard
-          headlineText="Rewards"
-          text={
+          overlineContent="Rewards"
+          headlineContent={
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
               <Apr slpxPair={props.slpxPair} />
             </Suspense>
           }
         />
         <InfoCard
-          headlineText="Unbonding period"
-          text={
+          overlineContent="Unbonding period"
+          headlineContent={
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
               <UnlockDuration slpxPair={props.slpxPair} />
             </Suspense>

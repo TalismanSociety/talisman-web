@@ -90,8 +90,8 @@ const Stats = (props: {
         }}
       >
         <ListItem
-          headlineText={props.account.name ?? shortenAddress(props.account.address)}
-          supportingText={shortenAddress(props.account.address)}
+          headlineContent={props.account.name ?? shortenAddress(props.account.address)}
+          supportingContent={shortenAddress(props.account.address)}
           leadingContent={<AccountIcon account={props.account} size="4rem" />}
           css={{ paddingRight: 0, paddingLeft: 0 }}
         />
@@ -113,8 +113,8 @@ const Stats = (props: {
                 <Zap />
               </TonalIcon>
             }
-            overlineText="Total balance"
-            headlineText={props.balance}
+            overlineContent="Total balance"
+            headlineContent={props.balance}
           />
           <ListItem
             css={{ padding: 0 }}
@@ -123,8 +123,8 @@ const Stats = (props: {
                 <Earn />
               </TonalIcon>
             }
-            overlineText="15 days rewards"
-            headlineText={props.rewards}
+            overlineContent="15 days rewards"
+            headlineContent={props.rewards}
           />
           <ListItem
             css={{ padding: 0 }}
@@ -133,8 +133,8 @@ const Stats = (props: {
                 <Percent />
               </TonalIcon>
             }
-            overlineText="APR"
-            headlineText={props.apr}
+            overlineContent="APR"
+            headlineContent={props.apr}
           />
           <ListItem
             css={{ padding: 0 }}
@@ -143,8 +143,8 @@ const Stats = (props: {
                 <Clock />
               </TonalIcon>
             }
-            overlineText="Current era ends"
-            headlineText={props.nextEraEta}
+            overlineContent="Current era ends"
+            headlineContent={props.nextEraEta}
           />
         </div>
         <section

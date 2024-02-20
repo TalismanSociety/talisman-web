@@ -13,6 +13,6 @@ export default {
 export const Default: Story<SectionHeaderProps> = (args: any) => <SectionHeader {...args} />
 
 Default.args = {
-  headlineText: 'Assets',
-  supportingText: '$19,495.23',
+  headlineContent: 'Assets',
+  supportingContent: '$19,495.23',
 }

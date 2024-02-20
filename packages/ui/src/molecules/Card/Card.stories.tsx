@@ -22,8 +22,8 @@ export default {
 export const Default: Story<CardProps> = args => <Card {...args} />
 
 Default.args = {
-  headlineText: 'Spirit Key #3268',
-  overlineText: 'Talisman Spirit Keys',
+  headlineContent: 'Spirit Key #3268',
+  overlineContent: 'Talisman Spirit Keys',
   media: (
     <Card.Preview
       src="https://ipfs2.rmrk.link/ipfs/bafybeicuuasrqnqndfw3k6rqacfpfil5sc5fhyjh63riqnd2imm5eucrk4"
@@ -81,8 +81,8 @@ export const Collection = Default.bind({})
 
 Collection.args = {
   ...Default.args,
-  headlineText: 'Talisman Spirit Keys',
-  overlineText: undefined,
+  headlineContent: 'Talisman Spirit Keys',
+  overlineContent: undefined,
   media: (
     <Card.MultiPreview>
       <Card.Preview

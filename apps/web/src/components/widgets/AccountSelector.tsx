@@ -44,7 +44,7 @@ const AccountSelector = (props: AccountSelectorProps) => {
           leadingIcon={
             <Identicon value="placeholder" size="4em" css={{ visibility: 'hidden', pointerEvents: 'none', width: 0 }} />
           }
-          headlineText="Select an account"
+          headlineContent="Select an account"
         />
       }
       value={selectedValue}
@@ -56,7 +56,7 @@ const AccountSelector = (props: AccountSelectorProps) => {
               return (
                 <Select.Option
                   leadingIcon={<CircularProgressIndicator size="4rem" />}
-                  headlineText={
+                  headlineContent={
                     selectedAccount === undefined ? '' : selectedAccount.name ?? shortenAddress(selectedAccount.address)
                   }
                 />
@@ -70,7 +70,7 @@ const AccountSelector = (props: AccountSelectorProps) => {
           key={x.address}
           value={x.address}
           leadingIcon={<AccountIcon account={x} size="4rem" />}
-          headlineText={x.name ?? shortenAddress(x.address)}
+          headlineContent={x.name ?? shortenAddress(x.address)}
         />
       ))}
     </Select>
