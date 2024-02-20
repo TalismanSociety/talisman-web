@@ -4,7 +4,7 @@ import { type ReactNode } from 'react'
 
 import { Button, Dialog, Surface, Text, type DialogProps } from '../../atoms'
 
-export type AlertDialogProps = Omit<DialogProps, 'title'> & {
+export type AlertDialogProps = Omit<DialogProps, 'title' | 'content'> & {
   title?: ReactNode
   /**
    * @deprecated use `children` instead

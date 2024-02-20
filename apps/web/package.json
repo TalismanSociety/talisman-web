@@ -95,7 +95,7 @@
     "@types/lodash": "^4.14.191",
     "@types/md5": "^2.3.2",
     "@types/node": "^18.11.19",
-    "@types/react": "^18.0.28",
+    "@types/react": "^18.2.57",
     "@types/react-dom": "^18.0.10",
     "@types/react-infinite-scroller": "^1.2.3",
     "@types/react-router-dom": "^5.3.3",

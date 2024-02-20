@@ -13,7 +13,7 @@
   "packageManager": "yarn@3.4.1",
   "devDependencies": {
     "@talismn/tsconfig": "workspace:^",
-    "@types/react": "^18.0.28",
+    "@types/react": "^18.2.57",
     "typescript": "^5.0.4"
   }
 }
