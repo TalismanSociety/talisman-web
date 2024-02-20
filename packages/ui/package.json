@@ -26,6 +26,7 @@
     "@talismn/web-icons": "workspace:^",
     "colorjs.io": "^0.4.4-patch.1",
     "mime": "^3.0.0",
+    "react-countup": "^6.5.0",
     "react-hot-toast": "^2.4.0"
   },
   "devDependencies": {
