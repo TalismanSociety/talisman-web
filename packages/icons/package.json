@@ -6,6 +6,9 @@
     ".": "./build/index.js",
     "./utils": "./build/utils.js"
   },
+  "files": [
+    "build"
+  ],
   "scripts": {
     "dev": "tsc --build --watch tsconfig.json",
     "build": "rm -rf build && tsc --build tsconfig.json",
