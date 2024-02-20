@@ -7,7 +7,7 @@ import {
   useSubstrateWalletConnect,
 } from '@domains/extension'
 import { ClassNames, useTheme } from '@emotion/react'
-import { Ethereum, Eye, Polkadot, Wallet } from '@talismn/icons'
+import { Ethereum, Eye, Polkadot, Wallet } from '@talismn/web-icons'
 import { Chip, Hr, ListItem, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Surface, Text } from '@talismn/ui'
 import { Suspense, useEffect, useState, type ButtonHTMLAttributes, type DetailedHTMLProps } from 'react'
 import { atom, useRecoilState } from 'recoil'

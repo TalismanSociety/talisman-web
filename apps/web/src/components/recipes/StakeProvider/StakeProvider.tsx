@@ -1,4 +1,4 @@
-import { Zap } from '@talismn/icons'
+import { Zap } from '@talismn/web-icons'
 import {
   Button,
   LinearProgressIndicator,

@@ -3,7 +3,7 @@ import { useAccountSelector } from '@components/widgets/AccountSelector'
 import { evmSignableAccountsState } from '@domains/accounts'
 import { ChainProvider } from '@domains/chains'
 import { slpxPairsState, useMintForm, type SlpxPair } from '@domains/staking/slpx'
-import { Zap } from '@talismn/icons'
+import { Zap } from '@talismn/web-icons'
 import {
   CircularProgressIndicator,
   InfoCard,

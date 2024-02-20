@@ -11,7 +11,7 @@ import {
   ShoppingCart,
   TalismanHand,
   Zap,
-} from '@talismn/icons'
+} from '@talismn/web-icons'
 
 import NavigationDrawer, { type NavigationDrawerProps } from './NavigationDrawer'
 

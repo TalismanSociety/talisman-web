@@ -1,4 +1,4 @@
-import { Box, Unknown, Video, Volume2 } from '@talismn/icons'
+import { Box, Unknown, Video, Volume2 } from '@talismn/web-icons'
 import React, { useState, type ReactNode } from 'react'
 import { useMimeType, type MimeTypeType } from '../../utils'
 import type { Interpolation, Theme } from '@emotion/react'

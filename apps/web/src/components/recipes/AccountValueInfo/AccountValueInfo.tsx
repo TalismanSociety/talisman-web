@@ -1,7 +1,7 @@
 import AccountIcon from '@components/molecules/AccountIcon'
 import type { Account } from '@domains/accounts'
 import { useTheme } from '@emotion/react'
-import { ChevronDown, Users } from '@talismn/icons'
+import { ChevronDown, Users } from '@talismn/web-icons'
 import { IconButton, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { type ReactNode } from 'react'

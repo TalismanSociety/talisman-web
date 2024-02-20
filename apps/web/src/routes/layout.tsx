@@ -29,7 +29,7 @@ import {
   Star,
   TalismanHand,
   Zap,
-} from '@talismn/icons'
+} from '@talismn/web-icons'
 import {
   Button,
   IconButton,

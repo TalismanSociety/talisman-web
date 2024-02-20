@@ -1,4 +1,4 @@
-import { Zap } from '@talismn/icons'
+import { Zap } from '@talismn/web-icons'
 import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, InfoCard, type InfoCardProps, Text } from '@talismn/ui'
 import { type AnchorHTMLAttributes, type DetailedHTMLProps, type PropsWithChildren, type ReactNode } from 'react'
 

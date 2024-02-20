@@ -1,7 +1,7 @@
 import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
 import type { Account } from '@domains/accounts'
 import { keyframes, useTheme } from '@emotion/react'
-import { ArrowDown, ArrowUp, ChevronRight } from '@talismn/icons'
+import { ArrowDown, ArrowUp, ChevronRight } from '@talismn/web-icons'
 import { Identicon, Surface, Text, TonalIcon, Tooltip, useSurfaceColorAtElevation } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import type React from 'react'

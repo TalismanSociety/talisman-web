@@ -1,6 +1,6 @@
 import type { LidoSuite } from '@domains/staking/lido'
 import { ClassNames } from '@emotion/react'
-import { Zap } from '@talismn/icons'
+import { Zap } from '@talismn/web-icons'
 import { SideSheet, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR } from '@talismn/ui'
 import { useEffect } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'

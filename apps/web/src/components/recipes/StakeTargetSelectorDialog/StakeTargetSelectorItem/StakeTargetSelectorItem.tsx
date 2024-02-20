@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { ExternalLink, TalismanHand, User } from '@talismn/icons'
+import { ExternalLink, TalismanHand, User } from '@talismn/web-icons'
 import { Button, Text, Tooltip } from '@talismn/ui'
 import type { ReactNode } from 'react'
 

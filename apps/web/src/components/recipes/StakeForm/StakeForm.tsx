@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { ChevronRight, Clock, Info, Settings } from '@talismn/icons'
+import { ChevronRight, Clock, Info, Settings } from '@talismn/web-icons'
 import {
   Button,
   DescriptionList,

@@ -1,6 +1,6 @@
 import AccountIcon from '@components/molecules/AccountIcon'
 import type { Account } from '@domains/accounts'
-import { Clock, MoreHorizontal, ZapOff, ZapPlus } from '@talismn/icons'
+import { Clock, MoreHorizontal, ZapOff, ZapPlus } from '@talismn/web-icons'
 import {
   Chip,
   CircularProgressIndicator,

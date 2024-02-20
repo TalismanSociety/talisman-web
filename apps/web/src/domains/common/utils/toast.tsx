@@ -1,6 +1,6 @@
 import type RpcError from '@polkadot/rpc-provider/coder/error'
 import { type ISubmittableResult } from '@polkadot/types/types'
-import { ExternalLink } from '@talismn/icons'
+import { ExternalLink } from '@talismn/web-icons'
 import { Text, toast } from '@talismn/ui'
 
 export const toastExtrinsic = (

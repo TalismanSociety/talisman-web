@@ -1,5 +1,5 @@
 import { type ComponentMeta, type Story } from '@storybook/react'
-import { MoreHorizontal } from '@talismn/icons'
+import { MoreHorizontal } from '@talismn/web-icons'
 import { useCallback, useState } from 'react'
 
 import { IconButton, Identicon, Text } from '../../atoms'

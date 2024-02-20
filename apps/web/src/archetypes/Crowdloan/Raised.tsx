@@ -1,7 +1,7 @@
 import { Pendor, ProgressBar, Stat } from '@components'
 import styled from '@emotion/styled'
 import { useCrowdloanById } from '@libs/talisman'
-import { CheckCircle } from '@talismn/icons'
+import { CheckCircle } from '@talismn/web-icons'
 import { shortNumber } from '@util/helpers'
 import { useTranslation } from 'react-i18next'
 

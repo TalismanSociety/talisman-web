@@ -9,7 +9,7 @@ import {
 import { fiatBalanceGetterState, portfolioBalancesFiatSumState } from '@domains/balances'
 import { copyAddressToClipboard } from '@domains/common/utils'
 import { useTheme } from '@emotion/react'
-import { Copy, Ethereum, Eye, EyePlus, TalismanHand, Trash2, Users, Wallet, X } from '@talismn/icons'
+import { Copy, Ethereum, Eye, EyePlus, TalismanHand, Trash2, Users, Wallet, X } from '@talismn/web-icons'
 import {
   Chip,
   CircularProgressIndicator,

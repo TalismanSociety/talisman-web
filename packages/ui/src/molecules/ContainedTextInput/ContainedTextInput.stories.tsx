@@ -1,7 +1,7 @@
 import { type Meta, type Story } from '@storybook/react'
 import ContainedTextInput, { type ContainedTextInputProps } from './ContainedTextInput'
 import { IconButton } from '../..'
-import { Search } from '@talismn/icons'
+import { Search } from '@talismn/web-icons'
 
 export default {
   title: 'Molecules/ContainedTextInput',

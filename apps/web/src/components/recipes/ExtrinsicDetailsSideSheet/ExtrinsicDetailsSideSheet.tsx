@@ -2,7 +2,7 @@ import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
 import type { Account } from '@domains/accounts'
 import { copyAddressToClipboard, copyExtrinsicHashToClipboard } from '@domains/common'
 import { useTheme } from '@emotion/react'
-import { CheckCircle, Copy, ExternalLink, XCircle } from '@talismn/icons'
+import { CheckCircle, Copy, ExternalLink, XCircle } from '@talismn/web-icons'
 import {
   DescriptionList,
   ListItem,

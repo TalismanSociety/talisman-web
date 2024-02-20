@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { ChevronRight } from '@talismn/icons'
+import { ChevronRight } from '@talismn/web-icons'
 import { motion } from 'framer-motion'
 import {
   createContext,

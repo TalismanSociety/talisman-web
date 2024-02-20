@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { Clock, Lock, Rocket } from '@talismn/icons'
+import { Clock, Lock, Rocket } from '@talismn/web-icons'
 
 import AccountIcon from '@components/molecules/AccountIcon'
 import type { Account } from '@domains/accounts'

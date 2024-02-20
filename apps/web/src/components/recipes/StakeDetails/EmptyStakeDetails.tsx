@@ -1,4 +1,4 @@
-import { Zap } from '@talismn/icons'
+import { Zap } from '@talismn/web-icons'
 import { Button, Text } from '@talismn/ui'
 import type { ReactNode } from 'react'
 import illustration from './empty-stake.png'

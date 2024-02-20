@@ -1,4 +1,4 @@
-import { Zap } from '@talismn/icons'
+import { Zap } from '@talismn/web-icons'
 import { AlertDialog, Button, Hr, Surface, Text } from '@talismn/ui'
 import type { PropsWithChildren, ReactNode } from 'react'
 

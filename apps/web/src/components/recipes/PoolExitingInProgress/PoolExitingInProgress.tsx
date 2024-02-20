@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { Info } from '@talismn/icons'
+import { Info } from '@talismn/web-icons'
 import { Text } from '@talismn/ui'
 
 const PoolExitingInProgress = () => {

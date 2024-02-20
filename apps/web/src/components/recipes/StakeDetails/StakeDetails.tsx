@@ -1,7 +1,7 @@
 import AccountIcon from '@components/molecules/AccountIcon'
 import type { Account } from '@domains/accounts'
 import { useTheme } from '@emotion/react'
-import { Clock, Earn, ExternalLink, Percent, Zap, ZapOff } from '@talismn/icons'
+import { Clock, Earn, ExternalLink, Percent, Zap, ZapOff } from '@talismn/web-icons'
 import {
   Button,
   DescriptionList,

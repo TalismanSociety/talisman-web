@@ -8021,23 +8021,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@talismn/icons@workspace:^, @talismn/icons@workspace:packages/icons":
-  version: 0.0.0-use.local
-  resolution: "@talismn/icons@workspace:packages/icons"
-  dependencies:
-    "@svgr/cli": "npm:^8.0.1"
-    "@talismn/eslint-config": "workspace:^"
-    "@talismn/tsconfig": "workspace:^"
-    "@types/react": "npm:^18.0.28"
-    eslint: "npm:^8.37.0"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
-    typescript: "npm:^5.0.2"
-  peerDependencies:
-    react: 18.x
-  languageName: unknown
-  linkType: soft
-
 "@talismn/math@workspace:^, @talismn/math@workspace:packages/math":
   version: 0.0.0-use.local
   resolution: "@talismn/math@workspace:packages/math"
@@ -8145,8 +8128,8 @@ __metadata:
     "@storybook/testing-library": "npm:^0.2.2"
     "@talismn/development": "workspace:^"
     "@talismn/eslint-config": "workspace:^"
-    "@talismn/icons": "workspace:^"
     "@talismn/tsconfig": "workspace:^"
+    "@talismn/web-icons": "workspace:^"
     "@types/mime": "npm:^3.0.1"
     "@types/mime-types": "npm:^2.1.1"
     "@types/react": "npm:^18.0.28"
@@ -8165,7 +8148,7 @@ __metadata:
     typescript: "npm:^5.0.2"
   peerDependencies:
     "@emotion/react": 11.x
-    "@talismn/icons": "*"
+    "@talismn/web-icons": "*"
     framer-motion: 10.x
     react: 18.x
   languageName: unknown
@@ -8209,6 +8192,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@talismn/web-icons@workspace:^, @talismn/web-icons@workspace:packages/icons":
+  version: 0.0.0-use.local
+  resolution: "@talismn/web-icons@workspace:packages/icons"
+  dependencies:
+    "@svgr/cli": "npm:^8.0.1"
+    "@talismn/eslint-config": "workspace:^"
+    "@talismn/tsconfig": "workspace:^"
+    "@types/react": "npm:^18.0.28"
+    eslint: "npm:^8.37.0"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
+    typescript: "npm:^5.0.2"
+  peerDependencies:
+    react: 18.x
+  languageName: unknown
+  linkType: soft
+
 "@talismn/web@workspace:apps/web":
   version: 0.0.0-use.local
   resolution: "@talismn/web@workspace:apps/web"
@@ -8246,7 +8246,6 @@ __metadata:
     "@talismn/development": "workspace:^"
     "@talismn/dot-pool-selector": "npm:0.0.0-snapshot.940501"
     "@talismn/eslint-config": "workspace:^"
-    "@talismn/icons": "workspace:^"
     "@talismn/math": "workspace:^"
     "@talismn/nft": "workspace:^"
     "@talismn/react-polkadot-api": "workspace:^"
@@ -8255,6 +8254,7 @@ __metadata:
     "@talismn/ui": "workspace:^"
     "@talismn/util": "npm:^0.2.0"
     "@talismn/utils": "workspace:^"
+    "@talismn/web-icons": "workspace:^"
     "@types/lodash": "npm:^4.14.191"
     "@types/md5": "npm:^2.3.2"
     "@types/node": "npm:^18.11.19"

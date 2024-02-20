@@ -14,7 +14,7 @@ import {
   type NftTag,
 } from '@domains/nfts'
 import { useTheme } from '@emotion/react'
-import { ChevronLeft, ChevronRight, ExternalLink, Eye, EyeOff, Heart } from '@talismn/icons'
+import { ChevronLeft, ChevronRight, ExternalLink, Eye, EyeOff, Heart } from '@talismn/web-icons'
 import {
   Button,
   Card,
