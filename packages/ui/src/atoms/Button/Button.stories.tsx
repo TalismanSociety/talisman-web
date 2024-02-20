@@ -35,6 +35,10 @@ export const Outlined: Story = {
   args: { variant: 'outlined', children: 'Click me' },
 }
 
+export const Text: Story = {
+  args: { variant: 'text', children: 'Click me' },
+}
+
 export const Surface: Story = {
   render: args => (
     <SurfaceContainer css={{ padding: '1.6rem' }}>
