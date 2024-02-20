@@ -9,8 +9,12 @@ type ButtonElementType = Extract<React.ElementType, 'button' | 'a'> | ElementTyp
 
 type PolymorphicButtonProps<T extends ButtonElementType = 'button'> = PropsWithChildren<{
   as?: T
+  /**
+   * @deprecated use variant components
+   */
   variant?:
     | 'outlined'
+    | 'text'
     | 'surface'
     /**
      * @deprecated use "surface" variant instead
@@ -66,6 +70,11 @@ const Button = <T extends ButtonElementType = 'button'>({
             color: theme.color.background,
             backgroundColor: theme.color.onBackground,
           },
+        }
+      case 'text':
+        return {
+          backgroundColor: 'transparent',
+          color: theme.color.primary,
         }
       case 'noop':
         return {
@@ -189,3 +198,18 @@ const Button = <T extends ButtonElementType = 'button'>({
 }
 
 export default Button
+
+export const OutlinedButton = <T extends ButtonElementType = 'button'>(props: Omit<ButtonProps<T>, 'variant'>) => (
+  // @ts-expect-error
+  <Button {...props} variant="outlined" />
+)
+
+export const TextButton = <T extends ButtonElementType = 'button'>(props: Omit<ButtonProps<T>, 'variant'>) => (
+  // @ts-expect-error
+  <Button {...props} variant="text" />
+)
+
+export const SurfaceButton = <T extends ButtonElementType = 'button'>(props: Omit<ButtonProps<T>, 'variant'>) => (
+  // @ts-expect-error
+  <Button {...props} variant="surface" />
+)
