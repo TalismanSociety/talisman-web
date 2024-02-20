@@ -4,9 +4,9 @@ import { type ReactNode } from 'react'
 import { Text } from '../../atoms'
 
 export type ListItemProps = HTMLMotionProps<'article'> & {
-  headlineText: ReactNode
-  overlineText?: ReactNode
-  supportingText?: ReactNode
+  headlineContent: ReactNode
+  overlineContent?: ReactNode
+  supportingContent?: ReactNode
   leadingContent?: ReactNode
   trailingContent?: ReactNode
   revealTrailingContentOnHover?: boolean
@@ -15,9 +15,9 @@ export type ListItemProps = HTMLMotionProps<'article'> & {
 export type MotionVariant = 'hover'
 
 const ListItem = ({
-  headlineText,
-  overlineText,
-  supportingText,
+  headlineContent,
+  overlineContent,
+  supportingContent,
   leadingContent,
   trailingContent,
   ...props
@@ -33,11 +33,11 @@ const ListItem = ({
         <div css={{ display: 'flex', justifyContent: 'center', justifyItems: 'center' }}>{leadingContent}</div>
       )}
       <header css={{ flex: 1, overflow: 'hidden' }}>
-        {overlineText && <Text.BodySmall as="div">{overlineText}</Text.BodySmall>}
+        {overlineContent && <Text.BodySmall as="div">{overlineContent}</Text.BodySmall>}
         <Text.Body as="div" alpha="high">
-          {headlineText}
+          {headlineContent}
         </Text.Body>
-        {supportingText && <Text.BodySmall as="div">{supportingText}</Text.BodySmall>}
+        {supportingContent && <Text.BodySmall as="div">{supportingContent}</Text.BodySmall>}
       </header>
       {trailingContent && (
         <motion.div

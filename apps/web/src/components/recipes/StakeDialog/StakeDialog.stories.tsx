@@ -13,8 +13,8 @@ Default.args = {
   open: true,
   stats: (
     <StakeDialog.Stats>
-      <StakeDialog.Stats.Item headlineText="Rewards" text="15.07% APR" />
-      <StakeDialog.Stats.Item headlineText="Current era ends" text="9h 24min" />
+      <StakeDialog.Stats.Item overlineContent="Rewards" headlineContent="15.07% APR" />
+      <StakeDialog.Stats.Item overlineContent="Current era ends" headlineContent="9h 24min" />
     </StakeDialog.Stats>
   ),
   stakeInput: <StakeFormStory {...(StakeFormStory.args as any)} />,

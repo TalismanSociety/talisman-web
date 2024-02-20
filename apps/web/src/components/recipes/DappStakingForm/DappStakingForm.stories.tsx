@@ -13,7 +13,7 @@ export const Default: Story = {
   args: {
     accountSelector: (
       <Select css={{ width: '100%' }} placeholder="Select account">
-        <Select.Option headlineText="foo" />
+        <Select.Option headlineContent="foo" />
       </Select>
     ),
     amountInput: (
@@ -25,7 +25,7 @@ export const Default: Story = {
         onRequestMaxAmount={() => {}}
         assetSelector={
           <Select placeholder="DOT">
-            <Select.Option headlineText="ASTAR" />
+            <Select.Option headlineContent="ASTAR" />
           </Select>
         }
       />

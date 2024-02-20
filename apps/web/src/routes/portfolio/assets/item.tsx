@@ -71,8 +71,8 @@ const AssetItem = () => {
               }}
             >
               <InfoCard
-                headlineText="Token"
-                text={
+                overlineContent="Token"
+                headlineContent={
                   <div
                     css={{
                       display: 'flex',
@@ -95,10 +95,10 @@ const AssetItem = () => {
                     <Text.Body>{`(${token.tokenDetails.symbol ?? ''})`}</Text.Body>
                   </div>
                 }
-                supportingText={token.rate !== undefined && <AnimatedFiatNumber end={token.rate} />}
+                supportingContent={token.rate !== undefined && <AnimatedFiatNumber end={token.rate} />}
               />
               <InfoCard
-                headlineText={
+                overlineContent={
                   <div
                     css={{
                       display: 'flex',
@@ -110,15 +110,15 @@ const AssetItem = () => {
                     <span>Total asset value</span>
                   </div>
                 }
-                text={
+                headlineContent={
                   <RedactableBalance>
                     {token.overallTotalAmount ?? ''} {token.tokenDetails.symbol ?? ''}
                   </RedactableBalance>
                 }
-                supportingText={<AnimatedFiatNumber end={token.overallTotalFiatAmount ?? 0} />}
+                supportingContent={<AnimatedFiatNumber end={token.overallTotalFiatAmount ?? 0} />}
               />
               <InfoCard
-                headlineText={
+                overlineContent={
                   <div
                     css={{
                       display: 'flex',
@@ -130,15 +130,15 @@ const AssetItem = () => {
                     <span>Locked</span>
                   </div>
                 }
-                text={
+                headlineContent={
                   <RedactableBalance>
                     {token.overallLockedAmount ?? ''} {token.tokenDetails.symbol ?? ''}
                   </RedactableBalance>
                 }
-                supportingText={<AnimatedFiatNumber end={token.overallLockedFiatAmount ?? 0} />}
+                supportingContent={<AnimatedFiatNumber end={token.overallLockedFiatAmount ?? 0} />}
               />
               <InfoCard
-                headlineText={
+                overlineContent={
                   <div
                     css={{
                       display: 'flex',
@@ -150,12 +150,12 @@ const AssetItem = () => {
                     <span>Available</span>
                   </div>
                 }
-                text={
+                headlineContent={
                   <RedactableBalance>
                     {token.overallTransferableAmount ?? ''} {token.tokenDetails.symbol ?? ''}
                   </RedactableBalance>
                 }
-                supportingText={<AnimatedFiatNumber end={token.transferableFiatAmount ?? 0} />}
+                supportingContent={<AnimatedFiatNumber end={token.transferableFiatAmount ?? 0} />}
               />
             </div>
 
@@ -229,19 +229,19 @@ const AssetItemSkeleton = ({ noToken }: { noToken?: boolean }) => {
         }}
       >
         <InfoCard
-          headlineText={<div css={{ padding: '0.75rem' }}>Talisman</div>}
-          text={'0.000 TSM'}
-          supportingText={'$0.00'}
+          overlineContent={<div css={{ padding: '0.75rem' }}>Talisman</div>}
+          headlineContent={'0.000 TSM'}
+          supportingContent={'$0.00'}
         />
         <InfoCard
-          headlineText={<div css={{ padding: '0.75rem' }}>Talisman</div>}
-          text={'0.000 TSM'}
-          supportingText={'$0.00'}
+          overlineContent={<div css={{ padding: '0.75rem' }}>Talisman</div>}
+          headlineContent={'0.000 TSM'}
+          supportingContent={'$0.00'}
         />
         <InfoCard
-          headlineText={<div css={{ padding: '0.75rem' }}>Talisman</div>}
-          text={'0.000 TSM'}
-          supportingText={'🍜'}
+          overlineContent={<div css={{ padding: '0.75rem' }}>Talisman</div>}
+          headlineContent={'0.000 TSM'}
+          supportingContent={'🍜'}
         />
       </div>
       <div

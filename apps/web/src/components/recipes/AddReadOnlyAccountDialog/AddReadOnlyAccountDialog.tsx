@@ -24,8 +24,8 @@ const PopularAccount = (props: { address: string; name: string; description?: st
     <Clickable.WithFeedback onClick={props.onClick}>
       <ListItem
         leadingContent={<Identicon value={props.address} size="3.2rem" />}
-        headlineText={props.name}
-        supportingText={props.description ?? shortenAddress(props.address)}
+        headlineContent={props.name}
+        supportingContent={props.description ?? shortenAddress(props.address)}
         css={{ borderRadius: '1.2rem', backgroundColor: theme.color.foreground }}
       />
     </Clickable.WithFeedback>
@@ -62,8 +62,8 @@ const AddReadOnlyAccountDialog = Object.assign(
             {props.resultingAddress && (
               <ListItem
                 leadingContent={<Identicon value={props.resultingAddress} size="4rem" />}
-                headlineText={isNilOrWhitespace(props.name) ? undefined : props.name}
-                supportingText={shortenAddress(props.resultingAddress)}
+                headlineContent={isNilOrWhitespace(props.name) ? undefined : props.name}
+                supportingContent={shortenAddress(props.resultingAddress)}
                 css={{ marginTop: '0.8rem', border: `2px solid ${theme.color.border}`, borderRadius: '0.8rem' }}
               />
             )}

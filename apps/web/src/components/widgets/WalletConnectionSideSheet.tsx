@@ -86,7 +86,7 @@ const WalletConnection = (props: WalletConnectionProps) => {
           <Wallet size="2.4rem" />
         )
       }
-      headlineText={<Text.BodyLarge alpha="high">{props.name}</Text.BodyLarge>}
+      headlineContent={<Text.BodyLarge alpha="high">{props.name}</Text.BodyLarge>}
       trailingContent={<ConnectionChip connected={props.connected} hovered={!props.nonInteractive && hovered} />}
       onClick={props.connected ? props.onDisconnectRequest : props.onConnectRequest}
       onMouseEnter={() => setHovered(!props.nonInteractive)}
@@ -106,7 +106,7 @@ const InstallTalisman = () => {
     <a href="https://talisman.xyz/download" target="_blank" css={{ display: 'contents' }}>
       <Surface
         as={ListItem}
-        headlineText={<Text.BodyLarge alpha="high">Talisman</Text.BodyLarge>}
+        headlineContent={<Text.BodyLarge alpha="high">Talisman</Text.BodyLarge>}
         leadingContent={<img src={talismanWalletLogo} alt="Talisman" css={{ width: '2.4rem', aspectRatio: '1 / 1' }} />}
         trailingContent={
           <Chip

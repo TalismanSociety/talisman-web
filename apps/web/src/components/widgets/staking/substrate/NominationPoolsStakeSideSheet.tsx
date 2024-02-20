@@ -58,16 +58,16 @@ const InnerStakeDialog = () => {
           <ErrorBoundary>
             <StakeDialogComponent.Stats>
               <StakeDialogComponent.Stats.Item
-                headlineText="Rewards"
-                text={
+                overlineContent="Rewards"
+                headlineContent={
                   <Suspense fallback={<CircularProgressIndicator size="1em" />}>
                     <Rewards />
                   </Suspense>
                 }
               />
               <StakeDialogComponent.Stats.Item
-                headlineText="Current era ends"
-                text={
+                overlineContent="Current era ends"
+                headlineContent={
                   <Suspense fallback={<CircularProgressIndicator size="1em" />}>
                     <EraEta />
                   </Suspense>

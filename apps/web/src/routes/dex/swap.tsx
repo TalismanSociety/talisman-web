@@ -10,7 +10,7 @@ const Swap = () => {
       faq={
         <>
           <SectionHeader
-            headlineText={
+            headlineContent={
               <>
                 About Cross-Chain Swaps{' '}
                 <Chip

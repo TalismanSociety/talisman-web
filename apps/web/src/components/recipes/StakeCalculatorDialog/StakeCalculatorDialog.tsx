@@ -35,26 +35,26 @@ const EstimatedYield = (props: EstimatedYieldProps) => (
     >
       <ListItem
         leadingContent={<TonalIcon>1D</TonalIcon>}
-        overlineText="1 day earnings"
-        headlineText={props.dailyYield ?? '...'}
+        overlineContent="1 day earnings"
+        headlineContent={props.dailyYield ?? '...'}
         css={{ padding: 0 }}
       />
       <ListItem
         leadingContent={<TonalIcon>1W</TonalIcon>}
-        overlineText="1 week earnings"
-        headlineText={props.weeklyYield ?? '...'}
+        overlineContent="1 week earnings"
+        headlineContent={props.weeklyYield ?? '...'}
         css={{ padding: 0 }}
       />
       <ListItem
         leadingContent={<TonalIcon>1M</TonalIcon>}
-        overlineText="1 month earnings"
-        headlineText={props.monthlyYield ?? '...'}
+        overlineContent="1 month earnings"
+        headlineContent={props.monthlyYield ?? '...'}
         css={{ padding: 0 }}
       />
       <ListItem
         leadingContent={<TonalIcon>1Y</TonalIcon>}
-        overlineText="1 year earnings"
-        headlineText={props.annualYield ?? '...'}
+        overlineContent="1 year earnings"
+        headlineContent={props.annualYield ?? '...'}
         css={{ padding: 0 }}
       />
     </div>

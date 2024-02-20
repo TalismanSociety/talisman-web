@@ -52,8 +52,8 @@ const AccountItem = (props: { account: Account }) => (
   <ListItem
     css={{ padding: 0, cursor: 'copy' }}
     leadingContent={<AccountIcon account={props.account} size="3.2rem" />}
-    headlineText={props.account.name ?? shortenAddress(props.account.address)}
-    supportingText={props.account.name !== undefined && shortenAddress(props.account.address)}
+    headlineContent={props.account.name ?? shortenAddress(props.account.address)}
+    supportingContent={props.account.name !== undefined && shortenAddress(props.account.address)}
     onClick={() => {
       void copyAddressToClipboard(props.account.address)
     }}

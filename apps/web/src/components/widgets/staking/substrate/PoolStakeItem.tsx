@@ -95,13 +95,13 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
               inTransition={statsDialogInTransition}
             >
               <ListItem
-                headlineText="Statistics"
+                headlineContent="Statistics"
                 trailingContent={statsDialogInTransition && <CircularProgressIndicator size="1em" />}
               />
             </StakePosition.MenuButton.Item>
             {!item.account.readonly && (
               <StakePosition.MenuButton.Item onClick={() => setClaimPermissionDialogOpen(true)}>
-                <ListItem headlineText="Claim settings" />
+                <ListItem headlineContent="Claim settings" />
               </StakePosition.MenuButton.Item>
             )}
           </StakePosition.MenuButton>

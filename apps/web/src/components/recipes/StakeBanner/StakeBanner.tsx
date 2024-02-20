@@ -69,12 +69,12 @@ const StakeBanner = (props: StakeBannerProps) => (
             <Zap />
           </TonalIcon>
         }
-        overlineText={
+        overlineContent={
           <Text.BodyLarge as="div" css={{ marginBottom: '0.8rem' }}>
             Staking balance
           </Text.BodyLarge>
         }
-        headlineText={
+        headlineContent={
           <Text.H3
             css={{
               marginBottom: 0,
@@ -90,12 +90,12 @@ const StakeBanner = (props: StakeBannerProps) => (
       />
       <ListItem
         css={{ gridArea: 'rewards', placeSelf: 'end', padding: 0, visibility: props.rewards ? 'visible' : 'hidden' }}
-        overlineText={
+        overlineContent={
           <Text.BodyLarge as="div" css={{ marginBottom: '0.8rem' }}>
             Total rewards
           </Text.BodyLarge>
         }
-        headlineText={
+        headlineContent={
           <Text.H3
             css={{
               marginBottom: 0,

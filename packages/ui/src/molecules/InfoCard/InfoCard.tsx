@@ -5,10 +5,9 @@ import { Text } from '../../atoms'
 
 export type InfoCardProps = {
   className?: string
-  headlineText: ReactNode
-  text: ReactNode
-  supportingText?: ReactNode
-  minWidth?: string
+  overlineContent: ReactNode
+  headlineContent: ReactNode
+  supportingContent?: ReactNode
 }
 
 const InfoCard = (props: InfoCardProps) => {
@@ -16,16 +15,16 @@ const InfoCard = (props: InfoCardProps) => {
   return (
     <article
       className={props.className}
-      css={{ borderRadius: '0.8rem', padding: '1.6rem', background: theme.color.surface, minWidth: props?.minWidth }}
+      css={{ borderRadius: '0.8rem', padding: '1.6rem', background: theme.color.surface }}
     >
       <Text.Body as="h4" css={{ fontSize: '1.2rem', margin: 0, marginBottom: '1.6rem' }}>
-        {props.headlineText}
+        {props.overlineContent}
       </Text.Body>
       <Text.Body as="div" alpha="high" css={{ fontSize: '1.4rem', marginBottom: '0.4rem' }}>
-        {props.text}
+        {props.headlineContent}
       </Text.Body>
       <Text.Body as="div" css={{ fontSize: '1.2rem' }}>
-        {props.supportingText}
+        {props.supportingContent}
       </Text.Body>
     </article>
   )

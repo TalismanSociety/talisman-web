@@ -48,8 +48,8 @@ const StakeTotal = () => <AnimatedFiatNumber end={useTotalStaked()} />
 const StakeHeader = () => {
   return (
     <SectionHeader
-      headlineText="Staking"
-      supportingText={
+      headlineContent="Staking"
+      supportingContent={
         <ErrorBoundary fallback={<></>}>
           <Suspense>
             <StakeTotal />

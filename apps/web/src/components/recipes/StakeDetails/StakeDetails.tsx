@@ -85,8 +85,8 @@ const StakeDetails = Object.assign(
             <ListItem
               css={{ padding: 0 }}
               leadingContent={<AccountIcon account={props.account} size="3.2rem" />}
-              headlineText={props.account.name ?? shortenAddress(props.account.address)}
-              supportingText={
+              headlineContent={props.account.name ?? shortenAddress(props.account.address)}
+              supportingContent={
                 <>
                   <StakeStatusIndicator css={{ display: 'inline-block' }} status={props.poolStatus} /> {props.poolName}
                 </>
@@ -121,8 +121,8 @@ const StakeDetails = Object.assign(
                   <Zap />
                 </TonalIcon>
               }
-              overlineText="Total balance"
-              headlineText={props.balance}
+              overlineContent="Total balance"
+              headlineContent={props.balance}
             />
             <ListItem
               css={{ padding: 0 }}
@@ -131,8 +131,8 @@ const StakeDetails = Object.assign(
                   <Earn />
                 </TonalIcon>
               }
-              overlineText="15 days rewards"
-              headlineText={props.rewards}
+              overlineContent="15 days rewards"
+              headlineContent={props.rewards}
             />
             <ListItem
               css={{ padding: 0 }}
@@ -141,8 +141,8 @@ const StakeDetails = Object.assign(
                   <Percent />
                 </TonalIcon>
               }
-              overlineText="Est. return"
-              headlineText={props.apr}
+              overlineContent="Est. return"
+              headlineContent={props.apr}
             />
             <ListItem
               css={{ padding: 0 }}
@@ -151,8 +151,8 @@ const StakeDetails = Object.assign(
                   <Clock />
                 </TonalIcon>
               }
-              overlineText="Current era ends"
-              headlineText={props.nextEraEta}
+              overlineContent="Current era ends"
+              headlineContent={props.nextEraEta}
             />
           </div>
           <div css={{ display: 'flex', flexWrap: 'wrap', gap: '2.4rem' }}>

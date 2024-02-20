@@ -3,9 +3,9 @@ import { type ReactNode } from 'react'
 
 export type SectionHeaderProps = {
   className?: string
-  headlineText: ReactNode
-  supportingText?: ReactNode
-  supportingTextIcon?: ReactNode
+  headlineContent: ReactNode
+  supportingContent?: ReactNode
+  supportingContentIcon?: ReactNode
 }
 
 const SectionHeader = (props: SectionHeaderProps) => (
@@ -19,10 +19,10 @@ const SectionHeader = (props: SectionHeaderProps) => (
       marginBottom: '2.4rem',
     }}
   >
-    <Text.H3 css={{ margin: 0 }}>{props.headlineText}</Text.H3>
+    <Text.H3 css={{ margin: 0 }}>{props.headlineContent}</Text.H3>
     <Text.BodyLarge css={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '2.4rem' }}>
-      {props.supportingText}
-      <span>{props.supportingTextIcon}</span>
+      {props.supportingContent}
+      <span>{props.supportingContentIcon}</span>
     </Text.BodyLarge>
   </header>
 )

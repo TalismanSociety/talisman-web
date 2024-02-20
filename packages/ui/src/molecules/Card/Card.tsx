@@ -6,8 +6,8 @@ import { MultiPreview, Preview } from './Preview'
 
 export type CardProps = {
   media?: ReactNode
-  headlineText: ReactNode
-  overlineText?: ReactNode
+  headlineContent: ReactNode
+  overlineContent?: ReactNode
   mediaLabel?: ReactNode
   actions?: ReactNode
   onClick?: () => unknown
@@ -130,10 +130,10 @@ const Card = Object.assign(
         </div>
         <header css={{ backgroundColor: theme.color.surface, padding: '1.6rem 2.4rem' }}>
           <Text.Body as="h4" css={{ marginBottom: '0.8rem' }}>
-            {props.overlineText}
+            {props.overlineContent}
           </Text.Body>
           <Text.BodyLarge as="h3" alpha="high">
-            {props.headlineText}
+            {props.headlineContent}
           </Text.BodyLarge>
         </header>
         <motion.div

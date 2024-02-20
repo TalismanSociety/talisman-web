@@ -72,7 +72,7 @@ const AccountHeader = (props: { className?: string; account: Account; loading?: 
   <ListItem
     className={props.className}
     leadingContent={<AccountIcon account={props.account} size="4rem" />}
-    headlineText={
+    headlineContent={
       <>
         {props.account.name ?? shortenAddress(props.account.address)}{' '}
         <CircularProgressIndicator
@@ -151,8 +151,8 @@ const NftCard = ({ nft }: { nft: Nft }) => {
             )}
           </Card.Actions>
         }
-        headlineText={nft.name}
-        overlineText={nft.collection?.name}
+        headlineContent={nft.name}
+        overlineContent={nft.collection?.name}
         onClick={() => setDialogOpen(true)}
       />
       <MediaDialog
@@ -237,7 +237,7 @@ const NftCollectionCard = ({ collection }: { collection: NftCollection }) => (
         </Card.MultiPreview>
       }
       mediaLabel={collection.items.length <= 4 ? undefined : `+${collection.items.length - 4}`}
-      headlineText={collection.name}
+      headlineContent={collection.name}
     />
   </Link>
 )
@@ -382,12 +382,12 @@ const Nfts = () => {
               <Text.Body as="label" css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                 Show:
                 <Select value={tag} onChange={setTag}>
-                  <Select.Option value={undefined} headlineText="All" />
+                  <Select.Option value={undefined} headlineContent="All" />
                   {['favorite', 'hidden'].map(x => (
                     <Select.Option
                       key={x}
                       value={x}
-                      headlineText={<span css={{ textTransform: 'capitalize' }}>{x}</span>}
+                      headlineContent={<span css={{ textTransform: 'capitalize' }}>{x}</span>}
                     />
                   ))}
                 </Select>

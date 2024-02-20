@@ -85,7 +85,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
       return (
         <Menu.Item onClick={() => setWalletConnectionSideSheetOpen(true)}>
           <ListItem
-            headlineText="Connect wallet"
+            headlineContent="Connect wallet"
             leadingContent={
               <SurfaceIcon contentColor={theme.color.primary}>
                 <Wallet />
@@ -104,13 +104,13 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
         }}
       >
         <ListItem
-          headlineText={Maybe.of(portfolioBalanceLoadable.valueMaybe()).mapOr(
+          headlineContent={Maybe.of(portfolioBalanceLoadable.valueMaybe()).mapOr(
             <CircularProgressIndicator size="1em" />,
             amount => (
               <AnimatedFiatNumber end={amount.total} />
             )
           )}
-          overlineText="My accounts"
+          overlineContent="My accounts"
           leadingContent={
             <SurfaceIcon contentColor={theme.color.primary}>
               <Users />
@@ -158,13 +158,13 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
               {portfolioAccounts.map((x, index) => (
                 <Menu.Item key={index} onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                   <ListItem
-                    headlineText={Maybe.of(getFiatBalanceLoadable.valueMaybe()?.(x.address)).mapOr(
+                    headlineContent={Maybe.of(getFiatBalanceLoadable.valueMaybe()?.(x.address)).mapOr(
                       <CircularProgressIndicator size="1em" />,
                       balance => (
                         <AnimatedFiatNumber end={balance.total} />
                       )
                     )}
-                    overlineText={
+                    overlineContent={
                       <div
                         css={
                           x.canSignEvm && {
@@ -217,13 +217,13 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                   {({ onToggleOpen: toggleRemoveDialog }) => (
                     <Menu.Item onClick={() => setSelectedAccountAddresses(() => [account.address])}>
                       <ListItem
-                        headlineText={Maybe.of(getFiatBalanceLoadable.valueMaybe()?.(account.address)).mapOr(
+                        headlineContent={Maybe.of(getFiatBalanceLoadable.valueMaybe()?.(account.address)).mapOr(
                           <CircularProgressIndicator size="1em" />,
                           balance => (
                             <AnimatedFiatNumber end={balance.total} />
                           )
                         )}
-                        overlineText={account.name ?? shortenAddress(account.address)}
+                        overlineContent={account.name ?? shortenAddress(account.address)}
                         leadingContent={<AccountIcon account={account} size="4rem" />}
                         revealTrailingContentOnHover
                         trailingContent={
@@ -266,7 +266,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                 {({ onToggleOpen }) => (
                   <Menu.Item onClick={onToggleOpen} dismissAfterSelection={false}>
                     <ListItem
-                      headlineText="Follow account"
+                      headlineContent="Follow account"
                       leadingContent={
                         <SurfaceIcon>
                           <EyePlus />
