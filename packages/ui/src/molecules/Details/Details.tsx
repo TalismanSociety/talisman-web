@@ -1,19 +1,18 @@
-import { useTheme } from '@emotion/react'
 import { ChevronRight } from '@talismn/web-icons'
 import { motion } from 'framer-motion'
 import {
   createContext,
   useCallback,
   useState,
+  type DetailedHTMLProps,
+  type HTMLAttributes,
   type MouseEventHandler,
   type PropsWithChildren,
   type ReactEventHandler,
-  type DetailedHTMLProps,
-  type HTMLAttributes,
 } from 'react'
 
 import React from 'react'
-import { Text } from '../../atoms'
+import { Surface, Text } from '../../atoms'
 
 const DetailsContext = createContext({ onClick: (() => {}) as MouseEventHandler<HTMLElement> })
 
@@ -26,19 +25,18 @@ export type DetailsProps = React.DetailedHTMLProps<
 
 const Details = Object.assign(
   (props: DetailsProps) => {
-    const theme = useTheme()
     const [_open, setOpen] = useState(false)
     const open = props.open ?? _open
 
     return (
-      <motion.details
+      <Surface
+        as={motion.details}
         {...(props as any)}
         open={true}
         animate={JSON.stringify(open)}
         initial={JSON.stringify(false)}
         css={{
           borderRadius: '1.6rem',
-          backgroundColor: theme.color.surface,
         }}
         onToggle={useCallback<ReactEventHandler<HTMLDetailsElement>>(event => event.preventDefault(), [])}
       >
@@ -57,7 +55,7 @@ const Details = Object.assign(
           {React.Children.toArray(props.children).at(0)}
         </DetailsContext.Provider>
         {React.Children.toArray(props.children).at(1)}
-      </motion.details>
+      </Surface>
     )
   },
   {
