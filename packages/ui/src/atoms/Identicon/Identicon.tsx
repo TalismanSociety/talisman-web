@@ -1,7 +1,7 @@
-import { encodeAnyAddress } from '@talismn/util'
 import { HSL, HSV, display as asCssColor, to as toColorSpace } from 'colorjs.io/fn'
 import md5 from 'md5'
 import { useId, useMemo, type CSSProperties } from 'react'
+import { encodeAnyAddress } from '../../utils/encodeAnyAddress'
 
 const djb2 = (str: string) => {
   let hash = 5381
