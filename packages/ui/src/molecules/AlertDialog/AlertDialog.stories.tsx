@@ -1,4 +1,3 @@
-import { Global, css } from '@emotion/react'
 import { type ComponentMeta, type Story } from '@storybook/react'
 
 import { Button, Text } from '../../atoms'
@@ -9,22 +8,20 @@ export default {
   component: AlertDialog,
   parameters: {
     layout: 'fullscreen',
+    backgrounds: {
+      default: 'default',
+      values: [
+        {
+          name: 'default',
+          value:
+            "url('https://815904063-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F2G9cEppDnwuwiGautnGv%2Fuploads%2FY0qwQL5TJki0pJbWrjdJ%2Ftalismanmeeting.jpg?alt=media&token=aca2fd60-fe9e-4d5e-84fa-5b8dfa77b0ed')",
+        },
+      ],
+    },
   },
 } as ComponentMeta<typeof AlertDialog>
 
-export const Default: Story<AlertDialogProps> = (args: any) => (
-  <>
-    <Global
-      styles={css`
-        body {
-          background-image: url('https://815904063-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F2G9cEppDnwuwiGautnGv%2Fuploads%2FY0qwQL5TJki0pJbWrjdJ%2Ftalismanmeeting.jpg?alt=media&token=aca2fd60-fe9e-4d5e-84fa-5b8dfa77b0ed');
-          background-size: cover;
-        }
-      `}
-    />
-    <AlertDialog {...args} />
-  </>
-)
+export const Default: Story<AlertDialogProps> = (args: any) => <AlertDialog {...args} />
 
 Default.args = {
   open: true,
