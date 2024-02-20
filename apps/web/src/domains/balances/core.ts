@@ -28,6 +28,7 @@ export const fiatBalanceGetterState = selector({
     const currency = get(selectedCurrencyState)
     return (address: string) => balances.find({ address }).sum.fiat(currency)
   },
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
 export const selectedBalancesState = selector({
@@ -37,11 +38,13 @@ export const selectedBalancesState = selector({
     return new Balances(get(balancesState).sorted.filter(x => accounts.includes(x.address)))
   },
   dangerouslyAllowMutability: true,
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
 export const selectedBalancesFiatSumState = selector({
   key: 'SelectedBalancesFiatSum',
   get: ({ get }) => get(selectedBalancesState).sum.fiat(get(selectedCurrencyState)),
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
 export const portfolioBalancesState = selector({
@@ -51,11 +54,13 @@ export const portfolioBalancesState = selector({
     return new Balances(get(balancesState).sorted.filter(x => accounts.includes(x.address)))
   },
   dangerouslyAllowMutability: true,
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
 export const portfolioBalancesFiatSumState = selector({
   key: 'PortfolioBalancesFiatSum',
   get: ({ get }) => get(portfolioBalancesState).sum.fiat(get(selectedCurrencyState)),
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
 export const writeableBalancesState = selector({
@@ -65,6 +70,7 @@ export const writeableBalancesState = selector({
     return new Balances(get(balancesState).sorted.filter(x => accounts.includes(x.address)))
   },
   dangerouslyAllowMutability: true,
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
 export const tokenRatesState = atom<Record<string, TokenRates>>({ key: 'TokenRates' })
