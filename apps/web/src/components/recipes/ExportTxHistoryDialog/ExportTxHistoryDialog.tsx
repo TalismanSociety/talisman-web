@@ -1,4 +1,5 @@
 import AccountIcon from '@components/molecules/AccountIcon'
+import { useTheme } from '@emotion/react'
 import { AlertDialog, Button, DateInput, Select, Text, type AlertDialogProps } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { endOfDay, startOfDay } from 'date-fns'
@@ -27,6 +28,7 @@ const ExportTxHistoryDialog = ({
   onRequestExport,
   ...props
 }: ExportTxHistoryDialogProps) => {
+  const theme = useTheme()
   const today = useMemo(() => new Date(), [])
   return (
     <AlertDialog
@@ -85,7 +87,7 @@ const ExportTxHistoryDialog = ({
             </Text.Body>
           </div>
           {props.error !== undefined && (
-            <Text.BodySmall color={theme => theme.color.error}>{props.error}</Text.BodySmall>
+            <Text.BodySmall css={{ color: theme.color.error }}>{props.error}</Text.BodySmall>
           )}
         </div>
       }

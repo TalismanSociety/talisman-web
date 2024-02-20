@@ -4,20 +4,18 @@ import { type ContentAlpha } from '../..'
 
 type PolymorphicTextProps<T extends React.ElementType> = {
   as?: T
-  color?: string | ((theme: Theme) => string)
   alpha?: ContentAlpha | ((props: { hover: boolean }) => ContentAlpha)
 }
 
 export type TextProps<T extends React.ElementType> = PolymorphicTextProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicTextProps<T>>
 
-const useAlpha = (color: string | ((theme: Theme) => string), alpha: ContentAlpha) => {
+const useAlpha = (alpha: ContentAlpha) => {
   const theme = useTheme()
 
-  const parsedColor = typeof color === 'string' ? color : color(theme)
   const alphaValue = theme.contentAlpha[alpha ?? 'medium']
 
-  return `color-mix(in srgb, ${parsedColor}, transparent ${Math.round((1 - alphaValue) * 100)}%)`
+  return `color-mix(in srgb, currentcolor, transparent ${Math.round((1 - alphaValue) * 100)}%) !important`
 }
 
 const NoopText = <T extends React.ElementType = 'span'>({
@@ -30,27 +28,27 @@ const NoopText = <T extends React.ElementType = 'span'>({
   return <Component {...props} css={{ color: 'inherit' }} />
 }
 
-const BaseText = <T extends React.ElementType = 'span'>({
-  as,
-  color: _color,
-  alpha = 'medium',
-  ...props
-}: TextProps<T>) => {
+const BaseText = <T extends React.ElementType = 'span'>({ as, alpha = 'medium', ...props }: TextProps<T>) => {
   const theme = useTheme()
   const Component = as ?? 'span'
-  const color = _color ?? theme.color.onBackground
 
   return (
-    <Component
-      {...props}
-      css={{
-        color: useAlpha(color, typeof alpha === 'function' ? alpha({ hover: false }) : alpha),
-        fontFamily: "'Surt', sans-serif",
-        ':hover': {
-          color: useAlpha(color, typeof alpha === 'function' ? alpha({ hover: true }) : alpha),
-        },
-      }}
-    />
+    <div
+      className={props['className']}
+      style={props['style']}
+      css={{ display: 'contents !important', color: theme.color.onBackground, fontSize: 'revert !important' }}
+    >
+      <Component
+        {...props}
+        css={{
+          color: useAlpha(typeof alpha === 'function' ? alpha({ hover: false }) : alpha),
+          fontFamily: "'Surt', sans-serif",
+          ':hover': {
+            color: useAlpha(typeof alpha === 'function' ? alpha({ hover: true }) : alpha),
+          },
+        }}
+      />
+    </div>
   )
 }
 

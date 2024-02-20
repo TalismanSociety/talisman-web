@@ -252,7 +252,7 @@ const StakeDetails = Object.assign(
                   <DescriptionList.Description>
                     <DescriptionList.Term></DescriptionList.Term>
                     <DescriptionList.Details>
-                      <Text.Noop.A color={theme => theme.color.primary} href={props.subscanPayoutsUrl} target="_blank">
+                      <Text.Noop.A href={props.subscanPayoutsUrl} target="_blank" css={{ color: theme.color.primary }}>
                         View all on Subscan <ExternalLink size="1em" />
                       </Text.Noop.A>
                     </DescriptionList.Details>
