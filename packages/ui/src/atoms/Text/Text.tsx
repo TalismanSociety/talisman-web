@@ -27,7 +27,7 @@ const NoopText = <T extends React.ElementType = 'span'>({
   ...props
 }: TextProps<T>) => {
   const Component = as ?? 'span'
-  return <Component {...props} />
+  return <Component {...props} css={{ color: 'inherit' }} />
 }
 
 const BaseText = <T extends React.ElementType = 'span'>({
@@ -54,7 +54,7 @@ const BaseText = <T extends React.ElementType = 'span'>({
   )
 }
 
-const decorateText = <T extends object>(typographyClass: keyof Theme['typography'] | undefined, element: T) =>
+const decorateText = <T extends object>(typographyClass: keyof Theme['typography'] | 'noop' | undefined, element: T) =>
   Object.assign(element, {
     A: <T extends React.ElementType = 'a'>(props: TextProps<T>) => (
       <BaseText
@@ -62,7 +62,11 @@ const decorateText = <T extends object>(typographyClass: keyof Theme['typography
         alpha="high"
         {...props}
         css={theme => [
-          typographyClass === undefined ? {} : theme.typography[typographyClass],
+          typographyClass === undefined
+            ? {}
+            : typographyClass === 'noop'
+            ? { color: 'inherit', ':hover': { color: 'inherit' } }
+            : theme.typography[typographyClass],
           { textDecoration: 'underline' },
         ]}
       />
@@ -73,7 +77,7 @@ const decorateText = <T extends object>(typographyClass: keyof Theme['typography
         alpha="disabled"
         {...props}
         css={theme => [
-          typographyClass === undefined ? {} : theme.typography[typographyClass],
+          typographyClass === undefined || typographyClass === 'noop' ? {} : theme.typography[typographyClass],
           {
             color: 'transparent',
             borderRadius: '0.5em',
@@ -110,7 +114,7 @@ const Text = Object.assign(BaseText, {
   BodySmall: decorateText('bodySmall', <T extends React.ElementType = 'span'>(props: TextProps<T>) => (
     <BaseText {...props} css={useTheme().typography.bodySmall} />
   )),
-  Noop: decorateText(undefined, NoopText),
+  Noop: decorateText('noop', NoopText),
 })
 
 export default Text
