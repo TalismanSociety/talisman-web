@@ -44,7 +44,7 @@
     "@talismn/tsconfig": "workspace:^",
     "@types/mime": "^3.0.1",
     "@types/mime-types": "^2.1.1",
-    "@types/react": "^18.0.28",
+    "@types/react": "^18.2.57",
     "babel-loader": "^8.3.0",
     "eslint": "^8.37.0",
     "eslint-plugin-storybook": "^0.6.15",

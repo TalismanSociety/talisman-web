@@ -64,7 +64,7 @@ const MediaPlayer = (props: MediaPlayerProps) => {
   }
 }
 
-export type MediaDialogProps = DialogProps & {
+export type MediaDialogProps = Omit<DialogProps, 'content'> & {
   title: ReactNode
   overline?: ReactNode
   media: ReactNode
