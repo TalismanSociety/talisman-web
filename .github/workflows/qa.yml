@@ -10,7 +10,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - run: yarn install --immutable
       - run: yarn prettier --check .
@@ -28,7 +28,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./.github/actions/load-environment-variables
         with:
