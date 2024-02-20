@@ -1,7 +1,6 @@
 {
-  "private": true,
   "name": "@talismn/icons",
-  "packageManager": "yarn@3.4.1",
+  "version": "0.0.0",
   "main": "build/commonjs/index.js",
   "exports": {
     ".": "./build/index.js",

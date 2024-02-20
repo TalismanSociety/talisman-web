@@ -1,5 +1,7 @@
 {
+  "private": true,
   "name": "@talismn/nft",
+  "version": "0.0.0",
   "type": "module",
   "exports": "./build/src/index.js",
   "scripts": {
