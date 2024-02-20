@@ -25,11 +25,12 @@ const LinearProgressIndicator = (props: LinearProgressIndicatorProps) => {
           position: 'absolute',
           inset: 0,
           backgroundColor:
-            props.value > (props.optimum ?? 0)
+            props.contentColor ??
+            (props.value > (props.optimum ?? 0)
               ? '#38D448'
               : props.value > (props.least ?? 0)
               ? '#F48F45'
-              : theme.color.error,
+              : theme.color.error),
           height: 6,
           transition: 'ease 1s',
           transform: `scaleX(${props.value})`,
