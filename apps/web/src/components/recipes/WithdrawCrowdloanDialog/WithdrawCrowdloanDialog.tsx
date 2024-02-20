@@ -1,4 +1,5 @@
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
+import { useTheme } from '@emotion/react'
 import { AlertDialog, Button, Text, type AlertDialogProps } from '@talismn/ui'
 import { useTranslation } from 'react-i18next'
 
@@ -21,6 +22,7 @@ export const WithdrawCrowdloanDialog = ({
   amount,
   ...props
 }: WithdrawCrowdloanDialogProps) => {
+  const theme = useTheme()
   const { t } = useTranslation()
 
   return (
@@ -56,7 +58,7 @@ export const WithdrawCrowdloanDialog = ({
               )}
             </Text.Body>
             {props.error !== undefined && (
-              <Text.BodySmall color={theme => theme.color.error}>{props.error}</Text.BodySmall>
+              <Text.BodySmall css={{ color: theme.color.error }}>{props.error}</Text.BodySmall>
             )}
           </div>
         )

@@ -22,11 +22,11 @@ const ButtonSegment = (props: ButtonSegmentProps) => {
         <Text.Body
           as={Clickable}
           {...props}
-          color={selectedValue === props.value ? theme.color.onPrimary : undefined}
           css={{
             position: 'relative',
             padding: '1rem 1.2rem',
           }}
+          style={{ color: selectedValue === props.value ? theme.color.onPrimary : undefined }}
           onClick={() => onChange?.(props.value)}
         >
           {selectedValue === props.value && (

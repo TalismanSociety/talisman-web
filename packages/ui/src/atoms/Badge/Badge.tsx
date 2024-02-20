@@ -13,8 +13,8 @@ const Badge = (props: BadgeProps) => (
   <Text.BodySmall
     as="div"
     {...props}
-    color={theme => props.contentColor ?? theme.color.onError}
     css={theme => ({
+      color: props.contentColor ?? theme.color.onError,
       display: 'inline-block',
       borderRadius: '0.8em',
       minWidth: '1.6em',

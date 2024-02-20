@@ -30,9 +30,9 @@ const Tab = <T extends TabElementType = 'li'>({ as = 'li' as T, ...props }: TabP
       }}
     >
       <Text.BodyLarge
-        color={props.selected ? theme.color.primary : undefined}
         alpha={props.selected ? 'high' : 'medium'}
         css={{ fontSize: '1.8rem', margin: 0 }}
+        style={{ color: props.selected ? theme.color.primary : undefined }}
       >
         {props.children}
       </Text.BodyLarge>

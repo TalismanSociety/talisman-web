@@ -112,7 +112,9 @@ const ContainedTextInput = Object.assign(
     )
   },
   {
-    ErrorLabel: (props: PropsWithChildren) => <Text.BodySmall color={theme => theme.color.onError} {...props} />,
+    ErrorLabel: (props: PropsWithChildren) => (
+      <Text.BodySmall css={theme => ({ color: theme.color.onError })} {...props} />
+    ),
   }
 )
 

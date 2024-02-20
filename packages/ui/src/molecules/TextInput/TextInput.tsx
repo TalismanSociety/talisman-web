@@ -138,7 +138,7 @@ const TextInput = Object.assign(
   ),
   {
     ErrorLabel: (props: PropsWithChildren) => (
-      <Text.BodySmall color={theme => theme.color.onErrorContainer} {...props} />
+      <Text.BodySmall css={theme => ({ color: theme.color.onErrorContainer })} {...props} />
     ),
     LabelButton: (props: DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) => (
       <Clickable.WithFeedback
