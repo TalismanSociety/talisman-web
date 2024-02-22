@@ -25,7 +25,8 @@ export type TalismanTheme = {
     surface: string
     onSurface: string
     surfaceTint: string
-    border: string
+    outline: string
+    outlineVariant: string
     error: string
     onError: string
     errorContainer: string
@@ -82,7 +83,8 @@ const greenDark: TalismanTheme = {
     onForeground: '#fafafa',
     foregroundVariant: '#3f3f3f',
     onForegroundVariant: '#fafafa',
-    border: '#2F2F2F',
+    outline: '#fafafa',
+    outlineVariant: '#2f2f2f',
   },
   contentAlpha: {
     disabled: 0.5,

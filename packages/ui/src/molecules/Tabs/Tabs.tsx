@@ -61,7 +61,7 @@ const Tabs = Object.assign(
           display: 'flex',
           gap: '2.4rem',
           margin: 0,
-          borderBottom: noBottomBorder ? undefined : `1px solid ${theme.color.border}`,
+          borderBottom: noBottomBorder ? undefined : `1px solid ${theme.color.outlineVariant}`,
           padding: 0,
           listStyle: 'none',
         }}
