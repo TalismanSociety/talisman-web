@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { type ComponentMeta, type Story } from '@storybook/react'
 
-import { Button, Text } from '../../atoms'
+import { Button } from '../../atoms'
 import Toaster, { toast } from '../../organisms/Toaster'
-import ToastBar, { type ToastBarProps } from './ToastBar'
+import ToastBar, { ToastMessage, type ToastBarProps } from './ToastBar'
 
 export default {
   title: 'Molecules/ToastBar',
@@ -21,12 +21,10 @@ Default.args = {
     type: 'blank',
     visible: true,
     message: (
-      <>
-        <Text.Body as="div" alpha="high">
-          This is your toast
-        </Text.Body>
-        <Text.Body as="div">And this is its really really long content</Text.Body>
-      </>
+      <ToastMessage
+        headlineContent="This is your toast"
+        supportingContent="And this is its really really long content"
+      />
     ),
     createdAt: Date.now(),
     pauseDuration: 0,
