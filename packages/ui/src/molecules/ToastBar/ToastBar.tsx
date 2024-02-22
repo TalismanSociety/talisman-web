@@ -2,9 +2,10 @@ import { useTheme } from '@emotion/react'
 import { Check, X } from '@talismn/web-icons'
 import { formatDistanceToNowStrict } from 'date-fns'
 import { motion } from 'framer-motion'
-import { isValidElement, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { isValidElement, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { resolveValue, type Toast, type ToastPosition } from 'react-hot-toast/headless'
-import { CircularProgressIndicator, Text } from '../../atoms'
+import { CircularProgressIndicator, SurfaceIconButton, Text, useSurfaceColorAtElevation } from '../../atoms'
+import { toast as toaster } from '../../organisms'
 
 export type ToastMessageProps = {
   headlineContent: ReactNode
@@ -19,6 +20,8 @@ export type ToastBarProps = {
 }
 
 const ToastBar = ({ toast }: ToastBarProps) => {
+  const ref = useRef<HTMLDivElement>(null)
+
   const theme = useTheme()
   const [createdAtDistance, setCreatedAtDistance] = useState(
     formatDistanceToNowStrict(toast.createdAt, { addSuffix: true })
@@ -61,6 +64,7 @@ const ToastBar = ({ toast }: ToastBarProps) => {
 
   return (
     <motion.div
+      ref={ref}
       key={toast.id}
       css={{
         position: 'relative',
@@ -70,10 +74,23 @@ const ToastBar = ({ toast }: ToastBarProps) => {
         padding: '1.6rem',
         borderRadius: '0.8rem',
         backgroundColor: theme.color.surface,
+        cursor: 'grab',
       }}
       initial={{ ...origin, opacity: 0, scale: 0.8 }}
       animate={{ ...(toast.visible ? { x: 0, y: 0 } : origin), opacity: toast.visible ? 1 : 0, scale: 1 }}
-      whileHover={{ scale: 1.01 }}
+      whileHover="hover"
+      drag="x"
+      dragConstraints={{ left: 0 }}
+      dragSnapToOrigin={true}
+      whileDrag={{ cursor: 'grabbing' }}
+      onDragEnd={(_, info) => {
+        const rect = ref.current?.getBoundingClientRect()
+
+        if (rect !== undefined && info.offset.x > rect.width / 2) {
+          toaster.dismiss(toast.id)
+        }
+      }}
+      variants={{ hover: { scale: 1.01 } }}
       {...toast.ariaProps}
     >
       {useMemo(() => {
@@ -141,6 +158,19 @@ const ToastBar = ({ toast }: ToastBarProps) => {
         </Text.Body>
         {supportingContent}
       </Text.Body>
+      <motion.div
+        animate={{ display: 'none' }}
+        variants={{ hover: { display: 'revert' } }}
+        css={{ position: 'absolute', top: '-0.75rem', left: '-0.75rem' }}
+      >
+        <SurfaceIconButton
+          size="2rem"
+          onClick={() => toaster.dismiss(toast.id)}
+          css={{ border: `1px solid ${useSurfaceColorAtElevation(x => x + 2)}` }}
+        >
+          <X />
+        </SurfaceIconButton>
+      </motion.div>
     </motion.div>
   )
 }

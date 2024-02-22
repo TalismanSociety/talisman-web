@@ -14,7 +14,7 @@ type PropsOf<T extends keyof JSX.IntrinsicElements | JSXElementConstructor<any>>
   ComponentPropsWithRef<T>
 >
 
-type Elevation = number | ((currentElevation: number) => number)
+export type Elevation = number | ((currentElevation: number) => number)
 
 type SurfaceOwnProps<T extends ElementType = ElementType> = {
   as?: T
