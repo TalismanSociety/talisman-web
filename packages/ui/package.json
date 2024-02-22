@@ -20,16 +20,16 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@floating-ui/react": "^0.26.3",
-    "@google/model-viewer": "^3.1.1",
-    "@lottiefiles/react-lottie-player": "^3.5.2",
+    "@floating-ui/react": "^0.26.9",
+    "@google/model-viewer": "^3.4.0",
+    "@lottiefiles/react-lottie-player": "^3.5.3",
     "@polkadot/util-crypto": "^12.6.2",
     "@talismn/web-icons": "workspace:^",
-    "colorjs.io": "^0.4.4-patch.1",
+    "colorjs.io": "^0.4.5",
     "md5": "^2.3.0",
-    "mime": "^3.0.0",
+    "mime": "^4.0.1",
     "react-countup": "^6.5.0",
-    "react-hot-toast": "^2.4.0"
+    "react-hot-toast": "^2.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
