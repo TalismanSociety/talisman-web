@@ -71,7 +71,7 @@ const ToastBar = ({ toast }: ToastBarProps) => {
         display: 'flex',
         alignItems: 'center',
         gap: '1.2rem',
-        border: `1px solid ${theme.color.border}`,
+        border: `1px solid ${theme.color.outlineVariant}`,
         padding: '1.6rem',
         borderRadius: '0.8rem',
         backgroundColor: theme.color.surface,
@@ -168,7 +168,7 @@ const ToastBar = ({ toast }: ToastBarProps) => {
         <SurfaceIconButton
           size="2rem"
           onClick={() => toaster.dismiss(toast.id)}
-          css={{ border: `1px solid ${theme.color.border}` }}
+          css={{ border: `1px solid ${theme.color.outlineVariant}` }}
         >
           <X />
         </SurfaceIconButton>

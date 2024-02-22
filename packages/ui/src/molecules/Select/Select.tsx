@@ -192,7 +192,7 @@ const Select = Object.assign(
           ref={refs.setReference}
           variants={{
             true: {
-              border: `solid ${theme.color.border}`,
+              border: `solid ${theme.color.outlineVariant}`,
               borderWidth: '1px 1px 0 1px',
               transitionEnd: {
                 borderBottomLeftRadius: detached ? '2rem' : 0,
@@ -237,7 +237,7 @@ const Select = Object.assign(
               true: {
                 height: 'unset',
                 visibility: 'unset',
-                border: `solid ${theme.color.border}`,
+                border: `solid ${theme.color.outlineVariant}`,
                 borderWidth: '0 1px 1px 1px',
                 transitionEnd: { overflow: 'auto' },
               },

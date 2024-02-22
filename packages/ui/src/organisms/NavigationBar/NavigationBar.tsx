@@ -32,7 +32,7 @@ const NavigationBar = Object.assign(
           gap: '1.2rem',
           width: '100%',
           margin: 0,
-          borderTop: `1px solid ${theme.color.border}`,
+          borderTop: `1px solid ${theme.color.outlineVariant}`,
           padding: '1.2rem 2.35rem',
           backgroundColor: theme.color.background,
         }}

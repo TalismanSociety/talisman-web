@@ -64,7 +64,7 @@ const AddReadOnlyAccountDialog = Object.assign(
                 leadingContent={<Identicon value={props.resultingAddress} size="4rem" />}
                 headlineContent={isNilOrWhitespace(props.name) ? undefined : props.name}
                 supportingContent={shortenAddress(props.resultingAddress)}
-                css={{ marginTop: '0.8rem', border: `2px solid ${theme.color.border}`, borderRadius: '0.8rem' }}
+                css={{ marginTop: '0.8rem', border: `2px solid ${theme.color.outlineVariant}`, borderRadius: '0.8rem' }}
               />
             )}
             <Button
