@@ -39,9 +39,9 @@ export const AssetBalance = ({ planck, fiat, symbol, locked, stale }: AssetBalan
         }}
       >
         <Text.Body
-          alpha={locked ? 'medium' : 'high'}
           css={{
             margin: 0,
+            color: locked ? '#a5a5a5' : 'var(--color-text)',
             fontSize: '16px',
           }}
         >
@@ -68,6 +68,7 @@ export const AssetBalance = ({ planck, fiat, symbol, locked, stale }: AssetBalan
       <Text.Body
         css={{
           margin: 0,
+          color: '#a5a5a5',
           fontSize: '14px',
         }}
       >
@@ -238,7 +239,7 @@ const Asset = Object.assign((props: AssetProps) => {
           </Tooltip>
           <div>
             <div css={{ display: 'flex', alignItems: 'center', gap: '0.4em' }}>
-              <Text.Body alpha="high" css={{ fontWeight: 600, fontSize: '16px', color: theme.color.onSurface }}>
+              <Text.Body css={{ fontWeight: 600, fontSize: '16px', color: theme.color.onSurface }}>
                 {token.tokenDetails.symbol}
               </Text.Body>
               <div
