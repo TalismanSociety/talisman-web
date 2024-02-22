@@ -4,7 +4,7 @@ import { formatDistanceToNowStrict } from 'date-fns'
 import { motion } from 'framer-motion'
 import { isValidElement, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { resolveValue, type Toast, type ToastPosition } from 'react-hot-toast/headless'
-import { CircularProgressIndicator, SurfaceIconButton, Text, useSurfaceColorAtElevation } from '../../atoms'
+import { CircularProgressIndicator, SurfaceIconButton, Text } from '../../atoms'
 import { toast as toaster } from '../../organisms'
 
 export type ToastMessageProps = {
@@ -71,9 +71,11 @@ const ToastBar = ({ toast }: ToastBarProps) => {
         display: 'flex',
         alignItems: 'center',
         gap: '1.2rem',
+        border: `1px solid ${theme.color.border}`,
         padding: '1.6rem',
         borderRadius: '0.8rem',
         backgroundColor: theme.color.surface,
+        filter: 'drop-shadow(0 2px 5px rgba(0, 0, 0, 0.06))',
         cursor: 'grab',
       }}
       initial={{ ...origin, opacity: 0, scale: 0.8 }}
@@ -166,7 +168,7 @@ const ToastBar = ({ toast }: ToastBarProps) => {
         <SurfaceIconButton
           size="2rem"
           onClick={() => toaster.dismiss(toast.id)}
-          css={{ border: `1px solid ${useSurfaceColorAtElevation(x => x + 2)}` }}
+          css={{ border: `1px solid ${theme.color.border}` }}
         >
           <X />
         </SurfaceIconButton>
