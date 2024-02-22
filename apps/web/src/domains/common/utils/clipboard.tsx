@@ -1,28 +1,14 @@
+import { ToastMessage, toast } from '@talismn/ui'
 import { Copy } from '@talismn/web-icons'
-import { Text, toast } from '@talismn/ui'
 
 export const copyAddressToClipboard = async (address: string) => {
   await navigator.clipboard.writeText(address)
-  toast(
-    <>
-      <Text.Body as="div" alpha="high">
-        Address copied to clipboard
-      </Text.Body>
-      <Text.Body as="div">{address}</Text.Body>
-    </>,
-    { icon: <Copy /> }
-  )
+  toast(<ToastMessage headlineContent="Address copied to clipboard" supportingContent={address} />, { icon: <Copy /> })
 }
 
 export const copyExtrinsicHashToClipboard = async (hash: string) => {
   await navigator.clipboard.writeText(hash)
-  toast(
-    <>
-      <Text.Body as="div" alpha="high">
-        Extrinsic hash copied to clipboard
-      </Text.Body>
-      <Text.Body as="div">{hash}</Text.Body>
-    </>,
-    { icon: <Copy /> }
-  )
+  toast(<ToastMessage headlineContent="Extrinsic hash copied to clipboard" supportingContent={hash} />, {
+    icon: <Copy />,
+  })
 }

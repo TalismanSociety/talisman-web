@@ -1,4 +1,4 @@
-import { Text, toast } from '@talismn/ui'
+import { Text, toast, ToastMessage } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { type WriteContractMode } from '@wagmi/core'
 import { type Abi } from 'abitype'
@@ -49,34 +49,26 @@ export const useWagmiContractWrite = <
       const promise = writeAsync(...args)
       void toast.promise(promise, {
         loading: (
-          <>
-            <Text.Body as="div" alpha="high">
-              Your transaction is pending...
-            </Text.Body>
-            <Text.Body as="div">Your transaction has been confirmed</Text.Body>
-          </>
+          <ToastMessage
+            headlineContent="Your transaction is pending..."
+            supportingContent="Your transaction has been confirmed"
+          />
         ),
-        error: (
-          <Text.Body as="div" alpha="high">
-            Your transaction was unsuccessful
-          </Text.Body>
-        ),
+        error: 'Your transaction was unsuccessful',
         success: result => {
           const url = new URL('/tx/' + result.hash, etherscanUrl)
           return (
-            <>
-              <Text.Body as="div" alpha="high">
-                Your transaction was successful
-              </Text.Body>
-              {etherscanUrl && (
+            <ToastMessage
+              headlineContent="Your transaction was successful"
+              supportingContent={
                 <Text.Body as="div">
                   View details on{' '}
                   <Text.Body as="a" alpha="high" href={url.toString()} target="_blank">
                     Etherscan
                   </Text.Body>
                 </Text.Body>
-              )}
-            </>
+              }
+            />
           )
         },
       })

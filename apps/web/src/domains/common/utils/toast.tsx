@@ -1,63 +1,47 @@
 import type RpcError from '@polkadot/rpc-provider/coder/error'
 import { type ISubmittableResult } from '@polkadot/types/types'
+import { Text, ToastMessage, toast } from '@talismn/ui'
 import { ExternalLink } from '@talismn/web-icons'
-import { Text, toast } from '@talismn/ui'
 
 export const toastExtrinsic = (
   extrinsics: Array<[string, string]>,
   promise: Promise<ISubmittableResult>,
   subscanUrl?: string
 ) => {
-  const message = (() => {
-    if (extrinsics.length === 1) {
-      return (
-        <>
-          <Text.Body as="div" alpha="high">
-            Your transaction was successful
-          </Text.Body>
-          <Text.Body as="div">
-            Your{' '}
-            <code>
-              {extrinsics[0]?.[0]}:{extrinsics[0]?.[1]}
-            </code>{' '}
-            transaction was successful.
-          </Text.Body>
-        </>
-      )
-    } else {
-      return (
-        <Text.Body as="div" alpha="high">
-          Your transaction was successful
-        </Text.Body>
-      )
-    }
-  })()
-
   void toast.promise(
     promise,
     {
-      loading: (
-        <Text.Body as="div" alpha="high">
-          Your transaction is pending...
-        </Text.Body>
-      ),
+      loading: 'Your transaction is pending...',
       success: data => (
-        <>
-          {message}
-          {subscanUrl !== undefined && (
-            <Text.Body as="div">
-              View details on{' '}
-              <Text.Body
-                as="a"
-                alpha="high"
-                href={subscanUrl + 'extrinsic/' + data?.txHash?.toString()}
-                target="_blank"
-              >
-                Subscan
-              </Text.Body>
-            </Text.Body>
-          )}
-        </>
+        <ToastMessage
+          headlineContent="Your transaction was successful"
+          supportingContent={
+            <div>
+              {extrinsics.length === 1 && (
+                <div>
+                  Your{' '}
+                  <code>
+                    {extrinsics[0]?.[0]}:{extrinsics[0]?.[1]}
+                  </code>{' '}
+                  transaction was successful.
+                </div>
+              )}
+              {subscanUrl !== undefined && (
+                <Text.Body as="div">
+                  View details on{' '}
+                  <Text.Body
+                    as="a"
+                    alpha="high"
+                    href={subscanUrl + 'extrinsic/' + data?.txHash?.toString()}
+                    target="_blank"
+                  >
+                    Subscan
+                  </Text.Body>
+                </Text.Body>
+              )}
+            </div>
+          }
+        />
       ),
       error: error => {
         const rawErrorMsg = (error as RpcError)?.data ?? (error as Error | undefined)?.message

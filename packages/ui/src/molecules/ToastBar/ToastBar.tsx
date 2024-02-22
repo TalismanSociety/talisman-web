@@ -2,9 +2,16 @@ import { useTheme } from '@emotion/react'
 import { Check, X } from '@talismn/web-icons'
 import { formatDistanceToNowStrict } from 'date-fns'
 import { motion } from 'framer-motion'
-import React, { Fragment, useEffect, useMemo, useState } from 'react'
+import { isValidElement, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { resolveValue, type Toast, type ToastPosition } from 'react-hot-toast/headless'
 import { CircularProgressIndicator, Text } from '../../atoms'
+
+export type ToastMessageProps = {
+  headlineContent: ReactNode
+  supportingContent: ReactNode
+}
+
+export const ToastMessage = (_props: ToastMessageProps) => null
 
 export type ToastBarProps = {
   toast: Toast
@@ -16,10 +23,16 @@ const ToastBar = ({ toast }: ToastBarProps) => {
   const [createdAtDistance, setCreatedAtDistance] = useState(
     formatDistanceToNowStrict(toast.createdAt, { addSuffix: true })
   )
-  const children = resolveValue(toast.message, toast)
-  const resolvedChildren = (children as any)?.type === Fragment ? (children as any)?.props?.children : children
 
-  const [firstMessage, ...messages] = React.Children.toArray(resolvedChildren)
+  const children = resolveValue(toast.message, toast)
+  const [headlineContent, supportingContent] = useMemo(() => {
+    if (isValidElement(children) && children.type === ToastMessage) {
+      const messageProps = children.props as ToastMessageProps
+      return [messageProps.headlineContent, messageProps.supportingContent] as const
+    }
+
+    return [children, undefined] as const
+  }, [children])
 
   useEffect(() => {
     const interval = setInterval(
@@ -121,12 +134,12 @@ const ToastBar = ({ toast }: ToastBarProps) => {
       }, [toast])}
       <Text.Body as="div">
         <Text.Body css={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
-          <span>{firstMessage}</span>
+          <Text.Body alpha="high">{headlineContent}</Text.Body>
           <Text.Body alpha="disabled" css={{ textAlign: 'end', alignSelf: 'first baseline', minWidth: '11rem' }}>
             {createdAtDistance}
           </Text.Body>
         </Text.Body>
-        {messages}
+        {supportingContent}
       </Text.Body>
     </motion.div>
   )
