@@ -3,22 +3,20 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-export const useThrottle = <T>(value: T, limit: number) => {
+export const useThrottle = <T>(value: T, milliseconds: number) => {
   const [throttledValue, setThrottledValue] = useState(value)
   const lastRan = useRef(Date.now())
 
   useEffect(() => {
     const handler = setTimeout(function () {
-      if (Date.now() - lastRan.current >= limit) {
+      if (Date.now() - lastRan.current >= milliseconds) {
         setThrottledValue(value)
         lastRan.current = Date.now()
       }
-    }, limit - (Date.now() - lastRan.current))
+    }, milliseconds - (Date.now() - lastRan.current))
 
-    return () => {
-      clearTimeout(handler)
-    }
-  }, [value, limit])
+    return () => clearTimeout(handler)
+  }, [value, milliseconds])
 
   return throttledValue
 }

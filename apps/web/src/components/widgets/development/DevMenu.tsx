@@ -50,7 +50,7 @@ const SignEvmTransaction = () => {
 }
 
 const Analytics = () => {
-  const [debug, setDebug] = useState(false)
+  const [debug, setDebug] = useState(true)
 
   const postHog = usePostHog()
 
