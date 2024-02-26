@@ -1,5 +1,6 @@
 import { useDebounce, useThrottle } from '@talismn/utils/react'
 import { usePostHog } from 'posthog-js/react'
+import { useState } from 'react'
 import { useUpdateEffect } from 'react-use'
 import { useRecoilValue } from 'recoil'
 import { writeableBalancesState } from '.'
@@ -13,11 +14,18 @@ const digestMessage = async (message: string) => {
 
 export const useBalancesReportEffect = () => {
   const postHog = usePostHog()
-  const balances = useThrottle(useDebounce(useRecoilValue(writeableBalancesState), 5_000), 60_000)
+  const balances = useThrottle(useDebounce(useRecoilValue(writeableBalancesState), 5_000), 15_000)
+  const [updateCount, setUpdateCount] = useState(0)
 
   // TODO: use normal effect after we redo balances section with proper suspense support
   // right now the first received balance value will be a default empty one
   useUpdateEffect(() => {
+    if (updateCount >= 1) {
+      return
+    }
+
+    setUpdateCount(x => x + 1)
+
     void (async () => {
       const balanceRecords = await Promise.all(
         balances
