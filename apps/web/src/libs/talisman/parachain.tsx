@@ -28,9 +28,9 @@ export const useParachainAssets = (
   const slug = crowdloanDetail?.slug
 
   return {
-    banner: `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/promo/${slug ?? ''}-banner.png`,
-    card: `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/promo/${slug ?? ''}-card.png`,
-    logo: `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${slug ?? ''}.svg`,
+    banner: `https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/promo/${slug ?? ''}-banner.png`,
+    card: `https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/promo/${slug ?? ''}-card.png`,
+    logo: `https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/chains/${slug ?? ''}.svg`,
   }
 }
 
