@@ -55,6 +55,11 @@ export type TalismanTheme = {
   }
 }
 
+declare module '@emotion/react' {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+  export interface Theme extends TalismanTheme {}
+}
+
 const greenDark: TalismanTheme = {
   typography: {
     h1: { fontFamily: 'SurtExpanded', fontSize: 56, margin: 0 },

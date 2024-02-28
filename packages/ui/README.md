@@ -25,13 +25,15 @@ export const App = () => {
 }
 ```
 
-## Typing the theme
+## Extending the theme
 
 ```ts
 import { TalismanTheme } from '@talismn/ui'
 
 declare module '@emotion/react' {
-  export interface Theme extends TalismanTheme {}
+  export interface Theme extends TalismanTheme {
+    customProperty: 'customValue'
+  }
 }
 ```
 
