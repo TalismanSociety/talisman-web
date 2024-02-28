@@ -1,5 +1,4 @@
-import { type ModelViewerElement } from '@google/model-viewer'
-import { type TalismanTheme } from './theme'
+import type { ModelViewerElement } from '@google/model-viewer'
 
 declare global {
   namespace JSX {
@@ -8,9 +7,4 @@ declare global {
       ['model-viewer']: Partial<ModelViewerElement>
     }
   }
-}
-
-declare module '@emotion/react' {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-  export interface Theme extends TalismanTheme {}
 }
