@@ -40,6 +40,7 @@
     "@polkadot/util-crypto": "^12.6.2",
     "@polkadot/wasm-crypto": "^7.3.2",
     "@polkadot/wasm-crypto-wasm": "^7.3.2",
+    "@types/react": "^18.2.57",
     "json-stream-stringify": "2.0.4",
     "recoil@^0.7.7": "patch:recoil@npm%3A0.7.7#./.yarn/patches/recoil-npm-0.7.7-4452f58b67.patch",
     "threads@^1.7.0": "patch:threads@npm%3A1.7.0#./.yarn/patches/threads-npm-1.7.0-c432dbb3e9.patch"

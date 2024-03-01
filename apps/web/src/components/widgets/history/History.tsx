@@ -195,7 +195,6 @@ const _History = (props: HistoryProps) => {
 
   return (
     <div>
-      {/* @ts-expect-error */}
       <InfiniteScroll
         loadMore={() => {
           void loadMore()
