@@ -21,6 +21,7 @@ const BaseIconButtonFactory =
     const theme = useTheme()
     return (
       <Element
+        as="button"
         {...props}
         css={[
           {

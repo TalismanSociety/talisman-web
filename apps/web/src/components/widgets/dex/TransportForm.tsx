@@ -7,23 +7,23 @@ import {
   type Account,
 } from '@domains/accounts'
 import { bridgeAdapterState, bridgeState } from '@domains/bridge'
+import { tokenPriceState } from '@domains/chains'
 import { useExtrinsic } from '@domains/common'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import { type ISubmittableResult } from '@polkadot/types/types'
 import { type Chain, type InputConfig } from '@polkawallet/bridge'
 import * as Sentry from '@sentry/react'
+import { useTokens as useBalancesLibTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, toast } from '@talismn/ui'
 import { Maybe } from '@util/monads'
-import { isEmpty, uniqBy } from 'lodash'
+import { uniqBy } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RecoilLoadable, constSelector, useRecoilValue, useRecoilValueLoadable, type Loadable } from 'recoil'
 import { Observable } from 'rxjs'
 import { useAccountSelector } from '../AccountSelector'
-import TokenSelectorButton from '../TokenSelectorButton'
-import { tokenPriceState } from '@domains/chains'
-import { useTokens as useBalancesLibTokens } from '@talismn/balances-react'
 import AnimatedFiatNumber from '../AnimatedFiatNumber'
+import TokenSelectorButton from '../TokenSelectorButton'
 
 const TransportForm = () => {
   const bridge = useRecoilValue(bridgeState)
@@ -75,16 +75,6 @@ const TransportForm = () => {
     }
   }, [sender, setRecipient])
 
-  const filterParams = <T extends Record<string, unknown>>(object: T) => {
-    const params = Object.fromEntries(Object.entries(object).filter(([_, value]) => value !== undefined))
-
-    if (isEmpty(params)) {
-      return undefined
-    }
-
-    return params
-  }
-
   const routes = useMemo(
     () =>
       bridge.router
@@ -125,7 +115,7 @@ const TransportForm = () => {
   )
 
   const routeReversible = useMemo(() => {
-    const routes = bridge.router.getRouters(filterParams({ token }))
+    const routes = bridge.router.getAvailableRouters().filter(x => x.token === token)
 
     if (fromChain === undefined && toChain === undefined) {
       return false
