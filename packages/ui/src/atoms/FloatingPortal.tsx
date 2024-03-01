@@ -1,9 +1,9 @@
-import { FloatingPortal as BaseFloatingPortal } from '@floating-ui/react'
-import { useLayoutEffect, useState } from 'react'
+import { useLayoutEffect, useState, type PropsWithChildren } from 'react'
+import { createPortal } from 'react-dom'
 
-const FloatingPortal = (props: Exclude<Parameters<typeof BaseFloatingPortal>['0'], 'root'>) => {
+const FloatingPortal = (props: PropsWithChildren & { id?: string }) => {
   const [element, setElement] = useState<HTMLDivElement | null>(null)
-  const [root, setRoot] = useState<Element>(document.body)
+  const [root, setRoot] = useState<Element>()
 
   useLayoutEffect(
     () =>
@@ -18,7 +18,7 @@ const FloatingPortal = (props: Exclude<Parameters<typeof BaseFloatingPortal>['0'
   return (
     <>
       <div ref={setElement} css={{ display: 'none' }} />
-      <BaseFloatingPortal {...props} root={root as HTMLElement} />
+      {root && createPortal(props.children, root, props.id)}
     </>
   )
 }
