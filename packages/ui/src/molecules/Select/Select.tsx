@@ -179,7 +179,7 @@ const Select = Object.assign(
     return (
       <motion.div
         className={props.className}
-        initial={String(false)}
+        initial={String(open)}
         animate={String(open)}
         variants={{
           true: { filter: 'drop-shadow(0 1px 3px rgba(0, 0, 0, 0.25))' },
