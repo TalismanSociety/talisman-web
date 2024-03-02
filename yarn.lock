@@ -8172,7 +8172,7 @@ __metadata:
     colorjs.io: "npm:^0.4.5"
     eslint: "npm:^8.37.0"
     eslint-plugin-storybook: "npm:^0.6.15"
-    framer-motion: "npm:^10.18.0"
+    framer-motion: "npm:^11.0.8"
     md5: "npm:^2.3.0"
     mime: "npm:^4.0.1"
     mime-db: "npm:^1.52.0"
@@ -8186,7 +8186,7 @@ __metadata:
   peerDependencies:
     "@emotion/react": 11.x
     "@talismn/web-icons": "*"
-    framer-motion: 10.x
+    framer-motion: 11.x
     react: 18.x
   languageName: unknown
   linkType: soft
@@ -8308,7 +8308,7 @@ __metadata:
     eslint: "npm:^8.33.0"
     eslint-config-prettier: "npm:^8.6.0"
     eslint-plugin-storybook: "npm:^0.6.15"
-    framer-motion: "npm:^10.18.0"
+    framer-motion: "npm:^11.0.8"
     graphql: "npm:^16.8.1"
     graphql-request: "npm:^6.1.0"
     i18next: "npm:^21.10.0"
@@ -14638,9 +14638,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^10.18.0":
-  version: 10.18.0
-  resolution: "framer-motion@npm:10.18.0"
+"framer-motion@npm:^11.0.8":
+  version: 11.0.8
+  resolution: "framer-motion@npm:11.0.8"
   dependencies:
     "@emotion/is-prop-valid": "npm:^0.8.2"
     tslib: "npm:^2.4.0"
@@ -14655,7 +14655,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 8dc61e16af34ea7c7e830e03f588c54b7a186a767787eb6373ac692bbffa219959d50b7cf983f54305951e121ea7d50ebd4819920290fc6ad58b03fc5eb2bdde
+  checksum: 6a9db8568dc40e2394398e832995909f39ee3a9be855c4987b5ef94675cf3f6875058f9d79e50c6fd33077b7694a64804d7ffcdccde4f4eff82a87ceda4b5f2d
   languageName: node
   linkType: hard
 
