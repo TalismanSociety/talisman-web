@@ -7,8 +7,7 @@ import {
   writeableAccountsState,
 } from '@domains/accounts/recoils'
 import { Balances } from '@talismn/balances'
-import { useBalances as _useBalances, useAllAddresses, useTokenRates, useTokens } from '@talismn/balances-react'
-import type { TokenRates } from '@talismn/token-rates'
+import { useBalances as _useBalances, useAllAddresses, useTokens } from '@talismn/balances-react'
 import { isNil } from 'lodash'
 import { useEffect, useMemo } from 'react'
 import { atom, selector, useRecoilCallback, useRecoilValue } from 'recoil'
@@ -73,8 +72,6 @@ export const writeableBalancesState = selector({
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
-export const tokenRatesState = atom<Record<string, TokenRates>>({ key: 'TokenRates' })
-
 export const BalancesWatcher = () => {
   const accounts = useRecoilValue(accountsState)
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
@@ -116,27 +113,6 @@ export const BalancesWatcher = () => {
   )
 
   useBalancesReportEffect()
-
-  const tokenRates = useTokenRates()
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(
-    useRecoilCallback(
-      ({ set }) =>
-        () => {
-          set(
-            tokenRatesState,
-            Object.fromEntries(
-              Object.entries(tokenRates)
-                .map(([key, value]) => [tokens[key]?.coingeckoId, value] as const)
-                .filter(([key]) => key !== undefined)
-            )
-          )
-        },
-      [tokenRates, tokens]
-    ),
-    [tokenRates, tokens]
-  )
 
   return null
 }
