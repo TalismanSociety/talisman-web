@@ -51,7 +51,7 @@
     "babel-loader": "^8.3.0",
     "eslint": "^8.37.0",
     "eslint-plugin-storybook": "^0.6.15",
-    "framer-motion": "^10.18.0",
+    "framer-motion": "^11.0.8",
     "mime-db": "^1.52.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
@@ -62,7 +62,7 @@
   "peerDependencies": {
     "@emotion/react": "11.x",
     "@talismn/web-icons": "*",
-    "framer-motion": "10.x",
+    "framer-motion": "11.x",
     "react": "18.x"
   }
 }
