@@ -1,17 +1,16 @@
-import { selectedCurrencyState, tokenRatesState } from '@domains/balances'
+import { selectedCurrencyState } from '@domains/balances'
 import { substrateApiState, useSubstrateApiEndpoint } from '@domains/common'
-import { storageEffect } from '@domains/common/effects'
 import { type BN } from '@polkadot/util'
 import { type ToBn } from '@polkadot/util/types'
 import { type Chain as ChainData, type IToken } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
-import type { TokenRateCurrency } from '@talismn/token-rates'
 import { Maybe } from '@util/monads'
 import { nullToUndefined } from '@util/nullToUndefine'
 import { useContext } from 'react'
 import { atom, selector, selectorFamily, waitForAll, type RecoilValueReadOnly } from 'recoil'
 import { ChainContext } from '.'
 import { chainConfigs } from './config'
+import { storageEffect } from '@domains/common/effects'
 
 export const chainState = selectorFamily({
   key: 'Chain',
@@ -78,7 +77,26 @@ export const tokenPriceState = selectorFamily({
     ({ coingeckoId, ...params }: { coingeckoId: string; currency?: string }) =>
     async ({ get }) => {
       const currency = params.currency ?? get(selectedCurrencyState)
-      return get(tokenRatesState)[coingeckoId]?.[currency as TokenRateCurrency] ?? 0
+      try {
+        const url = new URL('/api/v3/simple/price', import.meta.env.REACT_APP_COIN_GECKO_API)
+        url.searchParams.set('ids', coingeckoId)
+        url.searchParams.set('vs_currencies', currency)
+
+        const result = await fetch(url, {
+          headers:
+            import.meta.env.REACT_APP_COIN_GECKO_API_KEY === undefined
+              ? undefined
+              : import.meta.env.REACT_APP_COIN_GECKO_API_TIER === 'pro'
+              ? { 'x-cg-pro-api-key': import.meta.env.REACT_APP_COIN_GECKO_API_KEY }
+              : import.meta.env.REACT_APP_COIN_GECKO_API_TIER === 'demo'
+              ? { 'x-cg-demo-api-key': import.meta.env.REACT_APP_COIN_GECKO_API_KEY }
+              : undefined,
+        }).then(async x => await x.json())
+
+        return result[coingeckoId][currency] as number
+      } catch {
+        return 0
+      }
     },
 })
 
