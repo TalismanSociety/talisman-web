@@ -54,21 +54,13 @@ export const registeredDappsState = selectorFamily({
       const priorityDapp = chain?.priorityDapp
 
       const dapps = await Promise.all([
-        fetch(new URL('./dappssimple', params.dappStakingApiEndpoint.replace('v3', 'v1'))),
         fetch(new URL('./chaindapps', params.dappStakingApiEndpoint)),
+        fetch(new URL('./dappssimple', params.dappStakingApiEndpoint.replace('v3', 'v1'))),
       ])
         .then(
           async ([x, y]) =>
             [
               (await x.json()) as Array<{
-                imagesUrl: string
-                address: string
-                name: string
-                mainCategory: string
-                iconUrl: string
-                creationTime: number
-              }>,
-              (await y.json()) as Array<{
                 contractAddress: string
                 stakersCount: number
                 registeredAt: string
@@ -76,14 +68,26 @@ export const registeredDappsState = selectorFamily({
                 unregisteredAt: string | null
                 unregistrationBlockNumber: string | null
               }>,
+              (await y.json()) as Array<{
+                imagesUrl: string
+                address: string
+                name: string
+                mainCategory: string
+                iconUrl: string
+                creationTime: number
+              }>,
             ] as const
         )
-        .then(([simpleInfo, chainInfo]) =>
-          simpleInfo.map(x => ({
-            ...x,
-            stakerCount:
-              chainInfo.find(y => y.contractAddress.toLowerCase() === x.address.toLowerCase())?.stakersCount ?? 0,
-          }))
+        .then(([chainInfos, simpleInfos]) =>
+          chainInfos
+            .map(x => ({
+              chainInfo: x,
+              simpleInfo: simpleInfos.find(y => y.address.toLowerCase() === x.contractAddress.toLowerCase()),
+            }))
+            .filter(
+              (x): x is typeof x & { simpleInfo: NonNullable<(typeof x)['simpleInfo']> } => x.simpleInfo !== undefined
+            )
+            .map(({ chainInfo, simpleInfo }) => ({ ...simpleInfo, stakerCount: chainInfo.stakersCount }))
         )
 
       const sortedDapps =
