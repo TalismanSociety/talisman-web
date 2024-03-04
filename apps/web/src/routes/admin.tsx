@@ -11,7 +11,9 @@ import {
 import { useExtrinsic, useSubstrateApiState, useTokenAmountState } from '@domains/common'
 import { AnalyticsContext } from '@domains/common/analytics'
 import type { ApiPromise } from '@polkadot/api'
-import type { Balance } from '@polkadot/types/interfaces'
+import type { Option, StorageKey } from '@polkadot/types'
+import type { AccountId32, Balance } from '@polkadot/types/interfaces'
+import type { PalletNominationPoolsClaimPermission, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
 import { Button, Surface, Text, TextInput, toast } from '@talismn/ui'
 import { chunk } from 'lodash'
 import { Suspense, useCallback, useMemo, useState } from 'react'
@@ -46,7 +48,28 @@ const _NominationPoolsRewardsClaim = () => {
   const extrinsic = useExtrinsic(
     useCallback(
       async (api: ApiPromise) => {
-        const poolMembers = await api.query.nominationPools.poolMembers.entries()
+        const batchSize =
+          chain.genesisHash === '0xfe1b4c55fd4d668101126434206571a7838a8b6b93a6d1b95d607e78e6c53763' ? 32 : 500
+
+        let startKey: string | undefined
+        let poolMembers: Array<[StorageKey<[AccountId32]>, Option<PalletNominationPoolsPoolMember>]> = []
+
+        while (true) {
+          const page = await api.query.nominationPools.poolMembers.entriesPaged({
+            args: [],
+            pageSize: batchSize,
+            startKey,
+          })
+
+          const last = page.at(-1)
+          if (last === undefined) {
+            break
+          }
+
+          startKey = api.query.nominationPools.poolMembers.key(...last[0].args)
+          poolMembers = [...poolMembers, ...page]
+        }
+
         const poolMembersToClaim =
           poolIds.length === 0
             ? poolMembers
@@ -54,19 +77,20 @@ const _NominationPoolsRewardsClaim = () => {
 
         toast(`Found ${poolMembersToClaim.length} members in selected pools`)
 
-        const claimPermissions = await api.query.nominationPools.claimPermissions.multi(
-          poolMembersToClaim.map(x => x[0].args[0])
-        )
+        const memberBatches = chunk(poolMembersToClaim, batchSize)
+
+        let claimPermissions: PalletNominationPoolsClaimPermission[] = []
+        for (const members of memberBatches) {
+          claimPermissions = [
+            ...claimPermissions,
+            ...(await api.query.nominationPools.claimPermissions.multi(members.map(x => x[0].args[0]))),
+          ]
+        }
 
         // To avoid getting rate limited by Vara RPC
         // https://substrate.stackexchange.com/questions/7677/failed-to-instantiate-a-new-wasm-module-instance-limit-of-32-concurrent-instanc
         let rewards: Balance[] = []
-        for (const members of chunk(
-          poolMembersToClaim,
-          chain.genesisHash === '0xfe1b4c55fd4d668101126434206571a7838a8b6b93a6d1b95d607e78e6c53763'
-            ? 32
-            : poolMembersToClaim.length
-        )) {
+        for (const members of memberBatches) {
           rewards = [
             ...rewards,
             ...(await Promise.all(
