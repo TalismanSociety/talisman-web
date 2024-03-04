@@ -1,4 +1,4 @@
-import { useTheme, type Theme } from '@emotion/react'
+import { css, useTheme, type Theme } from '@emotion/react'
 import type React from 'react'
 import { type ContentAlpha } from '../..'
 
@@ -36,7 +36,27 @@ const BaseText = <T extends React.ElementType = 'span'>({ as, alpha = 'medium', 
     <div
       className={props['className']}
       style={props['style']}
-      css={{ display: 'contents !important', color: theme.color.onBackground, fontSize: 'revert !important' }}
+      css={[
+        {
+          display: 'contents !important',
+          color: theme.color.onBackground,
+          fontSize: 'revert !important',
+        },
+        css`
+          ::before {
+            content: none !important;
+          }
+          ::after {
+            content: none !important;
+          }
+          ::first-letter {
+            content: none !important;
+          }
+          ::first-line {
+            content: none !important;
+          }
+        `,
+      ]}
     >
       <Component
         {...props}
