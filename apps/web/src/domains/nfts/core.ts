@@ -86,7 +86,7 @@ const _nftsState = atomFamily<NftsProgress, string>({
 
                 errors.forEach(error => {
                   console.error(error)
-                  Sentry.captureException(error)
+                  Sentry.captureException(new Error('Failed to fetch NFT', { cause: error }))
                 })
               })
             )
