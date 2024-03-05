@@ -93,7 +93,16 @@ const _nftsState = atomFamily<NftsProgress, string>({
             .subscribe({
               complete: () => {
                 initialResolve({ nfts: [], hasMore: false })
-                setSelf(x => (x instanceof DefaultValue ? { nfts: [], hasMore: false } : { ...x, hasMore: false }))
+
+                try {
+                  setSelf(x => (x instanceof DefaultValue ? { nfts: [], hasMore: false } : { ...x, hasMore: false }))
+                } catch (error) {
+                  // Happen only if state is still pending somehow, which we want to ignore anyway
+                  if (!(error instanceof Error && error.message.includes('this is not currently supported'))) {
+                    throw error
+                  }
+                }
+
                 void Thread.terminate(worker)
               },
               error: error => {
