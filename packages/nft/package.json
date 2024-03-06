@@ -6,11 +6,10 @@
   "exports": "./build/src/index.js",
   "scripts": {
     "codegen:rmrk2": "yarn graphql-codegen --config graphql.config.cjs --project rmrk2",
-    "codegen:statemine": "yarn graphql-codegen --config graphql.config.cjs --project statemine",
     "codegen:substrateNftKusamaAssetHub": "yarn graphql-codegen --config graphql.config.cjs --project substrateNftKusamaAssetHub",
     "codegen:substrateNftPolkadotAssetHub": "yarn graphql-codegen --config graphql.config.cjs --project substrateNftPolkadotAssetHub",
     "codegen:unique": "yarn graphql-codegen --config graphql.config.cjs --project unique",
-    "codegen": "yarn codegen:rmrk2 && yarn codegen:statemine && yarn codegen:substrateNftKusamaAssetHub && yarn codegen:substrateNftPolkadotAssetHub && yarn codegen:unique",
+    "codegen": "rm -rf generated/gql && yarn codegen:rmrk2 && yarn codegen:substrateNftKusamaAssetHub && yarn codegen:substrateNftPolkadotAssetHub && yarn codegen:unique",
     "dev": "tsc --build --watch",
     "build": "rm -rf build && yarn tsc --build",
     "check-types": "yarn tsc --build"

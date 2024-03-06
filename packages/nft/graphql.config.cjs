@@ -22,12 +22,6 @@ module.exports = {
       documents: 'src/generators/rmrk2.ts',
       extensions: extensions('generated/gql/rmrk2/'),
     },
-    statemine: {
-      overwrite: true,
-      schema: 'https://squid.subsquid.io/statemine-uniques/v/3/graphql',
-      documents: 'src/generators/statemine.ts',
-      extensions: extensions('generated/gql/statemine/'),
-    },
     substrateNftKusamaAssetHub: {
       overwrite: true,
       schema: 'https://ahk.gql.api.kodadot.xyz/',
