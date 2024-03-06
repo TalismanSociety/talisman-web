@@ -42,7 +42,7 @@ export const CrowdloanDetail = styled(({ className }: { className?: string }) =>
             <PanelSection title={t('Raised')}>
               <Crowdloan.Raised id={id ?? ''} contributed={gqlContributions.find(x => x.id === id) !== undefined} />
             </PanelSection>
-            <PanelSection title={t('Ends in')}>
+            <PanelSection title={t('Contribution Window')}>
               <Crowdloan.Countdown id={id} />
             </PanelSection>
             <PanelSection>
