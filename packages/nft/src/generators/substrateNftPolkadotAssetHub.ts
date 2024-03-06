@@ -2,7 +2,7 @@ import '@polkadot/api-augment/substrate'
 import { encodeAddress } from '@polkadot/util-crypto'
 import { request } from 'graphql-request'
 
-import { graphql } from '../../generated/gql/substrate-nft-polkadot-asset-hub/index.js'
+import { graphql } from '../../generated/gql/substrateNftPolkadotAssetHub/index.js'
 import type { CreateNftAsyncGenerator, Nft } from '../types.js'
 
 export const createSubstrateNftPolkadotAssetHubNftAsyncGenerator: CreateNftAsyncGenerator<
@@ -12,7 +12,7 @@ export const createSubstrateNftPolkadotAssetHubNftAsyncGenerator: CreateNftAsync
 
   while (true) {
     const response = await request(
-      'https://squid.subsquid.io/speck/graphql',
+      'https://ahp.gql.api.kodadot.xyz/',
       graphql(`
         query collectionListWithSearch(
           $first: Int!

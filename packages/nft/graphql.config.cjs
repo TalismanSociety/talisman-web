@@ -28,17 +28,17 @@ module.exports = {
       documents: 'src/generators/statemine.ts',
       extensions: extensions('generated/gql/statemine/'),
     },
-    'substrate-nft-kusama-asset-hub': {
+    substrateNftKusamaAssetHub: {
       overwrite: true,
-      schema: 'https://query-stick.stellate.sh/',
-      documents: 'src/generators/substrate-nft-kusama-asset-hub.ts',
-      extensions: extensions('generated/gql/substrate-nft-kusama-asset-hub/'),
+      schema: 'https://ahk.gql.api.kodadot.xyz/',
+      documents: 'src/generators/substrateNftKusamaAssetHub.ts',
+      extensions: extensions('generated/gql/substrateNftKusamaAssetHub/'),
     },
-    'substrate-nft-polkadot-asset-hub': {
+    substrateNftPolkadotAssetHub: {
       overwrite: true,
-      schema: 'https://squid.subsquid.io/speck/graphql',
-      documents: 'src/generators/substrate-nft-polkadot-asset-hub.ts',
-      extensions: extensions('generated/gql/substrate-nft-polkadot-asset-hub/'),
+      schema: 'https://ahp.gql.api.kodadot.xyz/',
+      documents: 'src/generators/substrateNftPolkadotAssetHub.ts',
+      extensions: extensions('generated/gql/substrateNftPolkadotAssetHub/'),
     },
     unique: {
       overwrite: true,
