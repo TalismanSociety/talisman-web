@@ -2,7 +2,7 @@ import '@polkadot/api-augment/substrate'
 import { encodeAddress } from '@polkadot/util-crypto'
 import { request } from 'graphql-request'
 
-import { graphql } from '../../generated/gql/substrate-nft-kusama-asset-hub/index.js'
+import { graphql } from '../../generated/gql/substrateNftKusamaAssetHub/index.js'
 import type { CreateNftAsyncGenerator, Nft } from '../types.js'
 
 export const createSubstrateNftKusamaAssetHubNftAsyncGenerator: CreateNftAsyncGenerator<
@@ -12,7 +12,7 @@ export const createSubstrateNftKusamaAssetHubNftAsyncGenerator: CreateNftAsyncGe
 
   while (true) {
     const response = await request(
-      'https://query-stick.stellate.sh/',
+      'https://ahk.gql.api.kodadot.xyz/',
       graphql(`
         query collectionListWithSearch(
           $first: Int!
