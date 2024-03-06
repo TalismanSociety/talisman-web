@@ -92,6 +92,7 @@ const _nftsState = atomFamily<NftsProgress, string>({
             )
             .subscribe({
               complete: () => {
+                void Thread.terminate(worker)
                 initialResolve({ nfts: [], hasMore: false })
 
                 try {
@@ -102,13 +103,11 @@ const _nftsState = atomFamily<NftsProgress, string>({
                     throw error
                   }
                 }
-
-                void Thread.terminate(worker)
               },
               error: error => {
-                Sentry.captureException(error)
-                initialReject(error)
                 void Thread.terminate(worker)
+                initialReject(error)
+                Sentry.captureException(error)
               },
             })
       )
