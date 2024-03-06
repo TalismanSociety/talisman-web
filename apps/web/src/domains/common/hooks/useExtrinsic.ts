@@ -1,18 +1,18 @@
-import { type ApiPromise } from '@polkadot/api'
-import { type AddressOrPair, type SubmittableExtrinsic } from '@polkadot/api/types'
-import { type ISubmittableResult } from '@polkadot/types/types'
-import { useContext, useMemo, useState } from 'react'
-import { useRecoilCallback, useRecoilValue } from 'recoil'
-
+import { signetAccountState } from '@domains/accounts'
 import { chainState, useChainState } from '@domains/chains'
 import { useConnectedSubstrateWallet } from '@domains/extension'
+import { type ApiPromise } from '@polkadot/api'
+import { type AddressOrPair, type SubmittableExtrinsic } from '@polkadot/api/types'
+import RpcError from '@polkadot/rpc-provider/coder/error'
+import { type ISubmittableResult } from '@polkadot/types/types'
+import { useSignetSdk } from '@talismn/signet-apps-sdk'
+import { useContext, useMemo, useState } from 'react'
+import { useRecoilCallback, useRecoilValue } from 'recoil'
 import { substrateApiState, useSubstrateApiEndpoint } from '..'
+import { AnalyticsContext } from '../analytics'
 import { skipErrorReporting } from '../consts'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
-import { signetAccountState } from '@domains/accounts'
-import { useSignetSdk } from '@talismn/signet-apps-sdk'
-import { AnalyticsContext } from '../analytics'
 
 type Promisable<T> = T | PromiseLike<T>
 
@@ -181,7 +181,11 @@ export function useExtrinsic(
         } catch (error) {
           setLoadable({ state: 'hasError', contents: error })
 
-          if (error instanceof Error && error.message === 'Cancelled') {
+          if (
+            (error instanceof Error && error.message === 'Cancelled') ||
+            // Insufficient fees
+            (error instanceof RpcError && error.code === 1010)
+          ) {
             throw Object.assign(error, { [skipErrorReporting]: true })
           } else {
             throw error
