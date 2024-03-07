@@ -1,12 +1,13 @@
 import { encodeAddress, ethereumEncode, isEthereumAddress } from '@polkadot/util-crypto'
 
-export const encodeAnyAddress = (key: string | Uint8Array, ss58Format?: number | undefined) => {
-  try {
-    return encodeAddress(key, ss58Format)
-  } catch (error) {
-    if (typeof key !== 'string') throw error
-    if (!isEthereumAddress(key)) throw error
-
-    return ethereumEncode(key)
+export const encodeAnyAddress = (key: string, ss58Format?: number | undefined) => {
+  if (typeof key === 'string' && isEthereumAddress(key)) {
+    return { type: 'ethereum', address: ethereumEncode(key) } as const
   }
+
+  try {
+    return { type: 'substrate', address: encodeAddress(key, ss58Format) } as const
+  } catch {}
+
+  return { type: undefined, address: key } as const
 }
