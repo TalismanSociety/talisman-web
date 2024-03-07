@@ -67,8 +67,8 @@ const PoolInfo = (props: PoolInfoProps) => {
     <motion.div
       animate={String(expanded)}
       initial="false"
-      variants={{ true: { backgroundColor: theme.color.foreground }, false: { backgroundColor: 'transparent' } }}
-      whileHover={{ backgroundColor: theme.color.foreground }}
+      variants={{ true: { backgroundColor: theme.color.surface }, false: { backgroundColor: 'transparent' } }}
+      whileHover={{ backgroundColor: theme.color.surface }}
       css={{ padding: '0.8rem', borderRadius: '0.8rem' }}
     >
       <div

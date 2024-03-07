@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
 import { motion, useMotionTemplate, useSpring, useTransform } from 'framer-motion'
 import { createContext, useState, type ReactNode } from 'react'
-import { Skeleton, Text } from '../..'
+import { Skeleton, Text, useSurfaceColor, useSurfaceColorAtElevation } from '../..'
 import { MultiPreview, Preview } from './Preview'
 
 export type CardProps = {
@@ -102,7 +102,7 @@ const Card = Object.assign(
           position: 'relative',
           border: ' 1px solid rgba(200 200 200 / 0.2)',
           borderRadius: '1.5rem',
-          backgroundColor: theme.color.foreground,
+          backgroundColor: useSurfaceColorAtElevation(x => x + 1),
           overflow: 'hidden',
         }}
         onClick={props.onClick}
@@ -128,7 +128,7 @@ const Card = Object.assign(
             </Text.BodyLarge>
           )}
         </div>
-        <header css={{ backgroundColor: theme.color.surface, padding: '1.6rem 2.4rem' }}>
+        <header css={{ backgroundColor: useSurfaceColor(), padding: '1.6rem 2.4rem' }}>
           <Text.Body as="h4" css={{ marginBottom: '0.8rem' }}>
             {props.overlineContent}
           </Text.Body>

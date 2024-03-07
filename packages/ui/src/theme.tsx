@@ -31,22 +31,6 @@ export type TalismanTheme = {
     onError: string
     errorContainer: string
     onErrorContainer: string
-    /**
-     * @deprecated use surface & surface tint (via Surface component)
-     */
-    foreground: string
-    /**
-     * @deprecated use surface & surface tint (via Surface component)
-     */
-    onForeground: string
-    /**
-     * @deprecated use surface & surface tint (via Surface component)
-     */
-    foregroundVariant: string
-    /**
-     * @deprecated use surface & surface tint (via Surface component)
-     */
-    onForegroundVariant: string
   }
   contentAlpha: {
     disabled: number
@@ -77,17 +61,13 @@ const greenDark: TalismanTheme = {
     onPrimaryContainer: '#d5ff5c',
     background: '#121212',
     onBackground: '#fafafa',
-    surface: '#1B1B1B',
+    surface: '#1b1b1b',
     onSurface: '#fafafa',
     surfaceTint: '#fafafa',
     error: '#d22424',
     onError: '#fafafa',
     errorContainer: '#fd48483e',
     onErrorContainer: '#d22424',
-    foreground: '#262626',
-    onForeground: '#fafafa',
-    foregroundVariant: '#3f3f3f',
-    onForegroundVariant: '#fafafa',
     outline: '#fafafa',
     outlineVariant: '#2f2f2f',
   },

@@ -120,7 +120,7 @@ const StakeItem = Object.assign(
               flexWrap: 'wrap',
               gap: '0.8rem',
               padding: '0.8rem 1.6rem',
-              backgroundColor: theme.color.foreground,
+              backgroundColor: theme.color.surface,
             },
             (!props.actions || props.readonly) && !props.status && { display: 'none' },
           ]}

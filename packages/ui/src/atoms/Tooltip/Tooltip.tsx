@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react'
 import {
   autoUpdate,
   flip,
@@ -13,7 +12,8 @@ import {
   useRole,
 } from '@floating-ui/react'
 import { motion } from 'framer-motion'
-import { useState, type ReactNode, type PropsWithChildren } from 'react'
+import { useState, type PropsWithChildren, type ReactNode } from 'react'
+import { useSurfaceColorAtElevation } from '..'
 import FloatingPortal from '../FloatingPortal'
 import Text from '../Text'
 
@@ -24,7 +24,8 @@ export type TooltipProps = PropsWithChildren<{
 }>
 
 const Tooltip = ({ placement = 'right', ...props }: TooltipProps) => {
-  const theme = useTheme()
+  const surfaceColor = useSurfaceColorAtElevation(x => x + 1)
+
   const [open, setOpen] = useState(false)
 
   const { x, y, strategy, refs, context } = useFloating({
@@ -59,7 +60,7 @@ const Tooltip = ({ placement = 'right', ...props }: TooltipProps) => {
             ref={refs.setFloating}
             css={{
               pointerEvents: 'none',
-              backgroundColor: theme.color.foregroundVariant,
+              backgroundColor: surfaceColor,
               padding: '0.6rem',
               borderRadius: '0.4rem',
               zIndex: 50,

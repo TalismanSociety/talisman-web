@@ -29,7 +29,7 @@ const AccountValueInfo = ({ account, balance }: AccountValueInfoProps) => {
       }}
     >
       {account === undefined ? (
-        <IconButton size="6.4rem" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+        <IconButton size="6.4rem" containerColor={theme.color.surface} contentColor={theme.color.primary}>
           <Users />
         </IconButton>
       ) : (
