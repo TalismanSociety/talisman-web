@@ -1,5 +1,4 @@
-import { useTheme } from '@emotion/react'
-
+import { useSurfaceColorAtElevation } from '..'
 import Tooltip from '../Tooltip'
 
 export type StatusIndicatorProps = {
@@ -9,7 +8,7 @@ export type StatusIndicatorProps = {
 }
 
 const StatusIndicator = (props: StatusIndicatorProps) => {
-  const theme = useTheme()
+  const surfaceColor = useSurfaceColorAtElevation(x => x + 1)
   return (
     <Tooltip content={props.tooltip}>
       <div
@@ -29,7 +28,7 @@ const StatusIndicator = (props: StatusIndicatorProps) => {
               case 'error':
                 return '#D22424'
               case undefined:
-                return theme.color.foregroundVariant
+                return surfaceColor
             }
           })(),
         }}

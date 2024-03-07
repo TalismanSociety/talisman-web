@@ -29,7 +29,7 @@ export const TokenSelectorItem = (props: TokenSelectorItemProps) => {
         padding: '1.4rem 1.8rem',
         cursor: 'pointer',
         '&[aria-disabled="true"]': { opacity: 0.3, cursor: 'not-allowed' },
-        ':hover': { backgroundColor: theme.color.foreground },
+        ':hover': { backgroundColor: theme.color.surface },
       }}
     >
       <header css={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>

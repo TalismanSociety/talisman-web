@@ -118,13 +118,13 @@ const Button = <T extends ButtonElementType = 'button'>({
     switch (variant) {
       case undefined:
         return {
-          backgroundColor: theme.color.foreground,
+          backgroundColor: theme.color.surface,
           color: `rgba(255,255,255,${theme.contentAlpha.disabled})`,
         }
       default:
         return { filter: 'grayscale(1) brightness(0.5)' }
     }
-  }, [theme.color.foreground, theme.contentAlpha.disabled, variant])
+  }, [theme.color.surface, theme.contentAlpha.disabled, variant])
 
   const hasLeadingIcon = Boolean(loading) || leadingIcon !== undefined
 

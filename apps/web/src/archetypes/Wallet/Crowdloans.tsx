@@ -225,7 +225,7 @@ const GqlCrowdloanItem = styled(
               flexWrap: 'wrap',
               gap: '0.5rem',
               padding: '0.8rem 1.6rem',
-              backgroundColor: theme.color.foreground,
+              backgroundColor: theme.color.surface,
               fontSize: '1.2rem',
             },
             !actions && { display: 'none' },

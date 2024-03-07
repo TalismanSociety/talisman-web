@@ -1,4 +1,4 @@
-import { keyframes, useTheme } from '@emotion/react'
+import { keyframes } from '@emotion/react'
 import { X } from '@talismn/web-icons'
 import { IconContext } from '@talismn/web-icons/utils'
 import {
@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from 'react'
 
-import { Dialog, IconButton, Text } from '../../atoms'
+import { Dialog, IconButton, Text, useSurfaceColorAtElevation } from '../../atoms'
 
 export type BaseNavigationDrawerProps = {
   open?: boolean
@@ -45,7 +45,6 @@ const backdropKeyframes = keyframes`
 const Context = createContext<BaseNavigationDrawerProps>({})
 
 const NavigationDrawerItem = (props: NavigationDrawerItemProps) => {
-  const theme = useTheme()
   const context = useContext(Context)
 
   return (
@@ -60,7 +59,7 @@ const NavigationDrawerItem = (props: NavigationDrawerItemProps) => {
         boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.25)',
         width: '100%',
         padding: '2.4rem 4rem',
-        backgroundColor: `color-mix(in srgb, ${theme.color.foregroundVariant}, transparent 60%)`,
+        backgroundColor: `color-mix(in srgb, ${useSurfaceColorAtElevation(x => x + 1)}, transparent 60%)`,
         cursor: 'pointer',
         ':hover': { filter: 'brightness(1.2)' },
       }}

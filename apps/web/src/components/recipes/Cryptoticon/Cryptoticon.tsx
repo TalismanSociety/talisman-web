@@ -26,7 +26,7 @@ const Cryptoticon = ({ src, alt, size: _size, loading }: CryptoticonProps) => {
       <div
         css={{
           ...css,
-          backgroundColor: theme.color.foreground,
+          backgroundColor: theme.color.surface,
           padding: '1.5rem',
           display: 'flex',
           justifyContent: 'center',
