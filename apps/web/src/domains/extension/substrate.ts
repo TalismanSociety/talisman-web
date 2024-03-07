@@ -6,6 +6,7 @@ import { WalletAggregator, type BaseWallet } from '@polkadot-onboard/core'
 import { InjectedWalletProvider } from '@polkadot-onboard/injected-wallets'
 import type { InjectedWindow } from '@polkadot/extension-inject/types'
 import { jsonParser, string } from '@recoiljs/refine'
+import { toast } from '@talismn/ui'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect } from 'react'
 import { atom, selector, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
@@ -103,8 +104,10 @@ export const useSubstrateExtensionEffect = () => {
             posthog.capture('Substrate extensions connected', {
               $set: { substrateExtensions: [walletToConnect.metadata.id] },
             })
-          } catch {
+          } catch (error) {
             setConnectedWalletId(undefined)
+            toast.error('Wallet connection declined')
+            console.error(error)
           }
         }
       }

@@ -1,6 +1,7 @@
 import { wagmiAccountsState } from '@domains/accounts/recoils'
 import { storageEffect } from '@domains/common/effects'
 import { jsonParser, string } from '@recoiljs/refine'
+import { toast } from '@talismn/ui'
 import { connect as wagmiConnect, disconnect as wagmiDisconnect, watchAccount as watchWagmiAccount } from '@wagmi/core'
 import { createStore, type EIP6963ProviderDetail } from 'mipd'
 import { usePostHog } from 'posthog-js/react'
@@ -61,8 +62,10 @@ export const useEvmExtensionEffect = () => {
               }),
             })
             posthog.capture('EVM extensions connected', { $set: { evmExtensions: [providerToConnect.info.rdns] } })
-          } catch {
+          } catch (error) {
             setConnectedEip6963Rdns(undefined)
+            toast.error('Wallet connection declined')
+            console.error(error)
           }
         }
       })()
