@@ -18,23 +18,32 @@ const ErrorMessage = Object.assign(
       ]}
     >
       <figure css={{ margin: 0 }}>
-        <TalismanHand width="12rem" height="12rem" />
+        <TalismanHand
+          width={props.orientation === 'horizontal' ? '6rem' : '10rem'}
+          height={props.orientation === 'horizontal' ? '6rem' : '10rem'}
+        />
       </figure>
       <div
         css={[
           { display: 'flex', flexDirection: 'column' },
-          props.orientation === 'horizontal' ? { gap: '0.8rem' } : { alignItems: 'center', gap: '1.6rem' },
+          props.orientation === 'horizontal'
+            ? { flexDirection: 'row', gap: '0.8rem' }
+            : { alignItems: 'center', gap: '1.6rem' },
         ]}
       >
-        <Text.H4 as="header">{props.title}</Text.H4>
-        <Text.Body>{props.message}</Text.Body>
+        <div>
+          <Text.BodyLarge as="header" alpha="high">
+            {props.title}
+          </Text.BodyLarge>
+          <Text.BodySmall>{props.message}</Text.BodySmall>
+        </div>
         {props.actions}
       </div>
     </article>
   ),
   {
     Actions: (props: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>) => (
-      <div {...props} css={{ display: 'flex', gap: '0.8rem' }} />
+      <div {...props} css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }} />
     ),
   }
 )

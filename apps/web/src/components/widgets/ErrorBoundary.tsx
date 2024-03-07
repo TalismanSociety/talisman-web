@@ -1,6 +1,6 @@
 import ErrorMessage, { type ErrorMessageProps } from '@components/recipes/ErrorMessage'
 import * as Sentry from '@sentry/react'
-import { Button } from '@talismn/ui'
+import { Button, OutlinedButton } from '@talismn/ui'
 import { type PropsWithChildren, type ReactElement, type ReactNode, createContext, useContext, useState } from 'react'
 import { useRouteError } from 'react-router-dom'
 import { atom, useRecoilCallback, useRecoilValue } from 'recoil'
@@ -41,7 +41,7 @@ const ErrorElement = (props: ErrorElementProps) => {
       }
       actions={
         <ErrorMessage.Actions>
-          {props.error !== undefined && <Button onClick={() => alert(message)}>Show error</Button>}
+          {props.error !== undefined && <OutlinedButton onClick={() => alert(message)}>Show error</OutlinedButton>}
           {props.resetError !== undefined && <Button onClick={props.resetError}>Refresh</Button>}
         </ErrorMessage.Actions>
       }
