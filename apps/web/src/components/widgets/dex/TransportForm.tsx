@@ -64,8 +64,8 @@ const TransportForm = () => {
   const [[recipient, setRecipient], recipientSelector] = useAccountSelector(
     useRecoilValue(getAccountsState(toChain)),
     useCallback(
-      (x: Account[] | undefined) => (toEvm ? x?.at(0) : x?.find(y => y.address === sender?.address)),
-      [sender?.address, toEvm]
+      (x: Account[] | undefined) => x?.find(y => y.address === sender?.address) ?? x?.at(0),
+      [sender?.address]
     )
   )
 

@@ -19,10 +19,11 @@ const colorFromHash = (hash: string) =>
 const rotateText = (text: string, nbChars = 0) => text.slice(nbChars) + text.slice(0, nbChars)
 
 type OverlayProps = {
+  id: string
   type: 'ethereum' | 'substrate' | undefined
 }
 
-const Overlay = ({ type }: OverlayProps) => {
+const Overlay = ({ id, type }: OverlayProps) => {
   switch (type) {
     case 'ethereum':
       return (
@@ -34,7 +35,7 @@ const Overlay = ({ type }: OverlayProps) => {
     case 'substrate':
       return (
         <>
-          <g clipPath="url(#clip0_1751_2030)" opacity="0.75" transform="scale(2.2) translate(4.5 3.9)">
+          <g clipPath={`url(#${id}_1751_2030)`} opacity="0.75" transform="scale(2.2) translate(4.5 3.9)">
             <path
               d="M9.99937 4.4612C12.1176 4.4612 13.8347 3.46253 13.8347 2.2306C13.8347 0.998674 12.1176 0 9.99937 0C7.88119 0 6.16406 0.998674 6.16406 2.2306C6.16406 3.46253 7.88119 4.4612 9.99937 4.4612Z"
               fill="white"
@@ -61,7 +62,7 @@ const Overlay = ({ type }: OverlayProps) => {
             />
           </g>
           <defs>
-            <clipPath id="clip0_1751_2030">
+            <clipPath id={`${id}_1751_2030`}>
               <rect width="20" height="21.2699" fill="white" />
             </clipPath>
           </defs>
@@ -143,7 +144,7 @@ const Identicon = ({ value: seed, size = '2.4rem', className, style }: Identicon
           <rect fill={`url(#${id}-bg)`} x={0} y={0} width={64} height={64} />
           <circle fill={`url(#${id}-circle)`} cx={cx} cy={cy} r={45} opacity={0.7} />
         </g>
-        <Overlay type={type} />
+        <Overlay id={id} type={type} />
       </g>
     </svg>
   )
