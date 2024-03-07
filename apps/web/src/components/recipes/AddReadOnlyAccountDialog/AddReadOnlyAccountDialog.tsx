@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { AlertDialog, Button, Clickable, Hr, Identicon, ListItem, TextInput } from '@talismn/ui'
+import { AlertDialog, Button, Clickable, Hr, Identicon, ListItem, TextInput, useSurfaceColor } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { isNilOrWhitespace } from '@util/nil'
 import type { ReactNode } from 'react'
@@ -18,19 +18,16 @@ export type AddReadOnlyAccountDialogProps = {
   popularAccounts?: ReactNode
 }
 
-const PopularAccount = (props: { address: string; name: string; description?: string; onClick?: () => unknown }) => {
-  const theme = useTheme()
-  return (
-    <Clickable.WithFeedback onClick={props.onClick}>
-      <ListItem
-        leadingContent={<Identicon value={props.address} size="3.2rem" />}
-        headlineContent={props.name}
-        supportingContent={props.description ?? shortenAddress(props.address)}
-        css={{ borderRadius: '1.2rem', backgroundColor: theme.color.surface }}
-      />
-    </Clickable.WithFeedback>
-  )
-}
+const PopularAccount = (props: { address: string; name: string; description?: string; onClick?: () => unknown }) => (
+  <Clickable.WithFeedback onClick={props.onClick}>
+    <ListItem
+      leadingContent={<Identicon value={props.address} size="3.2rem" />}
+      headlineContent={props.name}
+      supportingContent={props.description ?? shortenAddress(props.address)}
+      css={{ borderRadius: '1.2rem', backgroundColor: useSurfaceColor() }}
+    />
+  </Clickable.WithFeedback>
+)
 
 const AddReadOnlyAccountDialog = Object.assign(
   (props: AddReadOnlyAccountDialogProps) => {
