@@ -1,5 +1,3 @@
-import { useTheme } from '@emotion/react'
-import { ChevronRight, Clock, Info, Settings } from '@talismn/web-icons'
 import {
   Button,
   DescriptionList,
@@ -10,9 +8,11 @@ import {
   TextInput,
   TonalChip,
   Tooltip,
+  useSurfaceColor,
   type ButtonProps,
   type ChipProps,
 } from '@talismn/ui'
+import { ChevronRight, Clock, Info, Settings } from '@talismn/web-icons'
 import { isNilOrWhitespace } from '@util/nil'
 import { LayoutGroup, motion } from 'framer-motion'
 import { createContext, useContext, useId, useState, type ReactNode } from 'react'
@@ -61,14 +61,14 @@ type PoolInfoProps = {
 }
 
 const PoolInfo = (props: PoolInfoProps) => {
-  const theme = useTheme()
   const [expanded, setExpanded] = useState(false)
+  const surfaceColor = useSurfaceColor()
   return (
     <motion.div
       animate={String(expanded)}
       initial="false"
-      variants={{ true: { backgroundColor: theme.color.surface }, false: { backgroundColor: 'transparent' } }}
-      whileHover={{ backgroundColor: theme.color.surface }}
+      variants={{ true: { backgroundColor: surfaceColor }, false: { backgroundColor: 'transparent' } }}
+      whileHover={{ backgroundColor: surfaceColor }}
       css={{ padding: '0.8rem', borderRadius: '0.8rem' }}
     >
       <div
