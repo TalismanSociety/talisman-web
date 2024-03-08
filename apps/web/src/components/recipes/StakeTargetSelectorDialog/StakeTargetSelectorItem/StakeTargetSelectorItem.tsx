@@ -1,6 +1,5 @@
-import { useTheme } from '@emotion/react'
+import { Button, Text, Tooltip, useSurfaceColor, useSurfaceColorAtElevation } from '@talismn/ui'
 import { ExternalLink, TalismanHand, User } from '@talismn/web-icons'
-import { Button, Text, Tooltip, useSurfaceColorAtElevation } from '@talismn/ui'
 import type { ReactNode } from 'react'
 
 export type StakeTargetSelectorItemProps = {
@@ -20,7 +19,6 @@ export type StakeTargetSelectorItemProps = {
 }
 
 const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => {
-  const theme = useTheme()
   const alpha = props.selected || props.highlighted ? 'high' : 'disabled'
   const surfaceVariant = useSurfaceColorAtElevation(x => x + 1)
 
@@ -32,7 +30,7 @@ const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => {
           padding: '0.8rem 1.6rem',
           borderRadius: '0.8rem',
           border: '1px solid transparent',
-          backgroundColor: theme.color.surface,
+          backgroundColor: useSurfaceColor(),
           cursor: 'pointer',
           ':hover': {
             filter: 'brightness(1.8)',
