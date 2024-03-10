@@ -69,7 +69,6 @@
     "recoil": "^0.7.7",
     "safety-match": "^0.4.4",
     "threads": "^1.7.0",
-    "uuid": "^9.0.0",
     "victory": "^36.6.8",
     "wagmi": "^1.4.12"
   },

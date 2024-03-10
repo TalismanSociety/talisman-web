@@ -13,7 +13,6 @@ import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import { makeTaggedUnion, none, type MemberType } from 'safety-match'
-import { v4 as uuidv4 } from 'uuid'
 import { Acala, Astar, Moonbeam, Zeitgeist } from './crowdloanOverrides'
 import { submitTermsAndConditions } from './moonbeam/remarkFlow'
 import { useCrowdloanContributions } from './useCrowdloanContributions'
@@ -733,7 +732,7 @@ function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: Dis
         )
 
       // get verificationSignature from moonbeam api
-      const guid = uuidv4()
+      const guid = globalThis.crypto.randomUUID()
       const previousTotalContributions = moonbeamContributions
         .reduce((total, contribution) => new BigNumber(total).plus(contribution.amount), new BigNumber(0))
         .toString()
