@@ -301,7 +301,7 @@ const TransportForm = () => {
             ) : undefined
           }
           transferableFiatAmount={fiatAmount !== undefined && <AnimatedFiatNumber end={fiatAmount} />}
-          fromChains={originChains.map(x => ({ name: x.id, logoSrc: x.icon }))}
+          fromChains={originChains.map(x => ({ name: x.display, logoSrc: x.icon }))}
           selectedFromChainInitializing={adapterLoadable.state === 'loading'}
           selectedFromChainIndex={useMemo(
             () => originChains.findIndex(x => x.id === fromChain?.id),
@@ -310,7 +310,7 @@ const TransportForm = () => {
           onSelectFromChainIndex={index =>
             setFromChain(Maybe.of(index).mapOrUndefined(originChains.at.bind(originChains)))
           }
-          toChains={destinationChains.map(x => ({ name: x.id, logoSrc: x.icon }))}
+          toChains={destinationChains.map(x => ({ name: x.display, logoSrc: x.icon }))}
           selectedToChainIndex={useMemo(
             () => destinationChains.findIndex(x => x.id === toChain?.id),
             [destinationChains, toChain?.id]

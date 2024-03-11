@@ -1,12 +1,13 @@
+import { AssetHubPolkadotAdapter } from '@polkawallet/bridge/adapters/assethub'
 import { CentrifugeAdapter } from '@polkawallet/bridge/adapters/centrifuge'
 import { ParallelAdapter } from '@polkawallet/bridge/adapters/parallel'
-import { StatemintAdapter } from '@polkawallet/bridge/adapters/statemint'
 import type { BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
+import type { ChainId } from '@polkawallet/bridge'
 
 import BN from 'bn.js'
 
 type RouteConfig = {
-  to: string
+  to: ChainId
   token: string
   xcm: {
     fee: { token: string; amount: string }
@@ -25,7 +26,7 @@ type TokenConfig = {
 type ExtendedAdapter<T extends new (...args: any[]) => BaseCrossChainAdapter> = new () => InstanceType<T> &
   BaseCrossChainAdapter
 
-function extendAdapter<T extends typeof StatemintAdapter | typeof ParallelAdapter | typeof CentrifugeAdapter>(
+function extendAdapter<T extends typeof AssetHubPolkadotAdapter | typeof ParallelAdapter | typeof CentrifugeAdapter>(
   AdapterClass: T,
   additionalRoutes: RouteConfig[],
   additionalTokens: Record<string, TokenConfig>
@@ -53,7 +54,7 @@ function extendAdapter<T extends typeof StatemintAdapter | typeof ParallelAdapte
   } as unknown as ExtendedAdapter<T>
 }
 
-const newStatemintRoutes: RouteConfig[] = [
+const newAssetHubPolkadotRoutes: RouteConfig[] = [
   {
     to: 'parallel',
     token: 'USDT',
@@ -72,7 +73,7 @@ const newStatemintRoutes: RouteConfig[] = [
   },
 ]
 
-const newStatemintTokens: Record<string, TokenConfig> = {
+const newAssetHubPolkadotTokens: Record<string, TokenConfig> = {
   USDC: {
     name: 'USD Coin',
     symbol: 'USDC',
@@ -84,7 +85,7 @@ const newStatemintTokens: Record<string, TokenConfig> = {
 
 const newParallelRoutes: RouteConfig[] = [
   {
-    to: 'statemint',
+    to: 'assetHubPolkadot',
     token: 'USDT',
     xcm: {
       fee: { token: 'USDT', amount: '4000' },
@@ -113,8 +114,12 @@ const newCentrifugeTokens: Record<string, TokenConfig> = {
   },
 }
 
-const ExtendedStatemintAdapter = extendAdapter(StatemintAdapter, newStatemintRoutes, newStatemintTokens)
-const ExtendedParallelAdapter = extendAdapter(ParallelAdapter, newParallelRoutes, newParallelTokens)
-const ExtendedCentrifugeAdapter = extendAdapter(CentrifugeAdapter, [], newCentrifugeTokens)
+export const ExtendedAssetHubPolkadotAdapter = extendAdapter(
+  AssetHubPolkadotAdapter,
+  newAssetHubPolkadotRoutes,
+  newAssetHubPolkadotTokens
+)
 
-export { ExtendedCentrifugeAdapter, ExtendedParallelAdapter, ExtendedStatemintAdapter }
+export const ExtendedParallelAdapter = extendAdapter(ParallelAdapter, newParallelRoutes, newParallelTokens)
+
+export const ExtendedCentrifugeAdapter = extendAdapter(CentrifugeAdapter, [], newCentrifugeTokens)
