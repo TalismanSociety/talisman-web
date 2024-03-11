@@ -26,7 +26,7 @@
     "@polkadot/api": "^10.11.2",
     "@polkadot/api-contract": "^10.11.2",
     "@polkadot/extension-dapp": "^0.46.6",
-    "@polkawallet/bridge": "^0.1.5-29",
+    "@polkawallet/bridge": "^0.1.5-38",
     "@recoiljs/refine": "^0.1.1",
     "@sentry/react": "^7.85.0",
     "@sentry/tracing": "^7.85.0",

@@ -1,5 +1,6 @@
 import { type ChainId } from '@polkawallet/bridge'
 import { AcalaAdapter, KaruraAdapter } from '@polkawallet/bridge/adapters/acala'
+import { AssetHubKusamaAdapter } from '@polkawallet/bridge/adapters/assethub'
 import { AstarAdapter, ShidenAdapter } from '@polkawallet/bridge/adapters/astar'
 import { BifrostAdapter } from '@polkawallet/bridge/adapters/bifrost'
 import { AltairAdapter } from '@polkawallet/bridge/adapters/centrifuge'
@@ -15,13 +16,13 @@ import { HeikoAdapter } from '@polkawallet/bridge/adapters/parallel'
 import { KhalaAdapter } from '@polkawallet/bridge/adapters/phala'
 import { KusamaAdapter, PolkadotAdapter } from '@polkawallet/bridge/adapters/polkadot'
 import { RobonomicsAdapter } from '@polkawallet/bridge/adapters/robonomics'
-import { StatemineAdapter } from '@polkawallet/bridge/adapters/statemint'
 import { TinkernetAdapter } from '@polkawallet/bridge/adapters/tinkernet'
 import { QuartzAdapter, UniqueAdapter } from '@polkawallet/bridge/adapters/unique'
 import { ZeitgeistAdapter } from '@polkawallet/bridge/adapters/zeitgeist'
+import { SubsocialAdapter } from '@polkawallet/bridge/adapters/subsocial'
 import { type BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 
-import { ExtendedStatemintAdapter, ExtendedCentrifugeAdapter, ExtendedParallelAdapter } from './extendedRoutes'
+import { ExtendedCentrifugeAdapter, ExtendedParallelAdapter, ExtendedAssetHubPolkadotAdapter } from './extendedRoutes'
 
 export const bridgeConfig = {
   polkadot: {
@@ -123,13 +124,13 @@ export const bridgeConfig = {
     genesisHash: '0xf1cf9022c7ebb34b162d5b5e34e705a5a740b2d0ecc1009fb89023e62a488108',
     adapter: new ShidenAdapter(),
   },
-  statemine: {
+  assetHubKusama: {
     genesisHash: '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a',
-    adapter: new StatemineAdapter(),
+    adapter: new AssetHubKusamaAdapter(),
   },
-  statemint: {
+  assetHubPolkadot: {
     genesisHash: '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f',
-    adapter: new ExtendedStatemintAdapter(),
+    adapter: new ExtendedAssetHubPolkadotAdapter(),
   },
   tinkernet: {
     genesisHash: '0xd42e9606a995dfe433dc7955dc2a70f495f350f373daa200098ae84437816ad2',
@@ -146,5 +147,9 @@ export const bridgeConfig = {
   zeitgeist: {
     genesisHash: '0x1bf2a2ecb4a868de66ea8610f2ce7c8c43706561b6476031315f6640fe38e060',
     adapter: new ZeitgeistAdapter(),
+  },
+  subsocial: {
+    genesisHash: '0x4a12be580bb959937a1c7a61d5cf24428ed67fa571974b4007645d1886e7c89f',
+    adapter: new SubsocialAdapter(),
   },
 } as const satisfies Record<ChainId, { genesisHash: `0x${string}`; adapter: BaseCrossChainAdapter } | undefined>
