@@ -65,7 +65,7 @@ const useStakesWithFastUnstake = () => {
       (x.stake.redeemable?.isZero() ?? true) &&
       (x.stake.unlocking?.length ?? 0) === 0,
     inFastUnstakeHead: fastUnstakeHead.unwrapOrDefault().stashes.some(y => y[0].eq(x.stake.accountId)),
-    inFastUnstakeQueue: !queues[index]?.unwrapOrDefault().isZero() ?? false,
+    inFastUnstakeQueue: queues[index]?.unwrapOrDefault().isZero() === false,
     fastUnstakeDeposit: api.consts.fastUnstake.deposit,
   }))
 }
