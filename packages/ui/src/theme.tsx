@@ -1,3 +1,6 @@
+import { ThemeProvider as EmotionThemeProvider, Global, css } from '@emotion/react'
+import type { PropsWithChildren } from 'react'
+
 type Typography = {
   fontFamily: string
   fontSize: number
@@ -5,7 +8,8 @@ type Typography = {
   margin?: string | number
 }
 
-export type TalismanTheme = {
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+export interface Theme {
   typography: {
     h1: Typography
     h2: Typography
@@ -39,12 +43,14 @@ export type TalismanTheme = {
   }
 }
 
+type TalismanTheme = Theme
+
 declare module '@emotion/react' {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   export interface Theme extends TalismanTheme {}
 }
 
-const greenDark: TalismanTheme = {
+const greenDark: Theme = {
   typography: {
     h1: { fontFamily: 'SurtExpanded', fontSize: 56, margin: 0 },
     h2: { fontFamily: 'SurtExpanded', fontSize: 32, margin: 0 },
@@ -78,6 +84,29 @@ const greenDark: TalismanTheme = {
   },
 }
 
-export type ContentAlpha = keyof TalismanTheme['contentAlpha']
+export type ContentAlpha = keyof Theme['contentAlpha']
 
 export const theme = { greenDark }
+
+export type ThemeProviderProps = PropsWithChildren<{ theme?: Theme }>
+
+export const ThemeProvider = ({ theme = greenDark, children }: ThemeProviderProps) => (
+  <>
+    <Global
+      styles={css`
+        :root {
+          color: ${theme.color.onBackground};
+          font-family: ${theme.typography.body.fontFamily};
+          font-size: 10px;
+          font-weight: ${theme.typography.body.fontWeight ?? 'revert'};
+          background-color: ${theme.color.background};
+        }
+
+        body {
+          font-size: ${theme.typography.body.fontSize}px;
+        }
+      `}
+    />
+    <EmotionThemeProvider theme={theme}>{children}</EmotionThemeProvider>
+  </>
+)
