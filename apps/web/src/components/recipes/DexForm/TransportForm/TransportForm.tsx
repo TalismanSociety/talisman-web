@@ -36,31 +36,23 @@ export type TransportFormProps = {
   inputError?: string
 }
 
-const TransportFormNetworkButton = (props: Pick<ButtonProps<'button'>, 'onClick' | 'disabled'>) => {
-  const theme = useTheme()
-  return (
-    <TonalIconButton
-      {...props}
-      contentColor={theme.color.primary}
-      disabledContentColor={theme.color.onSurface}
-      css={{ '@media(min-width: 600px)': { rotate: '-90deg' } }}
+const TransportFormNetworkButton = (props: Pick<ButtonProps<'button'>, 'onClick' | 'disabled'>) => (
+  <TonalIconButton {...props} css={{ '@media(min-width: 600px)': { rotate: '-90deg' } }}>
+    <motion.div
+      initial="false"
+      whileHover={props.disabled ? 'false' : 'true'}
+      variants={{ false: { rotate: 0 }, true: { rotate: 90 } }}
+      css={{ display: 'flex' }}
     >
-      <motion.div
-        initial="false"
-        whileHover={props.disabled ? 'false' : 'true'}
-        variants={{ false: { rotate: 0 }, true: { rotate: 90 } }}
-        css={{ display: 'flex' }}
-      >
-        <motion.div variants={{ false: { display: 'none' }, true: { display: 'contents' } }}>
-          <Repeat />
-        </motion.div>
-        <motion.div variants={{ false: { display: 'contents' }, true: { display: 'none' } }}>
-          <ArrowDown />
-        </motion.div>
+      <motion.div variants={{ false: { display: 'none' }, true: { display: 'contents' } }}>
+        <Repeat />
       </motion.div>
-    </TonalIconButton>
-  )
-}
+      <motion.div variants={{ false: { display: 'contents' }, true: { display: 'none' } }}>
+        <ArrowDown />
+      </motion.div>
+    </motion.div>
+  </TonalIconButton>
+)
 
 const TransportForm = Object.assign(
   (props: TransportFormProps) => {

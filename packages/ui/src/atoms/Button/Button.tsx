@@ -90,7 +90,7 @@ const Button = <T extends ButtonElementType = 'button'>({
         }
       case undefined:
         return {
-          backgroundColor: theme.color.primary,
+          backgroundColor: theme.color.primaryContainer,
           color: theme.color.onPrimary,
           ':hover': {
             opacity: 0.6,
@@ -104,6 +104,7 @@ const Button = <T extends ButtonElementType = 'button'>({
     theme.color.onPrimary,
     theme.color.onSurface,
     theme.color.primary,
+    theme.color.primaryContainer,
     variant,
   ])
 

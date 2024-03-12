@@ -36,7 +36,7 @@ const ButtonSegment = (props: ButtonSegmentProps) => {
                 position: 'absolute',
                 inset: 0,
                 borderRadius: '1.8rem',
-                backgroundColor: theme.color.primary,
+                backgroundColor: theme.color.primaryContainer,
               }}
             />
           )}

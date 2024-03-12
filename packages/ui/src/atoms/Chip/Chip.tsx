@@ -19,8 +19,8 @@ export type ChipProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement
 const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loading, ...props }: ChipProps) => {
   const theme = useTheme()
 
-  containerColor = containerColor ?? theme.color.primary
-  contentColor = contentColor ?? theme.color.onPrimary
+  containerColor = containerColor ?? theme.color.primaryContainer
+  contentColor = contentColor ?? theme.color.onPrimaryContainer
 
   const Container = useMemo(() => {
     switch (size) {

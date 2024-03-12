@@ -8,16 +8,16 @@ import { WithdrawCrowdloanWidget } from '@components/widgets/WithdrawCrowdloanWi
 import { selectedSubstrateAccountsState, substrateAccountsState } from '@domains/accounts/recoils'
 import { chainsState, tokenPriceState } from '@domains/chains/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
-import { css, useTheme } from '@emotion/react'
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import crowdloanDataState from '@libs/@talisman-crowdloans/provider'
 import { useCrowdloanContributions, type GqlContribution } from '@libs/crowdloans'
 import { calculateGqlCrowdloanPortfolioAmounts, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useParachainDetailsById } from '@libs/talisman'
 import { supportedRelayChainsState } from '@libs/talisman/util/_config'
-import { Clock, Eye, Lock } from '@talismn/web-icons'
-import { Chip, ListItem, Skeleton, Text, type SkeletonProps, useSurfaceColor } from '@talismn/ui'
+import { Chip, ListItem, Skeleton, Text, TonalChip, useSurfaceColor, type SkeletonProps } from '@talismn/ui'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
+import { Clock, Eye, Lock } from '@talismn/web-icons'
 import { formatCommas, truncateAddress } from '@util/helpers'
 import BigNumber from 'bignumber.js'
 import { Suspense, useCallback, useMemo } from 'react'
@@ -28,7 +28,6 @@ import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 const GqlCrowdloanItem = styled(
   ({ contribution, className }: { contribution: GqlContribution; className?: string }) => {
     const { t } = useTranslation()
-    const theme = useTheme()
     const surfaceColor = useSurfaceColor()
 
     const accounts = useRecoilValue(substrateAccountsState)
@@ -103,13 +102,7 @@ const GqlCrowdloanItem = styled(
       if (contribution.isFundsReturned)
         return (
           <>
-            <Chip
-              containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
-              contentColor={theme.color.primary}
-              onClick={goToStaking}
-            >
-              {t('Stake')}
-            </Chip>
+            <TonalChip onClick={goToStaking}>{t('Stake')}</TonalChip>
             <div css={{ flexGrow: '1' }} />
             <div css={{ color: 'rgb(90, 90, 90)' }}>{t('Withdrawn')}</div>
           </>
@@ -127,15 +120,7 @@ const GqlCrowdloanItem = styled(
               amount: contributedTokens,
             }}
           >
-            {({ onToggleOpen }) => (
-              <Chip
-                containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
-                contentColor={theme.color.primary}
-                onClick={onToggleOpen}
-              >
-                {t('Withdraw & Stake')}
-              </Chip>
-            )}
+            {({ onToggleOpen }) => <TonalChip onClick={onToggleOpen}>{t('Withdraw & Stake')}</TonalChip>}
           </WithdrawCrowdloanWidget>
           <WithdrawCrowdloanWidget
             {...{
