@@ -3,7 +3,7 @@ import { TalismanHand } from '@talismn/web-icons'
 import { type JSXElementConstructor } from 'react'
 
 import { Text } from './atoms'
-import { type TalismanTheme, theme } from './theme'
+import { type Theme, theme } from './theme'
 
 export default {
   title: 'Theme/Color',
@@ -12,7 +12,7 @@ export default {
   },
 } as ComponentMeta<JSXElementConstructor<Props>>
 
-type Props = { theme: TalismanTheme }
+type Props = { theme: Theme }
 
 export const DarkGreen: Story<Props> = args => {
   return (
@@ -26,7 +26,7 @@ export const DarkGreen: Story<Props> = args => {
             .filter(([key]) => !key.startsWith('on'))
             .map(([key, value]) => {
               const contentColor =
-                args.theme.color[`on${key.charAt(0).toUpperCase() + key.slice(1)}` as keyof TalismanTheme['color']]
+                args.theme.color[`on${key.charAt(0).toUpperCase() + key.slice(1)}` as keyof Theme['color']]
               return (
                 <figcaption
                   key={key}

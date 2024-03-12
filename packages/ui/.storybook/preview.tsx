@@ -1,4 +1,4 @@
-import { ThemeProvider, type Theme } from '@emotion/react'
+import { ThemeProvider, type Theme } from '../src/theme'
 import type { Preview } from '@storybook/react'
 import { theme as storybookTheme } from '@talismn/development/storybook'
 import React from 'react'

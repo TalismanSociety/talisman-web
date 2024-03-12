@@ -5,27 +5,9 @@ import SurtRegular from '@assets/fonts/Surt-Regular.woff'
 import SurtSemiBold from '@assets/fonts/Surt-SemiBold.woff2'
 import SurtSemiBoldExpanded from '@assets/fonts/Surt-SemiBoldExp.woff2'
 import SurtSemiBoldExtended from '@assets/fonts/Surt-SemiBoldExtended.woff2'
-import { Global, type Theme, ThemeProvider, css } from '@emotion/react'
-import { type TalismanTheme, theme } from '@talismn/ui'
+import { Global, css } from '@emotion/react'
+import { ThemeProvider, theme, type Theme } from '@talismn/ui'
 import { type PropsWithChildren } from 'react'
-
-declare module '@emotion/react' {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-  export interface Theme extends TalismanTheme {
-    // Deprecated styling
-    primary: string
-    secondary: string
-    background: string
-    foreground: string
-    mid: string
-    dim: string
-    light: string
-    dark: string
-    text: string
-    activeBackground: string
-    controlBackground: string
-  }
-}
 
 /*
   base style definitions

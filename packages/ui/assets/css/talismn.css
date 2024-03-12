@@ -24,15 +24,6 @@
 
 /* TODO: get rid of all this manual stuffs that is carried over to support legacy styles & components */
 
-html {
-  font-family: 'Surt', sans-serif;
-  font-size: 10px;
-}
-
-body {
-  font-size: 1.6rem !important;
-}
-
 * {
   box-sizing: border-box;
   color: inherit;
