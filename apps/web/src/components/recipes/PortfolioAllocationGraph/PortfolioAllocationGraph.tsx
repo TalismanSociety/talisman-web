@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { Skeleton, SurfaceChip, Text, type ChipProps, Surface } from '@talismn/ui'
+import { Skeleton, SurfaceChip, Text, type ChipProps, Surface, useSurfaceColor } from '@talismn/ui'
 import { type ReactNode } from 'react'
 import { VictoryPie, VictoryTooltip } from 'victory'
 
@@ -123,7 +123,7 @@ const PortfolioAllocationGraph = Object.assign(
                 cornerRadius={50}
                 flyoutWidth={100}
                 flyoutHeight={100}
-                flyoutStyle={{ fill: theme.color.surface }}
+                flyoutStyle={{ fill: useSurfaceColor() }}
                 style={{ fontFamily: "'Surt', sans-serif", fontWeight: 'bold', fill: theme.color.onSurface }}
               />
             }

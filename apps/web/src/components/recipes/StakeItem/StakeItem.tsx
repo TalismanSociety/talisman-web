@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react'
 import { Clock, Lock, Rocket } from '@talismn/web-icons'
 
 import AccountIcon from '@components/molecules/AccountIcon'
@@ -11,6 +10,7 @@ import {
   Text,
   TonalChip,
   Tooltip,
+  useSurfaceColor,
   type ChipProps,
 } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
@@ -87,7 +87,7 @@ export const FastUnstakingStatus = (props: { amount: ReactNode; status: 'in-head
 
 const StakeItem = Object.assign(
   (props: StakeItemProps) => {
-    const theme = useTheme()
+    const surfaceColor = useSurfaceColor()
 
     return (
       <article css={{ borderRadius: '0.8rem', overflow: 'hidden' }}>
@@ -110,7 +110,7 @@ const StakeItem = Object.assign(
               <Text.BodyLarge as="div">{props.stakingFiatAmount}</Text.BodyLarge>
             </div>
           }
-          css={{ backgroundColor: theme.color.surface }}
+          css={{ backgroundColor: surfaceColor }}
         />
         <div
           css={[
@@ -120,7 +120,7 @@ const StakeItem = Object.assign(
               flexWrap: 'wrap',
               gap: '0.8rem',
               padding: '0.8rem 1.6rem',
-              backgroundColor: theme.color.surface,
+              backgroundColor: surfaceColor,
             },
             (!props.actions || props.readonly) && !props.status && { display: 'none' },
           ]}

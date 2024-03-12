@@ -5,7 +5,7 @@ import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { type Balances } from '@talismn/balances'
 import { AlertTriangle, Lock } from '@talismn/web-icons'
-import { HiddenDetails, Text, Tooltip } from '@talismn/ui'
+import { HiddenDetails, Text, Tooltip, useSurfaceColor } from '@talismn/ui'
 import { isEmpty, startCase } from 'lodash'
 import { Children, type ReactElement, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -347,19 +347,15 @@ const Table = styled.table`
     }
 
     td {
-      background: rgb(27, 27, 27);
       .logo-stack .logo-circle {
-        border-color: rgb(27, 27, 27);
+        border-color: ${({ theme }) => theme.color.outline};
       }
 
       border-top: 1px solid #262626;
     }
 
     :not(.skeleton):hover td {
-      background: rgb(38, 38, 38);
-      .logo-stack .logo-circle {
-        border-color: rgb(38, 38, 38);
-      }
+      filter: brightness(1.2);
     }
 
     :first-of-type {
@@ -426,7 +422,7 @@ export const AssetsList = (props: AssetsListProps) => {
 
   return (
     <HiddenDetails overlay={<Text.H3>No assets found</Text.H3>} hidden={!isLoading && isEmpty(props.children)}>
-      <Table>
+      <Table css={{ td: { backgroundColor: useSurfaceColor() } }}>
         <thead>
           <tr>
             <th>Asset</th>

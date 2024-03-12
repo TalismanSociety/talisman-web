@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
 import { Info } from '@talismn/web-icons'
-import { Text } from '@talismn/ui'
+import { Text, useSurfaceColor } from '@talismn/ui'
 
 const PoolExitingInProgress = () => {
   const theme = useTheme()
@@ -11,7 +11,7 @@ const PoolExitingInProgress = () => {
         flexDirection: 'column',
         padding: '3.2rem',
         borderRadius: '1.6rem',
-        backgroundColor: theme.color.surface,
+        backgroundColor: useSurfaceColor(),
       }}
     >
       <Text.Body

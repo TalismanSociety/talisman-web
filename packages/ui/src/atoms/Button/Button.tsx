@@ -51,6 +51,7 @@ const Button = <T extends ButtonElementType = 'button'>({
 
   const variantStyle = useMemo(() => {
     switch (variant) {
+      case 'secondary':
       case 'surface':
         return {
           backgroundColor: surfaceColor,
@@ -83,14 +84,6 @@ const Button = <T extends ButtonElementType = 'button'>({
           background: 'none',
           border: 'none',
           outline: 'none',
-          ':hover': {
-            filter: 'brightness(1.5)',
-          },
-        }
-      case 'secondary':
-        return {
-          backgroundColor: '#1B1B1B',
-          color: '#A5A5A5',
           ':hover': {
             filter: 'brightness(1.5)',
           },

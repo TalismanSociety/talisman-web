@@ -1,13 +1,13 @@
-import { useTheme } from '@emotion/react'
 import {
   Button,
-  type ButtonProps,
   Clickable,
   Hr,
   Identicon,
   ListItem,
   Text,
   TextInput,
+  useSurfaceColor,
+  type ButtonProps,
   type TextInputProps,
 } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
@@ -37,19 +37,16 @@ const AddressInputConfirmButton = (props: Omit<ButtonProps, 'variant' | 'childre
   </Button>
 )
 
-const PopularAccount = (props: { address: string; name: string; description?: string; onClick?: () => unknown }) => {
-  const theme = useTheme()
-  return (
-    <Clickable.WithFeedback onClick={props.onClick}>
-      <ListItem
-        leadingContent={<Identicon value={props.address} size="3.2rem" />}
-        headlineContent={props.name}
-        supportingContent={props.description ?? shortenAddress(props.address)}
-        css={{ borderRadius: '1.2rem', backgroundColor: theme.color.surface }}
-      />
-    </Clickable.WithFeedback>
-  )
-}
+const PopularAccount = (props: { address: string; name: string; description?: string; onClick?: () => unknown }) => (
+  <Clickable.WithFeedback onClick={props.onClick}>
+    <ListItem
+      leadingContent={<Identicon value={props.address} size="3.2rem" />}
+      headlineContent={props.name}
+      supportingContent={props.description ?? shortenAddress(props.address)}
+      css={{ borderRadius: '1.2rem', backgroundColor: useSurfaceColor() }}
+    />
+  </Clickable.WithFeedback>
+)
 
 const Welcome = Object.assign(
   (props: WelcomeProps) => (

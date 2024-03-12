@@ -78,6 +78,7 @@ const TextInput = Object.assign(
           <Surface
             className={inputContainerClassName}
             css={{
+              color: theme.color.onSurface,
               display: 'flex',
               alignItems: 'center',
               padding: '1.156rem 1.5rem',

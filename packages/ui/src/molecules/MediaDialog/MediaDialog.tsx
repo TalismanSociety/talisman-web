@@ -1,7 +1,7 @@
-import { Global, keyframes, useTheme } from '@emotion/react'
+import { Global, keyframes } from '@emotion/react'
 import { Volume2, X } from '@talismn/web-icons'
 import { type ReactNode } from 'react'
-import { Button, Dialog, Text, type DialogProps } from '../../atoms'
+import { Button, Dialog, Surface, Text, type DialogProps } from '../../atoms'
 import { useMimeType, type MimeTypeSubType, type MimeTypeType } from '../../utils'
 
 const show = keyframes`
@@ -74,12 +74,11 @@ export type MediaDialogProps = Omit<DialogProps, 'content'> & {
 
 const MediaDialog = Object.assign(
   ({ title, overline, media, content, onRequestDismiss, ...props }: MediaDialogProps) => {
-    const theme = useTheme()
-
     return (
       <>
         {props.open && <Global styles={{ body: { overflow: 'hidden' } }} />}
-        <Dialog
+        <Surface
+          as={Dialog}
           {...props}
           title={undefined}
           onClickBackdrop={onRequestDismiss}
@@ -100,7 +99,6 @@ const MediaDialog = Object.assign(
             maxHeight: '100%',
             border: 'none',
             padding: 0,
-            background: theme.color.surface,
             overflow: 'auto',
             '&[open]': {
               animation: `${show} .5s ease`,
@@ -161,7 +159,7 @@ const MediaDialog = Object.assign(
               {content}
             </div>
           </div>
-        </Dialog>
+        </Surface>
       </>
     )
   },

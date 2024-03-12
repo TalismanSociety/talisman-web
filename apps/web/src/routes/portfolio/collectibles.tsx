@@ -14,7 +14,6 @@ import {
   type NftTag,
 } from '@domains/nfts'
 import { useTheme } from '@emotion/react'
-import { ChevronLeft, ChevronRight, ExternalLink, Eye, EyeOff, Heart } from '@talismn/web-icons'
 import {
   Button,
   Card,
@@ -26,8 +25,10 @@ import {
   SegmentedButton,
   Select,
   Text,
+  useSurfaceColor,
 } from '@talismn/ui'
 import { usePagination } from '@talismn/utils/react'
+import { ChevronLeft, ChevronRight, ExternalLink, Eye, EyeOff, Heart } from '@talismn/web-icons'
 import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -98,6 +99,7 @@ const NftGrid = (props: PropsWithChildren) => (
 
 const NftCard = ({ nft }: { nft: Nft }) => {
   const theme = useTheme()
+  const surfaceColor = useSurfaceColor()
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const { toggle: toggleFavorite } = useSetFavoriteNft(nft)
@@ -125,7 +127,7 @@ const NftCard = ({ nft }: { nft: Nft }) => {
               <>
                 {hover && (
                   <FloatingActionButton
-                    containerColor={theme.color.surface}
+                    containerColor={surfaceColor}
                     contentColor={theme.color.onSurface}
                     onClick={event => {
                       event.stopPropagation()
@@ -137,7 +139,7 @@ const NftCard = ({ nft }: { nft: Nft }) => {
                 )}
                 {(hover || favorite) && (
                   <FloatingActionButton
-                    containerColor={theme.color.surface}
+                    containerColor={surfaceColor}
                     contentColor={favorite ? theme.color.primary : theme.color.onSurface}
                     onClick={event => {
                       event.stopPropagation()

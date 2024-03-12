@@ -160,8 +160,8 @@ export const globalStyle = (theme: Theme) => css`
   }
 
   body {
-    background: rgb(${theme?.background});
-    color: rgb(${theme?.foreground});
+    background: ${theme.color.background};
+    color: ${theme.color.onBackground};
     font-size: var(--font-size-normal);
   }
 
@@ -209,7 +209,7 @@ export const globalStyle = (theme: Theme) => css`
   }
 
   ::placeholder {
-    color: rgba(${theme?.foreground}, 0.2);
+    color: ${theme.color.onSurface};
   }
 
   input,

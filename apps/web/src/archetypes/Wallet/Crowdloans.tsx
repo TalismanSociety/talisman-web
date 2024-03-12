@@ -16,7 +16,7 @@ import { calculateGqlCrowdloanPortfolioAmounts, useTaggedAmountsInPortfolio } fr
 import { useParachainDetailsById } from '@libs/talisman'
 import { supportedRelayChainsState } from '@libs/talisman/util/_config'
 import { Clock, Eye, Lock } from '@talismn/web-icons'
-import { Chip, ListItem, Skeleton, Text, type SkeletonProps } from '@talismn/ui'
+import { Chip, ListItem, Skeleton, Text, type SkeletonProps, useSurfaceColor } from '@talismn/ui'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
 import { formatCommas, truncateAddress } from '@util/helpers'
 import BigNumber from 'bignumber.js'
@@ -29,6 +29,7 @@ const GqlCrowdloanItem = styled(
   ({ contribution, className }: { contribution: GqlContribution; className?: string }) => {
     const { t } = useTranslation()
     const theme = useTheme()
+    const surfaceColor = useSurfaceColor()
 
     const accounts = useRecoilValue(substrateAccountsState)
     const account = useMemo(
@@ -213,7 +214,7 @@ const GqlCrowdloanItem = styled(
                 </div>
               </>
             }
-            css={{ backgroundColor: theme.color.surface }}
+            css={{ backgroundColor: surfaceColor }}
           />
         </Link>
         <div
@@ -225,7 +226,7 @@ const GqlCrowdloanItem = styled(
               flexWrap: 'wrap',
               gap: '0.5rem',
               padding: '0.8rem 1.6rem',
-              backgroundColor: theme.color.surface,
+              backgroundColor: surfaceColor,
               fontSize: '1.2rem',
             },
             !actions && { display: 'none' },
@@ -239,14 +240,14 @@ const GqlCrowdloanItem = styled(
 )``
 
 const GqlCrowdloanItemSkeleton = (props: SkeletonProps) => {
-  const theme = useTheme()
+  const surfaceColor = useSurfaceColor()
   return (
     <Skeleton.Surface
       {...props}
       animate={props.animate}
       css={{
         borderRadius: '0.8rem',
-        backgroundColor: theme.color.surface,
+        backgroundColor: surfaceColor,
       }}
     >
       <ListItem
