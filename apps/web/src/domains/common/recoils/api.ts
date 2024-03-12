@@ -1,22 +1,13 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { atomFamily } from 'recoil'
+import { selectorFamily } from 'recoil'
 
 import { useSubstrateApiEndpoint } from '..'
 
-export const substrateApiState = atomFamily<ApiPromise, string | undefined>({
+export const substrateApiState = selectorFamily<ApiPromise, string | undefined>({
   key: 'SubstrateApiState',
-  effects: endpoint => [
-    ({ setSelf }) => {
-      const apiPromise = ApiPromise.create({ provider: new WsProvider(endpoint) })
-
-      setSelf(apiPromise)
-
-      return () => {
-        void apiPromise.then(async api => await api.disconnect())
-      }
-    },
-  ],
+  get: endpoint => async () => await ApiPromise.create({ provider: new WsProvider(endpoint) }),
   dangerouslyAllowMutability: true,
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
 export const useSubstrateApiState = () => substrateApiState(useSubstrateApiEndpoint())
