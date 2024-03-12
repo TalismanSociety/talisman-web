@@ -3,8 +3,8 @@ import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { isNilOrWhitespace } from '@util/nil'
 import { useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
-import { useEnsAddress } from 'wagmi'
 import { readOnlyAccountsState, type ReadonlyAccount } from './recoils'
+import { useResolveNsName } from '@libs/on-chain-id'
 
 export const useSetReadonlyAccounts = () => {
   const setReadonlyAccounts = useSetRecoilState(readOnlyAccountsState)
@@ -35,10 +35,10 @@ export const useAddReadonlyAccountForm = () => {
   const [address, setAddress] = useState('')
   const [name, setName] = useState('')
 
-  const { data: addressFromEns } = useEnsAddress({ name: address })
+  const [addressFromNs] = useResolveNsName(address)
 
   const parsedAddress = useMemo(() => tryParseSubstrateOrEthereumAddress(address), [address])
-  const resultingAddress = addressFromEns ?? parsedAddress
+  const resultingAddress = addressFromNs ?? parsedAddress
 
   const hasExistingAccount = useMemo(
     () =>

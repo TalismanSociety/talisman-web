@@ -8,8 +8,8 @@ import {
 } from '@domains/accounts/recoils'
 import { fiatBalanceGetterState, portfolioBalancesFiatSumState } from '@domains/balances'
 import { copyAddressToClipboard } from '@domains/common/utils'
-import { useTheme } from '@emotion/react'
-import { Copy, Ethereum, Eye, EyePlus, TalismanHand, Trash2, Users, Wallet, X } from '@talismn/web-icons'
+import { css, useTheme } from '@emotion/react'
+import { useOnChainId } from '@libs/on-chain-id/hooks/useOnChainId'
 import {
   Chip,
   CircularProgressIndicator,
@@ -21,6 +21,7 @@ import {
   Text,
   Tooltip,
 } from '@talismn/ui'
+import { Copy, Ethereum, Eye, EyePlus, TalismanHand, Trash2, Users, Wallet, X } from '@talismn/web-icons'
 import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
 import { useMemo, type ReactNode } from 'react'
@@ -61,6 +62,26 @@ const AccountsManagementSurfaceIconButton = (props: { size?: number | string }) 
     <SurfaceIcon size={props.size} contentColor={theme.color.primary} css={{ cursor: 'pointer' }}>
       <Users />
     </SurfaceIcon>
+  )
+}
+
+const AccountsManagementAddress = ({ name, address }: { name?: string; address: string }) => {
+  const [onChainId] = useOnChainId(address)
+
+  return (
+    <>
+      {onChainId && (
+        <div
+          className="show-on-menu-item-hover"
+          css={css`
+            color: var(--color-primary);
+          `}
+        >
+          {onChainId}
+        </div>
+      )}
+      <div className={onChainId ? 'hide-on-menu-item-hover' : undefined}>{name ?? shortenAddress(address)}</div>
+    </>
   )
 }
 
@@ -156,7 +177,21 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
               </Text.Body>
               {leadingMenuItem}
               {portfolioAccounts.map((x, index) => (
-                <Menu.Item key={index} onClick={() => setSelectedAccountAddresses(() => [x.address])}>
+                <Menu.Item
+                  key={index}
+                  css={css`
+                    & .show-on-menu-item-hover {
+                      display: none;
+                    }
+                    &:hover .show-on-menu-item-hover {
+                      display: block;
+                    }
+                    &:hover .hide-on-menu-item-hover {
+                      display: none;
+                    }
+                  `}
+                  onClick={() => setSelectedAccountAddresses(() => [x.address])}
+                >
                   <ListItem
                     headlineContent={Maybe.of(getFiatBalanceLoadable.valueMaybe()?.(x.address)).mapOr(
                       <CircularProgressIndicator size="1em" />,
@@ -175,7 +210,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                           }
                         }
                       >
-                        {x.name ?? shortenAddress(x.address)}
+                        <AccountsManagementAddress name={x.name} address={x.address} />
                         {x.canSignEvm && <EvmChip />}
                       </div>
                     }
@@ -215,7 +250,20 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
               {readonlyAccounts.map((account, index) => (
                 <RemoveWatchedAccountConfirmationDialog key={index} account={account}>
                   {({ onToggleOpen: toggleRemoveDialog }) => (
-                    <Menu.Item onClick={() => setSelectedAccountAddresses(() => [account.address])}>
+                    <Menu.Item
+                      css={css`
+                        & .show-on-menu-item-hover {
+                          display: none;
+                        }
+                        &:hover .show-on-menu-item-hover {
+                          display: block;
+                        }
+                        &:hover .hide-on-menu-item-hover {
+                          display: none;
+                        }
+                      `}
+                      onClick={() => setSelectedAccountAddresses(() => [account.address])}
+                    >
                       <ListItem
                         headlineContent={Maybe.of(getFiatBalanceLoadable.valueMaybe()?.(account.address)).mapOr(
                           <CircularProgressIndicator size="1em" />,
@@ -223,7 +271,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                             <AnimatedFiatNumber end={balance.total} />
                           )
                         )}
-                        overlineContent={account.name ?? shortenAddress(account.address)}
+                        overlineContent={<AccountsManagementAddress name={account.name} address={account.address} />}
                         leadingContent={<AccountIcon account={account} size="4rem" />}
                         revealTrailingContentOnHover
                         trailingContent={
