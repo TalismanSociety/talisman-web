@@ -26,4 +26,12 @@ Assist.args = {
 
 export const Tonal: Story<ChipProps> = args => <TonalChip {...args} />
 
+Tonal.args = {
+  children: 'Talisman',
+}
+
 export const Surface: Story<ChipProps> = args => <SurfaceChip {...args} />
+
+Surface.args = {
+  children: 'Talisman',
+}
