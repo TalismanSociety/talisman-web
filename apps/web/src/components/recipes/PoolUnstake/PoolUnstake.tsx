@@ -1,6 +1,5 @@
-import { useTheme } from '@emotion/react'
+import { Button, Identicon, Text, useSurfaceColor } from '@talismn/ui'
 import { Lock } from '@talismn/web-icons'
-import { Button, Identicon, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import React, { type ReactElement } from 'react'
 
@@ -18,155 +17,152 @@ export type PoolUnstakeProps = {
   readonly?: boolean
 }
 
-const PoolUnstake = (props: PoolUnstakeProps) => {
-  const theme = useTheme()
-  return (
-    <article
-      css={{
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '1.6rem',
-        borderRadius: '1.6rem',
-        backgroundColor: theme.color.surface,
-        '@media (min-width: 1024px)': {
-          flexDirection: 'row',
-          alignItems: 'center',
-        },
-      }}
-    >
-      {props.variant !== 'compact' && <Identicon value={props.accountAddress} size="4rem" />}
-      <dl
-        css={[
-          {
+const PoolUnstake = (props: PoolUnstakeProps) => (
+  <article
+    css={{
+      display: 'flex',
+      flexDirection: 'column',
+      padding: '1.6rem',
+      borderRadius: '1.6rem',
+      backgroundColor: useSurfaceColor(),
+      '@media (min-width: 1024px)': {
+        flexDirection: 'row',
+        alignItems: 'center',
+      },
+    }}
+  >
+    {props.variant !== 'compact' && <Identicon value={props.accountAddress} size="4rem" />}
+    <dl
+      css={[
+        {
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '2rem',
+          '> div': {
             display: 'flex',
-            flexDirection: 'column',
-            gap: '2rem',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          },
+          dd: {
+            textAlign: 'right',
+          },
+          '@media (min-width: 1024px)': {
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            margin: 0,
+            overflow: 'hidden',
+            span: {
+              display: 'block',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            },
+            '> div:first-child': {
+              flex: 1,
+              overflow: 'hidden',
+              justifyContent: 'flex-start',
+              dd: { textAlign: 'start' },
+            },
             '> div': {
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
+              justifyContent: 'flex-end',
+            },
+            '> div:last-child': {
+              flex: 0.4,
+              overflow: 'hidden',
+              justifyContent: props.timeTilWithdrawable === undefined ? 'flex-start' : undefined,
+            },
+            dt: {
+              display: 'none',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
             },
             dd: {
-              textAlign: 'right',
-            },
-            '@media (min-width: 1024px)': {
-              flex: 1,
-              flexDirection: 'row',
-              alignItems: 'flex-start',
-              margin: 0,
+              marginLeft: '2rem',
               overflow: 'hidden',
-              span: {
-                display: 'block',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              },
-              '> div:first-child': {
-                flex: 1,
-                overflow: 'hidden',
-                justifyContent: 'flex-start',
-                dd: { textAlign: 'start' },
-              },
               '> div': {
-                justifyContent: 'flex-end',
-              },
-              '> div:last-child': {
-                flex: 0.4,
                 overflow: 'hidden',
-                justifyContent: props.timeTilWithdrawable === undefined ? 'flex-start' : undefined,
-              },
-              dt: {
-                display: 'none',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-              },
-              dd: {
-                marginLeft: '2rem',
-                overflow: 'hidden',
-                '> div': {
-                  overflow: 'hidden',
-                },
               },
             },
           },
-          props.variant === 'compact' && {
-            'dd:first-of-type': {
-              marginLeft: 0,
-            },
+        },
+        props.variant === 'compact' && {
+          'dd:first-of-type': {
+            marginLeft: 0,
           },
-        ]}
-      >
-        {props.variant !== 'compact' && (
-          <div>
-            <dt>Account</dt>
-            <dd>
-              <div>
-                <Text.Body alpha="high" css={{ '@media (min-width: 1024px)': { textAlign: 'left' } }}>
-                  {props.accountName}
-                </Text.Body>
-              </div>
-              <div>
-                <Text.Body>({shortenAddress(props.accountAddress)})</Text.Body>
-              </div>
-            </dd>
-          </div>
-        )}
+        },
+      ]}
+    >
+      {props.variant !== 'compact' && (
         <div>
-          <dt>Unstaking</dt>
+          <dt>Account</dt>
           <dd>
             <div>
-              <Text.Body css={{ fontSize: '1.6rem', fontWeight: 'bold' }}>
-                {props.unstakingAmount}
-                {props.timeTilWithdrawable !== undefined && <Lock size="1.2rem" css={{ marginLeft: '0.4rem' }} />}
+              <Text.Body alpha="high" css={{ '@media (min-width: 1024px)': { textAlign: 'left' } }}>
+                {props.accountName}
               </Text.Body>
             </div>
             <div>
-              <Text.Body>{props.unstakingFiatAmount}</Text.Body>
+              <Text.Body>({shortenAddress(props.accountAddress)})</Text.Body>
             </div>
           </dd>
         </div>
-        {props.timeTilWithdrawable !== undefined && (
-          <div>
-            <dt>Status</dt>
-            <dd>
-              <div>
-                <Text.Body alpha="high">Unstaking</Text.Body>
-              </div>
-              <div>
-                <Text.Body>{props.timeTilWithdrawable}</Text.Body>
-              </div>
-            </dd>
-          </div>
-        )}
-      </dl>
-      {props.timeTilWithdrawable === undefined && (
-        <section
-          css={{
-            display: 'flex',
-            gap: '1rem',
-            marginTop: '2.5rem',
-            '> *': {
-              flex: 1,
-            },
-            '@media (min-width: 1024px)': {
-              marginTop: 0,
-            },
-          }}
-        >
-          <Button
-            variant="outlined"
-            onClick={props.onRequestWithdraw}
-            hidden={props.readonly}
-            disabled={props.withdrawState === 'disabled'}
-            loading={props.withdrawState === 'pending'}
-          >
-            Withdraw
-          </Button>
-        </section>
       )}
-    </article>
-  )
-}
+      <div>
+        <dt>Unstaking</dt>
+        <dd>
+          <div>
+            <Text.Body css={{ fontSize: '1.6rem', fontWeight: 'bold' }}>
+              {props.unstakingAmount}
+              {props.timeTilWithdrawable !== undefined && <Lock size="1.2rem" css={{ marginLeft: '0.4rem' }} />}
+            </Text.Body>
+          </div>
+          <div>
+            <Text.Body>{props.unstakingFiatAmount}</Text.Body>
+          </div>
+        </dd>
+      </div>
+      {props.timeTilWithdrawable !== undefined && (
+        <div>
+          <dt>Status</dt>
+          <dd>
+            <div>
+              <Text.Body alpha="high">Unstaking</Text.Body>
+            </div>
+            <div>
+              <Text.Body>{props.timeTilWithdrawable}</Text.Body>
+            </div>
+          </dd>
+        </div>
+      )}
+    </dl>
+    {props.timeTilWithdrawable === undefined && (
+      <section
+        css={{
+          display: 'flex',
+          gap: '1rem',
+          marginTop: '2.5rem',
+          '> *': {
+            flex: 1,
+          },
+          '@media (min-width: 1024px)': {
+            marginTop: 0,
+          },
+        }}
+      >
+        <Button
+          variant="outlined"
+          onClick={props.onRequestWithdraw}
+          hidden={props.readonly}
+          disabled={props.withdrawState === 'disabled'}
+          loading={props.withdrawState === 'pending'}
+        >
+          Withdraw
+        </Button>
+      </section>
+    )}
+  </article>
+)
 
 export type PoolUnstakeListProps = {
   showHeader?: boolean

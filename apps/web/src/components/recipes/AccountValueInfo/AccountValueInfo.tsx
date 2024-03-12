@@ -2,7 +2,7 @@ import AccountIcon from '@components/molecules/AccountIcon'
 import type { Account } from '@domains/accounts'
 import { useTheme } from '@emotion/react'
 import { ChevronDown, Users } from '@talismn/web-icons'
-import { IconButton, Text } from '@talismn/ui'
+import { IconButton, Surface, Text, useSurfaceColor } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { type ReactNode } from 'react'
 
@@ -13,23 +13,24 @@ export type AccountValueInfoProps = {
 
 const AccountValueInfo = ({ account, balance }: AccountValueInfoProps) => {
   const theme = useTheme()
+  const surfaceColor = useSurfaceColor()
   return (
-    <section
+    <Surface
       css={{
         display: 'flex',
         flexDirection: 'row',
         borderRadius: '1.2rem',
         width: 'fit-content',
         padding: '1.6rem 2.4rem',
-        backgroundColor: theme.color.background,
         cursor: 'pointer',
+        backgroundColor: 'transparent',
         ':hover': {
-          backgroundColor: theme.color.surface,
+          backgroundColor: surfaceColor,
         },
       }}
     >
       {account === undefined ? (
-        <IconButton size="6.4rem" containerColor={theme.color.surface} contentColor={theme.color.primary}>
+        <IconButton size="6.4rem" containerColor={surfaceColor} contentColor={theme.color.primary}>
           <Users />
         </IconButton>
       ) : (
@@ -75,7 +76,7 @@ const AccountValueInfo = ({ account, balance }: AccountValueInfoProps) => {
           {balance}
         </Text.H3>
       </section>
-    </section>
+    </Surface>
   )
 }
 

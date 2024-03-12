@@ -1,8 +1,7 @@
-import { useTheme } from '@emotion/react'
 import { useTokens } from '@talismn/balances-react'
-import { CircularProgressIndicator } from '@talismn/ui'
-import { type PropsWithChildren, createContext, useContext } from 'react'
+import { CircularProgressIndicator, useSurfaceColor } from '@talismn/ui'
 import { IconContext } from '@talismn/web-icons/utils'
+import { createContext, useContext, type PropsWithChildren } from 'react'
 
 export type CryptoticonProps = {
   src?: string
@@ -14,7 +13,7 @@ export type CryptoticonProps = {
 const CryptoticonContext = createContext({ tokens: {} as ReturnType<typeof useTokens> })
 
 const Cryptoticon = ({ src, alt, size: _size, loading }: CryptoticonProps) => {
-  const theme = useTheme()
+  const surfaceColor = useSurfaceColor()
 
   const contextSize = useContext(IconContext).size
   const size = _size ?? contextSize ?? '6.4rem'
@@ -26,7 +25,7 @@ const Cryptoticon = ({ src, alt, size: _size, loading }: CryptoticonProps) => {
       <div
         css={{
           ...css,
-          backgroundColor: theme.color.surface,
+          backgroundColor: surfaceColor,
           padding: '1.5rem',
           display: 'flex',
           justifyContent: 'center',

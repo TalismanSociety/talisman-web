@@ -4,7 +4,7 @@ import { formatDistanceToNowStrict } from 'date-fns'
 import { motion } from 'framer-motion'
 import { isValidElement, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { resolveValue, type Toast, type ToastPosition } from 'react-hot-toast/headless'
-import { CircularProgressIndicator, SurfaceIconButton, Text } from '../../atoms'
+import { CircularProgressIndicator, SurfaceIconButton, Text, useSurfaceColor } from '../../atoms'
 import { toast as toaster } from '../../organisms'
 
 export type ToastMessageProps = {
@@ -23,6 +23,8 @@ const ToastBar = ({ toast }: ToastBarProps) => {
   const ref = useRef<HTMLDivElement>(null)
 
   const theme = useTheme()
+  const surfaceColor = useSurfaceColor()
+
   const [createdAtDistance, setCreatedAtDistance] = useState(
     formatDistanceToNowStrict(toast.createdAt, { addSuffix: true })
   )
@@ -74,7 +76,7 @@ const ToastBar = ({ toast }: ToastBarProps) => {
         border: `1px solid ${theme.color.outlineVariant}`,
         padding: '1.6rem',
         borderRadius: '0.8rem',
-        backgroundColor: theme.color.surface,
+        backgroundColor: surfaceColor,
         filter: 'drop-shadow(0 2px 5px rgba(0, 0, 0, 0.06))',
         cursor: 'grab',
       }}
