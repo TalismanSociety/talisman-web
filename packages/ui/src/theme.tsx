@@ -57,8 +57,8 @@ const greenDark: TalismanTheme = {
   color: {
     primary: '#d5ff5c',
     onPrimary: '#121212',
-    primaryContainer: `color-mix(in srgb, #d5ff5c, transparent 88%)`,
-    onPrimaryContainer: '#d5ff5c',
+    primaryContainer: '#d5ff5c',
+    onPrimaryContainer: '#121212',
     background: '#121212',
     onBackground: '#fafafa',
     surface: '#1b1b1b',
