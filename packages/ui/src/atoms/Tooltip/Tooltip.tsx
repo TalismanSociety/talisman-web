@@ -16,6 +16,7 @@ import { useState, type PropsWithChildren, type ReactNode } from 'react'
 import { useSurfaceColorAtElevation } from '..'
 import FloatingPortal from '../FloatingPortal'
 import Text from '../Text'
+import { useTheme } from '@emotion/react'
 
 export type TooltipProps = PropsWithChildren<{
   content: ReactNode
@@ -24,6 +25,7 @@ export type TooltipProps = PropsWithChildren<{
 }>
 
 const Tooltip = ({ placement = 'right', ...props }: TooltipProps) => {
+  const theme = useTheme()
   const surfaceColor = useSurfaceColorAtElevation(x => x + 1)
 
   const [open, setOpen] = useState(false)
@@ -62,7 +64,7 @@ const Tooltip = ({ placement = 'right', ...props }: TooltipProps) => {
               pointerEvents: 'none',
               backgroundColor: surfaceColor,
               padding: '0.6rem',
-              borderRadius: '0.4rem',
+              borderRadius: theme.shape.extraSmall,
               zIndex: 50,
             }}
             style={{

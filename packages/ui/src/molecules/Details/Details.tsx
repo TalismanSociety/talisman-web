@@ -13,6 +13,7 @@ import {
 
 import React from 'react'
 import { Surface, Text } from '../../atoms'
+import { useTheme } from '@emotion/react'
 
 const DetailsContext = createContext({ onClick: (() => {}) as MouseEventHandler<HTMLElement> })
 
@@ -25,6 +26,7 @@ export type DetailsProps = React.DetailedHTMLProps<
 
 const Details = Object.assign(
   (props: DetailsProps) => {
+    const theme = useTheme()
     const [_open, setOpen] = useState(false)
     const open = props.open ?? _open
 
@@ -36,7 +38,7 @@ const Details = Object.assign(
         animate={JSON.stringify(open)}
         initial={JSON.stringify(false)}
         css={{
-          borderRadius: '1.6rem',
+          borderRadius: theme.shape.large,
         }}
         onToggle={useCallback<ReactEventHandler<HTMLDetailsElement>>(event => event.preventDefault(), [])}
       >

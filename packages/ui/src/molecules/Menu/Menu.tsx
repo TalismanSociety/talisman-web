@@ -147,7 +147,7 @@ const MenuItems = (props: MenuItemsProps) => {
           }}
           css={{
             border: `1px solid ${theme.color.outlineVariant}`,
-            borderRadius: '1.2rem',
+            borderRadius: theme.shape.medium,
           }}
           {...getFloatingProps({
             ...props,

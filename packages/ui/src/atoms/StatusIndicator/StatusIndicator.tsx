@@ -1,3 +1,4 @@
+import { useTheme } from '@emotion/react'
 import { useSurfaceColorAtElevation } from '..'
 import Tooltip from '../Tooltip'
 
@@ -8,6 +9,7 @@ export type StatusIndicatorProps = {
 }
 
 const StatusIndicator = (props: StatusIndicatorProps) => {
+  const theme = useTheme()
   const surfaceColor = useSurfaceColorAtElevation(x => x + 1)
   return (
     <Tooltip content={props.tooltip}>
@@ -17,7 +19,7 @@ const StatusIndicator = (props: StatusIndicatorProps) => {
           width: '0.8rem',
           minWidth: '0.8rem',
           height: '0.8rem',
-          borderRadius: '0.4rem',
+          borderRadius: theme.shape.extraSmall,
           transition: '0.5s',
           backgroundColor: (() => {
             switch (props.status) {

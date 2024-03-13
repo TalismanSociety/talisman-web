@@ -35,7 +35,7 @@ const ButtonSegment = (props: ButtonSegmentProps) => {
               css={{
                 position: 'absolute',
                 inset: 0,
-                borderRadius: '1.8rem',
+                borderRadius: theme.shape.full,
                 backgroundColor: theme.color.primaryContainer,
               }}
             />
@@ -61,23 +61,26 @@ export type SegmentedButtonProps<T extends string | number> = PropsWithChildren<
 }>
 
 const SegmentedButton = Object.assign(
-  <T extends string | number>(props: SegmentedButtonProps<T>) => (
-    <SegmentedButtonContext.Provider
-      value={{
-        value: props.value,
-        // @ts-expect-error
-        onChange: props.onChange,
-      }}
-    >
-      <Surface
-        as="section"
-        className={props.className}
-        css={{ display: 'inline-block', borderRadius: '2rem', padding: '0.4rem' }}
+  <T extends string | number>(props: SegmentedButtonProps<T>) => {
+    const theme = useTheme()
+    return (
+      <SegmentedButtonContext.Provider
+        value={{
+          value: props.value,
+          // @ts-expect-error
+          onChange: props.onChange,
+        }}
       >
-        {props.children}
-      </Surface>
-    </SegmentedButtonContext.Provider>
-  ),
+        <Surface
+          as="section"
+          className={props.className}
+          css={{ display: 'inline-block', borderRadius: theme.shape.full, padding: '0.4rem' }}
+        >
+          {props.children}
+        </Surface>
+      </SegmentedButtonContext.Provider>
+    )
+  },
   { ButtonSegment }
 )
 

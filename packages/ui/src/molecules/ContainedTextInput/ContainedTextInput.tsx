@@ -1,5 +1,6 @@
 import { useId, type PropsWithChildren, type ReactNode } from 'react'
 import { Surface, Text } from '../../atoms'
+import { useTheme } from '@emotion/react'
 
 export type ContainedTextInputProps = React.DetailedHTMLProps<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -30,13 +31,14 @@ const ContainedTextInput = Object.assign(
     width,
     ...props
   }: ContainedTextInputProps) => {
+    const theme = useTheme()
     const inputId = useId()
 
     return (
       <Surface
         css={{
           padding: '1.5rem',
-          borderRadius: '1.25rem',
+          borderRadius: theme.shape.medium,
           width,
         }}
       >

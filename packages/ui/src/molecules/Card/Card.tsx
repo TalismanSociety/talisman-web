@@ -15,28 +15,31 @@ export type CardProps = {
 
 const CardContext = createContext({ hover: false })
 
-const CardSkeleton = () => (
-  <Skeleton.Surface
-    css={{
-      position: 'relative',
-      opacity: 0.95,
-      border: ' 1px solid rgba(200 200 200 / 0.2)',
-      borderRadius: '1.5rem',
-      backdropFilter: 'blur(16px)',
-      overflow: 'hidden',
-    }}
-  >
-    <Skeleton.Surface css={{ position: 'relative', width: 'auto', aspectRatio: '1 / 1' }} />
-    <Skeleton.Foreground css={{ padding: '1.6rem 2.4rem', borderRadius: 0 }}>
-      <Text.Body as="h4" css={{ marginBottom: '0.8rem' }}>
-        <wbr />
-      </Text.Body>
-      <Text.BodyLarge as="h3" alpha="high">
-        <wbr />
-      </Text.BodyLarge>
-    </Skeleton.Foreground>
-  </Skeleton.Surface>
-)
+const CardSkeleton = () => {
+  const theme = useTheme()
+  return (
+    <Skeleton.Surface
+      css={{
+        position: 'relative',
+        opacity: 0.95,
+        border: ' 1px solid rgba(200 200 200 / 0.2)',
+        borderRadius: theme.shape.large,
+        backdropFilter: 'blur(16px)',
+        overflow: 'hidden',
+      }}
+    >
+      <Skeleton.Surface css={{ position: 'relative', width: 'auto', aspectRatio: '1 / 1' }} />
+      <Skeleton.Foreground css={{ padding: '1.6rem 2.4rem', borderRadius: 0 }}>
+        <Text.Body as="h4" css={{ marginBottom: '0.8rem' }}>
+          <wbr />
+        </Text.Body>
+        <Text.BodyLarge as="h3" alpha="high">
+          <wbr />
+        </Text.BodyLarge>
+      </Skeleton.Foreground>
+    </Skeleton.Surface>
+  )
+}
 
 const Card = Object.assign(
   (props: CardProps) => {
@@ -101,7 +104,7 @@ const Card = Object.assign(
         css={{
           position: 'relative',
           border: ' 1px solid rgba(200 200 200 / 0.2)',
-          borderRadius: '1.5rem',
+          borderRadius: theme.shape.large,
           backgroundColor: useSurfaceColorAtElevation(x => x + 1),
           overflow: 'hidden',
         }}
@@ -119,7 +122,7 @@ const Card = Object.assign(
                 position: 'absolute',
                 right: '2.4rem',
                 bottom: '2.4rem',
-                borderRadius: '0.8rem',
+                borderRadius: theme.shape.small,
                 backgroundColor: theme.color.background,
                 padding: '1.2rem 1.6rem',
               }}

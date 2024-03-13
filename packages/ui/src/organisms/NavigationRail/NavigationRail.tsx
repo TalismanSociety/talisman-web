@@ -37,40 +37,43 @@ export const NavigationRailItem = (props: NavigationRailItemProps) => {
 }
 
 const NavigationRail = Object.assign(
-  (props: NavigationRailProps) => (
-    <Surface
-      as="nav"
-      css={[
-        {
-          display: 'flex',
-          flexDirection: 'column-reverse',
-          justifyContent: 'space-between',
-          gap: '2rem',
-          alignItems: 'center',
-          borderRadius: '1.6rem',
-          padding: '4.8rem 2.2rem',
-          width: 'fit-content',
-          height: '100%',
-          overflowY: 'auto',
-        },
-        props.header === undefined && {
-          justifyContent: 'center',
-        },
-      ]}
-    >
-      {props.header ? <header css={{ marginTop: '3rem' }}>{props.header}</header> : null}
-      <div
-        css={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '1.2rem',
-        }}
+  (props: NavigationRailProps) => {
+    const theme = useTheme()
+    return (
+      <Surface
+        as="nav"
+        css={[
+          {
+            display: 'flex',
+            flexDirection: 'column-reverse',
+            justifyContent: 'space-between',
+            gap: '2rem',
+            alignItems: 'center',
+            borderRadius: theme.shape.large,
+            padding: '4.8rem 2.2rem',
+            width: 'fit-content',
+            height: '100%',
+            overflowY: 'auto',
+          },
+          props.header === undefined && {
+            justifyContent: 'center',
+          },
+        ]}
       >
-        {props.children}
-      </div>
-    </Surface>
-  ),
+        {props.header ? <header css={{ marginTop: '3rem' }}>{props.header}</header> : null}
+        <div
+          css={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '1.2rem',
+          }}
+        >
+          {props.children}
+        </div>
+      </Surface>
+    )
+  },
   { Item: NavigationRailItem }
 )
 

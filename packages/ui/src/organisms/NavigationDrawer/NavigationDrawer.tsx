@@ -1,4 +1,4 @@
-import { keyframes } from '@emotion/react'
+import { keyframes, useTheme } from '@emotion/react'
 import { X } from '@talismn/web-icons'
 import { IconContext } from '@talismn/web-icons/utils'
 import {
@@ -45,6 +45,7 @@ const backdropKeyframes = keyframes`
 const Context = createContext<BaseNavigationDrawerProps>({})
 
 const NavigationDrawerItem = (props: NavigationDrawerItemProps) => {
+  const theme = useTheme()
   const context = useContext(Context)
 
   return (
@@ -55,7 +56,7 @@ const NavigationDrawerItem = (props: NavigationDrawerItemProps) => {
       }, [context, props])}
       css={{
         border: 'none',
-        borderRadius: '2.4rem',
+        borderRadius: theme.shape.extraLarge,
         boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.25)',
         width: '100%',
         padding: '2.4rem 4rem',

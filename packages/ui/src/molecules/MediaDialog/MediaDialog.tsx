@@ -1,4 +1,4 @@
-import { Global, keyframes } from '@emotion/react'
+import { Global, keyframes, useTheme } from '@emotion/react'
 import { Volume2, X } from '@talismn/web-icons'
 import { type ReactNode } from 'react'
 import { Button, Dialog, Surface, Text, type DialogProps } from '../../atoms'
@@ -74,6 +74,7 @@ export type MediaDialogProps = Omit<DialogProps, 'content'> & {
 
 const MediaDialog = Object.assign(
   ({ title, overline, media, content, onRequestDismiss, ...props }: MediaDialogProps) => {
+    const theme = useTheme()
     return (
       <>
         {props.open && <Global styles={{ body: { overflow: 'hidden' } }} />}
@@ -120,7 +121,7 @@ const MediaDialog = Object.assign(
               maxWidth: 'revert',
               height: 'revert',
               maxHeight: 'revert',
-              borderRadius: '2.4rem',
+              borderRadius: theme.shape.extraLarge,
               overflow: 'hidden',
             },
           }}

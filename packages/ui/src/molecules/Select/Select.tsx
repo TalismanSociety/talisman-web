@@ -176,10 +176,22 @@ const Select = Object.assign(
       }
     }, [open, activeIndex, pointer])
 
+    const [referenceHeight, setReferenceHeight] = useState<number>()
+    useLayoutEffect(() => {
+      const rect = refs.reference.current?.getBoundingClientRect()
+
+      if (rect !== undefined) {
+        setReferenceHeight(rect.height)
+      }
+    }, [refs.reference])
+
+    const shape =
+      referenceHeight === undefined ? theme.shape.full : `min(calc(${referenceHeight}px / 2), ${theme.shape.full})`
+
     return (
       <motion.div
         className={props.className}
-        initial={String(open)}
+        initial="false"
         animate={String(open)}
         variants={{
           true: { filter: 'drop-shadow(0 1px 3px rgba(0, 0, 0, 0.25))' },
@@ -194,15 +206,20 @@ const Select = Object.assign(
             true: {
               border: `solid ${theme.color.outlineVariant}`,
               borderWidth: '1px 1px 0 1px',
+              borderRadius: shape,
               transitionEnd: {
-                borderBottomLeftRadius: detached ? '2rem' : 0,
-                borderBottomRightRadius: detached ? '2rem' : 0,
+                borderBottomLeftRadius: detached ? shape : 0,
+                borderBottomRightRadius: detached ? shape : 0,
               },
             },
             false: {
               border: 'solid transparent',
               borderWidth: '1px 1px 0 1px',
-              transitionEnd: { borderBottomLeftRadius: '2rem', borderBottomRightRadius: '2rem' },
+              borderRadius: shape,
+              transitionEnd: {
+                borderBottomLeftRadius: shape,
+                borderBottomRightRadius: shape,
+              },
             },
           }}
           css={{
@@ -213,7 +230,6 @@ const Select = Object.assign(
             gap: '1.6rem',
             textAlign: 'start',
             padding: '0.75rem 1.25rem',
-            borderRadius: '2rem',
             cursor: 'pointer',
             width: '100%',
           }}
@@ -272,9 +288,7 @@ const Select = Object.assign(
                   backgroundColor: surfaceColor,
                 },
               },
-              detached
-                ? { borderRadius: '1.7rem' }
-                : { borderBottomLeftRadius: '1.7rem', borderBottomRightRadius: '1.7rem' },
+              detached ? { borderRadius: shape } : { borderBottomLeftRadius: shape, borderBottomRightRadius: shape },
             ]}
             {...getFloatingProps({
               style: {

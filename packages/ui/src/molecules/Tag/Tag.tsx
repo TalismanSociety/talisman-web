@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react'
 
 import { Text } from '../../atoms'
+import { useTheme } from '@emotion/react'
 
 export type TagProps = {
   header: ReactNode
@@ -8,6 +9,7 @@ export type TagProps = {
 }
 
 const Tag = (props: TagProps) => {
+  const theme = useTheme()
   return (
     <article
       css={{
@@ -16,7 +18,7 @@ const Tag = (props: TagProps) => {
         alignItems: 'flex-start',
         justifyContent: 'center',
         padding: '.5em',
-        borderRadius: '.5em',
+        borderRadius: theme.shape.extraSmall,
         backgroundColor: '#262626',
         color: '#fff',
         width: 'fit-content',

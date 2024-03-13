@@ -41,6 +41,15 @@ export interface Theme {
     medium: number
     high: number
   }
+  shape: {
+    none: number | string
+    extraSmall: number | string
+    small: number | string
+    medium: number | string
+    large: number | string
+    extraLarge: number | string
+    full: number | string
+  }
 }
 
 type TalismanTheme = Theme
@@ -81,6 +90,15 @@ const greenDark: Theme = {
     disabled: 0.5,
     medium: 0.7,
     high: 1,
+  },
+  shape: {
+    none: 0,
+    extraSmall: '0.4rem',
+    small: '0.8rem',
+    medium: '1.2rem',
+    large: '1.6rem',
+    extraLarge: '2.8rem',
+    full: '100dvw',
   },
 }
 

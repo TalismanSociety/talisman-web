@@ -14,7 +14,7 @@ const Switch = (props: SwitchProps) => {
         {
           display: 'inline-flex',
           width: '3.3rem',
-          borderRadius: 'calc(1.8rem / 2)',
+          borderRadius: theme.shape.full,
           padding: '0.2rem',
           cursor: 'pointer',
           ':has(input:checked)': {
@@ -31,7 +31,7 @@ const Switch = (props: SwitchProps) => {
         css={{
           width: '1.5rem',
           height: '1.5rem',
-          borderRadius: 'calc(1.5rem / 2)',
+          borderRadius: theme.shape.full,
           backgroundColor: useSurfaceColor(),
           transition: 'linear 0.125s',
         }}
