@@ -10,7 +10,7 @@ import { useContext, useMemo, useState } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
 import { substrateApiState, useSubstrateApiEndpoint } from '..'
 import { AnalyticsContext } from '../analytics'
-import { skipErrorReporting } from '../consts'
+import { HarmlessError } from '../errors'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
 
@@ -186,7 +186,7 @@ export function useExtrinsic(
             // Insufficient fees
             (error instanceof RpcError && error.code === 1010)
           ) {
-            throw Object.assign(error, { [skipErrorReporting]: true })
+            throw new HarmlessError(error)
           } else {
             throw error
           }
