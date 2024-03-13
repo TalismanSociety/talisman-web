@@ -16,7 +16,7 @@ const Badge = (props: BadgeProps) => (
     css={theme => ({
       color: props.contentColor ?? theme.color.onError,
       display: 'inline-block',
-      borderRadius: theme.shape.small,
+      borderRadius: theme.shape.full,
       minWidth: '1.6em',
       lineHeight: '1em',
       padding: '0.3em',
