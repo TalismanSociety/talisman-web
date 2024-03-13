@@ -98,7 +98,7 @@ const decorateText = <T extends object>(typographyClass: keyof Theme['typography
           typographyClass === undefined || typographyClass === 'noop' ? {} : theme.typography[typographyClass],
           {
             color: 'transparent',
-            borderRadius: '0.5em',
+            borderRadius: theme.shape.extraSmall,
             background: 'radial-gradient(rgba(200, 200, 200, 0.1), rgba(0, 0, 0, 0.1))',
             filter: 'contrast(0.5) brightness(1.5)',
             ':hover': {

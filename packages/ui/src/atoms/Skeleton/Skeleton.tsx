@@ -1,4 +1,4 @@
-import { keyframes } from '@emotion/react'
+import { keyframes, useTheme } from '@emotion/react'
 import { useSurfaceColor, useSurfaceColorAtElevation } from '..'
 
 export type SkeletonProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
@@ -16,6 +16,7 @@ const shimmer = keyframes`
 
 const Skeleton = {
   Surface: ({ animate = true, ...props }: SkeletonProps) => {
+    const theme = useTheme()
     const surfaceColor = useSurfaceColor()
     const elevatedSurfaceColor = useSurfaceColorAtElevation(x => x + 1)
     return (
@@ -23,7 +24,7 @@ const Skeleton = {
         {...props}
         css={[
           {
-            borderRadius: '1.2rem',
+            borderRadius: theme.shape.medium,
             background: surfaceColor,
           },
           animate && {
@@ -36,6 +37,7 @@ const Skeleton = {
     )
   },
   Foreground: ({ animate, ...props }: SkeletonProps) => {
+    const theme = useTheme()
     const elevatedSurfaceColor1 = useSurfaceColorAtElevation(x => x + 1)
     const elevatedSurfaceColor2 = useSurfaceColorAtElevation(x => x + 2)
     return (
@@ -44,7 +46,7 @@ const Skeleton = {
         css={[
           {
             backgroundColor: elevatedSurfaceColor1,
-            borderRadius: '1.2rem',
+            borderRadius: theme.shape.medium,
           },
           animate && {
             animation: `${shimmer} 1s infinite`,

@@ -82,7 +82,7 @@ const TextInput = Object.assign(
               display: 'flex',
               alignItems: 'center',
               padding: '1.156rem 1.5rem',
-              borderRadius: '1.25rem',
+              borderRadius: theme.shape.medium,
               gap: '1rem',
             }}
           >
@@ -141,22 +141,25 @@ const TextInput = Object.assign(
     ErrorLabel: (props: PropsWithChildren) => (
       <Text.BodySmall css={theme => ({ color: theme.color.onErrorContainer })} {...props} />
     ),
-    LabelButton: (props: DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) => (
-      <Clickable.WithFeedback
-        {...props}
-        css={{
-          padding: '0.6rem 1.6rem',
-          border: `1px solid ${useSurfaceColorAtElevation(x => x + 8)}`,
-          borderRadius: '20rem',
-          cursor: 'pointer',
-          ':hover': {
-            filter: 'brightness(1.4)',
-          },
-        }}
-      >
-        <Text.BodyLarge css={{ display: 'contents' }}>{props.children}</Text.BodyLarge>
-      </Clickable.WithFeedback>
-    ),
+    LabelButton: (props: DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) => {
+      const theme = useTheme()
+      return (
+        <Clickable.WithFeedback
+          {...props}
+          css={{
+            padding: '0.6rem 1.6rem',
+            border: `1px solid ${useSurfaceColorAtElevation(x => x + 8)}`,
+            borderRadius: theme.shape.full,
+            cursor: 'pointer',
+            ':hover': {
+              filter: 'brightness(1.4)',
+            },
+          }}
+        >
+          <Text.BodyLarge css={{ display: 'contents' }}>{props.children}</Text.BodyLarge>
+        </Clickable.WithFeedback>
+      )
+    },
   }
 )
 

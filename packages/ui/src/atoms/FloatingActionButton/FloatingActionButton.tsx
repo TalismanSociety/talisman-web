@@ -55,7 +55,7 @@ const FloatingActionButton = <T extends FloatingActionButtonElementType = 'butto
           width: size,
           height: size,
           border: 'none',
-          borderRadius: '1.6rem',
+          borderRadius: theme.shape.large,
           color: contentColor,
           backgroundColor: containerColor,
           overflow: 'hidden',

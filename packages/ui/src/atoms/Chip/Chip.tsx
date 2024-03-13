@@ -51,7 +51,7 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
           alignItems: 'center',
           gap: '0.25em',
           border: 'none',
-          borderRadius: '2em',
+          borderRadius: theme.shape.full,
           padding: '0.2em 0.8em',
           background: containerColor,
         },

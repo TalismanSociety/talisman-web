@@ -8,6 +8,7 @@ import {
   type InputHTMLAttributes,
 } from 'react'
 import { Text, useSurfaceColor } from '../../atoms'
+import { useTheme } from '@emotion/react'
 
 const parseDate = (date: Date | string | undefined) => {
   if (date instanceof Date) {
@@ -33,6 +34,8 @@ export type DateInputProps = Omit<
 // TODO: this is currently an uncontrolled component
 // passed value will only be used as initial value
 const DateInput = (props: DateInputProps) => {
+  const theme = useTheme()
+
   const [dateString, setDateString] = useState<string>(() => parseDate(props.value) ?? '')
 
   const date = useMemo(() => new Date(dateString), [dateString])
@@ -86,7 +89,7 @@ const DateInput = (props: DateInputProps) => {
         outline: 'none',
         border: 'none',
         padding: '1.6rem',
-        borderRadius: '0.8rem',
+        borderRadius: theme.shape.small,
         colorScheme: 'dark',
       }}
     />

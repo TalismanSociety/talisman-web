@@ -1,7 +1,7 @@
 import { Box, Unknown, Video, Volume2 } from '@talismn/web-icons'
 import React, { useState, type ReactNode } from 'react'
 import { useMimeType, type MimeTypeType } from '../../utils'
-import type { Interpolation, Theme } from '@emotion/react'
+import { useTheme, type Interpolation, type Theme } from '@emotion/react'
 
 type PreviewProps = {
   src?: string | readonly string[] | undefined
@@ -108,24 +108,27 @@ export const MultiPreview = (props: {
     | [ReactNode, ReactNode]
     | [ReactNode, ReactNode, ReactNode]
     | [ReactNode, ReactNode, ReactNode, ReactNode]
-}) => (
-  <div css={{ display: 'flex', height: '100%' }}>
-    <div
-      css={{
-        display: 'grid',
-        gridTemplateRows: '1fr 1fr',
-        gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
-        gap: '1.6rem',
-        margin: '1.6rem',
-        width: 'stretch',
-        alignSelf: 'stretch',
-      }}
-    >
-      {React.Children.map(props.children, (child, index) => (
-        <div key={index} css={{ position: 'relative', borderRadius: '0.8rem', overflow: 'hidden' }}>
-          {child}
-        </div>
-      ))}
+}) => {
+  const theme = useTheme()
+  return (
+    <div css={{ display: 'flex', height: '100%' }}>
+      <div
+        css={{
+          display: 'grid',
+          gridTemplateRows: '1fr 1fr',
+          gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
+          gap: '1.6rem',
+          margin: '1.6rem',
+          width: 'stretch',
+          alignSelf: 'stretch',
+        }}
+      >
+        {React.Children.map(props.children, (child, index) => (
+          <div key={index} css={{ position: 'relative', borderRadius: theme.shape.small, overflow: 'hidden' }}>
+            {child}
+          </div>
+        ))}
+      </div>
     </div>
-  </div>
-)
+  )
+}

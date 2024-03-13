@@ -75,7 +75,7 @@ const ToastBar = ({ toast }: ToastBarProps) => {
         gap: '1.2rem',
         border: `1px solid ${theme.color.outlineVariant}`,
         padding: '1.6rem',
-        borderRadius: '0.8rem',
+        borderRadius: theme.shape.small,
         backgroundColor: surfaceColor,
         filter: 'drop-shadow(0 2px 5px rgba(0, 0, 0, 0.06))',
         cursor: 'grab',
@@ -105,7 +105,7 @@ const ToastBar = ({ toast }: ToastBarProps) => {
           alignItems: 'center',
           width: '4rem',
           height: '4rem',
-          borderRadius: '2rem',
+          borderRadius: theme.shape.full,
         }
 
         if (toast.icon !== undefined) {
@@ -152,7 +152,7 @@ const ToastBar = ({ toast }: ToastBarProps) => {
         }
 
         return undefined
-      }, [toast])}
+      }, [theme.shape.full, toast])}
       <Text.Body as="div">
         <Text.Body css={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
           <Text.Body alpha="high">{headlineContent}</Text.Body>

@@ -14,7 +14,7 @@ const RadioButton = (props: RadioButtonProps) => {
       css={{
         appearance: 'none',
         display: 'inline-flex',
-        borderRadius: '0.8rem',
+        borderRadius: theme.shape.small,
         width: '1.6rem',
         height: '1.6rem',
         ':checked': {
@@ -24,7 +24,7 @@ const RadioButton = (props: RadioButtonProps) => {
             margin: 'auto',
             width: '0.8rem',
             height: '0.8rem',
-            borderRadius: '0.4rem',
+            borderRadius: theme.shape.extraSmall,
             backgroundColor: theme.color.primary,
           },
         },
