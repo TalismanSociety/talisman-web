@@ -2,7 +2,7 @@ import { init, reactRouterV6Instrumentation } from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
 import { useEffect } from 'react'
 import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType } from 'react-router-dom'
-import { skipErrorReporting } from './consts'
+import { HarmlessError } from './errors'
 
 export const initSentry = () =>
   init({
@@ -21,12 +21,7 @@ export const initSentry = () =>
     ],
     tracesSampleRate: 0.5,
     beforeSend: (event, hint) => {
-      if (
-        hint.originalException !== undefined &&
-        hint.originalException !== null &&
-        // @ts-expect-error
-        skipErrorReporting in hint.originalException
-      ) {
+      if (hint.originalException instanceof HarmlessError) {
         return null
       }
 
