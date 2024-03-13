@@ -8,6 +8,13 @@ export default {
   parameters: {
     layout: 'centered',
   },
+  decorators: [
+    Story => (
+      <div css={{ minWidth: '18rem' }}>
+        <Story />
+      </div>
+    ),
+  ],
 } satisfies Meta<LinearProgressIndicatorProps>
 
 type Story = StoryObj<LinearProgressIndicatorProps>

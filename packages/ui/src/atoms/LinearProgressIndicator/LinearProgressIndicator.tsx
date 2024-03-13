@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react'
 import { useSurfaceColorAtElevation } from '../Surface'
 
 export type LinearProgressIndicatorProps = {
+  className?: string
   value: number
   contentColor?: string
   least?: number
@@ -12,11 +13,12 @@ const LinearProgressIndicator = (props: LinearProgressIndicatorProps) => {
   const theme = useTheme()
   return (
     <div
+      className={props.className}
       css={{
         position: 'relative',
         backgroundColor: useSurfaceColorAtElevation(x => x + 1),
-        height: 6,
-        borderRadius: 3,
+        height: '0.6rem',
+        borderRadius: theme.shape.full,
         overflow: 'hidden',
       }}
     >
@@ -31,7 +33,6 @@ const LinearProgressIndicator = (props: LinearProgressIndicatorProps) => {
               : props.value > (props.least ?? 0)
               ? '#F48F45'
               : theme.color.error),
-          height: 6,
           transition: 'ease 1s',
           transform: `scaleX(${props.value})`,
           transformOrigin: 'left',
