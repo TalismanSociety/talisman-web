@@ -1,5 +1,5 @@
-import { ThemeProvider as EmotionThemeProvider, Global, css } from '@emotion/react'
-import type { PropsWithChildren } from 'react'
+import { ThemeProvider as EmotionThemeProvider, Global, css, useTheme as useEmotionTheme } from '@emotion/react'
+import { createContext, useContext, type PropsWithChildren } from 'react'
 
 type Typography = {
   fontFamily: string
@@ -106,25 +106,62 @@ export type ContentAlpha = keyof Theme['contentAlpha']
 
 export const theme = { greenDark }
 
-export type ThemeProviderProps = PropsWithChildren<{ theme?: Theme }>
+export const useTheme = useEmotionTheme
 
-export const ThemeProvider = ({ theme = greenDark, children }: ThemeProviderProps) => (
-  <>
-    <Global
-      styles={css`
-        :root {
-          color: ${theme.color.onBackground};
-          font-family: ${theme.typography.body.fontFamily};
-          font-size: 10px;
-          font-weight: ${theme.typography.body.fontWeight ?? 'revert'};
-          background-color: ${theme.color.background};
-        }
+export type ThemeProviderProps = PropsWithChildren<
+  | {
+      merge: true
+      theme?: {
+        typography?: Partial<Theme['typography']>
+        color?: Partial<Theme['color']>
+        contentAlpha?: Partial<Theme['contentAlpha']>
+        shape?: Partial<Theme['shape']>
+      }
+    }
+  | { merge?: false | undefined; theme: Theme }
+>
 
-        body {
-          font-size: ${theme.typography.body.fontSize}px;
-        }
-      `}
-    />
-    <EmotionThemeProvider theme={theme}>{children}</EmotionThemeProvider>
-  </>
-)
+const ThemeHasRootContext = createContext(false)
+
+export const ThemeProvider = ({ theme: propsTheme = greenDark, merge = false, children }: ThemeProviderProps) => {
+  const hasRoot = useContext(ThemeHasRootContext)
+  const parentTheme = useEmotionTheme()
+
+  const theme: Theme = !merge
+    ? (propsTheme as Theme)
+    : {
+        typography: { ...parentTheme.typography, ...propsTheme.typography },
+        color: { ...parentTheme.color, ...propsTheme.color },
+        contentAlpha: { ...parentTheme.contentAlpha, ...propsTheme.contentAlpha },
+        shape: { ...parentTheme.shape, ...propsTheme.shape },
+      }
+
+  return (
+    <>
+      {!hasRoot && theme.color !== undefined && theme.typography !== undefined && (
+        <Global
+          styles={css`
+            :root {
+              color: ${theme.color.onBackground};
+              font-family: ${theme.typography.body.fontFamily};
+              font-size: 10px;
+              font-weight: ${theme.typography.body.fontWeight ?? 'revert'};
+              background-color: ${theme.color.background};
+            }
+
+            body {
+              font-size: ${theme.typography.body.fontSize}px;
+            }
+          `}
+        />
+      )}
+      {hasRoot ? (
+        <EmotionThemeProvider theme={theme}>{children}</EmotionThemeProvider>
+      ) : (
+        <ThemeHasRootContext.Provider value={true}>
+          <EmotionThemeProvider theme={theme}>{children}</EmotionThemeProvider>
+        </ThemeHasRootContext.Provider>
+      )}
+    </>
+  )
+}
