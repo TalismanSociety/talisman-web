@@ -1,4 +1,3 @@
-import { balanceModules } from '@talismn/balances-default-modules'
 import { BalancesProvider } from '@talismn/balances-react'
 import { type PropsWithChildren } from 'react'
 
@@ -33,7 +32,6 @@ export {
 const Provider = ({ children }: PropsWithChildren) => (
   <Chainmeta.Provider>
     <BalancesProvider
-      balanceModules={balanceModules}
       onfinalityApiKey={import.meta.env.REACT_APP_ONFINALITY_API_KEY ?? undefined}
       coingeckoApiUrl={import.meta.env.REACT_APP_COIN_GECKO_API}
       coingeckoApiKeyValue={import.meta.env.REACT_APP_COIN_GECKO_API_KEY}

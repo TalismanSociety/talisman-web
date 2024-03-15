@@ -1,4 +1,4 @@
-import { useChaindata } from '@talismn/balances-react'
+import { useChaindataProvider } from '@talismn/balances-react'
 import type { CustomChain, CustomEvmNetwork, Token } from '@talismn/chaindata-provider'
 import { useEffect } from 'react'
 
@@ -10,31 +10,20 @@ const windowInject = globalThis as typeof globalThis & {
   }
 }
 
-const TalismanExtensionSynchronizer = () => {
-  const chaindata = useChaindata()
+export const TalismanExtensionSynchronizer = () => {
+  const chaindataProvider = useChaindataProvider()
 
-  useEffect(
-    () =>
-      windowInject.talismanSub?.subscribeCustomSubstrateChains?.(
-        async chains => await chaindata.setCustomChains(chains)
-      ),
-    [chaindata]
-  )
+  useEffect(() => {
+    const sub = windowInject.talismanSub
 
-  useEffect(
-    () =>
-      windowInject.talismanSub?.subscribeCustomEvmNetworks?.(
-        async networks => await chaindata.setCustomEvmNetworks(networks)
-      ),
-    [chaindata]
-  )
+    const unsubs = [
+      sub?.subscribeCustomSubstrateChains?.(async custom => await chaindataProvider.setCustomChains(custom)),
+      sub?.subscribeCustomEvmNetworks?.(async custom => await chaindataProvider.setCustomEvmNetworks(custom)),
+      sub?.subscribeCustomTokens?.(async custom => await chaindataProvider.setCustomTokens(custom)),
+    ]
 
-  useEffect(
-    () => windowInject.talismanSub?.subscribeCustomTokens?.(async tokens => await chaindata.setCustomTokens(tokens)),
-    [chaindata]
-  )
+    return () => unsubs.forEach(unsub => unsub?.())
+  }, [chaindataProvider])
 
   return null
 }
-
-export default TalismanExtensionSynchronizer
