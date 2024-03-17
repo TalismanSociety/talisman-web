@@ -113,12 +113,14 @@ const Button = <T extends ButtonElementType = 'button'>({
       case undefined:
         return {
           backgroundColor: surfaceColor,
-          color: `rgba(255,255,255,${theme.contentAlpha.disabled})`,
+          color: `color-mix(in srgb, ${theme.color.onSurface}, transparent ${Math.round(
+            (1 - theme.contentAlpha.disabled) * 100
+          )}%)`,
         }
       default:
         return { filter: 'grayscale(1) brightness(0.5)' }
     }
-  }, [surfaceColor, theme.contentAlpha.disabled, variant])
+  }, [surfaceColor, theme.color.onSurface, theme.contentAlpha.disabled, variant])
 
   const hasLeadingIcon = Boolean(loading) || leadingIcon !== undefined
 
