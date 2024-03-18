@@ -74,7 +74,7 @@ const AddStakeDialog = (props: AddStakeDialogProps) => (
   <AlertDialog
     open={props.open}
     title="Stake"
-    width="44rem"
+    targetWidth="44rem"
     content={
       <>
         <Text.Body as="p" css={{ marginBottom: '2.6rem' }}>

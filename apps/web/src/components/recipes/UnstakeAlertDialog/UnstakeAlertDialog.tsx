@@ -15,7 +15,7 @@ const UnstakeAlertDialog = (props: UnstakeAlertDialogProps) => (
   <AlertDialog
     open={props.open}
     title="Unstake"
-    width="48rem"
+    targetWidth="48rem"
     content={
       <Text.Body>
         You are unstaking{' '}
