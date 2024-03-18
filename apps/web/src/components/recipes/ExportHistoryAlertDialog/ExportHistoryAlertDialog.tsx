@@ -8,7 +8,7 @@ export type ExportCsvAlertDialogProps = {
 
 const ExportCsvAlertDialog = (props: ExportCsvAlertDialogProps) => (
   <AlertDialog
-    width="48rem"
+    targetWidth="48rem"
     title="Export CSV"
     onRequestDismiss={props.onRequestDismiss}
     confirmButton={<Button onClick={props.onConfirm}>Export {props.recordCount} records</Button>}

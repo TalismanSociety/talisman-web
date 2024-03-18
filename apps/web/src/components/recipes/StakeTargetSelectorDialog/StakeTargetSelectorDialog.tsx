@@ -37,7 +37,7 @@ const StakeTargetSelectorDialog = Object.assign(
       <AlertDialog
         open={props.open}
         title={props.title}
-        width="83rem"
+        targetWidth="83rem"
         content={
           <div>
             <Text.Body as="h3" css={{ marginBottom: '0.6rem' }}>

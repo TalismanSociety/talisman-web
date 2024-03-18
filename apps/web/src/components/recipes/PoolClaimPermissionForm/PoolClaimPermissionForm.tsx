@@ -149,7 +149,7 @@ export const PoolClaimPermissionDialog = (props: PoolClaimPermissionDialogProps)
         <Calculate css={{ verticalAlign: 'bottom' }} /> Claim method
       </>
     }
-    width="77rem"
+    targetWidth="77rem"
     {...props}
   >
     <Suspense

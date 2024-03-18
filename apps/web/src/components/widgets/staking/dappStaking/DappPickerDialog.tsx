@@ -28,7 +28,7 @@ const DappPickerDialog = (props: DappPickerDialogProps) => {
   }
 
   return (
-    <AlertDialog title={props.title} onRequestDismiss={props.onRequestDismiss} width="45rem">
+    <AlertDialog title={props.title} onRequestDismiss={props.onRequestDismiss} targetWidth="45rem">
       <div css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
         {props.stake.dapps.map(([dapp, info]) => {
           const total = tokenAmount.fromPlanck(

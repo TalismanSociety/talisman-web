@@ -13,7 +13,7 @@ export type AlertDialogProps = Omit<DialogProps, 'title' | 'content'> & {
   confirmButton?: ReactNode
   dismissButton?: ReactNode
   onRequestDismiss: () => unknown
-  width?: string | number
+  targetWidth?: string | number
 }
 
 export const ALERT_DIALOG_PADDING = '2.4rem'
@@ -43,7 +43,7 @@ const AlertDialog = ({
   confirmButton,
   dismissButton,
   onRequestDismiss,
-  width,
+  targetWidth,
   ...props
 }: AlertDialogProps) => {
   const theme = useTheme()
@@ -70,7 +70,7 @@ const AlertDialog = ({
         },
         width: 'auto',
         '@media (min-width: 768px)': {
-          width: width ?? 'revert',
+          width: targetWidth ?? 'revert',
         },
       }}
     >
