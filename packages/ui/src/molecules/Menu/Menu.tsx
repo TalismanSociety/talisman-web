@@ -128,9 +128,7 @@ const MenuItems = (props: MenuItemsProps) => {
                 overflow: 'auto',
               },
               transition: {
-                type: 'spring',
-                bounce: 0,
-                duration: 0.35,
+                duration: 0.25,
                 delayChildren: 0.15,
                 staggerChildren: 0.025,
               },
@@ -139,9 +137,7 @@ const MenuItems = (props: MenuItemsProps) => {
               clipPath: closedClipPath,
               overflow: false,
               transition: {
-                type: 'spring',
-                bounce: 0,
-                duration: 0.15,
+                duration: 0.125,
               },
             },
           }}
@@ -174,8 +170,8 @@ const MenuItem = ({ dismissAfterSelection = true, inTransition, ...props }: Menu
   return (
     <motion.div
       variants={{
-        true: { opacity: 1, transform: 'translateY(0px)', transition: { type: 'spring', stiffness: 300, damping: 24 } },
-        false: { opacity: 0, transform: 'translateY(20px)', transition: { duration: 0.1 } },
+        true: { opacity: 1, transform: 'translateY(0px)' },
+        false: { opacity: 0, transform: 'translateY(20px)' },
       }}
       css={{
         cursor: 'pointer',
