@@ -7925,7 +7925,7 @@ __metadata:
     mime-db: "npm:^1.52.0"
     prop-types: "npm:^15.8.1"
     react: "npm:^18.2.0"
-    react-countup: "npm:^6.5.0"
+    react-countup: "npm:^6.5.1"
     react-dom: "npm:^18.2.0"
     react-hot-toast: "npm:^2.4.1"
     storybook: "npm:^7.6.5"
@@ -18772,14 +18772,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-countup@npm:^6.5.0":
-  version: 6.5.0
-  resolution: "react-countup@npm:6.5.0"
+"react-countup@npm:^6.5.1":
+  version: 6.5.1
+  resolution: "react-countup@npm:6.5.1"
   dependencies:
     countup.js: "npm:^2.8.0"
   peerDependencies:
     react: ">= 16.3.0"
-  checksum: 10c0/b44e5b753f1a84d242a0b8465546f7d4b18f61629576949e609f6ddc37589db15351f0d527cb9b72e9600198959d4bfd580b34ababf7a9a8c8efae4533856de6
+  checksum: 10c0/f83dbbfd248bc758ce1c3f033b9403119d0ea50bddbc7a7af81de3996a717fab1271b7485865df70523bece86a4665793cbdcd34a7ca69f4b27be1e836132734
   languageName: node
   linkType: hard
 
