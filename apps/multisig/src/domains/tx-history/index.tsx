@@ -5,7 +5,7 @@ import { gql } from 'graphql-request'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { atom, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import fetchGraphQL from '../../graphql/fetch-graphql'
-import { Address } from '../../util/addresses'
+import { Address, parseCallAddressArg } from '../../util/addresses'
 import { useApi } from '../chains/pjs-api'
 import { txMetadataByTeamIdState } from '../offchain-data/metadata'
 import { makeTransactionID } from '../../util/misc'
@@ -13,32 +13,21 @@ import { allChainTokensSelector, decodeCallData } from '../chains'
 
 interface RawResponse {
   data: {
-    extrinsics: {
-      edges: {
-        node: {
-          success: boolean
-          error: string | null
-          block: {
-            hash: string
-            height: number
-            timestamp: string
-          }
-          call: {
-            name: string
-            args: any
-          }
-
-          /** {blockHeight}-{extrinsicHeight}-{somethingElse} */
-          subsquidId: string
-          signature: { address: { value: string } }
+    accountExtrinsics: {
+      extrinsic: {
+        id: string
+        index: number
+        callName: string
+        callArgs: any
+        signer: string
+        block: {
+          hash: string
+          timestamp: string
+          height: string
+          chainGenesisHash: string
         }
-      }[]
-      pageInfo: {
-        hasNextPage: boolean
-        startCursor: string
-        endCursor: string
       }
-    }
+    }[]
   }
 }
 
@@ -62,7 +51,6 @@ export const rawConfirmedTransactionsState = atom<
   Record<
     string,
     {
-      endCursor: string
       transactions: ParsedTransaction[]
     }
   >
@@ -78,72 +66,79 @@ export const unknownConfirmedTransactionsState = atom<string[]>({
 })
 
 type Variables = {
-  vaultAddress: string[]
+  vaultPublicKey: string
   chainGenesisHash: string
-  cursor?: string
+  offset: number | null
+  limit: number | null
 }
 
-const exHistoryV3ExtrinsicsQuery = gql`
-  query ConfirmedTransactions($vaultAddress: [String!]!, $chainGenesisHash: String!, $cursor: String) {
-    extrinsics(where: { addressIn: $vaultAddress, chainEq: $chainGenesisHash }, orderBy: timestampAsc, after: $cursor) {
-      edges {
-        node {
-          success
-          error
-          block {
-            hash
-            height
-            timestamp
-          }
-          call {
-            name
-            args
-          }
-          subsquidId
-          signature
-        }
+const signetSquidExtrinsicsQuery = gql`
+  query ConfirmedTransactions($vaultPublicKey: String!, $chainGenesisHash: String!, $limit: Int, $offset: Int) {
+    accountExtrinsics(
+      where: {
+        account: { address_eq: $vaultPublicKey }
+        extrinsic: { block: { chainGenesisHash_eq: $chainGenesisHash } }
       }
-      pageInfo {
-        hasNextPage
-        startCursor
-        endCursor
+      orderBy: extrinsic_id_ASC
+      limit: $limit
+      offset: $offset
+    ) {
+      extrinsic {
+        id
+        index
+        callName
+        callArgs
+        signer
+        block {
+          hash
+          timestamp
+          height
+        }
       }
     }
   }
 `
 
-const fetchRaw = async (vaultAddress: string, chainGenesisHash: string, _cursor?: string | null) => {
+const fetchRaw = async (vaultAddress: string, chainGenesisHash: string, _offset?: number | null) => {
   const extrinsics: ParsedTransaction[] = []
 
+  const LIMIT = 100
   const variables: Variables = {
-    vaultAddress: [vaultAddress],
+    vaultPublicKey: vaultAddress,
     chainGenesisHash,
+    offset: null,
+    limit: LIMIT,
   }
 
   let hasNextPage = true
-  let cursor = _cursor
+  let offset = _offset
   while (hasNextPage) {
-    if (cursor) variables.cursor = cursor
+    if (offset) variables.offset = offset
 
-    const res = (await fetchGraphQL(exHistoryV3ExtrinsicsQuery, variables, 'tx-history')) as RawResponse
+    const res = (await fetchGraphQL(signetSquidExtrinsicsQuery, variables, 'tx-history')) as RawResponse
 
-    res.data.extrinsics.edges.forEach(edge => {
-      const [, extIndexString] = edge.node.subsquidId.split('-')
+    res.data.accountExtrinsics.forEach(ext => {
       extrinsics.push({
-        block: edge.node.block,
-        indexInBlock: parseInt(extIndexString as string),
-        success: edge.node.success,
-        error: edge.node.error ?? undefined,
-        call: edge.node.call,
-        signer: edge.node.signature.address.value,
+        success: true,
+        block: {
+          hash: ext.extrinsic.block.hash,
+          height: parseInt(ext.extrinsic.block.height),
+          timestamp: new Date(parseInt(ext.extrinsic.block.timestamp)).toString(),
+        },
+        indexInBlock: ext.extrinsic.index,
+        call: {
+          args: ext.extrinsic.callArgs,
+          name: ext.extrinsic.callName,
+        },
+        signer: parseCallAddressArg(ext.extrinsic.signer),
       })
     })
 
-    cursor = res.data.extrinsics.pageInfo.endCursor
-    if (!res.data.extrinsics.pageInfo.hasNextPage) hasNextPage = false
+    offset = res.data.accountExtrinsics.length
+    hasNextPage = res.data.accountExtrinsics.length === LIMIT
   }
 
-  return { data: { extrinsics, endCursor: cursor } }
+  return { data: { extrinsics } }
 }
 
 const blockCacheState = atom<Record<string, Vec<GenericExtrinsic<AnyTuple>>>>({
@@ -336,18 +331,19 @@ export const useConfirmedTransactions = (): { loading: boolean; transactions: Tr
     try {
       const lastFetchedData = confirmedTransactions[fetchingFor.id]
 
-      let cursor = lastFetchedData?.endCursor ?? null
-
       // get all raw transactions from last cursor
       const {
-        data: { endCursor, extrinsics },
-      } = await fetchRaw(fetchingFor.proxyAddress.toSs58(fetchingFor.chain), fetchingFor.chain.genesisHash, cursor)
+        data: { extrinsics },
+      } = await fetchRaw(
+        fetchingFor.proxyAddress.toPubKey(),
+        fetchingFor.chain.genesisHash,
+        lastFetchedData?.transactions.length
+      )
 
-      if (endCursor && extrinsics.length > 0) {
+      if (extrinsics.length > 0) {
         setConfirmedTransactions(old => ({
           ...old,
           [fetchingFor.id]: {
-            endCursor,
             transactions: [...(lastFetchedData?.transactions ?? []), ...extrinsics],
           },
         }))

@@ -73,7 +73,7 @@ export const AmountFlexibleInput = (props: {
           leadingLabel={props.leadingLabel ?? `Amount to send`}
           trailingLabel={
             calculatedTokenAmount && calculatedTokenAmount !== 'NaN' && amountUnit !== AmountUnit.Token
-              ? `Amount in ${props.selectedToken?.symbol}: ${calculatedTokenAmount}`
+              ? `${calculatedTokenAmount} ${props.selectedToken?.symbol}`
               : ''
           }
           leadingSupportingText={
