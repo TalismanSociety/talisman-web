@@ -39,8 +39,6 @@ export const bridgeState = selector({
         { from: 'robonomics' },
         { from: 'tinkernet' },
         { from: 'assetHubKusama' },
-        // Disable Asset Hub due to similarly reported issue
-        { from: 'assetHubPolkadot' },
       ],
     })
     await bridge.isReady
