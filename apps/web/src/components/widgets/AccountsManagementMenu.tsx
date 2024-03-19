@@ -9,7 +9,7 @@ import {
 import { fiatBalanceGetterState, portfolioBalancesFiatSumState } from '@domains/balances'
 import { copyAddressToClipboard } from '@domains/common/utils'
 import { css, useTheme } from '@emotion/react'
-import { useOnChainId } from '@libs/on-chain-id/hooks/useOnChainId'
+import { useOnChainId } from '@libs/onChainId/hooks/useOnChainId'
 import {
   Chip,
   CircularProgressIndicator,
