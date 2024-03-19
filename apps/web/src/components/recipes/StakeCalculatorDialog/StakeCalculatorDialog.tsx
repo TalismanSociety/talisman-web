@@ -65,7 +65,7 @@ const StakeCalculatorDialog = Object.assign(
   (props: StakeCalculatorDialogProps) => (
     <AlertDialog
       {...props}
-      width="48rem"
+      targetWidth="48rem"
       title={
         <span>
           <Calculate size="1em" css={{ verticalAlign: 'middle' }} /> Staking calculator

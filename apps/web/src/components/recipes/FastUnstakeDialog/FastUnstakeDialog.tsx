@@ -18,7 +18,7 @@ export type FastUnstakeDialogProps = {
 const FastUnstakeDialog = (props: FastUnstakeDialogProps) => (
   <AlertDialog
     open={props.open}
-    width="48rem"
+    targetWidth="48rem"
     title="Fast unstake"
     content={
       <>

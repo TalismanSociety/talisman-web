@@ -38,7 +38,7 @@ const StakeProviderDialog = Object.assign(
             {props.title}
           </div>
         }
-        width="48rem"
+        targetWidth="48rem"
         onRequestDismiss={props.onRequestDismiss}
       >
         <div css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>{props.children}</div>

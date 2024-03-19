@@ -66,7 +66,7 @@ const TokenSelectorDialog = Object.assign(
   (props: TokenSelectorDialogProps) => {
     const [query, setQuery] = useState('')
     return (
-      <AlertDialog {...props} width="42.2rem" title="Select a token" css={{ paddingBottom: 0 }}>
+      <AlertDialog {...props} targetWidth="42.2rem" title="Select a token" css={{ paddingBottom: 0 }}>
         <div>
           <TextInput
             placeholder="🔍 Search by token"

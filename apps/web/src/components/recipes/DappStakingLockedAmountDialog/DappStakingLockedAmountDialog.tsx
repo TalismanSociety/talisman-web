@@ -13,7 +13,7 @@ export type DappStakingLockedAmountDialogProps = {
 
 const DappStakingLockedAmountDialog = (props: DappStakingLockedAmountDialogProps) => (
   <AlertDialog
-    width="54rem"
+    targetWidth="54rem"
     title="Locked token"
     dismissButton={
       <Button variant="outlined" loading={props.requestReStakeInTransition} onClick={props.onRequestReStake}>

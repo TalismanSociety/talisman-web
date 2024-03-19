@@ -13,7 +13,7 @@ export type ClaimStakeDialogProps = {
 const ClaimStakeDialog = (props: ClaimStakeDialogProps) => (
   <AlertDialog
     open={props.open}
-    width="54rem"
+    targetWidth="54rem"
     title="Claim rewards"
     content={
       <div>

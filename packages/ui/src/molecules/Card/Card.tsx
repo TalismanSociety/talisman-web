@@ -5,13 +5,18 @@ import { Skeleton, Text, useSurfaceColor, useSurfaceColorAtElevation } from '../
 import { MultiPreview, Preview } from './Preview'
 
 export type CardProps = {
-  media?: ReactNode
-  headlineContent: ReactNode
-  overlineContent?: ReactNode
-  mediaLabel?: ReactNode
-  actions?: ReactNode
+  className?: string
   onClick?: () => unknown
-}
+} & (
+  | {
+      media?: ReactNode
+      headlineContent: ReactNode
+      overlineContent?: ReactNode
+      mediaLabel?: ReactNode
+      actions?: ReactNode
+    }
+  | { children: ReactNode }
+)
 
 const CardContext = createContext({ hover: false })
 
@@ -65,11 +70,12 @@ const Card = Object.assign(
     const sheenGradient = useMotionTemplate`linear-gradient(
     55deg,
     transparent,
-    rgba(255 255 255 / ${sheenOpacity}) ${sheenPosition}%,
+    rgba(255, 255, 255, ${sheenOpacity}) ${sheenPosition}%,
     transparent)`
 
     return (
       <motion.article
+        className={props.className}
         whileHover="hover"
         onMouseEnter={() => {
           setHover(true)
@@ -110,35 +116,41 @@ const Card = Object.assign(
         }}
         onClick={props.onClick}
       >
-        <div css={{ position: 'relative', width: 'auto', aspectRatio: '1 / 1' }}>
-          {props.media}
-          <CardContext.Provider value={{ hover }}>{props.actions}</CardContext.Provider>
-          {props.mediaLabel && (
-            <Text.BodyLarge
-              as="div"
-              alpha="high"
-              css={{
-                fontWeight: 'bold',
-                position: 'absolute',
-                right: '2.4rem',
-                bottom: '2.4rem',
-                borderRadius: theme.shape.small,
-                backgroundColor: theme.color.background,
-                padding: '1.2rem 1.6rem',
-              }}
-            >
-              {props.mediaLabel}
-            </Text.BodyLarge>
-          )}
-        </div>
-        <header css={{ backgroundColor: useSurfaceColor(), padding: '1.6rem 2.4rem' }}>
-          <Text.Body as="h4" css={{ marginBottom: '0.8rem' }}>
-            {props.overlineContent}
-          </Text.Body>
-          <Text.BodyLarge as="h3" alpha="high">
-            {props.headlineContent}
-          </Text.BodyLarge>
-        </header>
+        {'children' in props ? (
+          props.children
+        ) : (
+          <>
+            <div css={{ position: 'relative', width: 'auto', aspectRatio: '1 / 1' }}>
+              {props.media}
+              <CardContext.Provider value={{ hover }}>{props.actions}</CardContext.Provider>
+              {props.mediaLabel && (
+                <Text.BodyLarge
+                  as="div"
+                  alpha="high"
+                  css={{
+                    fontWeight: 'bold',
+                    position: 'absolute',
+                    right: '2.4rem',
+                    bottom: '2.4rem',
+                    borderRadius: theme.shape.small,
+                    backgroundColor: theme.color.background,
+                    padding: '1.2rem 1.6rem',
+                  }}
+                >
+                  {props.mediaLabel}
+                </Text.BodyLarge>
+              )}
+            </div>
+            <header css={{ backgroundColor: useSurfaceColor(), padding: '1.6rem 2.4rem' }}>
+              <Text.Body as="h4" css={{ marginBottom: '0.8rem' }}>
+                {props.overlineContent}
+              </Text.Body>
+              <Text.BodyLarge as="h3" alpha="high">
+                {props.headlineContent}
+              </Text.BodyLarge>
+            </header>
+          </>
+        )}
         <motion.div
           variants={{ hover: { opacity: 1 } }}
           style={{ backgroundImage: hover ? sheenGradient : 'revert' }}
