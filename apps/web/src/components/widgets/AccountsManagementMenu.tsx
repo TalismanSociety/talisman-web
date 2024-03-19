@@ -8,7 +8,7 @@ import {
 } from '@domains/accounts/recoils'
 import { fiatBalanceGetterState, portfolioBalancesFiatSumState } from '@domains/balances'
 import { copyAddressToClipboard } from '@domains/common/utils'
-import { css, useTheme } from '@emotion/react'
+import { useTheme } from '@emotion/react'
 import { useOnChainId } from '@libs/onChainId/hooks/useOnChainId'
 import {
   Chip,
@@ -65,22 +65,23 @@ const AccountsManagementSurfaceIconButton = (props: { size?: number | string }) 
   )
 }
 
-const AccountsManagementAddress = ({ name, address }: { name?: string; address: string }) => {
+const AccountsManagementAddress = ({
+  name,
+  address,
+  showOnChainId,
+}: {
+  name?: string
+  address: string
+  showOnChainId?: boolean
+}) => {
   const [onChainId] = useOnChainId(address)
 
   return (
     <>
       {onChainId && (
-        <div
-          className="show-on-menu-item-hover"
-          css={css`
-            color: var(--color-primary);
-          `}
-        >
-          {onChainId}
-        </div>
+        <div css={{ display: showOnChainId ? 'block' : 'none', color: 'var(--color-primary)' }}>{onChainId}</div>
       )}
-      <div className={onChainId ? 'hide-on-menu-item-hover' : undefined}>{name ?? shortenAddress(address)}</div>
+      <div css={{ display: onChainId && showOnChainId ? 'none' : 'block' }}>{name ?? shortenAddress(address)}</div>
     </>
   )
 }
@@ -177,58 +178,46 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
               </Text.Body>
               {leadingMenuItem}
               {portfolioAccounts.map((x, index) => (
-                <Menu.Item
-                  key={index}
-                  css={css`
-                    & .show-on-menu-item-hover {
-                      display: none;
-                    }
-                    &:hover .show-on-menu-item-hover {
-                      display: block;
-                    }
-                    &:hover .hide-on-menu-item-hover {
-                      display: none;
-                    }
-                  `}
-                  onClick={() => setSelectedAccountAddresses(() => [x.address])}
-                >
-                  <ListItem
-                    headlineContent={Maybe.of(getFiatBalanceLoadable.valueMaybe()?.(x.address)).mapOr(
-                      <CircularProgressIndicator size="1em" />,
-                      balance => (
-                        <AnimatedFiatNumber end={balance.total} />
-                      )
-                    )}
-                    overlineContent={
-                      <div
-                        css={
-                          x.canSignEvm && {
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.8rem',
-                            marginBottom: '0.25rem',
+                <Menu.Item key={index} onClick={() => setSelectedAccountAddresses(() => [x.address])}>
+                  {({ hover }) => (
+                    <ListItem
+                      headlineContent={Maybe.of(getFiatBalanceLoadable.valueMaybe()?.(x.address)).mapOr(
+                        <CircularProgressIndicator size="1em" />,
+                        balance => (
+                          <AnimatedFiatNumber end={balance.total} />
+                        )
+                      )}
+                      overlineContent={
+                        <div
+                          css={
+                            x.canSignEvm && {
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '0.8rem',
+                              marginBottom: '0.25rem',
+                            }
                           }
-                        }
-                      >
-                        <AccountsManagementAddress name={x.name} address={x.address} />
-                        {x.canSignEvm && <EvmChip />}
-                      </div>
-                    }
-                    leadingContent={<AccountIcon account={x} size="4rem" />}
-                    revealTrailingContentOnHover
-                    trailingContent={
-                      <SurfaceIcon
-                        size="3.5rem"
-                        onClick={(event: any) => {
-                          event.stopPropagation()
-                          void copyAddressToClipboard(x.address)
-                        }}
-                        css={{ cursor: 'copy' }}
-                      >
-                        <Copy />
-                      </SurfaceIcon>
-                    }
-                  />
+                        >
+                          <AccountsManagementAddress name={x.name} address={x.address} showOnChainId={hover} />
+                          {x.canSignEvm && <EvmChip />}
+                        </div>
+                      }
+                      leadingContent={<AccountIcon account={x} size="4rem" />}
+                      revealTrailingContentOnHover
+                      trailingContent={
+                        <SurfaceIcon
+                          size="3.5rem"
+                          onClick={(event: any) => {
+                            event.stopPropagation()
+                            void copyAddressToClipboard(x.address)
+                          }}
+                          css={{ cursor: 'copy' }}
+                        >
+                          <Copy />
+                        </SurfaceIcon>
+                      }
+                    />
+                  )}
                 </Menu.Item>
               ))}
             </section>
@@ -250,62 +239,57 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
               {readonlyAccounts.map((account, index) => (
                 <RemoveWatchedAccountConfirmationDialog key={index} account={account}>
                   {({ onToggleOpen: toggleRemoveDialog }) => (
-                    <Menu.Item
-                      css={css`
-                        & .show-on-menu-item-hover {
-                          display: none;
-                        }
-                        &:hover .show-on-menu-item-hover {
-                          display: block;
-                        }
-                        &:hover .hide-on-menu-item-hover {
-                          display: none;
-                        }
-                      `}
-                      onClick={() => setSelectedAccountAddresses(() => [account.address])}
-                    >
-                      <ListItem
-                        headlineContent={Maybe.of(getFiatBalanceLoadable.valueMaybe()?.(account.address)).mapOr(
-                          <CircularProgressIndicator size="1em" />,
-                          balance => (
-                            <AnimatedFiatNumber end={balance.total} />
-                          )
-                        )}
-                        overlineContent={<AccountsManagementAddress name={account.name} address={account.address} />}
-                        leadingContent={<AccountIcon account={account} size="4rem" />}
-                        revealTrailingContentOnHover
-                        trailingContent={
-                          <div css={{ display: 'flex' }}>
-                            <SurfaceIcon
-                              size="3.5rem"
-                              onClick={(event: any) => {
-                                event.stopPropagation()
-                                void copyAddressToClipboard(account.address)
-                              }}
-                              css={{ cursor: 'copy' }}
-                            >
-                              <Copy />
-                            </SurfaceIcon>
-                            <Tooltip
-                              content="This account can be managed via the extension"
-                              disabled={account.origin === 'local'}
-                            >
-                              <div>
-                                <SurfaceIcon
-                                  size="3.5rem"
-                                  onClick={(event: any) => {
-                                    event.stopPropagation()
-                                    toggleRemoveDialog()
-                                  }}
-                                  disabled={account.origin !== 'local'}
-                                >
-                                  <Trash2 />
-                                </SurfaceIcon>
-                              </div>
-                            </Tooltip>
-                          </div>
-                        }
-                      />
+                    <Menu.Item onClick={() => setSelectedAccountAddresses(() => [account.address])}>
+                      {({ hover }) => (
+                        <ListItem
+                          headlineContent={Maybe.of(getFiatBalanceLoadable.valueMaybe()?.(account.address)).mapOr(
+                            <CircularProgressIndicator size="1em" />,
+                            balance => (
+                              <AnimatedFiatNumber end={balance.total} />
+                            )
+                          )}
+                          overlineContent={
+                            <AccountsManagementAddress
+                              name={account.name}
+                              address={account.address}
+                              showOnChainId={hover}
+                            />
+                          }
+                          leadingContent={<AccountIcon account={account} size="4rem" />}
+                          revealTrailingContentOnHover
+                          trailingContent={
+                            <div css={{ display: 'flex' }}>
+                              <SurfaceIcon
+                                size="3.5rem"
+                                onClick={(event: any) => {
+                                  event.stopPropagation()
+                                  void copyAddressToClipboard(account.address)
+                                }}
+                                css={{ cursor: 'copy' }}
+                              >
+                                <Copy />
+                              </SurfaceIcon>
+                              <Tooltip
+                                content="This account can be managed via the extension"
+                                disabled={account.origin === 'local'}
+                              >
+                                <div>
+                                  <SurfaceIcon
+                                    size="3.5rem"
+                                    onClick={(event: any) => {
+                                      event.stopPropagation()
+                                      toggleRemoveDialog()
+                                    }}
+                                    disabled={account.origin !== 'local'}
+                                  >
+                                    <Trash2 />
+                                  </SurfaceIcon>
+                                </div>
+                              </Tooltip>
+                            </div>
+                          }
+                        />
+                      )}
                     </Menu.Item>
                   )}
                 </RemoveWatchedAccountConfirmationDialog>
