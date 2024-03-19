@@ -9,7 +9,7 @@ import AmountRow from '@components/AmountRow'
 import MemberRow from '@components/MemberRow'
 import { Rpc, decodeCallData } from '@domains/chains'
 import { pjsApiSelector } from '@domains/chains/pjs-api'
-import { Balance, Transaction, TransactionType, calcSumOutgoing, txOffchainMetadataState } from '@domains/multisig'
+import { Balance, Transaction, TransactionType, calcSumOutgoing } from '@domains/multisig'
 import useCopied from '@hooks/useCopied'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
@@ -19,10 +19,13 @@ import { Address } from '@util/addresses'
 import { useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
 import { Collapse } from 'react-collapse'
-import { useRecoilState, useRecoilValueLoadable } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import truncateMiddle from 'truncate-middle'
 import { VoteExpandedDetails, VoteTransactionHeader } from './VoteTransactionDetails'
 import { useKnownAddresses } from '@hooks/useKnownAddresses'
+import { useInsertTxMetadata } from '@domains/offchain-data/metadata'
+import { selectedAccountState } from '@domains/auth'
+import { makeTransactionID } from '@util/misc'
 
 const ChangeConfigExpandedDetails = ({ t }: { t: Transaction }) => {
   const { contactByAddress } = useKnownAddresses(t.multisig.id)
@@ -163,11 +166,12 @@ function AdvancedExpendedDetails({ callData, rpcs }: { callData: `0x${string}` |
 const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
   const theme = useTheme()
   const [expanded, setExpanded] = useState(t.decoded?.type !== TransactionType.Transfer)
-  const [metadata, setMetadata] = useRecoilState(txOffchainMetadataState)
+  const insertTxMetadata = useInsertTxMetadata()
   const sumOutgoing: Balance[] = useMemo(() => calcSumOutgoing(t), [t])
   const { copied: copiedCallData, copy: copyCallData } = useCopied()
   const { copied: copiedCallHash, copy: copyCallHash } = useCopied()
   const { contactByAddress } = useKnownAddresses(t.multisig.id)
+  const signedInAccount = useRecoilValue(selectedAccountState)
 
   const recipients = t.decoded?.recipients || []
   return (
@@ -328,17 +332,21 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
                   if (!e) return
                   const expectedHash = t.hash
                   const extrinsicHash = e.registry.hash(e.method.toU8a()).toHex()
-                  if (expectedHash === extrinsicHash) {
-                    setMetadata({
-                      ...metadata,
-                      [expectedHash]: [
-                        {
-                          callData: e.method.toHex(),
-                          description: `Transaction ${truncateMiddle(expectedHash, 6, 4, '...')}`,
-                        },
-                        new Date(),
-                      ],
+                  if (expectedHash === extrinsicHash && signedInAccount && t.rawPending) {
+                    const timepointHeight = t.rawPending.onChainMultisig.when.height.toNumber()
+                    const timepointIndex = t.rawPending.onChainMultisig.when.index.toNumber()
+                    const extrinsicId = makeTransactionID(t.multisig.chain, timepointHeight, timepointIndex)
+
+                    insertTxMetadata(signedInAccount, t.multisig, {
+                      callData: e.method.toHex(),
+                      description: `Transaction ${truncateMiddle(expectedHash, 6, 4, '...')}`,
+                      extrinsicId,
+                      hash: expectedHash,
+                      timepointHeight,
+                      timepointIndex,
+                      changeConfigDetails: undefined,
                     })
+
                     setExpanded(true)
                   }
                 }}
