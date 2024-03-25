@@ -14,6 +14,7 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
     name: [name, setName],
     resultingAddress,
     confirmState,
+    loading,
     error,
     submit,
   } = useAddReadonlyAccountForm()
@@ -34,6 +35,7 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
           name={name}
           onChangeName={setName}
           confirmState={confirmState}
+          addressLoading={loading}
           addressError={error}
           onConfirm={() => {
             if (isNilOrWhitespace(resultingAddress)) {
