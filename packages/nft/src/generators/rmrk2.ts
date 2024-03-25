@@ -13,7 +13,7 @@ export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Nft<'rmrk2', 
 
   while (true) {
     const response = await request(
-      'https://squid.subsquid.io/marck/v/v2/graphql',
+      'https://ksm.gql.api.kodadot.xyz/',
       graphql(`
         query nftListWithSearch(
           $first: Int!
