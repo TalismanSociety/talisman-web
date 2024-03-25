@@ -7909,7 +7909,7 @@ __metadata:
     mime-db: "npm:^1.52.0"
     prop-types: "npm:^15.8.1"
     react: "npm:^18.2.0"
-    react-countup: "npm:^6.5.1"
+    react-countup: "npm:6.5.1"
     react-dom: "npm:^18.2.0"
     react-hot-toast: "npm:^2.4.1"
     storybook: "npm:^7.6.5"
@@ -18755,7 +18755,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-countup@npm:^6.5.1":
+"react-countup@npm:6.5.1":
   version: 6.5.1
   resolution: "react-countup@npm:6.5.1"
   dependencies:
