@@ -74,12 +74,13 @@ const AccountsManagementAddress = ({
   address: string
   showOnChainId?: boolean
 }) => {
+  const theme = useTheme()
   const [onChainId] = useOnChainId(address)
 
   return (
     <>
       {onChainId && (
-        <div css={{ display: showOnChainId ? 'block' : 'none', color: 'var(--color-primary)' }}>{onChainId}</div>
+        <div css={{ display: showOnChainId ? 'block' : 'none', color: theme.color.primary }}>{onChainId}</div>
       )}
       <div css={{ display: onChainId && showOnChainId ? 'none' : 'block' }}>{name ?? shortenAddress(address)}</div>
     </>
