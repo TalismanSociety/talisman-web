@@ -453,7 +453,7 @@ const Nfts = () => {
           <Text.Body>
             Talisman currently supports RMRK 2, Polkadot Asset Hub,
             <br />
-            Kusama Asset Hub and Unique Network NFTs
+            Kusama Asset Hub, ArtZero and Unique Network NFTs
           </Text.Body>
         </section>
       </section>
