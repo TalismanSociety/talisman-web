@@ -1,3 +1,4 @@
+import Loader from '@icons/loader.svg?react'
 import { useTheme } from '@emotion/react'
 import { AlertDialog, Button, Clickable, Hr, Identicon, ListItem, TextInput, useSurfaceColor } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
@@ -9,6 +10,7 @@ export type AddReadOnlyAccountDialogProps = {
   onRequestDismiss: () => unknown
   address: string
   onChangeAddress: (address: string) => unknown
+  addressLoading?: boolean
   addressError?: string
   name: string
   onChangeName: (name: string) => unknown
@@ -54,6 +56,7 @@ const AddReadOnlyAccountDialog = Object.assign(
               leadingLabel="Address"
               placeholder="Enter wallet address"
               trailingSupportingText={props.addressError}
+              trailingIcon={props.addressLoading ? <Loader /> : null}
               isError={props.addressError !== undefined}
             />
             {props.resultingAddress && (

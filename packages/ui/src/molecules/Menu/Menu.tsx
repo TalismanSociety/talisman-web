@@ -47,7 +47,8 @@ export type MenuItemsProps = Omit<DetailedHTMLProps<HTMLAttributes<HTMLElement>,
   children: ReactNode | ((props: { open: boolean; toggleOpen: () => unknown }) => ReactNode)
 }
 
-export type MenuItemProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
+export type MenuItemProps = Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, 'children'> & {
+  children: ReactNode | ((props: { hover: boolean }) => ReactNode)
   dismissAfterSelection?: boolean
   inTransition?: boolean
 }
@@ -156,7 +157,12 @@ const MenuItems = (props: MenuItemsProps) => {
   )
 }
 
-const MenuItem = ({ dismissAfterSelection = true, inTransition, ...props }: MenuItemProps) => {
+const MenuItem = ({
+  children: childrenOrRenderFunc,
+  dismissAfterSelection = true,
+  inTransition,
+  ...props
+}: MenuItemProps) => {
   const { getItemProps, setOpen } = useContext(MenuContext)
 
   const prevInTransition = usePrevious(inTransition)
@@ -166,6 +172,9 @@ const MenuItem = ({ dismissAfterSelection = true, inTransition, ...props }: Menu
       setOpen(false)
     }
   }, [inTransition, prevInTransition, setOpen])
+
+  const [hover, setHover] = useState(false)
+  const children = typeof childrenOrRenderFunc === 'function' ? childrenOrRenderFunc({ hover }) : childrenOrRenderFunc
 
   return (
     <motion.div
@@ -179,8 +188,11 @@ const MenuItem = ({ dismissAfterSelection = true, inTransition, ...props }: Menu
           backgroundColor: useSurfaceColor(),
         },
       }}
+      onHoverStart={() => setHover(true)}
+      onHoverEnd={() => setHover(false)}
       {...getItemProps({
         ...props,
+        children,
         onClick: (event: any) => {
           props.onClick?.(event)
           if (dismissAfterSelection) {

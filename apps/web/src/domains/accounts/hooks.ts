@@ -3,8 +3,8 @@ import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { isNilOrWhitespace } from '@util/nil'
 import { useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
-import { useEnsAddress } from 'wagmi'
 import { readOnlyAccountsState, type ReadonlyAccount } from './recoils'
+import { useResolveNsName } from '@libs/onChainId'
 
 export const useSetReadonlyAccounts = () => {
   const setReadonlyAccounts = useSetRecoilState(readOnlyAccountsState)
@@ -35,10 +35,10 @@ export const useAddReadonlyAccountForm = () => {
   const [address, setAddress] = useState('')
   const [name, setName] = useState('')
 
-  const { data: addressFromEns } = useEnsAddress({ name: address })
+  const [addressFromNs, { isNsFetching }] = useResolveNsName(address)
 
   const parsedAddress = useMemo(() => tryParseSubstrateOrEthereumAddress(address), [address])
-  const resultingAddress = addressFromEns ?? parsedAddress
+  const resultingAddress = addressFromNs ?? parsedAddress
 
   const hasExistingAccount = useMemo(
     () =>
@@ -55,6 +55,8 @@ export const useAddReadonlyAccountForm = () => {
   }, [hasExistingAccount, resultingAddress])
 
   const error = useMemo(() => {
+    if (isNsFetching) return undefined
+
     if (address !== '' && resultingAddress === undefined) {
       return 'Invalid address'
     }
@@ -64,13 +66,14 @@ export const useAddReadonlyAccountForm = () => {
     }
 
     return undefined
-  }, [address, hasExistingAccount, resultingAddress])
+  }, [address, hasExistingAccount, isNsFetching, resultingAddress])
 
   return {
     name: [name, setName] as const,
     address: [address, setAddress] as const,
     resultingAddress,
     confirmState,
+    loading: isNsFetching,
     error,
     submit: useCallback(() => {
       if (resultingAddress !== undefined) {
