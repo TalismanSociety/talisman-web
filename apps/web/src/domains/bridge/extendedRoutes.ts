@@ -2,6 +2,7 @@ import type { ChainId } from '@polkawallet/bridge'
 import { AssetHubPolkadotAdapter } from '@polkawallet/bridge/adapters/assethub'
 import { CentrifugeAdapter } from '@polkawallet/bridge/adapters/centrifuge'
 import { ParallelAdapter } from '@polkawallet/bridge/adapters/parallel'
+import { AstarAdapter } from '@polkawallet/bridge/adapters/astar'
 import type { BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 import type BN from 'bn.js'
 
@@ -20,16 +21,15 @@ type TokenConfig = {
   decimals: number
   ed: string
   toRaw: () => BN | number | string
+  toQuery?: () => BN | number | string // required for astar balance adapter
 }
 
 type ExtendedAdapter<T extends new (...args: any[]) => BaseCrossChainAdapter> = new () => InstanceType<T> &
   BaseCrossChainAdapter
 
-function extendAdapter<T extends typeof AssetHubPolkadotAdapter | typeof ParallelAdapter | typeof CentrifugeAdapter>(
-  AdapterClass: T,
-  additionalRoutes: RouteConfig[],
-  additionalTokens: Record<string, TokenConfig>
-): ExtendedAdapter<T> {
+function extendAdapter<
+  T extends typeof AssetHubPolkadotAdapter | typeof ParallelAdapter | typeof CentrifugeAdapter | typeof AstarAdapter
+>(AdapterClass: T, additionalRoutes: RouteConfig[], additionalTokens: Record<string, TokenConfig>): ExtendedAdapter<T> {
   return class ExtendedAdapter extends AdapterClass {
     constructor() {
       super()
@@ -67,6 +67,14 @@ const newAssetHubPolkadotRoutes: RouteConfig[] = [
     token: 'USDC',
     xcm: {
       fee: { token: 'USDC', amount: '4000' },
+      weightLimit: 'Unlimited',
+    },
+  },
+  {
+    to: 'astar',
+    token: 'PINK',
+    xcm: {
+      fee: { token: 'PINK', amount: '80370000' },
       weightLimit: 'Unlimited',
     },
   },
@@ -114,6 +122,19 @@ const newCentrifugeTokens: Record<string, TokenConfig> = {
   },
 }
 
+const newAstarTokens: Record<string, TokenConfig> = {
+  PINK: {
+    name: 'PINK',
+    symbol: 'PINK',
+    decimals: 10,
+    ed: '1',
+    // TODO: get this value
+    // for now it doesn't matter what toRaw is, as long as PINK is only received
+    toRaw: () => '0x0000000000000000000000000000000000000000000000000000000000000000',
+    toQuery: () => '18446744073709551633',
+  },
+}
+
 export const ExtendedAssetHubPolkadotAdapter = extendAdapter(
   AssetHubPolkadotAdapter,
   newAssetHubPolkadotRoutes,
@@ -123,3 +144,5 @@ export const ExtendedAssetHubPolkadotAdapter = extendAdapter(
 export const ExtendedParallelAdapter = extendAdapter(ParallelAdapter, newParallelRoutes, newParallelTokens)
 
 export const ExtendedCentrifugeAdapter = extendAdapter(CentrifugeAdapter, [], newCentrifugeTokens)
+
+export const ExtendedAstarAdapter = extendAdapter(AstarAdapter, [], newAstarTokens)
