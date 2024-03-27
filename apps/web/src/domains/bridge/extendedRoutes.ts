@@ -1,10 +1,9 @@
+import type { ChainId } from '@polkawallet/bridge'
 import { AssetHubPolkadotAdapter } from '@polkawallet/bridge/adapters/assethub'
 import { CentrifugeAdapter } from '@polkawallet/bridge/adapters/centrifuge'
 import { ParallelAdapter } from '@polkawallet/bridge/adapters/parallel'
 import type { BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
-import type { ChainId } from '@polkawallet/bridge'
-
-import BN from 'bn.js'
+import type BN from 'bn.js'
 
 type RouteConfig = {
   to: ChainId
@@ -74,12 +73,13 @@ const newAssetHubPolkadotRoutes: RouteConfig[] = [
 ]
 
 const newAssetHubPolkadotTokens: Record<string, TokenConfig> = {
-  USDC: {
-    name: 'USD Coin',
-    symbol: 'USDC',
-    decimals: 6,
-    ed: '700000',
-    toRaw: () => new BN(1337),
+  // https://github.com/polkawallet-io/bridge/pull/124
+  DOT: {
+    name: 'DOT',
+    symbol: 'DOT',
+    decimals: 10,
+    ed: '100000000',
+    toRaw: () => 'NATIVE',
   },
 }
 
