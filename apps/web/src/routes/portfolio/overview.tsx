@@ -6,14 +6,14 @@ import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import PortfolioAllocationGraph from '@components/widgets/PortfolioAllocationGraph'
 import Stakes from '@components/widgets/staking/Stakes'
-import { Eye, EyeOff } from '@talismn/web-icons'
 import { Button, IconButton, SearchBar } from '@talismn/ui'
+import { Eye, EyeOff } from '@talismn/web-icons'
 import { redactBalanceState } from '@talismn/web/src/components/widgets/RedactableBalance'
-import { useMemo, useState } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 
-const AssetsOverview = () => {
+const SuspendableAssetsOverview = () => {
   const [search, setSearch] = useState('')
   const { fiatTotal } = useAssets()
   const { tokens, balances, isLoading } = useAssetsFiltered({ size: 8, search })
@@ -115,6 +115,12 @@ const AssetsOverview = () => {
     </div>
   )
 }
+
+const AssetsOverview = () => (
+  <Suspense fallback={<AssetsList isLoading />}>
+    <SuspendableAssetsOverview />
+  </Suspense>
+)
 
 // const HistoryOverview = () => (
 //   <div>
