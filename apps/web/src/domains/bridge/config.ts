@@ -1,7 +1,7 @@
 import { type ChainId } from '@polkawallet/bridge'
 import { AcalaAdapter, KaruraAdapter } from '@polkawallet/bridge/adapters/acala'
 import { AssetHubKusamaAdapter } from '@polkawallet/bridge/adapters/assethub'
-import { AstarAdapter, ShidenAdapter } from '@polkawallet/bridge/adapters/astar'
+import { ShidenAdapter } from '@polkawallet/bridge/adapters/astar'
 import { BifrostAdapter } from '@polkawallet/bridge/adapters/bifrost'
 import { AltairAdapter } from '@polkawallet/bridge/adapters/centrifuge'
 import { ShadowAdapter } from '@polkawallet/bridge/adapters/crust'
@@ -22,7 +22,12 @@ import { ZeitgeistAdapter } from '@polkawallet/bridge/adapters/zeitgeist'
 import { SubsocialAdapter } from '@polkawallet/bridge/adapters/subsocial'
 import { type BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 
-import { ExtendedCentrifugeAdapter, ExtendedParallelAdapter, ExtendedAssetHubPolkadotAdapter } from './extendedRoutes'
+import {
+  ExtendedCentrifugeAdapter,
+  ExtendedParallelAdapter,
+  ExtendedAssetHubPolkadotAdapter,
+  ExtendedAstarAdapter,
+} from './extendedRoutes'
 
 export const bridgeConfig = {
   polkadot: {
@@ -47,7 +52,7 @@ export const bridgeConfig = {
   },
   astar: {
     genesisHash: '0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6',
-    adapter: new AstarAdapter(),
+    adapter: new ExtendedAstarAdapter(),
   },
   basilisk: {
     genesisHash: '0xa85cfb9b9fd4d622a5b28289a02347af987d8f73fa3108450e2b4a11c1ce5755',
