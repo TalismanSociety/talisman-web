@@ -44,10 +44,16 @@ const TransportFormNetworkButton = (props: Pick<ButtonProps<'button'>, 'onClick'
       variants={{ false: { rotate: 0 }, true: { rotate: 90 } }}
       css={{ display: 'flex' }}
     >
-      <motion.div variants={{ false: { display: 'none' }, true: { display: 'contents' } }}>
+      {/* Display transition doesn't work properly
+      https://github.com/framer/motion/issues/2563 */}
+      <motion.div
+        variants={{ false: { transitionEnd: { display: 'none' } }, true: { transitionEnd: { display: 'flex' } } }}
+      >
         <Repeat />
       </motion.div>
-      <motion.div variants={{ false: { display: 'contents' }, true: { display: 'none' } }}>
+      <motion.div
+        variants={{ false: { transitionEnd: { display: 'flex' } }, true: { transitionEnd: { display: 'none' } } }}
+      >
         <ArrowDown />
       </motion.div>
     </motion.div>
