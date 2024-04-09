@@ -1,19 +1,18 @@
 // TODO: lots of duplicate type definitions
 // but already super burned out, need to de-duplication
 
-import { type ApiPromise } from '@polkadot/api'
 import type {
-  ApiTypes,
-  AugmentedQueries,
   GenericStorageEntryFunction,
   PromiseResult,
+  QueryableStorage,
   QueryableStorageEntry,
   StorageEntryPromiseOverloads,
   UnsubscribePromise,
 } from '@polkadot/api/types'
+import type { AllDerives } from '@polkadot/api/util'
 import { useContext } from 'react'
 import { atomFamily, constSelector, isRecoilValue, type RecoilState, type RecoilValueReadOnly } from 'recoil'
-import { type Observable } from 'rxjs'
+import type { Observable } from 'rxjs'
 import { ApiIdContext, RecoilStateContext } from './Context.js'
 import { garbageCollectionKey } from './GarbageCollector.js'
 import type { ApiId, Diverge, Leading, Options, PickKnownKeys } from './types.js'
@@ -75,12 +74,12 @@ export const queryAtomFamily = (options: Options) => {
   })
 
   const queryState = <
-    TModule extends keyof AugmentedQueries<ApiTypes>,
-    TSection extends Extract<keyof PickKnownKeys<AugmentedQueries<ApiTypes>[TModule]>, string>,
+    TModule extends keyof QueryableStorage<'promise'>,
+    TSection extends Extract<keyof PickKnownKeys<QueryableStorage<'promise'>[TModule]>, string>,
     TAugmentedSection extends TSection | `${TSection}.multi`,
     TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
     TMethod extends Diverge<
-      ApiPromise['query'][TModule][TExtractedSection],
+      QueryableStorage<'promise'>[TModule][TExtractedSection],
       StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
     >
   >(
@@ -95,7 +94,14 @@ export const queryAtomFamily = (options: Options) => {
         : Array<Readonly<Leading<Parameters<TMethod>>>>
       : never
   ) =>
-    _state([apiId, 'query', moduleName, sectionName, params]) as RecoilState<
+    _state([
+      apiId,
+      'query',
+      // @ts-expect-error
+      moduleName,
+      sectionName,
+      params,
+    ]) as RecoilState<
       TMethod extends PromiseResult<(...args: any) => Observable<infer Result>>
         ? TAugmentedSection extends TSection
           ? Result
@@ -104,15 +110,12 @@ export const queryAtomFamily = (options: Options) => {
     >
 
   const deriveState = <
-    TModule extends keyof PickKnownKeys<ApiPromise['derive']>,
-    TSection extends Extract<keyof PickKnownKeys<ApiPromise['derive'][TModule]>, string>,
+    TModule extends keyof PickKnownKeys<AllDerives<'promise'>>,
+    TSection extends Extract<keyof PickKnownKeys<AllDerives<'promise'>[TModule]>, string>,
     TAugmentedSection extends TSection | `${TSection}.multi`,
     TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
-    TMethod extends Diverge<
-      // @ts-expect-error
-      ApiPromise['derive'][TModule][TExtractedSection],
-      StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
-    >
+    // @ts-expect-error
+    TMethod extends AllDerives<'promise'>[TModule][TExtractedSection]
   >(
     apiId: ApiId,
     moduleName: TModule,
@@ -144,12 +147,12 @@ export type QueryState = ReturnType<typeof queryAtomFamily>['queryState']
 export type DeriveState = ReturnType<typeof queryAtomFamily>['deriveState']
 
 export const useQueryState = <
-  TModule extends keyof AugmentedQueries<ApiTypes>,
-  TSection extends Extract<keyof PickKnownKeys<AugmentedQueries<ApiTypes>[TModule]>, string>,
+  TModule extends keyof QueryableStorage<'promise'>,
+  TSection extends Extract<keyof PickKnownKeys<QueryableStorage<'promise'>[TModule]>, string>,
   TAugmentedSection extends TSection | `${TSection}.multi`,
   TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
   TMethod extends Diverge<
-    ApiPromise['query'][TModule][TExtractedSection],
+    QueryableStorage<'promise'>[TModule][TExtractedSection],
     StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
   >,
   TEnabled = void
@@ -190,15 +193,12 @@ export const useQueryState = <
 }
 
 export const useDeriveState = <
-  TModule extends keyof PickKnownKeys<ApiPromise['derive']>,
-  TSection extends Extract<keyof PickKnownKeys<ApiPromise['derive'][TModule]>, string>,
+  TModule extends keyof PickKnownKeys<AllDerives<'promise'>>,
+  TSection extends Extract<keyof PickKnownKeys<AllDerives<'promise'>[TModule]>, string>,
   TAugmentedSection extends TSection | `${TSection}.multi`,
   TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
-  TMethod extends Diverge<
-    // @ts-expect-error
-    ApiPromise['derive'][TModule][TExtractedSection],
-    StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
-  >,
+  // @ts-expect-error
+  TMethod extends AllDerives<'promise'>[TModule][TExtractedSection],
   TEnabled = void
 >(
   moduleName: TModule,

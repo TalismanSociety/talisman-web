@@ -1303,7 +1303,7 @@ async function buildAcalaTx({
   }
 
   const txs = [
-    api.tx.balances.transfer(proxyAddress, amount),
+    api.tx.balances.transferKeepAlive(proxyAddress, amount),
     api.tx.system.remarkWithEvent(statement),
     api.tx.system.remarkWithEvent(`referrer:${referral}`),
     api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
