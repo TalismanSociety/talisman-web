@@ -14,6 +14,9 @@ export const bridgeState = selector({
         .filter((x): x is NonNullable<typeof x> => x !== undefined)
         .map(x => x.adapter),
       disabledRouters: [
+        // Disable routes from asset hub
+        // due to reports of possible lost of funds from users
+        { from: 'assetHubPolkadot' },
         // Temporarily disable Kusama routes
         // due to: https://github.com/paritytech/polkadot-sdk/issues/3050
         { from: 'altair' },
