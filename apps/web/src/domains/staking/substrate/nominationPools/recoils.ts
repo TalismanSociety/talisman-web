@@ -148,7 +148,6 @@ const subscanPoolPayoutsState = selectorFamily<
             new URL('api/scan/nomination_pool/rewards', subscanUrl.replace('subscan', 'api.subscan')),
             {
               method: 'POST',
-              headers: { 'X-API-Key': '6543451cf4d8429f9767c6b5026b349d' },
               body: JSON.stringify({
                 address: encodeAddress(account, api.registry.chainSS58),
                 pool_id: poolId,
