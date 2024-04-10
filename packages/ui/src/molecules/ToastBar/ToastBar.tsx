@@ -163,9 +163,10 @@ const ToastBar = ({ toast }: ToastBarProps) => {
         {supportingContent}
       </Text.Body>
       <motion.div
-        animate={{ display: 'none' }}
+        // https://github.com/framer/motion/issues/2563
+        animate={{ transitionEnd: { display: 'none' } }}
         variants={{ hover: { display: 'revert' } }}
-        css={{ position: 'absolute', top: '-0.75rem', left: '-0.75rem' }}
+        css={{ display: 'none', position: 'absolute', top: '-0.75rem', left: '-0.75rem' }}
       >
         <SurfaceIconButton
           size="2rem"
