@@ -27,4 +27,10 @@ export const initSentry = () =>
 
       return event
     },
+    ignoreErrors: [
+      /(disconnected from wss)[(]?:\/\/[\w./:-]+: \d+:: Normal Closure[)]?/,
+      /^disconnected from .+: [0-9]+:: .+$/,
+      /^unsubscribed from .+: [0-9]+:: .+$/,
+      /(Could not establish connection. Receiving end does not exist.)/,
+    ],
   })
