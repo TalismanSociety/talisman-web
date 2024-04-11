@@ -1,6 +1,6 @@
 # Talisman Web
 
-<img src="apps/web/public/talisman.svg" alt="Talisman" width="15%" align="right" />
+<img src="apps/portal/public/talisman.svg" alt="Talisman" width="15%" align="right" />
 
 [![website-link](https://img.shields.io/website?label=app.talisman.xyz&style=flat-square&up_message=online&url=https%3A%2F%2Fapp.talisman.xyz)](https://app.talisman.xyz)
 [![discord-link](https://img.shields.io/discord/858891448271634473?logo=discord&logoColor=white&style=flat-square)](https://discord.gg/talisman)
@@ -36,7 +36,7 @@ yarn
 4. Copy `.env.example` to `.env` and update the values inside:
 
 ```sh
-cp apps/web/.env.example apps/web/.env
+cp apps/portal/.env.example apps/portal/.env
 ```
 
 5. Start the dev server:

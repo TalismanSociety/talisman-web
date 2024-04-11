@@ -32,8 +32,8 @@ jobs:
       projectName: ${{ vars.PORTAL_STORYBOOK_PROJECT_NAME }}
       buildCommand: >-
         NODE_OPTIONS=--max_old_space_size=5120
-        yarn turbo run build-storybook --filter=web
-      outputDirectory: apps/web/storybook-static
+        yarn turbo run build-storybook --filter=portal
+      outputDirectory: apps/portal/storybook-static
     secrets: inherit
 
   deploy-portal:
@@ -44,8 +44,8 @@ jobs:
       buildCommand: >-
         NODE_OPTIONS=--max_old_space_size=10240
         REACT_APP_SENTRY_RELEASE=${{ github.sha }}
-        yarn turbo run build --filter=web -- --sourcemap
-      outputDirectory: apps/web/build
+        yarn turbo run build --filter=portal -- --sourcemap
+      outputDirectory: apps/portal/build
       sentryReleaseVersion: ${{ github.sha }}
       environmentVariableSecrets: >-
         CHAINDATA,

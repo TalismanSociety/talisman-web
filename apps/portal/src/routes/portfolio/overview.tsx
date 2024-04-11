@@ -8,7 +8,7 @@ import PortfolioAllocationGraph from '@components/widgets/PortfolioAllocationGra
 import Stakes from '@components/widgets/staking/Stakes'
 import { Button, IconButton, SearchBar } from '@talismn/ui'
 import { Eye, EyeOff } from '@talismn/web-icons'
-import { redactBalanceState } from '@talismn/web/src/components/widgets/RedactableBalance'
+import { redactBalanceState } from '@components/widgets/RedactableBalance'
 import { Suspense, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
