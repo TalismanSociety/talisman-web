@@ -2,8 +2,8 @@ import { chainsState } from '@domains/chains'
 import { substrateApiState } from '@domains/common'
 import crowdloanDataState, { type CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
 import { find } from 'lodash'
-import { type PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
-import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+import { useContext as _useContext, createContext, useEffect, useMemo, useState, type PropsWithChildren } from 'react'
+import { selector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 export type { CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
 
@@ -74,44 +74,48 @@ function useContext() {
 // Provider
 //
 
+const apisState = selector({
+  key: 'Parachain/Apis',
+  get: ({ get }) => {
+    const chains = get(chainsState)
+    return get(waitForAll([substrateApiState(chains[0]?.rpc), substrateApiState(chains[1]?.rpc)]))
+  },
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
+  dangerouslyAllowMutability: true,
+})
+
 export const Provider = ({ children }: PropsWithChildren) => {
   const [hydrated, setHydrated] = useState(false)
   const [parachains, setParachains] = useState<CrowdloanDetail[]>([])
 
-  const crowdloans = useRecoilValue(crowdloanDataState)
-  const chains = useRecoilValue(chainsState)
-  const apisLoadable = useRecoilValueLoadable(
-    waitForAll([substrateApiState(chains[0]?.rpc), substrateApiState(chains[1]?.rpc)])
-  )
+  const crowdloansLoadable = useRecoilValueLoadable(crowdloanDataState)
+  const apisLoadable = useRecoilValueLoadable(apisState)
 
-  useEffect(
-    () => {
-      if (hydrated) {
-        return
-      }
+  useEffect(() => {
+    if (hydrated) {
+      return
+    }
 
-      if (apisLoadable.state !== 'hasValue') {
-        return
-      }
+    if (crowdloansLoadable.state !== 'hasValue' || apisLoadable.state !== 'hasValue') {
+      return
+    }
 
-      void (async () => {
-        const [polkadotApi, kusamaApi] = apisLoadable.contents
+    void (async () => {
+      const crowdloans = crowdloansLoadable.contents
+      const [polkadotApi, kusamaApi] = apisLoadable.contents
 
-        const polkadotFunds = await polkadotApi.query.crowdloan.funds.entries()
-        const kusamaFunds = await kusamaApi.query.crowdloan.funds.entries()
+      const polkadotFunds = await polkadotApi.query.crowdloan.funds.entries()
+      const kusamaFunds = await kusamaApi.query.crowdloan.funds.entries()
 
-        const polkadotParaIds = polkadotFunds.map(x => `0-${x[0].args[0].toString()}`)
-        const kusamaParaIds = kusamaFunds.map(x => `2-${x[0].args[0].toString()}`)
+      const polkadotParaIds = polkadotFunds.map(x => `0-${x[0].args[0].toString()}`)
+      const kusamaParaIds = kusamaFunds.map(x => `2-${x[0].args[0].toString()}`)
 
-        const paraIds = [...polkadotParaIds, ...kusamaParaIds]
+      const paraIds = [...polkadotParaIds, ...kusamaParaIds]
 
-        setParachains(crowdloans.filter(x => paraIds.includes(x.id)))
-        setHydrated(true)
-      })()
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [apisLoadable.state]
-  )
+      setParachains(crowdloans.filter(x => paraIds.includes(x.id)))
+      setHydrated(true)
+    })()
+  }, [apisLoadable.contents, apisLoadable.state, crowdloansLoadable.contents, crowdloansLoadable.state, hydrated])
 
   return <Context.Provider value={{ parachains, hydrated }}>{children}</Context.Provider>
 }

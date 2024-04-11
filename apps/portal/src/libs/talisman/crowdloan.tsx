@@ -6,7 +6,7 @@ import { planckToTokens } from '@talismn/util'
 import BN from 'bn.js'
 import { find, get } from 'lodash'
 import { useContext as _useContext, createContext, useEffect, useMemo, useState, type PropsWithChildren } from 'react'
-import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+import { selector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import { substrateApiState } from '@domains/common'
 import { supportedRelayChainsState } from './util/_config'
@@ -134,20 +134,33 @@ function hasCrowdloadPrefix(accountId: AccountId): boolean {
   return u8aEq(accountId.slice(0, CROWD_PREFIX.length), CROWD_PREFIX)
 }
 
+const apisState = selector({
+  key: 'Crowdloans/Apis',
+  get: ({ get }) => {
+    const relayChains = get(supportedRelayChainsState)
+    return get(waitForAll(relayChains.map(relayChain => substrateApiState(relayChain.rpc))))
+  },
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
+  dangerouslyAllowMutability: true,
+})
+
 export const Provider = ({ children }: PropsWithChildren) => {
   const [crowdloans, setCrowdloans] = useState<Crowdloan[]>([])
   const [hydrated, setHydrated] = useState(false)
 
-  const relayChains = useRecoilValue(supportedRelayChainsState)
-  const loadable = useRecoilValueLoadable(
-    waitForAll([crowdloanDataState, ...relayChains.map(relayChain => substrateApiState(relayChain.rpc))])
-  )
+  const relayChainsLoadable = useRecoilValueLoadable(supportedRelayChainsState)
+  const crowdloanLoadable = useRecoilValueLoadable(crowdloanDataState)
+  const apisLoadable = useRecoilValueLoadable(apisState)
 
   useEffect(() => {
-    if (loadable.state === 'hasValue') {
-      const [crowdloanData, ...chainApis] = loadable.contents
-      const promises = relayChains
-        .map((chain, index) => ({ api: chainApis[index]!, chain }))
+    if (
+      relayChainsLoadable.state === 'hasValue' &&
+      crowdloanLoadable.state === 'hasValue' &&
+      apisLoadable.state === 'hasValue'
+    ) {
+      const crowdloanData = crowdloanLoadable.contents
+      const promises = relayChainsLoadable.contents
+        .map((chain, index) => ({ api: apisLoadable.contents[index]!, chain }))
         .map(async ({ api, chain }) => {
           const bestNumber = await api.derive.chain.bestNumber()
 
@@ -237,7 +250,14 @@ export const Provider = ({ children }: PropsWithChildren) => {
         setHydrated(true)
       })
     }
-  }, [loadable.contents, loadable.state, relayChains])
+  }, [
+    apisLoadable.contents,
+    apisLoadable.state,
+    crowdloanLoadable.contents,
+    crowdloanLoadable.state,
+    relayChainsLoadable.contents,
+    relayChainsLoadable.state,
+  ])
 
   const value = useMemo(() => ({ crowdloans, hydrated }), [crowdloans, hydrated])
 
