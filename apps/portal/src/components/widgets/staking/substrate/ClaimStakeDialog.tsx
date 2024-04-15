@@ -30,7 +30,7 @@ const ClaimStakeDialog = (props: ClaimStakeDialogProps) => {
   return (
     <ClaimStakeDialogComponent
       open={props.open}
-      amount={rewards.decimalAmount?.toHuman() ?? '...'}
+      amount={rewards.decimalAmount?.toLocaleString() ?? '...'}
       fiatAmount={rewards.localizedFiatAmount ?? '...'}
       onRequestDismiss={props.onRequestDismiss}
       onRequestClaim={() => {

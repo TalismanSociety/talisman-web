@@ -26,11 +26,11 @@ const ValidatorUnstakeDialog = (props: { accountAddress: string; open: boolean; 
     <BaseUnstakeDialog
       isError={inputError !== undefined}
       open={props.open}
-      availableAmount={available.decimalAmount?.toHuman() ?? '...'}
+      availableAmount={available.decimalAmount?.toLocaleString() ?? '...'}
       amount={amount}
       onChangeAmount={setAmount}
       fiatAmount={localizedFiatAmount ?? ''}
-      newAmount={resulting.decimalAmount?.toHuman() ?? '...'}
+      newAmount={resulting.decimalAmount?.toLocaleString() ?? '...'}
       newFiatAmount={resulting.localizedFiatAmount ?? '...'}
       inputSupportingText={inputError?.message}
       lockDuration={lockDuration}

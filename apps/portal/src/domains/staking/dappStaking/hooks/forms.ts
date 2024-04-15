@@ -135,7 +135,7 @@ export const useAddStakeForm = (
     }
 
     if (input.decimalAmount !== undefined && input.decimalAmount.planck < minimum.decimalAmount.planck) {
-      return new Error(`Minimum ${minimum.decimalAmount.toHuman()} needed`)
+      return new Error(`Minimum ${minimum.decimalAmount.toLocaleString()} needed`)
     }
 
     return undefined
@@ -257,7 +257,7 @@ export const useUnstakeForm = (
       available.decimalAmount.planck - input.decimalAmount.planck > 0n &&
       available.decimalAmount.planck - input.decimalAmount.planck < minimum.decimalAmount.planck
     ) {
-      return new Error(`Need ${minimum.decimalAmount.toHuman()} to keep staking`)
+      return new Error(`Need ${minimum.decimalAmount.toLocaleString()} to keep staking`)
     }
 
     return undefined

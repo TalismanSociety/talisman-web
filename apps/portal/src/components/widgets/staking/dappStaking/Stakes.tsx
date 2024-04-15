@@ -49,7 +49,7 @@ const Stake = ({ account }: { account: Account }) => {
         account={account}
         provider="DApp staking"
         stakeStatus={stake.earningRewards ? 'earning_rewards' : 'not_earning_rewards'}
-        balance={stake.totalStaked.decimalAmount.toHuman()}
+        balance={stake.totalStaked.decimalAmount.toLocaleString()}
         fiatBalance={stake.totalStaked.localizedFiatAmount}
         increaseStakeButton={
           stake.dapps.length > 0 && (
@@ -71,7 +71,7 @@ const Stake = ({ account }: { account: Account }) => {
           stake.locked.decimalAmount.planck !== 0n && (
             <StakePosition.LockedButton
               loading={unlockExtrinsic.state === 'loading'}
-              amount={stake.locked.decimalAmount.toHuman()}
+              amount={stake.locked.decimalAmount.toLocaleString()}
               onClick={() => setLockedDialogOpen(true)}
             />
           )
@@ -80,7 +80,7 @@ const Stake = ({ account }: { account: Account }) => {
           stake.totalRewards.decimalAmount.planck !== 0n && (
             <StakePosition.ClaimButton
               loading={claimAllRewardsExtrinsic.state === 'loading'}
-              amount={stake.totalRewards.decimalAmount.toHuman()}
+              amount={stake.totalRewards.decimalAmount.toLocaleString()}
               onClick={() => {
                 void claimAllRewardsExtrinsic.signAndSend(account.address)
               }}
@@ -91,7 +91,7 @@ const Stake = ({ account }: { account: Account }) => {
           stake.withdrawable.decimalAmount.planck > 0n && (
             <StakePosition.WithdrawButton
               loading={withdrawExtrinsic.state === 'loading'}
-              amount={stake.withdrawable.decimalAmount.toHuman()}
+              amount={stake.withdrawable.decimalAmount.toLocaleString()}
               onClick={() => {
                 void withdrawExtrinsic.signAndSend(account.address)
               }}
@@ -101,8 +101,8 @@ const Stake = ({ account }: { account: Account }) => {
         status={
           stake.unlocking.length > 0 && (
             <StakePosition.UnstakingStatus
-              amount={stake.totalUnlocking.decimalAmount.toHuman()}
-              unlocks={stake.unlocking.map(x => ({ amount: x.amount.decimalAmount.toHuman(), eta: x.eta }))}
+              amount={stake.totalUnlocking.decimalAmount.toLocaleString()}
+              unlocks={stake.unlocking.map(x => ({ amount: x.amount.decimalAmount.toLocaleString(), eta: x.eta }))}
             />
           )
         }
@@ -115,7 +115,7 @@ const Stake = ({ account }: { account: Account }) => {
       )}
       {lockedDialogOpen && (
         <DappStakingLockedAmountDialog
-          amount={stake.locked.decimalAmount.toHuman()}
+          amount={stake.locked.decimalAmount.toLocaleString()}
           fiatAmount={stake.locked.localizedFiatAmount}
           unlockDuration={<UnlockDuration />}
           onRequestDismiss={() => setLockedDialogOpen(false)}

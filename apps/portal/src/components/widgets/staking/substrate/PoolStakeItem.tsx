@@ -30,7 +30,7 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
 
   const eraEtaFormatter = useEraEtaFormatter()
   const unlocks = item.unlockings?.map(x => ({
-    amount: <RedactableBalance>{decimal.fromPlanck(x.amount).toHuman()}</RedactableBalance>,
+    amount: <RedactableBalance>{decimal.fromPlanck(x.amount).toLocaleString()}</RedactableBalance>,
     eta: eraEtaFormatter(x.erasTilWithdrawable),
   }))
 
@@ -47,7 +47,7 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
         readonly={item.account.readonly}
         stakeStatus={item.status}
         account={item.account}
-        balance={<RedactableBalance>{decimal.fromPlanck(item.poolMember.points).toHuman()}</RedactableBalance>}
+        balance={<RedactableBalance>{decimal.fromPlanck(item.poolMember.points).toLocaleString()}</RedactableBalance>}
         fiatBalance={
           <AnimatedFiatNumber end={decimal.fromPlanck(item.poolMember.points).toNumber() * nativeTokenPrice} />
         }
@@ -56,7 +56,7 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
         claimButton={
           item.pendingRewards?.isZero() === false && (
             <StakePosition.ClaimButton
-              amount={<RedactableBalance>{decimal.fromPlanck(item.pendingRewards).toHuman()}</RedactableBalance>}
+              amount={<RedactableBalance>{decimal.fromPlanck(item.pendingRewards).toLocaleString()}</RedactableBalance>}
               onClick={() => setClaimDialogOpen(true)}
               loading={claimPayoutLoadable.state === 'loading' || restakeLoadable.state === 'loading'}
             />
@@ -75,7 +75,7 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
         withdrawButton={
           item.withdrawable > 0n && (
             <StakePosition.WithdrawButton
-              amount={<RedactableBalance>{decimal.fromPlanck(item.withdrawable).toHuman()}</RedactableBalance>}
+              amount={<RedactableBalance>{decimal.fromPlanck(item.withdrawable).toLocaleString()}</RedactableBalance>}
               onClick={() => {
                 void withdrawExtrinsic.signAndSend(
                   item.account?.address ?? '',
@@ -109,7 +109,7 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
         status={
           item.totalUnlocking > 0n && (
             <StakePosition.UnstakingStatus
-              amount={<RedactableBalance>{decimal.fromPlanck(item.totalUnlocking).toHuman()}</RedactableBalance>}
+              amount={<RedactableBalance>{decimal.fromPlanck(item.totalUnlocking).toLocaleString()}</RedactableBalance>}
               unlocks={unlocks ?? []}
             />
           )

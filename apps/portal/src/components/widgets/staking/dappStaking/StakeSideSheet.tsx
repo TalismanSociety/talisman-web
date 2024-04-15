@@ -83,7 +83,7 @@ const DappSelectorDialog = (props: DappSelectorDialogProps) => {
           highlighted={dapp.address === highlightedDapp?.address}
           name={dapp.name}
           logo={dapp.iconUrl}
-          balance={dapp.staked.toHuman()}
+          balance={dapp.staked.toLocaleString()}
           count={dapp.stakerCount}
           talismanRecommended={index === 0}
           onClick={() => setHighlightedDapp(dapp)}
@@ -129,7 +129,7 @@ const EstimatedRewards = (props: { amount: string }) => {
 
   return (
     <>
-      {amount.decimalAmount.toHuman()} / Year ({amount.localizedFiatAmount})
+      {amount.decimalAmount.toLocaleString()} / Year ({amount.localizedFiatAmount})
     </>
   )
 }
@@ -152,7 +152,7 @@ const StakeForm = (props: StakeFormProps) => {
           fiatAmount={input.localizedFiatAmount}
           onChangeAmount={setAmount}
           onRequestMaxAmount={() => setAmount(available.decimalAmount.toString())}
-          availableToStake={available.decimalAmount.toHuman()}
+          availableToStake={available.decimalAmount.toLocaleString()}
           assetSelector={props.assetSelector}
           error={error?.message}
         />
@@ -176,7 +176,7 @@ const StakeForm = (props: StakeFormProps) => {
         </Suspense>
       }
       currentStakedBalance={
-        stake.totalStaked.decimalAmount.planck > 0n ? stake.totalStaked.decimalAmount.toHuman() : undefined
+        stake.totalStaked.decimalAmount.planck > 0n ? stake.totalStaked.decimalAmount.toLocaleString() : undefined
       }
     />
   )
@@ -269,7 +269,7 @@ const MinimumStake = () => (
   <>
     {useTokenAmountFromPlanck(
       useRecoilValue(useSubstrateApiState()).consts.dappStaking.minimumStakeAmount
-    ).decimalAmount.toHuman()}
+    ).decimalAmount.toLocaleString()}
   </>
 )
 

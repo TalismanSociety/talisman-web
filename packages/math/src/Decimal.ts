@@ -91,7 +91,7 @@ export default class Decimal {
     }
   }
 
-  toHuman(options = { withUnit: true }) {
+  toLocaleString(options = { withUnit: true }) {
     const raw = formatBalance(this.planck.toString(), {
       forceUnit: '-',
       withUnit: false,

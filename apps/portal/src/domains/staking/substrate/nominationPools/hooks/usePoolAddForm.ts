@@ -104,7 +104,7 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
       input.decimalAmount !== undefined &&
       input.decimalAmount.planck < minimum.decimalAmount.planck
     ) {
-      return new Error(`Minimum ${minimum.decimalAmount.toHuman()} needed`)
+      return new Error(`Minimum ${minimum.decimalAmount.toLocaleString()} needed`)
     }
 
     return undefined

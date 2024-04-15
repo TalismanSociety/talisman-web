@@ -303,15 +303,15 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
       account={props.account}
       poolName={props.pool.poolName}
       poolStatus={props.pool.status}
-      balance={<RedactableBalance>{balance.decimalAmount.toHuman()}</RedactableBalance>}
-      rewards={<RedactableBalance>{last15DaysTotalPayouts.toHuman()}</RedactableBalance>}
+      balance={<RedactableBalance>{balance.decimalAmount.toLocaleString()}</RedactableBalance>}
+      rewards={<RedactableBalance>{last15DaysTotalPayouts.toLocaleString()}</RedactableBalance>}
       apr={stakedReturn.toLocaleString(undefined, { style: 'percent' })}
       nextEraEta={useEraEtaFormatter()(1)}
       unbondings={useMemo(
         () =>
           props.pool.unlockings.map(x => ({
             eta: eraEtaFormatter(x.erasTilWithdrawable),
-            amount: decimal.fromPlanck(x.amount).toHuman(),
+            amount: decimal.fromPlanck(x.amount).toLocaleString(),
           })),
         [decimal, eraEtaFormatter, props.pool.unlockings]
       )}
@@ -320,7 +320,7 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
           last15DaysPayouts.map(x => ({
             date: x.date,
             amount: x.amount.toNumber(),
-            displayAmount: <RedactableBalance>{x.amount.toHuman()}</RedactableBalance>,
+            displayAmount: <RedactableBalance>{x.amount.toLocaleString()}</RedactableBalance>,
           })),
         [last15DaysPayouts]
       )}
@@ -329,7 +329,7 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
           mostRecentPayouts.map(x => ({
             date: x.date,
             amount: x.amount.toNumber(),
-            displayAmount: <RedactableBalance>{x.amount.toHuman()}</RedactableBalance>,
+            displayAmount: <RedactableBalance>{x.amount.toLocaleString()}</RedactableBalance>,
           })),
         [mostRecentPayouts]
       )}

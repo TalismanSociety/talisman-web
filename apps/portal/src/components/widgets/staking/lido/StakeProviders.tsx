@@ -33,7 +33,7 @@ const useAvailableBalance = (lidoSuite: LidoSuite) => {
         nativeBalance.sum.planck.transferable ?? 0n,
         nativeBalance.each.at(0)?.decimals ?? 0,
         lidoSuite.chain.nativeCurrency.symbol
-      ).toHuman(),
+      ).toLocaleString(),
       fiatAmount: nativeBalance.sum.fiat(currency).total,
     }),
     [currency, lidoSuite.chain.nativeCurrency.symbol, nativeBalance.each, nativeBalance.sum]

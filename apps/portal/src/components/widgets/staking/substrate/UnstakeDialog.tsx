@@ -26,12 +26,12 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
     <NominationPoolsUnstakeDialog
       isError={inputError !== undefined}
       open={props.account !== undefined}
-      availableAmount={available.decimalAmount?.toHuman() ?? '...'}
+      availableAmount={available.decimalAmount?.toLocaleString() ?? '...'}
       amount={amount}
       isLeaving={isLeaving}
       onChangeAmount={setAmount}
       fiatAmount={localizedFiatAmount ?? ''}
-      newAmount={resulting.decimalAmount?.toHuman() ?? '...'}
+      newAmount={resulting.decimalAmount?.toLocaleString() ?? '...'}
       newFiatAmount={resulting.localizedFiatAmount ?? '...'}
       inputSupportingText={inputError?.message}
       lockDuration={lockDuration}
