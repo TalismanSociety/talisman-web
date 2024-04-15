@@ -68,7 +68,7 @@ const ValidatorStakeItem = (props: {
 
   const eraEtaFormatter = useEraEtaFormatter()
   const unlocks = props.stake.unlocking?.map(x => ({
-    amount: decimal.fromPlanck(x.value).toHuman(),
+    amount: decimal.fromPlanck(x.value).toLocaleString(),
     eta: eraEtaFormatter(x.remainingEras) ?? <CircularProgressIndicator size="1em" />,
   }))
 
@@ -91,13 +91,15 @@ const ValidatorStakeItem = (props: {
         }
         readonly={props.account.readonly}
         account={props.account}
-        balance={<RedactableBalance>{active.toHuman()}</RedactableBalance>}
+        balance={<RedactableBalance>{active.toLocaleString()}</RedactableBalance>}
         fiatBalance={<AnimatedFiatNumber end={active.toNumber() * nativeTokenPrice} />}
         unstakeButton={<StakePosition.UnstakeButton onClick={onRequestUnstake} />}
         withdrawButton={
           props.stake.redeemable?.isZero() === false && (
             <StakePosition.WithdrawButton
-              amount={<RedactableBalance>{decimal.fromPlanck(props.stake.redeemable).toHuman()}</RedactableBalance>}
+              amount={
+                <RedactableBalance>{decimal.fromPlanck(props.stake.redeemable).toLocaleString()}</RedactableBalance>
+              }
               onClick={() => {
                 void withdrawExtrinsic.signAndSend(props.stake.controllerId ?? '', props.slashingSpan)
               }}
@@ -109,12 +111,12 @@ const ValidatorStakeItem = (props: {
           totalUnlocking?.isZero() === false ? (
             props.inFastUnstakeHead || props.inFastUnstakeQueue ? (
               <ValidatorStakeItemComponent.FastUnstakingStatus
-                amount={<RedactableBalance>{decimal.fromPlanck(totalUnlocking).toHuman()}</RedactableBalance>}
+                amount={<RedactableBalance>{decimal.fromPlanck(totalUnlocking).toLocaleString()}</RedactableBalance>}
                 status={props.inFastUnstakeHead ? 'in-head' : props.inFastUnstakeQueue ? 'in-queue' : undefined}
               />
             ) : (
               <ValidatorStakeItemComponent.UnstakingStatus
-                amount={<RedactableBalance>{decimal.fromPlanck(totalUnlocking).toHuman()}</RedactableBalance>}
+                amount={<RedactableBalance>{decimal.fromPlanck(totalUnlocking).toLocaleString()}</RedactableBalance>}
                 unlocks={unlocks ?? []}
               />
             )
@@ -138,10 +140,10 @@ const ValidatorStakeItem = (props: {
               return 'ineligible'
           }
         }, [hasEnoughDepositForFastUnstake, props.eligibleForFastUnstake])}
-        amount={amount.decimalAmount?.toHuman() ?? '...'}
+        amount={amount.decimalAmount?.toLocaleString() ?? '...'}
         fiatAmount={amount.localizedFiatAmount ?? '...'}
         lockDuration={lockDuration}
-        depositAmount={decimal.fromPlanck(props.fastUnstakeDeposit).toHuman()}
+        depositAmount={decimal.fromPlanck(props.fastUnstakeDeposit).toLocaleString()}
         onDismiss={() => {
           setIsFastUnstakeDialogOpen(false)
         }}

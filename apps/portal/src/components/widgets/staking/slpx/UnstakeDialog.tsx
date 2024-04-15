@@ -45,10 +45,10 @@ const UnstakeDialog = (props: UnstakeDialogProps) => {
       onDismiss={props.onRequestDismiss}
       amount={amount}
       fiatAmount={localizedFiatAmount ?? '...'}
-      newAmount={newAmount?.toHuman() ?? '...'}
+      newAmount={newAmount?.toLocaleString() ?? '...'}
       newFiatAmount={null}
       onChangeAmount={setAmount}
-      availableAmount={available?.toHuman() ?? '...'}
+      availableAmount={available?.toLocaleString() ?? '...'}
       lockDuration={
         <Suspense fallback="...">
           <UnlockDuration slpxPair={props.slpxPair} />

@@ -25,7 +25,7 @@ const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStake
         account={props.position.account}
         provider="Bifrost liquid staking"
         stakeStatus={props.position.balance.planck > 0n ? 'earning_rewards' : 'not_earning_rewards'}
-        balance={<RedactableBalance>{props.position.balance.toHuman()}</RedactableBalance>}
+        balance={<RedactableBalance>{props.position.balance.toLocaleString()}</RedactableBalance>}
         fiatBalance={<AnimatedFiatNumber end={props.position.fiatBalance} />}
         chain={props.slpxPair.chain.name}
         symbol={props.position.balance.unit}
@@ -38,7 +38,7 @@ const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStake
         status={
           props.position.unlocking !== undefined &&
           props.position.unlocking.planck > 0n && (
-            <StakePosition.UnstakingStatus amount={props.position.unlocking?.toHuman()} unlocks={[]} />
+            <StakePosition.UnstakingStatus amount={props.position.unlocking?.toLocaleString()} unlocks={[]} />
           )
         }
       />

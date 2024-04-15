@@ -195,7 +195,7 @@ export const useSlpxSwapForm = (
     }
 
     if (decimalAmount !== undefined && minAmount !== undefined && decimalAmount.planck < minAmount.planck) {
-      return new Error(`Minimum ${minAmount.toHuman()} needed`)
+      return new Error(`Minimum ${minAmount.toLocaleString()} needed`)
     }
 
     return undefined

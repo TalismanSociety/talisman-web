@@ -69,7 +69,7 @@ const ExistingPool = (props: { account: Account }) => {
   const decimal = useRecoilValue(useNativeTokenDecimalState())
   const eraEtaFormatter = useEraEtaFormatter()
   const unlocks = pool?.unlockings?.map(x => ({
-    amount: decimal.fromPlanck(x.amount).toHuman(),
+    amount: decimal.fromPlanck(x.amount).toLocaleString(),
     eta: eraEtaFormatter(x.erasTilWithdrawable),
   }))
 
@@ -81,9 +81,9 @@ const ExistingPool = (props: { account: Account }) => {
       <StakeFormComponent.ExistingPool
         name={pool?.poolName}
         status={pool?.status}
-        amount={amount.decimalAmount?.toHuman()}
+        amount={amount.decimalAmount?.toLocaleString()}
         fiatAmount={amount.localizedFiatAmount}
-        rewards={pendingRewards.decimalAmount?.toHuman()}
+        rewards={pendingRewards.decimalAmount?.toLocaleString()}
         rewardsFiatAmount={pendingRewards.localizedFiatAmount}
         claimChip={
           pool?.pendingRewards?.isZero() === false && (
@@ -94,12 +94,12 @@ const ExistingPool = (props: { account: Account }) => {
           )
         }
         unlocks={unlocks ?? []}
-        unlocking={unlocking.decimalAmount.planck > 0n && unlocking.decimalAmount.toHuman()}
+        unlocking={unlocking.decimalAmount.planck > 0n && unlocking.decimalAmount.toLocaleString()}
         unlockingFiatAmount={unlocking.localizedFiatAmount}
         withdrawable={
           withdrawable.decimalAmount !== undefined &&
           withdrawable.decimalAmount.planck > 0n &&
-          withdrawable.decimalAmount.toHuman()
+          withdrawable.decimalAmount.toLocaleString()
         }
         withdrawableFiatAmount={withdrawable.localizedFiatAmount}
         withdrawChip={
@@ -189,7 +189,7 @@ const PoolSelector = (props: {
               ? undefined
               : new URL(`nomination_pool/${pool.poolId}`, chain.subscanUrl).toString()
           }
-          balance={`${nativeTokenDecimal.fromPlanck(pool.bondedPool.points).toHuman()} staked`}
+          balance={`${nativeTokenDecimal.fromPlanck(pool.bondedPool.points).toLocaleString()} staked`}
           rating={3}
           count={pool.bondedPool.memberCounter.toString()}
           onClick={() => setNewPoolId(pool.poolId)}
@@ -254,7 +254,7 @@ const EstimatedYield = memo(
 
     return (
       <StakeFormComponent.EstimatedYield
-        amount={`${parsedAnnualReturn.decimalAmount.toHuman()} / Year`}
+        amount={`${parsedAnnualReturn.decimalAmount.toLocaleString()} / Year`}
         fiatAmount={parsedAnnualReturn.localizedFiatAmount}
       />
     )
@@ -456,7 +456,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
               }
             }}
             fiatAmount={localizedFiatAmount}
-            availableToStake={availableBalance.decimalAmount?.toHuman() ?? '...'}
+            availableToStake={availableBalance.decimalAmount?.toLocaleString() ?? '...'}
             error={inputError?.message}
           />
         }
@@ -464,7 +464,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
           <StakeFormComponent.PoolInfo
             name={poolMetadataLoadable.valueMaybe()?.[0]?.toUtf8() ?? ''}
             status={poolStatus}
-            totalStaked={poolTotalStaked?.toHuman() ?? ''}
+            totalStaked={poolTotalStaked?.toLocaleString() ?? ''}
             memberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}
             onRequestPoolChange={() => setShowPoolSelector(true)}
             chain={chain.id.toString() ?? ''}

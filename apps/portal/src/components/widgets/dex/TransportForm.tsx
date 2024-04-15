@@ -246,7 +246,7 @@ const TransportForm = () => {
     }
 
     if (decimalAmount.planck < parsedInputConfigLoadable.contents.minInput.planck) {
-      return `Minimum ${parsedInputConfigLoadable.contents.minInput.toHuman()}`
+      return `Minimum ${parsedInputConfigLoadable.contents.minInput.toLocaleString()}`
     }
 
     return undefined
@@ -297,7 +297,7 @@ const TransportForm = () => {
             parsedInputConfigLoadable?.state === 'loading' ? (
               <CircularProgressIndicator size="1em" />
             ) : parsedInputConfigLoadable?.state === 'hasValue' ? (
-              parsedInputConfigLoadable?.contents?.maxInput.toHuman()
+              parsedInputConfigLoadable?.contents?.maxInput.toLocaleString()
             ) : undefined
           }
           transferableFiatAmount={fiatAmount !== undefined && <AnimatedFiatNumber end={fiatAmount} />}
@@ -330,20 +330,20 @@ const TransportForm = () => {
           onChangeAmount={setAmount}
           onRequestMaxAmount={() => setAmount(parsedInputConfigLoadable?.valueMaybe()?.maxInput.toString() ?? '')}
           originFee={Maybe.of(parsedInputConfigLoadable?.valueMaybe()).mapOrUndefined(
-            fee => `~${fee.estimateFee.toHuman()}`
+            fee => `~${fee.estimateFee.toLocaleString()}`
           )}
-          destinationFee={parsedInputConfigLoadable?.valueMaybe()?.destFee.toHuman()}
+          destinationFee={parsedInputConfigLoadable?.valueMaybe()?.destFee.toLocaleString()}
           inputError={inputError}
         />
       }
       fees={[
         Maybe.of(parsedInputConfigLoadable?.valueMaybe()).mapOrUndefined(fee => ({
           name: 'Origin fee',
-          amount: `~${fee.estimateFee.toHuman()}`,
+          amount: `~${fee.estimateFee.toLocaleString()}`,
         })),
         Maybe.of(parsedInputConfigLoadable?.valueMaybe()).mapOrUndefined(fee => ({
           name: 'Destination fee',
-          amount: `~${fee.destFee.toHuman()}`,
+          amount: `~${fee.destFee.toLocaleString()}`,
         })),
       ]}
       submitButton={

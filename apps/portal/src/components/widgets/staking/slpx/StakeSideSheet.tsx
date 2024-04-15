@@ -73,10 +73,10 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
           accountSelector={accountSelector}
           amount={amount}
           fiatAmount={localizedFiatAmount ?? '...'}
-          newAmount={newAmount?.toHuman() ?? '...'}
+          newAmount={newAmount?.toLocaleString() ?? '...'}
           newFiatAmount={null}
           onChangeAmount={setAmount}
-          availableToStake={available?.toHuman() ?? '...'}
+          availableToStake={available?.toLocaleString() ?? '...'}
           rate={Maybe.of(rate).mapOr(
             '...',
             rate => `1 ${props.slpxPair.nativeToken.symbol} = ${rate.toLocaleString()} ${props.slpxPair.vToken.symbol}`

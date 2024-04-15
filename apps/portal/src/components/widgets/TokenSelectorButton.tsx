@@ -81,7 +81,7 @@ const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProp
                 key={index}
                 logoSrc={x.logo}
                 name={x.symbol}
-                amount={x.transferable.toHuman()}
+                amount={x.transferable.toLocaleString()}
                 fiatAmount={x.fiatTransferable.toLocaleString(undefined, {
                   style: 'currency',
                   currency,

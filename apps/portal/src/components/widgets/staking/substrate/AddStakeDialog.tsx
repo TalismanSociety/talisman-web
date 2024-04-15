@@ -26,11 +26,11 @@ const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) =
     <NominationPoolsAddStakeDialog
       isError={inputError !== undefined}
       open={props.account !== undefined}
-      availableToStake={availableBalance.decimalAmount?.toHuman() ?? '...'}
+      availableToStake={availableBalance.decimalAmount?.toLocaleString() ?? '...'}
       amount={amount}
       onChangeAmount={setAmount}
       fiatAmount={localizedFiatAmount ?? ''}
-      newAmount={resulting.decimalAmount?.toHuman() ?? '...'}
+      newAmount={resulting.decimalAmount?.toLocaleString() ?? '...'}
       newFiatAmount={resulting.localizedFiatAmount ?? '...'}
       inputSupportingText={inputError?.message}
       onDismiss={props.onDismiss}

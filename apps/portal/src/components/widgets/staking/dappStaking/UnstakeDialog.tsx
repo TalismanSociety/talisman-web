@@ -28,12 +28,12 @@ const DappUnstakeDialog = (props: DappUnstakeDialogProps) => {
     <UnstakeDialogComponent
       confirmState={extrinsic.state === 'loading' ? 'pending' : !ready ? 'disabled' : undefined}
       isError={error !== undefined}
-      availableAmount={available.decimalAmount.toHuman()}
+      availableAmount={available.decimalAmount.toLocaleString()}
       amount={input.amount}
       onChangeAmount={setAmount}
       onRequestMaxAmount={() => setAmount(available.decimalAmount.toString())}
       fiatAmount={input.localizedFiatAmount ?? ''}
-      newAmount={resulting.decimalAmount?.toHuman() ?? <CircularProgressIndicator size="1em" />}
+      newAmount={resulting.decimalAmount?.toLocaleString() ?? <CircularProgressIndicator size="1em" />}
       newFiatAmount={resulting.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
       onConfirm={() => {
         void extrinsic.signAndSend(props.account.address)

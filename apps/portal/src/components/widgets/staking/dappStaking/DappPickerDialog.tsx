@@ -72,7 +72,7 @@ const DappPickerDialog = (props: DappPickerDialogProps) => {
                 </div>
                 <div>
                   <Text.Body as="div" alpha="high">
-                    {total.decimalAmount.toHuman()}
+                    {total.decimalAmount.toLocaleString()}
                   </Text.Body>
                   <Text.BodySmall as="div">{total.localizedFiatAmount}</Text.BodySmall>
                 </div>

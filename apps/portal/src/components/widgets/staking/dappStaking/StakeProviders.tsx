@@ -45,7 +45,7 @@ const useAvailableBalance = () => {
   return availableBalance
 }
 
-const AvailableBalance = () => <RedactableBalance>{useAvailableBalance().toHuman()}</RedactableBalance>
+const AvailableBalance = () => <RedactableBalance>{useAvailableBalance().toLocaleString()}</RedactableBalance>
 
 const AvailableFiatBalance = () => (
   <AnimatedFiatNumber end={useTokenAmountFromPlanck(useAvailableBalance().planck).fiatAmount} />

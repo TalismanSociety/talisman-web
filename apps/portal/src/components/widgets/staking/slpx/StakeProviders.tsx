@@ -25,7 +25,7 @@ const useAvailableBalance = (slpxPair: SlpxPair) => {
         nativeBalance.sum.planck.transferable ?? 0n,
         nativeBalance.each.at(0)?.decimals ?? 0,
         slpxPair.nativeToken.symbol
-      ).toHuman(),
+      ).toLocaleString(),
       fiatAmount: nativeBalance.sum.fiat(currency).total,
     }),
     [currency, nativeBalance.each, nativeBalance.sum, slpxPair.nativeToken.symbol]

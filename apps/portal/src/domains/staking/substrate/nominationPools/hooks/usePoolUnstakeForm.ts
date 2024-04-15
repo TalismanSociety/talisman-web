@@ -52,7 +52,7 @@ export const usePoolUnstakeForm = (account?: string) => {
         minNeededForMembership.decimalAmount !== undefined &&
         available.decimalAmount.planck - input.decimalAmount.planck < minNeededForMembership.decimalAmount.planck
       ) {
-        return new Error(`Need ${minNeededForMembership.decimalAmount?.toHuman()} to stay in pool`)
+        return new Error(`Need ${minNeededForMembership.decimalAmount?.toLocaleString()} to stay in pool`)
       }
     }
 

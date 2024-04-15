@@ -30,10 +30,10 @@ const EstimatedYield = (props: { amount: string }) => {
 
   return (
     <StakeCalculatorDialogComponent.EstimatedYield
-      annualYield={annualYield.decimalAmount?.toHuman()}
-      monthlyYield={monthlyYield.decimalAmount?.toHuman()}
-      weeklyYield={weeklyYield.decimalAmount?.toHuman()}
-      dailyYield={dailyYield.decimalAmount?.toHuman()}
+      annualYield={annualYield.decimalAmount?.toLocaleString()}
+      monthlyYield={monthlyYield.decimalAmount?.toLocaleString()}
+      weeklyYield={weeklyYield.decimalAmount?.toLocaleString()}
+      dailyYield={dailyYield.decimalAmount?.toLocaleString()}
     />
   )
 }

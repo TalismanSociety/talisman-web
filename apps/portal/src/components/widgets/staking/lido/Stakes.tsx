@@ -49,14 +49,14 @@ const LidoStakes = (props: { lidoSuite: LidoSuite }) => {
           account={stake.account}
           provider="Lido finance"
           stakeStatus={stake.balance.planck > 0n ? 'earning_rewards' : 'not_earning_rewards'}
-          balance={<RedactableBalance>{stake.balance.toHuman()}</RedactableBalance>}
+          balance={<RedactableBalance>{stake.balance.toLocaleString()}</RedactableBalance>}
           fiatBalance={<AnimatedFiatNumber end={stake.fiatBalance} />}
           chain={props.lidoSuite.chain.name}
           symbol={stake.balance.unit}
           withdrawButton={
             stake.claimable.planck > 0n && (
               <StakePosition.WithdrawButton
-                amount={<RedactableBalance>{stake.claimable.toHuman()}</RedactableBalance>}
+                amount={<RedactableBalance>{stake.claimable.toLocaleString()}</RedactableBalance>}
                 onClick={() => setClaimSideSheetOpen(true)}
               />
             )
@@ -69,7 +69,7 @@ const LidoStakes = (props: { lidoSuite: LidoSuite }) => {
           }
           status={
             stake.totalUnlocking.planck > 0n && (
-              <StakePosition.UnstakingStatus amount={stake.totalUnlocking.toHuman()} unlocks={[]} />
+              <StakePosition.UnstakingStatus amount={stake.totalUnlocking.toLocaleString()} unlocks={[]} />
             )
           }
         />
