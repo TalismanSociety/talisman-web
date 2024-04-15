@@ -106,8 +106,8 @@ const _NominationPoolsRewardsClaim = () => {
               claimable === undefined ||
               claimable.lten(0) ||
               (minClaim.decimalAmount !== undefined &&
-                !minClaim.decimalAmount.planck.isZero() &&
-                claimable.lt(minClaim.decimalAmount.planck))
+                minClaim.decimalAmount.planck !== 0n &&
+                claimable.toBigInt() < minClaim.decimalAmount.planck)
             ) {
               return undefined
             }

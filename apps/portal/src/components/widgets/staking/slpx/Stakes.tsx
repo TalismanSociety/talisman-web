@@ -24,19 +24,20 @@ const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStake
         readonly={props.position.account.readonly || !props.position.account.canSignEvm}
         account={props.position.account}
         provider="Bifrost liquid staking"
-        stakeStatus={props.position.balance.planck.gtn(0) ? 'earning_rewards' : 'not_earning_rewards'}
+        stakeStatus={props.position.balance.planck > 0n ? 'earning_rewards' : 'not_earning_rewards'}
         balance={<RedactableBalance>{props.position.balance.toHuman()}</RedactableBalance>}
         fiatBalance={<AnimatedFiatNumber end={props.position.fiatBalance} />}
         chain={props.slpxPair.chain.name}
         symbol={props.position.balance.unit}
         increaseStakeButton={<StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeDialogOpen(true)} />}
         unstakeButton={
-          props.position.balance.planck.gtn(0) && (
+          props.position.balance.planck > 0n && (
             <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} />
           )
         }
         status={
-          props.position.unlocking?.planck.gtn(0) && (
+          props.position.unlocking !== undefined &&
+          props.position.unlocking.planck > 0n && (
             <StakePosition.UnstakingStatus amount={props.position.unlocking?.toHuman()} unlocks={[]} />
           )
         }

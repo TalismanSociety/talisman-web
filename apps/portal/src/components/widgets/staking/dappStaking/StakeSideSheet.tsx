@@ -18,6 +18,7 @@ import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lo
 import { useQueryState } from '@talismn/react-polkadot-api'
 import { CircularProgressIndicator, Select } from '@talismn/ui'
 import { Maybe } from '@util/monads'
+import BN from 'bn.js'
 import { Suspense, useMemo, useState, useTransition, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
@@ -119,7 +120,9 @@ const EstimatedRewards = (props: { amount: string }) => {
   const amount = useMemo(
     () =>
       tokenAmount.fromPlanck(
-        tokenAmount.fromUserInputOrUndefined(props.amount).decimalAmount?.planck.muln(apr.totalApr)
+        Maybe.of(tokenAmount.fromUserInputOrUndefined(props.amount).decimalAmount).mapOrUndefined(x =>
+          new BN(x.planck.toString()).muln(apr.totalApr)
+        )
       ),
     [apr.totalApr, props.amount, tokenAmount]
   )
@@ -173,7 +176,7 @@ const StakeForm = (props: StakeFormProps) => {
         </Suspense>
       }
       currentStakedBalance={
-        stake.totalStaked.decimalAmount.planck.gtn(0) ? stake.totalStaked.decimalAmount.toHuman() : undefined
+        stake.totalStaked.decimalAmount.planck > 0n ? stake.totalStaked.decimalAmount.toHuman() : undefined
       }
     />
   )

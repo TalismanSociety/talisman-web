@@ -241,11 +241,11 @@ const TransportForm = () => {
       return
     }
 
-    if (decimalAmount.planck.gt(parsedInputConfigLoadable.contents.maxInput.planck)) {
+    if (decimalAmount.planck > parsedInputConfigLoadable.contents.maxInput.planck) {
       return `Insufficient balance`
     }
 
-    if (decimalAmount.planck.lt(parsedInputConfigLoadable.contents.minInput.planck)) {
+    if (decimalAmount.planck < parsedInputConfigLoadable.contents.minInput.planck) {
       return `Minimum ${parsedInputConfigLoadable.contents.minInput.toHuman()}`
     }
 

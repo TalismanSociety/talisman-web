@@ -115,5 +115,5 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
         ),
       }
     })
-    .filter(x => x.balance.planck.gtn(0) || x.totalUnlocking.planck.gtn(0) || x.claimable.planck.gtn(0))
+    .filter(x => x.balance.planck > 0 || x.totalUnlocking.planck > 0 || x.claimable.planck > 0)
 }

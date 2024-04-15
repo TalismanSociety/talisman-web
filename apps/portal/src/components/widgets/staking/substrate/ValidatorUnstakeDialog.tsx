@@ -52,7 +52,7 @@ const ValidatorUnstakeDialog = (props: { accountAddress: string; open: boolean; 
         }
       }}
       confirmState={
-        !isReady || inputError !== undefined || decimalAmount?.planck.isZero()
+        !isReady || inputError !== undefined || decimalAmount === undefined || decimalAmount?.planck === 0n
           ? 'disabled'
           : unbondExtrinsic.state === 'loading'
           ? 'pending'

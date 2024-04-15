@@ -8,7 +8,7 @@ import { Decimal } from '@talismn/math'
 import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
-import type BN from 'bn.js'
+import BN from 'bn.js'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 import { isAddress } from 'viem'
@@ -122,7 +122,7 @@ export const useSlpxSwapForm = (
     }
 
     return Decimal.fromPlanck(
-      decimalAmount.planck.muln(rateLoadable.contents),
+      new BN(decimalAmount.planck.toString()).muln(rateLoadable.contents),
       destToken?.decimals ?? 0,
       destToken?.symbol
     )
@@ -138,7 +138,7 @@ export const useSlpxSwapForm = (
     }
 
     return Decimal.fromPlanck(
-      (existingOriginTokenAmount.data ?? 0n) - BigInt(decimalAmount.planck.toString()),
+      (existingOriginTokenAmount.data ?? 0n) - decimalAmount.planck,
       originToken?.decimals ?? 0,
       originToken?.symbol
     )
@@ -160,7 +160,7 @@ export const useSlpxSwapForm = (
     }
 
     return Decimal.fromPlanck(
-      (existingDestTokenAmount.data ?? 0n) + BigInt(receivingAmount?.planck.toString() ?? 0),
+      (existingDestTokenAmount.data ?? 0n) + receivingAmount.planck,
       destToken?.decimals ?? 0,
       destToken?.symbol
     )
@@ -190,11 +190,11 @@ export const useSlpxSwapForm = (
   )
 
   const error = useMemo(() => {
-    if (decimalAmount !== undefined && available !== undefined && decimalAmount.planck.gt(available.planck)) {
+    if (decimalAmount !== undefined && available !== undefined && decimalAmount.planck > available.planck) {
       return new Error('Insufficient balance')
     }
 
-    if (decimalAmount !== undefined && minAmount !== undefined && decimalAmount.planck.lt(minAmount.planck)) {
+    if (decimalAmount !== undefined && minAmount !== undefined && decimalAmount.planck < minAmount.planck) {
       return new Error(`Minimum ${minAmount.toHuman()} needed`)
     }
 
@@ -239,10 +239,7 @@ export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) 
 
   const base = useSlpxSwapForm(account, slpxPair.chain.id, slpxPair.splx, slpxPair.vToken, slpxPair.nativeToken)
 
-  const planckAmount = useMemo(
-    () => Maybe.of(base.input.decimalAmount?.planck).mapOrUndefined(x => BigInt(x.toString())),
-    [base.input.decimalAmount?.planck]
-  )
+  const planckAmount = base.input.decimalAmount?.planck
 
   const allowance = useContractRead({
     chainId: slpxPair.chain.id,
@@ -301,10 +298,7 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
 
   const base = useSlpxSwapForm(account, slpxPair.chain.id, slpxPair.splx, slpxPair.nativeToken, slpxPair.vToken)
 
-  const planckAmount = useMemo(
-    () => Maybe.of(base.input.decimalAmount?.planck).mapOrUndefined(x => BigInt(x.toString())),
-    [base.input.decimalAmount?.planck]
-  )
+  const planckAmount = base.input.decimalAmount?.planck
 
   const mint = useWagmiContractWrite({
     chainId: slpxPair.chain.id,
@@ -369,5 +363,5 @@ export const useStakes = (accounts: Account[], slpxPair: SlpxPair) => {
         ),
       }
     })
-    .filter(x => !x.balance.planck.isZero() || !x.unlocking?.planck.isZero())
+    .filter(x => x.balance.planck !== 0n || (x.unlocking !== undefined && x.unlocking.planck !== 0n))
 }
