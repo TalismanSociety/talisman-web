@@ -6,7 +6,6 @@ import type { AnyNumber } from '@polkadot/types-codec/types'
 import { encodeAddress } from '@polkadot/util-crypto'
 import DotPoolSelector, { ValidatorSelector, defaultOptions } from '@talismn/dot-pool-selector'
 import { Decimal } from '@talismn/math'
-import BN from 'bn.js'
 import { fromUnixTime, isAfter, isBefore, max as maxDate, startOfDay } from 'date-fns'
 import { selectorFamily, waitForAll, type SerializableParam } from 'recoil'
 
@@ -233,7 +232,7 @@ export const totalPoolPayoutsState = selectorFamily({
       const [api, payouts] = get(waitForAll([substrateApiState(params.chain.rpc), poolPayoutsState(params)]))
 
       return Decimal.fromPlanck(
-        payouts.reduce((prev, curr) => prev.add(curr.amount.planck), new BN(0)),
+        payouts.reduce((prev, curr) => prev + curr.amount.planck, 0n),
         api.registry.chainDecimals.at(0) ?? 0,
         api.registry.chainTokens.at(0)
       )

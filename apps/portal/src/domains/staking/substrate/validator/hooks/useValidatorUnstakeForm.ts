@@ -1,6 +1,5 @@
 import { useExtrinsic, useQueryMulti, useTokenAmountFromPlanck, useTokenAmountState } from '@domains/common/hooks'
 import type { ApiPromise } from '@polkadot/api'
-import { BN } from '@polkadot/util'
 import { useCallback, useMemo } from 'react'
 
 export const useValidatorUnstakeForm = (account?: string) => {
@@ -25,8 +24,11 @@ export const useValidatorUnstakeForm = (account?: string) => {
 
   const resulting = useTokenAmountFromPlanck(
     useMemo(
-      () => available.decimalAmount?.planck.sub(input.decimalAmount?.planck ?? new BN(0)),
-      [available.decimalAmount?.planck, input.decimalAmount?.planck]
+      () =>
+        available.decimalAmount === undefined || input.decimalAmount === undefined
+          ? undefined
+          : available.decimalAmount.planck - input.decimalAmount.planck,
+      [available.decimalAmount, input.decimalAmount]
     )
   )
 
@@ -43,16 +45,20 @@ export const useValidatorUnstakeForm = (account?: string) => {
     if (queriesLoadable.state !== 'hasValue') return
 
     if (!isLeaving) {
-      if (available.decimalAmount !== undefined && input.decimalAmount?.planck.gt(available.decimalAmount.planck)) {
+      if (
+        available.decimalAmount !== undefined &&
+        input.decimalAmount !== undefined &&
+        input.decimalAmount.planck > available.decimalAmount.planck
+      ) {
         return new Error('Insufficient balance')
       }
 
       if (
         available.decimalAmount !== undefined &&
         input.decimalAmount !== undefined &&
-        !input.decimalAmount.planck.eq(available.decimalAmount.planck) &&
+        input.decimalAmount.planck !== available.decimalAmount.planck &&
         minNeededForMembership.decimalAmount !== undefined &&
-        available.decimalAmount.planck.sub(input.decimalAmount.planck).lt(minNeededForMembership.decimalAmount.planck)
+        available.decimalAmount.planck - input.decimalAmount.planck < minNeededForMembership.decimalAmount.planck
       ) {
         return new Error(`Need ${minNeededForMembership.decimalAmount?.toHuman()} to stay active`)
       }

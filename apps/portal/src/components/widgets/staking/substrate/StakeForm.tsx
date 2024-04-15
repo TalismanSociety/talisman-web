@@ -94,9 +94,13 @@ const ExistingPool = (props: { account: Account }) => {
           )
         }
         unlocks={unlocks ?? []}
-        unlocking={!unlocking.decimalAmount.planck.isZero() && unlocking.decimalAmount.toHuman()}
+        unlocking={unlocking.decimalAmount.planck > 0n && unlocking.decimalAmount.toHuman()}
         unlockingFiatAmount={unlocking.localizedFiatAmount}
-        withdrawable={!withdrawable.decimalAmount?.planck.isZero() && withdrawable.decimalAmount?.toHuman()}
+        withdrawable={
+          withdrawable.decimalAmount !== undefined &&
+          withdrawable.decimalAmount.planck > 0n &&
+          withdrawable.decimalAmount.toHuman()
+        }
         withdrawableFiatAmount={withdrawable.localizedFiatAmount}
         withdrawChip={
           <StakeFormComponent.ExistingPool.WithdrawChip
@@ -242,7 +246,10 @@ export const AssetSelect = <T extends ChainInfo>(props: {
 const EstimatedYield = memo(
   (props: { amount: Decimal }) => {
     const stakedReturn = useApr()
-    const annualReturn = useMemo(() => props.amount.planck.muln(stakedReturn), [props.amount.planck, stakedReturn])
+    const annualReturn = useMemo(
+      () => new BN(props.amount.planck.toString()).muln(stakedReturn),
+      [props.amount.planck, stakedReturn]
+    )
     const parsedAnnualReturn = useTokenAmountFromPlanck(annualReturn)
 
     return (
@@ -252,7 +259,7 @@ const EstimatedYield = memo(
       />
     )
   },
-  (previous, current) => previous.amount.planck.eq(current.amount.planck)
+  (previous, current) => previous.amount.planck === current.amount.planck
 )
 
 const DeferredEstimatedYield = (props: { amount: Decimal }) => (
@@ -479,7 +486,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
         stakeButton={
           <StakeFormComponent.StakeButton
             loading={joinPoolExtrinsic.state === 'loading'}
-            disabled={!isReady || inputError !== undefined || decimalAmount.planck.isZero()}
+            disabled={!isReady || inputError !== undefined || decimalAmount.planck === 0n}
             onClick={() => {
               if (
                 selectedAccount !== undefined &&

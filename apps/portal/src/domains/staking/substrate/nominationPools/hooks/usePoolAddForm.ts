@@ -2,6 +2,7 @@ import { useSubstrateApiEndpoint, useTokenAmountFromPlanck, useTokenAmountState 
 import { paymentInfoState, useSubstrateApiState } from '@domains/common/recoils'
 import { BN } from '@polkadot/util'
 import { useDeriveState, useQueryMultiState } from '@talismn/react-polkadot-api'
+import { Maybe } from '@util/monads'
 import usePrevious from '@util/usePrevious'
 import { useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
@@ -75,10 +76,9 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
   const resulting = useTokenAmountFromPlanck(
     useMemo(
       () =>
-        queriesLoadable
-          .valueMaybe()?.[0]
-          ?.unwrapOrDefault()
-          .points.add(input.decimalAmount?.planck ?? new BN(0)),
+        Maybe.of(queriesLoadable.valueMaybe()?.[0]?.unwrapOrDefault().points.toBigInt()).mapOrUndefined(
+          x => x + (input.decimalAmount?.planck ?? 0n)
+        ),
       [input.decimalAmount?.planck, queriesLoadable]
     )
   )
@@ -92,7 +92,8 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
 
     if (
       availableBalance.decimalAmount !== undefined &&
-      input.decimalAmount?.planck.gt(availableBalance.decimalAmount.planck)
+      input.decimalAmount !== undefined &&
+      input.decimalAmount.planck > availableBalance.decimalAmount.planck
     ) {
       return new Error('Insufficient balance')
     }
@@ -100,18 +101,19 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
     if (
       action === 'join' &&
       minimum.decimalAmount !== undefined &&
-      input.decimalAmount?.planck.lt(minimum.decimalAmount.planck)
+      input.decimalAmount !== undefined &&
+      input.decimalAmount.planck < minimum.decimalAmount.planck
     ) {
       return new Error(`Minimum ${minimum.decimalAmount.toHuman()} needed`)
     }
 
     return undefined
   }, [
+    action,
+    availableBalance.decimalAmount,
     balancesLoadable.state,
     input.amount,
-    input.decimalAmount?.planck,
-    availableBalance.decimalAmount,
-    action,
+    input.decimalAmount,
     minimum.decimalAmount,
   ])
 

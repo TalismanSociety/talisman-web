@@ -73,7 +73,9 @@ const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProp
       {tokenSelectorDialogOpen && (
         <TokenSelectorDialog onRequestDismiss={() => setTokenSelectorDialogOpen(false)}>
           {tokensWithBalance
-            .sort((a, b) => b.fiatTransferable - a.fiatTransferable || b.transferable.planck.cmp(a.transferable.planck))
+            .sort(
+              (a, b) => b.fiatTransferable - a.fiatTransferable || Number(b.transferable.planck - a.transferable.planck)
+            )
             .map((x, index) => (
               <TokenSelectorDialog.Item
                 key={index}

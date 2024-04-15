@@ -6,7 +6,7 @@ export default class Decimal {
   static #maxDecimal = 100
 
   static fromPlanck(planck: string | number | bigint | BN | ToBn | undefined, decimals: number, unit?: string) {
-    return new Decimal(bnToBn(planck), decimals, unit)
+    return new Decimal(BigInt(bnToBn(planck).toString()), decimals, unit)
   }
 
   static fromPlanckOrUndefined(
@@ -59,7 +59,7 @@ export default class Decimal {
 
     const quantity = `${whole}${fractional.padEnd(decimals, '0')}`
 
-    return new Decimal(bnToBn(quantity), decimals, unit)
+    return new Decimal(BigInt(bnToBn(quantity).toString()), decimals, unit)
   }
 
   static fromUserInputOrUndefined(input: string, decimals: number, unit?: string) {
@@ -70,7 +70,7 @@ export default class Decimal {
     }
   }
 
-  private constructor(public planck: BN, public decimals: number, public unit?: string) {}
+  private constructor(public planck: bigint, public decimals: number, public unit?: string) {}
 
   toNumber() {
     return Number(this.toString())
@@ -78,8 +78,9 @@ export default class Decimal {
 
   toString() {
     const factor = new BN(10).pow(new BN(this.decimals))
-    const whole = this.planck.div(factor)
-    const fractional = this.planck.mod(factor)
+    const bnPlanck = new BN(this.planck.toString())
+    const whole = bnPlanck.div(factor)
+    const fractional = bnPlanck.mod(factor)
 
     if (fractional.isZero()) {
       return whole.toString()
@@ -91,7 +92,7 @@ export default class Decimal {
   }
 
   toHuman(options = { withUnit: true }) {
-    const raw = formatBalance(this.planck, {
+    const raw = formatBalance(this.planck.toString(), {
       forceUnit: '-',
       withUnit: false,
       decimals: this.decimals,

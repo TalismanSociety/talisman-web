@@ -9,6 +9,7 @@ import {
 } from '@domains/common'
 import type { ApiPromise } from '@polkadot/api'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
+import { BigIntMath } from '@talismn/math'
 import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import { Maybe } from '@util/monads'
 import BN from 'bn.js'
@@ -40,32 +41,32 @@ export const useAddStakeForm = (
   )
 
   const transferable = useMemo(
-    () => BN.max(new BN(0), accountInfo.data.free.sub(accountInfo.data.frozen)),
+    () => BigIntMath.max(0n, accountInfo.data.free.toBigInt() - accountInfo.data.frozen.toBigInt()),
     [accountInfo.data.free, accountInfo.data.frozen]
   )
   const lockedAvailableForStake = useMemo(
-    () =>
-      BN.max(new BN(0), stake.ledger.locked.unwrap().sub(new BN(stake.totalStaked.decimalAmount.planck.toString()))),
+    () => BigIntMath.max(0n, stake.ledger.locked.unwrap().toBigInt() - stake.totalStaked.decimalAmount.planck),
     [stake.ledger.locked, stake.totalStaked]
   )
 
   const availableBeforeFee = useTokenAmountFromPlanck(
     useMemo(
-      () => BN.max(new BN(0), transferable.sub(api.consts.balances.existentialDeposit).add(lockedAvailableForStake)),
+      () =>
+        BigIntMath.max(0n, transferable - api.consts.balances.existentialDeposit.toBigInt() + lockedAvailableForStake),
       [api.consts.balances.existentialDeposit, lockedAvailableForStake, transferable]
     )
   )
 
   const maxSubmittable = useMemo(() => {
-    const amountToLock = BN.max(availableBeforeFee.decimalAmount.planck.sub(lockedAvailableForStake), new BN(0))
+    const amountToLock = BigIntMath.max(availableBeforeFee.decimalAmount.planck - lockedAvailableForStake, 0n)
 
-    if (amountToLock?.isZero()) {
+    if (amountToLock === 0n) {
       return api.tx.dappStaking.stake(dapp, availableBeforeFee.decimalAmount.planck)
     }
 
     return api.tx.utility.batchAll([
       ...getAllRewardsClaimExtrinsics(api, stake),
-      api.tx.dappStaking.lock(amountToLock ?? 0),
+      api.tx.dappStaking.lock(amountToLock ?? 0n),
       api.tx.dappStaking.stake(dapp, availableBeforeFee.decimalAmount.planck),
     ])
   }, [api, availableBeforeFee.decimalAmount.planck, dapp, lockedAvailableForStake, stake])
@@ -87,11 +88,12 @@ export const useAddStakeForm = (
   const available = useTokenAmountFromPlanck(
     useMemo(
       () =>
-        BN.max(
-          new BN(0),
-          availableBeforeFee.decimalAmount.planck.sub(
-            paymentInfoLoadable.valueMaybe()?.partialFee.muln(ESTIMATED_FEE_MARGIN_OF_ERROR) ?? new BN(0)
-          )
+        BigIntMath.max(
+          0n,
+          availableBeforeFee.decimalAmount.planck -
+            BigInt(
+              new BN(paymentInfoLoadable.valueMaybe()?.partialFee.muln(ESTIMATED_FEE_MARGIN_OF_ERROR) ?? 0).toString()
+            )
         ),
       [availableBeforeFee.decimalAmount.planck, paymentInfoLoadable]
     )
@@ -128,11 +130,11 @@ export const useAddStakeForm = (
       return new Error('Too many staked contracts for the account')
     }
 
-    if (input.decimalAmount?.planck.gt(available.decimalAmount.planck)) {
+    if (input.decimalAmount !== undefined && input.decimalAmount.planck > available.decimalAmount.planck) {
       return new Error('Insufficient balance')
     }
 
-    if (input.decimalAmount?.planck.lt(minimum.decimalAmount.planck)) {
+    if (input.decimalAmount !== undefined && input.decimalAmount.planck < minimum.decimalAmount.planck) {
       return new Error(`Minimum ${minimum.decimalAmount.toHuman()} needed`)
     }
 
@@ -145,7 +147,7 @@ export const useAddStakeForm = (
     canCleanUpEntriesToMakeSpace,
     deferredAmount,
     inTransition,
-    input.decimalAmount?.planck,
+    input.decimalAmount,
     maxStakeEntriesReached,
     minimum.decimalAmount,
   ])
@@ -155,7 +157,7 @@ export const useAddStakeForm = (
       paymentInfoLoadable.state === 'hasValue' &&
       deferredAmount.trim() !== '' &&
       input.decimalAmount !== undefined &&
-      !input.decimalAmount.planck.isZero() &&
+      input.decimalAmount.planck !== 0n &&
       error === undefined &&
       !inTransition,
     input: { ...input, amount },
@@ -166,11 +168,9 @@ export const useAddStakeForm = (
         () =>
           inTransition
             ? undefined
-            : stakerInfo
-                .unwrapOrDefault()
-                .staked.voting.unwrap()
-                .add(stakerInfo.unwrapOrDefault().staked.buildAndEarn.unwrap())
-                .add(input.decimalAmount?.planck ?? new BN(0)),
+            : stakerInfo.unwrapOrDefault().staked.voting.unwrap().toBigInt() +
+              stakerInfo.unwrapOrDefault().staked.buildAndEarn.unwrap().toBigInt() +
+              (input.decimalAmount?.planck ?? 0n),
         [inTransition, input.decimalAmount?.planck, stakerInfo]
       )
     ),
@@ -179,12 +179,12 @@ export const useAddStakeForm = (
       useCallback(
         (api: ApiPromise) => {
           const amountToLock = Maybe.of(input.decimalAmount?.planck).mapOrUndefined(x =>
-            BN.max(x.sub(lockedAvailableForStake), new BN(0))
+            BigIntMath.max(x - lockedAvailableForStake, 0n)
           )
 
           const exs = [
             ...getAllRewardsClaimExtrinsics(api, stake),
-            ...(amountToLock?.isZero() ?? true ? [] : [api.tx.dappStaking.lock(amountToLock ?? 0)]),
+            ...(amountToLock === undefined || amountToLock === 0n ? [] : [api.tx.dappStaking.lock(amountToLock ?? 0)]),
             ...(maxStakeEntriesReached && canCleanUpEntriesToMakeSpace
               ? [api.tx.dappStaking.cleanupExpiredEntries()]
               : []),
@@ -248,14 +248,14 @@ export const useUnstakeForm = (
   const error = useMemo(() => {
     if (amount.trim() === '' || inTransition) return
 
-    if (input.decimalAmount?.planck.gt(available.decimalAmount.planck)) {
+    if (input.decimalAmount !== undefined && input.decimalAmount.planck > available.decimalAmount.planck) {
       return new Error('Insufficient balance')
     }
 
     if (
       input.decimalAmount !== undefined &&
-      available.decimalAmount.planck.sub(input.decimalAmount.planck).gtn(0) &&
-      available.decimalAmount.planck.sub(input.decimalAmount.planck).lt(minimum.decimalAmount.planck)
+      available.decimalAmount.planck - input.decimalAmount.planck > 0n &&
+      available.decimalAmount.planck - input.decimalAmount.planck < minimum.decimalAmount.planck
     ) {
       return new Error(`Need ${minimum.decimalAmount.toHuman()} to keep staking`)
     }
@@ -267,7 +267,7 @@ export const useUnstakeForm = (
     ready:
       deferredAmount.trim() !== '' &&
       input.decimalAmount !== undefined &&
-      !input.decimalAmount.planck.isZero() &&
+      input.decimalAmount.planck !== 0n &&
       error === undefined &&
       !inTransition,
     input: { ...input, amount },
@@ -276,13 +276,11 @@ export const useUnstakeForm = (
     resulting: useTokenAmountFromPlanck(
       useMemo(
         () =>
-          BN.max(
-            new BN(0),
-            stakerInfo
-              .unwrapOrDefault()
-              .staked.voting.unwrap()
-              .add(stakerInfo.unwrapOrDefault().staked.buildAndEarn.unwrap())
-              .sub(input.decimalAmount?.planck ?? new BN(0))
+          BigIntMath.max(
+            0n,
+            stakerInfo.unwrapOrDefault().staked.voting.unwrap().toBigInt() +
+              stakerInfo.unwrapOrDefault().staked.buildAndEarn.unwrap().toBigInt() -
+              (input.decimalAmount?.planck ?? 0n)
           ),
         [input.decimalAmount?.planck, stakerInfo]
       )

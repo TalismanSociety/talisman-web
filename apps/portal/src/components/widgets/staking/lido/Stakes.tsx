@@ -48,13 +48,13 @@ const LidoStakes = (props: { lidoSuite: LidoSuite }) => {
           readonly={stake.account.readonly || !stake.account.canSignEvm}
           account={stake.account}
           provider="Lido finance"
-          stakeStatus={stake.balance.planck.gtn(0) ? 'earning_rewards' : 'not_earning_rewards'}
+          stakeStatus={stake.balance.planck > 0n ? 'earning_rewards' : 'not_earning_rewards'}
           balance={<RedactableBalance>{stake.balance.toHuman()}</RedactableBalance>}
           fiatBalance={<AnimatedFiatNumber end={stake.fiatBalance} />}
           chain={props.lidoSuite.chain.name}
           symbol={stake.balance.unit}
           withdrawButton={
-            stake.claimable.planck.gtn(0) && (
+            stake.claimable.planck > 0n && (
               <StakePosition.WithdrawButton
                 amount={<RedactableBalance>{stake.claimable.toHuman()}</RedactableBalance>}
                 onClick={() => setClaimSideSheetOpen(true)}
@@ -65,10 +65,10 @@ const LidoStakes = (props: { lidoSuite: LidoSuite }) => {
             <StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeSideSheetOpen(true)} />
           }
           unstakeButton={
-            stake.balance.planck.gtn(0) && <StakePosition.UnstakeButton onClick={() => setUnstakeSideSheetOpen(true)} />
+            stake.balance.planck > 0n && <StakePosition.UnstakeButton onClick={() => setUnstakeSideSheetOpen(true)} />
           }
           status={
-            stake.totalUnlocking.planck.gtn(0) && (
+            stake.totalUnlocking.planck > 0n && (
               <StakePosition.UnstakingStatus amount={stake.totalUnlocking.toHuman()} unlocks={[]} />
             )
           }

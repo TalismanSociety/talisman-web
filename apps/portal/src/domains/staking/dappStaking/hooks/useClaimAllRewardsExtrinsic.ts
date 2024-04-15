@@ -4,10 +4,10 @@ import { useCallback } from 'react'
 import type { Stake } from './useStake'
 
 export const getAllRewardsClaimExtrinsics = (api: ApiPromise, stake: Stake) =>
-  stake.totalRewards.decimalAmount.planck.ltn(0)
+  stake.totalRewards.decimalAmount.planck < 0n
     ? []
     : [
-        ...(stake.stakerRewards.decimalAmount.planck.isZero()
+        ...(stake.stakerRewards.decimalAmount.planck === 0n
           ? []
           : Array.from({ length: stake.claimableSpanCount }).map(() => api.tx.dappStaking.claimStakerRewards())),
         ...stake.bonusRewards.map(x => api.tx.dappStaking.claimBonusReward(x.dapp)),

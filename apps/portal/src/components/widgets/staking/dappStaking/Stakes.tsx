@@ -68,7 +68,7 @@ const Stake = ({ account }: { account: Account }) => {
           )
         }
         lockedButton={
-          !stake.locked.decimalAmount.planck.isZero() && (
+          stake.locked.decimalAmount.planck !== 0n && (
             <StakePosition.LockedButton
               loading={unlockExtrinsic.state === 'loading'}
               amount={stake.locked.decimalAmount.toHuman()}
@@ -77,7 +77,7 @@ const Stake = ({ account }: { account: Account }) => {
           )
         }
         claimButton={
-          !stake.totalRewards.decimalAmount.planck.isZero() && (
+          stake.totalRewards.decimalAmount.planck !== 0n && (
             <StakePosition.ClaimButton
               loading={claimAllRewardsExtrinsic.state === 'loading'}
               amount={stake.totalRewards.decimalAmount.toHuman()}
@@ -88,7 +88,7 @@ const Stake = ({ account }: { account: Account }) => {
           )
         }
         withdrawButton={
-          stake.withdrawable.decimalAmount.planck.gtn(0) && (
+          stake.withdrawable.decimalAmount.planck > 0n && (
             <StakePosition.WithdrawButton
               loading={withdrawExtrinsic.state === 'loading'}
               amount={stake.withdrawable.decimalAmount.toHuman()}

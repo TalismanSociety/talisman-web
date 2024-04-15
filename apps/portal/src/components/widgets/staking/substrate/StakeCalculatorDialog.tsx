@@ -2,6 +2,7 @@ import StakeCalculatorDialogComponent from '@components/recipes/StakeCalculatorD
 import { ChainProvider, nominationPoolsEnabledChainsState, useChainState } from '@domains/chains'
 import { useTokenAmount, useTokenAmountFromPlanck } from '@domains/common'
 import { useApr } from '@domains/staking/substrate/nominationPools'
+import BN from 'bn.js'
 import { Suspense, useDeferredValue, useMemo, useState, useTransition } from 'react'
 import { useRecoilValue } from 'recoil'
 import ErrorBoundary from '../../ErrorBoundary'
@@ -14,21 +15,18 @@ const EstimatedYield = (props: { amount: string }) => {
 
   const amount = useTokenAmount(props.amount)
 
-  const annualYield = useTokenAmountFromPlanck(
-    useMemo(() => amount.decimalAmount?.planck.muln(stakedReturn), [amount.decimalAmount?.planck, stakedReturn])
+  const bnPlanck = useMemo(
+    () => (amount.decimalAmount === undefined ? undefined : new BN(amount.decimalAmount.planck.toString())),
+    [amount.decimalAmount]
   )
 
-  const monthlyYield = useTokenAmountFromPlanck(
-    useMemo(() => annualYield.decimalAmount?.planck.divn(12), [annualYield.decimalAmount?.planck])
-  )
+  const annualYield = useTokenAmountFromPlanck(useMemo(() => bnPlanck?.muln(stakedReturn), [bnPlanck, stakedReturn]))
 
-  const weeklyYield = useTokenAmountFromPlanck(
-    useMemo(() => annualYield.decimalAmount?.planck.divn(52), [annualYield.decimalAmount?.planck])
-  )
+  const monthlyYield = useTokenAmountFromPlanck(useMemo(() => bnPlanck?.divn(12), [bnPlanck]))
 
-  const dailyYield = useTokenAmountFromPlanck(
-    useMemo(() => annualYield.decimalAmount?.planck.divn(365), [annualYield.decimalAmount?.planck])
-  )
+  const weeklyYield = useTokenAmountFromPlanck(useMemo(() => bnPlanck?.divn(52), [bnPlanck]))
+
+  const dailyYield = useTokenAmountFromPlanck(useMemo(() => bnPlanck?.divn(365), [bnPlanck]))
 
   return (
     <StakeCalculatorDialogComponent.EstimatedYield
