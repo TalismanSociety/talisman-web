@@ -83,18 +83,29 @@ export const useStake = (account: Account) => {
           .map(span =>
             range(span.firstEra.toNumber(), span.lastEra.toNumber() + 1)
               .map(era => {
-                const stakedEligibleForRewards = ledger.staked.era.unwrap().gtn(era)
-                  ? 0n
-                  : ledger.staked.voting.unwrap().toBigInt() + ledger.staked.buildAndEarn.unwrap().toBigInt()
+                let totalStakedEligibleForRewards = 0n
 
-                const stakedFutureEligibleRewards = ledger.stakedFuture.isNone
-                  ? 0n
-                  : ledger.stakedFuture.unwrapOrDefault().era.unwrap().toBigInt() > era
-                  ? 0n
-                  : ledger.stakedFuture.unwrapOrDefault().voting.unwrap().toBigInt() +
-                    ledger.stakedFuture.unwrapOrDefault().buildAndEarn.unwrap().toBigInt()
+                const stakedEra = ledger.staked.era.unwrap().toNumber()
+                const stakedFutureEra = ledger.stakedFuture.unwrapOrDefault().era.unwrap().toNumber()
 
-                const totalStakedEligibleForRewards = stakedEligibleForRewards + stakedFutureEligibleRewards
+                const stakedTotal =
+                  ledger.staked.voting.unwrap().toBigInt() + ledger.staked.buildAndEarn.unwrap().toBigInt()
+
+                const stakedFutureTotal =
+                  ledger.stakedFuture.unwrapOrDefault().voting.unwrap().toBigInt() +
+                  ledger.stakedFuture.unwrapOrDefault().buildAndEarn.unwrap().toBigInt()
+
+                // Slight code smell to keep in parity with Astar codebase
+                if (stakedEra <= era && ledger.stakedFuture.isNone) {
+                  totalStakedEligibleForRewards += stakedTotal
+                } else if (ledger.stakedFuture.isSome) {
+                  if (stakedFutureEra <= era) {
+                    totalStakedEligibleForRewards += stakedFutureTotal
+                  } else if (stakedEra <= era) {
+                    totalStakedEligibleForRewards += stakedTotal
+                  }
+                }
+
                 const eraSpan = span.span[era - span.firstEra.toNumber()]
 
                 return eraSpan === undefined || eraSpan.staked.unwrap().isZero()
