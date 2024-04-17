@@ -62,7 +62,7 @@ const TextInput = Object.assign(
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 marginBottom: '0.8rem',
-                'label:empty::after': {
+                '*:empty::after': {
                   content: `"\u200B"`,
                 },
               }}
@@ -120,7 +120,7 @@ const TextInput = Object.assign(
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 marginTop: '0.8rem',
-                'label:empty::after': {
+                '*:empty::after': {
                   content: `"\u200B"`,
                 },
               }}
