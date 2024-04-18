@@ -105,8 +105,8 @@
     "prop-types": "^15.8.1",
     "storybook": "^7.6.5",
     "typescript": "^5.0.2",
-    "vite": "^5.0.12",
+    "vite": "^5.2.9",
     "vite-plugin-svgr": "^4.2.0",
-    "vite-tsconfig-paths": "^4.2.2"
+    "vite-tsconfig-paths": "^4.3.2"
   }
 }
