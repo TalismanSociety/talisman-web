@@ -26,7 +26,7 @@ export const Default: Story<Partial<SelectProps<string>>> = props => {
   const [selected, setSelected] = useState<string | undefined>(undefined)
 
   return (
-    <Select placeholder="Select account" value={selected} onChange={value => setSelected(value)} {...props}>
+    <Select placeholder="Select account" value={selected} onChangeValue={value => setSelected(value)} {...props}>
       <Select.Option
         value={0}
         leadingIcon={<Identicon value="5CcU6DRpocLUWYJHuNLjB4gGyHJrkWuruQD5XFbRYffCfSAP" size={40} />}
@@ -59,7 +59,13 @@ export const Detached: Story<Partial<SelectProps<string>>> = props => {
   const [selected, setSelected] = useState<string | undefined>(undefined)
 
   return (
-    <Select placeholder="Select account" value={selected} onChange={value => setSelected(value)} {...props} detached>
+    <Select
+      placeholder="Select account"
+      value={selected}
+      onChangeValue={value => setSelected(value)}
+      {...props}
+      detached
+    >
       <Select.Option
         value={0}
         leadingIcon={<Identicon value="5CcU6DRpocLUWYJHuNLjB4gGyHJrkWuruQD5XFbRYffCfSAP" size={40} />}
@@ -92,7 +98,7 @@ export const ClearRequired = () => {
   const [selected, setSelected] = useState<string | undefined>(undefined)
 
   return (
-    <Select placeholder="Select account" value={selected} onChange={value => setSelected(value)} clearRequired>
+    <Select placeholder="Select account" value={selected} onChangeValue={value => setSelected(value)} clearRequired>
       <Select.Option
         value={0}
         leadingIcon={<Identicon value="5CcU6DRpocLUWYJHuNLjB4gGyHJrkWuruQD5XFbRYffCfSAP" size={40} />}
@@ -127,7 +133,7 @@ export const Overflow = () => {
   return (
     <div css={{ height: '50vh', overflow: 'auto', background: 'white', padding: 40 }}>
       <div css={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100vh' }}>
-        <Select placeholder="Select account" value={selected} onChange={value => setSelected(value)}>
+        <Select placeholder="Select account" value={selected} onChangeValue={value => setSelected(value)}>
           {Array.from({ length: 50 }, (_, index) => (
             <Select.Option
               key={index}

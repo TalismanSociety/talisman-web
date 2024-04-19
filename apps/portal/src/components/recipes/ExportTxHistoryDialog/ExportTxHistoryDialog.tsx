@@ -49,7 +49,7 @@ const ExportTxHistoryDialog = ({
               css={{ width: '100%' }}
               placeholder="Select account"
               value={accounts.findIndex(x => x.selected)}
-              onChange={value =>
+              onChangeValue={value =>
                 Maybe.of(value)
                   .map(x => accounts[Number(x)])
                   .map(onSelectAccount)

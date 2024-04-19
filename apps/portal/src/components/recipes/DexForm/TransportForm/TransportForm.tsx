@@ -123,7 +123,7 @@ const TransportForm = Object.assign(
                 css={{ width: '100%' }}
                 placeholder="From network"
                 value={props.selectedFromChainIndex}
-                onChange={props.onSelectFromChainIndex}
+                onChangeValue={props.onSelectFromChainIndex}
                 clearRequired
               >
                 {props.fromChains.map((network, index) => (
@@ -160,7 +160,7 @@ const TransportForm = Object.assign(
                 css={{ width: '100%' }}
                 placeholder="To network"
                 value={props.selectedToChainIndex}
-                onChange={props.onSelectToChainIndex}
+                onChangeValue={props.onSelectToChainIndex}
                 clearRequired
               >
                 {props.toChains.map((network, index) => (

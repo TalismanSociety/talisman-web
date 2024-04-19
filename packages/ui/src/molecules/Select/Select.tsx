@@ -33,7 +33,7 @@ export type SelectProps<TValue extends string | number, TClear extends boolean =
   renderSelected?: (value: TValue | undefined) => ReactNode
   placeholder?: ReactNode
   children?: ReactNode
-  onChange?: (value: TClear extends false ? TValue : TValue | undefined) => unknown
+  onChangeValue?: (value: TClear extends false ? TValue : TValue | undefined) => unknown
   loading?: boolean
   clearRequired?: TClear
   detached?: boolean
@@ -97,7 +97,7 @@ const Select = Object.assign(
       onOpenChange: open => {
         if (clearRequired) {
           // @ts-expect-error
-          props.onChange?.(undefined)
+          props.onChangeValue?.(undefined)
         }
         setOpen(open)
       },
@@ -155,7 +155,7 @@ const Select = Object.assign(
         setOpen(false)
         setActiveIndex(null)
         // @ts-expect-error
-        props.onChange?.(value)
+        props.onChangeValue?.(value)
       },
       [props]
     )

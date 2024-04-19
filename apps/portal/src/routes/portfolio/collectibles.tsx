@@ -383,7 +383,7 @@ const Nfts = () => {
             {view === 'items' && (
               <Text.Body as="label" css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                 Show:
-                <Select value={tag} onChange={setTag}>
+                <Select value={tag} onChangeValue={setTag}>
                   <Select.Option value={undefined} headlineContent="All" />
                   {['favorite', 'hidden'].map(x => (
                     <Select.Option
