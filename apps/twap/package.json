@@ -1,0 +1,30 @@
+{
+  "private": true,
+  "name": "@talismn/twap",
+  "scripts": {
+    "dev": "vite --host"
+  },
+  "dependencies": {
+    "@chainflip/sdk": "^1.3.0",
+    "@talismn/math": "workspace:^",
+    "@talismn/ui": "workspace:^",
+    "@talismn/ui-recipes": "workspace:^",
+    "@talismn/web-icons": "workspace:^",
+    "jotai-effect": "^1.0.0",
+    "react-error-boundary": "^4.0.13"
+  },
+  "devDependencies": {
+    "@talismn/eslint-config": "workspace:^",
+    "@talismn/tsconfig": "workspace:^",
+    "@vitejs/plugin-react": "^4.2.1",
+    "jotai": "^2.8.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.8"
+  },
+  "peerDependencies": {
+    "jotai": ">= 2.x",
+    "react": ">= 18.x"
+  }
+}

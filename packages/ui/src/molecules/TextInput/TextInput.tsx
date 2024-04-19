@@ -98,6 +98,7 @@ const TextInput = Object.assign(
               css={[
                 theme.typography.body,
                 {
+                  color: theme.color.onSurface,
                   flex: 1,
                   width: props.width ?? '20rem',
                   background: 'transparent',
@@ -108,6 +109,7 @@ const TextInput = Object.assign(
                     '::-webkit-inner-spin-button': { display: 'none' },
                     '-moz-appearance': 'textfield',
                   },
+                  outline: 'none',
                 },
               ]}
             />

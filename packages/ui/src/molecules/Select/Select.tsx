@@ -27,7 +27,7 @@ import React, {
 import { CircularProgressIndicator, Surface, Text, useSurfaceColor } from '../../atoms'
 import FloatingPortal from '../../atoms/FloatingPortal'
 
-export type SelectProps<TValue extends string | number, TClear extends boolean = false> = {
+export type SelectProps<TValue, TClear extends boolean = false> = {
   className?: string
   value?: TValue
   renderSelected?: (value: TValue | undefined) => ReactNode
@@ -40,7 +40,7 @@ export type SelectProps<TValue extends string | number, TClear extends boolean =
 }
 
 type SelectItemProps = {
-  value?: string | number
+  value?: any
   leadingIcon?: ReactNode
   headlineContent: ReactNode
   supportingContent?: ReactNode
@@ -54,14 +54,16 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
       </figure>
     )}
     <div>
-      <Text.Body as="div">{props.headlineContent}</Text.Body>
+      <Text.Body as="div" alpha="high">
+        {props.headlineContent}
+      </Text.Body>
       <Text.Body as="div">{props.supportingContent}</Text.Body>
     </div>
   </div>
 ))
 
 const Select = Object.assign(
-  <TValue extends string | number, TClear extends boolean = false>({
+  <TValue, TClear extends boolean = false>({
     children,
     renderSelected,
     loading,
@@ -82,7 +84,7 @@ const Select = Object.assign(
 
     const selectedIndex = childrenArray
       .filter((x): x is ReactElement<SelectItemProps> => x as any)
-      .findIndex(x => x.props.value?.toString() === props.value?.toString())
+      .findIndex(x => x.props.value === props.value)
 
     const selectedChild =
       renderSelected?.(props.value) ?? (selectedIndex === undefined ? undefined : childrenArray[selectedIndex])

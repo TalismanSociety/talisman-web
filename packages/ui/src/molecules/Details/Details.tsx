@@ -39,6 +39,7 @@ const Details = Object.assign(
         initial={JSON.stringify(false)}
         css={{
           borderRadius: theme.shape.large,
+          padding: '2.2rem 3.2rem',
         }}
         onToggle={useCallback<ReactEventHandler<HTMLDetailsElement>>(event => event.preventDefault(), [])}
       >
@@ -72,7 +73,6 @@ const Details = Object.assign(
               display: 'flex',
               alignItems: 'center',
               gap: '1.6rem',
-              padding: '2.2rem 3.2rem',
               cursor: 'pointer',
               '::-webkit-details-marker': {
                 display: 'none',
@@ -95,7 +95,7 @@ const Details = Object.assign(
         variants={{ true: { opacity: 1, height: 'auto' }, false: { opacity: 0, height: 0 } }}
         css={{ overflow: 'hidden' }}
       >
-        <Text.Body as="div" css={{ padding: '0 3.2rem 2.2rem 3.2rem' }}>
+        <Text.Body as="div" css={{ paddingTop: '0.8rem' }}>
           {props.children}
         </Text.Body>
       </motion.div>

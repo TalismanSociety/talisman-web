@@ -9,13 +9,14 @@
   ],
   "scripts": {
     "postinstall": "husky install",
-    "dev": "yarn turbo run dev --concurrency 12",
+    "dev": "yarn turbo run dev --concurrency 13",
+    "dev:twap": "yarn turbo run dev --filter=twap --concurrency 13",
     "build": "yarn turbo run build",
     "test": "yarn turbo run test",
     "lint": "yarn turbo run lint",
     "check-types": "yarn turbo run check-types",
     "e2e": "yarn turbo run e2e",
-    "storybook": "yarn turbo run storybook --concurrency 12",
+    "storybook": "yarn turbo run storybook --concurrency 13",
     "build-storybook": "yarn turbo run storybook"
   },
   "devDependencies": {

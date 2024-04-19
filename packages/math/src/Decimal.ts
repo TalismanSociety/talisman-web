@@ -54,7 +54,7 @@ export default class Decimal {
     }
 
     if (fractional.length > decimals) {
-      throw new Error('Got more decimals than supported')
+      fractional = fractional.slice(0, decimals)
     }
 
     const quantity = `${whole}${fractional.padEnd(decimals, '0')}`
@@ -101,6 +101,14 @@ export default class Decimal {
     const stringWithoutUnit = raw.includes('.') ? raw.replace(/0+$/, '') : raw
 
     return stringWithoutUnit.replace(/\.0*$/, '') + (options.withUnit && this.unit !== undefined ? ` ${this.unit}` : '')
+  }
+
+  map(mapper: (planck: bigint) => bigint) {
+    return Decimal.fromPlanck(mapper(this.planck), this.decimals, this.unit)
+  }
+
+  mapNumber(mapper: (number: number) => number) {
+    return Decimal.fromUserInput(mapper(this.toNumber()).toString(), this.decimals, this.unit)
   }
 
   static #verifyDecimals(fractionalDigits: number): void {

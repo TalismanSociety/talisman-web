@@ -1,4 +1,3 @@
-import { ArrowDown } from '@talismn/web-icons'
 import {
   Button,
   Clickable,
@@ -7,6 +6,7 @@ import {
   useSurfaceColorAtElevation,
   type ButtonProps,
 } from '@talismn/ui'
+import { ArrowDown } from '@talismn/web-icons'
 import { type ReactNode } from 'react'
 
 export type SwapFormProps = {
