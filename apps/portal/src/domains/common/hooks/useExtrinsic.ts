@@ -132,7 +132,7 @@ export function useExtrinsic(
 
                 // both rejects don't matter because signet will toast corresponding message after every transaction
                 if (ok && receipt !== undefined) {
-                  reject(new Error('Please ignore this message'))
+                  reject(new HarmlessError('Please ignore this message'))
                 }
 
                 if (error !== undefined) {
