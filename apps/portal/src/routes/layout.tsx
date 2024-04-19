@@ -55,7 +55,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 const CurrencySelect = () => {
   const [currency, setCurrency] = useRecoilState(selectedCurrencyState)
   return (
-    <Select value={currency} onChange={setCurrency} detached>
+    <Select value={currency} onChangeValue={setCurrency} detached>
       {Object.entries(currencyConfig).map(([currency, config]) => (
         <Select.Option
           key={currency}

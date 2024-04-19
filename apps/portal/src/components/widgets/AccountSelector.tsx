@@ -48,7 +48,7 @@ const AccountSelector = (props: AccountSelectorProps) => {
         />
       }
       value={selectedValue}
-      onChange={onChangeAccount}
+      onChangeValue={onChangeAccount}
       renderSelected={
         props.inTransition
           ? address => {

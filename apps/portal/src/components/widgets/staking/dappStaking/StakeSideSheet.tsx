@@ -208,7 +208,7 @@ const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismis
     () => (
       <Select
         value={chain.id}
-        onChange={id => {
+        onChangeValue={id => {
           const chain = props.chains.find(x => x.id === id)
           if (chain !== undefined) {
             props.onChangeChain(chain)
