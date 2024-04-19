@@ -161,7 +161,7 @@ const _destAccountAtom = atomWithDefault(async get => {
 })
 
 const destAccountAtomEffect = atomEffect((get, set) => {
-  void get(destAccountsAtom).then(() => set(_destAccountAtom, RESET))
+  void get(destAccountsAtom).then(() => startTransition(() => set(_destAccountAtom, RESET)))
 })
 
 const destAccountAtom = atom(
