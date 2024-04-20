@@ -2242,7 +2242,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
           value: '34,000,000 GSGB',
         },
       ],
-      info: 'Crowdloaned 10 KSM unlocked and returned after Slot Duration finished, otherwise immediatly on unsuccessful slot auction.\n\nGSGB runs on SubGame Gamma. It is a reward token for participating in SubGame Gamma crowd loan activities. It has the same value as the token running on the SubGame mainnet. It can be exchanged 1:1 with SGB through SubGame Bridge',
+      info: 'Crowdloaned 10 KSM unlocked and returned after Slot Duration finished, otherwise immediately on unsuccessful slot auction.\n\nGSGB runs on SubGame Gamma. It is a reward token for participating in SubGame Gamma crowd loan activities. It has the same value as the token running on the SubGame mainnet. It can be exchanged 1:1 with SGB through SubGame Bridge',
     },
   },
   {

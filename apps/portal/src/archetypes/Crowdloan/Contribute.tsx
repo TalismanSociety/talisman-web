@@ -209,7 +209,7 @@ const ContributeTo = styled(
                   will prevent you from being able to collect rewards in the future.
                   <br />
                   <br />
-                  You can change your registered Moonbeam address by modifying this field and submiting a new
+                  You can change your registered Moonbeam address by modifying this field and submitting a new
                   contribution.
                 </div>
               </div>

@@ -5,7 +5,7 @@ import * as Chainmeta from './chainmeta'
 import * as Crowdloan from './crowdloan'
 import * as Parachain from './parachain'
 
-/* publically exposed hooks */
+/* publicly exposed hooks */
 
 // // chainmeta things
 export { useChainmeta, useChainmetaValue } from './chainmeta'
@@ -28,7 +28,7 @@ export {
   useParachainsDetailsIndexedById,
 } from './parachain'
 
-/* publically exposed provider */
+/* publicly exposed provider */
 const Provider = ({ children }: PropsWithChildren) => (
   <Chainmeta.Provider>
     <BalancesProvider

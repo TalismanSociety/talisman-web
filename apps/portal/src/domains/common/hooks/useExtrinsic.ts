@@ -169,7 +169,7 @@ export function useExtrinsic(
 
           const promise = promiseFunc()
 
-          // Don't toast if using signet sdk because signet cant resolve full ISubmittableResult
+          // Don't toast if using signet sdk because signet can't resolve full ISubmittableResult
           // also signet already handles toasting in its UI
           if (submittable !== undefined && !signingWithSignet) {
             toastExtrinsic([[submittable.method.section, submittable.method.method]], promise, chain.subscanUrl)
