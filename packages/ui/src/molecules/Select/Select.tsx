@@ -176,17 +176,8 @@ const Select = Object.assign(
       }
     }, [open, activeIndex, pointer])
 
-    const [referenceHeight, setReferenceHeight] = useState<number>()
-    useLayoutEffect(() => {
-      const rect = refs.reference.current?.getBoundingClientRect()
-
-      if (rect !== undefined) {
-        setReferenceHeight(rect.height)
-      }
-    }, [refs.reference])
-
-    const shape =
-      referenceHeight === undefined ? theme.shape.full : `min(calc(${referenceHeight}px / 2), ${theme.shape.full})`
+    // TODO: need a cap as setting maximum radius for only top or bottom corner create oval shape instead
+    const cappedShape = `min(2rem, ${theme.shape.full})`
 
     return (
       <motion.div
@@ -206,33 +197,32 @@ const Select = Object.assign(
             true: {
               border: `solid ${theme.color.outlineVariant}`,
               borderWidth: '1px 1px 0 1px',
-              borderRadius: shape,
-              transitionEnd: {
-                borderBottomLeftRadius: detached ? shape : 0,
-                borderBottomRightRadius: detached ? shape : 0,
-              },
+              borderRadius: cappedShape,
             },
             false: {
               border: 'solid transparent',
               borderWidth: '1px 1px 0 1px',
-              borderRadius: shape,
-              transitionEnd: {
-                borderBottomLeftRadius: shape,
-                borderBottomRightRadius: shape,
-              },
+              borderRadius: theme.shape.full,
             },
           }}
-          css={{
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1.6rem',
-            textAlign: 'start',
-            padding: '0.75rem 1.25rem',
-            cursor: 'pointer',
-            width: '100%',
-          }}
+          css={[
+            {
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1.6rem',
+              textAlign: 'start',
+              padding: '0.75rem 1.25rem',
+              cursor: 'pointer',
+              width: '100%',
+            },
+            !detached &&
+              open && {
+                borderBottomLeftRadius: `0 !important`,
+                borderBottomRightRadius: `0 !important`,
+              },
+          ]}
           {...getReferenceProps()}
         >
           <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none' }}>
@@ -288,7 +278,9 @@ const Select = Object.assign(
                   backgroundColor: surfaceColor,
                 },
               },
-              detached ? { borderRadius: shape } : { borderBottomLeftRadius: shape, borderBottomRightRadius: shape },
+              detached
+                ? { borderRadius: cappedShape }
+                : { borderBottomLeftRadius: cappedShape, borderBottomRightRadius: cappedShape },
             ]}
             {...getFloatingProps({
               style: {
