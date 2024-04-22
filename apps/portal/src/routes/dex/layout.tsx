@@ -2,17 +2,17 @@ import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { TitlePortal } from '@routes/layout'
 import { Tabs } from '@talismn/ui'
 import type { ReactNode } from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import { NavLink, Outlet } from 'react-router-dom'
 
 const Layout = () => (
   <div>
     <Tabs css={{ marginBottom: '5rem' }}>
-      <Tabs.Item as={Link} to="/transfer/transport">
-        Transport
-      </Tabs.Item>
-      <Tabs.Item as={Link} to="/transfer/swap">
-        Swap
-      </Tabs.Item>
+      <NavLink to="/transfer/transport" css={{ display: 'contents' }}>
+        {({ isActive }) => <Tabs.Item selected={isActive}>Transport</Tabs.Item>}
+      </NavLink>
+      <NavLink to="/transfer/swap" css={{ display: 'contents' }}>
+        {({ isActive }) => <Tabs.Item selected={isActive}>Swap</Tabs.Item>}
+      </NavLink>
     </Tabs>
     <Outlet />
   </div>
