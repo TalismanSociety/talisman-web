@@ -6,7 +6,7 @@ import { connect as wagmiConnect, disconnect as wagmiDisconnect, watchAccount as
 import { createStore, type EIP6963ProviderDetail } from 'mipd'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect, useSyncExternalStore } from 'react'
-import { atom, useRecoilState, useSetRecoilState } from 'recoil'
+import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { useAccount as useWagmiAccount } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 
@@ -19,6 +19,13 @@ export const connectedEip6963RdnsState = atom<string | undefined>({
 const eip6963Store = createStore()
 
 export const useEip6963Providers = () => useSyncExternalStore(eip6963Store.subscribe, eip6963Store.getProviders)
+
+export const useConnectedEip6963Provider = () => {
+  const eip6963Providers = useEip6963Providers()
+  const connectedEip6963Rdns = useRecoilValue(connectedEip6963RdnsState)
+
+  return eip6963Providers.find(x => x.info.rdns === connectedEip6963Rdns)
+}
 
 export const useConnectEip6963 = () => {
   const setConnectedProvider = useSetRecoilState(connectedEip6963RdnsState)

@@ -15,13 +15,14 @@ import React from 'react'
 import { Surface, Text } from '../../atoms'
 import { useTheme } from '@emotion/react'
 
-const DetailsContext = createContext({ onClick: (() => {}) as MouseEventHandler<HTMLElement> })
+const DetailsContext = createContext({ onClick: (() => {}) as MouseEventHandler<HTMLElement>, disabled: false })
 
 export type DetailsProps = React.DetailedHTMLProps<
   React.DetailsHTMLAttributes<HTMLDetailsElement>,
   HTMLDetailsElement
 > & {
   onToggle?: (value: boolean) => unknown
+  disabled?: boolean
 }
 
 const Details = Object.assign(
@@ -36,7 +37,7 @@ const Details = Object.assign(
         {...(props as any)}
         open={true}
         animate={JSON.stringify(open)}
-        initial={JSON.stringify(false)}
+        initial={JSON.stringify(open)}
         css={{
           borderRadius: theme.shape.large,
           padding: '2.2rem 3.2rem',
@@ -53,6 +54,7 @@ const Details = Object.assign(
               },
               [open, props]
             ),
+            disabled: props.disabled ?? false,
           }}
         >
           {React.Children.toArray(props.children).at(0)}
@@ -64,27 +66,32 @@ const Details = Object.assign(
   {
     Summary: (props: PropsWithChildren<{ className?: string }>) => (
       <DetailsContext.Consumer>
-        {({ onClick }) => (
+        {({ onClick, disabled }) => (
           <summary
             className={props.className}
             onClick={onClick}
-            css={{
-              listStyle: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1.6rem',
-              cursor: 'pointer',
-              '::-webkit-details-marker': {
-                display: 'none',
+            css={[
+              {
+                listStyle: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1.6rem',
+
+                '::-webkit-details-marker': {
+                  display: 'none',
+                },
               },
-            }}
+              !disabled && { cursor: 'pointer' },
+            ]}
           >
             <Text.Body as="span" alpha="high" css={{ flex: 1, marginRight: '2rem' }}>
               {props.children}
             </Text.Body>
-            <motion.div variants={{ true: { transform: 'rotate(90deg)' } }}>
-              <ChevronRight className="marker" />
-            </motion.div>
+            {!disabled && (
+              <motion.div variants={{ true: { transform: 'rotate(90deg)' } }}>
+                <ChevronRight className="marker" />
+              </motion.div>
+            )}
           </summary>
         )}
       </DetailsContext.Consumer>

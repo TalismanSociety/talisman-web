@@ -10,7 +10,7 @@
   "scripts": {
     "postinstall": "husky install",
     "dev": "yarn turbo run dev --concurrency 13",
-    "dev:twap": "yarn turbo run dev --filter=twap --concurrency 13",
+    "dev:swap": "yarn turbo run dev --filter=swap --concurrency 13",
     "build": "yarn turbo run build",
     "test": "yarn turbo run test",
     "lint": "yarn turbo run lint",
@@ -22,7 +22,7 @@
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
-    "eslint": "^8.33.0",
+    "eslint": "^8.39.0",
     "husky": "^8.0.3",
     "prettier": "^2.8.8",
     "pretty-quick": "^3.1.3",

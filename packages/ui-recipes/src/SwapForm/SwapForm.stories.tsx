@@ -16,10 +16,35 @@ export const Default: Story = {
   args: {
     accountSelect: <Select css={{ width: '100%' }}></Select>,
     destAccountSelect: <Select css={{ width: '100%' }}></Select>,
-    tokenSelect: <SwapForm.TokenSelect name="USDC" chain="Ethereum" onClick={() => {}} />,
-    destTokenSelect: <SwapForm.TokenSelect name="USDC" chain="Ethereum" onClick={() => {}} />,
+    tokenSelect: (
+      <SwapForm.TokenSelect
+        name="USDC"
+        chain="Ethereum"
+        iconSrc="https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/unknown.svg"
+        onClick={() => {}}
+      />
+    ),
+    destTokenSelect: (
+      <SwapForm.TokenSelect
+        name="USDC"
+        chain="Ethereum"
+        iconSrc="https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/unknown.svg"
+        onClick={() => {}}
+      />
+    ),
     summary: (
       <SwapForm.Summary
+        route={[
+          {
+            iconSrc: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/unknown.svg',
+          },
+          {
+            iconSrc: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/unknown.svg',
+          },
+          {
+            iconSrc: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/unknown.svg',
+          },
+        ]}
         descriptions={
           <SwapForm.Summary.DescriptionList>
             <SwapForm.Summary.DescriptionList.Description term="Origin fee" details="$0.12" />

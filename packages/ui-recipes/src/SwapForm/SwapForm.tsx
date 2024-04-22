@@ -1,5 +1,6 @@
 import {
   Button,
+  CircularProgressIndicator,
   DescriptionList,
   Details,
   IconButton,
@@ -11,32 +12,45 @@ import {
   TonalIconButton,
   useTheme,
 } from '@talismn/ui'
-import { ArrowDown, HelpCircle, X } from '@talismn/web-icons'
-import { useState, type PropsWithChildren, type ReactNode } from 'react'
+import { ArrowDown, ArrowRight, HelpCircle, Repeat, X } from '@talismn/web-icons'
+import { motion } from 'framer-motion'
+import { Fragment, Suspense, useState, type PropsWithChildren, type ReactNode } from 'react'
 
 export type SwapFormTokenSelectProps = {
   name: ReactNode
   chain: ReactNode
-  iconSrc: string
-  onClick: () => unknown
-}
 
-const TokenSelect = (props: SwapFormTokenSelectProps) => (
-  <SurfaceButton
-    leadingIcon={<img src={props.iconSrc} css={{ width: '2.4rem', height: '2.4rem' }} />}
-    onClick={props.onClick}
-    css={{ padding: '0.5rem 0.8rem' }}
-  >
-    <div css={{ textAlign: 'start' }}>
-      <Text.BodySmall as="div" alpha="high">
-        {props.name}
-      </Text.BodySmall>
-      <Text.BodySmall as="div">{props.chain}</Text.BodySmall>
+  onClick: () => unknown
+} & ({ iconSrc: string } | { icon: ReactNode })
+
+const TokenSelect = Object.assign(
+  (props: SwapFormTokenSelectProps) => (
+    <div css={{ minWidth: '11rem' }}>
+      <SurfaceButton
+        leadingIcon={
+          'icon' in props ? props.icon : <img src={props.iconSrc} css={{ width: '2.4rem', height: '2.4rem' }} />
+        }
+        onClick={props.onClick}
+        css={{ width: '100%', padding: '0.5rem 0.8rem' }}
+      >
+        <div css={{ textAlign: 'start' }}>
+          <Text.BodySmall as="div" alpha="high">
+            {props.name}
+          </Text.BodySmall>
+          <Text.BodySmall as="div">{props.chain}</Text.BodySmall>
+        </div>
+      </SurfaceButton>
     </div>
-  </SurfaceButton>
+  ),
+  {
+    Skeleton: () => (
+      <TokenSelect name="..." chain="..." icon={<CircularProgressIndicator size="2.4rem" />} onClick={() => {}} />
+    ),
+  }
 )
 
 export type SwapFormSummaryProps = {
+  route?: Array<{ iconSrc: string }>
   descriptions?: ReactNode
   footer: ReactNode
   faq: ReactNode
@@ -84,7 +98,36 @@ const Summary = Object.assign(
               </div>
             )}
           </header>
-          {faqVisible ? props.faq : props.descriptions}
+          {faqVisible ? (
+            props.faq
+          ) : (
+            <>
+              {props.route && (
+                <DescriptionList emphasis="details">
+                  <DescriptionList.Description>
+                    <DescriptionList.Term>Route</DescriptionList.Term>
+                    <DescriptionList.Details>
+                      <span css={{ fontSize: '1.8rem' }}>
+                        {props.route?.map((vertex, index) => (
+                          <Fragment key={index}>
+                            <img src={vertex.iconSrc} css={{ width: '1em', height: '1em' }} />
+                            {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
+                            {index < props.route!.length - 1 && (
+                              <span>
+                                {' '}
+                                <ArrowRight size="1em" />{' '}
+                              </span>
+                            )}
+                          </Fragment>
+                        ))}
+                      </span>
+                    </DescriptionList.Details>
+                  </DescriptionList.Description>
+                </DescriptionList>
+              )}
+              {props.descriptions}
+            </>
+          )}
           {props.footer}
         </div>
       </section>
@@ -131,15 +174,21 @@ export type SwapFormProps = {
   tokenSelect?: ReactNode
   destAmount: string
   destTokenSelect?: ReactNode
-  onChangeDestAmount: (value: string) => unknown
   reversible?: boolean
   onRequestReverse: () => unknown
   destAccountSelect?: ReactNode
   summary?: ReactNode
+  onRequestSwap: () => unknown
+  canSwap?: boolean
+  swapInProgress?: boolean
 }
 
 const SwapForm = Object.assign(
   (props: SwapFormProps) => {
+    const tokenSelect = <Suspense fallback={<TokenSelect.Skeleton />}>{props.tokenSelect}</Suspense>
+
+    const destTokenSelect = <Suspense fallback={<TokenSelect.Skeleton />}>{props.destTokenSelect}</Suspense>
+
     return (
       <div
         css={{
@@ -170,20 +219,20 @@ const SwapForm = Object.assign(
             </header>
             <div css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
               <div css={{ display: 'flex', '> *': { flex: 1 }, [WIDE_MEDIA_SELECTOR]: { display: 'none' } }}>
-                {props.tokenSelect}
+                {tokenSelect}
               </div>
               <TextInput
                 type="number"
                 inputMode="decimal"
                 leadingLabel="Available balance"
-                trailingLabel={props.availableAmount}
+                trailingLabel={
+                  <Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.availableAmount}</Suspense>
+                }
                 placeholder="0.00"
                 trailingIcon={
                   <div css={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
                     <TextInput.LabelButton onClick={props.onRequestMaxAmount}>Max</TextInput.LabelButton>
-                    <div css={{ display: 'none', [WIDE_MEDIA_SELECTOR]: { display: 'revert' } }}>
-                      {props.tokenSelect}
-                    </div>
+                    <div css={{ display: 'none', [WIDE_MEDIA_SELECTOR]: { display: 'revert' } }}>{tokenSelect}</div>
                   </div>
                 }
                 hasSupportingText
@@ -195,30 +244,47 @@ const SwapForm = Object.assign(
                 css={{ fontSize: '1.8rem' }}
               />
               <div css={{ display: 'flex', justifyContent: 'center' }}>
-                <TonalIconButton size="4.8rem">
-                  <ArrowDown />
-                </TonalIconButton>
+                <motion.div initial="false" whileHover={'true'}>
+                  <TonalIconButton size="4.8rem" onClick={props.onRequestReverse} css={{ marginTop: '-2.2rem' }}>
+                    <motion.div variants={{ false: { rotate: 0 }, true: { rotate: 90 } }} css={{ display: 'flex' }}>
+                      {/* Display transition doesn't work properly https://github.com/framer/motion/issues/2563 */}
+                      <motion.div
+                        variants={{
+                          false: { transitionEnd: { display: 'none' } },
+                          true: { transitionEnd: { display: 'flex' } },
+                        }}
+                      >
+                        <Repeat />
+                      </motion.div>
+                      <motion.div
+                        variants={{
+                          false: { transitionEnd: { display: 'flex' } },
+                          true: { transitionEnd: { display: 'none' } },
+                        }}
+                      >
+                        <ArrowDown />
+                      </motion.div>
+                    </motion.div>
+                  </TonalIconButton>
+                </motion.div>
               </div>
               <div css={{ display: 'flex', '> *': { flex: 1 }, [WIDE_MEDIA_SELECTOR]: { display: 'none' } }}>
-                {props.destTokenSelect}
+                {destTokenSelect}
               </div>
               <TextInput
                 type="number"
                 inputMode="decimal"
                 placeholder="0.00"
                 trailingIcon={
-                  <div css={{ display: 'none', [WIDE_MEDIA_SELECTOR]: { display: 'revert' } }}>
-                    {props.destTokenSelect}
-                  </div>
+                  <div css={{ display: 'none', [WIDE_MEDIA_SELECTOR]: { display: 'revert' } }}>{destTokenSelect}</div>
                 }
                 value={props.destAmount}
-                onChangeText={props.onChangeDestAmount}
                 css={{ fontSize: '1.8rem' }}
                 disabled
               />
             </div>
           </Surface>
-          <Details css={{ padding: '1.6rem' }}>
+          <Details css={{ padding: '1.6rem' }} open disabled>
             <Details.Summary>
               <Text.H4>Select destination</Text.H4>
             </Details.Summary>
@@ -231,7 +297,14 @@ const SwapForm = Object.assign(
               </label>
             </Details.Content>
           </Details>
-          <Button css={{ width: '100%' }}>Swap</Button>
+          <Button
+            disabled={!props.canSwap}
+            loading={props.swapInProgress}
+            onClick={props.onRequestSwap}
+            css={{ width: '100%' }}
+          >
+            Swap
+          </Button>
         </section>
         {props.summary}
       </div>

@@ -1,13 +1,35 @@
 import { SwapSDK, type Asset, type AssetData, type Chain } from '@chainflip/sdk/swap'
-import { Decimal } from '@talismn/math'
-import { Chip, Identicon, Select, TalismanHandProgressIndicator, ThemeProvider, theme } from '@talismn/ui'
+import { ApiPromise, WsProvider } from '@polkadot/api'
+import '@polkadot/api-augment/substrate'
+import type { Signer } from '@polkadot/api/types'
+import { BigIntMath, Decimal } from '@talismn/math'
+import {
+  Chip,
+  CircularProgressIndicator,
+  Identicon,
+  Select,
+  TalismanHandProgressIndicator,
+  Text,
+  ToastMessage,
+  Tooltip,
+  toast,
+} from '@talismn/ui'
 import { ErrorMessage, SwapForm, TokenSelectDialog } from '@talismn/ui-recipes'
 import '@talismn/ui/assets/css/talismn.css'
-import { ArrowRight, TalismanHand } from '@talismn/web-icons'
 import { Provider, atom, useAtom, useAtomValue, useSetAtom, type Atom } from 'jotai'
 import { atomEffect } from 'jotai-effect'
-import { RESET, atomWithDefault, atomWithRefresh, loadable, useAtomCallback, useHydrateAtoms } from 'jotai/utils'
-import React, {
+import {
+  RESET,
+  atomFamily,
+  atomWithDefault,
+  atomWithRefresh,
+  atomWithStorage,
+  createJSONStorage,
+  loadable,
+  useAtomCallback,
+  useHydrateAtoms,
+} from 'jotai/utils'
+import {
   Suspense,
   startTransition,
   useCallback,
@@ -15,43 +37,60 @@ import React, {
   useEffect,
   useMemo,
   useState,
-  useTransition,
   type PropsWithChildren,
 } from 'react'
-import { createRoot } from 'react-dom/client'
 import { ErrorBoundary } from 'react-error-boundary'
-import { shortenAddress } from './utils'
+import { createPublicClient, http, type WalletClient } from 'viem'
+import { mainnet, sepolia } from 'viem/chains'
+import { erc20Abi } from './abi'
+import { assetCoingeckoIds, assetIcons, chainIcons } from './config'
+import { shortenAddress, sleep } from './utils'
+
+const EVM_CHAINS = [mainnet, sepolia]
+
+const POLKADOT_RPC = 'wss://rpc-pdot.chainflip.io'
 
 const ENABLED_CHAINS: Chain[] = ['Ethereum', 'Polkadot']
 
-type Account = {
-  type: 'evm' | 'substrate'
-  address: string
-  name?: string
-  readonly?: boolean
-}
+type Account = { name?: string; readonly?: boolean } & (
+  | {
+      type: 'evm'
+      address: `0x${string}`
+    }
+  | { type: 'substrate'; address: string }
+)
 
 class InputError extends Error {}
 
 const swapSdk = new SwapSDK({
-  network: 'mainnet',
+  network: 'perseverance',
 })
 
 const accountsAtom = atom<Account[]>([])
 
-const _srcAccountAtom = atomWithDefault(get => get(accountsAtom).at(0))
+const srcAccountsAtom = atom(get => get(accountsAtom).filter(account => !account.readonly))
+
+const _srcAccountAtom = atomWithDefault(get => get(srcAccountsAtom).at(0))
+
+const srcAccountAtomEffect = atomEffect((get, set) => {
+  get(accountsAtom)
+
+  set(_srcAccountAtom, RESET)
+})
 
 const srcAccountAtom = atom(
   get => {
-    const account = get(_srcAccountAtom)
+    get(srcAccountAtomEffect)
 
-    return get(accountsAtom).find(x => x === account)
+    return get(_srcAccountAtom)
   },
   (_, set, account: Account) => set(_srcAccountAtom, () => account)
 )
 
+const chainsAtoms = atom(async () => await swapSdk.getChains())
+
 const srcChainsAtom = atom(async get => {
-  const chains = await swapSdk.getChains()
+  const chains = await get(chainsAtoms)
 
   const srcAccount = get(srcAccountAtom)
 
@@ -67,6 +106,18 @@ const srcChainsAtom = atom(async get => {
     default:
       return chains
   }
+})
+
+const srcChainAtom = atom(async get => {
+  const [chains, srcAsset] = await Promise.all([get(chainsAtoms), get(srcAssetAtom)])
+
+  const srcChain = chains.find(chain => chain.chain === srcAsset.chain)
+
+  if (srcChain === undefined) {
+    throw new Error(`Can't find chain ${srcAsset.chain}`)
+  }
+
+  return srcChain
 })
 
 const assetsAtom = atom(async () => await swapSdk.getAssets())
@@ -109,13 +160,23 @@ const _srcAssetAtom = atomWithDefault(async get => {
 })
 
 const srcAssetAtomEffect = atomEffect((get, set) => {
-  void get(srcAssetsAtom).then(() => startTransition(() => set(_srcAssetAtom, RESET)))
+  void get(srcAssetsAtom)
+  set(_srcAssetAtom, RESET)
 })
 
 const srcAssetAtom = atom(
   async get => {
     get(srcAssetAtomEffect)
-    return await get(_srcAssetAtom)
+    const asset = await get(_srcAssetAtom)
+
+    return {
+      ...asset,
+      minimumSwapAmount: Decimal.fromPlanck(asset.minimumSwapAmount, asset.decimals, asset.symbol),
+      maximumSwapAmount:
+        asset.maximumSwapAmount === null
+          ? undefined
+          : Decimal.fromPlanck(asset.maximumSwapAmount, asset.decimals, asset.symbol),
+    }
   },
   (_, set, asset: AssetData) => set(_srcAssetAtom, async () => asset)
 )
@@ -128,7 +189,8 @@ const _destAssetAtom = atomWithDefault(async get => {
 })
 
 const destAssetAtomEffect = atomEffect((get, set) => {
-  void get(destAssetsAtom).then(() => startTransition(() => set(_destAssetAtom, RESET)))
+  void get(destAssetsAtom)
+  set(_destAssetAtom, RESET)
 })
 
 const destAssetAtom = atom(
@@ -161,7 +223,8 @@ const _destAccountAtom = atomWithDefault(async get => {
 })
 
 const destAccountAtomEffect = atomEffect((get, set) => {
-  void get(destAccountsAtom).then(() => startTransition(() => set(_destAccountAtom, RESET)))
+  void get(destAccountsAtom)
+  set(_destAccountAtom, RESET)
 })
 
 const destAccountAtom = atom(
@@ -183,25 +246,6 @@ const srcAmountAtom = atom(async get => {
   return Decimal.fromUserInputOrUndefined(get(srcAmountInputAtom), asset.decimals, asset.symbol)
 })
 
-const destAddressAtom = atom<string | undefined>(undefined)
-
-const swapLimitsAtom = atom(async get => {
-  const limits = await swapSdk.getSwapLimits()
-
-  const srcAsset = await get(srcAssetAtom)
-
-  const chainMinimum = limits.minimumSwapAmounts[srcAsset.chain]
-  const minimum: bigint = chainMinimum[srcAsset.asset as keyof typeof chainMinimum]
-
-  const chainMaximum = limits.maximumSwapAmounts[srcAsset.chain]
-  const maximum: bigint | null = chainMaximum[srcAsset.asset as keyof typeof chainMaximum]
-
-  return {
-    minimum: Decimal.fromPlanck(minimum, srcAsset.decimals, srcAsset.symbol),
-    maximum: maximum === null ? undefined : Decimal.fromPlanck(maximum, srcAsset.decimals, srcAsset.symbol),
-  }
-})
-
 const quoteAtomEffect = atomEffect((get, set) => {
   let timeout: any | undefined
 
@@ -220,22 +264,26 @@ const quoteAtomEffect = atomEffect((get, set) => {
 })
 
 const quoteAtom = atomWithRefresh(async get => {
-  const amount = await get(srcAmountAtom)
-  const limit = await get(swapLimitsAtom)
+  const [srcAsset, destAsset, amount, inputAmount] = await Promise.all([
+    get(srcAssetAtom),
+    get(destAssetAtom),
+    get(srcAmountAtom),
+    get(srcAmountInputAtom),
+  ])
 
-  if (amount === undefined) {
+  if (inputAmount.trim() === '' || amount === undefined) {
     throw new InputError('No amount specified')
   }
 
-  if (amount.planck < limit.minimum.planck) {
-    throw new InputError(`Minimum swap of ${limit.minimum.toLocaleString()} required`)
+  if (amount.planck < srcAsset.minimumSwapAmount.planck) {
+    throw new InputError(`Minimum swap of ${srcAsset.minimumSwapAmount.toLocaleString()} required`)
   }
 
-  if (limit.maximum !== undefined && amount.planck > limit.maximum.planck) {
-    throw new InputError(`Maximum of ${limit.maximum.toLocaleString()} possible`)
+  if (srcAsset.maximumSwapAmount !== undefined && amount.planck > srcAsset.maximumSwapAmount.planck) {
+    throw new InputError(`Maximum of ${srcAsset.maximumSwapAmount.toLocaleString()} possible`)
   }
 
-  const [srcAsset, destAsset] = await Promise.all([get(srcAssetAtom), get(destAssetAtom)])
+  const assets = await get(assetsAtom)
 
   const quote = await swapSdk.getQuote({
     srcChain: srcAsset.chain,
@@ -247,54 +295,242 @@ const quoteAtom = atomWithRefresh(async get => {
 
   get(quoteAtomEffect)
 
-  const assets = await get(assetsAtom)
+  const includedFees = await Promise.all(
+    quote.quote.includedFees.map(async fee => {
+      const asset = assets.find(x => x.asset === fee.asset)
+
+      if (asset === undefined) {
+        throw new Error('No matching asset found')
+      }
+
+      const amount = Decimal.fromPlanck(fee.amount, asset.decimals, asset.symbol)
+      const fiatAmount = (await get(assetFiatPriceAtomFamily(asset.asset))) * amount.toNumber()
+
+      return { type: fee.type, amount, fiatAmount }
+    })
+  )
+
+  const totalFee = {
+    amount: includedFees.reduce((prev, curr) => prev + curr.fiatAmount, 0),
+    currency: get(currencyAtom),
+  }
 
   return {
     ...quote,
     quote: {
       ...quote.quote,
-      includedFees: quote.quote.includedFees.map(fee => {
-        const asset = assets.find(x => x.asset === fee.asset)
-
-        if (asset === undefined) {
-          throw new Error('No matching asset found')
-        }
-
-        return { type: fee.type, amount: Decimal.fromPlanck(fee.amount, asset.decimals, asset.symbol) }
-      }),
+      includedFees,
+      totalFee,
     },
+  }
+})
+
+const inProgressSwapIdsAtom = atomWithStorage<string[]>(
+  '@talisman/swap/chainflip-swap-ids',
+  [],
+  createJSONStorage(() => globalThis.sessionStorage)
+)
+
+const swapPromiseAtom = atom<Promise<void>>(Promise.resolve())
+
+const swapPromiseLoadableAtom = loadable(swapPromiseAtom)
+
+const swapStatusAtomEffect = atomEffect((get, set) => {
+  const ids = get(inProgressSwapIdsAtom)
+  const abortController = new AbortController()
+
+  const cleanupToast = () => ids.forEach(id => toast.remove(id))
+
+  const effect = async (id: string) => {
+    while (true) {
+      if (abortController.signal.aborted) {
+        cleanupToast()
+        break
+      }
+
+      const status = await swapSdk.getStatus({ id }, { signal: abortController.signal })
+
+      const progress = (() => {
+        switch (status.state) {
+          case 'AWAITING_DEPOSIT':
+            return { state: 'pending', message: 'Depositing funds' } as const
+          case 'DEPOSIT_RECEIVED':
+            return { state: 'pending', message: 'Executing swap' } as const
+          case 'SWAP_EXECUTED':
+          case 'EGRESS_SCHEDULED':
+          case 'BROADCAST_REQUESTED':
+          case 'BROADCASTED':
+            return { state: 'pending', message: 'Sending funds' } as const
+          case 'COMPLETE':
+            return { state: 'fulfilled', message: 'Swapping complete' } as const
+          case 'BROADCAST_ABORTED':
+          case 'FAILED':
+            return { state: 'rejected', message: 'Failed to swap' } as const
+        }
+      })()
+
+      switch (progress.state) {
+        case 'pending':
+          toast.loading(
+            <ToastMessage
+              headlineContent={progress.message}
+              supportingContent="Please be patience, cross-chain swap could take up to several minutes"
+            />,
+            { id }
+          )
+          break
+        case 'fulfilled':
+          toast.success(progress.message, { id })
+          break
+        case 'rejected':
+          toast.error(progress.message, { id })
+      }
+
+      if (progress.state === 'fulfilled' || progress.state === 'rejected') {
+        set(inProgressSwapIdsAtom, ids => ids.filter(x => x !== id))
+        break
+      }
+
+      await sleep(5000)
+    }
+  }
+
+  for (const id of ids) {
+    void effect(id)
+  }
+
+  return () => {
+    cleanupToast()
+    abortController.abort()
   }
 })
 
 const quoteLoadableAtom = loadable(quoteAtom)
 
 const destAmountAtom = atom(async get => {
-  const quote = await get(quoteAtom)
-  const asset = await get(destAssetAtom)
+  const [quote, asset] = await Promise.all([get(quoteAtom), get(destAssetAtom)])
 
   return Decimal.fromPlanck(quote.quote.egressAmount, asset.decimals, asset.symbol)
 })
 
 const destAmountLoadableAtom = loadable(destAmountAtom)
 
-const depositAddressAtom = atom(async get => {
-  const amount = await get(srcAmountAtom)
-  const destAddress = get(destAddressAtom)
+const srcEvmChain = atom(async get => {
+  const srcChain = await get(srcChainAtom)
 
-  if (amount === undefined || destAddress === undefined) {
+  if (srcChain.evmChainId === undefined) {
+    throw new Error("Can't initiate Viem client on non-EVM chain")
+  }
+
+  const chain = EVM_CHAINS.find(chain => chain.id === srcChain.evmChainId)
+
+  if (chain === undefined) {
+    throw new Error(`No chain found with ID: ${srcChain.evmChainId}`)
+  }
+
+  return chain
+})
+
+const viemPublicClientAtom = atom(async get => {
+  return createPublicClient({
+    chain: await get(srcEvmChain),
+    transport: http(),
+  })
+})
+
+const viemWalletClientAtom = atomWithDefault<WalletClient>(() => {
+  throw new Error('No Viem wallet client available')
+})
+
+const polkadotApiAtom = atom(async () => await ApiPromise.create({ provider: new WsProvider(POLKADOT_RPC) }))
+
+const polkadotSignerAtom = atomWithDefault<Signer>(() => {
+  throw new Error('No Polkadot signer available')
+})
+
+const coingeckoApiEndpointAtom = atom('https://api.coingecko.com')
+
+const coingeckoApiKeyAtom = atom<string | undefined>(undefined)
+
+const coingeckoApiTierAtom = atom<'pro' | 'demo'>('demo')
+
+const currencyAtom = atom('usd')
+
+const assetFiatPriceAtomFamily = atomFamily((asset: Asset) =>
+  atom(async get => {
+    try {
+      const currency = get(currencyAtom)
+
+      const url = new URL('/api/v3/simple/price', get(coingeckoApiEndpointAtom))
+      url.searchParams.set('ids', assetCoingeckoIds[asset])
+      url.searchParams.set('vs_currencies', currency)
+
+      const apiKey = get(coingeckoApiKeyAtom)
+      const apiTier = get(coingeckoApiTierAtom)
+
+      const result = await fetch(url, {
+        headers:
+          apiKey === undefined
+            ? undefined
+            : apiTier === 'pro'
+            ? { 'x-cg-pro-api-key': apiKey }
+            : apiTier === 'demo'
+            ? { 'x-cg-demo-api-key': apiKey }
+            : undefined,
+      }).then(async x => await x.json())
+
+      return result[assetCoingeckoIds[asset]][currency] as number
+    } catch {
+      return 0
+    }
+  })
+)
+
+const srcAssetAvailableAmountAtomEffect = atomEffect((_, set) => {
+  const interval = globalThis.setInterval(() => startTransition(() => set(srcAssetAvailableAmountAtom)), 6000)
+
+  return () => globalThis.clearInterval(interval)
+})
+
+const srcAssetAvailableAmountAtom = atomWithRefresh(async get => {
+  const srcAccount = get(srcAccountAtom)
+
+  if (srcAccount === undefined) {
     return undefined
   }
 
-  const [srcAsset, destAsset] = await Promise.all([get(srcAssetAtom), get(destAssetAtom)])
+  const srcAsset = await get(srcAssetAtom)
 
-  return await swapSdk.requestDepositAddress({
-    srcChain: srcAsset.chain,
-    destChain: destAsset.chain,
-    srcAsset: srcAsset.asset,
-    destAsset: destAsset.asset,
-    amount: amount.planck.toString(),
-    destAddress,
-  })
+  get(srcAssetAvailableAmountAtomEffect)
+
+  switch (srcAccount.type) {
+    case 'evm': {
+      const client = await get(viemPublicClientAtom)
+
+      const balance =
+        srcAsset.contractAddress === undefined
+          ? await client.getBalance({ address: srcAccount.address })
+          : await client.readContract({
+              abi: erc20Abi,
+              address: srcAsset.contractAddress as `0x${string}`,
+              functionName: 'balanceOf',
+              args: [srcAccount.address],
+            })
+
+      return Decimal.fromPlanck(balance, srcAsset.decimals, srcAsset.symbol)
+    }
+    case 'substrate': {
+      const api = await get(polkadotApiAtom)
+
+      const balances = await api.derive.balances.all(srcAccount.address)
+
+      return Decimal.fromPlanck(
+        BigIntMath.max(0n, balances.availableBalance.toBigInt() - api.consts.balances.existentialDeposit.toBigInt()),
+        srcAsset.decimals,
+        srcAsset.symbol
+      )
+    }
+  }
 })
 
 type AssetSelectProps = {
@@ -307,14 +543,17 @@ const AssetSelect = (props: AssetSelectProps) => {
   const chains = useAtomValue(props.for === 'src' ? srcChainsAtom : destChainsAtom)
   const assets = useAtomValue(props.for === 'src' ? srcAssetsAtom : destAssetsAtom)
 
-  const chainItems = useMemo(() => chains.map(chain => ({ id: chain.chain, name: chain.name, iconSrc: '' })), [chains])
+  const chainItems = useMemo(
+    () => chains.map(chain => ({ id: chain.chain, name: chain.name, iconSrc: chainIcons[chain.chain] })),
+    [chains]
+  )
   const assetItems = useMemo(
     () =>
       assets.map(asset => ({
         id: asset.asset,
         name: asset.name,
         code: asset.symbol,
-        iconSrc: `https://resources.acala.network/tokens/${asset.asset}.png`,
+        iconSrc: assetIcons[asset.asset],
         chain: asset.chain,
         chainId: asset.chain,
         amount: '',
@@ -347,7 +586,7 @@ const AssetSelect = (props: AssetSelectProps) => {
       <SwapForm.TokenSelect
         name={asset.asset}
         chain={asset.chain}
-        iconSrc={`https://resources.acala.network/tokens/${asset.asset}.png`}
+        iconSrc={assetIcons[asset.asset]}
         onClick={() => setOpen(true)}
       />
       {open && (
@@ -355,7 +594,9 @@ const AssetSelect = (props: AssetSelectProps) => {
           chains={chainItems}
           tokens={assetItems}
           onRequestDismiss={() => setOpen(false)}
-          onSelectToken={async token => await setChainAndAsset(token.chainId as Chain, token.id as Asset)}
+          onSelectToken={token => {
+            void setChainAndAsset(token.chainId as Chain, token.id as Asset)
+          }}
         />
       )}
     </>
@@ -380,21 +621,27 @@ const Quote = () => {
   return (
     <SwapForm.Summary.DescriptionList>
       <SwapForm.Summary.DescriptionList.Description
-        term="Route"
+        term="Est. swap fees"
         details={
-          <span>
-            <TalismanHand size="1em" /> <ArrowRight size="1em" /> <TalismanHand size="1em" /> <ArrowRight size="1em" />{' '}
-            <TalismanHand size="1em" />
-          </span>
+          <Tooltip
+            content={quote.quote.includedFees.map((fee, index) => (
+              <div key={index}>
+                <Text.Body alpha="high" css={{ textTransform: 'capitalize' }}>
+                  {fee.type.toLocaleLowerCase()}
+                </Text.Body>
+                : {fee.amount.toLocaleString()}
+              </div>
+            ))}
+          >
+            <span>
+              {quote.quote.totalFee.amount.toLocaleString(undefined, {
+                style: 'currency',
+                currency: quote.quote.totalFee.currency,
+              })}
+            </span>
+          </Tooltip>
         }
       />
-      {quote.quote.includedFees.map((fee, index) => (
-        <SwapForm.Summary.DescriptionList.Description
-          key={index}
-          term={`Est. ${fee.type.toLocaleLowerCase()} fee`}
-          details={fee.amount.toLocaleString()}
-        />
-      ))}
       <SwapForm.Summary.DescriptionList.Description
         term="Est. rate"
         details={
@@ -412,6 +659,17 @@ const Summary = () => {
 
   return (
     <SwapForm.Summary
+      route={useMemo(
+        () =>
+          quoteLoadable.state !== 'hasData'
+            ? undefined
+            : [
+                { iconSrc: assetIcons[quoteLoadable.data.srcAsset] },
+                { iconSrc: assetIcons.USDC },
+                { iconSrc: assetIcons[quoteLoadable.data.destAsset] },
+              ],
+        [quoteLoadable]
+      )}
       descriptions={
         quoteLoadable.state === 'loading' ? (
           <div css={{ display: 'flex', justifyContent: 'center' }}>
@@ -456,58 +714,74 @@ const Summary = () => {
 }
 
 const SrcAccountSelect = () => {
-  const [_, startTransition] = useTransition()
-
   const accounts = useAtomValue(accountsAtom)
   const [account, setAccount] = useAtom(srcAccountAtom)
 
   return (
     <Select
+      placeholder="Please select an account"
       value={account}
-      onChangeValue={account => startTransition(() => setAccount(account))}
+      onChangeValue={account => setAccount(account)}
       css={{ width: '100%' }}
     >
-      {accounts
-        .filter(account => !account.readonly)
-        .map((account, index) => (
-          <Select.Option
-            key={index}
-            value={account}
-            leadingIcon={<Identicon value={account.address} />}
-            headlineContent={account.name ?? shortenAddress(account.address)}
-            supportingContent={account.name !== undefined && shortenAddress(account.address)}
-          />
-        ))}
+      {accounts.map((account, index) => (
+        <Select.Option
+          key={index}
+          value={account}
+          leadingIcon={<Identicon value={account.address} />}
+          headlineContent={account.name ?? shortenAddress(account.address)}
+          supportingContent={account.name !== undefined && shortenAddress(account.address)}
+        />
+      ))}
     </Select>
   )
 }
 
 const DestAccountSelect = () => {
-  const [_, startTransition] = useTransition()
-
   const accounts = useAtomValue(destAccountsAtom)
   const [account, setAccount] = useAtom(destAccountAtom)
 
   return (
     <Select
+      placeholder="Please select an account"
       value={account}
-      onChangeValue={account => startTransition(() => setAccount(account))}
+      onChangeValue={account => setAccount(account)}
       css={{ width: '100%' }}
     >
-      {accounts
-        .filter(account => !account.readonly)
-        .map((account, index) => (
-          <Select.Option
-            key={index}
-            value={account}
-            leadingIcon={<Identicon value={account.address} />}
-            headlineContent={account.name ?? shortenAddress(account.address)}
-            supportingContent={account.name !== undefined && shortenAddress(account.address)}
-          />
-        ))}
+      {accounts.map((account, index) => (
+        <Select.Option
+          key={index}
+          value={account}
+          leadingIcon={<Identicon value={account.address} />}
+          headlineContent={account.name ?? shortenAddress(account.address)}
+          supportingContent={account.name !== undefined && shortenAddress(account.address)}
+        />
+      ))}
     </Select>
   )
 }
+
+const AvailableAmount = () => useAtomValue(srcAssetAvailableAmountAtom)?.toLocaleString()
+
+const inputErrorAtom = atom(async get => {
+  const [amount, availableAmount] = await Promise.all([get(srcAmountAtom), get(srcAssetAvailableAmountAtom)])
+
+  if (amount !== undefined && availableAmount !== undefined && amount.planck > availableAmount.planck) {
+    return 'Insufficient balance'
+  }
+
+  try {
+    await get(quoteAtom)
+  } catch (error) {
+    if (error instanceof InputError) {
+      return error.message
+    }
+  }
+
+  return undefined
+})
+
+const inputErrorLoadableAtom = loadable(inputErrorAtom)
 
 const _Swap = () => {
   const [amount, setAmount] = useState('')
@@ -515,54 +789,215 @@ const _Swap = () => {
 
   const setAtomAmount = useSetAtom(srcAmountInputAtom)
   useEffect(() => {
-    startTransition(() => setAtomAmount(deferredAmount))
+    setAtomAmount(deferredAmount)
   }, [deferredAmount, setAtomAmount])
 
-  const quoteLoadable = useAtomValue(quoteLoadableAtom)
   const destAmountLoadable = useAtomValue(destAmountLoadableAtom)
+  const inputErrorLoadable = useAtomValue(inputErrorLoadableAtom)
+  const quoteLoadable = useAtomValue(quoteLoadableAtom)
 
   const inputError =
-    deferredAmount.trim() !== '' && quoteLoadable.state === 'hasError' && quoteLoadable.error instanceof InputError
-      ? quoteLoadable.error.message
-      : undefined
+    deferredAmount.trim() !== '' && inputErrorLoadable.state === 'hasData' ? inputErrorLoadable.data : undefined
+
+  const swap = useAtomCallback(
+    useCallback(async (get, set) => {
+      const srcAccount = get(srcAccountAtom)
+
+      if (srcAccount === undefined) {
+        throw new Error('No source account selected')
+      }
+
+      const [destAccount, amount, srcAsset, destAsset] = await Promise.all([
+        get(destAccountAtom),
+        get(srcAmountAtom),
+        get(srcAssetAtom),
+        get(destAssetAtom),
+      ])
+
+      if (destAccount === undefined || amount === undefined) {
+        return
+      }
+
+      const depositAddress = await swapSdk.requestDepositAddress({
+        destAddress: destAccount.address,
+        amount: amount.planck.toString(),
+        srcChain: srcAsset.chain,
+        srcAsset: srcAsset.asset,
+        destChain: destAsset.chain,
+        destAsset: destAsset.asset,
+      })
+
+      switch (srcAsset.chain) {
+        case 'Ethereum': {
+          if (srcAccount.type !== 'evm') {
+            throw new Error("Can't swap from non-EVM account")
+          }
+
+          const chain = await get(srcEvmChain)
+          const client = get(viemWalletClientAtom)
+
+          await client.switchChain({ id: chain?.id })
+
+          if (srcAsset.contractAddress === undefined) {
+            await client.sendTransaction({
+              chain,
+              account: srcAccount.address,
+              to: depositAddress.depositAddress as `0x${string}`,
+              value: BigInt(depositAddress.amount),
+            })
+          } else {
+            await client.writeContract({
+              chain,
+              abi: erc20Abi,
+              address: srcAsset.contractAddress as `0x${string}`,
+              functionName: 'transfer',
+              account: srcAccount.address,
+              args: [depositAddress.depositAddress as `0x${string}`, BigInt(depositAddress.amount)],
+            })
+          }
+
+          break
+        }
+        case 'Polkadot': {
+          const api = await get(polkadotApiAtom)
+          const signer = get(polkadotSignerAtom)
+
+          await api.tx.balances
+            .transferKeepAlive(depositAddress.depositAddress, depositAddress.amount)
+            .signAndSend(srcAccount.address, { signer })
+
+          break
+        }
+        default:
+          throw new Error(`Unsupported swap from chain ${srcAsset.chain}`)
+      }
+
+      set(inProgressSwapIdsAtom, ids => [...ids, depositAddress.depositChannelId])
+    }, [])
+  )
+
+  useAtom(swapStatusAtomEffect)
 
   return (
     <SwapForm
       accountSelect={<SrcAccountSelect />}
       tokenSelect={<AssetSelect for="src" />}
       amount={amount}
-      availableAmount="1 DOT"
+      availableAmount={<AvailableAmount />}
       amountError={inputError}
       onChangeAmount={setAmount}
       destTokenSelect={<AssetSelect for="dest" />}
       destAmount={destAmountLoadable.state === 'hasData' ? destAmountLoadable.data?.toString() ?? '' : ''}
-      destAccountSelect={<DestAccountSelect />}
-      onRequestMaxAmount={() => {}}
-      onChangeDestAmount={() => {}}
-      onRequestReverse={() => {}}
+      destAccountSelect={
+        // TODO: this is to prevent suspense of entire component when dest accounts change
+        // better to use transition
+        <Suspense
+          fallback={
+            <Select
+              css={{ width: '100%' }}
+              renderSelected={() => (
+                <Select.Option
+                  leadingIcon={<CircularProgressIndicator />}
+                  headlineContent="..."
+                  supportingContent={`\u200B`}
+                />
+              )}
+            />
+          }
+        >
+          <DestAccountSelect />
+        </Suspense>
+      }
+      onRequestMaxAmount={useAtomCallback(
+        useCallback(async get => {
+          const amount = await get(srcAssetAvailableAmountAtom)
+
+          if (amount !== undefined) {
+            setAmount(amount.toString())
+          }
+        }, [])
+      )}
+      onRequestReverse={useAtomCallback(
+        useCallback(async (get, set) => {
+          const [srcAccounts, srcAsset, destAsset] = await Promise.all([
+            get(srcAccountsAtom),
+            get(_srcAssetAtom),
+            get(destAssetAtom),
+          ])
+
+          // TODO: remove this time bomb
+          set(
+            _srcAccountAtom,
+            srcAccounts.find(account => (destAsset.chain === 'Ethereum' ? account.type === 'evm' : 'substrate'))
+          )
+
+          set(srcAssetAtom, destAsset)
+          set(destAssetAtom, srcAsset)
+        }, [])
+      )}
       summary={<Summary />}
+      onRequestSwap={useAtomCallback(
+        useCallback(
+          async (_, set) => {
+            const promise = swap()
+
+            set(swapPromiseAtom, promise)
+
+            await promise
+          },
+          [swap]
+        )
+      )}
+      canSwap={
+        quoteLoadable.state === 'hasData' &&
+        inputErrorLoadable.state === 'hasData' &&
+        inputErrorLoadable.data === undefined
+      }
+      swapInProgress={useAtomValue(swapPromiseLoadableAtom).state === 'loading'}
     />
   )
 }
 
 type HydrateSwapProps = PropsWithChildren<{
   accounts: Account[]
+  viemWalletClient?: WalletClient
+  polkadotSigner?: Signer
+  coingeckoApiEndpoint?: string
+  coingeckoApiTier?: string
+  coingeckoApiKey?: string
 }>
 
 const HydrateSwap = (props: HydrateSwapProps) => {
-  useHydrateAtoms([[accountsAtom, props.accounts]])
+  const stableAccounts = useMemo(
+    () => props.accounts,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(props.accounts)]
+  )
+
+  useHydrateAtoms(
+    new Map(
+      [
+        [accountsAtom, stableAccounts],
+        [viemWalletClientAtom, props.viemWalletClient],
+        [polkadotSignerAtom, props.polkadotSigner],
+        [coingeckoApiEndpointAtom, props.coingeckoApiEndpoint],
+        [coingeckoApiTierAtom, props.coingeckoApiTier],
+        [coingeckoApiKeyAtom, props.coingeckoApiKey],
+      ].filter(([_, value]) => value !== undefined) as Array<[any, any]>
+    ),
+    { dangerouslyForceHydrate: true }
+  )
+
   return props.children
 }
 
-export type SwapProps = {
-  accounts: Account[]
-}
+export type SwapProps = HydrateSwapProps
 
 const Swap = (props: SwapProps) => {
   return (
     <Provider>
-      <Suspense>
-        <HydrateSwap accounts={props.accounts}>
+      <Suspense fallback={<TalismanHandProgressIndicator />}>
+        <HydrateSwap {...props}>
           <_Swap />
         </HydrateSwap>
       </Suspense>
@@ -570,31 +1005,33 @@ const Swap = (props: SwapProps) => {
   )
 }
 
-const Root = () => (
-  <React.StrictMode>
-    <ThemeProvider theme={theme.greenDark}>
-      <Swap
-        accounts={[
-          { type: 'evm', address: '0x5C9EBa3b10E45BF6db77267B40B95F3f91Fc5f67', name: 'EVM 1' },
-          {
-            type: 'substrate',
-            address: '5GsJWiLXwy6yPS9Q8gLo27hmjjqV2DxuMbgif6CttN5j72Ls',
-            name: 'Polkadot account 1',
-          },
-          {
-            type: 'substrate',
-            address: '5CLwQ5xmYfBshb9cwndyybRwbc673Rhh4f6s3i3qXbfDebXJ',
-            name: 'Polkadot account 2',
-          },
-          { type: 'substrate', address: '5EfK2DKRJKU2heXXnmZU6BTSqk3kFoeAJ3ZkqpyWFsSEBGPA', readonly: true },
-        ]}
-      />
-    </ThemeProvider>
-  </React.StrictMode>
-)
+export default Swap
 
-const container = document.getElementById('root')
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const root = createRoot(container!)
+// const Root = () => (
+//   <React.StrictMode>
+//     <ThemeProvider theme={theme.greenDark}>
+//       <Swap
+//         accounts={[
+//           { type: 'evm', address: '0x5C9EBa3b10E45BF6db77267B40B95F3f91Fc5f67', name: 'EVM 1' },
+//           {
+//             type: 'substrate',
+//             address: '5GsJWiLXwy6yPS9Q8gLo27hmjjqV2DxuMbgif6CttN5j72Ls',
+//             name: 'Polkadot account 1',
+//           },
+//           {
+//             type: 'substrate',
+//             address: '5CLwQ5xmYfBshb9cwndyybRwbc673Rhh4f6s3i3qXbfDebXJ',
+//             name: 'Polkadot account 2',
+//           },
+//           { type: 'substrate', address: '5EfK2DKRJKU2heXXnmZU6BTSqk3kFoeAJ3ZkqpyWFsSEBGPA', readonly: true },
+//         ]}
+//       />
+//     </ThemeProvider>
+//   </React.StrictMode>
+// )
 
-root.render(<Root />)
+// const container = document.getElementById('root')
+// // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+// const root = createRoot(container!)
+
+// root.render(<Root />)

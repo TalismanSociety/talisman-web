@@ -1,56 +1,50 @@
-import SectionHeader from '@components/molecules/SectionHeader'
-import SwapForm from '@components/widgets/dex/SwapForm'
-import { Chip, Details, OrderedDetailsList, Text } from '@talismn/ui'
-import { FaqLayout } from './layout'
+import { TalismanHandLoader } from '@components/TalismanHandLoader'
+import { evmAccountsState, writeableSubstrateAccountsState } from '@domains/accounts'
+import { useConnectedEip6963Provider, useConnectedSubstrateWallet } from '@domains/extension'
+import { TitlePortal } from '@routes/layout'
+
+import React, { Suspense, useMemo } from 'react'
+import { useRecoilValue } from 'recoil'
+import { createWalletClient, custom } from 'viem'
+
+const SwapWidget = React.lazy(async () => await import('@talismn/swap'))
 
 const Swap = () => {
+  const substrateAccounts = useRecoilValue(writeableSubstrateAccountsState)
+  const evmAccounts = useRecoilValue(evmAccountsState)
+
+  const substrateWallet = useConnectedSubstrateWallet()
+  const evmProvider = useConnectedEip6963Provider()
+
   return (
-    <FaqLayout
-      content={<SwapForm />}
-      faq={
-        <>
-          <SectionHeader
-            headlineContent={
-              <>
-                About Cross-Chain Swaps{' '}
-                <Chip
-                  size="lg"
-                  css={{
-                    display: 'inline-block',
-                    paddingInlineStart: '1.6rem',
-                    paddingInlineEnd: '1.6rem',
-                    verticalAlign: 'middle',
-                  }}
-                >
-                  Beta
-                </Chip>
-              </>
-            }
-          />
-          <OrderedDetailsList>
-            <Details>
-              <Details.Summary>How does the cross-chain swap work?</Details.Summary>
-              <Details.Content>
-                Cross-Chain Swaps utilize Privadex, a third-party service that determines the optimal route for your
-                swap through a series of cross-chain transports and DEXes, and executes that on your behalf. Swaps may
-                be routed to the same address on the destination chain, or a different address of your choosing.
-              </Details.Content>
-            </Details>
-            <Details>
-              <Details.Summary>What is included in the fees?</Details.Summary>
-              <Details.Content>
-                Privadex charges a fee of 0.05% of each transaction. This is automatically deducted from your balance as
-                the transaction is performed. Please refer to{' '}
-                <Text.Noop.A href="https://privadex.xyz" target="_blank">
-                  Privadex
-                </Text.Noop.A>{' '}
-                for more information.
-              </Details.Content>
-            </Details>
-          </OrderedDetailsList>
-        </>
-      }
-    />
+    <div css={{ display: 'flex', justifyContent: 'center' }}>
+      <TitlePortal>Swap</TitlePortal>
+      <Suspense fallback={<TalismanHandLoader />}>
+        <SwapWidget
+          accounts={useMemo(
+            () =>
+              [
+                ...substrateAccounts,
+                ...evmAccounts.filter(account => Boolean(account.readonly) || account.canSignEvm),
+              ].map(account => ({
+                type: account.type === 'ethereum' ? 'evm' : 'substrate',
+                address: account.address as any,
+                name: account.name,
+              })),
+            [evmAccounts, substrateAccounts]
+          )}
+          polkadotSigner={substrateWallet?.signer}
+          viemWalletClient={useMemo(
+            () =>
+              evmProvider === undefined ? undefined : createWalletClient({ transport: custom(evmProvider.provider) }),
+            [evmProvider]
+          )}
+          coingeckoApiEndpoint={import.meta.env.REACT_APP_COIN_GECKO_API}
+          coingeckoApiTier={import.meta.env.REACT_APP_COIN_GECKO_API_TIER}
+          coingeckoApiKey={import.meta.env.REACT_APP_COIN_GECKO_API_KEY}
+        />
+      </Suspense>
+    </div>
   )
 }
 

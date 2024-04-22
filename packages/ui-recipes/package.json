@@ -25,7 +25,7 @@
     "@talismn/tsconfig": "workspace:^",
     "@talismn/ui": "workspace:^",
     "@talismn/web-icons": "workspace:^",
-    "eslint": "^9.0.0",
+    "eslint": "^8.39.0",
     "react": "^18.2.0",
     "storybook": "^8.0.8",
     "typescript": "^5.4.5"

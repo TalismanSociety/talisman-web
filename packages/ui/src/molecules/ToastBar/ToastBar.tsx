@@ -1,8 +1,7 @@
 import { useTheme } from '@emotion/react'
 import { Check, X } from '@talismn/web-icons'
-import { formatDistanceToNowStrict } from 'date-fns'
 import { motion } from 'framer-motion'
-import { isValidElement, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { isValidElement, useMemo, useRef, type ReactNode } from 'react'
 import { resolveValue, type Toast, type ToastPosition } from 'react-hot-toast/headless'
 import { CircularProgressIndicator, SurfaceIconButton, Text, useSurfaceColor } from '../../atoms'
 import { toast as toaster } from '../../organisms'
@@ -25,10 +24,6 @@ const ToastBar = ({ toast }: ToastBarProps) => {
   const theme = useTheme()
   const surfaceColor = useSurfaceColor()
 
-  const [createdAtDistance, setCreatedAtDistance] = useState(
-    formatDistanceToNowStrict(toast.createdAt, { addSuffix: true })
-  )
-
   const children = resolveValue(toast.message, toast)
   const [headlineContent, supportingContent] = useMemo(() => {
     if (isValidElement(children) && children.type === ToastMessage) {
@@ -38,15 +33,6 @@ const ToastBar = ({ toast }: ToastBarProps) => {
 
     return [children, undefined] as const
   }, [children])
-
-  useEffect(() => {
-    const interval = setInterval(
-      () => setCreatedAtDistance(formatDistanceToNowStrict(toast.createdAt, { addSuffix: true })),
-      1000
-    )
-
-    return () => clearInterval(interval)
-  }, [toast.createdAt])
 
   const origin = useMemo(() => {
     switch (toast.position) {
@@ -156,9 +142,9 @@ const ToastBar = ({ toast }: ToastBarProps) => {
       <Text.Body as="div">
         <Text.Body css={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
           <Text.Body alpha="high">{headlineContent}</Text.Body>
-          <Text.Body alpha="disabled" css={{ textAlign: 'end', alignSelf: 'first baseline', minWidth: '11rem' }}>
+          {/* <Text.Body alpha="disabled" css={{ textAlign: 'end', alignSelf: 'first baseline', minWidth: '11rem' }}>
             {createdAtDistance}
-          </Text.Body>
+          </Text.Body> */}
         </Text.Body>
         {supportingContent}
       </Text.Body>
