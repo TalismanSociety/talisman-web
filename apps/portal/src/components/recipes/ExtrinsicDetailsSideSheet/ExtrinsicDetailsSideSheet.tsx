@@ -64,7 +64,7 @@ const ExtrinsicDetailsSideSheet = (props: ExtrinsicDetailsSideSheetProps) => {
   const theme = useTheme()
   return (
     <SideSheet title="Extrinsic details" onRequestDismiss={props.onRequestDismiss}>
-      <DescriptionList emphasis="details">
+      <DescriptionList emphasis="details" css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }}>
         <DescriptionList.Description>
           <DescriptionList.Term>Chain</DescriptionList.Term>
           <DescriptionList.Details>{props.chain}</DescriptionList.Details>

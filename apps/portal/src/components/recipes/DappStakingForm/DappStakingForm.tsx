@@ -121,7 +121,7 @@ const DappStakingForm = Object.assign(
             />
           </label>
         </div>
-        <DescriptionList>
+        <DescriptionList css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }}>
           <DescriptionList.Description>
             <DescriptionList.Term>Estimated earning</DescriptionList.Term>
             <DescriptionList.Details css={{ wordBreak: 'break-all' }}>{props.estimatedRewards}</DescriptionList.Details>

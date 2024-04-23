@@ -192,7 +192,7 @@ type EstimatedYieldProps = {
 }
 
 const EstimatedYield = (props: EstimatedYieldProps) => (
-  <DescriptionList>
+  <DescriptionList css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }}>
     <DescriptionList.Description>
       <DescriptionList.Term>Estimated earnings</DescriptionList.Term>
       <DescriptionList.Details css={{ wordBreak: 'break-all' }}>
