@@ -1,6 +1,7 @@
 import {
   createAcalaNftAsyncGenerator,
   createBitCountryNftAsyncGenerator,
+  createArtZeroNftAsyncGenerator,
   createEvmNftAsyncGenerator,
   createRmrk2NftAsyncGenerator,
   createSubstrateNftKusamaAssetHubNftAsyncGenerator,
@@ -23,6 +24,7 @@ const subscribeNfts = (address: string, options: { batchSize: number; acalaRpc: 
             createSubstrateNftKusamaAssetHubNftAsyncGenerator,
             createSubstrateNftPolkadotAssetHubNftAsyncGenerator,
             createUniqueNetworkNftAsyncGenerator,
+            createArtZeroNftAsyncGenerator,
           ]
     ).map(async createNftAsyncGenerator => {
       try {
