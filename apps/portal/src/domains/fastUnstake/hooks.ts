@@ -1,7 +1,7 @@
 import { writeableSubstrateAccountsState } from '@domains/accounts/recoils'
 import { useSubstrateApiEndpoint, useSubstrateApiState } from '@domains/common'
 import { encodeAddress } from '@polkadot/util-crypto'
-import { bool, coercion, jsonParser, writableDict } from '@recoiljs/refine'
+import { bool, coercion, jsonParser, literal, object, writableDict } from '@recoiljs/refine'
 import { useQueryState } from '@talismn/react-polkadot-api'
 import { useMemo } from 'react'
 import { DefaultValue, atomFamily, useRecoilValue } from 'recoil'
@@ -11,7 +11,7 @@ import type { WorkerFunction } from './worker'
 
 const getExposureKey = (genesisHash: string) => `fast-unstake-exposure/${genesisHash}`
 
-const exposureChecker = writableDict(writableDict(bool()))
+const exposureChecker = object({ version: literal(0), value: writableDict(writableDict(bool())) })
 const exposureCoercion = coercion(exposureChecker)
 const exposureJsonParser = jsonParser(exposureChecker)
 
@@ -27,10 +27,11 @@ const unexposedAddressesState = atomFamily<
         return
       }
 
-      const exposure = exposureJsonParser(localStorage.getItem(getExposureKey(genesisHash))) ?? {}
+      const storedExposure = exposureJsonParser(localStorage.getItem(getExposureKey(genesisHash)))
+      const exposure = storedExposure?.value ?? {}
 
       const storeExposure = () => {
-        const coercedExposure = exposureCoercion(exposure)
+        const coercedExposure = exposureCoercion({ version: 0, value: exposure })
 
         if (coercedExposure !== undefined && coercedExposure !== null) {
           localStorage.setItem(getExposureKey(genesisHash), JSON.stringify(coercedExposure))
