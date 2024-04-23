@@ -327,7 +327,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
     activeEraLoadable.state !== 'hasValue'
       ? constSelector(undefined)
       : eraStakersState({ endpoint: apiEndpoint, era: activeEraLoadable.contents.unwrapOrDefault().index })
-  ).map(value => new Set(value?.map(x => x[0].args[1].toHuman())))
+  ).map(value => new Set(value?.map(x => x.toString())))
 
   const existingPool =
     poolMembersLoadable.state === 'hasValue' ? poolMembersLoadable.contents.unwrapOr(undefined) : undefined

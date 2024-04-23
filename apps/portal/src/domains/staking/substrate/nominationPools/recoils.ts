@@ -42,7 +42,9 @@ export const eraStakersState = selectorFamily({
     async ({ get }) => {
       const api = get(substrateApiState(endpoint))
 
-      return await api.query.staking.erasStakers.entries(era)
+      const stakers = await (api.query.staking.erasStakersOverview ?? api.query.staking.erasStakers).keys(era)
+
+      return stakers.map(staker => staker.args[1])
     },
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
   // NOTE: polkadot.js returned codec object includes reference to the registry

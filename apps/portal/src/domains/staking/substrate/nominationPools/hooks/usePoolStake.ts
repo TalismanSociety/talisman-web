@@ -66,7 +66,7 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
   )
 
   const _eraStakers = useRecoilValue(useEraStakersState(activeEra.unwrapOrDefault().index))
-  const eraStakers = useMemo(() => new Set(_eraStakers.map(x => x[0].args[1].toHuman())), [_eraStakers])
+  const eraStakers = useMemo(() => new Set(_eraStakers.map(x => x.toString())), [_eraStakers])
 
   const pools = useMemo(
     () =>
