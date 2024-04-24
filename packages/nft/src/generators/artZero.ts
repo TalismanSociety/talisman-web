@@ -5,6 +5,10 @@ import type { CreateNftAsyncGenerator, Nft } from '../types.js'
 const ARTZERO_URL = 'https://a0.artzero.io'
 const ARTZERO_API = 'https://a0-api.artzero.io'
 
+const type = 'artzero' as const
+const chain = 'aleph-zero' as const
+type ThisNft = Nft<typeof type, typeof chain>
+
 type PartialNullable<T> = { [K in keyof T]: T[K] | undefined | null }
 
 type ArtzeroGetNFTsByOwnerResult =
@@ -67,7 +71,7 @@ type ArtzeroGetNFTsByOwnerResultItem = PartialNullable<{
   updatedTime: string
 }>
 
-export const createArtZeroNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'artzero', 'aleph-zero'>> = async function* (
+export const createArtZeroNftAsyncGenerator: CreateNftAsyncGenerator<ThisNft> = async function* (
   address,
   { batchSize }
 ) {
@@ -89,49 +93,50 @@ export const createArtZeroNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'artzer
         Object.entries({ owner, limit, offset, sort, isActive }).map(([key, value]) => [key, value.toString()])
       ).toString(),
     })
-    if (!response.ok) throw new Error(`ArtZero api response not ok: ${response.status}`)
+    if (!response.ok) throw new Error(`ArtZero api response not ok: ${response.status}`, { cause: response })
 
     const result: ArtzeroGetNFTsByOwnerResult = await response.json()
     if (!Array.isArray(result?.ret)) break
     if ((result?.ret?.length ?? 0) < 1) break
 
-    const type = 'artzero' as const
-    const chain = 'aleph-zero' as const
-
-    yield* (result?.ret ?? []).map(
-      (nft, index): Nft<'artzero', 'aleph-zero'> => ({
-        type,
-        chain,
-        id: `${type}-${chain}-${nft._id ?? index + offset}`,
-        name: nft.nftName ?? undefined,
-        description: nft.description ?? undefined,
-        media: { url: nft.avatar ?? undefined },
-        thumbnail: nft.avatar ?? undefined,
-        serialNumber: nft.tokenID ?? undefined,
-        properties: Object.fromEntries(
-          Object.entries(nft.traits ?? {}).flatMap(([key, value]) => (typeof value === 'string' ? [[key, value]] : []))
-        ),
-        externalLinks: [
-          {
-            name: 'ArtZero',
-            url: (() => {
-              if (nft.isAzDomain) return `${ARTZERO_URL}/nft/${nft.nftContractAddress}/${nft.nftName}`
-              if (typeof nft.tokenID === 'number') return `${ARTZERO_URL}/nft/${nft.nftContractAddress}/${nft.tokenID}`
-              return `${ARTZERO_URL}/collection/${nft.nftContractAddress}`
-            })(),
-          },
-        ],
-        collection:
-          typeof nft.nftContractAddress === 'string'
-            ? {
-                id: nft.nftContractAddress,
-                name: nft.isAzDomain ? 'AZERO.ID Domains' : undefined,
-                totalSupply: undefined,
-              }
-            : undefined,
-      })
-    )
+    yield* (result?.ret ?? []).map(parseNft)
 
     offset += batchSize
+  }
+}
+
+const parseNft = (nft: ArtzeroGetNFTsByOwnerResultItem): ThisNft | Error => {
+  if (typeof nft._id !== 'string') return new Error(`NFT is missing required field '_id'`, { cause: nft })
+
+  return {
+    type,
+    chain,
+    id: `${type}-${chain}-${nft._id}`,
+    name: nft.nftName ?? undefined,
+    description: nft.description ?? undefined,
+    media: { url: nft.avatar ?? undefined },
+    thumbnail: nft.avatar ?? undefined,
+    serialNumber: nft.tokenID ?? undefined,
+    properties: Object.fromEntries(
+      Object.entries(nft.traits ?? {}).flatMap(([key, value]) => (typeof value === 'string' ? [[key, value]] : []))
+    ),
+    externalLinks: [
+      {
+        name: 'ArtZero',
+        url: (() => {
+          if (nft.isAzDomain) return `${ARTZERO_URL}/nft/${nft.nftContractAddress}/${nft.nftName}`
+          if (typeof nft.tokenID === 'number') return `${ARTZERO_URL}/nft/${nft.nftContractAddress}/${nft.tokenID}`
+          return `${ARTZERO_URL}/collection/${nft.nftContractAddress}`
+        })(),
+      },
+    ],
+    collection:
+      typeof nft.nftContractAddress === 'string'
+        ? {
+            id: nft.nftContractAddress,
+            name: nft.isAzDomain ? 'AZERO.ID Domains' : undefined,
+            totalSupply: undefined,
+          }
+        : undefined,
   }
 }
