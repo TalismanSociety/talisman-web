@@ -17,7 +17,7 @@
     "react-error-boundary": "^4.0.13"
   },
   "devDependencies": {
-    "@polkadot/api": "^10.12.6",
+    "@polkadot/api": "^10.13.1",
     "@talismn/eslint-config": "workspace:^",
     "@talismn/tsconfig": "workspace:^",
     "@vitejs/plugin-react": "^4.2.1",

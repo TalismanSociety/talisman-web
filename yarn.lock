@@ -9131,7 +9131,7 @@ __metadata:
   resolution: "@talismn/swap@workspace:apps/twap"
   dependencies:
     "@chainflip/sdk": "npm:^1.3.0"
-    "@polkadot/api": "npm:^10.12.6"
+    "@polkadot/api": "npm:^10.13.1"
     "@talismn/eslint-config": "workspace:^"
     "@talismn/math": "workspace:^"
     "@talismn/tsconfig": "workspace:^"
