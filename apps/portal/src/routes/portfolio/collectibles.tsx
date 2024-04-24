@@ -451,15 +451,9 @@ const Nfts = () => {
         >
           <Text.H2>No collectibles found</Text.H2>
           <Text.Body>
-            Talisman currently supports RMRK 2, Astar,
+            Talisman currently supports RMRK 2, Polkadot Asset Hub,
             <br />
-            Moonriver, Moonbeam, Statemine and Acala NFTs
-          </Text.Body>
-          <Text.Body>
-            Start your collection with a{' '}
-            <Text.Body.A href="https://singular.rmrk.app/collections/b6e98494bff52d3b1e-SPIRIT" target="_blank">
-              Spirit Key <ExternalLink size="1em" />
-            </Text.Body.A>
+            Kusama Asset Hub, ArtZero and Unique Network NFTs
           </Text.Body>
         </section>
       </section>
