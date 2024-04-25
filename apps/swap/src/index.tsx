@@ -1006,32 +1006,3 @@ const Swap = (props: SwapProps) => {
 }
 
 export default Swap
-
-// const Root = () => (
-//   <React.StrictMode>
-//     <ThemeProvider theme={theme.greenDark}>
-//       <Swap
-//         accounts={[
-//           { type: 'evm', address: '0x5C9EBa3b10E45BF6db77267B40B95F3f91Fc5f67', name: 'EVM 1' },
-//           {
-//             type: 'substrate',
-//             address: '5GsJWiLXwy6yPS9Q8gLo27hmjjqV2DxuMbgif6CttN5j72Ls',
-//             name: 'Polkadot account 1',
-//           },
-//           {
-//             type: 'substrate',
-//             address: '5CLwQ5xmYfBshb9cwndyybRwbc673Rhh4f6s3i3qXbfDebXJ',
-//             name: 'Polkadot account 2',
-//           },
-//           { type: 'substrate', address: '5EfK2DKRJKU2heXXnmZU6BTSqk3kFoeAJ3ZkqpyWFsSEBGPA', readonly: true },
-//         ]}
-//       />
-//     </ThemeProvider>
-//   </React.StrictMode>
-// )
-
-// const container = document.getElementById('root')
-// // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-// const root = createRoot(container!)
-
-// root.render(<Root />)
