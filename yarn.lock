@@ -7984,7 +7984,7 @@ __metadata:
   dependencies:
     "@polkadot/util": "npm:^12.6.2"
     eslint: "npm:^8.39.0"
-    typescript: "npm:^5.0.4"
+    typescript: "npm:^5.4.5"
   peerDependencies:
     "@polkadot/util": "*"
   languageName: unknown
@@ -8001,7 +8001,7 @@ __metadata:
     graphql-request: "npm:^6.1.0"
     multiformats: "npm:^11.0.2"
     prettier: "npm:^2.8.8"
-    typescript: "npm:^5.0.2"
+    typescript: "npm:^5.4.5"
     viem: "npm:^1.20.3"
   peerDependencies:
     "@polkadot/api": ">= 9.x"
@@ -8110,7 +8110,7 @@ __metadata:
     safety-match: "npm:^0.4.4"
     storybook: "npm:^7.6.5"
     threads: "npm:^1.7.0"
-    typescript: "npm:^5.0.2"
+    typescript: "npm:^5.4.5"
     victory: "npm:^36.6.8"
     vite: "npm:^5.2.9"
     vite-plugin-svgr: "npm:^4.2.0"
@@ -8127,7 +8127,7 @@ __metadata:
     "@talismn/eslint-config": "workspace:^"
     "@talismn/tsconfig": "workspace:^"
     "@types/react": "npm:^18.2.57"
-    typescript: "npm:^5.0.4"
+    typescript: "npm:^5.4.5"
   peerDependencies:
     "@polkadot/api": ">= 9.x"
     react: ">= 18.x"
@@ -8226,7 +8226,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     react-hot-toast: "npm:^2.4.1"
     storybook: "npm:^7.6.5"
-    typescript: "npm:^5.0.2"
+    typescript: "npm:^5.4.5"
   peerDependencies:
     "@emotion/react": 11.x
     "@talismn/web-icons": "*"
@@ -8257,7 +8257,7 @@ __metadata:
   dependencies:
     "@talismn/tsconfig": "workspace:^"
     "@types/react": "npm:^18.2.57"
-    typescript: "npm:^5.0.4"
+    typescript: "npm:^5.4.5"
   languageName: unknown
   linkType: soft
 
@@ -8272,7 +8272,7 @@ __metadata:
     eslint: "npm:^8.37.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
-    typescript: "npm:^5.0.2"
+    typescript: "npm:^5.4.5"
   peerDependencies:
     react: 18.x
   languageName: unknown
@@ -21430,13 +21430,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.0.2, typescript@npm:^5.0.4":
-  version: 5.0.4
-  resolution: "typescript@npm:5.0.4"
+"typescript@npm:^5.4.5":
+  version: 5.4.5
+  resolution: "typescript@npm:5.4.5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/2f5bd1cead194905957cb34e220b1d6ff1662399adef8ec1864f74620922d860ee35b6e50eafb3b636ea6fd437195e454e1146cb630a4236b5095ed7617395c2
+  checksum: 10c0/2954022ada340fd3d6a9e2b8e534f65d57c92d5f3989a263754a78aba549f7e6529acc1921913560a4b816c46dce7df4a4d29f9f11a3dc0d4213bb76d043251e
   languageName: node
   linkType: hard
 
@@ -21450,13 +21450,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.0.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.0.4#optional!builtin<compat/typescript>":
-  version: 5.0.4
-  resolution: "typescript@patch:typescript@npm%3A5.0.4#optional!builtin<compat/typescript>::version=5.0.4&hash=b5f058"
+"typescript@patch:typescript@npm%3A^5.4.5#optional!builtin<compat/typescript>":
+  version: 5.4.5
+  resolution: "typescript@patch:typescript@npm%3A5.4.5#optional!builtin<compat/typescript>::version=5.4.5&hash=5adc0c"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/c3f7b80577bddf6fab202a7925131ac733bfc414aec298c2404afcddc7a6f242cfa8395cf2d48192265052e11a7577c27f6e5fac8d8fe6a6602023c83d6b3292
+  checksum: 10c0/db2ad2a16ca829f50427eeb1da155e7a45e598eec7b086d8b4e8ba44e5a235f758e606d681c66992230d3fc3b8995865e5fd0b22a2c95486d0b3200f83072ec9
   languageName: node
   linkType: hard
 

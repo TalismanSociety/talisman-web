@@ -12,8 +12,9 @@ import { ApiIdContext, RecoilStateContext } from './Context.js'
 import { garbageCollectionKey } from './GarbageCollector.js'
 import type { ApiId, Diverge, Options, PickKnownKeys } from './types.js'
 
-type QueryMap = PickKnownKeys<// @ts-expect-error
-{ [P in keyof ApiPromise['query']]: `${P}.${keyof PickKnownKeys<ApiPromise['query'][P]>}` }>
+type QueryMap = PickKnownKeys<{
+  [P in keyof ApiPromise['query']]: `${P}.${keyof PickKnownKeys<ApiPromise['query'][P]>}`
+}>
 
 type Query = QueryMap[keyof QueryMap]
 
