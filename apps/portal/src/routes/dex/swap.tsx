@@ -1,5 +1,6 @@
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { evmAccountsState, writeableSubstrateAccountsState } from '@domains/accounts'
+import { enableTestnetsState } from '@domains/chains'
 import { useConnectedEip6963Provider, useConnectedSubstrateWallet } from '@domains/extension'
 import { TitlePortal } from '@routes/layout'
 
@@ -42,6 +43,7 @@ const Swap = () => {
           coingeckoApiEndpoint={import.meta.env.REACT_APP_COIN_GECKO_API}
           coingeckoApiTier={import.meta.env.REACT_APP_COIN_GECKO_API_TIER}
           coingeckoApiKey={import.meta.env.REACT_APP_COIN_GECKO_API_KEY}
+          useTestnet={useRecoilValue(enableTestnetsState)}
         />
       </Suspense>
     </div>

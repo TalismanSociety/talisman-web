@@ -1,4 +1,4 @@
-import { SwapSDK, type Asset, type AssetData, type Chain } from '@chainflip/sdk/swap'
+import { SwapSDK, type Asset, type AssetData, type Chain, type ChainflipNetwork } from '@chainflip/sdk/swap'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import '@polkadot/api-augment/substrate'
 import type { Signer } from '@polkadot/api/types'
@@ -48,8 +48,6 @@ import { shortenAddress, sleep } from './utils'
 
 const EVM_CHAINS = [mainnet, sepolia]
 
-const POLKADOT_RPC = 'wss://rpc-pdot.chainflip.io'
-
 const ENABLED_CHAINS: Chain[] = ['Ethereum', 'Polkadot']
 
 type Account = { name?: string; readonly?: boolean } & (
@@ -62,9 +60,18 @@ type Account = { name?: string; readonly?: boolean } & (
 
 class InputError extends Error {}
 
-const swapSdk = new SwapSDK({
-  network: 'perseverance',
-})
+const chainflipNetworkAtom = atom<ChainflipNetwork | undefined>(undefined)
+
+const swapSdkAtom = atom(
+  get =>
+    new SwapSDK({
+      network: get(chainflipNetworkAtom),
+    })
+)
+
+const polkadotRpcAtom = atom(get =>
+  get(chainflipNetworkAtom) === 'mainnet' ? 'wss://polkadot.api.onfinality.io/public' : 'wss://rpc-pdot.chainflip.io'
+)
 
 const accountsAtom = atom<Account[]>([])
 
@@ -87,7 +94,7 @@ const srcAccountAtom = atom(
   (_, set, account: Account) => set(_srcAccountAtom, () => account)
 )
 
-const chainsAtoms = atom(async () => await swapSdk.getChains())
+const chainsAtoms = atom(async get => await get(swapSdkAtom).getChains())
 
 const srcChainsAtom = atom(async get => {
   const chains = await get(chainsAtoms)
@@ -120,12 +127,12 @@ const srcChainAtom = atom(async get => {
   return srcChain
 })
 
-const assetsAtom = atom(async () => await swapSdk.getAssets())
+const assetsAtom = atom(async get => await get(swapSdkAtom).getAssets())
 
 const srcAssetsAtom = atom(async get => {
   const srcChains = await get(srcChainsAtom)
 
-  const assets = await Promise.all(srcChains.map(async chain => await swapSdk.getAssets(chain.chain)))
+  const assets = await Promise.all(srcChains.map(async chain => await get(swapSdkAtom).getAssets(chain.chain)))
 
   return Array.from(
     assets
@@ -136,13 +143,15 @@ const srcAssetsAtom = atom(async get => {
 })
 
 const destChainsAtom = atom(async get =>
-  (await swapSdk.getChains((await get(srcAssetAtom)).chain)).filter(chain => ENABLED_CHAINS.includes(chain.chain))
+  (await get(swapSdkAtom).getChains((await get(srcAssetAtom)).chain)).filter(chain =>
+    ENABLED_CHAINS.includes(chain.chain)
+  )
 )
 
 const destAssetsAtom = atom(async get => {
   const destChains = await get(destChainsAtom)
 
-  const assets = await Promise.all(destChains.map(async chain => await swapSdk.getAssets(chain.chain)))
+  const assets = await Promise.all(destChains.map(async chain => await get(swapSdkAtom).getAssets(chain.chain)))
 
   return Array.from(
     assets
@@ -285,7 +294,7 @@ const quoteAtom = atomWithRefresh(async get => {
 
   const assets = await get(assetsAtom)
 
-  const quote = await swapSdk.getQuote({
+  const quote = await get(swapSdkAtom).getQuote({
     srcChain: srcAsset.chain,
     destChain: destAsset.chain,
     srcAsset: srcAsset.asset,
@@ -348,7 +357,7 @@ const swapStatusAtomEffect = atomEffect((get, set) => {
         break
       }
 
-      const status = await swapSdk.getStatus({ id }, { signal: abortController.signal })
+      const status = await get(swapSdkAtom).getStatus({ id }, { signal: abortController.signal })
 
       const progress = (() => {
         switch (status.state) {
@@ -366,6 +375,8 @@ const swapStatusAtomEffect = atomEffect((get, set) => {
           case 'BROADCAST_ABORTED':
           case 'FAILED':
             return { state: 'rejected', message: 'Failed to swap' } as const
+          default:
+            throw new Error('Invalid state')
         }
       })()
 
@@ -442,7 +453,7 @@ const viemWalletClientAtom = atomWithDefault<WalletClient>(() => {
   throw new Error('No Viem wallet client available')
 })
 
-const polkadotApiAtom = atom(async () => await ApiPromise.create({ provider: new WsProvider(POLKADOT_RPC) }))
+const polkadotApiAtom = atom(async get => await ApiPromise.create({ provider: new WsProvider(get(polkadotRpcAtom)) }))
 
 const polkadotSignerAtom = atomWithDefault<Signer>(() => {
   throw new Error('No Polkadot signer available')
@@ -818,7 +829,7 @@ const _Swap = () => {
         return
       }
 
-      const depositAddress = await swapSdk.requestDepositAddress({
+      const depositAddress = await get(swapSdkAtom).requestDepositAddress({
         destAddress: destAccount.address,
         amount: amount.planck.toString(),
         srcChain: srcAsset.chain,
@@ -965,6 +976,7 @@ type HydrateSwapProps = PropsWithChildren<{
   coingeckoApiEndpoint?: string
   coingeckoApiTier?: string
   coingeckoApiKey?: string
+  useTestnet?: boolean
 }>
 
 const HydrateSwap = (props: HydrateSwapProps) => {
@@ -983,6 +995,7 @@ const HydrateSwap = (props: HydrateSwapProps) => {
         [coingeckoApiEndpointAtom, props.coingeckoApiEndpoint],
         [coingeckoApiTierAtom, props.coingeckoApiTier],
         [coingeckoApiKeyAtom, props.coingeckoApiKey],
+        [chainflipNetworkAtom, props.useTestnet ? 'perseverance' : 'mainnet'],
       ].filter(([_, value]) => value !== undefined) as Array<[any, any]>
     ),
     { dangerouslyForceHydrate: true }
