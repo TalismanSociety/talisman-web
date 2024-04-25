@@ -3,7 +3,7 @@ import { ClassNames } from '@emotion/react'
 import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Text } from '@talismn/ui'
 import { Zap } from '@talismn/web-icons'
 import { useEffect } from 'react'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
+import { useAccount, useSwitchChain } from 'wagmi'
 
 export type LidoWidgetSideSheetProps = {
   url: string
@@ -12,14 +12,14 @@ export type LidoWidgetSideSheetProps = {
 }
 
 const LidoWidgetSideSheet = (props: LidoWidgetSideSheetProps) => {
-  const { chain } = useNetwork()
-  const { switchNetwork } = useSwitchNetwork()
+  const { chain } = useAccount()
+  const { switchChain } = useSwitchChain()
 
   useEffect(() => {
     if (chain?.id !== props.lidoSuite.chain.id) {
-      switchNetwork?.(props.lidoSuite.chain.id)
+      switchChain({ chainId: props.lidoSuite.chain.id })
     }
-  }, [chain?.id, props.lidoSuite.chain.id, switchNetwork])
+  }, [chain?.id, props.lidoSuite.chain.id, switchChain])
 
   return (
     <ClassNames>

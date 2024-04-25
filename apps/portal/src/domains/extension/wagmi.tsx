@@ -1,24 +1,26 @@
-import { noopStorage } from '@wagmi/core'
-import '@wagmi/core/window'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { PropsWithChildren } from 'react'
-import { WagmiConfig, configureChains, createConfig, createStorage, type WindowProvider } from 'wagmi'
+import type { EIP1193Provider } from 'viem'
+import { WagmiProvider, createConfig, http } from 'wagmi'
+import type {} from 'wagmi/'
 import { mainnet, moonbeam, moonriver } from 'wagmi/chains'
-import { publicProvider } from 'wagmi/providers/public'
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
-    talismanEth?: WindowProvider
+    talismanEth?: EIP1193Provider
   }
 }
 
-const { publicClient, webSocketPublicClient } = configureChains([mainnet, moonbeam, moonriver], [publicProvider()])
-
-const config = createConfig({
-  autoConnect: true,
-  publicClient,
-  webSocketPublicClient,
-  storage: createStorage({ storage: noopStorage }),
+export const wagmiConfig = createConfig({
+  chains: [mainnet, moonbeam, moonriver],
+  transports: { [mainnet.id]: http(), [moonbeam.id]: http(), [moonriver.id]: http() },
 })
 
-export const WagmiProvider = (props: PropsWithChildren) => <WagmiConfig config={config}>{props.children}</WagmiConfig>
+const queryClient = new QueryClient()
+
+export const EvmProvider = (props: PropsWithChildren) => (
+  <WagmiProvider config={wagmiConfig} reconnectOnMount>
+    <QueryClientProvider client={queryClient}>{props.children} </QueryClientProvider>
+  </WagmiProvider>
+)
