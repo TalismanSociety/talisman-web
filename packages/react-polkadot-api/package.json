@@ -15,7 +15,7 @@
     "@talismn/eslint-config": "workspace:^",
     "@talismn/tsconfig": "workspace:^",
     "@types/react": "^18.2.57",
-    "typescript": "^5.0.4"
+    "typescript": "^5.4.5"
   },
   "peerDependencies": {
     "@polkadot/api": ">= 9.x",

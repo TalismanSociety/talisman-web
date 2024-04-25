@@ -12,8 +12,9 @@ import { type Observable } from 'rxjs'
 
 import { useSubstrateApiState } from '..'
 
-type QueryMap = PickKnownKeys<// @ts-expect-error
-{ [P in keyof ApiPromise['query']]: `${P}.${keyof PickKnownKeys<ApiPromise['query'][P]>}` }>
+type QueryMap = PickKnownKeys<{
+  [P in keyof ApiPromise['query']]: `${P}.${keyof PickKnownKeys<ApiPromise['query'][P]>}`
+}>
 
 type Query = QueryMap[keyof QueryMap]
 
@@ -93,13 +94,13 @@ export const useQueryMulti = <
       })
 
       const unsubscribePromise = api
-        .queryMulti(params as any, (result: TResult) => {
+        .queryMulti(params as any, result => {
           if (promise !== promiseRef.current) {
             return
           }
 
-          setLoadable(RecoilLoadable.of(result))
-          resolve(result)
+          setLoadable(RecoilLoadable.of(result as TResult))
+          resolve(result as TResult)
         })
         .catch((error: any) => {
           if (promise !== promiseRef.current) {

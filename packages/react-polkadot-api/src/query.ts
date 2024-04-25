@@ -99,6 +99,7 @@ export const queryAtomFamily = (options: Options) => {
       'query',
       // @ts-expect-error
       moduleName,
+      // @ts-expect-error
       sectionName,
       params,
     ]) as RecoilState<
@@ -128,7 +129,14 @@ export const queryAtomFamily = (options: Options) => {
         : Array<Readonly<Leading<Parameters<TMethod>>>>
       : never
   ) =>
-    _state([apiId, 'derive', moduleName, sectionName, params]) as RecoilState<
+    _state([
+      apiId,
+      'derive',
+      moduleName,
+      // @ts-expect-error
+      sectionName,
+      params,
+    ]) as RecoilState<
       TMethod extends PromiseResult<(...args: any) => Observable<infer Result>>
         ? TAugmentedSection extends TSection
           ? Result

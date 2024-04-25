@@ -1,7 +1,6 @@
 {
   "extends": "@talismn/tsconfig/react-library.json",
   "compilerOptions": {
-    "moduleResolution": "nodenext",
     "outDir": "build"
   },
   "include": [
