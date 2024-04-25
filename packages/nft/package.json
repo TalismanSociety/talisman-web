@@ -25,10 +25,10 @@
     "@polkadot/api": "^10.13.1",
     "prettier": "^2.8.8",
     "typescript": "^5.4.5",
-    "viem": "^1.20.3"
+    "viem": "^2.9.26"
   },
   "peerDependencies": {
     "@polkadot/api": ">= 9.x",
-    "viem": "1.x"
+    "viem": "2.x"
   }
 }

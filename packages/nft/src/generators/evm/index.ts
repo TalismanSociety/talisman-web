@@ -1,6 +1,6 @@
-import { createPublicClient, http, isAddress as isEvmAddress } from 'viem'
+import { createPublicClient, erc721Abi, http, isAddress as isEvmAddress } from 'viem'
 import { type CreateNftAsyncGenerator, type Nft } from '../../types.js'
-import { erc721Abi } from './abi.js'
+
 import chains from './chains.js'
 
 const range = (start: number, stop: number, step = 1) =>
@@ -18,7 +18,7 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'erc721', s
     try {
       const publicClient = createPublicClient({ chain: config.chain, transport: http() })
 
-      const balances = await publicClient.multicall({
+      const balances = (await publicClient.multicall({
         contracts: Object.values(config.erc721ContractAddress).map(erc721Address => ({
           address: erc721Address,
           abi: erc721Abi,
@@ -26,7 +26,7 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'erc721', s
           args: [address],
         })),
         allowFailure: false,
-      })
+      })) as bigint[]
 
       const erc721AddressesWithBalance = balances
         .map((balance, index) => ({
@@ -64,10 +64,10 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'erc721', s
                 allowFailure: false,
               })
 
-              const tokenUris = await publicClient.multicall({
+              const tokenUris = (await publicClient.multicall({
                 contracts: tokenIds.map(tokenId => ({ ...wagmiContract, functionName: 'tokenURI', args: [tokenId] })),
                 allowFailure: false,
-              })
+              })) as string[]
 
               const metadatum: Array<
                 | {
@@ -90,7 +90,7 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'erc721', s
                 const metadata = metadatum[index]
 
                 const type = 'erc721' as const
-                const chain = config.chain.network
+                const chain = config.chain.name
                 const chainId = config.chain.id
 
                 return {
@@ -106,11 +106,11 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'erc721', s
                     ? undefined
                     : Object.fromEntries(metadata.attributes?.map(x => [x.trait_type, x.value])),
                   externalLinks:
-                    config.chain.blockExplorers?.etherscan !== undefined
+                    config.chain.blockExplorers?.default !== undefined
                       ? [
                           {
-                            name: config.chain.blockExplorers.etherscan.name,
-                            url: `${config.chain.blockExplorers.etherscan.url}/token/${erc721Address}?a=${tokenId}`,
+                            name: config.chain.blockExplorers.default.name,
+                            url: `${config.chain.blockExplorers.default.url}/token/${erc721Address}?a=${tokenId}`,
                           },
                         ]
                       : undefined,

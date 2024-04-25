@@ -11,7 +11,7 @@ import { AccountWatcher, SignetWatcher } from '@domains/accounts'
 import { BalancesWatcher } from '@domains/balances'
 import { chainDeriveState, chainQueryMultiState, chainQueryState } from '@domains/common/recoils/query'
 import { ExtensionWatcher, TalismanExtensionSynchronizer } from '@domains/extension'
-import { WagmiProvider } from '@domains/extension/wagmi'
+import { EvmProvider } from '@domains/extension/wagmi'
 import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import router from '@routes'
@@ -52,7 +52,7 @@ const App = () => (
       >
         <Suspense fallback={<Loader />}>
           <PostHogProvider apiKey={import.meta.env.REACT_APP_POSTHOG_AUTH_TOKEN}>
-            <WagmiProvider>
+            <EvmProvider>
               <PolkadotApiProvider
                 queryState={chainQueryState}
                 deriveState={chainDeriveState}
@@ -71,7 +71,7 @@ const App = () => (
                   </TalismanProvider>
                 </Portfolio.Provider>
               </PolkadotApiProvider>
-            </WagmiProvider>
+            </EvmProvider>
           </PostHogProvider>
         </Suspense>
       </ErrorBoundary>

@@ -69,7 +69,7 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
       </div>
       <Surface css={{ padding: '1.6rem', borderRadius: '1.6rem' }}>
         <SlpxAddStakeForm
-          confirmState={!ready ? 'disabled' : mint.isLoading ? 'pending' : undefined}
+          confirmState={!ready ? 'disabled' : mint.isPending ? 'pending' : undefined}
           accountSelector={accountSelector}
           amount={amount}
           fiatAmount={localizedFiatAmount ?? '...'}
@@ -82,7 +82,7 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
             rate => `1 ${props.slpxPair.nativeToken.symbol} = ${rate.toLocaleString()} ${props.slpxPair.vToken.symbol}`
           )}
           onConfirm={async () => {
-            await mint.writeAsync()
+            await mint.writeContractAsync()
           }}
           onRequestMaxAmount={() => {
             if (available !== undefined) {

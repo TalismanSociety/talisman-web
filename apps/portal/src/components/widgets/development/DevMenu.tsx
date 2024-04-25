@@ -2,7 +2,7 @@ import 'winbox/dist/css/themes/modern.min.css'
 import 'winbox/dist/css/winbox.min.css'
 
 import { enableTestnetsState } from '@domains/chains'
-import { toastExtrinsic, useWagmiContractWrite } from '@domains/common'
+import { toastExtrinsic, useWagmiWriteContract } from '@domains/common'
 import RpcError from '@polkadot/rpc-provider/coder/error'
 import { useSurfaceColor } from '@talismn/ui'
 import { usePostHog } from 'posthog-js/react'
@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useSessionStorage } from 'react-use'
 import WinBox, { type WinBoxPropType } from 'react-winbox'
 import { useRecoilState } from 'recoil'
-import { sepolia } from 'wagmi'
+import { sepolia } from 'wagmi/chains'
 import { debugErrorBoundaryState } from '../ErrorBoundary'
 import { counterAbi } from './counterAbi'
 
@@ -30,18 +30,18 @@ const InsufficientFeeToast = () => {
 }
 
 const SignEvmTransaction = () => {
-  const { writeAsync } = useWagmiContractWrite({
-    chainId: sepolia.id,
-    address: '0x87F762e318e8a54215b2e2FDcE28C136e176e14C',
-    abi: counterAbi,
-    functionName: 'increment',
-    etherscanUrl: sepolia.blockExplorers.etherscan.url,
-  })
+  const { writeContractAsync: writeAsync } = useWagmiWriteContract()
 
   return (
     <button
       onClick={() => {
-        void writeAsync()
+        void writeAsync({
+          chainId: sepolia.id,
+          address: '0x87F762e318e8a54215b2e2FDcE28C136e176e14C',
+          abi: counterAbi,
+          functionName: 'increment',
+          etherscanUrl: sepolia.blockExplorers.default.url,
+        })
       }}
     >
       Sign EVM transaction

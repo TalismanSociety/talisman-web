@@ -37,7 +37,7 @@ const UnstakeDialog = (props: UnstakeDialogProps) => {
       confirmState={
         !ready
           ? 'disabled'
-          : redeem.isLoading || approve.isLoading || approveTransaction.isLoading
+          : redeem.isPending || approve.isPending || approveTransaction.isLoading
           ? 'pending'
           : undefined
       }
@@ -61,9 +61,9 @@ const UnstakeDialog = (props: UnstakeDialogProps) => {
       approvalNeeded={approvalNeeded}
       onConfirm={async () => {
         if (approvalNeeded) {
-          await approve.writeAsync()
+          await approve.writeContractAsync()
         } else {
-          await redeem.writeAsync()
+          await redeem.writeContractAsync()
         }
       }}
       onRequestMaxAmount={() => {

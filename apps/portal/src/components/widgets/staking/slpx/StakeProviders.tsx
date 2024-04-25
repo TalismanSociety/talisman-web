@@ -7,11 +7,13 @@ import { ChainProvider } from '@domains/chains'
 import { slpxPairsState, type SlpxPair } from '@domains/staking/slpx'
 import { githubChainLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
-import { useToken } from 'wagmi'
+import { useConfig } from 'wagmi'
+import { getTokenQueryOptions } from 'wagmi/query'
 import Apr from './Apr'
 import UnlockDuration from './UnlockDuration'
 
@@ -42,17 +44,21 @@ const AvailableFiatBalance = (props: { slpxPair: SlpxPair }) => (
 
 const StakePercentage = (props: { slpxPair: SlpxPair }) => {
   const balances = useRecoilValue(selectedBalancesState)
-  const liquidToken = useToken({
-    chainId: props.slpxPair.chain.id,
-    address: props.slpxPair.vToken.address,
-    suspense: true,
-  })
+
+  const config = useConfig()
+  const liquidToken = useSuspenseQuery(
+    getTokenQueryOptions(config, {
+      chainId: props.slpxPair.chain.id,
+      address: props.slpxPair.vToken.address,
+    })
+  )
+
   const nativeBalance = useMemo(
     () => balances.find(x => x.token?.symbol.toLowerCase() === props.slpxPair.nativeToken.symbol.toLowerCase()),
     [balances, props.slpxPair.nativeToken.symbol]
   )
   const liquidBalance = useMemo(
-    () => balances.find(x => x.token?.symbol.toLowerCase() === liquidToken.data?.symbol.toLowerCase()),
+    () => balances.find(x => x.token?.symbol.toLowerCase() === liquidToken.data?.symbol?.toLowerCase()),
     [balances, liquidToken.data?.symbol]
   )
 

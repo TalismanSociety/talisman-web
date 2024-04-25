@@ -2,17 +2,19 @@ import '@bifrost-finance/types/augment/api'
 import type { Account } from '@domains/accounts'
 import { selectedCurrencyState } from '@domains/balances'
 import { tokenPriceState } from '@domains/chains'
-import { useSubstrateApiState, useWagmiContractWrite } from '@domains/common'
+import { useSubstrateApiState, useWagmiWriteContract } from '@domains/common'
 import { evmToAddress } from '@polkadot/util-crypto'
 import { Decimal } from '@talismn/math'
 import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
+import { useSuspenseQueries } from '@tanstack/react-query'
 import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
-import { isAddress } from 'viem'
-import { erc20ABI, useContractRead, useContractReads, useToken, useWaitForTransaction } from 'wagmi'
+import { erc20Abi, isAddress } from 'viem'
+import { useBlockNumber, useConfig, useReadContract, useToken, useWaitForTransactionReceipt } from 'wagmi'
+import { getTokenQueryOptions, readContractsQueryOptions } from 'wagmi/query'
 import slpx from './abi'
 import type { SlpxPair, SlpxToken } from './types'
 
@@ -75,13 +77,15 @@ export const useSlpxSwapForm = (
     [currency, decimalAmount, originTokenRate.contents, originTokenRate.state]
   )
 
-  const balance = useContractRead({
+  const balance = useReadContract({
     chainId,
     address: originToken?.address,
-    abi: erc20ABI,
+    abi: erc20Abi,
     functionName: 'balanceOf',
     args: [account?.address ?? '0x'],
-    enabled: account?.address !== undefined,
+    query: {
+      enabled: account?.address !== undefined,
+    },
   })
 
   const available = useMemo(
@@ -92,22 +96,26 @@ export const useSlpxSwapForm = (
     [balance.data, originToken?.decimals, originToken?.symbol]
   )
 
-  const existingOriginTokenAmount = useContractRead({
+  const existingOriginTokenAmount = useReadContract({
     chainId,
     address: originToken?.address,
-    abi: erc20ABI,
+    abi: erc20Abi,
     functionName: 'balanceOf',
     args: [account?.address ?? '0x'],
-    enabled: account?.address !== undefined,
+    query: {
+      enabled: account?.address !== undefined,
+    },
   })
 
-  const existingDestTokenAmount = useContractRead({
+  const existingDestTokenAmount = useReadContract({
     chainId,
     address: destToken?.address,
-    abi: erc20ABI,
+    abi: erc20Abi,
     functionName: 'balanceOf',
     args: [account?.address ?? '0x'],
-    enabled: account?.address !== undefined,
+    query: {
+      enabled: account?.address !== undefined,
+    },
   })
 
   const rateLoadable = useSwapRateLoadable(
@@ -172,13 +180,15 @@ export const useSlpxSwapForm = (
     receivingAmount,
   ])
 
-  const assetInfo = useContractRead({
+  const assetInfo = useReadContract({
     chainId,
     address: splxContractAddress,
     abi: slpx,
     functionName: 'addressToAssetInfo',
     args: [originToken?.address ?? '0x'],
-    enabled: originToken?.address !== undefined,
+    query: {
+      enabled: originToken?.address !== undefined,
+    },
   })
 
   const minAmount = useMemo(
@@ -241,40 +251,55 @@ export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) 
 
   const planckAmount = base.input.decimalAmount?.planck
 
-  const allowance = useContractRead({
+  const allowance = useReadContract({
     chainId: slpxPair.chain.id,
     address: slpxPair.vToken.address,
-    abi: erc20ABI,
+    abi: erc20Abi,
     functionName: 'allowance',
     args: [account?.address ?? '0x', slpxPair.splx],
-    enabled: account?.address !== undefined,
-  })
-
-  const redeem = useWagmiContractWrite({
-    chainId: slpxPair.chain.id,
-    address: slpxPair.splx,
-    abi: slpx,
-    functionName: 'redeemAsset',
-    args: [slpxPair.vToken.address, planckAmount ?? 0n, account?.address ?? '0x'],
-    etherscanUrl: slpxPair.etherscanUrl,
-  })
-
-  const approve = useWagmiContractWrite({
-    chainId: slpxPair.chain.id,
-    address: slpxPair.vToken.address,
-    abi: erc20ABI,
-    functionName: 'approve',
-    args: [slpxPair.splx, planckAmount ?? 0n],
-    etherscanUrl: slpxPair.etherscanUrl,
-  })
-
-  const approveTransaction = useWaitForTransaction({
-    chainId: slpxPair.chain.id,
-    hash: approve.data?.hash,
-    onSettled: () => {
-      void allowance.refetch()
+    query: {
+      enabled: account?.address !== undefined,
     },
   })
+
+  const _redeem = useWagmiWriteContract()
+  const redeem = {
+    ..._redeem,
+    writeContractAsync: async () =>
+      await _redeem.writeContractAsync({
+        chainId: slpxPair.chain.id,
+        address: slpxPair.splx,
+        abi: slpx,
+        functionName: 'redeemAsset',
+        args: [slpxPair.vToken.address, planckAmount ?? 0n, (account?.address as `0x${string}`) ?? '0x'],
+        etherscanUrl: slpxPair.etherscanUrl,
+      }),
+  }
+
+  const _approve = useWagmiWriteContract()
+  const approve = {
+    ..._approve,
+    writeContractAsync: async () =>
+      await _approve.writeContractAsync({
+        chainId: slpxPair.chain.id,
+        address: slpxPair.vToken.address,
+        abi: erc20Abi,
+        functionName: 'approve',
+        args: [slpxPair.splx, planckAmount ?? 0n],
+        etherscanUrl: slpxPair.etherscanUrl,
+      }),
+  }
+
+  const approveTransaction = useWaitForTransactionReceipt({
+    chainId: slpxPair.chain.id,
+    hash: approve.data,
+  })
+
+  useEffect(() => {
+    if (approveTransaction.data?.status === 'success') {
+      void allowance.refetch()
+    }
+  }, [allowance, approveTransaction.data?.status])
 
   const approvalNeeded = useMemo(
     () => allowance.data !== undefined && planckAmount !== undefined && allowance.data < planckAmount,
@@ -300,15 +325,20 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
 
   const planckAmount = base.input.decimalAmount?.planck
 
-  const mint = useWagmiContractWrite({
-    chainId: slpxPair.chain.id,
-    address: slpxPair.splx,
-    abi: slpx,
-    functionName: 'mintVNativeAsset',
-    args: [account?.address ?? '0x', import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman'],
-    value: planckAmount ?? 0n,
-    etherscanUrl: slpxPair.etherscanUrl,
-  })
+  const _mint = useWagmiWriteContract()
+  const mint = {
+    ..._mint,
+    writeContractAsync: async () =>
+      await _mint.writeContractAsync({
+        chainId: slpxPair.chain.id,
+        address: slpxPair.splx,
+        abi: slpx,
+        functionName: 'mintVNativeAsset',
+        args: [(account?.address as `0x${string}`) ?? '0x', import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman'],
+        value: planckAmount ?? 0n,
+        etherscanUrl: slpxPair.etherscanUrl,
+      }),
+  }
 
   return {
     ...base,
@@ -319,19 +349,33 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
 export const useStakes = (accounts: Account[], slpxPair: SlpxPair) => {
   const filteredAccounts = useMemo(() => accounts.filter(x => x.type === 'ethereum'), [accounts])
 
-  const vToken = useToken({ chainId: slpxPair.chain.id, address: slpxPair.vToken.address, suspense: true })
+  const { data: blockNumber } = useBlockNumber({ watch: true })
 
-  const balances = useContractReads({
-    contracts: filteredAccounts.map(x => ({
-      chainId: slpxPair.chain.id,
-      address: slpxPair.vToken.address,
-      abi: erc20ABI,
-      functionName: 'balanceOf',
-      args: [x.address],
-    })),
-    watch: true,
-    suspense: true,
+  const config = useConfig()
+
+  const [vToken, balances] = useSuspenseQueries({
+    queries: [
+      getTokenQueryOptions(config, { chainId: slpxPair.chain.id, address: slpxPair.vToken.address }),
+      readContractsQueryOptions(config, {
+        contracts: filteredAccounts.map(x => ({
+          chainId: slpxPair.chain.id,
+          address: slpxPair.vToken.address,
+          abi: erc20Abi,
+          functionName: 'balanceOf',
+          args: [x.address],
+        })),
+      }),
+    ],
   })
+
+  useEffect(
+    () => {
+      void vToken.refetch()
+      void balances.refetch()
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [blockNumber]
+  )
 
   const api = useRecoilValue(useSubstrateApiState())
   const [tokenPrice, userUnlockLedgers] = useRecoilValue(

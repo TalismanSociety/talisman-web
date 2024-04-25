@@ -43,6 +43,7 @@
     "@talismn/util": "0.0.0-pr1361-20240327170800",
     "@talismn/utils": "workspace:^",
     "@talismn/web-icons": "workspace:^",
+    "@tanstack/react-query": "^5.32.0",
     "@visx/visx": "^3.1.2",
     "bignumber.js": "^9.1.1",
     "csv-stringify": "^6.2.3",
@@ -56,7 +57,7 @@
     "jotai": "^2.6.4",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
-    "mipd": "^0.0.5",
+    "mipd": "^0.0.7",
     "posthog-js": "^1.93.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -70,7 +71,8 @@
     "safety-match": "^0.4.4",
     "threads": "^1.7.0",
     "victory": "^36.6.8",
-    "wagmi": "^1.4.12"
+    "viem": "^2.9.26",
+    "wagmi": "^2.5.20"
   },
   "devDependencies": {
     "@acala-network/types": "^5.1.2",
