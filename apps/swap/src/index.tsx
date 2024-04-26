@@ -1036,6 +1036,7 @@ const _Swap = () => {
 
 type HydrateSwapProps = PropsWithChildren<{
   accounts: Account[]
+  currency: string
   viemWalletClient?: WalletClient
   polkadotSigner?: Signer
   coingeckoApiEndpoint?: string
@@ -1055,6 +1056,7 @@ const HydrateSwap = (props: HydrateSwapProps) => {
     new Map(
       [
         [accountsAtom, stableAccounts],
+        [currencyAtom, props.currency],
         [viemWalletClientAtom, props.viemWalletClient],
         [polkadotSignerAtom, props.polkadotSigner],
         [coingeckoApiEndpointAtom, props.coingeckoApiEndpoint],

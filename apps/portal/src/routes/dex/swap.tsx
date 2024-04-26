@@ -1,5 +1,6 @@
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { evmAccountsState, writeableSubstrateAccountsState } from '@domains/accounts'
+import { selectedCurrencyState } from '@domains/balances'
 import { enableTestnetsState } from '@domains/chains'
 import { useConnectedEip6963Provider, useConnectedSubstrateWallet } from '@domains/extension'
 import { TitlePortal } from '@routes/layout'
@@ -34,6 +35,7 @@ const Swap = () => {
               })),
             [evmAccounts, substrateAccounts]
           )}
+          currency={useRecoilValue(selectedCurrencyState)}
           polkadotSigner={substrateWallet?.signer}
           viemWalletClient={useMemo(
             () =>
