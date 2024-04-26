@@ -5,7 +5,7 @@ export const glmrSlpxPair = {
   chain: moonbeam,
   substrateChainGenesisHash: '0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b',
   splx: '0xF1d4797E51a4640a76769A50b57abE7479ADd3d8',
-  etherscanUrl: moonbeam.blockExplorers.etherscan.url,
+  etherscanUrl: moonbeam.blockExplorers.default.url,
   nativeToken: {
     type: 'token',
     address: '0x0000000000000000000000000000000000000802',

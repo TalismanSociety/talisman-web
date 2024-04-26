@@ -1,4 +1,4 @@
-import { mainnet } from 'wagmi'
+import { mainnet } from 'wagmi/chains'
 import type { LidoSuite } from './types'
 
 export const lidoMainnet = {

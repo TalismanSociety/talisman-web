@@ -3,6 +3,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api'
 import '@polkadot/api-augment/substrate'
 import type { Signer } from '@polkadot/api/types'
 import { BigIntMath, Decimal } from '@talismn/math'
+import { erc20Abi } from 'viem'
 import {
   Chip,
   CircularProgressIndicator,
@@ -42,7 +43,6 @@ import {
 import { ErrorBoundary } from 'react-error-boundary'
 import { createPublicClient, http, type WalletClient } from 'viem'
 import { mainnet, sepolia } from 'viem/chains'
-import { erc20Abi } from './abi'
 import { assetCoingeckoIds, assetIcons, chainIcons } from './config'
 import { shortenAddress, sleep } from './utils'
 

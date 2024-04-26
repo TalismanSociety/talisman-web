@@ -7,11 +7,13 @@ import { type LidoSuite } from '@domains/staking/lido'
 import { lidoAprState, lidoSuitesState } from '@domains/staking/lido/recoils'
 import { githubChainLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
-import { useToken } from 'wagmi'
+import { useConfig } from 'wagmi'
+import { getTokenQueryOptions } from 'wagmi/query'
 
 const Apr = (props: { lidoSuite: LidoSuite }) => (
   <>
@@ -50,18 +52,21 @@ const AvailableFiatBalance = (props: { lidoSuite: LidoSuite }) => (
 
 const StakePercentage = (props: { lidoSuite: LidoSuite }) => {
   const balances = useRecoilValue(selectedBalancesState)
-  const liquidToken = useToken({
-    chainId: props.lidoSuite.chain.id,
-    address: props.lidoSuite.token.address,
-    suspense: true,
-  })
+
+  const config = useConfig()
+  const liquidToken = useSuspenseQuery(
+    getTokenQueryOptions(config, {
+      chainId: props.lidoSuite.chain.id,
+      address: props.lidoSuite.token.address,
+    })
+  )
   const nativeBalance = useMemo(
     () =>
       balances.find(x => x.token?.symbol.toLowerCase() === props.lidoSuite.chain.nativeCurrency.symbol.toLowerCase()),
     [balances, props.lidoSuite.chain.nativeCurrency.symbol]
   )
   const liquidBalance = useMemo(
-    () => balances.find(x => x.token?.symbol.toLowerCase() === liquidToken.data?.symbol.toLowerCase()),
+    () => balances.find(x => x.token?.symbol.toLowerCase() === liquidToken.data?.symbol?.toLowerCase()),
     [balances, liquidToken.data?.symbol]
   )
 

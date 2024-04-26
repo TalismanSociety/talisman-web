@@ -1,4 +1,4 @@
-import type { Chain } from 'wagmi'
+import type { Chain } from 'wagmi/chains'
 
 export type LidoSuite = {
   chain: Chain

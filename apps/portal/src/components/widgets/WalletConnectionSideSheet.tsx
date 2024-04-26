@@ -7,13 +7,13 @@ import {
   useSubstrateWalletConnect,
 } from '@domains/extension'
 import { ClassNames, useTheme } from '@emotion/react'
-import { Ethereum, Eye, Polkadot, Wallet } from '@talismn/web-icons'
+import { useSignetSdk } from '@talismn/signet-apps-sdk'
 import { Chip, Hr, ListItem, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Surface, Text } from '@talismn/ui'
-import { Suspense, useEffect, useState, type ButtonHTMLAttributes, type DetailedHTMLProps } from 'react'
+import { Ethereum, Eye, Polkadot, Wallet } from '@talismn/web-icons'
+import { Suspense, useState, type ButtonHTMLAttributes, type DetailedHTMLProps } from 'react'
 import { atom, useRecoilState } from 'recoil'
 import { useAccount } from 'wagmi'
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
-import { useSignetSdk } from '@talismn/signet-apps-sdk'
 
 const talismanInstalled = 'talismanEth' in globalThis
 
@@ -156,19 +156,7 @@ const SubstrateWalletConnection = () => {
 const EvmWalletConnections = () => {
   const { connect, disconnect } = useConnectEip6963()
   const providers = useEip6963Providers()
-  const { connector } = useAccount()
-
-  const [connectedProvider, setConnectedProvider] = useState<any>()
-
-  useEffect(() => {
-    if (connector === undefined) {
-      setConnectedProvider(undefined)
-    }
-
-    if (connector?.ready) {
-      void connector.getProvider().then(setConnectedProvider)
-    }
-  }, [connector])
+  const { connector, isConnected } = useAccount()
 
   return (
     <section>
@@ -182,7 +170,7 @@ const EvmWalletConnections = () => {
             key={x.info.uuid}
             name={x.info.name}
             iconUrl={x.info.icon}
-            connected={connectedProvider === x.provider}
+            connected={isConnected && x.info.uuid === connector?.id}
             onConnectRequest={() => connect(x)}
             onDisconnectRequest={() => disconnect()}
           />
