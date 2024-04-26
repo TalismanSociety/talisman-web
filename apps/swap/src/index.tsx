@@ -3,7 +3,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api'
 import '@polkadot/api-augment/substrate'
 import type { Signer } from '@polkadot/api/types'
 import { BigIntMath, Decimal } from '@talismn/math'
-import { erc20Abi } from 'viem'
+import { erc20Abi, isAddress } from 'viem'
 import {
   Chip,
   CircularProgressIndicator,
@@ -442,12 +442,14 @@ const srcEvmChain = atom(async get => {
   return chain
 })
 
-const viemPublicClientAtom = atom(async get => {
-  return createPublicClient({
-    chain: await get(srcEvmChain),
-    transport: http(),
+const viemPublicClientAtomFamily = atomFamily((evmChainId: number) =>
+  atom(async () => {
+    return createPublicClient({
+      chain: EVM_CHAINS.find(chain => chain.id === evmChainId),
+      transport: http(),
+    })
   })
-})
+)
 
 const viemWalletClientAtom = atomWithDefault<WalletClient>(() => {
   throw new Error('No Viem wallet client available')
@@ -503,46 +505,107 @@ const srcAssetAvailableAmountAtomEffect = atomEffect((_, set) => {
   return () => globalThis.clearInterval(interval)
 })
 
+const assetAvailableAmountAtomFamily = atomFamily(
+  ({ address, asset }: { address: string; asset: Asset }) =>
+    atom(async get => {
+      const [chains, assets] = await Promise.all([get(chainsAtoms), get(assetsAtom)])
+
+      const assetData = assets.find(x => x.asset === asset)
+
+      if (assetData === undefined) {
+        throw new Error(`Can't find asset: ${asset}`)
+      }
+
+      const chainData = chains.find(x => x.chain === assetData.chain)
+
+      if (chainData === undefined) {
+        throw new Error(`Can't find chain: ${assetData.chain}`)
+      }
+
+      switch (assetData.chain) {
+        case 'Ethereum': {
+          if (chainData.evmChainId === undefined) {
+            throw new Error('Invalid EVM chain')
+          }
+
+          if (!isAddress(address)) {
+            throw new Error('Invalid EVM address')
+          }
+
+          const client = await get(viemPublicClientAtomFamily(chainData.evmChainId))
+
+          const balance =
+            assetData.contractAddress === undefined
+              ? await client.getBalance({ address })
+              : await client.readContract({
+                  abi: erc20Abi,
+                  address: assetData.contractAddress as `0x${string}`,
+                  functionName: 'balanceOf',
+                  args: [address],
+                })
+
+          return Decimal.fromPlanck(balance, assetData.decimals, assetData.symbol)
+        }
+        case 'Polkadot': {
+          const api = await get(polkadotApiAtom)
+
+          const balances = await api.derive.balances.all(address)
+
+          return Decimal.fromPlanck(
+            BigIntMath.max(
+              0n,
+              balances.availableBalance.toBigInt() - api.consts.balances.existentialDeposit.toBigInt()
+            ),
+            assetData.decimals,
+            assetData.symbol
+          )
+        }
+        default:
+          throw new Error(`Unsupported asset chain: ${assetData.chain}`)
+      }
+    }),
+  (a, b) => a.address === b.address && a.asset === b.asset
+)
+
+assetAvailableAmountAtomFamily.setShouldRemove(createdAt => new Date().getTime() - createdAt > 6000)
+
 const srcAssetAvailableAmountAtom = atomWithRefresh(async get => {
-  const srcAccount = get(srcAccountAtom)
+  const account = get(srcAccountAtom)
 
-  if (srcAccount === undefined) {
-    return undefined
+  if (account === undefined) {
+    return
   }
-
-  const srcAsset = await get(srcAssetAtom)
 
   get(srcAssetAvailableAmountAtomEffect)
 
-  switch (srcAccount.type) {
-    case 'evm': {
-      const client = await get(viemPublicClientAtom)
-
-      const balance =
-        srcAsset.contractAddress === undefined
-          ? await client.getBalance({ address: srcAccount.address })
-          : await client.readContract({
-              abi: erc20Abi,
-              address: srcAsset.contractAddress as `0x${string}`,
-              functionName: 'balanceOf',
-              args: [srcAccount.address],
-            })
-
-      return Decimal.fromPlanck(balance, srcAsset.decimals, srcAsset.symbol)
-    }
-    case 'substrate': {
-      const api = await get(polkadotApiAtom)
-
-      const balances = await api.derive.balances.all(srcAccount.address)
-
-      return Decimal.fromPlanck(
-        BigIntMath.max(0n, balances.availableBalance.toBigInt() - api.consts.balances.existentialDeposit.toBigInt()),
-        srcAsset.decimals,
-        srcAsset.symbol
-      )
-    }
-  }
+  return await get(assetAvailableAmountAtomFamily({ address: account.address, asset: (await get(srcAssetAtom)).asset }))
 })
+
+type AssetAmountProps = {
+  account: Account
+  asset: Asset
+}
+
+const AssetAmount = (props: AssetAmountProps) => (
+  <>
+    {useAtomValue(
+      assetAvailableAmountAtomFamily({ address: props.account.address, asset: props.asset })
+    )?.toLocaleString()}
+  </>
+)
+
+type AssetFiatAmountProps = {
+  account: Account
+  asset: Asset
+}
+
+const AssetFiatAmount = (props: AssetFiatAmountProps) => {
+  const currency = useAtomValue(currencyAtom)
+  const price = useAtomValue(assetFiatPriceAtomFamily(props.asset))
+  const amount = useAtomValue(assetAvailableAmountAtomFamily({ address: props.account.address, asset: props.asset }))
+
+  return (price * amount.toNumber()).toLocaleString(undefined, { style: 'currency', currency })
+}
 
 type AssetSelectProps = {
   for: 'src' | 'dest'
@@ -550,6 +613,8 @@ type AssetSelectProps = {
 
 const AssetSelect = (props: AssetSelectProps) => {
   const [open, setOpen] = useState(false)
+
+  const account = useAtomValue(props.for === 'src' ? srcAccountAtom : destAccountAtom)
   const asset = useAtomValue(props.for === 'src' ? srcAssetAtom : destAssetAtom)
   const chains = useAtomValue(props.for === 'src' ? srcChainsAtom : destChainsAtom)
   const assets = useAtomValue(props.for === 'src' ? srcAssetsAtom : destAssetsAtom)
@@ -567,10 +632,10 @@ const AssetSelect = (props: AssetSelectProps) => {
         iconSrc: assetIcons[asset.asset],
         chain: asset.chain,
         chainId: asset.chain,
-        amount: '',
-        fiatAmount: '',
+        amount: account === undefined ? undefined : <AssetAmount account={account} asset={asset.asset} />,
+        fiatAmount: account === undefined ? undefined : <AssetFiatAmount account={account} asset={asset.asset} />,
       })),
-    [assets]
+    [account, assets]
   )
 
   const setChainAndAsset = useAtomCallback(

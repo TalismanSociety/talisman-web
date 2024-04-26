@@ -1,14 +1,14 @@
-import { AlertDialog, Clickable, ListItem, SearchBar, Select, Surface } from '@talismn/ui'
+import { AlertDialog, CircularProgressIndicator, Clickable, ListItem, SearchBar, Select, Surface } from '@talismn/ui'
 import { Globe } from '@talismn/web-icons'
-import { useMemo, useState } from 'react'
+import { Suspense, useMemo, useState, type ReactNode } from 'react'
 
 type TokenSelectDialogItemProps = {
   code: string
   name: string
   chain: string
   iconSrc: string
-  amount: string
-  fiatAmount: string
+  amount: ReactNode
+  fiatAmount: ReactNode
   onClick: () => unknown
 }
 
@@ -24,16 +24,16 @@ const TokenSelectDialogItem = (props: TokenSelectDialogItemProps) => (
       }}
     >
       <ListItem
-        css={{ padding: 0 }}
+        css={{ flex: 1, padding: 0 }}
         leadingContent={<img src={props.iconSrc} css={{ width: '4rem', height: '4rem' }} />}
         headlineContent={props.code}
         supportingContent={props.name}
       />
-      <ListItem css={{ padding: 0 }} headlineContent={props.chain} />
+      <ListItem css={{ flex: 1, padding: 0 }} headlineContent={props.chain} />
       <ListItem
-        css={{ padding: 0, textAlign: 'end' }}
-        headlineContent={props.amount}
-        supportingContent={props.fiatAmount}
+        css={{ flex: 1, padding: 0, textAlign: 'end' }}
+        headlineContent={<Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.amount}</Suspense>}
+        supportingContent={<Suspense>{props.fiatAmount}</Suspense>}
       />
     </Surface>
   </Clickable.WithFeedback>
