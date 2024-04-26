@@ -1,6 +1,6 @@
-import { createPublicClient, erc721Abi, http, isAddress as isEvmAddress } from 'viem'
+import { createPublicClient, http, isAddress as isEvmAddress } from 'viem'
 import { type CreateNftAsyncGenerator, type Nft } from '../../types.js'
-
+import { erc721Abi } from './abi.js'
 import chains from './chains.js'
 
 const range = (start: number, stop: number, step = 1) =>
