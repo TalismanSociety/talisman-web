@@ -285,11 +285,11 @@ const quoteAtom = atomWithRefresh(async get => {
   }
 
   if (amount.planck < srcAsset.minimumSwapAmount.planck) {
-    throw new InputError(`Minimum swap of ${srcAsset.minimumSwapAmount.toLocaleString()} required`)
+    throw new InputError(`Minimum ${srcAsset.minimumSwapAmount.toLocaleString()}`)
   }
 
   if (srcAsset.maximumSwapAmount !== undefined && amount.planck > srcAsset.maximumSwapAmount.planck) {
-    throw new InputError(`Maximum of ${srcAsset.maximumSwapAmount.toLocaleString()} possible`)
+    throw new InputError(`Maximum ${srcAsset.maximumSwapAmount.toLocaleString()}`)
   }
 
   const assets = await get(assetsAtom)
