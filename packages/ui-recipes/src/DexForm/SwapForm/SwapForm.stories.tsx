@@ -32,49 +32,53 @@ export const Default: Story = {
         onClick={() => {}}
       />
     ),
-    summary: (
-      <SwapForm.Summary
-        route={[
-          {
-            iconSrc: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/unknown.svg',
-          },
-          {
-            iconSrc: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/unknown.svg',
-          },
-          {
-            iconSrc: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/unknown.svg',
-          },
-        ]}
-        descriptions={
-          <SwapForm.Summary.DescriptionList>
-            <SwapForm.Summary.DescriptionList.Description term="Origin fee" details="$0.12" />
-            <SwapForm.Summary.DescriptionList.Description term="Est. platform fees" details="$0.12" />
-            <SwapForm.Summary.DescriptionList.Description term="Est. gas fees" details="$0.12" />
-            <SwapForm.Summary.DescriptionList.Description
-              term="Est. rate"
-              details={
-                <span>
-                  1 ETH <Repeat size="1em" /> 6 USDC
-                </span>
-              }
-            />
-            <SwapForm.Summary.DescriptionList.Description
-              term="Price delta"
-              details={(0.125).toLocaleString(undefined, { style: 'percent' })}
-            />
-          </SwapForm.Summary.DescriptionList>
+    info: (
+      <SwapForm.Info
+        summary={
+          <SwapForm.Info.Summary
+            route={[
+              {
+                iconSrc: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/unknown.svg',
+              },
+              {
+                iconSrc: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/unknown.svg',
+              },
+              {
+                iconSrc: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/unknown.svg',
+              },
+            ]}
+            descriptions={
+              <SwapForm.Info.Summary.DescriptionList>
+                <SwapForm.Info.Summary.DescriptionList.Description term="Origin fee" details="$0.12" />
+                <SwapForm.Info.Summary.DescriptionList.Description term="Est. platform fees" details="$0.12" />
+                <SwapForm.Info.Summary.DescriptionList.Description term="Est. gas fees" details="$0.12" />
+                <SwapForm.Info.Summary.DescriptionList.Description
+                  term="Est. rate"
+                  details={
+                    <span>
+                      1 ETH <Repeat size="1em" /> 6 USDC
+                    </span>
+                  }
+                />
+                <SwapForm.Info.Summary.DescriptionList.Description
+                  term="Price delta"
+                  details={(0.125).toLocaleString(undefined, { style: 'percent' })}
+                />
+              </SwapForm.Info.Summary.DescriptionList>
+            }
+          />
         }
         faq={
-          <SwapForm.Summary.Faq>
-            <SwapForm.Summary.Faq.Question question="How does the swap works?" answer="foo" />
-            <SwapForm.Summary.Faq.Question question="What is included in the fees?" answer="foo" />
-            <SwapForm.Summary.Faq.Question question="What are the risks?" answer="foo" />
-          </SwapForm.Summary.Faq>
+          <SwapForm.Info.Faq>
+            <SwapForm.Info.Faq.Question question="How does the swap works?" answer="foo" />
+            <SwapForm.Info.Faq.Question question="What is included in the fees?" answer="foo" />
+            <SwapForm.Info.Faq.Question question="What are the risks?" answer="foo" />
+          </SwapForm.Info.Faq>
         }
         footer={
-          <SwapForm.Summary.Footer>
+          <SwapForm.Info.Footer>
             Swap provided by <Chip css={{ textTransform: 'uppercase' }}>Chainflip</Chip>
-          </SwapForm.Summary.Footer>
+          </SwapForm.Info.Footer>
         }
       />
     ),

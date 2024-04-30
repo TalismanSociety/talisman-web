@@ -3,7 +3,6 @@ import { ApiPromise, WsProvider } from '@polkadot/api'
 import '@polkadot/api-augment/substrate'
 import type { Signer } from '@polkadot/api/types'
 import { BigIntMath, Decimal } from '@talismn/math'
-import { erc20Abi, isAddress } from 'viem'
 import {
   Chip,
   CircularProgressIndicator,
@@ -41,7 +40,7 @@ import {
   type PropsWithChildren,
 } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { createPublicClient, http, type WalletClient } from 'viem'
+import { createPublicClient, erc20Abi, http, isAddress, type WalletClient } from 'viem'
 import { mainnet, sepolia } from 'viem/chains'
 import { assetCoingeckoIds, assetIcons, chainIcons } from './config'
 import { shortenAddress, sleep } from './utils'
@@ -695,8 +694,8 @@ const Quote = () => {
   )
 
   return (
-    <SwapForm.Summary.DescriptionList>
-      <SwapForm.Summary.DescriptionList.Description
+    <SwapForm.Info.Summary.DescriptionList>
+      <SwapForm.Info.Summary.DescriptionList.Description
         term="Est. swap fees"
         details={
           <Tooltip
@@ -718,7 +717,7 @@ const Quote = () => {
           </Tooltip>
         }
       />
-      <SwapForm.Summary.DescriptionList.Description
+      <SwapForm.Info.Summary.DescriptionList.Description
         term="Est. rate"
         details={
           <span>
@@ -726,56 +725,63 @@ const Quote = () => {
           </span>
         }
       />
-    </SwapForm.Summary.DescriptionList>
+    </SwapForm.Info.Summary.DescriptionList>
   )
 }
 
-const Summary = () => {
+const Info = () => {
   const quoteLoadable = useAtomValue(quoteLoadableAtom)
 
+  const route = useMemo(
+    () =>
+      quoteLoadable.state !== 'hasData'
+        ? []
+        : [
+            { iconSrc: assetIcons[quoteLoadable.data.srcAsset] },
+            { iconSrc: assetIcons.USDC },
+            { iconSrc: assetIcons[quoteLoadable.data.destAsset] },
+          ],
+    // @ts-expect-error
+    [quoteLoadable.data?.destAsset, quoteLoadable.data?.srcAsset, quoteLoadable.state]
+  )
+
   return (
-    <SwapForm.Summary
-      route={useMemo(
-        () =>
-          quoteLoadable.state !== 'hasData'
-            ? undefined
-            : [
-                { iconSrc: assetIcons[quoteLoadable.data.srcAsset] },
-                { iconSrc: assetIcons.USDC },
-                { iconSrc: assetIcons[quoteLoadable.data.destAsset] },
-              ],
-        [quoteLoadable]
-      )}
-      descriptions={
+    <SwapForm.Info
+      summary={
         quoteLoadable.state === 'loading' ? (
           <div css={{ display: 'flex', justifyContent: 'center' }}>
             <TalismanHandProgressIndicator />
           </div>
         ) : quoteLoadable.state === 'hasError' && quoteLoadable.error instanceof InputError ? undefined : (
-          <ErrorBoundary
-            fallbackRender={({ error }) => {
-              const errorMessage: string = error.name === 'AxiosError' ? error.response.data.message : error.message
+          <SwapForm.Info.Summary
+            route={route}
+            descriptions={
+              <ErrorBoundary
+                fallbackRender={({ error }) => {
+                  const errorMessage: string = error.name === 'AxiosError' ? error.response.data.message : error.message
 
-              const message = errorMessage.includes('InsufficientLiquidity')
-                ? 'There are not enough liquidity to complete the swap. Please try again with a lower amount'
-                : errorMessage
+                  const message = errorMessage.includes('InsufficientLiquidity')
+                    ? 'There are not enough liquidity to complete the swap. Please try again with a lower amount'
+                    : errorMessage
 
-              return <ErrorMessage title="Unable to obtain quote" message={message} />
-            }}
-          >
-            <Quote />
-          </ErrorBoundary>
+                  return <ErrorMessage title="Unable to obtain quote" message={message} />
+                }}
+              >
+                <Quote />
+              </ErrorBoundary>
+            }
+          />
         )
       }
       faq={
-        <SwapForm.Summary.Faq>
-          <SwapForm.Summary.Faq.Question question="How does the swap works?" answer="foo" />
-          <SwapForm.Summary.Faq.Question question="What is included in the fees?" answer="foo" />
-          <SwapForm.Summary.Faq.Question question="What are the risks?" answer="foo" />
-        </SwapForm.Summary.Faq>
+        <SwapForm.Info.Faq>
+          <SwapForm.Info.Faq.Question question="How does the swap works?" answer="foo" />
+          <SwapForm.Info.Faq.Question question="What is included in the fees?" answer="foo" />
+          <SwapForm.Info.Faq.Question question="What are the risks?" answer="foo" />
+        </SwapForm.Info.Faq>
       }
       footer={
-        <SwapForm.Summary.Footer>
+        <SwapForm.Info.Footer>
           Swap provided by{' '}
           <Chip
             containerColor="linear-gradient(90deg, rgba(255, 73, 162, 0.10) 0%, rgba(70, 221, 147, 0.10) 100%)"
@@ -783,7 +789,7 @@ const Summary = () => {
           >
             <img src="https://chainflip.io/images/home/logo-white.svg" css={{ height: '1em' }} />
           </Chip>
-        </SwapForm.Summary.Footer>
+        </SwapForm.Info.Footer>
       }
     />
   )
@@ -1011,7 +1017,7 @@ const _Swap = () => {
           set(destAssetAtom, srcAsset)
         }, [])
       )}
-      summary={<Summary />}
+      info={<Info />}
       onRequestSwap={useAtomCallback(
         useCallback(
           async (_, set) => {

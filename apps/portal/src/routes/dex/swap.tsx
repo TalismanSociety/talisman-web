@@ -1,9 +1,9 @@
-import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { evmAccountsState, writeableSubstrateAccountsState } from '@domains/accounts'
 import { selectedCurrencyState } from '@domains/balances'
 import { enableTestnetsState } from '@domains/chains'
 import { useConnectedEip6963Provider, useConnectedSubstrateWallet } from '@domains/extension'
 import { TitlePortal } from '@routes/layout'
+import { TalismanHandProgressIndicator } from '@talismn/ui'
 
 import React, { Suspense, useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
@@ -19,9 +19,9 @@ const Swap = () => {
   const evmProvider = useConnectedEip6963Provider()
 
   return (
-    <div css={{ display: 'flex', justifyContent: 'center' }}>
+    <>
       <TitlePortal>Swap</TitlePortal>
-      <Suspense fallback={<TalismanHandLoader />}>
+      <Suspense fallback={<TalismanHandProgressIndicator />}>
         <SwapWidget
           accounts={useMemo(
             () =>
@@ -48,7 +48,7 @@ const Swap = () => {
           useTestnet={useRecoilValue(enableTestnetsState)}
         />
       </Suspense>
-    </div>
+    </>
   )
 }
 

@@ -16,7 +16,6 @@ export const DEX_FORM_WIDE_MEDIA_SELECTOR = `@media(min-width: 76rem)`
 export type DexFormTokenSelectProps = {
   name: ReactNode
   chain: ReactNode
-
   onClick: () => unknown
 } & ({ iconSrc: string } | { icon: ReactNode })
 
@@ -46,10 +45,10 @@ export const TokenSelect = Object.assign(
   }
 )
 
-export type DexFormSummaryProps = PropsWithChildren
+export type DexFormInfoProps = PropsWithChildren
 
-const Summary = Object.assign(
-  (props: DexFormSummaryProps) => {
+const Info = Object.assign(
+  (props: DexFormInfoProps) => {
     const theme = useTheme()
 
     return (
@@ -103,7 +102,7 @@ const Summary = Object.assign(
   }
 )
 
-export type DexFormProps = PropsWithChildren<{ summary: ReactNode }>
+export type DexFormProps = PropsWithChildren<{ info: ReactNode }>
 
 const DexForm = Object.assign(
   (props: DexFormProps) => {
@@ -119,8 +118,17 @@ const DexForm = Object.assign(
           },
         }}
       >
-        <section css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>{props.children}</section>
-        {props.summary}
+        <section
+          css={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.8rem',
+            [DEX_FORM_WIDE_MEDIA_SELECTOR]: { width: '50rem' },
+          }}
+        >
+          {props.children}
+        </section>
+        {props.info}
       </div>
     )
   },
@@ -142,7 +150,7 @@ const DexForm = Object.assign(
       </Details>
     ),
     ConfirmButton: (props: ButtonProps) => <Button {...props} css={{ width: '100%' }} />,
-    Summary,
+    Info,
   }
 )
 
