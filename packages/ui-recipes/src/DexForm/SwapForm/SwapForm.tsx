@@ -11,7 +11,14 @@ import {
 import { ArrowDown, ArrowRight, HelpCircle, Repeat, X } from '@talismn/web-icons'
 import { motion } from 'framer-motion'
 import { Fragment, Suspense, useState, type ReactNode } from 'react'
-import DexForm, { DEX_FORM_WIDE_MEDIA_SELECTOR, TokenSelect } from '../components'
+import DexForm, {
+  DEX_FORM_WIDE_MEDIA_SELECTOR,
+  DexFormInfoNotice,
+  DexFormInfoProgressIndicator,
+  TokenSelect,
+  type DexFormInfoNoticeProps,
+} from '../components'
+import ErrorIllustration from '../components/ErrorIllustration'
 
 export type SwapFormSummaryProps = {
   route: Array<{ iconSrc: string }>
@@ -47,6 +54,20 @@ const Summary = Object.assign(
   ),
   {
     DescriptionList: DexForm.Info.DescriptionList,
+    ProgressIndicator: () => (
+      <DexFormInfoProgressIndicator
+        title="Obtaining quote..."
+        text={
+          <>
+            We are processing this swap.
+            <br /> It shouldn't take too long...
+          </>
+        }
+      />
+    ),
+    ErrorMessage: (props: Omit<DexFormInfoNoticeProps, 'illustration'>) => (
+      <DexFormInfoNotice {...props} illustration={<ErrorIllustration />} />
+    ),
   }
 )
 

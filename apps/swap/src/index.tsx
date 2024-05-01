@@ -14,7 +14,7 @@ import {
   Tooltip,
   toast,
 } from '@talismn/ui'
-import { ErrorMessage, SwapForm, TokenSelectDialog } from '@talismn/ui-recipes'
+import { SwapForm, TokenSelectDialog } from '@talismn/ui-recipes'
 import '@talismn/ui/assets/css/talismn.css'
 import { Provider, atom, useAtom, useAtomValue, useSetAtom, type Atom } from 'jotai'
 import { atomEffect } from 'jotai-effect'
@@ -749,28 +749,21 @@ const Info = () => {
     <SwapForm.Info
       summary={
         quoteLoadable.state === 'loading' ? (
-          <div css={{ display: 'flex', justifyContent: 'center' }}>
-            <TalismanHandProgressIndicator />
-          </div>
+          <SwapForm.Info.Summary.ProgressIndicator />
         ) : quoteLoadable.state === 'hasError' && quoteLoadable.error instanceof InputError ? undefined : (
-          <SwapForm.Info.Summary
-            route={route}
-            descriptions={
-              <ErrorBoundary
-                fallbackRender={({ error }) => {
-                  const errorMessage: string = error.name === 'AxiosError' ? error.response.data.message : error.message
+          <ErrorBoundary
+            fallbackRender={({ error }) => {
+              const errorMessage: string = error.name === 'AxiosError' ? error.response.data.message : error.message
 
-                  const message = errorMessage.includes('InsufficientLiquidity')
-                    ? 'There are not enough liquidity to complete the swap. Please try again with a lower amount'
-                    : errorMessage
+              const message = errorMessage.includes('InsufficientLiquidity')
+                ? 'There are not enough liquidity to complete the swap. Please try again with a lower amount'
+                : errorMessage
 
-                  return <ErrorMessage title="Unable to obtain quote" message={message} />
-                }}
-              >
-                <Quote />
-              </ErrorBoundary>
-            }
-          />
+              return <SwapForm.Info.Summary.ErrorMessage title="Unable to obtain quote" text={message} />
+            }}
+          >
+            <SwapForm.Info.Summary route={route} descriptions={<Quote />} />
+          </ErrorBoundary>
         )
       }
       faq={
@@ -871,7 +864,7 @@ const _Swap = () => {
 
   const setAtomAmount = useSetAtom(srcAmountInputAtom)
   useEffect(() => {
-    setAtomAmount(deferredAmount)
+    startTransition(() => setAtomAmount(deferredAmount))
   }, [deferredAmount, setAtomAmount])
 
   const destAmountLoadable = useAtomValue(destAmountLoadableAtom)

@@ -15,7 +15,7 @@ import { type ChainId, type InputConfig } from '@polkawallet/bridge'
 import * as Sentry from '@sentry/react'
 import { useTokens as useBalancesLibTokens, useChains } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
-import { CircularProgressIndicator, TalismanHandProgressIndicator, Text, toast } from '@talismn/ui'
+import { CircularProgressIndicator, Text, toast } from '@talismn/ui'
 import { TokenSelectDialog, TransportForm } from '@talismn/ui-recipes'
 import { Maybe } from '@util/monads'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -416,18 +416,27 @@ const Transport = () => {
         transportInProgress={extrinsic?.state === 'loading'}
         info={
           <TransportForm.Info
-            summary={
-              parsedInputConfigLoadable?.state === 'loading' ? (
-                <div css={{ display: 'flex', justifyContent: 'center' }}>
-                  <TalismanHandProgressIndicator />
-                </div>
-              ) : parsedInputConfigLoadable?.state !== 'hasValue' ? undefined : (
-                <TransportForm.Info.Summary
-                  originFee={`~${parsedInputConfigLoadable.contents.estimateFee.toLocaleString()}`}
-                  destinationFee={`~${parsedInputConfigLoadable.contents.destFee.toLocaleString()}`}
-                />
-              )
-            }
+            summary={(() => {
+              switch (parsedInputConfigLoadable?.state) {
+                case 'loading':
+                case undefined:
+                  return <TransportForm.Info.Summary.ProgressIndicator />
+                case 'hasValue':
+                  return (
+                    <TransportForm.Info.Summary
+                      originFee={`~${parsedInputConfigLoadable.contents.estimateFee.toLocaleString()}`}
+                      destinationFee={`~${parsedInputConfigLoadable.contents.destFee.toLocaleString()}`}
+                    />
+                  )
+                case 'hasError':
+                  return (
+                    <TransportForm.Info.Summary.ErrorMessage
+                      title="Unable to process transport"
+                      text="Please try again later"
+                    />
+                  )
+              }
+            })()}
             faq={
               <TransportForm.Info.Faq>
                 <TransportForm.Info.Faq.Question

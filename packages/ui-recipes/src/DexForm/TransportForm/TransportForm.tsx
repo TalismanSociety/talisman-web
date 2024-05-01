@@ -11,7 +11,14 @@ import {
 import { ArrowDown, HelpCircle, Repeat, X } from '@talismn/web-icons'
 import { motion } from 'framer-motion'
 import { Suspense, useState, type ReactNode } from 'react'
-import DexForm, { DEX_FORM_WIDE_MEDIA_SELECTOR, TokenSelect } from '../components'
+import DexForm, {
+  DEX_FORM_WIDE_MEDIA_SELECTOR,
+  DexFormInfoNotice,
+  DexFormInfoProgressIndicator,
+  TokenSelect,
+  type DexFormInfoNoticeProps,
+} from '../components'
+import ErrorIllustration from '../components/ErrorIllustration'
 
 const TransportFormNetworkButton = (props: Pick<ButtonProps<'button'>, 'onClick' | 'disabled'>) => (
   <TonalIconButton {...props} css={{ '@media(min-width: 600px)': { rotate: '-90deg' } }}>
@@ -42,17 +49,35 @@ export type TransportFormSummaryProps = {
   destinationFee: ReactNode
 }
 
-const Summary = (props: TransportFormSummaryProps) => (
-  <DescriptionList emphasis="details">
-    <DescriptionList.Description>
-      <DescriptionList.Term>Origin fee</DescriptionList.Term>
-      <DescriptionList.Details>{props.originFee}</DescriptionList.Details>
-    </DescriptionList.Description>
-    <DescriptionList.Description>
-      <DescriptionList.Term>Destination fee</DescriptionList.Term>
-      <DescriptionList.Details>{props.destinationFee}</DescriptionList.Details>
-    </DescriptionList.Description>
-  </DescriptionList>
+const Summary = Object.assign(
+  (props: TransportFormSummaryProps) => (
+    <DescriptionList emphasis="details">
+      <DescriptionList.Description>
+        <DescriptionList.Term>Origin fee</DescriptionList.Term>
+        <DescriptionList.Details>{props.originFee}</DescriptionList.Details>
+      </DescriptionList.Description>
+      <DescriptionList.Description>
+        <DescriptionList.Term>Destination fee</DescriptionList.Term>
+        <DescriptionList.Details>{props.destinationFee}</DescriptionList.Details>
+      </DescriptionList.Description>
+    </DescriptionList>
+  ),
+  {
+    ProgressIndicator: () => (
+      <DexFormInfoProgressIndicator
+        title="Processing transport..."
+        text={
+          <>
+            We are processing this transport.
+            <br /> It shouldn't take too long...
+          </>
+        }
+      />
+    ),
+    ErrorMessage: (props: Omit<DexFormInfoNoticeProps, 'illustration'>) => (
+      <DexFormInfoNotice {...props} illustration={<ErrorIllustration />} />
+    ),
+  }
 )
 
 export type TransportFormInfoProps = {

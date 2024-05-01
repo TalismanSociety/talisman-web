@@ -45,6 +45,59 @@ export const TokenSelect = Object.assign(
   }
 )
 
+export type DexFormInfoNoticeProps = {
+  illustration: ReactNode
+  title: ReactNode
+  text: ReactNode
+}
+
+export const DexFormInfoNotice = (props: DexFormInfoNoticeProps) => {
+  const theme = useTheme()
+  return (
+    <article
+      css={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '0.8rem',
+        border: `1px solid color-mix(in srgb, ${theme.color.outlineVariant}, transparent 60%)`,
+        borderRadius: '0.8rem',
+        padding: '1.6rem',
+        textAlign: 'center',
+      }}
+    >
+      {props.illustration}
+      <Text.BodyLarge as="header">{props.title}</Text.BodyLarge>
+      <Text.Body alpha="disabled">{props.text}</Text.Body>
+    </article>
+  )
+}
+
+export type DexFormInfoProgressIndicatorProps = {
+  title: ReactNode
+  text: ReactNode
+}
+
+export const DexFormInfoProgressIndicator = (props: DexFormInfoProgressIndicatorProps) => (
+  <article
+    css={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.8rem',
+      borderRadius: '0.8rem',
+      padding: '7.2rem 1.6rem',
+      textAlign: 'center',
+    }}
+  >
+    <CircularProgressIndicator size="3.2rem" />
+    <Text.BodyLarge as="header" alpha="high">
+      {props.title}
+    </Text.BodyLarge>
+    <Text.Body alpha="disabled">{props.text}</Text.Body>
+  </article>
+)
+
 export type DexFormInfoProps = PropsWithChildren
 
 const Info = Object.assign(
