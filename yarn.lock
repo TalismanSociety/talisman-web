@@ -9434,6 +9434,7 @@ __metadata:
     "@talismn/ui-recipes": "workspace:^"
     "@talismn/web-icons": "workspace:^"
     "@vitejs/plugin-react": "npm:^4.2.1"
+    date-fns: "npm:^3.6.0"
     jotai: "npm:^2.8.0"
     jotai-effect: "npm:^1.0.0"
     react: "npm:^18.2.0"
@@ -9442,6 +9443,7 @@ __metadata:
     typescript: "npm:^5.4.5"
     viem: "npm:^2.9.27"
     vite: "npm:^5.2.8"
+    zod: "npm:^3.23.5"
   peerDependencies:
     "@polkadot/api": 10.x
     jotai: 2.x
@@ -14203,6 +14205,13 @@ __metadata:
   version: 2.29.3
   resolution: "date-fns@npm:2.29.3"
   checksum: 10c0/aa9128c876ef69a05988029d6aa3d7e5c47a1e978f18b77b48126683d1a2e6605a16c3f5293ca9f4ca790d0755b5061fcea5b469f097871cd53f6590a5c1adc4
+  languageName: node
+  linkType: hard
+
+"date-fns@npm:^3.6.0":
+  version: 3.6.0
+  resolution: "date-fns@npm:3.6.0"
+  checksum: 10c0/0b5fb981590ef2f8e5a3ba6cd6d77faece0ea7f7158948f2eaae7bbb7c80a8f63ae30b01236c2923cf89bb3719c33aeb150c715ea4fe4e86e37dcf06bed42fb6
   languageName: node
   linkType: hard
 
@@ -25532,6 +25541,13 @@ __metadata:
   version: 0.1.0
   resolution: "yocto-queue@npm:0.1.0"
   checksum: 10c0/dceb44c28578b31641e13695d200d34ec4ab3966a5729814d5445b194933c096b7ced71494ce53a0e8820685d1d010df8b2422e5bf2cdea7e469d97ffbea306f
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.23.5":
+  version: 3.23.5
+  resolution: "zod@npm:3.23.5"
+  checksum: 10c0/5c74aefe2c0bc2f00d79c5a8724dae863054653bbad640964fdb009c52573349366fa70533f0dfcb912b007421294d437f063d466f9692eb77a2b620640c2794
   languageName: node
   linkType: hard
 

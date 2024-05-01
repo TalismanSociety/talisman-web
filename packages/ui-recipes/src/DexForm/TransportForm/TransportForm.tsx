@@ -1,14 +1,13 @@
 import {
   DescriptionList,
   Details,
-  IconButton,
-  SurfaceChip,
+  SegmentedButton,
   Text,
   TextInput,
   TonalIconButton,
   type ButtonProps,
 } from '@talismn/ui'
-import { ArrowDown, HelpCircle, Repeat, X } from '@talismn/web-icons'
+import { ArrowDown, FileSearch, HelpCircle, Repeat } from '@talismn/web-icons'
 import { motion } from 'framer-motion'
 import { Suspense, useState, type ReactNode } from 'react'
 import DexForm, {
@@ -88,31 +87,34 @@ export type TransportFormInfoProps = {
 
 const Info = Object.assign(
   (props: TransportFormInfoProps) => {
-    const [_faqVisible, setFaqVisible] = useState(false)
-    const faqVisible = props.summary === undefined || _faqVisible
+    const [activeSegment, setActiveSegment] = useState<'details' | 'faq'>('details')
 
     return (
-      <DexForm.Info>
-        <div css={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
-          <header css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Text.H4>{faqVisible ? 'FAQ' : 'Details'}</Text.H4>
-            {props.summary === undefined ? (
-              <div css={{ height: '4rem' }} />
-            ) : faqVisible ? (
-              <IconButton onClick={() => setFaqVisible(false)}>
-                <X />
-              </IconButton>
-            ) : (
-              <div css={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '4rem' }}>
-                <SurfaceChip leadingContent={<HelpCircle />} onClick={() => setFaqVisible(true)}>
-                  F.A.Q
-                </SurfaceChip>
-              </div>
-            )}
-          </header>
-          {faqVisible ? props.faq : props.summary}
-          {props.footer}
-        </div>
+      <DexForm.Info
+        header={
+          <DexForm.Info.Header
+            actions={
+              <SegmentedButton value={activeSegment} onChange={setActiveSegment}>
+                <SegmentedButton.ButtonSegment value="details" leadingIcon={<FileSearch />} css={{ fontSize: '1rem' }}>
+                  Details
+                </SegmentedButton.ButtonSegment>
+                <SegmentedButton.ButtonSegment value="faq" leadingIcon={<HelpCircle />} css={{ fontSize: '1rem' }}>
+                  FAQ
+                </SegmentedButton.ButtonSegment>
+              </SegmentedButton>
+            }
+          />
+        }
+        footer={props.footer}
+      >
+        {(() => {
+          switch (activeSegment) {
+            case 'details':
+              return props.summary
+            case 'faq':
+              return props.faq
+          }
+        })()}
       </DexForm.Info>
     )
   },

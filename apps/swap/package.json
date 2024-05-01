@@ -13,8 +13,10 @@
     "@talismn/ui": "workspace:^",
     "@talismn/ui-recipes": "workspace:^",
     "@talismn/web-icons": "workspace:^",
+    "date-fns": "^3.6.0",
     "jotai-effect": "^1.0.0",
-    "react-error-boundary": "^4.0.13"
+    "react-error-boundary": "^4.0.13",
+    "zod": "^3.23.5"
   },
   "devDependencies": {
     "@polkadot/api": "^10.13.1",

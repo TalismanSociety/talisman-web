@@ -10,13 +10,13 @@ import {
   Select,
   TalismanHandProgressIndicator,
   Text,
-  ToastMessage,
   Tooltip,
   toast,
 } from '@talismn/ui'
 import { SwapForm, TokenSelectDialog } from '@talismn/ui-recipes'
 import '@talismn/ui/assets/css/talismn.css'
-import { Provider, atom, useAtom, useAtomValue, useSetAtom, type Atom } from 'jotai'
+import { differenceInDays } from 'date-fns'
+import { Provider, atom, useAtom, useAtomValue, useSetAtom, type Atom, type SetStateAction } from 'jotai'
 import { atomEffect } from 'jotai-effect'
 import {
   RESET,
@@ -26,6 +26,7 @@ import {
   atomWithStorage,
   createJSONStorage,
   loadable,
+  unstable_withStorageValidator,
   useAtomCallback,
   useHydrateAtoms,
 } from 'jotai/utils'
@@ -42,8 +43,9 @@ import {
 import { ErrorBoundary } from 'react-error-boundary'
 import { createPublicClient, erc20Abi, http, isAddress, type WalletClient } from 'viem'
 import { mainnet, sepolia } from 'viem/chains'
+import { z } from 'zod'
 import { assetCoingeckoIds, assetIcons, chainIcons } from './config'
-import { shortenAddress, sleep } from './utils'
+import { shortenAddress } from './utils'
 
 const EVM_CHAINS = [mainnet, sepolia]
 
@@ -59,7 +61,7 @@ type Account = { name?: string; readonly?: boolean } & (
 
 class InputError extends Error {}
 
-const chainflipNetworkAtom = atom<ChainflipNetwork | undefined>(undefined)
+const chainflipNetworkAtom = atom<ChainflipNetwork>('mainnet')
 
 const swapSdkAtom = atom(
   get =>
@@ -333,87 +335,120 @@ const quoteAtom = atomWithRefresh(async get => {
   }
 })
 
-const inProgressSwapIdsAtom = atomWithStorage<string[]>(
-  '@talisman/swap/chainflip-swap-ids',
-  [],
-  createJSONStorage(() => globalThis.sessionStorage)
+const StoredSwaps = z.array(z.object({ id: z.string(), date: z.date() }))
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+type StoredSwaps = z.infer<typeof StoredSwaps>
+
+const _swapsStorage = unstable_withStorageValidator(
+  (value): value is StoredSwaps => StoredSwaps.safeParse(value).success
+)(
+  createJSONStorage(() => globalThis.localStorage, {
+    reviver: (key, value) => {
+      if (key === 'date' && typeof value === 'string') {
+        return new Date(value)
+      }
+
+      return value
+    },
+  })
+)
+
+const filterAndSortStoredSwaps = (swaps: StoredSwaps) => {
+  const currentDate = new Date()
+
+  return swaps
+    .filter(swap => differenceInDays(currentDate, swap.date) < 7)
+    .toSorted((a, b) => b.date.getTime() - a.date.getTime())
+    .slice(0, 50)
+}
+
+const swapsStorage: typeof _swapsStorage = {
+  ..._swapsStorage,
+  getItem: (key, initialValue) => filterAndSortStoredSwaps(_swapsStorage.getItem(key, initialValue)),
+  setItem: (key, newValue) => _swapsStorage.setItem(key, filterAndSortStoredSwaps(newValue)),
+}
+
+const swapsAtomFamily = atomFamily((network: ChainflipNetwork) =>
+  atomWithStorage<StoredSwaps>(`@talisman/swap/chainflip/${network}/swap-ids`, [], swapsStorage)
+)
+
+const swapsAtom = atom(
+  get => get(swapsAtomFamily(get(chainflipNetworkAtom))),
+  (get, set, swaps: SetStateAction<StoredSwaps>) => set(swapsAtomFamily(get(chainflipNetworkAtom)), swaps)
+)
+
+const _swapStatusRequestCounterAtom = atom(0)
+
+const swapStatusRequestCounterEffect = atomEffect((_, set) => {
+  const interval = globalThis.setInterval(
+    () => startTransition(() => set(_swapStatusRequestCounterAtom, counter => counter + 1)),
+    5000
+  )
+
+  return () => globalThis.clearInterval(interval)
+})
+
+const swapStatusRequestCounterAtom = atom(get => {
+  get(swapStatusRequestCounterEffect)
+
+  return get(_swapStatusRequestCounterAtom)
+})
+
+const swapStatusAtomFamily = atomFamily((id: string) =>
+  atom(async get => {
+    const status = await get(swapSdkAtom).getStatus({ id })
+
+    if (!(['FAILED', 'COMPLETE', 'BROADCAST_ABORTED'] as const).includes(status.state as any)) {
+      get(swapStatusRequestCounterAtom)
+    }
+
+    const assets = await get(assetsAtom)
+    const asset = assets.find(x => x.asset === status.srcAsset)
+
+    if (asset === undefined) {
+      throw new Error(`Can't find asset: ${status.srcAsset}`)
+    }
+
+    return {
+      state: (() => {
+        switch (status.state) {
+          case 'AWAITING_DEPOSIT':
+          case 'BROADCASTED':
+          case 'BROADCAST_REQUESTED':
+          case 'DEPOSIT_RECEIVED':
+          case 'EGRESS_SCHEDULED':
+          case 'SWAP_EXECUTED':
+            return 'pending' as const
+          case 'COMPLETE':
+            return 'complete' as const
+          case 'BROADCAST_ABORTED':
+          case 'FAILED':
+            return 'failed' as const
+        }
+      })(),
+      amount:
+        status.depositAmount === undefined
+          ? undefined
+          : Decimal.fromPlanck(status.depositAmount, asset.decimals, asset.symbol),
+      date: status.depositChannelCreatedAt === undefined ? undefined : new Date(status.depositChannelCreatedAt),
+      externalLink: (() => {
+        switch (get(chainflipNetworkAtom)) {
+          case 'mainnet':
+            return `https://scan.chainflip.io/channels/${id}`
+          case 'perseverance':
+            return `https://scan.perseverance.chainflip.io/channels/${id}`
+          default:
+            throw new Error(`Unimplemented swap external link for network: ${get(chainflipNetworkAtom)}`)
+        }
+      })(),
+    }
+  })
 )
 
 const swapPromiseAtom = atom<Promise<void>>(Promise.resolve())
 
 const swapPromiseLoadableAtom = loadable(swapPromiseAtom)
-
-const swapStatusAtomEffect = atomEffect((get, set) => {
-  const ids = get(inProgressSwapIdsAtom)
-  const abortController = new AbortController()
-
-  const cleanupToast = () => ids.forEach(id => toast.remove(id))
-
-  const effect = async (id: string) => {
-    while (true) {
-      if (abortController.signal.aborted) {
-        cleanupToast()
-        break
-      }
-
-      const status = await get(swapSdkAtom).getStatus({ id }, { signal: abortController.signal })
-
-      const progress = (() => {
-        switch (status.state) {
-          case 'AWAITING_DEPOSIT':
-            return { state: 'pending', message: 'Depositing funds' } as const
-          case 'DEPOSIT_RECEIVED':
-            return { state: 'pending', message: 'Executing swap' } as const
-          case 'SWAP_EXECUTED':
-          case 'EGRESS_SCHEDULED':
-          case 'BROADCAST_REQUESTED':
-          case 'BROADCASTED':
-            return { state: 'pending', message: 'Sending funds' } as const
-          case 'COMPLETE':
-            return { state: 'fulfilled', message: 'Swapping complete' } as const
-          case 'BROADCAST_ABORTED':
-          case 'FAILED':
-            return { state: 'rejected', message: 'Failed to swap' } as const
-          default:
-            throw new Error('Invalid state')
-        }
-      })()
-
-      switch (progress.state) {
-        case 'pending':
-          toast.loading(
-            <ToastMessage
-              headlineContent={progress.message}
-              supportingContent="Please be patience, cross-chain swap could take up to several minutes"
-            />,
-            { id }
-          )
-          break
-        case 'fulfilled':
-          toast.success(progress.message, { id })
-          break
-        case 'rejected':
-          toast.error(progress.message, { id })
-      }
-
-      if (progress.state === 'fulfilled' || progress.state === 'rejected') {
-        set(inProgressSwapIdsAtom, ids => ids.filter(x => x !== id))
-        break
-      }
-
-      await sleep(5000)
-    }
-  }
-
-  for (const id of ids) {
-    void effect(id)
-  }
-
-  return () => {
-    cleanupToast()
-    abortController.abort()
-  }
-})
 
 const quoteLoadableAtom = loadable(quoteAtom)
 
@@ -678,6 +713,48 @@ const AssetSelect = (props: AssetSelectProps) => {
   )
 }
 
+type ActivityProps = {
+  id: string
+}
+
+const Activity = (props: ActivityProps) => {
+  const status = useAtomValue(swapStatusAtomFamily(props.id))
+
+  return (
+    <SwapForm.Info.Activities.Item
+      state={status.state}
+      amount={status.amount?.toLocaleString() ?? '...'}
+      date={status.date ?? new Date()}
+      externalLink={status.externalLink}
+    />
+  )
+}
+
+const Activities = () => {
+  const swaps = useAtomValue(swapsAtom)
+
+  return (
+    <SwapForm.Info.Activities
+      title={
+        <span>
+          View recent and pending swaps for the{' '}
+          <Tooltip content="Up to 50 swaps">
+            <span css={{ textDecoration: 'underline' }}>past week</span>.
+          </Tooltip>
+        </span>
+      }
+    >
+      {swaps.map(swap => (
+        <ErrorBoundary key={swap.id} fallback={<Text.Body as="div">Failed to fetch swap</Text.Body>}>
+          <Suspense fallback={<SwapForm.Info.Activities.Item.Skeleton />}>
+            <Activity id={swap.id} />
+          </Suspense>
+        </ErrorBoundary>
+      ))}
+    </SwapForm.Info.Activities>
+  )
+}
+
 const Quote = () => {
   const quote = useAtomValue(quoteAtom)
   const srcAmount = useAtomValue(srcAmountAtom)
@@ -766,6 +843,7 @@ const Info = () => {
           </ErrorBoundary>
         )
       }
+      activities={<Activities />}
       faq={
         <SwapForm.Info.Faq>
           <SwapForm.Info.Faq.Question question="How does the swap works?" answer="foo" />
@@ -947,11 +1025,9 @@ const _Swap = () => {
           throw new Error(`Unsupported swap from chain ${srcAsset.chain}`)
       }
 
-      set(inProgressSwapIdsAtom, ids => [...ids, depositAddress.depositChannelId])
+      set(swapsAtom, ids => [...ids, { id: depositAddress.depositChannelId, date: new Date() }])
     }, [])
   )
-
-  useAtom(swapStatusAtomEffect)
 
   return (
     <SwapForm
@@ -1015,6 +1091,12 @@ const _Swap = () => {
         useCallback(
           async (_, set) => {
             const promise = swap()
+
+            void toast.promise(promise, {
+              loading: 'Requesting swap',
+              success: 'Swap executed',
+              error: 'Failed to execute swap',
+            })
 
             set(swapPromiseAtom, promise)
 

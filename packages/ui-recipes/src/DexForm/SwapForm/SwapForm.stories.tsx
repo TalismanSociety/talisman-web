@@ -68,6 +68,13 @@ export const Default: Story = {
             }
           />
         }
+        activities={
+          <SwapForm.Info.Activities>
+            <SwapForm.Info.Activities.Item state="pending" amount="500 DOT" date={new Date()} externalLink="/" />
+            <SwapForm.Info.Activities.Item state="complete" amount="500 DOT" date={new Date()} externalLink="/" />
+            <SwapForm.Info.Activities.Item state="failed" amount="500 DOT" date={new Date()} externalLink="/" />
+          </SwapForm.Info.Activities>
+        }
         faq={
           <SwapForm.Info.Faq>
             <SwapForm.Info.Faq.Question question="How does the swap works?" answer="foo" />

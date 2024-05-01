@@ -67,8 +67,10 @@ export const DexFormInfoNotice = (props: DexFormInfoNoticeProps) => {
       }}
     >
       {props.illustration}
-      <Text.BodyLarge as="header">{props.title}</Text.BodyLarge>
-      <Text.Body alpha="disabled">{props.text}</Text.Body>
+      <Text.BodyLarge as="header" alpha="high">
+        {props.title}
+      </Text.BodyLarge>
+      <Text.Body>{props.text}</Text.Body>
     </article>
   )
 }
@@ -98,7 +100,7 @@ export const DexFormInfoProgressIndicator = (props: DexFormInfoProgressIndicator
   </article>
 )
 
-export type DexFormInfoProps = PropsWithChildren
+export type DexFormInfoProps = PropsWithChildren<{ header: ReactNode; footer?: ReactNode }>
 
 const Info = Object.assign(
   (props: DexFormInfoProps) => {
@@ -113,7 +115,7 @@ const Info = Object.assign(
           borderRadius: '1.2rem',
           padding: '1.6rem',
           [DEX_FORM_WIDE_MEDIA_SELECTOR]: {
-            width: '36rem',
+            width: '40rem',
             borderLeft: `64px solid transparent`,
             borderRadius: '0 1.2rem 1.2rem 0',
             '> div': {
@@ -122,7 +124,13 @@ const Info = Object.assign(
           },
         }}
       >
-        {props.children}
+        <div css={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
+          {props.header}
+          <div css={{ flex: 1, overflow: 'auto' }}>
+            <div css={{ height: 0, minHeight: '100%' }}>{props.children}</div>
+          </div>
+          {props.footer}
+        </div>
       </section>
     )
   },
@@ -151,7 +159,10 @@ const Info = Object.assign(
         ),
       }
     ),
-    Footer: (props: PropsWithChildren) => <div {...props} css={{ alignSelf: 'center', marginTop: 'auto' }} />,
+    Header: (props: { actions: ReactNode }) => (
+      <header css={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>{props.actions}</header>
+    ),
+    Footer: (props: PropsWithChildren) => <div {...props} css={{ alignSelf: 'center' }} />,
   }
 )
 

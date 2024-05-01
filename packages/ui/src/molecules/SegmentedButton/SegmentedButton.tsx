@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/web-icons/utils'
-import { motion } from 'framer-motion'
-import { createContext, type PropsWithChildren, type ReactNode } from 'react'
+import { LayoutGroup, motion } from 'framer-motion'
+import { createContext, useId, type PropsWithChildren, type ReactNode } from 'react'
 import { Clickable, Surface, Text, type ClickableProps } from '../../atoms'
 
 const SegmentedButtonContext = createContext<{
@@ -24,7 +24,7 @@ const ButtonSegment = (props: ButtonSegmentProps) => {
           {...props}
           css={{
             position: 'relative',
-            padding: '1rem 1.2rem',
+            padding: '0.7em 0.85em',
           }}
           style={{ color: selectedValue === props.value ? theme.color.onPrimary : undefined }}
           onClick={() => onChange?.(props.value)}
@@ -71,13 +71,15 @@ const SegmentedButton = Object.assign(
           onChange: props.onChange,
         }}
       >
-        <Surface
-          as="section"
-          className={props.className}
-          css={{ display: 'inline-block', borderRadius: theme.shape.full, padding: '0.4rem' }}
-        >
-          {props.children}
-        </Surface>
+        <LayoutGroup id={useId()}>
+          <Surface
+            as="section"
+            className={props.className}
+            css={{ display: 'inline-block', borderRadius: theme.shape.full, padding: '0.4rem' }}
+          >
+            {props.children}
+          </Surface>
+        </LayoutGroup>
       </SegmentedButtonContext.Provider>
     )
   },
