@@ -1046,7 +1046,7 @@ const _Swap = () => {
               css={{ width: '100%' }}
               renderSelected={() => (
                 <Select.Option
-                  leadingIcon={<CircularProgressIndicator />}
+                  leadingIcon={<CircularProgressIndicator size="4rem" />}
                   headlineContent="..."
                   supportingContent={`\u200B`}
                 />
