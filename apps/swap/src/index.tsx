@@ -881,9 +881,8 @@ const SrcAccountSelect = () => {
         <Select.Option
           key={index}
           value={account}
-          leadingIcon={<Identicon value={account.address} />}
+          leadingIcon={<Identicon value={account.address} size="4rem" />}
           headlineContent={account.name ?? shortenAddress(account.address)}
-          supportingContent={account.name !== undefined && shortenAddress(account.address)}
         />
       ))}
     </Select>
@@ -905,9 +904,8 @@ const DestAccountSelect = () => {
         <Select.Option
           key={index}
           value={account}
-          leadingIcon={<Identicon value={account.address} />}
+          leadingIcon={<Identicon value={account.address} size="4rem" />}
           headlineContent={account.name ?? shortenAddress(account.address)}
-          supportingContent={account.name !== undefined && shortenAddress(account.address)}
         />
       ))}
     </Select>
