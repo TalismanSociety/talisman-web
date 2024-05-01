@@ -126,8 +126,24 @@ const Info = Object.assign(
       >
         <div css={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
           {props.header}
-          <div css={{ flex: 1, overflow: 'auto' }}>
-            <div css={{ height: 0, minHeight: '100%' }}>{props.children}</div>
+          <div
+            css={{
+              display: 'contents',
+              flex: 1,
+              overflow: 'auto',
+              [DEX_FORM_WIDE_MEDIA_SELECTOR]: { display: 'revert' },
+            }}
+          >
+            <div
+              css={{
+                display: 'contents',
+                height: 0,
+                minHeight: '100%',
+                [DEX_FORM_WIDE_MEDIA_SELECTOR]: { display: 'revert' },
+              }}
+            >
+              {props.children}
+            </div>
           </div>
           {props.footer}
         </div>
@@ -176,9 +192,11 @@ const DexForm = Object.assign(
           display: 'flex',
           flexDirection: 'column',
           gap: '1.6rem',
+          width: 'min(50rem, 100%)',
           [DEX_FORM_WIDE_MEDIA_SELECTOR]: {
             flexDirection: 'row',
             gap: 0,
+            width: 'revert',
           },
         }}
       >

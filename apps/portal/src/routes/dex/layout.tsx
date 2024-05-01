@@ -31,7 +31,7 @@ const Layout = () => {
               )}
             </NavLink>
           </Tabs>
-          <div css={{ display: 'flex', justifyContent: 'center' }}>
+          <div css={{ width: 'min-content' }}>
             <Outlet />
           </div>
         </div>
