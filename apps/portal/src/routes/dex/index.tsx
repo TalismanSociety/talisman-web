@@ -8,7 +8,7 @@ const routes = {
   children: [
     { path: 'swap', element: <Swap /> },
     { path: 'transport', element: <Transport /> },
-    { path: '', element: <Navigate to="transport" /> },
+    { path: '', element: <Navigate to="swap" /> },
   ],
 } satisfies RouteObject
 

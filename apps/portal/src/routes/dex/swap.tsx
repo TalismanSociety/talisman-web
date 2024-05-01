@@ -3,9 +3,7 @@ import { selectedCurrencyState } from '@domains/balances'
 import { enableTestnetsState } from '@domains/chains'
 import { useConnectedEip6963Provider, useConnectedSubstrateWallet } from '@domains/extension'
 import { TitlePortal } from '@routes/layout'
-import { TalismanHandProgressIndicator } from '@talismn/ui'
-
-import React, { Suspense, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 import { createWalletClient, custom } from 'viem'
 
@@ -21,33 +19,31 @@ const Swap = () => {
   return (
     <>
       <TitlePortal>Swap</TitlePortal>
-      <Suspense fallback={<TalismanHandProgressIndicator />}>
-        <SwapWidget
-          accounts={useMemo(
-            () =>
-              [
-                ...substrateAccounts,
-                ...evmAccounts.filter(account => Boolean(account.readonly) || account.canSignEvm),
-              ].map(account => ({
-                type: account.type === 'ethereum' ? 'evm' : 'substrate',
-                address: account.address as any,
-                name: account.name,
-              })),
-            [evmAccounts, substrateAccounts]
-          )}
-          currency={useRecoilValue(selectedCurrencyState)}
-          polkadotSigner={substrateWallet?.signer}
-          viemWalletClient={useMemo(
-            () =>
-              evmProvider === undefined ? undefined : createWalletClient({ transport: custom(evmProvider.provider) }),
-            [evmProvider]
-          )}
-          coingeckoApiEndpoint={import.meta.env.REACT_APP_COIN_GECKO_API}
-          coingeckoApiTier={import.meta.env.REACT_APP_COIN_GECKO_API_TIER}
-          coingeckoApiKey={import.meta.env.REACT_APP_COIN_GECKO_API_KEY}
-          useTestnet={useRecoilValue(enableTestnetsState)}
-        />
-      </Suspense>
+      <SwapWidget
+        accounts={useMemo(
+          () =>
+            [
+              ...substrateAccounts,
+              ...evmAccounts.filter(account => Boolean(account.readonly) || account.canSignEvm),
+            ].map(account => ({
+              type: account.type === 'ethereum' ? 'evm' : 'substrate',
+              address: account.address as any,
+              name: account.name,
+            })),
+          [evmAccounts, substrateAccounts]
+        )}
+        currency={useRecoilValue(selectedCurrencyState)}
+        polkadotSigner={substrateWallet?.signer}
+        viemWalletClient={useMemo(
+          () =>
+            evmProvider === undefined ? undefined : createWalletClient({ transport: custom(evmProvider.provider) }),
+          [evmProvider]
+        )}
+        coingeckoApiEndpoint={import.meta.env.REACT_APP_COIN_GECKO_API}
+        coingeckoApiTier={import.meta.env.REACT_APP_COIN_GECKO_API_TIER}
+        coingeckoApiKey={import.meta.env.REACT_APP_COIN_GECKO_API_KEY}
+        useTestnet={useRecoilValue(enableTestnetsState)}
+      />
     </>
   )
 }
