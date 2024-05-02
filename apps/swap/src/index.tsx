@@ -374,7 +374,7 @@ const swapsAtomFamily = atomFamily((network: ChainflipNetwork) =>
 )
 
 const swapsAtom = atom(
-  get => get(swapsAtomFamily(get(chainflipNetworkAtom))),
+  get => filterAndSortStoredSwaps(get(swapsAtomFamily(get(chainflipNetworkAtom)))),
   (get, set, swaps: SetStateAction<StoredSwaps>) => set(swapsAtomFamily(get(chainflipNetworkAtom)), swaps)
 )
 
