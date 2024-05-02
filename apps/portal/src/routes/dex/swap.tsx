@@ -22,13 +22,11 @@ const Swap = () => {
       <SwapWidget
         accounts={useMemo(
           () =>
-            [
-              ...substrateAccounts,
-              ...evmAccounts.filter(account => Boolean(account.readonly) || account.canSignEvm),
-            ].map(account => ({
+            [...substrateAccounts, ...evmAccounts].map(account => ({
               type: account.type === 'ethereum' ? 'evm' : 'substrate',
               address: account.address as any,
               name: account.name,
+              readonly: account.readonly ?? (account.type === 'ethereum' && !account.canSignEvm),
             })),
           [evmAccounts, substrateAccounts]
         )}
