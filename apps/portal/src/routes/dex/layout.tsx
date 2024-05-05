@@ -1,3 +1,4 @@
+import AccountConnectionGuard from '@components/widgets/AccountConnectionGuard'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { CircularProgressIndicator, HiddenDetails, Tabs, TalismanHandProgressIndicator } from '@talismn/ui'
 import { Suspense, useTransition } from 'react'
@@ -9,41 +10,50 @@ const Layout = () => {
   const [pending, startTransition] = useTransition()
 
   return (
-    <div
-      css={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
-      <ErrorBoundary>
-        <Suspense fallback={<TalismanHandProgressIndicator />}>
-          <div>
-            <Tabs css={{ width: 'fit-content', marginBottom: '1.6rem' }}>
-              <NavLink to="/transfer/swap" css={{ display: 'contents' }} onClick={event => event.preventDefault()}>
-                {({ isActive }) => (
-                  <Tabs.Item selected={isActive} onClick={() => startTransition(() => navigate('/transfer/swap'))}>
-                    Swap
-                  </Tabs.Item>
-                )}
-              </NavLink>
-              <NavLink to="/transfer/transport" css={{ display: 'contents' }} onClick={event => event.preventDefault()}>
-                {({ isActive }) => (
-                  <Tabs.Item selected={isActive} onClick={() => startTransition(() => navigate('/transfer/transport'))}>
-                    Transport
-                  </Tabs.Item>
-                )}
-              </NavLink>
-            </Tabs>
-            <div css={{ width: 'min-content' }}>
-              <HiddenDetails overlay={<CircularProgressIndicator size="4em" />} hidden={pending}>
-                <Outlet />
-              </HiddenDetails>
+    <AccountConnectionGuard>
+      <div
+        css={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <ErrorBoundary>
+          <Suspense fallback={<TalismanHandProgressIndicator />}>
+            <div>
+              <Tabs css={{ width: 'fit-content', marginBottom: '1.6rem' }}>
+                <NavLink to="/transfer/swap" css={{ display: 'contents' }} onClick={event => event.preventDefault()}>
+                  {({ isActive }) => (
+                    <Tabs.Item selected={isActive} onClick={() => startTransition(() => navigate('/transfer/swap'))}>
+                      Swap
+                    </Tabs.Item>
+                  )}
+                </NavLink>
+                <NavLink
+                  to="/transfer/transport"
+                  css={{ display: 'contents' }}
+                  onClick={event => event.preventDefault()}
+                >
+                  {({ isActive }) => (
+                    <Tabs.Item
+                      selected={isActive}
+                      onClick={() => startTransition(() => navigate('/transfer/transport'))}
+                    >
+                      Transport
+                    </Tabs.Item>
+                  )}
+                </NavLink>
+              </Tabs>
+              <div css={{ width: 'min-content' }}>
+                <HiddenDetails overlay={<CircularProgressIndicator size="4em" />} hidden={pending}>
+                  <Outlet />
+                </HiddenDetails>
+              </div>
             </div>
-          </div>
-        </Suspense>
-      </ErrorBoundary>
-    </div>
+          </Suspense>
+        </ErrorBoundary>
+      </div>
+    </AccountConnectionGuard>
   )
 }
 
