@@ -1,11 +1,13 @@
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
-import { Tabs, TalismanHandProgressIndicator } from '@talismn/ui'
-import { Suspense, startTransition } from 'react'
+import { CircularProgressIndicator, HiddenDetails, Tabs, TalismanHandProgressIndicator } from '@talismn/ui'
+import { Suspense, useTransition } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 
 // TODO: hack used to enable usage of transition
 const Layout = () => {
   const navigate = useNavigate()
+  const [pending, startTransition] = useTransition()
+
   return (
     <div
       css={{
@@ -34,7 +36,9 @@ const Layout = () => {
               </NavLink>
             </Tabs>
             <div css={{ width: 'min-content' }}>
-              <Outlet />
+              <HiddenDetails overlay={<CircularProgressIndicator size="4em" />} hidden={pending}>
+                <Outlet />
+              </HiddenDetails>
             </div>
           </div>
         </Suspense>
