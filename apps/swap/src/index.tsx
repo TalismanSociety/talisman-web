@@ -6,6 +6,7 @@ import { BigIntMath, Decimal } from '@talismn/math'
 import {
   Chip,
   CircularProgressIndicator,
+  DescriptionList,
   Identicon,
   Select,
   TalismanHandProgressIndicator,
@@ -846,9 +847,57 @@ const Info = () => {
       activities={<Activities />}
       faq={
         <SwapForm.Info.Faq>
-          <SwapForm.Info.Faq.Question question="How does the swap works?" answer="foo" />
-          <SwapForm.Info.Faq.Question question="What is included in the fees?" answer="foo" />
-          <SwapForm.Info.Faq.Question question="What are the risks?" answer="foo" />
+          <SwapForm.Info.Faq.Question
+            question="How does the swap works?"
+            answer={
+              <>
+                Chainflip is a decentralized exchange that uses a consensus-driven software and a network of Validator
+                nodes to manage private keys and execute trades. It utilizes Multi Party Computation (MPC) to govern
+                high-threshold multi-signature wallets, ensuring a supermajority is required to function.
+                <br />
+                <br />
+                The State Chain defines the AMM and accounting rules, while the Validator Software manages shares of the
+                multisig wallets. In essence, Validators operate a virtual AMM system for swapping liquid assets.
+              </>
+            }
+          />
+          <SwapForm.Info.Faq.Question
+            question="How long does the swap take?"
+            answer={
+              <>
+                During a swap, the transactions into and out of Chainflip are on-chain, so the time depends on the speed
+                of the blockchains involved.
+                <br />
+                <br />
+                Typically, the new asset should reach the user's wallet within 5 minutes. This is significantly faster
+                than existing bridges and faster than the average centralised exchange. We also aim to speed this up
+                dramatically in future upgrades.
+              </>
+            }
+          />
+          <SwapForm.Info.Faq.Question
+            question="What is included in the fees?"
+            answer={
+              <DescriptionList>
+                <DescriptionList.Description>
+                  <DescriptionList.Details>Deposit Gas Fees</DescriptionList.Details>
+                  <DescriptionList.Term>Varies per chain</DescriptionList.Term>
+                </DescriptionList.Description>
+                <DescriptionList.Description>
+                  <DescriptionList.Details>Liquidity Fee Per Pool</DescriptionList.Details>
+                  <DescriptionList.Term>{(0.2).toLocaleString(undefined, { style: 'percent' })}</DescriptionList.Term>
+                </DescriptionList.Description>
+                <DescriptionList.Description>
+                  <DescriptionList.Details>Network Fee</DescriptionList.Details>
+                  <DescriptionList.Term>{(0.1).toLocaleString(undefined, { style: 'percent' })}</DescriptionList.Term>
+                </DescriptionList.Description>
+                <DescriptionList.Description>
+                  <DescriptionList.Details>Broadcast Fee</DescriptionList.Details>
+                  <DescriptionList.Term>Varies per chain</DescriptionList.Term>
+                </DescriptionList.Description>
+              </DescriptionList>
+            }
+          />
         </SwapForm.Info.Faq>
       }
       footer={
