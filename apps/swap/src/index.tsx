@@ -2,6 +2,7 @@ import { SwapSDK, type Asset, type AssetData, type Chain, type ChainflipNetwork 
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import '@polkadot/api-augment/substrate'
 import type { Signer } from '@polkadot/api/types'
+import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { BigIntMath, Decimal } from '@talismn/math'
 import {
   Chip,
@@ -42,7 +43,7 @@ import {
   type PropsWithChildren,
 } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { createPublicClient, erc20Abi, http, isAddress, type WalletClient } from 'viem'
+import { createPublicClient, erc20Abi, http, isAddress as isEvmAddress, type WalletClient } from 'viem'
 import { mainnet, sepolia } from 'viem/chains'
 import { z } from 'zod'
 import { assetCoingeckoIds, assetIcons, chainIcons } from './config'
@@ -557,14 +558,16 @@ const assetAvailableAmountAtomFamily = atomFamily(
         throw new Error(`Can't find chain: ${assetData.chain}`)
       }
 
+      const zeroAmount = Decimal.fromUserInput('0', assetData.decimals, assetData.symbol)
+
       switch (assetData.chain) {
         case 'Ethereum': {
           if (chainData.evmChainId === undefined) {
             throw new Error('Invalid EVM chain')
           }
 
-          if (!isAddress(address)) {
-            throw new Error('Invalid EVM address')
+          if (!isEvmAddress(address)) {
+            return zeroAmount
           }
 
           const client = await get(viemPublicClientAtomFamily(chainData.evmChainId))
@@ -582,6 +585,10 @@ const assetAvailableAmountAtomFamily = atomFamily(
           return Decimal.fromPlanck(balance, assetData.decimals, assetData.symbol)
         }
         case 'Polkadot': {
+          if (!isSubstrateAddress(address)) {
+            return zeroAmount
+          }
+
           const api = await get(polkadotApiAtom)
 
           const balances = await api.derive.balances.all(address)
@@ -625,7 +632,7 @@ const AssetAmount = (props: AssetAmountProps) => (
   <>
     {useAtomValue(
       assetAvailableAmountAtomFamily({ address: props.account.address, asset: props.asset })
-    )?.toLocaleString()}
+    ).toLocaleString()}
   </>
 )
 
