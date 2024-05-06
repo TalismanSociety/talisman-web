@@ -1,4 +1,4 @@
-import { Parachain } from '@archetypes'
+import { Parachain } from '@components/legacy/archetypes'
 import { Pill } from '@components/legacy'
 import styled from '@emotion/styled'
 import { useCrowdloanById, useParachainDetailsById } from '@libs/talisman'

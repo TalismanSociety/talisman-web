@@ -1,5 +1,5 @@
-import { Card, CardLoading, TagLoading } from '@archetypes/Explore'
-import { useFetchDapps, type Dapp } from '@archetypes/Explore/hooks'
+import { Card, CardLoading, TagLoading } from '@components/legacy/archetypes/Explore'
+import { useFetchDapps, type Dapp } from '@components/legacy/archetypes/Explore/hooks'
 import styled from '@emotion/styled'
 import { HiddenDetails, SearchBar, Text } from '@talismn/ui'
 import { device } from '@util/breakpoints'

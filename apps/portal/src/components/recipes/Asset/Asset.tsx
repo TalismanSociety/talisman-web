@@ -1,4 +1,4 @@
-import type { PortfolioToken } from '@archetypes/Portfolio/Assets'
+import type { PortfolioToken } from '@components/legacy/archetypes/Portfolio/Assets'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { keyframes, useTheme } from '@emotion/react'

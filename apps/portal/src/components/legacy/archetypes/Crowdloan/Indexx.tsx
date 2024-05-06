@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Crowdloan } from '@archetypes'
+import { Crowdloan } from '@components/legacy/archetypes'
 import { Await, Field, Grid, NoResults } from '@components/legacy'
 import styled from '@emotion/styled'
 import { useCrowdloanContributions } from '@libs/crowdloans'

@@ -1,5 +1,5 @@
-import { RootNav } from '@archetypes/Crowdloan/RootNav'
-import ParticipatedCrowdloans from '@archetypes/Wallet/Crowdloans'
+import { RootNav } from '@components/legacy/archetypes/Crowdloan/RootNav'
+import ParticipatedCrowdloans from '@components/legacy/archetypes/Wallet/Crowdloans'
 import styled from '@emotion/styled'
 import { TitlePortal } from '@routes/layout'
 

@@ -1,4 +1,4 @@
-import { Total } from '@archetypes/Wallet'
+import { Total } from '@components/legacy/archetypes/Wallet'
 import Discord from '@assets/icons/discord-header.svg?react'
 import GitHub from '@assets/icons/github-header.svg?react'
 import Medium from '@assets/icons/medium-header.svg?react'

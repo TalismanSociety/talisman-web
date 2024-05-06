@@ -1,4 +1,4 @@
-import { Crowdloan } from '@archetypes'
+import { Crowdloan } from '@components/legacy/archetypes'
 import styled from '@emotion/styled'
 
 export const CrowdloanIndex = styled(({ className }: { className?: string }) => (

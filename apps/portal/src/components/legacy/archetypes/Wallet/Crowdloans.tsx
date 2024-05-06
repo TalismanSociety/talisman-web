@@ -1,4 +1,4 @@
-import { Parachain } from '@archetypes'
+import { Parachain } from '@components/legacy/archetypes'
 import { Countdown, PanelSection, Pendor } from '@components/legacy'
 import AccountIcon from '@components/molecules/AccountIcon'
 import SectionHeader from '@components/molecules/SectionHeader'

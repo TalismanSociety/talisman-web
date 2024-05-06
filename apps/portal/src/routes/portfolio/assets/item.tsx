@@ -1,4 +1,4 @@
-import { useSingleAsset } from '@archetypes/Portfolio/Assets'
+import { useSingleAsset } from '@components/legacy/archetypes/Portfolio/Assets'
 import { AssetBreakdownList } from '@components/recipes/AssetBreakdown/AssetBreakdownList'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'

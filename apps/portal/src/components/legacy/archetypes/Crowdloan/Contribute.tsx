@@ -1,4 +1,4 @@
-import { Parachain } from '@archetypes'
+import { Parachain } from '@components/legacy/archetypes'
 import XCircle from '@assets/icons/x-circle.svg?react'
 import { Button, DesktopRequired, Field, MaterialLoader, useModal } from '@components/legacy'
 import { TalismanHandLike } from '@components/legacy/TalismanHandLike'
