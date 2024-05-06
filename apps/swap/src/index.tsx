@@ -916,7 +916,7 @@ const Info = () => {
 }
 
 const SrcAccountSelect = () => {
-  const accounts = useAtomValue(accountsAtom)
+  const accounts = useAtomValue(srcAccountsAtom)
   const [account, setAccount] = useAtom(srcAccountAtom)
 
   return (
