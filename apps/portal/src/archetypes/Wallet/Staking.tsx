@@ -1,4 +1,4 @@
-import { Panel, PanelSection } from '@components'
+import { Panel, PanelSection } from '@components/legacy'
 import { useTranslation } from 'react-i18next'
 
 const Staking = ({ className }: { className?: string }) => {

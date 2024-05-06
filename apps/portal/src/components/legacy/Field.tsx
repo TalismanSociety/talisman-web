@@ -1,5 +1,5 @@
 import IconClear from '@assets/icons/x-circle.svg?react'
-import { Pill } from '@components'
+import { Pill } from '@components/legacy'
 import styled from '@emotion/styled'
 import ChevronDown from '@icons/chevron-down.svg?react'
 import SearchIcon from '@icons/search.svg?react'

@@ -1,4 +1,4 @@
-import { Pill } from '@components'
+import { Pill } from '@components/legacy'
 import styled from '@emotion/styled'
 import { useParachainDetailsById } from '@libs/talisman'
 

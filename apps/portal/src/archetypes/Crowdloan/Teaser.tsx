@@ -1,5 +1,5 @@
 import { Parachain } from '@archetypes'
-import { Pill } from '@components'
+import { Pill } from '@components/legacy'
 import styled from '@emotion/styled'
 import { useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { useTranslation } from 'react-i18next'

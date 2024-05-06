@@ -1,4 +1,4 @@
-import { Button } from '@components'
+import { Button } from '@components/legacy'
 import { DISCORD_JOIN_URL } from '@util/links'
 
 export const JoinButton = ({ className = '' }: { className?: string }) => {

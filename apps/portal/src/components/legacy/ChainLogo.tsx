@@ -1,4 +1,4 @@
-import { Image } from '@components'
+import { Image } from '@components/legacy'
 import styled from '@emotion/styled'
 
 export default styled(({ chain, type, className }: { chain: any; type: string; size?: number; className?: string }) => {

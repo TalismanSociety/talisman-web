@@ -1,5 +1,5 @@
 import { Crowdloan, Parachain } from '@archetypes'
-import { Panel, PanelSection, Poster, useModal } from '@components'
+import { Panel, PanelSection, Poster, useModal } from '@components/legacy'
 import styled from '@emotion/styled'
 import { useCrowdloanContributions } from '@libs/crowdloans'
 import { useCrowdloanByParachainId, useParachainAssets, useParachainDetailsBySlug } from '@libs/talisman'

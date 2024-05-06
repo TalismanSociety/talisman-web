@@ -4,7 +4,7 @@ import '@talismn/astar-types/augment-api'
 import '@talismn/astar-types/types-lookup'
 
 import FairyBreadBanner from '@archetypes/FairyBreadBanner'
-import { TalismanHandLoader } from '@components/TalismanHandLoader'
+import { TalismanHandLoader } from '@components/legacy/TalismanHandLoader'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import Development from '@components/widgets/development'
 import { AccountWatcher, SignetWatcher } from '@domains/accounts'

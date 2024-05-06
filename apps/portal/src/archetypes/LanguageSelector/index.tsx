@@ -1,4 +1,4 @@
-import { Field } from '@components'
+import { Field } from '@components/legacy'
 import styled from '@emotion/styled'
 import { useTranslation } from 'react-i18next'
 
