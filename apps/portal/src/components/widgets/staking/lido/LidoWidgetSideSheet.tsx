@@ -1,7 +1,7 @@
 import type { LidoSuite } from '@domains/staking/lido'
 import { ClassNames } from '@emotion/react'
-import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Text } from '@talismn/ui'
 import { Zap } from '@talismn/web-icons'
+import { SideSheet, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR } from '@talismn/ui'
 import { useEffect } from 'react'
 import { useAccount, useSwitchChain } from 'wagmi'
 
@@ -37,15 +37,16 @@ const LidoWidgetSideSheet = (props: LidoWidgetSideSheetProps) => {
           }}
           contentContainerClassName={css({ flex: 1, padding: '0 !important' })}
         >
-          <Text.H4
-            as="div"
+          <iframe
+            src={props.url}
             css={{
-              textAlign: 'center',
+              flex: 1,
+              border: 'none',
+              width: '100%',
+              height: '100%',
               [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { width: '55rem' },
             }}
-          >
-            Lido widget is currently under maintenance
-          </Text.H4>
+          />
         </SideSheet>
       )}
     </ClassNames>

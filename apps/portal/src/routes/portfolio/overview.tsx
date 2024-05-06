@@ -1,5 +1,5 @@
-import useAssets, { useAssetsFiltered } from '@archetypes/Portfolio/Assets'
-import { Crowdloans } from '@archetypes/Wallet'
+import useAssets, { useAssetsFiltered } from '@components/legacy/archetypes/Portfolio/Assets'
+import { Crowdloans } from '@components/legacy/archetypes/Wallet'
 import SectionHeader from '@components/molecules/SectionHeader'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'

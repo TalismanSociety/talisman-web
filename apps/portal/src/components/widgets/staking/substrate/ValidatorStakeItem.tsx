@@ -1,5 +1,4 @@
 import FastUnstakeDialog from '@components/recipes/FastUnstakeDialog'
-import { ValidatorStakeItem as ValidatorStakeItemComponent } from '@components/recipes/StakeItem'
 import StakePosition from '@components/recipes/StakePosition'
 import { type Account } from '@domains/accounts/recoils'
 import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
@@ -110,12 +109,12 @@ const ValidatorStakeItem = (props: {
         status={
           totalUnlocking?.isZero() === false ? (
             props.inFastUnstakeHead || props.inFastUnstakeQueue ? (
-              <ValidatorStakeItemComponent.FastUnstakingStatus
+              <StakePosition.FastUnstakingStatus
                 amount={<RedactableBalance>{decimal.fromPlanck(totalUnlocking).toLocaleString()}</RedactableBalance>}
                 status={props.inFastUnstakeHead ? 'in-head' : props.inFastUnstakeQueue ? 'in-queue' : undefined}
               />
             ) : (
-              <ValidatorStakeItemComponent.UnstakingStatus
+              <StakePosition.UnstakingStatus
                 amount={<RedactableBalance>{decimal.fromPlanck(totalUnlocking).toLocaleString()}</RedactableBalance>}
                 unlocks={unlocks ?? []}
               />
