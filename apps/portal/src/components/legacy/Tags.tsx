@@ -1,4 +1,4 @@
-import { Pill } from '@components'
+import { Pill } from '@components/legacy'
 import styled from '@emotion/styled'
 import { useSet } from '@util/hooks'
 import { useEffect } from 'react'

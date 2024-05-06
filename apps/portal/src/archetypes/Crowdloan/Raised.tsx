@@ -1,4 +1,4 @@
-import { Pendor, ProgressBar, Stat } from '@components'
+import { Pendor, ProgressBar, Stat } from '@components/legacy'
 import styled from '@emotion/styled'
 import { useCrowdloanById } from '@libs/talisman'
 import { CheckCircle } from '@talismn/web-icons'

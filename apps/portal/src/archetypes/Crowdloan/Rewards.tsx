@@ -1,4 +1,4 @@
-import { Stat } from '@components'
+import { Stat } from '@components/legacy'
 import styled from '@emotion/styled'
 import { useCrowdloanById } from '@libs/talisman'
 

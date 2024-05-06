@@ -1,5 +1,5 @@
 import { Parachain } from '@archetypes'
-import { Countdown, PanelSection, Pendor } from '@components'
+import { Countdown, PanelSection, Pendor } from '@components/legacy'
 import AccountIcon from '@components/molecules/AccountIcon'
 import SectionHeader from '@components/molecules/SectionHeader'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'

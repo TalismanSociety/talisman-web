@@ -1,4 +1,4 @@
-import { TalismanHandLoader } from '@components/TalismanHandLoader'
+import { TalismanHandLoader } from '@components/legacy/TalismanHandLoader'
 import { useAccountSelector } from '@components/widgets/AccountSelector'
 import { writeableSubstrateAccountsState } from '@domains/accounts'
 import {
