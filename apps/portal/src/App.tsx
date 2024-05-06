@@ -3,7 +3,7 @@ import '@polkadot/api-augment/substrate'
 import '@talismn/astar-types/augment-api'
 import '@talismn/astar-types/types-lookup'
 
-import FairyBreadBanner from '@archetypes/FairyBreadBanner'
+import FairyBreadBanner from '@components/legacy/archetypes/FairyBreadBanner'
 import { TalismanHandLoader } from '@components/legacy/TalismanHandLoader'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import Development from '@components/widgets/development'

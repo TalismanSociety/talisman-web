@@ -4,7 +4,7 @@ import { BalanceFormatter, type Balances } from '@talismn/balances'
 import { formatDecimals } from '@talismn/util'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import type { PortfolioToken } from '@archetypes/Portfolio/Assets'
+import type { PortfolioToken } from '@components/legacy/archetypes/Portfolio/Assets'
 import { selectedCurrencyState } from '@domains/balances'
 import { AssetBreakdownRow, AssetBreakdownRowHeader } from './AssetBreakdownRow'
 

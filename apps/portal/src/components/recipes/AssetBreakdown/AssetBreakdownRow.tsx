@@ -6,7 +6,7 @@ import { startCase } from 'lodash'
 
 import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
 import { AssetBalance } from '../Asset'
-import type { PortfolioToken } from '@archetypes/Portfolio/Assets'
+import type { PortfolioToken } from '@components/legacy/archetypes/Portfolio/Assets'
 
 const slideDown = keyframes`
     from {

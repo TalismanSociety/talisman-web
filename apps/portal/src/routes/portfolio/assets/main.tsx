@@ -1,5 +1,5 @@
-import useAssets, { useAssetsFiltered } from '@archetypes/Portfolio/Assets'
-import { Total } from '@archetypes/Wallet'
+import useAssets, { useAssetsFiltered } from '@components/legacy/archetypes/Portfolio/Assets'
+import { Total } from '@components/legacy/archetypes/Wallet'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import { ClassNames } from '@emotion/react'

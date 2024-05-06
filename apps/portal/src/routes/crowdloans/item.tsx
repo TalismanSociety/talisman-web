@@ -1,4 +1,4 @@
-import { Crowdloan, Parachain } from '@archetypes'
+import { Crowdloan, Parachain } from '@components/legacy/archetypes'
 import { Panel, PanelSection, Poster, useModal } from '@components/legacy'
 import styled from '@emotion/styled'
 import { useCrowdloanContributions } from '@libs/crowdloans'
