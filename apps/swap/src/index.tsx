@@ -1124,8 +1124,8 @@ const _Swap = () => {
       )}
       onRequestReverse={useAtomCallback(
         useCallback(async (get, set) => {
-          const [srcAccounts, srcAsset, destAsset] = await Promise.all([
-            get(srcAccountsAtom),
+          const [accounts, srcAsset, destAsset] = await Promise.all([
+            get(accountsAtom),
             get(_srcAssetAtom),
             get(destAssetAtom),
           ])
@@ -1133,7 +1133,7 @@ const _Swap = () => {
           // TODO: remove this time bomb
           set(
             _srcAccountAtom,
-            srcAccounts.find(account => (destAsset.chain === 'Ethereum' ? account.type === 'evm' : 'substrate'))
+            accounts.find(account => (destAsset.chain === 'Ethereum' ? account.type === 'evm' : 'substrate'))
           )
 
           set(srcAssetAtom, destAsset)
