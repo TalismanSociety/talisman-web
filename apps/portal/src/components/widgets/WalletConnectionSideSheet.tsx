@@ -1,8 +1,8 @@
 import talismanWalletLogo from '@assets/talisman-wallet.svg'
 import {
-  useConnectEip6963,
+  useConnectEvm,
   useConnectedSubstrateWallet,
-  useEip6963Providers,
+  useEvmConnectors,
   useInstalledSubstrateWallets,
   useSubstrateWalletConnect,
 } from '@domains/extension'
@@ -12,7 +12,7 @@ import { Chip, Hr, ListItem, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Su
 import { Ethereum, Eye, Polkadot, Wallet } from '@talismn/web-icons'
 import { Suspense, useState, type ButtonHTMLAttributes, type DetailedHTMLProps } from 'react'
 import { atom, useRecoilState } from 'recoil'
-import { useAccount } from 'wagmi'
+import { useAccount as useEvmAccount, useDisconnect as useDisconnectEvm } from 'wagmi'
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
 
 const talismanInstalled = 'talismanEth' in globalThis
@@ -154,9 +154,10 @@ const SubstrateWalletConnection = () => {
 }
 
 const EvmWalletConnections = () => {
-  const { connect, disconnect } = useConnectEip6963()
-  const providers = useEip6963Providers()
-  const { connector, isConnected } = useAccount()
+  const connectors = useEvmConnectors()
+  const { connector } = useEvmAccount()
+  const { connectAsync } = useConnectEvm()
+  const { disconnectAsync } = useDisconnectEvm()
 
   return (
     <section>
@@ -165,14 +166,17 @@ const EvmWalletConnections = () => {
       </Text.H4>
       <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
         <InstallTalisman />
-        {providers.map(x => (
+        {connectors.map(x => (
           <WalletConnection
-            key={x.info.uuid}
-            name={x.info.name}
-            iconUrl={x.info.icon}
-            connected={isConnected && x.info.uuid === connector?.id}
-            onConnectRequest={() => connect(x)}
-            onDisconnectRequest={() => disconnect()}
+            key={x.uid}
+            name={x.name}
+            iconUrl={x.icon}
+            connected={x === connector}
+            onConnectRequest={async () => {
+              await disconnectAsync()
+              await connectAsync({ connector: x })
+            }}
+            onDisconnectRequest={async () => await disconnectAsync()}
           />
         ))}
       </div>
