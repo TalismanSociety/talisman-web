@@ -4,6 +4,7 @@ import type { EIP1193Provider } from 'viem'
 import { WagmiProvider, createConfig, http } from 'wagmi'
 import type {} from 'wagmi/'
 import { mainnet, moonbeam, moonriver } from 'wagmi/chains'
+import { injected } from 'wagmi/connectors'
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -14,6 +15,7 @@ declare global {
 
 export const wagmiConfig = createConfig({
   chains: [mainnet, moonbeam, moonriver],
+  connectors: [injected()],
   transports: { [mainnet.id]: http(), [moonbeam.id]: http(), [moonriver.id]: http() },
 })
 

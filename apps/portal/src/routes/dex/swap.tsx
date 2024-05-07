@@ -1,11 +1,11 @@
 import { evmAccountsState, writeableSubstrateAccountsState } from '@domains/accounts'
 import { selectedCurrencyState } from '@domains/balances'
 import { enableTestnetsState } from '@domains/chains'
-import { useConnectedEip6963Provider, useConnectedSubstrateWallet } from '@domains/extension'
+import { useConnectedSubstrateWallet } from '@domains/extension'
 import { TitlePortal } from '@routes/layout'
 import React, { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
-import { createWalletClient, custom } from 'viem'
+import { useWalletClient } from 'wagmi'
 
 const SwapWidget = React.lazy(async () => await import('@talismn/swap'))
 
@@ -14,7 +14,7 @@ const Swap = () => {
   const evmAccounts = useRecoilValue(evmAccountsState)
 
   const substrateWallet = useConnectedSubstrateWallet()
-  const evmProvider = useConnectedEip6963Provider()
+  const { data: evmWalletClient } = useWalletClient()
 
   return (
     <>
@@ -32,11 +32,7 @@ const Swap = () => {
         )}
         currency={useRecoilValue(selectedCurrencyState)}
         polkadotSigner={substrateWallet?.signer}
-        viemWalletClient={useMemo(
-          () =>
-            evmProvider === undefined ? undefined : createWalletClient({ transport: custom(evmProvider.provider) }),
-          [evmProvider]
-        )}
+        viemWalletClient={evmWalletClient}
         coingeckoApiEndpoint={import.meta.env.REACT_APP_COIN_GECKO_API}
         coingeckoApiTier={import.meta.env.REACT_APP_COIN_GECKO_API_TIER}
         coingeckoApiKey={import.meta.env.REACT_APP_COIN_GECKO_API_KEY}

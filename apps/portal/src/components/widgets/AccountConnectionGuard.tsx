@@ -1,7 +1,7 @@
 import Welcome from '@components/recipes/Welcome'
 import { lookupAccountAddressState, popularAccounts } from '@domains/accounts'
 import { readOnlyAccountsState } from '@domains/accounts/recoils'
-import { useHadPreviouslyConnectedWallet } from '@domains/extension'
+import { useHasActiveWalletConnection } from '@domains/extension'
 import { shortenAddress } from '@util/format'
 import { useState, type PropsWithChildren } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
@@ -10,11 +10,11 @@ import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
 export type AccountConnectionGuardProps = PropsWithChildren
 
 export const useShouldShowAccountConnectionGuard = () => {
-  const hadPreviouslyConnectedWallet = useHadPreviouslyConnectedWallet()
+  const hasActiveWalletConnection = useHasActiveWalletConnection()
   const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
   const lookupAccount = useRecoilValue(lookupAccountAddressState)
 
-  return !hadPreviouslyConnectedWallet && readonlyAccounts.length === 0 && lookupAccount === undefined
+  return !hasActiveWalletConnection && readonlyAccounts.length === 0 && lookupAccount === undefined
 }
 
 const AccountConnectionGuard = (props: AccountConnectionGuardProps) => {
