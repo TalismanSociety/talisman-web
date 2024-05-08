@@ -55,21 +55,23 @@ export const lookupAccountAddressState = atom<string | undefined>({
   ],
 })
 
-export const lookupAccountState = selector<Account | undefined>({
+export const lookupAccountsState = selector<Account[]>({
   key: 'LookupAccount',
   get: ({ get }) =>
-    Maybe.of(get(lookupAccountAddressState)).mapOrUndefined(address => {
-      const resultingAddress = tryParseSubstrateOrEthereumAddress(address)
-
-      return resultingAddress === undefined
-        ? undefined
-        : {
-            address: resultingAddress,
-            readonly: true,
-            partOfPortfolio: false,
-            type: isEvmAddress(resultingAddress) ? ('ethereum' as const) : undefined,
-          }
-    }),
+    Maybe.of(get(lookupAccountAddressState)).mapOr([] as Account[], address =>
+      address
+        .split(',')
+        .map(x => x.trim())
+        .filter(x => x !== '')
+        .map(address => tryParseSubstrateOrEthereumAddress(address))
+        .filter((result): result is NonNullable<typeof result> => result !== undefined)
+        .map(address => ({
+          address,
+          readonly: true,
+          partOfPortfolio: false,
+          type: isEvmAddress(address) ? ('ethereum' as const) : undefined,
+        }))
+    ),
 })
 
 const _substrateInjectedAccountsState = atom<AccountWithReadonlyInfo[]>({
@@ -138,15 +140,10 @@ export const accountsState = selector({
       ...x,
       name: substrateInjecteds.find(y => y.address === x.address)?.name,
     }))
-    const lookupAccount = get(lookupAccountState)
+    const lookupAccounts = get(lookupAccountsState)
 
     return uniqBy(
-      [
-        ...wagmiInjected,
-        ...substrateInjecteds,
-        ...get(readOnlyAccountsState),
-        ...(lookupAccount === undefined ? [] : [lookupAccount]),
-      ],
+      [...wagmiInjected, ...substrateInjecteds, ...get(readOnlyAccountsState), ...lookupAccounts],
       x => x.address
     )
   },
@@ -205,18 +202,18 @@ export const selectedAccountsState = selector({
     const signetAccount = get(signetAccountState)
     if (signetAccount !== undefined) return [signetAccount]
 
-    const [accounts, portfolioAccounts, readOnlyAccounts, selectedAddresses, lookupAccount] = get(
+    const [accounts, portfolioAccounts, readOnlyAccounts, selectedAddresses, lookupAccounts] = get(
       waitForAll([
         accountsState,
         portfolioAccountsState,
         readOnlyAccountsState,
         selectedAccountAddressesState,
-        lookupAccountState,
+        lookupAccountsState,
       ])
     )
 
-    if (lookupAccount !== undefined) {
-      return [lookupAccount]
+    if (lookupAccounts.length > 0) {
+      return lookupAccounts
     }
 
     const onlyHasReadonlyAccounts = portfolioAccounts.length === 0 && readOnlyAccounts.length > 0
