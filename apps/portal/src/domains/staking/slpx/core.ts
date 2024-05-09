@@ -130,7 +130,7 @@ export const useSlpxSwapForm = (
     }
 
     return Decimal.fromPlanck(
-      new BN(decimalAmount.planck.toString()).muln(rateLoadable.contents),
+      new BN(decimalAmount.planck.toString()).muln(rateLoadable.contents).toString(),
       destToken?.decimals ?? 0,
       destToken?.symbol
     )
@@ -403,7 +403,7 @@ export const useStakes = (accounts: Account[], slpxPair: SlpxPair) => {
         balance,
         fiatBalance: balance.toNumber() * tokenPrice,
         unlocking: Maybe.of(userUnlockLedgers[index]?.unwrapOrDefault()).mapOrUndefined(x =>
-          Decimal.fromPlanck(x[0], vToken.data?.decimals ?? 0, vToken.data?.symbol)
+          Decimal.fromPlanck(x[0].toBigInt(), vToken.data?.decimals ?? 0, vToken.data?.symbol)
         ),
       }
     })

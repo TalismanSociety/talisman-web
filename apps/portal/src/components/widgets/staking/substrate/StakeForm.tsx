@@ -189,7 +189,7 @@ const PoolSelector = (props: {
               ? undefined
               : new URL(`nomination_pool/${pool.poolId}`, chain.subscanUrl).toString()
           }
-          balance={`${nativeTokenDecimal.fromPlanck(pool.bondedPool.points).toLocaleString()} staked`}
+          balance={`${nativeTokenDecimal.fromPlanck(pool.bondedPool.points.toBigInt()).toLocaleString()} staked`}
           rating={3}
           count={pool.bondedPool.memberCounter.toString()}
           onClick={() => setNewPoolId(pool.poolId)}

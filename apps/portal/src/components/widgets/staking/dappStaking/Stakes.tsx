@@ -49,7 +49,7 @@ const Stake = ({ account }: { account: Account }) => {
         account={account}
         provider="DApp staking"
         stakeStatus={stake.earningRewards ? 'earning_rewards' : 'not_earning_rewards'}
-        balance={stake.totalStaked.decimalAmount.toLocaleString()}
+        balance={stake.totalStaked.decimalAmount?.toLocaleString()}
         fiatBalance={stake.totalStaked.localizedFiatAmount}
         increaseStakeButton={
           stake.dapps.length > 0 && (

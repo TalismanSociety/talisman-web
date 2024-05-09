@@ -7,15 +7,13 @@
   "scripts": {
     "dev": "tsc --build --watch tsconfig.json",
     "build": "rm -rf build && tsc --build tsconfig.json",
+    "test": "vitest run",
     "lint": "eslint src",
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {
-    "@polkadot/util": "^12.6.2",
     "eslint": "^8.39.0",
-    "typescript": "^5.4.5"
-  },
-  "peerDependencies": {
-    "@polkadot/util": "*"
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
   }
 }

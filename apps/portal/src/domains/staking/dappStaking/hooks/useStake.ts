@@ -200,7 +200,7 @@ export const useStake = (account: Account) => {
 
   const totalStaked = useMemo(
     () =>
-      nativeTokenAmount.fromPlanck(
+      nativeTokenAmount.fromPlanckOrUndefined(
         Maybe.of(
           [ledger.stakedFuture.unwrapOrDefault(), ledger.staked].find(x =>
             x.period.unwrap().eq(activeProtocol.periodInfo.number.unwrap())
@@ -215,7 +215,7 @@ export const useStake = (account: Account) => {
       ledger.unlocking
         .filter(x => x.unlockBlock.toBigInt() > bestNumber.toBigInt())
         .map(x => ({
-          amount: nativeTokenAmount.fromPlanck(x.amount.unwrap()),
+          amount: nativeTokenAmount.fromPlanck(x.amount.unwrap().toBigInt()),
           eta: formatDistanceToNow(
             addMilliseconds(
               new Date(),
@@ -256,12 +256,12 @@ export const useStake = (account: Account) => {
 
   return {
     active: dapps.length > 0 || ledger.unlocking.length > 0,
-    earningRewards: totalStaked.decimalAmount.planck > 0,
+    earningRewards: totalStaked.decimalAmount !== undefined && totalStaked.decimalAmount.planck > 0,
     account,
     ledger,
     locked: useMemo(
-      () => nativeTokenAmount.fromPlanck(ledger.locked.unwrap().toBigInt() - totalStaked.decimalAmount.planck),
-      [ledger.locked, nativeTokenAmount, totalStaked.decimalAmount.planck]
+      () => nativeTokenAmount.fromPlanck(ledger.locked.unwrap().toBigInt() - (totalStaked.decimalAmount?.planck ?? 0n)),
+      [ledger.locked, nativeTokenAmount, totalStaked.decimalAmount?.planck]
     ),
     totalStaked,
     stakerRewards,

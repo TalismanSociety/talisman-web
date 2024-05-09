@@ -119,13 +119,17 @@ const EstimatedRewards = (props: { amount: string }) => {
   const apr = useApr()
   const amount = useMemo(
     () =>
-      tokenAmount.fromPlanck(
-        Maybe.of(tokenAmount.fromUserInputOrUndefined(props.amount).decimalAmount).mapOrUndefined(x =>
-          new BN(x.planck.toString()).muln(apr.totalApr)
-        )
+      tokenAmount.fromPlanckOrUndefined(
+        Maybe.of(tokenAmount.fromUserInputOrUndefined(props.amount).decimalAmount)
+          .mapOrUndefined(x => new BN(x.planck.toString()).muln(apr.totalApr))
+          ?.toString()
       ),
     [apr.totalApr, props.amount, tokenAmount]
   )
+
+  if (amount.decimalAmount === undefined) {
+    return null
+  }
 
   return (
     <>
@@ -176,7 +180,9 @@ const StakeForm = (props: StakeFormProps) => {
         </Suspense>
       }
       currentStakedBalance={
-        stake.totalStaked.decimalAmount.planck > 0n ? stake.totalStaked.decimalAmount.toLocaleString() : undefined
+        stake.totalStaked.decimalAmount !== undefined && stake.totalStaked.decimalAmount.planck > 0n
+          ? stake.totalStaked.decimalAmount.toLocaleString()
+          : undefined
       }
     />
   )
