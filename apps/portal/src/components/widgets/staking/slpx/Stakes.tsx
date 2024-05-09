@@ -28,7 +28,7 @@ const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStake
         balance={<RedactableBalance>{props.position.balance.toLocaleString()}</RedactableBalance>}
         fiatBalance={<AnimatedFiatNumber end={props.position.fiatBalance} />}
         chain={props.slpxPair.chain.name}
-        symbol={props.position.balance.unit}
+        symbol={props.position.balance.options?.currency}
         increaseStakeButton={<StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeDialogOpen(true)} />}
         unstakeButton={
           props.position.balance.planck > 0n && (

@@ -118,27 +118,33 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
 
   return filteredAccounts
     .map((account, index) => {
-      const balance = Decimal.fromPlanck((balances?.at(index) as bigint) ?? 0n, token?.decimals ?? 0, token?.symbol)
+      const balance = Decimal.fromPlanck((balances?.at(index) as bigint) ?? 0n, token?.decimals ?? 0, {
+        currency: token?.symbol,
+      })
 
       const accountWithdrawals = withdrawals?.filter(x => x.status?.owner === account.address)
       const unlockings = accountWithdrawals?.filter(x => !x.status?.isClaimed && !x.status?.isFinalized)
 
       return {
         account,
-        balance: Decimal.fromPlanck((balances?.at(index) as bigint) ?? 0n, token?.decimals ?? 0, token?.symbol),
+        balance: Decimal.fromPlanck((balances?.at(index) as bigint) ?? 0n, token?.decimals ?? 0, {
+          currency: token?.symbol,
+        }),
         fiatBalance: balance.toNumber() * tokenPrice,
         totalUnlocking: Decimal.fromPlanck(
           unlockings?.reduce((prev, curr) => prev + (curr.status?.amountOfStETH ?? 0n), 0n),
           token?.decimals ?? 0,
-          token?.symbol
+          { currency: token?.symbol }
         ),
         unlockings: unlockings?.map(unlock => ({
-          amount: Decimal.fromPlanck(unlock.status?.amountOfStETH ?? 0n, token?.decimals ?? 0, token?.symbol),
+          amount: Decimal.fromPlanck(unlock.status?.amountOfStETH ?? 0n, token?.decimals ?? 0, {
+            currency: token?.symbol,
+          }),
         })),
         claimable: Decimal.fromPlanck(
           accountWithdrawals?.reduce((prev, curr) => prev + (curr.claimable ?? 0n), 0n),
           token?.decimals ?? 0,
-          token?.symbol
+          { currency: token?.symbol }
         ),
       }
     })

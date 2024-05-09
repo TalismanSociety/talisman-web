@@ -31,11 +31,9 @@ const useAvailableBalance = (lidoSuite: LidoSuite) => {
   )
   return useMemo(
     () => ({
-      amount: Decimal.fromPlanck(
-        nativeBalance.sum.planck.transferable ?? 0n,
-        nativeBalance.each.at(0)?.decimals ?? 0,
-        lidoSuite.chain.nativeCurrency.symbol
-      ).toLocaleString(),
+      amount: Decimal.fromPlanck(nativeBalance.sum.planck.transferable ?? 0n, nativeBalance.each.at(0)?.decimals ?? 0, {
+        currency: lidoSuite.chain.nativeCurrency.symbol,
+      }).toLocaleString(),
       fiatAmount: nativeBalance.sum.fiat(currency).total,
     }),
     [currency, lidoSuite.chain.nativeCurrency.symbol, nativeBalance.each, nativeBalance.sum]

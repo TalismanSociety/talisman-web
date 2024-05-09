@@ -1,24 +1,26 @@
+type DecimalOptions = Pick<Intl.NumberFormatOptions, 'currency'>
+
 export default class Decimal {
   // Too large values lead to massive memory usage. Limit to something sensible.
   static #maxDecimal = 100
 
-  static fromPlanck(planck: bigint | boolean | number | string, decimals: number, unit?: string) {
-    return new Decimal(BigInt(planck), decimals, unit)
+  static fromPlanck(planck: bigint | boolean | number | string, decimals: number, options?: DecimalOptions) {
+    return new Decimal(BigInt(planck), decimals, options)
   }
 
   static fromPlanckOrUndefined(
     planck: bigint | boolean | number | string | undefined,
     decimals: number,
-    unit?: string
+    options?: DecimalOptions
   ) {
     try {
-      return this.fromPlanck(planck ?? 0, decimals, unit)
+      return this.fromPlanck(planck ?? 0, decimals, options)
     } catch {
       return undefined
     }
   }
 
-  static fromUserInput(input: string, decimals: number, unit?: string) {
+  static fromUserInput(input: string, decimals: number, options?: DecimalOptions) {
     Decimal.#verifyDecimals(decimals)
 
     const badCharacter = input.match(/[^0-9.]/)
@@ -56,18 +58,22 @@ export default class Decimal {
 
     const quantity = `${whole}${fractional.padEnd(decimals, '0')}`
 
-    return new Decimal(BigInt(quantity), decimals, unit)
+    return new Decimal(BigInt(quantity), decimals, options)
   }
 
-  static fromUserInputOrUndefined(input: string, decimals: number, unit?: string) {
+  static fromUserInputOrUndefined(input: string, decimals: number, options?: DecimalOptions) {
     try {
-      return this.fromUserInput(input, decimals, unit)
+      return this.fromUserInput(input, decimals, options)
     } catch {
       return undefined
     }
   }
 
-  private constructor(public planck: bigint, public decimals: number, public unit?: string) {}
+  private constructor(
+    public readonly planck: bigint,
+    public readonly decimals: number,
+    public readonly options?: DecimalOptions
+  ) {}
 
   toNumber() {
     return Number(this.toString())
@@ -86,9 +92,10 @@ export default class Decimal {
   }
 
   toLocaleString(locales?: Intl.LocalesArgument, options?: Omit<Intl.NumberFormatOptions, 'style'>) {
+    const currency = options?.currency ?? this.options?.currency
     return (
       parseFloat(this.toString()).toLocaleString(locales, { ...options, style: 'decimal' }) +
-      (this.unit === undefined ? '' : ` ${this.unit}`)
+      (currency === undefined ? '' : ` ${currency}`)
     )
   }
 

@@ -218,7 +218,7 @@ const TransportForm = () => {
   }, [decimalAmount, tokenPriceLoadable])
 
   const fixedPointNumberToDecimal = (fn: FixedPointNumber, symbol?: string) =>
-    Decimal.fromPlanck(fn._getInner().integerValue().toString(), fn.getPrecision(), symbol)
+    Decimal.fromPlanck(fn._getInner().integerValue().toString(), fn.getPrecision(), { currency: symbol })
 
   const parsedInputConfigLoadable = useMemo(
     () =>

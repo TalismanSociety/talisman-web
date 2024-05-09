@@ -91,7 +91,7 @@ export const useSlpxSwapForm = (
   const available = useMemo(
     () =>
       Maybe.of(balance.data).mapOrUndefined(x =>
-        Decimal.fromPlanck(x, originToken?.decimals ?? 0, originToken?.symbol)
+        Decimal.fromPlanck(x, originToken?.decimals ?? 0, { currency: originToken?.symbol })
       ),
     [balance.data, originToken?.decimals, originToken?.symbol]
   )
@@ -132,13 +132,15 @@ export const useSlpxSwapForm = (
     return Decimal.fromPlanck(
       new BN(decimalAmount.planck.toString()).muln(rateLoadable.contents).toString(),
       destToken?.decimals ?? 0,
-      destToken?.symbol
+      { currency: destToken?.symbol }
     )
   }, [decimalAmount, destToken?.decimals, destToken?.symbol, rateLoadable.contents, rateLoadable.state])
 
   const newOriginTokenAmount = useMemo(() => {
     if (existingOriginTokenAmount.isFetched && decimalAmount === undefined) {
-      return Decimal.fromPlanck(existingOriginTokenAmount.data ?? 0n, originToken?.decimals ?? 0, originToken?.symbol)
+      return Decimal.fromPlanck(existingOriginTokenAmount.data ?? 0n, originToken?.decimals ?? 0, {
+        currency: originToken?.symbol,
+      })
     }
 
     if (!existingOriginTokenAmount.isFetched || decimalAmount === undefined) {
@@ -148,7 +150,7 @@ export const useSlpxSwapForm = (
     return Decimal.fromPlanck(
       (existingOriginTokenAmount.data ?? 0n) - decimalAmount.planck,
       originToken?.decimals ?? 0,
-      originToken?.symbol
+      { currency: originToken?.symbol }
     )
   }, [
     decimalAmount,
@@ -160,18 +162,18 @@ export const useSlpxSwapForm = (
 
   const newDestTokenAmount = useMemo(() => {
     if (existingDestTokenAmount.isFetched && receivingAmount === undefined) {
-      return Decimal.fromPlanck(existingDestTokenAmount.data ?? 0n, destToken?.decimals ?? 0, destToken?.symbol)
+      return Decimal.fromPlanck(existingDestTokenAmount.data ?? 0n, destToken?.decimals ?? 0, {
+        currency: destToken?.symbol,
+      })
     }
 
     if (!existingDestTokenAmount.isFetched || receivingAmount === undefined) {
       return undefined
     }
 
-    return Decimal.fromPlanck(
-      (existingDestTokenAmount.data ?? 0n) + receivingAmount.planck,
-      destToken?.decimals ?? 0,
-      destToken?.symbol
-    )
+    return Decimal.fromPlanck((existingDestTokenAmount.data ?? 0n) + receivingAmount.planck, destToken?.decimals ?? 0, {
+      currency: destToken?.symbol,
+    })
   }, [
     destToken?.decimals,
     destToken?.symbol,
@@ -194,7 +196,7 @@ export const useSlpxSwapForm = (
   const minAmount = useMemo(
     () =>
       Maybe.of(assetInfo.data?.[1]).mapOrUndefined(x =>
-        Decimal.fromPlanck(x, originToken?.decimals ?? 0, originToken?.symbol)
+        Decimal.fromPlanck(x, originToken?.decimals ?? 0, { currency: originToken?.symbol })
       ),
     [assetInfo.data, originToken?.decimals, originToken?.symbol]
   )
@@ -393,17 +395,15 @@ export const useStakes = (accounts: Account[], slpxPair: SlpxPair) => {
 
   return filteredAccounts
     .map((account, index) => {
-      const balance = Decimal.fromPlanck(
-        (balances.data?.[index]?.result as bigint) ?? 0n,
-        vToken.data?.decimals ?? 0,
-        vToken.data?.symbol
-      )
+      const balance = Decimal.fromPlanck((balances.data?.[index]?.result as bigint) ?? 0n, vToken.data?.decimals ?? 0, {
+        currency: vToken.data?.symbol,
+      })
       return {
         account,
         balance,
         fiatBalance: balance.toNumber() * tokenPrice,
         unlocking: Maybe.of(userUnlockLedgers[index]?.unwrapOrDefault()).mapOrUndefined(x =>
-          Decimal.fromPlanck(x[0].toBigInt(), vToken.data?.decimals ?? 0, vToken.data?.symbol)
+          Decimal.fromPlanck(x[0].toBigInt(), vToken.data?.decimals ?? 0, { currency: vToken.data?.symbol })
         ),
       }
     })

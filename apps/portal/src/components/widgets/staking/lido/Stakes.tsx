@@ -52,7 +52,7 @@ const LidoStakes = (props: { lidoSuite: LidoSuite }) => {
           balance={<RedactableBalance>{stake.balance.toLocaleString()}</RedactableBalance>}
           fiatBalance={<AnimatedFiatNumber end={stake.fiatBalance} />}
           chain={props.lidoSuite.chain.name}
-          symbol={stake.balance.unit}
+          symbol={stake.balance.options?.currency}
           withdrawButton={
             stake.claimable.planck > 0n && (
               <StakePosition.WithdrawButton
