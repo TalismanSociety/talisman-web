@@ -37,7 +37,7 @@ const useAvailableBalance = () => {
       Decimal.fromPlanck(
         balances.reduce((prev, curr) => prev + curr.availableBalance.toBigInt(), 0n),
         api.registry.chainDecimals.at(0) ?? 0,
-        api.registry.chainTokens.at(0)
+        { currency: api.registry.chainTokens.at(0) }
       ),
     [api.registry.chainDecimals, api.registry.chainTokens, balances]
   )

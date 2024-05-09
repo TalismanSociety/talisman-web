@@ -124,11 +124,9 @@ const Transport = () => {
                   iconSrc:
                     token?.logo ??
                     'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/tokens/unknown.svg',
-                  amount: Decimal.fromPlanck(
-                    balance.sum.planck.transferable,
-                    balance.each.at(0)?.decimals ?? 0,
-                    route.token
-                  ).toLocaleString(),
+                  amount: Decimal.fromPlanck(balance.sum.planck.transferable, balance.each.at(0)?.decimals ?? 0, {
+                    currency: route.token,
+                  }).toLocaleString(),
                   fiatAmount: balance.sum
                     .fiat(currency)
                     .transferable.toLocaleString(undefined, { style: 'currency', currency }),
@@ -174,11 +172,9 @@ const Transport = () => {
                   iconSrc:
                     token?.logo ??
                     'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/tokens/unknown.svg',
-                  amount: Decimal.fromPlanck(
-                    balance.sum.planck.transferable,
-                    balance.each.at(0)?.decimals ?? 0,
-                    route.token
-                  ).toLocaleString(),
+                  amount: Decimal.fromPlanck(balance.sum.planck.transferable, balance.each.at(0)?.decimals ?? 0, {
+                    currency: route.token,
+                  }).toLocaleString(),
                   fiatAmount: balance.sum
                     .fiat(currency)
                     .transferable.toLocaleString(undefined, { style: 'currency', currency }),
@@ -287,7 +283,7 @@ const Transport = () => {
   }, [decimalAmount, tokenPriceLoadable])
 
   const fixedPointNumberToDecimal = (fn: FixedPointNumber, symbol?: string) =>
-    Decimal.fromPlanck(fn._getInner().integerValue().toString(), fn.getPrecision(), symbol)
+    Decimal.fromPlanck(fn._getInner().integerValue().toString(), fn.getPrecision(), { currency: symbol })
 
   const parsedInputConfigLoadable = useMemo(
     () =>

@@ -19,6 +19,18 @@ export const wagmiConfig = createConfig({
   transports: { [mainnet.id]: http(), [moonbeam.id]: http(), [moonriver.id]: http() },
 })
 
+const migrate = () => {
+  const legacyKey = 'connected-eip-6963-provider'
+  const legacyConnectorId = localStorage.getItem(legacyKey)
+
+  if (legacyConnectorId !== null && wagmiConfig.storage?.key !== undefined) {
+    localStorage.setItem(`${wagmiConfig.storage.key}.recentConnectorId`, legacyConnectorId)
+    localStorage.removeItem(legacyKey)
+  }
+}
+
+migrate()
+
 const queryClient = new QueryClient()
 
 export const EvmProvider = (props: PropsWithChildren) => (

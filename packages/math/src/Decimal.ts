@@ -1,27 +1,26 @@
-import { BN, bnToBn, formatBalance } from '@polkadot/util'
-import { type ToBn } from '@polkadot/util/types'
+type DecimalOptions = Pick<Intl.NumberFormatOptions, 'currency'>
 
 export default class Decimal {
   // Too large values lead to massive memory usage. Limit to something sensible.
   static #maxDecimal = 100
 
-  static fromPlanck(planck: string | number | bigint | BN | ToBn | undefined, decimals: number, unit?: string) {
-    return new Decimal(BigInt(bnToBn(planck).toString()), decimals, unit)
+  static fromPlanck(planck: bigint | boolean | number | string, decimals: number, options?: DecimalOptions) {
+    return new Decimal(BigInt(planck), decimals, options)
   }
 
   static fromPlanckOrUndefined(
-    planck: string | number | bigint | BN | ToBn | undefined,
+    planck: bigint | boolean | number | string | undefined,
     decimals: number,
-    unit?: string
+    options?: DecimalOptions
   ) {
     try {
-      return this.fromPlanck(planck, decimals, unit)
+      return this.fromPlanck(planck ?? 0, decimals, options)
     } catch {
       return undefined
     }
   }
 
-  static fromUserInput(input: string, decimals: number, unit?: string) {
+  static fromUserInput(input: string, decimals: number, options?: DecimalOptions) {
     Decimal.#verifyDecimals(decimals)
 
     const badCharacter = input.match(/[^0-9.]/)
@@ -59,56 +58,53 @@ export default class Decimal {
 
     const quantity = `${whole}${fractional.padEnd(decimals, '0')}`
 
-    return new Decimal(BigInt(bnToBn(quantity).toString()), decimals, unit)
+    return new Decimal(BigInt(quantity), decimals, options)
   }
 
-  static fromUserInputOrUndefined(input: string, decimals: number, unit?: string) {
+  static fromUserInputOrUndefined(input: string, decimals: number, options?: DecimalOptions) {
     try {
-      return this.fromUserInput(input, decimals, unit)
+      return this.fromUserInput(input, decimals, options)
     } catch {
       return undefined
     }
   }
 
-  private constructor(public planck: bigint, public decimals: number, public unit?: string) {}
+  private constructor(
+    public readonly planck: bigint,
+    public readonly decimals: number,
+    public readonly options?: DecimalOptions
+  ) {}
 
   toNumber() {
     return Number(this.toString())
   }
 
   toString() {
-    const factor = new BN(10).pow(new BN(this.decimals))
-    const bnPlanck = new BN(this.planck.toString())
-    const whole = bnPlanck.div(factor)
-    const fractional = bnPlanck.mod(factor)
+    const paddedPlanck = this.planck.toString().padStart(this.decimals, '0')
+    const whole = paddedPlanck.slice(0, paddedPlanck.length - this.decimals)
+    const fractional = paddedPlanck.slice(paddedPlanck.length - this.decimals).replace(/0+$/, '')
 
-    if (fractional.isZero()) {
-      return whole.toString()
+    if (fractional.length === 0) {
+      return whole
     } else {
-      const fullFractionalPart = fractional.toString().padStart(this.decimals, '0')
-      const trimmedFractionalPart = fullFractionalPart.replace(/0+$/, '')
-      return `${whole.toString()}.${trimmedFractionalPart}`
+      return `${whole || '0'}.${fractional}`
     }
   }
 
-  toLocaleString(options = { withUnit: true }) {
-    const raw = formatBalance(this.planck.toString(), {
-      forceUnit: '-',
-      withUnit: false,
-      decimals: this.decimals,
-    })
-
-    const stringWithoutUnit = raw.includes('.') ? raw.replace(/0+$/, '') : raw
-
-    return stringWithoutUnit.replace(/\.0*$/, '') + (options.withUnit && this.unit !== undefined ? ` ${this.unit}` : '')
+  toLocaleString(locales?: Intl.LocalesArgument, options?: Omit<Intl.NumberFormatOptions, 'style'>) {
+    const currency = options?.currency ?? this.options?.currency
+    return (
+      parseFloat(this.toString()).toLocaleString(locales, { ...options, style: 'decimal' }) +
+      (currency === undefined ? '' : ` ${currency}`)
+    )
   }
 
   map(mapper: (planck: bigint) => bigint) {
-    return Decimal.fromPlanck(mapper(this.planck), this.decimals, this.unit)
+    return Decimal.fromPlanck(mapper(this.planck), this.decimals, this.options)
   }
 
   mapNumber(mapper: (number: number) => number) {
-    return Decimal.fromUserInput(mapper(this.toNumber()).toString(), this.decimals, this.unit)
+    return Decimal.fromUserInput(mapper(this.toNumber()).toString(), this.decimals, this.options)
   }
 
   static #verifyDecimals(fractionalDigits: number): void {

@@ -78,7 +78,7 @@ export const useTokenAmountFromPlanck = <
   const decimalAmount = useMemo<undefined extends T ? Decimal | undefined : Decimal>(() => {
     if (planck === undefined) return undefined as any
     try {
-      return nativeTokenDecimal.fromPlanck(planck)
+      return nativeTokenDecimal.fromPlanck(planck.toString())
     } catch (error) {
       if (!options.allowInvalidValue) {
         throw error

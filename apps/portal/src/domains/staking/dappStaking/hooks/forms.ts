@@ -45,7 +45,7 @@ export const useAddStakeForm = (
     [accountInfo.data.free, accountInfo.data.frozen]
   )
   const lockedAvailableForStake = useMemo(
-    () => BigIntMath.max(0n, stake.ledger.locked.unwrap().toBigInt() - stake.totalStaked.decimalAmount.planck),
+    () => BigIntMath.max(0n, stake.ledger.locked.unwrap().toBigInt() - (stake.totalStaked.decimalAmount?.planck ?? 0n)),
     [stake.ledger.locked, stake.totalStaked]
   )
 

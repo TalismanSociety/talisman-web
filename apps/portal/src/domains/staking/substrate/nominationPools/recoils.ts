@@ -210,7 +210,9 @@ const _poolPayoutsState = selectorFamily({
 
       return response.map(x => ({
         date: fromUnixTime(x.block_timestamp),
-        amount: Decimal.fromPlanck(x.amount, api.registry.chainDecimals.at(0) ?? 0, api.registry.chainTokens.at(0)),
+        amount: Decimal.fromPlanck(x.amount, api.registry.chainDecimals.at(0) ?? 0, {
+          currency: api.registry.chainTokens.at(0),
+        }),
       }))
     },
 })
@@ -236,7 +238,7 @@ export const totalPoolPayoutsState = selectorFamily({
       return Decimal.fromPlanck(
         payouts.reduce((prev, curr) => prev + curr.amount.planck, 0n),
         api.registry.chainDecimals.at(0) ?? 0,
-        api.registry.chainTokens.at(0)
+        { currency: api.registry.chainTokens.at(0) }
       )
     },
 })

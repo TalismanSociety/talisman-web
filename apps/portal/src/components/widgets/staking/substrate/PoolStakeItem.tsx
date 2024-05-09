@@ -47,16 +47,26 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
         readonly={item.account.readonly}
         stakeStatus={item.status}
         account={item.account}
-        balance={<RedactableBalance>{decimal.fromPlanck(item.poolMember.points).toLocaleString()}</RedactableBalance>}
+        balance={
+          <RedactableBalance>
+            {decimal.fromPlanckOrUndefined(item.poolMember.points.toBigInt())?.toLocaleString()}
+          </RedactableBalance>
+        }
         fiatBalance={
-          <AnimatedFiatNumber end={decimal.fromPlanck(item.poolMember.points).toNumber() * nativeTokenPrice} />
+          <AnimatedFiatNumber
+            end={(decimal.fromPlanckOrUndefined(item.poolMember.points.toBigInt())?.toNumber() ?? 0) * nativeTokenPrice}
+          />
         }
         provider={item.poolName ?? ''}
         shortProvider="Nomination pool"
         claimButton={
           item.pendingRewards?.isZero() === false && (
             <StakePosition.ClaimButton
-              amount={<RedactableBalance>{decimal.fromPlanck(item.pendingRewards).toLocaleString()}</RedactableBalance>}
+              amount={
+                <RedactableBalance>
+                  {decimal.fromPlanck(item.pendingRewards.toBigInt()).toLocaleString()}
+                </RedactableBalance>
+              }
               onClick={() => setClaimDialogOpen(true)}
               loading={claimPayoutLoadable.state === 'loading' || restakeLoadable.state === 'loading'}
             />

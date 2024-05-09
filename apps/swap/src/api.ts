@@ -152,11 +152,11 @@ export const srcAssetAtom = atom(
 
     return {
       ...asset,
-      minimumSwapAmount: Decimal.fromPlanck(asset.minimumSwapAmount, asset.decimals, asset.symbol),
+      minimumSwapAmount: Decimal.fromPlanck(asset.minimumSwapAmount, asset.decimals, { currency: asset.symbol }),
       maximumSwapAmount:
         asset.maximumSwapAmount === null
           ? undefined
-          : Decimal.fromPlanck(asset.maximumSwapAmount, asset.decimals, asset.symbol),
+          : Decimal.fromPlanck(asset.maximumSwapAmount, asset.decimals, { currency: asset.symbol }),
     }
   },
   (_, set, asset: AssetData) => set(_srcAssetAtom, async () => asset)
@@ -224,7 +224,7 @@ export const srcAmountInputAtom = atom<string>('')
 export const srcAmountAtom = atom(async get => {
   const asset = await get(srcAssetAtom)
 
-  return Decimal.fromUserInputOrUndefined(get(srcAmountInputAtom), asset.decimals, asset.symbol)
+  return Decimal.fromUserInputOrUndefined(get(srcAmountInputAtom), asset.decimals, { currency: asset.symbol })
 })
 
 export const quoteAtomEffect = atomEffect((get, set) => {
@@ -284,7 +284,7 @@ export const quoteAtom = atomWithRefresh(async get => {
         throw new Error('No matching asset found')
       }
 
-      const amount = Decimal.fromPlanck(fee.amount, asset.decimals, asset.symbol)
+      const amount = Decimal.fromPlanck(fee.amount, asset.decimals, { currency: asset.symbol })
       const fiatAmount = (await get(assetFiatPriceAtomFamily(asset.asset))) * amount.toNumber()
 
       return { type: fee.type, amount, fiatAmount }
@@ -401,7 +401,7 @@ export const swapStatusAtomFamily = atomFamily((id: string) =>
       amount:
         status.depositAmount === undefined
           ? undefined
-          : Decimal.fromPlanck(status.depositAmount, asset.decimals, asset.symbol),
+          : Decimal.fromPlanck(status.depositAmount, asset.decimals, { currency: asset.symbol }),
       date: status.depositChannelCreatedAt === undefined ? undefined : new Date(status.depositChannelCreatedAt),
       externalLink: (() => {
         switch (get(chainflipNetworkAtom)) {
@@ -426,7 +426,7 @@ export const quoteLoadableAtom = loadable(quoteAtom)
 export const destAmountAtom = atom(async get => {
   const [quote, asset] = await Promise.all([get(quoteAtom), get(destAssetAtom)])
 
-  return Decimal.fromPlanck(quote.quote.egressAmount, asset.decimals, asset.symbol)
+  return Decimal.fromPlanck(quote.quote.egressAmount, asset.decimals, { currency: asset.symbol })
 })
 
 export const destAmountLoadableAtom = loadable(destAmountAtom)
@@ -527,7 +527,7 @@ export const assetAvailableAmountAtomFamily = atomFamily(
         throw new Error(`Can't find chain: ${assetData.chain}`)
       }
 
-      const zeroAmount = Decimal.fromUserInput('0', assetData.decimals, assetData.symbol)
+      const zeroAmount = Decimal.fromUserInput('0', assetData.decimals, { currency: assetData.symbol })
 
       switch (assetData.chain) {
         case 'Ethereum': {
@@ -551,7 +551,7 @@ export const assetAvailableAmountAtomFamily = atomFamily(
                   args: [address],
                 })
 
-          return Decimal.fromPlanck(balance, assetData.decimals, assetData.symbol)
+          return Decimal.fromPlanck(balance, assetData.decimals, { currency: assetData.symbol })
         }
         case 'Polkadot': {
           if (!isSubstrateAddress(address)) {
@@ -568,7 +568,7 @@ export const assetAvailableAmountAtomFamily = atomFamily(
               balances.availableBalance.toBigInt() - api.consts.balances.existentialDeposit.toBigInt()
             ),
             assetData.decimals,
-            assetData.symbol
+            { currency: assetData.symbol }
           )
         }
         default:
