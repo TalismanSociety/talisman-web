@@ -129,17 +129,17 @@ export const nativeTokenDecimalState = selectorFamily({
       const api = get(substrateApiState(apiEndpoint))
       return {
         fromPlanck: (value: string | number | bigint) =>
-          Decimal.fromPlanck(value, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
+          Decimal.fromPlanck(value, api.registry.chainDecimals[0] ?? 0, { currency: api.registry.chainTokens[0] }),
         fromPlanckOrUndefined: (value: string | number | bigint | undefined) =>
-          Decimal.fromPlanckOrUndefined(value, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
+          Decimal.fromPlanckOrUndefined(value, api.registry.chainDecimals[0] ?? 0, {
+            currency: api.registry.chainTokens[0],
+          }),
         fromUserInput: (input: string) =>
-          Decimal.fromUserInput(input, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
+          Decimal.fromUserInput(input, api.registry.chainDecimals[0] ?? 0, { currency: api.registry.chainTokens[0] }),
         fromUserInputOrUndefined: (input: string) =>
-          Decimal.fromUserInputOrUndefined(
-            input,
-            api.registry.chainDecimals[0] ?? 0,
-            api.registry.chainTokens[0] ?? ''
-          ),
+          Decimal.fromUserInputOrUndefined(input, api.registry.chainDecimals[0] ?? 0, {
+            currency: api.registry.chainTokens[0],
+          }),
       }
     },
 })
