@@ -1,7 +1,6 @@
 import { selectedCurrencyState } from '@domains/balances'
 import { substrateApiState, useSubstrateApiEndpoint } from '@domains/common'
-import { type BN } from '@polkadot/util'
-import { type ToBn } from '@polkadot/util/types'
+import { storageEffect } from '@domains/common/effects'
 import { type Chain as ChainData, type IToken } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { Maybe } from '@util/monads'
@@ -10,7 +9,6 @@ import { useContext } from 'react'
 import { atom, selector, selectorFamily, waitForAll, type RecoilValueReadOnly } from 'recoil'
 import { ChainContext } from '.'
 import { chainConfigs } from './config'
-import { storageEffect } from '@domains/common/effects'
 
 export const chainState = selectorFamily({
   key: 'Chain',
@@ -130,8 +128,10 @@ export const nativeTokenDecimalState = selectorFamily({
     ({ get }) => {
       const api = get(substrateApiState(apiEndpoint))
       return {
-        fromPlanck: (value: string | number | bigint | BN | ToBn | undefined) =>
+        fromPlanck: (value: string | number | bigint) =>
           Decimal.fromPlanck(value, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
+        fromPlanckOrUndefined: (value: string | number | bigint | undefined) =>
+          Decimal.fromPlanckOrUndefined(value, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
         fromUserInput: (input: string) =>
           Decimal.fromUserInput(input, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
         fromUserInputOrUndefined: (input: string) =>
@@ -178,6 +178,7 @@ export const nativeTokenAmountState = selectorFamily({
 
       return {
         fromPlanck: fromValue(decimal.fromPlanck),
+        fromPlanckOrUndefined: fromValue(decimal.fromPlanckOrUndefined),
         fromUserInput: fromValue(decimal.fromUserInput),
         fromUserInputOrUndefined: fromValue(decimal.fromUserInputOrUndefined),
       }

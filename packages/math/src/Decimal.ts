@@ -1,21 +1,18 @@
-import { BN, bnToBn, formatBalance } from '@polkadot/util'
-import { type ToBn } from '@polkadot/util/types'
-
 export default class Decimal {
   // Too large values lead to massive memory usage. Limit to something sensible.
   static #maxDecimal = 100
 
-  static fromPlanck(planck: string | number | bigint | BN | ToBn | undefined, decimals: number, unit?: string) {
-    return new Decimal(BigInt(bnToBn(planck).toString()), decimals, unit)
+  static fromPlanck(planck: bigint | boolean | number | string, decimals: number, unit?: string) {
+    return new Decimal(BigInt(planck), decimals, unit)
   }
 
   static fromPlanckOrUndefined(
-    planck: string | number | bigint | BN | ToBn | undefined,
+    planck: bigint | boolean | number | string | undefined,
     decimals: number,
     unit?: string
   ) {
     try {
-      return this.fromPlanck(planck, decimals, unit)
+      return this.fromPlanck(planck ?? 0, decimals, unit)
     } catch {
       return undefined
     }
@@ -59,7 +56,7 @@ export default class Decimal {
 
     const quantity = `${whole}${fractional.padEnd(decimals, '0')}`
 
-    return new Decimal(BigInt(bnToBn(quantity).toString()), decimals, unit)
+    return new Decimal(BigInt(quantity), decimals, unit)
   }
 
   static fromUserInputOrUndefined(input: string, decimals: number, unit?: string) {
@@ -77,30 +74,22 @@ export default class Decimal {
   }
 
   toString() {
-    const factor = new BN(10).pow(new BN(this.decimals))
-    const bnPlanck = new BN(this.planck.toString())
-    const whole = bnPlanck.div(factor)
-    const fractional = bnPlanck.mod(factor)
+    const paddedPlanck = this.planck.toString().padStart(this.decimals, '0')
+    const whole = paddedPlanck.slice(0, paddedPlanck.length - this.decimals)
+    const fractional = paddedPlanck.slice(paddedPlanck.length - this.decimals).replace(/0+$/, '')
 
-    if (fractional.isZero()) {
-      return whole.toString()
+    if (fractional.length === 0) {
+      return whole
     } else {
-      const fullFractionalPart = fractional.toString().padStart(this.decimals, '0')
-      const trimmedFractionalPart = fullFractionalPart.replace(/0+$/, '')
-      return `${whole.toString()}.${trimmedFractionalPart}`
+      return `${whole || '0'}.${fractional}`
     }
   }
 
-  toLocaleString(options = { withUnit: true }) {
-    const raw = formatBalance(this.planck.toString(), {
-      forceUnit: '-',
-      withUnit: false,
-      decimals: this.decimals,
-    })
-
-    const stringWithoutUnit = raw.includes('.') ? raw.replace(/0+$/, '') : raw
-
-    return stringWithoutUnit.replace(/\.0*$/, '') + (options.withUnit && this.unit !== undefined ? ` ${this.unit}` : '')
+  toLocaleString(locales?: Intl.LocalesArgument, options?: Omit<Intl.NumberFormatOptions, 'style'>) {
+    return (
+      parseFloat(this.toString()).toLocaleString(locales, { ...options, style: 'decimal' }) +
+      (this.unit === undefined ? '' : ` ${this.unit}`)
+    )
   }
 
   static #verifyDecimals(fractionalDigits: number): void {
