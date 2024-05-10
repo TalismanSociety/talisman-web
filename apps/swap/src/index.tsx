@@ -353,13 +353,16 @@ const Info = () => {
       }
       footer={
         <SwapForm.Info.Footer>
-          Swap provided by{' '}
-          <Chip
-            containerColor="linear-gradient(90deg, rgba(255, 73, 162, 0.10) 0%, rgba(70, 221, 147, 0.10) 100%)"
-            css={{ textTransform: 'uppercase' }}
-          >
-            <img src="https://chainflip.io/images/home/logo-white.svg" css={{ height: '1em' }} />
-          </Chip>
+          Swap provided by
+          {/* eslint-disable-next-line react/jsx-no-target-blank */}
+          <a href="https://docs.chainflip.io/concepts/welcome" target="_blank" css={{ display: 'contents' }}>
+            <Chip
+              containerColor="linear-gradient(90deg, rgba(255, 73, 162, 0.10) 0%, rgba(70, 221, 147, 0.10) 100%)"
+              css={{ textTransform: 'uppercase', cursor: 'pointer' }}
+            >
+              <img src="https://chainflip.io/images/home/logo-white.svg" css={{ height: '1em' }} />
+            </Chip>
+          </a>
         </SwapForm.Info.Footer>
       }
     />
