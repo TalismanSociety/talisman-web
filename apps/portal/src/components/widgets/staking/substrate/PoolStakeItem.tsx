@@ -3,6 +3,7 @@ import { type Account } from '@domains/accounts'
 import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
 import { useEraEtaFormatter, useExtrinsic, useSubmittableResultLoadableState } from '@domains/common'
 import { type usePoolStakes } from '@domains/staking/substrate/nominationPools'
+import { CircularProgressIndicator } from '@talismn/ui'
 import { useCallback, useState, useTransition } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
@@ -10,9 +11,8 @@ import RedactableBalance from '../../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
 import ClaimStakeDialog from './ClaimStakeDialog'
 import NominationPoolsStatisticsSideSheet from './NominationPoolsStatisticsSideSheet'
-import UnstakeDialog from './UnstakeDialog'
-import { CircularProgressIndicator, ListItem } from '@talismn/ui'
 import PoolClaimPermissionDialog from './PoolClaimPermissionDialog'
+import UnstakeDialog from './UnstakeDialog'
 
 const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account[]>>[number] }) => {
   const [chain, decimal, nativeTokenPrice] = useRecoilValue(
@@ -99,20 +99,18 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
         }
         menuButton={
           <StakePosition.MenuButton>
-            <StakePosition.MenuButton.Item
+            <StakePosition.MenuButton.Item.Button
+              headlineContent="Statistics"
+              trailingContent={statsDialogInTransition && <CircularProgressIndicator size="1em" />}
               dismissAfterSelection={false}
               onClick={() => startStatsDialogTransition(() => setStatsDialogOpen(true))}
               inTransition={statsDialogInTransition}
-            >
-              <ListItem
-                headlineContent="Statistics"
-                trailingContent={statsDialogInTransition && <CircularProgressIndicator size="1em" />}
-              />
-            </StakePosition.MenuButton.Item>
+            />
             {!item.account.readonly && (
-              <StakePosition.MenuButton.Item onClick={() => setClaimPermissionDialogOpen(true)}>
-                <ListItem headlineContent="Claim settings" />
-              </StakePosition.MenuButton.Item>
+              <StakePosition.MenuButton.Item.Button
+                headlineContent="Claim settings"
+                onClick={() => setClaimPermissionDialogOpen(true)}
+              />
             )}
           </StakePosition.MenuButton>
         }
