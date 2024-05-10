@@ -144,14 +144,16 @@ const Button = <T extends ButtonElementType = 'button'>({
           ...variantStyle,
           ...(disabled ? { ':hover': undefined } : {}),
         },
+        hasLeadingIcon && { paddingInlineStart: '1.6rem' },
+        trailingIcon && { paddingInlineEnd: '1.6rem' },
         loading && { cursor: 'wait' },
         props.disabled && [{ cursor: 'not-allowed' }, variantDisabledStyle],
         hidden && { cursor: 'default', pointerEvent: 'none', opacity: 0 },
       ]}
     >
-      <div css={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5em' }}>
+      <div css={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.8rem' }}>
         {hasLeadingIcon && (
-          <IconContext.Provider value={{ size: '1em' }}>
+          <IconContext.Provider value={{ size: '1.8rem' }}>
             {(() => {
               if (loading) {
                 return <CircularProgressIndicator size="1.6rem" />
@@ -166,9 +168,11 @@ const Button = <T extends ButtonElementType = 'button'>({
           </IconContext.Provider>
         )}
         <span css={{ textAlign: 'center' }}>{props.children}</span>
-        <IconContext.Provider value={{ size: '1em' }}>
-          <div css={{ display: 'flex' }}>{trailingIcon}</div>
-        </IconContext.Provider>
+        {trailingIcon && (
+          <IconContext.Provider value={{ size: '1.8rem' }}>
+            <div css={{ display: 'flex' }}>{trailingIcon}</div>
+          </IconContext.Provider>
+        )}
       </div>
     </Component>
   )
