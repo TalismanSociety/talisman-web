@@ -1,4 +1,4 @@
-import { evmAccountsState, writeableSubstrateAccountsState } from '@domains/accounts'
+import { evmAccountsState, substrateAccountsState } from '@domains/accounts'
 import { selectedCurrencyState } from '@domains/balances'
 import { enableTestnetsState } from '@domains/chains'
 import { useConnectedSubstrateWallet } from '@domains/extension'
@@ -10,7 +10,7 @@ import { useWalletClient } from 'wagmi'
 const SwapWidget = React.lazy(async () => await import('@talismn/swap'))
 
 const Swap = () => {
-  const substrateAccounts = useRecoilValue(writeableSubstrateAccountsState)
+  const substrateAccounts = useRecoilValue(substrateAccountsState)
   const evmAccounts = useRecoilValue(evmAccountsState)
 
   const substrateWallet = useConnectedSubstrateWallet()
@@ -26,7 +26,7 @@ const Swap = () => {
               type: account.type === 'ethereum' ? 'evm' : 'substrate',
               address: account.address as any,
               name: account.name,
-              readonly: account.readonly ?? (account.type === 'ethereum' && !account.canSignEvm),
+              readonly: account.readonly || (account.type === 'ethereum' && !account.canSignEvm),
             })),
           [evmAccounts, substrateAccounts]
         )}
