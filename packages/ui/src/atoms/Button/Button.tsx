@@ -134,7 +134,7 @@ const Button = <T extends ButtonElementType = 'button'>({
         theme.typography.body,
         {
           textAlign: 'center',
-          display: 'inline-block',
+          display: 'inline-flex',
           padding: '1.156rem 2.4rem',
           width: 'fit-content',
           border: 'none',
@@ -144,50 +144,35 @@ const Button = <T extends ButtonElementType = 'button'>({
           ...variantStyle,
           ...(disabled ? { ':hover': undefined } : {}),
         },
+        hasLeadingIcon && { paddingInlineStart: '1.6rem' },
+        trailingIcon && { paddingInlineEnd: '1.6rem' },
         loading && { cursor: 'wait' },
         props.disabled && [{ cursor: 'not-allowed' }, variantDisabledStyle],
         hidden && { cursor: 'default', pointerEvent: 'none', opacity: 0 },
       ]}
     >
-      <div css={{ position: 'relative', display: 'flex' }}>
+      <div css={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.8rem' }}>
         {hasLeadingIcon && (
-          <span
-            css={{ position: 'absolute', top: 0, bottom: 0, left: '-1.6rem', display: 'flex', alignItems: 'center' }}
-          >
-            <IconContext.Provider value={{ size: '1.6rem' }}>
-              {(() => {
-                if (loading) {
-                  return <CircularProgressIndicator size="1.6rem" />
-                }
+          <IconContext.Provider value={{ size: '1.8rem' }}>
+            {(() => {
+              if (loading) {
+                return <CircularProgressIndicator size="1.6rem" />
+              }
 
-                if (leadingIcon) {
-                  return leadingIcon
-                }
+              if (leadingIcon) {
+                return <div css={{ display: 'flex' }}>{leadingIcon}</div>
+              }
 
-                return undefined
-              })()}
-            </IconContext.Provider>
-          </span>
+              return undefined
+            })()}
+          </IconContext.Provider>
         )}
-        <span
-          css={[
-            { textAlign: 'center', width: 'stretch' },
-            hasLeadingIcon && { translate: '0.8rem' },
-            trailingIcon && { translate: '-0.8rem' },
-            hasLeadingIcon && trailingIcon && { translate: 'revert' },
-          ]}
-        >
-          {props.children}
-        </span>
-        <IconContext.Provider value={{ size: '1.6rem' }}>
-          {trailingIcon && (
-            <span
-              css={{ position: 'absolute', top: 0, bottom: 0, right: '-1.6rem', display: 'flex', alignItems: 'center' }}
-            >
-              {trailingIcon}
-            </span>
-          )}
-        </IconContext.Provider>
+        <span css={{ textAlign: 'center' }}>{props.children}</span>
+        {trailingIcon && (
+          <IconContext.Provider value={{ size: '1.8rem' }}>
+            <div css={{ display: 'flex' }}>{trailingIcon}</div>
+          </IconContext.Provider>
+        )}
       </div>
     </Component>
   )
