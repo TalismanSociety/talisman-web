@@ -322,8 +322,7 @@ const Info = () => {
                 <br />
                 <br />
                 Typically, the new asset should reach the user's wallet within 5 minutes. This is significantly faster
-                than existing bridges and faster than the average centralised exchange. We also aim to speed this up
-                dramatically in future upgrades.
+                than existing bridges and faster than the average centralised exchange.
               </>
             }
           />
