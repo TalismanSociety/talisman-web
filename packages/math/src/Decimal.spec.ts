@@ -148,6 +148,10 @@ describe('Decimal', () => {
       expect(Decimal.fromPlanck('3', 2).toString()).toEqual('0.03')
       expect(Decimal.fromPlanck('3', 3).toString()).toEqual('0.003')
     })
+
+    it('handles zero value', () => {
+      expect(Decimal.fromPlanck(0, 18).toString()).toEqual('0')
+    })
   })
 
   describe('toNumber', () => {
