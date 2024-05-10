@@ -22,11 +22,22 @@ const ButtonSegment = (props: ButtonSegmentProps) => {
         <Text.Body
           as={Clickable}
           {...props}
-          css={{
-            position: 'relative',
-            padding: '0.7em 0.85em',
-          }}
-          style={{ color: selectedValue === props.value ? theme.color.onPrimary : undefined }}
+          css={[
+            {
+              position: 'relative',
+              padding: '0.7em 0.85em',
+            },
+            // This is to prevent a bug with Chrome, specifically in the swap/transport component
+            selectedValue === props.value && {
+              '*': {
+                color: `color-mix(in srgb, ${theme.color.onPrimary}, transparent 30%)`,
+              },
+            },
+            // Should be doing this instead
+            // selectedValue === props.value && {
+            //   color: theme.color.onPrimary,
+            // },
+          ]}
           onClick={() => onChange?.(props.value)}
         >
           {selectedValue === props.value && (
