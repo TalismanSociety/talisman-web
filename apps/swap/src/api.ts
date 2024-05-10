@@ -2,7 +2,6 @@ import { SwapSDK, type Asset, type AssetData, type Chain, type ChainflipNetwork 
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import '@polkadot/api-augment/substrate'
 import type { Signer } from '@polkadot/api/types'
-import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { BigIntMath, Decimal } from '@talismn/math'
 import '@talismn/ui/assets/css/talismn.css'
 import { differenceInDays } from 'date-fns'
@@ -25,6 +24,7 @@ import { mainnet, sepolia } from 'viem/chains'
 import { z } from 'zod'
 import { assetCoingeckoIds } from './config'
 import type { Account } from './types'
+import { isSubstrateAddress } from './utils'
 
 const EVM_CHAINS = [mainnet, sepolia]
 
