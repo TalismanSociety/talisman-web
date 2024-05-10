@@ -21,7 +21,6 @@ import {
   createContext,
   useContext,
   useEffect,
-  useMemo,
   useState,
   type DetailedHTMLProps,
   type HTMLAttributes,
@@ -34,8 +33,6 @@ import FloatingPortal from '../../atoms/FloatingPortal'
 import { usePrevious } from '../../utils'
 
 export const MENU_OFFSET = 12
-
-export const MENU_BORDER_RADIUS = '2rem'
 
 export type MenuProps = {
   children: [ReactElement<MenuButtonProps>, ReactElement<MenuItemsProps>]
@@ -97,22 +94,7 @@ const MenuButton = ({ children, ...props }: MenuButtonProps) => {
 const MenuItems = (props: MenuItemsProps) => {
   const theme = useTheme()
   const [animating, setAnimating] = useState(false)
-  const { nodeId, x, y, strategy, placement, refs, getFloatingProps, open, setOpen } = useContext(MenuContext)
-
-  const closedClipPath = useMemo(() => {
-    switch (placement) {
-      case 'top-start':
-        return `inset(100% 100% 0 0 round ${MENU_BORDER_RADIUS})`
-      case 'top-end':
-        return `inset(100% 0 0 100% round ${MENU_BORDER_RADIUS})`
-      case 'bottom-start':
-        return `inset(0 100% 100% 0 round ${MENU_BORDER_RADIUS})`
-      case 'bottom-end':
-        return `inset(0 0 100% 100% round ${MENU_BORDER_RADIUS})`
-      default:
-        return `inset(0 50% 100% 50% round ${MENU_BORDER_RADIUS})`
-    }
-  }, [placement])
+  const { nodeId, x, y, strategy, refs, getFloatingProps, open, setOpen } = useContext(MenuContext)
 
   const children =
     typeof props.children === 'function'
@@ -130,27 +112,24 @@ const MenuItems = (props: MenuItemsProps) => {
           onAnimationComplete={() => setAnimating(false)}
           variants={{
             true: {
-              clipPath: `inset(0% 0% 0% 0% round ${MENU_BORDER_RADIUS})`,
-              transitionEnd: {
-                overflow: 'auto',
-              },
+              scale: 1,
+              opacity: 1,
               transition: {
-                duration: 0.25,
                 delayChildren: 0.15,
                 staggerChildren: 0.025,
               },
             },
             false: {
-              clipPath: closedClipPath,
-              overflow: false,
-              transition: {
-                duration: 0.125,
-              },
+              scale: 0.95,
+              opacity: 0,
             },
           }}
           css={{
             border: `1px solid ${theme.color.outlineVariant}`,
-            borderRadius: theme.shape.medium,
+            borderRadius: theme.shape.small,
+            overflow: 'hidden',
+            '.talismn-ui-menu-item:first-child': { marginTop: '0.8rem' },
+            '.talismn-ui-menu-item:last-child': { marginBottom: '0.8rem' },
           }}
           {...getFloatingProps({
             ...props,
@@ -168,6 +147,8 @@ const renderMenuItemChildren = (children: MenuItemChildren, renderProps: MenuIte
 
 const MenuItem = Object.assign(
   ({ children: childrenOrRenderFunc, dismissAfterSelection = true, inTransition, ...props }: MenuItemProps) => {
+    const theme = useTheme()
+
     const { getItemProps, setOpen } = useContext(MenuContext)
 
     const prevInTransition = usePrevious(inTransition)
@@ -183,11 +164,14 @@ const MenuItem = Object.assign(
 
     return (
       <motion.div
+        className={['talismn-ui-menu-item', props.className].join(' ')}
         variants={{
           true: { opacity: 1, transform: 'translateY(0px)' },
           false: { opacity: 0, transform: 'translateY(20px)' },
         }}
         css={{
+          margin: '0 0.8rem',
+          borderRadius: theme.shape.extraSmall,
           cursor: 'pointer',
           ':hover': {
             backgroundColor: useSurfaceColor(),
