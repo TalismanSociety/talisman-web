@@ -81,7 +81,7 @@ export default class Decimal {
 
   toString() {
     const paddedPlanck = this.planck.toString().padStart(this.decimals, '0')
-    const whole = paddedPlanck.slice(0, paddedPlanck.length - this.decimals)
+    const whole = paddedPlanck.slice(0, paddedPlanck.length - this.decimals).padStart(1, '0')
     const fractional = paddedPlanck.slice(paddedPlanck.length - this.decimals).replace(/0+$/, '')
 
     if (fractional.length === 0) {
