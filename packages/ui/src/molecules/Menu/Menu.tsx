@@ -11,31 +11,28 @@ import {
   useFloatingNodeId,
   useInteractions,
   useRole,
+  type ExtendedRefs,
   type Placement,
   type ReferenceType,
   type Strategy,
-  type ExtendedRefs,
 } from '@floating-ui/react'
 import { motion } from 'framer-motion'
 import {
   createContext,
   useContext,
-  useMemo,
+  useEffect,
   useState,
   type DetailedHTMLProps,
   type HTMLAttributes,
   type HTMLProps,
   type ReactElement,
   type ReactNode,
-  useEffect,
 } from 'react'
-import { Surface, useSurfaceColor } from '../..'
+import { ListItem, Surface, useSurfaceColor } from '../..'
 import FloatingPortal from '../../atoms/FloatingPortal'
 import { usePrevious } from '../../utils'
 
 export const MENU_OFFSET = 12
-
-export const MENU_BORDER_RADIUS = '2rem'
 
 export type MenuProps = {
   children: [ReactElement<MenuButtonProps>, ReactElement<MenuItemsProps>]
@@ -47,10 +44,16 @@ export type MenuItemsProps = Omit<DetailedHTMLProps<HTMLAttributes<HTMLElement>,
   children: ReactNode | ((props: { open: boolean; toggleOpen: () => unknown }) => ReactNode)
 }
 
-export type MenuItemProps = Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, 'children'> & {
-  children: ReactNode | ((props: { hover: boolean }) => ReactNode)
+type MenuItemRenderProps = { hover: boolean }
+
+type MenuItemChildren = ReactNode | ((props: MenuItemRenderProps) => ReactNode)
+
+export type MenuItemProps = {
+  className?: string
+  children: MenuItemChildren
   dismissAfterSelection?: boolean
   inTransition?: boolean
+  onClick?: () => unknown
 }
 
 const MenuContext = createContext<{
@@ -91,22 +94,7 @@ const MenuButton = ({ children, ...props }: MenuButtonProps) => {
 const MenuItems = (props: MenuItemsProps) => {
   const theme = useTheme()
   const [animating, setAnimating] = useState(false)
-  const { nodeId, x, y, strategy, placement, refs, getFloatingProps, open, setOpen } = useContext(MenuContext)
-
-  const closedClipPath = useMemo(() => {
-    switch (placement) {
-      case 'top-start':
-        return `inset(100% 100% 0 0 round ${MENU_BORDER_RADIUS})`
-      case 'top-end':
-        return `inset(100% 0 0 100% round ${MENU_BORDER_RADIUS})`
-      case 'bottom-start':
-        return `inset(0 100% 100% 0 round ${MENU_BORDER_RADIUS})`
-      case 'bottom-end':
-        return `inset(0 0 100% 100% round ${MENU_BORDER_RADIUS})`
-      default:
-        return `inset(0 50% 100% 50% round ${MENU_BORDER_RADIUS})`
-    }
-  }, [placement])
+  const { nodeId, x, y, strategy, refs, getFloatingProps, open, setOpen } = useContext(MenuContext)
 
   const children =
     typeof props.children === 'function'
@@ -124,27 +112,24 @@ const MenuItems = (props: MenuItemsProps) => {
           onAnimationComplete={() => setAnimating(false)}
           variants={{
             true: {
-              clipPath: `inset(0% 0% 0% 0% round ${MENU_BORDER_RADIUS})`,
-              transitionEnd: {
-                overflow: 'auto',
-              },
+              scale: 1,
+              opacity: 1,
               transition: {
-                duration: 0.25,
                 delayChildren: 0.15,
                 staggerChildren: 0.025,
               },
             },
             false: {
-              clipPath: closedClipPath,
-              overflow: false,
-              transition: {
-                duration: 0.125,
-              },
+              scale: 0.95,
+              opacity: 0,
             },
           }}
           css={{
             border: `1px solid ${theme.color.outlineVariant}`,
-            borderRadius: theme.shape.medium,
+            borderRadius: theme.shape.small,
+            overflow: 'hidden',
+            '.talismn-ui-menu-item:first-child': { marginTop: '0.8rem' },
+            '.talismn-ui-menu-item:last-child': { marginBottom: '0.8rem' },
           }}
           {...getFloatingProps({
             ...props,
@@ -157,52 +142,88 @@ const MenuItems = (props: MenuItemsProps) => {
   )
 }
 
-const MenuItem = ({
-  children: childrenOrRenderFunc,
-  dismissAfterSelection = true,
-  inTransition,
-  ...props
-}: MenuItemProps) => {
-  const { getItemProps, setOpen } = useContext(MenuContext)
+const renderMenuItemChildren = (children: MenuItemChildren, renderProps: MenuItemRenderProps) =>
+  typeof children === 'function' ? children(renderProps) : children
 
-  const prevInTransition = usePrevious(inTransition)
+const MenuItem = Object.assign(
+  ({ children: childrenOrRenderFunc, dismissAfterSelection = true, inTransition, ...props }: MenuItemProps) => {
+    const theme = useTheme()
 
-  useEffect(() => {
-    if (inTransition === false && prevInTransition === true) {
-      setOpen(false)
-    }
-  }, [inTransition, prevInTransition, setOpen])
+    const { getItemProps, setOpen } = useContext(MenuContext)
 
-  const [hover, setHover] = useState(false)
-  const children = typeof childrenOrRenderFunc === 'function' ? childrenOrRenderFunc({ hover }) : childrenOrRenderFunc
+    const prevInTransition = usePrevious(inTransition)
 
-  return (
-    <motion.div
-      variants={{
-        true: { opacity: 1, transform: 'translateY(0px)' },
-        false: { opacity: 0, transform: 'translateY(20px)' },
-      }}
-      css={{
-        cursor: 'pointer',
-        ':hover': {
-          backgroundColor: useSurfaceColor(),
-        },
-      }}
-      onHoverStart={() => setHover(true)}
-      onHoverEnd={() => setHover(false)}
-      {...getItemProps({
-        ...props,
-        children,
-        onClick: (event: any) => {
-          props.onClick?.(event)
-          if (dismissAfterSelection) {
-            setOpen(false)
-          }
-        },
-      })}
-    />
-  )
-}
+    useEffect(() => {
+      if (inTransition === false && prevInTransition === true) {
+        setOpen(false)
+      }
+    }, [inTransition, prevInTransition, setOpen])
+
+    const [hover, setHover] = useState(false)
+    const children = renderMenuItemChildren(childrenOrRenderFunc, { hover })
+
+    return (
+      <motion.div
+        className={['talismn-ui-menu-item', props.className].join(' ')}
+        variants={{
+          true: { opacity: 1, transform: 'translateY(0px)' },
+          false: { opacity: 0, transform: 'translateY(20px)' },
+        }}
+        css={{
+          margin: '0 0.8rem',
+          borderRadius: theme.shape.extraSmall,
+          cursor: 'pointer',
+          ':hover': {
+            backgroundColor: useSurfaceColor(),
+          },
+        }}
+        onHoverStart={() => setHover(true)}
+        onHoverEnd={() => setHover(false)}
+        {...getItemProps({
+          ...props,
+          children,
+          onClick: () => {
+            props.onClick?.()
+            if (dismissAfterSelection) {
+              setOpen(false)
+            }
+          },
+        })}
+      />
+    )
+  },
+  {
+    Button: ({
+      headlineContent,
+      overlineContent,
+      supportingContent,
+      leadingContent,
+      trailingContent,
+      revealTrailingContentOnHover,
+      ...props
+    }: Omit<MenuItemProps, 'children'> & {
+      headlineContent: MenuItemChildren
+      overlineContent?: MenuItemChildren
+      supportingContent?: MenuItemChildren
+      leadingContent?: MenuItemChildren
+      trailingContent?: MenuItemChildren
+      revealTrailingContentOnHover?: boolean
+    }) => (
+      <MenuItem {...props}>
+        {renderProps => (
+          <ListItem
+            headlineContent={renderMenuItemChildren(headlineContent, renderProps)}
+            overlineContent={renderMenuItemChildren(overlineContent, renderProps)}
+            supportingContent={renderMenuItemChildren(supportingContent, renderProps)}
+            leadingContent={renderMenuItemChildren(leadingContent, renderProps)}
+            trailingContent={renderMenuItemChildren(trailingContent, renderProps)}
+            revealTrailingContentOnHover={revealTrailingContentOnHover}
+          />
+        )}
+      </MenuItem>
+    ),
+  }
+)
 
 const Menu = (props: MenuProps) => {
   const nodeId = useFloatingNodeId()
