@@ -1,3 +1,4 @@
+import * as viemChains from 'viem/chains'
 import type { CreateNftAsyncGenerator, Nft } from '../../types.js'
 import type { Chain, Nft as SimpleHashNft } from './types.js'
 
@@ -48,8 +49,14 @@ export const createSimpleHashNftAsyncGenerator = (options: {
         nfts: SimpleHashNft[]
       }
 
-      yield* nftsResult.nfts.map(
-        (nft): Nft<'erc721' | 'erc1155', string> => ({
+      yield* nftsResult.nfts.map((nft): Nft<'erc721' | 'erc1155', string> => {
+        const chain = chains.find(x => x.chain === nft.chain)
+        const viemChain =
+          chain === undefined
+            ? undefined
+            : Object.values(viemChains).find(x => 'id' in x && x.id === chain.eip155_network_id)
+
+        return {
           type: nft.contract.type.toLowerCase() as 'erc721' | 'erc1155',
           chain: nft.chain,
           id: nft.nft_id,
@@ -63,7 +70,15 @@ export const createSimpleHashNftAsyncGenerator = (options: {
           properties: Object.fromEntries(
             nft.extra_metadata.attributes.map(attribute => [attribute.trait_type, attribute.value] as const)
           ),
-          externalLinks: nft.external_url === null ? undefined : [{ name: 'External URL', url: nft.external_url }],
+          externalLinks: [
+            nft.external_url === null ? undefined : { name: 'Homepage', url: nft.external_url },
+            viemChain === undefined || !('blockExplorers' in viemChain && viemChain.blockExplorers !== undefined)
+              ? undefined
+              : {
+                  name: viemChain.blockExplorers.default.name,
+                  url: `${viemChain.blockExplorers.default.url}/nft/${nft.contract_address}/${nft.token_id}`,
+                },
+          ].filter((x): x is NonNullable<typeof x> => x !== undefined),
           collection:
             nft.collection === null
               ? undefined
@@ -72,8 +87,8 @@ export const createSimpleHashNftAsyncGenerator = (options: {
                   name: nft.collection.name ?? undefined,
                   totalSupply: nft.collection.total_quantity ?? undefined,
                 },
-        })
-      )
+        }
+      })
 
       if (nftsResult.next_cursor === null) {
         break
