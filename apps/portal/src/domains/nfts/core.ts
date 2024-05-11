@@ -51,9 +51,12 @@ const _nftsState = atomFamily<NftsProgress, string>({
               throw new Error('No RPC available for fetching Bitcountry NFTs')
             }
 
-            return worker(address, { batchSize, acalaRpc: acala.rpc, bitcountryRpc: bitcountry.rpc }).subscribe(
-              observer
-            )
+            return worker(address, {
+              batchSize,
+              simpleHashApiToken: import.meta.env.REACT_APP_SIMPLE_HASH_API_KEY,
+              acalaRpc: acala.rpc,
+              bitcountryRpc: bitcountry.rpc,
+            }).subscribe(observer)
           })
             .pipe(
               bufferTime(1000, null, batchSize),

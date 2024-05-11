@@ -1,9 +1,9 @@
 import {
   createAcalaNftAsyncGenerator,
-  createBitCountryNftAsyncGenerator,
   createArtZeroNftAsyncGenerator,
-  createEvmNftAsyncGenerator,
+  createBitCountryNftAsyncGenerator,
   createRmrk2NftAsyncGenerator,
+  createSimpleHashNftAsyncGenerator,
   createSubstrateNftKusamaAssetHubNftAsyncGenerator,
   createSubstrateNftPolkadotAssetHubNftAsyncGenerator,
   createUniqueNetworkNftAsyncGenerator,
@@ -12,11 +12,14 @@ import {
 import { Observable } from 'rxjs'
 import { expose } from 'threads/worker'
 
-const subscribeNfts = (address: string, options: { batchSize: number; acalaRpc: string; bitcountryRpc: string }) =>
+const subscribeNfts = (
+  address: string,
+  options: { batchSize: number; simpleHashApiToken: string; acalaRpc: string; bitcountryRpc: string }
+) =>
   new Observable<Nft | { error: unknown }>(observer => {
     const promises = (
       address.startsWith('0x')
-        ? [createEvmNftAsyncGenerator]
+        ? [createSimpleHashNftAsyncGenerator({ apiToken: options.simpleHashApiToken })]
         : [
             createAcalaNftAsyncGenerator({ rpc: options.acalaRpc }),
             createBitCountryNftAsyncGenerator({ rpc: options.bitcountryRpc }),
@@ -41,8 +44,8 @@ const subscribeNfts = (address: string, options: { batchSize: number; acalaRpc: 
     })
 
     Promise.all(promises)
-      .then(() => observer.complete())
       .catch(error => observer.error(error))
+      .finally(() => observer.complete())
   })
 
 export type SubscribeNfts = typeof subscribeNfts
