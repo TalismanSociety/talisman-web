@@ -12,10 +12,11 @@ const SvgNavigation = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -24,7 +25,7 @@ const SvgNavigation = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="m3 11 19-9-9 19-2-8-8-2Z"
+        d="m3 11 19-9-9 19-2-8z"
       />
     </svg>
   )

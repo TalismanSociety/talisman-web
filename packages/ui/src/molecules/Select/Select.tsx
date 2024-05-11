@@ -13,6 +13,7 @@ import {
   useTypeahead,
 } from '@floating-ui/react'
 import { ChevronDown, X } from '@talismn/web-icons'
+import { IconContext } from '@talismn/web-icons/utils'
 import { motion } from 'framer-motion'
 import React, {
   forwardRef,
@@ -50,7 +51,7 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
   <div ref={ref} css={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
     {props.leadingIcon && (
       <figure css={{ display: 'flex', alignItems: 'center', maxWidth: 40, maxHeight: 40, margin: 0 }}>
-        {props.leadingIcon}
+        <IconContext.Provider value={{ size: '2.4rem' }}>{props.leadingIcon}</IconContext.Provider>
       </figure>
     )}
     <div>
@@ -228,13 +229,15 @@ const Select = Object.assign(
           <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none' }}>
             {selectedChild ?? <Text.Body alpha="disabled">{props.placeholder}</Text.Body>}
           </Text.Body>
-          {loading ? (
-            <CircularProgressIndicator />
-          ) : clearRequired ? (
-            <X />
-          ) : (
-            <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
-          )}
+          <IconContext.Provider value={{ size: '2.4rem' }}>
+            {loading ? (
+              <CircularProgressIndicator />
+            ) : clearRequired ? (
+              <X />
+            ) : (
+              <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
+            )}
+          </IconContext.Provider>
         </Surface>
         <FloatingPortal>
           <motion.ul

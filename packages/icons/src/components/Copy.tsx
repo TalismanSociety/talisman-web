@@ -12,10 +12,11 @@ const SvgCopy = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -24,7 +25,7 @@ const SvgCopy = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M20 9h-9a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2Z"
+        d="M20 9h-9a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2"
       />
       <path
         stroke="currentcolor"

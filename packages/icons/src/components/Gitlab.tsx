@@ -12,10 +12,11 @@ const SvgGitlab = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -25,7 +26,7 @@ const SvgGitlab = (
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth={2}
-          d="M22.65 14.39 12 22.13 1.35 14.39a.84.84 0 0 1-.3-.94l1.22-3.78 2.44-7.51A.43.43 0 0 1 5.4 2a.42.42 0 0 1 .11.18l2.44 7.49h8.1l2.44-7.51a.43.43 0 0 1 .69-.16.42.42 0 0 1 .11.18l2.44 7.51L23 13.45a.84.84 0 0 1-.35.94Z"
+          d="M22.65 14.39 12 22.13 1.35 14.39a.84.84 0 0 1-.3-.94l1.22-3.78 2.44-7.51A.43.43 0 0 1 5.4 2a.4.4 0 0 1 .11.18l2.44 7.49h8.1l2.44-7.51a.43.43 0 0 1 .69-.16.4.4 0 0 1 .11.18l2.44 7.51L23 13.45a.84.84 0 0 1-.35.94"
         />
       </g>
       <defs>

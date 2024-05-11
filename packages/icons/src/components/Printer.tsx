@@ -12,10 +12,11 @@ const SvgPrinter = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -27,7 +28,7 @@ const SvgPrinter = (
         strokeWidth={2}
         d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
       />
-      <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 14H6v8h12v-8Z" />
+      <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 14H6v8h12z" />
     </svg>
   )
 }

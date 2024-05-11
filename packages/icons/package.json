@@ -17,7 +17,7 @@
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {
-    "@svgr/cli": "^8.0.1",
+    "@svgr/cli": "^8.1.0",
     "@talismn/eslint-config": "workspace:^",
     "@talismn/tsconfig": "workspace:^",
     "@types/react": "^18.3.1",

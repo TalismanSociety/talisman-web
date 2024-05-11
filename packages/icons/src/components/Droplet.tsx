@@ -12,10 +12,11 @@ const SvgDroplet = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -24,7 +25,7 @@ const SvgDroplet = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="m12 2.69 5.66 5.66a8 8 0 1 1-11.31 0L12 2.69Z"
+        d="m12 2.69 5.66 5.66a8 8 0 1 1-11.31 0z"
       />
     </svg>
   )

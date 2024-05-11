@@ -1,4 +1,5 @@
 import { useTheme } from '@emotion/react'
+import { IconContext } from '@talismn/web-icons/utils'
 
 type FloatingActionButtonElementType = Extract<React.ElementType, 'button' | 'a' | 'figure'>
 
@@ -74,7 +75,9 @@ const FloatingActionButton = <T extends FloatingActionButtonElementType = 'butto
           cursor: 'not-allowed',
         },
       ]}
-    />
+    >
+      <IconContext.Provider value={{ size: '2.4rem' }}>{props.children}</IconContext.Provider>
+    </Component>
   )
 }
 

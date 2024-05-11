@@ -12,34 +12,29 @@ const SvgTruck = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
-      <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 3H1v13h15V3Z" />
+      <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 3H1v13h15z" />
+      <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8h4l3 3v5h-7z" />
       <path
         stroke="currentcolor"
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M16 8h4l3 3v5h-7V8Z"
+        d="M5.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"
       />
       <path
         stroke="currentcolor"
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M5.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"
-      />
-      <path
-        stroke="currentcolor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M18.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"
+        d="M18.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"
       />
     </svg>
   )

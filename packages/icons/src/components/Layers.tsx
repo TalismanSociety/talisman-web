@@ -12,10 +12,11 @@ const SvgLayers = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -24,7 +25,7 @@ const SvgLayers = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M12 2 2 7l10 5 10-5-10-5Z"
+        d="M12 2 2 7l10 5 10-5z"
       />
       <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m2 17 10 5 10-5" />
       <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m2 12 10 5 10-5" />

@@ -12,10 +12,11 @@ const SvgSend = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -25,7 +26,7 @@ const SvgSend = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="m22 2-7 20-4-9-9-4 20-7Z"
+        d="m22 2-7 20-4-9-9-4z"
       />
     </svg>
   )

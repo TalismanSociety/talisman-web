@@ -12,10 +12,11 @@ const SvgMoreHorizontal = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -25,7 +26,7 @@ const SvgMoreHorizontal = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+        d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2"
       />
       <path
         fill="currentcolor"
@@ -33,7 +34,7 @@ const SvgMoreHorizontal = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M19 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+        d="M19 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2"
       />
       <path
         fill="currentcolor"
@@ -41,7 +42,7 @@ const SvgMoreHorizontal = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M5 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+        d="M5 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2"
       />
     </svg>
   )

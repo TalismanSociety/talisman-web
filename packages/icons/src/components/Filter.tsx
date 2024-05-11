@@ -12,10 +12,11 @@ const SvgFilter = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -24,7 +25,7 @@ const SvgFilter = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M22 3H2l8 9.46V19l4 2v-8.54L22 3Z"
+        d="M22 3H2l8 9.46V19l4 2v-8.54z"
       />
     </svg>
   )

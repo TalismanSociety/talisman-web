@@ -12,10 +12,11 @@ const SvgUser = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -31,7 +32,7 @@ const SvgUser = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
+        d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8"
       />
     </svg>
   )

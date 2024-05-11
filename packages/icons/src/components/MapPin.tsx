@@ -12,10 +12,11 @@ const SvgMapPin = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -24,14 +25,14 @@ const SvgMapPin = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0Z"
+        d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0"
       />
       <path
         stroke="currentcolor"
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+        d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6"
       />
     </svg>
   )

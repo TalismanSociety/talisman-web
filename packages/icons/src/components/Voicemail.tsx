@@ -12,10 +12,11 @@ const SvgVoicemail = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -24,14 +25,14 @@ const SvgVoicemail = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M5.5 16a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Z"
+        d="M5.5 16a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9"
       />
       <path
         stroke="currentcolor"
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M18.5 16a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Z"
+        d="M18.5 16a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9"
       />
       <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.5 16h13" />
     </svg>

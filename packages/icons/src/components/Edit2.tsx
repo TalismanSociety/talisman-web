@@ -12,10 +12,11 @@ const SvgEdit2 = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -24,7 +25,7 @@ const SvgEdit2 = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="m16 3 5 5L8 21H3v-5L16 3Z"
+        d="m16 3 5 5L8 21H3v-5z"
       />
     </svg>
   )

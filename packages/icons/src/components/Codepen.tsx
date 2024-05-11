@@ -12,10 +12,11 @@ const SvgCodepen = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -24,7 +25,7 @@ const SvgCodepen = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="m12 2 10 6.5v7L12 22 2 15.5v-7L12 2Z"
+        d="m12 2 10 6.5v7L12 22 2 15.5v-7z"
       />
       <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 22v-6.5" />
       <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m22 8.5-10 7-10-7" />

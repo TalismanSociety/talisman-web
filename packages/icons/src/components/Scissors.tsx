@@ -12,10 +12,11 @@ const SvgScissors = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -24,14 +25,14 @@ const SvgScissors = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+        d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6"
       />
       <path
         stroke="currentcolor"
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+        d="M6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6"
       />
       <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 4 8.12 15.88" />
       <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.47 14.48 20 20" />

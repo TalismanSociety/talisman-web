@@ -12,10 +12,11 @@ const SvgBold = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -24,14 +25,14 @@ const SvgBold = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M6 4h8a4 4 0 1 1 0 8H6V4Z"
+        d="M6 4h8a4 4 0 1 1 0 8H6z"
       />
       <path
         stroke="currentcolor"
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M6 12h9a4 4 0 1 1 0 8H6v-8Z"
+        d="M6 12h9a4 4 0 1 1 0 8H6z"
       />
     </svg>
   )

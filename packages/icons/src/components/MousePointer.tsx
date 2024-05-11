@@ -12,10 +12,11 @@ const SvgMousePointer = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -24,7 +25,7 @@ const SvgMousePointer = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="m3 3 7.07 16.97 2.51-7.39 7.39-2.51L3 3Z"
+        d="m3 3 7.07 16.97 2.51-7.39 7.39-2.51z"
       />
       <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m13 13 6 6" />
     </svg>

@@ -12,10 +12,11 @@ const SvgBell = (
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
+      width={props.size ?? iconContext.size ?? '1em'}
+      height={props.size ?? iconContext.size ?? '1em'}
       fill="none"
       viewBox="0 0 24 24"
+      display="inline"
       ref={ref}
       {...props}
     >
@@ -24,7 +25,7 @@ const SvgBell = (
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M13.73 21a2 2 0 0 1-3.46 0M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3Z"
+        d="M13.73 21a2 2 0 0 1-3.46 0M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3"
       />
     </svg>
   )
