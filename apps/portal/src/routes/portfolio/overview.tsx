@@ -1,22 +1,21 @@
-import useAssets, { useAssetsFiltered } from '@components/legacy/archetypes/Portfolio/Assets'
+import { useAssetsFiltered } from '@components/legacy/archetypes/Portfolio/Assets'
 import { Crowdloans } from '@components/legacy/archetypes/Wallet'
 import SectionHeader from '@components/molecules/SectionHeader'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import PortfolioAllocationGraph from '@components/widgets/PortfolioAllocationGraph'
+import { redactBalanceState } from '@components/widgets/RedactableBalance'
 import Stakes from '@components/widgets/staking/Stakes'
 import { Button, IconButton, SearchBar } from '@talismn/ui'
 import { Eye, EyeOff } from '@talismn/web-icons'
-import { redactBalanceState } from '@components/widgets/RedactableBalance'
 import { Suspense, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 
 const SuspendableAssetsOverview = () => {
   const [search, setSearch] = useState('')
-  const { fiatTotal } = useAssets()
-  const { tokens, balances, isLoading } = useAssetsFiltered({ size: 8, search })
+  const { tokens, balances, fiatTotal, isLoading } = useAssetsFiltered({ size: 8, search })
 
   const lockedAssets = useMemo(
     () =>
