@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
 import { TokenSelectDialog } from './TokenSelectDialog'
+import type { Meta, StoryObj } from '@storybook/react'
 
 export default {
   component: TokenSelectDialog,

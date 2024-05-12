@@ -1,8 +1,8 @@
-import Loader from '@icons/loader.svg?react'
+import Loader from '../../../assets/icons/loader.svg?react'
+import { shortenAddress } from '../../../util/format'
+import { isNilOrWhitespace } from '../../../util/nil'
 import { useTheme } from '@emotion/react'
 import { AlertDialog, Button, Clickable, Hr, Identicon, ListItem, TextInput, useSurfaceColor } from '@talismn/ui'
-import { shortenAddress } from '@util/format'
-import { isNilOrWhitespace } from '@util/nil'
 import type { ReactNode } from 'react'
 
 export type AddReadOnlyAccountDialogProps = {

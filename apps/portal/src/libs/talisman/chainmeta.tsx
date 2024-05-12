@@ -1,3 +1,4 @@
+import { supportedRelayChainsState } from './util/_config'
 import { WsProvider } from '@polkadot/api'
 import { get } from 'lodash'
 import {
@@ -9,7 +10,6 @@ import {
   type PropsWithChildren,
 } from 'react'
 import { useRecoilValue } from 'recoil'
-import { supportedRelayChainsState } from './util/_config'
 
 //
 // Types

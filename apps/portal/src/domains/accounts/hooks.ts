@@ -1,10 +1,10 @@
+import { useResolveNsName } from '../../libs/onChainId'
+import { tryParseSubstrateOrEthereumAddress } from '../../util/addressValidation'
+import { isNilOrWhitespace } from '../../util/nil'
+import { readOnlyAccountsState, type ReadonlyAccount } from './recoils'
 import { toast } from '@talismn/ui'
-import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
-import { isNilOrWhitespace } from '@util/nil'
 import { useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
-import { readOnlyAccountsState, type ReadonlyAccount } from './recoils'
-import { useResolveNsName } from '@libs/onChainId'
 
 export const useSetReadonlyAccounts = () => {
   const setReadonlyAccounts = useSetRecoilState(readOnlyAccountsState)

@@ -1,61 +1,7 @@
 {
   "extends": "@talismn/tsconfig/vite-react",
   "compilerOptions": {
-    "jsxImportSource": "@emotion/react",
-    "baseUrl": "./src",
-    "paths": {
-      "@archetypes": [
-        "./archetypes"
-      ],
-      "@archetypes/*": [
-        "./archetypes/*"
-      ],
-      "@assets": [
-        "./assets"
-      ],
-      "@assets/*": [
-        "./assets/*"
-      ],
-      "@components": [
-        "./components"
-      ],
-      "@components/*": [
-        "./components/*"
-      ],
-      "@icons": [
-        "./assets/icons"
-      ],
-      "@icons/*": [
-        "./assets/icons/*"
-      ],
-      "@libs": [
-        "./libs"
-      ],
-      "@libs/*": [
-        "./libs/*"
-      ],
-      "@routes": [
-        "./routes"
-      ],
-      "@routes/*": [
-        "./routes/*"
-      ],
-      "@util": [
-        "./util"
-      ],
-      "@util/*": [
-        "./util/*"
-      ],
-      "@layout": [
-        "./layout"
-      ],
-      "@layout/*": [
-        "./layout/*"
-      ],
-      "@domains/*": [
-        "./domains/*"
-      ]
-    }
+    "jsxImportSource": "@emotion/react"
   },
   "include": [
     "src"

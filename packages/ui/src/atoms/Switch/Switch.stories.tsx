@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
 import Switch from './Switch'
+import type { Meta, StoryObj } from '@storybook/react'
 
 export default {
   title: 'Atoms/Switch',

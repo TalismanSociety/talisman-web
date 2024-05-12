@@ -1,4 +1,4 @@
-import { wagmiAccountsState } from '@domains/accounts/recoils'
+import { wagmiAccountsState } from '../accounts/recoils'
 import { toast } from '@talismn/ui'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect } from 'react'

@@ -1,4 +1,4 @@
-import { developmentState } from '@domains/common'
+import { developmentState } from '../../../domains/common'
 import React, { Suspense, useEffect } from 'react'
 import { useRecoilState } from 'recoil'
 

@@ -1,8 +1,7 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-import { useState } from 'react'
-
 import { Identicon } from '../../atoms'
 import Select, { type SelectProps } from './Select'
+import { type ComponentMeta, type Story } from '@storybook/react'
+import { useState } from 'react'
 
 export default {
   title: 'Molecules/Select',

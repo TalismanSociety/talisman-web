@@ -1,11 +1,10 @@
-import { useTheme } from '@emotion/react'
-import { IconContext } from '@talismn/web-icons/utils'
-import { useMemo, type ButtonHTMLAttributes, type DetailedHTMLProps, type ReactNode } from 'react'
-
 import { useSurfaceColor } from '..'
 import type { ContentAlpha } from '../..'
 import CircularProgressIndicator from '../CircularProgressIndicator'
 import Text from '../Text'
+import { useTheme } from '@emotion/react'
+import { IconContext } from '@talismn/web-icons/utils'
+import { useMemo, type ButtonHTMLAttributes, type DetailedHTMLProps, type ReactNode } from 'react'
 
 export type ChipProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
   size?: 'sm' | 'md' | 'lg'

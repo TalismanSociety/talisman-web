@@ -1,8 +1,8 @@
+import { Button, Dialog, Surface, Text, type DialogProps } from '../../atoms'
+import { useMimeType, type MimeTypeSubType, type MimeTypeType } from '../../utils'
 import { Global, keyframes, useTheme } from '@emotion/react'
 import { Volume2, X } from '@talismn/web-icons'
 import { type ReactNode } from 'react'
-import { Button, Dialog, Surface, Text, type DialogProps } from '../../atoms'
-import { useMimeType, type MimeTypeSubType, type MimeTypeType } from '../../utils'
 
 const show = keyframes`
   from {

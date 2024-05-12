@@ -1,9 +1,9 @@
+import '../assets/css/talismn.css'
 import { ThemeProvider, type Theme } from '../src/theme'
+import { theme } from '../src/theme'
 import type { Preview } from '@storybook/react'
 import { theme as storybookTheme } from '@talismn/development/storybook'
 import React from 'react'
-import '../assets/css/talismn.css'
-import { theme } from '../src/theme'
 
 const preview: Preview = {
   parameters: {

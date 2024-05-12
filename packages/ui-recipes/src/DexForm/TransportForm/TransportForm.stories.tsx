@@ -1,6 +1,6 @@
+import TransportForm from './TransportForm'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Chip, Select } from '@talismn/ui'
-import TransportForm from './TransportForm'
 
 export default {
   component: TransportForm,

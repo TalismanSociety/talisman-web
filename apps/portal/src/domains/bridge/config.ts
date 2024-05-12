@@ -1,3 +1,9 @@
+import {
+  ExtendedCentrifugeAdapter,
+  ExtendedParallelAdapter,
+  ExtendedAssetHubPolkadotAdapter,
+  ExtendedAstarAdapter,
+} from './extendedRoutes'
 import { type ChainId } from '@polkawallet/bridge'
 import { AcalaAdapter, KaruraAdapter } from '@polkawallet/bridge/adapters/acala'
 import { AssetHubKusamaAdapter } from '@polkawallet/bridge/adapters/assethub'
@@ -16,18 +22,11 @@ import { HeikoAdapter } from '@polkawallet/bridge/adapters/parallel'
 import { KhalaAdapter } from '@polkawallet/bridge/adapters/phala'
 import { KusamaAdapter, PolkadotAdapter } from '@polkawallet/bridge/adapters/polkadot'
 import { RobonomicsAdapter } from '@polkawallet/bridge/adapters/robonomics'
+import { SubsocialAdapter } from '@polkawallet/bridge/adapters/subsocial'
 import { TinkernetAdapter } from '@polkawallet/bridge/adapters/tinkernet'
 import { QuartzAdapter, UniqueAdapter } from '@polkawallet/bridge/adapters/unique'
 import { ZeitgeistAdapter } from '@polkawallet/bridge/adapters/zeitgeist'
-import { SubsocialAdapter } from '@polkawallet/bridge/adapters/subsocial'
 import { type BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
-
-import {
-  ExtendedCentrifugeAdapter,
-  ExtendedParallelAdapter,
-  ExtendedAssetHubPolkadotAdapter,
-  ExtendedAstarAdapter,
-} from './extendedRoutes'
 
 export const bridgeConfig = {
   polkadot: {

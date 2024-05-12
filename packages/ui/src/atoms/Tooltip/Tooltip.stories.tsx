@@ -1,6 +1,5 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-
 import Tooltip, { type TooltipProps } from './Tooltip'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 export default {
   title: 'Atoms/Tooltip',

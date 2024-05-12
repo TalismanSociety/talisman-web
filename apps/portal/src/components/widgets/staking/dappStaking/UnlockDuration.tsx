@@ -1,4 +1,4 @@
-import { useLocalizedUnlockDuration } from '@domains/staking/dappStaking'
+import { useLocalizedUnlockDuration } from '../../../../domains/staking/dappStaking'
 
 const UnlockDuration = () => <>{useLocalizedUnlockDuration()}</>
 

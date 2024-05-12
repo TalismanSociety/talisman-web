@@ -1,12 +1,11 @@
-import '@talismn/ui/assets/css/talismn.css'
-
-import ATApocRevelations from '@assets/fonts/AT-Apoc-Revelations.woff'
-import SurtRegular from '@assets/fonts/Surt-Regular.woff'
-import SurtSemiBold from '@assets/fonts/Surt-SemiBold.woff2'
-import SurtSemiBoldExpanded from '@assets/fonts/Surt-SemiBoldExp.woff2'
-import SurtSemiBoldExtended from '@assets/fonts/Surt-SemiBoldExtended.woff2'
+import ATApocRevelations from './assets/fonts/AT-Apoc-Revelations.woff'
+import SurtRegular from './assets/fonts/Surt-Regular.woff'
+import SurtSemiBold from './assets/fonts/Surt-SemiBold.woff2'
+import SurtSemiBoldExpanded from './assets/fonts/Surt-SemiBoldExp.woff2'
+import SurtSemiBoldExtended from './assets/fonts/Surt-SemiBoldExtended.woff2'
 import { Global, css } from '@emotion/react'
 import { ThemeProvider, theme, type Theme } from '@talismn/ui'
+import '@talismn/ui/assets/css/talismn.css'
 import { type PropsWithChildren } from 'react'
 
 /*

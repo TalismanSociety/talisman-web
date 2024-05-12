@@ -1,8 +1,7 @@
-import { useTheme } from '@emotion/react'
-import { type PropsWithChildren, type ReactNode } from 'react'
-
 import { Surface, Tooltip, useSurfaceColorAtElevation } from '../../atoms'
 import FloatingActionButton from '../../atoms/FloatingActionButton'
+import { useTheme } from '@emotion/react'
+import { type PropsWithChildren, type ReactNode } from 'react'
 
 export type NavigationRailProps = PropsWithChildren<{
   header?: ReactNode

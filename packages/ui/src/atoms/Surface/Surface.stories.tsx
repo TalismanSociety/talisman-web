@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react'
 import type { SurfaceProps } from './Surface'
 import Surface from './Surface'
+import type { Meta, StoryObj } from '@storybook/react'
 
 export default {
   title: 'Atoms/Surface',

@@ -1,14 +1,16 @@
-import { FixedPointNumber } from '@acala-network/sdk-core'
 import {
   evmAccountsState,
   substrateAccountsState,
   writeableSubstrateAccountsState,
   type Account,
-} from '@domains/accounts'
-import { balancesState, selectedCurrencyState } from '@domains/balances'
-import { bridgeAdapterState, bridgeState } from '@domains/bridge'
-import { tokenPriceState } from '@domains/chains'
-import { useExtrinsic } from '@domains/common'
+} from '../../../domains/accounts'
+import { balancesState, selectedCurrencyState } from '../../../domains/balances'
+import { bridgeAdapterState, bridgeState } from '../../../domains/bridge'
+import { tokenPriceState } from '../../../domains/chains'
+import { useExtrinsic } from '../../../domains/common'
+import { Maybe } from '../../../util/monads'
+import { useAccountSelector } from '../AccountSelector'
+import { FixedPointNumber } from '@acala-network/sdk-core'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import { type ISubmittableResult } from '@polkadot/types/types'
 import type { Chain, ChainId, InputConfig } from '@polkawallet/bridge'
@@ -17,11 +19,9 @@ import { useTokens as useBalancesLibTokens, useChains } from '@talismn/balances-
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, Text, toast } from '@talismn/ui'
 import { TokenSelectDialog, TransportForm } from '@talismn/ui-recipes'
-import { Maybe } from '@util/monads'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RecoilLoadable, constSelector, selector, useRecoilValue, useRecoilValueLoadable, type Loadable } from 'recoil'
 import { Observable } from 'rxjs'
-import { useAccountSelector } from '../AccountSelector'
 
 const routesState = selector({
   key: 'Transport/Routes',

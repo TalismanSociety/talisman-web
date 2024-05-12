@@ -1,7 +1,7 @@
+import { DexFormInfoNotice, type DexFormInfoNoticeProps } from './components'
 import { CircularProgressIndicator, IconButton, Skeleton, Text, TonalChip, useTheme } from '@talismn/ui'
 import { CheckCircle, ExternalLink, XCircle } from '@talismn/web-icons'
 import type { PropsWithChildren, ReactNode } from 'react'
-import { DexFormInfoNotice, type DexFormInfoNoticeProps } from './components'
 import React from 'react'
 
 export type ActivityLineItemProps = {

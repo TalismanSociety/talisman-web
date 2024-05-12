@@ -1,6 +1,6 @@
-import type { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from 'react'
 import { Text } from '.'
 import { useTheme } from '@emotion/react'
+import type { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from 'react'
 
 type HrProps = PropsWithChildren<DetailedHTMLProps<HTMLAttributes<HTMLHRElement>, HTMLHRElement>>
 

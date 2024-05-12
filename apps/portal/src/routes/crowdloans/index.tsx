@@ -1,7 +1,7 @@
-import type { RouteObject } from 'react-router-dom'
 import { CrowdloanDetail } from './item'
 import { CrowdloanIndex } from './main'
 import { CrowdloanParticipated } from './participated'
+import type { RouteObject } from 'react-router-dom'
 
 const routes = {
   children: [

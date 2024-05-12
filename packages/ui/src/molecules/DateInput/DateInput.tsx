@@ -1,3 +1,5 @@
+import { Text, useSurfaceColor } from '../../atoms'
+import { useTheme } from '@emotion/react'
 import {
   useCallback,
   useEffect,
@@ -7,8 +9,6 @@ import {
   type DetailedHTMLProps,
   type InputHTMLAttributes,
 } from 'react'
-import { Text, useSurfaceColor } from '../../atoms'
-import { useTheme } from '@emotion/react'
 
 const parseDate = (date: Date | string | undefined) => {
   if (date instanceof Date) {

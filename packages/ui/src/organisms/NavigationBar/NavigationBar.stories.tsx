@@ -1,7 +1,6 @@
+import NavigationBar, { NavigationBarItem, type NavigationBarProps } from './NavigationBar'
 import { type ComponentMeta, type Story } from '@storybook/react'
 import { Compass, CreditCard, PieChart, Repeat, Zap } from '@talismn/web-icons'
-
-import NavigationBar, { NavigationBarItem, type NavigationBarProps } from './NavigationBar'
 
 export default {
   title: 'Organisms/NavigationBar',

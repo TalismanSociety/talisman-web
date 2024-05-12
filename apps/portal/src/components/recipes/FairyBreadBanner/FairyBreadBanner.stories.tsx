@@ -1,6 +1,5 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-
 import FairyBreadBanner, { type FairyBreadBannerProps } from './FairyBreadBanner'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 export default {
   title: 'Recipes/FairyBreadBanner',

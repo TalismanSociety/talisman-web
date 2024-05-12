@@ -1,6 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react'
-
 import TransactionHistory from './TransactionHistory'
+import { type Meta, type StoryObj } from '@storybook/react'
 
 export default {
   title: 'Templates/TransactionHistory',

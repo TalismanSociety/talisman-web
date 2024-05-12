@@ -1,15 +1,15 @@
-import { TalismanHandLoader } from '@components/legacy/TalismanHandLoader'
-import { useAccountSelector } from '@components/widgets/AccountSelector'
-import { writeableSubstrateAccountsState } from '@domains/accounts'
+import { TalismanHandLoader } from '../components/legacy/TalismanHandLoader'
+import { useAccountSelector } from '../components/widgets/AccountSelector'
+import { writeableSubstrateAccountsState } from '../domains/accounts'
 import {
   ChainProvider,
   assertChain,
   nominationPoolsEnabledChainsState,
   useChainState,
   useNativeTokenPriceState,
-} from '@domains/chains'
-import { useExtrinsic, useSubstrateApiState, useTokenAmountState } from '@domains/common'
-import { AnalyticsContext } from '@domains/common/analytics'
+} from '../domains/chains'
+import { useExtrinsic, useSubstrateApiState, useTokenAmountState } from '../domains/common'
+import { AnalyticsContext } from '../domains/common/analytics'
 import type { ApiPromise } from '@polkadot/api'
 import type { Option, StorageKey } from '@polkadot/types'
 import type { AccountId32, Balance } from '@polkadot/types/interfaces'

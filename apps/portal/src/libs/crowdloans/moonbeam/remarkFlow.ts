@@ -1,10 +1,8 @@
-import * as crypto from 'crypto'
-
-import { type ApiPromise } from '@polkadot/api'
-import { type Signer } from '@polkadot/api/types'
-
 import { Moonbeam } from '../crowdloanOverrides'
 import moonbeamStatement from './moonbeamStatement'
+import { type ApiPromise } from '@polkadot/api'
+import { type Signer } from '@polkadot/api/types'
+import * as crypto from 'crypto'
 
 export async function submitTermsAndConditions(api: ApiPromise, address: string, signer: Signer) {
   if (!signer?.signRaw) throw new Error('Extension does not support signing messages')

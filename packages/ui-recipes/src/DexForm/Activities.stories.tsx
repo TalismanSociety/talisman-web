@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
 import ActivityLineItem, { ActivityList } from './Activities'
+import type { Meta, StoryObj } from '@storybook/react'
 
 export default {
   component: ActivityLineItem,

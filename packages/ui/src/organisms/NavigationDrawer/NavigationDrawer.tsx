@@ -1,3 +1,4 @@
+import { Dialog, IconButton, Text, useSurfaceColorAtElevation } from '../../atoms'
 import { keyframes, useTheme } from '@emotion/react'
 import { X } from '@talismn/web-icons'
 import { IconContext } from '@talismn/web-icons/utils'
@@ -10,8 +11,6 @@ import {
   type PropsWithChildren,
   type ReactNode,
 } from 'react'
-
-import { Dialog, IconButton, Text, useSurfaceColorAtElevation } from '../../atoms'
 
 export type BaseNavigationDrawerProps = {
   open?: boolean

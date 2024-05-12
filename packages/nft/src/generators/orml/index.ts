@@ -1,8 +1,8 @@
+import { createOrmlNftAsyncGenerator } from './orml.js'
 import { WsProvider } from '@polkadot/api'
 import { type Bytes } from '@polkadot/types-codec'
 import { hexToString } from '@polkadot/util'
 import { CID } from 'multiformats'
-import { createOrmlNftAsyncGenerator } from './orml.js'
 
 const parseCid = (bytes: Bytes) => {
   try {

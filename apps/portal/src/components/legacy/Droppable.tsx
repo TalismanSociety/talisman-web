@@ -1,5 +1,5 @@
+import { type DragAndDropCallbacks, useDragAndDrop } from '../../util/useDragAndDrop'
 import styled from '@emotion/styled'
-import { type DragAndDropCallbacks, useDragAndDrop } from '@util/useDragAndDrop'
 import { type ReactNode, useRef } from 'react'
 
 type DraggableProps = {

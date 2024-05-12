@@ -1,10 +1,10 @@
+import { globalStyle } from '../src/App.Theme'
 import { Global } from '@emotion/react'
 import type { Preview } from '@storybook/react'
 import { theme as storybookTheme } from '@talismn/development/storybook'
 import { ThemeProvider } from '@talismn/ui'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
-import { globalStyle } from '../src/App.Theme'
 
 const preview: Preview = {
   parameters: {

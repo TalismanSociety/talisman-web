@@ -1,5 +1,4 @@
-import React, { useCallback, useState, type ChangeEventHandler, type ReactElement } from 'react'
-
+import Cryptoticon from '../Cryptoticon'
 import {
   ALERT_DIALOG_PADDING,
   AlertDialog,
@@ -9,7 +8,7 @@ import {
   useSurfaceColor,
   type AlertDialogProps,
 } from '@talismn/ui'
-import Cryptoticon from '../Cryptoticon'
+import React, { useCallback, useState, type ChangeEventHandler, type ReactElement } from 'react'
 
 export type TokenSelectorItemProps = {
   logoSrc?: string

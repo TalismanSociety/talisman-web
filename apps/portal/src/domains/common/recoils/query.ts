@@ -1,5 +1,5 @@
-import { queryAtomFamily, queryMultiAtomFamily } from '@talismn/react-polkadot-api'
 import { substrateApiState } from '.'
+import { queryAtomFamily, queryMultiAtomFamily } from '@talismn/react-polkadot-api'
 
 export const { queryState: chainQueryState, deriveState: chainDeriveState } = queryAtomFamily({
   key: 'SubstrateQuery',

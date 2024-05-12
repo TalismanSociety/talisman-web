@@ -1,7 +1,4 @@
-import StakeFormComponent from '@components/recipes/StakeForm'
-import { type StakeStatus } from '@components/recipes/StakeStatusIndicator'
-import { PoolSelectorDialog } from '@components/recipes/StakeTargetSelectorDialog'
-import { writeableSubstrateAccountsState, type Account } from '@domains/accounts/recoils'
+import { writeableSubstrateAccountsState, type Account } from '../../../../domains/accounts/recoils'
 import {
   ChainProvider,
   assertChain,
@@ -9,7 +6,7 @@ import {
   useChainState as useChainRecoilState,
   useNativeTokenDecimalState,
   type ChainInfo,
-} from '@domains/chains'
+} from '../../../../domains/chains'
 import {
   useChainState,
   useEraEtaFormatter,
@@ -18,14 +15,28 @@ import {
   useSubstrateApiEndpoint,
   useSubstrateApiState,
   useTokenAmountFromPlanck,
-} from '@domains/common'
-import { useApr, usePoolAddForm, usePoolStakes } from '@domains/staking/substrate/nominationPools/hooks'
-import { eraStakersState, useRecommendedPoolsState } from '@domains/staking/substrate/nominationPools/recoils'
-import { createAccounts } from '@domains/staking/substrate/nominationPools/utils'
+} from '../../../../domains/common'
+import { useApr, usePoolAddForm, usePoolStakes } from '../../../../domains/staking/substrate/nominationPools/hooks'
+import {
+  eraStakersState,
+  useRecommendedPoolsState,
+} from '../../../../domains/staking/substrate/nominationPools/recoils'
+import { createAccounts } from '../../../../domains/staking/substrate/nominationPools/utils'
+import { Maybe } from '../../../../util/monads'
+import StakeFormComponent from '../../../recipes/StakeForm'
+import { type StakeStatus } from '../../../recipes/StakeStatusIndicator'
+import { PoolSelectorDialog } from '../../../recipes/StakeTargetSelectorDialog'
+import { useAccountSelector } from '../../AccountSelector'
+import AddStakeDialog from './AddStakeDialog'
+import ClaimStakeDialog from './ClaimStakeDialog'
+import PoolClaimPermissionDialog, {
+  PoolClaimPermissionControlledDialog,
+  toUiPermission,
+} from './PoolClaimPermissionDialog'
+import UnstakeDialog from './UnstakeDialog'
 import type { ApiPromise } from '@polkadot/api'
 import { type Decimal } from '@talismn/math'
 import { CircularProgressIndicator, Select } from '@talismn/ui'
-import { Maybe } from '@util/monads'
 import BN from 'bn.js'
 import {
   Suspense,
@@ -40,14 +51,6 @@ import {
 } from 'react'
 import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
-import { useAccountSelector } from '../../AccountSelector'
-import AddStakeDialog from './AddStakeDialog'
-import ClaimStakeDialog from './ClaimStakeDialog'
-import PoolClaimPermissionDialog, {
-  PoolClaimPermissionControlledDialog,
-  toUiPermission,
-} from './PoolClaimPermissionDialog'
-import UnstakeDialog from './UnstakeDialog'
 
 const ExistingPool = (props: { account: Account }) => {
   const pool = usePoolStakes({ address: props.account.address })

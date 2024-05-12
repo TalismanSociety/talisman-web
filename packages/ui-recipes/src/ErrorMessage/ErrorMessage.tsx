@@ -1,6 +1,6 @@
+import TalismanHand from './TalismanHand'
 import { Text } from '@talismn/ui'
 import type { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react'
-import TalismanHand from './TalismanHand'
 
 export type ErrorMessageProps = {
   title: ReactNode

@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
 import PoolClaimPermissionForm from './PoolClaimPermissionForm'
+import type { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 
 export default {

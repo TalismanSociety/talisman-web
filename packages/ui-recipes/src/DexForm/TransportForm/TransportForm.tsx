@@ -1,3 +1,11 @@
+import DexForm, {
+  DEX_FORM_WIDE_MEDIA_SELECTOR,
+  DexFormInfoNotice,
+  DexFormInfoProgressIndicator,
+  TokenSelect,
+  type DexFormInfoNoticeProps,
+} from '../components'
+import ErrorIllustration from '../components/ErrorIllustration'
 import {
   DescriptionList,
   Details,
@@ -10,14 +18,6 @@ import {
 import { ArrowDown, FileSearch, HelpCircle, Repeat } from '@talismn/web-icons'
 import { motion } from 'framer-motion'
 import { Suspense, useState, type ReactNode } from 'react'
-import DexForm, {
-  DEX_FORM_WIDE_MEDIA_SELECTOR,
-  DexFormInfoNotice,
-  DexFormInfoProgressIndicator,
-  TokenSelect,
-  type DexFormInfoNoticeProps,
-} from '../components'
-import ErrorIllustration from '../components/ErrorIllustration'
 
 const TransportFormNetworkButton = (props: Pick<ButtonProps<'button'>, 'onClick' | 'disabled'>) => (
   <TonalIconButton {...props} css={{ '@media(min-width: 600px)': { rotate: '-90deg' } }}>

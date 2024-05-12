@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react'
 import type { LinearProgressIndicatorProps } from './LinearProgressIndicator'
 import LinearProgressIndicator from './LinearProgressIndicator'
+import type { Meta, StoryObj } from '@storybook/react'
 
 export default {
   title: 'Atoms/LinearProgressIndicator',

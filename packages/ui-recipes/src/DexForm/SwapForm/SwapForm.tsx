@@ -1,3 +1,12 @@
+import { ActivityList, type ActivityListProps } from '../Activities'
+import DexForm, {
+  DEX_FORM_WIDE_MEDIA_SELECTOR,
+  DexFormInfoNotice,
+  DexFormInfoProgressIndicator,
+  TokenSelect,
+  type DexFormInfoNoticeProps,
+} from '../components'
+import ErrorIllustration from '../components/ErrorIllustration'
 import {
   CircularProgressIndicator,
   DescriptionList,
@@ -11,15 +20,6 @@ import {
 import { Activity, ArrowDown, ArrowRight, FileSearch, HelpCircle, Repeat } from '@talismn/web-icons'
 import { motion } from 'framer-motion'
 import { Fragment, Suspense, useState, type ReactNode } from 'react'
-import DexForm, {
-  DEX_FORM_WIDE_MEDIA_SELECTOR,
-  DexFormInfoNotice,
-  DexFormInfoProgressIndicator,
-  TokenSelect,
-  type DexFormInfoNoticeProps,
-} from '../components'
-import ErrorIllustration from '../components/ErrorIllustration'
-import { ActivityList, type ActivityListProps } from '../Activities'
 
 export type SwapFormSummaryProps = {
   route: Array<{ iconSrc: string }>

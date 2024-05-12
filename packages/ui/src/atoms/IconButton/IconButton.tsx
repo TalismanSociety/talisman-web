@@ -1,8 +1,8 @@
-import { type ElementType, type PropsWithChildren } from 'react'
+import { CircularProgressIndicator } from '..'
 import type { IconProps } from '../Icon'
 import Icon, { SurfaceIcon, TonalIcon } from '../Icon'
 import { useTheme } from '@emotion/react'
-import { CircularProgressIndicator } from '..'
+import { type ElementType, type PropsWithChildren } from 'react'
 
 type IconButtonElementType = Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>
 

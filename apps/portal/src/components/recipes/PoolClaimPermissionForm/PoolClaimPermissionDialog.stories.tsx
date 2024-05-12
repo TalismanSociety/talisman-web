@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react'
 import { PoolClaimPermissionDialog } from './PoolClaimPermissionForm'
 import { Default as DefaultFormStory } from './PoolClaimPermissionForm.stories'
+import type { Meta, StoryObj } from '@storybook/react'
 
 export default {
   title: 'Recipes/PoolClaimPermissionForm/Dialog',

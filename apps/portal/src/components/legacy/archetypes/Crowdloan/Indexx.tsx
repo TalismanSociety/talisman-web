@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Crowdloan } from '@components/legacy/archetypes'
-import { Await, Field, Grid, NoResults } from '@components/legacy'
-import styled from '@emotion/styled'
-import { useCrowdloanContributions } from '@libs/crowdloans'
-import { TitlePortal } from '@routes/layout'
-import { SearchBar } from '@talismn/ui'
-import { device } from '@util/breakpoints'
-import { useTranslation } from 'react-i18next'
+import { Crowdloan } from '..'
+import { Await, Field, Grid, NoResults } from '../..'
+import { useCrowdloanContributions } from '../../../../libs/crowdloans'
+import { TitlePortal } from '../../../../routes/layout'
+import { device } from '../../../../util/breakpoints'
 import { RootNav } from './RootNav'
+import styled from '@emotion/styled'
+import { SearchBar } from '@talismn/ui'
+import { useTranslation } from 'react-i18next'
 
 const FilterBar = styled(
   ({

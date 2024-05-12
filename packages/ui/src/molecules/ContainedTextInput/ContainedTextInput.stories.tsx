@@ -1,6 +1,6 @@
-import { type Meta, type Story } from '@storybook/react'
-import ContainedTextInput, { type ContainedTextInputProps } from './ContainedTextInput'
 import { IconButton } from '../..'
+import ContainedTextInput, { type ContainedTextInputProps } from './ContainedTextInput'
+import { type Meta, type Story } from '@storybook/react'
 import { Search } from '@talismn/web-icons'
 
 export default {

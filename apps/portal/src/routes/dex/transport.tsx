@@ -1,7 +1,7 @@
-import { TitlePortal } from '@routes/layout'
+import { TitlePortal } from '../layout'
 import React from 'react'
 
-const TransportForm = React.lazy(async () => await import('@components/widgets/dex/TransportForm'))
+const TransportForm = React.lazy(async () => await import('../../components/widgets/dex/TransportForm'))
 
 const Transport = () => (
   <>

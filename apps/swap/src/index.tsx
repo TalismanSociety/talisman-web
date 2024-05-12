@@ -1,33 +1,3 @@
-import { type Asset, type Chain } from '@chainflip/sdk/swap'
-import '@polkadot/api-augment/substrate'
-import type { Signer } from '@polkadot/api/types'
-import {
-  Chip,
-  CircularProgressIndicator,
-  DescriptionList,
-  Identicon,
-  Select,
-  TalismanHandProgressIndicator,
-  Text,
-  Tooltip,
-  toast,
-} from '@talismn/ui'
-import { SwapForm, TokenSelectDialog } from '@talismn/ui-recipes'
-import '@talismn/ui/assets/css/talismn.css'
-import { Provider, atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { loadable, useAtomCallback, useHydrateAtoms } from 'jotai/utils'
-import {
-  Suspense,
-  startTransition,
-  useCallback,
-  useDeferredValue,
-  useEffect,
-  useMemo,
-  useState,
-  type PropsWithChildren,
-} from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
-import { type WalletClient } from 'viem'
 import {
   InputError,
   accountsAtom,
@@ -67,6 +37,36 @@ import {
 import { assetIcons, chainIcons } from './config'
 import type { Account } from './types'
 import { shortenAddress } from './utils'
+import { type Asset, type Chain } from '@chainflip/sdk/swap'
+import '@polkadot/api-augment/substrate'
+import type { Signer } from '@polkadot/api/types'
+import {
+  Chip,
+  CircularProgressIndicator,
+  DescriptionList,
+  Identicon,
+  Select,
+  TalismanHandProgressIndicator,
+  Text,
+  Tooltip,
+  toast,
+} from '@talismn/ui'
+import { SwapForm, TokenSelectDialog } from '@talismn/ui-recipes'
+import '@talismn/ui/assets/css/talismn.css'
+import { Provider, atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { loadable, useAtomCallback, useHydrateAtoms } from 'jotai/utils'
+import {
+  Suspense,
+  startTransition,
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useState,
+  type PropsWithChildren,
+} from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
+import { type WalletClient } from 'viem'
 
 type AssetAmountProps = {
   account: Account

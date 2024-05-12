@@ -1,3 +1,6 @@
+import { assetCoingeckoIds } from './config'
+import type { Account } from './types'
+import { isSubstrateAddress } from './utils'
 import { SwapSDK, type Asset, type AssetData, type Chain, type ChainflipNetwork } from '@chainflip/sdk/swap'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import '@polkadot/api-augment/substrate'
@@ -22,9 +25,6 @@ import { startTransition, useCallback } from 'react'
 import { createPublicClient, erc20Abi, http, isAddress as isEvmAddress, type WalletClient } from 'viem'
 import { mainnet, sepolia } from 'viem/chains'
 import { z } from 'zod'
-import { assetCoingeckoIds } from './config'
-import type { Account } from './types'
-import { isSubstrateAddress } from './utils'
 
 const EVM_CHAINS = [mainnet, sepolia]
 

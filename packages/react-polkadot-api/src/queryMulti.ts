@@ -1,3 +1,6 @@
+import { ApiIdContext, RecoilStateContext } from './Context.js'
+import { garbageCollectionKey } from './GarbageCollector.js'
+import type { ApiId, Diverge, Options, PickKnownKeys } from './types.js'
 import { type ApiPromise } from '@polkadot/api'
 import type {
   GenericStorageEntryFunction,
@@ -8,9 +11,6 @@ import type {
 import { useContext } from 'react'
 import { atomFamily, constSelector, isRecoilValue, type RecoilValueReadOnly } from 'recoil'
 import { type Observable } from 'rxjs'
-import { ApiIdContext, RecoilStateContext } from './Context.js'
-import { garbageCollectionKey } from './GarbageCollector.js'
-import type { ApiId, Diverge, Options, PickKnownKeys } from './types.js'
 
 type QueryMap = PickKnownKeys<{
   [P in keyof ApiPromise['query']]: `${P}.${keyof PickKnownKeys<ApiPromise['query'][P]>}`

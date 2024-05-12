@@ -1,3 +1,6 @@
+import { ListItem, Surface, useSurfaceColor } from '../..'
+import FloatingPortal from '../../atoms/FloatingPortal'
+import { usePrevious } from '../../utils'
 import { useTheme } from '@emotion/react'
 import {
   autoPlacement,
@@ -28,9 +31,6 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react'
-import { ListItem, Surface, useSurfaceColor } from '../..'
-import FloatingPortal from '../../atoms/FloatingPortal'
-import { usePrevious } from '../../utils'
 
 export const MENU_OFFSET = 12
 
@@ -127,7 +127,7 @@ const MenuItems = (props: MenuItemsProps) => {
           css={{
             border: `1px solid ${theme.color.outlineVariant}`,
             borderRadius: theme.shape.small,
-            overflow: 'hidden',
+            overflow: 'auto',
             '.talismn-ui-menu-item:first-child': { marginTop: '0.8rem' },
             '.talismn-ui-menu-item:last-child': { marginBottom: '0.8rem' },
           }}

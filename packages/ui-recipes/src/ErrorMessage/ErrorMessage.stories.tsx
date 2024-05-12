@@ -1,6 +1,6 @@
+import ErrorMessage from './ErrorMessage'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Button } from '@talismn/ui'
-import ErrorMessage from './ErrorMessage'
 
 export default {
   component: ErrorMessage,

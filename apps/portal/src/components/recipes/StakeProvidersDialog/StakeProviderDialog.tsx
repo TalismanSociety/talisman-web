@@ -1,5 +1,5 @@
-import { Zap } from '@talismn/web-icons'
 import { AlertDialog, Button, Hr, Surface, Text } from '@talismn/ui'
+import { Zap } from '@talismn/web-icons'
 import type { PropsWithChildren, ReactNode } from 'react'
 
 export type StakeProviderOptionProps = {

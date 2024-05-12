@@ -1,8 +1,8 @@
 import type { ChainId } from '@polkawallet/bridge'
 import { AssetHubPolkadotAdapter } from '@polkawallet/bridge/adapters/assethub'
+import { AstarAdapter } from '@polkawallet/bridge/adapters/astar'
 import { CentrifugeAdapter } from '@polkawallet/bridge/adapters/centrifuge'
 import { ParallelAdapter } from '@polkawallet/bridge/adapters/parallel'
-import { AstarAdapter } from '@polkawallet/bridge/adapters/astar'
 import type { BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 import type BN from 'bn.js'
 

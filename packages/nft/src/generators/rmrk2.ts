@@ -1,9 +1,8 @@
+import { graphql } from '../../generated/gql/rmrk2/index.js'
+import type { CreateNftAsyncGenerator, Nft } from '../types.js'
 import '@polkadot/api-augment/substrate'
 import { encodeAddress } from '@polkadot/util-crypto'
 import { request } from 'graphql-request'
-
-import { graphql } from '../../generated/gql/rmrk2/index.js'
-import type { CreateNftAsyncGenerator, Nft } from '../types.js'
 
 export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Nft<'rmrk2', 'kusama'>> = async function* (
   address,

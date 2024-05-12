@@ -1,6 +1,5 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-
 import { type NominationPoolsAddStakeDialogProps, NominationPoolsAddStakeDialog } from './AddStakeDialog'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 export default {
   title: 'Recipes/AddStakeDialog/NominationPools',

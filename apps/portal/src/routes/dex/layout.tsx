@@ -1,5 +1,5 @@
-import AccountConnectionGuard from '@components/widgets/AccountConnectionGuard'
-import ErrorBoundary from '@components/widgets/ErrorBoundary'
+import AccountConnectionGuard from '../../components/widgets/AccountConnectionGuard'
+import ErrorBoundary from '../../components/widgets/ErrorBoundary'
 import { CircularProgressIndicator, HiddenDetails, Tabs, TalismanHandProgressIndicator } from '@talismn/ui'
 import { Suspense, useTransition } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'

@@ -1,3 +1,7 @@
+import { useSurfaceColorAtElevation } from '..'
+import FloatingPortal from '../FloatingPortal'
+import Text from '../Text'
+import { useTheme } from '@emotion/react'
 import {
   autoUpdate,
   flip,
@@ -13,10 +17,6 @@ import {
 } from '@floating-ui/react'
 import { motion } from 'framer-motion'
 import { useState, type PropsWithChildren, type ReactNode } from 'react'
-import { useSurfaceColorAtElevation } from '..'
-import FloatingPortal from '../FloatingPortal'
-import Text from '../Text'
-import { useTheme } from '@emotion/react'
 
 export type TooltipProps = PropsWithChildren<{
   content: ReactNode

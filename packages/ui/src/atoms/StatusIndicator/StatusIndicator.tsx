@@ -1,6 +1,6 @@
-import { useTheme } from '@emotion/react'
 import { useSurfaceColorAtElevation } from '..'
 import Tooltip from '../Tooltip'
+import { useTheme } from '@emotion/react'
 
 export type StatusIndicatorProps = {
   className?: string

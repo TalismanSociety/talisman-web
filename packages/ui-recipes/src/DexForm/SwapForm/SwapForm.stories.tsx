@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
 import SwapForm from './SwapForm'
+import type { Meta, StoryObj } from '@storybook/react'
 import { Chip, Select } from '@talismn/ui'
 import { Repeat } from '@talismn/web-icons'
 
