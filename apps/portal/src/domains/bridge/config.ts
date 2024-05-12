@@ -8,7 +8,7 @@ import { type ChainId } from '@polkawallet/bridge'
 import { AcalaAdapter, KaruraAdapter } from '@polkawallet/bridge/adapters/acala'
 import { AssetHubKusamaAdapter } from '@polkawallet/bridge/adapters/assethub'
 import { ShidenAdapter } from '@polkawallet/bridge/adapters/astar'
-import { BifrostAdapter } from '@polkawallet/bridge/adapters/bifrost'
+import { BifrostAdapter, BifrostPolkadotAdapter } from '@polkawallet/bridge/adapters/bifrost'
 import { AltairAdapter } from '@polkawallet/bridge/adapters/centrifuge'
 import { ShadowAdapter } from '@polkawallet/bridge/adapters/crust'
 import { CrabAdapter } from '@polkawallet/bridge/adapters/darwinia'
@@ -58,8 +58,12 @@ export const bridgeConfig = {
     adapter: new BasiliskAdapter(),
   },
   bifrost: {
-    genesisHash: '0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b',
+    genesisHash: '0x9f28c6a68e0fc9646eff64935684f6eeeece527e37bbe1f213d22caa1d9d6bed',
     adapter: new BifrostAdapter(),
+  },
+  bifrostPolkadot: {
+    genesisHash: '0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b',
+    adapter: new BifrostPolkadotAdapter(),
   },
   calamari: {
     genesisHash: '0x4ac80c99289841dd946ef92765bf659a307d39189b3ce374a92b5f0415ee17a1',
