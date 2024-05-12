@@ -8,7 +8,10 @@ import { useRecoilValue } from 'recoil'
 
 const useFetchAssets = (address: string | undefined) => {
   const _balances = useRecoilValue(address === undefined ? selectedBalancesState : balancesState)
-  const balances = address === undefined ? _balances : _balances.find({ address })
+  const balances = useMemo(
+    () => (address === undefined ? _balances : _balances.find({ address })),
+    [_balances, address]
+  )
 
   const currency = useRecoilValue(selectedCurrencyState)
 
@@ -20,9 +23,9 @@ const useFetchAssets = (address: string | undefined) => {
     return isEmpty(chains) || isEmpty(evmNetworks) || isEmpty(tokens) || isNil(balances)
   }, [chains, evmNetworks, tokens, balances])
 
-  const fiatTotal = balances.sum.fiat(currency).total
-  const lockedTotal = balances.sum.fiat(currency).locked
-  const transferable = balances.sum.fiat(currency).transferable
+  const fiatTotal = useMemo(() => balances.sum.fiat(currency).total, [balances.sum, currency])
+  const lockedTotal = useMemo(() => balances.sum.fiat(currency).locked, [balances.sum, currency])
+  const transferable = useMemo(() => balances.sum.fiat(currency).transferable, [balances.sum, currency])
 
   const assetBalances = useMemo(
     () =>
@@ -78,182 +81,198 @@ const useAssets = (customAddress?: string) => {
   const currency = useRecoilValue(selectedCurrencyState)
   const rates = useTokenRates()
 
-  if (!assetBalances)
-    return {
-      tokens: [],
-      fiatTotal: 0,
-      lockedTotal: 0,
-      balances: undefined,
-      value: undefined,
-    }
+  const tokens = useMemo(
+    () =>
+      assetBalances.map(token => {
+        const tokenBalances = balances.find({ tokenId: token.id })
 
-  const tokens = assetBalances.map(token => {
-    const tokenBalances = balances.find({ tokenId: token.id })
+        const totalAmount = tokenBalances.sum.planck.total
+        const totalAmountFormatted = formatDecimals(new BalanceFormatter(totalAmount, token.decimals).tokens)
+        const totalFiatAmount = tokenBalances.sum.fiat(currency).total
+        const totalFiatAmountFormatted = getFiatString(totalFiatAmount, currency)
 
-    const totalAmount = tokenBalances.sum.planck.total
-    const totalAmountFormatted = formatDecimals(new BalanceFormatter(totalAmount, token.decimals).tokens)
-    const totalFiatAmount = tokenBalances.sum.fiat(currency).total
-    const totalFiatAmountFormatted = getFiatString(totalFiatAmount, currency)
+        const transferableAmount = tokenBalances.sum.planck.transferable
+        const transferableAmountFormatted = formatDecimals(
+          new BalanceFormatter(transferableAmount, token.decimals).tokens
+        )
 
-    const transferableAmount = tokenBalances.sum.planck.transferable
-    const transferableAmountFormatted = formatDecimals(new BalanceFormatter(transferableAmount, token.decimals).tokens)
+        const transferableFiatAmount = tokenBalances.sum.fiat(currency).transferable
+        const transferableFiatAmountFormatted = getFiatString(transferableFiatAmount, currency)
 
-    const transferableFiatAmount = tokenBalances.sum.fiat(currency).transferable
-    const transferableFiatAmountFormatted = getFiatString(transferableFiatAmount, currency)
+        const lockedAmount = tokenBalances.sum.planck.locked
+        const lockedAmountFormatted = formatDecimals(new BalanceFormatter(lockedAmount, token.decimals).tokens)
+        const lockedFiatAmount = tokenBalances.sum.fiat(currency).locked ?? 0
+        const lockedFiatAmountFormatted = getFiatString(lockedFiatAmount, currency)
 
-    const lockedAmount = tokenBalances.sum.planck.locked
-    const lockedAmountFormatted = formatDecimals(new BalanceFormatter(lockedAmount, token.decimals).tokens)
-    const lockedFiatAmount = tokenBalances.sum.fiat(currency).locked ?? 0
-    const lockedFiatAmountFormatted = getFiatString(lockedFiatAmount, currency)
+        if (tokenBalances.sorted[0] === undefined) {
+          return null
+        }
 
-    if (tokenBalances.sorted[0] === undefined) {
-      return null
-    }
+        const locked = lockedAmount > 0n
 
-    const locked = lockedAmount > 0n
+        const tokenDisplayName = startCase(token.coingeckoId)
 
-    const tokenDisplayName = startCase(token.coingeckoId)
+        return {
+          stale: tokenBalances.each.some(x => x.status === 'stale'),
+          locked,
+          totalAmount,
+          totalAmountFormatted,
+          totalFiatAmount,
+          totalFiatAmountFormatted,
+          lockedAmount,
+          lockedAmountFormatted,
+          lockedFiatAmount,
+          lockedFiatAmountFormatted,
+          transferableAmount,
+          transferableAmountFormatted,
+          transferableFiatAmount,
+          transferableFiatAmountFormatted,
+          rate: rates[token.id]?.[currency] ?? undefined,
+          tokenDetails: {
+            ...token,
+            chain: token.chain
+              ? chains[token.chain.id]
+              : token.evmNetwork
+              ? evmNetworks[token.evmNetwork.id]
+              : undefined,
+            tokenDisplayName,
+          },
+          // if the token is substrate-native then make it an array else make it undefined
+          nonNativeTokens: [],
+        }
+      }),
+    [assetBalances, balances, chains, currency, evmNetworks, rates]
+  )
 
-    return {
-      stale: tokenBalances.each.some(x => x.status === 'stale'),
-      locked,
-      totalAmount,
-      totalAmountFormatted,
-      totalFiatAmount,
-      totalFiatAmountFormatted,
-      lockedAmount,
-      lockedAmountFormatted,
-      lockedFiatAmount,
-      lockedFiatAmountFormatted,
-      transferableAmount,
-      transferableAmountFormatted,
-      transferableFiatAmount,
-      transferableFiatAmountFormatted,
-      rate: rates[token.id]?.[currency] ?? undefined,
-      tokenDetails: {
-        ...token,
-        chain: token.chain ? chains[token.chain.id] : token.evmNetwork ? evmNetworks[token.evmNetwork.id] : undefined,
-        tokenDisplayName,
-      },
-      // if the token is substrate-native then make it an array else make it undefined
-      nonNativeTokens: [],
-    }
-  })
-
-  const compressedTokens = compact(tokens)
+  const compressedTokens = useMemo(() => compact(tokens), [tokens])
 
   // for each compressed token
   // find the tokens with the same symbol in token details
   // group them together, in the new group, find the token that is substrate native
   // if there is a substrate native token, then add the other tokens to the nonNativeTokens array
 
-  const groupedTokens = groupBy(compressedTokens, 'tokenDetails.symbol')
-  const groupedTokensArray = Object.values(groupedTokens)
+  const groupedTokens = useMemo(() => groupBy(compressedTokens, 'tokenDetails.symbol'), [compressedTokens])
+  const groupedTokensArray = useMemo(() => Object.values(groupedTokens), [groupedTokens])
 
   // for each group of tokens look through the chains using the tokendetails.chain.id as the key and find if the chain nativeToken.id is the same as the tokenDetails.id
   // if it is the same then make that the substrateNativeToken add the other tokens to the nonNativeTokens array
 
-  const groupedTokensWithNonNativeTokens = groupedTokensArray
-    .map(group => {
-      const substrateNativeToken = group.find(token => {
-        const chain = token.tokenDetails.chain?.id ? chains[token.tokenDetails.chain?.id] : undefined
-        if (!chain) {
-          const evmNetwork = token.tokenDetails.evmNetwork?.id
-            ? evmNetworks[token.tokenDetails.evmNetwork?.id]
-            : undefined
-          if (!evmNetwork) return token
-          return evmNetwork.nativeToken?.id === token.tokenDetails.id
-        }
-        return chain.nativeToken?.id === token.tokenDetails.id
-      })
+  const groupedTokensWithNonNativeTokens = useMemo(
+    () =>
+      groupedTokensArray
+        .map(group => {
+          const substrateNativeToken = group.find(token => {
+            const chain = token.tokenDetails.chain?.id ? chains[token.tokenDetails.chain?.id] : undefined
+            if (!chain) {
+              const evmNetwork = token.tokenDetails.evmNetwork?.id
+                ? evmNetworks[token.tokenDetails.evmNetwork?.id]
+                : undefined
+              if (!evmNetwork) return token
+              return evmNetwork.nativeToken?.id === token.tokenDetails.id
+            }
+            return chain.nativeToken?.id === token.tokenDetails.id
+          })
 
-      if (substrateNativeToken) {
-        const nonNativeTokens = group.filter(token => token.tokenDetails.id !== substrateNativeToken.tokenDetails.id)
+          if (substrateNativeToken) {
+            const nonNativeTokens = group.filter(
+              token => token.tokenDetails.id !== substrateNativeToken.tokenDetails.id
+            )
+            return {
+              ...substrateNativeToken,
+              nonNativeTokens,
+            }
+          }
+
+          // if there is no substrate native token, then make the first token in the group the substrate native token
+          // and add the other tokens to the nonNativeTokens array
+
+          const nonNativeTokens = group.filter(token => token.tokenDetails.id !== group[0]?.tokenDetails.id)
+
+          if (group[0]) {
+            return {
+              ...group[0],
+              nonNativeTokens,
+            }
+          }
+
+          return null
+        })
+        .filter((x): x is Exclude<typeof x, null> => x !== null),
+    [chains, evmNetworks, groupedTokensArray]
+  )
+
+  const balancesWithNonNativeTokens = useMemo(
+    () =>
+      groupedTokensWithNonNativeTokens.map(token => {
+        if (token && token.nonNativeTokens.length > 0) {
+          const nonNativeTotalAmount = token.nonNativeTokens.reduce((prev, curr) => prev + curr.totalAmount, 0n)
+
+          const nonNativeTransferableAmount = token.nonNativeTokens.reduce(
+            (sum, token) => sum + token.transferableAmount,
+            0n
+          )
+
+          const nonNativeLockedAmount = token.nonNativeTokens.reduce((sum, token) => sum + token.lockedAmount, 0n)
+
+          const overallTotalAmount = formatDecimals(
+            new BalanceFormatter(token.totalAmount + nonNativeTotalAmount, token.tokenDetails.decimals).tokens
+          )
+
+          const overallTransferableAmount = formatDecimals(
+            new BalanceFormatter(token.transferableAmount + nonNativeTransferableAmount, token.tokenDetails.decimals)
+              .tokens
+          )
+
+          const overallLockedAmount = formatDecimals(
+            new BalanceFormatter(token.lockedAmount + nonNativeLockedAmount, token.tokenDetails.decimals).tokens
+          )
+
+          const overallTotalFiatAmount =
+            token.totalFiatAmount + token.nonNativeTokens.reduce((prev, curr) => prev + curr.totalFiatAmount, 0)
+
+          const overallLockedFiatAmount =
+            token.lockedFiatAmount + token.nonNativeTokens.reduce((sum, token) => sum + token.lockedFiatAmount, 0)
+
+          const overallTransferableFiatAmount =
+            token.transferableFiatAmount +
+            token.nonNativeTokens.reduce((sum, token) => sum + token.transferableFiatAmount, 0)
+
+          const locked = token.locked || token.nonNativeTokens.some(token => token.locked)
+
+          return {
+            ...token,
+            overallTotalAmount,
+            overallTotalFiatAmount,
+            overallTransferableAmount,
+            overallTransferableFiatAmount,
+            overallLockedAmount,
+            overallLockedFiatAmount,
+            locked,
+          }
+        }
+
         return {
-          ...substrateNativeToken,
-          nonNativeTokens,
+          ...token,
+          overallTotalAmount: token.totalAmountFormatted,
+          overallTotalFiatAmount: token.totalFiatAmount,
+          overallTransferableAmount: token.transferableAmountFormatted,
+          overallTransferableFiatAmount: token.transferableFiatAmount,
+          overallLockedAmount: token.lockedAmountFormatted,
+          overallLockedFiatAmount: token.lockedFiatAmount,
         }
-      }
-
-      // if there is no substrate native token, then make the first token in the group the substrate native token
-      // and add the other tokens to the nonNativeTokens array
-
-      const nonNativeTokens = group.filter(token => token.tokenDetails.id !== group[0]?.tokenDetails.id)
-
-      if (group[0]) {
-        return {
-          ...group[0],
-          nonNativeTokens,
-        }
-      }
-
-      return null
-    })
-    .filter((x): x is Exclude<typeof x, null> => x !== null)
-
-  const balancesWithNonNativeTokens = groupedTokensWithNonNativeTokens.map(token => {
-    if (token && token.nonNativeTokens.length > 0) {
-      const nonNativeTotalAmount = token.nonNativeTokens.reduce((prev, curr) => prev + curr.totalAmount, 0n)
-
-      const nonNativeTransferableAmount = token.nonNativeTokens.reduce(
-        (sum, token) => sum + token.transferableAmount,
-        0n
-      )
-
-      const nonNativeLockedAmount = token.nonNativeTokens.reduce((sum, token) => sum + token.lockedAmount, 0n)
-
-      const overallTotalAmount = formatDecimals(
-        new BalanceFormatter(token.totalAmount + nonNativeTotalAmount, token.tokenDetails.decimals).tokens
-      )
-
-      const overallTransferableAmount = formatDecimals(
-        new BalanceFormatter(token.transferableAmount + nonNativeTransferableAmount, token.tokenDetails.decimals).tokens
-      )
-
-      const overallLockedAmount = formatDecimals(
-        new BalanceFormatter(token.lockedAmount + nonNativeLockedAmount, token.tokenDetails.decimals).tokens
-      )
-
-      const overallTotalFiatAmount =
-        token.totalFiatAmount + token.nonNativeTokens.reduce((prev, curr) => prev + curr.totalFiatAmount, 0)
-
-      const overallLockedFiatAmount =
-        token.lockedFiatAmount + token.nonNativeTokens.reduce((sum, token) => sum + token.lockedFiatAmount, 0)
-
-      const overallTransferableFiatAmount =
-        token.transferableFiatAmount +
-        token.nonNativeTokens.reduce((sum, token) => sum + token.transferableFiatAmount, 0)
-
-      const locked = token.locked || token.nonNativeTokens.some(token => token.locked)
-
-      return {
-        ...token,
-        overallTotalAmount,
-        overallTotalFiatAmount,
-        overallTransferableAmount,
-        overallTransferableFiatAmount,
-        overallLockedAmount,
-        overallLockedFiatAmount,
-        locked,
-      }
-    }
-
-    return {
-      ...token,
-      overallTotalAmount: token.totalAmountFormatted,
-      overallTotalFiatAmount: token.totalFiatAmount,
-      overallTransferableAmount: token.transferableAmountFormatted,
-      overallTransferableFiatAmount: token.transferableFiatAmount,
-      overallLockedAmount: token.lockedAmountFormatted,
-      overallLockedFiatAmount: token.lockedFiatAmount,
-    }
-  })
+      }),
+    [groupedTokensWithNonNativeTokens]
+  )
 
   return {
-    tokens: balancesWithNonNativeTokens.map(x => ({
-      ...x,
-      nonNativeTokens: x.nonNativeTokens.sort((a, b) => b.totalFiatAmount - a.totalFiatAmount),
-    })),
+    tokens: useMemo(
+      () =>
+        balancesWithNonNativeTokens.map(x => ({
+          ...x,
+          nonNativeTokens: x.nonNativeTokens.sort((a, b) => b.totalFiatAmount - a.totalFiatAmount),
+        })),
+      [balancesWithNonNativeTokens]
+    ),
     fiatTotal,
     lockedTotal,
     balances,
@@ -298,7 +317,7 @@ type Filter = {
 }
 
 export const useAssetsFiltered = ({ size, search, address }: Filter) => {
-  const { tokens, balances, isLoading } = useAssets(address)
+  const { tokens, balances, isLoading, fiatTotal } = useAssets(address)
 
   const filteredTokens = useMemo(() => {
     if (search === '') return tokens
@@ -347,6 +366,7 @@ export const useAssetsFiltered = ({ size, search, address }: Filter) => {
     tokens: sortedTokens,
     balances,
     isLoading,
+    fiatTotal,
   }
 }
 
