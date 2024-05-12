@@ -2,7 +2,7 @@
   "private": true,
   "name": "talisman-web",
   "license": "GPL-3.0-or-later",
-  "packageManager": "yarn@4.1.1",
+  "packageManager": "yarn@4.2.2",
   "workspaces": [
     "apps/*",
     "packages/*"
