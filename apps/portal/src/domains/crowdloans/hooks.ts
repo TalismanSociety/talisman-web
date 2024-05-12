@@ -1,5 +1,5 @@
-import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { usePortfolio } from '@libs/portfolio'
+import { selectedSubstrateAccountsState } from '../accounts/recoils'
+import { usePortfolio } from '../../libs/portfolio'
 import { encodeAnyAddress } from '@talismn/util'
 import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'

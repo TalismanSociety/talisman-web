@@ -1,7 +1,7 @@
 import { type ApiPromise } from '@polkadot/api'
 import { atom, selectorFamily } from 'recoil'
 
-import { connectedSubstrateWalletState } from '@domains/extension'
+import { connectedSubstrateWalletState } from '../../extension'
 import { substrateApiState } from '..'
 
 export * from './api'

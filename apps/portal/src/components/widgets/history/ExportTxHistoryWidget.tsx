@@ -1,5 +1,5 @@
-import DialogComponent from '@components/recipes/ExportTxHistoryDialog'
-import { accountsState } from '@domains/accounts/recoils'
+import DialogComponent from '../../recipes/ExportTxHistoryDialog'
+import { accountsState } from '../../../domains/accounts/recoils'
 import * as Sentry from '@sentry/react'
 import { toast } from '@talismn/ui'
 import { stringify } from 'csv-stringify/browser/esm'

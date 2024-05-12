@@ -1,4 +1,4 @@
-import type { Account } from '@domains/accounts'
+import type { Account } from '../../../accounts'
 import {
   paymentInfoState,
   useExtrinsic,
@@ -6,12 +6,12 @@ import {
   useSubstrateApiState,
   useTokenAmount,
   useTokenAmountFromPlanck,
-} from '@domains/common'
+} from '../../../common'
 import type { ApiPromise } from '@polkadot/api'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
 import { BigIntMath } from '@talismn/math'
 import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
-import { Maybe } from '@util/monads'
+import { Maybe } from '../../../../util/monads'
 import BN from 'bn.js'
 import { useCallback, useDeferredValue, useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'

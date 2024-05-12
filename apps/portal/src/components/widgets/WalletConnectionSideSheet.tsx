@@ -1,11 +1,11 @@
-import talismanWalletLogo from '@assets/talisman-wallet.svg'
+import talismanWalletLogo from '../../assets/talisman-wallet.svg'
 import {
   useConnectEvm,
   useConnectedSubstrateWallet,
   useEvmConnectors,
   useInstalledSubstrateWallets,
   useSubstrateWalletConnect,
-} from '@domains/extension'
+} from '../../domains/extension'
 import { ClassNames, useTheme } from '@emotion/react'
 import { useSignetSdk } from '@talismn/signet-apps-sdk'
 import { Chip, Hr, ListItem, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Surface, Text } from '@talismn/ui'

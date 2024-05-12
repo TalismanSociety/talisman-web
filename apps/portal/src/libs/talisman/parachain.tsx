@@ -1,11 +1,9 @@
-import { chainsState } from '@domains/chains'
-import { substrateApiState } from '@domains/common'
-import crowdloanDataState, { type CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
+import { chainsState } from '../../domains/chains'
+import { substrateApiState } from '../../domains/common'
+import crowdloanDataState, { type CrowdloanDetail } from '../@talisman-crowdloans/provider'
 import { find } from 'lodash'
 import { useContext as _useContext, createContext, useEffect, useMemo, useState, type PropsWithChildren } from 'react'
 import { selector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
-
-export type { CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
 
 export const useParachainsDetails = () => useContext()
 export const useParachainsDetailsIndexedById = () => {

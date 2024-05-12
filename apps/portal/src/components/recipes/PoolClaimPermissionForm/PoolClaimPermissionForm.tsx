@@ -1,4 +1,4 @@
-import { TalismanHandLoader } from '@components/legacy/TalismanHandLoader'
+import { TalismanHandLoader } from '../../legacy/TalismanHandLoader'
 import { useTheme } from '@emotion/react'
 import { Calculate, Info } from '@talismn/web-icons'
 import { AlertDialog, Button, HiddenDetails, RadioButton, Surface, Switch, Text, Tooltip } from '@talismn/ui'

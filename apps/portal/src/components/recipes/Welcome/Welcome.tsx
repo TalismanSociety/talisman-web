@@ -10,7 +10,7 @@ import {
   type ButtonProps,
   type TextInputProps,
 } from '@talismn/ui'
-import { shortenAddress } from '@util/format'
+import { shortenAddress } from '../../../util/format'
 import { type ReactNode } from 'react'
 
 export type WelcomeProps = {

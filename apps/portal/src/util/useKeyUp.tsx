@@ -1,4 +1,4 @@
-import useEventListener from '@util/useEventListener'
+import useEventListener from './useEventListener'
 import { useCallback } from 'react'
 
 export default function useKeyUp(targetKey: string, callback: () => any) {

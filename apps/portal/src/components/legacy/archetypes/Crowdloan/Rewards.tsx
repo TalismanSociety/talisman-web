@@ -1,6 +1,6 @@
-import { Stat } from '@components/legacy'
+import { Stat } from '../..'
 import styled from '@emotion/styled'
-import { useCrowdloanById } from '@libs/talisman'
+import { useCrowdloanById } from '../../../../libs/talisman'
 
 const Rewards = styled(({ id, className }: { id?: string; className?: string }) => {
   const { crowdloan } = useCrowdloanById(id)

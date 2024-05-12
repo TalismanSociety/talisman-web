@@ -1,4 +1,4 @@
-import { expectedEraTime, useSubstrateApiState } from '@domains/common'
+import { expectedEraTime, useSubstrateApiState } from '../../../../common'
 import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import BigNumber from 'bignumber.js'
 import { hoursToMilliseconds } from 'date-fns'

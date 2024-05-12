@@ -1,5 +1,5 @@
-import { selectedAccountsState } from '@domains/accounts'
-import { storageEffect } from '@domains/common/effects'
+import { selectedAccountsState } from '../accounts'
+import { storageEffect } from '../common/effects'
 import { array, jsonParser, string } from '@recoiljs/refine'
 import { partial } from 'lodash'
 import { useCallback, useMemo } from 'react'

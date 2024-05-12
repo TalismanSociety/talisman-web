@@ -1,6 +1,6 @@
-import { Countdown as Cd, Pendor } from '@components/legacy'
+import { Countdown as Cd, Pendor } from '../..'
 import styled from '@emotion/styled'
-import { useChainmetaValue, useCrowdloanById } from '@libs/talisman'
+import { useChainmetaValue, useCrowdloanById } from '../../../../libs/talisman'
 import { type ReactNode, useEffect, useState } from 'react'
 
 type OngoingProps = {

@@ -1,6 +1,6 @@
-import { Button, useModal } from '@components/legacy'
+import { Button, useModal } from './'
 import styled from '@emotion/styled'
-import { isMobileBrowser } from '@util/helpers'
+import { isMobileBrowser } from '../../util/helpers'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 

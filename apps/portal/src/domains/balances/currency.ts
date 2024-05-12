@@ -1,4 +1,4 @@
-import { storageEffect } from '@domains/common/effects'
+import { storageEffect } from '../common/effects'
 import { jsonParser, stringLiterals } from '@recoiljs/refine'
 import { type TokenRateCurrency } from '@talismn/token-rates'
 import { atom } from 'recoil'

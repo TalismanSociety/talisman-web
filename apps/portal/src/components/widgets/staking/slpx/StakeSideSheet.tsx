@@ -1,8 +1,8 @@
-import { SlpxAddStakeForm } from '@components/recipes/AddStakeDialog'
-import { useAccountSelector } from '@components/widgets/AccountSelector'
-import { evmSignableAccountsState } from '@domains/accounts'
-import { ChainProvider } from '@domains/chains'
-import { slpxPairsState, useMintForm, type SlpxPair } from '@domains/staking/slpx'
+import { SlpxAddStakeForm } from '../../../recipes/AddStakeDialog'
+import { useAccountSelector } from '../../AccountSelector'
+import { evmSignableAccountsState } from '../../../../domains/accounts'
+import { ChainProvider } from '../../../../domains/chains'
+import { slpxPairsState, useMintForm, type SlpxPair } from '../../../../domains/staking/slpx'
 import { Zap } from '@talismn/web-icons'
 import {
   CircularProgressIndicator,
@@ -12,7 +12,7 @@ import {
   Surface,
   Text,
 } from '@talismn/ui'
-import { Maybe } from '@util/monads'
+import { Maybe } from '../../../../util/monads'
 import { Suspense, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'

@@ -1,4 +1,4 @@
-import { expectedBlockTime, useSubstrateApiState } from '@domains/common'
+import { expectedBlockTime, useSubstrateApiState } from '../../../common'
 import { formatDistance } from 'date-fns'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'

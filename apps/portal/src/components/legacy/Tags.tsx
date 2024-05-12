@@ -1,6 +1,6 @@
-import { Pill } from '@components/legacy'
+import { Pill } from './'
 import styled from '@emotion/styled'
-import { useSet } from '@util/hooks'
+import { useSet } from '../../util/hooks'
 import { useEffect } from 'react'
 
 type StyledNoCrowdloansPlaceholderProps = {

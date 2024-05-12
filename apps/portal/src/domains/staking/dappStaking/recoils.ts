@@ -1,5 +1,5 @@
-import { ChainContext, assertChain, dappStakingEnabledChainsState } from '@domains/chains'
-import { chainReadIdState, substrateApiState, useSubstrateApiEndpoint } from '@domains/common'
+import { ChainContext, assertChain, dappStakingEnabledChainsState } from '../../chains'
+import { chainReadIdState, substrateApiState, useSubstrateApiEndpoint } from '../../common'
 import type { Bytes } from '@polkadot/types'
 import { u8aToNumber } from '@polkadot/util'
 import { useContext } from 'react'

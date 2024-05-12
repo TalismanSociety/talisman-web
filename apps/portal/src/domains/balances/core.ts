@@ -5,7 +5,7 @@ import {
   portfolioAccountsState,
   selectedAccountsState,
   writeableAccountsState,
-} from '@domains/accounts/recoils'
+} from '../accounts/recoils'
 import { Balances } from '@talismn/balances'
 import { useBalances as _useBalances, useSetBalancesAddresses } from '@talismn/balances-react'
 import { useEffect, useMemo } from 'react'

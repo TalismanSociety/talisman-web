@@ -1,4 +1,4 @@
-import ErrorMessage, { type ErrorMessageProps } from '@components/recipes/ErrorMessage'
+import ErrorMessage, { type ErrorMessageProps } from '../recipes/ErrorMessage'
 import * as Sentry from '@sentry/react'
 import { Button, OutlinedButton } from '@talismn/ui'
 import { type PropsWithChildren, type ReactElement, type ReactNode, createContext, useContext, useState } from 'react'

@@ -1,5 +1,5 @@
-import useKeyDown from '@util/useKeyDown'
-import useKeyUp from '@util/useKeyUp'
+import useKeyDown from './useKeyDown'
+import useKeyUp from './useKeyUp'
 import { useCallback, useState } from 'react'
 
 export const useKeyPressed = (targetKey: string): boolean => {

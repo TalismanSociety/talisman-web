@@ -1,19 +1,19 @@
-import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
+import AccountIcon from '../molecules/AccountIcon/AccountIcon'
 import {
   lookupAccountAddressState,
   portfolioAccountsState,
   readOnlyAccountsState,
   selectedAccountAddressesState,
   selectedAccountsState,
-} from '@domains/accounts/recoils'
-import { fiatBalanceGetterState, portfolioBalancesFiatSumState } from '@domains/balances'
-import { copyAddressToClipboard } from '@domains/common/utils'
+} from '../../domains/accounts/recoils'
+import { fiatBalanceGetterState, portfolioBalancesFiatSumState } from '../../domains/balances'
+import { copyAddressToClipboard } from '../../domains/common/utils'
 import { useTheme } from '@emotion/react'
-import { useOnChainId } from '@libs/onChainId/hooks/useOnChainId'
+import { useOnChainId } from '../../libs/onChainId/hooks/useOnChainId'
 import { Chip, CircularProgressIndicator, Hr, IconButton, Menu, SurfaceIcon, Text, Tooltip } from '@talismn/ui'
 import { Copy, Ethereum, Eye, EyePlus, TalismanHand, Trash2, Users, Wallet, X } from '@talismn/web-icons'
-import { shortenAddress } from '@util/format'
-import { Maybe } from '@util/monads'
+import { shortenAddress } from '../../util/format'
+import { Maybe } from '../../util/monads'
 import { useMemo, type ReactNode } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, useResetRecoilState, useSetRecoilState } from 'recoil'
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'

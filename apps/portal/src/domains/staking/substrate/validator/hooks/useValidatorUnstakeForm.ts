@@ -1,4 +1,4 @@
-import { useExtrinsic, useQueryMulti, useTokenAmountFromPlanck, useTokenAmountState } from '@domains/common/hooks'
+import { useExtrinsic, useQueryMulti, useTokenAmountFromPlanck, useTokenAmountState } from '../../../../common/hooks'
 import type { ApiPromise } from '@polkadot/api'
 import { useCallback, useMemo } from 'react'
 

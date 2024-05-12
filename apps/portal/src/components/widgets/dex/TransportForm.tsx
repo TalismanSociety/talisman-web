@@ -1,14 +1,14 @@
 import { FixedPointNumber } from '@acala-network/sdk-core'
-import DexForm from '@components/recipes/DexForm/DexForm'
+import DexForm from '../../recipes/DexForm/DexForm'
 import {
   writeableAccountsState,
   writeableEvmAccountsState,
   writeableSubstrateAccountsState,
   type Account,
-} from '@domains/accounts'
-import { bridgeAdapterState, bridgeState } from '@domains/bridge'
-import { tokenPriceState } from '@domains/chains'
-import { useExtrinsic } from '@domains/common'
+} from '../../../domains/accounts'
+import { bridgeAdapterState, bridgeState } from '../../../domains/bridge'
+import { tokenPriceState } from '../../../domains/chains'
+import { useExtrinsic } from '../../../domains/common'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import { type ISubmittableResult } from '@polkadot/types/types'
 import { type Chain, type InputConfig } from '@polkawallet/bridge'
@@ -16,7 +16,7 @@ import * as Sentry from '@sentry/react'
 import { useTokens as useBalancesLibTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, toast } from '@talismn/ui'
-import { Maybe } from '@util/monads'
+import { Maybe } from '../../../util/monads'
 import { uniqBy } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RecoilLoadable, constSelector, useRecoilValue, useRecoilValueLoadable, type Loadable } from 'recoil'

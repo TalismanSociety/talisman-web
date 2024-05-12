@@ -1,5 +1,5 @@
-import crowdloanRowSkeleton from '@assets/crowdloan-row-skeleton.png'
-import { Placeholder } from '@components/legacy/Placeholder'
+import crowdloanRowSkeleton from '../../assets/crowdloan-row-skeleton.png'
+import { Placeholder } from './Placeholder'
 import styled from '@emotion/styled'
 import React from 'react'
 

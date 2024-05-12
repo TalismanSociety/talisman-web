@@ -1,6 +1,6 @@
-import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
-import type { Account } from '@domains/accounts'
-import { copyAddressToClipboard, copyExtrinsicHashToClipboard } from '@domains/common'
+import AccountIcon from '../../molecules/AccountIcon/AccountIcon'
+import type { Account } from '../../../domains/accounts'
+import { copyAddressToClipboard, copyExtrinsicHashToClipboard } from '../../../domains/common'
 import { useTheme } from '@emotion/react'
 import { CheckCircle, Copy, ExternalLink, XCircle } from '@talismn/web-icons'
 import {
@@ -12,7 +12,7 @@ import {
   Text,
   useSurfaceColorAtElevation,
 } from '@talismn/ui'
-import { shortenAddress } from '@util/format'
+import { shortenAddress } from '../../../util/format'
 import { formatDistanceToNow } from 'date-fns'
 import { useMemo, type PropsWithChildren, type ReactNode } from 'react'
 // @ts-expect-error

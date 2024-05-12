@@ -1,4 +1,4 @@
-import { useExtrinsic } from '@domains/common'
+import { useExtrinsic } from '../../../common'
 import type { ApiPromise } from '@polkadot/api'
 import { useCallback } from 'react'
 import type { Stake } from './useStake'

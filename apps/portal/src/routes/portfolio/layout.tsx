@@ -1,4 +1,4 @@
-import ErrorBoundary from '@components/widgets/ErrorBoundary'
+import ErrorBoundary from '../../components/widgets/ErrorBoundary'
 import { Tabs } from '@talismn/ui'
 import { Outlet } from 'react-router'
 import { Link, useMatch } from 'react-router-dom'

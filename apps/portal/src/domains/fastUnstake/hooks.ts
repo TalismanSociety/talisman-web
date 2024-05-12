@@ -1,5 +1,5 @@
-import { writeableSubstrateAccountsState } from '@domains/accounts/recoils'
-import { useSubstrateApiEndpoint, useSubstrateApiState } from '@domains/common'
+import { writeableSubstrateAccountsState } from '../accounts/recoils'
+import { useSubstrateApiEndpoint, useSubstrateApiState } from '../common'
 import { encodeAddress } from '@polkadot/util-crypto'
 import { bool, coercion, jsonParser, literal, object, writableDict } from '@recoiljs/refine'
 import { useQueryState } from '@talismn/react-polkadot-api'

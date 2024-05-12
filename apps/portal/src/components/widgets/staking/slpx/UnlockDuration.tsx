@@ -1,4 +1,4 @@
-import { useVTokenUnlockDuration, type SlpxPair } from '@domains/staking/slpx'
+import { useVTokenUnlockDuration, type SlpxPair } from '../../../../domains/staking/slpx'
 import { formatDistance } from 'date-fns'
 import { useMemo } from 'react'
 

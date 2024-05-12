@@ -5,7 +5,7 @@ import type {
   QueryableStorageEntry,
   StorageEntryPromiseOverloads,
 } from '@polkadot/api/types'
-import useDeferred from '@util/useDeferred'
+import useDeferred from '../../../util/useDeferred'
 import { useEffect, useRef, useState } from 'react'
 import { type Loadable, RecoilLoadable, useRecoilValue } from 'recoil'
 import { type Observable } from 'rxjs'

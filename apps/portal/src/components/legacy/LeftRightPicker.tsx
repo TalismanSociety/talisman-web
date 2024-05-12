@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import ChevronRight from '@icons/chevron-right.svg?react'
+import ChevronRight from '../../assets/icons/chevron-right.svg?react'
 
 import { ButtonIcon } from './Button'
 

@@ -1,4 +1,4 @@
-import { TalismanHandLoader } from '@components/legacy/TalismanHandLoader'
+import { TalismanHandLoader } from '../../legacy/TalismanHandLoader'
 import { useTheme } from '@emotion/react'
 import { AlertDialog, Button, Text, type AlertDialogProps } from '@talismn/ui'
 import { useTranslation } from 'react-i18next'

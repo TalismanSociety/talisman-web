@@ -1,7 +1,7 @@
-import ClaimStakeDialogComponent from '@components/recipes/ClaimStakeDialog'
-import type { Account } from '@domains/accounts'
-import { useExtrinsic, useTokenAmountFromPlanck, type SubmittableResultLoadable } from '@domains/common'
-import { usePoolStakes } from '@domains/staking/substrate/nominationPools'
+import ClaimStakeDialogComponent from '../../../recipes/ClaimStakeDialog'
+import type { Account } from '../../../../domains/accounts'
+import { useExtrinsic, useTokenAmountFromPlanck, type SubmittableResultLoadable } from '../../../../domains/common'
+import { usePoolStakes } from '../../../../domains/staking/substrate/nominationPools'
 import { useEffect } from 'react'
 
 type ClaimStakeDialogProps = {

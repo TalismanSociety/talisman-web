@@ -1,7 +1,7 @@
-import { Parachain } from '@components/legacy/archetypes'
-import { Pill } from '@components/legacy'
+import { Parachain } from '..'
+import { Pill } from '../..'
 import styled from '@emotion/styled'
-import { useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
+import { useCrowdloanById, useParachainDetailsById } from '../../../../libs/talisman'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 

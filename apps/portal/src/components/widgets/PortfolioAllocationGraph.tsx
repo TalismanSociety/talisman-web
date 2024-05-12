@@ -1,5 +1,5 @@
-import PortfolioAllocationGraphComponent from '@components/recipes/PortfolioAllocationGraph'
-import { selectedBalancesFiatSumState, selectedBalancesState, selectedCurrencyState } from '@domains/balances'
+import PortfolioAllocationGraphComponent from '../recipes/PortfolioAllocationGraph'
+import { selectedBalancesFiatSumState, selectedBalancesState, selectedCurrencyState } from '../../domains/balances'
 import { HiddenDetails, Text } from '@talismn/ui'
 import { groupBy } from 'lodash'
 import { Suspense, useCallback, useMemo, useState } from 'react'
