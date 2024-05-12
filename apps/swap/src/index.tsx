@@ -45,7 +45,7 @@ import {
   destAssetAtom,
   destAssetsAtom,
   destChainsAtom,
-  polkadotSignerAtom,
+  substrateSignerAtom,
   quoteAtom,
   quoteLoadableAtom,
   srcAccountAtom,
@@ -528,7 +528,7 @@ type HydrateSwapProps = PropsWithChildren<{
   accounts: Account[]
   currency: string
   viemWalletClient?: WalletClient
-  polkadotSigner?: Signer
+  substrateSigner?: Signer
   coingeckoApiEndpoint?: string
   coingeckoApiTier?: string
   coingeckoApiKey?: string
@@ -548,7 +548,7 @@ const HydrateSwap = (props: HydrateSwapProps) => {
         [accountsAtom, stableAccounts],
         [currencyAtom, props.currency],
         [viemWalletClientAtom, props.viemWalletClient],
-        [polkadotSignerAtom, props.polkadotSigner],
+        [substrateSignerAtom, props.substrateSigner],
         [coingeckoApiEndpointAtom, props.coingeckoApiEndpoint],
         [coingeckoApiTierAtom, props.coingeckoApiTier],
         [coingeckoApiKeyAtom, props.coingeckoApiKey],

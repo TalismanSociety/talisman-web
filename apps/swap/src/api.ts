@@ -462,8 +462,8 @@ export const viemWalletClientAtom = atomWithDefault<WalletClient>(() => {
 
 const polkadotApiAtom = atom(async get => await ApiPromise.create({ provider: new WsProvider(get(polkadotRpcAtom)) }))
 
-export const polkadotSignerAtom = atomWithDefault<Signer>(() => {
-  throw new Error('No Polkadot signer available')
+export const substrateSignerAtom = atomWithDefault<Signer>(() => {
+  throw new Error('No Substrate signer available')
 })
 
 export const coingeckoApiEndpointAtom = atom('https://api.coingecko.com')
@@ -674,7 +674,7 @@ export const useSwap = () =>
         }
         case 'Polkadot': {
           const api = await get(polkadotApiAtom)
-          const signer = get(polkadotSignerAtom)
+          const signer = get(substrateSignerAtom)
 
           await api.tx.balances
             .transferKeepAlive(depositAddress.depositAddress, depositAddress.amount)

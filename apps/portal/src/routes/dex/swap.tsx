@@ -31,7 +31,7 @@ const Swap = () => {
           [evmAccounts, substrateAccounts]
         )}
         currency={useRecoilValue(selectedCurrencyState)}
-        polkadotSigner={substrateWallet?.signer}
+        substrateSigner={substrateWallet?.signer}
         viemWalletClient={evmWalletClient}
         coingeckoApiEndpoint={import.meta.env.REACT_APP_COIN_GECKO_API}
         coingeckoApiTier={import.meta.env.REACT_APP_COIN_GECKO_API_TIER}
