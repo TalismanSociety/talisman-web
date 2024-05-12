@@ -11,7 +11,7 @@ import { tokenPriceState } from '@domains/chains'
 import { useExtrinsic } from '@domains/common'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import { type ISubmittableResult } from '@polkadot/types/types'
-import { type ChainId, type InputConfig } from '@polkawallet/bridge'
+import type { Chain, ChainId, InputConfig } from '@polkawallet/bridge'
 import * as Sentry from '@sentry/react'
 import { useTokens as useBalancesLibTokens, useChains } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
@@ -27,6 +27,9 @@ const routesState = selector({
   key: 'Transport/Routes',
   get: ({ get }) => get(bridgeState).router.getAvailableRouters(),
 })
+
+// TODO: remove once bug is fixed
+const isEvmChain = (chain: Chain) => chain.id === 'moonbeam' || chain.type === 'ethereum'
 
 const Transport = () => {
   const currency = useRecoilValue(selectedCurrencyState)
@@ -45,11 +48,11 @@ const Transport = () => {
       availableRoutes.filter(route => {
         switch (sender?.type) {
           case 'ethereum':
-            return route.from.type === 'ethereum'
+            return isEvmChain(route.from)
           case 'ecdsa':
           case 'ed25519':
           case 'sr25519':
-            return route.from.type === 'substrate'
+            return !isEvmChain(route.from)
           case undefined:
             return true
           default:
@@ -63,7 +66,7 @@ const Transport = () => {
   const [route, setRoute] = useState(routes.at(0)!)
 
   const [[recipient, setRecipient], recipientSelector] = useAccountSelector(
-    useRecoilValue(route.to.type === 'ethereum' ? evmAccountsState : substrateAccountsState),
+    useRecoilValue(isEvmChain(route.to) ? evmAccountsState : substrateAccountsState),
     useCallback(
       (x: Account[] | undefined) => x?.find(y => y.address === sender?.address) ?? x?.at(0),
       [sender?.address]
@@ -245,6 +248,10 @@ const Transport = () => {
 
   useEffect(() => {
     const adapter = adapterLoadable.valueMaybe()
+
+    if (adapter === undefined) {
+      setInputConfigLoadable(undefined)
+    }
 
     if (adapter !== undefined && sender !== undefined && recipient !== undefined) {
       setInputConfigLoadable(RecoilLoadable.loading())
