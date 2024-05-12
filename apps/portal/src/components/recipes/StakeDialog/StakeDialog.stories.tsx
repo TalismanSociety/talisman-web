@@ -1,6 +1,6 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
 import { Default as StakeFormStory } from '../StakeForm/StakeForm.stories'
 import StakeDialog, { type StakeDialogProps } from './StakeDialog'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 export default {
   title: 'Recipes/StakeDialog',

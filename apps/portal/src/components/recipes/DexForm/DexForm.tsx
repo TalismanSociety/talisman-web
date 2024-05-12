@@ -1,9 +1,9 @@
-import { Surface, Tabs, Text, type TabProps } from '@talismn/ui'
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
-import type { ElementType, ReactNode } from 'react'
 import DexFormSkeleton from './DexForm.skeleton'
 import SwapForm from './SwapForm'
 import TransportForm from './TransportForm'
+import { Surface, Tabs, Text, type TabProps } from '@talismn/ui'
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
+import type { ElementType, ReactNode } from 'react'
 
 type FeeDisplay = { name: string; amount: string }
 

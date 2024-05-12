@@ -1,6 +1,5 @@
-import { encodeAddress } from '@polkadot/util-crypto'
-
 import type { CreateNftAsyncGenerator, Nft } from '../types.js'
+import { encodeAddress } from '@polkadot/util-crypto'
 
 const ARTZERO_URL = 'https://a0.artzero.io'
 const ARTZERO_API = 'https://a0-api.artzero.io'

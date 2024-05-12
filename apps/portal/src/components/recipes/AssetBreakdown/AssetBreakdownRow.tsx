@@ -1,12 +1,11 @@
 import { type Account } from '../../../domains/accounts/recoils'
+import type { PortfolioToken } from '../../legacy/archetypes/Portfolio/Assets'
+import AccountIcon from '../../molecules/AccountIcon/AccountIcon'
+import { AssetBalance } from '../Asset'
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Text, Tooltip } from '@talismn/ui'
 import { startCase } from 'lodash'
-
-import AccountIcon from '../../molecules/AccountIcon/AccountIcon'
-import { AssetBalance } from '../Asset'
-import type { PortfolioToken } from '../../legacy/archetypes/Portfolio/Assets'
 
 const slideDown = keyframes`
     from {

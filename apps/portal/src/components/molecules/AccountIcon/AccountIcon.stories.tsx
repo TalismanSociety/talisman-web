@@ -1,6 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react'
-
 import AccountIcon from './AccountIcon'
+import { type Meta, type StoryObj } from '@storybook/react'
 
 export default {
   title: 'Molecules/AccountIcon',

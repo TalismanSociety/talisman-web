@@ -1,8 +1,8 @@
-import { createContext, useContext, type PropsWithChildren } from 'react'
 import { POLKADOT_API_STATE_GARBAGE_COLLECTOR_UNSTABLE } from './GarbageCollector.js'
 import type { DeriveState, QueryState } from './query.js'
 import type { QueryMultiState } from './queryMulti.js'
 import type { ApiId } from './types.js'
+import { createContext, useContext, type PropsWithChildren } from 'react'
 import { RecoilRoot } from 'recoil'
 
 export const ApiIdContext = createContext<ApiId>(undefined)

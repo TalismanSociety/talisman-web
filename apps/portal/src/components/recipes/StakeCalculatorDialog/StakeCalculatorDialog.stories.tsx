@@ -1,6 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react'
-
 import StakeCalculatorDialog from './StakeCalculatorDialog'
+import { type Meta, type StoryObj } from '@storybook/react'
 import { Select } from '@talismn/ui'
 
 export default {

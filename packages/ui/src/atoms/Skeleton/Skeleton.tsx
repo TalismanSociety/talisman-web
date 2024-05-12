@@ -1,5 +1,5 @@
-import { keyframes, useTheme } from '@emotion/react'
 import { useSurfaceColor, useSurfaceColorAtElevation } from '..'
+import { keyframes, useTheme } from '@emotion/react'
 
 export type SkeletonProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   animate?: boolean

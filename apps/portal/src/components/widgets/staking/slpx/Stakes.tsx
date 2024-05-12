@@ -1,17 +1,16 @@
-import StakePosition from '../../../recipes/StakePosition'
-import ErrorBoundary from '../../ErrorBoundary'
 import { selectedEvmAccountsState } from '../../../../domains/accounts'
-import { useStakes } from '../../../../domains/staking/slpx/core'
-import { useState } from 'react'
-
-import AnimatedFiatNumber from '../../AnimatedFiatNumber'
-import RedactableBalance from '../../RedactableBalance'
 import { ChainProvider } from '../../../../domains/chains'
 import { slpxPairsState } from '../../../../domains/staking/slpx'
+import { useStakes } from '../../../../domains/staking/slpx/core'
 import type { SlpxPair } from '../../../../domains/staking/slpx/types'
-import { useRecoilValue } from 'recoil'
+import StakePosition from '../../../recipes/StakePosition'
+import AnimatedFiatNumber from '../../AnimatedFiatNumber'
+import ErrorBoundary from '../../ErrorBoundary'
+import RedactableBalance from '../../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
+import { useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
 const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStakes>[number] }) => {
   const [increaseStakeDialogOpen, setIncreaseStakeDialogOpen] = useState(false)

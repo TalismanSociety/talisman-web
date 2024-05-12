@@ -1,6 +1,6 @@
+import Tabs, { type TabsProps } from './Tabs'
 import { type ComponentMeta, type Story } from '@storybook/react'
 import { useState } from 'react'
-import Tabs, { type TabsProps } from './Tabs'
 
 export default {
   title: 'Molecules/Tabs',

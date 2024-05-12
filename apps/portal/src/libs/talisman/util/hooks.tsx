@@ -1,7 +1,6 @@
+import { statusOptions as baseStatusOptions } from './_config'
 import { get } from 'lodash'
 import { useEffect, useState } from 'react'
-
-import { statusOptions as baseStatusOptions } from './_config'
 
 export const useStatus = (props: { status?: string; message?: string | null; customOptions?: any } = {}) => {
   const { status = baseStatusOptions.INITIALIZED, message = null, customOptions = {} } = props

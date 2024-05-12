@@ -1,5 +1,3 @@
-import * as Sentry from '@sentry/react'
-import { Navigate, createBrowserRouter } from 'react-router-dom'
 import AccountConnectionGuard from '../components/widgets/AccountConnectionGuard'
 import { RouteErrorElement } from '../components/widgets/ErrorBoundary'
 import Admin from './admin'
@@ -10,6 +8,8 @@ import History from './history'
 import Layout from './layout'
 import portfolioRoutes from './portfolio'
 import stakingRoutes from './staking'
+import * as Sentry from '@sentry/react'
+import { Navigate, createBrowserRouter } from 'react-router-dom'
 
 export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
   {

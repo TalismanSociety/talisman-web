@@ -1,5 +1,5 @@
-import { selector, selectorFamily } from 'recoil'
 import { glmrSlpxPair } from './config'
+import { selector, selectorFamily } from 'recoil'
 
 export const slpxPairsState = selector({ key: 'SlpxPairs', get: () => [glmrSlpxPair] })
 

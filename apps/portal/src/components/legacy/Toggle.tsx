@@ -1,5 +1,5 @@
-import styled from '@emotion/styled'
 import { useBoolean } from '../../util/hooks'
+import styled from '@emotion/styled'
 import { useEffect } from 'react'
 
 export type ToggleProps = {

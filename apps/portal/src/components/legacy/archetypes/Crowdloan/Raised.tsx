@@ -1,8 +1,8 @@
 import { Pendor, ProgressBar, Stat } from '../..'
-import styled from '@emotion/styled'
 import { useCrowdloanById } from '../../../../libs/talisman'
-import { CheckCircle } from '@talismn/web-icons'
 import { shortNumber } from '../../../../util/helpers'
+import styled from '@emotion/styled'
+import { CheckCircle } from '@talismn/web-icons'
 import { useTranslation } from 'react-i18next'
 
 const Raised = styled(

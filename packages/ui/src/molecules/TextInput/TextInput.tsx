@@ -1,3 +1,4 @@
+import { Clickable, Surface, Text, useSurfaceColorAtElevation } from '../../atoms'
 import { useTheme } from '@emotion/react'
 import {
   useId,
@@ -8,7 +9,6 @@ import {
   type ChangeEvent,
   forwardRef,
 } from 'react'
-import { Clickable, Surface, Text, useSurfaceColorAtElevation } from '../../atoms'
 
 export type TextInputProps = Omit<
   React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,

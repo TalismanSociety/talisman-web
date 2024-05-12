@@ -1,5 +1,5 @@
-import styled from '@emotion/styled'
 import useImageWithFallback from '../../util/useImageWithFallback'
+import styled from '@emotion/styled'
 import { type PropsWithChildren } from 'react'
 
 const Poster = styled(

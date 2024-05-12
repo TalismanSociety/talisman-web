@@ -1,5 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react'
 import DappStakingForm from './DappStakingForm'
+import { type Meta, type StoryObj } from '@storybook/react'
 import { Select } from '@talismn/ui'
 
 export default {

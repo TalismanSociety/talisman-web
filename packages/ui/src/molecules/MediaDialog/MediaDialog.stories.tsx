@@ -1,9 +1,9 @@
-import { Global, css } from '@emotion/react'
-import { type ComponentMeta, type Story } from '@storybook/react'
 import { Text } from '../../atoms'
 import MediaDialog, { type MediaDialogProps } from './MediaDialog'
 // @ts-expect-error
 import testTrack from './test-track.mp3'
+import { Global, css } from '@emotion/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 export default {
   title: 'Molecules/MediaDialog',

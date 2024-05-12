@@ -1,7 +1,7 @@
 import { RootNav } from '../../components/legacy/archetypes/Crowdloan/RootNav'
 import ParticipatedCrowdloans from '../../components/legacy/archetypes/Wallet/Crowdloans'
-import styled from '@emotion/styled'
 import { TitlePortal } from '../layout'
+import styled from '@emotion/styled'
 
 export const CrowdloanParticipated = styled(({ className }: { className?: string }) => (
   <div className={className} css={{ padding: '2.4rem' }}>

@@ -1,5 +1,5 @@
-import type { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from 'react'
 import { Text } from '.'
+import type { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from 'react'
 
 type HrProps = PropsWithChildren<DetailedHTMLProps<HTMLAttributes<HTMLHRElement>, HTMLHRElement>>
 

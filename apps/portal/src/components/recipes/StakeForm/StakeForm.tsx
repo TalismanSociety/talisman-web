@@ -1,3 +1,7 @@
+import { isNilOrWhitespace } from '../../../util/nil'
+import type { PoolClaimPermission } from '../PoolClaimPermissionForm'
+import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
+import StakeFormSkeleton from './StakeForm.skeleton'
 import {
   Button,
   DescriptionList,
@@ -13,12 +17,8 @@ import {
   type ChipProps,
 } from '@talismn/ui'
 import { ChevronRight, Clock, Info, Settings } from '@talismn/web-icons'
-import { isNilOrWhitespace } from '../../../util/nil'
 import { LayoutGroup, motion } from 'framer-motion'
 import { createContext, useContext, useId, useState, type ReactNode } from 'react'
-import type { PoolClaimPermission } from '../PoolClaimPermissionForm'
-import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
-import StakeFormSkeleton from './StakeForm.skeleton'
 
 const AssetSelectorContext = createContext<ReactNode>(null)
 

@@ -1,10 +1,10 @@
+import { resolveNsNameFamily } from '../atoms/onChainIdResolver'
 import { isPotentialAzns, isPotentialEns } from '@talismn/on-chain-id'
 import { isEthereumAddress } from '@talismn/util'
 import { useAtomValue } from 'jotai'
 import { loadable } from 'jotai/utils'
 import { useState } from 'react'
 import { useDebounce } from 'react-use'
-import { resolveNsNameFamily } from '../atoms/onChainIdResolver'
 
 export type Options = {
   /** Enabled by default, set to false to disable */

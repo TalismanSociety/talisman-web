@@ -1,3 +1,5 @@
+import { CircularProgressIndicator, Surface, Text, useSurfaceColor } from '../../atoms'
+import FloatingPortal from '../../atoms/FloatingPortal'
 import { useTheme } from '@emotion/react'
 import {
   autoPlacement,
@@ -24,8 +26,6 @@ import React, {
   type ReactElement,
   type ReactNode,
 } from 'react'
-import { CircularProgressIndicator, Surface, Text, useSurfaceColor } from '../../atoms'
-import FloatingPortal from '../../atoms/FloatingPortal'
 
 export type SelectProps<TValue extends string | number, TClear extends boolean = false> = {
   className?: string

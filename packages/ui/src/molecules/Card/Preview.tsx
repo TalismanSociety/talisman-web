@@ -1,7 +1,7 @@
-import { Box, Unknown, Video, Volume2 } from '@talismn/web-icons'
-import React, { useState, type ReactNode } from 'react'
 import { useMimeType, type MimeTypeType } from '../../utils'
 import { useTheme, type Interpolation, type Theme } from '@emotion/react'
+import { Box, Unknown, Video, Volume2 } from '@talismn/web-icons'
+import React, { useState, type ReactNode } from 'react'
 
 type PreviewProps = {
   src?: string | readonly string[] | undefined

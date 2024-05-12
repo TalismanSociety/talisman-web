@@ -1,6 +1,5 @@
 // Needed as `useThrottle` from `react-use` doesn't work
 // https://github.com/streamich/react-use/issues/2488
-
 import { useEffect, useRef, useState } from 'react'
 
 export const useThrottle = <T>(value: T, milliseconds: number) => {

@@ -1,11 +1,10 @@
 // NOTE: modified version of https://github.com/timolins/react-hot-toast/blob/main/src/components/toaster.tsx
 // to allow customizability later on
-
+import { ToastBar } from '../molecules'
 import type { CSSObject } from '@emotion/react'
 import { useReducedMotion } from 'framer-motion'
 import { useCallback, type CSSProperties, type ReactNode, type RefCallback } from 'react'
 import { resolveValue, useToaster, type ToastPosition, type ToasterProps } from 'react-hot-toast/headless'
-import { ToastBar } from '../molecules'
 
 type ToastWrapperProps = {
   id: string

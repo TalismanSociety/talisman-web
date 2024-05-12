@@ -1,7 +1,7 @@
+import { useSurfaceColor } from '..'
 import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/web-icons/utils'
 import { type ComponentPropsWithoutRef, type ElementType } from 'react'
-import { useSurfaceColor } from '..'
 
 export type IconElementType = Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>
 

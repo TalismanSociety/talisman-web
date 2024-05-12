@@ -1,10 +1,10 @@
+import type { CreateNftAsyncGenerator, IpfsMetadata, Nft } from '../../types.js'
 import '@acala-network/types/index.js'
 import '@acala-network/types/lookup/types-acala.js'
 import { ApiPromise } from '@polkadot/api'
 import { type ProviderInterface } from '@polkadot/rpc-provider/types'
 import { type Bytes, type Option, type u32, type u64 } from '@polkadot/types-codec'
 import { type OrmlNftClassInfo } from '@polkadot/types/lookup'
-import type { CreateNftAsyncGenerator, IpfsMetadata, Nft } from '../../types.js'
 
 type Config<T> = {
   chain: T

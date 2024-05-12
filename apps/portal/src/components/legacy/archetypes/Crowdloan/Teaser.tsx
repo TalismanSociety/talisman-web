@@ -1,13 +1,12 @@
 import { Parachain } from '..'
 import { Pill } from '../..'
-import styled from '@emotion/styled'
 import { useCrowdloanById, useParachainDetailsById } from '../../../../libs/talisman'
-import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
-
 import Bonus from './Bonus'
 import Countdown from './Countdown'
 import Raised from './Raised'
+import styled from '@emotion/styled'
+import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 
 const Teaser = styled(({ id, contributed, className }: { id: string; contributed?: boolean; className?: string }) => {
   const { t } = useTranslation()

@@ -1,10 +1,10 @@
-import DexForm from '../../recipes/DexForm/DexForm'
 import { writeableAccountsState } from '../../../domains/accounts'
+import DexForm from '../../recipes/DexForm/DexForm'
+import AccountSelector from '../AccountSelector'
+import TokenSelectorButton from '../TokenSelectorButton'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
-import AccountSelector from '../AccountSelector'
-import TokenSelectorButton from '../TokenSelectorButton'
 
 const SwapForm = () => {
   const [account, setAccount] = useState(useRecoilValue(writeableAccountsState).at(0))

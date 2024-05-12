@@ -1,7 +1,7 @@
+import { Text } from '../..'
 import { useTheme } from '@emotion/react'
 import { motion } from 'framer-motion'
 import { createContext, useContext, type ElementType, type PropsWithChildren } from 'react'
-import { Text } from '../..'
 
 const TabsContext = createContext({ noBottomBorder: false })
 

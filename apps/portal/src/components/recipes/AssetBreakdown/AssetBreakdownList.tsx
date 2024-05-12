@@ -1,12 +1,11 @@
 import { selectedAccountsState } from '../../../domains/accounts/recoils'
+import { selectedCurrencyState } from '../../../domains/balances'
+import type { PortfolioToken } from '../../legacy/archetypes/Portfolio/Assets'
+import { AssetBreakdownRow, AssetBreakdownRowHeader } from './AssetBreakdownRow'
 import styled from '@emotion/styled'
 import { BalanceFormatter, type Balances } from '@talismn/balances'
 import { formatDecimals } from '@talismn/util'
 import { useRecoilValue, waitForAll } from 'recoil'
-
-import type { PortfolioToken } from '../../legacy/archetypes/Portfolio/Assets'
-import { selectedCurrencyState } from '../../../domains/balances'
-import { AssetBreakdownRow, AssetBreakdownRowHeader } from './AssetBreakdownRow'
 
 const Table = styled.table`
   width: 100%;

@@ -1,12 +1,12 @@
-import AccountIcon from '../../molecules/AccountIcon/AccountIcon'
 import type { Account } from '../../../domains/accounts'
-import { keyframes, useTheme } from '@emotion/react'
-import { ArrowDown, ArrowUp, ChevronRight } from '@talismn/web-icons'
-import { Identicon, Surface, Text, TonalIcon, Tooltip, useSurfaceColorAtElevation } from '@talismn/ui'
 import { shortenAddress } from '../../../util/format'
+import AccountIcon from '../../molecules/AccountIcon/AccountIcon'
+import { getSubstrateModuleColor } from '../extrinsicColor'
+import { keyframes, useTheme } from '@emotion/react'
+import { Identicon, Surface, Text, TonalIcon, Tooltip, useSurfaceColorAtElevation } from '@talismn/ui'
+import { ArrowDown, ArrowUp, ChevronRight } from '@talismn/web-icons'
 import type React from 'react'
 import { Fragment, useMemo, type PropsWithChildren, type ReactElement } from 'react'
-import { getSubstrateModuleColor } from '../extrinsicColor'
 
 type TokenAmount = {
   amount: string

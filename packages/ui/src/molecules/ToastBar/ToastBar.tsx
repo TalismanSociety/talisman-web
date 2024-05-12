@@ -1,11 +1,11 @@
+import { CircularProgressIndicator, SurfaceIconButton, Text, useSurfaceColor } from '../../atoms'
+import { toast as toaster } from '../../organisms'
 import { useTheme } from '@emotion/react'
 import { Check, X } from '@talismn/web-icons'
 import { formatDistanceToNowStrict } from 'date-fns'
 import { motion } from 'framer-motion'
 import { isValidElement, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { resolveValue, type Toast, type ToastPosition } from 'react-hot-toast/headless'
-import { CircularProgressIndicator, SurfaceIconButton, Text, useSurfaceColor } from '../../atoms'
-import { toast as toaster } from '../../organisms'
 
 export type ToastMessageProps = {
   headlineContent: ReactNode

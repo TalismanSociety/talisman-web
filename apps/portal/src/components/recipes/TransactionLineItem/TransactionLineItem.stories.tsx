@@ -1,5 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react'
 import TransactionLineItem, { TransactionList } from './TransactionLineItem'
+import { type Meta, type StoryObj } from '@storybook/react'
 
 export default {
   title: 'Recipes/TransactionLineItem',

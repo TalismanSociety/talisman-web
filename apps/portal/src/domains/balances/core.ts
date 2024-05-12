@@ -1,17 +1,16 @@
 // TODO: nuke everything and re-write balances lib integration
-
+import { selectedCurrencyState } from '.'
 import {
   accountsState,
   portfolioAccountsState,
   selectedAccountsState,
   writeableAccountsState,
 } from '../accounts/recoils'
+import { useBalancesReportEffect } from './analytics'
 import { Balances } from '@talismn/balances'
 import { useBalances as _useBalances, useSetBalancesAddresses } from '@talismn/balances-react'
 import { useEffect, useMemo } from 'react'
 import { atom, selector, useRecoilCallback, useRecoilValue } from 'recoil'
-import { selectedCurrencyState } from '.'
-import { useBalancesReportEffect } from './analytics'
 
 export const balancesState = atom<Balances>({
   key: 'Balances',

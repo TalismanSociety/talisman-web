@@ -1,5 +1,5 @@
-import styled from '@emotion/styled'
 import useOnClickOutside from '../../util/useOnClickOutside'
+import styled from '@emotion/styled'
 import React, { useRef, useState } from 'react'
 
 type MenuDropdownAlignment = 'left' | 'right'

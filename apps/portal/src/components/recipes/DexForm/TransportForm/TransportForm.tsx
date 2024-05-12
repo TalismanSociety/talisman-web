@@ -1,6 +1,5 @@
 import Cryptoticon from '../../Cryptoticon'
 import { useTheme } from '@emotion/react'
-import { ArrowDown, Repeat } from '@talismn/web-icons'
 import {
   Button,
   CircularProgressIndicator,
@@ -10,6 +9,7 @@ import {
   TonalIconButton,
   type ButtonProps,
 } from '@talismn/ui'
+import { ArrowDown, Repeat } from '@talismn/web-icons'
 import { LayoutGroup, motion } from 'framer-motion'
 import { useId, useState, type ReactNode } from 'react'
 

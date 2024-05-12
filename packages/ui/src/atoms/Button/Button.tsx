@@ -1,9 +1,8 @@
+import { useSurfaceColor } from '..'
+import CircularProgressIndicator from '../CircularProgressIndicator'
 import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/web-icons/utils'
 import { useMemo, type ElementType, type PropsWithChildren, type ReactNode } from 'react'
-
-import { useSurfaceColor } from '..'
-import CircularProgressIndicator from '../CircularProgressIndicator'
 
 type ButtonElementType = Extract<React.ElementType, 'button' | 'a'> | ElementType<any>
 

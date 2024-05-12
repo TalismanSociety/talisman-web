@@ -1,6 +1,6 @@
+import useUniqueId from '../../util/useUniqueId'
 import { type GqlContribution } from '../crowdloans'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
-import useUniqueId from '../../util/useUniqueId'
 import BigNumber from 'bignumber.js'
 import {
   useContext as _useContext,

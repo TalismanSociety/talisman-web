@@ -1,6 +1,5 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-
 import EyeOfSauronProgressIndicator, { type EyeOfSauronProgressIndicatorProps } from './EyeOfSauronProgressIndicator'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 export default {
   title: 'Atoms/EyeOfSauronProgressIndicator',

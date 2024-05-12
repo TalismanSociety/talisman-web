@@ -1,12 +1,12 @@
-import UnstakeDialogComponent from '../../../recipes/UnstakeDialog'
 import type { Account } from '../../../../domains/accounts'
 import { useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
 import { useUnstakeForm, type Stake } from '../../../../domains/staking/dappStaking'
+import UnstakeDialogComponent from '../../../recipes/UnstakeDialog'
+import DappPickerDialog from './DappPickerDialog'
+import UnlockDuration from './UnlockDuration'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
 import { CircularProgressIndicator } from '@talismn/ui'
 import { useState } from 'react'
-import DappPickerDialog from './DappPickerDialog'
-import UnlockDuration from './UnlockDuration'
 
 type DappUnstakeDialogProps = {
   account: Account

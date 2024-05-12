@@ -1,9 +1,9 @@
-import NominationPoolsStakeProviders from './substrate/StakeProviders'
+import { StakeProviderList } from '../../recipes/StakeProvider'
+import ErrorBoundary from '../ErrorBoundary'
+import DappStakingProviders from './dappStaking/StakeProviders'
 import LidoStakeProviders from './lido/StakeProviders'
 import SlpxStakeProviders from './slpx/StakeProviders'
-import { StakeProviderList } from '../../recipes/StakeProvider'
-import DappStakingProviders from './dappStaking/StakeProviders'
-import ErrorBoundary from '../ErrorBoundary'
+import NominationPoolsStakeProviders from './substrate/StakeProviders'
 
 const StakeProviders = () => {
   return (

@@ -1,11 +1,10 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-
+import StakeTargetSelectorDialog, { type StakeTargetSelectorDialogProps } from './StakeTargetSelectorDialog'
 import StakeTargetSelectorItem from './StakeTargetSelectorItem/StakeTargetSelectorItem'
 import {
   Selected as SelectedStakeTargetSelectorItem,
   UnSelected as UnSelectedStakeTargetSelectorItem,
 } from './StakeTargetSelectorItem/StakeTargetSelectorItem.stories'
-import StakeTargetSelectorDialog, { type StakeTargetSelectorDialogProps } from './StakeTargetSelectorDialog'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 export default {
   title: 'Recipes/StakeTargetSelectorDialog',

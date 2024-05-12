@@ -1,5 +1,5 @@
-import { selector, selectorFamily } from 'recoil'
 import { lidoMainnet } from './config'
+import { selector, selectorFamily } from 'recoil'
 
 export const lidoSuitesState = selector({ key: 'LidoSuites', get: () => [lidoMainnet] })
 

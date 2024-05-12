@@ -1,7 +1,6 @@
-import { type ReactNode } from 'react'
-
 import { Text, useSurfaceColor } from '../../atoms'
 import { useTheme } from '@emotion/react'
+import { type ReactNode } from 'react'
 
 export type InfoCardProps = {
   className?: string

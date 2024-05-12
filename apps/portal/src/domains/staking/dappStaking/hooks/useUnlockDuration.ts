@@ -1,8 +1,8 @@
+import { useEraLengthState } from '..'
 import { expectedBlockTime, useSubstrateApiState } from '../../../common'
 import { formatDistance } from 'date-fns'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
-import { useEraLengthState } from '..'
 
 export const useLocalizedUnlockDuration = () => {
   const [api, { standardEraLength }] = useRecoilValue(waitForAll([useSubstrateApiState(), useEraLengthState()]))

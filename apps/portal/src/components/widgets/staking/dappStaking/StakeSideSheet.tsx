@@ -1,8 +1,3 @@
-import { TalismanHandLoader } from '../../../legacy/TalismanHandLoader'
-import DappStakingForm, { DappStakingSideSheet } from '../../../recipes/DappStakingForm'
-import { DappSelectorDialog as DappSelectorDialogComponent } from '../../../recipes/StakeTargetSelectorDialog'
-import { useAccountSelector } from '../../AccountSelector'
-import ErrorBoundary from '../../ErrorBoundary'
 import { writeableSubstrateAccountsState, type Account } from '../../../../domains/accounts'
 import {
   ChainProvider,
@@ -20,15 +15,20 @@ import {
   useStake,
   type DappInfo,
 } from '../../../../domains/staking/dappStaking'
+import { Maybe } from '../../../../util/monads'
+import { TalismanHandLoader } from '../../../legacy/TalismanHandLoader'
+import DappStakingForm, { DappStakingSideSheet } from '../../../recipes/DappStakingForm'
+import { DappSelectorDialog as DappSelectorDialogComponent } from '../../../recipes/StakeTargetSelectorDialog'
+import { useAccountSelector } from '../../AccountSelector'
+import ErrorBoundary from '../../ErrorBoundary'
+import UnlockDuration from './UnlockDuration'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
 import { useQueryState } from '@talismn/react-polkadot-api'
 import { CircularProgressIndicator, Select } from '@talismn/ui'
-import { Maybe } from '../../../../util/monads'
 import BN from 'bn.js'
 import { Suspense, useMemo, useState, useTransition, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
-import UnlockDuration from './UnlockDuration'
 
 type DappSelectorDialogProps = {
   selectedDapp?: DappInfo

@@ -1,13 +1,12 @@
-import { ChevronLeft, ChevronRight } from '@talismn/web-icons'
-import { AlertDialog, Button, Text } from '@talismn/ui'
-import { motion } from 'framer-motion'
-import React, { useState, type ReactElement, type ReactNode } from 'react'
-
 import StakeTargetSelectorItem, {
   DappSelectorItem,
   PoolSelectorItem,
   type StakeTargetSelectorItemProps,
 } from './StakeTargetSelectorItem'
+import { AlertDialog, Button, Text } from '@talismn/ui'
+import { ChevronLeft, ChevronRight } from '@talismn/web-icons'
+import { motion } from 'framer-motion'
+import React, { useState, type ReactElement, type ReactNode } from 'react'
 
 export type StakeTargetSelectorDialogProps = {
   open?: boolean

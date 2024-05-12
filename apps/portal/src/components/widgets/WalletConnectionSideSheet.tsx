@@ -6,6 +6,7 @@ import {
   useInstalledSubstrateWallets,
   useSubstrateWalletConnect,
 } from '../../domains/extension'
+import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
 import { ClassNames, useTheme } from '@emotion/react'
 import { useSignetSdk } from '@talismn/signet-apps-sdk'
 import { Chip, Hr, ListItem, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Surface, Text } from '@talismn/ui'
@@ -13,7 +14,6 @@ import { Ethereum, Eye, Polkadot, Wallet } from '@talismn/web-icons'
 import { Suspense, useState, type ButtonHTMLAttributes, type DetailedHTMLProps } from 'react'
 import { atom, useRecoilState } from 'recoil'
 import { useAccount as useEvmAccount, useDisconnect as useDisconnectEvm } from 'wagmi'
-import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
 
 const talismanInstalled = 'talismanEth' in globalThis
 

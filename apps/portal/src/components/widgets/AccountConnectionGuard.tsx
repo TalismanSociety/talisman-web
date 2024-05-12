@@ -1,11 +1,11 @@
-import Welcome from '../recipes/Welcome'
 import { lookupAccountAddressState, popularAccounts } from '../../domains/accounts'
 import { readOnlyAccountsState } from '../../domains/accounts/recoils'
 import { useHasActiveWalletConnection } from '../../domains/extension'
 import { shortenAddress } from '../../util/format'
+import Welcome from '../recipes/Welcome'
+import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
 import { useState, type PropsWithChildren } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
-import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
 
 export type AccountConnectionGuardProps = PropsWithChildren
 

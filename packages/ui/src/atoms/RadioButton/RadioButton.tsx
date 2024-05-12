@@ -1,6 +1,6 @@
+import { Surface } from '..'
 import { useTheme } from '@emotion/react'
 import type { DetailedHTMLProps, InputHTMLAttributes } from 'react'
-import { Surface } from '..'
 
 export type RadioButtonProps = DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 

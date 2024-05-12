@@ -1,13 +1,13 @@
 import type { Account } from '../../accounts'
 import { tokenPriceState } from '../../chains'
+import { lidoTokenAbi, withdrawalQueueAbi } from './abi'
+import type { LidoSuite } from './types'
 import { Decimal } from '@talismn/math'
 import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useRecoilValue } from 'recoil'
 import { useBlockNumber, useConfig } from 'wagmi'
 import { getTokenQueryOptions, readContractQueryOptions, readContractsQueryOptions } from 'wagmi/query'
-import { lidoTokenAbi, withdrawalQueueAbi } from './abi'
-import type { LidoSuite } from './types'
 
 // https://github.com/wevm/wagmi/issues/3855
 const serializableBigInt = (value: bigint) => Object.assign(value, { toJSON: () => value.toString() })

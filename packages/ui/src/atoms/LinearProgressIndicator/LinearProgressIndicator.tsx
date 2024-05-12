@@ -1,5 +1,5 @@
-import { useTheme } from '@emotion/react'
 import { useSurfaceColorAtElevation } from '../Surface'
+import { useTheme } from '@emotion/react'
 
 export type LinearProgressIndicatorProps = {
   className?: string

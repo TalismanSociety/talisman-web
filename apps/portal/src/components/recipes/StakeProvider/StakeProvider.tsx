@@ -1,4 +1,3 @@
-import { Zap } from '@talismn/web-icons'
 import {
   Button,
   LinearProgressIndicator,
@@ -7,6 +6,7 @@ import {
   type ButtonProps,
   CircularProgressIndicator,
 } from '@talismn/ui'
+import { Zap } from '@talismn/web-icons'
 import { Suspense, type ElementType, type PropsWithChildren, type ReactNode } from 'react'
 
 export type StakeProviderProps = {

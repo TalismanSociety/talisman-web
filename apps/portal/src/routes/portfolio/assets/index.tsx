@@ -1,6 +1,6 @@
-import type { RouteObject } from 'react-router-dom'
 import AssetItem from './item'
 import Assets from './main'
+import type { RouteObject } from 'react-router-dom'
 
 const routes = {
   children: [

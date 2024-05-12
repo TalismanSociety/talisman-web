@@ -1,12 +1,12 @@
 import { chainState } from '../chains'
+import { favoriteNftIdsState, hiddenNftIdsState, nftsByTagState } from './tags'
+import type { SubscribeNfts } from './worker'
 import * as Sentry from '@sentry/react'
 import { type Nft as BaseNft } from '@talismn/nft'
 import { toast } from '@talismn/ui'
 import { DefaultValue, atomFamily, selectorFamily, waitForNone } from 'recoil'
 import { Observable, bufferTime, filter, last, scan, tap } from 'rxjs'
 import { Thread, spawn } from 'threads'
-import { favoriteNftIdsState, hiddenNftIdsState, nftsByTagState } from './tags'
-import type { SubscribeNfts } from './worker'
 
 export type NftTag = 'favorite' | 'hidden'
 

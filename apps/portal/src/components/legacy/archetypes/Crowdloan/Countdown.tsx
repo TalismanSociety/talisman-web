@@ -1,6 +1,6 @@
 import { Countdown as Cd, Pendor } from '../..'
-import styled from '@emotion/styled'
 import { useChainmetaValue, useCrowdloanById } from '../../../../libs/talisman'
+import styled from '@emotion/styled'
 import { type ReactNode, useEffect, useState } from 'react'
 
 type OngoingProps = {

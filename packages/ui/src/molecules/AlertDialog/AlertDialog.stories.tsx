@@ -1,7 +1,6 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-
 import { Button, Text } from '../../atoms'
 import AlertDialog, { type AlertDialogProps } from './AlertDialog'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 export default {
   title: 'Molecules/AlertDialog',

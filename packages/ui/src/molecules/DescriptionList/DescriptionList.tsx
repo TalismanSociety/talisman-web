@@ -1,5 +1,5 @@
-import { createContext, useContext } from 'react'
 import { Text } from '../../atoms'
+import { createContext, useContext } from 'react'
 
 export type DescriptionListProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDListElement>, HTMLDListElement> & {
   emphasis?: 'term' | 'details'

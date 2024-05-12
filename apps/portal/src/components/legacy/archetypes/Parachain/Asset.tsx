@@ -1,6 +1,6 @@
-import styled from '@emotion/styled'
 import { useParachainAssets } from '../../../../libs/talisman'
 import useImageWithFallback from '../../../../util/useImageWithFallback'
+import styled from '@emotion/styled'
 
 type ImageProps = {
   id: string

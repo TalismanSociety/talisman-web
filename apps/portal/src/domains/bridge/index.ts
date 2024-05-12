@@ -1,8 +1,8 @@
 import { chainState } from '../chains'
 import { substrateApiState } from '../common'
+import { bridgeConfig } from './config'
 import { Bridge, type ChainId } from '@polkawallet/bridge'
 import { selector, selectorFamily } from 'recoil'
-import { bridgeConfig } from './config'
 
 export { bridgeConfig } from './config'
 

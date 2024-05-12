@@ -1,10 +1,10 @@
 import { selectedBalancesState, selectedCurrencyState } from '../balances'
-import { useMemo } from 'react'
-import { useRecoilValue, waitForAll } from 'recoil'
 import { useTotalStaked as useDappStakingTotalStaked } from './dappStaking'
 import { lidoSuitesState } from './lido/recoils'
 import { slpxPairsState } from './slpx'
 import { useTotalStaked as useSubstrateTotalStaked } from './substrate/useTotalStaked'
+import { useMemo } from 'react'
+import { useRecoilValue, waitForAll } from 'recoil'
 
 export const useTotalStaked = () => {
   const [lidoSuites, slpxPairs, balances, currency] = useRecoilValue(

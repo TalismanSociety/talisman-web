@@ -1,9 +1,9 @@
+import { useEraLengthState } from '..'
 import type { Perquintill } from '@polkadot/types/interfaces/runtime'
 import { useQueryMultiState } from '@talismn/react-polkadot-api'
 import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
-import { useEraLengthState } from '..'
 
 export const useApr = () => {
   const [

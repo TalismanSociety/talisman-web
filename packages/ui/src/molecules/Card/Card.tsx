@@ -1,8 +1,8 @@
+import { Skeleton, Text, useSurfaceColor, useSurfaceColorAtElevation } from '../..'
+import { MultiPreview, Preview } from './Preview'
 import { useTheme } from '@emotion/react'
 import { motion, useMotionTemplate, useSpring, useTransform } from 'framer-motion'
 import { createContext, useState, type ReactNode } from 'react'
-import { Skeleton, Text, useSurfaceColor, useSurfaceColorAtElevation } from '../..'
-import { MultiPreview, Preview } from './Preview'
 
 export type CardProps = {
   className?: string

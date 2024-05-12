@@ -1,3 +1,5 @@
+import { Surface, Text } from '../../atoms'
+import { useTheme } from '@emotion/react'
 import { ChevronRight } from '@talismn/web-icons'
 import { motion } from 'framer-motion'
 import {
@@ -10,10 +12,7 @@ import {
   type PropsWithChildren,
   type ReactEventHandler,
 } from 'react'
-
 import React from 'react'
-import { Surface, Text } from '../../atoms'
-import { useTheme } from '@emotion/react'
 
 const DetailsContext = createContext({ onClick: (() => {}) as MouseEventHandler<HTMLElement> })
 

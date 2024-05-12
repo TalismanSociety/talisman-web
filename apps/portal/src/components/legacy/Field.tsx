@@ -1,10 +1,10 @@
-import styled from '@emotion/styled'
-import { useEffect } from 'react'
 import ChevronDown from '../../assets/icons/chevron-down.svg?react'
 import SearchIcon from '../../assets/icons/search.svg?react'
 import IconClear from '../../assets/icons/x-circle.svg?react'
 import { useBoolean } from '../../util/hooks'
 import { Pill } from './'
+import styled from '@emotion/styled'
+import { useEffect } from 'react'
 
 // framework
 

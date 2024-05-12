@@ -1,5 +1,6 @@
-import DialogComponent from '../../recipes/ExportTxHistoryDialog'
+import { graphql } from '../../../../generated/gql/extrinsicHistory/gql'
 import { accountsState } from '../../../domains/accounts/recoils'
+import DialogComponent from '../../recipes/ExportTxHistoryDialog'
 import * as Sentry from '@sentry/react'
 import { toast } from '@talismn/ui'
 import { stringify } from 'csv-stringify/browser/esm'
@@ -7,7 +8,6 @@ import { differenceInYears, subMonths } from 'date-fns'
 import { request } from 'graphql-request'
 import { useCallback, useMemo, useState, type ReactNode } from 'react'
 import { useRecoilValue } from 'recoil'
-import { graphql } from '../../../../generated/gql/extrinsicHistory/gql'
 
 export type ExportTxHistoryWidgetProps = {
   children: (props: { onToggleOpen: () => unknown }) => ReactNode

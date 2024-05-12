@@ -1,8 +1,8 @@
-import RemoveWatchedAccountConfirmationDialogComponent from '../recipes/RemoveWatchedAccountConfirmationDialog'
 import { useSetReadonlyAccounts } from '../../domains/accounts/hooks'
 import { type ReadonlyAccount } from '../../domains/accounts/recoils'
 import { shortenAddress } from '../../util/format'
 import { isNilOrWhitespace } from '../../util/nil'
+import RemoveWatchedAccountConfirmationDialogComponent from '../recipes/RemoveWatchedAccountConfirmationDialog'
 import { type ReactNode, useCallback, useState } from 'react'
 
 export type RemoveWatchedAccountConfirmationDialogProps = {

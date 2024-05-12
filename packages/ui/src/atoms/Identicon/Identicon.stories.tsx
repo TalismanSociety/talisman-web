@@ -1,6 +1,5 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-
 import Identicon, { type IdenticonProps } from './Identicon'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 export default {
   title: 'Atoms/Identicon',

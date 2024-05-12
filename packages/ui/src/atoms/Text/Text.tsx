@@ -1,6 +1,6 @@
+import { type ContentAlpha } from '../..'
 import { useTheme, type Theme } from '@emotion/react'
 import type React from 'react'
-import { type ContentAlpha } from '../..'
 
 type PolymorphicTextProps<T extends React.ElementType> = {
   as?: T

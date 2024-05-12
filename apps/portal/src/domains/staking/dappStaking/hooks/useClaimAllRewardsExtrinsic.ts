@@ -1,7 +1,7 @@
 import { useExtrinsic } from '../../../common'
+import type { Stake } from './useStake'
 import type { ApiPromise } from '@polkadot/api'
 import { useCallback } from 'react'
-import type { Stake } from './useStake'
 
 export const getAllRewardsClaimExtrinsics = (api: ApiPromise, stake: Stake) =>
   stake.totalRewards.decimalAmount.planck < 0n

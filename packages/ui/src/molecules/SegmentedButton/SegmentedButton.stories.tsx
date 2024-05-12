@@ -1,6 +1,5 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-
 import SegmentedButton, { type SegmentedButtonProps } from './SegmentedButton'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 export default {
   title: 'Molecules/SegmentedButton',
