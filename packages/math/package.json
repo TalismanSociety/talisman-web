@@ -12,6 +12,7 @@
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {
+    "@talismn/tsconfig": "workspace:^",
     "eslint": "^8.39.0",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
