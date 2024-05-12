@@ -1,5 +1,8 @@
 {
   "private": true,
   "name": "@talismn/development",
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "devDependencies": {
+    "@storybook/theming": "^8.0.10"
+  }
 }

@@ -10,11 +10,16 @@
     "lint": "eslint src",
     "check-types": "tsc --noEmit"
   },
+  "dependencies": {
+    "rxjs": "^7.8.1"
+  },
   "devDependencies": {
     "@polkadot/api": "^10.13.1",
     "@talismn/eslint-config": "workspace:^",
     "@talismn/tsconfig": "workspace:^",
     "@types/react": "^18.3.1",
+    "eslint": "^8.33.0",
+    "recoil": "^0.7.7",
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
