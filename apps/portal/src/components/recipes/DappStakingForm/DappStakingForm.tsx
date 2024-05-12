@@ -1,5 +1,5 @@
+import { Maybe } from '../../../util/monads'
 import { useTheme } from '@emotion/react'
-import { Zap } from '@talismn/web-icons'
 import {
   Button,
   CircularProgressIndicator,
@@ -15,7 +15,7 @@ import {
   type ButtonProps,
   type SideSheetProps,
 } from '@talismn/ui'
-import { Maybe } from '../../../util/monads'
+import { Zap } from '@talismn/web-icons'
 import { Suspense, type ReactNode } from 'react'
 
 type AmountInputProps =

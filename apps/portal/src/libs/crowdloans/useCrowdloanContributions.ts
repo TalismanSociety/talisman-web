@@ -1,3 +1,5 @@
+import { graphql } from '../../../generated/gql/crowdloan/gql'
+import type { ContributionsQuery } from '../../../generated/gql/crowdloan/gql/graphql'
 import { selectedSubstrateAccountsState } from '../../domains/accounts'
 import { useChainmetaValue } from '../talisman'
 import { encodeAnyAddress } from '@talismn/util'
@@ -6,8 +8,6 @@ import { request } from 'graphql-request'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useInterval } from 'react-use'
 import { useRecoilValue } from 'recoil'
-import { graphql } from '../../../generated/gql/crowdloan/gql'
-import type { ContributionsQuery } from '../../../generated/gql/crowdloan/gql/graphql'
 
 type ContributionsIndexerConfig = {
   accountIndex: number

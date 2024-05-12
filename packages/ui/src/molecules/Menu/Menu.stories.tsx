@@ -1,9 +1,8 @@
+import { Button, Identicon } from '../../atoms'
+import Menu, { MENU_OFFSET, type MenuProps } from './Menu'
 import { type ComponentMeta, type Story } from '@storybook/react'
 import { ChevronDown } from '@talismn/web-icons'
 import { motion } from 'framer-motion'
-
-import { Button, Identicon } from '../../atoms'
-import Menu, { MENU_OFFSET, type MenuProps } from './Menu'
 
 export default {
   title: 'Molecules/Menu',

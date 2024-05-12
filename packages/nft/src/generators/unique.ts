@@ -1,7 +1,7 @@
-import '@polkadot/api-augment/substrate'
-import { request } from 'graphql-request'
 import { graphql } from '../../generated/gql/unique/index.js'
 import type { CreateNftAsyncGenerator, Nft } from '../types.js'
+import '@polkadot/api-augment/substrate'
+import { request } from 'graphql-request'
 
 export const createUniqueNetworkNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'unique', 'unique'>> = async function* (
   address,

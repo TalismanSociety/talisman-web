@@ -1,8 +1,8 @@
+import { Clickable, Surface, Text, type ClickableProps } from '../../atoms'
 import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/web-icons/utils'
 import { motion } from 'framer-motion'
 import { createContext, type PropsWithChildren, type ReactNode } from 'react'
-import { Clickable, Surface, Text, type ClickableProps } from '../../atoms'
 
 const SegmentedButtonContext = createContext<{
   value: string | number | undefined

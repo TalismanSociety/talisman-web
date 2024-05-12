@@ -1,9 +1,8 @@
+import gradient from './gradient.png'
+import BaseStubStakingInput from './staking-input.svg?react'
 import { Text } from '@talismn/ui'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-
-import gradient from './gradient.png'
-import BaseStubStakingInput from './staking-input.svg?react'
 
 const StubStakingInput = motion(BaseStubStakingInput)
 const MotionLink = motion(Link)

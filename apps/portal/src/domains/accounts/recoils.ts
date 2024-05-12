@@ -1,16 +1,16 @@
-import { storageEffect } from '../common/effects'
-import type { InjectedAccount } from '@polkadot/extension-inject/types'
-import { useSignetSdk } from '@talismn/signet-apps-sdk'
-import { array, jsonParser, object, optional, string } from '@recoiljs/refine'
+import router from '../../routes'
 import { tryParseSubstrateOrEthereumAddress } from '../../util/addressValidation'
 import { Maybe } from '../../util/monads'
 import { isNilOrWhitespace } from '../../util/nil'
+import { storageEffect } from '../common/effects'
+import type { InjectedAccount } from '@polkadot/extension-inject/types'
+import { array, jsonParser, object, optional, string } from '@recoiljs/refine'
+import { useSignetSdk } from '@talismn/signet-apps-sdk'
 import { uniqBy } from 'lodash'
+import { useEffect } from 'react'
 import { useUpdateEffect } from 'react-use'
 import { atom, selector, useRecoilValue, useSetRecoilState, waitForAll } from 'recoil'
 import { isAddress as isEvmAddress } from 'viem'
-import router from '../../routes'
-import { useEffect } from 'react'
 
 type AccountWithOrigin = InjectedAccount & { origin?: 'injected' | 'local' }
 

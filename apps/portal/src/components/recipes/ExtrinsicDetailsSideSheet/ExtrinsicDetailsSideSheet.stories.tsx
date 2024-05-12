@@ -1,6 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react'
-
 import ExtrinsicDetailsSideSheet from './ExtrinsicDetailsSideSheet'
+import { type Meta, type StoryObj } from '@storybook/react'
 
 export default {
   title: 'Recipes/ExtrinsicDetailsSideSheet',

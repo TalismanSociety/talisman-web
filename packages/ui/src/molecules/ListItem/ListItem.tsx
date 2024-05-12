@@ -1,7 +1,6 @@
+import { Text } from '../../atoms'
 import { type HTMLMotionProps, motion } from 'framer-motion'
 import { type ReactNode } from 'react'
-
-import { Text } from '../../atoms'
 
 export type ListItemProps = HTMLMotionProps<'article'> & {
   headlineContent: ReactNode

@@ -1,5 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react'
 import StakePosition from './StakePosition'
+import { type Meta, type StoryObj } from '@storybook/react'
 
 export default {
   title: 'Recipes/StakePosition',

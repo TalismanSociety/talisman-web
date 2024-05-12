@@ -1,7 +1,7 @@
 import { TalismanHandLoader } from '../../legacy/TalismanHandLoader'
 import { useTheme } from '@emotion/react'
-import { Calculate, Info } from '@talismn/web-icons'
 import { AlertDialog, Button, HiddenDetails, RadioButton, Surface, Switch, Text, Tooltip } from '@talismn/ui'
+import { Calculate, Info } from '@talismn/web-icons'
 import { Suspense, type PropsWithChildren, createContext, useContext } from 'react'
 
 const Context = createContext({ isSkeleton: false, onRequestDismiss: undefined as (() => unknown) | undefined })

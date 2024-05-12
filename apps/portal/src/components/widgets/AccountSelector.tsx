@@ -1,12 +1,12 @@
-import AccountIcon from '../molecules/AccountIcon/AccountIcon'
 import { type Account } from '../../domains/accounts/recoils'
 import { useHasActiveWalletConnection } from '../../domains/extension'
-import { Button, CircularProgressIndicator, Identicon, Select } from '@talismn/ui'
 import { shortenAddress } from '../../util/format'
+import AccountIcon from '../molecules/AccountIcon/AccountIcon'
+import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
+import { Button, CircularProgressIndicator, Identicon, Select } from '@talismn/ui'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { usePrevious } from 'react-use'
 import { useSetRecoilState } from 'recoil'
-import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
 
 export type AccountSelectorProps = {
   width?: number | string

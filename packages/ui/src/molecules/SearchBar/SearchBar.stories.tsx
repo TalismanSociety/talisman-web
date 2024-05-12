@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react'
 import type { SearchBarProps } from './SearchBar'
 import SearchBar from './SearchBar'
+import type { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 
 export default {

@@ -1,3 +1,6 @@
+import { ListItem, Surface, useSurfaceColor } from '../..'
+import FloatingPortal from '../../atoms/FloatingPortal'
+import { usePrevious } from '../../utils'
 import { useTheme } from '@emotion/react'
 import {
   autoPlacement,
@@ -28,9 +31,6 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react'
-import { ListItem, Surface, useSurfaceColor } from '../..'
-import FloatingPortal from '../../atoms/FloatingPortal'
-import { usePrevious } from '../../utils'
 
 export const MENU_OFFSET = 12
 

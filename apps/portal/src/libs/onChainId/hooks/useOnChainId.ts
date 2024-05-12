@@ -1,6 +1,6 @@
+import { lookupAddressFamily } from '../atoms/onChainIdResolver'
 import { useAtomValue } from 'jotai'
 import { loadable } from 'jotai/utils'
-import { lookupAddressFamily } from '../atoms/onChainIdResolver'
 import { useEffect } from 'react'
 
 export const useOnChainId = (address?: string) => {

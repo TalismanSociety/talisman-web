@@ -13,6 +13,8 @@ import {
   type NftCollection,
   type NftTag,
 } from '../../domains/nfts'
+import { shortenAddress } from '../../util/format'
+import { Maybe } from '../../util/monads'
 import { useTheme } from '@emotion/react'
 import {
   Button,
@@ -29,8 +31,6 @@ import {
 } from '@talismn/ui'
 import { usePagination } from '@talismn/utils/react'
 import { ChevronLeft, ChevronRight, ExternalLink, Eye, EyeOff, Heart } from '@talismn/web-icons'
-import { shortenAddress } from '../../util/format'
-import { Maybe } from '../../util/monads'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Suspense,

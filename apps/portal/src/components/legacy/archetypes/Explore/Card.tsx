@@ -1,9 +1,8 @@
-import styled from '@emotion/styled'
 import { device } from '../../../../util/breakpoints'
+import { type Dapp } from './hooks'
+import styled from '@emotion/styled'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback } from 'react'
-
-import { type Dapp } from './hooks'
 
 type CardProps = {
   className?: string

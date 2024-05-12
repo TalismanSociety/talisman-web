@@ -1,8 +1,8 @@
-import { SlpxAddStakeDialog } from '../../../recipes/AddStakeDialog'
 import { type Account } from '../../../../domains/accounts'
 import { useMintForm } from '../../../../domains/staking/slpx/core'
 import type { SlpxPair } from '../../../../domains/staking/slpx/types'
 import { Maybe } from '../../../../util/monads'
+import { SlpxAddStakeDialog } from '../../../recipes/AddStakeDialog'
 import { useEffect } from 'react'
 
 type AddStakeDialogProps = {

@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
 import RadioButton from './RadioButton'
+import type { Meta, StoryObj } from '@storybook/react'
 
 export default {
   title: 'Atoms/RadioButton',

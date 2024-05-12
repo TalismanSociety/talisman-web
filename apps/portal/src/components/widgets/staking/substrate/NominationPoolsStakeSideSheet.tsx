@@ -1,17 +1,16 @@
-import StakeDialogComponent from '../../../recipes/StakeDialog'
+import { ChainProvider } from '../../../../domains/chains'
 import { nominationPoolsEnabledChainsState, type ChainInfo } from '../../../../domains/chains/recoils'
 import { useEraEtaFormatter } from '../../../../domains/common/hooks'
+import { useApr } from '../../../../domains/staking/substrate/nominationPools'
+import StakeDialogComponent from '../../../recipes/StakeDialog'
+import StakeForm from '../../../recipes/StakeForm/StakeForm'
+import ErrorBoundary from '../../ErrorBoundary'
+import { AssetSelect, ControlledStakeForm } from './StakeForm'
 import { CircularProgressIndicator } from '@talismn/ui'
 import BN from 'bn.js'
 import { Suspense, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
-
-import StakeForm from '../../../recipes/StakeForm/StakeForm'
-import { ChainProvider } from '../../../../domains/chains'
-import { useApr } from '../../../../domains/staking/substrate/nominationPools'
-import ErrorBoundary from '../../ErrorBoundary'
-import { AssetSelect, ControlledStakeForm } from './StakeForm'
 
 const Rewards = () => {
   return <>{useApr().toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</>

@@ -1,7 +1,8 @@
+import { IconContext } from '../context'
 import * as React from 'react'
 import type { SVGProps } from 'react'
 import { Ref, forwardRef } from 'react'
-import { IconContext } from '../context'
+
 const SvgPrinter = (
   props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
     size?: number | string

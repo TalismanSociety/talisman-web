@@ -1,12 +1,12 @@
-import StakeCalculatorDialogComponent from '../../../recipes/StakeCalculatorDialog'
 import { ChainProvider, nominationPoolsEnabledChainsState, useChainState } from '../../../../domains/chains'
 import { useTokenAmount, useTokenAmountFromPlanck } from '../../../../domains/common'
 import { useApr } from '../../../../domains/staking/substrate/nominationPools'
+import StakeCalculatorDialogComponent from '../../../recipes/StakeCalculatorDialog'
+import ErrorBoundary from '../../ErrorBoundary'
+import { AssetSelect } from './StakeForm'
 import BN from 'bn.js'
 import { Suspense, useDeferredValue, useMemo, useState, useTransition } from 'react'
 import { useRecoilValue } from 'recoil'
-import ErrorBoundary from '../../ErrorBoundary'
-import { AssetSelect } from './StakeForm'
 
 type StakeCalculatorDialogProps = { open?: boolean; onRequestDismiss: () => unknown }
 

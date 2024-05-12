@@ -1,5 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react'
 import Details, { OrderedDetailsList } from './Details'
+import { type Meta, type StoryObj } from '@storybook/react'
 
 export default {
   title: 'Molecules/Details',

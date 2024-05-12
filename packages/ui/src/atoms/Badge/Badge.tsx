@@ -1,6 +1,6 @@
-import type { CSSProperties, PropsWithChildren, ReactNode } from 'react'
 import { Text } from '..'
 import { IconContext } from '@talismn/web-icons/utils'
+import type { CSSProperties, PropsWithChildren, ReactNode } from 'react'
 
 export type BadgeProps = PropsWithChildren<{
   className?: string

@@ -1,8 +1,7 @@
-import 'winbox/dist/css/themes/modern.min.css'
-import 'winbox/dist/css/winbox.min.css'
-
 import { enableTestnetsState } from '../../../domains/chains'
 import { toastExtrinsic, useWagmiWriteContract } from '../../../domains/common'
+import { debugErrorBoundaryState } from '../ErrorBoundary'
+import { counterAbi } from './counterAbi'
 import RpcError from '@polkadot/rpc-provider/coder/error'
 import { useSurfaceColor } from '@talismn/ui'
 import { usePostHog } from 'posthog-js/react'
@@ -11,8 +10,8 @@ import { useSessionStorage } from 'react-use'
 import WinBox, { type WinBoxPropType } from 'react-winbox'
 import { useRecoilState } from 'recoil'
 import { sepolia } from 'wagmi/chains'
-import { debugErrorBoundaryState } from '../ErrorBoundary'
-import { counterAbi } from './counterAbi'
+import 'winbox/dist/css/themes/modern.min.css'
+import 'winbox/dist/css/winbox.min.css'
 
 const InsufficientFeeToast = () => {
   return (

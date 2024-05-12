@@ -1,11 +1,11 @@
-import { DappStakingAddStakeDialog } from '../../../recipes/AddStakeDialog'
 import type { Account } from '../../../../domains/accounts'
 import { useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
 import { useAddStakeForm, type Stake } from '../../../../domains/staking/dappStaking'
+import { DappStakingAddStakeDialog } from '../../../recipes/AddStakeDialog'
+import DappPickerDialog from './DappPickerDialog'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
 import { CircularProgressIndicator } from '@talismn/ui'
 import { useState } from 'react'
-import DappPickerDialog from './DappPickerDialog'
 
 type DappAddStakeDialogProps = {
   account: Account

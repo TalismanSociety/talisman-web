@@ -1,8 +1,7 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-import { Trash } from '@talismn/web-icons'
-
 import { Identicon } from '../../atoms'
 import ListItem, { type ListItemProps } from './ListItem'
+import { type ComponentMeta, type Story } from '@storybook/react'
+import { Trash } from '@talismn/web-icons'
 
 export default {
   title: 'Molecules/ListItem',

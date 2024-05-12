@@ -1,6 +1,5 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-
 import { WithdrawCrowdloanDialog, type WithdrawCrowdloanDialogProps } from './WithdrawCrowdloanDialog'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 export default {
   title: 'Recipes/WithdrawCrowdloanDialog',

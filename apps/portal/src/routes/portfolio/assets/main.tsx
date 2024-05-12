@@ -4,8 +4,8 @@ import Asset, { AssetsList, AssetsListLocked } from '../../../components/recipes
 import AnimatedFiatNumber from '../../../components/widgets/AnimatedFiatNumber'
 import { ClassNames } from '@emotion/react'
 import styled from '@emotion/styled'
-import { ChevronLeft } from '@talismn/web-icons'
 import { Button, InfoCard, SearchBar } from '@talismn/ui'
+import { ChevronLeft } from '@talismn/web-icons'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 

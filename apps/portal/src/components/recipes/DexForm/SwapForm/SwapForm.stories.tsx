@@ -1,7 +1,6 @@
-import { type Meta, type Story } from '@storybook/react'
-
-import { Select } from '@talismn/ui'
 import SwapForm, { type SwapFormProps } from './SwapForm'
+import { type Meta, type Story } from '@storybook/react'
+import { Select } from '@talismn/ui'
 
 export default {
   title: 'Recipes/DexForm/SwapForm',

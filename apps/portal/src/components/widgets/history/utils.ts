@@ -1,7 +1,7 @@
+import type { ExtrinsicsQuery } from '../../../../generated/gql/extrinsicHistory/gql/graphql'
 import { type Account } from '../../../domains/accounts'
 import { encodeAnyAddress } from '@talismn/util'
 import BigNumber from 'bignumber.js'
-import type { ExtrinsicsQuery } from '../../../../generated/gql/extrinsicHistory/gql/graphql'
 
 export type ExtrinsicNode = ExtrinsicsQuery['extrinsics']['edges'][number]['node']
 

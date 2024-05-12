@@ -1,10 +1,10 @@
-import PortfolioAllocationGraphComponent from '../recipes/PortfolioAllocationGraph'
 import { selectedBalancesFiatSumState, selectedBalancesState, selectedCurrencyState } from '../../domains/balances'
+import PortfolioAllocationGraphComponent from '../recipes/PortfolioAllocationGraph'
+import AnimatedFiatNumber from './AnimatedFiatNumber'
 import { HiddenDetails, Text } from '@talismn/ui'
 import { groupBy } from 'lodash'
 import { Suspense, useCallback, useMemo, useState } from 'react'
 import { selector, useRecoilValue } from 'recoil'
-import AnimatedFiatNumber from './AnimatedFiatNumber'
 
 const assetDataState = selector({
   key: 'PortfolioAllocationGraph/AssetData',

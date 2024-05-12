@@ -1,9 +1,11 @@
-import { SlpxAddStakeForm } from '../../../recipes/AddStakeDialog'
-import { useAccountSelector } from '../../AccountSelector'
 import { evmSignableAccountsState } from '../../../../domains/accounts'
 import { ChainProvider } from '../../../../domains/chains'
 import { slpxPairsState, useMintForm, type SlpxPair } from '../../../../domains/staking/slpx'
-import { Zap } from '@talismn/web-icons'
+import { Maybe } from '../../../../util/monads'
+import { SlpxAddStakeForm } from '../../../recipes/AddStakeDialog'
+import { useAccountSelector } from '../../AccountSelector'
+import Apr from './Apr'
+import UnlockDuration from './UnlockDuration'
 import {
   CircularProgressIndicator,
   InfoCard,
@@ -12,12 +14,10 @@ import {
   Surface,
   Text,
 } from '@talismn/ui'
-import { Maybe } from '../../../../util/monads'
+import { Zap } from '@talismn/web-icons'
 import { Suspense, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
-import Apr from './Apr'
-import UnlockDuration from './UnlockDuration'
 
 type AddStakeSideSheetProps = {
   slpxPair: SlpxPair

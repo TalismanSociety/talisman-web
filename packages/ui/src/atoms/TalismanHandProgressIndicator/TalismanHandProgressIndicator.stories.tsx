@@ -1,6 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
-
 import TalismanHandProgressIndicator from './TalismanHandProgressIndicator'
+import type { Meta, StoryObj } from '@storybook/react'
 
 export default {
   component: TalismanHandProgressIndicator,

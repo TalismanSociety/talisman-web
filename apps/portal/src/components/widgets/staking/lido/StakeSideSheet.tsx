@@ -1,8 +1,8 @@
 import { lidoSuitesState } from '../../../../domains/staking/lido/recoils'
+import LidoWidgetSideSheet from './LidoWidgetSideSheet'
 import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
-import LidoWidgetSideSheet from './LidoWidgetSideSheet'
 
 const StakeSideSheet = () => {
   const lidoSuites = useRecoilValue(lidoSuitesState)

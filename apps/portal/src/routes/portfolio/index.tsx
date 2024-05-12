@@ -1,9 +1,9 @@
 import AccountConnectionGuard from '../../components/widgets/AccountConnectionGuard'
-import type { RouteObject } from 'react-router-dom'
 import assetRoutes from './assets'
 import Collectibles from './collectibles'
 import Layout from './layout'
 import Overview from './overview'
+import type { RouteObject } from 'react-router-dom'
 
 const routes = {
   element: (

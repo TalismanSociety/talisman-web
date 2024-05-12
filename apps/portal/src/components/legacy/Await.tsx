@@ -1,5 +1,5 @@
-import styled from '@emotion/styled'
 import Loader from '../../assets/icons/loader.svg?react'
+import styled from '@emotion/styled'
 
 export const StyledLoader = styled(({ className }: { className?: string }) => (
   <div className={`await ${className ?? ''}`}>

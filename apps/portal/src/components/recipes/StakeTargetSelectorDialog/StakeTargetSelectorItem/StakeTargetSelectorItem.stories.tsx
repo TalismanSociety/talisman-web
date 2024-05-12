@@ -1,6 +1,5 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-
 import StakeTargetSelectorItem, { type StakeTargetSelectorItemProps } from './StakeTargetSelectorItem'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 export default {
   title: 'Recipes/StakeTargetSelectorDialog/Item',

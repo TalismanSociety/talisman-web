@@ -1,7 +1,6 @@
+import FloatingActionButton, { type FloatingActionButtonProps } from './FloatingActionButton'
 import { type ComponentMeta, type Story } from '@storybook/react'
 import { Union } from '@talismn/web-icons'
-
-import FloatingActionButton, { type FloatingActionButtonProps } from './FloatingActionButton'
 
 export default {
   title: 'Atoms/FloatingActionButton',

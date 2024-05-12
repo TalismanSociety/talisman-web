@@ -1,6 +1,5 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-
 import { type SlpxAddStakeDialogProps, SlpxAddStakeDialog } from './AddStakeDialog'
+import { type ComponentMeta, type Story } from '@storybook/react'
 import { Select } from '@talismn/ui'
 
 export default {

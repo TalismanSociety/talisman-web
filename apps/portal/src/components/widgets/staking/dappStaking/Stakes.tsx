@@ -1,16 +1,16 @@
-import DappStakingLockedAmountDialog from '../../../recipes/DappStakingLockedAmountDialog'
-import StakePosition from '../../../recipes/StakePosition'
-import ErrorBoundary from '../../ErrorBoundary'
 import { selectedSubstrateAccountsState, type Account } from '../../../../domains/accounts'
 import { ChainProvider, dappStakingEnabledChainsState, useChainState } from '../../../../domains/chains'
 import { useExtrinsic } from '../../../../domains/common'
 import { useClaimAllRewardsExtrinsic, useRegisteredDappsState, useStake } from '../../../../domains/staking/dappStaking'
-import { useState, useTransition } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import DappStakingLockedAmountDialog from '../../../recipes/DappStakingLockedAmountDialog'
+import StakePosition from '../../../recipes/StakePosition'
+import ErrorBoundary from '../../ErrorBoundary'
 import AddStakeDialog from './AddStakeDialog'
 import UnlockDuration from './UnlockDuration'
 import UnstakeDialog from './UnstakeDialog'
+import { useState, useTransition } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 const Stake = ({ account }: { account: Account }) => {
   // Pre-load potentially heavy query

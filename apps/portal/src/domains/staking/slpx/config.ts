@@ -1,5 +1,5 @@
-import { moonbeam } from 'wagmi/chains'
 import type { SlpxPair } from './types'
+import { moonbeam } from 'wagmi/chains'
 
 export const glmrSlpxPair = {
   chain: moonbeam,

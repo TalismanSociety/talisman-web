@@ -1,6 +1,6 @@
 import { ClassNames } from '@emotion/react'
-import { Calculate, Earn } from '@talismn/web-icons'
 import { AlertDialog, Hr, ListItem, Text, TextInput, TonalIcon } from '@talismn/ui'
+import { Calculate, Earn } from '@talismn/web-icons'
 import type { ReactNode } from 'react'
 
 export type StakeCalculatorDialogProps = {

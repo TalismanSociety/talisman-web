@@ -1,5 +1,5 @@
-import type { CSSProperties } from 'react'
 import illustrationSrc from '../../../assets/images/talisman-hand-progress-indicator.gif'
+import type { CSSProperties } from 'react'
 
 export type TalismanHandProgressIndicatorProps = {
   className?: string

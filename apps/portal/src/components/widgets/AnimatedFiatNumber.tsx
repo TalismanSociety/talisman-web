@@ -1,8 +1,8 @@
+import { selectedCurrencyState } from '../../domains/balances'
+import RedactableBalance from './RedactableBalance'
 import { AnimatedNumber } from '@talismn/ui'
 import { useMemo } from 'react'
-import RedactableBalance from './RedactableBalance'
 import { useRecoilValue } from 'recoil'
-import { selectedCurrencyState } from '../../domains/balances'
 
 export type AnimatedFiatNumberProps = {
   animate?: boolean

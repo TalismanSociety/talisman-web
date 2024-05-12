@@ -1,8 +1,8 @@
+import { getErasToCheck } from './utils'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { encodeAddress } from '@polkadot/util-crypto'
 import { Observable } from 'rxjs'
 import { expose } from 'threads/worker'
-import { getErasToCheck } from './utils'
 
 export type WorkerFunction = typeof getExposure
 

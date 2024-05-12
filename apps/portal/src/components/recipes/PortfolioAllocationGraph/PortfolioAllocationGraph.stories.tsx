@@ -1,6 +1,5 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-
 import PortfolioAllocationGraph, { type PortfolioAllocationGraphProps } from './PortfolioAllocationGraph'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 export default {
   title: 'Recipes/PortfolioAllocationGraph',

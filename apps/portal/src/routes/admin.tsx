@@ -1,11 +1,3 @@
-import type { ApiPromise } from '@polkadot/api'
-import type { Option, StorageKey } from '@polkadot/types'
-import type { AccountId32, Balance } from '@polkadot/types/interfaces'
-import type { PalletNominationPoolsClaimPermission, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
-import { Button, Surface, Text, TextInput, toast } from '@talismn/ui'
-import { chunk } from 'lodash'
-import { Suspense, useCallback, useMemo, useState } from 'react'
-import { useRecoilValue } from 'recoil'
 import { TalismanHandLoader } from '../components/legacy/TalismanHandLoader'
 import { useAccountSelector } from '../components/widgets/AccountSelector'
 import { writeableSubstrateAccountsState } from '../domains/accounts'
@@ -18,6 +10,14 @@ import {
 } from '../domains/chains'
 import { useExtrinsic, useSubstrateApiState, useTokenAmountState } from '../domains/common'
 import { AnalyticsContext } from '../domains/common/analytics'
+import type { ApiPromise } from '@polkadot/api'
+import type { Option, StorageKey } from '@polkadot/types'
+import type { AccountId32, Balance } from '@polkadot/types/interfaces'
+import type { PalletNominationPoolsClaimPermission, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
+import { Button, Surface, Text, TextInput, toast } from '@talismn/ui'
+import { chunk } from 'lodash'
+import { Suspense, useCallback, useMemo, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
 const _NominationPoolsRewardsClaim = () => {
   const chain = useRecoilValue(useChainState())

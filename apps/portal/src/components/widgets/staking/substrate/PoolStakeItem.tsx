@@ -1,11 +1,8 @@
-import StakePosition from '../../../recipes/StakePosition'
 import { type Account } from '../../../../domains/accounts'
 import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '../../../../domains/chains'
 import { useEraEtaFormatter, useExtrinsic, useSubmittableResultLoadableState } from '../../../../domains/common'
 import { type usePoolStakes } from '../../../../domains/staking/substrate/nominationPools'
-import { CircularProgressIndicator } from '@talismn/ui'
-import { useCallback, useState, useTransition } from 'react'
-import { useRecoilValue, waitForAll } from 'recoil'
+import StakePosition from '../../../recipes/StakePosition'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import RedactableBalance from '../../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
@@ -13,6 +10,9 @@ import ClaimStakeDialog from './ClaimStakeDialog'
 import NominationPoolsStatisticsSideSheet from './NominationPoolsStatisticsSideSheet'
 import PoolClaimPermissionDialog from './PoolClaimPermissionDialog'
 import UnstakeDialog from './UnstakeDialog'
+import { CircularProgressIndicator } from '@talismn/ui'
+import { useCallback, useState, useTransition } from 'react'
+import { useRecoilValue, waitForAll } from 'recoil'
 
 const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account[]>>[number] }) => {
   const [chain, decimal, nativeTokenPrice] = useRecoilValue(

@@ -1,6 +1,6 @@
+import ErrorMessage, { type ErrorMessageProps } from './ErrorMessage'
 import { type ComponentMeta, type Story } from '@storybook/react'
 import { Button } from '@talismn/ui'
-import ErrorMessage, { type ErrorMessageProps } from './ErrorMessage'
 
 export default {
   title: 'Recipes/ErrorMessage',

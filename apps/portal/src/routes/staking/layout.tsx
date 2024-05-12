@@ -2,8 +2,8 @@ import AccountConnectionGuard from '../../components/widgets/AccountConnectionGu
 import AnimatedFiatNumber from '../../components/widgets/AnimatedFiatNumber'
 import { useTotalStaked } from '../../domains/staking'
 import { HeaderWidgetPortal, TitlePortal } from '../layout'
-import { Layers, Zap } from '@talismn/web-icons'
 import { CircularProgressIndicator, SegmentedButton, Surface, Text } from '@talismn/ui'
+import { Layers, Zap } from '@talismn/web-icons'
 import { Suspense, useMemo } from 'react'
 import { Link, Outlet, useMatch } from 'react-router-dom'
 

@@ -1,7 +1,6 @@
 // TODO: remove legacy modal completely
-
-import { AlertDialog } from '@talismn/ui'
 import useKeyDown from '../../util/useKeyDown'
+import { AlertDialog } from '@talismn/ui'
 import { createContext, useCallback, useContext, useMemo, useState, type PropsWithChildren } from 'react'
 
 type OpenModalOptions = {

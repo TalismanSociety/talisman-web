@@ -1,12 +1,12 @@
-import StakePosition from '../../../recipes/StakePosition'
-import AnimatedFiatNumber from '../../AnimatedFiatNumber'
-import RedactableBalance from '../../RedactableBalance'
 import { selectedEvmAccountsState } from '../../../../domains/accounts'
 import { useStakes, type LidoSuite } from '../../../../domains/staking/lido'
 import { lidoSuitesState } from '../../../../domains/staking/lido/recoils'
+import StakePosition from '../../../recipes/StakePosition'
+import AnimatedFiatNumber from '../../AnimatedFiatNumber'
+import RedactableBalance from '../../RedactableBalance'
+import LidoWidgetSideSheet from './LidoWidgetSideSheet'
 import { useState } from 'react'
 import { useRecoilValue } from 'recoil'
-import LidoWidgetSideSheet from './LidoWidgetSideSheet'
 
 const IncreaseStakeSideSheet = (props: { onRequestDismiss: () => unknown; lidoSuite: LidoSuite }) => (
   <LidoWidgetSideSheet

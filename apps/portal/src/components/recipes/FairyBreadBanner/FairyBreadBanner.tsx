@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
-import { X } from '@talismn/web-icons'
 import { Button, Text } from '@talismn/ui'
+import { X } from '@talismn/web-icons'
 import { AnimatePresence, motion } from 'framer-motion'
 
 export type FairyBreadBannerProps = {

@@ -1,9 +1,8 @@
-import { Player, PlayerEvent } from '@lottiefiles/react-lottie-player'
-import { useEffect, useMemo, useState } from 'react'
-
 import fulfilled from './fulfilled.json'
 import pending from './pending.json'
 import rejected from './rejected.json'
+import { Player, PlayerEvent } from '@lottiefiles/react-lottie-player'
+import { useEffect, useMemo, useState } from 'react'
 
 export type EyeOfSauronProgressIndicatorProps = {
   state?: 'pending' | 'fulfilled' | 'rejected'

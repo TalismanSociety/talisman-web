@@ -3,8 +3,8 @@ import { AssetBreakdownList } from '../../../components/recipes/AssetBreakdown/A
 import AnimatedFiatNumber from '../../../components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '../../../components/widgets/RedactableBalance'
 import { keyframes } from '@emotion/react'
-import { ChevronLeft } from '@talismn/web-icons'
 import { Button, HiddenDetails, InfoCard, Text, Tooltip } from '@talismn/ui'
+import { ChevronLeft } from '@talismn/web-icons'
 import { startCase } from 'lodash'
 import { useNavigate, useParams } from 'react-router-dom'
 

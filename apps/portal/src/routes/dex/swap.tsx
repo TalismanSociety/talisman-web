@@ -1,7 +1,7 @@
 import SectionHeader from '../../components/molecules/SectionHeader'
 import SwapForm from '../../components/widgets/dex/SwapForm'
-import { Chip, Details, OrderedDetailsList, Text } from '@talismn/ui'
 import { FaqLayout } from './layout'
+import { Chip, Details, OrderedDetailsList, Text } from '@talismn/ui'
 
 const Swap = () => {
   return (

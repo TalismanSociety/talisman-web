@@ -1,6 +1,6 @@
 import { Stat } from '../..'
-import styled from '@emotion/styled'
 import { useCrowdloanById } from '../../../../libs/talisman'
+import styled from '@emotion/styled'
 
 const Rewards = styled(({ id, className }: { id?: string; className?: string }) => {
   const { crowdloan } = useCrowdloanById(id)

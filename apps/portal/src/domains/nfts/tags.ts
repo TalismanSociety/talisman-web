@@ -1,3 +1,4 @@
+import { nftsState, type Nft, type NftTag } from '.'
 import { selectedAccountsState } from '../accounts'
 import { storageEffect } from '../common/effects'
 import { array, jsonParser, string } from '@recoiljs/refine'
@@ -12,7 +13,6 @@ import {
   waitForNone,
   type SetterOrUpdater,
 } from 'recoil'
-import { nftsState, type Nft, type NftTag } from '.'
 
 export const favoriteNftIdsState = atom<readonly string[]>({
   key: 'favorite-nft-ids',

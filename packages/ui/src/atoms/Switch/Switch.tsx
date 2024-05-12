@@ -1,6 +1,6 @@
+import { Surface, useSurfaceColor } from '..'
 import { useTheme } from '@emotion/react'
 import type { DetailedHTMLProps, InputHTMLAttributes } from 'react'
-import { Surface, useSurfaceColor } from '..'
 
 export type SwitchProps = DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 

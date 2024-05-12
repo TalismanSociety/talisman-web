@@ -15,9 +15,8 @@ yarn add @emotion/react @talismn/web-icons framer-motion
 ## Configuring the theme
 
 ```tsx
-import '@talismn/ui/assets/css/talismn.css'
-
 import { ThemeProvider, theme } from '@talismn/ui'
+import '@talismn/ui/assets/css/talismn.css'
 
 export const App = () => {
   return <ThemeProvider theme={theme.greenDark}>{/* Your app */}</ThemeProvider>

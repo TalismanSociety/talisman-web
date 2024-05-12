@@ -1,7 +1,7 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-import { TalismanHand } from '@talismn/web-icons'
 import { TonalIcon } from '.'
 import Icon, { type IconProps } from './Icon'
+import { type ComponentMeta, type Story } from '@storybook/react'
+import { TalismanHand } from '@talismn/web-icons'
 
 export default {
   title: 'Atoms/Icon',

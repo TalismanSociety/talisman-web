@@ -1,8 +1,8 @@
+import { typeRegistryFamily } from './typeRegistry'
 import { chainConnectorsAtom } from '@talismn/balances-react'
 import { OnChainId } from '@talismn/on-chain-id'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
-import { typeRegistryFamily } from './typeRegistry'
 
 const chainIdPolkadot = 'polkadot'
 const chainIdAlephZero = 'aleph-zero'

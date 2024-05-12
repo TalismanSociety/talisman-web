@@ -1,8 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react'
-
-import Badge, { BadgedBox } from './Badge'
-import { Eye, Mail } from '@talismn/web-icons'
 import { FloatingActionButton } from '..'
+import Badge, { BadgedBox } from './Badge'
+import type { Meta, StoryObj } from '@storybook/react'
+import { Eye, Mail } from '@talismn/web-icons'
 
 export default {
   component: Badge,

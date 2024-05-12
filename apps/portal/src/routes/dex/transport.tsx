@@ -1,10 +1,10 @@
-import { Details, OrderedDetailsList, Text } from '@talismn/ui'
-import React, { Suspense } from 'react'
 import DexForm from '../../components/recipes/DexForm/DexForm'
 import { FaqLayout } from './layout'
 import illustrationAvif from './transport-illustration.avif'
 import illustrationPng from './transport-illustration.png'
 import illustrationWebp from './transport-illustration.webp'
+import { Details, OrderedDetailsList, Text } from '@talismn/ui'
+import React, { Suspense } from 'react'
 
 const TransportForm = React.lazy(async () => await import('../../components/widgets/dex/TransportForm'))
 

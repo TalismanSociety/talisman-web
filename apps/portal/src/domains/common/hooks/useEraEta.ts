@@ -1,11 +1,11 @@
-import { useDeriveState } from '@talismn/react-polkadot-api'
+import { useSubstrateApiState } from '..'
 import { Maybe } from '../../../util/monads'
+import { expectedBlockTime, expectedSessionTime } from '../utils/substratePolyfills'
+import { useDeriveState } from '@talismn/react-polkadot-api'
 import BN from 'bn.js'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { useCallback } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
-import { useSubstrateApiState } from '..'
-import { expectedBlockTime, expectedSessionTime } from '../utils/substratePolyfills'
 
 const erasOrSessionsRemaining = (current: BN, length: BN, progress: BN) =>
   current.subn(1).mul(length).add(length).sub(progress)

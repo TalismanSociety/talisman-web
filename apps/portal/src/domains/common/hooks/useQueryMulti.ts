@@ -1,3 +1,5 @@
+import { useSubstrateApiState } from '..'
+import useDeferred from '../../../util/useDeferred'
 import { type ApiPromise } from '@polkadot/api'
 import type {
   GenericStorageEntryFunction,
@@ -5,12 +7,9 @@ import type {
   QueryableStorageEntry,
   StorageEntryPromiseOverloads,
 } from '@polkadot/api/types'
-import useDeferred from '../../../util/useDeferred'
 import { useEffect, useRef, useState } from 'react'
 import { type Loadable, RecoilLoadable, useRecoilValue } from 'recoil'
 import { type Observable } from 'rxjs'
-
-import { useSubstrateApiState } from '..'
 
 type QueryMap = PickKnownKeys<{
   [P in keyof ApiPromise['query']]: `${P}.${keyof PickKnownKeys<ApiPromise['query'][P]>}`

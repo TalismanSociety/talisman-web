@@ -1,6 +1,8 @@
-import AccountIcon from '../../molecules/AccountIcon'
 import type { Account } from '../../../domains/accounts'
-import { Clock, MoreHorizontal, ZapOff, ZapPlus } from '@talismn/web-icons'
+import { shortenAddress } from '../../../util/format'
+import AccountIcon from '../../molecules/AccountIcon'
+import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
+import StakePositionSkeleton from './StakePosition.skeleton'
 import {
   Chip,
   CircularProgressIndicator,
@@ -15,10 +17,8 @@ import {
   type ButtonProps,
   type ChipProps,
 } from '@talismn/ui'
-import { shortenAddress } from '../../../util/format'
+import { Clock, MoreHorizontal, ZapOff, ZapPlus } from '@talismn/web-icons'
 import { createContext, type PropsWithChildren, type ReactNode } from 'react'
-import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
-import StakePositionSkeleton from './StakePosition.skeleton'
 
 export type StakePositionProps = {
   readonly?: boolean

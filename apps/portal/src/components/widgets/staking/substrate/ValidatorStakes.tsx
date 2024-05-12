@@ -2,11 +2,11 @@ import { selectedSubstrateAccountsState } from '../../../../domains/accounts/rec
 import { useSubstrateApiState } from '../../../../domains/common'
 import { useInjectedAccountFastUnstakeEligibility } from '../../../../domains/fastUnstake'
 import { useStakersRewardState } from '../../../../domains/staking/substrate/validator/recoils'
+import ErrorBoundary from '../../ErrorBoundary'
+import ValidatorStakeItem from './ValidatorStakeItem'
 import { useDeriveState, useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import { useMemo } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
-import ValidatorStakeItem from './ValidatorStakeItem'
-import ErrorBoundary from '../../ErrorBoundary'
 
 const useStakes = () => {
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
