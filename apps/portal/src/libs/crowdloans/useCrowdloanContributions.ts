@@ -1,5 +1,5 @@
-import { selectedSubstrateAccountsState } from '@domains/accounts'
-import { useChainmetaValue } from '@libs/talisman'
+import { selectedSubstrateAccountsState } from '../../domains/accounts'
+import { useChainmetaValue } from '../talisman'
 import { encodeAnyAddress } from '@talismn/util'
 import BigNumber from 'bignumber.js'
 import { request } from 'graphql-request'

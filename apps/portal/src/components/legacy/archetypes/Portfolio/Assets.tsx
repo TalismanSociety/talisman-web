@@ -1,4 +1,4 @@
-import { balancesState, selectedBalancesState, selectedCurrencyState } from '@domains/balances'
+import { balancesState, selectedBalancesState, selectedCurrencyState } from '../../../../domains/balances'
 import { BalanceFormatter } from '@talismn/balances'
 import { useChains, useEvmNetworks, useTokenRates, useTokens } from '@talismn/balances-react'
 import { formatDecimals } from '@talismn/util'

@@ -1,4 +1,4 @@
-import { chainState } from '@domains/chains'
+import { chainState } from '../chains'
 import * as Sentry from '@sentry/react'
 import { type Nft as BaseNft } from '@talismn/nft'
 import { toast } from '@talismn/ui'

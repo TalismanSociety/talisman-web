@@ -1,5 +1,5 @@
-import ExportHistoryAlertDialog from '@components/recipes/ExportHistoryAlertDialog'
-import type { Account } from '@domains/accounts'
+import ExportHistoryAlertDialog from '../../recipes/ExportHistoryAlertDialog'
+import type { Account } from '../../../domains/accounts'
 import * as Sentry from '@sentry/react'
 import { Button, FloatingActionButtonPortal, toast } from '@talismn/ui'
 import { encodeAnyAddress } from '@talismn/util'

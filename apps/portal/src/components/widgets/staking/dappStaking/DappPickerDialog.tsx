@@ -1,9 +1,9 @@
-import { useNativeTokenAmountState } from '@domains/chains'
-import type { Stake } from '@domains/staking/dappStaking'
-import { useRegisteredDappsState } from '@domains/staking/dappStaking/recoils'
+import { useNativeTokenAmountState } from '../../../../domains/chains'
+import type { Stake } from '../../../../domains/staking/dappStaking'
+import { useRegisteredDappsState } from '../../../../domains/staking/dappStaking/recoils'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
 import { AlertDialog, CircularProgressIndicator, Clickable, Surface, Text } from '@talismn/ui'
-import { shortenAddress } from '@util/format'
+import { shortenAddress } from '../../../../util/format'
 import { useState, useTransition, type ReactNode } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 

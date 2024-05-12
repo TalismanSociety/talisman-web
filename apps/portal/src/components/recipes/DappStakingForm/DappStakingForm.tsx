@@ -15,7 +15,7 @@ import {
   type ButtonProps,
   type SideSheetProps,
 } from '@talismn/ui'
-import { Maybe } from '@util/monads'
+import { Maybe } from '../../../util/monads'
 import { Suspense, type ReactNode } from 'react'
 
 type AmountInputProps =

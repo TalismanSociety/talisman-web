@@ -1,7 +1,7 @@
 import NominationPoolsStakeProviders from './substrate/StakeProviders'
 import LidoStakeProviders from './lido/StakeProviders'
 import SlpxStakeProviders from './slpx/StakeProviders'
-import { StakeProviderList } from '@components/recipes/StakeProvider'
+import { StakeProviderList } from '../../recipes/StakeProvider'
 import DappStakingProviders from './dappStaking/StakeProviders'
 import ErrorBoundary from '../ErrorBoundary'
 

@@ -1,10 +1,10 @@
-import IconClear from '@assets/icons/x-circle.svg?react'
-import { Pill } from '@components/legacy'
 import styled from '@emotion/styled'
-import ChevronDown from '@icons/chevron-down.svg?react'
-import SearchIcon from '@icons/search.svg?react'
-import { useBoolean } from '@util/hooks'
 import { useEffect } from 'react'
+import ChevronDown from '../../assets/icons/chevron-down.svg?react'
+import SearchIcon from '../../assets/icons/search.svg?react'
+import IconClear from '../../assets/icons/x-circle.svg?react'
+import { useBoolean } from '../../util/hooks'
+import { Pill } from './'
 
 // framework
 

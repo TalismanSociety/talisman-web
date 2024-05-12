@@ -1,5 +1,5 @@
 import { useDeriveState } from '@talismn/react-polkadot-api'
-import { Maybe } from '@util/monads'
+import { Maybe } from '../../../util/monads'
 import BN from 'bn.js'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { useCallback } from 'react'

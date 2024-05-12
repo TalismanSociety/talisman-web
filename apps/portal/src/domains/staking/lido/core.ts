@@ -1,5 +1,5 @@
-import type { Account } from '@domains/accounts'
-import { tokenPriceState } from '@domains/chains'
+import type { Account } from '../../accounts'
+import { tokenPriceState } from '../../chains'
 import { Decimal } from '@talismn/math'
 import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'

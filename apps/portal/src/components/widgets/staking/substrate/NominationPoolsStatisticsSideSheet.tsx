@@ -1,9 +1,9 @@
-import AccountIcon from '@components/molecules/AccountIcon'
-import type { StakeStatus } from '@components/recipes/StakeStatusIndicator'
-import RedactableBalance from '@components/widgets/RedactableBalance'
-import type { Account } from '@domains/accounts'
-import { useChainState, useNativeTokenDecimalState } from '@domains/chains'
-import { useEraEtaFormatter, useSubstrateApiState, useTokenAmountFromPlanck } from '@domains/common'
+import AccountIcon from '../../../molecules/AccountIcon'
+import type { StakeStatus } from '../../../recipes/StakeStatusIndicator'
+import RedactableBalance from '../../RedactableBalance'
+import type { Account } from '../../../../domains/accounts'
+import { useChainState, useNativeTokenDecimalState } from '../../../../domains/chains'
+import { useEraEtaFormatter, useSubstrateApiState, useTokenAmountFromPlanck } from '../../../../domains/common'
 import {
   mostRecentPoolPayoutsState,
   poolPayoutsState,
@@ -11,7 +11,7 @@ import {
   useApr,
   usePoolStakes,
   type DerivedPool,
-} from '@domains/staking/substrate/nominationPools'
+} from '../../../../domains/staking/substrate/nominationPools'
 import { useTheme } from '@emotion/react'
 import { encodeAddress } from '@polkadot/util-crypto'
 import { BarChart, Clock, Earn, ExternalLink, Percent, Zap } from '@talismn/web-icons'
@@ -24,7 +24,7 @@ import {
   TonalIcon,
   useSurfaceColorAtElevation,
 } from '@talismn/ui'
-import { shortenAddress } from '@util/format'
+import { shortenAddress } from '../../../../util/format'
 import { eachDayOfInterval, isSameDay, subDays } from 'date-fns'
 import { useMemo, type ReactNode } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'

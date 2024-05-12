@@ -1,4 +1,4 @@
-import { lidoSuitesState } from '@domains/staking/lido/recoils'
+import { lidoSuitesState } from '../../../../domains/staking/lido/recoils'
 import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'

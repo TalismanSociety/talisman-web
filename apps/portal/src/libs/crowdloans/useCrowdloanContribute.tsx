@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { useConnectedSubstrateWallet } from '@domains/extension'
-import { parachainDetails, supportedRelayChainsState } from '@libs/talisman/util/_config'
+import { useConnectedSubstrateWallet } from '../../domains/extension'
+import { parachainDetails, supportedRelayChainsState } from '../talisman/util/_config'
 import { ApiPromise, WsProvider, type SubmittableResult } from '@polkadot/api'
 import { type SubmittableExtrinsic } from '@polkadot/api/submittable/types'
 import { isEthereumChecksum } from '@polkadot/util-crypto'
 import { encodeAnyAddress, planckToTokens, tokensToPlanck } from '@talismn/util'
-import customRpcs from '@util/customRpcs'
-import { Maybe } from '@util/monads'
+import customRpcs from '../../util/customRpcs'
+import { Maybe } from '../../util/monads'
 import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilValue } from 'recoil'

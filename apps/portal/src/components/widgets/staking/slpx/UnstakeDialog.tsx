@@ -1,7 +1,7 @@
-import { SlpxUnstakeDialog } from '@components/recipes/UnstakeDialog'
-import { type Account } from '@domains/accounts'
-import { useRedeemForm, type SlpxPair } from '@domains/staking/slpx'
-import { Maybe } from '@util/monads'
+import { SlpxUnstakeDialog } from '../../../recipes/UnstakeDialog'
+import { type Account } from '../../../../domains/accounts'
+import { useRedeemForm, type SlpxPair } from '../../../../domains/staking/slpx'
+import { Maybe } from '../../../../util/monads'
 import { Suspense, useEffect } from 'react'
 import UnlockDuration from './UnlockDuration'
 

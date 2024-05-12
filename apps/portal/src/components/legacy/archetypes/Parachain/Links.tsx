@@ -1,6 +1,6 @@
-import { Pill } from '@components/legacy'
+import { Pill } from '../..'
 import styled from '@emotion/styled'
-import { useParachainDetailsById } from '@libs/talisman'
+import { useParachainDetailsById } from '../../../../libs/talisman'
 
 export type LinksProps = {
   id: number | string

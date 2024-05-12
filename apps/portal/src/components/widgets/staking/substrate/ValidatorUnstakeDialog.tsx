@@ -1,7 +1,7 @@
-import BaseUnstakeDialog from '@components/recipes/UnstakeDialog'
-import { useExtrinsicInBlockOrErrorEffect } from '@domains/common'
-import { useLocalizedUnlockDuration } from '@domains/staking/substrate/nominationPools/hooks/useUnlockDuration'
-import { useValidatorUnstakeForm } from '@domains/staking/substrate/validator/hooks'
+import BaseUnstakeDialog from '../../../recipes/UnstakeDialog'
+import { useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
+import { useLocalizedUnlockDuration } from '../../../../domains/staking/substrate/nominationPools/hooks/useUnlockDuration'
+import { useValidatorUnstakeForm } from '../../../../domains/staking/substrate/validator/hooks'
 import { useCallback } from 'react'
 
 const ValidatorUnstakeDialog = (props: { accountAddress: string; open: boolean; onRequestDismiss: () => unknown }) => {

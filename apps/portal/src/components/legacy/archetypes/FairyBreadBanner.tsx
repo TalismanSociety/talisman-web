@@ -1,4 +1,4 @@
-import BaseFairyBreadBanner from '@components/recipes/FairyBreadBanner'
+import BaseFairyBreadBanner from '../../recipes/FairyBreadBanner'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
 

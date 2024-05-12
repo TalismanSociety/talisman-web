@@ -1,4 +1,4 @@
-import { chainState } from '@domains/chains'
+import { chainState } from '../../../domains/chains'
 import { selector, waitForAll } from 'recoil'
 
 export const statusOptions = {

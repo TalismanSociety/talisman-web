@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import crowdloanDataState, { type CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
+import crowdloanDataState, { type CrowdloanDetail } from '../@talisman-crowdloans/provider'
 import type { AccountId } from '@polkadot/types/interfaces'
 import { stringToU8a, u8aConcat, u8aEq } from '@polkadot/util'
 import { planckToTokens } from '@talismn/util'
@@ -8,7 +8,7 @@ import { find, get } from 'lodash'
 import { useContext as _useContext, createContext, useEffect, useMemo, useState, type PropsWithChildren } from 'react'
 import { selector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
-import { substrateApiState } from '@domains/common'
+import { substrateApiState } from '../../domains/common'
 import { supportedRelayChainsState } from './util/_config'
 
 export type Crowdloan = {

@@ -1,9 +1,9 @@
-import AccountIcon from '@components/molecules/AccountIcon'
-import type { Account } from '@domains/accounts'
+import AccountIcon from '../../molecules/AccountIcon'
+import type { Account } from '../../../domains/accounts'
 import { useTheme } from '@emotion/react'
 import { ChevronDown, Users } from '@talismn/web-icons'
 import { IconButton, Surface, Text, useSurfaceColor } from '@talismn/ui'
-import { shortenAddress } from '@util/format'
+import { shortenAddress } from '../../../util/format'
 import { type ReactNode } from 'react'
 
 export type AccountValueInfoProps = {

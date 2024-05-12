@@ -1,6 +1,6 @@
-import { expectedBlockTime, expectedSessionTime, useSubstrateApiState } from '@domains/common'
+import { expectedBlockTime, expectedSessionTime, useSubstrateApiState } from '../../../../common'
 import { useDeriveState } from '@talismn/react-polkadot-api'
-import { Maybe } from '@util/monads'
+import { Maybe } from '../../../../../util/monads'
 import { formatDistance } from 'date-fns'
 import { useRecoilValue, waitForAll } from 'recoil'
 

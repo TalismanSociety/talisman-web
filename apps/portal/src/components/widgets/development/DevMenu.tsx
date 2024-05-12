@@ -1,8 +1,8 @@
 import 'winbox/dist/css/themes/modern.min.css'
 import 'winbox/dist/css/winbox.min.css'
 
-import { enableTestnetsState } from '@domains/chains'
-import { toastExtrinsic, useWagmiWriteContract } from '@domains/common'
+import { enableTestnetsState } from '../../../domains/chains'
+import { toastExtrinsic, useWagmiWriteContract } from '../../../domains/common'
 import RpcError from '@polkadot/rpc-provider/coder/error'
 import { useSurfaceColor } from '@talismn/ui'
 import { usePostHog } from 'posthog-js/react'

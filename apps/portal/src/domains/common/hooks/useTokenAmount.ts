@@ -1,5 +1,5 @@
-import { selectedCurrencyState } from '@domains/balances'
-import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains/recoils'
+import { selectedCurrencyState } from '../../balances'
+import { useNativeTokenDecimalState, useNativeTokenPriceState } from '../../chains/recoils'
 import { type BN } from '@polkadot/util'
 import { type Decimal } from '@talismn/math'
 import { useMemo, useState } from 'react'

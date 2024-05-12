@@ -1,5 +1,5 @@
-import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
-import { selectedBalancesFiatSumState } from '@domains/balances'
+import AnimatedFiatNumber from '../../../widgets/AnimatedFiatNumber'
+import { selectedBalancesFiatSumState } from '../../../../domains/balances'
 import { CircularProgressIndicator } from '@talismn/ui'
 import { Suspense } from 'react'
 import { useRecoilValue } from 'recoil'

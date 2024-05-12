@@ -1,6 +1,6 @@
-import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
-import ErrorBoundary from '@components/widgets/ErrorBoundary'
-import { selectedAccountsState, type Account } from '@domains/accounts'
+import AccountIcon from '../../components/molecules/AccountIcon/AccountIcon'
+import ErrorBoundary from '../../components/widgets/ErrorBoundary'
+import { selectedAccountsState, type Account } from '../../domains/accounts'
 import {
   nftCollectionItemsState,
   nftCollectionsState,
@@ -12,7 +12,7 @@ import {
   type Nft,
   type NftCollection,
   type NftTag,
-} from '@domains/nfts'
+} from '../../domains/nfts'
 import { useTheme } from '@emotion/react'
 import {
   Button,
@@ -29,8 +29,8 @@ import {
 } from '@talismn/ui'
 import { usePagination } from '@talismn/utils/react'
 import { ChevronLeft, ChevronRight, ExternalLink, Eye, EyeOff, Heart } from '@talismn/web-icons'
-import { shortenAddress } from '@util/format'
-import { Maybe } from '@util/monads'
+import { shortenAddress } from '../../util/format'
+import { Maybe } from '../../util/monads'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Suspense,

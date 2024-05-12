@@ -1,5 +1,5 @@
-import ErrorBoundary from '@components/widgets/ErrorBoundary'
-import { TitlePortal } from '@routes/layout'
+import ErrorBoundary from '../../components/widgets/ErrorBoundary'
+import { TitlePortal } from '../layout'
 import type { ReactNode } from 'react'
 import { Outlet } from 'react-router-dom'
 

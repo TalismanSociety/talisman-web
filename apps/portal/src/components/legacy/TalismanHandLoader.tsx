@@ -1,4 +1,4 @@
-import TalismanHandLoading from '@assets/spin_red.gif'
+import TalismanHandLoading from '../../assets/spin_red.gif'
 import { type ImgHTMLAttributes } from 'react'
 
 export const TalismanHandLoader = (props: ImgHTMLAttributes<HTMLImageElement>) => {

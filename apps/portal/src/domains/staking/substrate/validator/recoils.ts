@@ -1,5 +1,5 @@
-import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { useSubstrateApiEndpoint } from '@domains/common'
+import { selectedSubstrateAccountsState } from '../../../accounts/recoils'
+import { useSubstrateApiEndpoint } from '../../../common'
 import { selectorFamily } from 'recoil'
 import { Thread, spawn } from 'threads'
 import type { WorkerFunction } from './worker'

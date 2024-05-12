@@ -1,7 +1,7 @@
-import AccountIcon from '@components/molecules/AccountIcon'
+import AccountIcon from '../../molecules/AccountIcon'
 import { useTheme } from '@emotion/react'
 import { AlertDialog, Button, DateInput, Select, Text, type AlertDialogProps } from '@talismn/ui'
-import { Maybe } from '@util/monads'
+import { Maybe } from '../../../util/monads'
 import { endOfDay, startOfDay } from 'date-fns'
 import { useMemo } from 'react'
 

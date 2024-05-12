@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { device } from '@util/breakpoints'
+import { device } from '../../../../util/breakpoints'
 
 export const TagLoading = styled(({ className }: { className?: string }) => {
   return (

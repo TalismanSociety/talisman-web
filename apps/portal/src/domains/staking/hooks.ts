@@ -1,4 +1,4 @@
-import { selectedBalancesState, selectedCurrencyState } from '@domains/balances'
+import { selectedBalancesState, selectedCurrencyState } from '../balances'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 import { useTotalStaked as useDappStakingTotalStaked } from './dappStaking'

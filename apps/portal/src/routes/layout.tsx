@@ -1,35 +1,4 @@
-import { Total } from '@components/legacy/archetypes/Wallet'
-import Discord from '@assets/icons/discord-header.svg?react'
-import GitHub from '@assets/icons/github-header.svg?react'
-import Medium from '@assets/icons/medium-header.svg?react'
-import Twitter from '@assets/icons/twitter-header.svg?react'
-import { ModalProvider } from '@components/legacy'
-import AccountValueInfo from '@components/recipes/AccountValueInfo'
-import { useShouldShowAccountConnectionGuard } from '@components/widgets/AccountConnectionGuard'
-import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
-import WalletConnectionSideSheet, {
-  walletConnectionSideSheetOpenState,
-} from '@components/widgets/WalletConnectionSideSheet'
-import DappStakingStakeSideSheet from '@components/widgets/staking/dappStaking/StakeSideSheet'
-import LidoStakeSideSheet from '@components/widgets/staking/lido/StakeSideSheet'
-import SlpxStakeSideSheet from '@components/widgets/staking/slpx/StakeSideSheet'
-import NominationPoolsStakeSideSheet from '@components/widgets/staking/substrate/NominationPoolsStakeSideSheet'
-import { lookupAccountAddressState, selectedAccountsState } from '@domains/accounts'
-import { currencyConfig, selectedCurrencyState } from '@domains/balances'
-import { useHasActiveWalletConnection } from '@domains/extension'
 import { useTheme } from '@emotion/react'
-import {
-  Compass,
-  CreditCard,
-  PieChart,
-  FileText,
-  MoreHorizontal,
-  Repeat,
-  Search,
-  Star,
-  TalismanHand,
-  Zap,
-} from '@talismn/web-icons'
 import {
   Button,
   IconButton,
@@ -45,12 +14,43 @@ import {
   TopAppBar,
   createPortal,
 } from '@talismn/ui'
-import { isNilOrWhitespace } from '@util/nil'
+import {
+  Compass,
+  CreditCard,
+  FileText,
+  MoreHorizontal,
+  PieChart,
+  Repeat,
+  Search,
+  Star,
+  TalismanHand,
+  Zap,
+} from '@talismn/web-icons'
 import { LayoutGroup, motion } from 'framer-motion'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import Discord from '../assets/icons/discord-header.svg?react'
+import GitHub from '../assets/icons/github-header.svg?react'
+import Medium from '../assets/icons/medium-header.svg?react'
+import Twitter from '../assets/icons/twitter-header.svg?react'
+import { ModalProvider } from '../components/legacy'
+import { Total } from '../components/legacy/archetypes/Wallet'
+import AccountValueInfo from '../components/recipes/AccountValueInfo'
+import { useShouldShowAccountConnectionGuard } from '../components/widgets/AccountConnectionGuard'
+import AccountsManagementMenu from '../components/widgets/AccountsManagementMenu'
+import WalletConnectionSideSheet, {
+  walletConnectionSideSheetOpenState,
+} from '../components/widgets/WalletConnectionSideSheet'
+import DappStakingStakeSideSheet from '../components/widgets/staking/dappStaking/StakeSideSheet'
+import LidoStakeSideSheet from '../components/widgets/staking/lido/StakeSideSheet'
+import SlpxStakeSideSheet from '../components/widgets/staking/slpx/StakeSideSheet'
+import NominationPoolsStakeSideSheet from '../components/widgets/staking/substrate/NominationPoolsStakeSideSheet'
+import { lookupAccountAddressState, selectedAccountsState } from '../domains/accounts'
+import { currencyConfig, selectedCurrencyState } from '../domains/balances'
+import { useHasActiveWalletConnection } from '../domains/extension'
+import { isNilOrWhitespace } from '../util/nil'
 
 const CurrencySelect = () => {
   const [currency, setCurrency] = useRecoilState(selectedCurrencyState)

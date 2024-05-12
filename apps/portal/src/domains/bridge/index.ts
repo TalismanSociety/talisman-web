@@ -1,5 +1,5 @@
-import { chainState } from '@domains/chains'
-import { substrateApiState } from '@domains/common'
+import { chainState } from '../chains'
+import { substrateApiState } from '../common'
 import { Bridge, type ChainId } from '@polkawallet/bridge'
 import { selector, selectorFamily } from 'recoil'
 import { bridgeConfig } from './config'

@@ -1,7 +1,7 @@
-import { NominationPoolsUnstakeDialog } from '@components/recipes/UnstakeDialog'
-import { useExtrinsicInBlockOrErrorEffect } from '@domains/common'
-import { usePoolUnstakeForm } from '@domains/staking/substrate/nominationPools/hooks'
-import { useLocalizedUnlockDuration } from '@domains/staking/substrate/nominationPools/hooks/useUnlockDuration'
+import { NominationPoolsUnstakeDialog } from '../../../recipes/UnstakeDialog'
+import { useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
+import { usePoolUnstakeForm } from '../../../../domains/staking/substrate/nominationPools/hooks'
+import { useLocalizedUnlockDuration } from '../../../../domains/staking/substrate/nominationPools/hooks/useUnlockDuration'
 import { useCallback } from 'react'
 
 const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) => {

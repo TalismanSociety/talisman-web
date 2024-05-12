@@ -1,4 +1,4 @@
-import Cryptoticon from '@components/recipes/Cryptoticon'
+import Cryptoticon from '../../Cryptoticon'
 import { useTheme } from '@emotion/react'
 import { ArrowDown, Repeat } from '@talismn/web-icons'
 import {

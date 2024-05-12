@@ -1,12 +1,9 @@
-import {
-  ExtrinsicDetailsSideSheet,
-  type ExtrinsicDetailsSideSheetProps,
-} from '@components/recipes/ExtrinsicDetailsSideSheet'
-import TransactionLineItem, { TransactionList } from '@components/recipes/TransactionLineItem'
-import { accountsState, selectedAccountsState, type Account } from '@domains/accounts'
+import { ExtrinsicDetailsSideSheet, type ExtrinsicDetailsSideSheetProps } from '../../recipes/ExtrinsicDetailsSideSheet'
+import TransactionLineItem, { TransactionList } from '../../recipes/TransactionLineItem'
+import { accountsState, selectedAccountsState, type Account } from '../../../domains/accounts'
 import { CircularProgressIndicator, Text } from '@talismn/ui'
 import { encodeAnyAddress } from '@talismn/util'
-import { Maybe } from '@util/monads'
+import { Maybe } from '../../../util/monads'
 import request from 'graphql-request'
 import { isNil } from 'lodash'
 import { useCallback, useMemo, useState } from 'react'

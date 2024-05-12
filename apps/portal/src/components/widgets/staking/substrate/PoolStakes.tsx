@@ -1,5 +1,5 @@
-import { selectedSubstrateAccountsState } from '@domains/accounts'
-import { usePoolStakes } from '@domains/staking/substrate/nominationPools/hooks'
+import { selectedSubstrateAccountsState } from '../../../../domains/accounts'
+import { usePoolStakes } from '../../../../domains/staking/substrate/nominationPools/hooks'
 import { useRecoilValue } from 'recoil'
 import PoolStakeItem from './PoolStakeItem'
 import ErrorBoundary from '../../ErrorBoundary'

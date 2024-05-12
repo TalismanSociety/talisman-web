@@ -1,4 +1,4 @@
-import { type SlpxPair, slpxAprState } from '@domains/staking/slpx'
+import { type SlpxPair, slpxAprState } from '../../../../domains/staking/slpx'
 import { useRecoilValue } from 'recoil'
 
 const Apr = (props: { slpxPair: SlpxPair }) => (

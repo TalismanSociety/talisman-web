@@ -1,4 +1,4 @@
-import AccountConnectionGuard from '@components/widgets/AccountConnectionGuard'
+import AccountConnectionGuard from '../../components/widgets/AccountConnectionGuard'
 import type { RouteObject } from 'react-router-dom'
 import assetRoutes from './assets'
 import Collectibles from './collectibles'
