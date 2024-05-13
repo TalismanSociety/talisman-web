@@ -227,7 +227,7 @@ export const srcAmountAtom = atom(async get => {
   return Decimal.fromUserInputOrUndefined(get(srcAmountInputAtom), asset.decimals, { currency: asset.symbol })
 })
 
-export const quoteAtomEffect = atomEffect((get, set) => {
+const quoteAtomEffect = atomEffect((get, set) => {
   let timeout: any | undefined
 
   void (async () => {
@@ -244,7 +244,14 @@ export const quoteAtomEffect = atomEffect((get, set) => {
   return () => clearTimeout(timeout)
 })
 
+const quoteFocusAtomEffect = atomEffect((get, set) => {
+  void Promise.all([get(srcAssetAtom), get(destAssetAtom), get(srcAmountAtom)])
+  set(focusedInfoSection, 'details')
+})
+
 export const quoteAtom = atomWithRefresh(async get => {
+  get(quoteFocusAtomEffect)
+
   const [srcAsset, destAsset, amount, inputAmount] = await Promise.all([
     get(srcAssetAtom),
     get(destAssetAtom),
@@ -592,6 +599,8 @@ export const srcAssetAvailableAmountAtom = atomWithRefresh(async get => {
   return await get(assetAvailableAmountAtomFamily({ address: account.address, asset: (await get(srcAssetAtom)).asset }))
 })
 
+export const focusedInfoSection = atom<'details' | 'activities' | 'faq'>('details')
+
 export const useReverse = () =>
   useAtomCallback(
     useCallback(async (get, set) => {
@@ -687,5 +696,6 @@ export const useSwap = () =>
       }
 
       set(swapsAtom, ids => [...ids, { id: depositAddress.depositChannelId, date: new Date() }])
+      set(focusedInfoSection, 'activities')
     }, [])
   )

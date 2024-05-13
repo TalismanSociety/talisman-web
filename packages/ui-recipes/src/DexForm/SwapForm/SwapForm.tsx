@@ -73,23 +73,34 @@ const Summary = Object.assign(
   }
 )
 
-export type SwapFormInfoProps = {
+type SwapFormInfoSection = 'details' | 'faq' | 'activities'
+
+type BaseSwapFormInfoProps = {
   summary: ReactNode
   activities: ReactNode
   footer: ReactNode
   faq: ReactNode
 }
 
+export type SwapFormInfoProps =
+  | BaseSwapFormInfoProps
+  | (BaseSwapFormInfoProps & {
+      focusedSection: SwapFormInfoSection
+      onChangeFocusedSection: (section: SwapFormInfoSection) => unknown
+    })
+
 const Info = Object.assign(
   (props: SwapFormInfoProps) => {
-    const [activeSegment, setActiveSegment] = useState<'details' | 'faq' | 'activities'>('details')
+    const [_activeSection, _setFocusedSection] = useState<'details' | 'faq' | 'activities'>('details')
+    const focusedSection = 'focusedSection' in props ? props.focusedSection : _activeSection
+    const onChangeFocusedSection = 'onChangeFocusedSection' in props ? props.onChangeFocusedSection : _setFocusedSection
 
     return (
       <DexForm.Info
         header={
           <DexForm.Info.Header
             actions={
-              <SegmentedButton value={activeSegment} onChange={setActiveSegment}>
+              <SegmentedButton value={focusedSection} onChange={onChangeFocusedSection}>
                 <SegmentedButton.ButtonSegment value="details" leadingIcon={<FileSearch />} css={{ fontSize: '1rem' }}>
                   Details
                 </SegmentedButton.ButtonSegment>
@@ -106,7 +117,7 @@ const Info = Object.assign(
         footer={props.footer}
       >
         {(() => {
-          switch (activeSegment) {
+          switch (focusedSection) {
             case 'details':
               return (
                 props.summary ?? (

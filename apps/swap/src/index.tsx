@@ -33,6 +33,7 @@ import {
   useReverse,
   useSwap,
   viemWalletClientAtom,
+  focusedInfoSection,
 } from './api'
 import { assetIcons, chainIcons } from './config'
 import type { Account } from './types'
@@ -275,8 +276,12 @@ const Info = () => {
     [quoteLoadable.data?.destAsset, quoteLoadable.data?.srcAsset, quoteLoadable.state]
   )
 
+  const [focusedSection, setFocusedSection] = useAtom(focusedInfoSection)
+
   return (
     <SwapForm.Info
+      focusedSection={focusedSection}
+      onChangeFocusedSection={setFocusedSection}
       summary={
         quoteLoadable.state === 'loading' ? (
           <SwapForm.Info.Summary.ProgressIndicator />

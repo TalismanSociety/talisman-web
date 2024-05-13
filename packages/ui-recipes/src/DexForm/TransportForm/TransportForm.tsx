@@ -79,22 +79,33 @@ const Summary = Object.assign(
   }
 )
 
-export type TransportFormInfoProps = {
+type TransportFormInfoSection = 'details' | 'faq'
+
+type BaseTransportFormInfoProps = {
   summary: ReactNode
   footer: ReactNode
   faq: ReactNode
 }
 
+export type TransportFormInfoProps =
+  | BaseTransportFormInfoProps
+  | (BaseTransportFormInfoProps & {
+      focusedSection: TransportFormInfoSection
+      onChangeFocusedSection: (section: TransportFormInfoSection) => unknown
+    })
+
 const Info = Object.assign(
   (props: TransportFormInfoProps) => {
-    const [activeSegment, setActiveSegment] = useState<'details' | 'faq'>('details')
+    const [_activeSection, _setFocusedSection] = useState<'details' | 'faq'>('details')
+    const focusedSection = 'focusedSection' in props ? props.focusedSection : _activeSection
+    const onChangeFocusedSection = 'onChangeFocusedSection' in props ? props.onChangeFocusedSection : _setFocusedSection
 
     return (
       <DexForm.Info
         header={
           <DexForm.Info.Header
             actions={
-              <SegmentedButton value={activeSegment} onChange={setActiveSegment}>
+              <SegmentedButton value={focusedSection} onChange={onChangeFocusedSection}>
                 <SegmentedButton.ButtonSegment value="details" leadingIcon={<FileSearch />} css={{ fontSize: '1rem' }}>
                   Details
                 </SegmentedButton.ButtonSegment>
@@ -108,7 +119,7 @@ const Info = Object.assign(
         footer={props.footer}
       >
         {(() => {
-          switch (activeSegment) {
+          switch (focusedSection) {
             case 'details':
               return props.summary
             case 'faq':

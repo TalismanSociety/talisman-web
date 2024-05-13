@@ -347,6 +347,12 @@ const Transport = () => {
     adapterLoadable.valueMaybe()?.getApi()?.genesisHash.toHex()
   )
 
+  const [focusedSection, setFocusedSection] = useState<'details' | 'faq'>('details')
+
+  useEffect(() => {
+    setFocusedSection('details')
+  }, [amount, route])
+
   return (
     <>
       {fromTokenDialogOpen && (
@@ -419,6 +425,8 @@ const Transport = () => {
         transportInProgress={extrinsic?.state === 'loading'}
         info={
           <TransportForm.Info
+            focusedSection={focusedSection}
+            onChangeFocusedSection={setFocusedSection}
             summary={(() => {
               switch (parsedInputConfigLoadable?.state) {
                 case 'loading':
