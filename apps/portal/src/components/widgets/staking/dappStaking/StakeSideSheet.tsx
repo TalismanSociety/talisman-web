@@ -120,16 +120,11 @@ const InCompleteSelectionStakeForm = (props: IncompleteStakeFormProps) => (
   />
 )
 
-const EstimatedRewards = (props: { amount: string }) => {
+const EstimatedRewards = (props: { amount: bigint }) => {
   const tokenAmount = useRecoilValue(useNativeTokenAmountState())
   const apr = useApr()
   const amount = useMemo(
-    () =>
-      tokenAmount.fromPlanckOrUndefined(
-        Maybe.of(tokenAmount.fromUserInputOrUndefined(props.amount).decimalAmount)
-          .mapOrUndefined(x => new BN(x.planck.toString()).muln(apr.totalApr))
-          ?.toString()
-      ),
+    () => tokenAmount.fromPlanck(new BN(props.amount.toString()).muln(apr.totalApr).toString()),
     [apr.totalApr, props.amount, tokenAmount]
   )
 
@@ -182,7 +177,9 @@ const StakeForm = (props: StakeFormProps) => {
       }
       estimatedRewards={
         <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-          <EstimatedRewards amount={input.amount} />
+          <EstimatedRewards
+            amount={(input.decimalAmount?.planck ?? 0n) + (stake.totalStaked.decimalAmount?.planck ?? 0n)}
+          />
         </Suspense>
       }
       currentStakedBalance={

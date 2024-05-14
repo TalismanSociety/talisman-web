@@ -26,6 +26,7 @@
     "@polkadot/util-crypto": "^12.6.2",
     "@talismn/web-icons": "workspace:^",
     "colorjs.io": "^0.4.5",
+    "date-fns": "^3.6.0",
     "md5": "^2.3.0",
     "mime": "^4.0.1",
     "react-countup": "6.5.1",
