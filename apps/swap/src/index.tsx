@@ -15,7 +15,7 @@ import {
   destAssetAtom,
   destAssetsAtom,
   destChainsAtom,
-  substrateSignerAtom,
+  focusedInfoSection,
   quoteAtom,
   quoteLoadableAtom,
   srcAccountAtom,
@@ -26,6 +26,7 @@ import {
   srcAssetAvailableAmountAtom,
   srcAssetsAtom,
   srcChainsAtom,
+  substrateSignerAtom,
   swapPromiseAtom,
   swapPromiseLoadableAtom,
   swapStatusAtomFamily,
@@ -33,7 +34,6 @@ import {
   useReverse,
   useSwap,
   viemWalletClientAtom,
-  focusedInfoSection,
 } from './api'
 import { assetIcons, chainIcons } from './config'
 import type { Account } from './types'
@@ -54,18 +54,9 @@ import {
 } from '@talismn/ui'
 import { SwapForm, TokenSelectDialog } from '@talismn/ui-recipes'
 import '@talismn/ui/assets/css/talismn.css'
-import { Provider, atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { Provider, atom, useAtom, useAtomValue } from 'jotai'
 import { loadable, useAtomCallback, useHydrateAtoms } from 'jotai/utils'
-import {
-  Suspense,
-  startTransition,
-  useCallback,
-  useDeferredValue,
-  useEffect,
-  useMemo,
-  useState,
-  type PropsWithChildren,
-} from 'react'
+import { Suspense, useCallback, useMemo, useState, type PropsWithChildren } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { type WalletClient } from 'viem'
 
@@ -443,20 +434,14 @@ const inputErrorAtom = atom(async get => {
 const inputErrorLoadableAtom = loadable(inputErrorAtom)
 
 const _Swap = () => {
-  const [amount, setAmount] = useState('')
-  const deferredAmount = useDeferredValue(amount)
-
-  const setAtomAmount = useSetAtom(srcAmountInputAtom)
-  useEffect(() => {
-    startTransition(() => setAtomAmount(deferredAmount))
-  }, [deferredAmount, setAtomAmount])
+  const [amount, setAmount] = useAtom(srcAmountInputAtom)
 
   const destAmountLoadable = useAtomValue(destAmountLoadableAtom)
   const inputErrorLoadable = useAtomValue(inputErrorLoadableAtom)
   const quoteLoadable = useAtomValue(quoteLoadableAtom)
 
   const inputError =
-    deferredAmount.trim() !== '' && inputErrorLoadable.state === 'hasData' ? inputErrorLoadable.data : undefined
+    amount.trim() !== '' && inputErrorLoadable.state === 'hasData' ? inputErrorLoadable.data : undefined
 
   const swap = useSwap()
 
@@ -491,13 +476,16 @@ const _Swap = () => {
         </Suspense>
       }
       onRequestMaxAmount={useAtomCallback(
-        useCallback(async get => {
-          const amount = await get(srcAssetAvailableAmountAtom)
+        useCallback(
+          async get => {
+            const amount = await get(srcAssetAvailableAmountAtom)
 
-          if (amount !== undefined) {
-            setAmount(amount.toString())
-          }
-        }, [])
+            if (amount !== undefined) {
+              setAmount(amount.toString())
+            }
+          },
+          [setAmount]
+        )
       )}
       onRequestReverse={useReverse()}
       info={<Info />}

@@ -695,7 +695,16 @@ export const useSwap = () =>
           throw new Error(`Unsupported swap from chain ${srcAsset.chain}`)
       }
 
-      set(swapsAtom, ids => [...ids, { id: depositAddress.depositChannelId, date: new Date() }])
-      set(focusedInfoSection, 'activities')
+      set(srcAmountInputAtom, '')
+
+      // Need to do this as we have an effect that trigger navigation
+      // to details tab on amount input change
+      // which will be triggered by the above atom setter
+      // we want to ensure that user will be navigated to 'activities'
+      // tab after having reset the src amount
+      globalThis.requestIdleCallback(() => {
+        set(swapsAtom, ids => [...ids, { id: depositAddress.depositChannelId, date: new Date() }])
+        set(focusedInfoSection, 'activities')
+      })
     }, [])
   )
