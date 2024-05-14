@@ -122,16 +122,18 @@ const DappStakingForm = Object.assign(
           </label>
         </div>
         <DescriptionList>
+          {props.currentStakedBalance !== undefined && (
+            <DescriptionList.Description>
+              <DescriptionList.Term>Already staked</DescriptionList.Term>
+              <DescriptionList.Details>
+                <Text css={{ color: '#38D448' }}>{props.currentStakedBalance}</Text>
+              </DescriptionList.Details>
+            </DescriptionList.Description>
+          )}
           <DescriptionList.Description>
             <DescriptionList.Term>Estimated earning</DescriptionList.Term>
             <DescriptionList.Details css={{ wordBreak: 'break-all' }}>{props.estimatedRewards}</DescriptionList.Details>
           </DescriptionList.Description>
-          {props.currentStakedBalance !== undefined && (
-            <DescriptionList.Description>
-              <DescriptionList.Term>Staked balance</DescriptionList.Term>
-              <DescriptionList.Details>{props.currentStakedBalance}</DescriptionList.Details>
-            </DescriptionList.Description>
-          )}
         </DescriptionList>
         {props.stakeButton}
       </Surface>
