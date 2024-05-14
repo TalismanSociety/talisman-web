@@ -22,24 +22,17 @@ const Layout = () => {
           <Suspense fallback={<TalismanHandProgressIndicator />}>
             <div>
               <Tabs css={{ width: 'fit-content', marginBottom: '1.6rem' }}>
-                <NavLink to="/transfer/swap" css={{ display: 'contents' }} onClick={event => event.preventDefault()}>
+                <NavLink to="/transport/swap" css={{ display: 'contents' }} onClick={event => event.preventDefault()}>
                   {({ isActive }) => (
-                    <Tabs.Item selected={isActive} onClick={() => startTransition(() => navigate('/transfer/swap'))}>
+                    <Tabs.Item selected={isActive} onClick={() => startTransition(() => navigate('/transport/swap'))}>
                       Swap
                     </Tabs.Item>
                   )}
                 </NavLink>
-                <NavLink
-                  to="/transfer/transport"
-                  css={{ display: 'contents' }}
-                  onClick={event => event.preventDefault()}
-                >
+                <NavLink to="/transport/xcm" css={{ display: 'contents' }} onClick={event => event.preventDefault()}>
                   {({ isActive }) => (
-                    <Tabs.Item
-                      selected={isActive}
-                      onClick={() => startTransition(() => navigate('/transfer/transport'))}
-                    >
-                      Transport
+                    <Tabs.Item selected={isActive} onClick={() => startTransition(() => navigate('/transport/xcm'))}>
+                      XCM
                     </Tabs.Item>
                   )}
                 </NavLink>
