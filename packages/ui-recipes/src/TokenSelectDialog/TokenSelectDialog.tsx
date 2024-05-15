@@ -69,7 +69,12 @@ export const TokenSelectDialog = (props: TokenSelectDialogProps) => {
   )
 
   return (
-    <AlertDialog title="Select from asset" targetWidth="60rem" onRequestDismiss={props.onRequestDismiss}>
+    <AlertDialog
+      title="Select from asset"
+      targetWidth="60rem"
+      onRequestDismiss={props.onRequestDismiss}
+      css={{ marginTop: '20dvh' }}
+    >
       <div
         css={{
           display: 'flex',
