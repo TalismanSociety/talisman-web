@@ -1,9 +1,11 @@
 import { type Account } from '../../../../domains/accounts/recoils'
+import { selectedCurrencyState } from '../../../../domains/balances'
 import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '../../../../domains/chains'
 import { useSubstrateApiState } from '../../../../domains/common'
 import { useExtrinsic, useTokenAmountFromPlanck } from '../../../../domains/common/hooks'
 import { useEraEtaFormatter } from '../../../../domains/common/hooks/useEraEta'
 import { useLocalizedUnlockDuration } from '../../../../domains/staking/substrate/nominationPools'
+import { useTotalValidatorStakingRewards } from '../../../../domains/staking/substrate/validator'
 import FastUnstakeDialog from '../../../recipes/FastUnstakeDialog'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import RedactableBalance from '../../RedactableBalance'
@@ -15,6 +17,16 @@ import { StakePosition } from '@talismn/ui-recipes'
 import BN from 'bn.js'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
+
+const TotalRewards = (props: { account: Account }) => useTotalValidatorStakingRewards(props.account).toLocaleString()
+
+const TotalFiatRewards = (props: { account: Account }) => {
+  const currency = useRecoilValue(selectedCurrencyState)
+  const price = useRecoilValue(useNativeTokenPriceState())
+  const amount = useTotalValidatorStakingRewards(props.account)
+
+  return (amount.toNumber() * price).toLocaleString(undefined, { style: 'currency', currency })
+}
 
 const ValidatorStakeItem = (props: {
   account: Account
@@ -93,6 +105,8 @@ const ValidatorStakeItem = (props: {
         account={props.account}
         balance={<RedactableBalance>{active.toLocaleString()}</RedactableBalance>}
         fiatBalance={<AnimatedFiatNumber end={active.toNumber() * nativeTokenPrice} />}
+        rewards={<TotalRewards account={props.account} />}
+        fiatRewards={<TotalFiatRewards account={props.account} />}
         unstakeButton={<StakePosition.UnstakeButton onClick={onRequestUnstake} />}
         withdrawButton={
           props.stake.redeemable?.isZero() === false && (

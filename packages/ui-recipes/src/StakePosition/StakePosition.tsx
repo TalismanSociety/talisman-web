@@ -19,7 +19,7 @@ import {
   type MenuItemProps,
 } from '@talismn/ui'
 import { ArrowDown, Clock, Earn, MoreHorizontal } from '@talismn/web-icons'
-import { createContext, useContext, type PropsWithChildren, type ReactNode } from 'react'
+import { Suspense, createContext, useContext, type PropsWithChildren, type ReactNode } from 'react'
 
 const MEDIUM_CONTAINER_QUERY = '@container(min-width: 100rem)'
 
@@ -220,7 +220,7 @@ const StakePosition = Object.assign(
                     display: 'inline-block',
                     width: '1.2rem',
                     height: '1.2rem',
-                    [MEDIUM_CONTAINER_QUERY]: { width: '3rem', height: '3rem' },
+                    [MEDIUM_CONTAINER_QUERY]: { width: '4rem', height: '4rem' },
                   }}
                 >
                   <AccountIcon size="100%" address={props.account.address} readonly={props.account.readonly} />
@@ -274,7 +274,7 @@ const StakePosition = Object.assign(
             <div css={{ [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}>
               <Hr css={{ margin: 0 }} />
             </div>
-            <section css={{ [MEDIUM_CONTAINER_QUERY]: { order: -1 }, [LARGE_CONTAINER_QUERY]: { width: '16rem' } }}>
+            <section css={{ [MEDIUM_CONTAINER_QUERY]: { order: -1 }, [LARGE_CONTAINER_QUERY]: { width: '14rem' } }}>
               <Text.BodySmall
                 as="div"
                 alpha="disabled"
@@ -293,7 +293,7 @@ const StakePosition = Object.assign(
                     width: '2rem',
                     height: '2rem',
                     verticalAlign: '-0.25em',
-                    [MEDIUM_CONTAINER_QUERY]: { width: '3rem', height: '3rem' },
+                    [MEDIUM_CONTAINER_QUERY]: { width: '4rem', height: '4rem' },
                   }}
                 />
                 <span
@@ -335,9 +335,15 @@ const StakePosition = Object.assign(
                 Total rewards
               </Text.BodySmall>
               <Text.BodyLarge as="div" alpha="high">
-                {props.rewards ?? 'Coming soon'}
+                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                  {props.rewards ?? <Text alpha="medium">Coming soon</Text>}
+                </Suspense>
                 <div css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }} />{' '}
-                <Text.Body alpha="medium">{props.fiatRewards}</Text.Body>
+                <Suspense>
+                  <Text.Body alpha="medium" css={{ color: '#38D448' }}>
+                    {props.fiatRewards}
+                  </Text.Body>
+                </Suspense>
               </Text.BodyLarge>
             </section>
             <div css={{ [MEDIUM_CONTAINER_QUERY]: { width: '20rem', display: 'flex', justifyContent: 'start' } }}>
@@ -377,10 +383,10 @@ export const StakePositionList = (props: PropsWithChildren<{ className?: string 
       >
         <Text.BodySmall
           css={{
-            width: '3rem',
+            width: '4rem',
             visibility: 'hidden',
             [LARGE_CONTAINER_QUERY]: {
-              width: '16rem',
+              width: '14rem',
               visibility: 'visible',
             },
           }}
@@ -395,7 +401,7 @@ export const StakePositionList = (props: PropsWithChildren<{ className?: string 
         <div css={{ width: '4rem' }} />
       </header>
     </div>
-    <div css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>{props.children}</div>
+    <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>{props.children}</div>
   </section>
 )
 

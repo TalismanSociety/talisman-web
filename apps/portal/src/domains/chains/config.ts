@@ -6,6 +6,7 @@ type ChainWithNominationPools = {
   hasNominationPools: true
   priorityPool: number | undefined
   talismanPools: number[] | undefined
+  novaIndexerUrl: string
 }
 
 type ChainWithDappStaking = {
@@ -23,6 +24,7 @@ export const chainConfigs: ChainConfig[] = [
     hasNominationPools: true,
     priorityPool: 16,
     talismanPools: [12, 16],
+    novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-polkadot',
   },
   // Kusama
   {
@@ -30,6 +32,7 @@ export const chainConfigs: ChainConfig[] = [
     hasNominationPools: true,
     priorityPool: 15,
     talismanPools: [15],
+    novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-kusama',
   },
   // Astar
   {
@@ -44,6 +47,7 @@ export const chainConfigs: ChainConfig[] = [
     hasNominationPools: true,
     priorityPool: 47,
     talismanPools: [47],
+    novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-aleph-zero',
   },
   // Vara
   {
@@ -51,6 +55,7 @@ export const chainConfigs: ChainConfig[] = [
     hasNominationPools: true,
     priorityPool: 8,
     talismanPools: [8],
+    novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet---vara',
   },
   // Westend
   {
@@ -58,6 +63,7 @@ export const chainConfigs: ChainConfig[] = [
     hasNominationPools: true,
     priorityPool: undefined,
     talismanPools: undefined,
+    novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-westend',
   },
   // Shibuya
   {

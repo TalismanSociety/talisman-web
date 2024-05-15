@@ -1,7 +1,11 @@
 import { type Account } from '../../../../domains/accounts'
+import { selectedCurrencyState } from '../../../../domains/balances'
 import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '../../../../domains/chains'
 import { useEraEtaFormatter, useExtrinsic, useSubmittableResultLoadableState } from '../../../../domains/common'
-import { type usePoolStakes } from '../../../../domains/staking/substrate/nominationPools'
+import {
+  useTotalNominationPoolRewards,
+  type usePoolStakes,
+} from '../../../../domains/staking/substrate/nominationPools'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import RedactableBalance from '../../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
@@ -12,6 +16,16 @@ import UnstakeDialog from './UnstakeDialog'
 import { StakePosition } from '@talismn/ui-recipes'
 import { useCallback, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
+
+const PoolTotalRewards = (props: { account: Account }) => useTotalNominationPoolRewards(props.account).toLocaleString()
+
+const PoolTotalFiatRewards = (props: { account: Account }) => {
+  const currency = useRecoilValue(selectedCurrencyState)
+  const price = useRecoilValue(useNativeTokenPriceState())
+  const amount = useTotalNominationPoolRewards(props.account)
+
+  return (amount.toNumber() * price).toLocaleString(undefined, { style: 'currency', currency })
+}
 
 const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account[]>>[number] }) => {
   const [chain, decimal, nativeTokenPrice] = useRecoilValue(
@@ -56,6 +70,8 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
             end={(decimal.fromPlanckOrUndefined(item.poolMember.points.toBigInt())?.toNumber() ?? 0) * nativeTokenPrice}
           />
         }
+        rewards={<PoolTotalRewards account={item.account} />}
+        fiatRewards={<PoolTotalFiatRewards account={item.account} />}
         provider={item.poolName ?? ''}
         shortProvider="Nomination pool"
         claimButton={

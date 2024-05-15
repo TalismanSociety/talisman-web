@@ -16,7 +16,8 @@
     "storybook": "storybook dev -p 6008",
     "build-storybook": "storybook build",
     "codegen:history": "graphql-codegen --require dotenv/config --config codegen.history.ts",
-    "codegen:crowdloan": "graphql-codegen --require dotenv/config --config codegen.crowdloan.ts"
+    "codegen:crowdloan": "graphql-codegen --require dotenv/config --config codegen.crowdloan.ts",
+    "codegen:nova": "graphql-codegen --require dotenv/config --config codegen.nova.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
