@@ -4,7 +4,7 @@ export const assetIcons = {
   BTC: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/unknown.svg',
   DOT: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/dot.svg',
   ETH: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg',
-  FLIP: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/unknown.svg',
+  FLIP: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/flip.svg',
   USDC: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/coingecko/usd-coin.webp',
   USDT: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/usdt.svg',
 } satisfies Record<Asset, string>
