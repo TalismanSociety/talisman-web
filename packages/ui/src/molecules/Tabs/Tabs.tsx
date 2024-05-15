@@ -25,7 +25,7 @@ const Tab = <T extends TabElementType = 'li'>({ as = 'li' as T, ...props }: TabP
       {...(props as any)}
       css={{
         position: 'relative',
-        padding: '0.8rem 0',
+        padding: '0.8rem 1.2rem',
         cursor: 'pointer',
       }}
     >
@@ -59,7 +59,6 @@ const Tabs = Object.assign(
         {...props}
         css={{
           display: 'flex',
-          gap: '2.4rem',
           margin: 0,
           borderBottom: noBottomBorder ? undefined : `1px solid ${theme.color.outlineVariant}`,
           padding: 0,
