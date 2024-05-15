@@ -162,16 +162,17 @@ export const UnstakingStatus = (props: {
     disabled={props.unlocks.length === 0}
   >
     <SurfaceButton leadingIcon={<Clock />} disabled css={{ width: '100%' }}>
-      Unstaking {props.amount}
+      <span css={{ [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}>Unstaking </span>
+      {props.amount}
     </SurfaceButton>
   </Tooltip>
 )
 
 export const FastUnstakingStatus = (props: { amount: ReactNode; status: 'in-head' | 'in-queue' | undefined }) => (
-  <div css={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
-    <CircularProgressIndicator size="1em" />
-    <Text.Body>Fast unstaking {props.amount}</Text.Body>
-  </div>
+  <SurfaceButton leadingIcon={<CircularProgressIndicator />} disabled css={{ width: '100%' }}>
+    <span css={{ [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}>Fast unstaking </span>
+    {props.amount}
+  </SurfaceButton>
 )
 
 const StakePosition = Object.assign(
@@ -265,7 +266,8 @@ const StakePosition = Object.assign(
                     ),
                   }}
                 >
-                  {props.menuButton ?? <StakePosition.MenuButton />}
+                  {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
+                  {props.menuButton || <StakePosition.MenuButton />}
                 </MenuContext.Provider>
               </div>
             </div>
@@ -339,7 +341,8 @@ const StakePosition = Object.assign(
               </Text.BodyLarge>
             </section>
             <div css={{ [MEDIUM_CONTAINER_QUERY]: { width: '20rem', display: 'flex', justifyContent: 'start' } }}>
-              <div>{props.withdrawButton ?? props.unstakingStatus}</div>
+              {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
+              <div>{props.withdrawButton || props.unstakingStatus}</div>
             </div>
             <div css={{ [MEDIUM_CONTAINER_QUERY]: { width: '20rem', display: 'flex', justifyContent: 'start' } }}>
               <div>{props.claimButton}</div>
