@@ -41,6 +41,7 @@
     "@talismn/react-polkadot-api": "workspace:^",
     "@talismn/signet-apps-sdk": "0.0.7",
     "@talismn/ui": "workspace:^",
+    "@talismn/ui-recipes": "workspace:^",
     "@talismn/util": "0.0.0-pr1392-20240408055115",
     "@talismn/utils": "workspace:^",
     "@talismn/web-icons": "workspace:^",

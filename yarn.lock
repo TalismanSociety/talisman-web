@@ -9478,6 +9478,7 @@ __metadata:
     "@talismn/signet-apps-sdk": "npm:0.0.7"
     "@talismn/tsconfig": "workspace:^"
     "@talismn/ui": "workspace:^"
+    "@talismn/ui-recipes": "workspace:^"
     "@talismn/util": "npm:0.0.0-pr1392-20240408055115"
     "@talismn/utils": "workspace:^"
     "@talismn/web-icons": "workspace:^"
@@ -9602,7 +9603,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@talismn/ui-recipes@workspace:packages/ui-recipes":
+"@talismn/ui-recipes@workspace:^, @talismn/ui-recipes@workspace:packages/ui-recipes":
   version: 0.0.0-use.local
   resolution: "@talismn/ui-recipes@workspace:packages/ui-recipes"
   dependencies:
