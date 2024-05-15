@@ -147,7 +147,7 @@ const TextInput = Object.assign(
         <Clickable.WithFeedback
           {...props}
           css={{
-            padding: '0.6rem 1.6rem',
+            padding: '0.3rem 1.1rem',
             border: `1px solid ${useSurfaceColorAtElevation(x => x + 8)}`,
             borderRadius: theme.shape.full,
             cursor: 'pointer',
