@@ -14,12 +14,14 @@ import {
   SurfaceIconButton,
   Text,
   TonalButton,
+  TonalIconButton,
   Tooltip,
   useTheme,
   type ButtonProps,
+  type IconButtonProps,
   type MenuItemProps,
 } from '@talismn/ui'
-import { ArrowDown, Clock, Earn, MoreHorizontal } from '@talismn/web-icons'
+import { ArrowDown, Clock, Earn, MoreHorizontal, ZapPlus } from '@talismn/web-icons'
 import { Suspense, createContext, useContext, type PropsWithChildren, type ReactNode } from 'react'
 
 const MEDIUM_CONTAINER_QUERY = '@container(min-width: 100rem)'
@@ -50,11 +52,13 @@ export type StakePositionProps = {
 
 const StakePositionContext = createContext({ readonly: false })
 
-const IncreaseStakeButton = (props: Omit<MenuItemProps, 'children'>) => (
+const IncreaseStakeButton = (props: Omit<IconButtonProps, 'children'>) => (
   <StakePositionContext.Consumer>
     {({ readonly }) => (
-      <Tooltip content="Account is readonly" disabled={!readonly}>
-        <Menu.Item.Button headlineContent="Increase stake" disabled={readonly} {...props} />
+      <Tooltip content={readonly ? 'Account is readonly' : 'Increase stake'}>
+        <TonalIconButton disabled={readonly} {...props}>
+          <ZapPlus />
+        </TonalIconButton>
       </Tooltip>
     )}
   </StakePositionContext.Consumer>
@@ -254,13 +258,14 @@ const StakePosition = Object.assign(
                   </span>
                 </div>
               </Text.BodySmall>
-              <div css={{ [MEDIUM_CONTAINER_QUERY]: { order: 1 } }}>
+              <div css={{ display: 'flex', gap: '0.8rem', [MEDIUM_CONTAINER_QUERY]: { order: 1 } }}>
+                {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
+                {props.increaseStakeButton || <div css={{ width: '4rem' }} />}
                 <MenuContext.Provider
                   value={{
                     attentionRequired: Boolean(props.lockedButton),
                     children: (
                       <>
-                        {props.increaseStakeButton}
                         {props.unstakeButton}
                         {props.lockedButton}
                       </>
@@ -399,7 +404,7 @@ export const StakePositionList = (props: PropsWithChildren<{ className?: string 
         <Text.BodySmall css={{ flex: 1 }}>Total rewards</Text.BodySmall>
         <Text.BodySmall css={{ width: '20rem' }}>Unstaking</Text.BodySmall>
         <Text.BodySmall css={{ width: '20rem' }}>Claim</Text.BodySmall>
-        <div css={{ width: '4rem' }} />
+        <Text.BodySmall css={{ width: '8.8rem', textAlign: 'end' }}>Actions</Text.BodySmall>
       </header>
     </div>
     <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>{props.children}</div>

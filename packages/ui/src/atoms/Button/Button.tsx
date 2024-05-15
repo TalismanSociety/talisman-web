@@ -2,7 +2,7 @@ import { useSurfaceColor } from '..'
 import CircularProgressIndicator from '../CircularProgressIndicator'
 import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/web-icons/utils'
-import { useMemo, type ElementType, type PropsWithChildren, type ReactNode } from 'react'
+import { useCallback, useMemo, useTransition, type ElementType, type PropsWithChildren, type ReactNode } from 'react'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ButtonElementType = Extract<React.ElementType, 'button' | 'a'> | ElementType<any>
@@ -30,6 +30,7 @@ type PolymorphicButtonProps<T extends ButtonElementType = 'button'> = PropsWithC
   disabled?: boolean
   hidden?: boolean
   loading?: boolean
+  withTransition?: boolean
 }>
 
 export type ButtonProps<T extends ButtonElementType = 'button'> = PolymorphicButtonProps<T> &
@@ -41,10 +42,14 @@ const Button = <T extends ButtonElementType = 'button'>({
   trailingIcon,
   leadingIcon,
   hidden,
-  loading,
+  loading: _loading = false,
+  withTransition = false,
   ...props
 }: ButtonProps<T>) => {
   const theme = useTheme()
+
+  const [isPending, startTransition] = useTransition()
+  const loading = _loading || isPending
 
   const disabled = Boolean(props.disabled) || Boolean(hidden) || Boolean(loading)
 
@@ -133,12 +138,26 @@ const Button = <T extends ButtonElementType = 'button'>({
 
   const hasLeadingIcon = Boolean(loading) || leadingIcon !== undefined
 
+  const onClick = useCallback(
+    (...args: any[]) => {
+      if (withTransition) {
+        return startTransition(() => {
+          ;(props as any).onClick?.(...args)
+        })
+      } else {
+        return (props as any).onClick?.(...args)
+      }
+    },
+    [props, withTransition]
+  )
+
   const Component = as
 
   return (
     <Component
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       {...(props as any)}
+      onClick={onClick}
       disabled={disabled}
       css={[
         theme.typography.body,
