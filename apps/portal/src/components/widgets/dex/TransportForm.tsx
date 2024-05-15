@@ -449,7 +449,9 @@ const Transport = () => {
               }
             })()}
             faq={
-              <TransportForm.Info.Faq>
+              <TransportForm.Info.Faq
+                footer={<TransportForm.Info.Faq.Footer discordUrl="https://discord.gg/talisman" />}
+              >
                 <TransportForm.Info.Faq.Question
                   question="How does transport work?"
                   answer={

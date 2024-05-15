@@ -163,8 +163,11 @@ const Info = Object.assign(
       }
     ),
     Faq: Object.assign(
-      (props: PropsWithChildren) => (
-        <section css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>{props.children}</section>
+      (props: PropsWithChildren & { footer?: ReactNode }) => (
+        <section css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+          {props.children}
+          {props.footer}
+        </section>
       ),
       {
         Question: (props: { question: ReactNode; answer: ReactNode }) => (
@@ -172,6 +175,21 @@ const Info = Object.assign(
             <Details.Summary>{props.question}</Details.Summary>
             <Details.Content>{props.answer}</Details.Content>
           </Details>
+        ),
+        Footer: (props: { discordUrl: string }) => (
+          <Text.Body alpha="disabled" css={{ textAlign: 'center', marginTop: '2.4rem' }}>
+            Still need help? Reach out to us on our{' '}
+            <Text
+              as="a"
+              alpha="high"
+              href={props.discordUrl}
+              target="_blank"
+              css={theme => ({ color: theme.color.primary })}
+            >
+              Discord channel
+            </Text>
+            .
+          </Text.Body>
         ),
       }
     ),

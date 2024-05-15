@@ -36,7 +36,7 @@ export const Default: Story = {
       <TransportForm.Info
         summary={<TransportForm.Info.Summary originFee="0.01 DOT" destinationFee="0.01 DOT" />}
         faq={
-          <TransportForm.Info.Faq>
+          <TransportForm.Info.Faq footer={<TransportForm.Info.Faq.Footer discordUrl="https://discord.gg/talisman" />}>
             <TransportForm.Info.Faq.Question question="How does the swap works?" answer="foo" />
             <TransportForm.Info.Faq.Question question="What is included in the fees?" answer="foo" />
             <TransportForm.Info.Faq.Question question="What are the risks?" answer="foo" />

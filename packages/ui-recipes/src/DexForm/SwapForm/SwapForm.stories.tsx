@@ -76,7 +76,7 @@ export const Default: Story = {
           </SwapForm.Info.Activities>
         }
         faq={
-          <SwapForm.Info.Faq>
+          <SwapForm.Info.Faq footer={<SwapForm.Info.Faq.Footer discordUrl="https://discord.gg/talisman" />}>
             <SwapForm.Info.Faq.Question question="How does the swap works?" answer="foo" />
             <SwapForm.Info.Faq.Question question="What is included in the fees?" answer="foo" />
             <SwapForm.Info.Faq.Question question="What are the risks?" answer="foo" />
