@@ -1,12 +1,13 @@
 import { DexFormInfoNotice, type DexFormInfoNoticeProps } from './components'
-import { CircularProgressIndicator, IconButton, Skeleton, Text, TonalChip, useTheme } from '@talismn/ui'
-import { CheckCircle, ExternalLink, XCircle } from '@talismn/web-icons'
+import { CircularProgressIndicator, IconButton, Skeleton, SurfaceIcon, Text, TonalIcon, useTheme } from '@talismn/ui'
+import { Check, ExternalLink, XCircle } from '@talismn/web-icons'
 import type { PropsWithChildren, ReactNode } from 'react'
 import React from 'react'
 
 export type ActivityLineItemProps = {
   state: 'pending' | 'complete' | 'failed'
-  amount: ReactNode
+  srcAmount: ReactNode
+  destAmount: ReactNode
   date: Date
   externalLink: string
 }
@@ -16,36 +17,32 @@ const ActivityLineItem = Object.assign(
     const theme = useTheme()
     return (
       <div css={{ containerType: 'inline-size', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-        <div css={{ flex: '0 9rem', display: 'none', '@container(min-width: 36rem)': { display: 'revert' } }}>
+        <div css={{ flex: '0 2rem' }}>
           {(() => {
             switch (props.state) {
               case 'pending':
                 return (
-                  <TonalChip contentColor="#f48f45" leadingContent={<CircularProgressIndicator />}>
-                    Pending
-                  </TonalChip>
+                  <SurfaceIcon size="1.6rem">
+                    <CircularProgressIndicator />
+                  </SurfaceIcon>
                 )
               case 'complete':
-                return <TonalChip contentColor="#38d448">Complete</TonalChip>
+                return (
+                  <TonalIcon size="1.6rem" contentColor="#38d448">
+                    <Check />
+                  </TonalIcon>
+                )
               case 'failed':
-                return <TonalChip contentColor="#d22424">Failed</TonalChip>
+                return (
+                  <TonalIcon size="1.6rem" contentColor="#d22424">
+                    <XCircle />
+                  </TonalIcon>
+                )
             }
           })()}
         </div>
-        <div css={{ flex: '0 2rem', '@container(min-width: 36rem)': { display: 'none' } }}>
-          {(() => {
-            switch (props.state) {
-              case 'pending':
-                return <CircularProgressIndicator size="1em" />
-              case 'complete':
-                return <CheckCircle size="1em" css={{ color: '#38d448' }} />
-              case 'failed':
-                return <XCircle size="1em" css={{ color: '#d22424' }} />
-            }
-          })()}
-        </div>
-        <Text.Body as="div" alpha="high" css={{ flex: 2 }}>
-          {props.amount}
+        <Text.Body as="div" alpha="high" css={{ flex: 3 }}>
+          <span>{props.srcAmount}</span> <span>➡️</span> <span>{props.destAmount}</span>
         </Text.Body>
         <Text.Body as="div" alpha="high" css={{ flex: 1 }}>
           {props.date.toLocaleDateString(undefined, { day: 'numeric', month: 'numeric', year: '2-digit' })}
@@ -78,15 +75,16 @@ export const ActivityList = Object.assign(
         )}
         <div css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
           <div css={{ containerType: 'inline-size', display: 'flex', gap: '0.8rem' }}>
-            <Text.BodySmall
-              css={{ flex: '0 9rem', display: 'none', '@container(min-width: 36rem)': { display: 'revert' } }}
-            >
-              Status
+            <div css={{ width: '1.6rem' }} />
+            <Text.BodySmall alpha="disabled" css={{ flex: 3 }}>
+              Amount
             </Text.BodySmall>
-            <div css={{ flex: '0 2rem', '@container(min-width: 36rem)': { display: 'none' } }} />
-            <Text.BodySmall css={{ flex: 2 }}>Amount</Text.BodySmall>
-            <Text.BodySmall css={{ flex: 1 }}>Date</Text.BodySmall>
-            <Text.BodySmall css={{ flex: '0 2rem', textAlign: 'center' }}>TX</Text.BodySmall>
+            <Text.BodySmall alpha="disabled" css={{ flex: 1 }}>
+              Date
+            </Text.BodySmall>
+            <Text.BodySmall alpha="disabled" css={{ width: '2rem', textAlign: 'center' }}>
+              TX
+            </Text.BodySmall>
           </div>
           {props.children}
         </div>

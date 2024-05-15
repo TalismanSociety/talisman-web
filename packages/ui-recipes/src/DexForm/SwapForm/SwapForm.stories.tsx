@@ -70,9 +70,27 @@ export const Default: Story = {
         }
         activities={
           <SwapForm.Info.Activities>
-            <SwapForm.Info.Activities.Item state="pending" amount="500 DOT" date={new Date()} externalLink="/" />
-            <SwapForm.Info.Activities.Item state="complete" amount="500 DOT" date={new Date()} externalLink="/" />
-            <SwapForm.Info.Activities.Item state="failed" amount="500 DOT" date={new Date()} externalLink="/" />
+            <SwapForm.Info.Activities.Item
+              state="pending"
+              srcAmount="500 DOT"
+              destAmount="1 ETH"
+              date={new Date()}
+              externalLink="/"
+            />
+            <SwapForm.Info.Activities.Item
+              state="complete"
+              srcAmount="500 DOT"
+              destAmount="1 ETH"
+              date={new Date()}
+              externalLink="/"
+            />
+            <SwapForm.Info.Activities.Item
+              state="failed"
+              srcAmount="500 DOT"
+              destAmount="1 ETH"
+              date={new Date()}
+              externalLink="/"
+            />
           </SwapForm.Info.Activities>
         }
         faq={

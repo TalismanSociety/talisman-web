@@ -10,7 +10,8 @@ type Story = StoryObj<typeof ActivityLineItem>
 export const Default: Story = {
   args: {
     state: 'pending',
-    amount: '500 DOT',
+    srcAmount: '500 DOT',
+    destAmount: '1 ETH',
     date: new Date(),
     externalLink: globalThis.location.href,
   },

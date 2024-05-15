@@ -382,11 +382,13 @@ export const swapStatusAtomFamily = atomFamily((id: string) =>
     }
 
     const assets = await get(assetsAtom)
-    const asset = assets.find(x => x.asset === status.srcAsset)
+    const srcAsset = assets.find(x => x.asset === status.srcAsset)
 
-    if (asset === undefined) {
+    if (srcAsset === undefined) {
       throw new Error(`Can't find asset: ${status.srcAsset}`)
     }
+
+    const destAsset = status.destAsset === undefined ? undefined : assets.find(x => x.asset === status.destAsset)
 
     return {
       state: (() => {
@@ -408,7 +410,11 @@ export const swapStatusAtomFamily = atomFamily((id: string) =>
       amount:
         status.depositAmount === undefined
           ? undefined
-          : Decimal.fromPlanck(status.depositAmount, asset.decimals, { currency: asset.symbol }),
+          : Decimal.fromPlanck(status.depositAmount, srcAsset.decimals, { currency: srcAsset.symbol }),
+      egressAmount:
+        destAsset === undefined || !('egressAmount' in status)
+          ? undefined
+          : Decimal.fromPlanck(status.egressAmount, destAsset.decimals, { currency: destAsset.symbol }),
       date: status.depositChannelCreatedAt === undefined ? undefined : new Date(status.depositChannelCreatedAt),
       externalLink: (() => {
         switch (get(chainflipNetworkAtom)) {

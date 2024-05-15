@@ -168,7 +168,8 @@ const Activity = (props: ActivityProps) => {
   return (
     <SwapForm.Info.Activities.Item
       state={status.state}
-      amount={status.amount?.toLocaleString() ?? '...'}
+      srcAmount={status.amount?.toLocaleString() ?? '...'}
+      destAmount={status.egressAmount?.toLocaleString() ?? '...'}
       date={status.date ?? new Date()}
       externalLink={status.externalLink}
     />
