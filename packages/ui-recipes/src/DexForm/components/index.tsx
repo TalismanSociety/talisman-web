@@ -184,7 +184,7 @@ const Info = Object.assign(
               alpha="high"
               href={props.discordUrl}
               target="_blank"
-              css={theme => ({ color: theme.color.primary })}
+              css={theme => ({ color: theme.color.primary, whiteSpace: 'nowrap' })}
             >
               Discord channel
             </Text>
