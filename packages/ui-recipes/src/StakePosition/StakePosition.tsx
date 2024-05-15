@@ -2,6 +2,7 @@ import AccountIcon from '../AccountIcon'
 import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
 import type { Account } from '../types'
 import { shortenAddress } from '../utils'
+import StakePositionSkeleton from './StakePosition.skeleton'
 import {
   Badge,
   BadgedBox,
@@ -367,7 +368,7 @@ const StakePosition = Object.assign(
     LockedButton,
     UnstakingStatus,
     FastUnstakingStatus,
-    Skeleton: (_props: { className?: string; animate?: boolean }) => null,
+    Skeleton: StakePositionSkeleton,
   }
 )
 
