@@ -1,0 +1,399 @@
+import AccountIcon from '../AccountIcon'
+import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
+import type { Account } from '../types'
+import { shortenAddress } from '../utils'
+import {
+  Badge,
+  BadgedBox,
+  CircularProgressIndicator,
+  Hr,
+  Menu,
+  Surface,
+  SurfaceButton,
+  SurfaceIconButton,
+  Text,
+  TonalButton,
+  Tooltip,
+  useTheme,
+  type ButtonProps,
+  type MenuItemProps,
+} from '@talismn/ui'
+import { ArrowDown, Clock, Earn, MoreHorizontal } from '@talismn/web-icons'
+import { createContext, useContext, type PropsWithChildren, type ReactNode } from 'react'
+
+const MEDIUM_CONTAINER_QUERY = '@container(min-width: 100rem)'
+
+const LARGE_CONTAINER_QUERY = '@container(min-width: 120rem)'
+
+export type StakePositionProps = {
+  readonly?: boolean
+  account: Account
+  provider: ReactNode
+  shortProvider?: ReactNode
+  stakeStatus: StakeStatus
+  assetSymbol: ReactNode
+  assetLogoSrc: string
+  chain: ReactNode
+  balance: ReactNode
+  fiatBalance: ReactNode
+  rewards?: ReactNode
+  fiatRewards?: ReactNode
+  unstakingStatus?: ReactNode
+  increaseStakeButton?: ReactNode
+  unstakeButton?: ReactNode
+  lockedButton?: ReactNode
+  menuButton?: ReactNode
+  claimButton?: ReactNode
+  withdrawButton?: ReactNode
+}
+
+const StakePositionContext = createContext({ readonly: false })
+
+const IncreaseStakeButton = (props: Omit<MenuItemProps, 'children'>) => (
+  <StakePositionContext.Consumer>
+    {({ readonly }) => (
+      <Tooltip content="Account is readonly" disabled={!readonly}>
+        <Menu.Item.Button headlineContent="Increase stake" disabled={readonly} {...props} />
+      </Tooltip>
+    )}
+  </StakePositionContext.Consumer>
+)
+
+const UnstakeButton = (props: Omit<MenuItemProps, 'children'>) => (
+  <StakePositionContext.Consumer>
+    {({ readonly }) => (
+      <Tooltip content="Account is readonly" disabled={!readonly}>
+        <Menu.Item.Button headlineContent="Unstake" disabled={readonly} {...props} />
+      </Tooltip>
+    )}
+  </StakePositionContext.Consumer>
+)
+
+const MenuContext = createContext<{ attentionRequired: boolean; children: ReactNode }>({
+  attentionRequired: false,
+  children: null,
+})
+
+const MenuButton = Object.assign(
+  (props: PropsWithChildren) => {
+    const context = useContext(MenuContext)
+
+    return (
+      <Menu>
+        <Menu.Button>
+          <BadgedBox badge={context.attentionRequired && <Badge />} overlap="circular">
+            <SurfaceIconButton>
+              <MoreHorizontal />
+            </SurfaceIconButton>
+          </BadgedBox>
+        </Menu.Button>
+        <Menu.Items>
+          {context.children}
+          {props.children}
+        </Menu.Items>
+      </Menu>
+    )
+  },
+  { Item: Menu.Item }
+)
+
+const ClaimButton = (props: Omit<ButtonProps, 'children'> & { amount: ReactNode }) => (
+  <StakePositionContext.Consumer>
+    {({ readonly }) => (
+      <Tooltip content="Account is readonly" disabled={!readonly}>
+        <TonalButton {...props} leadingIcon={<Earn />} disabled={readonly} css={{ width: '100%' }}>
+          <span css={{ [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}>Claim </span>
+          {props.amount}
+        </TonalButton>
+      </Tooltip>
+    )}
+  </StakePositionContext.Consumer>
+)
+
+const WithdrawButton = (props: Omit<ButtonProps, 'children'> & { amount: ReactNode }) => (
+  <StakePositionContext.Consumer>
+    {({ readonly }) => (
+      <Tooltip content="Account is readonly" disabled={!readonly}>
+        <SurfaceButton {...props} leadingIcon={<ArrowDown />} disabled={readonly} css={{ width: '100%' }}>
+          <span css={{ [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}>Withdraw </span>
+          {props.amount}
+        </SurfaceButton>
+      </Tooltip>
+    )}
+  </StakePositionContext.Consumer>
+)
+
+const LockedButton = (
+  props: Omit<ButtonProps, 'children' | 'onClick'> & { amount: ReactNode; onClick: () => unknown }
+) => (
+  <StakePositionContext.Consumer>
+    {({ readonly }) => (
+      <Tooltip content="Account is readonly" disabled={!readonly}>
+        <Menu.Item.Button
+          {...props}
+          headlineContent={<span>{props.amount} locked</span>}
+          trailingContent={<Badge />}
+          disabled={readonly}
+        />
+      </Tooltip>
+    )}
+  </StakePositionContext.Consumer>
+)
+
+export const UnstakingStatus = (props: {
+  amount: ReactNode
+  unlocks: Array<{ amount: ReactNode; eta: ReactNode }>
+}) => (
+  <Tooltip
+    placement="bottom"
+    content={
+      <div>
+        {props.unlocks.map((x, index, array) => (
+          <>
+            <Text.Body as="div" alpha="high">
+              {x.amount}
+            </Text.Body>
+            <Text.Body as="div">{x.eta}</Text.Body>
+            {index < array.length - 1 && <Hr />}
+          </>
+        ))}
+      </div>
+    }
+    disabled={props.unlocks.length === 0}
+  >
+    <SurfaceButton leadingIcon={<Clock />} disabled css={{ width: '100%' }}>
+      Unstaking {props.amount}
+    </SurfaceButton>
+  </Tooltip>
+)
+
+export const FastUnstakingStatus = (props: { amount: ReactNode; status: 'in-head' | 'in-queue' | undefined }) => (
+  <div css={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
+    <CircularProgressIndicator size="1em" />
+    <Text.Body>Fast unstaking {props.amount}</Text.Body>
+  </div>
+)
+
+const StakePosition = Object.assign(
+  (props: StakePositionProps) => {
+    const theme = useTheme()
+    return (
+      <StakePositionContext.Provider value={{ readonly: props.readonly ?? false }}>
+        <div css={{ containerType: 'inline-size' }}>
+          <Surface
+            css={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.8rem',
+              borderRadius: '1.6rem',
+              padding: '1.6rem',
+              [MEDIUM_CONTAINER_QUERY]: {
+                flexDirection: 'row',
+                alignItems: 'center',
+              },
+            }}
+          >
+            <div
+              css={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: '0.8rem',
+                [MEDIUM_CONTAINER_QUERY]: { display: 'contents' },
+              }}
+            >
+              <Text.BodySmall
+                as="header"
+                css={{
+                  [MEDIUM_CONTAINER_QUERY]: {
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1.2rem',
+                    width: '24rem',
+                    fontSize: theme.typography.bodyLarge.fontSize,
+                  },
+                }}
+              >
+                <div
+                  css={{
+                    display: 'inline-block',
+                    width: '1.2rem',
+                    height: '1.2rem',
+                    [MEDIUM_CONTAINER_QUERY]: { width: '3rem', height: '3rem' },
+                  }}
+                >
+                  <AccountIcon size="100%" address={props.account.address} readonly={props.account.readonly} />
+                </div>{' '}
+                <div
+                  css={{
+                    display: 'contents',
+                    [MEDIUM_CONTAINER_QUERY]: {
+                      display: 'block',
+                      width: 'calc(100% - 5rem)',
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis',
+                    },
+                  }}
+                >
+                  <Text alpha="high">{props.account.name ?? shortenAddress(props.account.address)}</Text>
+                  <br />
+                  <span>
+                    <span css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }}>
+                      <StakeStatusIndicator status={props.stakeStatus} />{' '}
+                    </span>
+                    <span
+                      css={{
+                        [MEDIUM_CONTAINER_QUERY]: { fontSize: theme.typography.body.fontSize },
+                      }}
+                    >
+                      {props.provider}
+                    </span>
+                  </span>
+                </div>
+              </Text.BodySmall>
+              <div css={{ [MEDIUM_CONTAINER_QUERY]: { order: 1 } }}>
+                <MenuContext.Provider
+                  value={{
+                    attentionRequired: Boolean(props.lockedButton),
+                    children: (
+                      <>
+                        {props.increaseStakeButton}
+                        {props.unstakeButton}
+                        {props.lockedButton}
+                      </>
+                    ),
+                  }}
+                >
+                  {props.menuButton ?? <StakePosition.MenuButton />}
+                </MenuContext.Provider>
+              </div>
+            </div>
+            <div css={{ [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}>
+              <Hr css={{ margin: 0 }} />
+            </div>
+            <section css={{ [MEDIUM_CONTAINER_QUERY]: { order: -1 }, [LARGE_CONTAINER_QUERY]: { width: '16rem' } }}>
+              <Text.BodySmall
+                as="div"
+                alpha="disabled"
+                css={{ marginBottom: '0.6rem', [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}
+              >
+                Asset
+              </Text.BodySmall>
+              <span
+                css={{
+                  [MEDIUM_CONTAINER_QUERY]: { display: 'flex', alignItems: 'center', gap: '1.2rem' },
+                }}
+              >
+                <img
+                  src={props.assetLogoSrc}
+                  css={{
+                    width: '2rem',
+                    height: '2rem',
+                    verticalAlign: '-0.25em',
+                    [MEDIUM_CONTAINER_QUERY]: { width: '3rem', height: '3rem' },
+                  }}
+                />
+                <span
+                  css={{
+                    display: 'contents',
+                    [MEDIUM_CONTAINER_QUERY]: { display: 'none' },
+                    [LARGE_CONTAINER_QUERY]: { display: 'contents' },
+                  }}
+                >
+                  {' '}
+                  <Text.BodyLarge alpha="high">
+                    {props.assetSymbol}
+                    <div css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }} />{' '}
+                    <Text.Body alpha="medium">{props.chain}</Text.Body>
+                  </Text.BodyLarge>
+                </span>
+              </span>
+            </section>
+            <section css={{ flex: 1 }}>
+              <Text.BodySmall
+                as="div"
+                alpha="disabled"
+                css={{ marginBottom: '0.6rem', [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}
+              >
+                Staked balance
+              </Text.BodySmall>
+              <Text.BodyLarge as="div" alpha="high">
+                {props.balance}
+                <div css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }} />{' '}
+                <Text.Body alpha="medium">{props.fiatBalance}</Text.Body>
+              </Text.BodyLarge>
+            </section>
+            <section css={{ flex: 1 }}>
+              <Text.BodySmall
+                as="div"
+                alpha="disabled"
+                css={{ marginBottom: '0.6rem', [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}
+              >
+                Total rewards
+              </Text.BodySmall>
+              <Text.BodyLarge as="div" alpha="high">
+                {props.rewards ?? 'Coming soon'}
+                <div css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }} />{' '}
+                <Text.Body alpha="medium">{props.fiatRewards}</Text.Body>
+              </Text.BodyLarge>
+            </section>
+            <div css={{ [MEDIUM_CONTAINER_QUERY]: { width: '20rem', display: 'flex', justifyContent: 'start' } }}>
+              <div>{props.withdrawButton ?? props.unstakingStatus}</div>
+            </div>
+            <div css={{ [MEDIUM_CONTAINER_QUERY]: { width: '20rem', display: 'flex', justifyContent: 'start' } }}>
+              <div>{props.claimButton}</div>
+            </div>
+          </Surface>
+        </div>
+      </StakePositionContext.Provider>
+    )
+  },
+  {
+    IncreaseStakeButton,
+    UnstakeButton,
+    MenuButton,
+    ClaimButton,
+    WithdrawButton,
+    LockedButton,
+    UnstakingStatus,
+    FastUnstakingStatus,
+    Skeleton: (_props: { className?: string; animate?: boolean }) => null,
+  }
+)
+
+export const StakePositionList = (props: PropsWithChildren<{ className?: string }>) => (
+  <section {...props}>
+    <div css={{ containerType: 'inline-size' }}>
+      <header
+        css={{
+          display: 'none',
+          marginBottom: '1.2rem',
+          [MEDIUM_CONTAINER_QUERY]: { display: 'flex', gap: '0.8rem', padding: '0 1.6rem' },
+        }}
+      >
+        <Text.BodySmall
+          css={{
+            width: '3rem',
+            visibility: 'hidden',
+            [LARGE_CONTAINER_QUERY]: {
+              width: '16rem',
+              visibility: 'visible',
+            },
+          }}
+        >
+          Asset
+        </Text.BodySmall>
+        <Text.BodySmall css={{ width: '24rem' }}>Account</Text.BodySmall>
+        <Text.BodySmall css={{ flex: 1 }}>Staked balance</Text.BodySmall>
+        <Text.BodySmall css={{ flex: 1 }}>Total rewards</Text.BodySmall>
+        <Text.BodySmall css={{ width: '20rem' }}>Unstaking</Text.BodySmall>
+        <Text.BodySmall css={{ width: '20rem' }}>Claim</Text.BodySmall>
+        <div css={{ width: '4rem' }} />
+      </header>
+    </div>
+    <div css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>{props.children}</div>
+  </section>
+)
+
+export default StakePosition

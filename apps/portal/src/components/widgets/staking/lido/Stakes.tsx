@@ -1,10 +1,10 @@
 import { selectedEvmAccountsState } from '../../../../domains/accounts'
 import { useStakes, type LidoSuite } from '../../../../domains/staking/lido'
 import { lidoSuitesState } from '../../../../domains/staking/lido/recoils'
-import StakePosition from '../../../recipes/StakePosition'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import RedactableBalance from '../../RedactableBalance'
 import LidoWidgetSideSheet from './LidoWidgetSideSheet'
+import { StakePosition } from '@talismn/ui-recipes'
 import { useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
@@ -51,7 +51,8 @@ const LidoStakes = (props: { lidoSuite: LidoSuite }) => {
           balance={<RedactableBalance>{stake.balance.toLocaleString()}</RedactableBalance>}
           fiatBalance={<AnimatedFiatNumber end={stake.fiatBalance} />}
           chain={props.lidoSuite.chain.name}
-          symbol={stake.balance.options?.currency}
+          assetSymbol={stake.balance.options?.currency}
+          assetLogoSrc="https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg"
           withdrawButton={
             stake.claimable.planck > 0n && (
               <StakePosition.WithdrawButton
@@ -66,7 +67,7 @@ const LidoStakes = (props: { lidoSuite: LidoSuite }) => {
           unstakeButton={
             stake.balance.planck > 0n && <StakePosition.UnstakeButton onClick={() => setUnstakeSideSheetOpen(true)} />
           }
-          status={
+          unstakingStatus={
             stake.totalUnlocking.planck > 0n && (
               <StakePosition.UnstakingStatus amount={stake.totalUnlocking.toLocaleString()} unlocks={[]} />
             )

@@ -1,4 +1,4 @@
-import { ListItem, Surface, useSurfaceColor } from '../..'
+import { CircularProgressIndicator, ListItem, Surface, useSurfaceColor } from '../..'
 import FloatingPortal from '../../atoms/FloatingPortal'
 import { usePrevious } from '../../utils'
 import { useTheme } from '@emotion/react'
@@ -25,6 +25,7 @@ import {
   useContext,
   useEffect,
   useState,
+  useTransition,
   type DetailedHTMLProps,
   type HTMLAttributes,
   type HTMLProps,
@@ -44,7 +45,7 @@ export type MenuItemsProps = Omit<DetailedHTMLProps<HTMLAttributes<HTMLElement>,
   children: ReactNode | ((props: { open: boolean; toggleOpen: () => unknown }) => ReactNode)
 }
 
-type MenuItemRenderProps = { hover: boolean }
+type MenuItemRenderProps = { hover: boolean; isPending: boolean }
 
 type MenuItemChildren = ReactNode | ((props: MenuItemRenderProps) => ReactNode)
 
@@ -52,8 +53,9 @@ export type MenuItemProps = {
   className?: string
   children: MenuItemChildren
   dismissAfterSelection?: boolean
-  inTransition?: boolean
+  withTransition?: boolean
   onClick?: () => unknown
+  disabled?: boolean
 }
 
 const MenuContext = createContext<{
@@ -154,50 +156,79 @@ const renderMenuItemChildren = (children: MenuItemChildren, renderProps: MenuIte
   typeof children === 'function' ? children(renderProps) : children
 
 const MenuItem = Object.assign(
-  ({ children: childrenOrRenderFunc, dismissAfterSelection = true, inTransition, ...props }: MenuItemProps) => {
+  ({
+    children: childrenOrRenderFunc,
+    dismissAfterSelection = true,
+    withTransition = false,
+    onClick,
+    disabled,
+    ...props
+  }: MenuItemProps) => {
     const theme = useTheme()
 
     const { getItemProps, setOpen } = useContext(MenuContext)
 
-    const prevInTransition = usePrevious(inTransition)
+    const [isPending, startTransition] = useTransition()
+
+    const prevIsPending = usePrevious(isPending)
 
     useEffect(() => {
-      if (inTransition === false && prevInTransition === true) {
+      if (!isPending && prevIsPending) {
         setOpen(false)
       }
-    }, [inTransition, prevInTransition, setOpen])
+    }, [isPending, prevIsPending, setOpen])
 
     const [hover, setHover] = useState(false)
-    const children = renderMenuItemChildren(childrenOrRenderFunc, { hover })
+    const children = renderMenuItemChildren(childrenOrRenderFunc, { hover, isPending })
 
     return (
-      <motion.div
-        className={['talismn-ui-menu-item', props.className].join(' ')}
-        variants={{
-          true: { opacity: 1, transform: 'translateY(0px)' },
-          false: { opacity: 0, transform: 'translateY(20px)' },
-        }}
-        css={{
-          margin: '0 0.8rem',
-          borderRadius: theme.shape.extraSmall,
-          cursor: 'pointer',
-          ':hover': {
-            backgroundColor: useSurfaceColor(),
-          },
-        }}
-        onHoverStart={() => setHover(true)}
-        onHoverEnd={() => setHover(false)}
-        {...getItemProps({
-          ...props,
-          children,
-          onClick: () => {
-            props.onClick?.()
-            if (dismissAfterSelection) {
+      <button
+        onClick={() => {
+          const maybeStartTransition = withTransition ? startTransition : (callback: () => void) => callback()
+
+          maybeStartTransition(() => {
+            onClick?.()
+            if (dismissAfterSelection && !withTransition) {
               setOpen(false)
             }
+          })
+        }}
+        disabled={disabled}
+        css={{
+          display: 'contents',
+          textAlign: 'unset',
+          cursor: 'pointer',
+          ':disabled': {
+            cursor: 'not-allowed',
+            '> *': {
+              filter: 'brightness(0.5)',
+            },
           },
-        })}
-      />
+          ':not(:disabled)': {
+            '> *:hover': {
+              backgroundColor: useSurfaceColor(),
+            },
+          },
+        }}
+      >
+        <motion.div
+          className={['talismn-ui-menu-item', props.className].join(' ')}
+          variants={{
+            true: { opacity: 1, transform: 'translateY(0px)' },
+            false: { opacity: 0, transform: 'translateY(20px)' },
+          }}
+          css={{
+            margin: '0 0.8rem',
+            borderRadius: theme.shape.extraSmall,
+          }}
+          onHoverStart={() => setHover(true)}
+          onHoverEnd={() => setHover(false)}
+          {...getItemProps({
+            ...props,
+            children,
+          })}
+        />
+      </button>
     )
   },
   {
@@ -224,7 +255,13 @@ const MenuItem = Object.assign(
             overlineContent={renderMenuItemChildren(overlineContent, renderProps)}
             supportingContent={renderMenuItemChildren(supportingContent, renderProps)}
             leadingContent={renderMenuItemChildren(leadingContent, renderProps)}
-            trailingContent={renderMenuItemChildren(trailingContent, renderProps)}
+            trailingContent={
+              renderProps.isPending ? (
+                <CircularProgressIndicator size="1em" />
+              ) : (
+                renderMenuItemChildren(trailingContent, renderProps)
+              )
+            }
             revealTrailingContentOnHover={revealTrailingContentOnHover}
           />
         )}

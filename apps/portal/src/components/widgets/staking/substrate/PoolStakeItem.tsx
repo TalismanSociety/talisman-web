@@ -2,7 +2,6 @@ import { type Account } from '../../../../domains/accounts'
 import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '../../../../domains/chains'
 import { useEraEtaFormatter, useExtrinsic, useSubmittableResultLoadableState } from '../../../../domains/common'
 import { type usePoolStakes } from '../../../../domains/staking/substrate/nominationPools'
-import StakePosition from '../../../recipes/StakePosition'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import RedactableBalance from '../../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
@@ -10,8 +9,8 @@ import ClaimStakeDialog from './ClaimStakeDialog'
 import NominationPoolsStatisticsSideSheet from './NominationPoolsStatisticsSideSheet'
 import PoolClaimPermissionDialog from './PoolClaimPermissionDialog'
 import UnstakeDialog from './UnstakeDialog'
-import { CircularProgressIndicator } from '@talismn/ui'
-import { useCallback, useState, useTransition } from 'react'
+import { StakePosition } from '@talismn/ui-recipes'
+import { useCallback, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account[]>>[number] }) => {
@@ -35,7 +34,6 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
   }))
 
   const [statsDialogOpen, setStatsDialogOpen] = useState(false)
-  const [statsDialogInTransition, startStatsDialogTransition] = useTransition()
 
   const [claimPermissionDialogOpen, setClaimPermissionDialogOpen] = useState(false)
 
@@ -43,7 +41,8 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
     <>
       <StakePosition
         chain={chain.name}
-        symbol={chain.nativeToken?.symbol}
+        assetSymbol={chain.nativeToken?.symbol}
+        assetLogoSrc={chain.nativeToken?.logo ?? ''}
         readonly={item.account.readonly}
         stakeStatus={item.status}
         account={item.account}
@@ -101,10 +100,8 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
           <StakePosition.MenuButton>
             <StakePosition.MenuButton.Item.Button
               headlineContent="Statistics"
-              trailingContent={statsDialogInTransition && <CircularProgressIndicator size="1em" />}
-              dismissAfterSelection={false}
-              onClick={() => startStatsDialogTransition(() => setStatsDialogOpen(true))}
-              inTransition={statsDialogInTransition}
+              onClick={() => setStatsDialogOpen(true)}
+              withTransition
             />
             {!item.account.readonly && (
               <StakePosition.MenuButton.Item.Button
@@ -114,7 +111,7 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
             )}
           </StakePosition.MenuButton>
         }
-        status={
+        unstakingStatus={
           item.totalUnlocking > 0n && (
             <StakePosition.UnstakingStatus
               amount={<RedactableBalance>{decimal.fromPlanck(item.totalUnlocking).toLocaleString()}</RedactableBalance>}

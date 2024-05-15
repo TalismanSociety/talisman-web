@@ -3,11 +3,11 @@ import { ChainProvider, dappStakingEnabledChainsState, useChainState } from '../
 import { useExtrinsic } from '../../../../domains/common'
 import { useClaimAllRewardsExtrinsic, useRegisteredDappsState, useStake } from '../../../../domains/staking/dappStaking'
 import DappStakingLockedAmountDialog from '../../../recipes/DappStakingLockedAmountDialog'
-import StakePosition from '../../../recipes/StakePosition'
 import ErrorBoundary from '../../ErrorBoundary'
 import AddStakeDialog from './AddStakeDialog'
 import UnlockDuration from './UnlockDuration'
 import UnstakeDialog from './UnstakeDialog'
+import { StakePosition } from '@talismn/ui-recipes'
 import { useState, useTransition } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
@@ -25,13 +25,9 @@ const Stake = ({ account }: { account: Account }) => {
   const withdrawExtrinsic = useExtrinsic('dappStaking', 'withdrawUnbonded')
   const unlockExtrinsic = useExtrinsic('dappStaking', 'unlock')
 
-  const [addStakeDialogOpen, _setAddStakeDialogOpen] = useState(false)
-  const [addStakeDialogInTransition, startAddStakeDialogTransition] = useTransition()
-  const setAddStakeDialogOpen = (value: boolean) => startAddStakeDialogTransition(() => _setAddStakeDialogOpen(value))
+  const [addStakeDialogOpen, setAddStakeDialogOpen] = useState(false)
 
-  const [unstakeDialogOpen, _setUnstakeDialogOpen] = useState(false)
-  const [unstakeDialogInTransition, startUnstakeDialogTransition] = useTransition()
-  const setUnstakeDialogOpen = (value: boolean) => startUnstakeDialogTransition(() => _setUnstakeDialogOpen(value))
+  const [unstakeDialogOpen, setUnstakeDialogOpen] = useState(false)
 
   const [lockedDialogOpen, setLockedDialogOpen] = useState(false)
   const [requestReStakeInTransition, startRequestRestakeTransition] = useTransition()
@@ -45,7 +41,8 @@ const Stake = ({ account }: { account: Account }) => {
       <StakePosition
         readonly={account.readonly}
         chain={chain.name}
-        symbol={chain.nativeToken?.symbol ?? ''}
+        assetSymbol={chain.nativeToken?.symbol ?? ''}
+        assetLogoSrc={chain.nativeToken?.logo ?? ''}
         account={account}
         provider="DApp staking"
         stakeStatus={stake.earningRewards ? 'earning_rewards' : 'not_earning_rewards'}
@@ -53,18 +50,12 @@ const Stake = ({ account }: { account: Account }) => {
         fiatBalance={stake.totalStaked.localizedFiatAmount}
         increaseStakeButton={
           stake.dapps.length > 0 && (
-            <StakePosition.IncreaseStakeButton
-              loading={addStakeDialogInTransition}
-              onClick={() => setAddStakeDialogOpen(true)}
-            />
+            <StakePosition.IncreaseStakeButton onClick={() => setAddStakeDialogOpen(true)} withTransition />
           )
         }
         unstakeButton={
           stake.dapps.length > 0 && (
-            <StakePosition.UnstakeButton
-              loading={unstakeDialogInTransition}
-              onClick={() => setUnstakeDialogOpen(true)}
-            />
+            <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} withTransition />
           )
         }
         lockedButton={
@@ -98,7 +89,7 @@ const Stake = ({ account }: { account: Account }) => {
             />
           )
         }
-        status={
+        unstakingStatus={
           stake.unlocking.length > 0 && (
             <StakePosition.UnstakingStatus
               amount={stake.totalUnlocking.decimalAmount.toLocaleString()}

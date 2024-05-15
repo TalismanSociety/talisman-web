@@ -5,13 +5,13 @@ import { useExtrinsic, useTokenAmountFromPlanck } from '../../../../domains/comm
 import { useEraEtaFormatter } from '../../../../domains/common/hooks/useEraEta'
 import { useLocalizedUnlockDuration } from '../../../../domains/staking/substrate/nominationPools'
 import FastUnstakeDialog from '../../../recipes/FastUnstakeDialog'
-import StakePosition from '../../../recipes/StakePosition'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import RedactableBalance from '../../RedactableBalance'
 import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
 import { type DeriveStakingAccount } from '@polkadot/api-derive/types'
 import { useDeriveState } from '@talismn/react-polkadot-api'
 import { CircularProgressIndicator } from '@talismn/ui'
+import { StakePosition } from '@talismn/ui-recipes'
 import BN from 'bn.js'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
@@ -83,7 +83,8 @@ const ValidatorStakeItem = (props: {
     <>
       <StakePosition
         chain={chain.name}
-        symbol={chain.nativeToken?.symbol}
+        assetSymbol={chain.nativeToken?.symbol}
+        assetLogoSrc={chain.nativeToken?.logo ?? ''}
         provider="Validator staking"
         stakeStatus={
           props.reward === undefined ? undefined : props.reward === 0n ? 'not_earning_rewards' : 'earning_rewards'
@@ -108,7 +109,7 @@ const ValidatorStakeItem = (props: {
             />
           )
         }
-        status={
+        unstakingStatus={
           totalUnlocking?.isZero() === false ? (
             props.inFastUnstakeHead || props.inFastUnstakeQueue ? (
               <StakePosition.FastUnstakingStatus

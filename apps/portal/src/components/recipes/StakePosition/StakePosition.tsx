@@ -32,7 +32,7 @@ export type StakePositionProps = {
   fiatBalance: ReactNode
   rewards?: ReactNode
   fiatRewards?: ReactNode
-  status?: ReactNode
+  unstakingStatus?: ReactNode
   increaseStakeButton?: ReactNode
   unstakeButton?: ReactNode
   lockedButton?: ReactNode
@@ -267,7 +267,7 @@ const StakePosition = Object.assign(
                 flexWrap: 'wrap',
               }}
             >
-              {props.status}
+              {props.unstakingStatus}
               {props.lockedButton}
               {props.claimButton}
               {props.withdrawButton}

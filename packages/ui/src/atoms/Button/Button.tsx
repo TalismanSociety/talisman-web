@@ -15,6 +15,7 @@ type PolymorphicButtonProps<T extends ButtonElementType = 'button'> = PropsWithC
   variant?:
     | 'outlined'
     | 'text'
+    | 'tonal'
     | 'surface'
     /**
      * @deprecated use "surface" variant instead
@@ -70,6 +71,14 @@ const Button = <T extends ButtonElementType = 'button'>({
           ':hover': {
             color: theme.color.background,
             backgroundColor: theme.color.onBackground,
+          },
+        }
+      case 'tonal':
+        return {
+          backgroundColor: `color-mix(in srgb, ${theme.color.primary}, transparent 90%)`,
+          color: theme.color.primary,
+          ':hover': {
+            opacity: 0.6,
           },
         }
       case 'text':
@@ -184,6 +193,11 @@ export default Button
 export const OutlinedButton = <T extends ButtonElementType = 'button'>(props: Omit<ButtonProps<T>, 'variant'>) => (
   // @ts-expect-error
   <Button {...props} variant="outlined" />
+)
+
+export const TonalButton = <T extends ButtonElementType = 'button'>(props: Omit<ButtonProps<T>, 'variant'>) => (
+  // @ts-expect-error
+  <Button {...props} variant="tonal" />
 )
 
 export const TextButton = <T extends ButtonElementType = 'button'>(props: Omit<ButtonProps<T>, 'variant'>) => (

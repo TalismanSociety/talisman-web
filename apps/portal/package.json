@@ -13,7 +13,7 @@
     "lint": "eslint src",
     "check-types": "tsc --noEmit",
     "e2e": "playwright test",
-    "storybook": "storybook dev -p 6007",
+    "storybook": "storybook dev -p 6008",
     "build-storybook": "storybook build",
     "codegen:history": "graphql-codegen --require dotenv/config --config codegen.history.ts",
     "codegen:crowdloan": "graphql-codegen --require dotenv/config --config codegen.crowdloan.ts"

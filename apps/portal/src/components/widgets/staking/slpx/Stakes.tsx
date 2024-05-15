@@ -3,12 +3,12 @@ import { ChainProvider } from '../../../../domains/chains'
 import { slpxPairsState } from '../../../../domains/staking/slpx'
 import { useStakes } from '../../../../domains/staking/slpx/core'
 import type { SlpxPair } from '../../../../domains/staking/slpx/types'
-import StakePosition from '../../../recipes/StakePosition'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
+import { StakePosition } from '@talismn/ui-recipes'
 import { useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
@@ -26,14 +26,15 @@ const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStake
         balance={<RedactableBalance>{props.position.balance.toLocaleString()}</RedactableBalance>}
         fiatBalance={<AnimatedFiatNumber end={props.position.fiatBalance} />}
         chain={props.slpxPair.chain.name}
-        symbol={props.position.balance.options?.currency}
+        assetSymbol={props.position.balance.options?.currency}
+        assetLogoSrc={props.slpxPair.vToken.logo}
         increaseStakeButton={<StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeDialogOpen(true)} />}
         unstakeButton={
           props.position.balance.planck > 0n && (
             <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} />
           )
         }
-        status={
+        unstakingStatus={
           props.position.unlocking !== undefined &&
           props.position.unlocking.planck > 0n && (
             <StakePosition.UnstakingStatus amount={props.position.unlocking?.toLocaleString()} unlocks={[]} />
