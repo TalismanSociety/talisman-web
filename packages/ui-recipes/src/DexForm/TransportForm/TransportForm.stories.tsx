@@ -1,6 +1,6 @@
 import TransportForm from './TransportForm'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Chip, Select } from '@talismn/ui'
+import { Select } from '@talismn/ui'
 
 export default {
   component: TransportForm,
@@ -42,11 +42,7 @@ export const Default: Story = {
             <TransportForm.Info.Faq.Question question="What are the risks?" answer="foo" />
           </TransportForm.Info.Faq>
         }
-        footer={
-          <TransportForm.Info.Footer>
-            XCM transport provided by <Chip css={{ textTransform: 'uppercase' }}>Polkadot</Chip>
-          </TransportForm.Info.Footer>
-        }
+        footer={<TransportForm.Info.Footer>Transport via XCM</TransportForm.Info.Footer>}
       />
     ),
   },

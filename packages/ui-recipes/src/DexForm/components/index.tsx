@@ -196,7 +196,7 @@ const Info = Object.assign(
     Header: (props: { actions: ReactNode }) => (
       <header css={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>{props.actions}</header>
     ),
-    Footer: (props: PropsWithChildren) => <div {...props} css={{ alignSelf: 'center' }} />,
+    Footer: (props: PropsWithChildren) => <Text.BodySmall alpha="disabled" {...props} css={{ textAlign: 'center' }} />,
   }
 )
 

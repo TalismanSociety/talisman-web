@@ -84,7 +84,7 @@ export const Default: Story = {
         }
         footer={
           <SwapForm.Info.Footer>
-            Swap provided by <Chip css={{ textTransform: 'uppercase' }}>Chainflip</Chip>
+            Swap powered by <Chip css={{ textTransform: 'uppercase' }}>Chainflip</Chip>
           </SwapForm.Info.Footer>
         }
       />
