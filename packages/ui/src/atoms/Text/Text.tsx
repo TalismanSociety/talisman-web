@@ -29,10 +29,11 @@ const NoopText = <T extends React.ElementType = 'span'>({
 }
 
 const BaseText = <T extends React.ElementType = 'span'>({ as, alpha = 'medium', ...props }: TextProps<T>) => {
+  const theme = useTheme()
   const Component = as ?? 'span'
 
   return (
-    <Component {...props} css={{ fontSize: 'inherit' }}>
+    <Component {...props} css={{ color: theme.color.onBackground, fontSize: 'inherit' }}>
       <span
         css={{
           display: 'contents',
