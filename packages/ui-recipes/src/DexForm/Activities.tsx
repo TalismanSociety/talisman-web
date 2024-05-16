@@ -1,6 +1,6 @@
 import { DexFormInfoNotice, type DexFormInfoNoticeProps } from './components'
-import { CircularProgressIndicator, IconButton, Skeleton, SurfaceIcon, Text, TonalIcon, useTheme } from '@talismn/ui'
-import { Check, ExternalLink, XCircle } from '@talismn/web-icons'
+import { CircularProgressIndicator, Skeleton, Surface, Text, useTheme } from '@talismn/ui'
+import { ArrowRight, Check, ExternalLink, XCircle } from '@talismn/web-icons'
 import type { PropsWithChildren, ReactNode } from 'react'
 import React from 'react'
 
@@ -8,6 +8,8 @@ export type ActivityLineItemProps = {
   state: 'pending' | 'complete' | 'failed'
   srcAmount: ReactNode
   destAmount: ReactNode
+  srcAssetIconSrc: string
+  destAssetIconSrc: string
   date: Date
   externalLink: string
 }
@@ -16,47 +18,61 @@ const ActivityLineItem = Object.assign(
   (props: ActivityLineItemProps) => {
     const theme = useTheme()
     return (
-      <div css={{ containerType: 'inline-size', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-        <div css={{ flex: '0 2rem' }}>
-          {(() => {
-            switch (props.state) {
-              case 'pending':
-                return (
-                  <SurfaceIcon size="1.6rem">
-                    <CircularProgressIndicator />
-                  </SurfaceIcon>
-                )
-              case 'complete':
-                return (
-                  <TonalIcon size="1.6rem" contentColor="#38d448">
-                    <Check />
-                  </TonalIcon>
-                )
-              case 'failed':
-                return (
-                  <TonalIcon size="1.6rem" contentColor="#d22424">
-                    <XCircle />
-                  </TonalIcon>
-                )
-            }
-          })()}
-        </div>
-        <Text.Body as="div" alpha="high" css={{ flex: 3 }}>
-          <span>{props.srcAmount}</span> <span>➡️</span> <span>{props.destAmount}</span>
-        </Text.Body>
-        <Text.Body as="div" alpha="high" css={{ flex: 1 }}>
-          {props.date.toLocaleDateString(undefined, { day: 'numeric', month: 'numeric', year: '2-digit' })}
-        </Text.Body>
-        <div css={{ flex: '0 2rem' }}>
-          <IconButton as="a" href={props.externalLink} target="_blank" size="2rem" contentColor={theme.color.primary}>
-            <ExternalLink />
-          </IconButton>
-        </div>
-      </div>
+      // eslint-disable-next-line react/jsx-no-target-blank
+      <a href={props.externalLink} target="_blank" css={{ display: 'contents', cursor: 'pointer' }}>
+        <Surface
+          css={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.8rem',
+            borderRadius: '0.8rem',
+            padding: '0.8rem',
+            ':not(:hover)': {
+              backgroundColor: 'transparent',
+              '>:last-child': {
+                visibility: 'hidden',
+              },
+            },
+          }}
+        >
+          <div>
+            <img src={props.srcAssetIconSrc} css={{ width: '2.4rem', height: '2.4rem' }} />
+            <img
+              src={props.destAssetIconSrc}
+              css={{ width: '2.4rem', height: '2.4rem', marginInlineStart: '-1.2rem' }}
+            />
+          </div>
+          <div>
+            <Text.Body as="div" alpha="high">
+              <span>{props.srcAmount}</span>{' '}
+              <Text>
+                <ArrowRight size="1em" css={{ verticalAlign: '-0.12em' }} />
+              </Text>{' '}
+              <span>{props.destAmount}</span>
+            </Text.Body>
+            <Text.Body as="div" css={{ marginTop: '0.4rem' }}>
+              {(() => {
+                switch (props.state) {
+                  case 'pending':
+                    return <CircularProgressIndicator size="0.8rem" />
+                  case 'complete':
+                    return <Check size="0.8rem" css={{ color: '#38d448' }} />
+                  case 'failed':
+                    return <XCircle size="0.8rem" css={{ color: '#d22424' }} />
+                }
+              })()}{' '}
+              <span css={{ marginLeft: '0.4rem' }}>
+                {props.date.toLocaleDateString(undefined, { day: 'numeric', month: 'numeric', year: '2-digit' })}
+              </span>
+            </Text.Body>
+          </div>
+          <ExternalLink size="1.6rem" css={{ color: theme.color.primary, marginInlineStart: 'auto' }} />
+        </Surface>
+      </a>
     )
   },
   {
-    Skeleton: () => <Skeleton.Surface css={{ height: '2rem' }} />,
+    Skeleton: () => <Skeleton.Surface css={{ height: '5.4rem' }} />,
   }
 )
 
@@ -73,21 +89,7 @@ export const ActivityList = Object.assign(
             {props.title}
           </Text.Body>
         )}
-        <div css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-          <div css={{ containerType: 'inline-size', display: 'flex', gap: '0.8rem' }}>
-            <div css={{ width: '1.6rem' }} />
-            <Text.BodySmall alpha="disabled" css={{ flex: 3 }}>
-              Amount
-            </Text.BodySmall>
-            <Text.BodySmall alpha="disabled" css={{ flex: 1 }}>
-              Date
-            </Text.BodySmall>
-            <Text.BodySmall alpha="disabled" css={{ width: '2rem', textAlign: 'center' }}>
-              TX
-            </Text.BodySmall>
-          </div>
-          {props.children}
-        </div>
+        <div css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>{props.children}</div>
       </div>
     ),
   {

@@ -12,6 +12,8 @@ export const Default: Story = {
     state: 'pending',
     srcAmount: '500 DOT',
     destAmount: '1 ETH',
+    srcAssetIconSrc: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/unknown.svg',
+    destAssetIconSrc: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/unknown.svg',
     date: new Date(),
     externalLink: globalThis.location.href,
   },

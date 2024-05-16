@@ -1,4 +1,4 @@
-import { assetCoingeckoIds } from './config'
+import { assetCoingeckoIds, assetIcons } from './config'
 import type { Account } from './types'
 import { isSubstrateAddress } from './utils'
 import { SwapSDK, type Asset, type AssetData, type Chain, type ChainflipNetwork } from '@chainflip/sdk/swap'
@@ -415,6 +415,11 @@ export const swapStatusAtomFamily = atomFamily((id: string) =>
         destAsset === undefined || !('egressAmount' in status)
           ? undefined
           : Decimal.fromPlanck(status.egressAmount, destAsset.decimals, { currency: destAsset.symbol }),
+      srcAssetIcon: assetIcons[srcAsset.asset],
+      destAssetIcon:
+        destAsset === undefined
+          ? 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/unknown.svg'
+          : assetIcons[destAsset?.asset],
       date: status.depositChannelCreatedAt === undefined ? undefined : new Date(status.depositChannelCreatedAt),
       externalLink: (() => {
         switch (get(chainflipNetworkAtom)) {

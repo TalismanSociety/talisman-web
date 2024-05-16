@@ -170,6 +170,8 @@ const Activity = (props: ActivityProps) => {
       state={status.state}
       srcAmount={status.amount?.toLocaleString() ?? '...'}
       destAmount={status.egressAmount?.toLocaleString() ?? '...'}
+      srcAssetIconSrc={status.srcAssetIcon}
+      destAssetIconSrc={status.destAssetIcon}
       date={status.date ?? new Date()}
       externalLink={status.externalLink}
     />
