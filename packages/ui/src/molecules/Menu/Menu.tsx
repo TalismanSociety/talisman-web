@@ -118,10 +118,14 @@ const MenuItems = (props: MenuItemsProps) => {
                 delayChildren: 0.15,
                 staggerChildren: 0.025,
               },
+              transitionEnd: {
+                overflow: 'auto',
+              },
             },
             false: {
               scale: 0.95,
               opacity: 0,
+              overflow: 'hidden',
             },
           }}
           css={{
