@@ -130,20 +130,23 @@ const WithdrawButton = (props: Omit<ButtonProps, 'children'> & { amount: ReactNo
 
 const LockedButton = (
   props: Omit<ButtonProps, 'children' | 'onClick'> & { amount: ReactNode; onClick: () => unknown }
-) => (
-  <StakePositionContext.Consumer>
-    {({ readonly }) => (
-      <Tooltip content="Account is readonly" disabled={!readonly}>
-        <Menu.Item.Button
-          {...props}
-          headlineContent={<span>{props.amount} locked</span>}
-          trailingContent={<Badge />}
-          disabled={readonly}
-        />
-      </Tooltip>
-    )}
-  </StakePositionContext.Consumer>
-)
+) => {
+  const theme = useTheme()
+  return (
+    <StakePositionContext.Consumer>
+      {({ readonly }) => (
+        <Tooltip content="Account is readonly" disabled={!readonly}>
+          <Menu.Item.Button
+            {...props}
+            headlineContent={<span>{props.amount} locked</span>}
+            trailingContent={<Badge containerColor={theme.color.primary} />}
+            disabled={readonly}
+          />
+        </Tooltip>
+      )}
+    </StakePositionContext.Consumer>
+  )
+}
 
 export const UnstakingStatus = (props: {
   amount: ReactNode
