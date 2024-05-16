@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "tsc --build --watch tsconfig.json",
     "build": "rm -rf build && tsc --build tsconfig.json",
-    "lint": "eslint src",
+    "lint": "eslint",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
@@ -18,13 +18,13 @@
     "@talismn/eslint-config": "workspace:^",
     "@talismn/tsconfig": "workspace:^",
     "@types/react": "^18.3.1",
-    "eslint": "^8.33.0",
-    "recoil": "^0.7.7",
+    "eslint": "^9.2.0",
+    "recoil": "patch:recoil@patch%3Arecoil@npm%253A0.7.7%23./.yarn/patches/recoil-npm-0.7.7-4452f58b67.patch%3A%3Aversion=0.7.7&hash=782944&locator=talisman-web%2540workspace%253A.#~/.yarn/patches/recoil-patch-34a7806c1c.patch",
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
     "@polkadot/api": ">= 9.x",
-    "react": ">= 18.x",
+    "react": "19.x",
     "recoil": ">= 0.7.x"
   }
 }

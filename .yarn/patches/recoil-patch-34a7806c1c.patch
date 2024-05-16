@@ -1,0 +1,128 @@
+diff --git a/cjs/index.js b/cjs/index.js
+index 2fb571f97d46750ffbae0678c108876e0fe3ba3d..2d87e71fb82531ee027c6492ece520149eb3af1b 100644
+--- a/cjs/index.js
++++ b/cjs/index.js
+@@ -504,26 +504,7 @@ let ReactRendererVersionMismatchWarnOnce = false; // Check if the current render
+ // change we can't simply check if `React.useSyncExternalStore()` is defined.
+ 
+ function currentRendererSupportsUseSyncExternalStore() {
+-  var _ReactCurrentDispatch;
+-
+-  // $FlowFixMe[incompatible-use]
+-  const {
+-    ReactCurrentDispatcher,
+-    ReactCurrentOwner
+-  } =
+-  /* $FlowFixMe[prop-missing] This workaround was approved as a safer mechanism
+-   * to detect if the current renderer supports useSyncExternalStore()
+-   * https://fb.workplace.com/groups/reactjs/posts/9558682330846963/ */
+-  react.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+-  const dispatcher = (_ReactCurrentDispatch = ReactCurrentDispatcher === null || ReactCurrentDispatcher === void 0 ? void 0 : ReactCurrentDispatcher.current) !== null && _ReactCurrentDispatch !== void 0 ? _ReactCurrentDispatch : ReactCurrentOwner.currentDispatcher;
+-  const isUseSyncExternalStoreSupported = dispatcher.useSyncExternalStore != null;
+-
+-  if (useSyncExternalStore && !isUseSyncExternalStoreSupported && !ReactRendererVersionMismatchWarnOnce) {
+-    ReactRendererVersionMismatchWarnOnce = true;
+-    Recoil_recoverableViolation('A React renderer without React 18+ API support is being used with React 18+.');
+-  }
+-
+-  return isUseSyncExternalStoreSupported;
++  return true;
+ }
+ 
+ /**
+diff --git a/es/index.js b/es/index.js
+index 3cc366b4bfd910cfb2b3bf60d51c561a85c5d4b0..7a5074be9aecb31de68df614e442650d491528ae 100644
+--- a/es/index.js
++++ b/es/index.js
+@@ -498,26 +498,7 @@ let ReactRendererVersionMismatchWarnOnce = false; // Check if the current render
+ // change we can't simply check if `React.useSyncExternalStore()` is defined.
+ 
+ function currentRendererSupportsUseSyncExternalStore() {
+-  var _ReactCurrentDispatch;
+-
+-  // $FlowFixMe[incompatible-use]
+-  const {
+-    ReactCurrentDispatcher,
+-    ReactCurrentOwner
+-  } =
+-  /* $FlowFixMe[prop-missing] This workaround was approved as a safer mechanism
+-   * to detect if the current renderer supports useSyncExternalStore()
+-   * https://fb.workplace.com/groups/reactjs/posts/9558682330846963/ */
+-  react.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+-  const dispatcher = (_ReactCurrentDispatch = ReactCurrentDispatcher === null || ReactCurrentDispatcher === void 0 ? void 0 : ReactCurrentDispatcher.current) !== null && _ReactCurrentDispatch !== void 0 ? _ReactCurrentDispatch : ReactCurrentOwner.currentDispatcher;
+-  const isUseSyncExternalStoreSupported = dispatcher.useSyncExternalStore != null;
+-
+-  if (useSyncExternalStore && !isUseSyncExternalStoreSupported && !ReactRendererVersionMismatchWarnOnce) {
+-    ReactRendererVersionMismatchWarnOnce = true;
+-    Recoil_recoverableViolation('A React renderer without React 18+ API support is being used with React 18+.');
+-  }
+-
+-  return isUseSyncExternalStoreSupported;
++  return true;
+ }
+ 
+ /**
+diff --git a/native/index.js b/native/index.js
+index dcb8bc961bfc0595864a18436df9685f0bcff43d..46c6776353fd84c57592ff5b5d81c1556a29fdee 100644
+--- a/native/index.js
++++ b/native/index.js
+@@ -498,26 +498,7 @@ let ReactRendererVersionMismatchWarnOnce = false; // Check if the current render
+ // change we can't simply check if `React.useSyncExternalStore()` is defined.
+ 
+ function currentRendererSupportsUseSyncExternalStore() {
+-  var _ReactCurrentDispatch;
+-
+-  // $FlowFixMe[incompatible-use]
+-  const {
+-    ReactCurrentDispatcher,
+-    ReactCurrentOwner
+-  } =
+-  /* $FlowFixMe[prop-missing] This workaround was approved as a safer mechanism
+-   * to detect if the current renderer supports useSyncExternalStore()
+-   * https://fb.workplace.com/groups/reactjs/posts/9558682330846963/ */
+-  react.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+-  const dispatcher = (_ReactCurrentDispatch = ReactCurrentDispatcher === null || ReactCurrentDispatcher === void 0 ? void 0 : ReactCurrentDispatcher.current) !== null && _ReactCurrentDispatch !== void 0 ? _ReactCurrentDispatch : ReactCurrentOwner.currentDispatcher;
+-  const isUseSyncExternalStoreSupported = dispatcher.useSyncExternalStore != null;
+-
+-  if (useSyncExternalStore && !isUseSyncExternalStoreSupported && !ReactRendererVersionMismatchWarnOnce) {
+-    ReactRendererVersionMismatchWarnOnce = true;
+-    Recoil_recoverableViolation('A React renderer without React 18+ API support is being used with React 18+.');
+-  }
+-
+-  return isUseSyncExternalStoreSupported;
++  return true;
+ }
+ 
+ /**
+diff --git a/umd/index.js b/umd/index.js
+index 5e0cffb75926ceebd2d385776870d41c9941cf66..87329fc5ee193057a282f1255dcfd11935206973 100644
+--- a/umd/index.js
++++ b/umd/index.js
+@@ -504,26 +504,7 @@
+   // change we can't simply check if `React.useSyncExternalStore()` is defined.
+ 
+   function currentRendererSupportsUseSyncExternalStore() {
+-    var _ReactCurrentDispatch;
+-
+-    // $FlowFixMe[incompatible-use]
+-    const {
+-      ReactCurrentDispatcher,
+-      ReactCurrentOwner
+-    } =
+-    /* $FlowFixMe[prop-missing] This workaround was approved as a safer mechanism
+-     * to detect if the current renderer supports useSyncExternalStore()
+-     * https://fb.workplace.com/groups/reactjs/posts/9558682330846963/ */
+-    react.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+-    const dispatcher = (_ReactCurrentDispatch = ReactCurrentDispatcher === null || ReactCurrentDispatcher === void 0 ? void 0 : ReactCurrentDispatcher.current) !== null && _ReactCurrentDispatch !== void 0 ? _ReactCurrentDispatch : ReactCurrentOwner.currentDispatcher;
+-    const isUseSyncExternalStoreSupported = dispatcher.useSyncExternalStore != null;
+-
+-    if (useSyncExternalStore && !isUseSyncExternalStoreSupported && !ReactRendererVersionMismatchWarnOnce) {
+-      ReactRendererVersionMismatchWarnOnce = true;
+-      Recoil_recoverableViolation('A React renderer without React 18+ API support is being used with React 18+.');
+-    }
+-
+-    return isUseSyncExternalStoreSupported;
++    return true;
+   }
+ 
+   /**

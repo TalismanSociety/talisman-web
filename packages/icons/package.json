@@ -13,7 +13,7 @@
     "dev": "tsc --build --watch tsconfig.json",
     "build": "rm -rf build && tsc --build tsconfig.json",
     "codegen": "npx @svgr/cli -- src/svgs",
-    "lint": "eslint src",
+    "lint": "eslint",
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {
@@ -21,12 +21,12 @@
     "@talismn/eslint-config": "workspace:^",
     "@talismn/tsconfig": "workspace:^",
     "@types/react": "^18.3.1",
-    "eslint": "^8.37.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "eslint": "^9.2.0",
+    "react": "^19.0.0-beta-26f2496093-20240514",
+    "react-dom": "^19.0.0-beta-26f2496093-20240514",
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
-    "react": "18.x"
+    "react": "19.x"
   }
 }

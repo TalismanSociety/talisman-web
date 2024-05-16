@@ -16,6 +16,6 @@
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
-    "react": "18.x"
+    "react": "19.x"
   }
 }
