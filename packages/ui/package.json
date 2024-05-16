@@ -14,7 +14,7 @@
   "scripts": {
     "dev": "tsc --build --watch tsconfig.build.json",
     "build": "rm -rf build && tsc --build tsconfig.build.json",
-    "lint": "eslint src",
+    "lint": "eslint",
     "check-types": "tsc --noEmit",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -50,13 +50,13 @@
     "@types/mime-types": "^2.1.1",
     "@types/react": "^18.3.1",
     "babel-loader": "^8.3.0",
-    "eslint": "^8.37.0",
+    "eslint": "^9.2.0",
     "eslint-plugin-storybook": "^0.6.15",
     "framer-motion": "^11.1.9",
     "mime-db": "^1.52.0",
     "prop-types": "^15.8.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.0.0-beta-26f2496093-20240514",
+    "react-dom": "^19.0.0-beta-26f2496093-20240514",
     "storybook": "^7.6.5",
     "typescript": "^5.4.5"
   },
@@ -64,6 +64,6 @@
     "@emotion/react": "11.x",
     "@talismn/web-icons": "*",
     "framer-motion": "11.x",
-    "react": "18.x"
+    "react": "19.x"
   }
 }

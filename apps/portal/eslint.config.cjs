@@ -9,4 +9,5 @@ module.exports = {
       },
     ],
   },
+  files: ['src/**/*.(ts,tsx)'],
 }

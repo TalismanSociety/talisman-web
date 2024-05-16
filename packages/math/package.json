@@ -8,12 +8,12 @@
     "dev": "tsc --build --watch tsconfig.json",
     "build": "rm -rf build && tsc --build tsconfig.json",
     "test": "vitest run",
-    "lint": "eslint src",
+    "lint": "eslint",
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {
     "@talismn/tsconfig": "workspace:^",
-    "eslint": "^8.39.0",
+    "eslint": "^9.2.0",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
   }
