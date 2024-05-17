@@ -341,7 +341,7 @@ const StakePosition = Object.assign(
                 alpha="disabled"
                 css={{ marginBottom: '0.6rem', [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}
               >
-                Total rewards
+                Total rewards (all time)
               </Text.BodySmall>
               <Text.BodyLarge as="div" alpha="high">
                 <Suspense fallback={<CircularProgressIndicator size="1em" />}>
@@ -404,8 +404,8 @@ export const StakePositionList = (props: PropsWithChildren<{ className?: string 
         </Text.BodySmall>
         <Text.BodySmall css={{ width: '24rem' }}>Account</Text.BodySmall>
         <Text.BodySmall css={{ flex: 1 }}>Staked balance</Text.BodySmall>
-        <Text.BodySmall css={{ flex: 1 }}>Total rewards</Text.BodySmall>
-        <Text.BodySmall css={{ width: '20rem' }}>Unstaking</Text.BodySmall>
+        <Text.BodySmall css={{ flex: 1 }}>Total rewards (all time)</Text.BodySmall>
+        <Text.BodySmall css={{ width: '20rem' }}>Unstake / Withdraw</Text.BodySmall>
         <Text.BodySmall css={{ width: '20rem' }}>Claim</Text.BodySmall>
         <Text.BodySmall css={{ width: '8.8rem', textAlign: 'end' }}>Actions</Text.BodySmall>
       </header>
