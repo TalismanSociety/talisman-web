@@ -34,12 +34,15 @@ const BaseIconButtonFactory =
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const onClick = useCallback(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (...args: any[]) => {
         if (withTransition) {
           return startTransition(() => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ;(props as any).onClick?.(...args)
           })
         } else {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           return (props as any).onClick?.(...args)
         }
       },

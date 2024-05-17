@@ -82,10 +82,15 @@ export const Unstaking: Story = {
 export const Multiple: Story = {
   render: () => (
     <StakePositionList>
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <StakePosition {...(Default.args as any)} />
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <StakePosition {...(Default.args as any)} unstakingStatus={undefined} withdrawButton={undefined} />
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <StakePosition {...(Default.args as any)} readonly />
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <StakePosition {...(Default.args as any)} unstakingStatus={undefined} statisticsButton={undefined} />
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <StakePosition {...(LargeAmount.args as any)} />
     </StakePositionList>
   ),

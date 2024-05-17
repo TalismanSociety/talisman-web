@@ -262,7 +262,6 @@ const StakePosition = Object.assign(
                 </div>
               </Text.BodySmall>
               <div css={{ display: 'flex', gap: '0.8rem', [MEDIUM_CONTAINER_QUERY]: { order: 1 } }}>
-                {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
                 {props.increaseStakeButton || <div css={{ width: '4rem' }} />}
                 <MenuContext.Provider
                   value={{
@@ -275,7 +274,6 @@ const StakePosition = Object.assign(
                     ),
                   }}
                 >
-                  {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
                   {props.menuButton || <StakePosition.MenuButton />}
                 </MenuContext.Provider>
               </div>
@@ -356,7 +354,6 @@ const StakePosition = Object.assign(
               </Text.BodyLarge>
             </section>
             <div css={{ [MEDIUM_CONTAINER_QUERY]: { width: '20rem', display: 'flex', justifyContent: 'start' } }}>
-              {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
               <div>{props.withdrawButton || props.unstakingStatus}</div>
             </div>
             <div css={{ [MEDIUM_CONTAINER_QUERY]: { width: '20rem', display: 'flex', justifyContent: 'start' } }}>
