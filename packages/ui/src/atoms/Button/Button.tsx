@@ -4,6 +4,7 @@ import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/web-icons/utils'
 import { useMemo, type ElementType, type PropsWithChildren, type ReactNode } from 'react'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ButtonElementType = Extract<React.ElementType, 'button' | 'a'> | ElementType<any>
 
 type PolymorphicButtonProps<T extends ButtonElementType = 'button'> = PropsWithChildren<{
@@ -127,6 +128,7 @@ const Button = <T extends ButtonElementType = 'button'>({
 
   return (
     <Component
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       {...(props as any)}
       disabled={disabled}
       css={[

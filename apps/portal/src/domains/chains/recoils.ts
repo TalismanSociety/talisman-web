@@ -29,7 +29,7 @@ export const chainState = selectorFamily({
               )
           ),
           rpc: x.rpcs?.at(0)?.url,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
           ...chainConfigs.find(y => y.genesisHash === x.genesisHash)!,
         }))
       ),

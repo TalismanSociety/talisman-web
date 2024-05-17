@@ -42,7 +42,6 @@ const unexposedAddressesState = atomFamily<
       const erasToCheck = new Set(getErasToCheck(activeEra, bondingDuration))
       for (const era of Object.keys(exposure)) {
         if (!erasToCheck.has(Number(era))) {
-          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
           delete exposure[era]
         }
       }
@@ -59,7 +58,6 @@ const unexposedAddressesState = atomFamily<
             }
 
             if (era in exposure) {
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               exposure[era]![address] = exposed
             } else {
               exposure[era] = { [address]: exposed }

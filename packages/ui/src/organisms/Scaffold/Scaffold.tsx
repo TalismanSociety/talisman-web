@@ -111,7 +111,6 @@ const Scaffold = (props: ScaffoldProps) => (
             ':empty': { display: 'none' },
           }}
         >
-          {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
           {props.floatingActionButton || <FabPortalElement />}
         </div>
       </FabPortalProvider>

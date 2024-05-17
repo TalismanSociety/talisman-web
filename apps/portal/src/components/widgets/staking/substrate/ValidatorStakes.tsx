@@ -30,7 +30,6 @@ const useStakes = () => {
       const reward = stakerRewards.valueMaybe()?.[accounts[index]?.address ?? '']
       return {
         stake,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         account: accounts[index]!,
         reward,
         slashingSpan: (slashingSpansLoadable[index]?.unwrapOrDefault().prior.length ?? -1) + 1,

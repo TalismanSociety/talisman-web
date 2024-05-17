@@ -81,14 +81,13 @@ export const useQueryMulti = <
       const params = queries.map(x => {
         if (typeof x === 'string') {
           const [module, section] = x.split('.')
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
           return api.query[module!]?.[section!]
         }
 
         const [query, ...params] = x
         const [module, section] = query.split('.')
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return [api.query[module!]?.[section!], ...params]
       })
 

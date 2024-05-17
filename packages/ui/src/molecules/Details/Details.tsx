@@ -32,6 +32,7 @@ const Details = Object.assign(
     return (
       <Surface
         as={motion.details}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         {...(props as any)}
         open={true}
         animate={JSON.stringify(open)}

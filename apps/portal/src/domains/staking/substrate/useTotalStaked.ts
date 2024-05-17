@@ -28,7 +28,6 @@ export const useTotalStaked = () => {
     validatorStakes.state !== 'hasValue'
       ? 0
       : validatorStakes.contents
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           .map((x, index) => ({ decimals: decimals[index]!, price: nativeTokenPrices[index]!, loadable: x }))
           .filter(x => x.loadable.state === 'hasValue')
           .map(x => ({
@@ -46,7 +45,6 @@ export const useTotalStaked = () => {
     poolStakes.state !== 'hasValue'
       ? 0
       : poolStakes.contents
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           .map((x, index) => ({ decimals: decimals[index]!, price: nativeTokenPrices[index]!, loadable: x }))
           .filter(x => x.loadable.state === 'hasValue')
           .map(x => ({

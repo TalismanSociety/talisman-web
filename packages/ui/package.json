@@ -50,7 +50,7 @@
     "@types/mime-types": "^2.1.1",
     "@types/react": "^18.3.1",
     "babel-loader": "^8.3.0",
-    "eslint": "^8.37.0",
+    "eslint": "^9.2.0",
     "eslint-plugin-storybook": "^0.6.15",
     "framer-motion": "^11.1.9",
     "mime-db": "^1.52.0",

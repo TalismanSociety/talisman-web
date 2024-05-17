@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "@talismn/utils",
+  "type": "module",
   "version": "0.0.0",
   "exports": {
     ".": "./build/index.js",
@@ -8,7 +9,8 @@
   },
   "scripts": {
     "dev": "tsc --build --watch",
-    "build": "rm -rf build && yarn tsc --build"
+    "build": "rm -rf build && yarn tsc --build",
+    "lint": "eslint src"
   },
   "devDependencies": {
     "@talismn/tsconfig": "workspace:^",

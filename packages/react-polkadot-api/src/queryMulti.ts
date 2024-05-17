@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiIdContext, RecoilStateContext } from './Context.js'
 import { garbageCollectionKey } from './GarbageCollector.js'
 import type { ApiId, Diverge, Options, PickKnownKeys } from './types.js'
@@ -66,7 +67,7 @@ export const queryMultiAtomFamily = (options: Options) => {
           const params = queries.map(x => {
             if (typeof x === 'string') {
               const [module, section] = x.split('.')
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
               return api.query[module!]?.[section!]
             }
 
@@ -132,12 +133,14 @@ export const useQueryMultiState = <
       : any
   }>
 
-  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   type TReturn = TEnabled extends true | void ? TResult : TResult | RecoilValueReadOnly<undefined>
+
+  const recoilState = useContext(RecoilStateContext)
+  const apiId = useContext(ApiIdContext)
 
   if (!options.enabled) {
     return constSelector(undefined) as TReturn
   }
 
-  return useContext(RecoilStateContext).queryMultiState(useContext(ApiIdContext), queries) as any as TReturn
+  return recoilState.queryMultiState(apiId, queries) as any as TReturn
 }

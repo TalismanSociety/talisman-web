@@ -52,16 +52,15 @@ export const useMimeType = (src: string | readonly string[] | undefined, fetchMi
             sessionStorage.setItem(storageKey(referenceSrc), contentType)
           }
           break
-        } catch {}
+        } catch {
+          /* empty */
+        }
       }
     })()
   }, [fetchMime, mimeType, referenceSrc, src])
 
   type TypeDetail = MimeType extends `${infer Type}/${infer SubType}` ? [Type, SubType] : never
-  const [type, subType]: TypeDetail | [undefined, undefined] = (mimeType?.split('/') ?? [undefined, undefined]) as [
-    any,
-    any
-  ]
+  const [type, subType] = (mimeType?.split('/') ?? [undefined, undefined]) as TypeDetail | [undefined, undefined]
 
   return [type, subType] as const
 }

@@ -41,7 +41,7 @@ export const lookupAccountAddressState = atom<string | undefined>({
       })
 
       // Persist lookup address between navigation
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+
       router.subscribe(async state => {
         const search = new URLSearchParams(state.location.search)
         const currentValue = await getPromise(lookupAccountAddressState)

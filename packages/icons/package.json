@@ -1,6 +1,7 @@
 {
   "name": "@talismn/web-icons",
   "version": "0.0.0",
+  "type": "module",
   "main": "build/commonjs/index.js",
   "exports": {
     ".": "./build/index.js",
@@ -21,7 +22,7 @@
     "@talismn/eslint-config": "workspace:^",
     "@talismn/tsconfig": "workspace:^",
     "@types/react": "^18.3.1",
-    "eslint": "^8.37.0",
+    "eslint": "^9.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "^5.4.5"

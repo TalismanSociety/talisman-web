@@ -12,7 +12,8 @@
     "codegen": "rm -rf generated/gql && yarn codegen:rmrk2 && yarn codegen:substrateNftKusamaAssetHub && yarn codegen:substrateNftPolkadotAssetHub && yarn codegen:unique",
     "dev": "tsc --build --watch",
     "build": "rm -rf build && yarn tsc --build",
-    "check-types": "yarn tsc --build"
+    "check-types": "yarn tsc --build",
+    "lint": "eslint src"
   },
   "dependencies": {
     "graphql": "^16.8.1",
@@ -23,6 +24,8 @@
     "@acala-network/types": "^5.1.2",
     "@graphql-codegen/cli": "^5.0.0",
     "@polkadot/api": "^10.13.1",
+    "@talismn/eslint-config": "workspace:^",
+    "eslint": "^9.2.0",
     "prettier": "^2.8.8",
     "typescript": "^5.4.5",
     "viem": "^2.9.26"

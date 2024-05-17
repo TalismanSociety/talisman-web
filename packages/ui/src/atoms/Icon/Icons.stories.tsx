@@ -11,6 +11,7 @@ export default {
   },
 } as ComponentMeta<typeof Icon.Activity>
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<React.SVGProps<SVGSVGElement> & { title?: string }> = (args: any) => {
   const theme = useTheme()
   return (

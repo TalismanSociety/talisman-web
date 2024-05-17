@@ -1,7 +1,6 @@
 import styled from '@emotion/styled'
 
 const Pill = styled(({ children, className, small, large, primary, secondary, active, ...rest }: any) => (
-  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
   <span className={`pill ${className ?? ''}`} {...rest}>
     {children}
   </span>
@@ -49,7 +48,6 @@ const Pill = styled(({ children, className, small, large, primary, secondary, ac
       color: var(--color-foreground);
       box-shadow: none;
       ${
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         !!onClick &&
         `
         &:hover{
@@ -67,7 +65,6 @@ const Pill = styled(({ children, className, small, large, primary, secondary, ac
       color: var(--color-foreground);
       box-shadow: none;
       ${
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         !!onClick &&
         `
         &:hover{

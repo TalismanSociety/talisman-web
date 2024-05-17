@@ -17,7 +17,6 @@ type ErrorElementProps = {
 const ErrorElement = (props: ErrorElementProps) => {
   const message =
     `${props.error.name}\n\n${props.error.message}` +
-    // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
     (props.error.cause ? `\n\n${props.error.cause}` : '') +
     (props.error.stack ? `\n\n${props.error.stack}` : '') +
     (props.componentStack ? `\n\n${props.componentStack}` : '')
@@ -55,7 +54,6 @@ export const RouteErrorElement = () => {
   // let the root error boundary handle it instead
   // https://github.com/remix-run/react-router/discussions/10494
   if (error) {
-    // eslint-disable-next-line @typescript-eslint/no-throw-literal
     throw error
   }
 

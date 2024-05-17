@@ -8,7 +8,6 @@ import { useMemo } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
   const accounts = useMemo(() => (Array.isArray(account) ? (account as Account[]) : [account as Account]), [account])
 
   // TODO: recoil freeze if we use `useRecoilValue_TRANSITION_SUPPORT_UNSTABLE` here
@@ -31,7 +30,6 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
     () =>
       _poolMembers
         .map((x, index) => ({
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           account: accounts[index]!,
           poolMembers: x,
           pendingRewards: pendingRewards.find(rewards => rewards[0] === accounts[index]?.address)?.[1],

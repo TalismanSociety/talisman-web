@@ -9,7 +9,7 @@ import {
   type Ref,
 } from 'react'
 
-type PropsOf<T extends keyof JSX.IntrinsicElements | JSXElementConstructor<any>> = JSX.LibraryManagedAttributes<
+type PropsOf<T extends keyof JSX.IntrinsicElements | JSXElementConstructor<unknown>> = JSX.LibraryManagedAttributes<
   T,
   ComponentPropsWithRef<T>
 >
@@ -48,6 +48,7 @@ const Surface = forwardRef(
     const backgroundColor = useSurfaceColorAtElevation(elevation)
 
     return (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       <Element ref={ref} {...(props as any)} css={{ backgroundColor }}>
         {props['children'] && (
           <SurfaceElevationContext.Provider value={elevation + 1}>{props['children']}</SurfaceElevationContext.Provider>
