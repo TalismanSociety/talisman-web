@@ -1,8 +1,11 @@
 import { type Account } from '../../../../domains/accounts/recoils'
-import { selectedCurrencyState } from '../../../../domains/balances'
 import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '../../../../domains/chains'
 import { useSubstrateApiState } from '../../../../domains/common'
-import { useExtrinsic, useTokenAmountFromPlanck } from '../../../../domains/common/hooks'
+import {
+  useExtrinsic,
+  useNativeTokenLocalizedFiatAmount,
+  useTokenAmountFromPlanck,
+} from '../../../../domains/common/hooks'
 import { useEraEtaFormatter } from '../../../../domains/common/hooks/useEraEta'
 import { useLocalizedUnlockDuration } from '../../../../domains/staking/substrate/nominationPools'
 import { useTotalValidatorStakingRewards } from '../../../../domains/staking/substrate/validator'
@@ -20,13 +23,8 @@ import { useRecoilValue, waitForAll } from 'recoil'
 
 const TotalRewards = (props: { account: Account }) => useTotalValidatorStakingRewards(props.account).toLocaleString()
 
-const TotalFiatRewards = (props: { account: Account }) => {
-  const currency = useRecoilValue(selectedCurrencyState)
-  const price = useRecoilValue(useNativeTokenPriceState())
-  const amount = useTotalValidatorStakingRewards(props.account)
-
-  return (amount.toNumber() * price).toLocaleString(undefined, { style: 'currency', currency })
-}
+const TotalFiatRewards = (props: { account: Account }) =>
+  useNativeTokenLocalizedFiatAmount(useTotalValidatorStakingRewards(props.account))
 
 const ValidatorStakeItem = (props: {
   account: Account

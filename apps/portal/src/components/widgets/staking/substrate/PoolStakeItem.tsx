@@ -1,7 +1,11 @@
 import { type Account } from '../../../../domains/accounts'
-import { selectedCurrencyState } from '../../../../domains/balances'
 import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '../../../../domains/chains'
-import { useEraEtaFormatter, useExtrinsic, useSubmittableResultLoadableState } from '../../../../domains/common'
+import {
+  useEraEtaFormatter,
+  useExtrinsic,
+  useNativeTokenLocalizedFiatAmount,
+  useSubmittableResultLoadableState,
+} from '../../../../domains/common'
 import {
   useTotalNominationPoolRewards,
   type usePoolStakes,
@@ -19,13 +23,8 @@ import { useRecoilValue, waitForAll } from 'recoil'
 
 const PoolTotalRewards = (props: { account: Account }) => useTotalNominationPoolRewards(props.account).toLocaleString()
 
-const PoolTotalFiatRewards = (props: { account: Account }) => {
-  const currency = useRecoilValue(selectedCurrencyState)
-  const price = useRecoilValue(useNativeTokenPriceState())
-  const amount = useTotalNominationPoolRewards(props.account)
-
-  return (amount.toNumber() * price).toLocaleString(undefined, { style: 'currency', currency })
-}
+const PoolTotalFiatRewards = (props: { account: Account }) =>
+  useNativeTokenLocalizedFiatAmount(useTotalNominationPoolRewards(props.account))
 
 const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account[]>>[number] }) => {
   const [chain, decimal, nativeTokenPrice] = useRecoilValue(

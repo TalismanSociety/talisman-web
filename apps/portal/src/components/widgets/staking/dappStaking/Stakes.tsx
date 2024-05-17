@@ -1,7 +1,12 @@
 import { selectedSubstrateAccountsState, type Account } from '../../../../domains/accounts'
 import { ChainProvider, dappStakingEnabledChainsState, useChainState } from '../../../../domains/chains'
-import { useExtrinsic } from '../../../../domains/common'
-import { useClaimAllRewardsExtrinsic, useRegisteredDappsState, useStake } from '../../../../domains/staking/dappStaking'
+import { useExtrinsic, useNativeTokenLocalizedFiatAmount } from '../../../../domains/common'
+import {
+  useClaimAllRewardsExtrinsic,
+  useRegisteredDappsState,
+  useStake,
+  useTotalDappStakingRewards,
+} from '../../../../domains/staking/dappStaking'
 import DappStakingLockedAmountDialog from '../../../recipes/DappStakingLockedAmountDialog'
 import ErrorBoundary from '../../ErrorBoundary'
 import AddStakeDialog from './AddStakeDialog'
@@ -11,6 +16,11 @@ import { StakePosition } from '@talismn/ui-recipes'
 import { useState, useTransition } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+
+const TotalRewards = (props: { account: Account }) => useTotalDappStakingRewards(props.account).toLocaleString()
+
+const TotalFiatRewards = (props: { account: Account }) =>
+  useNativeTokenLocalizedFiatAmount(useTotalDappStakingRewards(props.account))
 
 const Stake = ({ account }: { account: Account }) => {
   // Pre-load potentially heavy query
@@ -48,6 +58,8 @@ const Stake = ({ account }: { account: Account }) => {
         stakeStatus={stake.earningRewards ? 'earning_rewards' : 'not_earning_rewards'}
         balance={stake.totalStaked.decimalAmount?.toLocaleString()}
         fiatBalance={stake.totalStaked.localizedFiatAmount}
+        rewards={<TotalRewards account={account} />}
+        fiatRewards={<TotalFiatRewards account={account} />}
         increaseStakeButton={
           stake.dapps.length > 0 && (
             <StakePosition.IncreaseStakeButton onClick={() => setAddStakeDialogOpen(true)} withTransition />
