@@ -44,7 +44,6 @@ const LidoStakes = (props: { lidoSuite: LidoSuite }) => {
       {stakes.map((stake, index) => (
         <StakePosition
           key={index}
-          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           readonly={stake.account.readonly || !stake.account.canSignEvm}
           account={stake.account}
           provider="Lido finance"

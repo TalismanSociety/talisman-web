@@ -154,7 +154,6 @@ export const Provider = ({ children }: ProviderProps) => {
   const clearTotal = useCallback(
     (uniqueId: string) =>
       setTotalStore(totalStore => {
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete totalStore[uniqueId]
         return totalStore
       }),
@@ -168,7 +167,6 @@ export const Provider = ({ children }: ProviderProps) => {
 
         const loadingListMut = { ...loadingList }
         if (loading) loadingListMut[uniqueId] = true
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         else delete loadingListMut[uniqueId]
 
         return loadingListMut

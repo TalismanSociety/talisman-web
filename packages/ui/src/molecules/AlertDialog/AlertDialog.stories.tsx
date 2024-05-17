@@ -20,6 +20,7 @@ export default {
   },
 } as ComponentMeta<typeof AlertDialog>
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<AlertDialogProps> = (args: any) => <AlertDialog {...args} />
 
 Default.args = {

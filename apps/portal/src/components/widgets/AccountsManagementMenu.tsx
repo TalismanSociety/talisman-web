@@ -42,10 +42,7 @@ const AccountsManagementSurfaceIconButton = (props: { size?: number | string }) 
   const selectedAccounts = useRecoilValue(selectedAccountsState)
 
   if (selectedAccounts.length === 1) {
-    return (
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      <AccountIcon account={selectedAccounts[0]!} size={props.size ?? '2.4rem'} css={{ cursor: 'pointer' }} />
-    )
+    return <AccountIcon account={selectedAccounts[0]!} size={props.size ?? '2.4rem'} css={{ cursor: 'pointer' }} />
   }
 
   return (

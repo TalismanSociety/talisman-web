@@ -7,7 +7,9 @@ export const encodeAnyAddress = (key: string, ss58Format?: number | undefined) =
 
   try {
     return { type: 'substrate', address: encodeAddress(key, ss58Format) } as const
-  } catch {}
+  } catch {
+    /* empty */
+  }
 
   return { type: undefined, address: key } as const
 }

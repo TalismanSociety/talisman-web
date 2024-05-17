@@ -81,7 +81,7 @@ const AddStakeDialog = (props: AddStakeDialogProps) => {
       <DappAddStakeDialog
         account={props.account}
         stake={props.stake}
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-non-null-asserted-optional-chain
+        // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
         dapp={props.stake.dapps.at(0)?.[0]!}
         onRequestDismiss={props.onRequestDismiss}
       />

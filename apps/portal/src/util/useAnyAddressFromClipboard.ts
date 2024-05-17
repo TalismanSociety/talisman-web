@@ -48,10 +48,8 @@ export function useAnyAddressFromClipboard(ss58format: SS58Format | number) {
   }
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     document.addEventListener('paste', getClipboardData)
     return () => {
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       document.removeEventListener('paste', getClipboardData)
     }
   })

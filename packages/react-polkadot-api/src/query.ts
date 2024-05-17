@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // TODO: lots of duplicate type definitions
 // but already super burned out, need to de-duplication
 import { ApiIdContext, RecoilStateContext } from './Context.js'
@@ -36,7 +37,7 @@ export const queryAtomFamily = (options: Options) => {
         })()
 
         let initialResolve = (_value: unknown) => {}
-        let initialReject = (_reason?: any) => {}
+        let initialReject = (_reason?: unknown) => {}
 
         setSelf(
           new Promise((resolve, reject) => {
@@ -49,7 +50,7 @@ export const queryAtomFamily = (options: Options) => {
           const [section, multi] = sectionName.split('.')
 
           const func =
-            // @ts-expect-error
+            // @ts-expect-error complex dynamic type
             multi === undefined ? api[typeName][moduleName][section] : api[typeName][moduleName][section][multi]
 
           const parsedParams = multi === undefined ? params : [params]
@@ -57,7 +58,7 @@ export const queryAtomFamily = (options: Options) => {
           const unsubscribePromise: UnsubscribePromise = func(...parsedParams, (result: any) => {
             initialResolve(result)
             setSelf(result)
-          }).catch((error: any) => {
+          }).catch((error: unknown) => {
             initialReject(error)
           })
 
@@ -96,9 +97,9 @@ export const queryAtomFamily = (options: Options) => {
     _state([
       apiId,
       'query',
-      // @ts-expect-error
+      // @ts-expect-error complex type
       moduleName,
-      // @ts-expect-error
+      // @ts-expect-error complex type
       sectionName,
       params,
     ]) as RecoilState<
@@ -114,7 +115,7 @@ export const queryAtomFamily = (options: Options) => {
     TSection extends Extract<keyof PickKnownKeys<AllDerives<'promise'>[TModule]>, string>,
     TAugmentedSection extends TSection | `${TSection}.multi`,
     TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
-    // @ts-expect-error
+    // @ts-expect-error complex type
     TMethod extends AllDerives<'promise'>[TModule][TExtractedSection]
   >(
     apiId: ApiId,
@@ -132,7 +133,7 @@ export const queryAtomFamily = (options: Options) => {
       apiId,
       'derive',
       moduleName,
-      // @ts-expect-error
+      // @ts-expect-error complex type
       sectionName,
       params,
     ]) as RecoilState<
@@ -183,18 +184,20 @@ export const useQueryState = <
       : never
   >
 
-  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   type TReturn = TEnabled extends true | void ? TResult : TResult | RecoilState<undefined>
+
+  const recoilState = useContext(RecoilStateContext)
+  const apiId = useContext(ApiIdContext)
 
   if (!options.enabled) {
     return constSelector(undefined) as TReturn
   }
 
-  return useContext(RecoilStateContext).queryState(
-    useContext(ApiIdContext),
+  return recoilState.queryState(
+    apiId,
     moduleName,
     sectionName,
-    // @ts-expect-error
+    // @ts-expect-error complex type
     params
   ) as TReturn
 }
@@ -204,7 +207,7 @@ export const useDeriveState = <
   TSection extends Extract<keyof PickKnownKeys<AllDerives<'promise'>[TModule]>, string>,
   TAugmentedSection extends TSection | `${TSection}.multi`,
   TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
-  // @ts-expect-error
+  // @ts-expect-error complex type
   TMethod extends AllDerives<'promise'>[TModule][TExtractedSection],
   TEnabled = void
 >(
@@ -227,19 +230,21 @@ export const useDeriveState = <
       : never
   >
 
-  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   type TReturn = TEnabled extends true | void ? TResult : TResult | RecoilValueReadOnly<undefined>
+
+  const recoilState = useContext(RecoilStateContext)
+  const apiId = useContext(ApiIdContext)
 
   if (!options.enabled) {
     return constSelector(undefined) as TReturn
   }
 
-  // @ts-expect-error
-  return useContext(RecoilStateContext).deriveState(
-    useContext(ApiIdContext),
+  // @ts-expect-error complex type
+  return recoilState.deriveState(
+    apiId,
     moduleName,
     sectionName,
-    // @ts-expect-error
+    // @ts-expect-error complex type
     params
   ) as TReturn
 }

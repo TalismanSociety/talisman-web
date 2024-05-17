@@ -9,6 +9,7 @@ export default {
   },
 } as ComponentMeta<typeof InfoCard>
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<InfoCardProps> = (args: any) => <InfoCard {...args} />
 
 Default.args = {

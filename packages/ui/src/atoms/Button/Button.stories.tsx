@@ -9,6 +9,7 @@ export default {
     layout: 'centered',
   },
   decorators: [
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (Story: any) => (
       <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <div css={{ width: 300, marginBottom: '1.6rem' }}>

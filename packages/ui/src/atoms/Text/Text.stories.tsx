@@ -6,6 +6,7 @@ export default {
   component: Text,
 } as ComponentMeta<typeof Text>
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<TextProps<'span'>> = (args: any) => (
   <table
     css={{

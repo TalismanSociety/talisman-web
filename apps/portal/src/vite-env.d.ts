@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/triple-slash-reference */
 /// <reference types="vite/client" />
 /// <reference types="vite-plugin-svgr/client" />
 
@@ -24,7 +23,6 @@ interface ImportMetaEnv {
 declare namespace JSX {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface IntrinsicElements {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     'model-viewer': any
   }
 }
