@@ -1,14 +1,14 @@
 import Layout from './layout'
 import Swap from './swap'
-import Transport from './transport'
+import Xcm from './xcm'
 import { Navigate, type RouteObject } from 'react-router-dom'
 
 const routes = {
   element: <Layout />,
   children: [
     { path: 'swap', element: <Swap /> },
-    { path: 'transport', element: <Transport /> },
-    { path: '', element: <Navigate to="transport" /> },
+    { path: 'xcm', element: <Xcm /> },
+    { path: '', element: <Navigate to="swap" /> },
   ],
 } satisfies RouteObject
 

@@ -1,72 +1,92 @@
 import {
-  writeableAccountsState,
-  writeableEvmAccountsState,
+  evmAccountsState,
+  substrateAccountsState,
   writeableSubstrateAccountsState,
   type Account,
 } from '../../../domains/accounts'
+import { balancesState, selectedCurrencyState } from '../../../domains/balances'
 import { bridgeAdapterState, bridgeState } from '../../../domains/bridge'
 import { tokenPriceState } from '../../../domains/chains'
 import { useExtrinsic } from '../../../domains/common'
 import { Maybe } from '../../../util/monads'
-import DexForm from '../../recipes/DexForm/DexForm'
 import { useAccountSelector } from '../AccountSelector'
-import AnimatedFiatNumber from '../AnimatedFiatNumber'
-import TokenSelectorButton from '../TokenSelectorButton'
 import { FixedPointNumber } from '@acala-network/sdk-core'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import { type ISubmittableResult } from '@polkadot/types/types'
-import { type Chain, type InputConfig } from '@polkawallet/bridge'
+import type { Chain, ChainId, InputConfig } from '@polkawallet/bridge'
 import * as Sentry from '@sentry/react'
-import { useTokens as useBalancesLibTokens } from '@talismn/balances-react'
+import { useTokens as useBalancesLibTokens, useChains } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
-import { CircularProgressIndicator, toast } from '@talismn/ui'
-import { uniqBy } from 'lodash'
+import { CircularProgressIndicator, Text, toast } from '@talismn/ui'
+import { TokenSelectDialog, TransportForm } from '@talismn/ui-recipes'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { RecoilLoadable, constSelector, useRecoilValue, useRecoilValueLoadable, type Loadable } from 'recoil'
+import { RecoilLoadable, constSelector, selector, useRecoilValue, useRecoilValueLoadable, type Loadable } from 'recoil'
 import { Observable } from 'rxjs'
 
-const TransportForm = () => {
-  const bridge = useRecoilValue(bridgeState)
+const routesState = selector({
+  key: 'Transport/Routes',
+  get: ({ get }) => get(bridgeState).router.getAvailableRouters(),
+})
+
+// TODO: remove once bug is fixed
+const isEvmChain = (chain: Chain) => chain.id === 'moonbeam' || chain.type === 'ethereum'
+
+const Transport = () => {
+  const currency = useRecoilValue(selectedCurrencyState)
+  const availableRoutes = useRecoilValue(routesState)
+  const balances = useRecoilValue(balancesState)
+
+  const [[sender], senderSelector] = useAccountSelector(useRecoilValue(writeableSubstrateAccountsState), 0)
 
   const [amount, setAmount] = useState('')
 
-  const [fromChain, setFromChain] = useState<Chain>()
-  const [toChain, setToChain] = useState<Chain>()
-
+  const balancesLibChains = useChains()
   const balancesLibTokens = useBalancesLibTokens()
-  const [token, setToken] = useState<string>()
-  const tokenConfig = useMemo(
-    () => Object.values(balancesLibTokens).find(x => x.symbol.toLowerCase() === token?.toLowerCase()),
-    [balancesLibTokens, token]
+
+  const routes = useMemo(
+    () =>
+      availableRoutes.filter(route => {
+        switch (sender?.type) {
+          case 'ethereum':
+            return isEvmChain(route.from)
+          case 'ecdsa':
+          case 'ed25519':
+          case 'sr25519':
+            return !isEvmChain(route.from)
+          case undefined:
+            return true
+          default:
+            throw new Error(`Unknown account type: ${sender?.type ?? 'undefined'}`)
+        }
+      }),
+    [availableRoutes, sender?.type]
   )
-  const tokenPriceLoadable = useRecoilValueLoadable(
-    tokenConfig?.coingeckoId === undefined
-      ? constSelector(undefined)
-      : tokenPriceState({ coingeckoId: tokenConfig?.coingeckoId })
-  )
 
-  const fromEvm = useMemo(() => fromChain?.id === 'moonbeam' || fromChain?.id === 'moonriver', [fromChain?.id])
-  const toEvm = useMemo(() => toChain?.id === 'moonbeam' || toChain?.id === 'moonriver', [toChain?.id])
+  const [route, setRoute] = useState(routes.at(0)!)
 
-  const getAccountsState = useCallback((chain: Chain | undefined) => {
-    switch (chain?.id) {
-      case 'moonbeam':
-      case 'moonriver':
-        return writeableEvmAccountsState
-      case undefined:
-        return writeableAccountsState
-      default:
-        return writeableSubstrateAccountsState
-    }
-  }, [])
-
-  const [[sender], senderSelector] = useAccountSelector(useRecoilValue(getAccountsState(fromChain)), 0)
   const [[recipient, setRecipient], recipientSelector] = useAccountSelector(
-    useRecoilValue(getAccountsState(toChain)),
+    useRecoilValue(isEvmChain(route.to) ? evmAccountsState : substrateAccountsState),
     useCallback(
       (x: Account[] | undefined) => x?.find(y => y.address === sender?.address) ?? x?.at(0),
       [sender?.address]
     )
+  )
+
+  const token = useMemo(
+    () =>
+      Object.values(balancesLibTokens).find(
+        x =>
+          x.symbol.toLowerCase() === route.token.toLowerCase() &&
+          x.chain &&
+          (route.from.paraChainId === -1
+            ? balancesLibChains[x.chain.id]?.paraId === null
+            : balancesLibChains[x.chain.id]?.paraId === route.from.paraChainId)
+      ),
+    [balancesLibChains, balancesLibTokens, route.from.paraChainId, route.token]
+  )
+
+  const tokenPriceLoadable = useRecoilValueLoadable(
+    !token?.coingeckoId ? constSelector(undefined) : tokenPriceState({ coingeckoId: token.coingeckoId })
   )
 
   useEffect(() => {
@@ -75,74 +95,145 @@ const TransportForm = () => {
     }
   }, [sender, setRecipient])
 
-  const routes = useMemo(
+  const [fromTokenDialogOpen, setFromTokenDialogOpen] = useState(false)
+  const fromTokens = useMemo(
     () =>
-      bridge.router
-        .getAvailableRouters()
-        .filter(x => fromChain === undefined || x.from.id === fromChain.id)
-        .filter(x => toChain === undefined || x.to.id === toChain.id)
-        .filter(x => token === undefined || x.token === token),
-    [bridge.router, toChain, fromChain, token]
+      Array.from(
+        new Map(
+          routes
+            .map(route => {
+              const token = Object.values(balancesLibTokens).find(
+                token => token.symbol.toLowerCase() === route.token.toLowerCase()
+              )
+              const balance = balances
+                .find({ address: sender?.address })
+                .find(
+                  balance =>
+                    balance.token.symbol.toLowerCase() === route.token.toLowerCase() &&
+                    (route.from.paraChainId === -1
+                      ? balancesLibChains[balance.chain.id]?.paraId === null
+                      : balancesLibChains[balance.chain.id]?.paraId === route.from.paraChainId)
+                )
+
+              return [
+                `${route.from.id}-${route.token}`,
+                {
+                  id: route.token,
+                  name: route.token,
+                  code: route.token,
+                  chain: route.from.display,
+                  chainId: route.from.id,
+                  iconSrc:
+                    token?.logo ??
+                    'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/tokens/unknown.svg',
+                  amount: Decimal.fromPlanck(balance.sum.planck.transferable, balance.each.at(0)?.decimals ?? 0, {
+                    currency: route.token,
+                  }).toLocaleString(),
+                  fiatAmount: balance.sum
+                    .fiat(currency)
+                    .transferable.toLocaleString(undefined, { style: 'currency', currency }),
+                  sortKey: balance.sum.fiat(currency).transferable,
+                },
+              ] as const
+            })
+            .toSorted((a, b) => b[1].sortKey - a[1].sortKey || a[1].name.localeCompare(b[1].name))
+        ).values()
+      ),
+    [balances, balancesLibChains, balancesLibTokens, currency, routes, sender?.address]
   )
 
-  const tokens = useMemo(() => Array.from(new Set(bridge.router.getRouters().map(x => x.token))), [bridge.router])
-  const routeTokens = useMemo(() => new Set(routes.map(x => x.token)), [routes])
+  const [toTokenDialogOpen, setToTokenDialogOpen] = useState(false)
+  const toTokens = useMemo(
+    () =>
+      Array.from(
+        new Map(
+          routes
+            .filter(x => x.from.id === route.from.id && x.token === route.token)
+            .map(route => {
+              const token = Object.values(balancesLibTokens).find(
+                token => token.symbol.toLowerCase() === route.token.toLowerCase()
+              )
+              const balance = balances
+                .find({ address: sender?.address })
+                .find(
+                  balance =>
+                    balance.token.symbol.toLowerCase() === route.token.toLowerCase() &&
+                    (route.to.paraChainId === -1
+                      ? balancesLibChains[balance.chain.id]?.paraId === null
+                      : balancesLibChains[balance.chain.id]?.paraId === route.to.paraChainId)
+                )
 
-  const onChangeToken = (token: string) => {
-    setToken(token)
-
-    if (!routeTokens.has(token)) {
-      setFromChain(undefined)
-      setToChain(undefined)
-    }
-  }
+              return [
+                `${route.to.id}-${route.token}`,
+                {
+                  id: route.token,
+                  name: route.token,
+                  code: route.token,
+                  chain: route.to.display,
+                  chainId: route.to.id,
+                  iconSrc:
+                    token?.logo ??
+                    'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/tokens/unknown.svg',
+                  amount: Decimal.fromPlanck(balance.sum.planck.transferable, balance.each.at(0)?.decimals ?? 0, {
+                    currency: route.token,
+                  }).toLocaleString(),
+                  fiatAmount: balance.sum
+                    .fiat(currency)
+                    .transferable.toLocaleString(undefined, { style: 'currency', currency }),
+                  sortKey: balance.sum.fiat(currency).transferable,
+                },
+              ] as const
+            })
+            .toSorted((a, b) => b[1].sortKey - a[1].sortKey || a[1].name.localeCompare(b[1].name))
+        ).values()
+      ),
+    [balances, balancesLibChains, balancesLibTokens, currency, route.from.id, route.token, routes, sender?.address]
+  )
 
   const originChains = useMemo(
-    () =>
-      uniqBy(
-        routes.map(x => x.from),
-        'id'
-      ),
+    () => Array.from(new Map(routes.map(route => [route.from.id, route.from] as const)).values()),
     [routes]
   )
+
   const destinationChains = useMemo(
     () =>
-      uniqBy(
-        routes.map(x => x.to),
-        'id'
+      Array.from(
+        new Map(
+          routes
+            .filter(x => x.from.id === route.from.id && x.token === route.token)
+            .map(route => [route.to.id, route.from] as const)
+        ).values()
       ),
-    [routes]
+    [route.from.id, route.token, routes]
   )
 
-  const routeReversible = useMemo(() => {
-    const routes = bridge.router.getAvailableRouters().filter(x => x.token === token)
+  const onChangeFromToken = (token: string, chainId: ChainId) => {
+    const route = routes.find(route => route.token === token && route.from.id === chainId)
 
-    if (fromChain === undefined && toChain === undefined) {
-      return false
+    if (route === undefined) {
+      throw new Error(`Can't find route from ${token}@${chainId}`)
     }
 
-    if (fromChain !== undefined && toChain === undefined && routes.some(x => x.to.id === fromChain.id)) {
-      return true
+    setRoute(route)
+  }
+
+  const onChangeToToken = (token: string, chainId: ChainId) => {
+    const newRoute = routes.find(x => x.token === token && x.from.id === route.from.id && x.to.id === chainId)
+
+    if (newRoute === undefined) {
+      throw new Error(`Can't find route from ${token}@${chainId}`)
     }
 
-    if (toChain !== undefined && fromChain === undefined && routes.some(x => x.from.id === toChain.id)) {
-      return true
-    }
+    setRoute(newRoute)
+  }
 
-    if (
-      toChain !== undefined &&
-      fromChain !== undefined &&
-      routes.some(x => x.to.id === fromChain.id && x.from.id === toChain.id)
-    ) {
-      return true
-    }
+  const reversedRoute = useMemo(() => {
+    return routes.find(x => x.token === route.token && x.from.id === route.to.id && x.to.id === route.from.id)
+  }, [route.from.id, route.to.id, route.token, routes])
 
-    return false
-  }, [bridge.router, fromChain, toChain, token])
+  const routeReversible = reversedRoute !== undefined
 
-  const adapterLoadable = useRecoilValueLoadable(
-    fromChain === undefined ? constSelector(undefined) : bridgeAdapterState(fromChain.id)
-  )
+  const adapterLoadable = useRecoilValueLoadable(bridgeAdapterState(route.from.id))
 
   const [inputConfigLoadable, setInputConfigLoadable] = useState<Loadable<InputConfig>>()
 
@@ -155,19 +246,13 @@ const TransportForm = () => {
   }, [inputConfigLoadable?.contents, inputConfigLoadable?.state])
 
   useEffect(() => {
-    setInputConfigLoadable(undefined)
-
     const adapter = adapterLoadable.valueMaybe()
 
-    if (
-      !(fromEvm && sender?.type !== 'ethereum') &&
-      !(toEvm && recipient?.type !== 'ethereum') &&
-      adapter !== undefined &&
-      sender !== undefined &&
-      recipient !== undefined &&
-      toChain !== undefined &&
-      token !== undefined
-    ) {
+    if (adapter === undefined) {
+      setInputConfigLoadable(undefined)
+    }
+
+    if (adapter !== undefined && sender !== undefined && recipient !== undefined) {
       setInputConfigLoadable(RecoilLoadable.loading())
 
       const subscription = new Observable<InputConfig>(observer =>
@@ -175,8 +260,8 @@ const TransportForm = () => {
           .subscribeInputConfig({
             address: recipient.address,
             signer: sender.address,
-            to: toChain.id,
-            token,
+            to: route.to.id,
+            token: route.token,
           })
           .subscribe(observer)
       ).subscribe({
@@ -188,26 +273,12 @@ const TransportForm = () => {
     }
 
     return undefined
-  }, [
-    adapterLoadable,
-    fromChain,
-    fromEvm,
-    recipient,
-    recipient?.address,
-    recipient?.type,
-    sender,
-    toChain,
-    toEvm,
-    token,
-  ])
+  }, [adapterLoadable, recipient, route.to.id, route.token, sender])
 
-  const tokenInfo = useMemo(
-    () => Maybe.of(token).mapOrUndefined(x => adapterLoadable.valueMaybe()?.getToken(x)),
-    [adapterLoadable, token]
-  )
+  const tokenInfo = useMemo(() => adapterLoadable.valueMaybe()?.getToken(route.token), [adapterLoadable, route.token])
 
   const decimalAmount = useMemo(
-    () => Maybe.of(tokenInfo).mapOrUndefined(token => Decimal.fromUserInput(amount, token.decimals)),
+    () => Maybe.of(tokenInfo).mapOrUndefined(token => Decimal.fromUserInputOrUndefined(amount, token.decimals)),
     [amount, tokenInfo]
   )
 
@@ -225,11 +296,11 @@ const TransportForm = () => {
       inputConfigLoadable?.map(x => ({
         ...x,
         estimateFee: fixedPointNumberToDecimal(x.estimateFee.balance, x.estimateFee.token),
-        minInput: fixedPointNumberToDecimal(x.minInput, token),
-        maxInput: fixedPointNumberToDecimal(x.maxInput, token),
+        minInput: fixedPointNumberToDecimal(x.minInput, route.token),
+        maxInput: fixedPointNumberToDecimal(x.maxInput, route.token),
         destFee: fixedPointNumberToDecimal(x.destFee.balance, x.destFee.token),
       })),
-    [inputConfigLoadable, token]
+    [inputConfigLoadable, route.token]
   )
 
   const inputError = useMemo(() => {
@@ -261,104 +332,199 @@ const TransportForm = () => {
     useMemo(() => {
       const adapter = adapterLoadable.valueMaybe()
 
-      if (
-        (fromEvm && sender?.type !== 'ethereum') ||
-        (toEvm && recipient?.type !== 'ethereum') ||
-        adapter === undefined ||
-        token === undefined ||
-        decimalAmount === undefined ||
-        toChain === undefined ||
-        recipient === undefined
-      ) {
+      if (adapter === undefined || token === undefined || decimalAmount === undefined || recipient === undefined) {
         return
       }
 
       return adapter?.createTx({
         amount: FixedPointNumber.fromInner(decimalAmount.planck.toString(), decimalAmount?.decimals),
-        to: toChain.id,
-        token,
+        to: route.to.id,
+        token: route.token,
         address: recipient.address,
       }) as SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
-    }, [adapterLoadable, decimalAmount, fromEvm, recipient, sender?.type, toChain, toEvm, token]),
+    }, [adapterLoadable, decimalAmount, recipient, route.to.id, route.token, token]),
     adapterLoadable.valueMaybe()?.getApi()?.genesisHash.toHex()
   )
 
+  const [focusedSection, setFocusedSection] = useState<'details' | 'faq'>('details')
+
+  useEffect(() => {
+    setFocusedSection('details')
+  }, [amount, route])
+
   return (
-    <DexForm
-      // swapLink={<DexForm.SwapTab as={Link} to="/dex/swap" />}
-      // transportLink={<DexForm.TransportTab as={Link} to="/dex/transport" selected />}
-      swapLink={undefined}
-      transportLink={undefined}
-      form={
-        <DexForm.Transport
-          accountSelector={senderSelector}
-          destAccountSelector={recipientSelector}
-          transferableAmount={
-            parsedInputConfigLoadable?.state === 'loading' ? (
-              <CircularProgressIndicator size="1em" />
-            ) : parsedInputConfigLoadable?.state === 'hasValue' ? (
-              parsedInputConfigLoadable?.contents?.maxInput.toLocaleString()
-            ) : undefined
-          }
-          transferableFiatAmount={fiatAmount !== undefined && <AnimatedFiatNumber end={fiatAmount} />}
-          fromChains={originChains.map(x => ({ name: x.display, logoSrc: x.icon }))}
-          selectedFromChainInitializing={adapterLoadable.state === 'loading'}
-          selectedFromChainIndex={useMemo(
-            () => originChains.findIndex(x => x.id === fromChain?.id),
-            [fromChain?.id, originChains]
-          )}
-          onSelectFromChainIndex={index =>
-            setFromChain(Maybe.of(index).mapOrUndefined(originChains.at.bind(originChains)))
-          }
-          toChains={destinationChains.map(x => ({ name: x.display, logoSrc: x.icon }))}
-          selectedToChainIndex={useMemo(
-            () => destinationChains.findIndex(x => x.id === toChain?.id),
-            [destinationChains, toChain?.id]
-          )}
-          onSelectToChainIndex={index =>
-            setToChain(Maybe.of(index).mapOrUndefined(destinationChains.at.bind(destinationChains)))
-          }
-          canReverseChainRoute={routeReversible}
-          onReverseChainRoute={() => {
-            setFromChain(toChain)
-            setToChain(fromChain)
-          }}
-          tokenSelector={
-            <TokenSelectorButton account={sender} tokens={tokens} selectedToken={token} onChangeToken={onChangeToken} />
-          }
-          amount={amount}
-          onChangeAmount={setAmount}
-          onRequestMaxAmount={() => setAmount(parsedInputConfigLoadable?.valueMaybe()?.maxInput.toString() ?? '')}
-          originFee={Maybe.of(parsedInputConfigLoadable?.valueMaybe()).mapOrUndefined(
-            fee => `~${fee.estimateFee.toLocaleString()}`
-          )}
-          destinationFee={parsedInputConfigLoadable?.valueMaybe()?.destFee.toLocaleString()}
-          inputError={inputError}
+    <>
+      {fromTokenDialogOpen && (
+        <TokenSelectDialog
+          tokens={fromTokens}
+          chains={originChains.map(chain => ({ id: chain.id, name: chain.display, iconSrc: chain.icon }))}
+          onSelectToken={token => onChangeFromToken(token.id, token.chainId as any)}
+          onRequestDismiss={() => setFromTokenDialogOpen(false)}
         />
-      }
-      fees={[
-        Maybe.of(parsedInputConfigLoadable?.valueMaybe()).mapOrUndefined(fee => ({
-          name: 'Origin fee',
-          amount: `~${fee.estimateFee.toLocaleString()}`,
-        })),
-        Maybe.of(parsedInputConfigLoadable?.valueMaybe()).mapOrUndefined(fee => ({
-          name: 'Destination fee',
-          amount: `~${fee.destFee.toLocaleString()}`,
-        })),
-      ]}
-      submitButton={
-        <DexForm.Transport.SubmitButton
-          loading={extrinsic?.state === 'loading'}
-          disabled={!ready}
-          onClick={() => {
-            if (sender !== undefined) {
-              void extrinsic?.signAndSend(sender.address)
+      )}
+      {toTokenDialogOpen && (
+        <TokenSelectDialog
+          tokens={toTokens}
+          chains={destinationChains.map(chain => ({ id: chain.id, name: chain.display, iconSrc: chain.icon }))}
+          onSelectToken={token => onChangeToToken(token.id, token.chainId as any)}
+          onRequestDismiss={() => setToTokenDialogOpen(false)}
+        />
+      )}
+      <TransportForm
+        amount={amount}
+        fiatAmount={
+          fiatAmount?.toLocaleString(undefined, { style: 'currency', currency }) ?? (
+            <CircularProgressIndicator size="1em" />
+          )
+        }
+        availableAmount={
+          parsedInputConfigLoadable?.valueMaybe()?.maxInput.toLocaleString() ?? <CircularProgressIndicator size="1em" />
+        }
+        onChangeAmount={setAmount}
+        onRequestMaxAmount={() => setAmount(parsedInputConfigLoadable?.valueMaybe()?.maxInput.toString() ?? '')}
+        amountError={inputError}
+        accountSelect={senderSelector}
+        tokenSelect={
+          <TransportForm.TokenSelect
+            name={route.token}
+            chain={route.from.display}
+            iconSrc={route.from.icon}
+            onClick={() => setFromTokenDialogOpen(true)}
+          />
+        }
+        destTokenSelect={
+          <TransportForm.TokenSelect
+            name={route.token}
+            chain={route.to.display}
+            iconSrc={route.to.icon}
+            onClick={() => setToTokenDialogOpen(true)}
+          />
+        }
+        reversible={routeReversible}
+        onRequestReverse={() => {
+          if (reversedRoute === undefined) {
+            throw new Error("Can't reverse irreversible route")
+          }
+
+          setRoute(reversedRoute)
+        }}
+        destAccountSelect={recipientSelector}
+        canTransport={ready}
+        onRequestTransport={() => {
+          if (sender === undefined) {
+            throw new Error("Can't swap with no sender")
+          }
+
+          if (extrinsic === undefined) {
+            throw new Error("Extrinsic isn't ready yet")
+          }
+
+          void extrinsic.signAndSend(sender.address)
+        }}
+        transportInProgress={extrinsic?.state === 'loading'}
+        info={
+          <TransportForm.Info
+            focusedSection={focusedSection}
+            onChangeFocusedSection={setFocusedSection}
+            summary={(() => {
+              switch (parsedInputConfigLoadable?.state) {
+                case 'loading':
+                case undefined:
+                  return <TransportForm.Info.Summary.ProgressIndicator />
+                case 'hasValue':
+                  return (
+                    <TransportForm.Info.Summary
+                      originFee={`~${parsedInputConfigLoadable.contents.estimateFee.toLocaleString()}`}
+                      destinationFee={`~${parsedInputConfigLoadable.contents.destFee.toLocaleString()}`}
+                    />
+                  )
+                case 'hasError':
+                  return (
+                    <TransportForm.Info.Summary.ErrorMessage
+                      title="Unable to process transport"
+                      text="Please try again later"
+                    />
+                  )
+              }
+            })()}
+            faq={
+              <TransportForm.Info.Faq
+                footer={<TransportForm.Info.Faq.Footer discordUrl="https://discord.gg/talisman" />}
+              >
+                <TransportForm.Info.Faq.Question
+                  question="How does transport work?"
+                  answer={
+                    <span>
+                      Talisman’s transport feature leverages XCMP on Polkadot to send assets between networks. The
+                      Talisman portal crafts the relevant transaction before requesting a signature before sending the
+                      transaction to the “from” network, which executes the transfer of tokens to your specified
+                      “destination” chain. Learn more about Polkadot’s XCMP{' '}
+                      <Text.Noop.A href="https://polkadot.network/features/cross-chain-communication/" target="_blank">
+                        here
+                      </Text.Noop.A>
+                      .
+                    </span>
+                  }
+                />
+                <TransportForm.Info.Faq.Question
+                  question="How do I perform a teleport?"
+                  answer={
+                    <span>
+                      A “teleport” is an XCM instruction that moves assets between two networks. It is implemented by
+                      networks that trust one-another, e.g. Statemint & Polkadot. Performing a teleport in the Talisman
+                      Portal is like performing any other cross-chain transport in the “Transport” feature: by
+                      specifying the asset, amount, “from” network, and “to” network you are interested in.
+                    </span>
+                  }
+                />
+                <TransportForm.Info.Faq.Question
+                  question="How do I perform a teleport?"
+                  answer={
+                    <span>
+                      A “teleport” is an XCM instruction that moves assets between two networks. It is implemented by
+                      networks that trust one-another, e.g. Statemint & Polkadot. Performing a teleport in the Talisman
+                      Portal is like performing any other cross-chain transport in the “Transport” feature: by
+                      specifying the asset, amount, “from” network, and “to” network you are interested in.
+                    </span>
+                  }
+                />
+                <TransportForm.Info.Faq.Question
+                  question="What are the risks?"
+                  answer={
+                    <span>
+                      Sending assets between networks is generally a safe procedure on the Talisman portal, since
+                      Talisman interacts directly with the networks to execute your transaction, and our team have
+                      tested all routes we offer. However depending on the assets and networks involved, you may find:
+                      <br />
+                      <br />
+                      <ul>
+                        <li>
+                          Your transferred assets on a chain where your account does not have the necessary token to pay
+                          for further txs.
+                        </li>
+                        <li>
+                          When transferring some assets you might be at risk of losing your existential deposit, which
+                          may reap your account on the “from” network.
+                        </li>
+                        <li>
+                          An (increasingly rare) bug in an XCM configuration on a network means a transfer is not
+                          processed correctly.
+                        </li>
+                      </ul>
+                      <br />
+                      Additionally, always make sure that the URL of the Dapp you are using is correct. In this case:
+                      app.talisman.xyz.
+                    </span>
+                  }
+                />
+              </TransportForm.Info.Faq>
             }
-          }}
-        />
-      }
-    />
+            footer={<TransportForm.Info.Footer>Transport via XCM</TransportForm.Info.Footer>}
+          />
+        }
+      />
+    </>
   )
 }
 
-export default TransportForm
+export default Transport

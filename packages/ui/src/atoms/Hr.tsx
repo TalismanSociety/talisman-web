@@ -1,10 +1,16 @@
 import { Text } from '.'
+import { useTheme } from '@emotion/react'
 import type { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from 'react'
 
 type HrProps = PropsWithChildren<DetailedHTMLProps<HTMLAttributes<HTMLHRElement>, HTMLHRElement>>
 
 const Hr = ({ children, ...props }: HrProps) => {
-  const baseStyle = { opacity: 0.15, height: 0, border: 'none', borderBottom: '1px solid currentColor' }
+  const theme = useTheme()
+  const baseStyle = {
+    height: 0,
+    border: 'none',
+    borderBottom: `1px solid ${theme.color.outlineVariant}`,
+  }
 
   if (!children) {
     return <hr {...props} css={baseStyle} />

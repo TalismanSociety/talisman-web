@@ -13,7 +13,7 @@
     "lint": "eslint src",
     "check-types": "tsc --noEmit",
     "e2e": "playwright test",
-    "storybook": "storybook dev -p 6007",
+    "storybook": "storybook dev -p 6008",
     "build-storybook": "storybook build",
     "codegen:history": "graphql-codegen --require dotenv/config --config codegen.history.ts",
     "codegen:crowdloan": "graphql-codegen --require dotenv/config --config codegen.crowdloan.ts"
@@ -39,6 +39,7 @@
     "@talismn/on-chain-id": "0.0.0-pr1392-20240408055115",
     "@talismn/react-polkadot-api": "workspace:^",
     "@talismn/signet-apps-sdk": "0.0.7",
+    "@talismn/swap": "workspace:^",
     "@talismn/ui": "workspace:^",
     "@talismn/util": "0.0.0-pr1392-20240408055115",
     "@talismn/utils": "workspace:^",
@@ -54,7 +55,7 @@
     "i18next": "^21.10.0",
     "i18next-browser-languagedetector": "^6.1.8",
     "i18next-http-backend": "^1.4.5",
-    "jotai": "^2.6.4",
+    "jotai": "^2.8.0",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "mipd": "^0.0.7",
@@ -71,7 +72,7 @@
     "safety-match": "^0.4.4",
     "threads": "^1.7.0",
     "victory": "^36.6.8",
-    "viem": "^2.9.26",
+    "viem": "^2.9.27",
     "wagmi": "^2.5.20"
   },
   "devDependencies": {

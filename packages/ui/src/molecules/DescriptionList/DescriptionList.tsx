@@ -29,7 +29,7 @@ const Description = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDiv
 const DescriptionList = Object.assign(
   (props: DescriptionListProps) => (
     <DescriptionListContext.Provider value={{ emphasis: props.emphasis ?? 'term' }}>
-      <dl {...props} css={{ '> * + *': { marginTop: '1.6rem' } }} />
+      <dl {...props} css={{ '> * + *': { marginTop: '1.6rem' }, margin: 0 }} />
     </DescriptionListContext.Provider>
   ),
   { Description, Term, Details }

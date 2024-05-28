@@ -260,7 +260,7 @@ const Layout = () => {
           <Link to="/staking">
             <NavigationBar.Item label="Staking" icon={<Zap />} />
           </Link>
-          <Link to="/transfer">
+          <Link to="/transport">
             <NavigationBar.Item label="Transport" icon={<Repeat />} />
           </Link>
           <Link to="/crowdloans/participated">
@@ -285,7 +285,7 @@ const Layout = () => {
           <Link to="/staking">
             <NavigationRail.Item label="Staking" icon={<Zap />} />
           </Link>
-          <Link to="/transfer">
+          <Link to="/transport">
             <NavigationRail.Item label="Transport" icon={<Repeat />} />
           </Link>
           <Link to="/explore">
@@ -350,7 +350,7 @@ const Layout = () => {
           <Link to="/staking">
             <NavigationDrawer.Item label="Staking" icon={<Zap />} />
           </Link>
-          <Link to="/transfer">
+          <Link to="/transport">
             <NavigationDrawer.Item label="Transport" icon={<Repeat />} />
           </Link>
           <Link to="/crowdloans/participated">
