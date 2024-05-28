@@ -4,6 +4,7 @@ import Icon, { SurfaceIcon, TonalIcon } from '../Icon'
 import { useTheme } from '@emotion/react'
 import { type ElementType, type PropsWithChildren } from 'react'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type IconButtonElementType = Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>
 
 export type IconButtonProps<T extends IconButtonElementType = 'button'> = PropsWithChildren<
@@ -15,7 +16,10 @@ export type IconButtonProps<T extends IconButtonElementType = 'button'> = PropsW
 >
 
 const BaseIconButtonFactory =
-  (Element: any) =>
+  (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Element: any
+  ) =>
   <T extends IconButtonElementType = 'button'>(props: IconButtonProps<T>) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const theme = useTheme()

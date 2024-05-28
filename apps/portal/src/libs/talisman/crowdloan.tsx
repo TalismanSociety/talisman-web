@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { substrateApiState } from '../../domains/common'
 import crowdloanDataState, { type CrowdloanDetail } from '../@talisman-crowdloans/provider'
 import { supportedRelayChainsState } from './util/_config'

@@ -18,7 +18,6 @@ export const useTotalStaked = () => {
             chains.map(chain =>
               nativeTokenAmountState({
                 genesisHash: chain.genesisHash,
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 apiEndpoint: chain.rpc!,
               })
             )

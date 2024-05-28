@@ -5,6 +5,7 @@ import { createContext, useContext, type ElementType, type PropsWithChildren } f
 
 const TabsContext = createContext({ noBottomBorder: false })
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type TabElementType = React.ElementType | ElementType<any>
 
 type PolymorphicTabProps<T extends TabElementType = 'li'> = PropsWithChildren<{
@@ -22,6 +23,7 @@ const Tab = <T extends TabElementType = 'li'>({ as = 'li' as T, ...props }: TabP
 
   return (
     <Element
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       {...(props as any)}
       css={{
         position: 'relative',

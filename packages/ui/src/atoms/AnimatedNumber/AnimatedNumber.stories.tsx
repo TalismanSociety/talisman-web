@@ -9,6 +9,7 @@ export default {
   },
 } as ComponentMeta<typeof AnimatedNumber>
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<AnimatedNumberProps> = (args: any) => <AnimatedNumber {...args} />
 
 Default.args = {

@@ -16,7 +16,6 @@ export class Maybe<T> {
   }
 
   static ofFalsy<T>(value?: T) {
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     return new Maybe(value || undefined)
   }
 

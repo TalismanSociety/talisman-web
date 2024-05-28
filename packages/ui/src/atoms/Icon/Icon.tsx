@@ -3,6 +3,7 @@ import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/web-icons/utils'
 import { type ComponentPropsWithoutRef, type ElementType } from 'react'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type IconElementType = Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>
 
 type PolymorphicIconProps<T extends IconElementType> = {
@@ -32,6 +33,7 @@ const Icon = <T extends IconElementType = 'figure'>({
 
   return (
     <Component
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       {...(props as any)}
       css={{
         display: 'flex',
@@ -49,7 +51,8 @@ const Icon = <T extends IconElementType = 'figure'>({
         transition: '.25s',
       }}
     >
-      <IconContext.Provider value={{ size: `calc(${size} * 0.5)` }}>{props['children']}</IconContext.Provider>
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <IconContext.Provider value={{ size: `calc(${size} * 0.5)` }}>{(props as any)['children']}</IconContext.Provider>
     </Component>
   )
 }

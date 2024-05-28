@@ -13,6 +13,7 @@ export default {
   },
 } as ComponentMeta<typeof MediaDialog>
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<MediaDialogProps> = (args: any) => (
   <>
     <Global

@@ -40,6 +40,7 @@ export type SelectProps<TValue, TClear extends boolean = false> = {
 }
 
 type SelectItemProps = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value?: any
   leadingIcon?: ReactNode
   headlineContent: ReactNode
@@ -83,6 +84,7 @@ const Select = Object.assign(
     const childrenArray = React.Children.toArray(children)
 
     const selectedIndex = childrenArray
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .filter((x): x is ReactElement<SelectItemProps> => x as any)
       .findIndex(x => x.props.value === props.value)
 
@@ -303,6 +305,7 @@ const Select = Object.assign(
               },
             })}
           >
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {React.Children.map(children as any, (child: ReactElement<SelectItemProps>, index) => (
               <li
                 key={child.key}

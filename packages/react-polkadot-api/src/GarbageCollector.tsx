@@ -77,7 +77,7 @@ export const POLKADOT_API_STATE_GARBAGE_COLLECTOR_UNSTABLE = () => {
           node.startsWith(states.queryState[garbageCollectionKey]) ||
           node.startsWith(states.deriveState[garbageCollectionKey]) ||
           node.startsWith(states.queryMultiState[garbageCollectionKey]),
-        []
+        [states.deriveState, states.queryMultiState, states.queryState]
       )}
     />
   )

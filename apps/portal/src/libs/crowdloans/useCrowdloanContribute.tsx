@@ -1,8 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { useConnectedSubstrateWallet } from '../../domains/extension'
 import customRpcs from '../../util/customRpcs'
 import { Maybe } from '../../util/monads'
@@ -40,7 +36,7 @@ export const ContributeState = makeTaggedUnion({
   ContributionSuccess: (props: ContributionSuccessProps) => props,
   ContributionFailed: (props: ContributionFailedProps) => props,
 })
-export type ContributeState = MemberType<typeof ContributeState> // eslint-disable-line @typescript-eslint/no-redeclare
+export type ContributeState = MemberType<typeof ContributeState>
 export type ContributeStateVariant = keyof typeof ContributeState
 
 // ContributeEvent represents the events which can be externally triggered in order to progress to the next ContributeState
@@ -70,7 +66,7 @@ export const ContributeEvent = makeTaggedUnion({
   _finalizedContributionSuccess: (props: ContributionSuccessProps) => props,
   _finalizedContributionFailed: (props: ContributionFailedProps) => props,
 })
-export type ContributeEvent = MemberType<typeof ContributeEvent> // eslint-disable-line @typescript-eslint/no-redeclare
+export type ContributeEvent = MemberType<typeof ContributeEvent>
 
 // The callback for dispatching ContributeEvents
 // This is returned from the useCrowdloanContribute hook
@@ -394,7 +390,7 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
 function useInitializeThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
   const stateDeps = state.match({
     Initializing: ({ crowdloanId, relayChainId, parachainId }) => ({ crowdloanId, relayChainId, parachainId }),
-    _: () => false as false,
+    _: () => false as const,
   })
 
   const relayChains = useRecoilValue(supportedRelayChainsState)
@@ -453,7 +449,7 @@ function useApiThunk(state: ContributeState, dispatch: DispatchContributeEvent) 
   const stateDeps = state.match({
     Ready: ({ relayRpcs }) => ({ relayRpcs }),
     RegisteringUser: ({ relayRpcs }) => ({ relayRpcs }),
-    _: () => false as false,
+    _: () => false as const,
   })
 
   useEffect(() => {
@@ -501,7 +497,7 @@ function useAccountBalanceThunk(state: ContributeState, dispatch: DispatchContri
 function useValidateAccountHasContributionBalanceThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
   const stateDeps = state.match({
     Ready: ({ contributionAmount, accountBalance }) => ({ contributionAmount, accountBalance }),
-    _: () => false as false,
+    _: () => false as const,
   })
 
   useEffect(() => {
@@ -543,7 +539,7 @@ function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent
       memoAddress,
       api,
     }),
-    _: () => false as false,
+    _: () => false as const,
   })
   const { api, ...jsonCmpStateDeps } = stateDeps || {}
 
@@ -647,7 +643,7 @@ function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: Dis
       submissionRequested,
       submissionValidated,
     }),
-    _: () => false as false,
+    _: () => false as const,
   })
   // don't fetch contributions unless we're on moonbeam crowdloan
   // (if accounts is [] then useCrowdloanContributions will skip the query)
@@ -757,7 +753,7 @@ function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: Dis
 
       dispatch(ContributeEvent.setVerifierSignature({ sr25519: signature as string }))
     })()
-  }, [dispatch, moonbeamContributions, contributionsHydrated, stateDeps]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [dispatch, moonbeamContributions, contributionsHydrated, stateDeps])
 }
 
 function useMoonbeamRegisterUserThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
@@ -795,7 +791,7 @@ function useMoonbeamRegisterUserThunk(state: ContributeState, dispatch: Dispatch
       api,
       submissionRequested,
     }),
-    _: () => false as false,
+    _: () => false as const,
   })
   const { api, ...jsonCmpStateDeps } = stateDeps || {}
 
@@ -903,7 +899,7 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
       txFee,
       submissionRequested,
     }),
-    _: () => false as false,
+    _: () => false as const,
   })
   const { api, ...jsonCmpStateDeps } = stateDeps || {}
 
@@ -1029,7 +1025,7 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
       api,
       submissionValidated,
     }),
-    _: () => false as false,
+    _: () => false as const,
   })
 
   const { api, ...jsonCmpStateDeps } = stateDeps || {}

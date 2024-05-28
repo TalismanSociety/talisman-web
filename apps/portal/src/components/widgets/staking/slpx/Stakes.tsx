@@ -19,7 +19,6 @@ const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStake
   return (
     <ErrorBoundary orientation="horizontal">
       <StakePosition
-        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
         readonly={props.position.account.readonly || !props.position.account.canSignEvm}
         account={props.position.account}
         provider="Bifrost liquid staking"

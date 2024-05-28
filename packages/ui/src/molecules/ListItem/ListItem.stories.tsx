@@ -11,6 +11,7 @@ export default {
   },
 } as ComponentMeta<typeof ListItem>
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<ListItemProps> = (args: any) => <ListItem {...args} />
 
 Default.args = {

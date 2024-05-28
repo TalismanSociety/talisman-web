@@ -44,6 +44,7 @@ const FloatingActionButton = <T extends FloatingActionButtonElementType = 'butto
 
   return (
     <Component
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       {...(props as any)}
       css={[
         {

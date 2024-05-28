@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import styled from '@emotion/styled'
 import { sortBy } from 'lodash'
 

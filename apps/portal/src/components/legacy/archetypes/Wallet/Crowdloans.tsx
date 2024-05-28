@@ -46,7 +46,6 @@ const GqlCrowdloanItem = styled(
     const { tokenSymbol: relayNativeToken, coingeckoId, tokenDecimals: relayTokenDecimals } = relayChain ?? {}
     const { name } = chain ?? {}
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const priceLoadable = useRecoilValueLoadable(tokenPriceState({ coingeckoId: coingeckoId! }))
 
     const relayTokenPrice = priceLoadable.valueMaybe()?.toString()

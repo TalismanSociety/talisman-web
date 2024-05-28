@@ -12,9 +12,7 @@ type OngoingProps = {
 
 const Ongoing = ({ end, showSeconds, relayChainId, className = '' }: OngoingProps) => {
   const [secondsRemaining, setSecondsRemaining] = useState<number>()
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const blockNumber = useChainmetaValue(relayChainId!, 'blockNumber')
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const blockPeriod = useChainmetaValue(relayChainId!, 'blockPeriod')
 
   useEffect(() => {

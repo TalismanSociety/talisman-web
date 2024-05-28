@@ -37,7 +37,6 @@ const Summary = Object.assign(
               {props.route?.map((vertex, index) => (
                 <Fragment key={index}>
                   <img src={vertex.iconSrc} css={{ width: '1em', height: '1em' }} />
-                  {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
                   {index < props.route.length - 1 && (
                     <span>
                       {' '}

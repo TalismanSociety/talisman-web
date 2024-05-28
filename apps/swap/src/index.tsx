@@ -549,6 +549,7 @@ const HydrateSwap = (props: HydrateSwapProps) => {
         [coingeckoApiTierAtom, props.coingeckoApiTier],
         [coingeckoApiKeyAtom, props.coingeckoApiKey],
         [chainflipNetworkAtom, props.useTestnet ? 'perseverance' : 'mainnet'],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ].filter(([_, value]) => value !== undefined) as Array<[any, any]>
     ),
     { dangerouslyForceHydrate: true }

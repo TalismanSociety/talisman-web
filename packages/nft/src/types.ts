@@ -18,7 +18,7 @@ export type Nft<TType extends string, TChain extends string> = {
     | undefined
 }
 
-export type CreateNftAsyncGenerator<T extends Nft<any, any>> = {
+export type CreateNftAsyncGenerator<T extends Nft<string, string>> = {
   (address: string, options: { batchSize: number }): AsyncGenerator<T | Error>
 }
 

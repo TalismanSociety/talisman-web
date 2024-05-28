@@ -136,7 +136,6 @@ export const destAssetsAtom = atom(async get => {
 const _srcAssetAtom = atomWithDefault(async get => {
   const assets = await get(srcAssetsAtom)
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return assets.at(0)!
 })
 
@@ -165,7 +164,6 @@ export const srcAssetAtom = atom(
 const _destAssetAtom = atomWithDefault(async get => {
   const assets = await get(destAssetsAtom)
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return assets.at(0)!
 })
 
@@ -228,13 +226,16 @@ export const srcAmountAtom = atom(async get => {
 })
 
 const quoteAtomEffect = atomEffect((get, set) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let timeout: any | undefined
 
   void (async () => {
     let quote: Awaited<typeof quoteAtom extends Atom<infer V> ? V : never> | undefined
     try {
       quote = await get(quoteAtom)
-    } catch {}
+    } catch {
+      /* empty */
+    }
 
     if (quote !== undefined) {
       timeout = setTimeout(() => set(quoteAtom), quote.quote.estimatedDurationSeconds * 1000)
@@ -315,7 +316,6 @@ export const quoteAtom = atomWithRefresh(async get => {
 
 const StoredSwaps = z.array(z.object({ id: z.string(), date: z.date() }))
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
 type StoredSwaps = z.infer<typeof StoredSwaps>
 
 const _swapsStorage = unstable_withStorageValidator(
@@ -377,6 +377,7 @@ export const swapStatusAtomFamily = atomFamily((id: string) =>
   atom(async get => {
     const status = await get(swapSdkAtom).getStatus({ id })
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!(['FAILED', 'COMPLETE', 'BROADCAST_ABORTED'] as const).includes(status.state as any)) {
       get(swapStatusRequestCounterAtom)
     }

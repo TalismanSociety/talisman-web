@@ -62,7 +62,6 @@ const Transport = () => {
     [availableRoutes, sender?.type]
   )
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [route, setRoute] = useState(routes.at(0)!)
 
   const [[recipient, setRecipient], recipientSelector] = useAccountSelector(

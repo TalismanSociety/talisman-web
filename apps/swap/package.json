@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "@talismn/swap",
+  "type": "module",
   "exports": "./build/index.js",
   "scripts": {
     "dev": "tsc --build --watch",
@@ -23,6 +24,7 @@
     "@talismn/eslint-config": "workspace:^",
     "@talismn/tsconfig": "workspace:^",
     "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^9.2.0",
     "jotai": "^2.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

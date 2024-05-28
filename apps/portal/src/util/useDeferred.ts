@@ -16,7 +16,6 @@ const useDeferred = <T>(deps: DependencyList = []) => {
     [resolver]
   )
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return { promise, resolve: resolver.resolve!, reject: resolver.reject! }
 }
 

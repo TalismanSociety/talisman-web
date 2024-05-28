@@ -1,19 +1,23 @@
 {
   "private": true,
   "name": "@talismn/eslint-config",
+  "type": "module",
   "version": "0.0.0",
+  "exports": {
+    ".": "./index.js",
+    "./react.js": "./react.js"
+  },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.43.0",
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-config-standard-with-typescript": "latest",
-    "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-n": "^15.0.0",
-    "eslint-plugin-promise": "^6.0.0",
-    "eslint-plugin-react": "latest",
-    "eslint-plugin-react-hooks": "^4.6.0"
+    "@eslint/compat": "^1.0.1",
+    "@eslint/js": "^9.2.0",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "typescript-eslint": "^7.9.0"
   },
   "peerDependencies": {
-    "eslint": "*",
-    "typescript": "*"
+    "eslint": "9.x",
+    "typescript": "5.x"
   }
 }

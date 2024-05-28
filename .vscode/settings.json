@@ -1,4 +1,5 @@
 {
   "eslint.workingDirectories": [{ "mode": "auto" }],
+  "eslint.experimental.useFlatConfig": true,
   "search.exclude": { ".yarn/**": true }
 }

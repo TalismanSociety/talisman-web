@@ -43,7 +43,7 @@ export default class Decimal {
           throw new Error('Fewer than two elements in split result. This must not happen here.')
         case 2:
           if (!parts[1]) throw new Error('Fractional part missing')
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
           whole = parts[0]!
           fractional = parts[1].replace(/0+$/, '')
           break

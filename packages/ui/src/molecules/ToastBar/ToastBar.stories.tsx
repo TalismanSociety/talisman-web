@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Button } from '../../atoms'
 import Toaster, { toast } from '../../organisms/Toaster'
 import ToastBar, { ToastMessage, type ToastBarProps } from './ToastBar'
@@ -12,6 +11,7 @@ export default {
   },
 } as ComponentMeta<typeof ToastBar>
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<ToastBarProps> = (args: any) => <ToastBar {...args} />
 
 Default.args = {

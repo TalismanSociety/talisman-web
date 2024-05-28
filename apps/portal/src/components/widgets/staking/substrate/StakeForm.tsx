@@ -359,7 +359,6 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
       : 'waiting'
   }, [eraStakersLoadable, poolNominatorsLoadable])
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const bondedPoolLoadable = useChainState('query', 'nominationPools', 'bondedPools', [selectedPoolId!], {
     enabled: selectedPoolId !== undefined,
   })
@@ -373,8 +372,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
     'nominationPools',
     'metadata.multi',
     existingPool === undefined
-      ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        [selectedPoolId!]
+      ? [selectedPoolId!]
       : selectedPoolId === undefined
       ? [existingPool.poolId, existingPool.poolId]
       : [selectedPoolId, existingPool.poolId],
@@ -513,7 +511,7 @@ const StakeForm = () => {
   const chains = useRecoilValue(nominationPoolsEnabledChainsState)
 
   const [inTransition, startTransition] = useTransition()
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
   const [selectedChain, setSelectedChain] = useState(chains[0]!)
 
   return (
