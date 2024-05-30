@@ -109,7 +109,7 @@ export const useAccountSelector = (
   }, [account, accounts, accountsUpdated, getInitialAccount])
 
   return [
-    [accounts.find(x => x.address === account?.address || x.origin === account?.origin), setAccount] as const,
+    [accounts.find(x => x.address === account?.address && x.origin === account?.origin), setAccount] as const,
     // eslint-disable-next-line react/jsx-key
     <AccountSelector
       {...accountSelectorProps}
