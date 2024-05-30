@@ -2,6 +2,7 @@ import { isNilOrWhitespace } from '../../../util/nil'
 import type { PoolClaimPermission } from '../PoolClaimPermissionForm'
 import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
 import StakeFormSkeleton from './StakeForm.skeleton'
+import { useTheme } from '@emotion/react'
 import {
   Button,
   DescriptionList,
@@ -145,46 +146,61 @@ const PoolInfo = (props: PoolInfoProps) => {
 type ClaimPermissionProps = {
   permission: PoolClaimPermission
   onChangeRequest: () => unknown
+  isTalismanPool?: boolean
 }
 
-const ClaimPermission = (props: ClaimPermissionProps) => (
-  <Surface
-    css={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      borderRadius: '0.8rem',
-      padding: '0.8rem 1.6rem',
-    }}
-  >
-    <Text.Body as="div">
-      Claim permission:{' '}
-      <TonalChip size="sm" contentColor={props.permission === undefined ? '#F48F45' : '#38D448'}>
-        {(() => {
-          switch (props.permission) {
-            case undefined:
-              return 'None'
-            case 'compound':
-              return 'Compound'
-            case 'withdraw':
-              return 'Withdraw'
-            case 'all':
-              return 'All'
-          }
-        })()}
-      </TonalChip>
-    </Text.Body>
-    <SurfaceChip
-      contentAlpha="high"
-      size="lg"
-      leadingContent={<Settings />}
-      css={{ padding: '0.6rem 0.8rem' }}
-      onClick={props.onChangeRequest}
-    >
-      Manage
-    </SurfaceChip>
-  </Surface>
-)
+const ClaimPermission = (props: ClaimPermissionProps) => {
+  const theme = useTheme()
+  return (
+    <DescriptionList emphasis="details">
+      <DescriptionList.Description>
+        <DescriptionList.Term>
+          {props.isTalismanPool ? <Text alpha="high">Auto-claim</Text> : <Text alpha="high">Claim permission</Text>}
+        </DescriptionList.Term>
+        <DescriptionList.Details>
+          <TonalChip
+            contentColor={props.permission === undefined ? '#F48F45' : '#38D448'}
+            leadingContent={<Settings />}
+            onClick={props.onChangeRequest}
+          >
+            {(() => {
+              switch (props.permission) {
+                case undefined:
+                  return 'None'
+                case 'compound':
+                  return props.isTalismanPool ? 'Auto compound' : 'Compound'
+                case 'withdraw':
+                  return props.isTalismanPool ? 'Auto withdraw' : 'Withdraw'
+                case 'all':
+                  return props.isTalismanPool ? 'Auto compound' : 'All'
+              }
+            })()}
+          </TonalChip>
+        </DescriptionList.Details>
+      </DescriptionList.Description>
+      {props.isTalismanPool && (
+        <>
+          <DescriptionList.Description>
+            <DescriptionList.Term css={{ fontSize: theme.typography.bodySmall.fontSize }}>
+              Claim threshold 1
+            </DescriptionList.Term>
+            <DescriptionList.Details css={{ fontSize: theme.typography.bodySmall.fontSize }}>
+              Daily when claim {'>'} {(5).toLocaleString(undefined, { style: 'currency', currency: 'usd' })}
+            </DescriptionList.Details>
+          </DescriptionList.Description>
+          <DescriptionList.Description>
+            <DescriptionList.Term css={{ fontSize: theme.typography.bodySmall.fontSize }}>
+              Claim threshold 2
+            </DescriptionList.Term>
+            <DescriptionList.Details css={{ fontSize: theme.typography.bodySmall.fontSize }}>
+              Weekly when claim {'>'} {(1).toLocaleString(undefined, { style: 'currency', currency: 'usd' })}
+            </DescriptionList.Details>
+          </DescriptionList.Description>
+        </>
+      )}
+    </DescriptionList>
+  )
+}
 
 type EstimatedYieldProps = {
   amount: ReactNode
@@ -302,7 +318,12 @@ const ExistingPool = Object.assign(
           </DescriptionList.Description>
         )}
       </DescriptionList>
-      {props.claimPermission && <div css={{ marginBottom: '1.6rem' }}>{props.claimPermission}</div>}
+      {props.claimPermission && (
+        <>
+          <Hr css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }} />
+          <div css={{ marginBottom: '1.6rem' }}>{props.claimPermission}</div>
+        </>
+      )}
       {!props.readonly && (
         <div css={{ display: 'flex', gap: '0.8rem' }}>
           {props.addButton}

@@ -1,8 +1,18 @@
 import { TalismanHandLoader } from '../../legacy/TalismanHandLoader'
 import { useTheme } from '@emotion/react'
-import { AlertDialog, Button, HiddenDetails, RadioButton, Surface, Switch, Text, Tooltip } from '@talismn/ui'
+import {
+  AlertDialog,
+  Button,
+  DescriptionList,
+  HiddenDetails,
+  Hr,
+  RadioButton,
+  Switch,
+  Text,
+  Tooltip,
+} from '@talismn/ui'
 import { Calculate, Info } from '@talismn/web-icons'
-import { Suspense, type PropsWithChildren, createContext, useContext } from 'react'
+import { Suspense, createContext, useContext, type PropsWithChildren } from 'react'
 
 const Context = createContext({ isSkeleton: false, onRequestDismiss: undefined as (() => unknown) | undefined })
 
@@ -81,13 +91,13 @@ const PoolClaimPermissionForm = (props: PoolClaimPermissionFormProps) => {
           <Info size="1em" css={{ verticalAlign: 'middle' }} />
         </Tooltip>
       </div>
-      <Surface
+      <div
         css={{
           display: 'flex',
           flexDirection: 'column',
           gap: '1.6rem',
           borderRadius: '1.6rem',
-          padding: '1.6rem',
+          padding: '1.6rem 0',
           '@media(min-width: 768px)': {
             flexDirection: 'row',
           },
@@ -123,7 +133,26 @@ const PoolClaimPermissionForm = (props: PoolClaimPermissionFormProps) => {
           checked={props.permission === 'all'}
           onCheck={() => props.onChangePermission('all')}
         />
-      </Surface>
+      </div>
+      {props.isTalismanPool && (
+        <>
+          <Hr />
+          <DescriptionList emphasis="details">
+            <DescriptionList.Description>
+              <DescriptionList.Term>Claim threshold 1</DescriptionList.Term>
+              <DescriptionList.Details>
+                Daily when claim {'>'} {(5).toLocaleString(undefined, { style: 'currency', currency: 'usd' })}
+              </DescriptionList.Details>
+            </DescriptionList.Description>
+            <DescriptionList.Description>
+              <DescriptionList.Term>Claim threshold 2</DescriptionList.Term>
+              <DescriptionList.Details>
+                Weekly when claim {'>'} {(1).toLocaleString(undefined, { style: 'currency', currency: 'usd' })}
+              </DescriptionList.Details>
+            </DescriptionList.Description>
+          </DescriptionList>
+        </>
+      )}
       <div css={{ display: 'flex', gap: '1.6rem', marginTop: '4.6rem', '> *': { flex: 1 } }}>
         {onRequestDismiss && (
           <Button disabled={context.isSkeleton} variant="outlined" onClick={onRequestDismiss}>

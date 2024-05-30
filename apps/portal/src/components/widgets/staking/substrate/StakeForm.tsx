@@ -297,6 +297,8 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
   const [selectedPoolId, setSelectedPoolId] = useState(initialPoolId)
   const [showPoolSelector, setShowPoolSelector] = useState(false)
 
+  const isTalismanPool = selectedPoolId !== undefined && chain.talismanPools?.includes(selectedPoolId)
+
   const [[selectedAccount], accountSelector] = useAccountSelector(
     useRecoilValue(writeableSubstrateAccountsState),
     accounts =>
@@ -391,7 +393,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
     setSelectedPoolId(initialPoolId)
   }, [initialPoolId, recommendedPools])
 
-  const [claimPermissionDialogOpen, setClaimPermisssionDialogOpen] = useState(false)
+  const [claimPermissionDialogOpen, setClaimPermissionDialogOpen] = useState(false)
   const [claimPermission, setClaimPermission] = useState<
     'Permissioned' | 'PermissionlessCompound' | 'PermissionlessWithdraw' | 'PermissionlessAll'
   >('Permissioned')
@@ -441,7 +443,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
           permission={claimPermission}
           onChangePermission={setClaimPermission}
           poolId={selectedPoolId}
-          onRequestDismiss={() => setClaimPermisssionDialogOpen(false)}
+          onRequestDismiss={() => setClaimPermissionDialogOpen(false)}
         />
       )}
       <StakeFormComponent
@@ -481,7 +483,8 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
         claimPermission={
           <StakeFormComponent.ClaimPermission
             permission={toUiPermission(claimPermission)}
-            onChangeRequest={() => setClaimPermisssionDialogOpen(true)}
+            onChangeRequest={() => setClaimPermissionDialogOpen(true)}
+            isTalismanPool={isTalismanPool}
           />
         }
         stakeButton={
