@@ -16,7 +16,6 @@ export const bridgeState = selector({
       disabledRouters: [
         // Disable routes from asset hub
         // due to reports of possible lost of funds from users
-        { from: 'assetHubPolkadot' },
         // Temporarily disable Kusama routes
         // due to: https://github.com/paritytech/polkadot-sdk/issues/3050
         { from: 'altair' },
@@ -41,7 +40,6 @@ export const bridgeState = selector({
         { from: 'karura' },
         { from: 'robonomics' },
         { from: 'tinkernet' },
-        { from: 'assetHubKusama' },
       ],
     })
     await bridge.isReady
