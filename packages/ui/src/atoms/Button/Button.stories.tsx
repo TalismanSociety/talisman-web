@@ -1,6 +1,7 @@
 import SurfaceContainer from '../Surface'
 import Button from './Button'
 import { type Meta, type StoryObj } from '@storybook/react'
+import { TalismanHand } from '@talismn/web-icons'
 
 export default {
   title: 'Atoms/Button',
@@ -29,11 +30,11 @@ export default {
 type Story = StoryObj<typeof Button>
 
 export const Primary: Story = {
-  args: { children: 'Click me' },
+  args: { children: 'Click me', leadingIcon: <TalismanHand />, trailingIcon: <TalismanHand /> },
 }
 
 export const Outlined: Story = {
-  args: { variant: 'outlined', children: 'Click me' },
+  args: { variant: 'outlined', children: 'Click me', leadingIcon: <TalismanHand />, trailingIcon: <TalismanHand /> },
 }
 
 export const Tonal: Story = {
@@ -41,7 +42,7 @@ export const Tonal: Story = {
 }
 
 export const Text: Story = {
-  args: { variant: 'text', children: 'Click me' },
+  args: { variant: 'text', children: 'Click me', leadingIcon: <TalismanHand />, trailingIcon: <TalismanHand /> },
 }
 
 export const Surface: Story = {
@@ -53,5 +54,5 @@ export const Surface: Story = {
       </SurfaceContainer>
     </SurfaceContainer>
   ),
-  args: { variant: 'surface', children: 'Click me' },
+  args: { variant: 'surface', children: 'Click me', leadingIcon: <TalismanHand />, trailingIcon: <TalismanHand /> },
 }

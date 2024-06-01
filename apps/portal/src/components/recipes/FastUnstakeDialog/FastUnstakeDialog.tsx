@@ -70,7 +70,7 @@ const FastUnstakeDialog = (props: FastUnstakeDialogProps) => (
                           You’re eligible for fast unstaking!
                         </Text.H4>
                         <Hr />
-                        <DescriptionList>
+                        <DescriptionList css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }}>
                           <DescriptionList.Description>
                             <DescriptionList.Term>Unstake amount</DescriptionList.Term>
                             <DescriptionList.Details>

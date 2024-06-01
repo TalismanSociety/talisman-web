@@ -121,7 +121,7 @@ const DappStakingForm = Object.assign(
             />
           </label>
         </div>
-        <DescriptionList>
+        <DescriptionList css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }}>
           {props.currentStakedBalance !== undefined && (
             <DescriptionList.Description>
               <DescriptionList.Term>Already staked</DescriptionList.Term>

@@ -28,7 +28,7 @@
     "eslint": "^9.2.0",
     "prettier": "^2.8.8",
     "typescript": "^5.4.5",
-    "viem": "^2.9.26"
+    "viem": "^2.9.27"
   },
   "peerDependencies": {
     "@polkadot/api": ">= 9.x",

@@ -221,7 +221,7 @@ const Stats = (props: {
         <div css={{ flex: '33rem' }}>
           <section>
             <Text.H4>Latest payouts</Text.H4>
-            <DescriptionList>
+            <DescriptionList css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }}>
               {props.mostRecentPayouts.length <= 0 && <Text.Body>No payouts found</Text.Body>}
               {useMemo(
                 () =>

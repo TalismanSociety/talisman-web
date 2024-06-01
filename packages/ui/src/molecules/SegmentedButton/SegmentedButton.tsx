@@ -1,8 +1,8 @@
 import { Clickable, Surface, Text, type ClickableProps } from '../../atoms'
 import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/web-icons/utils'
-import { motion } from 'framer-motion'
-import { createContext, type PropsWithChildren, type ReactNode } from 'react'
+import { LayoutGroup, motion } from 'framer-motion'
+import { createContext, useId, type PropsWithChildren, type ReactNode } from 'react'
 
 const SegmentedButtonContext = createContext<{
   value: string | number | undefined
@@ -22,11 +22,22 @@ const ButtonSegment = (props: ButtonSegmentProps) => {
         <Text.Body
           as={Clickable}
           {...props}
-          css={{
-            position: 'relative',
-            padding: '1rem 1.2rem',
-          }}
-          style={{ color: selectedValue === props.value ? theme.color.onPrimary : undefined }}
+          css={[
+            {
+              position: 'relative',
+              padding: '0.7em 0.85em',
+            },
+            // This is to prevent a bug with Chrome, specifically in the swap/transport component
+            selectedValue === props.value && {
+              '*': {
+                color: `color-mix(in srgb, ${theme.color.onPrimary}, transparent 30%)`,
+              },
+            },
+            // Should be doing this instead
+            // selectedValue === props.value && {
+            //   color: theme.color.onPrimary,
+            // },
+          ]}
           onClick={() => onChange?.(props.value)}
         >
           {selectedValue === props.value && (
@@ -71,13 +82,15 @@ const SegmentedButton = Object.assign(
           onChange: props.onChange,
         }}
       >
-        <Surface
-          as="section"
-          className={props.className}
-          css={{ display: 'inline-block', borderRadius: theme.shape.full, padding: '0.4rem' }}
-        >
-          {props.children}
-        </Surface>
+        <LayoutGroup id={useId()}>
+          <Surface
+            as="section"
+            className={props.className}
+            css={{ display: 'inline-block', borderRadius: theme.shape.full, padding: '0.4rem' }}
+          >
+            {props.children}
+          </Surface>
+        </LayoutGroup>
       </SegmentedButtonContext.Provider>
     )
   },

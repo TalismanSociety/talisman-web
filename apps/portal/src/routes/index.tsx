@@ -2,12 +2,12 @@ import AccountConnectionGuard from '../components/widgets/AccountConnectionGuard
 import { RouteErrorElement } from '../components/widgets/ErrorBoundary'
 import Admin from './admin'
 import crowdloanRoutes from './crowdloans'
-import dexRoutes from './dex'
 import Explore from './explore'
 import History from './history'
 import Layout from './layout'
 import portfolioRoutes from './portfolio'
 import stakingRoutes from './staking'
+import dexRoutes from './transport'
 import * as Sentry from '@sentry/react'
 import { Navigate, createBrowserRouter } from 'react-router-dom'
 
@@ -22,7 +22,7 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
         path: 'portfolio',
         ...portfolioRoutes,
       },
-      { path: 'transfer', ...dexRoutes },
+      { path: 'transport', ...dexRoutes },
       { path: 'explore', element: <Explore /> },
       {
         path: 'crowdloans',
