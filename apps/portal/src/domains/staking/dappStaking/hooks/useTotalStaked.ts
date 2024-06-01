@@ -3,41 +3,40 @@ import { selectedSubstrateAccountsState } from '../../../accounts'
 import { dappStakingEnabledChainsState, nativeTokenAmountState } from '../../../chains'
 import { chainQueryState } from '../../../common'
 import { useMemo } from 'react'
-import { constSelector, useRecoilValue, waitForAll, waitForAny } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable, waitForAll, waitForAny } from 'recoil'
 
 export const useTotalStaked = () => {
   const [chains, accounts] = useRecoilValue(waitForAll([dappStakingEnabledChainsState, selectedSubstrateAccountsState]))
 
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
 
-  const [nativeTokenAmounts, ledgerLoadables] = useRecoilValue(
-    chains.length <= 0
-      ? constSelector(undefined)
-      : waitForAll([
-          waitForAny(
-            chains.map(chain =>
-              nativeTokenAmountState({
-                genesisHash: chain.genesisHash,
-                apiEndpoint: chain.rpc!,
-              })
-            )
-          ),
-          waitForAny(
-            chains.map(chain =>
-              waitForAll([
-                chainQueryState(chain.rpc, 'dappStaking', 'activeProtocolState', []),
-                chainQueryState(chain.rpc, 'dappStaking', 'ledger.multi', addresses),
-              ])
-            )
-          ),
-        ])
-  ) ?? [undefined, undefined]
+  const nativeTokenAmounts = useRecoilValueLoadable(
+    waitForAny(
+      chains.map(chain =>
+        nativeTokenAmountState({
+          genesisHash: chain.genesisHash,
+          apiEndpoint: chain.rpc!,
+        })
+      )
+    )
+  )
 
-  if (nativeTokenAmounts === undefined || ledgerLoadables === undefined) {
+  const ledgerLoadables = useRecoilValueLoadable(
+    waitForAny(
+      chains.map(chain =>
+        waitForAll([
+          chainQueryState(chain.rpc, 'dappStaking', 'activeProtocolState', []),
+          chainQueryState(chain.rpc, 'dappStaking', 'ledger.multi', addresses),
+        ])
+      )
+    )
+  )
+
+  if (nativeTokenAmounts.state !== 'hasValue' || ledgerLoadables.state !== 'hasValue') {
     return 0
   }
 
-  return ledgerLoadables
+  return ledgerLoadables.contents
     .map((x, chainIndex) => {
       if (x.state !== 'hasValue') {
         return 0
@@ -52,7 +51,7 @@ export const useTotalStaked = () => {
               )
             ).mapOr(0n, z => z.voting.toBigInt() + z.buildAndEarn.toBigInt())
 
-            return nativeTokenAmounts.at(chainIndex)?.valueMaybe()?.fromPlanck(staked).fiatAmount ?? 0
+            return nativeTokenAmounts.contents.at(chainIndex)?.valueMaybe()?.fromPlanck(staked).fiatAmount ?? 0
           })
           .reduce((prev, curr) => prev + curr, 0) ?? 0
       )
