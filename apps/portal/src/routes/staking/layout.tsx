@@ -2,9 +2,9 @@ import AccountConnectionGuard from '../../components/widgets/AccountConnectionGu
 import AnimatedFiatNumber from '../../components/widgets/AnimatedFiatNumber'
 import { useTotalStaked } from '../../domains/staking'
 import { HeaderWidgetPortal, TitlePortal } from '../layout'
-import { CircularProgressIndicator, SegmentedButton, Surface, Text } from '@talismn/ui'
+import { SegmentedButton, Surface, Text } from '@talismn/ui'
 import { Layers, Zap } from '@talismn/web-icons'
-import { Suspense, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Link, Outlet, useMatch } from 'react-router-dom'
 
 const TotalStaked = () => <AnimatedFiatNumber end={useTotalStaked()} />
@@ -25,9 +25,7 @@ const Layout = () => {
         <div css={{ marginTop: '1.25em' }}>
           <Text.BodyLarge as="div">Staking balance</Text.BodyLarge>
           <Text.H3 as="div" css={{ marginTop: '0.125em' }}>
-            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-              <TotalStaked />
-            </Suspense>
+            <TotalStaked />
           </Text.H3>
         </div>
       </HeaderWidgetPortal>
