@@ -27,19 +27,25 @@ git clone https://github.com/TalismanSociety/talisman-web.git
 nvm use
 ```
 
-3. Install the project dependencies:
+3. Enable corepack (ensures you're using the correct version of `yarn`)
+
+```sh
+corepack enable
+```
+
+4. Install the project dependencies:
 
 ```sh
 yarn
 ```
 
-4. Copy `.env.example` to `.env` and update the values inside:
+5. Copy `.env.example` to `.env` and update the values inside:
 
 ```sh
 cp apps/portal/.env.example apps/portal/.env
 ```
 
-5. Start the dev server:
+6. Start the dev server:
 
 ```sh
 yarn dev
