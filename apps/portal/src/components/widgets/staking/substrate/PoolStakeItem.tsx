@@ -11,7 +11,9 @@ import {
   type usePoolStakes,
 } from '../../../../domains/staking/substrate/nominationPools'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
+import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
+import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import AddStakeDialog from './AddStakeDialog'
 import ClaimStakeDialog from './ClaimStakeDialog'
 import NominationPoolsStatisticsSideSheet from './NominationPoolsStatisticsSideSheet'
@@ -50,12 +52,16 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
 
   const [claimPermissionDialogOpen, setClaimPermissionDialogOpen] = useState(false)
 
+  const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
+
   return (
-    <>
+    <ErrorBoundary
+      renderFallback={() => <ErrorBoundaryFallback logo={logo} symbol={symbol} provider={name} list="positions" />}
+    >
       <StakePosition
-        chain={chain.name}
-        assetSymbol={chain.nativeToken?.symbol}
-        assetLogoSrc={chain.nativeToken?.logo ?? ''}
+        chain={name}
+        assetSymbol={symbol}
+        assetLogoSrc={logo}
         readonly={item.account.readonly}
         stakeStatus={item.status}
         account={item.account}
@@ -159,7 +165,7 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
           onRequestDismiss={() => setClaimPermissionDialogOpen(false)}
         />
       )}
-    </>
+    </ErrorBoundary>
   )
 }
 

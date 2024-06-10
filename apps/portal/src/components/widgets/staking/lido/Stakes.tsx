@@ -2,7 +2,9 @@ import { selectedEvmAccountsState } from '../../../../domains/accounts'
 import { useStakes, type LidoSuite } from '../../../../domains/staking/lido'
 import { lidoSuitesState } from '../../../../domains/staking/lido/recoils'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
+import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
+import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import LidoWidgetSideSheet from './LidoWidgetSideSheet'
 import { StakePosition } from '@talismn/ui-recipes'
 import { useState } from 'react'
@@ -39,41 +41,59 @@ const LidoStakes = (props: { lidoSuite: LidoSuite }) => {
 
   const stakes = useStakes(useRecoilValue(selectedEvmAccountsState), props.lidoSuite)
 
+  const logo = 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg'
+
   return (
     <>
-      {stakes.map((stake, index) => (
-        <StakePosition
-          key={index}
-          readonly={stake.account.readonly || !stake.account.canSignEvm}
-          account={stake.account}
-          provider="Lido finance"
-          stakeStatus={stake.balance.planck > 0n ? 'earning_rewards' : 'not_earning_rewards'}
-          balance={<RedactableBalance>{stake.balance.toLocaleString()}</RedactableBalance>}
-          fiatBalance={<AnimatedFiatNumber end={stake.fiatBalance} />}
-          chain={props.lidoSuite.chain.name}
-          assetSymbol={stake.balance.options?.currency}
-          assetLogoSrc="https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg"
-          withdrawButton={
-            stake.claimable.planck > 0n && (
-              <StakePosition.WithdrawButton
-                amount={<RedactableBalance>{stake.claimable.toLocaleString()}</RedactableBalance>}
-                onClick={() => setClaimSideSheetOpen(true)}
+      {stakes.map((stake, index) => {
+        const symbol = stake.balance.options?.currency ?? ''
+        return (
+          <ErrorBoundary
+            key={index}
+            renderFallback={() => (
+              <ErrorBoundaryFallback
+                logo={logo}
+                symbol={symbol}
+                provider={props.lidoSuite.chain.name}
+                list="positions"
               />
-            )
-          }
-          increaseStakeButton={
-            <StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeSideSheetOpen(true)} />
-          }
-          unstakeButton={
-            stake.balance.planck > 0n && <StakePosition.UnstakeButton onClick={() => setUnstakeSideSheetOpen(true)} />
-          }
-          unstakingStatus={
-            stake.totalUnlocking.planck > 0n && (
-              <StakePosition.UnstakingStatus amount={stake.totalUnlocking.toLocaleString()} unlocks={[]} />
-            )
-          }
-        />
-      ))}
+            )}
+          >
+            <StakePosition
+              readonly={stake.account.readonly || !stake.account.canSignEvm}
+              account={stake.account}
+              provider="Lido finance"
+              stakeStatus={stake.balance.planck > 0n ? 'earning_rewards' : 'not_earning_rewards'}
+              balance={<RedactableBalance>{stake.balance.toLocaleString()}</RedactableBalance>}
+              fiatBalance={<AnimatedFiatNumber end={stake.fiatBalance} />}
+              chain={props.lidoSuite.chain.name}
+              assetSymbol={symbol}
+              assetLogoSrc={logo}
+              withdrawButton={
+                stake.claimable.planck > 0n && (
+                  <StakePosition.WithdrawButton
+                    amount={<RedactableBalance>{stake.claimable.toLocaleString()}</RedactableBalance>}
+                    onClick={() => setClaimSideSheetOpen(true)}
+                  />
+                )
+              }
+              increaseStakeButton={
+                <StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeSideSheetOpen(true)} />
+              }
+              unstakeButton={
+                stake.balance.planck > 0n && (
+                  <StakePosition.UnstakeButton onClick={() => setUnstakeSideSheetOpen(true)} />
+                )
+              }
+              unstakingStatus={
+                stake.totalUnlocking.planck > 0n && (
+                  <StakePosition.UnstakingStatus amount={stake.totalUnlocking.toLocaleString()} unlocks={[]} />
+                )
+              }
+            />
+          </ErrorBoundary>
+        )
+      })}
       {increaseStakeSideSheetOpen && (
         <IncreaseStakeSideSheet
           onRequestDismiss={() => setIncreaseStakeSideSheetOpen(false)}

@@ -9,6 +9,7 @@ import {
 } from '../../../../domains/staking/dappStaking'
 import DappStakingLockedAmountDialog from '../../../recipes/DappStakingLockedAmountDialog'
 import ErrorBoundary from '../../ErrorBoundary'
+import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import AddStakeDialog from './AddStakeDialog'
 import UnlockDuration from './UnlockDuration'
 import UnstakeDialog from './UnstakeDialog'
@@ -42,17 +43,21 @@ const Stake = ({ account }: { account: Account }) => {
   const [lockedDialogOpen, setLockedDialogOpen] = useState(false)
   const [requestReStakeInTransition, startRequestRestakeTransition] = useTransition()
 
+  const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
+
   if (!stake.active) {
     return null
   }
 
   return (
-    <>
+    <ErrorBoundary
+      renderFallback={() => <ErrorBoundaryFallback logo={logo} symbol={symbol} provider={name} list="positions" />}
+    >
       <StakePosition
         readonly={account.readonly}
-        chain={chain.name}
-        assetSymbol={chain.nativeToken?.symbol ?? ''}
-        assetLogoSrc={chain.nativeToken?.logo ?? ''}
+        chain={name}
+        assetSymbol={symbol}
+        assetLogoSrc={logo}
         account={account}
         provider="DApp staking"
         stakeStatus={stake.earningRewards ? 'earning_rewards' : 'not_earning_rewards'}
@@ -139,7 +144,7 @@ const Stake = ({ account }: { account: Account }) => {
           }}
         />
       )}
-    </>
+    </ErrorBoundary>
   )
 }
 
@@ -150,13 +155,11 @@ const Stakes = () => {
   return (
     <>
       {chains.map((chain, index) => (
-        <ErrorBoundary key={index} orientation="horizontal">
-          <ChainProvider chain={chain}>
-            {accounts.map((account, index) => (
-              <Stake key={index} account={account} />
-            ))}
-          </ChainProvider>
-        </ErrorBoundary>
+        <ChainProvider key={index} chain={chain}>
+          {accounts.map((account, index) => (
+            <Stake key={index} account={account} />
+          ))}
+        </ChainProvider>
       ))}
     </>
   )

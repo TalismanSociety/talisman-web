@@ -11,7 +11,9 @@ import { useLocalizedUnlockDuration } from '../../../../domains/staking/substrat
 import { useTotalValidatorStakingRewards } from '../../../../domains/staking/substrate/validator'
 import FastUnstakeDialog from '../../../recipes/FastUnstakeDialog'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
+import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
+import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
 import { type DeriveStakingAccount } from '@polkadot/api-derive/types'
 import { useDeriveState } from '@talismn/react-polkadot-api'
@@ -81,6 +83,8 @@ const ValidatorStakeItem = (props: {
     eta: eraEtaFormatter(x.remainingEras) ?? <CircularProgressIndicator size="1em" />,
   }))
 
+  const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
+
   const onRequestUnstake = () => {
     if (props.eligibleForFastUnstake || props.eligibleForFastUnstake === undefined) {
       setIsFastUnstakeDialogOpen(true)
@@ -90,11 +94,13 @@ const ValidatorStakeItem = (props: {
   }
 
   return (
-    <>
+    <ErrorBoundary
+      renderFallback={() => <ErrorBoundaryFallback logo={logo} symbol={symbol} provider={name} list="positions" />}
+    >
       <StakePosition
-        chain={chain.name}
-        assetSymbol={chain.nativeToken?.symbol}
-        assetLogoSrc={chain.nativeToken?.logo ?? ''}
+        chain={name}
+        assetSymbol={symbol}
+        assetLogoSrc={logo}
         provider="Validator staking"
         stakeStatus={
           props.reward === undefined ? undefined : props.reward === 0n ? 'not_earning_rewards' : 'earning_rewards'
@@ -184,7 +190,7 @@ const ValidatorStakeItem = (props: {
         }}
         learnMoreHref="https://wiki.polkadot.network/docs/learn-staking#fast-unstake"
       />
-    </>
+    </ErrorBoundary>
   )
 }
 

@@ -6,6 +6,7 @@ import type { SlpxPair } from '../../../../domains/staking/slpx/types'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
+import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
 import { StakePosition } from '@talismn/ui-recipes'
@@ -17,7 +18,17 @@ const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStake
   const [unstakeDialogOpen, setUnstakeDialogOpen] = useState(false)
 
   return (
-    <ErrorBoundary orientation="horizontal">
+    <ErrorBoundary
+      orientation="horizontal"
+      renderFallback={() => (
+        <ErrorBoundaryFallback
+          logo={props.slpxPair.vToken.logo}
+          symbol={props.position.balance.options?.currency ?? ''}
+          provider={props.slpxPair.chain.name}
+          list="positions"
+        />
+      )}
+    >
       <StakePosition
         readonly={props.position.account.readonly || !props.position.account.canSignEvm}
         account={props.position.account}
@@ -65,9 +76,7 @@ const SlpxStakes = (props: { slpxPair: SlpxPair }) => {
   return (
     <>
       {stakes.map((x, index) => (
-        <ErrorBoundary key={index} orientation="horizontal">
-          <Stake key={index} slpxPair={props.slpxPair} position={x} />
-        </ErrorBoundary>
+        <Stake key={index} slpxPair={props.slpxPair} position={x} />
       ))}
     </>
   )

@@ -2,7 +2,6 @@ import { selectedSubstrateAccountsState } from '../../../../domains/accounts/rec
 import { useSubstrateApiState } from '../../../../domains/common'
 import { useInjectedAccountFastUnstakeEligibility } from '../../../../domains/fastUnstake'
 import { useStakersRewardState } from '../../../../domains/staking/substrate/validator/recoils'
-import ErrorBoundary from '../../ErrorBoundary'
 import ValidatorStakeItem from './ValidatorStakeItem'
 import { useDeriveState, useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import { useMemo } from 'react'
@@ -79,9 +78,7 @@ const BaseValidatorStakes = () => {
   return (
     <>
       {stakes.map((props, index) => (
-        <ErrorBoundary key={index} orientation="horizontal">
-          <ValidatorStakeItem {...props} eligibleForFastUnstake={false} />
-        </ErrorBoundary>
+        <ValidatorStakeItem key={index} {...props} eligibleForFastUnstake={false} />
       ))}
     </>
   )
@@ -97,9 +94,7 @@ const ValidatorStakesWithFastUnstake = () => {
   return (
     <>
       {stakes.map((props, index) => (
-        <ErrorBoundary key={index} orientation="horizontal">
-          <ValidatorStakeItem key={index} {...props} />
-        </ErrorBoundary>
+        <ValidatorStakeItem key={index} {...props} />
       ))}
     </>
   )
