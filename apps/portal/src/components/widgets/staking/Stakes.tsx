@@ -10,6 +10,7 @@ import PoolStakes from './substrate/PoolStakes'
 import ValidatorStakes from './substrate/ValidatorStakes'
 import { Button, HiddenDetails, Text } from '@talismn/ui'
 import { StakePosition, StakePositionList } from '@talismn/ui-recipes'
+import { useState } from 'react'
 import { Fragment, Suspense, type PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
@@ -68,6 +69,7 @@ const SuspenseSkeleton = (props: PropsWithChildren) => (
 
 const Stakes = (props: { hideHeader?: boolean }) => {
   const chains = useRecoilValue(nominationPoolsEnabledChainsState)
+  const [shouldRenderLoadingSkeleton, setShouldRenderLoadingSkeleton] = useState<boolean>(true)
 
   return (
     <div id="staking">
@@ -77,17 +79,19 @@ const Stakes = (props: { hideHeader?: boolean }) => {
           [`[class~=${skellyClassName}]:not(:nth-last-child(1 of [class~=${skellyClassName}]))`]: { display: 'none' },
         }}
       >
+        {shouldRenderLoadingSkeleton && <StakePosition.Skeleton className={skellyClassName} css={{ order: 1 }} />}
+
         {chains.map((chain, index) => (
           <Fragment key={index}>
             <ChainProvider chain={chain}>
               <ErrorBoundary orientation="horizontal">
                 <SuspenseSkeleton>
-                  <PoolStakes />
+                  <PoolStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
                 </SuspenseSkeleton>
               </ErrorBoundary>
               <ErrorBoundary orientation="horizontal">
                 <SuspenseSkeleton>
-                  <ValidatorStakes />
+                  <ValidatorStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
                 </SuspenseSkeleton>
               </ErrorBoundary>
             </ChainProvider>
