@@ -1,10 +1,18 @@
 import { selectedSubstrateAccountsState } from '../../../../domains/accounts'
-import { usePoolStakes } from '../../../../domains/staking/substrate/nominationPools/hooks'
+import { usePoolStakeLoadable } from '../../../../domains/staking/substrate/nominationPools/hooks'
 import PoolStakeItem from './PoolStakeItem'
 import { useRecoilValue } from 'recoil'
 
-const PoolStakes = () => {
-  const pools = usePoolStakes(useRecoilValue(selectedSubstrateAccountsState))
+type PoolStakeProps = {
+  setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const PoolStakes = ({ setShouldRenderLoadingSkeleton }: PoolStakeProps) => {
+  const { data: pools, state } = usePoolStakeLoadable(useRecoilValue(selectedSubstrateAccountsState))
+
+  if (state === 'hasValue' && pools.length) {
+    setShouldRenderLoadingSkeleton(false)
+  }
 
   return (
     <>
