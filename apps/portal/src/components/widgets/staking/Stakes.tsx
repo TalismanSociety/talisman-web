@@ -99,7 +99,7 @@ const Stakes = (props: { hideHeader?: boolean }) => {
         ))}
         <ErrorBoundary orientation="horizontal">
           <SuspenseSkeleton>
-            <DappStakes />
+            <DappStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
           </SuspenseSkeleton>
         </ErrorBoundary>
         <ErrorBoundary orientation="horizontal">
