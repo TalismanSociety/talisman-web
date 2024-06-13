@@ -68,16 +68,26 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       keyframes: {
+        'opacity-in': {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
+        },
+        'opacity-out': {
+          from: { opacity: '1' },
+          to: { opacity: '0' },
+        },
         'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' },
+          from: { height: '0', opacity: 0 },
+          to: { height: 'var(--radix-accordion-content-height)', opacity: 1 },
         },
         'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' },
+          from: { height: 'var(--radix-accordion-content-height)', opacity: 1 },
+          to: { height: '0', opacity: 0 },
         },
       },
       animation: {
+        'opacity-in': 'opacity-in 0.2s ease-out',
+        'opacity-out': 'opacity-out 0.2s ease-out',
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
       },

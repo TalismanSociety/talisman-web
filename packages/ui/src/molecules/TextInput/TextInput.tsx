@@ -61,7 +61,7 @@ const TextInput = Object.assign(
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                marginBottom: '0.8rem',
+                marginBottom: '0.4rem',
                 '*:empty::after': {
                   content: `"\u200B"`,
                 },

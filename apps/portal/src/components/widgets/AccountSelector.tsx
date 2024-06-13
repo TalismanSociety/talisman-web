@@ -4,7 +4,7 @@ import { shortenAddress } from '../../util/format'
 import AccountIcon from '../molecules/AccountIcon/AccountIcon'
 import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
 import { useBalances } from '@talismn/balances-react'
-import { Button, CircularProgressIndicator, Identicon, Select } from '@talismn/ui'
+import { Button, CircularProgressIndicator, Select } from '@talismn/ui'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { usePrevious } from 'react-use'
 import { useSetRecoilState } from 'recoil'
@@ -41,14 +41,7 @@ const AccountSelector = (props: AccountSelectorProps) => {
   return (
     <Select
       className="w-full [&>button]:!py-[12px] [&>button]:!rounded-[8px] [&>button>div]:w-full mt-[8px]"
-      placeholder={
-        <Select.Option
-          leadingIcon={
-            <Identicon value="placeholder" size="4em" css={{ visibility: 'hidden', pointerEvents: 'none', width: 0 }} />
-          }
-          headlineContent="Select an account"
-        />
-      }
+      placeholder={<Select.Option headlineContent="Select an account" />}
       value={selectedValue}
       onChangeValue={onChangeAccount}
       renderSelected={
@@ -57,6 +50,7 @@ const AccountSelector = (props: AccountSelectorProps) => {
               const selectedAccount = props.accounts.find(x => x.address === address)
               return (
                 <Select.Option
+                  className=""
                   leadingIcon={<CircularProgressIndicator size="4rem" />}
                   supportingContent={
                     selectedAccount && selectedAccount.name ? shortenAddress(selectedAccount.address) : ''
@@ -110,7 +104,8 @@ export const useAccountSelector = (
   accountSelectorProps?: Omit<AccountSelectorProps, 'accounts' | 'selectedAccount' | 'onChangeSelectedAccount'>,
   withToken?: boolean
 ) => {
-  const [inTransition, startTransition] = useTransition()
+  // TODO: remove this
+  const [inTransition] = useTransition()
 
   const getInitialAccount = useCallback(
     (accounts: Account[]) =>
@@ -143,7 +138,7 @@ export const useAccountSelector = (
       {...accountSelectorProps}
       accounts={accounts}
       selectedAccount={account}
-      onChangeSelectedAccount={account => startTransition(() => setAccount(account))}
+      onChangeSelectedAccount={setAccount}
       inTransition={inTransition}
       withBalance={withToken}
     />,

@@ -37,7 +37,7 @@ const Layout = () => {
                   )}
                 </NavLink>
               </Tabs>
-              <div className="w-full">
+              <div className="w-full pb-[40px]">
                 <HiddenDetails overlay={<CircularProgressIndicator size="4em" />} hidden={pending}>
                   <Outlet />
                 </HiddenDetails>
