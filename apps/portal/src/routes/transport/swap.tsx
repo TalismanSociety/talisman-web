@@ -3,6 +3,7 @@ import { selectedCurrencyState } from '../../domains/balances'
 import { enableTestnetsState } from '../../domains/chains'
 import { useConnectedSubstrateWallet } from '../../domains/extension'
 import { TitlePortal } from '../layout'
+import { ChainFlipSwap } from '@/components/widgets/chainflip-swap'
 import React, { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 import { useWalletClient } from 'wagmi'
@@ -19,6 +20,7 @@ const Swap = () => {
   return (
     <>
       <TitlePortal>Swap</TitlePortal>
+      <ChainFlipSwap />
       <SwapWidget
         accounts={useMemo(
           () =>

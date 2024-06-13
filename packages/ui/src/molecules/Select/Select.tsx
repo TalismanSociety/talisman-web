@@ -45,10 +45,11 @@ type SelectItemProps = {
   leadingIcon?: ReactNode
   headlineContent: ReactNode
   supportingContent?: ReactNode
+  className?: string
 }
 
 const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
-  <div ref={ref} css={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+  <div ref={ref} className={props.className} css={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
     {props.leadingIcon && (
       <figure css={{ display: 'flex', alignItems: 'center', maxWidth: 40, maxHeight: 40, margin: 0 }}>
         {props.leadingIcon}
@@ -266,11 +267,8 @@ const Select = Object.assign(
                 backgroundColor: surfaceColor,
                 listStyle: 'none',
                 li: {
-                  padding: '1.5rem 1.25rem',
+                  padding: '1.2rem 1.25rem',
                   backgroundColor: surfaceColor,
-                  ':last-child': {
-                    padding: '1.5rem 1.25rem 1rem 1.25rem',
-                  },
                 },
                 // Top spacer for animation overlap
                 '::before': {
@@ -318,7 +316,10 @@ const Select = Object.assign(
                 }}
                 tabIndex={index === activeIndex ? 0 : 1}
                 aria-selected={index === selectedIndex && index === activeIndex}
-                css={[{ cursor: 'pointer' }, index === activeIndex && { filter: 'brightness(1.2)' }]}
+                css={[
+                  { cursor: 'pointer' },
+                  (index === activeIndex || index === selectedIndex) && { filter: 'brightness(1.2)' },
+                ]}
                 {...getItemProps({
                   onClick: () => select(child.props.value),
                   onKeyDown: event => {

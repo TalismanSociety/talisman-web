@@ -19,7 +19,6 @@ import {
   quoteAtom,
   quoteLoadableAtom,
   srcAccountAtom,
-  srcAccountsAtom,
   srcAmountAtom,
   srcAmountInputAtom,
   srcAssetAtom,
@@ -43,7 +42,6 @@ import '@polkadot/api-augment/substrate'
 import type { Signer } from '@polkadot/api/types'
 import {
   Chip,
-  CircularProgressIndicator,
   DescriptionList,
   Identicon,
   Select,
@@ -369,22 +367,23 @@ const Info = () => {
 }
 
 const SrcAccountSelect = () => {
-  const accounts = useAtomValue(srcAccountsAtom)
+  const accounts = useAtomValue(accountsAtom)
   const [account, setAccount] = useAtom(srcAccountAtom)
 
   return (
     <Select
+      className="w-full [&>button]:!rounded-[8px]"
       placeholder="Please select an account"
       value={account}
       onChangeValue={account => setAccount(account)}
-      css={{ width: '100%' }}
     >
       {accounts.map((account, index) => (
         <Select.Option
           key={index}
           value={account}
-          leadingIcon={<Identicon value={account.address} size="4rem" />}
+          leadingIcon={<Identicon value={account.address} size="32px" />}
           headlineContent={account.name ?? shortenAddress(account.address)}
+          supportingContent={account.name ? shortenAddress(account.address) : null}
         />
       ))}
     </Select>
@@ -397,17 +396,18 @@ const DestAccountSelect = () => {
 
   return (
     <Select
+      className="w-full [&>button]:!rounded-[8px]"
       placeholder="Please select an account"
       value={account}
       onChangeValue={account => setAccount(account)}
-      css={{ width: '100%' }}
     >
       {accounts.map((account, index) => (
         <Select.Option
           key={index}
           value={account}
-          leadingIcon={<Identicon value={account.address} size="4rem" />}
+          leadingIcon={<Identicon value={account.address} size="32px" />}
           headlineContent={account.name ?? shortenAddress(account.address)}
+          supportingContent={account.name ? shortenAddress(account.address) : null}
         />
       ))}
     </Select>
@@ -461,22 +461,22 @@ const _Swap = () => {
       destAccountSelect={
         // TODO: this is to prevent suspense of entire component when dest accounts change
         // better to use transition
-        <Suspense
-          fallback={
-            <Select
-              css={{ width: '100%' }}
-              renderSelected={() => (
-                <Select.Option
-                  leadingIcon={<CircularProgressIndicator size="4rem" />}
-                  headlineContent="..."
-                  supportingContent={`\u200B`}
-                />
-              )}
-            />
-          }
-        >
-          <DestAccountSelect />
-        </Suspense>
+        // <Suspense
+        //   fallback={
+        //     <Select
+        //       css={{ width: '100%' }}
+        //       renderSelected={() => (
+        //         <Select.Option
+        //           leadingIcon={<CircularProgressIndicator size="4rem" />}
+        //           headlineContent="..."
+        //           supportingContent={`\u200B`}
+        //         />
+        //       )}
+        //     />
+        //   }
+        // >
+        <DestAccountSelect />
+        // </Suspense>
       }
       onRequestMaxAmount={useAtomCallback(
         useCallback(

@@ -20,8 +20,8 @@ const Layout = () => {
       >
         <ErrorBoundary>
           <Suspense fallback={<TalismanHandProgressIndicator />}>
-            <div>
-              <Tabs css={{ width: 'fit-content', marginBottom: '1.6rem' }}>
+            <div className="w-full max-w-[840px] mx-auto">
+              <Tabs css={{ width: 'fit-content', marginBottom: '1.6rem', marginLeft: 16, marginRight: 16 }}>
                 <NavLink to="/transport/swap" css={{ display: 'contents' }} onClick={event => event.preventDefault()}>
                   {({ isActive }) => (
                     <Tabs.Item selected={isActive} onClick={() => startTransition(() => navigate('/transport/swap'))}>
@@ -37,7 +37,7 @@ const Layout = () => {
                   )}
                 </NavLink>
               </Tabs>
-              <div css={{ width: 'min-content' }}>
+              <div className="w-full">
                 <HiddenDetails overlay={<CircularProgressIndicator size="4em" />} hidden={pending}>
                   <Outlet />
                 </HiddenDetails>
