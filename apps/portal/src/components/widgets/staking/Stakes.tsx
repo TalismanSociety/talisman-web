@@ -104,7 +104,7 @@ const Stakes = (props: { hideHeader?: boolean }) => {
         </ErrorBoundary>
         <ErrorBoundary orientation="horizontal">
           <SuspenseSkeleton>
-            <SlpxStakes />
+            <SlpxStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
           </SuspenseSkeleton>
         </ErrorBoundary>
         <ErrorBoundary orientation="horizontal">

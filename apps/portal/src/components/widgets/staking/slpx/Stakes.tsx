@@ -11,9 +11,9 @@ import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
 import { StakePosition } from '@talismn/ui-recipes'
 import { useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
-const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStakes>[number] }) => {
+const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStakes>['data'][number] }) => {
   const [increaseStakeDialogOpen, setIncreaseStakeDialogOpen] = useState(false)
   const [unstakeDialogOpen, setUnstakeDialogOpen] = useState(false)
 
@@ -70,31 +70,43 @@ const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStake
   )
 }
 
-const SlpxStakes = (props: { slpxPair: SlpxPair }) => {
-  const stakes = useStakes(useRecoilValue(selectedEvmAccountsState), props.slpxPair)
+const SlpxStakes = (props: {
+  slpxPair: SlpxPair
+  setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
+  const { data: stakes, isLoading } = useStakes(useRecoilValue(selectedEvmAccountsState), props.slpxPair)
+
+  if (!isLoading) {
+    props.setShouldRenderLoadingSkeleton(false)
+  }
 
   return (
     <>
-      {stakes.map((x, index) => (
+      {stakes?.map((x, index) => (
         <Stake key={index} slpxPair={props.slpxPair} position={x} />
       ))}
     </>
   )
 }
 
-const Stakes = () => {
-  const slpxPairs = useRecoilValue(slpxPairsState)
+type StakesProps = {
+  setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const Stakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
+  const slpxPairsLoadable = useRecoilValueLoadable(slpxPairsState)
+  const slpxPairs = slpxPairsLoadable.valueMaybe()
 
   return (
     <>
-      {slpxPairs.map((slpxPair, index) => (
+      {slpxPairs?.map((slpxPair, index) => (
         <ChainProvider
           key={index}
           chain={{
             genesisHash: slpxPair.substrateChainGenesisHash,
           }}
         >
-          <SlpxStakes slpxPair={slpxPair} />
+          <SlpxStakes slpxPair={slpxPair} setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
         </ChainProvider>
       ))}
     </>
