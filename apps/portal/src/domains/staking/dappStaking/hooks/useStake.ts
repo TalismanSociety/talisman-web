@@ -57,7 +57,6 @@ export const useStake = (account: Account) => {
       lastStakedPeriodEnd.unwrapOrDefault().finalEra.unwrap()
 
   const rewardsExpired = lastStakedPeriod.lte(currentPeriod.sub(rewardRetentionInPeriods))
-  console.log({ rewardsExpiredOriginal: rewardsExpired })
 
   const firstSpanIndex =
     firstStakedEra === undefined
@@ -69,7 +68,6 @@ export const useStake = (account: Account) => {
     rewardsExpired || firstSpanIndex === undefined ? [] : range(firstSpanIndex.toNumber(), lastSpanIndex.toNumber() + 1)
 
   const eraRewardsSpans = useRecoilValue(useQueryState('dappStaking', 'eraRewards.multi', queryParams))
-  console.log({ eraRewardsSpansOriginal: eraRewardsSpans, queryParamsOriginal: queryParams })
 
   const stakerRewards = useMemo(
     () =>
@@ -154,8 +152,6 @@ export const useStake = (account: Account) => {
             ),
     [activeProtocol.periodInfo.number, api.consts.dappStaking.rewardRetentionInPeriods, rewardsExpired, stakedDapps]
   )
-
-  console.log({ eligibleBonusRewardsOriginal: eligibleBonusRewards })
 
   const bonusRewardsPeriodEnds = useRecoilValue(
     useQueryState(
@@ -252,8 +248,6 @@ export const useStake = (account: Account) => {
         .filter(x => x[1].staked.period.unwrap().eq(activeProtocol.periodInfo.number.unwrap())),
     [activeProtocol.periodInfo.number, stakedDapps]
   )
-
-  console.log({ stakerRewardsOriginal: stakerRewards, totalBonusRewardsOriginal: totalBonusRewards })
 
   return {
     active: dapps.length > 0 || ledger.unlocking.length > 0,

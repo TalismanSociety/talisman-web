@@ -95,7 +95,7 @@ const useStakesWithFastUnstake = () => {
 const BaseValidatorStakes = ({ setShouldRenderLoadingSkeleton }: ValidatorStakesProps) => {
   const { data: stakes, state } = useStakes()
 
-  if (state === 'hasValue' && stakes.length) {
+  if (state === 'hasValue' || stakes.length) {
     setShouldRenderLoadingSkeleton(false)
   }
 
@@ -111,7 +111,7 @@ const BaseValidatorStakes = ({ setShouldRenderLoadingSkeleton }: ValidatorStakes
 const ValidatorStakesWithFastUnstake = ({ setShouldRenderLoadingSkeleton }: ValidatorStakesProps) => {
   const { data: stakes, state } = useStakesWithFastUnstake()
 
-  if (stakes.length && state === 'hasValue') {
+  if (stakes.length || state === 'hasValue') {
     setShouldRenderLoadingSkeleton(false)
   }
 

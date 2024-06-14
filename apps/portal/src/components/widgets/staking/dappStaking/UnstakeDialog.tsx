@@ -10,7 +10,7 @@ import { useState } from 'react'
 
 type DappUnstakeDialogProps = {
   account: Account
-  stake: StakeLoadable
+  stake: StakeLoadable['data']
   dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
   onRequestDismiss: () => void
 }
@@ -47,7 +47,7 @@ const DappUnstakeDialog = (props: DappUnstakeDialogProps) => {
 
 type MultiDappsUnstakeDialogProps = {
   account: Account
-  stake: StakeLoadable
+  stake: StakeLoadable['data']
   onRequestDismiss: () => void
 }
 
@@ -73,7 +73,7 @@ const MultiDappUnstakeDialog = (props: MultiDappsUnstakeDialogProps) => {
 
 type UnstakeDialogProps = {
   account: Account
-  stake: StakeLoadable
+  stake: StakeLoadable['data']
   onRequestDismiss: () => void
 }
 

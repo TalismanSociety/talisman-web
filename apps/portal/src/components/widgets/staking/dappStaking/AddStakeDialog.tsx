@@ -9,7 +9,7 @@ import { useState } from 'react'
 
 type DappAddStakeDialogProps = {
   account: Account
-  stake: StakeLoadable
+  stake: StakeLoadable['data']
   dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
   onRequestDismiss: () => void
 }
@@ -45,7 +45,7 @@ const DappAddStakeDialog = (props: DappAddStakeDialogProps) => {
 
 type MultiDappsAddStakeDialogProps = {
   account: Account
-  stake: StakeLoadable
+  stake: StakeLoadable['data']
   onRequestDismiss: () => void
 }
 
@@ -71,7 +71,7 @@ const MultiDappAddStakeDialog = (props: MultiDappsAddStakeDialogProps) => {
 
 type AddStakeDialogProps = {
   account: Account
-  stake: StakeLoadable
+  stake: StakeLoadable['data']
   onRequestDismiss: () => void
 }
 

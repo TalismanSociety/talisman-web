@@ -260,7 +260,7 @@ export const useStakeLoadable = (account: Account) => {
       .filter(x => x[1].staked.period.unwrap().eq(activeProtocol.periodInfo.number.unwrap()))
   }, [activeProtocol, stakedDapps])
 
-  return {
+  const data = {
     active: dapps.length > 0 || (ledger?.unlocking.length ?? 0) > 0,
     earningRewards: totalStaked?.decimalAmount !== undefined && totalStaked.decimalAmount.planck > 0,
     account,
@@ -288,6 +288,11 @@ export const useStakeLoadable = (account: Account) => {
     totalUnlocking,
     withdrawable,
     dapps,
+  }
+
+  return {
+    data,
+    isLoading: state === 'loading' || multiQueryState === 'loading' || eraRewardsSpansLoadable.state === 'loading',
   }
 }
 

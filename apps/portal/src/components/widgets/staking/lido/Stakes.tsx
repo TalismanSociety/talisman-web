@@ -46,7 +46,6 @@ const LidoStakes = (props: {
 
   if (stakes.length || !isLoading) {
     props.setShouldRenderLoadingSkeleton(false)
-    console.log('Set skeleton to false')
   }
 
   const logo = 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg'

@@ -23,7 +23,13 @@ const TotalRewards = (props: { account: Account }) => useTotalDappStakingRewards
 const TotalFiatRewards = (props: { account: Account }) =>
   useNativeTokenLocalizedFiatAmount(useTotalDappStakingRewards(props.account))
 
-const Stake = ({ account }: { account: Account }) => {
+const Stake = ({
+  account,
+  setShouldRenderLoadingSkeleton,
+}: {
+  account: Account
+  setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
   const [addStakeDialogOpen, setAddStakeDialogOpen] = useState(false)
   const [unstakeDialogOpen, setUnstakeDialogOpen] = useState(false)
   const [lockedDialogOpen, setLockedDialogOpen] = useState(false)
@@ -34,7 +40,7 @@ const Stake = ({ account }: { account: Account }) => {
   const navigate = useNavigate()
 
   const chain = useRecoilValue(useChainState())
-  const stake = useStakeLoadable(account)
+  const { data: stake, isLoading } = useStakeLoadable(account)
 
   const claimAllRewardsExtrinsic = useClaimAllRewardsExtrinsic(stake)
   const withdrawExtrinsic = useExtrinsic('dappStaking', 'withdrawUnbonded')
@@ -43,6 +49,10 @@ const Stake = ({ account }: { account: Account }) => {
   const [requestReStakeInTransition, startRequestRestakeTransition] = useTransition()
 
   const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
+
+  if (stake.active || !isLoading) {
+    setShouldRenderLoadingSkeleton(false)
+  }
 
   if (!stake.active) {
     return null
@@ -159,16 +169,12 @@ const Stakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
   const accounts = accountsLoadable.valueMaybe()
   const chains = chainsLoadable.valueMaybe()
 
-  if (chains?.length && accounts?.length) {
-    setShouldRenderLoadingSkeleton(false)
-  }
-
   return (
     <>
       {chains?.map((chain, index) => (
         <ChainProvider key={index} chain={chain}>
           {accounts?.map((account, index) => (
-            <Stake key={index} account={account} />
+            <Stake key={index} account={account} setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
           ))}
         </ChainProvider>
       ))}

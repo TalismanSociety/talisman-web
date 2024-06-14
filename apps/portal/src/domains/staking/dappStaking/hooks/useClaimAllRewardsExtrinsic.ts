@@ -3,7 +3,7 @@ import type { StakeLoadable } from './useStakeLoadable'
 import type { ApiPromise } from '@polkadot/api'
 import { useCallback } from 'react'
 
-export const getAllRewardsClaimExtrinsics = (api: ApiPromise, stake: StakeLoadable) =>
+export const getAllRewardsClaimExtrinsics = (api: ApiPromise, stake: StakeLoadable['data']) =>
   stake.totalRewards?.decimalAmount.planck ?? 0n < 0n
     ? []
     : [
@@ -13,7 +13,7 @@ export const getAllRewardsClaimExtrinsics = (api: ApiPromise, stake: StakeLoadab
         ...stake.bonusRewards.map(x => api.tx.dappStaking.claimBonusReward(x.dapp)),
       ]
 
-export const useClaimAllRewardsExtrinsic = (stake: StakeLoadable) =>
+export const useClaimAllRewardsExtrinsic = (stake: StakeLoadable['data']) =>
   useExtrinsic(
     useCallback(
       (api: ApiPromise) => {

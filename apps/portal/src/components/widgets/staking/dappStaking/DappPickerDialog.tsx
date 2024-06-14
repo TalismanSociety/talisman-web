@@ -9,7 +9,7 @@ import { useRecoilValue, waitForAll } from 'recoil'
 
 type DappPickerDialogProps = {
   title: ReactNode
-  stake: StakeLoadable
+  stake: StakeLoadable['data']
   onSelect: (dapp: AstarPrimitivesDappStakingSmartContract) => void
   onRequestDismiss: () => void
 }

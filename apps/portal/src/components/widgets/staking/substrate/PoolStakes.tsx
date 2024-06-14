@@ -10,7 +10,7 @@ type PoolStakeProps = {
 const PoolStakes = ({ setShouldRenderLoadingSkeleton }: PoolStakeProps) => {
   const { data: pools, state } = usePoolStakeLoadable(useRecoilValue(selectedSubstrateAccountsState))
 
-  if (state === 'hasValue' && pools.length) {
+  if (state === 'hasValue' || pools.length) {
     setShouldRenderLoadingSkeleton(false)
   }
 
