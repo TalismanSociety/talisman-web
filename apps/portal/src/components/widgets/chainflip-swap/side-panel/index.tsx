@@ -4,9 +4,15 @@ import { ChainFlipFAQ } from './ChainflipFAQ'
 import { cn } from '@/lib/utils'
 import { Chip } from '@talismn/ui'
 import { Activity, FileSearch, HelpCircle } from '@talismn/web-icons'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
+import { atom, useRecoilState } from 'recoil'
 
 type Tab = 'details' | 'activities' | 'faq'
+
+export const swapInfoTabState = atom<Tab>({
+  key: 'swapInfoTabState',
+  default: 'details',
+})
 
 const TabItem: React.FC<React.PropsWithChildren & { onClick?: () => void; selected?: boolean }> = ({
   children,
@@ -27,7 +33,7 @@ const TabItem: React.FC<React.PropsWithChildren & { onClick?: () => void; select
 }
 
 export const SidePanel: React.FC = () => {
-  const [tab, setTab] = useState<Tab>('details')
+  const [tab, setTab] = useRecoilState<Tab>(swapInfoTabState)
 
   const content = useMemo(() => {
     switch (tab) {

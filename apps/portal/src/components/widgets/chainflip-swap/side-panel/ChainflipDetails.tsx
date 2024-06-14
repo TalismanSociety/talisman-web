@@ -1,14 +1,72 @@
-import { quoteChainflipState } from '../api'
+import { chainflipChainsState, fromAmountInputState, fromAmountState, quoteChainflipState, toAmountState } from '../api'
+import { assetIcons } from '../chainflip-config'
+import { selectedCurrencyState } from '@/domains/balances'
+import { useTokenRates, useTokens } from '@talismn/balances-react'
+import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator } from '@talismn/ui'
-import { useRecoilValueLoadable } from 'recoil'
+import { ArrowRight } from '@talismn/web-icons'
+import { useMemo } from 'react'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 export const ChainflipDetails: React.FC = () => {
   const quoteLoadable = useRecoilValueLoadable(quoteChainflipState)
+  const fromAmountInput = useRecoilValue(fromAmountInputState)
+  const fromAmount = useRecoilValueLoadable(fromAmountState)
+  const toAmount = useRecoilValueLoadable(toAmountState)
+  const chainflipChains = useRecoilValueLoadable(chainflipChainsState)
+  const currency = useRecoilValue(selectedCurrencyState)
+  const rates = useTokenRates()
+  const tokens = useTokens()
 
-  if (quoteLoadable.state === 'loading') {
+  const fromQuote = useMemo(() => {
+    if (fromAmount.state !== 'hasValue') return undefined
+    return fromAmount.contents?.mapNumber(() => 1)
+  }, [fromAmount])
+
+  const toQuote = useMemo(() => {
+    if (toAmount.state !== 'hasValue' || fromAmount.state !== 'hasValue' || !toAmount.contents) return undefined
+    return toAmount.contents.mapNumber(
+      () => (toAmount.contents?.toNumber() ?? 0) / (fromAmount.contents?.toNumber() ?? 1)
+    )
+  }, [fromAmount, toAmount])
+
+  const totalFiatFee = useMemo(() => {
+    if (
+      !tokens ||
+      quoteLoadable.state !== 'hasValue' ||
+      !quoteLoadable.contents ||
+      !rates ||
+      chainflipChains.state !== 'hasValue'
+    )
+      return undefined
+
+    const fees = quoteLoadable.contents.quote.includedFees.map(fee => {
+      const chainflipChain = chainflipChains.contents.find(chain => chain.chain === fee.chain)
+
+      // find the matching token from balances library
+      const token = Object.values(tokens).find(token => {
+        const symbolMatch = token.symbol === fee.asset
+        if (!symbolMatch) return false
+        if (chainflipChain?.evmChainId) return `${chainflipChain.evmChainId}` === `${token.evmNetwork?.id}`
+        return chainflipChain?.chain.toLowerCase() === token.chain?.id
+      })
+      if (!token) return { fee, rate: 0, fiatAmount: 0 }
+
+      // get rate and compute fee in fiat
+      const rate = rates[token.id]?.[currency] ?? 0
+      const amount = Decimal.fromPlanck(fee.amount, token.decimals)
+      return { fee, rate, amount, fiatAmount: rate * +amount.toString() }
+    })
+
+    return { feesWithRate: fees, total: fees.reduce((acc, fee) => acc + fee.fiatAmount, 0) }
+  }, [tokens, quoteLoadable, rates, chainflipChains, currency])
+
+  if (quoteLoadable.state === 'loading' && fromAmountInput.trim() !== '' && +fromAmountInput > 0) {
     return (
-      <div className="flex items-center justify-center gap-[8px] flex-col rounded-[8px] p-[16px]">
-        <CircularProgressIndicator size={48} />
+      <div className="flex items-center justify-center gap-[8px] flex-col border-gray-800 border rounded-[8px] p-[16px]">
+        <div className="flex items-center justify-center h-[94px] w-[94px]">
+          <CircularProgressIndicator size={48} />
+        </div>
         <div>
           <h4 className="font-bold text-[14px] text-center">Getting quote</h4>
           <p className="text-gray-400 text-[14px] text-center">This shouldn't take too long.</p>
@@ -28,7 +86,7 @@ export const ChainflipDetails: React.FC = () => {
       : errorMessage
 
     return (
-      <div className="flex items-center justify-center gap-[8px] flex-col rounded-[8px] p-[16px]">
+      <div className="flex items-center justify-center gap-[8px] flex-col border-gray-800 border rounded-[8px] p-[16px]">
         <svg width="97" height="96" viewBox="0 0 97 96" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="48.5" cy="48" r="48" fill="url(#paint0_linear_3285_12864)" />
           <path
@@ -89,6 +147,50 @@ export const ChainflipDetails: React.FC = () => {
       </div>
     )
   }
+
+  if (quoteLoadable.state === 'hasValue' && quoteLoadable.contents !== null) {
+    return (
+      <div className="grid gap-[24px]">
+        <div className="w-full">
+          <div className="flex items-center justify-between">
+            <p className="text-gray-400 text-[14px]">Route</p>
+            <div className="flex items-center justify-end gap-[4px]">
+              <img src={assetIcons[quoteLoadable.contents.fromAsset?.asset]} className="w-[20px] h-[20px]" />
+              <ArrowRight size={16} className="text-gray-500" />
+              {quoteLoadable.contents.fromAsset.asset !== 'USDC' && (
+                <>
+                  <img src={assetIcons.USDC} className="w-[20px] h-[20px]" />
+                  <ArrowRight size={16} className="text-gray-500" />
+                </>
+              )}
+              <img src={assetIcons[quoteLoadable.contents.toAsset?.asset]} className="w-[20px] h-[20px]" />
+            </div>
+          </div>
+        </div>
+        <div className="w-full border-b border-gray-900" />
+        <div className="grid gap-[8px]">
+          <div className="flex items-center justify-between">
+            <p className="text-gray-400 text-[14px]">Est. Fees</p>
+            <p className="text-[14px] text-white">
+              {totalFiatFee?.total.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                currency,
+                style: 'currency',
+              })}
+            </p>
+          </div>
+          <div className="flex items-center justify-between">
+            <p className="text-gray-400 text-[14px]">Est. Rate</p>
+            <p className="text-[14px] text-white">
+              {fromQuote?.toLocaleString()} = {toQuote?.toLocaleString()}
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex items-center justify-center gap-[8px] flex-col border-gray-800 border rounded-[8px] p-[16px]">
       <svg width="97" height="96" viewBox="0 0 97 96" fill="none" xmlns="http://www.w3.org/2000/svg">

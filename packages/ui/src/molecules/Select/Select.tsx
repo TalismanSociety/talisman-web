@@ -21,6 +21,7 @@ import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type ReactElement,
@@ -49,7 +50,15 @@ type SelectItemProps = {
 }
 
 const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
-  <div ref={ref} className={props.className} css={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+  <div
+    ref={ref}
+    className={props.className}
+    css={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '1rem',
+    }}
+  >
     {props.leadingIcon && (
       <figure css={{ display: 'flex', alignItems: 'center', maxWidth: 40, maxHeight: 40, margin: 0 }}>
         {props.leadingIcon}
@@ -63,6 +72,24 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
     </div>
   </div>
 ))
+
+SelectItem.displayName = 'SelectItem'
+
+const findOption = (children: ReactElement): ReactElement<SelectItemProps>[] => {
+  if (!children) return []
+  if (typeof children === 'string') return []
+  if (Array.isArray(children)) return children.map(findOption).flat()
+
+  if (
+    typeof children.type === 'object' &&
+    'displayName' in children.type &&
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (children.type as any).displayName === 'SelectItem'
+  ) {
+    return [children as React.ReactElement<SelectItemProps>]
+  }
+  return findOption(children.props.children as React.ReactElement)
+}
 
 const Select = Object.assign(
   <TValue, TClear extends boolean = false>({
@@ -82,15 +109,14 @@ const Select = Object.assign(
     const [pointer, setPointer] = useState(false)
     const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
-    const childrenArray = React.Children.toArray(children)
-
-    const selectedIndex = childrenArray
+    const optionsArray = useMemo(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .filter((x): x is ReactElement<SelectItemProps> => x as any)
-      .findIndex(x => x.props.value === props.value)
+      (): React.ReactElement<SelectItemProps>[] => React.Children.map(children as any, findOption).flat(),
+      [children]
+    )
 
     const selectedChild =
-      renderSelected?.(props.value) ?? (selectedIndex === undefined ? undefined : childrenArray[selectedIndex])
+      renderSelected?.(props.value) ?? optionsArray.find(x => x.props.value === props.value) ?? undefined
 
     const clearRequired = !open && _clearRequired && selectedChild !== undefined
 
@@ -183,6 +209,66 @@ const Select = Object.assign(
 
     // TODO: need a cap as setting maximum radius for only top or bottom corner create oval shape instead
     const cappedShape = `min(2rem, ${theme.shape.full})`
+
+    const injectChildren = useCallback(
+      (children: ReactElement, index: number): React.ReactNode => {
+        if (!children) return null
+
+        if (typeof children === 'string') return children
+        if (Array.isArray(children)) return children.map(injectChildren)
+
+        if (
+          typeof children.type === 'object' &&
+          'displayName' in children.type &&
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (children.type as any).displayName === 'SelectItem'
+        ) {
+          const child = children as ReactElement<SelectItemProps>
+          const selected =
+            typeof selectedChild === 'object' &&
+            child.props.value === (selectedChild as React.ReactElement<SelectItemProps>).props.value
+          return (
+            <li
+              key={child.key}
+              role="option"
+              ref={node => {
+                if (node !== null) {
+                  listRef.current[child.props.value] = node
+                  listContentRef.current[index] = node?.textContent
+                }
+              }}
+              tabIndex={index === activeIndex ? 0 : 1}
+              aria-selected={selected && index === activeIndex}
+              css={{
+                ':hover': {
+                  filter: 'brightness(1.2)',
+                },
+                filter: selected ? 'brightness(1.4)' : undefined,
+                cursor: 'pointer',
+              }}
+              {...getItemProps({
+                onClick: () => select(child.props.value),
+                onKeyDown: event => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault()
+                    if (child.props.value !== undefined) {
+                      select(child.props.value)
+                    }
+                  }
+                },
+              })}
+            >
+              {children}
+            </li>
+          )
+        }
+        return React.cloneElement(children, {
+          key: children.key ?? index,
+          children: children.props.children ? injectChildren(children.props.children, index) : children.props.children,
+        })
+      },
+      [selectedChild, select, getItemProps, activeIndex]
+    )
 
     return (
       <motion.div
@@ -304,37 +390,7 @@ const Select = Object.assign(
             })}
           >
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {React.Children.map(children as any, (child: ReactElement<SelectItemProps>, index) => (
-              <li
-                key={child.key}
-                role="option"
-                ref={node => {
-                  if (node !== null) {
-                    listRef.current[index] = node
-                    listContentRef.current[index] = node?.textContent
-                  }
-                }}
-                tabIndex={index === activeIndex ? 0 : 1}
-                aria-selected={index === selectedIndex && index === activeIndex}
-                css={[
-                  { cursor: 'pointer' },
-                  (index === activeIndex || index === selectedIndex) && { filter: 'brightness(1.2)' },
-                ]}
-                {...getItemProps({
-                  onClick: () => select(child.props.value),
-                  onKeyDown: event => {
-                    if (event.key === 'Enter') {
-                      event.preventDefault()
-                      if (child.props.value !== undefined) {
-                        select(child.props.value)
-                      }
-                    }
-                  },
-                })}
-              >
-                {child}
-              </li>
-            ))}
+            {React.Children.map(children as any, injectChildren)}
           </motion.ul>
         </FloatingPortal>
       </motion.div>
