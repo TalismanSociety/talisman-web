@@ -55,8 +55,9 @@ export const ChainFlipSwap: React.FC = () => {
   )
 
   const insufficientBalance = useMemo(() => {
-    if (!fromBalance || fromAmountLoadable.state !== 'hasValue' || !fromAmountLoadable.contents) return undefined
-    return fromAmountLoadable.contents.planck > fromBalance.planck
+    if (!fromBalance || fromBalance.loading || fromAmountLoadable.state !== 'hasValue' || !fromAmountLoadable.contents)
+      return undefined
+    return fromAmountLoadable.contents.planck > fromBalance.balance.planck
   }, [fromBalance, fromAmountLoadable])
 
   // refresh quote every 15 seconds
@@ -84,7 +85,7 @@ export const ChainFlipSwap: React.FC = () => {
           <FromAmount assetAndChain={assetAndChain} availableBalance={fromBalance} />
           <div className="relative w-full h-[8px]">
             <TonalIconButton
-              className="border-3 !border-solid !border-gray-900 -top-[6px] absolute z-10 left-1/2 -translate-x-1/2 !bg-[#2D3121] !w-[48px] !h-[48px] !rounded-full"
+              className="border-3 !border-solid !border-gray-900 -top-[8px] absolute z-10 left-1/2 -translate-x-1/2 !bg-[#2D3121] !w-[48px] !h-[48px] !rounded-full"
               onClick={assetAndChain.reverse}
             >
               <Repeat />

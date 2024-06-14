@@ -1,12 +1,12 @@
 import { TokenSelector } from './TokenSelector'
 import { fromAccountState, fromAddressState, fromAmountInputState, useAssetAndChain } from './api'
 import { Decimal } from '@talismn/math'
-import { TextInput } from '@talismn/ui'
+import { CircularProgressIndicator, TextInput } from '@talismn/ui'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
 export const FromAmount: React.FC<{
   assetAndChain: ReturnType<typeof useAssetAndChain>
-  availableBalance: Decimal | null
+  availableBalance: { balance: Decimal; loading: boolean } | null
 }> = ({ assetAndChain, availableBalance }) => {
   const [fromAmountInput, setFromAmountInput] = useRecoilState(fromAmountInputState)
   const fromAccount = useRecoilValue(fromAccountState)
@@ -16,12 +16,16 @@ export const FromAmount: React.FC<{
     <TextInput
       leadingLabel="You're paying"
       trailingLabel={
-        availableBalance
-          ? `Balance: ${availableBalance.toLocaleString(undefined, {
+        availableBalance ? (
+          availableBalance.loading ? (
+            <CircularProgressIndicator size={12} />
+          ) : (
+            `Balance: ${availableBalance.balance.toLocaleString(undefined, {
               minimumFractionDigits: 4,
               maximumFractionDigits: 4,
             })}`
-          : null
+          )
+        ) : null
       }
       placeholder="0.00"
       className="text-ellipsis"
@@ -32,7 +36,7 @@ export const FromAmount: React.FC<{
       type="number"
       trailingIcon={
         <div className="flex items-center gap-[8px] justify-end">
-          {availableBalance && (
+          {availableBalance && !availableBalance.loading && (
             <TextInput.LabelButton
               css={{ fontSize: 12, paddingTop: 4, paddingBottom: 4 }}
               onClick={() => {

@@ -1,13 +1,15 @@
 import { fromAddressState, useAssetAndChain } from './api'
 import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
+import { selectedCurrencyState } from '@/domains/balances'
 import { cn } from '@/lib/utils'
 import { Decimal } from '@talismn/math'
 import { Surface } from '@talismn/ui'
 import type React from 'react'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
 export const FromAccount: React.FC<{ assetAndChain: ReturnType<typeof useAssetAndChain> }> = ({ assetAndChain }) => {
   const [fromAddress, setFromAddress] = useRecoilState(fromAddressState)
+  const currency = useRecoilValue(selectedCurrencyState)
 
   return (
     <Surface className="bg-card p-[16px] rounded-[8px] w-full">
@@ -26,25 +28,29 @@ export const FromAccount: React.FC<{ assetAndChain: ReturnType<typeof useAssetAn
                 // find the balance for the selected from asset
                 const chainMatch =
                   assetAndChain.fromAssetJson?.chain.chain === balance.chain?.chainName ||
-                  assetAndChain.fromAssetJson?.chain.evmChainId?.toString() === balance.evmNetworkId?.toString()
+                  (balance.evmNetworkId !== undefined &&
+                    assetAndChain.fromAssetJson?.chain.evmChainId?.toString() === balance.evmNetworkId?.toString())
 
-                if (assetAndChain.srcAssetSymbol && chainMatch)
-                  return balance.token.symbol === assetAndChain.srcAssetSymbol
-                return chainMatch
+                return (
+                  chainMatch &&
+                  (assetAndChain.srcAssetSymbol ? balance.token.symbol === assetAndChain.srcAssetSymbol : true)
+                )
               }
             : undefined,
           output: b => {
             if (!assetAndChain.fromAssetJson) {
               return (
                 <p className="text-[14px] text-gray-400 whitespace-nowrap">
-                  $
-                  {b.sum
-                    .fiat('usd')
-                    .transferable.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {b.sum.fiat(currency).transferable.toLocaleString(undefined, {
+                    currency,
+                    style: 'currency',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
                 </p>
               )
             }
-            const loading = b.each.find(b => b.status !== 'live')
+            const loading = b.each.find(b => b.status !== 'live') !== undefined
 
             return (
               <p className={cn('text-[14px] text-gray-400 whitespace-nowrap', { 'animate-pulse': loading })}>

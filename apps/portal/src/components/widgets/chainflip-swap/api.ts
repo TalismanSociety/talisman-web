@@ -358,7 +358,7 @@ export const getBalanceForChainflipAsset = (balances: Balances, tokenSymbol: str
   balances.find(b => {
     const tokenMatch = b.token.symbol === tokenSymbol
     const chainMatch = b.evmNetworkId === `${chainData.evmChainId}` || b.chain?.name === chainData.chain
-    return tokenMatch && chainMatch
+    return tokenMatch && chainMatch && !b.subSource
   })
 
 export const useChainflipAssetBalance = (
@@ -372,10 +372,11 @@ export const useChainflipAssetBalance = (
   return useMemo(() => {
     if (!address || !tokenSymbol || !chainData || !tokenDecimal) return null
     const assetBalance = getBalanceForChainflipAsset(balances, tokenSymbol, chainData)
-    return Decimal.fromPlanck(
-      assetBalance.find(b => b.address.toLowerCase() === address.toLowerCase()).sum.planck.transferable,
-      tokenDecimal,
-      { currency: tokenSymbol }
-    )
+    const targetBalances = assetBalance.find(b => b.address.toLowerCase() === address.toLowerCase())
+    const loading = targetBalances.each.find(b => b.status !== 'live') !== undefined
+    return {
+      balance: Decimal.fromPlanck(targetBalances.sum.planck.transferable, tokenDecimal, { currency: tokenSymbol }),
+      loading,
+    }
   }, [balances, address, tokenSymbol, tokenDecimal, chainData])
 }
