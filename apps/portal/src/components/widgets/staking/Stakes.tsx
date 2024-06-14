@@ -109,7 +109,7 @@ const Stakes = (props: { hideHeader?: boolean }) => {
         </ErrorBoundary>
         <ErrorBoundary orientation="horizontal">
           <SuspenseSkeleton>
-            <LidoStakes />
+            <LidoStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
           </SuspenseSkeleton>
         </ErrorBoundary>
         <NoStakePrompt css={{ display: 'none', ':only-child': { display: 'revert' } }} />

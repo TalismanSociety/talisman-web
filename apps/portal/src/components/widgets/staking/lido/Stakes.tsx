@@ -8,7 +8,7 @@ import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import LidoWidgetSideSheet from './LidoWidgetSideSheet'
 import { StakePosition } from '@talismn/ui-recipes'
 import { useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 const IncreaseStakeSideSheet = (props: { onRequestDismiss: () => unknown; lidoSuite: LidoSuite }) => (
   <LidoWidgetSideSheet
@@ -34,12 +34,20 @@ const ClaimSideSheet = (props: { onRequestDismiss: () => unknown; lidoSuite: Lid
   />
 )
 
-const LidoStakes = (props: { lidoSuite: LidoSuite }) => {
+const LidoStakes = (props: {
+  lidoSuite: LidoSuite
+  setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
   const [increaseStakeSideSheetOpen, setIncreaseStakeSideSheetOpen] = useState(false)
   const [unstakeSideSheetOpen, setUnstakeSideSheetOpen] = useState(false)
   const [claimSideSheetOpen, setClaimSideSheetOpen] = useState(false)
 
-  const stakes = useStakes(useRecoilValue(selectedEvmAccountsState), props.lidoSuite)
+  const { data: stakes, isLoading } = useStakes(useRecoilValue(selectedEvmAccountsState), props.lidoSuite)
+
+  if (stakes.length || !isLoading) {
+    props.setShouldRenderLoadingSkeleton(false)
+    console.log('Set skeleton to false')
+  }
 
   const logo = 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg'
 
@@ -110,13 +118,19 @@ const LidoStakes = (props: { lidoSuite: LidoSuite }) => {
   )
 }
 
-const Stakes = () => {
-  const lidoSuites = useRecoilValue(lidoSuitesState)
+type StakesProps = {
+  setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const Stakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
+  const lidoSuitesLoadable = useRecoilValueLoadable(lidoSuitesState)
+
+  const lidoSuites = lidoSuitesLoadable.valueMaybe()
 
   return (
     <>
-      {lidoSuites.map((lidoSuite, index) => (
-        <LidoStakes key={index} lidoSuite={lidoSuite} />
+      {lidoSuites?.map((lidoSuite, index) => (
+        <LidoStakes key={index} lidoSuite={lidoSuite} setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
       ))}
     </>
   )
