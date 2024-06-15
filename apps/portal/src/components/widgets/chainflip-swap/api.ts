@@ -1,16 +1,34 @@
+import { swapInfoTabState } from './side-panel'
 import { accountsState, evmAccountsState, substrateAccountsState, type Account } from '@/domains/accounts'
+import { substrateApiState } from '@/domains/common'
+import { storageEffect } from '@/domains/common/effects'
+import { connectedSubstrateWalletState } from '@/domains/extension'
 import { SwapSDK, type ChainflipNetwork, type Chain, type ChainData } from '@chainflip/sdk/swap'
 import '@polkadot/api-augment/substrate'
+import { type DispatchError } from '@polkadot/types/interfaces'
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
+import { array, jsonParser, number, object, string } from '@recoiljs/refine'
 import { type Balances } from '@talismn/balances'
 import { useBalances } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
+import { toast } from '@talismn/ui'
 import '@talismn/ui/assets/css/talismn.css'
 import { useCallback, useEffect, useMemo } from 'react'
-import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
-import { isAddress } from 'viem'
+import {
+  atom,
+  selector,
+  selectorFamily,
+  useRecoilState,
+  useRecoilValue,
+  useRecoilValueLoadable,
+  useSetRecoilState,
+} from 'recoil'
+import { createPublicClient, erc20Abi, http, isAddress, type SendTransactionReturnType } from 'viem'
+import { mainnet, sepolia } from 'viem/chains'
+import { useWalletClient } from 'wagmi'
 
 const ENABLED_CHAINS: Chain[] = ['Ethereum', 'Polkadot']
+const EVM_CHAINS = [mainnet, sepolia]
 
 export const chainflipNetworkState = atom<ChainflipNetwork>({
   key: 'chainflipNetwork',
@@ -198,6 +216,106 @@ export const toAmountState = selector({
   },
 })
 
+export const fromAddressState = atom<string | null>({
+  key: 'fromAddress',
+  default: null,
+})
+
+export const fromAccountState = selector({
+  key: 'fromAccount',
+  get: ({ get }) => {
+    const fromAddress = get(fromAddressState)
+    if (!fromAddress) return null
+    const evmAccounts = get(evmAccountsState)
+    const substrateAccounts = get(substrateAccountsState)
+    const account =
+      [...evmAccounts, ...substrateAccounts].find(
+        account => account.address.toLowerCase() === fromAddress.toLowerCase()
+      ) ?? null
+
+    return account
+  },
+})
+
+export const toAddressState = atom<string | null>({
+  key: 'toAddress',
+  default: null,
+})
+
+export const toAccountState = selector({
+  key: 'toAccount',
+  get: ({ get }): Account | null => {
+    const toAddress = get(toAddressState)
+    if (!toAddress) return null
+
+    const knownAccount = get(accountsState).find(account => account.address.toLowerCase() === toAddress.toLowerCase())
+    if (knownAccount) return knownAccount
+
+    // toAddress can be any input, so might not be valid address
+    const evmAddress = isAddress(toAddress)
+    const substrateAddress = isSubstrateAddress(toAddress)
+    if (!evmAddress && !substrateAddress) return null
+
+    return {
+      address: toAddress,
+      type: evmAddress ? 'ethereum' : 'sr25519',
+      partOfPortfolio: false,
+      canSignEvm: false,
+      readonly: true,
+    }
+  },
+})
+
+export const swapsState = atom<readonly { id: string; date: number }[]>({
+  key: 'chainflip-swaps',
+  default: [],
+  effects: [
+    storageEffect(localStorage, {
+      parser: jsonParser(
+        array(
+          object({
+            id: string(),
+            date: number(),
+          })
+        )
+      ),
+    }),
+  ],
+})
+
+export const swapStatusSelector = selectorFamily({
+  key: 'swapStatus',
+  get:
+    (id: string) =>
+    async ({ get }) => {
+      const sdk = get(swapSdkState)
+      const status = await sdk.getStatus({ id })
+      if (!(['FAILED', 'COMPLETE', 'BROADCAST_ABORTED'] as const).includes(status.state as any)) {
+        get(quoteRefresherState)
+      }
+      return status
+    },
+})
+
+export const swappingState = atom<boolean>({
+  key: 'swapping',
+  default: false,
+})
+
+export const processingSwapState = atom<boolean>({
+  key: 'processingSwap',
+  default: false,
+})
+
+export const getBalanceForChainflipAsset = (balances: Balances, tokenSymbol: string, chainData: ChainData) =>
+  balances.find(b => {
+    const chainMatch = b.evmNetworkId === `${chainData.evmChainId}` || b.chain?.name === chainData.chain
+    const tokenMatch = b.token.symbol === tokenSymbol
+    return tokenMatch && chainMatch && !b.subSource
+  })
+
+// ==== HOOKS ====
+
 export const useAssetAndChain = (
   onForceChange?: (props: { newSrcAssetSymbol: string | null; newDestAssetSymbol: string | null }) => void
 ) => {
@@ -304,63 +422,6 @@ export const useAssetAndChain = (
   }
 }
 
-export const fromAddressState = atom<string | null>({
-  key: 'fromAddress',
-  default: null,
-})
-
-export const fromAccountState = selector({
-  key: 'fromAccount',
-  get: ({ get }) => {
-    const fromAddress = get(fromAddressState)
-    if (!fromAddress) return null
-    const evmAccounts = get(evmAccountsState)
-    const substrateAccounts = get(substrateAccountsState)
-    const account =
-      [...evmAccounts, ...substrateAccounts].find(
-        account => account.address.toLowerCase() === fromAddress.toLowerCase()
-      ) ?? null
-
-    return account
-  },
-})
-
-export const toAddressState = atom<string | null>({
-  key: 'toAddress',
-  default: null,
-})
-
-export const toAccountState = selector({
-  key: 'toAccount',
-  get: ({ get }): Account | null => {
-    const toAddress = get(toAddressState)
-    if (!toAddress) return null
-
-    const knownAccount = get(accountsState).find(account => account.address.toLowerCase() === toAddress.toLowerCase())
-    if (knownAccount) return knownAccount
-
-    // toAddress can be any input, so might not be valid address
-    const evmAddress = isAddress(toAddress)
-    const substrateAddress = isSubstrateAddress(toAddress)
-    if (!evmAddress && !substrateAddress) return null
-
-    return {
-      address: toAddress,
-      type: evmAddress ? 'ethereum' : 'sr25519',
-      partOfPortfolio: false,
-      canSignEvm: false,
-      readonly: true,
-    }
-  },
-})
-
-export const getBalanceForChainflipAsset = (balances: Balances, tokenSymbol: string, chainData: ChainData) =>
-  balances.find(b => {
-    const tokenMatch = b.token.symbol === tokenSymbol
-    const chainMatch = b.evmNetworkId === `${chainData.evmChainId}` || b.chain?.name === chainData.chain
-    return tokenMatch && chainMatch && !b.subSource
-  })
-
 export const useChainflipAssetBalance = (
   address?: string | null,
   tokenSymbol?: string | null,
@@ -373,10 +434,178 @@ export const useChainflipAssetBalance = (
     if (!address || !tokenSymbol || !chainData || !tokenDecimal) return null
     const assetBalance = getBalanceForChainflipAsset(balances, tokenSymbol, chainData)
     const targetBalances = assetBalance.find(b => b.address.toLowerCase() === address.toLowerCase())
-    const loading = targetBalances.each.find(b => b.status !== 'live') !== undefined
+    const loading = targetBalances.each.find(b => b.status === 'initializing') !== undefined
     return {
       balance: Decimal.fromPlanck(targetBalances.sum.planck.transferable, tokenDecimal, { currency: tokenSymbol }),
       loading,
     }
   }, [balances, address, tokenSymbol, tokenDecimal, chainData])
+}
+
+export const useSwap = () => {
+  const fromAccount = useRecoilValue(fromAccountState)
+  const toAccount = useRecoilValue(toAccountState)
+  const setFromAountInput = useSetRecoilState(fromAmountInputState)
+  const setInfoTab = useSetRecoilState(swapInfoTabState)
+  const fromAssetLoadable = useRecoilValueLoadable(fromAssetState)
+  const toAssetLoadable = useRecoilValueLoadable(toAssetState)
+  const fromAmountLoadable = useRecoilValueLoadable(fromAmountState)
+  const sdk = useRecoilValue(swapSdkState)
+  const { data: evmWalletClient } = useWalletClient()
+  const [swapping, setSwapping] = useRecoilState(swappingState)
+  const setProcessingSwap = useSetRecoilState(processingSwapState)
+  const polkadotRpc = useRecoilValue(polkadotRpcAtom)
+  const substrateApiLoadable = useRecoilValueLoadable(substrateApiState(polkadotRpc))
+  const substrateWallet = useRecoilValue(connectedSubstrateWalletState)
+  const setSwaps = useSetRecoilState(swapsState)
+
+  const swap = useCallback(async () => {
+    try {
+      setSwapping(true)
+      if (!fromAccount || !toAccount) throw new Error('Missing accounts')
+      if (
+        fromAssetLoadable.state !== 'hasValue' ||
+        toAssetLoadable.state !== 'hasValue' ||
+        fromAmountLoadable.state !== 'hasValue'
+      )
+        throw new Error('Missing swap parameters')
+      const fromAsset = fromAssetLoadable.contents
+      const toAsset = toAssetLoadable.contents
+      const fromAmount = fromAmountLoadable.contents
+
+      if (!toAsset) throw new Error('Missing asset to receive')
+      if (!fromAsset) throw new Error('Missing asset to send')
+      if (!fromAmount) throw new Error('Missing amount to send')
+
+      const depositAddress = await sdk.requestDepositAddress({
+        destAddress: toAccount.address,
+        destChain: toAsset.chain.chain,
+        amount: fromAmount.planck.toString(),
+        destAsset: toAsset.asset,
+        srcAsset: fromAsset.asset,
+        srcChain: fromAsset.chain.chain,
+      })
+
+      switch (fromAsset.chain.chain) {
+        case 'Ethereum': {
+          if (fromAccount.type !== 'ethereum') throw new Error("Can't swap from non-EVM account")
+          if (!evmWalletClient) throw new Error('Ethereum account not connected')
+          if (fromAsset.chain.evmChainId === undefined) throw new Error('Missing evmChainId, this is likely a bug.')
+          const chain = EVM_CHAINS.find(chain => chain.id === fromAsset.chain.evmChainId)
+          if (!chain) throw new Error('Missing evmChain, this is likely a bug.')
+
+          // make sure user is swapping on the right chain
+          await evmWalletClient.switchChain({ id: chain.id })
+
+          let txHash: SendTransactionReturnType
+          if (!fromAsset.contractAddress) {
+            txHash = await evmWalletClient.sendTransaction({
+              chain,
+              to: depositAddress.depositAddress as `0x${string}`,
+              value: BigInt(depositAddress.amount),
+              account: fromAccount.address as `0x${string}`,
+            })
+          } else {
+            txHash = await evmWalletClient.writeContract({
+              chain,
+              abi: erc20Abi,
+              address: fromAsset.contractAddress as `0x${string}`,
+              functionName: 'transfer',
+              account: fromAccount.address as `0x${string}`,
+              args: [depositAddress.depositAddress as `0x${string}`, BigInt(depositAddress.amount)],
+            })
+          }
+
+          setProcessingSwap(true)
+          setSwaps(prev => [{ id: depositAddress.depositChannelId, date: new Date().getTime() }, ...prev])
+
+          const client = createPublicClient({ chain, transport: http() })
+          const receipt = await client.waitForTransactionReceipt({ hash: txHash })
+          // make sure we dont store ids for deposits that failed or they will appear stuck in the ui
+          if (receipt.status === 'reverted') throw new Error('Transaction reverted.')
+          break
+        }
+        case 'Polkadot': {
+          if (substrateApiLoadable.state !== 'hasValue') throw new Error('Polkadot API not connected')
+          if (!substrateWallet) throw new Error('Polkadot wallet not connected')
+
+          const api = substrateApiLoadable.contents
+          const signer = substrateWallet.signer
+
+          // only store ids for successful deposits
+          await new Promise((resolve, reject) => {
+            api.tx.balances
+              .transferKeepAlive(depositAddress.depositAddress, depositAddress.amount)
+              .signAndSend(fromAccount.address, { signer }, ({ status, events }) => {
+                setProcessingSwap(true)
+                setSwaps(prev =>
+                  prev.find(({ id }) => id === depositAddress.depositChannelId)
+                    ? prev
+                    : [{ id: depositAddress.depositChannelId, date: new Date().getTime() }, ...prev]
+                )
+                if (status.isInBlock || status.isFinalized) {
+                  const systemFailedEvent = events
+                    // find/filter for failed events
+                    .find(({ event }) => api.events.system.ExtrinsicFailed.is(event))
+                  if (!systemFailedEvent) return resolve(true)
+                  // we know that data for system.ExtrinsicFailed is
+                  // (DispatchError, DispatchInfo)
+                  const {
+                    event: {
+                      data: [_error],
+                    },
+                  } = systemFailedEvent
+                  const error = _error as DispatchError
+                  if ((error as DispatchError)?.isModule) {
+                    // for module errors, we have the section indexed, lookup
+                    const decoded = api.registry.findMetaError(error.asModule)
+                    const { docs, method, section } = decoded
+
+                    reject(`${section}.${method}: ${docs.join(' ')}`)
+                  } else {
+                    // Other, CannotLookup, BadOrigin, no extra info
+                    console.error(error?.toString())
+                    reject(`Transaction failed, please check log for details.`)
+                  }
+                }
+              })
+              .catch(reject)
+          })
+          break
+        }
+        default: {
+          throw new Error(`Unsupported swap from chain ${fromAsset.chain.chain}`)
+        }
+      }
+
+      setFromAountInput('')
+      globalThis.requestIdleCallback(() => {
+        setInfoTab('activities')
+      })
+    } catch (e) {
+      console.error(e)
+      const error = e as any
+      toast.error(error?.shortMessage ?? error?.details ?? error.message ?? 'unknown error')
+    } finally {
+      setProcessingSwap(false)
+      setSwapping(false)
+    }
+  }, [
+    fromAccount,
+    toAccount,
+    sdk,
+    fromAssetLoadable,
+    toAssetLoadable,
+    fromAmountLoadable,
+    evmWalletClient,
+    substrateWallet,
+    substrateApiLoadable,
+    setSwaps,
+    setFromAountInput,
+    setInfoTab,
+    setSwapping,
+    setProcessingSwap,
+  ])
+
+  return { swap, initializing: substrateApiLoadable.state !== 'hasValue', swapping }
 }

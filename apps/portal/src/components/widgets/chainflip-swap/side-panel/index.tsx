@@ -14,6 +14,11 @@ export const swapInfoTabState = atom<Tab>({
   default: 'details',
 })
 
+export const shouldFocusDetailsState = atom<boolean>({
+  key: 'shouldFocusDetails',
+  default: false,
+})
+
 const TabItem: React.FC<React.PropsWithChildren & { onClick?: () => void; selected?: boolean }> = ({
   children,
   onClick,
@@ -63,7 +68,7 @@ export const SidePanel: React.FC = () => {
             </TabItem>
           </div>
         </div>
-        <div className="flex-1 flex flex-col overflow-auto overflow-x-hidden">{content}</div>
+        <div className="flex-1 flex flex-col overflow-auto overflow-x-hidden w-full">{content}</div>
         <div className="bg-background mt-auto pt-3">
           <p className="text-center text-[12px] text-gray-500">
             Swap powered by {/* eslint-disable-next-line react/jsx-no-target-blank */}

@@ -6,36 +6,41 @@ import { ToAccount } from './ToAccount'
 import { ToAmount } from './ToAmount'
 import {
   fromAccountState,
+  fromAmountInputState,
   fromAmountState,
   quoteRefresherState,
   toAddressState,
   toAmountState,
   useAssetAndChain,
   useChainflipAssetBalance,
+  useSwap,
 } from './api'
-import { SidePanel, swapInfoTabState } from './side-panel'
+import { shouldFocusDetailsState, SidePanel, swapInfoTabState } from './side-panel'
 import { Button, Surface, toast, TonalIconButton } from '@talismn/ui'
 import { Repeat } from '@talismn/web-icons'
 import { useEffect, useMemo } from 'react'
 import type React from 'react'
-import { useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 /**
  * TODO:
- * - execute swap
  * - remove ED from available + some fee
- * - track swaps and display in activities (steal from old implementation)
  * - empty tokens list message in token selector pop up (e.g. when source isnt selected and user clicks dest, it should show "Please selct they asset you'r paying first")
+ * - make sure swaps history is compatible with previous version so users dont lose all past swap record
  */
 export const ChainFlipSwap: React.FC = () => {
   const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
   const accounts = useRecoilValue(writeableSubstrateAccountsState)
   const ethAccount = useRecoilValue(wagmiAccountsState)
+  const { swap, swapping } = useSwap()
 
   const fromAccount = useRecoilValue(fromAccountState)
+  const fromAmountInput = useRecoilValue(fromAmountInputState)
   const fromAmountLoadable = useRecoilValueLoadable(fromAmountState)
   const toAddress = useRecoilValue(toAddressState)
   const toAmountLoadable = useRecoilValueLoadable(toAmountState)
+  const setInfoTab = useSetRecoilState(swapInfoTabState)
+  const [shouldFocusDetails, setShouldFocusDetails] = useRecoilState(shouldFocusDetailsState)
 
   const assetAndChain = useAssetAndChain(({ newSrcAssetSymbol, newDestAssetSymbol }) => {
     if (newSrcAssetSymbol === null || newDestAssetSymbol === null) return
@@ -63,18 +68,26 @@ export const ChainFlipSwap: React.FC = () => {
   // refresh quote every 15 seconds
   const setQuoteRefresher = useSetRecoilState(quoteRefresherState)
   useEffect(() => {
+    if (swapping) return
     const id = setInterval(() => {
+      setShouldFocusDetails(false)
       setQuoteRefresher(prev => prev + 1)
     }, 15_000)
     return () => clearInterval(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [swapping])
 
-  // bring user back to details page to wait for quote
-  const setInfoTab = useSetRecoilState(swapInfoTabState)
   useEffect(() => {
-    if (toAmountLoadable.state === 'loading') setInfoTab('details')
-  }, [toAmountLoadable, setInfoTab])
+    setShouldFocusDetails(true)
+  }, [fromAmountInput, assetAndChain.destAssetSymbol, assetAndChain.srcAssetSymbol, setShouldFocusDetails])
+
+  // // bring user back to details page to wait for quote
+  useEffect(() => {
+    if (toAmountLoadable.state === 'loading' && shouldFocusDetails) {
+      setShouldFocusDetails(false)
+      setInfoTab('details')
+    }
+  }, [toAmountLoadable, setInfoTab, shouldFocusDetails, setShouldFocusDetails])
 
   return (
     <div className="w-full flex items-stretch flex-col md:flex-row mb-[40px]">
@@ -114,8 +127,14 @@ export const ChainFlipSwap: React.FC = () => {
               !toAmountLoadable.contents ||
               !fromAccount ||
               !toAddress ||
-              insufficientBalance !== false
+              insufficientBalance !== false ||
+              swapping
             }
+            loading={swapping}
+            onClick={() => {
+              setInfoTab('details')
+              swap()
+            }}
           >
             {insufficientBalance ? 'Insufficient Balance' : 'Swap'}
           </Button>

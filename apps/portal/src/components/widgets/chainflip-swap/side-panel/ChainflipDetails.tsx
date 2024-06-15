@@ -1,4 +1,12 @@
-import { chainflipChainsState, fromAmountInputState, fromAmountState, quoteChainflipState, toAmountState } from '../api'
+import {
+  chainflipChainsState,
+  fromAmountInputState,
+  fromAmountState,
+  processingSwapState,
+  quoteChainflipState,
+  swappingState,
+  toAmountState,
+} from '../api'
 import { assetIcons } from '../chainflip-config'
 import { selectedCurrencyState } from '@/domains/balances'
 import { useTokenRates, useTokens } from '@talismn/balances-react'
@@ -17,6 +25,8 @@ export const ChainflipDetails: React.FC = () => {
   const currency = useRecoilValue(selectedCurrencyState)
   const rates = useTokenRates()
   const tokens = useTokens()
+  const swapping = useRecoilValue(swappingState)
+  const processingSwap = useRecoilValue(processingSwapState)
 
   const fromQuote = useMemo(() => {
     if (fromAmount.state !== 'hasValue') return undefined
@@ -60,6 +70,28 @@ export const ChainflipDetails: React.FC = () => {
 
     return { feesWithRate: fees, total: fees.reduce((acc, fee) => acc + fee.fiatAmount, 0) }
   }, [tokens, quoteLoadable, rates, chainflipChains, currency])
+
+  if (swapping || processingSwap) {
+    return (
+      <div className="flex items-center justify-center gap-[8px] flex-col border-gray-800 border rounded-[8px] p-[16px]">
+        <div className="flex items-center justify-center h-[94px] w-[94px]">
+          <CircularProgressIndicator size={48} />
+        </div>
+        <div>
+          <h4 className="font-bold text-[14px] text-center">
+            {processingSwap ? 'Processing Swap...' : 'Waiting for approval...'}
+          </h4>
+          {processingSwap && (
+            <p className="text-gray-400 text-[14px] text-center">
+              We are processing this swap.
+              <br />
+              It shouldn't take too long...
+            </p>
+          )}
+        </div>
+      </div>
+    )
+  }
 
   if (quoteLoadable.state === 'loading' && fromAmountInput.trim() !== '' && +fromAmountInput > 0) {
     return (
