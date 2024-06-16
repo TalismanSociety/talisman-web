@@ -4,8 +4,8 @@ import { lidoSuitesState } from '../../../../domains/staking/lido/recoils'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
-import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import LidoWidgetSideSheet from './LidoWidgetSideSheet'
+import { StakePositionErrorBoundary } from '@talismn/ui-recipes'
 import { StakePosition } from '@talismn/ui-recipes'
 import { useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
@@ -58,11 +58,13 @@ const LidoStakes = (props: {
           <ErrorBoundary
             key={index}
             renderFallback={() => (
-              <ErrorBoundaryFallback
-                logo={logo}
-                symbol={symbol}
-                provider={props.lidoSuite.chain.name}
-                list="positions"
+              <StakePositionErrorBoundary
+                chain={props.lidoSuite.chain.name}
+                assetSymbol={symbol}
+                assetLogoSrc={logo}
+                account={stake.account}
+                provider="Lido finance"
+                key={index}
               />
             )}
           >

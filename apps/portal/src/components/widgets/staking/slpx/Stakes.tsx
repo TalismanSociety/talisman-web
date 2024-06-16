@@ -6,10 +6,10 @@ import type { SlpxPair } from '../../../../domains/staking/slpx/types'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
-import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
 import { StakePosition } from '@talismn/ui-recipes'
+import { StakePositionErrorBoundary } from '@talismn/ui-recipes'
 import { useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
@@ -21,11 +21,12 @@ const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStake
     <ErrorBoundary
       orientation="horizontal"
       renderFallback={() => (
-        <ErrorBoundaryFallback
-          logo={props.slpxPair.vToken.logo}
-          symbol={props.position.balance.options?.currency ?? ''}
-          provider={props.slpxPair.chain.name}
-          list="positions"
+        <StakePositionErrorBoundary
+          chain={props.slpxPair.chain.name}
+          assetSymbol={props.position.balance.options?.currency}
+          assetLogoSrc={props.slpxPair.vToken.logo}
+          account={props.position.account}
+          provider="Bifrost liquid staking"
         />
       )}
     >

@@ -9,11 +9,11 @@ import {
 } from '../../../../domains/staking/dappStaking'
 import DappStakingLockedAmountDialog from '../../../recipes/DappStakingLockedAmountDialog'
 import ErrorBoundary from '../../ErrorBoundary'
-import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import AddStakeDialog from './AddStakeDialog'
 import UnlockDuration from './UnlockDuration'
 import UnstakeDialog from './UnstakeDialog'
 import { StakePosition } from '@talismn/ui-recipes'
+import { StakePositionErrorBoundary } from '@talismn/ui-recipes'
 import { useState, useTransition } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
@@ -59,9 +59,7 @@ const Stake = ({
   }
 
   return (
-    <ErrorBoundary
-      renderFallback={() => <ErrorBoundaryFallback logo={logo} symbol={symbol} provider={name} list="positions" />}
-    >
+    <>
       <StakePosition
         readonly={account.readonly}
         chain={name}
@@ -153,7 +151,7 @@ const Stake = ({
           }}
         />
       )}
-    </ErrorBoundary>
+    </>
   )
 }
 
@@ -173,9 +171,26 @@ const Stakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
     <>
       {chains?.map((chain, index) => (
         <ChainProvider key={index} chain={chain}>
-          {accounts?.map((account, index) => (
-            <Stake key={index} account={account} setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
-          ))}
+          {accounts?.map((account, index) => {
+            const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
+            return (
+              <ErrorBoundary
+                key={index}
+                renderFallback={() => (
+                  <StakePositionErrorBoundary
+                    chain={name}
+                    assetSymbol={symbol}
+                    assetLogoSrc={logo}
+                    account={account}
+                    provider="DApp staking"
+                    key={index}
+                  />
+                )}
+              >
+                <Stake account={account} setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
+              </ErrorBoundary>
+            )
+          })}
         </ChainProvider>
       ))}
     </>
