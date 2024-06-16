@@ -1,9 +1,12 @@
 import { selectedSubstrateAccountsState } from '../../../../domains/accounts/recoils'
+import { useChainState } from '../../../../domains/chains'
 import { useSubstrateApiState } from '../../../../domains/common'
 import { useInjectedAccountFastUnstakeEligibility } from '../../../../domains/fastUnstake'
 import { useStakersRewardState } from '../../../../domains/staking/substrate/validator/recoils'
+import ErrorBoundary from '../../ErrorBoundary'
 import ValidatorStakeItem from './ValidatorStakeItem'
 import { useDeriveState, useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
+import { StakePositionErrorBoundary } from '@talismn/ui-recipes'
 import { useMemo } from 'react'
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
@@ -94,32 +97,79 @@ const useStakesWithFastUnstake = () => {
 
 const BaseValidatorStakes = ({ setShouldRenderLoadingSkeleton }: ValidatorStakesProps) => {
   const { data: stakes, state } = useStakes()
+  const chainLoadable = useRecoilValueLoadable(useChainState())
+  const chain = chainLoadable.valueMaybe()
 
   if (state === 'hasValue' || stakes.length) {
     setShouldRenderLoadingSkeleton(false)
   }
 
+  const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
+
   return (
     <>
-      {stakes.map((props, index) => (
-        <ValidatorStakeItem key={index} {...props} eligibleForFastUnstake={false} />
-      ))}
+      {stakes.map((props, index) => {
+        // eslint-disable-next-line react/prop-types
+        const { account, reward } = props
+        const stakeStatus = reward === undefined ? undefined : reward === 0n ? 'not_earning_rewards' : 'earning_rewards'
+
+        return (
+          <ErrorBoundary
+            key={index}
+            renderFallback={() => (
+              <StakePositionErrorBoundary
+                chain={name}
+                assetSymbol={symbol}
+                assetLogoSrc={logo}
+                account={account}
+                provider="Validator staking"
+                stakeStatus={stakeStatus}
+              />
+            )}
+          >
+            <ValidatorStakeItem key={index} {...props} eligibleForFastUnstake={false} />
+          </ErrorBoundary>
+        )
+      })}
     </>
   )
 }
 
 const ValidatorStakesWithFastUnstake = ({ setShouldRenderLoadingSkeleton }: ValidatorStakesProps) => {
   const { data: stakes, state } = useStakesWithFastUnstake()
+  const chainLoadable = useRecoilValueLoadable(useChainState())
+  const chain = chainLoadable.valueMaybe()
 
   if (stakes.length || state === 'hasValue') {
     setShouldRenderLoadingSkeleton(false)
   }
 
+  const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
+
   return (
     <>
-      {stakes.map((props, index) => (
-        <ValidatorStakeItem key={index} {...props} />
-      ))}
+      {stakes.map((props, index) => {
+        // eslint-disable-next-line react/prop-types
+        const { account, reward } = props
+        const stakeStatus = reward === undefined ? undefined : reward === 0n ? 'not_earning_rewards' : 'earning_rewards'
+        return (
+          <ErrorBoundary
+            key={index}
+            renderFallback={() => (
+              <StakePositionErrorBoundary
+                chain={name}
+                assetSymbol={symbol}
+                assetLogoSrc={logo}
+                account={account}
+                provider="Validator staking"
+                stakeStatus={stakeStatus}
+              />
+            )}
+          >
+            <ValidatorStakeItem {...props} />
+          </ErrorBoundary>
+        )
+      })}
     </>
   )
 }

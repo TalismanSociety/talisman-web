@@ -11,9 +11,7 @@ import { useLocalizedUnlockDuration } from '../../../../domains/staking/substrat
 import { useTotalValidatorStakingRewards } from '../../../../domains/staking/substrate/validator'
 import FastUnstakeDialog from '../../../recipes/FastUnstakeDialog'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
-import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
-import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
 import { type DeriveStakingAccount } from '@polkadot/api-derive/types'
 import { useDeriveState } from '@talismn/react-polkadot-api'
@@ -95,9 +93,7 @@ const ValidatorStakeItem = (props: {
   }
 
   return (
-    <ErrorBoundary
-      renderFallback={() => <ErrorBoundaryFallback logo={logo} symbol={symbol} provider={name} list="positions" />}
-    >
+    <>
       <StakePosition
         chain={name}
         assetSymbol={symbol}
@@ -191,7 +187,7 @@ const ValidatorStakeItem = (props: {
         }}
         learnMoreHref="https://wiki.polkadot.network/docs/learn-staking#fast-unstake"
       />
-    </ErrorBoundary>
+    </>
   )
 }
 
