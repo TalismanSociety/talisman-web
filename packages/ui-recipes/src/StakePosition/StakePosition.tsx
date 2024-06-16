@@ -377,6 +377,157 @@ const StakePosition = Object.assign(
   }
 )
 
+export type StakePositionErrorBoundaryProps = {
+  chain: ReactNode
+  assetSymbol: ReactNode
+  assetLogoSrc: string
+  account: Account
+  provider: ReactNode
+  stakeStatus?: StakeStatus
+}
+
+export const StakePositionErrorBoundary = (props: StakePositionErrorBoundaryProps) => {
+  const theme = useTheme()
+  return (
+    <div css={{ containerType: 'inline-size' }}>
+      <Surface
+        css={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.8rem',
+          borderRadius: '1.6rem',
+          padding: '1.6rem',
+          [MEDIUM_CONTAINER_QUERY]: {
+            flexDirection: 'row',
+            alignItems: 'center',
+          },
+        }}
+      >
+        <section css={{ [MEDIUM_CONTAINER_QUERY]: { order: -1 }, [LARGE_CONTAINER_QUERY]: { width: '14rem' } }}>
+          <Text.BodySmall
+            as="div"
+            alpha="disabled"
+            css={{ marginBottom: '0.6rem', [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}
+          >
+            Asset
+          </Text.BodySmall>
+          <span
+            css={{
+              [MEDIUM_CONTAINER_QUERY]: { display: 'flex', alignItems: 'center', gap: '1.2rem' },
+            }}
+          >
+            <img
+              src={props.assetLogoSrc}
+              css={{
+                width: '2rem',
+                height: '2rem',
+                verticalAlign: '-0.25em',
+                [MEDIUM_CONTAINER_QUERY]: { width: '4rem', height: '4rem' },
+              }}
+            />
+            <span
+              css={{
+                display: 'contents',
+                [MEDIUM_CONTAINER_QUERY]: { display: 'none' },
+                [LARGE_CONTAINER_QUERY]: { display: 'contents' },
+              }}
+            >
+              {' '}
+              <Text.BodyLarge alpha="high">
+                {props.assetSymbol}
+                <div css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }} />{' '}
+                <Text.Body alpha="medium">{props.chain}</Text.Body>
+              </Text.BodyLarge>
+            </span>
+          </span>
+        </section>
+        <div
+          css={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '0.8rem',
+            [MEDIUM_CONTAINER_QUERY]: { display: 'contents' },
+          }}
+        >
+          <Text.BodySmall
+            as="header"
+            css={{
+              [MEDIUM_CONTAINER_QUERY]: {
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1.2rem',
+                width: '24rem',
+                fontSize: theme.typography.bodyLarge.fontSize,
+              },
+            }}
+          >
+            <div
+              css={{
+                display: 'inline-block',
+                width: '1.2rem',
+                height: '1.2rem',
+                [MEDIUM_CONTAINER_QUERY]: { width: '4rem', height: '4rem' },
+              }}
+            >
+              <AccountIcon size="100%" address={props.account.address} readonly={props.account.readonly} />
+            </div>{' '}
+            <div
+              css={{
+                display: 'contents',
+                [MEDIUM_CONTAINER_QUERY]: {
+                  display: 'block',
+                  width: 'calc(100% - 5rem)',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                },
+              }}
+            >
+              <Text alpha="high">{props.account.name ?? shortenAddress(props.account.address)}</Text>
+              <br />
+              <span>
+                <span css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }}>
+                  <StakeStatusIndicator status={props.stakeStatus ?? 'not_earning_rewards'} />{' '}
+                </span>
+                <span
+                  css={{
+                    [MEDIUM_CONTAINER_QUERY]: { fontSize: theme.typography.body.fontSize },
+                  }}
+                >
+                  {props.provider}
+                </span>
+              </span>
+            </div>
+          </Text.BodySmall>
+          <div
+            css={{
+              display: 'flex',
+              marginLeft: 'auto',
+              gap: '0.8rem',
+              [MEDIUM_CONTAINER_QUERY]: { order: 1 },
+            }}
+          >
+            <Tooltip content="Error loading staking provider data">
+              <TonalButton
+                {...props}
+                leadingIcon={<StakeStatusIndicator status={'not_nominating'} />}
+                css={{
+                  width: '100%',
+                  backgroundColor: `color-mix(in srgb, ${theme.color.error}, transparent 95%)`,
+                  color: theme.color.error,
+                }}
+              >
+                Loading Error
+              </TonalButton>
+            </Tooltip>
+          </div>
+        </div>
+      </Surface>
+    </div>
+  )
+}
+
 export const StakePositionList = (props: PropsWithChildren<{ className?: string }>) => (
   <section {...props}>
     <div css={{ containerType: 'inline-size' }}>
