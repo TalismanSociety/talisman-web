@@ -24,9 +24,7 @@ import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilSta
 
 /**
  * TODO:
- * - remove ED from available + some fee
- * - empty tokens list message in token selector pop up (e.g. when source isnt selected and user clicks dest, it should show "Please selct they asset you'r paying first")
- * - make sure swaps history is compatible with previous version so users dont lose all past swap record
+ * - handle polkadot ED
  */
 export const ChainFlipSwap: React.FC = () => {
   const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
@@ -83,11 +81,11 @@ export const ChainFlipSwap: React.FC = () => {
 
   // // bring user back to details page to wait for quote
   useEffect(() => {
-    if (toAmountLoadable.state === 'loading' && shouldFocusDetails) {
+    if (toAmountLoadable.state === 'loading' && shouldFocusDetails && !swapping) {
       setShouldFocusDetails(false)
       setInfoTab('details')
     }
-  }, [toAmountLoadable, setInfoTab, shouldFocusDetails, setShouldFocusDetails])
+  }, [toAmountLoadable, setInfoTab, shouldFocusDetails, setShouldFocusDetails, swapping])
 
   return (
     <div className="w-full flex items-stretch flex-col md:flex-row mb-[40px]">

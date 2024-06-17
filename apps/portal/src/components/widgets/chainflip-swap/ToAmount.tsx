@@ -1,10 +1,11 @@
 import { TokenSelector } from './TokenSelector'
-import { toAmountState, useAssetAndChain } from './api'
+import { toAccountState, toAmountState, useAssetAndChain } from './api'
 import { TextInput } from '@talismn/ui'
-import { useRecoilValueLoadable } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 export const ToAmount: React.FC<{ assetAndChain: ReturnType<typeof useAssetAndChain> }> = ({ assetAndChain }) => {
   const toAmountLoadable = useRecoilValueLoadable(toAmountState)
+  const toAccount = useRecoilValue(toAccountState)
 
   return (
     <TextInput
@@ -17,10 +18,11 @@ export const ToAmount: React.FC<{ assetAndChain: ReturnType<typeof useAssetAndCh
       value={toAmountLoadable.state === 'hasValue' ? toAmountLoadable.contents?.toString() ?? '' : ''}
       trailingIcon={
         <TokenSelector
+          balanceFor={toAccount?.address ?? null}
           selectedAssetSymbol={assetAndChain.destAssetSymbol}
           selectedAssetChain={assetAndChain.destAssetChain}
           assetFilter={a => {
-            if (assetAndChain.srcAssetChain === null) return false
+            if (assetAndChain.srcAssetChain === null) return true
             return a.chain !== assetAndChain.srcAssetChain
           }}
           onSelectToken={token => {

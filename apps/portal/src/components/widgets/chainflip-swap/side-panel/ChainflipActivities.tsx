@@ -8,7 +8,7 @@ import { Suspense, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 
-const Activity: React.FC<{ id: string; date: number }> = ({ id, date }) => {
+const Activity: React.FC<{ id: string; date: string | number }> = ({ id, date }) => {
   const status = useRecoilValue(swapStatusSelector(id))
   const assets = useRecoilValue(chainflipAssetsState)
   const dateObj = new Date(status.depositChannelCreatedAt ?? date)
@@ -68,6 +68,10 @@ const Activity: React.FC<{ id: string; date: number }> = ({ id, date }) => {
                   <p className="text-[14px] font-semibold text-white !leading-none">
                     {destAmount.toLocaleString(undefined, { minimumFractionDigits: 4 })}
                   </p>
+                ) : status.expired ? (
+                  <div className="p-[4px] px-[6px] bg-orange-500/30 rounded-full">
+                    <p className="text-[12px] leading-none text-orange-300">Expired</p>
+                  </div>
                 ) : (
                   <CircularProgressIndicator size={12} />
                 )}
@@ -75,7 +79,7 @@ const Activity: React.FC<{ id: string; date: number }> = ({ id, date }) => {
               <div className="flex items-center justify-start gap-[4px] mt-[2px]">
                 {status.state === 'COMPLETE' ? (
                   <Check className="text-primary" size={12} />
-                ) : status.state === 'FAILED' ? (
+                ) : status.state === 'FAILED' || status.expired ? (
                   <X className="text-red-500" size={12} />
                 ) : (
                   <CircularProgressIndicator size={12} />

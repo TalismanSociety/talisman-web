@@ -39,9 +39,7 @@ export const FromAmount: React.FC<{
           {availableBalance && !availableBalance.loading && (
             <TextInput.LabelButton
               css={{ fontSize: 12, paddingTop: 4, paddingBottom: 4 }}
-              onClick={() => {
-                setFromAmountInput(availableBalance.toString())
-              }}
+              onClick={() => setFromAmountInput(availableBalance.balance.toString())}
             >
               <p css={{ fontSize: 12, lineHeight: 1 }}>Max</p>
             </TextInput.LabelButton>

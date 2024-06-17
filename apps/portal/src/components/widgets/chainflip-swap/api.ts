@@ -7,7 +7,7 @@ import { SwapSDK, type ChainflipNetwork, type Chain, type ChainData } from '@cha
 import '@polkadot/api-augment/substrate'
 import { type DispatchError } from '@polkadot/types/interfaces'
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
-import { array, jsonParser, number, object, string } from '@recoiljs/refine'
+import { array, jsonParser, number, object, or, string } from '@recoiljs/refine'
 import { type Balances } from '@talismn/balances'
 import { useBalances } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
@@ -266,8 +266,8 @@ export const toAccountState = selector({
   },
 })
 
-export const swapsState = atom<readonly { id: string; date: number }[]>({
-  key: 'chainflip-swaps',
+export const swapsState = atom<readonly { id: string; date: string | number }[]>({
+  key: '@talisman/swap/chainflip/mainnet/swap-ids',
   default: [],
   effects: [
     storageEffect(localStorage, {
@@ -275,7 +275,7 @@ export const swapsState = atom<readonly { id: string; date: number }[]>({
         array(
           object({
             id: string(),
-            date: number(),
+            date: or(string(), number()),
           })
         )
       ),
@@ -290,10 +290,16 @@ export const swapStatusSelector = selectorFamily({
     async ({ get }) => {
       const sdk = get(swapSdkState)
       const status = await sdk.getStatus({ id })
+      let expired = false
+
       if (!(['FAILED', 'COMPLETE', 'BROADCAST_ABORTED'] as const).includes(status.state as any)) {
-        get(quoteRefresherState)
+        if (status.estimatedDepositChannelExpiryTime && status.state === 'AWAITING_DEPOSIT') {
+          const now = new Date().getTime()
+          expired = now > status.estimatedDepositChannelExpiryTime
+        }
+        if (!expired) get(quoteRefresherState)
       }
-      return status
+      return { ...status, expired }
     },
 })
 
@@ -364,6 +370,7 @@ export const useAssetAndChain = (
     }
   }, [fromAccount, toAccount, setToAddress])
 
+  // TODO: need a better identifier for chains before we turn on arbitrum
   useEffect(() => {
     if (fromAccount && srcAssetChain) {
       if (
@@ -517,7 +524,9 @@ export const useSwap = () => {
           }
 
           setProcessingSwap(true)
-          setSwaps(prev => [{ id: depositAddress.depositChannelId, date: new Date().getTime() }, ...prev])
+          setSwaps(prev => [{ id: depositAddress.depositChannelId, date: new Date().toISOString() }, ...prev])
+          setInfoTab('activities')
+          setFromAountInput('')
 
           const client = createPublicClient({ chain, transport: http() })
           const receipt = await client.waitForTransactionReceipt({ hash: txHash })
@@ -532,6 +541,7 @@ export const useSwap = () => {
           const api = substrateApiLoadable.contents
           const signer = substrateWallet.signer
 
+          let redirected = false
           // only store ids for successful deposits
           await new Promise((resolve, reject) => {
             api.tx.balances
@@ -541,8 +551,13 @@ export const useSwap = () => {
                 setSwaps(prev =>
                   prev.find(({ id }) => id === depositAddress.depositChannelId)
                     ? prev
-                    : [{ id: depositAddress.depositChannelId, date: new Date().getTime() }, ...prev]
+                    : [{ id: depositAddress.depositChannelId, date: new Date().toISOString() }, ...prev]
                 )
+                if (!redirected && (status.isBroadcast || status.isFinalized || status.isInBlock)) {
+                  redirected = true
+                  setInfoTab('activities')
+                  setFromAountInput('')
+                }
                 if (status.isInBlock || status.isFinalized) {
                   const systemFailedEvent = events
                     // find/filter for failed events
@@ -577,11 +592,6 @@ export const useSwap = () => {
           throw new Error(`Unsupported swap from chain ${fromAsset.chain.chain}`)
         }
       }
-
-      setFromAountInput('')
-      globalThis.requestIdleCallback(() => {
-        setInfoTab('activities')
-      })
     } catch (e) {
       console.error(e)
       const error = e as any

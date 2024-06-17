@@ -10,9 +10,6 @@ import {
   useDismiss,
   useFloating,
   useInteractions,
-  useListNavigation,
-  useRole,
-  useTypeahead,
 } from '@floating-ui/react'
 import { ChevronDown, X } from '@talismn/web-icons'
 import { motion } from 'framer-motion'
@@ -38,6 +35,9 @@ export type SelectProps<TValue, TClear extends boolean = false> = {
   loading?: boolean
   clearRequired?: TClear
   detached?: boolean
+  allowInput?: boolean
+  inputValue?: string
+  onInputChange?: React.ChangeEventHandler<HTMLInputElement>
 }
 
 type SelectItemProps = {
@@ -94,10 +94,12 @@ const findOption = (children: ReactElement): ReactElement<SelectItemProps>[] => 
 const Select = Object.assign(
   <TValue, TClear extends boolean = false>({
     children,
-    renderSelected,
-    loading,
     clearRequired: _clearRequired,
     detached,
+    loading,
+    inputValue,
+    onInputChange,
+    renderSelected,
     ...props
   }: SelectProps<TValue, TClear>) => {
     const theme = useTheme()
@@ -108,6 +110,7 @@ const Select = Object.assign(
     const [open, setOpen] = useState(false)
     const [pointer, setPointer] = useState(false)
     const [activeIndex, setActiveIndex] = useState<number | null>(null)
+    const inputRef = useRef<HTMLInputElement | null>(null)
 
     const optionsArray = useMemo(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -126,11 +129,12 @@ const Select = Object.assign(
     const { context, x, y, refs, strategy } = useFloating({
       open,
       onOpenChange: open => {
+        setOpen(open)
         if (clearRequired) {
           // @ts-expect-error
           props.onChangeValue?.(undefined)
         }
-        setOpen(open)
+        if (open && props.allowInput && inputRef.current) inputRef.current.focus()
       },
       whileElementsMounted: autoUpdate,
       middleware: [
@@ -161,24 +165,14 @@ const Select = Object.assign(
       ],
     })
 
-    const { getReferenceProps, getFloatingProps, getItemProps } = useInteractions([
-      useRole(context, { role: 'listbox' }),
-      useClick(context),
-      useListNavigation(context, {
-        listRef,
-        activeIndex,
-        // TODO: disable selected index for now as
-        // as this cause weird animation on open if an item is already focused
-        // selectedIndex,
-        onNavigate: setActiveIndex,
-        loop: true,
+    const { getReferenceProps, getFloatingProps } = useInteractions([
+      useClick(context, {
+        keyboardHandlers: false,
+        toggle: false,
       }),
-      useTypeahead(context, {
-        listRef: listContentRef,
-        activeIndex,
-        onMatch: setActiveIndex,
+      useDismiss(context, {
+        outsidePress: true,
       }),
-      useDismiss(context),
     ])
 
     const select = useCallback(
@@ -239,6 +233,7 @@ const Select = Object.assign(
               }}
               tabIndex={index === activeIndex ? 0 : 1}
               aria-selected={selected && index === activeIndex}
+              onClick={() => select(child.props.value)}
               css={{
                 ':hover': {
                   filter: 'brightness(1.2)',
@@ -246,17 +241,6 @@ const Select = Object.assign(
                 filter: selected ? 'brightness(1.4)' : undefined,
                 cursor: 'pointer',
               }}
-              {...getItemProps({
-                onClick: () => select(child.props.value),
-                onKeyDown: event => {
-                  if (event.key === 'Enter') {
-                    event.preventDefault()
-                    if (child.props.value !== undefined) {
-                      select(child.props.value)
-                    }
-                  }
-                },
-              })}
             >
               {children}
             </li>
@@ -267,7 +251,7 @@ const Select = Object.assign(
           children: children.props.children ? injectChildren(children.props.children, index) : children.props.children,
         })
       },
-      [selectedChild, select, getItemProps, activeIndex]
+      [selectedChild, select, activeIndex]
     )
 
     return (
@@ -316,9 +300,31 @@ const Select = Object.assign(
           ]}
           {...getReferenceProps()}
         >
-          <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none' }}>
-            {selectedChild ?? <Text.Body alpha="disabled">{props.placeholder}</Text.Body>}
-          </Text.Body>
+          {selectedChild ??
+            (props.allowInput ? (
+              <input
+                onClick={e => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                }}
+                onChange={onInputChange}
+                value={inputValue}
+                ref={inputRef}
+                placeholder={typeof props.placeholder === 'string' ? props.placeholder : ''}
+                onFocus={() => setOpen(true)}
+                style={{
+                  fontSize: '14px',
+                  backgroundColor: 'transparent',
+                  padding: 0,
+                  height: 'max-content',
+                  width: '100%',
+                }}
+              />
+            ) : (
+              <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none' }}>
+                <Text.Body alpha="disabled">{props.placeholder}</Text.Body>
+              </Text.Body>
+            ))}
           {loading ? (
             <CircularProgressIndicator />
           ) : clearRequired ? (
@@ -379,13 +385,6 @@ const Select = Object.assign(
               },
               onPointerMove: () => {
                 setPointer(true)
-              },
-              onKeyDown: event => {
-                setPointer(false)
-
-                if (event.key === 'Tab') {
-                  setOpen(false)
-                }
               },
             })}
           >
