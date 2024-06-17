@@ -9714,7 +9714,6 @@ __metadata:
     "@talismn/on-chain-id": "npm:0.0.0-pr1392-20240408055115"
     "@talismn/react-polkadot-api": "workspace:^"
     "@talismn/signet-apps-sdk": "npm:0.0.7"
-    "@talismn/swap": "workspace:^"
     "@talismn/tsconfig": "workspace:^"
     "@talismn/ui": "workspace:^"
     "@talismn/util": "npm:0.0.0-pr1392-20240408055115"
@@ -9826,7 +9825,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talismn/swap@workspace:^, @talismn/swap@workspace:apps/swap":
+"@talismn/swap@workspace:apps/swap":
   version: 0.0.0-use.local
   resolution: "@talismn/swap@workspace:apps/swap"
   dependencies:

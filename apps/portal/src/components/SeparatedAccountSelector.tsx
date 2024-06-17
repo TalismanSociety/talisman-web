@@ -14,18 +14,17 @@ import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { isAddress } from 'viem'
 
 type Props = {
-  /** Selected Account Address */
-  value?: string | null
-  onAccountChange?: (address: string | null) => void
-
-  accountsType?: 'substrate' | 'ethereum' | 'all'
-  substrateAccountsFilter?: (account: Account) => boolean
-
   allowInput?: boolean
+  accountsType?: 'substrate' | 'ethereum' | 'all'
+  /** Selected Account Address */
+  onAccountChange?: (address: string | null) => void
+  evmAccountsFilter?: (account: Account) => boolean
   showBalances?: {
     filter?: BalanceSearchQuery | BalanceSearchQuery[]
     output?: (addressBalances: Balances) => React.ReactNode
   }
+  substrateAccountsFilter?: (account: Account) => boolean
+  value?: string | null
 }
 
 const AccountRow: React.FC<{ name?: string; address: string; balance?: React.ReactNode }> = ({
@@ -57,6 +56,7 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
   allowInput = false,
   onAccountChange,
   showBalances,
+  evmAccountsFilter,
   substrateAccountsFilter,
   value,
 }) => {
@@ -91,15 +91,17 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
   }, [allowInput, query])
 
   const evmAccounts = useMemo(() => {
-    if (accountFromInput?.type !== 'ethereum') return defaultEvmAccounts
-    return [accountFromInput, ...defaultEvmAccounts]
-  }, [accountFromInput, defaultEvmAccounts])
+    const filtered = evmAccountsFilter ? defaultEvmAccounts.filter(evmAccountsFilter) : defaultEvmAccounts
+    if (accountFromInput?.type !== 'ethereum') return filtered
+    return [accountFromInput, ...filtered]
+  }, [accountFromInput, defaultEvmAccounts, evmAccountsFilter])
 
   const substrateAccounts = useMemo(() => {
-    if (!substrateAccountsFilter) return defaultSubstrateAccounts
-    return defaultSubstrateAccounts
-      .filter(substrateAccountsFilter)
-      .concat(accountFromInput && accountFromInput.type !== 'ethereum' ? [accountFromInput] : [])
+    const filtered = substrateAccountsFilter
+      ? defaultSubstrateAccounts.filter(substrateAccountsFilter)
+      : defaultSubstrateAccounts
+    if (!accountFromInput || accountFromInput.type === 'ethereum') return filtered
+    return [accountFromInput, ...filtered]
   }, [accountFromInput, substrateAccountsFilter, defaultSubstrateAccounts])
 
   const queriedEvmAccounts = useMemo(() => {
@@ -143,7 +145,10 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
   useEffect(() => {
     if (!onAccountChange) return
     // parent has value set as unconnected account, help it set to null
-    if (value && !selectedAccount && !allowInput) onAccountChange(null)
+    if (value && !selectedAccount && !allowInput) {
+      onAccountChange(null)
+      setQuery('')
+    }
     if (allowInput) return
     if (accountsType === 'ethereum') {
       const evmAccount = evmAccounts[0]
@@ -205,7 +210,7 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
           )}
           {evmAccounts.length > 0 ? (
             queriedEvmAccounts.length > 0 ? (
-              evmAccounts.map(account => (
+              queriedEvmAccounts.map(account => (
                 <Select.Option
                   leadingIcon={<AccountIcon account={{ address: account.address }} size="32px" />}
                   headlineContent={
