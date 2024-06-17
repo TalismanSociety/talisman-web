@@ -3,7 +3,7 @@ import { walletConnectionSideSheetOpenState } from './widgets/WalletConnectionSi
 import { evmAccountsState, substrateAccountsState, type Account } from '@/domains/accounts'
 import { cn } from '@/lib/utils'
 import { shortenAddress } from '@/util/format'
-import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
+import { isAddress as isSubstrateAddress, decodeAddress, encodeAddress } from '@polkadot/util-crypto'
 import { type BalanceSearchQuery, type Balances } from '@talismn/balances'
 import { useBalances } from '@talismn/balances-react'
 import { Select, Surface } from '@talismn/ui'
@@ -24,26 +24,35 @@ type Props = {
     output?: (addressBalances: Balances) => React.ReactNode
   }
   substrateAccountsFilter?: (account: Account) => boolean
+  substrateAccountPrefix?: number
   value?: string | null
 }
 
-const AccountRow: React.FC<{ name?: string; address: string; balance?: React.ReactNode }> = ({
-  address,
-  name,
-  balance,
-}) => {
+const AccountRow: React.FC<{
+  name?: string
+  address: string
+  balance?: React.ReactNode
+  substrateAccountPrefix?: number
+}> = ({ address, name, balance, substrateAccountPrefix }) => {
+  const formattedAddress = useMemo(() => {
+    if (address.startsWith('0x') || substrateAccountPrefix === undefined) return address
+    return encodeAddress(decodeAddress(address), substrateAccountPrefix)
+  }, [address, substrateAccountPrefix])
+
   return (
     <div className="flex items-center justify-between w-full">
       <div className="grid gap-[1px]">
         <p
           className={cn('!leading-none font-semibold whitespace-nowrap overflow-hidden text-ellipsis', {
-            'text-[14px]': address.startsWith('0x'),
+            'text-[14px]': formattedAddress.startsWith('0x'),
           })}
         >
-          {name ?? shortenAddress(address, address.startsWith('0x') ? 6 : undefined)}
+          {name ?? shortenAddress(formattedAddress, 6)}
         </p>
         {name ? (
-          <p className="!text-[12px] !text-gray-300 brightness-100 !leading-none">{shortenAddress(address)}</p>
+          <p className="!text-[12px] !text-gray-300 brightness-100 !leading-none mt-[2px]">
+            {shortenAddress(formattedAddress, 6)}
+          </p>
         ) : null}
       </div>
 
@@ -58,6 +67,7 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
   showBalances,
   evmAccountsFilter,
   substrateAccountsFilter,
+  substrateAccountPrefix,
   value,
 }) => {
   const defaultEvmAccounts = useRecoilValue(evmAccountsState)
@@ -169,6 +179,7 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
           <div className="flex items-center gap-[10px]">
             <AccountIcon account={{ address: evmAccount.address }} size="32px" />
             <AccountRow
+              substrateAccountPrefix={substrateAccountPrefix}
               address={evmAccount.address}
               name={evmAccount.name}
               balance={
@@ -215,6 +226,7 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
                   leadingIcon={<AccountIcon account={{ address: account.address }} size="32px" />}
                   headlineContent={
                     <AccountRow
+                      substrateAccountPrefix={substrateAccountPrefix}
                       address={account.address}
                       name={account.name}
                       balance={
@@ -264,6 +276,7 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
                 leadingIcon={<AccountIcon account={{ address: account.address }} size="32px" />}
                 headlineContent={
                   <AccountRow
+                    substrateAccountPrefix={substrateAccountPrefix}
                     address={account.address}
                     name={account.name}
                     balance={

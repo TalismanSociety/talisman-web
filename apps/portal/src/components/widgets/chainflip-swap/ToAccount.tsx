@@ -25,6 +25,7 @@ export const ToAccount: React.FC<{ assetAndChain: ReturnType<typeof useAssetAndC
         allowInput
         accountsType={allowedAccountsType}
         substrateAccountsFilter={a => !a.readonly}
+        substrateAccountPrefix={0}
         value={toAddess}
         onAccountChange={setToAddress}
       />

@@ -18,6 +18,7 @@ export const FromAccount: React.FC<{ assetAndChain: ReturnType<typeof useAssetAn
         accountsType={
           !assetAndChain.srcAssetChain ? 'all' : assetAndChain.srcAssetChain === 'Ethereum' ? 'ethereum' : 'substrate'
         }
+        substrateAccountPrefix={0}
         substrateAccountsFilter={a => !a.readonly}
         evmAccountsFilter={a => !!a.canSignEvm}
         value={fromAddress}
