@@ -1,7 +1,5 @@
-import ErrorMessage from '../../recipes/ErrorMessage'
-import StakeProvider from '../../recipes/StakeProvider'
-import { Surface, Text, SurfaceIconButton } from '@talismn/ui'
-import { MoreHorizontal } from '@talismn/web-icons'
+import { StakeStatusIndicator } from '../../recipes/StakeStatusIndicator'
+import { Surface, Text, Tooltip, TonalButton, useTheme } from '@talismn/ui'
 
 type ErrorBoundaryFallbackProps = {
   symbol: string
@@ -10,45 +8,16 @@ type ErrorBoundaryFallbackProps = {
   list?: 'stakes' | 'positions'
 }
 
-export default function ErrorBoundaryFallback({ symbol, logo, provider, list }: ErrorBoundaryFallbackProps) {
-  const isPositions = list === 'positions'
+export default function ErrorBoundaryFallback({ symbol, logo, provider }: ErrorBoundaryFallbackProps) {
+  const theme = useTheme()
   return (
-    <div css={{ containerType: 'inline-size', position: 'relative' }}>
-      <div
-        css={{
-          padding: '1.6rem',
-          position: 'absolute',
-          top: '0',
-          left: '0',
-          width: '100%',
-          height: '100%',
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(2px)',
-          borderRadius: isPositions ? '1.6rem' : '0.8rem',
-        }}
-      >
-        <div
-          css={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '1.6rem',
-            height: '100%',
-          }}
-        >
-          <ErrorMessage
-            orientation="horizontal"
-            title="Oops!"
-            message={<span> {`Error loading ${provider} staking provider data for ${symbol} token.`}</span>}
-          />
-        </div>
-      </div>
+    <div css={{ containerType: 'inline-size' }}>
       <Surface
         css={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          borderRadius: isPositions ? '1.6rem' : '0.8rem',
+          borderRadius: '0.8rem',
           padding: '1.6rem',
         }}
       >
@@ -56,14 +25,14 @@ export default function ErrorBoundaryFallback({ symbol, logo, provider, list }: 
           css={{
             display: 'flex',
             alignItems: 'center',
-            gap: isPositions ? '1.6rem' : '0.6rem',
+            gap: '0.6rem',
           }}
         >
           <img
             src={logo}
             css={{
-              width: isPositions ? '4rem' : '2em',
-              height: isPositions ? '4rem' : '2em',
+              width: '2em',
+              height: '2em',
               borderRadius: '50%',
             }}
           />
@@ -74,13 +43,21 @@ export default function ErrorBoundaryFallback({ symbol, logo, provider, list }: 
             <Text.BodySmall as="div">{provider}</Text.BodySmall>
           </div>
         </div>
-        {isPositions ? (
-          <SurfaceIconButton>
-            <MoreHorizontal />
-          </SurfaceIconButton>
-        ) : (
-          <StakeProvider.StakeButton />
-        )}
+
+        <div css={{ marginLeft: 'auto' }}>
+          <Tooltip content="Error loading staking provider data">
+            <TonalButton
+              leadingIcon={<StakeStatusIndicator status={'not_nominating'} />}
+              css={{
+                width: '100%',
+                backgroundColor: `color-mix(in srgb, ${theme.color.error}, transparent 95%)`,
+                color: theme.color.error,
+              }}
+            >
+              Loading Error
+            </TonalButton>
+          </Tooltip>
+        </div>
       </Surface>
     </div>
   )
