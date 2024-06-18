@@ -4,6 +4,7 @@ import { FromAccount } from './FromAccount'
 import { FromAmount } from './FromAmount'
 import { ToAccount } from './ToAccount'
 import { ToAmount } from './ToAmount'
+import { shouldFocusDetailsState, SidePanel, swapInfoTabState } from './side-panel'
 import {
   fromAccountState,
   fromAmountInputState,
@@ -14,8 +15,7 @@ import {
   useAssetAndChain,
   useChainflipAssetBalance,
   useSwap,
-} from './api'
-import { shouldFocusDetailsState, SidePanel, swapInfoTabState } from './side-panel'
+} from './swap.api'
 import { Button, Surface, toast, TonalIconButton } from '@talismn/ui'
 import { Repeat } from '@talismn/web-icons'
 import { useEffect, useMemo } from 'react'
@@ -90,7 +90,6 @@ export const ChainFlipSwap: React.FC = () => {
   return (
     <div className="w-full flex items-stretch flex-col md:flex-row mb-[40px]">
       <div className="grid gap-[8px] w-full">
-        <FromAccount assetAndChain={assetAndChain} />
         <Surface className="bg-card p-[16px] rounded-[8px] w-full">
           <h4 className="text-[16px] font-semibold mb-[8px]">Select Asset</h4>
           <FromAmount assetAndChain={assetAndChain} availableBalance={fromBalance} />
@@ -104,6 +103,7 @@ export const ChainFlipSwap: React.FC = () => {
           </div>
           <ToAmount assetAndChain={assetAndChain} />
         </Surface>
+        <FromAccount assetAndChain={assetAndChain} />
         <ToAccount assetAndChain={assetAndChain} />
         {accounts.length === 0 && ethAccount.length === 0 ? (
           <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>

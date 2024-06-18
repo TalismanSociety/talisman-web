@@ -1,4 +1,4 @@
-import { fromAddressState, useAssetAndChain } from './api'
+import { fromAddressState, useAssetAndChain } from './swap.api'
 import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
 import { selectedCurrencyState } from '@/domains/balances'
 import { cn } from '@/lib/utils'
@@ -16,7 +16,11 @@ export const FromAccount: React.FC<{ assetAndChain: ReturnType<typeof useAssetAn
       <h4 className="text-[16px] font-semibold">From Account</h4>
       <SeparatedAccountSelector
         accountsType={
-          !assetAndChain.srcAssetChain ? 'all' : assetAndChain.srcAssetChain === 'Ethereum' ? 'ethereum' : 'substrate'
+          !assetAndChain.fromAssetJson
+            ? 'all'
+            : assetAndChain.fromAssetJson.chain.evmChainId !== undefined
+            ? 'ethereum'
+            : 'substrate'
         }
         substrateAccountPrefix={0}
         substrateAccountsFilter={a => !a.readonly}

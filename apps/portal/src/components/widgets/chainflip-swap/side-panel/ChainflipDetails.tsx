@@ -1,13 +1,13 @@
+import { assetIcons } from '../chainflip-config'
+import { chainflipChainsState } from '../chainflip.api'
 import {
-  chainflipChainsState,
   fromAmountInputState,
   fromAmountState,
   processingSwapState,
   quoteChainflipState,
   swappingState,
   toAmountState,
-} from '../api'
-import { assetIcons } from '../chainflip-config'
+} from '../swap.api'
 import { selectedCurrencyState } from '@/domains/balances'
 import { useTokenRates, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'

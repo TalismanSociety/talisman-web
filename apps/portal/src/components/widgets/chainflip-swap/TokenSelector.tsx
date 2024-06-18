@@ -1,5 +1,6 @@
-import { chainflipAssetsAndChainsState, getBalanceForChainflipAsset } from './api'
 import { assetIcons, chainIcons } from './chainflip-config'
+import { chainflipAssetsAndChainsState } from './chainflip.api'
+import { getBalanceForChainflipAsset } from './swap.api'
 import TokenSelectDialog, { type Token } from '@/components/recipes/TokenSelectDialog'
 import { selectedCurrencyState } from '@/domains/balances'
 import { type Chain } from '@chainflip/sdk/swap'

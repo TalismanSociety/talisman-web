@@ -1,5 +1,6 @@
 import { TokenSelector } from './TokenSelector'
-import { fromAccountState, fromAddressState, fromAmountInputState, useAssetAndChain } from './api'
+import { TokenSelectorNew } from './TokenSelectorNew'
+import { fromAccountState, fromAddressState, fromAmountInputState, useAssetAndChain } from './swap.api'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, TextInput } from '@talismn/ui'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
@@ -72,6 +73,12 @@ export const FromAmount: React.FC<{
                 assetAndChain.setDestAssetSymbol(assetAndChain.srcAssetSymbol)
               }
             }}
+          />
+          <TokenSelectorNew
+            onSelectAsset={a => {
+              console.log(a)
+            }}
+            selectedAsset={null}
           />
         </div>
       }

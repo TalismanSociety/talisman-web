@@ -1,5 +1,6 @@
-import { chainflipAssetsState, chainflipNetworkState, swapsState, swapStatusSelector } from '../api'
 import { assetIcons } from '../chainflip-config'
+import { chainflipAssetsState, chainflipNetworkState } from '../chainflip.api'
+import { swapsState, swapStatusSelector } from '../swap.api'
 import { ErrorBoundary } from '@sentry/react'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, Skeleton, SurfaceButton } from '@talismn/ui'

@@ -39,7 +39,7 @@ const TokenSelectDialogItem = (props: TokenSelectDialogItemProps) => (
   </Clickable.WithFeedback>
 )
 
-export type Token = Omit<TokenSelectDialogItemProps, 'onClick'> & { id: string; chainId: string }
+export type Token = Omit<TokenSelectDialogItemProps, 'onClick'> & { id: string; chainId: any }
 
 export type TokenSelectDialogProps = {
   chains: Array<{ id: string; name: string; iconSrc: string }>

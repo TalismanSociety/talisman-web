@@ -1,9 +1,17 @@
+import {
+  chainflipAssetsAndChainsState,
+  chainflipSwappableAssets,
+  chainflipSwappableChains,
+  polkadotRpcAtom,
+  swapSdkState,
+} from './chainflip.api'
 import { swapInfoTabState } from './side-panel'
+import type { SwappableAssetType, SwappableChainId, SwappableChainType } from './swap.types'
 import { accountsState, evmAccountsState, substrateAccountsState, type Account } from '@/domains/accounts'
 import { substrateApiState } from '@/domains/common'
 import { storageEffect } from '@/domains/common/effects'
 import { connectedSubstrateWalletState } from '@/domains/extension'
-import { SwapSDK, type ChainflipNetwork, type Chain, type ChainData } from '@chainflip/sdk/swap'
+import { type ChainData } from '@chainflip/sdk/swap'
 import '@polkadot/api-augment/substrate'
 import { type DispatchError } from '@polkadot/types/interfaces'
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
@@ -27,56 +35,60 @@ import { createPublicClient, erc20Abi, http, isAddress, type SendTransactionRetu
 import { mainnet, sepolia } from 'viem/chains'
 import { useWalletClient } from 'wagmi'
 
-const ENABLED_CHAINS: Chain[] = ['Ethereum', 'Polkadot']
 const EVM_CHAINS = [mainnet, sepolia]
 
-export const chainflipNetworkState = atom<ChainflipNetwork>({
-  key: 'chainflipNetwork',
-  default: 'mainnet',
+export type AssetsWithProtocols = {
+  symbol: string
+  name: string
+  chainId: SwappableChainId
+  contractAddress?: string
+  assets: SwappableAssetType[]
+}
+
+export const allSwappableChainsState = selector({
+  key: 'allSwappableChains',
+  get: ({ get }) => {
+    const chainflipChains = get(chainflipSwappableChains)
+    const chains: Partial<Record<SwappableChainId, SwappableChainType>> = {}
+    chainflipChains.forEach(chain => {
+      chains[chain.chainId] = chain
+    })
+    return chains
+  },
 })
 
-export const swapSdkState = selector({
-  key: 'chainflipSwapSdk',
-  get: ({ get }) =>
-    new SwapSDK({
-      network: get(chainflipNetworkState),
-    }),
-  dangerouslyAllowMutability: true,
-})
+export const allSwappableAssetsState = selector({
+  key: 'allSwappableAssets',
+  get: ({ get }): AssetsWithProtocols[] => {
+    const chainflipAssets = get(chainflipSwappableAssets)
+    const chainsById = get(allSwappableChainsState)
+    const assetsWithProtocols: AssetsWithProtocols[] = []
+    chainflipAssets.forEach(asset => {
+      let assetIndex = assetsWithProtocols.findIndex(a => {
+        const chain = chainsById[asset.chainId]
+        if (!chain) return false
+        const chainMatch = asset.chainId === a.chainId
+        if (!chainMatch) return false
+        if (chain.evmChainId !== undefined) {
+          return asset.contractAddress === a.contractAddress
+        }
+        // TODO: in the future we may have to do some manual check for substrate assets
+        return asset.symbol === a.symbol
+      })
+      if (assetIndex === -1)
+        assetIndex =
+          assetsWithProtocols.push({
+            name: asset.name,
+            symbol: asset.symbol,
+            contractAddress: asset.contractAddress,
+            chainId: asset.chainId,
+            assets: [],
+          }) - 1
 
-export const polkadotRpcAtom = selector({
-  key: 'polkadotRpc',
-  get: ({ get }) =>
-    get(chainflipNetworkState) === 'mainnet'
-      ? 'wss://polkadot.api.onfinality.io/public'
-      : 'wss://rpc-pdot.chainflip.io',
-  dangerouslyAllowMutability: true,
-})
+      assetsWithProtocols[assetIndex]!.assets.push(asset)
+    })
 
-export const chainflipChainsState = selector({
-  key: 'chainflipChains',
-  get: async ({ get }) => await get(swapSdkState).getChains(),
-  dangerouslyAllowMutability: true,
-})
-
-export const chainflipAssetsState = selector({
-  key: 'chainflipAssets',
-  get: async ({ get }) => await get(swapSdkState).getAssets(),
-  dangerouslyAllowMutability: true,
-})
-
-export const chainflipAssetsAndChainsState = selector({
-  key: 'chainflipAssetsAndChains',
-  get: async ({ get }) => {
-    const _assets = get(chainflipAssetsState)
-    const _chains = get(chainflipChainsState)
-
-    const chains = _chains.filter(chain => ENABLED_CHAINS.includes(chain.chain))
-    const assets = _assets
-      .map(asset => ({ ...asset, chain: chains.find(chain => chain.chain === asset.chain)! }))
-      .filter(a => !!a.chain)
-
-    return { assets, chains }
+    return assetsWithProtocols
   },
 })
 

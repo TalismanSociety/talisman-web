@@ -1,5 +1,5 @@
 import { TokenSelector } from './TokenSelector'
-import { toAccountState, toAmountState, useAssetAndChain } from './api'
+import { toAccountState, toAmountState, useAssetAndChain } from './swap.api'
 import { TextInput } from '@talismn/ui'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
