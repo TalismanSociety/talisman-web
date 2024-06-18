@@ -20,7 +20,7 @@
     "zod": "^3.23.5"
   },
   "devDependencies": {
-    "@polkadot/api": "^10.13.1",
+    "@polkadot/api": "^11.2.1",
     "@talismn/eslint-config": "workspace:^",
     "@talismn/tsconfig": "workspace:^",
     "@vitejs/plugin-react": "^4.2.1",
@@ -33,7 +33,7 @@
     "vite": "^5.2.8"
   },
   "peerDependencies": {
-    "@polkadot/api": "10.x",
+    "@polkadot/api": "11.x",
     "jotai": "2.x",
     "react": "18.x",
     "viem": "2.x"

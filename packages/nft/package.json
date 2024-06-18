@@ -23,7 +23,7 @@
   "devDependencies": {
     "@acala-network/types": "^5.1.2",
     "@graphql-codegen/cli": "^5.0.0",
-    "@polkadot/api": "^10.13.1",
+    "@polkadot/api": "^11.2.1",
     "@talismn/eslint-config": "workspace:^",
     "eslint": "^9.2.0",
     "prettier": "^2.8.8",

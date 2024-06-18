@@ -10,6 +10,9 @@ import { Decimal } from '@talismn/math'
 import { useContext } from 'react'
 import { atom, selector, selectorFamily, waitForAll, type RecoilValueReadOnly } from 'recoil'
 
+const CHAINDATA_API = import.meta.env.REACT_APP_CHAINDATA
+if (!CHAINDATA_API && import.meta.env.DEV) throw new Error('env var REACT_APP_CHAINDATA not set')
+
 export const chainState = selectorFamily({
   key: 'Chain',
   get:
@@ -17,14 +20,14 @@ export const chainState = selectorFamily({
     async () =>
       nullToUndefined(
         await (
-          fetch(new URL(`./chains/byGenesisHash/${genesisHash}.json`, import.meta.env.REACT_APP_CHAINDATA)).then(
+          fetch(new URL(`./chains/byGenesisHash/${genesisHash}.json`, CHAINDATA_API)).then(
             async x => await x.json()
           ) as Promise<ChainData>
         ).then(async x => ({
           ...x,
           nativeToken: await Maybe.of(x.nativeToken).mapOrUndefined(
             async token =>
-              await fetch(new URL(`./tokens/byId/${token.id}.json`, import.meta.env.REACT_APP_CHAINDATA)).then(
+              await fetch(new URL(`./tokens/byId/${token.id}.json`, CHAINDATA_API)).then(
                 async response => (await response.json()) as IToken
               )
           ),
