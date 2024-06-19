@@ -1,115 +1,124 @@
-import { assetIcons, chainIcons } from './chainflip-config'
-import { chainflipAssetsAndChainsState } from './chainflip.api'
-import { getBalanceForChainflipAsset } from './swap.api'
+import type { CommonSwappableAssetType } from './swap-modules/common.swap-module'
+import { SwappableChainId } from './swap.types'
+import { swappableTokensAtom } from './swaps.api'
 import TokenSelectDialog, { type Token } from '@/components/recipes/TokenSelectDialog'
 import { selectedCurrencyState } from '@/domains/balances'
-import { type Chain } from '@chainflip/sdk/swap'
-import { useBalances } from '@talismn/balances-react'
+import { useGetEvmOrSubstrateChain } from '@/hooks/useGetEvmOrSubstrateChain'
+import { useBalances, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { Skeleton, SurfaceButton } from '@talismn/ui'
 import { X } from '@talismn/web-icons'
+import { useAtomValue } from 'jotai'
 import type React from 'react'
-import { useMemo, useState } from 'react'
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { Suspense, useCallback, useMemo, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
 type Props = {
-  selectedAssetSymbol: string | null
-  selectedAssetChain: string | null
-  assetFilter?: (asset: Token) => boolean
-  onSelectToken: (asset: Token | null) => void
+  selectedAsset: CommonSwappableAssetType | null
+  assetFilter?: (asset: CommonSwappableAssetType) => boolean
+  onSelectAsset: (asset: CommonSwappableAssetType | null) => void
   balanceFor?: string | null
 }
 
-export const TokenSelector: React.FC<Props> = ({
-  selectedAssetSymbol,
-  selectedAssetChain,
-  assetFilter,
-  onSelectToken,
-  balanceFor,
-}) => {
-  const assetsAndChains = useRecoilValueLoadable(chainflipAssetsAndChainsState)
+export const TokenSelector: React.FC<Props> = ({ selectedAsset, assetFilter, onSelectAsset, balanceFor }) => {
+  const allSwappableAssets = useAtomValue(swappableTokensAtom)
   const [open, setOpen] = useState(false)
   const balances = useBalances()
+  const tokens = useTokens()
+  const getChain = useGetEvmOrSubstrateChain()
   const currency = useRecoilValue(selectedCurrencyState)
 
-  const selectedToken = useMemo(() => {
-    if (assetsAndChains.state !== 'hasValue') return undefined
-    return (
-      assetsAndChains.contents.assets.find(
-        asset => asset.symbol === selectedAssetSymbol && asset.chain?.chain === selectedAssetChain
-      ) ?? null
-    )
-  }, [assetsAndChains, selectedAssetSymbol, selectedAssetChain])
+  const token = useMemo((): (typeof tokens)[string] | null => {
+    if (!selectedAsset) return null
+    return tokens[selectedAsset.id] ?? null
+  }, [selectedAsset, tokens])
+
+  const chain = useMemo(() => (selectedAsset ? getChain(selectedAsset.chainId) : null), [selectedAsset, getChain])
+
+  const filteredAssets = useMemo(
+    () => (assetFilter ? allSwappableAssets.filter(assetFilter) : allSwappableAssets),
+    [allSwappableAssets, assetFilter]
+  )
 
   const assetItems = useMemo(
     () =>
-      assetsAndChains.state === 'hasValue'
-        ? assetsAndChains.contents.assets
-            .map(asset => {
-              const assetBalances = getBalanceForChainflipAsset(balances, asset.symbol, asset.chain)
-              const balanceToDisplay = balanceFor
-                ? assetBalances?.find(b => b.address.toLowerCase() === balanceFor.toLowerCase())
-                : assetBalances
+      filteredAssets
+        .map((asset): Token | null => {
+          const token = tokens[asset.id]
+          const chain = getChain(asset.chainId)
+          if (!token || !chain) return null
+          const assetBalances = balances.find(balance => balance.tokenId === asset.id)
+          const balanceToDisplay = balanceFor
+            ? assetBalances?.find(b => b.address.toLowerCase() === balanceFor.toLowerCase())
+            : assetBalances
 
-              return {
-                id: asset.asset,
-                name: asset.name,
-                code: asset.symbol,
-                iconSrc: assetIcons[asset.asset],
-                chain: asset.chain?.name,
-                chainId: asset.chain?.chain,
-                amount: Decimal.fromPlanck(balanceToDisplay.sum.planck.transferable, asset.decimals, {
-                  currency: asset.symbol,
-                }).toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 }),
-                fiatAmount: balanceToDisplay.sum.fiat(currency).transferable.toLocaleString(undefined, {
-                  style: 'currency',
-                  currency,
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                }),
-              }
-            })
-            .filter(asset => assetFilter?.(asset) ?? true)
-        : [],
-    [assetsAndChains.state, assetsAndChains.contents.assets, assetFilter, currency, balances, balanceFor]
+          return {
+            id: token.id,
+            name: asset.name,
+            code: asset.symbol,
+            iconSrc: token.logo,
+            chain: chain.name ?? '',
+            chainId: asset.chainId,
+            amount: Decimal.fromPlanck(balanceToDisplay.sum.planck.transferable, 18, {
+              currency: asset.symbol,
+            }).toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 }),
+            fiatAmount: balanceToDisplay.sum.fiat(currency).transferable.toLocaleString(undefined, {
+              style: 'currency',
+              currency,
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }),
+          }
+        })
+        .filter(asset => asset !== null) as Token[],
+    [filteredAssets, tokens, getChain, balances, balanceFor, currency]
   )
 
   const chainItems = useMemo(() => {
-    const chains: Partial<Record<Chain, string>> = {}
+    const chains: Partial<Record<SwappableChainId, string>> = {}
     assetItems.forEach(a => {
-      chains[a.chainId] = a.chain
+      if (a !== null) chains[a.chainId as SwappableChainId] = a.chain
     })
 
     return Object.entries(chains).map(([id, name]) => ({
       id,
       name,
-      iconSrc: chainIcons[id as Chain],
+      iconSrc: getChain(id)?.logo ?? '',
     }))
-  }, [assetItems])
+  }, [assetItems, getChain])
 
-  if (assetsAndChains.state === 'loading') return <Skeleton.Surface className="w-[80px] h-[40px]" />
+  const handleSelectToken = useCallback(
+    (token: Token) => {
+      setOpen(false)
+      onSelectAsset(filteredAssets.find(a => token.id === a.id) ?? null)
+    },
+    [filteredAssets, onSelectAsset]
+  )
 
   return (
     <div className="">
       <SurfaceButton
         className="!py-[4px] !px-[8px] !h-[40px] !rounded-[8px] items-center flex"
+        // TODO: need a logo for unknown token logo
         leadingIcon={
-          selectedToken ? <img src={assetIcons[selectedToken.asset] ?? ''} className="w-[24px] h-[24px]" /> : undefined
+          selectedAsset ? <img src={token?.logo ?? ''} className="w-[24px] h-[24px] rounded-full" /> : undefined
         }
         onClick={() => setOpen(true)}
       >
         <div>
-          {selectedToken ? (
+          {selectedAsset ? (
             <div className="flex items-center gap-[4px]">
               <div className="text-left">
-                <p className="text-[14px] leading-none mb-[2px]">{selectedToken.symbol}</p>
-                <p className="text-[10px] text-gray-400 leading-none">{selectedToken.chain?.name}</p>
+                <p className="text-[14px] leading-none mb-[2px]">{selectedAsset.symbol}</p>
+                <p className="text-[10px] text-gray-400 leading-none whitespace-nowrap max-w-[52px] overflow-hidden text-ellipsis">
+                  {chain?.name}
+                </p>
               </div>
               <X
                 size={16}
                 onClick={e => {
                   e.stopPropagation()
-                  onSelectToken(null)
+                  onSelectAsset(null)
                 }}
               />
             </div>
@@ -123,9 +132,15 @@ export const TokenSelector: React.FC<Props> = ({
           chains={chainItems ?? []}
           tokens={assetItems ?? []}
           onRequestDismiss={() => setOpen(false)}
-          onSelectToken={onSelectToken}
+          onSelectToken={handleSelectToken}
         />
       )}
     </div>
   )
 }
+
+export const SuspensedTokenSelector: React.FC<Props> = props => (
+  <Suspense fallback={<Skeleton.Surface className="w-[80px] h-[40px]" />}>
+    <TokenSelector {...props} />
+  </Suspense>
+)

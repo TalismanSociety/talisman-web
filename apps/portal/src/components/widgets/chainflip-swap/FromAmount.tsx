@@ -1,17 +1,31 @@
-import { TokenSelector } from './TokenSelector'
-import { TokenSelectorNew } from './TokenSelectorNew'
-import { fromAccountState, fromAddressState, fromAmountInputState, useAssetAndChain } from './swap.api'
+import { SuspensedTokenSelector } from './TokenSelector'
+import {
+  fromAmountInputAtom,
+  fromAssetAtom,
+  toAssetAtom,
+  type CommonSwappableAssetType,
+} from './swap-modules/common.swap-module'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, TextInput } from '@talismn/ui'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { useAtom } from 'jotai'
+import { useCallback } from 'react'
 
 export const FromAmount: React.FC<{
-  assetAndChain: ReturnType<typeof useAssetAndChain>
+  // NOTE: we get this as a prop so we dont have to get this balance twice. The parent component also needs this to
+  // check whether user has enough balance to swap
   availableBalance: { balance: Decimal; loading: boolean } | null
-}> = ({ assetAndChain, availableBalance }) => {
-  const [fromAmountInput, setFromAmountInput] = useRecoilState(fromAmountInputState)
-  const fromAccount = useRecoilValue(fromAccountState)
-  const setFromAddress = useSetRecoilState(fromAddressState)
+}> = ({ availableBalance }) => {
+  const [fromAmountInput, setFromAmountInput] = useAtom(fromAmountInputAtom)
+  const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
+  const [toAsset, setToAsset] = useAtom(toAssetAtom)
+
+  const handleSelectAsset = useCallback(
+    (asset: CommonSwappableAssetType | null) => {
+      if (toAsset && toAsset.id === asset?.id) setToAsset(fromAsset)
+      setFromAsset(asset)
+    },
+    [fromAsset, setFromAsset, setToAsset, toAsset]
+  )
 
   return (
     <TextInput
@@ -21,10 +35,7 @@ export const FromAmount: React.FC<{
           availableBalance.loading ? (
             <CircularProgressIndicator size={12} />
           ) : (
-            `Balance: ${availableBalance.balance.toLocaleString(undefined, {
-              minimumFractionDigits: 4,
-              maximumFractionDigits: 4,
-            })}`
+            `Balance: ${availableBalance.balance.toLocaleString()}`
           )
         ) : null
       }
@@ -45,41 +56,7 @@ export const FromAmount: React.FC<{
               <p css={{ fontSize: 12, lineHeight: 1 }}>Max</p>
             </TextInput.LabelButton>
           )}
-          <TokenSelector
-            balanceFor={fromAccount?.address ?? null}
-            selectedAssetSymbol={assetAndChain.srcAssetSymbol}
-            selectedAssetChain={assetAndChain.srcAssetChain}
-            onSelectToken={token => {
-              if (!token) {
-                assetAndChain.setSrcAssetSymbol(null)
-                assetAndChain.setSrcAssetChain(null)
-
-                return
-              }
-              assetAndChain.setSrcAssetSymbol(token.code)
-              assetAndChain.setSrcAssetChain(token.chainId)
-
-              if (fromAccount) {
-                if (
-                  (token.chain === 'Ethereum' && fromAccount.type !== 'ethereum') ||
-                  (token.chain === 'Polkadot' && fromAccount.type === 'ethereum')
-                ) {
-                  setFromAddress(null)
-                }
-              }
-
-              if (token.chain === assetAndChain.destAssetChain) {
-                assetAndChain.setDestAssetChain(assetAndChain.srcAssetChain)
-                assetAndChain.setDestAssetSymbol(assetAndChain.srcAssetSymbol)
-              }
-            }}
-          />
-          <TokenSelectorNew
-            onSelectAsset={a => {
-              console.log(a)
-            }}
-            selectedAsset={null}
-          />
+          <SuspensedTokenSelector onSelectAsset={handleSelectAsset} selectedAsset={fromAsset} />
         </div>
       }
     />

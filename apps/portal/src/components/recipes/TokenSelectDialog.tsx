@@ -25,7 +25,9 @@ const TokenSelectDialogItem = (props: TokenSelectDialogItemProps) => (
     >
       <ListItem
         css={{ flex: 1, padding: 0 }}
-        leadingContent={<img src={props.iconSrc} css={{ width: '4rem', height: '4rem' }} />}
+        leadingContent={
+          <img src={props.iconSrc} css={{ width: '4rem', height: '4rem' }} className="w-[40px] h-[40px] rounded-full" />
+        }
         headlineContent={props.code}
         supportingContent={props.name}
       />
@@ -95,7 +97,7 @@ export const TokenSelectDialog = (props: TokenSelectDialogProps) => {
             <Select.Option
               key={chain.id}
               value={chain.id}
-              leadingIcon={<img src={chain.iconSrc} css={{ width: '2.4rem', height: '2.4rem' }} />}
+              leadingIcon={<img className="w-[24px] h-[24px] rounded-full" src={chain.iconSrc} />}
               headlineContent={chain.name}
             />
           ))}

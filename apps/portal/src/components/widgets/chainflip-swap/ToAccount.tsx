@@ -1,34 +1,38 @@
-import { toAddressState, useAssetAndChain } from './swap.api'
+import { toAddressAtom, toAssetAtom } from './swap-modules/common.swap-module'
 import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
+import { cn } from '@/lib/utils'
+import { useTokens } from '@talismn/balances-react'
 import { Surface } from '@talismn/ui'
+import { useAtom, useAtomValue } from 'jotai'
 import type React from 'react'
 import { useMemo } from 'react'
-import { useRecoilState } from 'recoil'
 
-export const ToAccount: React.FC<{ assetAndChain: ReturnType<typeof useAssetAndChain> }> = ({ assetAndChain }) => {
-  const [toAddess, setToAddress] = useRecoilState(toAddressState)
+export const ToAccount: React.FC = () => {
+  const toAsset = useAtomValue(toAssetAtom)
+  const [toAddess, setToAddress] = useAtom(toAddressAtom)
+  const tokens = useTokens()
 
-  const allowedAccountsType = useMemo(() => {
-    if (assetAndChain.destAssetChain) {
-      return assetAndChain.destAssetChain === 'Polkadot' ? 'substrate' : 'ethereum'
-    }
-    if (assetAndChain.srcAssetChain) {
-      return assetAndChain.srcAssetChain === 'Polkadot' ? 'ethereum' : 'substrate'
-    }
-    return 'all'
-  }, [assetAndChain])
+  const token = useMemo(() => {
+    if (!toAsset) return null
+    return tokens[toAsset.id]
+  }, [toAsset, tokens])
 
   return (
     <Surface className="bg-card p-[16px] rounded-[8px] w-full">
-      <h4 className="text-[16px] font-semibold">To Account</h4>
-      <SeparatedAccountSelector
-        allowInput
-        accountsType={allowedAccountsType}
-        substrateAccountsFilter={a => !a.readonly}
-        substrateAccountPrefix={0}
-        value={toAddess}
-        onAccountChange={setToAddress}
-      />
+      <div className="flex items-center justify-between">
+        <h4 className={cn('text-[16px]', toAsset ? 'font-semibold' : 'text-gray-500')}>To Account</h4>
+        <p className="text-primary text-[14px] font-medium">Send to another address</p>
+      </div>
+      {toAsset && (
+        <SeparatedAccountSelector
+          allowInput
+          accountsType={!token ? 'all' : token?.evmNetwork ? 'ethereum' : 'substrate'}
+          substrateAccountsFilter={a => !a.readonly}
+          substrateAccountPrefix={0}
+          value={toAddess}
+          onAccountChange={setToAddress}
+        />
+      )}
     </Surface>
   )
 }

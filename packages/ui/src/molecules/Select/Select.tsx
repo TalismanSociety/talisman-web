@@ -114,7 +114,7 @@ const Select = Object.assign(
 
     const optionsArray = useMemo(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (): React.ReactElement<SelectItemProps>[] => React.Children.map(children as any, findOption).flat(),
+      (): React.ReactElement<SelectItemProps>[] => React.Children.map(children as any, findOption)?.flat() ?? [],
       [children]
     )
 

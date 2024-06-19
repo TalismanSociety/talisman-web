@@ -5,23 +5,26 @@ import {
   polkadotRpcAtom,
   swapSdkState,
 } from './chainflip.api'
-import { swapInfoTabState } from './side-panel'
+import { swapInfoTabAtom } from './side-panel'
 import type { SwappableAssetType, SwappableChainId, SwappableChainType } from './swap.types'
 import { accountsState, evmAccountsState, substrateAccountsState, type Account } from '@/domains/accounts'
+import { getCoinGeckoErc20Coin } from '@/domains/balances/coingecko'
 import { substrateApiState } from '@/domains/common'
 import { storageEffect } from '@/domains/common/effects'
 import { connectedSubstrateWalletState } from '@/domains/extension'
+import { useSetCustomTokens, type CustomTokensConfig } from '@/hooks/useSetCustomTokens'
 import { type ChainData } from '@chainflip/sdk/swap'
 import '@polkadot/api-augment/substrate'
 import { type DispatchError } from '@polkadot/types/interfaces'
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { array, jsonParser, number, object, or, string } from '@recoiljs/refine'
-import { type Balances } from '@talismn/balances'
-import { useBalances } from '@talismn/balances-react'
+import { type Balances, evmErc20TokenId, evmNativeTokenId, subNativeTokenId } from '@talismn/balances'
+import { useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { toast } from '@talismn/ui'
 import '@talismn/ui/assets/css/talismn.css'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useSetAtom } from 'jotai'
+import { useCallback, useMemo } from 'react'
 import {
   atom,
   selector,
@@ -43,6 +46,22 @@ export type AssetsWithProtocols = {
   chainId: SwappableChainId
   contractAddress?: string
   assets: SwappableAssetType[]
+}
+
+export const getTokenIdForSwappableAsset = (
+  asset: Pick<SwappableAssetType, 'contractAddress'>,
+  chain: SwappableChainType
+) => {
+  switch (chain.type) {
+    case 'evm':
+      return asset.contractAddress
+        ? evmErc20TokenId(chain.chainId.toString(), asset.contractAddress)
+        : evmNativeTokenId(chain.chainId.toString())
+    case 'substrate':
+      return subNativeTokenId(chain.chainId.toString())
+    default:
+      return 'not-supported'
+  }
 }
 
 export const allSwappableChainsState = selector({
@@ -328,144 +347,17 @@ export const processingSwapState = atom<boolean>({
 export const getBalanceForChainflipAsset = (balances: Balances, tokenSymbol: string, chainData: ChainData) =>
   balances.find(b => {
     const chainMatch = b.evmNetworkId === `${chainData.evmChainId}` || b.chain?.name === chainData.chain
-    const tokenMatch = b.token.symbol === tokenSymbol
-    return tokenMatch && chainMatch && !b.subSource
+    const tokenMatch = b.token?.symbol === tokenSymbol
+    return tokenMatch && chainMatch
   })
 
 // ==== HOOKS ====
-
-export const useAssetAndChain = (
-  onForceChange?: (props: { newSrcAssetSymbol: string | null; newDestAssetSymbol: string | null }) => void
-) => {
-  const fromAccount = useRecoilValue(fromAccountState)
-  const toAccount = useRecoilValue(toAccountState)
-  const setFromAddress = useSetRecoilState(fromAddressState)
-  const setToAddress = useSetRecoilState(toAddressState)
-  const [srcAssetSymbol, setSrcAssetSymbol] = useRecoilState(srcAssetSymbolState)
-  const [srcAssetChain, setSrcAssetChain] = useRecoilState(srcAssetChainState)
-  const fromAssetLoadable = useRecoilValueLoadable(fromAssetState)
-  const toAssetLoadable = useRecoilValueLoadable(toAssetState)
-
-  const [destAssetSymbol, setDestAssetSymbol] = useRecoilState(destAssetSymbolState)
-  const [destAssetChain, setDestAssetChain] = useRecoilState(destAssetChainState)
-
-  const reverse = useCallback(() => {
-    setSrcAssetChain(destAssetChain)
-    setSrcAssetSymbol(destAssetSymbol)
-    setDestAssetChain(srcAssetChain)
-    setDestAssetSymbol(srcAssetSymbol)
-    setFromAddress(toAccount?.address ?? null)
-    setToAddress(fromAccount?.address ?? null)
-  }, [
-    destAssetChain,
-    destAssetSymbol,
-    toAccount,
-    fromAccount,
-    srcAssetChain,
-    srcAssetSymbol,
-    setFromAddress,
-    setToAddress,
-    setSrcAssetChain,
-    setSrcAssetSymbol,
-    setDestAssetChain,
-    setDestAssetSymbol,
-  ])
-
-  useEffect(() => {
-    if (fromAccount && toAccount) {
-      if (
-        (fromAccount.type === 'ethereum' && toAccount.type === 'ethereum') ||
-        (fromAccount.type !== 'ethereum' && toAccount.type !== 'ethereum')
-      ) {
-        setToAddress(fromAccount?.address ?? null)
-      }
-    }
-  }, [fromAccount, toAccount, setToAddress])
-
-  // TODO: need a better identifier for chains before we turn on arbitrum
-  useEffect(() => {
-    if (fromAccount && srcAssetChain) {
-      if (
-        (fromAccount.type === 'ethereum' && srcAssetChain !== 'Ethereum') ||
-        (fromAccount.type !== 'ethereum' && srcAssetChain === 'Ethereum')
-      ) {
-        setSrcAssetChain(destAssetChain)
-        setSrcAssetSymbol(destAssetSymbol)
-        setDestAssetChain(srcAssetChain)
-        setDestAssetSymbol(srcAssetSymbol)
-        onForceChange?.({
-          newSrcAssetSymbol: destAssetSymbol!,
-          newDestAssetSymbol: srcAssetSymbol!,
-        })
-      }
-    }
-  }, [
-    fromAccount,
-    srcAssetChain,
-    srcAssetSymbol,
-    destAssetChain,
-    destAssetSymbol,
-    setSrcAssetChain,
-    setSrcAssetSymbol,
-    setDestAssetChain,
-    setDestAssetSymbol,
-    onForceChange,
-  ])
-
-  const fromAssetJson = useMemo(() => {
-    if (fromAssetLoadable.state === 'hasValue') {
-      return fromAssetLoadable.contents
-    }
-    return null
-  }, [fromAssetLoadable])
-
-  const toAssetJson = useMemo(() => {
-    if (toAssetLoadable.state === 'hasValue') {
-      return toAssetLoadable.contents
-    }
-    return null
-  }, [toAssetLoadable])
-
-  return {
-    srcAssetSymbol,
-    setSrcAssetSymbol,
-    srcAssetChain,
-    setSrcAssetChain,
-    destAssetSymbol,
-    setDestAssetSymbol,
-    destAssetChain,
-    setDestAssetChain,
-    reverse,
-    fromAssetJson,
-    toAssetJson,
-  }
-}
-
-export const useChainflipAssetBalance = (
-  address?: string | null,
-  tokenSymbol?: string | null,
-  tokenDecimal?: number | null,
-  chainData?: ChainData | null
-) => {
-  const balances = useBalances()
-
-  return useMemo(() => {
-    if (!address || !tokenSymbol || !chainData || !tokenDecimal) return null
-    const assetBalance = getBalanceForChainflipAsset(balances, tokenSymbol, chainData)
-    const targetBalances = assetBalance.find(b => b.address.toLowerCase() === address.toLowerCase())
-    const loading = targetBalances.each.find(b => b.status === 'initializing') !== undefined
-    return {
-      balance: Decimal.fromPlanck(targetBalances.sum.planck.transferable, tokenDecimal, { currency: tokenSymbol }),
-      loading,
-    }
-  }, [balances, address, tokenSymbol, tokenDecimal, chainData])
-}
 
 export const useSwap = () => {
   const fromAccount = useRecoilValue(fromAccountState)
   const toAccount = useRecoilValue(toAccountState)
   const setFromAountInput = useSetRecoilState(fromAmountInputState)
-  const setInfoTab = useSetRecoilState(swapInfoTabState)
+  const setInfoTab = useSetAtom(swapInfoTabAtom)
   const fromAssetLoadable = useRecoilValueLoadable(fromAssetState)
   const toAssetLoadable = useRecoilValueLoadable(toAssetState)
   const fromAmountLoadable = useRecoilValueLoadable(fromAmountState)
@@ -630,4 +522,75 @@ export const useSwap = () => {
   ])
 
   return { swap, initializing: substrateApiLoadable.state !== 'hasValue', swapping }
+}
+
+const coingeckoErc20Selector = selectorFamily({
+  key: 'coingeckoErc20',
+  get:
+    ([assetPlatformId, contractAddress]: [string, string]) =>
+    async () =>
+      await getCoinGeckoErc20Coin(assetPlatformId, contractAddress),
+})
+
+const coingeckoErc20BultSelector = selectorFamily({
+  key: 'coingeckoErc20',
+  get:
+    (details: string[]) =>
+    async ({ get }) => {
+      if (details.length === 0) return []
+      const tokens = details.map(id => id.split(':') as [string, string])
+      return Promise.all(
+        tokens.map(([assetPlatformId, contractAddress]) =>
+          get(coingeckoErc20Selector([assetPlatformId, contractAddress]))
+        )
+      )
+    },
+})
+
+export const useLoadTokens = () => {
+  const assets = useRecoilValueLoadable(allSwappableAssetsState)
+  const chains = useRecoilValueLoadable(allSwappableChainsState)
+  const tokens = useTokens()
+
+  const assetsToSet = useMemo((): CustomTokensConfig => {
+    if (assets.state !== 'hasValue' || chains.state !== 'hasValue') return []
+    const _assets = assets.contents
+    const _chains = chains.contents
+    const missingAssets = _assets.filter(a => {
+      const chain = _chains[a.chainId]
+      // chain not supported
+      if (!chain) return false
+      // we cant process a token that we dont know contract for
+      if (!a.contractAddress) return false
+      // we cant process a token that we dont know decimals for
+      if (!a.assets.find(a => a.decimals !== undefined)) return false
+
+      const tokenId = getTokenIdForSwappableAsset(a, chain)
+      return !tokens[tokenId]
+    })
+    return missingAssets.map(a => ({
+      contractAddress: a.contractAddress!,
+      decimals: a.assets.find(a => a.decimals !== undefined)!.decimals,
+      evmChainId: a.chainId.toString(),
+      symbol: a.symbol.toUpperCase(),
+    }))
+  }, [assets.contents, assets.state, chains.contents, chains.state, tokens])
+
+  const coingeckoErc20 = useRecoilValueLoadable(
+    coingeckoErc20BultSelector(assetsToSet.map(({ evmChainId, contractAddress }) => `${evmChainId}:${contractAddress}`))
+  )
+
+  const tokensToSet = useMemo((): CustomTokensConfig => {
+    if (coingeckoErc20.state !== 'hasValue') return []
+    return assetsToSet.map(a => ({
+      ...a,
+      coingeckoId: coingeckoErc20.contents.find(
+        c => c?.contract_address.toLowerCase() === a.contractAddress.toLowerCase()
+      )?.id,
+      logo: coingeckoErc20.contents.find(c => c?.contract_address.toLowerCase() === a.contractAddress.toLowerCase())
+        ?.image.large,
+    }))
+  }, [assetsToSet, coingeckoErc20.contents, coingeckoErc20.state])
+
+  useSetCustomTokens(tokensToSet)
 }

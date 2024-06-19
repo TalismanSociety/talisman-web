@@ -99,7 +99,7 @@ export const ChainflipActivities: React.FC = () => {
   const [activities] = useRecoilState(swapsState)
   if (activities.length > 0) {
     return (
-      <div className="w-full grid gap-[8px] max-h-[396px] overflow-y-auto">
+      <div className="w-full grid gap-[8px]">
         {activities.map(activity => (
           <ErrorBoundary
             key={activity.id}
