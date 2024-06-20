@@ -1,4 +1,4 @@
-import { SuspensedTokenSelector } from './TokenSelector'
+import { SuspensedSwapTokenSelector } from './SwapTokenSelector'
 import {
   fromAddressAtom,
   fromAmountInputAtom,
@@ -58,7 +58,7 @@ export const FromAmount: React.FC<{
               <p css={{ fontSize: 12, lineHeight: 1 }}>Max</p>
             </TextInput.LabelButton>
           )}
-          <SuspensedTokenSelector
+          <SuspensedSwapTokenSelector
             balanceFor={fromAddress ?? null}
             onSelectAsset={handleSelectAsset}
             selectedAsset={fromAsset}

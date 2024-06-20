@@ -20,7 +20,7 @@ type Props = {
   balanceFor?: string | null
 }
 
-export const TokenSelector: React.FC<Props> = ({ selectedAsset, assetFilter, onSelectAsset, balanceFor }) => {
+export const SwapTokenSelector: React.FC<Props> = ({ selectedAsset, assetFilter, onSelectAsset, balanceFor }) => {
   const allSwappableAssets = useAtomValue(swappableTokensAtom)
   const [open, setOpen] = useState(false)
   const balances = useBalances()
@@ -139,10 +139,10 @@ export const TokenSelector: React.FC<Props> = ({ selectedAsset, assetFilter, onS
   )
 }
 
-export const SuspensedTokenSelector: React.FC<Props> = props => (
+export const SuspensedSwapTokenSelector: React.FC<Props> = props => (
   <ErrorBoundary fallback={<Skeleton.Surface className="w-[80px] h-[40px]" />}>
     <Suspense fallback={<Skeleton.Surface className="w-[80px] h-[40px]" />}>
-      <TokenSelector {...props} />
+      <SwapTokenSelector {...props} />
     </Suspense>
   </ErrorBoundary>
 )

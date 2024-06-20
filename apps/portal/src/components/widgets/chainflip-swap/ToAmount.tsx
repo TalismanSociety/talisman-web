@@ -1,4 +1,4 @@
-import { SuspensedTokenSelector } from './TokenSelector'
+import { SuspensedSwapTokenSelector } from './SwapTokenSelector'
 import {
   fromAssetAtom,
   toAddressAtom,
@@ -53,7 +53,7 @@ export const ToAmount: React.FC = () => {
       disabled
       value={toAmountLoadable.state === 'hasData' ? toAmountLoadable.data?.toString() ?? '' : ''}
       trailingIcon={
-        <SuspensedTokenSelector
+        <SuspensedSwapTokenSelector
           balanceFor={toAddress ?? null}
           onSelectAsset={handleSelectAsset}
           selectedAsset={toAsset}
