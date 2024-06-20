@@ -1,6 +1,11 @@
+import type { BaseWallet } from '@polkadot-onboard/core'
+import { ApiPromise } from '@polkadot/api'
 import { evmErc20TokenId, evmNativeTokenId, subNativeTokenId } from '@talismn/balances'
 import { Decimal } from '@talismn/math'
-import { type Atom, atom, type Getter, type Setter } from 'jotai'
+import { type Atom, atom, type Getter, type SetStateAction, type Setter } from 'jotai'
+import { atomWithStorage, createJSONStorage, unstable_withStorageValidator } from 'jotai/utils'
+import 'recoil'
+import type { WalletClient } from 'viem'
 
 export type SupportedSwapProtocol = 'chainflip'
 
@@ -22,12 +27,32 @@ export type BaseQuote = {
   data?: any
 }
 
+type SwapProps = {
+  evmWalletClient?: WalletClient
+  substrateWallet?: BaseWallet
+  getSubstrateApi: (rpc: string) => Promise<ApiPromise>
+  toAmount: Decimal | null
+}
+
+export type SwapActivity<TData> = {
+  protocol: SupportedSwapProtocol
+  timestamp: number
+  data: TData
+}
+
+export type QuoteFunction = (get: Getter) => Promise<BaseQuote | null>
+export type SwapFunction<TData> = (
+  get: Getter,
+  set: Setter,
+  props: SwapProps
+) => Promise<Omit<SwapActivity<TData>, 'timestamp'>>
+
 export type SwapModule = {
   protocol: SupportedSwapProtocol
   tokensSelector: Atom<Promise<CommonSwappableAssetType[]>>
-  quote: Atom<Promise<BaseQuote | null>>
+  quote: QuoteFunction
   /** Returns whether the swap succeeded or not */
-  swap: (get: Getter, set: Setter) => Promise<boolean>
+  swap: SwapFunction<any>
 }
 
 // atoms shared between swap modules
@@ -45,6 +70,45 @@ export const fromAmountAtom = atom(get => {
 })
 export const fromAddressAtom = atom<string | null>(null)
 export const toAddressAtom = atom<string | null>(null)
+export const swappingAtom = atom(false)
+
+// swaps history related atoms
+
+type StoredSwaps = SwapActivity<any>[]
+
+const validateSwaps = (value: unknown): value is StoredSwaps => {
+  if (!Array.isArray(value)) return false
+  for (const swap of value) {
+    if (typeof swap?.protocol !== 'string' || typeof swap?.timestamp !== 'number' || !swap?.data) return false
+  }
+  return true
+}
+
+const _swapsStorage = unstable_withStorageValidator(validateSwaps)(
+  createJSONStorage(() => globalThis.localStorage, {
+    reviver: (key, value) => {
+      if (key === 'timestamp' && typeof value === 'number') new Date(value)
+      return value
+    },
+  })
+)
+
+const filterAndSortStoredSwaps = (swaps: StoredSwaps) =>
+  swaps.toSorted((a, b) => b.timestamp - a.timestamp).slice(0, 50)
+
+const swapsStorage: typeof _swapsStorage = {
+  ..._swapsStorage,
+  getItem: (key, initialValue) => filterAndSortStoredSwaps(_swapsStorage.getItem(key, initialValue)),
+  setItem: (key, newValue) => _swapsStorage.setItem(key, filterAndSortStoredSwaps(newValue)),
+}
+
+const swapsStorageAtom = atomWithStorage('@talisman/swaps', [], swapsStorage)
+
+export const swapsAtom = atom(
+  get => filterAndSortStoredSwaps(get(swapsStorageAtom)),
+  (_, set, swaps: SetStateAction<StoredSwaps>) => set(swapsStorageAtom, swaps)
+)
+
 // helpers
 
 export const getTokenIdForSwappableAsset = (

@@ -5,10 +5,25 @@ import { FromAmount } from './FromAmount'
 import { ToAccount } from './ToAccount'
 import { ToAmount } from './ToAmount'
 import { shouldFocusDetailsAtom, SidePanel, swapInfoTabAtom } from './side-panel'
-import { fromAmountAtom, fromAmountInputAtom, fromAssetAtom, toAssetAtom } from './swap-modules/common.swap-module'
-import { fromAccountState, quoteRefresherState, toAddressState, useLoadTokens, useSwap } from './swap.api'
-import { toAmountAtom, useAssetToken, useReverse } from './swaps.api'
-import { useBalances } from '@talismn/balances-react'
+import {
+  fromAddressAtom,
+  fromAmountAtom,
+  fromAmountInputAtom,
+  fromAssetAtom,
+  toAddressAtom,
+  toAssetAtom,
+} from './swap-modules/common.swap-module'
+import {
+  swapQuoteAtom,
+  swapQuoteRefresherAtom,
+  toAmountAtom,
+  useAssetToken,
+  useLoadTokens,
+  useReverse,
+  useSwap,
+  useSyncPreviousChainflipSwaps,
+} from './swaps.api'
+import { useBalances, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { Button, Surface, TonalIconButton } from '@talismn/ui'
 import { Repeat } from '@talismn/web-icons'
@@ -24,37 +39,42 @@ import { useRecoilValue, useSetRecoilState } from 'recoil'
  */
 export const ChainFlipSwap: React.FC = () => {
   useLoadTokens()
+  useSyncPreviousChainflipSwaps()
+  const quote = useAtomValue(swapQuoteAtom)
+  const setQuoteRefresher = useSetAtom(swapQuoteRefresherAtom)
   const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
   const accounts = useRecoilValue(writeableSubstrateAccountsState)
   const ethAccount = useRecoilValue(wagmiAccountsState)
-  const { swap, swapping } = useSwap()
 
-  const fromAccount = useRecoilValue(fromAccountState)
-
-  const toAddress = useRecoilValue(toAddressState)
   const setInfoTab = useSetAtom(swapInfoTabAtom)
   const [shouldFocusDetails, setShouldFocusDetails] = useAtom(shouldFocusDetailsAtom)
-  const reverse = useReverse()
 
+  const fromAddress = useAtomValue(fromAddressAtom)
   const fromAmountInput = useAtomValue(fromAmountInputAtom)
   const fromAmount = useAtomValue(fromAmountAtom)
-  const toAmount = useAtomValue(loadable(toAmountAtom))
-
   const fromAsset = useAtomValue(fromAssetAtom)
-  const toAsset = useAtomValue(toAssetAtom)
-  const balances = useBalances()
   const fromToken = useAssetToken(fromAssetAtom)
 
+  const toAddress = useAtomValue(toAddressAtom)
+  const toAmount = useAtomValue(loadable(toAmountAtom))
+  const toAsset = useAtomValue(toAssetAtom)
+
+  const { swap, swapping } = useSwap()
+  const reverse = useReverse()
+  const balances = useBalances()
+  const tokens = useTokens()
+  if (fromToken) console.log(tokens[fromToken.id])
   const availableBalance = useMemo(() => {
-    if (!fromAccount || !fromAsset) return null
+    if (!fromAddress || !fromToken) return null
     const balance = balances.find(
-      b => b.tokenId === fromAsset.id && b.address.toLowerCase() === fromAccount.address.toLowerCase()
+      b => b.tokenId === fromToken.id && b.address.toLowerCase() === fromAddress.toLowerCase()
     )
+
     return {
-      balance: Decimal.fromPlanck(balance.sum.planck.transferable, fromAsset.decimals, { currency: fromAsset.symbol }),
-      loading: balance.find(b => b.status === 'stale').each.length !== 0,
+      balance: Decimal.fromPlanck(balance.sum.planck.transferable, fromToken.decimals, { currency: fromToken.symbol }),
+      loading: balance.find(b => b.status === 'stale').each.length !== 0 || balance.count === 0,
     }
-  }, [balances, fromAccount, fromAsset])
+  }, [balances, fromAddress, fromToken])
 
   const insufficientBalance = useMemo(() => {
     if (!availableBalance || availableBalance.loading) return undefined
@@ -62,12 +82,11 @@ export const ChainFlipSwap: React.FC = () => {
   }, [availableBalance, fromAmount.planck])
 
   // refresh quote every 15 seconds
-  const setQuoteRefresher = useSetRecoilState(quoteRefresherState)
   useEffect(() => {
     if (swapping) return
     const id = setInterval(() => {
       setShouldFocusDetails(false)
-      setQuoteRefresher(prev => prev + 1)
+      setQuoteRefresher(new Date().getTime())
     }, 15_000)
     return () => clearInterval(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -124,7 +143,7 @@ export const ChainFlipSwap: React.FC = () => {
               toAmount.state !== 'hasData' ||
               !toAmount.data ||
               toAmount.data.planck === 0n ||
-              !fromAccount ||
+              !fromAddress ||
               !toAddress ||
               insufficientBalance !== false ||
               swapping
@@ -132,7 +151,9 @@ export const ChainFlipSwap: React.FC = () => {
             loading={swapping}
             onClick={() => {
               setInfoTab('details')
-              swap()
+              if (quote.state === 'hasData' && quote.data) {
+                swap(quote.data.protocol)
+              }
             }}
           >
             {insufficientBalance ? 'Insufficient Balance' : 'Swap'}

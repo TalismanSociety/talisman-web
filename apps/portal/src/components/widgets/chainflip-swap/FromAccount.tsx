@@ -1,19 +1,18 @@
-import { fromAssetAtom } from './swap-modules/common.swap-module'
-import { fromAddressState } from './swap.api'
+import { fromAddressAtom, fromAssetAtom } from './swap-modules/common.swap-module'
 import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
 import { selectedCurrencyState } from '@/domains/balances'
 import { cn } from '@/lib/utils'
 import { useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { Surface } from '@talismn/ui'
-import { useAtomValue } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import type React from 'react'
 import { useMemo } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilValue } from 'recoil'
 
 export const FromAccount: React.FC = () => {
   const fromAsset = useAtomValue(fromAssetAtom)
-  const [fromAddress, setFromAddress] = useRecoilState(fromAddressState)
+  const [fromAddress, setFromAddress] = useAtom(fromAddressAtom)
   const currency = useRecoilValue(selectedCurrencyState)
 
   const tokens = useTokens()
@@ -58,7 +57,7 @@ export const FromAccount: React.FC = () => {
                   </p>
                 )
               }
-              const loading = b.each.find(b => b.status !== 'live') !== undefined
+              const loading = b.each.find(b => b.status !== 'live') !== undefined || b.count === 0
 
               return (
                 <p className={cn('text-[14px] text-gray-400 whitespace-nowrap', { 'animate-pulse': loading })}>

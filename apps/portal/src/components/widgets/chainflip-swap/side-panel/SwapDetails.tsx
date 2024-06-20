@@ -1,10 +1,9 @@
 import ErrorBoundary from '../../ErrorBoundary'
-import { fromAmountAtom, fromAssetAtom, toAssetAtom } from '../swap-modules/common.swap-module'
+import { fromAmountAtom, fromAssetAtom, swappingAtom, toAssetAtom } from '../swap-modules/common.swap-module'
 import { swapQuoteAtom } from '../swaps.api'
-import { ChainflipDetails } from './ChainflipDetails'
+import { ChainflipDetails } from './details/ChainflipDetails'
 import { CircularProgressIndicator } from '@talismn/ui'
 import { useAtomValue } from 'jotai'
-import { loadable } from 'jotai/utils'
 import { Suspense, useMemo } from 'react'
 
 const PlaceholderUI: React.FC = () => (
@@ -45,14 +44,14 @@ const PlaceholderUI: React.FC = () => (
   </div>
 )
 
-const LoadingUI: React.FC = () => (
+const LoadingUI: React.FC<{ title?: string; description?: React.ReactNode }> = ({ title, description }) => (
   <div className="flex items-center justify-center gap-[8px] flex-col border-gray-800 border rounded-[8px] p-[16px]">
     <div className="flex items-center justify-center h-[94px] w-[94px]">
       <CircularProgressIndicator size={48} />
     </div>
     <div>
-      <h4 className="font-bold text-[14px] text-center">Getting quote</h4>
-      <p className="text-gray-400 text-[14px] text-center">This shouldn't take too long.</p>
+      <h4 className="font-bold text-[14px] text-center">{title}</h4>
+      <p className="text-gray-400 text-[14px] text-center">{description}</p>
     </div>
   </div>
 )
@@ -113,7 +112,8 @@ const ErrorUI: React.FC<{ message?: string }> = ({ message }) => (
 )
 
 const Details: React.FC = () => {
-  const quote = useAtomValue(loadable(swapQuoteAtom))
+  const quote = useAtomValue(swapQuoteAtom)
+  const swapping = useAtomValue(swappingAtom)
 
   const renderProtocolDetails = useMemo(() => {
     if (quote.state !== 'hasData' || !quote.data) return null
@@ -125,7 +125,23 @@ const Details: React.FC = () => {
     }
   }, [quote])
 
-  if (quote.state === 'loading') return <LoadingUI />
+  if (quote.state === 'loading' || swapping)
+    return (
+      <LoadingUI
+        title={swapping ? 'Processing Swap' : 'Getting Quote'}
+        description={
+          swapping ? (
+            <span>
+              We are processing this swap.
+              <br />
+              It shouldn't take too long...
+            </span>
+          ) : (
+            "This shouldn't take too long."
+          )
+        }
+      />
+    )
   if (quote.state === 'hasError') return <ErrorUI message={(quote.error as any)?.message ?? ''} />
   if (!quote.data) return <PlaceholderUI />
 

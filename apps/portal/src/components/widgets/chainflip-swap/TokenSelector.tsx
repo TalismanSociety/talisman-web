@@ -1,9 +1,9 @@
 import type { CommonSwappableAssetType } from './swap-modules/common.swap-module'
-import { SwappableChainId } from './swap.types'
 import { swappableTokensAtom } from './swaps.api'
 import TokenSelectDialog, { type Token } from '@/components/recipes/TokenSelectDialog'
 import { selectedCurrencyState } from '@/domains/balances'
 import { useGetEvmOrSubstrateChain } from '@/hooks/useGetEvmOrSubstrateChain'
+import { ErrorBoundary } from '@sentry/react'
 import { useBalances, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { Skeleton, SurfaceButton } from '@talismn/ui'
@@ -75,9 +75,9 @@ export const TokenSelector: React.FC<Props> = ({ selectedAsset, assetFilter, onS
   )
 
   const chainItems = useMemo(() => {
-    const chains: Partial<Record<SwappableChainId, string>> = {}
+    const chains: Record<number | string, string> = {}
     assetItems.forEach(a => {
-      if (a !== null) chains[a.chainId as SwappableChainId] = a.chain
+      if (a !== null) chains[a.chainId] = a.chain
     })
 
     return Object.entries(chains).map(([id, name]) => ({
@@ -140,7 +140,9 @@ export const TokenSelector: React.FC<Props> = ({ selectedAsset, assetFilter, onS
 }
 
 export const SuspensedTokenSelector: React.FC<Props> = props => (
-  <Suspense fallback={<Skeleton.Surface className="w-[80px] h-[40px]" />}>
-    <TokenSelector {...props} />
-  </Suspense>
+  <ErrorBoundary fallback={<Skeleton.Surface className="w-[80px] h-[40px]" />}>
+    <Suspense fallback={<Skeleton.Surface className="w-[80px] h-[40px]" />}>
+      <TokenSelector {...props} />
+    </Suspense>
+  </ErrorBoundary>
 )

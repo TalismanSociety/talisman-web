@@ -1,6 +1,6 @@
-import { ChainflipActivities } from './ChainflipActivities'
 import { ChainFlipFAQ } from './ChainflipFAQ'
 import { SwapDetails } from './SwapDetails'
+import { SwapHistory } from './SwapHistory'
 import { cn } from '@/lib/utils'
 import { Chip } from '@talismn/ui'
 import { Activity, FileSearch, HelpCircle } from '@talismn/web-icons'
@@ -39,7 +39,7 @@ export const SidePanel: React.FC = () => {
       case 'details':
         return <SwapDetails />
       case 'activities':
-        return <ChainflipActivities />
+        return <SwapHistory />
       default:
         return <ChainFlipFAQ />
     }
@@ -63,7 +63,7 @@ export const SidePanel: React.FC = () => {
           </div>
         </div>
         <div className="flex-1 flex flex-col w-full">
-          <div className="h-0 min-h-full overflow-auto">{content}</div>
+          <div className="md:h-0 md:min-h-full overflow-auto max-h-[340px] md:max-h-auto">{content}</div>
         </div>
         <div className="bg-background mt-auto pt-3">
           <p className="text-center text-[12px] text-gray-500">

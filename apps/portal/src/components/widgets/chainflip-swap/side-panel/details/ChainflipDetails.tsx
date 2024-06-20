@@ -1,11 +1,10 @@
-import { assetIcons } from '../chainflip-config'
 import {
   chainflipAssetsAtom,
   chainflipAssetToSwappableAsset,
   chainflipChainsAtom,
-} from '../swap-modules/chainflip.swap-module'
-import { fromAmountAtom, fromAssetAtom, toAssetAtom } from '../swap-modules/common.swap-module'
-import { toAmountAtom } from '../swaps.api'
+} from '../../swap-modules/chainflip.swap-module'
+import { fromAmountAtom, fromAssetAtom, toAssetAtom } from '../../swap-modules/common.swap-module'
+import { toAmountAtom } from '../../swaps.api'
 import { selectedCurrencyState } from '@/domains/balances'
 import { type QuoteResponse } from '@chainflip/sdk/swap'
 import { useTokenRates, useTokens } from '@talismn/balances-react'
@@ -64,7 +63,10 @@ export const ChainflipDetails: React.FC<{ data: QuoteResponse }> = ({ data }) =>
               <ArrowRight size={16} className="text-gray-500" />
               {fromAsset.symbol.toUpperCase() !== 'USDC' && toAsset.symbol.toUpperCase() !== 'USDC' && (
                 <>
-                  <img src={assetIcons.USDC} className="w-[20px] h-[20px]" />
+                  <img
+                    src="https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/coingecko/usd-coin.webp"
+                    className="w-[20px] h-[20px]"
+                  />
                   <ArrowRight size={16} className="text-gray-500" />
                 </>
               )}

@@ -7,6 +7,10 @@ import {
   type BaseQuote,
   type SupportedSwapProtocol,
   type SwapModule,
+  fromAddressAtom,
+  toAddressAtom,
+  type SwapFunction,
+  type QuoteFunction,
 } from './common.swap-module'
 import {
   SwapSDK,
@@ -16,10 +20,16 @@ import {
   type AssetData,
   type ChainData,
 } from '@chainflip/sdk/swap'
+import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { Decimal } from '@talismn/math'
-import { atom } from 'jotai'
+import { atom, type Getter, type Setter } from 'jotai'
+import { atomEffect } from 'jotai-effect'
+import { atomFamily } from 'jotai/utils'
+import { erc20Abi, isAddress, type SendTransactionReturnType } from 'viem'
+import { arbitrum, mainnet, sepolia } from 'viem/chains'
 
 const PROTOCOL: SupportedSwapProtocol = 'chainflip'
+const EVM_CHAINS = [mainnet, sepolia, arbitrum]
 
 const CHAINFLIP_CHAIN_TO_ID_MAP: Record<Chain, string> = {
   Arbitrum: '42161',
@@ -30,7 +40,9 @@ const CHAINFLIP_CHAIN_TO_ID_MAP: Record<Chain, string> = {
 
 const CHAINFLIP_ID_TO_CHAIN_MAP: Record<string, Chain> = {
   '42161': 'Arbitrum',
+  '421614': 'Arbitrum', // arbitrum testnet
   '1': 'Ethereum',
+  '11155111': 'Ethereum',
   polkadot: 'Polkadot',
   unsupported: 'Bitcoin',
 }
@@ -39,7 +51,7 @@ const CHAINFLIP_ID_TO_CHAIN_MAP: Record<string, Chain> = {
  * Given an asset and chain from chainflip, convert it to a unified swappable asset type
  */
 export const chainflipAssetToSwappableAsset = (asset: AssetData, chain: ChainData): CommonSwappableAssetType | null => {
-  const chainId = CHAINFLIP_CHAIN_TO_ID_MAP[chain.chain]
+  const chainId = chain.evmChainId?.toString() ?? CHAINFLIP_CHAIN_TO_ID_MAP[chain.chain] ?? 'unsupported'
   if (chainId === 'unsupported') return null
   return {
     id: getTokenIdForSwappableAsset(chain.chain === 'Polkadot' ? 'substrate' : 'evm', chainId, asset.contractAddress),
@@ -50,30 +62,29 @@ export const chainflipAssetToSwappableAsset = (asset: AssetData, chain: ChainDat
     contractAddress: asset.contractAddress,
   }
 }
-
-const REMOVE_THIS_LATER_mockedArbitrum = {
-  chain: 'Arbitrum' as Chain,
-  evmChainId: 42161,
-  isMainnet: true,
-  name: 'Arbitrum',
-  requiredBlockConfirmations: 7,
-}
-
-const REMOVE_THIS_LATER_mockedArbToken = {
-  asset: 'ARB' as any,
-  chain: 'Arbitrum' as Chain,
-  chainflipId: 'Arb' as any,
-  contractAddress: '0x912ce59144191c1204e64559fe8253a0e49e6548',
-  decimals: 18,
-  minimumSwapAmount: '100000000000000000',
-  isMainnet: true,
-  maximumSwapAmount: '10000000000000000000000',
-  minimumEgressAmount: '100000000000000000',
-  name: 'ARB',
-  symbol: 'ARB',
+const swappableAssetToChainflipAsset = (
+  swappableAsset: CommonSwappableAssetType,
+  assets: AssetData[]
+): AssetData | undefined => {
+  const chain = CHAINFLIP_ID_TO_CHAIN_MAP[swappableAsset.chainId.toString()]
+  if (chain === 'Bitcoin') return undefined
+  return assets.find(a => {
+    if (a.chain !== chain) return false
+    if (chain === 'Polkadot') {
+      return a.asset === 'DOT'
+    } else if (swappableAsset.contractAddress) {
+      return a.contractAddress?.toLowerCase() === swappableAsset.contractAddress.toLowerCase()
+    } else {
+      // we're likely looking for native asset at this point, just double check that the symbol matches
+      return !a.contractAddress && a.symbol.toLowerCase() === swappableAsset.symbol.toLowerCase()
+    }
+  })
 }
 
 const chainflipNetworkAtom = atom<ChainflipNetwork>('mainnet')
+const polkadotRpcAtom = atom(get =>
+  get(chainflipNetworkAtom) === 'mainnet' ? 'wss://polkadot.api.onfinality.io/public' : 'wss://rpc-pdot.chainflip.io'
+)
 const swapSdkAtom = atom(
   get =>
     new SwapSDK({
@@ -89,17 +100,18 @@ const tokensSelector = atom(async (get): Promise<CommonSwappableAssetType[]> => 
   const chains = await get(chainflipChainsAtom)
   const tokens: CommonSwappableAssetType[] = []
 
-  for (const asset of [...assets, REMOVE_THIS_LATER_mockedArbToken]) {
-    const chain = [...chains, REMOVE_THIS_LATER_mockedArbitrum].find(chain => chain.chain === asset.chain)
+  for (const asset of assets) {
+    const chain = chains.find(chain => chain.chain === asset.chain)
     // for safety measure only, unless chainflip has bug
     if (!chain) continue
+    console.log(chain, asset)
     const swappableAsset = chainflipAssetToSwappableAsset(asset, chain)
     if (swappableAsset) tokens.push(swappableAsset)
   }
   return tokens
 })
 
-const quote = atom(async (get): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {
+const quote: QuoteFunction = async (get): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {
   const sdk = get(swapSdkAtom)
   const fromAsset = get(fromAssetAtom)
   const toAsset = get(toAssetAtom)
@@ -107,7 +119,6 @@ const quote = atom(async (get): Promise<(BaseQuote & { data?: QuoteResponse }) |
   const assets = await get(chainflipAssetsAtom)
   if (!fromAsset || !toAsset || !fromAmount || fromAmount.planck === 0n) return null
 
-  assets.push(REMOVE_THIS_LATER_mockedArbToken)
   const chainflipFromAsset = assets.find(
     asset =>
       asset.symbol.toLowerCase() === fromAsset.symbol.toLowerCase() &&
@@ -155,7 +166,6 @@ const quote = atom(async (get): Promise<(BaseQuote & { data?: QuoteResponse }) |
         : error.message === 'Request failed with status code 400'
         ? 'Pair not available. Please try another swapping a different asset pair'
         : error.message ?? 'Unknown error'
-    // TODO handle insufficient liquidity error
     return {
       protocol: PROTOCOL,
       inputAmountBN: fromAmount.planck,
@@ -163,35 +173,150 @@ const quote = atom(async (get): Promise<(BaseQuote & { data?: QuoteResponse }) |
       fees: null,
     }
   }
-})
+}
 
-// const swap = (get: Getter, set: Setter) => {
-//   const sdk = get(swapSdkAtom)
-//   if (!quote || quote.error) return false
-//   const fromAsset = get(fromAssetAtom)
-//   const toAsset = get(toAssetAtom)
-//   const fromAmount = get(fromAmountAtom)
-//   const quoteResponse = quote.data
+export type ChainflipSwapActivityData = {
+  id: string
+  network: ChainflipNetwork
+}
 
-//   if (!fromAsset || !toAsset || !fromAmount || fromAmount.planck === 0n || !quoteResponse) return false
+const swap: SwapFunction<ChainflipSwapActivityData> = async (
+  get: Getter,
+  _: Setter,
+  { evmWalletClient, getSubstrateApi, substrateWallet }
+) => {
+  const sdk = get(swapSdkAtom)
+  const network = get(chainflipNetworkAtom)
+  const fromAsset = get(fromAssetAtom)
+  const toAsset = get(toAssetAtom)
+  const fromAmount = get(fromAmountAtom)
+  const fromAddress = get(fromAddressAtom)
+  const toAddress = get(toAddressAtom)
+  const assets = await get(chainflipAssetsAtom)
+  const chains = await get(chainflipChainsAtom)
 
-//   set(fromAmountAtom, Decimal.fromPlanck(0n, fromAsset.decimals))
+  // make sure we have all the parameters we need
+  if (!fromAsset) throw new Error('From asset not selected.')
+  if (!toAsset) throw new Error('To asset not selected.')
+  if (!fromAddress) throw new Error('Missing from address')
+  if (!toAddress) throw new Error('Missing to address')
+  if (fromAmount.planck === 0n) throw new Error('Cannot swap 0 amount')
 
-//   sdk.swap({
-//     amount: fromAmount.planck.toString(),
-//     srcAsset: fromAsset.id,
-//     destAsset: toAsset.id,
-//     srcChain: fromAsset.chainId,
-//     destChain: toAsset.chainId,
-//     quote: quoteResponse,
-//   })
-//   return true
+  // map assets to chainflip assets
+  const chainflipFromAsset = swappableAssetToChainflipAsset(fromAsset, assets)
+  const chainflipToAsset = swappableAssetToChainflipAsset(toAsset, assets)
+  const chainflipFromChain = chains.find(c => c.chain === CHAINFLIP_ID_TO_CHAIN_MAP[fromAsset.chainId.toString()])
+  if (!chainflipFromAsset) throw new Error(`${fromAsset.symbol} on ${fromAsset.chainId} not supported on Chainflip`)
+  if (!chainflipToAsset) throw new Error(`${toAsset.symbol} on ${toAsset.chainId} not supported on Chainflip`)
+  if (!chainflipFromChain) throw new Error(`Chain ${fromAsset.chainId} not supported on Chainflip`)
 
-// }
+  // validate from address for the source chain
+  const swappingFromEVM = EVM_CHAINS.some(c => c.id.toString() === fromAsset.chainId.toString())
+  if (swappingFromEVM && !isAddress(fromAddress))
+    throw new Error(`Cannot swap from EVM chain with non-EVM address: ${fromAddress}`)
+  if (!swappingFromEVM && !isSubstrateAddress(fromAddress))
+    throw new Error(`Cannot swap from Polkadot chain with non-Polkadot address: ${fromAddress}`)
+
+  // validate to address for the source chain
+  const swappingToEVM = EVM_CHAINS.some(c => c.id.toString() === toAsset.chainId.toString())
+  if (swappingToEVM && !isAddress(toAddress))
+    throw new Error(`Cannot swap to EVM chain with non-EVM address: ${toAddress}`)
+  if (!swappingToEVM && !isSubstrateAddress(toAddress))
+    throw new Error(`Cannot swap to Polkadot chain with non-Polkadot address: ${toAddress}`)
+
+  try {
+    // request a deposit address to send funds to
+    const depositAddress = await sdk.requestDepositAddress({
+      destAddress: toAddress,
+      amount: fromAmount.planck.toString(),
+      destChain: chainflipToAsset.chain,
+      destAsset: chainflipToAsset.asset,
+      srcAsset: chainflipFromAsset.asset,
+      srcChain: chainflipFromAsset.chain,
+    })
+
+    // begin swap
+    if (swappingFromEVM) {
+      if (!evmWalletClient) throw new Error('Ethereum account not connected')
+      if (chainflipFromChain.evmChainId === undefined) throw new Error('Missing evmChainId, this is likely a bug.')
+
+      await evmWalletClient.switchChain({ id: chainflipFromChain.evmChainId })
+      let evmTxHash: SendTransactionReturnType
+      const chain = EVM_CHAINS.find(c => c.id.toString() === fromAsset.chainId.toString())
+      if (!chain) throw new Error('Chain not found')
+      if (!chainflipFromAsset.contractAddress) {
+        evmTxHash = await evmWalletClient.sendTransaction({
+          chain,
+          to: depositAddress.depositAddress as `0x${string}`,
+          value: BigInt(depositAddress.amount),
+          account: fromAddress as `0x${string}`,
+        })
+      } else {
+        evmTxHash = await evmWalletClient.writeContract({
+          chain,
+          abi: erc20Abi,
+          address: fromAsset.contractAddress as `0x${string}`,
+          functionName: 'transfer',
+          account: fromAddress as `0x${string}`,
+          args: [depositAddress.depositAddress as `0x${string}`, BigInt(depositAddress.amount)],
+        })
+      }
+
+      return { protocol: PROTOCOL, data: { evmTxHash, id: depositAddress.depositChannelId, network } }
+    } else {
+      const signer = substrateWallet?.signer
+      if (!signer) throw new Error('Substrate wallet not connected.')
+      const polkadotRpc = get(polkadotRpcAtom)
+      const polkadotApi = await getSubstrateApi(polkadotRpc)
+
+      await polkadotApi.tx.balances
+        .transferKeepAlive(depositAddress.depositAddress, depositAddress.amount)
+        .signAndSend(fromAddress, { signer })
+
+      return { protocol: PROTOCOL, data: { id: depositAddress.depositChannelId, network } }
+    }
+  } catch (e) {
+    console.error(e)
+    // TODO: convert to user friendly error messages
+    throw e
+  }
+}
 
 export const chainflipSwapModule: SwapModule = {
   protocol: PROTOCOL,
   tokensSelector,
   quote,
-  swap: async () => true,
+  swap,
 }
+
+// helpers
+
+const _swapStatusRequestCounterAtom = atom(0)
+
+const swapStatusRequestCounterEffect = atomEffect((_, set) => {
+  const interval = globalThis.setInterval(() => set(_swapStatusRequestCounterAtom, counter => counter + 1), 5000)
+  return () => globalThis.clearInterval(interval)
+})
+
+const swapStatusRequestCounterAtom = atom(get => {
+  get(swapStatusRequestCounterEffect)
+  return get(_swapStatusRequestCounterAtom)
+})
+
+export const chainflipSwapStatusAtom = atomFamily((id: string) =>
+  atom(async get => {
+    const status = await get(swapSdkAtom).getStatus({ id })
+    let expired = false
+
+    if (!['FAILED', 'COMPLETE', 'BROADCAST_ABORTED'].includes(status.state)) {
+      if (status.estimatedDepositChannelExpiryTime && status.state === 'AWAITING_DEPOSIT') {
+        const now = new Date().getTime()
+        expired = now > status.estimatedDepositChannelExpiryTime
+      } else {
+        get(swapStatusRequestCounterAtom)
+      }
+    }
+
+    return { ...status, expired }
+  })
+)

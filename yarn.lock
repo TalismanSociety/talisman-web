@@ -9748,6 +9748,7 @@ __metadata:
     i18next-browser-languagedetector: "npm:^6.1.8"
     i18next-http-backend: "npm:^1.4.5"
     jotai: "npm:^2.8.0"
+    jotai-effect: "npm:^1.0.0"
     lodash: "npm:^4.17.21"
     lucide-react: "npm:^0.394.0"
     md5: "npm:^2.3.0"

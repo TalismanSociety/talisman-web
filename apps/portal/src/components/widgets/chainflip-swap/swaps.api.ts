@@ -1,18 +1,29 @@
-import { chainflipSwapModule } from './swap-modules/chainflip.swap-module'
+import { swapInfoTabAtom } from './side-panel'
+import { chainflipSwapModule, type ChainflipSwapActivityData } from './swap-modules/chainflip.swap-module'
 import {
   fromAmountAtom,
   fromAmountInputAtom,
   fromAssetAtom,
+  swappingAtom,
+  swapsAtom,
   toAssetAtom,
   type BaseQuote,
   type CommonSwappableAssetType,
   type SupportedSwapProtocol,
+  type SwapActivity,
 } from './swap-modules/common.swap-module'
-import { useTokens } from '@talismn/balances-react'
+import { getCoinGeckoErc20Coin } from '@/domains/balances/coingecko'
+import { substrateApiState } from '@/domains/common'
+import { connectedSubstrateWalletState } from '@/domains/extension'
+import { useSetCustomTokens, type CustomTokensConfig } from '@/hooks/useSetCustomTokens'
+import { tokensByIdAtom, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
+import { toast } from '@talismn/ui'
 import { atom, useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import { loadable, useAtomCallback } from 'jotai/utils'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
+import { useRecoilCallback, useRecoilValue } from 'recoil'
+import { useWalletClient } from 'wagmi'
 
 const swapModules = [chainflipSwapModule]
 
@@ -30,50 +41,98 @@ export const swappableTokensAtom = atom(async get => {
   return tokens.filter((token, index) => tokens.findIndex(t => t.id === token.id) === index)
 })
 
+export const swapQuoteRefresherAtom = atom(new Date().getTime())
+
 /**
  * Get the best quote across all swap modules
  * Each module has their own quoter logic
  */
-export const swapQuoteAtom = atom(async (get): Promise<BaseQuote | null> => {
-  const allQuoters = swapModules.map(module => module.quote)
-  const fromAsset = get(fromAssetAtom)
-  const toAsset = get(toAssetAtom)
-  const fromAmount = get(fromAmountAtom)
+export const swapQuoteAtom = loadable(
+  atom(async (get): Promise<BaseQuote | null> => {
+    const allQuoters = swapModules.map(module => module.quote)
+    const fromAsset = get(fromAssetAtom)
+    const toAsset = get(toAssetAtom)
+    const fromAmount = get(fromAmountAtom)
 
-  // nothing to quote
-  if (!fromAsset || !toAsset || !fromAmount.planck) return null
+    // force refresh
+    get(swapQuoteRefresherAtom)
 
-  const allQuotes = await Promise.all(allQuoters.map(get))
-  const bestQuote = allQuotes.reduce((best, next): BaseQuote | null => {
-    if (!best) return next // return whatever next quote is if best is null
-    if (!next) return best // return best if nothing to compare in next
-    if (best.outputAmountBN === undefined) return next ?? best
-    if (next.outputAmountBN === undefined) return best
-    return next.outputAmountBN > best.outputAmountBN ? next : best
-  }, null)
+    // nothing to quote
+    if (!fromAsset || !toAsset || !fromAmount.planck) return null
 
-  if (!bestQuote || bestQuote.error)
-    throw new Error(bestQuote?.error ? bestQuote.error : 'No available path. Please try another asset ')
+    const allQuotes = await Promise.all(allQuoters.map(quoter => quoter(get)))
+    const bestQuote = allQuotes.reduce((best, next): BaseQuote | null => {
+      if (!best) return next // return whatever next quote is if best is null
+      if (!next) return best // return best if nothing to compare in next
+      if (best.outputAmountBN === undefined) return next ?? best
+      if (next.outputAmountBN === undefined) return best
+      return next.outputAmountBN > best.outputAmountBN ? next : best
+    }, null)
 
-  return bestQuote
-})
+    if (!bestQuote || bestQuote.error)
+      throw new Error(bestQuote?.error ? bestQuote.error : 'No available path. Please try another asset ')
 
-export const useSwap = () => {
-  return useAtomCallback(
-    useCallback(async (get, set, protocol: SupportedSwapProtocol) => {
-      const module = swapModules.find(module => module.protocol === protocol)
-      if (!module) return false
-      return module.swap(get, set)
-    }, [])
-  )
-}
+    return bestQuote
+  })
+)
 
 export const toAmountAtom = atom(async get => {
-  const quote = await get(swapQuoteAtom)
+  const _quote = get(swapQuoteAtom)
+  if (_quote.state !== 'hasData') return null
+  const quote = _quote.data
   const toAsset = get(toAssetAtom)
   if (!quote || quote.outputAmountBN === undefined || !toAsset) return null
   return Decimal.fromPlanck(quote.outputAmountBN, toAsset.decimals)
 })
+
+export const useSwap = () => {
+  const { data: walletClient } = useWalletClient()
+  const swapping = useAtomValue(swappingAtom)
+  const substrateWallet = useRecoilValue(connectedSubstrateWalletState)
+  const getSubstrateApi = useRecoilCallback(
+    ({ snapshot }) =>
+      (rpc: string) =>
+        snapshot.getPromise(substrateApiState(rpc))
+  )
+
+  const swap = useAtomCallback(
+    useCallback(
+      async (get, set, protocol: SupportedSwapProtocol) => {
+        try {
+          set(swappingAtom, true)
+          const toAmount = await get(toAmountAtom)
+          const module = swapModules.find(module => module.protocol === protocol)
+          // just a safety measure, this should never happen
+          if (!module) throw new Error('Invalid protocol. This is likely a bug')
+          const swapped = await module.swap(get, set, {
+            evmWalletClient: walletClient,
+            substrateWallet,
+            getSubstrateApi,
+            toAmount,
+          })
+          //  TODO: instead of just getting "swapped: boolean"
+          // we should handle adding swap to activity generically so that
+          // all swaps across different protocols can appear in the activity list
+          const now = new Date().getTime()
+
+          set(swapsAtom, swaps => [...swaps, { ...swapped, timestamp: now }])
+          set(swapInfoTabAtom, 'activities')
+        } catch (e) {
+          console.error(e)
+          const error = e as any
+          toast.error(error?.shortMessage ?? error?.details ?? error.message ?? 'unknown error')
+        } finally {
+          set(swappingAtom, false)
+        }
+      },
+      [getSubstrateApi, substrateWallet, walletClient]
+    )
+  )
+
+  return { swap, swapping }
+}
+
+// utility hooks
 
 export const useReverse = () => {
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
@@ -103,4 +162,81 @@ export const useAssetToken = (assetAtom: PrimitiveAtom<CommonSwappableAssetType 
       isEvm: token.type === 'evm-erc20' || token.type === 'evm-native' || token.type === 'evm-uniswapv2',
     }
   }, [asset, tokens])
+}
+
+export const missingTokensAtom = atom(async (get): Promise<CustomTokensConfig> => {
+  const allAssets = await get(swappableTokensAtom)
+  const tokens = await get(tokensByIdAtom)
+
+  // only the following type of assets can be added as custom token
+  // - evm chains
+  // - erc20 tokens
+  const evmAssetsMissingInTokens = allAssets.filter(
+    a => !tokens[a.id] && a.id.split('-')[1] === 'evm' && !!a.contractAddress
+  )
+
+  if (evmAssetsMissingInTokens.length === 0) return []
+
+  console.log(evmAssetsMissingInTokens)
+  // get coingecko data
+  const coingeckoData = await Promise.allSettled(
+    evmAssetsMissingInTokens.map(async a => await getCoinGeckoErc20Coin(a.chainId.toString(), a.contractAddress!))
+  )
+
+  return evmAssetsMissingInTokens.map((a, index) => {
+    const coingeckoRes = coingeckoData[index]
+    const coingecko = coingeckoRes?.status === 'fulfilled' ? coingeckoRes.value : null
+    return {
+      contractAddress: a.contractAddress!,
+      decimals: a.decimals,
+      evmChainId: a.chainId.toString(),
+      symbol: a.symbol,
+      coingeckoId: coingecko?.id,
+      logo: coingecko?.image.large,
+    }
+  })
+})
+
+export const useLoadTokens = () => {
+  const missingTokens = useAtomValue(loadable(missingTokensAtom))
+
+  const tokensToSet = useMemo((): CustomTokensConfig => {
+    if (missingTokens.state !== 'hasData') return []
+    return missingTokens.data
+  }, [missingTokens])
+
+  useSetCustomTokens(tokensToSet)
+}
+
+export const useSyncPreviousChainflipSwaps = () => {
+  const setSwaps = useSetAtom(swapsAtom)
+
+  const sync = useCallback(() => {
+    const previousSwaps = window.localStorage.getItem('@talisman/swap/chainflip/mainnet/swap-ids')
+    if (!previousSwaps) return
+    const swaps = JSON.parse(previousSwaps)
+    if (!Array.isArray(swaps)) return
+
+    const newSwaps: SwapActivity<ChainflipSwapActivityData>[] = []
+    swaps.forEach(a => {
+      if (typeof a.id === 'string' && (typeof a.date === 'string' || typeof a.date === 'number')) {
+        const date = new Date(a.date)
+
+        newSwaps.push({
+          data: {
+            id: a.id as string,
+            network: 'mainnet',
+          },
+          protocol: 'chainflip',
+          timestamp: date.getTime(),
+        })
+      }
+    })
+    setSwaps(prev => [...prev, ...newSwaps])
+    window.localStorage.removeItem('@talisman/swap/chainflip/mainnet/swap-ids')
+  }, [setSwaps])
+
+  useEffect(() => {
+    sync()
+  }, [sync])
 }
