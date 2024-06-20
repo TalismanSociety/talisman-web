@@ -7,7 +7,7 @@ import { useAtomValue } from 'jotai'
 import { Suspense, useMemo } from 'react'
 
 const PlaceholderUI: React.FC = () => (
-  <div className="flex items-center justify-center gap-[8px] flex-col border-gray-800 border rounded-[8px] p-[16px]">
+  <div className="flex items-center justify-center gap-[8px] flex-col border-gray-800 border rounded-[8px] p-[16px] py-[12px]">
     <svg width="97" height="96" viewBox="0 0 97 96" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="48.5" cy="48" r="48" fill="url(#paint0_linear_3285_23038)" fillOpacity="0.04" />
       <path

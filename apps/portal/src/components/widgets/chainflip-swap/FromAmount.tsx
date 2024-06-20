@@ -23,7 +23,10 @@ export const FromAmount: React.FC<{
 
   const handleSelectAsset = useCallback(
     (asset: CommonSwappableAssetType | null) => {
-      if (toAsset && toAsset.id === asset?.id) setToAsset(fromAsset)
+      if (toAsset) {
+        // reverse
+        if (toAsset.id === asset?.id) setToAsset(fromAsset)
+      }
       setFromAsset(asset)
     },
     [fromAsset, setFromAsset, setToAsset, toAsset]

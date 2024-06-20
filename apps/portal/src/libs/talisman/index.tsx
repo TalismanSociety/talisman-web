@@ -31,7 +31,6 @@ export {
 const Provider = ({ children }: PropsWithChildren) => (
   <Chainmeta.Provider>
     <BalancesProvider
-      withTestnets
       onfinalityApiKey={import.meta.env.REACT_APP_ONFINALITY_API_KEY ?? undefined}
       coingeckoApiUrl={import.meta.env.REACT_APP_COIN_GECKO_API}
       coingeckoApiKeyValue={import.meta.env.REACT_APP_COIN_GECKO_API_KEY}

@@ -17,6 +17,7 @@ import {
 import {
   swapQuoteAtom,
   toAmountAtom,
+  useAccountsController,
   useAssetToken,
   useLoadTokens,
   useReverse,
@@ -59,6 +60,7 @@ export const ChainFlipSwap: React.FC = () => {
   const toAddress = useAtomValue(toAddressAtom)
   const toAmount = useAtomValue(loadable(toAmountAtom))
   const toAsset = useAtomValue(toAssetAtom)
+  useAccountsController()
 
   const { swap, swapping } = useSwap()
   const reverse = useReverse()
@@ -72,7 +74,7 @@ export const ChainFlipSwap: React.FC = () => {
 
     return {
       balance: Decimal.fromPlanck(balance.sum.planck.transferable, fromToken.decimals, { currency: fromToken.symbol }),
-      loading: balance.find(b => b.status === 'stale').each.length !== 0 || balance.count === 0,
+      loading: balance.find(b => b.status === 'stale').each.length !== 0,
     }
   }, [balances, fromAddress, fromToken])
 

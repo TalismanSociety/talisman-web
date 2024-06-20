@@ -72,7 +72,7 @@ export const ChainflipActivity: React.FC<{ data: ChainflipSwapActivityData; time
       <SurfaceButton className="!rounded-[8px] min-h-[56px] !w-full [&>div]:!justify-start [&>div>span]:!w-full !px-[8px] py-[12px]">
         <div className="flex items-center w-full justify-between gap-[8px]">
           <div className="flex items-center gap-[8px]">
-            <div className="flex items-center ">
+            <div className="flex items-center min-w-max">
               {fromToken && (
                 <img src={fromToken.logo} className="w-[32px] h-[32px] border-2 border-gray-800 rounded-full" />
               )}
@@ -85,13 +85,13 @@ export const ChainflipActivity: React.FC<{ data: ChainflipSwapActivityData; time
             </div>
             <div>
               <div className="flex items-center gap-[4px]">
-                <p className="text-[14px] font-semibold text-white !leading-none">
-                  {fromAmount?.toLocaleString(undefined, { minimumFractionDigits: 4 })}
+                <p className="text-[14px] font-semibold text-white !leading-none whitespace-nowrap">
+                  {fromAmount?.toLocaleString()}
                 </p>
                 <ArrowRight className="text-gray-600" size={16} />
                 {destAmount ? (
-                  <p className="text-[14px] font-semibold text-white !leading-none">
-                    {destAmount.toLocaleString(undefined, { minimumFractionDigits: 4 })}
+                  <p className="text-[14px] font-semibold text-white !leading-none whitespace-nowrap">
+                    {destAmount.toLocaleString()}
                   </p>
                 ) : status.expired ? (
                   <div className="p-[4px] px-[6px] bg-orange-500/30 rounded-full">

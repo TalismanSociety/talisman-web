@@ -261,7 +261,7 @@ const Layout = () => {
             <NavigationBar.Item label="Staking" icon={<Zap />} />
           </Link>
           <Link to="/transport">
-            <NavigationBar.Item label="Transport" icon={<Repeat />} />
+            <NavigationBar.Item label="Swap" icon={<Repeat />} />
           </Link>
           <Link to="/crowdloans/participated">
             <NavigationBar.Item label="Crowdloans" icon={<Star />} />
@@ -286,7 +286,7 @@ const Layout = () => {
             <NavigationRail.Item label="Staking" icon={<Zap />} />
           </Link>
           <Link to="/transport">
-            <NavigationRail.Item label="Transport" icon={<Repeat />} />
+            <NavigationRail.Item label="Cross-chain Swap" icon={<Repeat />} />
           </Link>
           <Link to="/explore">
             <NavigationRail.Item label="Explore" icon={<Compass />} />
@@ -351,7 +351,7 @@ const Layout = () => {
             <NavigationDrawer.Item label="Staking" icon={<Zap />} />
           </Link>
           <Link to="/transport">
-            <NavigationDrawer.Item label="Transport" icon={<Repeat />} />
+            <NavigationDrawer.Item label="Cross-chain Swap" icon={<Repeat />} />
           </Link>
           <Link to="/crowdloans/participated">
             <NavigationDrawer.Item label="Crowdloans" icon={<Star />} />

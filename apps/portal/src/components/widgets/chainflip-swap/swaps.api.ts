@@ -1,18 +1,21 @@
 import { swapInfoTabAtom } from './side-panel'
 import { chainflipSwapModule, type ChainflipSwapActivityData } from './swap-modules/chainflip.swap-module'
 import {
+  fromAddressAtom,
   fromAmountAtom,
   fromAmountInputAtom,
   fromAssetAtom,
   swappingAtom,
   swapQuoteRefresherAtom,
   swapsAtom,
+  toAddressAtom,
   toAssetAtom,
   type BaseQuote,
   type CommonSwappableAssetType,
   type SupportedSwapProtocol,
   type SwapActivity,
 } from './swap-modules/common.swap-module'
+import { evmSignableAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts'
 import { getCoinGeckoErc20Coin } from '@/domains/balances/coingecko'
 import { substrateApiState } from '@/domains/common'
 import { connectedSubstrateWalletState } from '@/domains/extension'
@@ -24,6 +27,7 @@ import { atom, useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jot
 import { loadable, useAtomCallback } from 'jotai/utils'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
+import { isAddress } from 'viem'
 import { useWalletClient } from 'wagmi'
 
 const swapModules = [chainflipSwapModule]
@@ -237,4 +241,60 @@ export const useSyncPreviousChainflipSwaps = () => {
   useEffect(() => {
     sync()
   }, [sync])
+}
+
+export const selectCustomAddressAtom = atom(false)
+
+export const useAccountsController = () => {
+  const [fromAddress, setFromAddress] = useAtom(fromAddressAtom)
+  const [toAddress, setToAddress] = useAtom(toAddressAtom)
+  const fromAsset = useAtomValue(fromAssetAtom)
+  const toAsset = useAtomValue(toAssetAtom)
+  const evmAccounts = useRecoilValue(evmSignableAccountsState)
+  const substrateAccounts = useRecoilValue(writeableSubstrateAccountsState)
+  const [selectCustomAddress, setSelectCustomAddress] = useAtom(selectCustomAddressAtom)
+
+  // handle selecting default account
+  useEffect(() => {
+    if (!fromAsset) {
+      setFromAddress(null)
+    } else {
+      if (fromAsset.id.split('-')[1] === 'evm') {
+        const defaultEvmAccount = evmAccounts[0]
+        if (!fromAddress || !isAddress(fromAddress)) setFromAddress(defaultEvmAccount?.address ?? null)
+      } else {
+        const defaultSubstrateAccount = substrateAccounts[0]
+        if (!fromAddress || isAddress(fromAddress)) setFromAddress(defaultSubstrateAccount?.address ?? null)
+      }
+    }
+  }, [evmAccounts, fromAddress, fromAsset, setFromAddress, substrateAccounts])
+
+  useEffect(() => {
+    if (!toAsset) {
+      setToAddress(null)
+    } else if (!selectCustomAddress) {
+      if (toAsset.id.split('-')[1] === 'evm') {
+        const defaultEvmAccount = evmAccounts[0]
+        const defaultAddress = fromAsset?.id.split('-')[1] === 'evm' ? fromAddress : defaultEvmAccount?.address
+        if (!toAddress || !isAddress(toAddress)) setToAddress(defaultAddress ?? null)
+      } else {
+        const defaultSubstrateAccount = substrateAccounts[0]
+        const defaultAddress = fromAsset?.id.split('-')[1] !== 'evm' ? fromAddress : defaultSubstrateAccount?.address
+        if (!toAddress || isAddress(toAddress)) setToAddress(defaultAddress ?? null)
+      }
+    }
+  }, [
+    evmAccounts,
+    fromAddress,
+    fromAsset?.id,
+    selectCustomAddress,
+    setToAddress,
+    substrateAccounts,
+    toAddress,
+    toAsset,
+  ])
+
+  useEffect(() => {
+    if (toAddress?.toLowerCase() === fromAddress?.toLowerCase()) setSelectCustomAddress(false)
+  }, [fromAddress, setSelectCustomAddress, toAddress])
 }

@@ -1,4 +1,4 @@
-import { toAddressAtom, toAssetAtom } from './swap-modules/common.swap-module'
+import { fromAddressAtom, toAddressAtom, toAssetAtom } from './swap-modules/common.swap-module'
 import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
 import { cn } from '@/lib/utils'
 import { useTokens } from '@talismn/balances-react'
@@ -9,6 +9,7 @@ import { useMemo } from 'react'
 
 export const ToAccount: React.FC = () => {
   const toAsset = useAtomValue(toAssetAtom)
+  const fromAddress = useAtomValue(fromAddressAtom)
   const [toAddess, setToAddress] = useAtom(toAddressAtom)
   const tokens = useTokens()
 
@@ -17,11 +18,17 @@ export const ToAccount: React.FC = () => {
     return tokens[toAsset.id]
   }, [toAsset, tokens])
 
+  const shouldShowToAccount = useMemo(() => {
+    return !!toAsset && fromAddress && (fromAddress !== toAddess || !toAddess)
+  }, [fromAddress, toAddess, toAsset])
+  if (!toAsset) return null
+
+  if (!shouldShowToAccount) return null
+
   return (
     <Surface className="bg-card p-[16px] rounded-[8px] w-full">
       <div className="flex items-center justify-between">
-        <h4 className={cn('text-[16px]', toAsset ? 'font-semibold' : 'text-gray-500')}>To Account</h4>
-        <p className="text-primary text-[14px] font-medium">Send to another address</p>
+        <h4 className={cn('text-[16px]', toAsset ? 'font-semibold' : 'text-gray-500')}>Send to wallet</h4>
       </div>
       {toAsset && (
         <SeparatedAccountSelector

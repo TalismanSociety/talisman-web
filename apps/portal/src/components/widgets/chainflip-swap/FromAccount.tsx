@@ -1,4 +1,5 @@
-import { fromAddressAtom, fromAssetAtom } from './swap-modules/common.swap-module'
+import { fromAddressAtom, fromAssetAtom, toAddressAtom } from './swap-modules/common.swap-module'
+import { selectCustomAddressAtom } from './swaps.api'
 import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
 import { selectedCurrencyState } from '@/domains/balances'
 import { cn } from '@/lib/utils'
@@ -13,7 +14,9 @@ import { useRecoilValue } from 'recoil'
 export const FromAccount: React.FC = () => {
   const fromAsset = useAtomValue(fromAssetAtom)
   const [fromAddress, setFromAddress] = useAtom(fromAddressAtom)
+  const [toAddress, setToAddress] = useAtom(toAddressAtom)
   const currency = useRecoilValue(selectedCurrencyState)
+  const [selectCustomAddress, setSelectCustomAddress] = useAtom(selectCustomAddressAtom)
 
   const tokens = useTokens()
   const token = useMemo(() => {
@@ -23,7 +26,20 @@ export const FromAccount: React.FC = () => {
 
   return (
     <Surface className="bg-card p-[16px] rounded-[8px] w-full">
-      <h4 className={cn('text-[16px]', fromAsset ? 'font-semibold' : 'text-gray-500')}>From Account</h4>
+      <div className="flex items-center justify-between">
+        <h4 className={cn('text-[16px]', fromAsset ? 'font-semibold' : 'text-gray-500')}>Connected Account</h4>
+        {!selectCustomAddress && !!fromAddress && fromAddress.toLowerCase() === toAddress?.toLowerCase() && (
+          <p
+            className="text-primary text-[14px] font-medium cursor-pointer hover:text-primary/70"
+            onClick={() => {
+              setSelectCustomAddress(true)
+              setToAddress(null)
+            }}
+          >
+            Send to another address
+          </p>
+        )}
+      </div>
       {!!fromAsset && (
         <SeparatedAccountSelector
           accountsType={
