@@ -36,6 +36,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil'
 /**
  * TODO:
  * - handle polkadot ED
+ * - keep swap button disabled until transfer is complete on chain / after user's balance change
  */
 export const ChainFlipSwap: React.FC = () => {
   useLoadTokens()
@@ -80,6 +81,10 @@ export const ChainFlipSwap: React.FC = () => {
     return fromAmount.planck > availableBalance.balance.planck
   }, [availableBalance, fromAmount.planck])
 
+  useEffect(() => {
+    if (fromAmountInput.trim() !== '' && fromAsset && toAsset) setShouldFocusDetails(true)
+  }, [fromAmountInput, fromAsset, toAsset, setShouldFocusDetails])
+
   // refresh quote every 15 seconds
   useEffect(() => {
     if (swapping) return
@@ -91,13 +96,9 @@ export const ChainFlipSwap: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapping])
 
-  useEffect(() => {
-    setShouldFocusDetails(true)
-  }, [fromAmountInput, fromAsset, toAsset, setShouldFocusDetails])
-
   // // bring user back to details page to wait for quote
   useEffect(() => {
-    if (toAmount.state === 'loading' && shouldFocusDetails && !swapping) {
+    if (shouldFocusDetails && !swapping) {
       setShouldFocusDetails(false)
       setInfoTab('details')
     }
