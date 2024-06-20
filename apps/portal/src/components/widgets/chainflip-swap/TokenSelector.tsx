@@ -59,7 +59,7 @@ export const TokenSelector: React.FC<Props> = ({ selectedAsset, assetFilter, onS
             iconSrc: token.logo,
             chain: chain.name ?? '',
             chainId: asset.chainId,
-            amount: Decimal.fromPlanck(balanceToDisplay.sum.planck.transferable, 18, {
+            amount: Decimal.fromPlanck(balanceToDisplay.sum.planck.transferable, token.decimals, {
               currency: asset.symbol,
             }).toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 }),
             fiatAmount: balanceToDisplay.sum.fiat(currency).transferable.toLocaleString(undefined, {

@@ -10,12 +10,12 @@ import {
   fromAmountAtom,
   fromAmountInputAtom,
   fromAssetAtom,
+  swapQuoteRefresherAtom,
   toAddressAtom,
   toAssetAtom,
 } from './swap-modules/common.swap-module'
 import {
   swapQuoteAtom,
-  swapQuoteRefresherAtom,
   toAmountAtom,
   useAssetToken,
   useLoadTokens,
@@ -23,7 +23,7 @@ import {
   useSwap,
   useSyncPreviousChainflipSwaps,
 } from './swaps.api'
-import { useBalances, useTokens } from '@talismn/balances-react'
+import { useBalances } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { Button, Surface, TonalIconButton } from '@talismn/ui'
 import { Repeat } from '@talismn/web-icons'
@@ -62,8 +62,7 @@ export const ChainFlipSwap: React.FC = () => {
   const { swap, swapping } = useSwap()
   const reverse = useReverse()
   const balances = useBalances()
-  const tokens = useTokens()
-  if (fromToken) console.log(tokens[fromToken.id])
+
   const availableBalance = useMemo(() => {
     if (!fromAddress || !fromToken) return null
     const balance = balances.find(

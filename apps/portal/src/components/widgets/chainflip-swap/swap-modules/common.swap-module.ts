@@ -71,6 +71,7 @@ export const fromAmountAtom = atom(get => {
 export const fromAddressAtom = atom<string | null>(null)
 export const toAddressAtom = atom<string | null>(null)
 export const swappingAtom = atom(false)
+export const swapQuoteRefresherAtom = atom(new Date().getTime())
 
 // swaps history related atoms
 

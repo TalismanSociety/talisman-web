@@ -1,5 +1,6 @@
 import { SuspensedTokenSelector } from './TokenSelector'
 import {
+  fromAddressAtom,
   fromAmountInputAtom,
   fromAssetAtom,
   toAssetAtom,
@@ -7,7 +8,7 @@ import {
 } from './swap-modules/common.swap-module'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, TextInput } from '@talismn/ui'
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { useCallback } from 'react'
 
 export const FromAmount: React.FC<{
@@ -18,6 +19,7 @@ export const FromAmount: React.FC<{
   const [fromAmountInput, setFromAmountInput] = useAtom(fromAmountInputAtom)
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
   const [toAsset, setToAsset] = useAtom(toAssetAtom)
+  const fromAddress = useAtomValue(fromAddressAtom)
 
   const handleSelectAsset = useCallback(
     (asset: CommonSwappableAssetType | null) => {
@@ -56,7 +58,11 @@ export const FromAmount: React.FC<{
               <p css={{ fontSize: 12, lineHeight: 1 }}>Max</p>
             </TextInput.LabelButton>
           )}
-          <SuspensedTokenSelector onSelectAsset={handleSelectAsset} selectedAsset={fromAsset} />
+          <SuspensedTokenSelector
+            balanceFor={fromAddress ?? null}
+            onSelectAsset={handleSelectAsset}
+            selectedAsset={fromAsset}
+          />
         </div>
       }
     />

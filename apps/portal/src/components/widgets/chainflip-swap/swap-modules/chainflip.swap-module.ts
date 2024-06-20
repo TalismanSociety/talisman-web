@@ -11,6 +11,7 @@ import {
   toAddressAtom,
   type SwapFunction,
   type QuoteFunction,
+  swapQuoteRefresherAtom,
 } from './common.swap-module'
 import {
   SwapSDK,
@@ -23,7 +24,6 @@ import {
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { Decimal } from '@talismn/math'
 import { atom, type Getter, type Setter } from 'jotai'
-import { atomEffect } from 'jotai-effect'
 import { atomFamily } from 'jotai/utils'
 import { erc20Abi, isAddress, type SendTransactionReturnType } from 'viem'
 import { arbitrum, mainnet, sepolia } from 'viem/chains'
@@ -104,7 +104,6 @@ const tokensSelector = atom(async (get): Promise<CommonSwappableAssetType[]> => 
     const chain = chains.find(chain => chain.chain === asset.chain)
     // for safety measure only, unless chainflip has bug
     if (!chain) continue
-    console.log(chain, asset)
     const swappableAsset = chainflipAssetToSwappableAsset(asset, chain)
     if (swappableAsset) tokens.push(swappableAsset)
   }
@@ -291,18 +290,6 @@ export const chainflipSwapModule: SwapModule = {
 
 // helpers
 
-const _swapStatusRequestCounterAtom = atom(0)
-
-const swapStatusRequestCounterEffect = atomEffect((_, set) => {
-  const interval = globalThis.setInterval(() => set(_swapStatusRequestCounterAtom, counter => counter + 1), 5000)
-  return () => globalThis.clearInterval(interval)
-})
-
-const swapStatusRequestCounterAtom = atom(get => {
-  get(swapStatusRequestCounterEffect)
-  return get(_swapStatusRequestCounterAtom)
-})
-
 export const chainflipSwapStatusAtom = atomFamily((id: string) =>
   atom(async get => {
     const status = await get(swapSdkAtom).getStatus({ id })
@@ -312,9 +299,8 @@ export const chainflipSwapStatusAtom = atomFamily((id: string) =>
       if (status.estimatedDepositChannelExpiryTime && status.state === 'AWAITING_DEPOSIT') {
         const now = new Date().getTime()
         expired = now > status.estimatedDepositChannelExpiryTime
-      } else {
-        get(swapStatusRequestCounterAtom)
       }
+      if (!expired) get(swapQuoteRefresherAtom)
     }
 
     return { ...status, expired }

@@ -5,6 +5,7 @@ import {
   fromAmountInputAtom,
   fromAssetAtom,
   swappingAtom,
+  swapQuoteRefresherAtom,
   swapsAtom,
   toAssetAtom,
   type BaseQuote,
@@ -40,8 +41,6 @@ export const swappableTokensAtom = atom(async get => {
   // make sure each token is only displayed in the list once
   return tokens.filter((token, index) => tokens.findIndex(t => t.id === token.id) === index)
 })
-
-export const swapQuoteRefresherAtom = atom(new Date().getTime())
 
 /**
  * Get the best quote across all swap modules
@@ -177,7 +176,6 @@ export const missingTokensAtom = atom(async (get): Promise<CustomTokensConfig> =
 
   if (evmAssetsMissingInTokens.length === 0) return []
 
-  console.log(evmAssetsMissingInTokens)
   // get coingecko data
   const coingeckoData = await Promise.allSettled(
     evmAssetsMissingInTokens.map(async a => await getCoinGeckoErc20Coin(a.chainId.toString(), a.contractAddress!))
