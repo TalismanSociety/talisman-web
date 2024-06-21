@@ -107,7 +107,12 @@ const tokensSelector = atom(async (get): Promise<CommonSwappableAssetType[]> => 
     const swappableAsset = chainflipAssetToSwappableAsset(asset, chain)
     if (swappableAsset) tokens.push(swappableAsset)
   }
-  return tokens
+
+  return tokens.sort((a, b) => {
+    if (a.symbol === 'FLIP') return 1
+    if (b.symbol === 'FLIP') return -1
+    return 0
+  })
 })
 
 const quote: QuoteFunction = async (get): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {

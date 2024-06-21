@@ -1,9 +1,10 @@
 import { fromAddressAtom, toAddressAtom, toAssetAtom } from './swap-modules/common.swap-module'
+import { selectCustomAddressAtom } from './swaps.api'
 import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
 import { cn } from '@/lib/utils'
 import { useTokens } from '@talismn/balances-react'
 import { Surface } from '@talismn/ui'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import type React from 'react'
 import { useMemo } from 'react'
 
@@ -12,6 +13,7 @@ export const ToAccount: React.FC = () => {
   const fromAddress = useAtomValue(fromAddressAtom)
   const [toAddess, setToAddress] = useAtom(toAddressAtom)
   const tokens = useTokens()
+  const setSelectCustomAddress = useSetAtom(selectCustomAddressAtom)
 
   const token = useMemo(() => {
     if (!toAsset) return null
@@ -37,7 +39,10 @@ export const ToAccount: React.FC = () => {
           substrateAccountsFilter={a => !a.readonly}
           substrateAccountPrefix={0}
           value={toAddess}
-          onAccountChange={setToAddress}
+          onAccountChange={address => {
+            setToAddress(address)
+            if (!address) setSelectCustomAddress(true)
+          }}
         />
       )}
     </Surface>
