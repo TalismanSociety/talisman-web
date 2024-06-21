@@ -27,7 +27,7 @@ export const FromAccount: React.FC = () => {
   return (
     <Surface className="bg-card p-[16px] rounded-[8px] w-full">
       <div className="flex items-center justify-between">
-        <h4 className={cn('text-[16px]', fromAsset ? 'font-semibold' : 'text-gray-500')}>Connected Account</h4>
+        <h4 className={cn('text-[16px]', fromAsset ? 'font-semibold' : 'text-gray-500')}>Swapping With</h4>
         {!selectCustomAddress && !!fromAddress && fromAddress.toLowerCase() === toAddress?.toLowerCase() && (
           <p
             className="text-primary text-[14px] font-medium cursor-pointer hover:text-primary/70"

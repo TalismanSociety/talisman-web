@@ -1,15 +1,19 @@
 import { SuspensedSwapTokenSelector } from './SwapTokenSelector'
 import {
   fromAddressAtom,
+  fromAmountAtom,
   fromAmountInputAtom,
   fromAssetAtom,
   toAssetAtom,
   type CommonSwappableAssetType,
 } from './swap-modules/common.swap-module'
+import { selectedCurrencyState } from '@/domains/balances'
+import { useTokenRates } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, TextInput } from '@talismn/ui'
 import { useAtom, useAtomValue } from 'jotai'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
+import { useRecoilValue } from 'recoil'
 
 export const FromAmount: React.FC<{
   // NOTE: we get this as a prop so we dont have to get this balance twice. The parent component also needs this to
@@ -20,20 +24,31 @@ export const FromAmount: React.FC<{
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
   const [toAsset, setToAsset] = useAtom(toAssetAtom)
   const fromAddress = useAtomValue(fromAddressAtom)
-
+  const fromAmount = useAtomValue(fromAmountAtom)
+  const rates = useTokenRates()
+  const currency = useRecoilValue(selectedCurrencyState)
   const handleSelectAsset = useCallback(
     (asset: CommonSwappableAssetType | null) => {
-      if (toAsset) {
-        // reverse
-        if (toAsset.id === asset?.id) setToAsset(fromAsset)
-      }
+      // reverse
+      if (toAsset) if (toAsset.id === asset?.id) setToAsset(fromAsset)
+      if (fromAsset) setFromAmountInput('')
       setFromAsset(asset)
     },
-    [fromAsset, setFromAsset, setToAsset, toAsset]
+    [fromAsset, setFromAmountInput, setFromAsset, setToAsset, toAsset]
   )
+
+  const usdValue = useMemo(() => {
+    if (!fromAsset) return null
+    const rate = rates[fromAsset.id]
+    if (!rate) return null
+    const rateInCurrency = rate[currency]
+    if (!rateInCurrency) return null
+    return +fromAmount.toString() * rateInCurrency
+  }, [currency, fromAmount, fromAsset, rates])
 
   return (
     <TextInput
+      autoComplete="off"
       leadingLabel="You're paying"
       trailingLabel={
         availableBalance ? (
@@ -44,8 +59,13 @@ export const FromAmount: React.FC<{
           )
         ) : null
       }
+      textBelowInput={
+        <p className="text-gray-400 text-[10px] leading-none">
+          {(usdValue ?? 0)?.toLocaleString(undefined, { currency, style: 'currency' })}
+        </p>
+      }
       placeholder="0.00"
-      className="text-ellipsis"
+      className="text-ellipsis !text-[18px] !font-semibold"
       containerClassName="[&>div:nth-child(2)]:!py-[8px] [&>div]:!pr-[8px]"
       value={fromAmountInput}
       onChangeText={setFromAmountInput}

@@ -111,7 +111,7 @@ export const ChainFlipSwap: React.FC = () => {
       <div className="grid gap-[8px] w-full">
         <Surface className="bg-card p-[16px] rounded-[8px] w-full">
           <h4 className="text-[18px] font-semibold mb-[8px]">Select Asset</h4>
-          <FromAmount availableBalance={availableBalance} />
+          <FromAmount availableBalance={availableBalance} />{' '}
           <div className="relative w-full h-[8px]">
             <TonalIconButton
               className="border-3 !border-solid !border-gray-900 -top-[8px] absolute z-10 left-1/2 -translate-x-1/2 !bg-[#2D3121] !w-[48px] !h-[48px] !rounded-full"
@@ -124,8 +124,6 @@ export const ChainFlipSwap: React.FC = () => {
         </Surface>
         <FromAccount />
         <ToAccount />
-        {/* <FromAccount assetAndChain={assetAndChain} />
-        <ToAccount assetAndChain={assetAndChain} /> */}
         {accounts.length === 0 && ethAccount.length === 0 ? (
           <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
             Connect Wallet
