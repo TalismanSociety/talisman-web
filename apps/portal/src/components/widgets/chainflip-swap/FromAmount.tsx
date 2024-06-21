@@ -8,18 +8,23 @@ import {
   type CommonSwappableAssetType,
 } from './swap-modules/common.swap-module'
 import { selectedCurrencyState } from '@/domains/balances'
+import { cn } from '@/lib/utils'
 import { useTokenRates } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, TextInput } from '@talismn/ui'
+import { HelpCircle } from '@talismn/web-icons'
 import { useAtom, useAtomValue } from 'jotai'
 import { useCallback, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 export const FromAmount: React.FC<{
   // NOTE: we get this as a prop so we dont have to get this balance twice. The parent component also needs this to
   // check whether user has enough balance to swap
   availableBalance: { balance: Decimal; loading: boolean } | null
-}> = ({ availableBalance }) => {
+  wouldReapAccount?: boolean
+  insufficientBalance?: boolean
+}> = ({ availableBalance, insufficientBalance, wouldReapAccount }) => {
   const [fromAmountInput, setFromAmountInput] = useAtom(fromAmountInputAtom)
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
   const [toAsset, setToAsset] = useAtom(toAssetAtom)
@@ -60,13 +65,33 @@ export const FromAmount: React.FC<{
         ) : null
       }
       textBelowInput={
-        <p className="text-gray-400 text-[10px] leading-none">
-          {(usdValue ?? 0)?.toLocaleString(undefined, { currency, style: 'currency' })}
-        </p>
+        insufficientBalance ? (
+          <p className="text-red-400 text-[10px] leading-none">Insufficient balance</p>
+        ) : wouldReapAccount ? (
+          <div className="flex items-center gap-[4px]">
+            <p className="text-red-400 text-[10px] leading-none">Insufficient existential deposit</p>
+            <Link
+              to="https://support.polkadot.network/support/solutions/articles/65000168651-what-is-the-existential-deposit-"
+              target="_blank"
+              className="leading-none"
+            >
+              <HelpCircle size={10} className="text-red-400 cursor-pointer" />
+            </Link>
+          </div>
+        ) : (
+          <p className="text-gray-400 text-[10px] leading-none">
+            {(usdValue ?? 0)?.toLocaleString(undefined, { currency, style: 'currency' })}
+          </p>
+        )
       }
       placeholder="0.00"
       className="text-ellipsis !text-[18px] !font-semibold"
-      containerClassName="[&>div:nth-child(2)]:!py-[8px] [&>div]:!pr-[8px]"
+      containerClassName={cn(
+        '[&>div:nth-child(2)]:!py-[8px] [&>div]:!pr-[8px] [&>div:nth-child(2)]:border [&>div:nth-child(2)]:border-red-500/0',
+        {
+          '[&>div:nth-child(2)]:border-red-400 ': wouldReapAccount || insufficientBalance,
+        }
+      )}
       value={fromAmountInput}
       onChangeText={setFromAmountInput}
       inputMode="decimal"

@@ -23,6 +23,7 @@ import {
   useReverse,
   useSwap,
   useSyncPreviousChainflipSwaps,
+  useWouldReapAccount,
 } from './swaps.api'
 import { useBalances } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
@@ -77,6 +78,7 @@ export const ChainFlipSwap: React.FC = () => {
       loading: balance.find(b => b.status === 'stale').each.length !== 0,
     }
   }, [balances, fromAddress, fromToken])
+  const wouldReapAccount = useWouldReapAccount(availableBalance?.balance)
 
   const insufficientBalance = useMemo(() => {
     if (!availableBalance || availableBalance.loading) return undefined
@@ -108,10 +110,14 @@ export const ChainFlipSwap: React.FC = () => {
 
   return (
     <div className="w-full flex flex-col md:flex-row mb-[40px]">
-      <div className="grid gap-[8px] w-full">
+      <div className="grid gap-[8px] w-full relative">
         <Surface className="bg-card p-[16px] rounded-[8px] w-full">
           <h4 className="text-[18px] font-semibold mb-[8px]">Select Asset</h4>
-          <FromAmount availableBalance={availableBalance} />{' '}
+          <FromAmount
+            availableBalance={availableBalance}
+            insufficientBalance={insufficientBalance}
+            wouldReapAccount={wouldReapAccount}
+          />
           <div className="relative w-full h-[8px]">
             <TonalIconButton
               className="border-3 !border-solid !border-gray-900 -top-[8px] absolute z-10 left-1/2 -translate-x-1/2 !bg-[#2D3121] !w-[48px] !h-[48px] !rounded-full"
@@ -146,9 +152,10 @@ export const ChainFlipSwap: React.FC = () => {
               !fromAddress ||
               !toAddress ||
               insufficientBalance !== false ||
-              swapping
+              swapping ||
+              wouldReapAccount !== false
             }
-            loading={swapping}
+            loading={swapping || wouldReapAccount === undefined}
             onClick={() => {
               setInfoTab('details')
               if (quote.state === 'hasData' && quote.data) {
@@ -156,7 +163,7 @@ export const ChainFlipSwap: React.FC = () => {
               }
             }}
           >
-            {insufficientBalance ? 'Insufficient Balance' : 'Swap'}
+            Swap
           </Button>
         )}
       </div>

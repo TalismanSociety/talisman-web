@@ -82,7 +82,7 @@ const swappableAssetToChainflipAsset = (
 }
 
 const chainflipNetworkAtom = atom<ChainflipNetwork>('mainnet')
-const polkadotRpcAtom = atom(get =>
+export const polkadotRpcAtom = atom(get =>
   get(chainflipNetworkAtom) === 'mainnet' ? 'wss://polkadot.api.onfinality.io/public' : 'wss://rpc-pdot.chainflip.io'
 )
 const swapSdkAtom = atom(

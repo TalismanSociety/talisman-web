@@ -1,5 +1,9 @@
 import { swapInfoTabAtom } from './side-panel'
-import { chainflipSwapModule, type ChainflipSwapActivityData } from './swap-modules/chainflip.swap-module'
+import {
+  chainflipSwapModule,
+  polkadotRpcAtom,
+  type ChainflipSwapActivityData,
+} from './swap-modules/chainflip.swap-module'
 import {
   fromAddressAtom,
   fromAmountAtom,
@@ -26,7 +30,7 @@ import { toast } from '@talismn/ui'
 import { atom, useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import { loadable, useAtomCallback } from 'jotai/utils'
 import { useCallback, useEffect, useMemo } from 'react'
-import { useRecoilCallback, useRecoilValue } from 'recoil'
+import { useRecoilCallback, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import { isAddress } from 'viem'
 import { useWalletClient } from 'wagmi'
 
@@ -297,4 +301,20 @@ export const useAccountsController = () => {
   useEffect(() => {
     if (toAddress?.toLowerCase() === fromAddress?.toLowerCase()) setSelectCustomAddress(false)
   }, [fromAddress, setSelectCustomAddress, toAddress])
+}
+
+export const useWouldReapAccount = (availableBalance?: Decimal | null) => {
+  const fromAmount = useAtomValue(fromAmountAtom)
+  const fromAsset = useAtomValue(fromAssetAtom)
+  const polkadotRpc = useAtomValue(polkadotRpcAtom)
+  const polkadotApi = useRecoilValueLoadable(substrateApiState(polkadotRpc))
+  return useMemo(() => {
+    if (!availableBalance || !fromAsset || fromAsset.chainId !== 'polkadot' || fromAmount.planck === 0n) return false
+    // insufficient balance
+    if (fromAmount.planck > availableBalance.planck) return false
+    if (polkadotApi.state !== 'hasValue') return undefined
+
+    const ed = polkadotApi.contents.consts.balances.existentialDeposit.toBigInt()
+    return availableBalance.planck - fromAmount.planck < ed
+  }, [availableBalance, fromAmount.planck, fromAsset, polkadotApi.contents, polkadotApi.state])
 }
