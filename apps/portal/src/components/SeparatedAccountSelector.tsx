@@ -92,7 +92,8 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
       }
     if (isSubstrateAddress(query))
       return {
-        address: query,
+        // computation will always be done in generic format
+        address: encodeAddress(decodeAddress(query), 42),
         type: 'sr25519',
         partOfPortfolio: false,
         readonly: true,
@@ -102,7 +103,11 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
 
   const evmAccounts = useMemo(() => {
     const filtered = evmAccountsFilter ? defaultEvmAccounts.filter(evmAccountsFilter) : defaultEvmAccounts
-    if (accountFromInput?.type !== 'ethereum') return filtered
+    if (
+      accountFromInput?.type !== 'ethereum' ||
+      filtered.find(a => a.address.toLowerCase() === accountFromInput.address.toLowerCase())
+    )
+      return filtered
     return [accountFromInput, ...filtered]
   }, [accountFromInput, defaultEvmAccounts, evmAccountsFilter])
 
@@ -110,7 +115,12 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
     const filtered = substrateAccountsFilter
       ? defaultSubstrateAccounts.filter(substrateAccountsFilter)
       : defaultSubstrateAccounts
-    if (!accountFromInput || accountFromInput.type === 'ethereum') return filtered
+    if (
+      !accountFromInput ||
+      accountFromInput?.type === 'ethereum' ||
+      filtered.find(a => a.address.toLowerCase() === accountFromInput.address.toLowerCase())
+    )
+      return filtered
     return [accountFromInput, ...filtered]
   }, [accountFromInput, substrateAccountsFilter, defaultSubstrateAccounts])
 
@@ -128,9 +138,12 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
     return substrateAccounts.filter(
       account =>
         account.address?.toLowerCase().includes(query.toLowerCase()) ||
+        encodeAddress(decodeAddress(account.address), substrateAccountPrefix)
+          .toLowerCase()
+          .includes(query.toLowerCase()) ||
         account.name?.toLowerCase().includes(query.toLowerCase())
     )
-  }, [query, substrateAccounts])
+  }, [query, substrateAccountPrefix, substrateAccounts])
 
   const selectedAccount = useMemo(() => {
     const allowedAccounts =
@@ -152,24 +165,13 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
     [setQuery, allowInput]
   )
 
+  // selected account is invalid, clear it
   useEffect(() => {
-    if (!onAccountChange) return
-    // parent has value set as unconnected account, help it set to null
-    if (value && !selectedAccount && !allowInput) {
-      onAccountChange(null)
+    if (!selectedAccount && value) {
+      onAccountChange?.(null)
       setQuery('')
     }
-    if (allowInput) return
-    if (accountsType === 'ethereum') {
-      const evmAccount = evmAccounts[0]
-      if (evmAccount && value?.toLowerCase() !== evmAccount.address.toLowerCase()) onAccountChange(evmAccount.address)
-    } else if (accountsType === 'substrate') {
-      if (substrateAccounts.length > 0 && !substrateAccounts.find(a => a.address === value)) {
-        const defaultSubstrateAccount = substrateAccounts[0]
-        if (defaultSubstrateAccount) onAccountChange(defaultSubstrateAccount.address)
-      }
-    }
-  }, [onAccountChange, value, selectedAccount, allowInput, accountsType, evmAccounts, substrateAccounts])
+  }, [onAccountChange, selectedAccount, value])
 
   if (accountsType === 'ethereum' && !allowInput) {
     const evmAccount = evmAccounts[0]

@@ -1,72 +1,91 @@
-import { fromAddressState, useAssetAndChain } from './api'
+import { fromAddressAtom, fromAssetAtom, toAddressAtom } from './swap-modules/common.swap-module'
+import { selectCustomAddressAtom } from './swaps.api'
 import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
 import { selectedCurrencyState } from '@/domains/balances'
 import { cn } from '@/lib/utils'
+import { useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { Surface } from '@talismn/ui'
+import { useAtom, useAtomValue } from 'jotai'
 import type React from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useMemo } from 'react'
+import { useRecoilValue } from 'recoil'
 
-export const FromAccount: React.FC<{ assetAndChain: ReturnType<typeof useAssetAndChain> }> = ({ assetAndChain }) => {
-  const [fromAddress, setFromAddress] = useRecoilState(fromAddressState)
+export const FromAccount: React.FC = () => {
+  const fromAsset = useAtomValue(fromAssetAtom)
+  const [fromAddress, setFromAddress] = useAtom(fromAddressAtom)
+  const [toAddress, setToAddress] = useAtom(toAddressAtom)
   const currency = useRecoilValue(selectedCurrencyState)
+  const [selectCustomAddress, setSelectCustomAddress] = useAtom(selectCustomAddressAtom)
+
+  const tokens = useTokens()
+  const token = useMemo(() => {
+    if (!fromAsset) return null
+    return tokens[fromAsset.id]
+  }, [fromAsset, tokens])
 
   return (
     <Surface className="bg-card p-[16px] rounded-[8px] w-full">
-      <h4 className="text-[16px] font-semibold">From Account</h4>
-      <SeparatedAccountSelector
-        accountsType={
-          !assetAndChain.srcAssetChain ? 'all' : assetAndChain.srcAssetChain === 'Ethereum' ? 'ethereum' : 'substrate'
-        }
-        substrateAccountPrefix={0}
-        substrateAccountsFilter={a => !a.readonly}
-        evmAccountsFilter={a => !!a.canSignEvm}
-        value={fromAddress}
-        onAccountChange={setFromAddress}
-        showBalances={{
-          // if from asset is not seleted, we return the sum of all balances for that account
-          filter: assetAndChain.fromAssetJson
-            ? balance => {
-                // find the balance for the selected from asset
-                const chainMatch =
-                  assetAndChain.fromAssetJson?.chain.chain === balance.chain?.chainName ||
-                  (balance.evmNetworkId !== undefined &&
-                    assetAndChain.fromAssetJson?.chain.evmChainId?.toString() === balance.evmNetworkId?.toString())
-
+      <div className="flex items-center justify-between">
+        <h4 className={cn('text-[16px]', fromAsset ? 'font-semibold' : 'text-gray-500')}>Swapping With</h4>
+        {!selectCustomAddress && !!fromAddress && fromAddress.toLowerCase() === toAddress?.toLowerCase() && (
+          <p
+            className="text-primary text-[14px] font-medium cursor-pointer hover:text-primary/70"
+            onClick={() => {
+              setSelectCustomAddress(true)
+              setToAddress(null)
+            }}
+          >
+            Send to another address
+          </p>
+        )}
+      </div>
+      {!!fromAsset && (
+        <SeparatedAccountSelector
+          accountsType={
+            !token
+              ? 'all'
+              : token.type === 'evm-erc20' || token.type === 'evm-native' || token.type === 'evm-uniswapv2'
+              ? 'ethereum'
+              : 'substrate'
+          }
+          substrateAccountPrefix={0}
+          substrateAccountsFilter={a => !a.readonly}
+          evmAccountsFilter={a => !!a.canSignEvm}
+          value={fromAddress}
+          onAccountChange={setFromAddress}
+          showBalances={{
+            // if from asset is not seleted, we return the sum of all balances for that account
+            filter: fromAsset
+              ? // find the balance for the selected from asset
+                balance => balance.tokenId === fromAsset.id
+              : undefined,
+            output: b => {
+              if (!fromAsset) {
                 return (
-                  chainMatch &&
-                  (assetAndChain.srcAssetSymbol ? balance.token.symbol === assetAndChain.srcAssetSymbol : true)
+                  <p className="text-[14px] text-gray-400 whitespace-nowrap">
+                    {b.sum.fiat(currency).transferable.toLocaleString(undefined, {
+                      currency,
+                      style: 'currency',
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </p>
                 )
               }
-            : undefined,
-          output: b => {
-            if (!assetAndChain.fromAssetJson) {
+              const loading = b.each.find(b => b.status !== 'live') !== undefined || b.count === 0
+
               return (
-                <p className="text-[14px] text-gray-400 whitespace-nowrap">
-                  {b.sum.fiat(currency).transferable.toLocaleString(undefined, {
-                    currency,
-                    style: 'currency',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
+                <p className={cn('text-[14px] text-gray-400 whitespace-nowrap', { 'animate-pulse': loading })}>
+                  {Decimal.fromPlanck(b.sum.planck.transferable, fromAsset.decimals, {
+                    currency: fromAsset.symbol ?? undefined,
+                  }).toLocaleString()}
                 </p>
               )
-            }
-            const loading = b.each.find(b => b.status !== 'live') !== undefined
-
-            return (
-              <p className={cn('text-[14px] text-gray-400 whitespace-nowrap', { 'animate-pulse': loading })}>
-                {Decimal.fromPlanck(b.sum.planck.transferable, assetAndChain.fromAssetJson.decimals, {
-                  currency: assetAndChain.srcAssetSymbol ?? undefined,
-                }).toLocaleString(undefined, {
-                  minimumFractionDigits: 4,
-                  maximumFractionDigits: 4,
-                })}
-              </p>
-            )
-          },
-        }}
-      />
+            },
+          }}
+        />
+      )}
     </Surface>
   )
 }

@@ -25,14 +25,14 @@ const Layout = () => {
                 <NavLink to="/transport/swap" css={{ display: 'contents' }} onClick={event => event.preventDefault()}>
                   {({ isActive }) => (
                     <Tabs.Item selected={isActive} onClick={() => startTransition(() => navigate('/transport/swap'))}>
-                      Swap
+                      Cross-chain Swap
                     </Tabs.Item>
                   )}
                 </NavLink>
                 <NavLink to="/transport/xcm" css={{ display: 'contents' }} onClick={event => event.preventDefault()}>
                   {({ isActive }) => (
                     <Tabs.Item selected={isActive} onClick={() => startTransition(() => navigate('/transport/xcm'))}>
-                      XCM
+                      Polkadot (XCM)
                     </Tabs.Item>
                   )}
                 </NavLink>

@@ -1,35 +1,97 @@
-import { TokenSelector } from './TokenSelector'
-import { fromAccountState, fromAddressState, fromAmountInputState, useAssetAndChain } from './api'
+import { SuspensedSwapTokenSelector } from './SwapTokenSelector'
+import {
+  fromAddressAtom,
+  fromAmountAtom,
+  fromAmountInputAtom,
+  fromAssetAtom,
+  toAssetAtom,
+  type CommonSwappableAssetType,
+} from './swap-modules/common.swap-module'
+import { selectedCurrencyState } from '@/domains/balances'
+import { cn } from '@/lib/utils'
+import { useTokenRates } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, TextInput } from '@talismn/ui'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { HelpCircle } from '@talismn/web-icons'
+import { useAtom, useAtomValue } from 'jotai'
+import { useCallback, useMemo } from 'react'
+import { Link } from 'react-router-dom'
+import { useRecoilValue } from 'recoil'
 
 export const FromAmount: React.FC<{
-  assetAndChain: ReturnType<typeof useAssetAndChain>
+  // NOTE: we get this as a prop so we dont have to get this balance twice. The parent component also needs this to
+  // check whether user has enough balance to swap
   availableBalance: { balance: Decimal; loading: boolean } | null
-}> = ({ assetAndChain, availableBalance }) => {
-  const [fromAmountInput, setFromAmountInput] = useRecoilState(fromAmountInputState)
-  const fromAccount = useRecoilValue(fromAccountState)
-  const setFromAddress = useSetRecoilState(fromAddressState)
+  wouldReapAccount?: boolean
+  insufficientBalance?: boolean
+}> = ({ availableBalance, insufficientBalance, wouldReapAccount }) => {
+  const [fromAmountInput, setFromAmountInput] = useAtom(fromAmountInputAtom)
+  const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
+  const [toAsset, setToAsset] = useAtom(toAssetAtom)
+  const fromAddress = useAtomValue(fromAddressAtom)
+  const fromAmount = useAtomValue(fromAmountAtom)
+  const rates = useTokenRates()
+  const currency = useRecoilValue(selectedCurrencyState)
+  const handleSelectAsset = useCallback(
+    (asset: CommonSwappableAssetType | null) => {
+      // reverse
+      if (toAsset) if (toAsset.id === asset?.id) setToAsset(fromAsset)
+      if (fromAsset) setFromAmountInput('')
+      setFromAsset(asset)
+    },
+    [fromAsset, setFromAmountInput, setFromAsset, setToAsset, toAsset]
+  )
+
+  const usdValue = useMemo(() => {
+    if (!fromAsset) return null
+    const rate = rates[fromAsset.id]
+    if (!rate) return null
+    const rateInCurrency = rate[currency]
+    if (!rateInCurrency) return null
+    return +fromAmount.toString() * rateInCurrency
+  }, [currency, fromAmount, fromAsset, rates])
 
   return (
     <TextInput
+      autoComplete="off"
       leadingLabel="You're paying"
       trailingLabel={
         availableBalance ? (
           availableBalance.loading ? (
             <CircularProgressIndicator size={12} />
           ) : (
-            `Balance: ${availableBalance.balance.toLocaleString(undefined, {
-              minimumFractionDigits: 4,
-              maximumFractionDigits: 4,
-            })}`
+            `Balance: ${availableBalance.balance.toLocaleString()}`
           )
         ) : null
       }
+      textBelowInput={
+        insufficientBalance ? (
+          <p className="text-red-400 text-[10px] leading-none">Insufficient balance</p>
+        ) : wouldReapAccount ? (
+          <div className="flex items-center gap-[4px]">
+            <p className="text-red-400 text-[10px] leading-none">Insufficient existential deposit</p>
+            <Link
+              to="https://support.polkadot.network/support/solutions/articles/65000168651-what-is-the-existential-deposit-"
+              target="_blank"
+              className="leading-none"
+            >
+              <HelpCircle size={10} className="text-red-400 cursor-pointer" />
+            </Link>
+          </div>
+        ) : (
+          <p className="text-gray-400 text-[10px] leading-none">
+            {(usdValue ?? 0)?.toLocaleString(undefined, { currency, style: 'currency' })}
+          </p>
+        )
+      }
       placeholder="0.00"
-      className="text-ellipsis"
-      containerClassName="[&>div:nth-child(2)]:!py-[8px] [&>div]:!pr-[8px]"
+      className="text-ellipsis !text-[18px] !font-semibold"
+      containerClassName={cn(
+        '[&>div:nth-child(2)]:!py-[8px] [&>div]:!pr-[8px] [&>div:nth-child(2)]:border [&>div:nth-child(2)]:border-red-500/0',
+        {
+          '[&>div:nth-child(2)]:border-red-400 ': wouldReapAccount || insufficientBalance,
+        }
+      )}
       value={fromAmountInput}
       onChangeText={setFromAmountInput}
       inputMode="decimal"
@@ -44,34 +106,10 @@ export const FromAmount: React.FC<{
               <p css={{ fontSize: 12, lineHeight: 1 }}>Max</p>
             </TextInput.LabelButton>
           )}
-          <TokenSelector
-            balanceFor={fromAccount?.address ?? null}
-            selectedAssetSymbol={assetAndChain.srcAssetSymbol}
-            selectedAssetChain={assetAndChain.srcAssetChain}
-            onSelectToken={token => {
-              if (!token) {
-                assetAndChain.setSrcAssetSymbol(null)
-                assetAndChain.setSrcAssetChain(null)
-
-                return
-              }
-              assetAndChain.setSrcAssetSymbol(token.code)
-              assetAndChain.setSrcAssetChain(token.chainId)
-
-              if (fromAccount) {
-                if (
-                  (token.chain === 'Ethereum' && fromAccount.type !== 'ethereum') ||
-                  (token.chain === 'Polkadot' && fromAccount.type === 'ethereum')
-                ) {
-                  setFromAddress(null)
-                }
-              }
-
-              if (token.chain === assetAndChain.destAssetChain) {
-                assetAndChain.setDestAssetChain(assetAndChain.srcAssetChain)
-                assetAndChain.setDestAssetSymbol(assetAndChain.srcAssetSymbol)
-              }
-            }}
+          <SuspensedSwapTokenSelector
+            balanceFor={fromAddress ?? null}
+            onSelectAsset={handleSelectAsset}
+            selectedAsset={fromAsset}
           />
         </div>
       }

@@ -1,23 +1,17 @@
-import { ChainflipActivities } from './ChainflipActivities'
-import { ChainflipDetails } from './ChainflipDetails'
 import { ChainFlipFAQ } from './ChainflipFAQ'
+import { SwapDetails } from './SwapDetails'
+import { SwapHistory } from './SwapHistory'
 import { cn } from '@/lib/utils'
 import { Chip } from '@talismn/ui'
 import { Activity, FileSearch, HelpCircle } from '@talismn/web-icons'
+import { atom, useAtom } from 'jotai'
 import { useMemo } from 'react'
-import { atom, useRecoilState } from 'recoil'
 
 type Tab = 'details' | 'activities' | 'faq'
 
-export const swapInfoTabState = atom<Tab>({
-  key: 'swapInfoTabState',
-  default: 'details',
-})
+export const swapInfoTabAtom = atom<Tab>('details')
 
-export const shouldFocusDetailsState = atom<boolean>({
-  key: 'shouldFocusDetails',
-  default: false,
-})
+export const shouldFocusDetailsAtom = atom<boolean>(false)
 
 const TabItem: React.FC<React.PropsWithChildren & { onClick?: () => void; selected?: boolean }> = ({
   children,
@@ -38,14 +32,14 @@ const TabItem: React.FC<React.PropsWithChildren & { onClick?: () => void; select
 }
 
 export const SidePanel: React.FC = () => {
-  const [tab, setTab] = useRecoilState<Tab>(swapInfoTabState)
+  const [tab, setTab] = useAtom<Tab>(swapInfoTabAtom)
 
   const content = useMemo(() => {
     switch (tab) {
       case 'details':
-        return <ChainflipDetails />
+        return <SwapDetails />
       case 'activities':
-        return <ChainflipActivities />
+        return <SwapHistory />
       default:
         return <ChainFlipFAQ />
     }
@@ -68,7 +62,9 @@ export const SidePanel: React.FC = () => {
             </TabItem>
           </div>
         </div>
-        <div className="flex-1 flex flex-col overflow-auto overflow-x-hidden w-full">{content}</div>
+        <div className="flex-1 flex flex-col w-full">
+          <div className="md:h-0 md:min-h-full overflow-auto max-h-[340px] md:max-h-auto">{content}</div>
+        </div>
         <div className="bg-background mt-auto pt-3">
           <p className="text-center text-[12px] text-gray-500">
             Swap powered by {/* eslint-disable-next-line react/jsx-no-target-blank */}
