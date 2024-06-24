@@ -103,7 +103,7 @@ const StakeProviderItem = () => {
 const StakeProviders = () => {
   return (
     <>
-      {useRecoilValue(nominationPoolsEnabledChainsState).map((chain, index) => (
+      {useRecoilValue(nominationPoolsEnabledChainsState)?.map((chain, index) => (
         <ChainProvider key={index} chain={chain}>
           <StakeProviderItem />
         </ChainProvider>
