@@ -11,13 +11,7 @@ const Layout = () => {
 
   return (
     <AccountConnectionGuard>
-      <div
-        css={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
+      <div className="flex flex-col items-center mt-[64px]">
         <ErrorBoundary>
           <Suspense fallback={<TalismanHandProgressIndicator />}>
             <div className="w-full max-w-[840px] mx-auto">

@@ -67,7 +67,7 @@ export const SwapHistory: React.FC = () => {
   return (
     <div className="w-full grid gap-[8px]">
       {swaps.map(swap => (
-        <ErrorBoundary key={swap.timestamp} fallback={<></>}>
+        <ErrorBoundary key={swap.timestamp} fallback={<Skeleton.Surface className="h-[56px] w-full" />}>
           <Suspense fallback={<Skeleton.Surface className="h-[56px] w-full" />}>{renderSwap(swap)}</Suspense>
         </ErrorBoundary>
       ))}

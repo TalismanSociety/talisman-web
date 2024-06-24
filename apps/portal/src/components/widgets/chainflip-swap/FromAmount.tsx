@@ -24,7 +24,8 @@ export const FromAmount: React.FC<{
   availableBalance: { balance: Decimal; loading: boolean } | null
   wouldReapAccount?: boolean
   insufficientBalance?: boolean
-}> = ({ availableBalance, insufficientBalance, wouldReapAccount }) => {
+  existentialDeposit?: bigint | null
+}> = ({ availableBalance, existentialDeposit, insufficientBalance, wouldReapAccount }) => {
   const [fromAmountInput, setFromAmountInput] = useAtom(fromAmountInputAtom)
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
   const [toAsset, setToAsset] = useAtom(toAssetAtom)
@@ -101,7 +102,14 @@ export const FromAmount: React.FC<{
           {availableBalance && !availableBalance.loading && (
             <TextInput.LabelButton
               css={{ fontSize: 12, paddingTop: 4, paddingBottom: 4 }}
-              onClick={() => setFromAmountInput(availableBalance.balance.toString())}
+              onClick={() =>
+                setFromAmountInput(
+                  Decimal.fromPlanck(
+                    availableBalance.balance.planck - (existentialDeposit ?? 0n),
+                    availableBalance.balance.decimals
+                  ).toString()
+                )
+              }
             >
               <p css={{ fontSize: 12, lineHeight: 1 }}>Max</p>
             </TextInput.LabelButton>

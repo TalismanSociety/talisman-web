@@ -20,6 +20,7 @@ import {
   type QuoteResponse,
   type AssetData,
   type ChainData,
+  type SwapStatusResponse,
 } from '@chainflip/sdk/swap'
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { Decimal } from '@talismn/math'
@@ -85,12 +86,26 @@ const chainflipNetworkAtom = atom<ChainflipNetwork>('mainnet')
 export const polkadotRpcAtom = atom(get =>
   get(chainflipNetworkAtom) === 'mainnet' ? 'wss://polkadot.api.onfinality.io/public' : 'wss://rpc-pdot.chainflip.io'
 )
-const swapSdkAtom = atom(
-  get =>
-    new SwapSDK({
-      network: get(chainflipNetworkAtom),
-    })
-)
+
+const brokerUrlAtom = atom(get => {
+  switch (get(chainflipNetworkAtom)) {
+    case 'mainnet':
+      return 'https://broker.chainflip.talisman.xyz'
+    case 'perseverance':
+      return 'https://broker.perseverance.chainflip.talisman.xyz'
+    default:
+      return undefined
+  }
+})
+
+const swapSdkAtom = atom(get => {
+  const network = get(chainflipNetworkAtom)
+  const brokerUrl = get(brokerUrlAtom)
+  return new SwapSDK({
+    network,
+    broker: brokerUrl ? { url: brokerUrl, commissionBps: 100 } : undefined,
+  })
+})
 
 export const chainflipAssetsAtom = atom(async get => await get(swapSdkAtom).getAssets())
 export const chainflipChainsAtom = atom(async get => await get(swapSdkAtom).getChains())
@@ -295,8 +310,12 @@ export const chainflipSwapModule: SwapModule = {
 
 // helpers
 
-export const chainflipSwapStatusAtom = atomFamily((id: string) =>
-  atom(async get => {
+const retryStatus = async (
+  get: Getter,
+  id: string,
+  attempts = 0
+): Promise<SwapStatusResponse & { expired: boolean }> => {
+  try {
     const status = await get(swapSdkAtom).getStatus({ id })
     let expired = false
 
@@ -309,5 +328,16 @@ export const chainflipSwapStatusAtom = atomFamily((id: string) =>
     }
 
     return { ...status, expired }
-  })
-)
+  } catch (e) {
+    const error = e as Error & { response?: { status: number } }
+    // because we're using a broker, the tx isnt always available immediately in their api service
+    // so we wait a bit and retry
+    if (error.name === 'AxiosError' && error?.response?.status === 404 && attempts < 10) {
+      await new Promise(resolve => setTimeout(resolve, 5000))
+      return retryStatus(get, id, attempts + 1)
+    }
+    throw e
+  }
+}
+
+export const chainflipSwapStatusAtom = atomFamily((id: string) => atom(async get => await retryStatus(get, id)))
