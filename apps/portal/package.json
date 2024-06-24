@@ -16,7 +16,8 @@
     "storybook": "storybook dev -p 6008",
     "build-storybook": "storybook build",
     "codegen:history": "graphql-codegen --require dotenv/config --config codegen.history.ts",
-    "codegen:crowdloan": "graphql-codegen --require dotenv/config --config codegen.crowdloan.ts"
+    "codegen:crowdloan": "graphql-codegen --require dotenv/config --config codegen.crowdloan.ts",
+    "codegen:nova": "graphql-codegen --require dotenv/config --config codegen.nova.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -41,6 +42,7 @@
     "@talismn/signet-apps-sdk": "0.0.7",
     "@talismn/swap": "workspace:^",
     "@talismn/ui": "workspace:^",
+    "@talismn/ui-recipes": "workspace:^",
     "@talismn/util": "0.0.0-pr1392-20240408055115",
     "@talismn/utils": "workspace:^",
     "@talismn/web-icons": "workspace:^",

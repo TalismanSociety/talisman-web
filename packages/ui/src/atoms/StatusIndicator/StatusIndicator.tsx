@@ -16,6 +16,7 @@ const StatusIndicator = (props: StatusIndicatorProps) => {
       <div
         className={props.className}
         css={{
+          display: 'inline-block',
           width: '0.8rem',
           minWidth: '0.8rem',
           height: '0.8rem',

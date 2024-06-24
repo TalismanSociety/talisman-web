@@ -10,6 +10,7 @@ export const glmrSlpxPair = {
     type: 'token',
     address: '0x0000000000000000000000000000000000000802',
     symbol: 'GLMR',
+    logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/chains/moonbeam.svg',
     coingeckoId: 'moonbeam',
     tokenId: {
       Token2: 1,
@@ -19,6 +20,7 @@ export const glmrSlpxPair = {
     type: 'vToken',
     address: '0xFfFfFFff99dABE1a8De0EA22bAa6FD48fdE96F6c',
     symbol: 'xcvGMLR',
+    logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/chains/moonbeam.svg',
     coingeckoId: 'voucher-glmr',
     tokenId: {
       VToken2: 1,

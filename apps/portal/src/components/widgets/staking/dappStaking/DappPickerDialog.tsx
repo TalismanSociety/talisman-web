@@ -1,5 +1,5 @@
 import { useNativeTokenAmountState } from '../../../../domains/chains'
-import type { Stake } from '../../../../domains/staking/dappStaking'
+import type { StakeLoadable } from '../../../../domains/staking/dappStaking'
 import { useRegisteredDappsState } from '../../../../domains/staking/dappStaking/recoils'
 import { shortenAddress } from '../../../../util/format'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
@@ -9,7 +9,7 @@ import { useRecoilValue, waitForAll } from 'recoil'
 
 type DappPickerDialogProps = {
   title: ReactNode
-  stake: Stake
+  stake: StakeLoadable['data']
   onSelect: (dapp: AstarPrimitivesDappStakingSmartContract) => void
   onRequestDismiss: () => void
 }

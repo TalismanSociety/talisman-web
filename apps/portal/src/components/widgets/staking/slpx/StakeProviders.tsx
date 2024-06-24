@@ -5,6 +5,7 @@ import StakeProvider from '../../../recipes/StakeProvider'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
+import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import Apr from './Apr'
 import UnlockDuration from './UnlockDuration'
 import { githubChainLogoUrl } from '@talismn/chaindata-provider'
@@ -80,31 +81,43 @@ const StakeProviders = () => {
 
   return (
     <>
-      {slpxPairs.map((slpxPair, index) => (
-        <ErrorBoundary key={index} orientation="horizontal">
+      {slpxPairs.map((slpxPair, index) => {
+        const logo = githubChainLogoUrl('moonbeam')
+        const { symbol } = slpxPair.nativeToken
+        const provider = 'Bifrost SLPx'
+        return (
           <ChainProvider
+            key={index}
             chain={{
               genesisHash: slpxPair.substrateChainGenesisHash,
             }}
           >
-            <StakeProvider
-              symbol={slpxPair.nativeToken.symbol}
-              logo={githubChainLogoUrl('moonbeam')}
-              chain={slpxPair.chain.name}
-              apr={<Apr slpxPair={slpxPair} />}
-              type="Liquid staking"
-              provider="Bifrost SLPx"
-              unbondingPeriod={<UnlockDuration slpxPair={slpxPair} />}
-              availableBalance={<AvailableBalance slpxPair={slpxPair} />}
-              availableFiatBalance={<AvailableFiatBalance slpxPair={slpxPair} />}
-              stakePercentage={<StakePercentage slpxPair={slpxPair} />}
-              stakeButton={
-                <StakeProvider.StakeButton as={Link} to={`?action=stake&type=slpx&contract-address=${slpxPair.splx}`} />
-              }
-            />
+            <ErrorBoundary
+              orientation="horizontal"
+              renderFallback={() => <ErrorBoundaryFallback logo={logo} symbol={symbol} provider={provider} />}
+            >
+              <StakeProvider
+                symbol={symbol}
+                logo={logo}
+                chain={slpxPair.chain.name}
+                apr={<Apr slpxPair={slpxPair} />}
+                type="Liquid staking"
+                provider={provider}
+                unbondingPeriod={<UnlockDuration slpxPair={slpxPair} />}
+                availableBalance={<AvailableBalance slpxPair={slpxPair} />}
+                availableFiatBalance={<AvailableFiatBalance slpxPair={slpxPair} />}
+                stakePercentage={<StakePercentage slpxPair={slpxPair} />}
+                stakeButton={
+                  <StakeProvider.StakeButton
+                    as={Link}
+                    to={`?action=stake&type=slpx&contract-address=${slpxPair.splx}`}
+                  />
+                }
+              />
+            </ErrorBoundary>
           </ChainProvider>
-        </ErrorBoundary>
-      ))}
+        )
+      })}
     </>
   )
 }

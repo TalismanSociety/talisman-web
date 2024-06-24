@@ -1,7 +1,6 @@
 import { ChainProvider, nominationPoolsEnabledChainsState } from '../../../domains/chains'
 import { useTotalStaked } from '../../../domains/staking'
 import SectionHeader from '../../molecules/SectionHeader'
-import StakePosition, { StakePositionList } from '../../recipes/StakePosition'
 import AnimatedFiatNumber from '../AnimatedFiatNumber'
 import ErrorBoundary from '../ErrorBoundary'
 import DappStakes from './dappStaking/Stakes'
@@ -10,6 +9,8 @@ import SlpxStakes from './slpx/Stakes'
 import PoolStakes from './substrate/PoolStakes'
 import ValidatorStakes from './substrate/ValidatorStakes'
 import { Button, HiddenDetails, Text } from '@talismn/ui'
+import { StakePosition, StakePositionList } from '@talismn/ui-recipes'
+import { useState } from 'react'
 import { Fragment, Suspense, type PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
@@ -68,6 +69,7 @@ const SuspenseSkeleton = (props: PropsWithChildren) => (
 
 const Stakes = (props: { hideHeader?: boolean }) => {
   const chains = useRecoilValue(nominationPoolsEnabledChainsState)
+  const [shouldRenderLoadingSkeleton, setShouldRenderLoadingSkeleton] = useState<boolean>(true)
 
   return (
     <div id="staking">
@@ -77,35 +79,39 @@ const Stakes = (props: { hideHeader?: boolean }) => {
           [`[class~=${skellyClassName}]:not(:nth-last-child(1 of [class~=${skellyClassName}]))`]: { display: 'none' },
         }}
       >
-        {chains.map((chain, index) => (
-          <Fragment key={index}>
-            <ChainProvider chain={chain}>
-              <ErrorBoundary orientation="horizontal">
-                <SuspenseSkeleton>
-                  <PoolStakes />
-                </SuspenseSkeleton>
-              </ErrorBoundary>
-              <ErrorBoundary orientation="horizontal">
-                <SuspenseSkeleton>
-                  <ValidatorStakes />
-                </SuspenseSkeleton>
-              </ErrorBoundary>
-            </ChainProvider>
-          </Fragment>
-        ))}
+        {shouldRenderLoadingSkeleton && <StakePosition.Skeleton className={skellyClassName} css={{ order: 1 }} />}
+
+        {chains.map((chain, index) => {
+          return (
+            <Fragment key={index}>
+              <ChainProvider chain={chain}>
+                <ErrorBoundary orientation="horizontal">
+                  <SuspenseSkeleton>
+                    <PoolStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
+                  </SuspenseSkeleton>
+                </ErrorBoundary>
+                <ErrorBoundary orientation="horizontal">
+                  <SuspenseSkeleton>
+                    <ValidatorStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
+                  </SuspenseSkeleton>
+                </ErrorBoundary>
+              </ChainProvider>
+            </Fragment>
+          )
+        })}
         <ErrorBoundary orientation="horizontal">
           <SuspenseSkeleton>
-            <DappStakes />
+            <DappStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
           </SuspenseSkeleton>
         </ErrorBoundary>
         <ErrorBoundary orientation="horizontal">
           <SuspenseSkeleton>
-            <SlpxStakes />
+            <SlpxStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
           </SuspenseSkeleton>
         </ErrorBoundary>
         <ErrorBoundary orientation="horizontal">
           <SuspenseSkeleton>
-            <LidoStakes />
+            <LidoStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
           </SuspenseSkeleton>
         </ErrorBoundary>
         <NoStakePrompt css={{ display: 'none', ':only-child': { display: 'revert' } }} />

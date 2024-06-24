@@ -64,15 +64,10 @@ export const useStake = (account: Account) => {
       : firstStakedEra.sub(firstStakedEra.mod(api.consts.dappStaking.eraRewardSpanLength))
   const lastSpanIndex = lastStakedEra.sub(lastStakedEra.mod(api.consts.dappStaking.eraRewardSpanLength))
 
-  const eraRewardsSpans = useRecoilValue(
-    useQueryState(
-      'dappStaking',
-      'eraRewards.multi',
-      rewardsExpired || firstSpanIndex === undefined
-        ? []
-        : range(firstSpanIndex.toNumber(), lastSpanIndex.toNumber() + 1)
-    )
-  )
+  const queryParams =
+    rewardsExpired || firstSpanIndex === undefined ? [] : range(firstSpanIndex.toNumber(), lastSpanIndex.toNumber() + 1)
+
+  const eraRewardsSpans = useRecoilValue(useQueryState('dappStaking', 'eraRewards.multi', queryParams))
 
   const stakerRewards = useMemo(
     () =>

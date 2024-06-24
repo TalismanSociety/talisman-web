@@ -4,6 +4,7 @@ export type SlpxToken = {
   type: 'token' | 'vToken'
   address: `0x${string}`
   symbol: string
+  logo: string
   coingeckoId: string
   tokenId: any
 }

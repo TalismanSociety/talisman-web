@@ -3,7 +3,7 @@ import { nativeTokenPriceState, nominationPoolsEnabledChainsState } from '../../
 import { chainDeriveState, chainQueryState, substrateApiState } from '../../common'
 import { Decimal } from '@talismn/math'
 import { useMemo } from 'react'
-import { useRecoilValue, waitForAll, waitForAny } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable, waitForAll, waitForAny } from 'recoil'
 
 export const useTotalStaked = () => {
   const [chains, accounts] = useRecoilValue(
@@ -14,14 +14,17 @@ export const useTotalStaked = () => {
     waitForAll(chains.map(chain => nativeTokenPriceState({ genesisHash: chain.genesisHash })))
   )
 
-  const apis = useRecoilValue(waitForAll(chains.map(x => substrateApiState(x.rpc))))
-  const decimals = apis.map(x => x.registry.chainDecimals.at(0) ?? 0)
+  const apis = useRecoilValueLoadable(waitForAll(chains.map(x => substrateApiState(x.rpc))))
+  const decimals = useMemo(() => {
+    if (apis.state !== 'hasValue') return []
+    return apis.contents.map(x => x.registry.chainDecimals.at(0) ?? 0)
+  }, [apis])
 
-  const [validatorStakes, poolStakes] = useRecoilValue(
-    waitForAny([
-      waitForAny(chains.map(x => chainDeriveState(x.rpc, 'staking', 'accounts', [addresses, undefined]))),
-      waitForAny(chains.map(x => chainQueryState(x.rpc, 'nominationPools', 'poolMembers.multi', addresses))),
-    ])
+  const validatorStakes = useRecoilValueLoadable(
+    waitForAny(chains.map(x => chainDeriveState(x.rpc, 'staking', 'accounts', [addresses, undefined])))
+  )
+  const poolStakes = useRecoilValueLoadable(
+    waitForAny(chains.map(x => chainQueryState(x.rpc, 'nominationPools', 'poolMembers.multi', addresses)))
   )
 
   const validatorStakeFiatTotal =

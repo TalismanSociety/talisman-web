@@ -125,6 +125,7 @@ const Identicon = ({ value: seed, size = '2.4rem', className, style }: Identicon
       viewBox={`0 0 64 64`}
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
+      css={{ display: 'inline-block' }}
     >
       <defs>
         <linearGradient id={`${id}-bg`}>
