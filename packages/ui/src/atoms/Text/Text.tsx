@@ -33,7 +33,7 @@ const BaseText = <T extends React.ElementType = 'span'>({ as, alpha = 'medium', 
   const Component = as ?? 'span'
 
   return (
-    <Component {...props} css={{ color: theme.color.onBackground }}>
+    <Component {...props} css={{ color: theme.color.onBackground, fontSize: 'inherit' }}>
       <span
         css={{
           display: 'contents',

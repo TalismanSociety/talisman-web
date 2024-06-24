@@ -1,4 +1,4 @@
-import { getAllRewardsClaimExtrinsics, type Stake } from '.'
+import { getAllRewardsClaimExtrinsics, type StakeLoadable } from '.'
 import { Maybe } from '../../../../util/monads'
 import type { Account } from '../../../accounts'
 import {
@@ -21,7 +21,7 @@ const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.5
 
 export const useAddStakeForm = (
   account: Account,
-  stake: Stake,
+  stake: StakeLoadable['data'],
   dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
 ) => {
   const [amount, setAmount] = useState('')
@@ -45,8 +45,12 @@ export const useAddStakeForm = (
     [accountInfo.data.free, accountInfo.data.frozen]
   )
   const lockedAvailableForStake = useMemo(
-    () => BigIntMath.max(0n, stake.ledger.locked.unwrap().toBigInt() - (stake.totalStaked.decimalAmount?.planck ?? 0n)),
-    [stake.ledger.locked, stake.totalStaked]
+    () =>
+      BigIntMath.max(
+        0n,
+        (stake.ledger?.locked.unwrap().toBigInt() ?? 0n) - (stake.totalStaked?.decimalAmount?.planck ?? 0n)
+      ),
+    [stake.ledger?.locked, stake.totalStaked]
   )
 
   const availableBeforeFee = useTokenAmountFromPlanck(
@@ -102,8 +106,8 @@ export const useAddStakeForm = (
   const minimum = useTokenAmountFromPlanck(api.consts.dappStaking.minimumStakeAmount)
 
   const maxStakeEntriesReached = useMemo(
-    () => stake.ledger.contractStakeCount.unwrap().gte(api.consts.dappStaking.maxNumberOfStakedContracts),
-    [api.consts.dappStaking.maxNumberOfStakedContracts, stake.ledger.contractStakeCount]
+    () => stake.ledger?.contractStakeCount.unwrap().gte(api.consts.dappStaking.maxNumberOfStakedContracts),
+    [api.consts.dappStaking.maxNumberOfStakedContracts, stake.ledger?.contractStakeCount]
   )
 
   const maxStakedDappsReached = useMemo(
@@ -208,7 +212,7 @@ export const useAddStakeForm = (
 
 export const useUnstakeForm = (
   account: Account,
-  stake: Stake,
+  stake: StakeLoadable['data'],
   dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
 ) => {
   const [amount, setAmount] = useState('')

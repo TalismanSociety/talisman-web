@@ -30,6 +30,8 @@ export const Icon: Story = {
   },
 }
 
+export const Empty: Story = {}
+
 export const Container: Story = {
   render: () => (
     <BadgedBox badge={<Badge>999+</Badge>}>

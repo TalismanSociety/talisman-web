@@ -5,7 +5,9 @@ import { useApr } from '../../../../domains/staking/dappStaking'
 import { Maybe } from '../../../../util/monads'
 import StakeProvider from '../../../recipes/StakeProvider'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
+import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
+import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import UnlockDuration from './UnlockDuration'
 import { Decimal } from '@talismn/math'
 import { usePolkadotApiId, useQueryState } from '@talismn/react-polkadot-api'
@@ -92,21 +94,29 @@ const StakePercentage = () => {
 
 const StakeProviderItem = () => {
   const chain = useRecoilValue(useChainState())
+  const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
 
   return (
-    <StakeProvider
-      symbol={chain.nativeToken?.symbol}
-      logo={chain.nativeToken?.logo ?? ''}
-      chain={chain.name}
-      apr={<Apr />}
-      type="DApp staking"
-      provider={chain.name}
-      unbondingPeriod={<UnlockDuration />}
-      availableBalance={<AvailableBalance />}
-      availableFiatBalance={<AvailableFiatBalance />}
-      stakePercentage={<StakePercentage />}
-      stakeButton={<StakeProvider.StakeButton as={Link} to={`?action=stake&type=dapp-staking&chain=${chain.id}`} />}
-    />
+    <ErrorBoundary
+      orientation="horizontal"
+      renderFallback={() => <ErrorBoundaryFallback logo={logo} symbol={symbol} provider={name} />}
+    >
+      <StakeProvider
+        symbol={symbol}
+        logo={logo}
+        chain={name}
+        apr={<Apr />}
+        type="DApp staking"
+        provider={name}
+        unbondingPeriod={<UnlockDuration />}
+        availableBalance={<AvailableBalance />}
+        availableFiatBalance={<AvailableFiatBalance />}
+        stakePercentage={<StakePercentage />}
+        stakeButton={
+          <StakeProvider.StakeButton as={Link} to={`?action=stake&type=dapp-staking&chain=${chain?.id ?? ''}`} />
+        }
+      />
+    </ErrorBoundary>
   )
 }
 

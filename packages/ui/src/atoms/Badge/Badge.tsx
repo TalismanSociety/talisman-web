@@ -13,17 +13,20 @@ const Badge = (props: BadgeProps) => (
   <Text.BodySmall
     as="div"
     {...props}
-    css={theme => ({
-      color: props.contentColor ?? theme.color.onError,
-      display: 'inline-block',
-      borderRadius: theme.shape.full,
-      minWidth: '1.6em',
-      lineHeight: '1em',
-      padding: '0.3em',
-      backgroundColor: theme.color.error,
-      textAlign: 'center',
-      svg: { display: 'block' },
-    })}
+    css={theme => [
+      {
+        color: props.contentColor ?? theme.color.onError,
+        display: 'inline-block',
+        borderRadius: theme.shape.full,
+        minWidth: '1.6em',
+        lineHeight: '1em',
+        padding: '0.3em',
+        backgroundColor: theme.color.error,
+        textAlign: 'center',
+        svg: { display: 'block' },
+      },
+      props.children === undefined && { minWidth: 'revert', width: '0.8rem', height: '0.8rem' },
+    ]}
     style={{ backgroundColor: props.containerColor }}
   >
     <IconContext.Provider value={{ size: '1em' }}>{props.children}</IconContext.Provider>
@@ -38,7 +41,7 @@ export const BadgedBox = ({ overlap = 'rectangular', ...props }: BadgedBoxProps)
       css={{
         position: 'relative',
         // Trick to make parent height equal to child
-        display: 'flex',
+        display: 'inline-flex',
       }}
     >
       {props.children}

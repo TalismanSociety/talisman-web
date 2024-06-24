@@ -9,7 +9,7 @@ import '@bifrost-finance/types/augment/api'
 import { evmToAddress } from '@polkadot/util-crypto'
 import { Decimal } from '@talismn/math'
 import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
-import { useSuspenseQueries } from '@tanstack/react-query'
+import { useQueries } from '@tanstack/react-query'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
 import { useEffect, useMemo, useState } from 'react'
@@ -355,7 +355,7 @@ export const useStakes = (accounts: Account[], slpxPair: SlpxPair) => {
 
   const config = useConfig()
 
-  const [vToken, balances] = useSuspenseQueries({
+  const [vToken, balances] = useQueries({
     queries: [
       getTokenQueryOptions(config, { chainId: slpxPair.chain.id, address: slpxPair.vToken.address }),
       readContractsQueryOptions(config, {
@@ -379,33 +379,48 @@ export const useStakes = (accounts: Account[], slpxPair: SlpxPair) => {
     [blockNumber]
   )
 
-  const api = useRecoilValue(useSubstrateApiState())
-  const [tokenPrice, userUnlockLedgers] = useRecoilValue(
+  const apiLoadable = useRecoilValueLoadable(useSubstrateApiState())
+  const api = apiLoadable.valueMaybe()
+
+  const { state, contents } = useRecoilValueLoadable(
     waitForAll([
       tokenPriceState({ coingeckoId: slpxPair.vToken.coingeckoId }),
       useQueryState(
         'vtokenMinting',
         'userUnlockLedger.multi',
         filteredAccounts.map(
-          x => [evmToAddress(x.address, api.registry.chainSS58), slpxPair.nativeToken.tokenId] as const
+          x => [evmToAddress(x.address, api?.registry.chainSS58), slpxPair.nativeToken.tokenId] as const
         )
       ),
     ])
   )
 
-  return filteredAccounts
-    .map((account, index) => {
-      const balance = Decimal.fromPlanck((balances.data?.[index]?.result as bigint) ?? 0n, vToken.data?.decimals ?? 0, {
-        currency: vToken.data?.symbol,
+  const [tokenPrice, userUnlockLedgers] = state === 'hasValue' ? contents : []
+
+  const data = useMemo(() => {
+    return filteredAccounts
+      .map((account, index) => {
+        const balance = Decimal.fromPlanck(
+          (balances.data?.[index]?.result as bigint) ?? 0n,
+          vToken.data?.decimals ?? 0,
+          {
+            currency: vToken.data?.symbol,
+          }
+        )
+        return {
+          account,
+          balance,
+          fiatBalance: balance.toNumber() * (tokenPrice ?? 0),
+          unlocking: Maybe.of(userUnlockLedgers?.[index]?.unwrapOrDefault()).mapOrUndefined(x =>
+            Decimal.fromPlanck(x[0].toBigInt(), vToken.data?.decimals ?? 0, { currency: vToken.data?.symbol })
+          ),
+        }
       })
-      return {
-        account,
-        balance,
-        fiatBalance: balance.toNumber() * tokenPrice,
-        unlocking: Maybe.of(userUnlockLedgers[index]?.unwrapOrDefault()).mapOrUndefined(x =>
-          Decimal.fromPlanck(x[0].toBigInt(), vToken.data?.decimals ?? 0, { currency: vToken.data?.symbol })
-        ),
-      }
-    })
-    .filter(x => x.balance.planck !== 0n || (x.unlocking !== undefined && x.unlocking.planck !== 0n))
+      .filter(x => x.balance.planck !== 0n || (x.unlocking !== undefined && x.unlocking.planck !== 0n))
+  }, [balances.data, filteredAccounts, tokenPrice, userUnlockLedgers, vToken.data?.decimals, vToken.data?.symbol])
+
+  return {
+    data,
+    isLoading: balances.isLoading || vToken.isLoading || apiLoadable.state === 'loading' || state === 'loading',
+  }
 }

@@ -1,6 +1,6 @@
 import type { Account } from '../../../../domains/accounts'
 import { useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
-import { useAddStakeForm, type Stake } from '../../../../domains/staking/dappStaking'
+import { useAddStakeForm, type StakeLoadable } from '../../../../domains/staking/dappStaking'
 import { DappStakingAddStakeDialog } from '../../../recipes/AddStakeDialog'
 import DappPickerDialog from './DappPickerDialog'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
@@ -9,7 +9,7 @@ import { useState } from 'react'
 
 type DappAddStakeDialogProps = {
   account: Account
-  stake: Stake
+  stake: StakeLoadable['data']
   dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
   onRequestDismiss: () => void
 }
@@ -45,7 +45,7 @@ const DappAddStakeDialog = (props: DappAddStakeDialogProps) => {
 
 type MultiDappsAddStakeDialogProps = {
   account: Account
-  stake: Stake
+  stake: StakeLoadable['data']
   onRequestDismiss: () => void
 }
 
@@ -71,7 +71,7 @@ const MultiDappAddStakeDialog = (props: MultiDappsAddStakeDialogProps) => {
 
 type AddStakeDialogProps = {
   account: Account
-  stake: Stake
+  stake: StakeLoadable['data']
   onRequestDismiss: () => void
 }
 

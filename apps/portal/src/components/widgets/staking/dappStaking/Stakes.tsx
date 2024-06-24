@@ -1,40 +1,58 @@
 import { selectedSubstrateAccountsState, type Account } from '../../../../domains/accounts'
 import { ChainProvider, dappStakingEnabledChainsState, useChainState } from '../../../../domains/chains'
-import { useExtrinsic } from '../../../../domains/common'
-import { useClaimAllRewardsExtrinsic, useRegisteredDappsState, useStake } from '../../../../domains/staking/dappStaking'
+import { useExtrinsic, useNativeTokenLocalizedFiatAmount } from '../../../../domains/common'
+import {
+  useClaimAllRewardsExtrinsic,
+  useRegisteredDappsState,
+  useStakeLoadable,
+  useTotalDappStakingRewards,
+} from '../../../../domains/staking/dappStaking'
 import DappStakingLockedAmountDialog from '../../../recipes/DappStakingLockedAmountDialog'
-import StakePosition from '../../../recipes/StakePosition'
 import ErrorBoundary from '../../ErrorBoundary'
 import AddStakeDialog from './AddStakeDialog'
 import UnlockDuration from './UnlockDuration'
 import UnstakeDialog from './UnstakeDialog'
+import { StakePosition } from '@talismn/ui-recipes'
+import { StakePositionErrorBoundary } from '@talismn/ui-recipes'
 import { useState, useTransition } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
-const Stake = ({ account }: { account: Account }) => {
+const TotalRewards = (props: { account: Account }) => useTotalDappStakingRewards(props.account).toLocaleString()
+
+const TotalFiatRewards = (props: { account: Account }) =>
+  useNativeTokenLocalizedFiatAmount(useTotalDappStakingRewards(props.account))
+
+const Stake = ({
+  account,
+  setShouldRenderLoadingSkeleton,
+}: {
+  account: Account
+  setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
+  const [addStakeDialogOpen, setAddStakeDialogOpen] = useState(false)
+  const [unstakeDialogOpen, setUnstakeDialogOpen] = useState(false)
+  const [lockedDialogOpen, setLockedDialogOpen] = useState(false)
+
   // Pre-load potentially heavy query
   useRecoilValueLoadable(useRegisteredDappsState())
 
   const navigate = useNavigate()
 
   const chain = useRecoilValue(useChainState())
-  const stake = useStake(account)
+  const { data: stake, isLoading } = useStakeLoadable(account)
 
   const claimAllRewardsExtrinsic = useClaimAllRewardsExtrinsic(stake)
   const withdrawExtrinsic = useExtrinsic('dappStaking', 'withdrawUnbonded')
   const unlockExtrinsic = useExtrinsic('dappStaking', 'unlock')
 
-  const [addStakeDialogOpen, _setAddStakeDialogOpen] = useState(false)
-  const [addStakeDialogInTransition, startAddStakeDialogTransition] = useTransition()
-  const setAddStakeDialogOpen = (value: boolean) => startAddStakeDialogTransition(() => _setAddStakeDialogOpen(value))
-
-  const [unstakeDialogOpen, _setUnstakeDialogOpen] = useState(false)
-  const [unstakeDialogInTransition, startUnstakeDialogTransition] = useTransition()
-  const setUnstakeDialogOpen = (value: boolean) => startUnstakeDialogTransition(() => _setUnstakeDialogOpen(value))
-
-  const [lockedDialogOpen, setLockedDialogOpen] = useState(false)
   const [requestReStakeInTransition, startRequestRestakeTransition] = useTransition()
+
+  const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
+
+  if (stake.active || !isLoading) {
+    setShouldRenderLoadingSkeleton(false)
+  }
 
   if (!stake.active) {
     return null
@@ -44,43 +62,40 @@ const Stake = ({ account }: { account: Account }) => {
     <>
       <StakePosition
         readonly={account.readonly}
-        chain={chain.name}
-        symbol={chain.nativeToken?.symbol ?? ''}
+        chain={name}
+        assetSymbol={symbol}
+        assetLogoSrc={logo}
         account={account}
         provider="DApp staking"
         stakeStatus={stake.earningRewards ? 'earning_rewards' : 'not_earning_rewards'}
-        balance={stake.totalStaked.decimalAmount?.toLocaleString()}
-        fiatBalance={stake.totalStaked.localizedFiatAmount}
+        balance={stake.totalStaked?.decimalAmount?.toLocaleString()}
+        fiatBalance={stake.totalStaked?.localizedFiatAmount}
+        rewards={<TotalRewards account={account} />}
+        fiatRewards={<TotalFiatRewards account={account} />}
         increaseStakeButton={
           stake.dapps.length > 0 && (
-            <StakePosition.IncreaseStakeButton
-              loading={addStakeDialogInTransition}
-              onClick={() => setAddStakeDialogOpen(true)}
-            />
+            <StakePosition.IncreaseStakeButton onClick={() => setAddStakeDialogOpen(true)} withTransition />
           )
         }
         unstakeButton={
           stake.dapps.length > 0 && (
-            <StakePosition.UnstakeButton
-              loading={unstakeDialogInTransition}
-              onClick={() => setUnstakeDialogOpen(true)}
-            />
+            <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} withTransition />
           )
         }
         lockedButton={
-          stake.locked.decimalAmount.planck !== 0n && (
+          stake.locked?.decimalAmount.planck !== 0n && (
             <StakePosition.LockedButton
               loading={unlockExtrinsic.state === 'loading'}
-              amount={stake.locked.decimalAmount.toLocaleString()}
+              amount={stake.locked?.decimalAmount.toLocaleString()}
               onClick={() => setLockedDialogOpen(true)}
             />
           )
         }
         claimButton={
-          stake.totalRewards.decimalAmount.planck !== 0n && (
+          stake.totalRewards?.decimalAmount.planck !== 0n && (
             <StakePosition.ClaimButton
               loading={claimAllRewardsExtrinsic.state === 'loading'}
-              amount={stake.totalRewards.decimalAmount.toLocaleString()}
+              amount={stake.totalRewards?.decimalAmount.toLocaleString()}
               onClick={() => {
                 void claimAllRewardsExtrinsic.signAndSend(account.address)
               }}
@@ -88,20 +103,20 @@ const Stake = ({ account }: { account: Account }) => {
           )
         }
         withdrawButton={
-          stake.withdrawable.decimalAmount.planck > 0n && (
+          (stake.withdrawable?.decimalAmount.planck ?? 0n) > 0n && (
             <StakePosition.WithdrawButton
               loading={withdrawExtrinsic.state === 'loading'}
-              amount={stake.withdrawable.decimalAmount.toLocaleString()}
+              amount={stake.withdrawable?.decimalAmount.toLocaleString()}
               onClick={() => {
                 void withdrawExtrinsic.signAndSend(account.address)
               }}
             />
           )
         }
-        status={
+        unstakingStatus={
           stake.unlocking.length > 0 && (
             <StakePosition.UnstakingStatus
-              amount={stake.totalUnlocking.decimalAmount.toLocaleString()}
+              amount={stake.totalUnlocking?.decimalAmount.toLocaleString()}
               unlocks={stake.unlocking.map(x => ({ amount: x.amount.decimalAmount.toLocaleString(), eta: x.eta }))}
             />
           )
@@ -115,8 +130,8 @@ const Stake = ({ account }: { account: Account }) => {
       )}
       {lockedDialogOpen && (
         <DappStakingLockedAmountDialog
-          amount={stake.locked.decimalAmount.toLocaleString()}
-          fiatAmount={stake.locked.localizedFiatAmount}
+          amount={stake.locked?.decimalAmount.toLocaleString()}
+          fiatAmount={stake.locked?.localizedFiatAmount}
           unlockDuration={<UnlockDuration />}
           onRequestDismiss={() => setLockedDialogOpen(false)}
           onRequestReStake={() => {
@@ -131,7 +146,7 @@ const Stake = ({ account }: { account: Account }) => {
           }}
           requestReStakeInTransition={requestReStakeInTransition}
           onRequestUnlock={() => {
-            void unlockExtrinsic.signAndSend(account.address, stake.locked.decimalAmount.planck)
+            void unlockExtrinsic.signAndSend(account.address, stake.locked?.decimalAmount.planck ?? 0n)
             setLockedDialogOpen(false)
           }}
         />
@@ -140,20 +155,43 @@ const Stake = ({ account }: { account: Account }) => {
   )
 }
 
-const Stakes = () => {
-  const chains = useRecoilValue(dappStakingEnabledChainsState)
-  const accounts = useRecoilValue(selectedSubstrateAccountsState)
+type StakesProps = {
+  setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const Stakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
+  const chainsLoadable = useRecoilValueLoadable(dappStakingEnabledChainsState)
+
+  const accountsLoadable = useRecoilValueLoadable(selectedSubstrateAccountsState)
+
+  const accounts = accountsLoadable.valueMaybe()
+  const chains = chainsLoadable.valueMaybe()
 
   return (
     <>
-      {chains.map((chain, index) => (
-        <ErrorBoundary key={index} orientation="horizontal">
-          <ChainProvider chain={chain}>
-            {accounts.map((account, index) => (
-              <Stake key={index} account={account} />
-            ))}
-          </ChainProvider>
-        </ErrorBoundary>
+      {chains?.map((chain, index) => (
+        <ChainProvider key={index} chain={chain}>
+          {accounts?.map((account, index) => {
+            const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
+            return (
+              <ErrorBoundary
+                key={index}
+                renderFallback={() => (
+                  <StakePositionErrorBoundary
+                    chain={name}
+                    assetSymbol={symbol}
+                    assetLogoSrc={logo}
+                    account={account}
+                    provider="DApp staking"
+                    key={index}
+                  />
+                )}
+              >
+                <Stake account={account} setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
+              </ErrorBoundary>
+            )
+          })}
+        </ChainProvider>
       ))}
     </>
   )

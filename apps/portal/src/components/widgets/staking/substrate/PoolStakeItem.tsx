@@ -1,8 +1,15 @@
 import { type Account } from '../../../../domains/accounts'
 import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '../../../../domains/chains'
-import { useEraEtaFormatter, useExtrinsic, useSubmittableResultLoadableState } from '../../../../domains/common'
-import { type usePoolStakes } from '../../../../domains/staking/substrate/nominationPools'
-import StakePosition from '../../../recipes/StakePosition'
+import {
+  useEraEtaFormatter,
+  useExtrinsic,
+  useNativeTokenLocalizedFiatAmount,
+  useSubmittableResultLoadableState,
+} from '../../../../domains/common'
+import {
+  useTotalNominationPoolRewards,
+  type usePoolStakes,
+} from '../../../../domains/staking/substrate/nominationPools'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import RedactableBalance from '../../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
@@ -10,9 +17,14 @@ import ClaimStakeDialog from './ClaimStakeDialog'
 import NominationPoolsStatisticsSideSheet from './NominationPoolsStatisticsSideSheet'
 import PoolClaimPermissionDialog from './PoolClaimPermissionDialog'
 import UnstakeDialog from './UnstakeDialog'
-import { CircularProgressIndicator } from '@talismn/ui'
-import { useCallback, useState, useTransition } from 'react'
+import { StakePosition } from '@talismn/ui-recipes'
+import { useCallback, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
+
+const PoolTotalRewards = (props: { account: Account }) => useTotalNominationPoolRewards(props.account).toLocaleString()
+
+const PoolTotalFiatRewards = (props: { account: Account }) =>
+  useNativeTokenLocalizedFiatAmount(useTotalNominationPoolRewards(props.account))
 
 const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account[]>>[number] }) => {
   const [chain, decimal, nativeTokenPrice] = useRecoilValue(
@@ -35,15 +47,17 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
   }))
 
   const [statsDialogOpen, setStatsDialogOpen] = useState(false)
-  const [statsDialogInTransition, startStatsDialogTransition] = useTransition()
 
   const [claimPermissionDialogOpen, setClaimPermissionDialogOpen] = useState(false)
+
+  const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
 
   return (
     <>
       <StakePosition
-        chain={chain.name}
-        symbol={chain.nativeToken?.symbol}
+        chain={name}
+        assetSymbol={symbol}
+        assetLogoSrc={logo}
         readonly={item.account.readonly}
         stakeStatus={item.status}
         account={item.account}
@@ -57,6 +71,8 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
             end={(decimal.fromPlanckOrUndefined(item.poolMember.points.toBigInt())?.toNumber() ?? 0) * nativeTokenPrice}
           />
         }
+        rewards={<PoolTotalRewards account={item.account} />}
+        fiatRewards={<PoolTotalFiatRewards account={item.account} />}
         provider={item.poolName ?? ''}
         shortProvider="Nomination pool"
         claimButton={
@@ -101,10 +117,8 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
           <StakePosition.MenuButton>
             <StakePosition.MenuButton.Item.Button
               headlineContent="Statistics"
-              trailingContent={statsDialogInTransition && <CircularProgressIndicator size="1em" />}
-              dismissAfterSelection={false}
-              onClick={() => startStatsDialogTransition(() => setStatsDialogOpen(true))}
-              inTransition={statsDialogInTransition}
+              onClick={() => setStatsDialogOpen(true)}
+              withTransition
             />
             {!item.account.readonly && (
               <StakePosition.MenuButton.Item.Button
@@ -114,7 +128,7 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
             )}
           </StakePosition.MenuButton>
         }
-        status={
+        unstakingStatus={
           item.totalUnlocking > 0n && (
             <StakePosition.UnstakingStatus
               amount={<RedactableBalance>{decimal.fromPlanck(item.totalUnlocking).toLocaleString()}</RedactableBalance>}
