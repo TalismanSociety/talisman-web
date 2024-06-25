@@ -96,6 +96,7 @@ export const useSwap = () => {
   const { data: walletClient } = useWalletClient()
   const swapping = useAtomValue(swappingAtom)
   const substrateWallet = useRecoilValue(connectedSubstrateWalletState)
+  const _swaps = useAtomValue(swapsAtom)
   const getSubstrateApi = useRecoilCallback(
     ({ snapshot }) =>
       (rpc: string) =>
@@ -122,7 +123,7 @@ export const useSwap = () => {
           // all swaps across different protocols can appear in the activity list
           const now = new Date().getTime()
 
-          set(swapsAtom, swaps => [...swaps, { ...swapped, timestamp: now }])
+          set(swapsAtom, [..._swaps, { ...swapped, timestamp: now }])
           set(swapInfoTabAtom, 'activities')
         } catch (e) {
           console.error(e)
@@ -132,7 +133,7 @@ export const useSwap = () => {
           set(swappingAtom, false)
         }
       },
-      [getSubstrateApi, substrateWallet, walletClient]
+      [_swaps, getSubstrateApi, substrateWallet, walletClient]
     )
   )
 
@@ -238,6 +239,7 @@ export const useSyncPreviousChainflipSwaps = () => {
         })
       }
     })
+    console.log('here?')
     setSwaps(prev => [...prev, ...newSwaps])
     window.localStorage.removeItem('@talisman/swap/chainflip/mainnet/swap-ids')
   }, [setSwaps])

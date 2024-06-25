@@ -26,7 +26,7 @@ import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { Decimal } from '@talismn/math'
 import { atom, type Getter, type Setter } from 'jotai'
 import { atomFamily } from 'jotai/utils'
-import { erc20Abi, isAddress, type SendTransactionReturnType } from 'viem'
+import { erc20Abi, isAddress } from 'viem'
 import { arbitrum, mainnet, sepolia } from 'viem/chains'
 
 const PROTOCOL: SupportedSwapProtocol = 'chainflip'
@@ -274,18 +274,17 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
       if (chainflipFromChain.evmChainId === undefined) throw new Error('Missing evmChainId, this is likely a bug.')
 
       await evmWalletClient.switchChain({ id: chainflipFromChain.evmChainId })
-      let evmTxHash: SendTransactionReturnType
       const chain = EVM_CHAINS.find(c => c.id.toString() === fromAsset.chainId.toString())
       if (!chain) throw new Error('Chain not found')
       if (!chainflipFromAsset.contractAddress) {
-        evmTxHash = await evmWalletClient.sendTransaction({
+        await evmWalletClient.sendTransaction({
           chain,
           to: depositAddress.depositAddress as `0x${string}`,
           value: BigInt(depositAddress.amount),
           account: fromAddress as `0x${string}`,
         })
       } else {
-        evmTxHash = await evmWalletClient.writeContract({
+        await evmWalletClient.writeContract({
           chain,
           abi: erc20Abi,
           address: fromAsset.contractAddress as `0x${string}`,
@@ -296,17 +295,17 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
       }
       saveAddressForQuest(depositAddress.depositChannelId, fromAddress)
 
-      return { protocol: PROTOCOL, data: { evmTxHash, id: depositAddress.depositChannelId, network } }
+      return { protocol: PROTOCOL, data: { id: depositAddress.depositChannelId, network } }
     } else {
       const signer = substrateWallet?.signer
       if (!signer) throw new Error('Substrate wallet not connected.')
       const polkadotRpc = get(polkadotRpcAtom)
       const polkadotApi = await getSubstrateApi(polkadotRpc)
 
-      saveAddressForQuest(depositAddress.depositChannelId, fromAddress)
       await polkadotApi.tx.balances
         .transferKeepAlive(depositAddress.depositAddress, depositAddress.amount)
         .signAndSend(fromAddress, { signer })
+
       saveAddressForQuest(depositAddress.depositChannelId, fromAddress)
       return { protocol: PROTOCOL, data: { id: depositAddress.depositChannelId, network } }
     }
