@@ -15,6 +15,7 @@ type TokenSelectDialogItemProps = {
 const TokenSelectDialogItem = (props: TokenSelectDialogItemProps) => (
   <Clickable.WithFeedback onClick={props.onClick}>
     <Surface
+      className="gap-[4px] sm:gap-[8px]"
       css={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -24,17 +25,28 @@ const TokenSelectDialogItem = (props: TokenSelectDialogItemProps) => (
       }}
     >
       <ListItem
+        className="!flex-1 !p-0"
         css={{ flex: 1, padding: 0 }}
         leadingContent={
-          <img src={props.iconSrc} css={{ width: '4rem', height: '4rem' }} className="w-[40px] h-[40px] rounded-full" />
+          <img
+            src={props.iconSrc}
+            className="w-[24px] h-[24px] min-w-[24px] sm:min-w-[40px] sm:w-[40px] sm:h-[40px] rounded-full"
+          />
         }
-        headlineContent={props.code}
-        supportingContent={props.name}
+        headlineContent={<span className="text-[14px]">{props.code}</span>}
+        supportingContent={<span className="text-[12px]">{props.name}</span>}
       />
-      <ListItem css={{ flex: 1, padding: 0 }} headlineContent={props.chain} />
+      <ListItem
+        className="!flex-1 !p-0"
+        headlineContent={<span className="text-[12px] sm:text-[14px]">{props.chain}</span>}
+      />
       <ListItem
         css={{ flex: 1, padding: 0, textAlign: 'end' }}
-        headlineContent={<Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.amount}</Suspense>}
+        headlineContent={
+          <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+            <span className="text-[12px] sm:text-[14px] whitespace-nowrap">{props.amount}</span>
+          </Suspense>
+        }
         supportingContent={<Suspense>{props.fiatAmount}</Suspense>}
       />
     </Surface>

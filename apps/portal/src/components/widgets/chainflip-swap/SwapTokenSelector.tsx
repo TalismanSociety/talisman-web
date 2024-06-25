@@ -101,7 +101,9 @@ export const SwapTokenSelector: React.FC<Props> = ({ selectedAsset, assetFilter,
         className="!py-[4px] !px-[8px] !h-[40px] !rounded-[8px] items-center flex"
         // TODO: need a logo for unknown token logo
         leadingIcon={
-          selectedAsset ? <img src={token?.logo ?? ''} className="w-[24px] h-[24px] rounded-full" /> : undefined
+          selectedAsset ? (
+            <img src={token?.logo ?? ''} className="w-[24px] h-[24px] min-w-[24px] rounded-full" />
+          ) : undefined
         }
         onClick={() => setOpen(true)}
       >
@@ -123,7 +125,7 @@ export const SwapTokenSelector: React.FC<Props> = ({ selectedAsset, assetFilter,
               />
             </div>
           ) : (
-            <p className="text-gray-400 text-[14px]">Select Token</p>
+            <p className="text-gray-400 text-[12px] sm:text-[14px] whitespace-nowrap">Select Token</p>
           )}
         </div>
       </SurfaceButton>
