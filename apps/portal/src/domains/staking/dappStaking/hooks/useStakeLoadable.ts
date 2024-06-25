@@ -254,24 +254,30 @@ export const useStakeLoadable = (account: Account) => {
   }, [bestNumber, ledger, nativeTokenAmount])
 
   const dapps = useMemo(() => {
-    if (!activeProtocol || !stakedDapps) return []
+    if (!activeProtocol?.periodInfo.number || !stakedDapps) return []
     return stakedDapps
       .map(x => [x[0].args[1], x[1]] as const)
       .filter(x => x[1].staked.period.unwrap().eq(activeProtocol.periodInfo.number.unwrap()))
-  }, [activeProtocol, stakedDapps])
+  }, [activeProtocol?.periodInfo.number, stakedDapps])
+
+  const locked = useMemo(
+    () =>
+      nativeTokenAmount?.fromPlanck(
+        (ledger?.locked.unwrap().toBigInt() ?? 0n) - (totalStaked?.decimalAmount?.planck ?? 0n)
+      ),
+    [ledger?.locked, nativeTokenAmount, totalStaked?.decimalAmount?.planck]
+  )
+
+  const isActive = useMemo(() => {
+    return dapps.length > 0 || (ledger?.unlocking.length ?? 0) > 0 || (locked?.decimalAmount.planck ?? 0) > 0
+  }, [dapps.length, ledger?.unlocking.length, locked?.decimalAmount.planck])
 
   const data = {
-    active: dapps.length > 0 || (ledger?.unlocking.length ?? 0) > 0,
+    active: isActive,
     earningRewards: totalStaked?.decimalAmount !== undefined && totalStaked.decimalAmount.planck > 0,
     account,
     ledger,
-    locked: useMemo(
-      () =>
-        nativeTokenAmount?.fromPlanck(
-          (ledger?.locked.unwrap().toBigInt() ?? 0n) - (totalStaked?.decimalAmount?.planck ?? 0n)
-        ),
-      [ledger?.locked, nativeTokenAmount, totalStaked?.decimalAmount?.planck]
-    ),
+    locked,
     totalStaked,
     stakerRewards,
     claimableSpanCount,
