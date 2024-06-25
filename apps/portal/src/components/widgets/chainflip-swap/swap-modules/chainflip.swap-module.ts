@@ -201,6 +201,18 @@ export type ChainflipSwapActivityData = {
   network: ChainflipNetwork
 }
 
+const saveAddressForQuest = async (swapId: string, fromAddress: string) => {
+  const api = import.meta.env.REACT_APP_QUEST_API
+  if (!api) return
+  await fetch(`${api}/api/quests/chainflip`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ swapId, fromAddress }),
+  })
+}
+
 const swap: SwapFunction<ChainflipSwapActivityData> = async (
   get: Getter,
   _: Setter,
@@ -282,6 +294,7 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
           args: [depositAddress.depositAddress as `0x${string}`, BigInt(depositAddress.amount)],
         })
       }
+      saveAddressForQuest(depositAddress.depositChannelId, fromAddress)
 
       return { protocol: PROTOCOL, data: { evmTxHash, id: depositAddress.depositChannelId, network } }
     } else {
@@ -290,10 +303,11 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
       const polkadotRpc = get(polkadotRpcAtom)
       const polkadotApi = await getSubstrateApi(polkadotRpc)
 
+      saveAddressForQuest(depositAddress.depositChannelId, fromAddress)
       await polkadotApi.tx.balances
         .transferKeepAlive(depositAddress.depositAddress, depositAddress.amount)
         .signAndSend(fromAddress, { signer })
-
+      saveAddressForQuest(depositAddress.depositChannelId, fromAddress)
       return { protocol: PROTOCOL, data: { id: depositAddress.depositChannelId, network } }
     }
   } catch (e) {
