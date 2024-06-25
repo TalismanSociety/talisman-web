@@ -92,7 +92,7 @@ export type NominationPoolsAddStakeDialogProps = Omit<AddStakeDialogProps, 'mess
 export const NominationPoolsAddStakeDialog = (props: NominationPoolsAddStakeDialogProps) => (
   <AddStakeDialog
     {...props}
-    message="Increase your stake below. Talisman will automatically stake this in the same nomination pool for you."
+    message="Increase your stake below. Talisman will automatically stake this in the same nomination pool."
   />
 )
 
@@ -109,7 +109,7 @@ export const SlpxAddStakeForm = (props: SlpxAddStakeFormProps) => <AddStakeForm 
 export const SlpxAddStakeDialog = (props: SlpxAddStakeDialogProps) => (
   <AddStakeDialog
     {...props}
-    message="Increase your stake below. Talisman will automatically stake this using Bifrost liquid staking for you."
+    message="Increase your stake below. Talisman will automatically stake this using Bifrost liquid staking."
   />
 )
 
@@ -118,7 +118,20 @@ export type DappStakingAddStakeDialogProps = Omit<AddStakeDialogProps, 'message'
 export const DappStakingAddStakeDialog = (props: DappStakingAddStakeDialogProps) => (
   <AddStakeDialog
     {...props}
-    message="Increase your stake below. Talisman will automatically stake this toward your chosen DApp for you."
+    message="Increase your stake below. Talisman will automatically stake this towards your chosen DApp."
+  />
+)
+
+export type SubtensorAddStakeDialogProps = Omit<AddStakeDialogProps, 'message'> & { delegateName?: string }
+
+export const SubtensorAddStakeDialog = (props: SubtensorAddStakeDialogProps) => (
+  <AddStakeDialog
+    {...props}
+    message={
+      props.delegateName
+        ? `Increase your stake below. Talisman will automatically stake this towards the ${props.delegateName} delegate.`
+        : `Increase your stake below. Talisman will automatically stake this towards your chosen delegate.`
+    }
   />
 )
 

@@ -9,13 +9,13 @@ export type BadgeProps = PropsWithChildren<{
   contentColor?: string
 }>
 
-const Badge = (props: BadgeProps) => (
+const Badge = ({ containerColor, contentColor, children, ...passProps }: BadgeProps) => (
   <Text.BodySmall
     as="div"
-    {...props}
+    {...passProps}
     css={theme => [
       {
-        color: props.contentColor ?? theme.color.onError,
+        color: contentColor ?? theme.color.onError,
         display: 'inline-block',
         borderRadius: theme.shape.full,
         minWidth: '1.6em',
@@ -25,11 +25,11 @@ const Badge = (props: BadgeProps) => (
         textAlign: 'center',
         svg: { display: 'block' },
       },
-      props.children === undefined && { minWidth: 'revert', width: '0.8rem', height: '0.8rem' },
+      children === undefined && { minWidth: 'revert', width: '0.8rem', height: '0.8rem' },
     ]}
-    style={{ backgroundColor: props.containerColor }}
+    style={{ backgroundColor: containerColor }}
   >
-    <IconContext.Provider value={{ size: '1em' }}>{props.children}</IconContext.Provider>
+    <IconContext.Provider value={{ size: '1em' }}>{children}</IconContext.Provider>
   </Text.BodySmall>
 )
 
