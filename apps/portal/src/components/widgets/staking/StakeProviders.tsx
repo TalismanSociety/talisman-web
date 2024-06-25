@@ -4,12 +4,16 @@ import DappStakingProviders from './dappStaking/StakeProviders'
 import LidoStakeProviders from './lido/StakeProviders'
 import SlpxStakeProviders from './slpx/StakeProviders'
 import NominationPoolsStakeProviders from './substrate/StakeProviders'
+import SubtensorStakeProviders from './subtensor/StakeProviders'
 
 const StakeProviders = () => {
   return (
     <StakeProviderList>
       <ErrorBoundary orientation="horizontal">
         <NominationPoolsStakeProviders />
+      </ErrorBoundary>
+      <ErrorBoundary orientation="horizontal">
+        <SubtensorStakeProviders />
       </ErrorBoundary>
       <ErrorBoundary orientation="horizontal">
         <DappStakingProviders />

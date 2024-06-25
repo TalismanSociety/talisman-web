@@ -107,7 +107,7 @@ const TextInput = Object.assign(
                   '&[type=number]': {
                     '::-webkit-outer-spin-button': { display: 'none' },
                     '::-webkit-inner-spin-button': { display: 'none' },
-                    '-moz-appearance': 'textfield',
+                    MozAppearance: 'textfield',
                   },
                   outline: 'none',
                 },

@@ -72,6 +72,14 @@ export const dappStakingEnabledChainsState = selector({
     ),
 })
 
+export const subtensorStakingEnabledChainsState = selector({
+  key: 'SubtensorStakingEnabledChains',
+  get: ({ get }) =>
+    get(chainsState).filter(
+      (x): x is Extract<typeof x, { hasSubtensorStaking: true }> => 'hasSubtensorStaking' in x && x.hasSubtensorStaking
+    ),
+})
+
 export const tokenPriceState = selectorFamily({
   key: 'TokenPrice',
   get:
