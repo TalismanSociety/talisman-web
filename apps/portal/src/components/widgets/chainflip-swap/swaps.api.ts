@@ -239,7 +239,6 @@ export const useSyncPreviousChainflipSwaps = () => {
         })
       }
     })
-    console.log('here?')
     setSwaps(prev => [...prev, ...newSwaps])
     window.localStorage.removeItem('@talisman/swap/chainflip/mainnet/swap-ids')
   }, [setSwaps])
