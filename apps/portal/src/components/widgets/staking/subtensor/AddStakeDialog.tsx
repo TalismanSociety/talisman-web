@@ -3,7 +3,7 @@ import { useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
 import { useAddStakeForm } from '../../../../domains/staking/subtensor/hooks/forms'
 import { useDelegate } from '../../../../domains/staking/subtensor/hooks/useDelegate'
 import { type Stake } from '../../../../domains/staking/subtensor/hooks/useStake'
-import { SubtensorAddStakeDialog as _SubtensorAddStakeDialog } from '../../../recipes/AddStakeDialog'
+import { AddStakeDialog as _AddStakeDialog } from '../../../recipes/AddStakeDialog'
 import DelegatePickerDialog from './DelegatePickerDialog'
 import { CircularProgressIndicator } from '@talismn/ui'
 import { useState } from 'react'
@@ -27,8 +27,12 @@ const SubtensorAddStakeDialog = (props: SubtensorAddStakeDialogProps) => {
   const delegateName = useDelegate(props.delegate)?.name
 
   return (
-    <_SubtensorAddStakeDialog
-      delegateName={delegateName}
+    <_AddStakeDialog
+      message={
+        delegateName
+          ? `Increase your stake below. Talisman will automatically stake this towards the ${delegateName} delegate.`
+          : `Increase your stake below. Talisman will automatically stake this towards your chosen delegate.`
+      }
       confirmState={extrinsic.state === 'loading' ? 'pending' : !ready ? 'disabled' : undefined}
       isError={error !== undefined}
       availableToStake={transferable.decimalAmount.toLocaleString()}
