@@ -17,7 +17,6 @@ type ChainWithDappStaking = {
 
 type ChainWithSubtensorStaking = {
   hasSubtensorStaking: true
-  priorityValidator: string | undefined
 }
 
 export type ChainConfig =
@@ -68,7 +67,6 @@ export const chainConfigs: ChainConfig[] = [
   {
     genesisHash: '0x2f0555cc76fc2840a25a6ea3b9637146806f1f44b090c175ffde2a7e5ab36c03',
     hasSubtensorStaking: true,
-    priorityValidator: '5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3', // Openτensor Foundaτion
   },
   // Westend
   {
