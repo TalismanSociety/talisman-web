@@ -39,7 +39,6 @@ export const allDelegateInfosAtomFamily = atomFamily(
           ])
         )
 
-        console.log('all delegates', allDelegates)
         return allDelegates
       } catch (cause) {
         console.error(new Error(`Failed to fetch all delegate infos on chain ${api.genesisHash}`, { cause }))

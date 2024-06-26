@@ -33,6 +33,10 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
       {Object.values(delegates).map(delegate => (
         <StakeTargetSelectorDialog.Item
           key={delegate.address}
+          balanceDescription="Total staked with this delegate"
+          countDescription="Number of delegate stakers"
+          talismanRecommendedDescription="Talisman top recommended delegate"
+          rating={3}
           selected={delegate.address === props.selected?.address}
           highlighted={delegate.address === highlighted?.address}
           name={delegate.name}

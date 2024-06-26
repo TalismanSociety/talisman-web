@@ -70,7 +70,7 @@ const AddStakeForm = (props: AddStakeFormProps) => (
   </div>
 )
 
-const AddStakeDialog = (props: AddStakeDialogProps) => (
+export const AddStakeDialog = (props: AddStakeDialogProps) => (
   <AlertDialog
     open={props.open}
     title="Stake"
@@ -119,19 +119,6 @@ export const DappStakingAddStakeDialog = (props: DappStakingAddStakeDialogProps)
   <AddStakeDialog
     {...props}
     message="Increase your stake below. Talisman will automatically stake this towards your chosen DApp."
-  />
-)
-
-export type SubtensorAddStakeDialogProps = Omit<AddStakeDialogProps, 'message'> & { delegateName?: string }
-
-export const SubtensorAddStakeDialog = (props: SubtensorAddStakeDialogProps) => (
-  <AddStakeDialog
-    {...props}
-    message={
-      props.delegateName
-        ? `Increase your stake below. Talisman will automatically stake this towards the ${props.delegateName} delegate.`
-        : `Increase your stake below. Talisman will automatically stake this towards your chosen delegate.`
-    }
   />
 )
 
