@@ -45,6 +45,7 @@ Default.args = {
         headlineContent="Polkadot.js import"
         overlineContent="$356,120.32"
         leadingContent={<Identicon value="1YmEYgtfPbwx5Jos1PjKDWRpuJWSpTzytwZgYan6kgiquNS" size="4rem" />}
+        disabled
       />
       <Menu.Item.Button
         headlineContent="Polkadot.js import"

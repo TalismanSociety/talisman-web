@@ -5,7 +5,7 @@ import type { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react'
 export type ErrorMessageProps = {
   title: ReactNode
   message: ReactNode
-  actions: ReactNode
+  actions?: ReactNode
   orientation?: 'vertical' | 'horizontal'
 }
 

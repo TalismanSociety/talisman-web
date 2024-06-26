@@ -1,7 +1,7 @@
 import type { PortfolioToken } from '../../legacy/archetypes/Portfolio/Assets'
 import AnimatedFiatNumber from '../../widgets/AnimatedFiatNumber'
 import RedactableBalance from '../../widgets/RedactableBalance'
-import { keyframes, useTheme } from '@emotion/react'
+import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
 import { type Balances } from '@talismn/balances'
 import { HiddenDetails, Text, Tooltip, useSurfaceColor } from '@talismn/ui'
@@ -205,8 +205,6 @@ const slideDown = keyframes`
 `
 
 const Asset = Object.assign((props: AssetProps) => {
-  const theme = useTheme()
-
   const { token, lockedAsset } = props
   const navigate = useNavigate()
 
@@ -238,7 +236,7 @@ const Asset = Object.assign((props: AssetProps) => {
           </Tooltip>
           <div>
             <div css={{ display: 'flex', alignItems: 'center', gap: '0.4em' }}>
-              <Text.Body alpha="high" css={{ fontWeight: 600, fontSize: '16px', color: theme.color.onSurface }}>
+              <Text.Body alpha="high" css={{ fontWeight: 600, fontSize: '16px' }}>
                 {token.tokenDetails.symbol}
               </Text.Body>
               <div
@@ -325,7 +323,6 @@ const Table = styled.table`
   border-spacing: 0 0;
   border-collapse: separate;
   width: 100%;
-  color: var(--color-mid);
   text-align: left;
   font-weight: 400;
   font-size: 1.6rem;

@@ -37,6 +37,10 @@ export const Outlined: Story = {
   args: { variant: 'outlined', children: 'Click me', leadingIcon: <TalismanHand />, trailingIcon: <TalismanHand /> },
 }
 
+export const Tonal: Story = {
+  args: { variant: 'tonal', children: 'Click me' },
+}
+
 export const Text: Story = {
   args: { variant: 'text', children: 'Click me', leadingIcon: <TalismanHand />, trailingIcon: <TalismanHand /> },
 }

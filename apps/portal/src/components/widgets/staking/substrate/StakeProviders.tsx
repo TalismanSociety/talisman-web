@@ -6,6 +6,7 @@ import StakeProvider from '../../../recipes/StakeProvider'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
+import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import { Decimal } from '@talismn/math'
 import { usePolkadotApiId, useQueryState } from '@talismn/react-polkadot-api'
 import BigNumber from 'bignumber.js'
@@ -73,32 +74,39 @@ const StakePercentage = () => {
 
 const StakeProviderItem = () => {
   const chain = useRecoilValue(useChainState())
+  const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
+
   return (
-    <StakeProvider
-      symbol={chain.nativeToken?.symbol}
-      logo={chain.nativeToken?.logo ?? ''}
-      chain={chain.name}
-      apr={<Apr />}
-      type="Nomination pool"
-      provider={chain.name}
-      unbondingPeriod={<UnlockDuration />}
-      availableBalance={<AvailableBalance />}
-      availableFiatBalance={<AvailableFiatBalance />}
-      stakePercentage={<StakePercentage />}
-      stakeButton={<StakeProvider.StakeButton as={Link} to={`?action=stake&type=nomination-pools&chain=${chain.id}`} />}
-    />
+    <ErrorBoundary
+      orientation="horizontal"
+      renderFallback={() => <ErrorBoundaryFallback logo={logo} symbol={symbol} provider={name} />}
+    >
+      <StakeProvider
+        symbol={chain.nativeToken?.symbol}
+        logo={chain.nativeToken?.logo ?? ''}
+        chain={chain.name}
+        apr={<Apr />}
+        type="Nomination pool"
+        provider={chain.name}
+        unbondingPeriod={<UnlockDuration />}
+        availableBalance={<AvailableBalance />}
+        availableFiatBalance={<AvailableFiatBalance />}
+        stakePercentage={<StakePercentage />}
+        stakeButton={
+          <StakeProvider.StakeButton as={Link} to={`?action=stake&type=nomination-pools&chain=${chain.id}`} />
+        }
+      />
+    </ErrorBoundary>
   )
 }
 
 const StakeProviders = () => {
   return (
     <>
-      {useRecoilValue(nominationPoolsEnabledChainsState).map((chain, index) => (
-        <ErrorBoundary key={index} orientation="horizontal">
-          <ChainProvider chain={chain}>
-            <StakeProviderItem />
-          </ChainProvider>
-        </ErrorBoundary>
+      {useRecoilValue(nominationPoolsEnabledChainsState)?.map((chain, index) => (
+        <ChainProvider key={index} chain={chain}>
+          <StakeProviderItem />
+        </ChainProvider>
       ))}
     </>
   )

@@ -3,9 +3,9 @@ import { tokenPriceState } from '../../chains'
 import { lidoTokenAbi, withdrawalQueueAbi } from './abi'
 import type { LidoSuite } from './types'
 import { Decimal } from '@talismn/math'
-import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query'
+import { useQuery, useQueries } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValueLoadable } from 'recoil'
 import { useBlockNumber, useConfig } from 'wagmi'
 import { getTokenQueryOptions, readContractQueryOptions, readContractsQueryOptions } from 'wagmi/query'
 
@@ -18,7 +18,7 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
   const config = useConfig()
 
   // @ts-expect-error
-  const firstQueryBatch = useSuspenseQueries({
+  const firstQueryBatch = useQueries({
     queries: [
       getTokenQueryOptions(config, { chainId: lidoSuite.chain.id, address: lidoSuite.token.address }),
       readContractsQueryOptions(config, {
@@ -61,7 +61,7 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
       .map(serializableBigInt)
       .sort((a, b) => (a > b ? 1 : -1)) ?? []
 
-  const secondQueryBatch = useSuspenseQueries({
+  const secondQueryBatch = useQueries({
     queries: [
       readContractQueryOptions(config, {
         chainId: lidoSuite.chain.id,
@@ -82,9 +82,9 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
 
   const [{ data: withdrawalStatuses }, { data: _hints }] = secondQueryBatch
 
-  const hints = _hints.map(serializableBigInt)
+  const hints = _hints?.map(serializableBigInt)
 
-  const { data: claimables, refetch: refetchClaimables } = useSuspenseQuery(
+  const { data: claimables, refetch: refetchClaimables } = useQuery(
     readContractQueryOptions(config, {
       chainId: lidoSuite.chain.id,
       address: lidoSuite.withdrawalQueue,
@@ -114,9 +114,10 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
     claimable: claimables?.at(index),
   }))
 
-  const tokenPrice = useRecoilValue(tokenPriceState({ coingeckoId: lidoSuite.token.coingeckoId }))
+  const tokenPriceLoadable = useRecoilValueLoadable(tokenPriceState({ coingeckoId: lidoSuite.token.coingeckoId }))
+  const tokenPrice = tokenPriceLoadable.valueMaybe()
 
-  return filteredAccounts
+  const data = filteredAccounts
     .map((account, index) => {
       const balance = Decimal.fromPlanck((balances?.at(index) as bigint) ?? 0n, token?.decimals ?? 0, {
         currency: token?.symbol,
@@ -130,23 +131,32 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
         balance: Decimal.fromPlanck((balances?.at(index) as bigint) ?? 0n, token?.decimals ?? 0, {
           currency: token?.symbol,
         }),
-        fiatBalance: balance.toNumber() * tokenPrice,
+        fiatBalance: balance.toNumber() * (tokenPrice ?? 0),
         totalUnlocking: Decimal.fromPlanck(
-          unlockings?.reduce((prev, curr) => prev + (curr.status?.amountOfStETH ?? 0n), 0n),
+          unlockings?.reduce((prev, curr) => prev + (curr.status?.amountOfStETH ?? 0n), 0n) ?? 0n,
           token?.decimals ?? 0,
           { currency: token?.symbol }
         ),
+
         unlockings: unlockings?.map(unlock => ({
           amount: Decimal.fromPlanck(unlock.status?.amountOfStETH ?? 0n, token?.decimals ?? 0, {
             currency: token?.symbol,
           }),
         })),
         claimable: Decimal.fromPlanck(
-          accountWithdrawals?.reduce((prev, curr) => prev + (curr.claimable ?? 0n), 0n),
+          accountWithdrawals?.reduce((prev, curr) => prev + (curr.claimable ?? 0n), 0n) ?? 0n,
           token?.decimals ?? 0,
           { currency: token?.symbol }
         ),
       }
     })
     .filter(x => x.balance.planck > 0 || x.totalUnlocking.planck > 0 || x.claimable.planck > 0)
+
+  return {
+    data,
+    isLoading:
+      firstQueryBatch.some(x => x.isLoading) ||
+      secondQueryBatch.some(x => x.isLoading) ||
+      tokenPriceLoadable.state === 'loading',
+  }
 }

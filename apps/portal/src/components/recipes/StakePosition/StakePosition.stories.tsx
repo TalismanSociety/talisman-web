@@ -17,7 +17,7 @@ export const Default: Story = {
     unstakeButton: <StakePosition.UnstakeButton />,
     claimButton: <StakePosition.ClaimButton amount="1 DOT" />,
     withdrawButton: <StakePosition.WithdrawButton amount="1 DOT" />,
-    status: (
+    unstakingStatus: (
       <StakePosition.UnstakingStatus
         amount="1 DOT"
         unlocks={[
@@ -34,9 +34,9 @@ export const Multiple: Story = {
   render: () => (
     <div>
       <StakePosition {...(Default.args as any)} />
-      <StakePosition {...(Default.args as any)} status={undefined} withdrawButton={undefined} />
+      <StakePosition {...(Default.args as any)} unstakingStatus={undefined} withdrawButton={undefined} />
       <StakePosition {...(Default.args as any)} readonly />
-      <StakePosition {...(Default.args as any)} status={undefined} statisticsButton={undefined} />
+      <StakePosition {...(Default.args as any)} unstakingStatus={undefined} statisticsButton={undefined} />
     </div>
   ),
 }

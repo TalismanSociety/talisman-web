@@ -1,6 +1,6 @@
 import type { Account } from '../../../../domains/accounts'
 import { useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
-import { useUnstakeForm, type Stake } from '../../../../domains/staking/dappStaking'
+import { useUnstakeForm, type StakeLoadable } from '../../../../domains/staking/dappStaking'
 import UnstakeDialogComponent from '../../../recipes/UnstakeDialog'
 import DappPickerDialog from './DappPickerDialog'
 import UnlockDuration from './UnlockDuration'
@@ -10,7 +10,7 @@ import { useState } from 'react'
 
 type DappUnstakeDialogProps = {
   account: Account
-  stake: Stake
+  stake: StakeLoadable['data']
   dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
   onRequestDismiss: () => void
 }
@@ -47,7 +47,7 @@ const DappUnstakeDialog = (props: DappUnstakeDialogProps) => {
 
 type MultiDappsUnstakeDialogProps = {
   account: Account
-  stake: Stake
+  stake: StakeLoadable['data']
   onRequestDismiss: () => void
 }
 
@@ -73,7 +73,7 @@ const MultiDappUnstakeDialog = (props: MultiDappsUnstakeDialogProps) => {
 
 type UnstakeDialogProps = {
   account: Account
-  stake: Stake
+  stake: StakeLoadable['data']
   onRequestDismiss: () => void
 }
 
