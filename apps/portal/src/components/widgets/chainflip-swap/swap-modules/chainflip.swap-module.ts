@@ -43,7 +43,7 @@ const CHAINFLIP_ID_TO_CHAIN_MAP: Record<string, Chain> = {
   '42161': 'Arbitrum',
   '421614': 'Arbitrum', // arbitrum testnet
   '1': 'Ethereum',
-  '11155111': 'Ethereum',
+  '11155111': 'Ethereum', // sepolia testnet
   polkadot: 'Polkadot',
   unsupported: 'Bitcoin',
 }
@@ -103,7 +103,7 @@ const swapSdkAtom = atom(get => {
   const brokerUrl = get(brokerUrlAtom)
   return new SwapSDK({
     network,
-    broker: brokerUrl ? { url: brokerUrl, commissionBps: 100 } : undefined,
+    broker: brokerUrl ? { url: brokerUrl, commissionBps: 150 } : undefined,
   })
 })
 

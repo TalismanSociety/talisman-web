@@ -58,6 +58,11 @@ export const ToAmount: React.FC = () => {
           balanceFor={toAddress ?? null}
           onSelectAsset={handleSelectAsset}
           selectedAsset={toAsset}
+          assetFilter={asset => {
+            if (!fromAsset) return true
+            if (fromAsset.chainId === 'polkadot') return asset.chainId !== 'polkadot'
+            return asset.chainId === 'polkadot'
+          }}
         />
       }
     />
