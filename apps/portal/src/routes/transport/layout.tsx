@@ -11,28 +11,30 @@ const Layout = () => {
 
   return (
     <AccountConnectionGuard>
-      <div
-        css={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
+      <div className="flex flex-col items-center mt-[64px]">
         <ErrorBoundary>
           <Suspense fallback={<TalismanHandProgressIndicator />}>
             <div className="w-full max-w-[840px] mx-auto">
               <Tabs css={{ width: 'fit-content', marginBottom: '1.6rem', marginLeft: 16, marginRight: 16 }}>
                 <NavLink to="/transport/swap" css={{ display: 'contents' }} onClick={event => event.preventDefault()}>
                   {({ isActive }) => (
-                    <Tabs.Item selected={isActive} onClick={() => startTransition(() => navigate('/transport/swap'))}>
-                      Cross-chain Swap
+                    <Tabs.Item
+                      className="whitespace-nowrap !text-[14px] sm:!text-[18px]"
+                      selected={isActive}
+                      onClick={() => startTransition(() => navigate('/transport/swap'))}
+                    >
+                      <span className="whitespace-nowrap !text-[14px] sm:!text-[18px] font-semibold">
+                        Cross-chain Swap
+                      </span>
                     </Tabs.Item>
                   )}
                 </NavLink>
                 <NavLink to="/transport/xcm" css={{ display: 'contents' }} onClick={event => event.preventDefault()}>
                   {({ isActive }) => (
                     <Tabs.Item selected={isActive} onClick={() => startTransition(() => navigate('/transport/xcm'))}>
-                      Polkadot (XCM)
+                      <span className="whitespace-nowrap !text-[14px] sm:!text-[18px] font-semibold">
+                        Polkadot (XCM)
+                      </span>
                     </Tabs.Item>
                   )}
                 </NavLink>

@@ -24,7 +24,8 @@ export const FromAmount: React.FC<{
   availableBalance: { balance: Decimal; loading: boolean } | null
   wouldReapAccount?: boolean
   insufficientBalance?: boolean
-}> = ({ availableBalance, insufficientBalance, wouldReapAccount }) => {
+  existentialDeposit?: bigint | null
+}> = ({ availableBalance, existentialDeposit, insufficientBalance, wouldReapAccount }) => {
   const [fromAmountInput, setFromAmountInput] = useAtom(fromAmountInputAtom)
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
   const [toAsset, setToAsset] = useAtom(toAssetAtom)
@@ -65,24 +66,27 @@ export const FromAmount: React.FC<{
         ) : null
       }
       textBelowInput={
-        insufficientBalance ? (
-          <p className="text-red-400 text-[10px] leading-none">Insufficient balance</p>
-        ) : wouldReapAccount ? (
-          <div className="flex items-center gap-[4px]">
-            <p className="text-red-400 text-[10px] leading-none">Insufficient existential deposit</p>
-            <Link
-              to="https://support.polkadot.network/support/solutions/articles/65000168651-what-is-the-existential-deposit-"
-              target="_blank"
-              className="leading-none"
-            >
-              <HelpCircle size={10} className="text-red-400 cursor-pointer" />
-            </Link>
-          </div>
-        ) : (
+        <div className="flex">
           <p className="text-gray-400 text-[10px] leading-none">
             {(usdValue ?? 0)?.toLocaleString(undefined, { currency, style: 'currency' })}
           </p>
-        )
+          {insufficientBalance ? (
+            <p className="text-red-400 text-[10px] leading-none pl-[8px] ml-[8px] border-l border-l-gray-600">
+              Insufficient balance
+            </p>
+          ) : wouldReapAccount ? (
+            <div className="flex items-center gap-[4px] pl-[8px] ml-[8px] border-l border-l-gray-600">
+              <p className="text-red-400 text-[10px] leading-none">Insufficient existential deposit</p>
+              <Link
+                to="https://support.polkadot.network/support/solutions/articles/65000168651-what-is-the-existential-deposit-"
+                target="_blank"
+                className="leading-none"
+              >
+                <HelpCircle size={10} className="text-red-400 cursor-pointer" />
+              </Link>
+            </div>
+          ) : null}
+        </div>
       }
       placeholder="0.00"
       className="text-ellipsis !text-[18px] !font-semibold"
@@ -101,7 +105,14 @@ export const FromAmount: React.FC<{
           {availableBalance && !availableBalance.loading && (
             <TextInput.LabelButton
               css={{ fontSize: 12, paddingTop: 4, paddingBottom: 4 }}
-              onClick={() => setFromAmountInput(availableBalance.balance.toString())}
+              onClick={() =>
+                setFromAmountInput(
+                  Decimal.fromPlanck(
+                    availableBalance.balance.planck - (existentialDeposit ?? 0n),
+                    availableBalance.balance.decimals
+                  ).toString()
+                )
+              }
             >
               <p css={{ fontSize: 12, lineHeight: 1 }}>Max</p>
             </TextInput.LabelButton>

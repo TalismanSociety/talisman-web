@@ -20,12 +20,13 @@ import {
   type QuoteResponse,
   type AssetData,
   type ChainData,
+  type SwapStatusResponse,
 } from '@chainflip/sdk/swap'
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { Decimal } from '@talismn/math'
 import { atom, type Getter, type Setter } from 'jotai'
 import { atomFamily } from 'jotai/utils'
-import { erc20Abi, isAddress, type SendTransactionReturnType } from 'viem'
+import { erc20Abi, isAddress } from 'viem'
 import { arbitrum, mainnet, sepolia } from 'viem/chains'
 
 const PROTOCOL: SupportedSwapProtocol = 'chainflip'
@@ -85,12 +86,26 @@ const chainflipNetworkAtom = atom<ChainflipNetwork>('mainnet')
 export const polkadotRpcAtom = atom(get =>
   get(chainflipNetworkAtom) === 'mainnet' ? 'wss://polkadot.api.onfinality.io/public' : 'wss://rpc-pdot.chainflip.io'
 )
-const swapSdkAtom = atom(
-  get =>
-    new SwapSDK({
-      network: get(chainflipNetworkAtom),
-    })
-)
+
+const brokerUrlAtom = atom(get => {
+  switch (get(chainflipNetworkAtom)) {
+    case 'mainnet':
+      return 'https://broker.chainflip.talisman.xyz'
+    case 'perseverance':
+      return 'https://broker.perseverance.chainflip.talisman.xyz'
+    default:
+      return undefined
+  }
+})
+
+const swapSdkAtom = atom(get => {
+  const network = get(chainflipNetworkAtom)
+  const brokerUrl = get(brokerUrlAtom)
+  return new SwapSDK({
+    network,
+    broker: brokerUrl ? { url: brokerUrl, commissionBps: 100 } : undefined,
+  })
+})
 
 export const chainflipAssetsAtom = atom(async get => await get(swapSdkAtom).getAssets())
 export const chainflipChainsAtom = atom(async get => await get(swapSdkAtom).getChains())
@@ -165,7 +180,9 @@ const quote: QuoteFunction = async (get): Promise<(BaseQuote & { data?: QuoteRes
     console.error(_error)
     const error = _error as Error & { response?: { data?: { message: string } } }
     const errorMessage =
-      error.name === 'AxiosError' && error.response?.data?.message?.includes('InsufficientLiquidity')
+      error.name === 'AxiosError' &&
+      (error.response?.data?.message?.includes('InsufficientLiquidity') ||
+        error.response?.data?.message.toLowerCase().includes('insufficient liquidity'))
         ? 'Insufficient liquidity. Please try again with a smaller amount'
         : error.message === 'Request failed with status code 400'
         ? 'Pair not available. Please try another swapping a different asset pair'
@@ -182,6 +199,18 @@ const quote: QuoteFunction = async (get): Promise<(BaseQuote & { data?: QuoteRes
 export type ChainflipSwapActivityData = {
   id: string
   network: ChainflipNetwork
+}
+
+const saveAddressForQuest = async (swapId: string, fromAddress: string) => {
+  const api = import.meta.env.REACT_APP_QUEST_API
+  if (!api) return
+  await fetch(`${api}/api/quests/chainflip`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ swapId, fromAddress }),
+  })
 }
 
 const swap: SwapFunction<ChainflipSwapActivityData> = async (
@@ -245,18 +274,17 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
       if (chainflipFromChain.evmChainId === undefined) throw new Error('Missing evmChainId, this is likely a bug.')
 
       await evmWalletClient.switchChain({ id: chainflipFromChain.evmChainId })
-      let evmTxHash: SendTransactionReturnType
       const chain = EVM_CHAINS.find(c => c.id.toString() === fromAsset.chainId.toString())
       if (!chain) throw new Error('Chain not found')
       if (!chainflipFromAsset.contractAddress) {
-        evmTxHash = await evmWalletClient.sendTransaction({
+        await evmWalletClient.sendTransaction({
           chain,
           to: depositAddress.depositAddress as `0x${string}`,
           value: BigInt(depositAddress.amount),
           account: fromAddress as `0x${string}`,
         })
       } else {
-        evmTxHash = await evmWalletClient.writeContract({
+        await evmWalletClient.writeContract({
           chain,
           abi: erc20Abi,
           address: fromAsset.contractAddress as `0x${string}`,
@@ -265,8 +293,9 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
           args: [depositAddress.depositAddress as `0x${string}`, BigInt(depositAddress.amount)],
         })
       }
+      saveAddressForQuest(depositAddress.depositChannelId, fromAddress)
 
-      return { protocol: PROTOCOL, data: { evmTxHash, id: depositAddress.depositChannelId, network } }
+      return { protocol: PROTOCOL, data: { id: depositAddress.depositChannelId, network } }
     } else {
       const signer = substrateWallet?.signer
       if (!signer) throw new Error('Substrate wallet not connected.')
@@ -277,6 +306,7 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
         .transferKeepAlive(depositAddress.depositAddress, depositAddress.amount)
         .signAndSend(fromAddress, { signer })
 
+      saveAddressForQuest(depositAddress.depositChannelId, fromAddress)
       return { protocol: PROTOCOL, data: { id: depositAddress.depositChannelId, network } }
     }
   } catch (e) {
@@ -295,8 +325,12 @@ export const chainflipSwapModule: SwapModule = {
 
 // helpers
 
-export const chainflipSwapStatusAtom = atomFamily((id: string) =>
-  atom(async get => {
+const retryStatus = async (
+  get: Getter,
+  id: string,
+  attempts = 0
+): Promise<SwapStatusResponse & { expired: boolean }> => {
+  try {
     const status = await get(swapSdkAtom).getStatus({ id })
     let expired = false
 
@@ -309,5 +343,16 @@ export const chainflipSwapStatusAtom = atomFamily((id: string) =>
     }
 
     return { ...status, expired }
-  })
-)
+  } catch (e) {
+    const error = e as Error & { response?: { status: number } }
+    // because we're using a broker, the tx isnt always available immediately in their api service
+    // so we wait a bit and retry
+    if (error.name === 'AxiosError' && error?.response?.status === 404 && attempts < 10) {
+      await new Promise(resolve => setTimeout(resolve, 5000))
+      return retryStatus(get, id, attempts + 1)
+    }
+    throw e
+  }
+}
+
+export const chainflipSwapStatusAtom = atomFamily((id: string) => atom(async get => await retryStatus(get, id)))

@@ -48,7 +48,7 @@ import {
 } from '@talismn/web-icons'
 import { LayoutGroup, motion } from 'framer-motion'
 import { usePostHog } from 'posthog-js/react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
@@ -156,9 +156,16 @@ export { TitlePortal }
 const [HeaderWidgetPortalProvider, HeaderWidgetPortal, HeaderWidgetPortalElement] = createPortal()
 export { HeaderWidgetPortal }
 
+const PATHS_TO_EXCLUDE_ACCOUNTS_MENU = ['/transport']
+
 const Header = () => {
   const shouldShowAccountConnectionGuard = useShouldShowAccountConnectionGuard()
   const accounts = useRecoilValue(selectedAccountsState)
+  const location = useLocation()
+
+  const shouldExcludeAccountsManagementMenu = useMemo(() => {
+    return PATHS_TO_EXCLUDE_ACCOUNTS_MENU.find(e => location.pathname.toLowerCase().startsWith(e.toLowerCase()))
+  }, [location.pathname])
 
   if (shouldShowAccountConnectionGuard) {
     return null
@@ -188,9 +195,11 @@ const Header = () => {
         </div>
       </div>
       <div css={{ display: 'flex', gap: '2.4rem', flexWrap: 'wrap' }}>
-        <AccountsManagementMenu
-          button={<AccountValueInfo account={accounts.length === 1 ? accounts[0] : undefined} balance={<Total />} />}
-        />
+        {!shouldExcludeAccountsManagementMenu && (
+          <AccountsManagementMenu
+            button={<AccountValueInfo account={accounts.length === 1 ? accounts[0] : undefined} balance={<Total />} />}
+          />
+        )}
         <HeaderWidgetPortalElement />
       </div>
     </div>

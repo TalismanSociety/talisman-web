@@ -78,7 +78,7 @@ export const ChainFlipSwap: React.FC = () => {
       loading: balance.find(b => b.status === 'stale').each.length !== 0,
     }
   }, [balances, fromAddress, fromToken])
-  const wouldReapAccount = useWouldReapAccount(availableBalance?.balance)
+  const { wouldReapAccount, existentialDeposit } = useWouldReapAccount(availableBalance?.balance)
 
   const insufficientBalance = useMemo(() => {
     if (!availableBalance || availableBalance.loading) return undefined
@@ -117,8 +117,9 @@ export const ChainFlipSwap: React.FC = () => {
             availableBalance={availableBalance}
             insufficientBalance={insufficientBalance}
             wouldReapAccount={wouldReapAccount}
+            existentialDeposit={existentialDeposit}
           />
-          <div className="relative w-full h-[8px]">
+          <div className="relative w-full h-[12px]">
             <TonalIconButton
               className="border-3 !border-solid !border-gray-900 -top-[8px] absolute z-10 left-1/2 -translate-x-1/2 !bg-[#2D3121] !w-[48px] !h-[48px] !rounded-full"
               onClick={reverse}

@@ -89,13 +89,14 @@ export const toAmountAtom = atom(async get => {
   const quote = _quote.data
   const toAsset = get(toAssetAtom)
   if (!quote || quote.outputAmountBN === undefined || !toAsset) return null
-  return Decimal.fromPlanck(quote.outputAmountBN, toAsset.decimals)
+  return Decimal.fromPlanck(quote.outputAmountBN, toAsset.decimals, { currency: toAsset.symbol })
 })
 
 export const useSwap = () => {
   const { data: walletClient } = useWalletClient()
   const swapping = useAtomValue(swappingAtom)
   const substrateWallet = useRecoilValue(connectedSubstrateWalletState)
+  const _swaps = useAtomValue(swapsAtom)
   const getSubstrateApi = useRecoilCallback(
     ({ snapshot }) =>
       (rpc: string) =>
@@ -122,7 +123,7 @@ export const useSwap = () => {
           // all swaps across different protocols can appear in the activity list
           const now = new Date().getTime()
 
-          set(swapsAtom, swaps => [...swaps, { ...swapped, timestamp: now }])
+          set(swapsAtom, [..._swaps, { ...swapped, timestamp: now }])
           set(swapInfoTabAtom, 'activities')
         } catch (e) {
           console.error(e)
@@ -132,7 +133,7 @@ export const useSwap = () => {
           set(swappingAtom, false)
         }
       },
-      [getSubstrateApi, substrateWallet, walletClient]
+      [_swaps, getSubstrateApi, substrateWallet, walletClient]
     )
   )
 
@@ -308,13 +309,20 @@ export const useWouldReapAccount = (availableBalance?: Decimal | null) => {
   const fromAsset = useAtomValue(fromAssetAtom)
   const polkadotRpc = useAtomValue(polkadotRpcAtom)
   const polkadotApi = useRecoilValueLoadable(substrateApiState(polkadotRpc))
-  return useMemo(() => {
-    if (!availableBalance || !fromAsset || fromAsset.chainId !== 'polkadot' || fromAmount.planck === 0n) return false
+
+  const existentialDeposit = useMemo(() => {
+    if (!fromAsset || fromAsset.chainId !== 'polkadot') return 0n
+    if (polkadotApi.state !== 'hasValue') return null
+    return polkadotApi.contents.consts.balances.existentialDeposit.toBigInt()
+  }, [fromAsset, polkadotApi.contents, polkadotApi.state])
+
+  const wouldReapAccount = useMemo(() => {
+    if (!availableBalance || !existentialDeposit || fromAmount.planck === 0n) return false
     // insufficient balance
     if (fromAmount.planck > availableBalance.planck) return false
-    if (polkadotApi.state !== 'hasValue') return undefined
 
-    const ed = polkadotApi.contents.consts.balances.existentialDeposit.toBigInt()
-    return availableBalance.planck - fromAmount.planck < ed
-  }, [availableBalance, fromAmount.planck, fromAsset, polkadotApi.contents, polkadotApi.state])
+    return availableBalance.planck - fromAmount.planck < existentialDeposit
+  }, [availableBalance, existentialDeposit, fromAmount.planck])
+
+  return { wouldReapAccount, existentialDeposit }
 }

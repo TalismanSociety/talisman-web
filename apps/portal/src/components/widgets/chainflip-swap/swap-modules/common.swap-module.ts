@@ -94,8 +94,7 @@ const _swapsStorage = unstable_withStorageValidator(validateSwaps)(
   })
 )
 
-const filterAndSortStoredSwaps = (swaps: StoredSwaps) =>
-  swaps.toSorted((a, b) => b.timestamp - a.timestamp).slice(0, 50)
+const filterAndSortStoredSwaps = (swaps: StoredSwaps) => swaps.toSorted((a, b) => b.timestamp - a.timestamp)
 
 const swapsStorage: typeof _swapsStorage = {
   ..._swapsStorage,
