@@ -1,4 +1,5 @@
 import {
+  CHAINFLIP_COMMISSION_BPS,
   chainflipAssetsAtom,
   chainflipAssetToSwappableAsset,
   chainflipChainsAtom,
@@ -10,6 +11,7 @@ import { type QuoteResponse } from '@chainflip/sdk/swap'
 import { useTokenRates, useTokens } from '@talismn/balances-react'
 import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
+import { Tooltip } from '@talismn/ui'
 import { ArrowRight } from '@talismn/web-icons'
 import { useAtomValue } from 'jotai'
 import { loadable } from 'jotai/utils'
@@ -32,23 +34,25 @@ export const ChainflipDetails: React.FC<{ data: QuoteResponse }> = ({ data }) =>
     return toAmount.data.mapNumber(() => (toAmount.data?.toNumber() ?? 0) / (fromAmount.toNumber() ?? 1))
   }, [fromAmount, toAmount])
 
-  const totalFiatFee = useMemo(() => {
-    const fees = data.quote.includedFees.map(fee => {
-      const chainflipChain = chainflipChains.find(chain => chain.chain === fee.chain)
-      const chainflipAsset = chainflipAssets.find(asset => asset.asset === fee.asset)
-      if (!chainflipAsset || !chainflipChain) return { fee, rate: 0, fiatAmount: 0 }
+  const fees = useMemo(() => {
+    return data.quote.includedFees
+      .map(fee => {
+        const chainflipChain = chainflipChains.find(chain => chain.chain === fee.chain)
+        const chainflipAsset = chainflipAssets.find(asset => asset.asset === fee.asset)
+        if (!chainflipAsset || !chainflipChain) return { name: fee.type.toLowerCase(), rate: 0, fiatAmount: 0 }
 
-      const swappableAsset = chainflipAssetToSwappableAsset(chainflipAsset, chainflipChain)
-      if (!swappableAsset) return { fee, rate: 0, fiatAmount: 0 }
+        const swappableAsset = chainflipAssetToSwappableAsset(chainflipAsset, chainflipChain)
+        if (!swappableAsset) return { name: fee.type.toLowerCase(), rate: 0, fiatAmount: 0 }
 
-      // get rate and compute fee in fiat
-      const rate = rates[swappableAsset.id]?.[currency] ?? 0
-      const amount = Decimal.fromPlanck(fee.amount, swappableAsset.decimals)
-      return { fee, rate, amount, fiatAmount: rate * +amount.toString() }
-    })
+        // get rate and compute fee in fiat
+        const rate = rates[swappableAsset.id]?.[currency] ?? 0
+        const amount = Decimal.fromPlanck(fee.amount, swappableAsset.decimals)
+        return { name: fee.type.toLowerCase(), rate, amount, fiatAmount: rate * +amount.toString() }
+      })
+      .filter(fee => fee !== null)
+  }, [chainflipAssets, chainflipChains, currency, data.quote.includedFees, rates])
 
-    return { feesWithRate: fees, total: fees.reduce((acc, fee) => acc + fee.fiatAmount, 0) }
-  }, [data.quote.includedFees, chainflipChains, chainflipAssets, rates, currency])
+  const totalFiatFee = useMemo(() => fees.reduce((acc, fee) => acc + fee.fiatAmount, 0), [fees])
 
   return (
     <div className="grid gap-[24px]">
@@ -79,15 +83,44 @@ export const ChainflipDetails: React.FC<{ data: QuoteResponse }> = ({ data }) =>
       <div className="grid gap-[8px]">
         <div className="flex items-center justify-between">
           <p className="text-gray-400 text-[14px]">Est. Fees</p>
-          <p className="text-[14px] text-white">
-            {totalFiatFee?.total.toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-              currency,
-              style: 'currency',
-            })}
-          </p>
+          <Tooltip
+            content={
+              <div>
+                {fees.map(fee =>
+                  fee.name === 'broker' ? null : (
+                    <div className="flex items-center justify-between gap-[16px]" key={fee.name}>
+                      <p className="text-gray-400 text-[14px] capitalize">{fee.name} Fee</p>
+                      <p className="text-[14px] text-white">
+                        {fee.fiatAmount.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                          currency,
+                          style: 'currency',
+                        })}
+                      </p>
+                    </div>
+                  )
+                )}
+                {!!CHAINFLIP_COMMISSION_BPS && (
+                  <div className="flex items-center justify-between gap-[16px]">
+                    <p className="text-gray-400 text-[14px]">Service Fee</p>
+                    <p className="text-[14px] text-white">{CHAINFLIP_COMMISSION_BPS / 100}%</p>
+                  </div>
+                )}
+              </div>
+            }
+          >
+            <p className="text-[14px] text-white">
+              {totalFiatFee.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                currency,
+                style: 'currency',
+              })}
+            </p>
+          </Tooltip>
         </div>
+
         <div className="flex items-center justify-between">
           <p className="text-gray-400 text-[14px]">Est. Rate</p>
           <p className="text-[14px] text-white">

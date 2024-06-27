@@ -96,6 +96,8 @@ export const SwapTokenSelector: React.FC<Props> = ({ selectedAsset, assetFilter,
     [filteredAssets, onSelectAsset]
   )
 
+  if (Object.keys(tokens).length === 0) return <Skeleton.Surface className="w-[80px] h-[40px]" />
+
   return (
     <div className="">
       <SurfaceButton

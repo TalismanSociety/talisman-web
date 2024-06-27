@@ -24,6 +24,7 @@ export type BaseQuote = {
   inputAmountBN: bigint
   error?: string
   fees: any
+  talismanFeeBps?: number
   data?: any
 }
 

@@ -35,11 +35,6 @@ import { useEffect, useMemo } from 'react'
 import type React from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
-/**
- * TODO:
- * - handle polkadot ED
- * - keep swap button disabled until transfer is complete on chain / after user's balance change
- */
 export const ChainFlipSwap: React.FC = () => {
   useLoadTokens()
   useSyncPreviousChainflipSwaps()

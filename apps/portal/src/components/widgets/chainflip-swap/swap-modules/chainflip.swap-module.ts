@@ -98,12 +98,13 @@ const brokerUrlAtom = atom(get => {
   }
 })
 
+export const CHAINFLIP_COMMISSION_BPS = 150
 const swapSdkAtom = atom(get => {
   const network = get(chainflipNetworkAtom)
   const brokerUrl = get(brokerUrlAtom)
   return new SwapSDK({
     network,
-    broker: brokerUrl ? { url: brokerUrl, commissionBps: 150 } : undefined,
+    broker: brokerUrl ? { url: brokerUrl, commissionBps: CHAINFLIP_COMMISSION_BPS } : undefined,
   })
 })
 
@@ -175,6 +176,7 @@ const quote: QuoteFunction = async (get): Promise<(BaseQuote & { data?: QuoteRes
       protocol: PROTOCOL,
       inputAmountBN: fromAmount.planck,
       outputAmountBN: BigInt(quote.quote.egressAmount),
+      talismanFeeBps: CHAINFLIP_COMMISSION_BPS,
       fees: null,
       data: quote,
     }
