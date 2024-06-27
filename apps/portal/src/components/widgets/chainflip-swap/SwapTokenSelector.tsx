@@ -5,6 +5,7 @@ import { selectedCurrencyState } from '@/domains/balances'
 import { useGetEvmOrSubstrateChain } from '@/hooks/useGetEvmOrSubstrateChain'
 import { ErrorBoundary } from '@sentry/react'
 import { useBalances, useTokens } from '@talismn/balances-react'
+import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { Skeleton, SurfaceButton } from '@talismn/ui'
 import { X } from '@talismn/web-icons'
@@ -46,20 +47,20 @@ export const SwapTokenSelector: React.FC<Props> = ({ selectedAsset, assetFilter,
         .map((asset): Token | null => {
           const token = tokens[asset.id]
           const chain = getChain(asset.chainId)
-          if (!token || !chain) return null
+          if (!chain) return null
           const assetBalances = balances.find(balance => balance.tokenId === asset.id)
           const balanceToDisplay = balanceFor
             ? assetBalances?.find(b => b.address.toLowerCase() === balanceFor.toLowerCase())
             : assetBalances
 
           return {
-            id: token.id,
+            id: asset.id,
             name: asset.name,
             code: asset.symbol,
-            iconSrc: token.logo,
+            iconSrc: token?.logo ?? githubUnknownTokenLogoUrl,
             chain: chain.name ?? '',
             chainId: asset.chainId,
-            amount: Decimal.fromPlanck(balanceToDisplay.sum.planck.transferable, token.decimals, {
+            amount: Decimal.fromPlanck(balanceToDisplay.sum.planck.transferable, asset.decimals, {
               currency: asset.symbol,
             }).toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 }),
             fiatAmount: balanceToDisplay.sum.fiat(currency).transferable.toLocaleString(undefined, {
