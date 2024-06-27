@@ -107,7 +107,9 @@ const swapSdkAtom = atom(get => {
   })
 })
 
-export const chainflipAssetsAtom = atom(async get => await get(swapSdkAtom).getAssets())
+export const chainflipAssetsAtom = atom(async get =>
+  (await get(swapSdkAtom).getAssets()).filter(a => a.asset !== 'FLIP')
+)
 export const chainflipChainsAtom = atom(async get => await get(swapSdkAtom).getChains())
 
 const tokensSelector = atom(async (get): Promise<CommonSwappableAssetType[]> => {
