@@ -83,7 +83,7 @@ const Stake = ({
           )
         }
         lockedButton={
-          stake.locked?.decimalAmount.planck !== 0n && (
+          (stake.locked?.decimalAmount.planck ?? 0n) > 0n && (
             <StakePosition.LockedButton
               loading={unlockExtrinsic.state === 'loading'}
               amount={stake.locked?.decimalAmount.toLocaleString()}
@@ -92,7 +92,7 @@ const Stake = ({
           )
         }
         claimButton={
-          stake.totalRewards?.decimalAmount.planck !== 0n && (
+          (stake.totalRewards?.decimalAmount.planck ?? 0n) > 0n && (
             <StakePosition.ClaimButton
               loading={claimAllRewardsExtrinsic.state === 'loading'}
               amount={stake.totalRewards?.decimalAmount.toLocaleString()}
