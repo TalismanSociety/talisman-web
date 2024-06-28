@@ -186,6 +186,7 @@ export const FastUnstakingStatus = (props: { amount: ReactNode; status: 'in-head
 const StakePosition = Object.assign(
   (props: StakePositionProps) => {
     const theme = useTheme()
+    const shouldRenderMenuBtn = props.unstakeButton || props.lockedButton || props.menuButton
     return (
       <StakePositionContext.Provider value={{ readonly: props.readonly ?? false }}>
         <div css={{ containerType: 'inline-size' }}>
@@ -263,19 +264,21 @@ const StakePosition = Object.assign(
               </Text.BodySmall>
               <div css={{ display: 'flex', gap: '0.8rem', [MEDIUM_CONTAINER_QUERY]: { order: 1 } }}>
                 {props.increaseStakeButton || <div css={{ width: '4rem' }} />}
-                <MenuContext.Provider
-                  value={{
-                    attentionRequired: Boolean(props.lockedButton),
-                    children: (
-                      <>
-                        {props.unstakeButton}
-                        {props.lockedButton}
-                      </>
-                    ),
-                  }}
-                >
-                  {props.menuButton || <StakePosition.MenuButton />}
-                </MenuContext.Provider>
+                <div css={{ visibility: shouldRenderMenuBtn ? 'visible' : 'hidden' }}>
+                  <MenuContext.Provider
+                    value={{
+                      attentionRequired: Boolean(props.lockedButton),
+                      children: (
+                        <>
+                          {props.unstakeButton}
+                          {props.lockedButton}
+                        </>
+                      ),
+                    }}
+                  >
+                    {props.menuButton || <StakePosition.MenuButton />}
+                  </MenuContext.Provider>
+                </div>
               </div>
             </div>
             <div css={{ [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}>
