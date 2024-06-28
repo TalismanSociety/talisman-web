@@ -32,7 +32,7 @@ import { loadable, useAtomCallback } from 'jotai/utils'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useRecoilCallback, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import { isAddress } from 'viem'
-import { useWalletClient } from 'wagmi'
+import { useGasPrice, useWalletClient } from 'wagmi'
 
 const swapModules = [chainflipSwapModule]
 
@@ -91,6 +91,40 @@ export const toAmountAtom = atom(async get => {
   if (!quote || quote.outputAmountBN === undefined || !toAsset) return null
   return Decimal.fromPlanck(quote.outputAmountBN, toAsset.decimals, { currency: toAsset.symbol })
 })
+
+const estimateGasAtom = atom(get => {
+  const quote = get(swapQuoteAtom)
+  if (quote.state !== 'hasData' || quote.data === null) return null
+
+  const module = swapModules.find(module => module.protocol === quote.data?.protocol)
+  if (!module) return null
+  return get(module.estimateGas)
+})
+
+export const useEstimatedSwapGas = () => {
+  const fromAsset = useAtomValue(fromAssetAtom)
+  const estimatedGas = useAtomValue(estimateGasAtom)
+
+  const gasPrice = useGasPrice({
+    chainId: fromAsset ? +fromAsset.chainId : 1,
+    query: {
+      refetchInterval: 12_000,
+      enabled: !!fromAsset && Number.isNaN(fromAsset.chainId) === false,
+    },
+  })
+
+  return useMemo(() => {
+    if (!estimatedGas) return null
+    if (estimatedGas.type === 'eth') {
+      if (!gasPrice.data) return null
+      return Decimal.fromPlanck(estimatedGas.gas * gasPrice.data, estimatedGas.decimals, {
+        currency: estimatedGas.symbol,
+      })
+    } else {
+      return Decimal.fromPlanck(estimatedGas.gas, estimatedGas.decimals, { currency: estimatedGas.symbol })
+    }
+  }, [estimatedGas, gasPrice.data])
+}
 
 export const useSwap = () => {
   const { data: walletClient } = useWalletClient()

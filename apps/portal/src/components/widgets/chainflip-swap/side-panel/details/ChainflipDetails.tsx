@@ -5,13 +5,13 @@ import {
   chainflipChainsAtom,
 } from '../../swap-modules/chainflip.swap-module'
 import { fromAmountAtom, fromAssetAtom, toAssetAtom } from '../../swap-modules/common.swap-module'
-import { toAmountAtom } from '../../swaps.api'
+import { toAmountAtom, useEstimatedSwapGas } from '../../swaps.api'
 import { selectedCurrencyState } from '@/domains/balances'
 import { type QuoteResponse } from '@chainflip/sdk/swap'
 import { useTokenRates, useTokens } from '@talismn/balances-react'
 import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
-import { Tooltip } from '@talismn/ui'
+import { Skeleton, Tooltip } from '@talismn/ui'
 import { ArrowRight } from '@talismn/web-icons'
 import { useAtomValue } from 'jotai'
 import { loadable } from 'jotai/utils'
@@ -29,6 +29,7 @@ export const ChainflipDetails: React.FC<{ data: QuoteResponse }> = ({ data }) =>
   const rates = useTokenRates()
   const tokens = useTokens()
 
+  const gasCost = useEstimatedSwapGas()
   const toQuote = useMemo(() => {
     if (toAmount.state !== 'hasData' || !fromAmount || !toAmount.data) return undefined
     return toAmount.data.mapNumber(() => (toAmount.data?.toNumber() ?? 0) / (fromAmount.toNumber() ?? 1))
@@ -82,31 +83,16 @@ export const ChainflipDetails: React.FC<{ data: QuoteResponse }> = ({ data }) =>
       <div className="w-full border-b border-gray-900" />
       <div className="grid gap-[8px]">
         <div className="flex items-center justify-between">
-          <p className="text-gray-400 text-[14px]">Est. Fees</p>
+          <p className="text-gray-400 text-[14px]">Included Fees (est.)</p>
           <Tooltip
+            placement="left"
             content={
-              <div>
-                {fees.map(fee =>
-                  fee.name === 'broker' ? null : (
-                    <div className="flex items-center justify-between gap-[16px]" key={fee.name}>
-                      <p className="text-gray-400 text-[14px] capitalize">{fee.name} Fee</p>
-                      <p className="text-[14px] text-white">
-                        {fee.fiatAmount.toLocaleString(undefined, {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                          currency,
-                          style: 'currency',
-                        })}
-                      </p>
-                    </div>
-                  )
-                )}
-                {!!CHAINFLIP_COMMISSION_BPS && (
-                  <div className="flex items-center justify-between gap-[16px]">
-                    <p className="text-gray-400 text-[14px]">Service Fee</p>
-                    <p className="text-[14px] text-white">{CHAINFLIP_COMMISSION_BPS / 100}%</p>
-                  </div>
-                )}
+              <div className="max-w-[240px]">
+                <p className="text-[14px]">
+                  This is the estimated cost of making the cross chain swap, which includes the exchange liquidity fee,
+                  gas fees on the destination chain, a {CHAINFLIP_COMMISSION_BPS / 100}% Talisman fee, and any other
+                  cost of making the swap.
+                </p>
               </div>
             }
           >
@@ -119,6 +105,17 @@ export const ChainflipDetails: React.FC<{ data: QuoteResponse }> = ({ data }) =>
               })}
             </p>
           </Tooltip>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <p className="text-gray-400 text-[14px]">Gas Fees (est.)</p>
+          <p className="text-[14px] text-white">
+            {gasCost ? (
+              gasCost.toLocaleString(undefined, { minimumFractionDigits: 4 })
+            ) : (
+              <Skeleton.Surface className="w-[86px] h-[22px]" />
+            )}
+          </p>
         </div>
 
         <div className="flex items-center justify-between">

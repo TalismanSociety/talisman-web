@@ -12,6 +12,7 @@ import {
   type SwapFunction,
   type QuoteFunction,
   swapQuoteRefresherAtom,
+  type EstimateGasFunction,
 } from './common.swap-module'
 import {
   SwapSDK,
@@ -320,9 +321,27 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
   }
 }
 
+const estimateGas: EstimateGasFunction = atom((get: Getter) => {
+  const fromAsset = get(fromAssetAtom)
+  if (!fromAsset) return null
+
+  const swappingFromEVM = EVM_CHAINS.some(c => c.id.toString() === fromAsset.chainId.toString())
+  if (swappingFromEVM) {
+    // since we are just doing simple transfers, we can use a rough estimate of gas
+    // - native transfers costs ~21k gas
+    // - erc20 transfers costs ~40-60k gas
+    // - using 80k should be more than enough
+    return { type: 'eth', gas: 80000n, decimals: 18, symbol: 'ETH' }
+  } else {
+    // rough gas estimate of simple transfer
+    return { type: 'substrate', gas: 157107779n, decimals: 10, symbol: 'DOT' }
+  }
+})
+
 export const chainflipSwapModule: SwapModule = {
   protocol: PROTOCOL,
   tokensSelector,
+  estimateGas,
   quote,
   swap,
 }

@@ -47,11 +47,18 @@ export type SwapFunction<TData> = (
   set: Setter,
   props: SwapProps
 ) => Promise<Omit<SwapActivity<TData>, 'timestamp'>>
+export type EstimateGasFunction = Atom<{
+  type: 'eth' | 'substrate'
+  gas: bigint
+  decimals: number
+  symbol: string
+} | null>
 
 export type SwapModule = {
   protocol: SupportedSwapProtocol
   tokensSelector: Atom<Promise<CommonSwappableAssetType[]>>
   quote: QuoteFunction
+  estimateGas: EstimateGasFunction
   /** Returns whether the swap succeeded or not */
   swap: SwapFunction<any>
 }

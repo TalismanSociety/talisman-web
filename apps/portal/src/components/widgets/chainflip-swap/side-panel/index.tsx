@@ -1,13 +1,12 @@
-import { ChainFlipFAQ } from './ChainflipFAQ'
 import { SwapDetails } from './SwapDetails'
 import { SwapHistory } from './SwapHistory'
 import { cn } from '@/lib/utils'
 import { Chip } from '@talismn/ui'
-import { Activity, FileSearch, HelpCircle } from '@talismn/web-icons'
+import { Activity, FileSearch } from '@talismn/web-icons'
 import { atom, useAtom } from 'jotai'
 import { useMemo } from 'react'
 
-type Tab = 'details' | 'activities' | 'faq'
+type Tab = 'details' | 'activities'
 
 export const swapInfoTabAtom = atom<Tab>('details')
 
@@ -41,7 +40,7 @@ export const SidePanel: React.FC = () => {
       case 'activities':
         return <SwapHistory />
       default:
-        return <ChainFlipFAQ />
+        return null
     }
   }, [tab])
 
@@ -56,9 +55,6 @@ export const SidePanel: React.FC = () => {
             </TabItem>
             <TabItem selected={tab === 'activities'} onClick={() => setTab('activities')}>
               <Activity size={16} />
-            </TabItem>
-            <TabItem selected={tab === 'faq'} onClick={() => setTab('faq')}>
-              <HelpCircle size={16} />
             </TabItem>
           </div>
         </div>
