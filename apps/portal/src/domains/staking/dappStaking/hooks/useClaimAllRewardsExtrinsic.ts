@@ -4,7 +4,7 @@ import type { ApiPromise } from '@polkadot/api'
 import { useCallback } from 'react'
 
 export const getAllRewardsClaimExtrinsics = (api: ApiPromise, stake: StakeLoadable['data']) =>
-  stake.totalRewards?.decimalAmount.planck ?? 0n < 0n
+  (stake.totalRewards?.decimalAmount.planck ?? 0n) < 0n
     ? []
     : [
         ...(stake?.stakerRewards?.decimalAmount.planck === 0n
