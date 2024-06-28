@@ -274,7 +274,10 @@ export const useStakeLoadable = (account: Account) => {
 
   const data = {
     active: isActive,
-    earningRewards: totalStaked?.decimalAmount !== undefined && totalStaked.decimalAmount.planck > 0,
+    earningRewards: useMemo(
+      () => totalStaked?.decimalAmount !== undefined && totalStaked.decimalAmount.planck > 0,
+      [totalStaked?.decimalAmount]
+    ),
     account,
     ledger,
     locked,
