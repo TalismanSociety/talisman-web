@@ -699,7 +699,7 @@ export const useSwap = () =>
 
           await api.tx.balances
             .transferKeepAlive(depositAddress.depositAddress, depositAddress.amount)
-            .signAndSend(srcAccount.address, { signer })
+            .signAndSend(srcAccount.address, { signer, withSignedTransaction: true })
 
           break
         }
