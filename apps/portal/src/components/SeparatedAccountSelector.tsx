@@ -21,7 +21,7 @@ type Props = {
   evmAccountsFilter?: (account: Account) => boolean
   showBalances?: {
     filter?: BalanceSearchQuery | BalanceSearchQuery[]
-    output?: (addressBalances: Balances) => React.ReactNode
+    output?: (address: string, addressBalances: Balances) => React.ReactNode
   }
   substrateAccountsFilter?: (account: Account) => boolean
   substrateAccountPrefix?: number
@@ -187,6 +187,7 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
               balance={
                 showBalances
                   ? showBalances.output?.(
+                      evmAccount.address,
                       filteredBalances.find(b => b.address.toLowerCase() === evmAccount.address.toLowerCase())
                     ) ?? null
                   : null
@@ -234,6 +235,7 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
                       balance={
                         showBalances
                           ? showBalances.output?.(
+                              account.address,
                               filteredBalances.find(b => b.address.toLowerCase() === account.address.toLowerCase())
                             ) ?? null
                           : null
@@ -283,7 +285,10 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
                     name={account.name}
                     balance={
                       showBalances
-                        ? showBalances.output?.(filteredBalances.find(b => b.address === account.address)) ?? null
+                        ? showBalances.output?.(
+                            account.address,
+                            filteredBalances.find(b => b.address === account.address)
+                          ) ?? null
                         : null
                     }
                   />

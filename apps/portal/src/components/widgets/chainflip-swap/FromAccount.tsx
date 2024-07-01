@@ -66,7 +66,7 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
               ? // find the balance for the selected from asset
                 balance => balance.tokenId === fromAsset.id
               : undefined,
-            output: b => {
+            output: (account, b) => {
               if (!fromAsset) {
                 return (
                   <p className="text-[14px] text-gray-400 whitespace-nowrap">
@@ -81,12 +81,10 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
               }
 
               if (fastBalance && fromAddress) {
-                const [firstBalance] = b.each
                 if (
-                  firstBalance?.token?.symbol?.toLowerCase() === fastBalance.amount.options?.currency?.toLowerCase() &&
-                  (firstBalance?.evmNetworkId ?? firstBalance?.chainId)?.toLowerCase() ===
-                    `${fastBalance.chainId}`.toLowerCase() &&
-                  firstBalance?.address.toLowerCase() === fromAddress?.toLowerCase()
+                  fromAsset.symbol.toLowerCase() === fastBalance.amount.options?.currency?.toLowerCase() &&
+                  `${fromAsset.chainId}`.toLowerCase() === `${fastBalance.chainId}`.toLowerCase() &&
+                  account.toLowerCase() === fromAddress.toLowerCase()
                 ) {
                   return (
                     <p className="text-[14px] text-gray-400 whitespace-nowrap">{fastBalance.amount.toLocaleString()}</p>
