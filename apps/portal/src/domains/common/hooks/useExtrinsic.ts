@@ -140,26 +140,30 @@ export function useExtrinsic(
                 }
               }
 
-              const unsubscribe = await submittable?.signAndSend(account, { signer: wallet?.signer }, result => {
-                extrinsicMiddleware(chain.id, submittable, result, callbackInterface, {
-                  blacklist: analytics.enabled ? [] : ['analytics'],
-                })
+              const unsubscribe = await submittable?.signAndSend(
+                account,
+                { signer: wallet?.signer, withSignedTransaction: true },
+                result => {
+                  extrinsicMiddleware(chain.id, submittable, result, callbackInterface, {
+                    blacklist: analytics.enabled ? [] : ['analytics'],
+                  })
 
-                if (result.isError) {
-                  unsubscribe?.()
-                  reject(result)
-                } else if (result.isFinalized) {
-                  unsubscribe?.()
-
-                  if (result.dispatchError !== undefined) {
+                  if (result.isError) {
+                    unsubscribe?.()
                     reject(result)
+                  } else if (result.isFinalized) {
+                    unsubscribe?.()
+
+                    if (result.dispatchError !== undefined) {
+                      reject(result)
+                    } else {
+                      resolve(result)
+                    }
                   } else {
-                    resolve(result)
+                    setLoadable({ state: 'loading', contents: result })
                   }
-                } else {
-                  setLoadable({ state: 'loading', contents: result })
                 }
-              })
+              )
             } catch (error) {
               reject(error)
             }
