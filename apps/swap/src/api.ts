@@ -34,12 +34,25 @@ export class InputError extends Error {}
 
 export const chainflipNetworkAtom = atom<ChainflipNetwork>('mainnet')
 
-export const swapSdkAtom = atom(
-  get =>
-    new SwapSDK({
-      network: get(chainflipNetworkAtom),
-    })
-)
+export const swapSdkAtom = atom(get => {
+  const network = get(chainflipNetworkAtom)
+
+  const brokerUrl = (() => {
+    switch (network) {
+      case 'mainnet':
+        return 'https://broker.chainflip.talisman.xyz'
+      case 'perseverance':
+        return 'https://broker.perseverance.chainflip.talisman.xyz'
+      default:
+        return undefined
+    }
+  })()
+
+  return new SwapSDK({
+    network: get(chainflipNetworkAtom),
+    broker: brokerUrl === undefined ? undefined : { url: brokerUrl, commissionBps: 100 },
+  })
+})
 
 export const polkadotRpcAtom = atom(get =>
   get(chainflipNetworkAtom) === 'mainnet' ? 'wss://polkadot.api.onfinality.io/public' : 'wss://rpc-pdot.chainflip.io'
