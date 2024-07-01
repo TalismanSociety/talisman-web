@@ -2,9 +2,11 @@ import type { CommonSwappableAssetType } from './swap-modules/common.swap-module
 import { swappableTokensAtom } from './swaps.api'
 import TokenSelectDialog, { type Token } from '@/components/recipes/TokenSelectDialog'
 import { selectedCurrencyState } from '@/domains/balances'
+import type { UseFastBalanceProps } from '@/hooks/useFastBalance'
 import { useGetEvmOrSubstrateChain } from '@/hooks/useGetEvmOrSubstrateChain'
+import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { ErrorBoundary } from '@sentry/react'
-import { useBalances, useTokens } from '@talismn/balances-react'
+import { useBalances, useTokenRates, useTokens } from '@talismn/balances-react'
 import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { Skeleton, SurfaceButton } from '@talismn/ui'
@@ -13,12 +15,16 @@ import { useAtomValue } from 'jotai'
 import type React from 'react'
 import { Suspense, useCallback, useMemo, useState } from 'react'
 import { useRecoilValue } from 'recoil'
+import { isAddress } from 'viem'
 
 type Props = {
   selectedAsset: CommonSwappableAssetType | null
   assetFilter?: (asset: CommonSwappableAssetType) => boolean
   onSelectAsset: (asset: CommonSwappableAssetType | null) => void
-  balanceFor?: string | null
+  balanceFor?: {
+    evm?: string
+    substrate?: string
+  }
 }
 
 export const SwapTokenSelector: React.FC<Props> = ({ selectedAsset, assetFilter, onSelectAsset, balanceFor }) => {
@@ -28,6 +34,7 @@ export const SwapTokenSelector: React.FC<Props> = ({ selectedAsset, assetFilter,
   const tokens = useTokens()
   const getChain = useGetEvmOrSubstrateChain()
   const currency = useRecoilValue(selectedCurrencyState)
+  const rates = useTokenRates()
 
   const token = useMemo((): (typeof tokens)[string] | null => {
     if (!selectedAsset) return null
@@ -48,11 +55,42 @@ export const SwapTokenSelector: React.FC<Props> = ({ selectedAsset, assetFilter,
           const token = tokens[asset.id]
           const chain = getChain(asset.chainId)
           if (!chain) return null
+          const rate = rates[asset.id]?.[currency]
+
+          const networkType = asset.id.split('-')[1] as 'evm' | 'substrate'
+
           const assetBalances = balances.find(balance => balance.tokenId === asset.id)
-          const balanceToDisplay = balanceFor
-            ? assetBalances?.find(b => b.address.toLowerCase() === balanceFor.toLowerCase())
+          const defaultBalances = balanceFor
+            ? assetBalances?.find(
+                b =>
+                  b.address.toLowerCase() === balanceFor.evm?.toLowerCase() ||
+                  b.address.toLowerCase() === balanceFor.substrate?.toLowerCase()
+              )
             : assetBalances
 
+          const defaultBalanceDecimal = Decimal.fromPlanck(defaultBalances.sum.planck.transferable, asset.decimals, {
+            currency: asset.symbol,
+          })
+
+          let balanceFetcher: UseFastBalanceProps | undefined = undefined
+          if (networkType === 'evm' && balanceFor?.evm && isAddress(balanceFor.evm)) {
+            balanceFetcher = {
+              type: 'evm',
+              networkId: +asset.chainId,
+              address: balanceFor?.evm,
+              tokenAddress: asset.contractAddress as `0x${string}` | undefined,
+            }
+          } else if (
+            networkType === 'substrate' &&
+            balanceFor?.substrate &&
+            isSubstrateAddress(balanceFor?.substrate)
+          ) {
+            balanceFetcher = {
+              type: 'substrate',
+              chainId: `${asset.chainId}`,
+              address: balanceFor?.substrate,
+            }
+          }
           return {
             id: asset.id,
             name: asset.name,
@@ -60,19 +98,13 @@ export const SwapTokenSelector: React.FC<Props> = ({ selectedAsset, assetFilter,
             iconSrc: token?.logo ?? githubUnknownTokenLogoUrl,
             chain: chain.name ?? '',
             chainId: asset.chainId,
-            amount: Decimal.fromPlanck(balanceToDisplay.sum.planck.transferable, asset.decimals, {
-              currency: asset.symbol,
-            }).toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 }),
-            fiatAmount: balanceToDisplay.sum.fiat(currency).transferable.toLocaleString(undefined, {
-              style: 'currency',
-              currency,
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            }),
+            balanceFetcher,
+            defaultBalanceDecimal,
+            rates: rate ?? undefined,
           }
         })
         .filter(asset => asset !== null) as Token[],
-    [filteredAssets, tokens, getChain, balances, balanceFor, currency]
+    [filteredAssets, tokens, getChain, rates, currency, balances, balanceFor]
   )
 
   const chainItems = useMemo(() => {

@@ -4,21 +4,26 @@ import {
   chainflipAssetToSwappableAsset,
   chainflipChainsAtom,
 } from '../../swap-modules/chainflip.swap-module'
-import { fromAmountAtom, fromAssetAtom, toAssetAtom } from '../../swap-modules/common.swap-module'
-import { toAmountAtom, useEstimatedSwapGas } from '../../swaps.api'
+import {
+  fromAmountAtom,
+  fromAssetAtom,
+  getTokenIdForSwappableAsset,
+  toAssetAtom,
+} from '../../swap-modules/common.swap-module'
+import { toAmountAtom } from '../../swaps.api'
 import { selectedCurrencyState } from '@/domains/balances'
 import { type QuoteResponse } from '@chainflip/sdk/swap'
 import { useTokenRates, useTokens } from '@talismn/balances-react'
 import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { Skeleton, Tooltip } from '@talismn/ui'
-import { ArrowRight } from '@talismn/web-icons'
+import { ArrowRight, Info } from '@talismn/web-icons'
 import { useAtomValue } from 'jotai'
 import { loadable } from 'jotai/utils'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
-export const ChainflipDetails: React.FC<{ data: QuoteResponse }> = ({ data }) => {
+export const ChainflipDetails: React.FC<{ data: QuoteResponse; gas: Decimal | null }> = ({ data, gas }) => {
   const chainflipAssets = useAtomValue(chainflipAssetsAtom)
   const chainflipChains = useAtomValue(chainflipChainsAtom)
   const currency = useRecoilValue(selectedCurrencyState)
@@ -29,7 +34,14 @@ export const ChainflipDetails: React.FC<{ data: QuoteResponse }> = ({ data }) =>
   const rates = useTokenRates()
   const tokens = useTokens()
 
-  const gasCost = useEstimatedSwapGas()
+  const gasValue = useMemo(() => {
+    if (gas === null || !fromAsset) return null
+    const id = getTokenIdForSwappableAsset(fromAsset.chainId === 'polkadot' ? 'substrate' : 'evm', fromAsset?.chainId)
+    const rate = rates[id]?.[currency] ?? 0
+
+    return +gas.toNumber() * rate
+  }, [currency, fromAsset, gas, rates])
+
   const toQuote = useMemo(() => {
     if (toAmount.state !== 'hasData' || !fromAmount || !toAmount.data) return undefined
     return toAmount.data.mapNumber(() => (toAmount.data?.toNumber() ?? 0) / (fromAmount.toNumber() ?? 1))
@@ -83,46 +95,56 @@ export const ChainflipDetails: React.FC<{ data: QuoteResponse }> = ({ data }) =>
       <div className="w-full border-b border-gray-900" />
       <div className="grid gap-[8px]">
         <div className="flex items-center justify-between">
+          <p className="text-gray-400 text-[14px]">Est. Rate</p>
+          <p className="text-[14px] text-white">
+            {fromAmount.mapNumber(() => 1).toLocaleString()} = {toQuote?.toLocaleString()}
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between">
           <p className="text-gray-400 text-[14px]">Included Fees (est.)</p>
           <Tooltip
             placement="left"
             content={
               <div className="max-w-[240px]">
                 <p className="text-[14px]">
-                  This is the estimated cost of making the cross chain swap, which includes the exchange liquidity fee,
-                  gas fees on the destination chain, a {CHAINFLIP_COMMISSION_BPS / 100}% Talisman fee, and any other
-                  cost of making the swap.
+                  This is the estimated cost of making the swap, including the provider costs for exchange liquidity,
+                  gas fees on destination chain, provider rates, and a {CHAINFLIP_COMMISSION_BPS / 100}% Talisman fee on
+                  this path.
                 </p>
               </div>
             }
           >
-            <p className="text-[14px] text-white">
-              {totalFiatFee.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-                currency,
-                style: 'currency',
-              })}
-            </p>
+            <div className="flex items-center justify-end gap-[8px]">
+              <p className="text-[14px] text-white">
+                {totalFiatFee.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                  currency,
+                  style: 'currency',
+                })}
+              </p>
+              <Info size={16} className="text-gray-400" />
+            </div>
           </Tooltip>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex justify-between">
           <p className="text-gray-400 text-[14px]">Gas Fees (est.)</p>
-          <p className="text-[14px] text-white">
-            {gasCost ? (
-              gasCost.toLocaleString(undefined, { minimumFractionDigits: 4 })
-            ) : (
-              <Skeleton.Surface className="w-[86px] h-[22px]" />
+          <div>
+            <p className="text-[14px] text-white">
+              {gas !== null ? (
+                gas.toLocaleString(undefined, { maximumFractionDigits: 6 })
+              ) : (
+                <Skeleton.Surface className="w-[86px] h-[22px]" />
+              )}
+            </p>
+            {gasValue !== null && (
+              <p className="text-gray-400 text-[12px] text-right">
+                ({gasValue.toLocaleString(undefined, { maximumFractionDigits: 2, currency, style: 'currency' })})
+              </p>
             )}
-          </p>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <p className="text-gray-400 text-[14px]">Est. Rate</p>
-          <p className="text-[14px] text-white">
-            {fromAmount.mapNumber(() => 1).toLocaleString()} = {toQuote?.toLocaleString()}
-          </p>
+          </div>
         </div>
       </div>
     </div>

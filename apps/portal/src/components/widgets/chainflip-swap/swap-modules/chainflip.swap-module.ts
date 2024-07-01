@@ -12,7 +12,7 @@ import {
   type SwapFunction,
   type QuoteFunction,
   swapQuoteRefresherAtom,
-  type EstimateGasFunction,
+  type GetEstimateGasTxFunction,
 } from './common.swap-module'
 import {
   SwapSDK,
@@ -27,7 +27,7 @@ import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { Decimal } from '@talismn/math'
 import { atom, type Getter, type Setter } from 'jotai'
 import { atomFamily } from 'jotai/utils'
-import { erc20Abi, isAddress } from 'viem'
+import { encodeFunctionData, erc20Abi, isAddress } from 'viem'
 import { arbitrum, mainnet, sepolia } from 'viem/chains'
 
 const PROTOCOL: SupportedSwapProtocol = 'chainflip'
@@ -171,6 +171,7 @@ const quote: QuoteFunction = async (get): Promise<(BaseQuote & { data?: QuoteRes
       destAsset: chainflipToAsset.asset,
       srcChain: chainflipFromAsset.chain,
       destChain: chainflipToAsset.chain,
+      brokerCommissionBps: CHAINFLIP_COMMISSION_BPS,
     })
 
     return {
@@ -321,27 +322,49 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
   }
 }
 
-const estimateGas: EstimateGasFunction = atom((get: Getter) => {
+const getEstimateGasTx: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) => {
   const fromAsset = get(fromAssetAtom)
+  const fromAddress = get(fromAddressAtom)
   if (!fromAsset) return null
+  if (!fromAddress) return null
 
   const swappingFromEVM = EVM_CHAINS.some(c => c.id.toString() === fromAsset.chainId.toString())
   if (swappingFromEVM) {
-    // since we are just doing simple transfers, we can use a rough estimate of gas
-    // - native transfers costs ~21k gas
-    // - erc20 transfers costs ~40-60k gas
-    // - using 80k should be more than enough
-    return { type: 'eth', gas: 80000n, decimals: 18, symbol: 'ETH' }
-  } else {
-    // rough gas estimate of simple transfer
-    return { type: 'substrate', gas: 157107779n, decimals: 10, symbol: 'DOT' }
+    if (!isAddress(fromAddress)) return null // invalid ethereum address
+
+    // the to address and amount dont matter, we just need to place any address here for the estimation
+    return {
+      type: 'evm',
+      chainId: +fromAsset.chainId,
+      tx: {
+        from: fromAddress as `0x${string}`,
+        data: fromAsset.contractAddress
+          ? encodeFunctionData({ abi: erc20Abi, functionName: 'transfer', args: [fromAddress, 0n] })
+          : undefined,
+
+        to: fromAsset.contractAddress ? (fromAsset.contractAddress as `0x${string}`) : fromAddress,
+        value: 0n,
+      },
+    }
   }
-})
+
+  // swapping from Polkadot
+
+  const chainRpc = get(polkadotRpcAtom)
+  const polkadotApi = await getSubstrateApi(chainRpc)
+  const fromAmount = get(fromAmountAtom)
+
+  return {
+    type: 'substrate',
+    fromAddress,
+    tx: polkadotApi.tx.balances.transferKeepAlive(fromAddress, fromAmount.planck),
+  }
+}
 
 export const chainflipSwapModule: SwapModule = {
   protocol: PROTOCOL,
   tokensSelector,
-  estimateGas,
+  getEstimateGasTx,
   quote,
   swap,
 }

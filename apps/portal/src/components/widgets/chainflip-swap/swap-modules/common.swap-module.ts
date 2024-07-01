@@ -1,11 +1,12 @@
 import type { BaseWallet } from '@polkadot-onboard/core'
 import { ApiPromise } from '@polkadot/api'
+import type { SubmittableExtrinsic } from '@polkadot/api/types'
 import { evmErc20TokenId, evmNativeTokenId, subNativeTokenId } from '@talismn/balances'
 import { Decimal } from '@talismn/math'
 import { type Atom, atom, type Getter, type SetStateAction, type Setter } from 'jotai'
 import { atomWithStorage, createJSONStorage, unstable_withStorageValidator } from 'jotai/utils'
 import 'recoil'
-import type { WalletClient } from 'viem'
+import type { TransactionRequest, WalletClient } from 'viem'
 
 export type SupportedSwapProtocol = 'chainflip'
 
@@ -41,24 +42,34 @@ export type SwapActivity<TData> = {
   data: TData
 }
 
+export type EstimateGasTx =
+  | {
+      type: 'evm'
+      chainId: number
+      tx: TransactionRequest
+    }
+  | {
+      type: 'substrate'
+      fromAddress: string
+      tx: SubmittableExtrinsic<'promise'>
+    }
+
 export type QuoteFunction = (get: Getter) => Promise<BaseQuote | null>
 export type SwapFunction<TData> = (
   get: Getter,
   set: Setter,
   props: SwapProps
 ) => Promise<Omit<SwapActivity<TData>, 'timestamp'>>
-export type EstimateGasFunction = Atom<{
-  type: 'eth' | 'substrate'
-  gas: bigint
-  decimals: number
-  symbol: string
-} | null>
+export type GetEstimateGasTxFunction = (
+  get: Getter,
+  props: { getSubstrateApi: (rpc: string) => Promise<ApiPromise> }
+) => Promise<EstimateGasTx | null>
 
 export type SwapModule = {
   protocol: SupportedSwapProtocol
   tokensSelector: Atom<Promise<CommonSwappableAssetType[]>>
   quote: QuoteFunction
-  estimateGas: EstimateGasFunction
+  getEstimateGasTx: GetEstimateGasTxFunction
   /** Returns whether the swap succeeded or not */
   swap: SwapFunction<any>
 }

@@ -1,57 +1,69 @@
-import { AlertDialog, CircularProgressIndicator, Clickable, ListItem, SearchBar, Select, Surface } from '@talismn/ui'
+import { selectedCurrencyState } from '@/domains/balances'
+import { useFastBalance, type UseFastBalanceProps } from '@/hooks/useFastBalance'
+import type { Decimal } from '@talismn/math'
+import { AlertDialog, Clickable, ListItem, SearchBar, Select, Skeleton, Surface } from '@talismn/ui'
 import { Globe } from '@talismn/web-icons'
-import { Suspense, useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
 type TokenSelectDialogItemProps = {
   code: string
   name: string
   chain: string
   iconSrc: string
-  amount: ReactNode
-  fiatAmount: ReactNode
+  rates?: number
+  balanceFetcher?: UseFastBalanceProps
+  defaultBalanceDecimal?: Decimal
   onClick: () => unknown
 }
 
-const TokenSelectDialogItem = (props: TokenSelectDialogItemProps) => (
-  <Clickable.WithFeedback onClick={props.onClick}>
-    <Surface
-      className="gap-[4px] sm:gap-[8px]"
-      css={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        gap: '0.8rem',
-        borderRadius: '0.8rem',
-        padding: '1.6rem',
-      }}
-    >
-      <ListItem
-        className="!flex-1 !p-0"
-        css={{ flex: 1, padding: 0 }}
-        leadingContent={
-          <img
-            src={props.iconSrc}
-            className="w-[24px] h-[24px] min-w-[24px] sm:min-w-[40px] sm:w-[40px] sm:h-[40px] rounded-full"
+const TokenSelectDialogItem = (props: TokenSelectDialogItemProps) => {
+  const fastBalance = useFastBalance(props.balanceFetcher)
+  const currency = useRecoilValue(selectedCurrencyState)
+
+  const value = useMemo(() => {
+    if (props.rates === undefined) return null
+    const balance = fastBalance?.balance ?? props.defaultBalanceDecimal
+    if (balance === undefined) return <Skeleton.Surface className="ml-auto h-[18px] w-[50px]" />
+    return (props.rates * balance.toNumber()).toLocaleString(undefined, { currency, style: 'currency' })
+  }, [currency, fastBalance, props.defaultBalanceDecimal, props.rates])
+
+  const balanceUI = useMemo(() => {
+    const balance = fastBalance?.balance ?? props.defaultBalanceDecimal
+    if (balance === undefined) return <Skeleton.Surface className="h-[21px] w-[70px]" />
+    return balance.toLocaleString(undefined, { maximumFractionDigits: 4 })
+  }, [fastBalance?.balance, props.defaultBalanceDecimal])
+
+  return (
+    <Clickable.WithFeedback onClick={props.onClick}>
+      <Surface className="gap-[4px] sm:gap-[8px] grid grid-cols-3 p-[16px] rounded-[8px] w-full">
+        <ListItem
+          className="!w-full !p-0"
+          css={{ flex: 1, padding: 0 }}
+          leadingContent={
+            <img
+              src={props.iconSrc}
+              className="w-[24px] h-[24px] min-w-[24px] sm:min-w-[40px] sm:w-[40px] sm:h-[40px] rounded-full"
+            />
+          }
+          headlineContent={<span className="text-[14px]">{props.code}</span>}
+          supportingContent={<span className="text-[12px]">{props.name}</span>}
+        />
+        <ListItem
+          className="!w-full !p-0"
+          headlineContent={<span className="text-[12px] sm:text-[14px]">{props.chain}</span>}
+        />
+        {props.balanceFetcher || props.defaultBalanceDecimal ? (
+          <ListItem
+            css={{ flex: 1, padding: 0, textAlign: 'end' }}
+            headlineContent={balanceUI}
+            supportingContent={value}
           />
-        }
-        headlineContent={<span className="text-[14px]">{props.code}</span>}
-        supportingContent={<span className="text-[12px]">{props.name}</span>}
-      />
-      <ListItem
-        className="!flex-1 !p-0"
-        headlineContent={<span className="text-[12px] sm:text-[14px]">{props.chain}</span>}
-      />
-      <ListItem
-        css={{ flex: 1, padding: 0, textAlign: 'end' }}
-        headlineContent={
-          <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-            <span className="text-[12px] sm:text-[14px] whitespace-nowrap">{props.amount}</span>
-          </Suspense>
-        }
-        supportingContent={<Suspense>{props.fiatAmount}</Suspense>}
-      />
-    </Surface>
-  </Clickable.WithFeedback>
-)
+        ) : null}
+      </Surface>
+    </Clickable.WithFeedback>
+  )
+}
 
 export type Token = Omit<TokenSelectDialogItemProps, 'onClick'> & { id: string; chainId: any }
 

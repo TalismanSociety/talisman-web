@@ -11,7 +11,13 @@ import type React from 'react'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
-export const FromAccount: React.FC = () => {
+type Props = {
+  fastBalance?: {
+    amount: Decimal
+    chainId: number | string
+  }
+}
+export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
   const fromAsset = useAtomValue(fromAssetAtom)
   const [fromAddress, setFromAddress] = useAtom(fromAddressAtom)
   const [toAddress, setToAddress] = useAtom(toAddressAtom)
@@ -73,6 +79,21 @@ export const FromAccount: React.FC = () => {
                   </p>
                 )
               }
+
+              if (fastBalance && fromAddress) {
+                const [firstBalance] = b.each
+                if (
+                  firstBalance?.token?.symbol?.toLowerCase() === fastBalance.amount.options?.currency?.toLowerCase() &&
+                  (firstBalance?.evmNetworkId ?? firstBalance?.chainId)?.toLowerCase() ===
+                    `${fastBalance.chainId}`.toLowerCase() &&
+                  firstBalance?.address.toLowerCase() === fromAddress?.toLowerCase()
+                ) {
+                  return (
+                    <p className="text-[14px] text-gray-400 whitespace-nowrap">{fastBalance.amount.toLocaleString()}</p>
+                  )
+                }
+              }
+
               const loading = b.each.find(b => b.status !== 'live') !== undefined || b.count === 0
 
               return (

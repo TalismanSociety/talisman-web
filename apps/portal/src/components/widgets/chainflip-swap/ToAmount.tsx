@@ -6,6 +6,7 @@ import {
   type CommonSwappableAssetType,
 } from './swap-modules/common.swap-module'
 import { toAmountAtom } from './swaps.api'
+import { writeableEvmAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts'
 import { selectedCurrencyState } from '@/domains/balances'
 import { useTokenRates } from '@talismn/balances-react'
 import { TextInput } from '@talismn/ui'
@@ -18,6 +19,8 @@ export const ToAmount: React.FC = () => {
   const [toAsset, setToAsset] = useAtom(toAssetAtom)
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
   const toAmountLoadable = useAtomValue(loadable(toAmountAtom))
+  const evmAccounts = useRecoilValue(writeableEvmAccountsState)
+  const substrateAccounts = useRecoilValue(writeableSubstrateAccountsState)
   const [toAddress] = useAtom(toAddressAtom)
   const rates = useTokenRates()
   const currency = useRecoilValue(selectedCurrencyState)
@@ -55,7 +58,10 @@ export const ToAmount: React.FC = () => {
       }
       trailingIcon={
         <SuspensedSwapTokenSelector
-          balanceFor={toAddress ?? null}
+          balanceFor={{
+            evm: toAddress?.startsWith('0x') ? toAddress : evmAccounts[0]?.address,
+            substrate: !toAddress || toAddress.startsWith('0x') ? substrateAccounts[0]?.address : toAddress,
+          }}
           onSelectAsset={handleSelectAsset}
           selectedAsset={toAsset}
           assetFilter={asset => {

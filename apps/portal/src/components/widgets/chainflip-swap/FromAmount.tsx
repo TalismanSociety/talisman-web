@@ -7,15 +7,14 @@ import {
   toAssetAtom,
   type CommonSwappableAssetType,
 } from './swap-modules/common.swap-module'
+import { writeableEvmAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts'
 import { selectedCurrencyState } from '@/domains/balances'
 import { cn } from '@/lib/utils'
 import { useTokenRates } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, TextInput } from '@talismn/ui'
-import { HelpCircle } from '@talismn/web-icons'
 import { useAtom, useAtomValue } from 'jotai'
 import { useCallback, useMemo } from 'react'
-import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 export const FromAmount: React.FC<{
@@ -24,12 +23,13 @@ export const FromAmount: React.FC<{
   availableBalance: { balance: Decimal; loading: boolean } | null
   wouldReapAccount?: boolean
   insufficientBalance?: boolean
-  existentialDeposit?: bigint | null
-}> = ({ availableBalance, existentialDeposit, insufficientBalance, wouldReapAccount }) => {
+}> = ({ availableBalance, insufficientBalance }) => {
   const [fromAmountInput, setFromAmountInput] = useAtom(fromAmountInputAtom)
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
   const [toAsset, setToAsset] = useAtom(toAssetAtom)
   const fromAddress = useAtomValue(fromAddressAtom)
+  const evmAccounts = useRecoilValue(writeableEvmAccountsState)
+  const substrateAccounts = useRecoilValue(writeableSubstrateAccountsState)
   const fromAmount = useAtomValue(fromAmountAtom)
   const rates = useTokenRates()
   const currency = useRecoilValue(selectedCurrencyState)
@@ -74,17 +74,6 @@ export const FromAmount: React.FC<{
             <p className="text-red-400 text-[10px] leading-none pl-[8px] ml-[8px] border-l border-l-gray-600">
               Insufficient balance
             </p>
-          ) : wouldReapAccount ? (
-            <div className="flex items-center gap-[4px] pl-[8px] ml-[8px] border-l border-l-gray-600">
-              <p className="text-red-400 text-[10px] leading-none">Insufficient existential deposit</p>
-              <Link
-                to="https://support.polkadot.network/support/solutions/articles/65000168651-what-is-the-existential-deposit-"
-                target="_blank"
-                className="leading-none"
-              >
-                <HelpCircle size={10} className="text-red-400 cursor-pointer" />
-              </Link>
-            </div>
           ) : null}
         </div>
       }
@@ -93,7 +82,7 @@ export const FromAmount: React.FC<{
       containerClassName={cn(
         '[&>div:nth-child(2)]:!py-[8px] [&>div]:!pr-[8px] [&>div:nth-child(2)]:border [&>div:nth-child(2)]:border-red-500/0',
         {
-          '[&>div:nth-child(2)]:border-red-400 ': wouldReapAccount || insufficientBalance,
+          '[&>div:nth-child(2)]:border-red-400 ': insufficientBalance,
         }
       )}
       value={fromAmountInput}
@@ -107,10 +96,7 @@ export const FromAmount: React.FC<{
               css={{ fontSize: 12, paddingTop: 4, paddingBottom: 4 }}
               onClick={() =>
                 setFromAmountInput(
-                  Decimal.fromPlanck(
-                    availableBalance.balance.planck - (existentialDeposit ?? 0n),
-                    availableBalance.balance.decimals
-                  ).toString()
+                  Decimal.fromPlanck(availableBalance.balance.planck, availableBalance.balance.decimals).toString()
                 )
               }
             >
@@ -118,7 +104,10 @@ export const FromAmount: React.FC<{
             </TextInput.LabelButton>
           )}
           <SuspensedSwapTokenSelector
-            balanceFor={fromAddress ?? null}
+            balanceFor={{
+              evm: fromAddress?.startsWith('0x') ? fromAddress : evmAccounts[0]?.address,
+              substrate: !fromAddress || fromAddress.startsWith('0x') ? substrateAccounts[0]?.address : fromAddress,
+            }}
             onSelectAsset={handleSelectAsset}
             selectedAsset={fromAsset}
           />

@@ -1,9 +1,5 @@
 import { swapInfoTabAtom } from './side-panel'
-import {
-  chainflipSwapModule,
-  polkadotRpcAtom,
-  type ChainflipSwapActivityData,
-} from './swap-modules/chainflip.swap-module'
+import { chainflipSwapModule, type ChainflipSwapActivityData } from './swap-modules/chainflip.swap-module'
 import {
   fromAddressAtom,
   fromAmountAtom,
@@ -16,6 +12,7 @@ import {
   toAssetAtom,
   type BaseQuote,
   type CommonSwappableAssetType,
+  type EstimateGasTx,
   type SupportedSwapProtocol,
   type SwapActivity,
 } from './swap-modules/common.swap-module'
@@ -24,15 +21,16 @@ import { getCoinGeckoErc20Coin } from '@/domains/balances/coingecko'
 import { substrateApiState } from '@/domains/common'
 import { connectedSubstrateWalletState } from '@/domains/extension'
 import { useSetCustomTokens, type CustomTokensConfig } from '@/hooks/useSetCustomTokens'
+import { useSubstrateEstimateGas } from '@/hooks/useSubstrateEstimateGas'
 import { tokensByIdAtom, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { toast } from '@talismn/ui'
 import { atom, useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import { loadable, useAtomCallback } from 'jotai/utils'
-import { useCallback, useEffect, useMemo } from 'react'
-import { useRecoilCallback, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useRecoilCallback, useRecoilValue } from 'recoil'
 import { isAddress } from 'viem'
-import { useGasPrice, useWalletClient } from 'wagmi'
+import { deepEqual, useEstimateGas, useGasPrice, useWalletClient } from 'wagmi'
 
 const swapModules = [chainflipSwapModule]
 
@@ -92,38 +90,70 @@ export const toAmountAtom = atom(async get => {
   return Decimal.fromPlanck(quote.outputAmountBN, toAsset.decimals, { currency: toAsset.symbol })
 })
 
-const estimateGasAtom = atom(get => {
-  const quote = get(swapQuoteAtom)
-  if (quote.state !== 'hasData' || quote.data === null) return null
-
-  const module = swapModules.find(module => module.protocol === quote.data?.protocol)
-  if (!module) return null
-  return get(module.estimateGas)
-})
-
-export const useEstimatedSwapGas = () => {
+export const useEstimateSwapGas = () => {
   const fromAsset = useAtomValue(fromAssetAtom)
-  const estimatedGas = useAtomValue(estimateGasAtom)
+  const [tx, setTx] = useState<EstimateGasTx | null>(null)
+  const quoteLoadable = useAtomValue(swapQuoteAtom)
+  const gasPrice = useGasPrice(tx?.type === 'evm' ? { chainId: tx.chainId } : { chainId: 1 })
+  const evmGas = useEstimateGas(
+    tx?.type === 'evm'
+      ? {
+          ...tx.tx,
+          query: {
+            enabled: !!tx && tx.type === 'evm',
+          },
+        }
+      : undefined
+  )
 
-  const gasPrice = useGasPrice({
-    chainId: fromAsset ? +fromAsset.chainId : 1,
-    query: {
-      refetchInterval: 12_000,
-      enabled: !!fromAsset && Number.isNaN(fromAsset.chainId) === false,
-    },
-  })
+  const { gas: substrateGas, refetch } = useSubstrateEstimateGas(tx?.type === 'substrate' ? tx : undefined)
+
+  const getSubstrateApi = useRecoilCallback(
+    ({ snapshot }) =>
+      (rpc: string) =>
+        snapshot.getPromise(substrateApiState(rpc))
+  )
+
+  const estimateGas = useAtomCallback(
+    useCallback(
+      get => {
+        if (quoteLoadable.state !== 'hasData') return null
+        const module = swapModules.find(module => module.protocol === quoteLoadable.data?.protocol)
+        if (!module) return null
+        return module.getEstimateGasTx(get, { getSubstrateApi })
+      },
+      [getSubstrateApi, quoteLoadable]
+    )
+  )
+
+  // invalidate tx when fromAsset changes to re-trigger estimate gas
+  useEffect(() => {
+    setTx(null)
+    refetch()
+  }, [fromAsset, refetch])
+
+  useEffect(() => {
+    if (tx || !fromAsset) return
+    const estimateGasPromise = estimateGas()
+    if (!estimateGasPromise) return
+    estimateGasPromise.then(newTx => {
+      if (!deepEqual(newTx, tx)) setTx(newTx)
+    })
+  }, [estimateGas, fromAsset, tx])
 
   return useMemo(() => {
-    if (!estimatedGas) return null
-    if (estimatedGas.type === 'eth') {
-      if (!gasPrice.data) return null
-      return Decimal.fromPlanck(estimatedGas.gas * gasPrice.data, estimatedGas.decimals, {
-        currency: estimatedGas.symbol,
-      })
-    } else {
-      return Decimal.fromPlanck(estimatedGas.gas, estimatedGas.decimals, { currency: estimatedGas.symbol })
-    }
-  }, [estimatedGas, gasPrice.data])
+    if (!tx) return null
+    if (tx.type === 'evm') {
+      if (gasPrice.data === undefined) return null
+      let gasUsage = evmGas.data
+      // default to 80k gas if estimate gas fails (e.g. user has insufficient balance to estimate gas)
+      if (gasUsage === undefined && !evmGas.isLoading && evmGas.error?.name === 'EstimateGasExecutionError')
+        gasUsage = 80000n
+      // TODO: support other evm gas tokens by not hardcoding decimals and currency
+      if (gasUsage !== undefined) return Decimal.fromPlanck(gasPrice.data * gasUsage, 18, { currency: 'ETH' })
+      return null
+    } else return substrateGas ?? null
+  }, [evmGas, gasPrice.data, substrateGas, tx])
 }
 
 export const useSwap = () => {
@@ -159,6 +189,7 @@ export const useSwap = () => {
 
           set(swapsAtom, [..._swaps, { ...swapped, timestamp: now }])
           set(swapInfoTabAtom, 'activities')
+          set(fromAmountInputAtom, '')
         } catch (e) {
           console.error(e)
           const error = e as any
@@ -336,27 +367,4 @@ export const useAccountsController = () => {
   useEffect(() => {
     if (toAddress?.toLowerCase() === fromAddress?.toLowerCase()) setSelectCustomAddress(false)
   }, [fromAddress, setSelectCustomAddress, toAddress])
-}
-
-export const useWouldReapAccount = (availableBalance?: Decimal | null) => {
-  const fromAmount = useAtomValue(fromAmountAtom)
-  const fromAsset = useAtomValue(fromAssetAtom)
-  const polkadotRpc = useAtomValue(polkadotRpcAtom)
-  const polkadotApi = useRecoilValueLoadable(substrateApiState(polkadotRpc))
-
-  const existentialDeposit = useMemo(() => {
-    if (!fromAsset || fromAsset.chainId !== 'polkadot') return 0n
-    if (polkadotApi.state !== 'hasValue') return null
-    return polkadotApi.contents.consts.balances.existentialDeposit.toBigInt()
-  }, [fromAsset, polkadotApi.contents, polkadotApi.state])
-
-  const wouldReapAccount = useMemo(() => {
-    if (!availableBalance || !existentialDeposit || fromAmount.planck === 0n) return false
-    // insufficient balance
-    if (fromAmount.planck > availableBalance.planck) return false
-
-    return availableBalance.planck - fromAmount.planck < existentialDeposit
-  }, [availableBalance, existentialDeposit, fromAmount.planck])
-
-  return { wouldReapAccount, existentialDeposit }
 }

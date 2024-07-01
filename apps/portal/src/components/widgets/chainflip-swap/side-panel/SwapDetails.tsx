@@ -1,6 +1,6 @@
 import ErrorBoundary from '../../ErrorBoundary'
 import { fromAmountAtom, fromAssetAtom, swappingAtom, toAssetAtom } from '../swap-modules/common.swap-module'
-import { swapQuoteAtom } from '../swaps.api'
+import { swapQuoteAtom, useEstimateSwapGas } from '../swaps.api'
 import { ChainflipDetails } from './details/ChainflipDetails'
 import { CircularProgressIndicator } from '@talismn/ui'
 import { useAtomValue } from 'jotai'
@@ -114,16 +114,18 @@ const ErrorUI: React.FC<{ message?: string }> = ({ message }) => (
 const Details: React.FC = () => {
   const quote = useAtomValue(swapQuoteAtom)
   const swapping = useAtomValue(swappingAtom)
+  const gas = useEstimateSwapGas()
+  // handle gas here
 
   const renderProtocolDetails = useMemo(() => {
     if (quote.state !== 'hasData' || !quote.data) return null
     switch (quote.data.protocol) {
       case 'chainflip':
-        return <ChainflipDetails data={quote.data.data} />
+        return <ChainflipDetails data={quote.data.data} gas={gas} />
       default:
         return null
     }
-  }, [quote])
+  }, [gas, quote])
 
   if (quote.state === 'loading' || swapping)
     return (
