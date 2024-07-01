@@ -2057,18 +2057,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainflip/sdk@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "@chainflip/sdk@npm:1.3.0"
-  dependencies:
-    "@polkadot/util": "npm:^12.6.2"
-    "@polkadot/util-crypto": "npm:^12.6.2"
-    axios: "npm:^1.6.8"
-    ethers: "npm:^6.11.1"
-  checksum: 10c0/18690f1a2eb070339221bc7c1bd9fa9c05d8d69e5c04e156355ad138a89d6013f131e290398c9a8e766307644ee12f346d4e3cb1dae7e6b12f2f321c3f50d61f
-  languageName: node
-  linkType: hard
-
 "@chainflip/sdk@npm:^1.4.0":
   version: 1.4.1
   resolution: "@chainflip/sdk@npm:1.4.1"
@@ -10187,38 +10175,6 @@ __metadata:
   checksum: 10c0/e506023461b2b29b8b3def8682a77a15c205bbdbcc91b5e66ed330e9c16050cf65bafa4b83e000a14265d82b011e6beec845176a723ce7d9558e9a441ebdf724
   languageName: node
   linkType: hard
-
-"@talismn/swap@workspace:apps/swap":
-  version: 0.0.0-use.local
-  resolution: "@talismn/swap@workspace:apps/swap"
-  dependencies:
-    "@chainflip/sdk": "npm:^1.3.0"
-    "@polkadot/api": "npm:^11.2.1"
-    "@talismn/eslint-config": "workspace:^"
-    "@talismn/math": "workspace:^"
-    "@talismn/tsconfig": "workspace:^"
-    "@talismn/ui": "workspace:^"
-    "@talismn/ui-recipes": "workspace:^"
-    "@talismn/web-icons": "workspace:^"
-    "@vitejs/plugin-react": "npm:^4.2.1"
-    date-fns: "npm:^3.6.0"
-    eslint: "npm:^9.2.0"
-    jotai: "npm:^2.8.0"
-    jotai-effect: "npm:^1.0.0"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
-    react-error-boundary: "npm:^4.0.13"
-    typescript: "npm:^5.4.5"
-    viem: "npm:^2.9.27"
-    vite: "npm:^5.2.8"
-    zod: "npm:^3.23.5"
-  peerDependencies:
-    "@polkadot/api": 11.x
-    jotai: 2.x
-    react: 18.x
-    viem: 2.x
-  languageName: unknown
-  linkType: soft
 
 "@talismn/token-rates@npm:0.0.0-pr1478-20240612072205":
   version: 0.0.0-pr1478-20240612072205
@@ -22697,17 +22653,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-error-boundary@npm:^4.0.13":
-  version: 4.0.13
-  resolution: "react-error-boundary@npm:4.0.13"
-  dependencies:
-    "@babel/runtime": "npm:^7.12.5"
-  peerDependencies:
-    react: ">=16.13.1"
-  checksum: 10c0/6f3e0e4d7669f680ccf49c08c9571519c6e31f04dcfc30a765a7136c7e6fbbbe93423dd5a9fce12107f8166e54133e9dd5c2079a00c7a38201ac811f7a28b8e7
-  languageName: node
-  linkType: hard
-
 "react-fast-compare@npm:^3.2.0":
   version: 3.2.0
   resolution: "react-fast-compare@npm:3.2.0"
@@ -26832,7 +26777,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^5.2.8, vite@npm:^5.2.9":
+"vite@npm:^5.2.9":
   version: 5.2.9
   resolution: "vite@npm:5.2.9"
   dependencies:
@@ -27650,13 +27595,6 @@ __metadata:
   version: 3.23.8
   resolution: "zod@npm:3.23.8"
   checksum: 10c0/8f14c87d6b1b53c944c25ce7a28616896319d95bc46a9660fe441adc0ed0a81253b02b5abdaeffedbeb23bdd25a0bf1c29d2c12dd919aef6447652dd295e3e69
-  languageName: node
-  linkType: hard
-
-"zod@npm:^3.23.5":
-  version: 3.23.5
-  resolution: "zod@npm:3.23.5"
-  checksum: 10c0/5c74aefe2c0bc2f00d79c5a8724dae863054653bbad640964fdb009c52573349366fa70533f0dfcb912b007421294d437f063d466f9692eb77a2b620640c2794
   languageName: node
   linkType: hard
 
