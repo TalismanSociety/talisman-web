@@ -8,6 +8,7 @@ import LidoStakes from './lido/Stakes'
 import SlpxStakes from './slpx/Stakes'
 import PoolStakes from './substrate/PoolStakes'
 import ValidatorStakes from './substrate/ValidatorStakes'
+import SubtensorStakes from './subtensor/Stakes'
 import { Button, HiddenDetails, Text } from '@talismn/ui'
 import { StakePosition, StakePositionList } from '@talismn/ui-recipes'
 import { useState } from 'react'
@@ -99,6 +100,11 @@ const Stakes = (props: { hideHeader?: boolean }) => {
             </Fragment>
           )
         })}
+        <ErrorBoundary orientation="horizontal">
+          <SuspenseSkeleton>
+            <SubtensorStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
+          </SuspenseSkeleton>
+        </ErrorBoundary>
         <ErrorBoundary orientation="horizontal">
           <SuspenseSkeleton>
             <DappStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />

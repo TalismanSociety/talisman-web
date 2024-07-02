@@ -70,7 +70,7 @@ const AddStakeForm = (props: AddStakeFormProps) => (
   </div>
 )
 
-const AddStakeDialog = (props: AddStakeDialogProps) => (
+export const AddStakeDialog = (props: AddStakeDialogProps) => (
   <AlertDialog
     open={props.open}
     title="Stake"
@@ -92,7 +92,7 @@ export type NominationPoolsAddStakeDialogProps = Omit<AddStakeDialogProps, 'mess
 export const NominationPoolsAddStakeDialog = (props: NominationPoolsAddStakeDialogProps) => (
   <AddStakeDialog
     {...props}
-    message="Increase your stake below. Talisman will automatically stake this in the same nomination pool for you."
+    message="Increase your stake below. Talisman will automatically stake this in the same nomination pool."
   />
 )
 
@@ -109,7 +109,7 @@ export const SlpxAddStakeForm = (props: SlpxAddStakeFormProps) => <AddStakeForm 
 export const SlpxAddStakeDialog = (props: SlpxAddStakeDialogProps) => (
   <AddStakeDialog
     {...props}
-    message="Increase your stake below. Talisman will automatically stake this using Bifrost liquid staking for you."
+    message="Increase your stake below. Talisman will automatically stake this using Bifrost liquid staking."
   />
 )
 
@@ -118,7 +118,7 @@ export type DappStakingAddStakeDialogProps = Omit<AddStakeDialogProps, 'message'
 export const DappStakingAddStakeDialog = (props: DappStakingAddStakeDialogProps) => (
   <AddStakeDialog
     {...props}
-    message="Increase your stake below. Talisman will automatically stake this toward your chosen DApp for you."
+    message="Increase your stake below. Talisman will automatically stake this towards your chosen DApp."
   />
 )
 
