@@ -12,10 +12,9 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # playwright is broken for some reason. will fix later
-  # qa:
-  #   uses: ./.github/workflows/qa.yml
-  #   secrets: inherit
+  qa:
+    uses: ./.github/workflows/qa.yml
+    secrets: inherit
 
   deploy-ui-storybook:
     # needs: [qa]
