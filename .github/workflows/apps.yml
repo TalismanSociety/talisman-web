@@ -26,7 +26,7 @@ jobs:
     secrets: inherit
 
   deploy-portal-storybook:
-    # needs: [qa]
+    needs: [qa]
     uses: ./.github/workflows/deploy.yml
     with:
       projectName: ${{ vars.PORTAL_STORYBOOK_PROJECT_NAME }}
