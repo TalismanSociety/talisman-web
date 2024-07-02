@@ -131,11 +131,13 @@ const SubstrateWalletConnection = () => {
   const connectedWallet = useConnectedSubstrateWallet()
   const { connect, disconnect } = useSubstrateWalletConnect()
 
+  console.log(connectedWallet)
   return (
     <section>
-      <Text.H4 css={{ marginBottom: '1.6rem' }}>
-        <Polkadot size="1.6rem" css={{ marginRight: '1.2rem' }} /> Substrate wallets
-      </Text.H4>
+      <div className="flex items-center justify-start gap-[8px] mb-[16px] font-bold">
+        <Polkadot size="1.6rem" />
+        <h4 className="text-[1.8rem]">Substrate wallets</h4>
+      </div>
       <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
         <InstallTalisman />
         {wallets.map((x, index) => (
@@ -161,9 +163,10 @@ const EvmWalletConnections = () => {
 
   return (
     <section>
-      <Text.H4 css={{ marginBottom: '1.6rem' }}>
-        <Ethereum size="1.6rem" css={{ marginRight: '1.2rem' }} /> Ethereum wallets
-      </Text.H4>
+      <div className="flex items-center justify-start gap-[8px] mb-[16px] font-bold">
+        <Ethereum size="1.6rem" />
+        <h4 className="text-[1.8rem]">Ethereum wallets</h4>
+      </div>
       <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
         <InstallTalisman />
         {connectors.map(x => (

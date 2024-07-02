@@ -10,10 +10,8 @@ import ErrorIllustration from '../components/ErrorIllustration'
 import {
   CircularProgressIndicator,
   DescriptionList,
-  Details,
   Hr,
   SegmentedButton,
-  Text,
   TextInput,
   TonalIconButton,
 } from '@talismn/ui'
@@ -215,14 +213,7 @@ const SwapForm = Object.assign(
 
     return (
       <DexForm info={props.info}>
-        <DexForm.Section header="Select account">
-          <label>
-            <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
-              Origin account
-            </Text.BodySmall>
-            {props.accountSelect}
-          </label>
-        </DexForm.Section>
+        <DexForm.Section header="From account">{props.accountSelect}</DexForm.Section>
         <DexForm.Section header="Select asset">
           <div css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
             <div css={{ display: 'flex', '> *': { flex: 1 }, [DEX_FORM_WIDE_MEDIA_SELECTOR]: { display: 'none' } }}>
@@ -238,7 +229,12 @@ const SwapForm = Object.assign(
               placeholder="0.00"
               trailingIcon={
                 <div css={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
-                  <TextInput.LabelButton onClick={props.onRequestMaxAmount}>Max</TextInput.LabelButton>
+                  <TextInput.LabelButton
+                    css={{ fontSize: 12, paddingTop: 4, paddingBottom: 4 }}
+                    onClick={props.onRequestMaxAmount}
+                  >
+                    <p css={{ fontSize: 12, lineHeight: 1 }}>Max</p>
+                  </TextInput.LabelButton>
                   <div css={{ display: 'none', [DEX_FORM_WIDE_MEDIA_SELECTOR]: { display: 'revert' } }}>
                     {tokenSelect}
                   </div>
@@ -295,16 +291,7 @@ const SwapForm = Object.assign(
             />
           </div>
         </DexForm.Section>
-        <DexForm.CollapsibleSection header="Select destination" open disabled>
-          <Details.Content>
-            <label>
-              <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
-                Destination account
-              </Text.BodySmall>
-              {props.destAccountSelect}
-            </label>
-          </Details.Content>
-        </DexForm.CollapsibleSection>
+        <DexForm.Section header="To account">{props.destAccountSelect}</DexForm.Section>
         <DexForm.ConfirmButton
           disabled={!props.canSwap}
           loading={props.swapInProgress}

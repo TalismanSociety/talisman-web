@@ -3,7 +3,8 @@ import { useHasActiveWalletConnection } from '../../domains/extension'
 import { shortenAddress } from '../../util/format'
 import AccountIcon from '../molecules/AccountIcon/AccountIcon'
 import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
-import { Button, CircularProgressIndicator, Identicon, Select } from '@talismn/ui'
+import { useBalances } from '@talismn/balances-react'
+import { Button, CircularProgressIndicator, Select } from '@talismn/ui'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { usePrevious } from 'react-use'
 import { useSetRecoilState } from 'recoil'
@@ -14,12 +15,13 @@ export type AccountSelectorProps = {
   selectedAccount?: Account | string
   onChangeSelectedAccount: (account: Account | undefined) => unknown
   inTransition?: boolean
+  withBalance?: boolean
 }
 
 const AccountSelector = (props: AccountSelectorProps) => {
   const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
   const hasActiveWalletConnection = useHasActiveWalletConnection()
-
+  const balances = useBalances()
   const onChangeAccount = useCallback(
     (address: string | undefined) => props.onChangeSelectedAccount(props.accounts.find(x => x.address === address)),
     [props]
@@ -38,15 +40,8 @@ const AccountSelector = (props: AccountSelectorProps) => {
 
   return (
     <Select
-      css={{ width: '100%' }}
-      placeholder={
-        <Select.Option
-          leadingIcon={
-            <Identicon value="placeholder" size="4em" css={{ visibility: 'hidden', pointerEvents: 'none', width: 0 }} />
-          }
-          headlineContent="Select an account"
-        />
-      }
+      className="w-full [&>button]:!py-[12px] [&>button]:!rounded-[8px] [&>button>div]:w-full mt-[8px]"
+      placeholder={<Select.Option headlineContent="Select an account" />}
       value={selectedValue}
       onChangeValue={onChangeAccount}
       renderSelected={
@@ -55,7 +50,11 @@ const AccountSelector = (props: AccountSelectorProps) => {
               const selectedAccount = props.accounts.find(x => x.address === address)
               return (
                 <Select.Option
+                  className=""
                   leadingIcon={<CircularProgressIndicator size="4rem" />}
+                  supportingContent={
+                    selectedAccount && selectedAccount.name ? shortenAddress(selectedAccount.address) : ''
+                  }
                   headlineContent={
                     selectedAccount === undefined ? '' : selectedAccount.name ?? shortenAddress(selectedAccount.address)
                   }
@@ -69,8 +68,30 @@ const AccountSelector = (props: AccountSelectorProps) => {
         <Select.Option
           key={x.address}
           value={x.address}
-          leadingIcon={<AccountIcon account={x} size="4rem" />}
-          headlineContent={x.name ?? shortenAddress(x.address)}
+          leadingIcon={<AccountIcon account={x} size="32px" />}
+          className="!w-full [&>div]:w-full"
+          headlineContent={
+            <div className="flex items-center justify-between w-full">
+              <div>
+                <p className="!leading-none !mb-[4px] font-semibold">{x.name ?? shortenAddress(x.address)}</p>
+                {x.name ? (
+                  <p className="!text-[12px] !text-gray-300 brightness-100 !leading-none">
+                    {shortenAddress(x.address)}
+                  </p>
+                ) : null}
+              </div>
+
+              {props.withBalance ? (
+                <p className="text-gray-400 text-[14px]">
+                  $
+                  {balances
+                    .find(q => q.address === x.address)
+                    .sum.fiat('usd')
+                    .transferable.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </p>
+              ) : null}
+            </div>
+          }
         />
       ))}
     </Select>
@@ -80,9 +101,11 @@ const AccountSelector = (props: AccountSelectorProps) => {
 export const useAccountSelector = (
   accounts: Account[],
   initialAccount?: Account | number | ((accounts?: Account[]) => Account | undefined),
-  accountSelectorProps?: Omit<AccountSelectorProps, 'accounts' | 'selectedAccount' | 'onChangeSelectedAccount'>
+  accountSelectorProps?: Omit<AccountSelectorProps, 'accounts' | 'selectedAccount' | 'onChangeSelectedAccount'>,
+  withToken?: boolean
 ) => {
-  const [inTransition, startTransition] = useTransition()
+  // TODO: remove this
+  const [inTransition] = useTransition()
 
   const getInitialAccount = useCallback(
     (accounts: Account[]) =>
@@ -115,8 +138,9 @@ export const useAccountSelector = (
       {...accountSelectorProps}
       accounts={accounts}
       selectedAccount={account}
-      onChangeSelectedAccount={account => startTransition(() => setAccount(account))}
+      onChangeSelectedAccount={setAccount}
       inTransition={inTransition}
+      withBalance={withToken}
     />,
     inTransition,
   ] as const

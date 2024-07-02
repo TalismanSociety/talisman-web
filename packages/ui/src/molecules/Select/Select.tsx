@@ -10,9 +10,6 @@ import {
   useDismiss,
   useFloating,
   useInteractions,
-  useListNavigation,
-  useRole,
-  useTypeahead,
 } from '@floating-ui/react'
 import { ChevronDown, X } from '@talismn/web-icons'
 import { motion } from 'framer-motion'
@@ -21,6 +18,7 @@ import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type ReactElement,
@@ -37,6 +35,9 @@ export type SelectProps<TValue, TClear extends boolean = false> = {
   loading?: boolean
   clearRequired?: TClear
   detached?: boolean
+  allowInput?: boolean
+  inputValue?: string
+  onInputChange?: React.ChangeEventHandler<HTMLInputElement>
 }
 
 type SelectItemProps = {
@@ -45,10 +46,19 @@ type SelectItemProps = {
   leadingIcon?: ReactNode
   headlineContent: ReactNode
   supportingContent?: ReactNode
+  className?: string
 }
 
 const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
-  <div ref={ref} css={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+  <div
+    ref={ref}
+    className={props.className}
+    css={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '1rem',
+    }}
+  >
     {props.leadingIcon && (
       <figure css={{ display: 'flex', alignItems: 'center', maxWidth: 40, maxHeight: 40, margin: 0 }}>
         {props.leadingIcon}
@@ -63,13 +73,33 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
   </div>
 ))
 
+SelectItem.displayName = 'SelectItem'
+
+const findOption = (children: ReactElement): ReactElement<SelectItemProps>[] => {
+  if (!children) return []
+  if (typeof children === 'string') return []
+  if (Array.isArray(children)) return children.map(findOption).flat()
+
+  if (
+    typeof children.type === 'object' &&
+    'displayName' in children.type &&
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (children.type as any).displayName === 'SelectItem'
+  ) {
+    return [children as React.ReactElement<SelectItemProps>]
+  }
+  return findOption(children.props.children as React.ReactElement)
+}
+
 const Select = Object.assign(
   <TValue, TClear extends boolean = false>({
     children,
-    renderSelected,
-    loading,
     clearRequired: _clearRequired,
     detached,
+    loading,
+    inputValue,
+    onInputChange,
+    renderSelected,
     ...props
   }: SelectProps<TValue, TClear>) => {
     const theme = useTheme()
@@ -80,16 +110,16 @@ const Select = Object.assign(
     const [open, setOpen] = useState(false)
     const [pointer, setPointer] = useState(false)
     const [activeIndex, setActiveIndex] = useState<number | null>(null)
+    const inputRef = useRef<HTMLInputElement | null>(null)
 
-    const childrenArray = React.Children.toArray(children)
-
-    const selectedIndex = childrenArray
+    const optionsArray = useMemo(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .filter((x): x is ReactElement<SelectItemProps> => x as any)
-      .findIndex(x => x.props.value === props.value)
+      (): React.ReactElement<SelectItemProps>[] => React.Children.map(children as any, findOption)?.flat() ?? [],
+      [children]
+    )
 
     const selectedChild =
-      renderSelected?.(props.value) ?? (selectedIndex === undefined ? undefined : childrenArray[selectedIndex])
+      renderSelected?.(props.value) ?? optionsArray.find(x => x.props.value === props.value) ?? undefined
 
     const clearRequired = !open && _clearRequired && selectedChild !== undefined
 
@@ -99,11 +129,12 @@ const Select = Object.assign(
     const { context, x, y, refs, strategy } = useFloating({
       open,
       onOpenChange: open => {
+        setOpen(open)
         if (clearRequired) {
           // @ts-expect-error
           props.onChangeValue?.(undefined)
         }
-        setOpen(open)
+        if (open && props.allowInput && inputRef.current) inputRef.current.focus()
       },
       whileElementsMounted: autoUpdate,
       middleware: [
@@ -134,24 +165,14 @@ const Select = Object.assign(
       ],
     })
 
-    const { getReferenceProps, getFloatingProps, getItemProps } = useInteractions([
-      useRole(context, { role: 'listbox' }),
-      useClick(context),
-      useListNavigation(context, {
-        listRef,
-        activeIndex,
-        // TODO: disable selected index for now as
-        // as this cause weird animation on open if an item is already focused
-        // selectedIndex,
-        onNavigate: setActiveIndex,
-        loop: true,
+    const { getReferenceProps, getFloatingProps } = useInteractions([
+      useClick(context, {
+        keyboardHandlers: false,
+        toggle: false,
       }),
-      useTypeahead(context, {
-        listRef: listContentRef,
-        activeIndex,
-        onMatch: setActiveIndex,
+      useDismiss(context, {
+        outsidePress: true,
       }),
-      useDismiss(context),
     ])
 
     const select = useCallback(
@@ -182,6 +203,56 @@ const Select = Object.assign(
 
     // TODO: need a cap as setting maximum radius for only top or bottom corner create oval shape instead
     const cappedShape = `min(2rem, ${theme.shape.full})`
+
+    const injectChildren = useCallback(
+      (children: ReactElement, index: number): React.ReactNode => {
+        if (!children) return null
+
+        if (typeof children === 'string') return children
+        if (Array.isArray(children)) return children.map(injectChildren)
+
+        if (
+          typeof children.type === 'object' &&
+          'displayName' in children.type &&
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (children.type as any).displayName === 'SelectItem'
+        ) {
+          const child = children as ReactElement<SelectItemProps>
+          const selected =
+            typeof selectedChild === 'object' &&
+            child.props.value === (selectedChild as React.ReactElement<SelectItemProps>).props.value
+          return (
+            <li
+              key={child.key}
+              role="option"
+              ref={node => {
+                if (node !== null) {
+                  listRef.current[child.props.value] = node
+                  listContentRef.current[index] = node?.textContent
+                }
+              }}
+              tabIndex={index === activeIndex ? 0 : 1}
+              aria-selected={selected && index === activeIndex}
+              onClick={() => select(child.props.value)}
+              css={{
+                ':hover': {
+                  filter: 'brightness(1.2)',
+                },
+                filter: selected ? 'brightness(1.4)' : undefined,
+                cursor: 'pointer',
+              }}
+            >
+              {children}
+            </li>
+          )
+        }
+        return React.cloneElement(children, {
+          key: children.key ?? index,
+          children: children.props.children ? injectChildren(children.props.children, index) : children.props.children,
+        })
+      },
+      [selectedChild, select, activeIndex]
+    )
 
     return (
       <motion.div
@@ -229,9 +300,31 @@ const Select = Object.assign(
           ]}
           {...getReferenceProps()}
         >
-          <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none' }}>
-            {selectedChild ?? <Text.Body alpha="disabled">{props.placeholder}</Text.Body>}
-          </Text.Body>
+          {selectedChild ??
+            (props.allowInput ? (
+              <input
+                onClick={e => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                }}
+                onChange={onInputChange}
+                value={inputValue}
+                ref={inputRef}
+                placeholder={typeof props.placeholder === 'string' ? props.placeholder : ''}
+                onFocus={() => setOpen(true)}
+                style={{
+                  fontSize: '14px',
+                  backgroundColor: 'transparent',
+                  padding: 0,
+                  height: 'max-content',
+                  width: '100%',
+                }}
+              />
+            ) : (
+              <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none' }}>
+                <Text.Body alpha="disabled">{props.placeholder}</Text.Body>
+              </Text.Body>
+            ))}
           {loading ? (
             <CircularProgressIndicator />
           ) : clearRequired ? (
@@ -266,11 +359,8 @@ const Select = Object.assign(
                 backgroundColor: surfaceColor,
                 listStyle: 'none',
                 li: {
-                  padding: '1.5rem 1.25rem',
+                  padding: '1.2rem 1.25rem',
                   backgroundColor: surfaceColor,
-                  ':last-child': {
-                    padding: '1.5rem 1.25rem 1rem 1.25rem',
-                  },
                 },
                 // Top spacer for animation overlap
                 '::before': {
@@ -296,44 +386,10 @@ const Select = Object.assign(
               onPointerMove: () => {
                 setPointer(true)
               },
-              onKeyDown: event => {
-                setPointer(false)
-
-                if (event.key === 'Tab') {
-                  setOpen(false)
-                }
-              },
             })}
           >
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {React.Children.map(children as any, (child: ReactElement<SelectItemProps>, index) => (
-              <li
-                key={child.key}
-                role="option"
-                ref={node => {
-                  if (node !== null) {
-                    listRef.current[index] = node
-                    listContentRef.current[index] = node?.textContent
-                  }
-                }}
-                tabIndex={index === activeIndex ? 0 : 1}
-                aria-selected={index === selectedIndex && index === activeIndex}
-                css={[{ cursor: 'pointer' }, index === activeIndex && { filter: 'brightness(1.2)' }]}
-                {...getItemProps({
-                  onClick: () => select(child.props.value),
-                  onKeyDown: event => {
-                    if (event.key === 'Enter') {
-                      event.preventDefault()
-                      if (child.props.value !== undefined) {
-                        select(child.props.value)
-                      }
-                    }
-                  },
-                })}
-              >
-                {child}
-              </li>
-            ))}
+            {React.Children.map(children as any, injectChildren)}
           </motion.ul>
         </FloatingPortal>
       </motion.div>

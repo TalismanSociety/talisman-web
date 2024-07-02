@@ -3,7 +3,7 @@ import type { PropsWithChildren } from 'react'
 import type { EIP1193Provider } from 'viem'
 import { WagmiProvider, createConfig, http } from 'wagmi'
 import type {} from 'wagmi/'
-import { mainnet, moonbeam, moonriver } from 'wagmi/chains'
+import { arbitrum, mainnet, moonbeam, moonriver } from 'wagmi/chains'
 import { injected } from 'wagmi/connectors'
 
 declare global {
@@ -14,9 +14,9 @@ declare global {
 }
 
 export const wagmiConfig = createConfig({
-  chains: [mainnet, moonbeam, moonriver],
+  chains: [mainnet, moonbeam, moonriver, arbitrum],
   connectors: [injected()],
-  transports: { [mainnet.id]: http(), [moonbeam.id]: http(), [moonriver.id]: http() },
+  transports: { [mainnet.id]: http(), [arbitrum.id]: http(), [moonbeam.id]: http(), [moonriver.id]: http() },
 })
 
 const migrate = () => {

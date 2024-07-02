@@ -109,7 +109,8 @@ const Transport = () => {
                 .find({ address: sender?.address })
                 .find(
                   balance =>
-                    balance.token.symbol.toLowerCase() === route.token.toLowerCase() &&
+                    balance.token?.symbol.toLowerCase() === route.token.toLowerCase() &&
+                    !!balance.chain &&
                     (route.from.paraChainId === -1
                       ? balancesLibChains[balance.chain.id]?.paraId === null
                       : balancesLibChains[balance.chain.id]?.paraId === route.from.paraChainId)
@@ -157,7 +158,8 @@ const Transport = () => {
                 .find({ address: sender?.address })
                 .find(
                   balance =>
-                    balance.token.symbol.toLowerCase() === route.token.toLowerCase() &&
+                    balance.token?.symbol.toLowerCase() === route.token.toLowerCase() &&
+                    !!balance.chain &&
                     (route.to.paraChainId === -1
                       ? balancesLibChains[balance.chain.id]?.paraId === null
                       : balancesLibChains[balance.chain.id]?.paraId === route.to.paraChainId)

@@ -1,7 +1,13 @@
 {
   "extends": "@talismn/tsconfig/vite-react",
   "compilerOptions": {
-    "jsxImportSource": "@emotion/react"
+    "jsxImportSource": "@emotion/react",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
   },
   "include": [
     "src"

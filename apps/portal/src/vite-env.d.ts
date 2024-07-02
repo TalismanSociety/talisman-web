@@ -18,6 +18,7 @@ interface ImportMetaEnv {
   REACT_APP_BASEROW_EXPLORE_AUTH: string
   REACT_APP_BASEROW_CROWDLOANS_AUTH: string
   REACT_APP_LIDO_REWARDS_ADDRESS: string
+  REACT_APP_QUEST_API?: string
 }
 
 declare namespace JSX {

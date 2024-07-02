@@ -193,13 +193,7 @@ export const useQueryState = <
     return constSelector(undefined) as TReturn
   }
 
-  return recoilState.queryState(
-    apiId,
-    moduleName,
-    sectionName,
-    // @ts-expect-error complex type
-    params
-  ) as TReturn
+  return recoilState.queryState(apiId, moduleName, sectionName, params) as TReturn
 }
 
 export const useDeriveState = <
@@ -240,11 +234,5 @@ export const useDeriveState = <
   }
 
   // @ts-expect-error complex type
-  return recoilState.deriveState(
-    apiId,
-    moduleName,
-    sectionName,
-    // @ts-expect-error complex type
-    params
-  ) as TReturn
+  return recoilState.deriveState(apiId, moduleName, sectionName, params) as TReturn
 }

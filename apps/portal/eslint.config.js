@@ -3,6 +3,7 @@ import tseslint from 'typescript-eslint'
 
 export default tseslint.config(...recommended, {
   rules: {
+    'react/prop-types': 'off',
     // TODO: turn this back on
     '@typescript-eslint/no-explicit-any': 'off',
     'react-hooks/exhaustive-deps': [
