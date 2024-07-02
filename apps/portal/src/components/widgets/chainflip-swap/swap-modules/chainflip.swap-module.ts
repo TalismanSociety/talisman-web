@@ -186,13 +186,13 @@ const quote: QuoteFunction = async (get): Promise<(BaseQuote & { data?: QuoteRes
     console.error(_error)
     const error = _error as Error & { response?: { data?: { message: string } } }
     const errorMessage =
-      error.name === 'AxiosError' &&
-      (error.response?.data?.message?.includes('InsufficientLiquidity') ||
-        error.response?.data?.message.toLowerCase().includes('insufficient liquidity'))
-        ? 'Insufficient liquidity. Please try again with a smaller amount'
-        : error.message === 'Request failed with status code 400'
-        ? 'Pair not available. Please try another swapping a different asset pair'
+      error.name === 'AxiosError'
+        ? error.response?.data?.message.includes('InsufficientLiquidity') ||
+          error.response?.data?.message.toLowerCase().includes('insufficient liquidity')
+          ? 'Chainflip: Insufficient liquidity. Please try again with a smaller amount'
+          : `Chainflip: ${error.response?.data?.message}`
         : error.message ?? 'Unknown error'
+
     return {
       protocol: PROTOCOL,
       inputAmountBN: fromAmount.planck,
