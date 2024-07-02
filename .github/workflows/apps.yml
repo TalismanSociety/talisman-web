@@ -17,7 +17,7 @@ jobs:
     secrets: inherit
 
   deploy-ui-storybook:
-    # needs: [qa]
+    needs: [qa]
     uses: ./.github/workflows/deploy.yml
     with:
       projectName: ${{ vars.UI_STORYBOOK_PROJECT_NAME }}
@@ -37,7 +37,7 @@ jobs:
     secrets: inherit
 
   deploy-portal:
-    # needs: [qa]
+    needs: [qa]
     uses: ./.github/workflows/deploy.yml
     with:
       projectName: ${{ vars.PORTAL_PROJECT_NAME }}
