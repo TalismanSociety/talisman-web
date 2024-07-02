@@ -20,7 +20,6 @@ export default defineConfig({
     svgr(),
   ],
   envPrefix: 'REACT_APP_',
-
   build: {
     outDir: 'build',
     rollupOptions: {
