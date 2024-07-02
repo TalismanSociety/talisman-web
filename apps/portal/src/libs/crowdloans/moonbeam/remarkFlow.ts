@@ -37,7 +37,7 @@ async function agreeRemark(address: string, signedMessage: string): Promise<stri
 async function sendRemark(api: ApiPromise, signer: Signer, address: string, remark: string): Promise<[string, string]> {
   return await new Promise(resolve => {
     const tx = api.tx.system.remark(remark)
-    void tx.signAndSend(address, { signer }, ({ status }) => {
+    void tx.signAndSend(address, { signer, withSignedTransaction: true }, ({ status }) => {
       if (!status.isFinalized) return
       resolve([tx.hash.toHex(), status.asFinalized.toHex()])
     })
