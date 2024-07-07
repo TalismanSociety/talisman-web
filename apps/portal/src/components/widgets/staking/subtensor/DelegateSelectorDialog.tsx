@@ -29,6 +29,22 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
       onConfirm={() => {
         if (highlighted !== undefined) props.onConfirm(highlighted)
       }}
+      sortMethods={{
+        'Number of stakers': (a, b) =>
+          parseInt(b.props.count?.toString?.() ?? '0') - parseInt(a.props.count?.toString?.() ?? '0'),
+        'Total staked': (a, b) =>
+          (b.props.balancePlanck ?? 0n) === (a.props.balancePlanck ?? 0n)
+            ? 0
+            : (b.props.balancePlanck ?? 0n) - (a.props.balancePlanck ?? 0n) < 0
+            ? -1
+            : 1,
+        'Estimated return': (a, b) =>
+          BigInt(b.props.estimatedReturn ?? 0n) === BigInt(a.props.estimatedReturn ?? 0n)
+            ? 0
+            : BigInt(b.props.estimatedReturn ?? 0n) - BigInt(a.props.estimatedReturn ?? 0n) < 0
+            ? -1
+            : 1,
+      }}
     >
       {Object.values(delegates).map(delegate => (
         <StakeTargetSelectorDialog.Item
@@ -48,6 +64,11 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
               .fromPlanckOrUndefined(allDelegateInfos[delegate.address]?.totalDelegated)
               .decimalAmount?.toLocaleString() ?? ''
           }
+          balancePlanck={
+            nativeTokenAmount.fromPlanckOrUndefined(allDelegateInfos[delegate.address]?.totalDelegated).decimalAmount
+              ?.planck
+          }
+          estimatedReturn={allDelegateInfos[delegate.address]?.return_per_1000}
           onClick={() => setHighlighted(delegate)}
         />
       ))}

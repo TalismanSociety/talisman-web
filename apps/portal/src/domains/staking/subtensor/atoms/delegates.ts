@@ -42,7 +42,15 @@ const safeParseDelegates = (response: unknown): Delegates => {
       if (typeof props !== 'object' || props === null) return []
       if (!('name' in props) || typeof props.name !== 'string' || props.name.length === 0) return []
 
-      return { ...props, address, name: props.name }
+      const url = (() => {
+        if (!('url' in props)) return
+        if (typeof props.url !== 'string') return
+        if (props.url.length === 0) return
+        if (!props.url.startsWith('https://')) return `https://${props.url}`
+        return props.url
+      })()
+
+      return { ...props, address, name: props.name, url }
     })
     .sort(sortDefaultDelegateFirst)
 

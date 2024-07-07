@@ -63,6 +63,12 @@ export const useAddStakeForm = (account: Account, stake: Stake, delegate: string
   }, [accountInfo.data.free, accountInfo.data.frozen, accountInfo.data.reserved, existentialDeposit, feeEstimate])
 
   const transferable = useTokenAmountFromPlanck(transferablePlanck)
+  const resulting = useTokenAmountFromPlanck(
+    useMemo(
+      () => (stake.totalStaked.decimalAmount?.planck ?? 0n) + (amount.decimalAmount?.planck ?? 0n),
+      [amount.decimalAmount?.planck, stake.totalStaked.decimalAmount?.planck]
+    )
+  )
 
   const minimum = useTokenAmount(String(MIN_SUBTENSOR_STAKE))
   const error = useMemo(() => {
@@ -70,18 +76,17 @@ export const useAddStakeForm = (account: Account, stake: Stake, delegate: string
     if ((amount.decimalAmount?.planck ?? 0n) > transferable.decimalAmount.planck)
       return new Error('Insufficient balance')
 
-    if (amount.decimalAmount && amount.decimalAmount?.planck < (minimum.decimalAmount?.planck ?? 0n))
+    if (resulting.decimalAmount && resulting.decimalAmount?.planck < (minimum.decimalAmount?.planck ?? 0n))
       return new Error(`Minimum stake is ${(minimum.decimalAmount ?? 0n).toLocaleString()}`)
 
     return undefined
-  }, [amount.decimalAmount, input, minimum.decimalAmount, transferable.decimalAmount.planck])
-
-  const resulting = useTokenAmountFromPlanck(
-    useMemo(
-      () => (stake.totalStaked.decimalAmount?.planck ?? 0n) + (amount.decimalAmount?.planck ?? 0n),
-      [amount.decimalAmount?.planck, stake.totalStaked.decimalAmount?.planck]
-    )
-  )
+  }, [
+    amount.decimalAmount?.planck,
+    input,
+    minimum.decimalAmount,
+    resulting.decimalAmount,
+    transferable.decimalAmount.planck,
+  ])
 
   const tx: SubmittableExtrinsic<any> = useMemo(
     () => (api.tx as any)?.subtensorModule?.addStake?.(delegate, amount.decimalAmount?.planck ?? 0n),
