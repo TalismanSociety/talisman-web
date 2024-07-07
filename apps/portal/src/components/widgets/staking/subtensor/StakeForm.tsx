@@ -7,6 +7,7 @@ import { SubtensorStakingForm } from './SubtensorStakingForm'
 import { CircularProgressIndicator } from '@talismn/ui'
 import BN from 'bn.js'
 import { Suspense, useMemo, type ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 type StakeFormProps = IncompleteSelectionStakeFormProps & {
@@ -21,6 +22,7 @@ export const StakeForm = (props: StakeFormProps) => {
     stake,
     props.delegate
   )
+  const navigate = useNavigate()
 
   return (
     <SubtensorStakingForm
@@ -44,7 +46,7 @@ export const StakeForm = (props: StakeFormProps) => {
           disabled={!ready}
           loading={extrinsic.state === 'loading'}
           onClick={() => {
-            void extrinsic.signAndSend(props.account.address)
+            extrinsic.signAndSend(props.account.address).then(() => navigate('/staking/positions'))
           }}
         />
       }

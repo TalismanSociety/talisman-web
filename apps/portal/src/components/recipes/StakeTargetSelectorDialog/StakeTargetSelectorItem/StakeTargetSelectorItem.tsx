@@ -9,7 +9,9 @@ export type StakeTargetSelectorItemProps = {
   logo?: string
   detailUrl?: string
   balance: string
+  balancePlanck?: bigint
   balanceDescription: string
+  estimatedReturn?: number | bigint
   talismanRecommended: boolean
   talismanRecommendedDescription: string
   rating?: 0 | 1 | 2 | 3

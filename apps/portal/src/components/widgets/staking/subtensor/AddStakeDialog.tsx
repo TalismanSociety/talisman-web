@@ -43,7 +43,7 @@ const SubtensorAddStakeDialog = (props: SubtensorAddStakeDialogProps) => {
       newAmount={resulting.decimalAmount?.toLocaleString() ?? <CircularProgressIndicator size="1em" />}
       newFiatAmount={resulting.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
       onConfirm={() => {
-        void extrinsic.signAndSend(props.account.address)
+        extrinsic.signAndSend(props.account.address).then(() => props.onRequestDismiss())
       }}
       inputSupportingText={error?.message}
       onDismiss={props.onRequestDismiss}
