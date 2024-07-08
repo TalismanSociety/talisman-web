@@ -306,34 +306,36 @@ const Select = Object.assign(
             })}
           >
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {React.Children.map(children as any, (child: ReactElement<SelectItemProps>, index) => (
-              <li
-                key={child.key}
-                role="option"
-                ref={node => {
-                  if (node !== null) {
-                    listRef.current[index] = node
-                    listContentRef.current[index] = node?.textContent
-                  }
-                }}
-                tabIndex={index === activeIndex ? 0 : 1}
-                aria-selected={index === selectedIndex && index === activeIndex}
-                css={[{ cursor: 'pointer' }, index === activeIndex && { filter: 'brightness(1.2)' }]}
-                {...getItemProps({
-                  onClick: () => select(child.props.value),
-                  onKeyDown: event => {
-                    if (event.key === 'Enter') {
-                      event.preventDefault()
-                      if (child.props.value !== undefined) {
-                        select(child.props.value)
-                      }
+            {React.Children.map(children as any, (child: ReactElement<SelectItemProps>, index) =>
+              !child ? null : (
+                <li
+                  key={child.key}
+                  role="option"
+                  ref={node => {
+                    if (node !== null) {
+                      listRef.current[index] = node
+                      listContentRef.current[index] = node?.textContent
                     }
-                  },
-                })}
-              >
-                {child}
-              </li>
-            ))}
+                  }}
+                  tabIndex={index === activeIndex ? 0 : 1}
+                  aria-selected={index === selectedIndex && index === activeIndex}
+                  css={[{ cursor: 'pointer' }, index === activeIndex && { filter: 'brightness(1.2)' }]}
+                  {...getItemProps({
+                    onClick: () => select(child.props.value),
+                    onKeyDown: event => {
+                      if (event.key === 'Enter') {
+                        event.preventDefault()
+                        if (child.props.value !== undefined) {
+                          select(child.props.value)
+                        }
+                      }
+                    },
+                  })}
+                >
+                  {child}
+                </li>
+              )
+            )}
           </motion.ul>
         </FloatingPortal>
       </motion.div>

@@ -30,7 +30,9 @@ const ITEMS_PER_PAGE = 9
 const StakeTargetSelectorDialog = Object.assign(
   (props: StakeTargetSelectorDialogProps) => {
     const items = React.Children.toArray(props.children) as Array<ReactElement<StakeTargetSelectorItemProps>>
-    const [sortMethod, setSortMethod] = useState('Default')
+    const [sortMethod, setSortMethod] = useState(
+      (props.sortMethods ? Object.keys(props.sortMethods)[0] : undefined) ?? 'Default'
+    )
     const selectedItems = items.filter(item => item.props.selected)
     const nonSelectedItems = items
       .filter(item => !item.props.selected)
@@ -85,7 +87,9 @@ const StakeTargetSelectorDialog = Object.assign(
                   onChangeValue={setSortMethod}
                   css={{ minWidth: '22rem' }}
                 >
-                  <Select.Option headlineContent="Default" value="Default" />
+                  {Object.keys(props.sortMethods).length === 0 ? (
+                    <Select.Option headlineContent="Default" value="Default" />
+                  ) : null}
                   {Object.keys(props.sortMethods).map(option => (
                     <Select.Option key={option} headlineContent={option} value={option} />
                   ))}
