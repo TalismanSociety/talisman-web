@@ -30,20 +30,20 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
         if (highlighted !== undefined) props.onConfirm(highlighted)
       }}
       sortMethods={{
-        'Number of stakers': (a, b) =>
-          parseInt(b.props.count?.toString?.() ?? '0') - parseInt(a.props.count?.toString?.() ?? '0'),
         'Total staked': (a, b) =>
           (b.props.balancePlanck ?? 0n) === (a.props.balancePlanck ?? 0n)
             ? 0
             : (b.props.balancePlanck ?? 0n) - (a.props.balancePlanck ?? 0n) < 0
             ? -1
             : 1,
-        'Estimated return': (a, b) =>
-          BigInt(b.props.estimatedReturn ?? 0n) === BigInt(a.props.estimatedReturn ?? 0n)
-            ? 0
-            : BigInt(b.props.estimatedReturn ?? 0n) - BigInt(a.props.estimatedReturn ?? 0n) < 0
-            ? -1
-            : 1,
+        'Number of stakers': (a, b) =>
+          parseInt(b.props.count?.toString?.() ?? '0') - parseInt(a.props.count?.toString?.() ?? '0'),
+        // 'Estimated return': (a, b) =>
+        //   BigInt(b.props.estimatedReturn ?? 0n) === BigInt(a.props.estimatedReturn ?? 0n)
+        //     ? 0
+        //     : BigInt(b.props.estimatedReturn ?? 0n) - BigInt(a.props.estimatedReturn ?? 0n) < 0
+        //     ? -1
+        //     : 1,
       }}
     >
       {Object.values(delegates).map(delegate => (
@@ -51,6 +51,7 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
           key={delegate.address}
           balanceDescription="Total staked with this delegate"
           countDescription="Number of delegate stakers"
+          estimatedAprDescription="Estimated APR"
           talismanRecommendedDescription="Talisman top recommended delegate"
           rating={3}
           selected={delegate.address === props.selected?.address}
@@ -68,7 +69,8 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
             nativeTokenAmount.fromPlanckOrUndefined(allDelegateInfos[delegate.address]?.totalDelegated).decimalAmount
               ?.planck
           }
-          estimatedReturn={allDelegateInfos[delegate.address]?.return_per_1000}
+          // estimatedReturn={allDelegateInfos[delegate.address]?.return_per_1000}
+          // estimatedApr={allDelegateInfos[delegate.address]?.apr}
           onClick={() => setHighlighted(delegate)}
         />
       ))}

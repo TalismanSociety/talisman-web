@@ -14,7 +14,7 @@ const DelegateInfo = Struct({
   registrations: Vector(compact),
   /** Vec of netuid this delegate has validator permit on */
   validatorPermits: Vector(compact),
-  /** Delegators current daily return per 1000 TAO staked minus take fee */
+  /** Delegators current daily return per 1000 TAO staked minus take fee, in planck units */
   return_per_1000: compact,
   /** Delegators current daily return */
   total_daily_return: compact,
@@ -35,7 +35,13 @@ export const allDelegateInfosAtomFamily = atomFamily(
         const allDelegates = Object.fromEntries(
           (result ?? []).map(d => [
             d.hotkey,
-            { ...d, totalDelegated: d.nominators.reduce((acc, [_address, amount]) => acc + BigInt(amount), 0n) },
+            {
+              ...d,
+              return_per_1000: typeof d.return_per_1000 === 'number' ? BigInt(d.return_per_1000) : d.return_per_1000,
+              totalDelegated: d.nominators.reduce((acc, [_address, amount]) => acc + BigInt(amount), 0n),
+              // TODO: Calculate APR from return_per_1000
+              apr: undefined,
+            },
           ])
         )
 
