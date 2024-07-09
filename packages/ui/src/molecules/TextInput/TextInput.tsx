@@ -21,6 +21,7 @@ export type TextInputProps = Omit<
   trailingLabel?: ReactNode
   trailingIcon?: ReactNode
   hasSupportingText?: boolean
+  textBelowInput?: ReactNode
   trailingSupportingText?: ReactNode
   leadingSupportingText?: ReactNode
   containerClassName?: string
@@ -44,6 +45,7 @@ const TextInput = Object.assign(
         leadingSupportingText,
         containerClassName,
         inputContainerClassName,
+        textBelowInput,
         onChangeText,
         isError,
         ...props
@@ -61,7 +63,7 @@ const TextInput = Object.assign(
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                marginBottom: '0.8rem',
+                marginBottom: '0.4rem',
                 '*:empty::after': {
                   content: `"\u200B"`,
                 },
@@ -87,32 +89,34 @@ const TextInput = Object.assign(
             }}
           >
             {leadingIcon}
-            <input
-              ref={ref}
-              {...props}
-              id={inputId}
-              onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                props.onChange?.(event)
-                onChangeText?.(event.target.value)
-              }}
-              css={[
-                theme.typography.body,
-                {
-                  color: theme.color.onSurface,
-                  flex: 1,
-                  width: props.width ?? '20rem',
-                  background: 'transparent',
-                  border: 'none',
-                  padding: 0,
-                  '&[type=number]': {
-                    '::-webkit-outer-spin-button': { display: 'none' },
-                    '::-webkit-inner-spin-button': { display: 'none' },
-                    '-moz-appearance': 'textfield',
+            <div className="flex flex-col flex-1" css={{ width: props.width ?? '20rem' }}>
+              <input
+                ref={ref}
+                {...props}
+                id={inputId}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  props.onChange?.(event)
+                  onChangeText?.(event.target.value)
+                }}
+                css={[
+                  theme.typography.body,
+                  {
+                    color: theme.color.onSurface,
+                    flex: 1,
+                    background: 'transparent',
+                    border: 'none',
+                    padding: 0,
+                    '&[type=number]': {
+                      '::-webkit-outer-spin-button': { display: 'none' },
+                      '::-webkit-inner-spin-button': { display: 'none' },
+                      '-moz-appearance': 'textfield',
+                    },
+                    outline: 'none',
                   },
-                  outline: 'none',
-                },
-              ]}
-            />
+                ]}
+              />
+              {textBelowInput}
+            </div>
             {trailingIcon}
           </Surface>
           {(hasSupportingText || leadingSupportingText || trailingSupportingText) && (

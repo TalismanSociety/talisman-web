@@ -73,10 +73,14 @@ export const writeableBalancesState = selector({
 export const BalancesWatcher = () => {
   const accounts = useRecoilValue(accountsState)
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
+  const currency = useRecoilValue(selectedCurrencyState)
   useSetBalancesAddresses(addresses)
 
   const unfilteredBalances = _useBalances()
-  const balances = useMemo(() => unfilteredBalances.filterNonZero('total').filterMirrorTokens(), [unfilteredBalances])
+  const balances = useMemo(
+    () => unfilteredBalances.filterNonZeroFiat('total', currency).filterMirrorTokens(),
+    [currency, unfilteredBalances]
+  )
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(
@@ -89,4 +93,17 @@ export const BalancesWatcher = () => {
   useBalancesReportEffect()
 
   return null
+}
+
+export type CoinGeckoErc20Coin = {
+  id: string
+  symbol: string
+  name: string
+  asset_platform_id: string
+  contract_address: string
+  image: {
+    thumb: string
+    small: string
+    large: string
+  }
 }
