@@ -94,16 +94,17 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
         />
       </Surface>
       <Text.Body as="p" css={{ marginTop: '4.8rem' }}>
-        Talisman has integrated the liquid staking protocol by Bifrost, which allows users to easily stake GLMR, without
-        the need for complex staking processes. After staking, users receive vGLMR (voucher GLMR), a liquid staking
-        token of GLMR, which has fully underlying GLMR reserve and is directly yield bearing from GLMR rewards.{' '}
+        {`Talisman has integrated the liquid staking protocol by Bifrost, which allows users to easily stake ${props.slpxPair.nativeToken.symbol}, without
+        the need for complex staking processes. After staking, users receive ${props.slpxPair.vToken.symbol} (voucher ${props.slpxPair.nativeToken.symbol}), a liquid staking
+          token of ${props.slpxPair.nativeToken.symbol}, which has fully underlying ${props.slpxPair.nativeToken.symbol} reserve and is directly yield bearing from ${props.slpxPair.nativeToken.symbol} rewards.
+
+        `}
         <Text.Noop.A
           target="blank"
           href="https://bifrost.finance/news/bifrost-announces-the-official-launch-of-the-first-parachain-derivatives-v-glmr-and-v-movr"
         >
           Learn more
         </Text.Noop.A>
-        .
       </Text.Body>
     </SideSheet>
   )
