@@ -171,7 +171,7 @@ const quote: QuoteFunction = async (get): Promise<(BaseQuote & { data?: QuoteRes
       destAsset: chainflipToAsset.asset,
       srcChain: chainflipFromAsset.chain,
       destChain: chainflipToAsset.chain,
-      brokerCommissionBps: CHAINFLIP_COMMISSION_BPS,
+      boostFeeBps: CHAINFLIP_COMMISSION_BPS,
     })
 
     return {
