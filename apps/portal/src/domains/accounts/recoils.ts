@@ -171,7 +171,7 @@ export const writeableEvmAccountsState = selector({
 
 export const evmSignableAccountsState = selector({
   key: 'EvmSignableAccounts',
-  get: ({ get }) => get(writeableAccountsState).filter(x => x.type === 'ethereum' && x.canSignEvm),
+  get: ({ get }) => get(writeableAccountsState).filter(x => x.type === 'ethereum'),
 })
 
 export const substrateAccountsState = selector({
