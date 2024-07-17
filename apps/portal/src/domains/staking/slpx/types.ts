@@ -19,3 +19,8 @@ export type SlpxPair = {
   apiEndpoint: string
   estimatedRoundDuration: number
 }
+
+export enum mantaPacificOperation {
+  Mint,
+  Redeem,
+}
