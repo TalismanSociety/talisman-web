@@ -32,6 +32,9 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
     setAmount,
     newDestTokenAmount: newAmount,
     available,
+    approvalNeeded,
+    approve,
+    approveTransaction,
     mint,
     rate,
     ready,
@@ -69,7 +72,14 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
       </div>
       <Surface css={{ padding: '1.6rem', borderRadius: '1.6rem' }}>
         <SlpxAddStakeForm
-          confirmState={!ready ? 'disabled' : mint.isPending ? 'pending' : undefined}
+          confirmState={
+            !ready
+              ? 'disabled'
+              : mint.isPending || approve.isPending || approveTransaction.isLoading
+              ? 'pending'
+              : undefined
+          }
+          approvalNeeded={approvalNeeded}
           accountSelector={accountSelector}
           amount={amount}
           fiatAmount={localizedFiatAmount ?? '...'}
@@ -82,7 +92,11 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
             rate => `1 ${props.slpxPair.nativeToken.symbol} = ${rate.toLocaleString()} ${props.slpxPair.vToken.symbol}`
           )}
           onConfirm={async () => {
-            await mint.writeContractAsync()
+            if (approvalNeeded) {
+              await approve.writeContractAsync()
+            } else {
+              await mint.writeContractAsync()
+            }
           }}
           onRequestMaxAmount={() => {
             if (available !== undefined) {
