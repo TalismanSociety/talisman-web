@@ -16,6 +16,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 import { erc20Abi, isAddress } from 'viem'
 import { useBlockNumber, useConfig, useReadContract, useToken, useWaitForTransactionReceipt } from 'wagmi'
+import { manta } from 'wagmi/chains'
 import { getTokenQueryOptions, readContractsQueryOptions } from 'wagmi/query'
 
 export const useVTokenUnlockDuration = (slpxPair: SlpxPair) => {
@@ -327,6 +328,50 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
 
   const planckAmount = base.input.decimalAmount?.planck
 
+  const allowance = useReadContract({
+    chainId: slpxPair.chain.id,
+    address: slpxPair.nativeToken.address,
+    abi: erc20Abi,
+    functionName: 'allowance',
+    args: [account?.address ?? '0x', slpxPair.splx],
+    query: {
+      enabled: account?.address !== undefined && slpxPair.chain.id === manta.id,
+    },
+  })
+
+  const approvalNeeded = useMemo(
+    () =>
+      slpxPair.chain.id === manta.id &&
+      allowance.data !== undefined &&
+      planckAmount !== undefined &&
+      allowance.data < planckAmount,
+    [allowance.data, planckAmount, slpxPair.chain.id]
+  )
+
+  const _approve = useWagmiWriteContract()
+  const approve = {
+    ..._approve,
+    writeContractAsync: async () =>
+      await _approve.writeContractAsync({
+        chainId: slpxPair.chain.id,
+        address: slpxPair.nativeToken.address,
+        abi: erc20Abi,
+        functionName: 'approve',
+        args: [slpxPair.splx, planckAmount ?? 0n],
+        etherscanUrl: slpxPair.etherscanUrl,
+      }),
+  }
+  const approveTransaction = useWaitForTransactionReceipt({
+    chainId: slpxPair.chain.id,
+    hash: approve.data,
+  })
+
+  useEffect(() => {
+    if (approveTransaction.data?.status === 'success') {
+      void allowance.refetch()
+    }
+  }, [allowance, approveTransaction.data?.status])
+
   const _mint = useWagmiWriteContract()
   const mint = {
     ..._mint,
@@ -344,7 +389,14 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
 
   return {
     ...base,
+    approvalNeeded,
+    approve,
+    approveTransaction,
     mint,
+    ready: useMemo(
+      () => base.ready && (allowance.isFetched || slpxPair.chain.id !== manta.id),
+      [allowance.isFetched, base.ready, slpxPair.chain.id]
+    ),
   }
 }
 
