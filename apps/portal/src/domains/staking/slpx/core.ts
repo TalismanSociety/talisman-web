@@ -4,6 +4,7 @@ import { selectedCurrencyState } from '../../balances'
 import { tokenPriceState } from '../../chains'
 import { useSubstrateApiState, useWagmiWriteContract } from '../../common'
 import slpx from './abi'
+import { _adapterParams, _dstGasForCall } from './constants'
 import mantaPacificSlpxAbi from './mantaPacificSlpxAbi'
 import type { SlpxPair, SlpxToken } from './types'
 import { mantaPacificOperation } from './types'
@@ -14,7 +15,6 @@ import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import { useQueries } from '@tanstack/react-query'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
-import { utils } from 'ethers'
 import _ from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
@@ -269,18 +269,44 @@ export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) 
     },
   })
 
+  const estimatedSendAndCallFee = useEstimateSendAndCallFee({
+    slpxPair,
+    planckAmount: planckAmount ?? 0n,
+    account,
+    operation: mantaPacificOperation.Redeem,
+  })
+
+  const redeemGlmr = async () => {
+    await _redeem.writeContractAsync({
+      chainId: slpxPair.chain.id,
+      address: slpxPair.splx,
+      abi: slpx,
+      functionName: 'redeemAsset',
+      args: [slpxPair.vToken.address, planckAmount ?? 0n, (account?.address as `0x${string}`) ?? '0x'],
+      etherscanUrl: slpxPair.etherscanUrl,
+    })
+  }
+
+  const redeemManta = async () =>
+    await _redeem.writeContractAsync({
+      chainId: slpxPair.chain.id,
+      address: slpxPair.splx,
+      abi: mantaPacificSlpxAbi,
+      functionName: 'redeem',
+      args: [planckAmount ?? 0n, _dstGasForCall, _adapterParams],
+      value: estimatedSendAndCallFee.data?.[0],
+      etherscanUrl: slpxPair.etherscanUrl,
+    })
+
+  const redeemer: Record<number, () => Promise<string | void>> = {
+    [manta.id]: redeemManta,
+    [moonbeam.id]: redeemGlmr,
+  }
+
   const _redeem = useWagmiWriteContract()
   const redeem = {
     ..._redeem,
-    writeContractAsync: async () =>
-      await _redeem.writeContractAsync({
-        chainId: slpxPair.chain.id,
-        address: slpxPair.splx,
-        abi: slpx,
-        functionName: 'redeemAsset',
-        args: [slpxPair.vToken.address, planckAmount ?? 0n, (account?.address as `0x${string}`) ?? '0x'],
-        etherscanUrl: slpxPair.etherscanUrl,
-      }),
+    writeContractAsync: redeemer[slpxPair.chain.id]!,
   }
 
   const _approve = useWagmiWriteContract()
@@ -327,8 +353,6 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
   if (account?.address !== undefined && !isAddress(account.address)) {
     throw new Error(`Invalid EVM address ${account.address}`)
   }
-  const _dstGasForCall = 3000000
-  const adapterParams = utils.solidityPack(['uint16', 'uint256'], [1, 3200000])
 
   const base = useSlpxSwapForm(account, slpxPair.chain.id, slpxPair.splx, slpxPair.nativeToken, slpxPair.vToken)
 
@@ -354,15 +378,11 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
     [allowance.data, planckAmount, slpxPair.chain.id]
   )
 
-  const estimatedSendAndCallFee = useReadContract({
-    chainId: slpxPair.chain.id,
-    address: slpxPair.splx,
-    abi: mantaPacificSlpxAbi,
-    functionName: 'estimateSendAndCallFee',
-    args: [account?.address ?? '0x', mantaPacificOperation.Mint, planckAmount ?? 0n, _dstGasForCall, adapterParams],
-    query: {
-      enabled: account?.address !== undefined && slpxPair.chain.id === manta.id && planckAmount !== undefined,
-    },
+  const estimatedSendAndCallFee = useEstimateSendAndCallFee({
+    slpxPair,
+    planckAmount: planckAmount ?? 0n,
+    account,
+    operation: mantaPacificOperation.Mint,
   })
 
   const _approve = useWagmiWriteContract()
@@ -408,9 +428,8 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
       address: slpxPair.splx,
       abi: mantaPacificSlpxAbi,
       functionName: 'mint',
-      args: [planckAmount, _dstGasForCall, adapterParams],
-      // @ts-ignore
-      value: estimatedSendAndCallFee.data[0] as bigint,
+      args: [planckAmount ?? 0n, _dstGasForCall, _adapterParams],
+      value: estimatedSendAndCallFee.data?.[0],
       etherscanUrl: slpxPair.etherscanUrl,
     })
   }
@@ -515,3 +534,25 @@ export const useStakes = (accounts: Account[], slpxPair: SlpxPair) => {
     isLoading: balances.isLoading || vToken.isLoading || apiLoadable.state === 'loading' || state === 'loading',
   }
 }
+
+const useEstimateSendAndCallFee = ({
+  slpxPair,
+  planckAmount,
+  account,
+  operation,
+}: {
+  slpxPair: SlpxPair
+  planckAmount: bigint
+  account: Account | undefined
+  operation: mantaPacificOperation
+}) =>
+  useReadContract({
+    chainId: slpxPair.chain.id,
+    address: slpxPair.splx,
+    abi: mantaPacificSlpxAbi,
+    functionName: 'estimateSendAndCallFee',
+    args: [account?.address as `0x${string}`, operation, planckAmount ?? 0n, _dstGasForCall, _adapterParams],
+    query: {
+      enabled: account?.address !== undefined && slpxPair.chain.id === manta.id && planckAmount !== undefined,
+    },
+  })
