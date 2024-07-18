@@ -1,12 +1,6 @@
 export default [
   {
     anonymous: false,
-
-    name: 'Mint',
-    type: 'event',
-  },
-  {
-    anonymous: false,
     inputs: [
       {
         indexed: true,
