@@ -80,7 +80,11 @@ const Stakes = (props: { hideHeader?: boolean }) => {
         }}
       >
         {shouldRenderLoadingSkeleton && <StakePosition.Skeleton className={skellyClassName} css={{ order: 1 }} />}
-
+        <ErrorBoundary orientation="horizontal">
+          <SuspenseSkeleton>
+            <SlpxStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
+          </SuspenseSkeleton>
+        </ErrorBoundary>
         {chains.map((chain, index) => {
           return (
             <Fragment key={index}>
@@ -102,11 +106,6 @@ const Stakes = (props: { hideHeader?: boolean }) => {
         <ErrorBoundary orientation="horizontal">
           <SuspenseSkeleton>
             <DappStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
-          </SuspenseSkeleton>
-        </ErrorBoundary>
-        <ErrorBoundary orientation="horizontal">
-          <SuspenseSkeleton>
-            <SlpxStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
           </SuspenseSkeleton>
         </ErrorBoundary>
         <ErrorBoundary orientation="horizontal">
