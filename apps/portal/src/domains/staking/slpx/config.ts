@@ -26,6 +26,6 @@ export const glmrSlpxPair = {
       VToken2: 1,
     },
   },
-  apiEndpoint: 'https://api.bifrost.app/',
+  apiEndpoint: 'https://dapi.bifrost.io/',
   estimatedRoundDuration: 21_600_000,
 } as const satisfies SlpxPair
