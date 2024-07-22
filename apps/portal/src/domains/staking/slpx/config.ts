@@ -42,7 +42,7 @@ export const mantaSlpxPair = {
     logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/chains/manta.svg',
     coingeckoId: 'manta-network',
     tokenId: {
-      Token2: 1, // TODO: check and perhaps update this
+      Token2: 8,
     },
   },
   vToken: {
@@ -52,7 +52,7 @@ export const mantaSlpxPair = {
     logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/chains/manta.svg',
     coingeckoId: 'bifrost-voucher-manta',
     tokenId: {
-      VToken2: 1, // TODO: check and perhaps update this
+      VToken2: 8,
     },
   },
   apiEndpoint: 'https://dapi.bifrost.io/',
