@@ -305,7 +305,13 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
       poolStatus={props.pool.status}
       balance={<RedactableBalance>{balance.decimalAmount.toLocaleString()}</RedactableBalance>}
       rewards={<RedactableBalance>{last15DaysTotalPayouts.toLocaleString()}</RedactableBalance>}
-      apr={stakedReturn.toLocaleString(undefined, { style: 'percent' })}
+      apr={
+        chain.id === 'avail' ? (
+          <Text.Body>Coming Soon</Text.Body>
+        ) : (
+          stakedReturn.toLocaleString(undefined, { style: 'percent' })
+        )
+      }
       nextEraEta={useEraEtaFormatter()(1)}
       unbondings={useMemo(
         () =>
