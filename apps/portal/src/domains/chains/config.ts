@@ -63,6 +63,7 @@ export const chainConfigs: ChainConfig[] = [
     hasNominationPools: true,
     priorityPool: 2,
     talismanPools: [2],
+    novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-avail',
   },
   // Westend
   {
