@@ -39,7 +39,7 @@ const Assets = () => {
               onChangeText={setSearch}
               placeholder="Search for an Asset"
               containerClassName={css({ flex: 1, maxWidth: '37rem' })}
-              css={{ width: 0 }}
+              css={{ width: '100%' }}
             />
           )}
         </ClassNames>
