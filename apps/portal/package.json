@@ -49,6 +49,7 @@
     "@talismn/web-icons": "workspace:^",
     "@tanstack/react-query": "^5.32.0",
     "@visx/visx": "^3.1.2",
+    "avail-js-sdk": "^0.2.13",
     "bignumber.js": "^9.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

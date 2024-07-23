@@ -5328,7 +5328,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/api@npm:^10.11.1, @polkadot/api@npm:^10.7.3, @polkadot/api@npm:^10.9.1":
+"@polkadot/api@npm:^10.11.1, @polkadot/api@npm:^10.11.3, @polkadot/api@npm:^10.7.3, @polkadot/api@npm:^10.9.1":
   version: 10.13.1
   resolution: "@polkadot/api@npm:10.13.1"
   dependencies:
@@ -9861,6 +9861,7 @@ __metadata:
     "@types/react-router-dom": "npm:^5.3.3"
     "@visx/visx": "npm:^3.1.2"
     "@vitejs/plugin-react": "npm:^4.2.1"
+    avail-js-sdk: "npm:^0.2.13"
     bignumber.js: "npm:^9.1.1"
     class-variance-authority: "npm:^0.7.0"
     clsx: "npm:^2.1.1"
@@ -12959,6 +12960,15 @@ __metadata:
   version: 4.0.0
   resolution: "auto-bind@npm:4.0.0"
   checksum: 10c0/12f70745d081ba990dca028ecfa70de25d4baa9a8b74a5bef3ab293da56cba32ff8276c3ff8e5fe6d9f370547bf3fa71486befbfefe272af7e722c21d0c25530
+  languageName: node
+  linkType: hard
+
+"avail-js-sdk@npm:^0.2.13":
+  version: 0.2.13
+  resolution: "avail-js-sdk@npm:0.2.13"
+  dependencies:
+    "@polkadot/api": "npm:^10.11.3"
+  checksum: 10c0/0f85b816f4858e0e132aab786280ce9500d5d69382f939203088c39e815f0aab27f6f6863535221119d9a2f19fb837b1aa304f80adf63925650f8d10788282fe
   languageName: node
   linkType: hard
 
