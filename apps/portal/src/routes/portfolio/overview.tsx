@@ -85,7 +85,7 @@ const SuspendableAssetsOverview = () => {
               onChangeText={setSearch}
               css={{
                 '@media (min-width: 1024px)': {
-                  width: 0,
+                  width: 'auto',
                 },
               }}
             />
