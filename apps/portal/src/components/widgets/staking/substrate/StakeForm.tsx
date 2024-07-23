@@ -188,9 +188,7 @@ const PoolSelector = (props: {
           talismanRecommended={index === 0}
           name={pool.name ?? ''}
           detailUrl={
-            chain.subscanUrl === null
-              ? undefined
-              : new URL(`nomination_pool/${pool.poolId}`, chain.subscanUrl).toString()
+            chain?.subscanUrl ? new URL(`nomination_pool/${pool.poolId}`, chain.subscanUrl).toString() : undefined
           }
           balance={`${nativeTokenDecimal.fromPlanck(pool.bondedPool.points.toBigInt()).toLocaleString()} staked`}
           rating={3}
