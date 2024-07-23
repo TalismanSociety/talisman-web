@@ -9,13 +9,18 @@ import RedactableBalance from '../../RedactableBalance'
 import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import { Decimal } from '@talismn/math'
 import { usePolkadotApiId, useQueryState } from '@talismn/react-polkadot-api'
+import { Text } from '@talismn/ui'
 import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 const Apr = () => {
-  return <>{useApr().toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</>
+  const chain = useRecoilValue(useChainState())
+  const apr = useApr()
+
+  if (chain.id === 'avail') return <Text.BodySmall>Coming Soon</Text.BodySmall>
+  return <>{apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</>
 }
 
 const useAvailableBalance = () => {
