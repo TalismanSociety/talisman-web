@@ -163,7 +163,7 @@ const Stats = (props: {
           <div css={{ flex: 1 }}>
             <VictoryChart domainPadding={25} height={225} padding={{ top: 5, right: 0, bottom: 40, left: 50 }}>
               <VictoryAxis
-                tickFormat={x =>
+                tickFormat={(x: any) =>
                   new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short' }).format(new Date(x))
                 }
                 tickLabelComponent={
@@ -305,7 +305,13 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
       poolStatus={props.pool.status}
       balance={<RedactableBalance>{balance.decimalAmount.toLocaleString()}</RedactableBalance>}
       rewards={<RedactableBalance>{last15DaysTotalPayouts.toLocaleString()}</RedactableBalance>}
-      apr={stakedReturn.toLocaleString(undefined, { style: 'percent' })}
+      apr={
+        chain.id === 'avail' ? (
+          <Text.Body>Coming Soon</Text.Body>
+        ) : (
+          stakedReturn.toLocaleString(undefined, { style: 'percent' })
+        )
+      }
       nextEraEta={useEraEtaFormatter()(1)}
       unbondings={useMemo(
         () =>

@@ -109,7 +109,6 @@ const BaseValidatorStakes = ({ setShouldRenderLoadingSkeleton }: ValidatorStakes
   return (
     <>
       {stakes.map((props, index) => {
-        // eslint-disable-next-line react/prop-types
         const { account, reward } = props
         const stakeStatus = reward === undefined ? undefined : reward === 0n ? 'not_earning_rewards' : 'earning_rewards'
 
@@ -149,7 +148,6 @@ const ValidatorStakesWithFastUnstake = ({ setShouldRenderLoadingSkeleton }: Vali
   return (
     <>
       {stakes.map((props, index) => {
-        // eslint-disable-next-line react/prop-types
         const { account, reward } = props
         const stakeStatus = reward === undefined ? undefined : reward === 0n ? 'not_earning_rewards' : 'earning_rewards'
         return (

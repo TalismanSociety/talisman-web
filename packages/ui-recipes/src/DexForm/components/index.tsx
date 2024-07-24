@@ -234,8 +234,8 @@ const DexForm = Object.assign(
   },
   {
     Section: (props: PropsWithChildren<{ header: ReactNode }>) => (
-      <Surface css={{ borderRadius: '1.6rem', padding: '1.6rem' }}>
-        <header css={{ marginBottom: '0.8rem' }}>
+      <Surface css={{ borderRadius: 8, padding: 16 }}>
+        <header css={{ marginBottom: 8 }}>
           <Text.H4>{props.header}</Text.H4>
         </header>
         {props.children}
