@@ -23,13 +23,13 @@ const TokenSelectDialogItem = (props: TokenSelectDialogItemProps) => {
 
   const value = useMemo(() => {
     if (props.rates === undefined) return null
-    const balance = fastBalance?.balance ?? props.defaultBalanceDecimal
+    const balance = fastBalance?.balance?.transferrable ?? props.defaultBalanceDecimal
     if (balance === undefined) return <Skeleton.Surface className="ml-auto h-[18px] w-[50px]" />
     return (props.rates * balance.toNumber()).toLocaleString(undefined, { currency, style: 'currency' })
   }, [currency, fastBalance, props.defaultBalanceDecimal, props.rates])
 
   const balanceUI = useMemo(() => {
-    const balance = fastBalance?.balance ?? props.defaultBalanceDecimal
+    const balance = fastBalance?.balance?.transferrable ?? props.defaultBalanceDecimal
     if (balance === undefined) return <Skeleton.Surface className="h-[21px] w-[70px]" />
     return balance.toLocaleString(undefined, { maximumFractionDigits: 4 })
   }, [fastBalance?.balance, props.defaultBalanceDecimal])

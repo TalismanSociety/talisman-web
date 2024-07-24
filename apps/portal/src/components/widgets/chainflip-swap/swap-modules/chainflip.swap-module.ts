@@ -222,7 +222,7 @@ const saveAddressForQuest = async (swapId: string, fromAddress: string) => {
 const swap: SwapFunction<ChainflipSwapActivityData> = async (
   get: Getter,
   _: Setter,
-  { evmWalletClient, getSubstrateApi, substrateWallet }
+  { evmWalletClient, getSubstrateApi, substrateWallet, allowReap }
 ) => {
   const sdk = get(swapSdkAtom)
   const network = get(chainflipNetworkAtom)
@@ -308,9 +308,10 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
       const polkadotRpc = get(polkadotRpcAtom)
       const polkadotApi = await getSubstrateApi(polkadotRpc)
 
-      await polkadotApi.tx.balances
-        .transferKeepAlive(depositAddress.depositAddress, depositAddress.amount)
-        .signAndSend(fromAddress, { signer, withSignedTransaction: true })
+      await polkadotApi.tx.balances[allowReap ? 'transferAllowDeath' : 'transferKeepAlive'](
+        depositAddress.depositAddress,
+        depositAddress.amount
+      ).signAndSend(fromAddress, { signer, withSignedTransaction: true })
 
       saveAddressForQuest(depositAddress.depositChannelId, fromAddress)
       return { protocol: PROTOCOL, data: { id: depositAddress.depositChannelId, network } }
@@ -357,7 +358,7 @@ const getEstimateGasTx: GetEstimateGasTxFunction = async (get, { getSubstrateApi
   return {
     type: 'substrate',
     fromAddress,
-    tx: polkadotApi.tx.balances.transferKeepAlive(fromAddress, fromAmount.planck),
+    tx: polkadotApi.tx.balances.transferAllowDeath(fromAddress, fromAmount.planck),
   }
 }
 

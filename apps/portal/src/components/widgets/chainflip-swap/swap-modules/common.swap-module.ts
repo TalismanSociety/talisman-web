@@ -33,6 +33,7 @@ type SwapProps = {
   evmWalletClient?: WalletClient
   substrateWallet?: BaseWallet
   getSubstrateApi: (rpc: string) => Promise<ApiPromise>
+  allowReap?: boolean
   toAmount: Decimal | null
 }
 
