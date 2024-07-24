@@ -171,7 +171,7 @@ const quote: QuoteFunction = async (get): Promise<(BaseQuote & { data?: QuoteRes
       destAsset: chainflipToAsset.asset,
       srcChain: chainflipFromAsset.chain,
       destChain: chainflipToAsset.chain,
-      brokerCommissionBps: CHAINFLIP_COMMISSION_BPS,
+      boostFeeBps: CHAINFLIP_COMMISSION_BPS,
     })
 
     return {
@@ -310,7 +310,7 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
 
       await polkadotApi.tx.balances
         .transferKeepAlive(depositAddress.depositAddress, depositAddress.amount)
-        .signAndSend(fromAddress, { signer })
+        .signAndSend(fromAddress, { signer, withSignedTransaction: true })
 
       saveAddressForQuest(depositAddress.depositChannelId, fromAddress)
       return { protocol: PROTOCOL, data: { id: depositAddress.depositChannelId, network } }

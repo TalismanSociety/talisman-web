@@ -143,7 +143,7 @@ export const ThemeProvider = ({ theme: propsTheme = greenDark, merge = false, ch
           styles={css`
             :root {
               color: ${theme.color.onBackground};
-              font-family: ${theme.typography.body.fontFamily};
+              font-family: ${theme.typography.body.fontFamily}, sans-serif;
               font-size: 10px;
               font-weight: ${theme.typography.body.fontWeight ?? 'revert'};
               background-color: ${theme.color.background};
