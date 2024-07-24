@@ -49,7 +49,7 @@ export const mantaSlpxPair = {
     type: 'vToken',
     address: '0x7746ef546d562b443AE4B4145541a3b1a3D75717',
     symbol: 'vMANTA',
-    logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/chains/manta.svg',
+    logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/coingecko/bifrost-voucher-manta.webp',
     coingeckoId: 'bifrost-voucher-manta',
     tokenId: {
       VToken2: 8,
