@@ -12,18 +12,25 @@ import { selectedCurrencyState } from '@/domains/balances'
 import { cn } from '@/lib/utils'
 import { useTokenRates } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
-import { CircularProgressIndicator, TextInput } from '@talismn/ui'
+import { CircularProgressIndicator, TextInput, Tooltip } from '@talismn/ui'
 import { useAtom, useAtomValue } from 'jotai'
+import { HelpCircle } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
+
+const hardcodedGasBufferByTokenSymbol: Record<string, number> = {
+  dot: 0.03,
+  eth: 0.01, // same as uniswap, they give a fixed 0.01 ETH buffer regardless of the chain
+}
 
 export const FromAmount: React.FC<{
   // NOTE: we get this as a prop so we dont have to get this balance twice. The parent component also needs this to
   // check whether user has enough balance to swap
-  availableBalance: { balance: Decimal; loading: boolean } | null
-  wouldReapAccount?: boolean
+  availableBalance?: Decimal
+  stayAliveBalance?: Decimal
   insufficientBalance?: boolean
-}> = ({ availableBalance, insufficientBalance }) => {
+}> = ({ availableBalance, insufficientBalance, stayAliveBalance }) => {
   const [fromAmountInput, setFromAmountInput] = useAtom(fromAmountInputAtom)
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
   const [toAsset, setToAsset] = useAtom(toAssetAtom)
@@ -52,16 +59,35 @@ export const FromAmount: React.FC<{
     return +fromAmount.toString() * rateInCurrency
   }, [currency, fromAmount, fromAsset, rates])
 
+  const accountWouldBeReaped = useMemo(() => {
+    if (!stayAliveBalance) return false
+    return stayAliveBalance < fromAmount
+  }, [fromAmount, stayAliveBalance])
+
+  const maxAfterGas = useMemo(() => {
+    if (!fromAsset || !availableBalance) return null
+    const idParts = fromAsset.id.split('-')
+    const assetType = idParts[idParts.length - 1]
+    if (assetType === 'native') {
+      const gasBuffer = hardcodedGasBufferByTokenSymbol[fromAsset.symbol.toLowerCase()]
+      if (gasBuffer) {
+        const gasBufferDecimal = Decimal.fromUserInputOrUndefined(gasBuffer?.toString(), fromAsset.decimals)
+        return Decimal.fromPlanck(availableBalance.planck - (gasBufferDecimal?.planck ?? 0n), fromAsset.decimals)
+      }
+    }
+    return availableBalance
+  }, [availableBalance, fromAsset])
+
   return (
     <TextInput
       autoComplete="off"
       leadingLabel="You're paying"
       trailingLabel={
-        availableBalance ? (
-          availableBalance.loading ? (
-            <CircularProgressIndicator size={12} />
+        fromAsset && fromAddress ? (
+          availableBalance ? (
+            `Balance: ${availableBalance.toLocaleString()}`
           ) : (
-            `Balance: ${availableBalance.balance.toLocaleString()}`
+            <CircularProgressIndicator size={12} />
           )
         ) : null
       }
@@ -74,6 +100,30 @@ export const FromAmount: React.FC<{
             <p className="text-red-400 text-[10px] leading-none pl-[8px] ml-[8px] border-l border-l-gray-600">
               Insufficient balance
             </p>
+          ) : accountWouldBeReaped ? (
+            <div className="flex items-center gap-1 text-orange-400">
+              <p className="text-[10px] leading-none pl-[8px] ml-[8px] border-l border-l-gray-600">
+                Account would be reaped
+              </p>
+
+              <Tooltip
+                placement="bottom"
+                content={
+                  <p className="text-[12px]">
+                    This amount will cause your balance to go below the network's{' '}
+                    <span className="text-white">Existential Deposit</span>,
+                    <br />
+                    which would cause your account to be reaped.
+                    <br />
+                    Any remaining funds in a reaped account cannot be recovered.
+                  </p>
+                }
+              >
+                <Link to="https://support.polkadot.network/support/solutions/articles/65000168651-what-is-the-existential-deposit-">
+                  <HelpCircle className="w-4 h-4" />
+                </Link>
+              </Tooltip>
+            </div>
           ) : null}
         </div>
       }
@@ -91,13 +141,11 @@ export const FromAmount: React.FC<{
       type="number"
       trailingIcon={
         <div className="flex items-center gap-[8px] justify-end">
-          {availableBalance && !availableBalance.loading && (
+          {maxAfterGas && maxAfterGas.planck > 0 && (
             <TextInput.LabelButton
               css={{ fontSize: 12, paddingTop: 4, paddingBottom: 4 }}
               onClick={() =>
-                setFromAmountInput(
-                  Decimal.fromPlanck(availableBalance.balance.planck, availableBalance.balance.decimals).toString()
-                )
+                setFromAmountInput(Decimal.fromPlanck(maxAfterGas.planck, maxAfterGas.decimals).toString())
               }
             >
               <p css={{ fontSize: 12, lineHeight: 1 }}>Max</p>

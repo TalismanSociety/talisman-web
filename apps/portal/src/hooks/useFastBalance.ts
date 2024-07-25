@@ -35,10 +35,16 @@ export const useFastBalance = (props?: UseFastBalanceProps) => {
         balance: substrateBalance,
       }
     }
+    const ethBalance = evmBalance.data
+      ? Decimal.fromPlanck(evmBalance.data.value, evmBalance.data.decimals, { currency: evmBalance.data.symbol })
+      : undefined
     return {
       ...props,
-      balance: evmBalance.data
-        ? Decimal.fromPlanck(evmBalance.data.value, evmBalance.data.decimals, { currency: evmBalance.data.symbol })
+      balance: ethBalance
+        ? {
+            transferrable: ethBalance,
+            stayAlive: ethBalance,
+          }
         : undefined,
     }
   }, [evmBalance.data, props, substrateBalance])

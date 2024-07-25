@@ -11,8 +11,13 @@ export type UseSubstrateBalanceProps = {
   address: string
 }
 
+type SubstrateBalance = {
+  transferrable: Decimal
+  stayAlive: Decimal
+}
+
 export const useSubstrateBalance = (props?: UseSubstrateBalanceProps) => {
-  const [balance, setBalance] = useState<Decimal | undefined>()
+  const [balance, setBalance] = useState<SubstrateBalance | undefined>()
   const unsubRef = useRef<() => void>()
   const chainsLoadable = useRecoilValueLoadable(chainsState)
   const api = useRecoilValueLoadable(
@@ -34,14 +39,14 @@ export const useSubstrateBalance = (props?: UseSubstrateBalanceProps) => {
           const reserved = account.data.reserved.toBigInt()
           const frozen = account.data.frozen.toBigInt()
           const untouchable = BigMath.max(frozen - reserved, 0n)
-          // make sure untouchable is never less than the existentialDeposit
-          const untouchableOrEd = BigMath.max(untouchable, ed.toBigInt())
           const free = account.data.free.toBigInt()
-          const transferableBN = BigMath.max(free - untouchableOrEd, 0n)
+          const transferableBN = BigMath.max(free - untouchable, 0n)
 
           const decimals = api.contents.registry.chainDecimals[0] ?? 10
           const symbol = api.contents.registry.chainTokens[0] ?? 'DOT'
-          setBalance(Decimal.fromPlanck(transferableBN, decimals, { currency: symbol }))
+          const transferrable = Decimal.fromPlanck(transferableBN, decimals, { currency: symbol })
+          const stayAlive = Decimal.fromPlanck(free - ed.toBigInt(), decimals, { currency: symbol })
+          setBalance({ transferrable, stayAlive })
         })
         .then(unsub => {
           unsubRef.current = unsub
