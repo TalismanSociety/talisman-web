@@ -62,7 +62,6 @@ const AmountInput = (props: AmountInputProps) => {
           Max
         </Button>
       }
-      width="10rem"
       css={{ fontSize: '3rem' }}
     />
   )

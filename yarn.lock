@@ -4167,20 +4167,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:^10.0.0":
-  version: 10.0.5
-  resolution: "@graphql-tools/utils@npm:10.0.5"
-  dependencies:
-    "@graphql-typed-document-node/core": "npm:^3.1.1"
-    dset: "npm:^3.1.2"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/3a8d306df62b530dd6f65fb78f483dfc816c212c7c78d2c84148864b3330ed7b9dc42e42047665858840d12d061b98a40b97884e4cfe8218c5b5086b0604dd91
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.1.1, @graphql-tools/utils@npm:^10.2.1, @graphql-tools/utils@npm:^10.2.3":
+"@graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.1.1, @graphql-tools/utils@npm:^10.2.1, @graphql-tools/utils@npm:^10.2.3":
   version: 10.2.3
   resolution: "@graphql-tools/utils@npm:10.2.3"
   dependencies:
@@ -7848,10 +7835,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scure/base@npm:^1.1.1, @scure/base@npm:^1.1.3":
-  version: 1.1.6
-  resolution: "@scure/base@npm:1.1.6"
-  checksum: 10c0/237a46a1f45391fc57719154f14295db936a0b1562ea3e182dd42d7aca082dbb7062a28d6c49af16a7e478b12dae8a0fe678d921ea5056bcc30238d29eb05c55
+"@scure/base@npm:^1.1.1, @scure/base@npm:^1.1.3, @scure/base@npm:~1.1.6":
+  version: 1.1.7
+  resolution: "@scure/base@npm:1.1.7"
+  checksum: 10c0/2d06aaf39e6de4b9640eb40d2e5419176ebfe911597856dcbf3bc6209277ddb83f4b4b02cb1fd1208f819654268ec083da68111d3530bbde07bae913e2fc2e5d
   languageName: node
   linkType: hard
 
@@ -7859,13 +7846,6 @@ __metadata:
   version: 1.1.5
   resolution: "@scure/base@npm:1.1.5"
   checksum: 10c0/6eb07be0202fac74a57c79d0d00a45f6f7e57447010c1e3d90a4275d197829727b7abc54b248fc6f9bef9ae374f7be5ee9154dde5b5b73da773560bf17aa8504
-  languageName: node
-  linkType: hard
-
-"@scure/base@npm:~1.1.6":
-  version: 1.1.7
-  resolution: "@scure/base@npm:1.1.7"
-  checksum: 10c0/2d06aaf39e6de4b9640eb40d2e5419176ebfe911597856dcbf3bc6209277ddb83f4b4b02cb1fd1208f819654268ec083da68111d3530bbde07bae913e2fc2e5d
   languageName: node
   linkType: hard
 
@@ -19759,7 +19739,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-core-module@npm:^2.13.0, is-core-module@npm:^2.8.1":
+"is-core-module@npm:^2.13.0":
   version: 2.13.1
   resolution: "is-core-module@npm:2.13.1"
   dependencies:
@@ -19774,6 +19754,15 @@ __metadata:
   dependencies:
     hasown: "npm:^2.0.2"
   checksum: 10c0/ae8dbc82bd20426558bc8d20ce290ce301c1cfd6ae4446266d10cacff4c63c67ab16440ade1d72ced9ec41c569fbacbcee01e293782ce568527c4cdf35936e4c
+  languageName: node
+  linkType: hard
+
+"is-core-module@npm:^2.8.1":
+  version: 2.15.0
+  resolution: "is-core-module@npm:2.15.0"
+  dependencies:
+    hasown: "npm:^2.0.2"
+  checksum: 10c0/da161f3d9906f459486da65609b2f1a2dfdc60887c689c234d04e88a062cb7920fa5be5fb7ab08dc43b732929653c4135ef05bf77888ae2a9040ce76815eb7b1
   languageName: node
   linkType: hard
 
@@ -23209,7 +23198,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:8.4.38, postcss@npm:^8.4.38":
+"postcss@npm:8.4.38":
   version: 8.4.38
   resolution: "postcss@npm:8.4.38"
   dependencies:
@@ -23220,7 +23209,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.4.23":
+"postcss@npm:^8.4.23, postcss@npm:^8.4.38":
   version: 8.4.39
   resolution: "postcss@npm:8.4.39"
   dependencies:
@@ -24917,7 +24906,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:7.6.0, semver@npm:^7.5.4":
+"semver@npm:7.6.0":
   version: 7.6.0
   resolution: "semver@npm:7.6.0"
   dependencies:
@@ -24937,7 +24926,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.3.8, semver@npm:^7.6.0":
+"semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.3.8, semver@npm:^7.5.4, semver@npm:^7.6.0":
   version: 7.6.2
   resolution: "semver@npm:7.6.2"
   bin:
