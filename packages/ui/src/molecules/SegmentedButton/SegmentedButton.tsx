@@ -14,33 +14,33 @@ type ButtonSegmentProps = Omit<ClickableProps, 'value'> & {
   leadingIcon?: ReactNode
 }
 
-const ButtonSegment = (props: ButtonSegmentProps) => {
+const ButtonSegment = ({ value, leadingIcon, children, ...passProps }: ButtonSegmentProps) => {
   const theme = useTheme()
   return (
     <SegmentedButtonContext.Consumer>
       {({ value: selectedValue, onChange }) => (
         <Text.Body
           as={Clickable}
-          {...props}
+          {...passProps}
           css={[
             {
               position: 'relative',
               padding: '0.7em 0.85em',
             },
             // This is to prevent a bug with Chrome, specifically in the swap/transport component
-            selectedValue === props.value && {
+            selectedValue === value && {
               '*': {
                 color: `color-mix(in srgb, ${theme.color.onPrimary}, transparent 30%)`,
               },
             },
             // Should be doing this instead
-            // selectedValue === props.value && {
+            // selectedValue === value && {
             //   color: theme.color.onPrimary,
             // },
           ]}
-          onClick={() => onChange?.(props.value)}
+          onClick={() => onChange?.(value)}
         >
-          {selectedValue === props.value && (
+          {selectedValue === value && (
             <motion.div
               layoutId="highlight"
               css={{
@@ -52,12 +52,12 @@ const ButtonSegment = (props: ButtonSegmentProps) => {
             />
           )}
           <div css={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0.25em' }}>
-            {props.leadingIcon && (
+            {leadingIcon && (
               <div css={{ display: 'contents' }}>
-                <IconContext.Provider value={{ size: '1.125em' }}>{props.leadingIcon}</IconContext.Provider>
+                <IconContext.Provider value={{ size: '1.125em' }}>{leadingIcon}</IconContext.Provider>
               </div>
             )}
-            {props.children}
+            {children}
           </div>
         </Text.Body>
       )}

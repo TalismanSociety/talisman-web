@@ -3,7 +3,7 @@ import StakeTargetSelectorItem, {
   PoolSelectorItem,
   type StakeTargetSelectorItemProps,
 } from './StakeTargetSelectorItem'
-import { AlertDialog, Button, Text } from '@talismn/ui'
+import { AlertDialog, Button, Text, Select } from '@talismn/ui'
 import { ChevronLeft, ChevronRight } from '@talismn/web-icons'
 import { motion } from 'framer-motion'
 import React, { useState, type ReactElement, type ReactNode } from 'react'
@@ -16,6 +16,12 @@ export type StakeTargetSelectorDialogProps = {
   onRequestDismiss: () => unknown
   confirmButtonContent: ReactNode
   onConfirm: () => unknown
+  sortMethods?: {
+    [key: string]: (
+      a: ReactElement<StakeTargetSelectorItemProps>,
+      b: ReactElement<StakeTargetSelectorItemProps>
+    ) => number
+  }
   children: ReactElement<StakeTargetSelectorItemProps> | Array<ReactElement<StakeTargetSelectorItemProps>>
 }
 
@@ -24,8 +30,13 @@ const ITEMS_PER_PAGE = 9
 const StakeTargetSelectorDialog = Object.assign(
   (props: StakeTargetSelectorDialogProps) => {
     const items = React.Children.toArray(props.children) as Array<ReactElement<StakeTargetSelectorItemProps>>
+    const [sortMethod, setSortMethod] = useState(
+      (props.sortMethods ? Object.keys(props.sortMethods)[0] : undefined) ?? 'Default'
+    )
     const selectedItems = items.filter(item => item.props.selected)
-    const nonSelectedItems = items.filter(item => !item.props.selected)
+    const nonSelectedItems = items
+      .filter(item => !item.props.selected)
+      .sort((sortMethod === 'Default' ? undefined : props.sortMethods?.[sortMethod]) ?? (() => 0))
     const highlightedItems = items.filter(item => item.props.highlighted)
 
     const [page, setPage] = useState(0)
@@ -56,18 +67,34 @@ const StakeTargetSelectorDialog = Object.assign(
             >
               {selectedItems[0]}
             </div>
-            <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div
+              css={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginTop: '1.6rem',
+                marginBottom: '0.6rem',
+              }}
+            >
               <Text.Body as="h3" css={{ marginTop: '1.6rem', marginBottom: '0.6rem' }}>
                 {props.selectionLabel}
               </Text.Body>
-              <div css={{ display: 'flex' }}>
-                <Button variant="noop" onClick={() => setPage(page => page - 1)} hidden={!hasPreviousPage}>
-                  <ChevronLeft />
-                </Button>
-                <Button variant="noop" onClick={() => setPage(page => page + 1)} hidden={!hasNextPage}>
-                  <ChevronRight />
-                </Button>
-              </div>
+              {props.sortMethods ? (
+                <Select
+                  placeholder="Sort delegates"
+                  renderSelected={value => `Sort by: ${value}`}
+                  value={sortMethod}
+                  onChangeValue={setSortMethod}
+                  css={{ minWidth: '22rem' }}
+                >
+                  {Object.keys(props.sortMethods).length === 0 ? (
+                    <Select.Option headlineContent="Default" value="Default" />
+                  ) : null}
+                  {Object.keys(props.sortMethods).map(option => (
+                    <Select.Option key={option} headlineContent={option} value={option} />
+                  ))}
+                </Select>
+              ) : null}
             </div>
             <motion.div
               css={{
@@ -104,6 +131,20 @@ const StakeTargetSelectorDialog = Object.assign(
                     : []),
                 ])}
             </motion.div>
+            <div css={{ display: 'flex', justifyContent: 'end', marginTop: '0.6rem' }}>
+              <Button variant="noop" onClick={() => setPage(page => page - 1)} hidden={!hasPreviousPage}>
+                <div css={{ display: 'flex', alignItems: 'center', userSelect: 'none' }}>
+                  <ChevronLeft />
+                  <div>Previous Page</div>
+                </div>
+              </Button>
+              <Button variant="noop" onClick={() => setPage(page => page + 1)} hidden={!hasNextPage}>
+                <div css={{ display: 'flex', alignItems: 'center', userSelect: 'none' }}>
+                  <div>Next Page</div>
+                  <ChevronRight />
+                </div>
+              </Button>
+            </div>
           </div>
         }
         dismissButton={
