@@ -7,12 +7,13 @@ import {
   useSubstrateWalletConnect,
 } from '../../domains/extension'
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
+import { writeableEvmAccountsState } from '@/domains/accounts'
 import { ClassNames, useTheme } from '@emotion/react'
 import { useSignetSdk } from '@talismn/signet-apps-sdk'
-import { Chip, Hr, ListItem, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Surface, Text } from '@talismn/ui'
+import { Chip, Hr, ListItem, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Surface, Text, toast } from '@talismn/ui'
 import { Ethereum, Eye, Polkadot, Wallet } from '@talismn/web-icons'
 import { Suspense, useState, type ButtonHTMLAttributes, type DetailedHTMLProps } from 'react'
-import { atom, useRecoilState } from 'recoil'
+import { atom, useRecoilState, useRecoilValue } from 'recoil'
 import { useAccount as useEvmAccount, useDisconnect as useDisconnectEvm } from 'wagmi'
 
 const talismanInstalled = 'talismanEth' in globalThis
@@ -160,6 +161,7 @@ const EvmWalletConnections = () => {
   const { connector } = useEvmAccount()
   const { connectAsync } = useConnectEvm()
   const { disconnectAsync } = useDisconnectEvm()
+  const writeableEvmAccounts = useRecoilValue(writeableEvmAccountsState)
 
   return (
     <section>
@@ -174,10 +176,13 @@ const EvmWalletConnections = () => {
             key={x.uid}
             name={x.name}
             iconUrl={x.icon}
-            connected={x === connector}
+            connected={x.id === connector?.id && writeableEvmAccounts.length > 0}
             onConnectRequest={async () => {
               await disconnectAsync()
-              await connectAsync({ connector: x })
+              const res = await connectAsync({ connector: x })
+              if (res.accounts.length === 0) {
+                toast.error('Please enable ethereum account in your wallet.')
+              }
             }}
             onDisconnectRequest={async () => await disconnectAsync()}
           />
