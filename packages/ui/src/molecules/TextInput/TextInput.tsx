@@ -89,7 +89,7 @@ const TextInput = Object.assign(
             }}
           >
             {leadingIcon}
-            <div className="flex flex-col flex-1" css={{ width: props.width ?? '20rem' }}>
+            <div className="flex flex-col flex-1" css={{ width: props.width ?? '100%' }}>
               <input
                 ref={ref}
                 {...props}
@@ -103,13 +103,16 @@ const TextInput = Object.assign(
                   {
                     color: theme.color.onSurface,
                     flex: 1,
+                    width: props.width ?? '100%',
                     background: 'transparent',
                     border: 'none',
                     padding: 0,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
                     '&[type=number]': {
                       '::-webkit-outer-spin-button': { display: 'none' },
                       '::-webkit-inner-spin-button': { display: 'none' },
-                      '-moz-appearance': 'textfield',
+                      MozAppearance: 'textfield',
                     },
                     outline: 'none',
                   },

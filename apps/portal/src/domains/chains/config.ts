@@ -15,7 +15,13 @@ type ChainWithDappStaking = {
   priorityDapp: string | undefined
 }
 
-export type ChainConfig = BaseChain | (BaseChain & (ChainWithNominationPools | ChainWithDappStaking))
+type ChainWithSubtensorStaking = {
+  hasSubtensorStaking: true
+}
+
+export type ChainConfig =
+  | BaseChain
+  | (BaseChain & (ChainWithNominationPools | ChainWithDappStaking | ChainWithSubtensorStaking))
 
 export const chainConfigs: ChainConfig[] = [
   // Polkadot
@@ -64,6 +70,11 @@ export const chainConfigs: ChainConfig[] = [
     priorityPool: 2,
     talismanPools: [2],
     novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-avail',
+  },
+  // Bittensor
+  {
+    genesisHash: '0x2f0555cc76fc2840a25a6ea3b9637146806f1f44b090c175ffde2a7e5ab36c03',
+    hasSubtensorStaking: true,
   },
   // Westend
   {

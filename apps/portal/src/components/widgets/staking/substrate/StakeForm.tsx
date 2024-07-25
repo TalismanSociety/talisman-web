@@ -2,7 +2,6 @@ import { writeableSubstrateAccountsState, type Account } from '../../../../domai
 import {
   ChainProvider,
   assertChain,
-  useChainState as Chains_useChainState,
   nominationPoolsEnabledChainsState,
   useChainState as useChainRecoilState,
   useNativeTokenDecimalState,
@@ -37,7 +36,7 @@ import PoolClaimPermissionDialog, {
 import UnstakeDialog from './UnstakeDialog'
 import type { ApiPromise } from '@polkadot/api'
 import { type Decimal } from '@talismn/math'
-import { Text, CircularProgressIndicator, Select } from '@talismn/ui'
+import { CircularProgressIndicator, Select } from '@talismn/ui'
 import BN from 'bn.js'
 import {
   Suspense,
@@ -247,16 +246,12 @@ export const AssetSelect = <T extends ChainInfo>(props: {
 
 const EstimatedYield = memo(
   (props: { amount: Decimal }) => {
-    const chain = useRecoilValue(Chains_useChainState())
     const stakedReturn = useApr()
     const annualReturn = useMemo(
       () => new BN(props.amount.planck.toString()).muln(stakedReturn),
       [props.amount.planck, stakedReturn]
     )
     const parsedAnnualReturn = useTokenAmountFromPlanck(annualReturn)
-
-    if (chain.id === 'avail')
-      return <StakeFormComponent.EstimatedYield amount={<Text.Body>Coming Soon</Text.Body>} fiatAmount={null} />
 
     return (
       <StakeFormComponent.EstimatedYield

@@ -1,4 +1,4 @@
-import { ChainProvider, useChainState } from '../../../../domains/chains'
+import { ChainProvider } from '../../../../domains/chains'
 import { nominationPoolsEnabledChainsState, type ChainInfo } from '../../../../domains/chains/recoils'
 import { useEraEtaFormatter } from '../../../../domains/common/hooks'
 import { useApr } from '../../../../domains/staking/substrate/nominationPools'
@@ -7,19 +7,12 @@ import StakeForm from '../../../recipes/StakeForm/StakeForm'
 import ErrorBoundary from '../../ErrorBoundary'
 import { AssetSelect, ControlledStakeForm } from './StakeForm'
 import { CircularProgressIndicator } from '@talismn/ui'
-import { Text } from '@talismn/ui'
 import BN from 'bn.js'
 import { Suspense, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
-const Rewards = () => {
-  const chain = useRecoilValue(useChainState())
-  const apr = useApr()
-
-  if (chain.id === 'avail') return <Text.Body>Coming Soon</Text.Body>
-  return <>{apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</>
-}
+const Rewards = () => <>{useApr().toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</>
 
 const EraEta = () => {
   return <>{useEraEtaFormatter()(new BN(1))}</>

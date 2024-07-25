@@ -169,7 +169,7 @@ export const useSwap = () => {
 
   const swap = useAtomCallback(
     useCallback(
-      async (get, set, protocol: SupportedSwapProtocol) => {
+      async (get, set, protocol: SupportedSwapProtocol, allowReap = false) => {
         try {
           set(swappingAtom, true)
           const toAmount = await get(toAmountAtom)
@@ -181,6 +181,7 @@ export const useSwap = () => {
             substrateWallet,
             getSubstrateApi,
             toAmount,
+            allowReap,
           })
           //  TODO: instead of just getting "swapped: boolean"
           // we should handle adding swap to activity generically so that
