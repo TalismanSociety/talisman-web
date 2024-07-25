@@ -63,11 +63,6 @@ export const chainConfigs: ChainConfig[] = [
     talismanPools: [8],
     novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet---vara',
   },
-  // Bittensor
-  {
-    genesisHash: '0x2f0555cc76fc2840a25a6ea3b9637146806f1f44b090c175ffde2a7e5ab36c03',
-    hasSubtensorStaking: true,
-  },
   // Avail
   {
     genesisHash: '0xb91746b45e0346cc2f815a520b9c6cb4d5c0902af848db0a80f85932d2e8276a',
