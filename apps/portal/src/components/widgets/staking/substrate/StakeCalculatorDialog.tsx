@@ -4,7 +4,6 @@ import { useApr } from '../../../../domains/staking/substrate/nominationPools'
 import StakeCalculatorDialogComponent from '../../../recipes/StakeCalculatorDialog'
 import ErrorBoundary from '../../ErrorBoundary'
 import { AssetSelect } from './StakeForm'
-import { Text } from '@talismn/ui'
 import BN from 'bn.js'
 import { Suspense, useDeferredValue, useMemo, useState, useTransition } from 'react'
 import { useRecoilValue } from 'recoil'
@@ -12,7 +11,6 @@ import { useRecoilValue } from 'recoil'
 type StakeCalculatorDialogProps = { open?: boolean; onRequestDismiss: () => unknown }
 
 const EstimatedYield = (props: { amount: string }) => {
-  const chain = useRecoilValue(useChainState())
   const stakedReturn = useApr()
 
   const amount = useTokenAmount(props.amount)
@@ -29,16 +27,6 @@ const EstimatedYield = (props: { amount: string }) => {
   const weeklyYield = useTokenAmountFromPlanck(useMemo(() => bnPlanck?.divn(52), [bnPlanck]))
 
   const dailyYield = useTokenAmountFromPlanck(useMemo(() => bnPlanck?.divn(365), [bnPlanck]))
-
-  if (chain.id === 'avail')
-    return (
-      <StakeCalculatorDialogComponent.EstimatedYield
-        annualYield={<Text.Body>Coming Soon</Text.Body>}
-        monthlyYield={monthlyYield.decimalAmount?.toLocaleString()}
-        weeklyYield={weeklyYield.decimalAmount?.toLocaleString()}
-        dailyYield={dailyYield.decimalAmount?.toLocaleString()}
-      />
-    )
 
   return (
     <StakeCalculatorDialogComponent.EstimatedYield
