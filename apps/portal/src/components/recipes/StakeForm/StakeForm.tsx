@@ -35,7 +35,6 @@ const AmountInput = (props: AmountInputProps) => (
   <TextInput
     type="number"
     inputMode="decimal"
-    width="10rem"
     placeholder="0.00"
     value={props.amount}
     onChange={event => props.onChangeAmount(event.target.value)}

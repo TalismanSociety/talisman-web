@@ -9,7 +9,11 @@ export type StakeTargetSelectorItemProps = {
   logo?: string
   detailUrl?: string
   balance: string
+  balancePlanck?: bigint
   balanceDescription: string
+  estimatedReturn?: number | bigint
+  estimatedApr?: string
+  estimatedAprDescription?: string
   talismanRecommended: boolean
   talismanRecommendedDescription: string
   rating?: 0 | 1 | 2 | 3
@@ -93,29 +97,19 @@ const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => {
         css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.6rem' }}
       >
         <div css={{ display: 'flex', alignItems: 'center' }}>
-          {/* <Tooltip content="Talisman pool rating">
-              <div>
-                {Array(3)
-                  .fill(undefined)
-                  .map((_, index) => (
-                    <Star size="1.4rem" fill={index < props.rating ? 'currentColor' : 'none'} />
-                  ))}
-              </div>
-          </Tooltip> */}
-          <Tooltip content={props.countDescription}>
-            <div css={{ display: 'flex', alignItems: 'center' }}>
-              <Text.Body
-                alpha={alpha}
-                css={{
-                  // marginLeft: '0.8rem',
-                  marginRight: '0.4rem',
-                }}
-              >
-                {props.count}
-              </Text.Body>
-              <User size="1.4rem" />
-            </div>
-          </Tooltip>
+          <div css={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <Tooltip content={props.countDescription}>
+              {props.count ? (
+                <div css={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Text.Body alpha={alpha}>{props.count}</Text.Body>
+                  <User size="1.4rem" />
+                </div>
+              ) : null}
+            </Tooltip>
+            <Tooltip content={props.estimatedAprDescription}>
+              {props.estimatedApr ? <div>{props.estimatedApr}</div> : null}
+            </Tooltip>
+          </div>
         </div>
         {props.talismanRecommended && (
           <Tooltip content={props.talismanRecommendedDescription}>

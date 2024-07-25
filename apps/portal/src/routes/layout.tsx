@@ -14,6 +14,7 @@ import DappStakingStakeSideSheet from '../components/widgets/staking/dappStaking
 import LidoStakeSideSheet from '../components/widgets/staking/lido/StakeSideSheet'
 import SlpxStakeSideSheet from '../components/widgets/staking/slpx/StakeSideSheet'
 import NominationPoolsStakeSideSheet from '../components/widgets/staking/substrate/NominationPoolsStakeSideSheet'
+import { StakeSideSheet as SubtensorStakeSideSheet } from '../components/widgets/staking/subtensor/StakeSideSheet'
 import { lookupAccountAddressState, selectedAccountsState } from '../domains/accounts'
 import { currencyConfig, selectedCurrencyState } from '../domains/balances'
 import { useHasActiveWalletConnection } from '../domains/extension'
@@ -423,6 +424,7 @@ const Layout = () => {
             <Outlet />
             <NominationPoolsStakeSideSheet />
             <DappStakingStakeSideSheet />
+            <SubtensorStakeSideSheet />
             <SlpxStakeSideSheet />
             <LidoStakeSideSheet />
             <WalletConnectionSideSheet />

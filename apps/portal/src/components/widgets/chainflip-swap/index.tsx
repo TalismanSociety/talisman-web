@@ -26,7 +26,6 @@ import {
 } from './swaps.api'
 import { useFastBalance } from '@/hooks/useFastBalance'
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
-import { Decimal } from '@talismn/math'
 import { Button, Surface, TonalIconButton } from '@talismn/ui'
 import { Repeat } from '@talismn/web-icons'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
@@ -83,28 +82,10 @@ export const ChainFlipSwap: React.FC = () => {
     }, [fromAddress, fromAsset])
   )
 
-  const availableBalance = useMemo(() => {
-    if (!fromAddress || !fromToken || !fastBalance) return null
-
-    if (
-      fastBalance.balance === undefined ||
-      fromToken.symbol.toLowerCase() !== fastBalance?.balance?.options?.currency?.toLowerCase()
-    ) {
-      return {
-        balance: Decimal.fromPlanck(0n, fromToken.decimals, { currency: fromToken.symbol }),
-        loading: true,
-      }
-    }
-    return {
-      balance: fastBalance?.balance ?? Decimal.fromPlanck(0n, fromToken.decimals, { currency: fromToken.symbol }),
-      loading: fastBalance?.balance === undefined,
-    }
-  }, [fastBalance, fromAddress, fromToken])
-
   const insufficientBalance = useMemo(() => {
-    if (!availableBalance || availableBalance.loading) return undefined
-    return fromAmount.planck > availableBalance.balance.planck
-  }, [availableBalance, fromAmount.planck])
+    if (!fastBalance?.balance) return undefined
+    return fromAmount.planck > fastBalance.balance.transferrable.planck
+  }, [fastBalance, fromAmount.planck])
 
   useEffect(() => {
     if (fromAmountInput.trim() !== '' && fromAsset && toAsset) setShouldFocusDetails(true)
@@ -134,7 +115,11 @@ export const ChainFlipSwap: React.FC = () => {
       <div className="grid gap-[8px] w-full relative">
         <Surface className="bg-card p-[16px] rounded-[8px] w-full">
           <h4 className="text-[18px] font-semibold mb-[8px]">Select Asset</h4>
-          <FromAmount availableBalance={availableBalance} insufficientBalance={insufficientBalance} />
+          <FromAmount
+            availableBalance={fastBalance?.balance?.transferrable}
+            stayAliveBalance={fastBalance?.balance?.stayAlive}
+            insufficientBalance={insufficientBalance}
+          />
           <div className="relative w-full h-[12px]">
             <TonalIconButton
               className="border-3 !border-solid !border-gray-900 -top-[8px] absolute z-10 left-1/2 -translate-x-1/2 !bg-[#2D3121] !w-[48px] !h-[48px] !rounded-full"
@@ -147,9 +132,9 @@ export const ChainFlipSwap: React.FC = () => {
         </Surface>
         <FromAccount
           fastBalance={
-            fromAsset && availableBalance
+            fromAsset && fastBalance?.balance
               ? {
-                  amount: availableBalance.balance,
+                  amount: fastBalance?.balance.transferrable,
                   chainId: fromAsset.chainId,
                 }
               : undefined
@@ -183,8 +168,8 @@ export const ChainFlipSwap: React.FC = () => {
             loading={swapping}
             onClick={() => {
               setInfoTab('details')
-              if (quote.state === 'hasData' && quote.data) {
-                swap(quote.data.protocol)
+              if (quote.state === 'hasData' && quote.data && fastBalance?.balance) {
+                swap(quote.data.protocol, fromAmount.planck > fastBalance.balance.stayAlive.planck)
               }
             }}
           >
