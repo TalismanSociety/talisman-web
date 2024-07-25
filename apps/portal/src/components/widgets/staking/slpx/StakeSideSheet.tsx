@@ -1,12 +1,14 @@
-import { evmSignableAccountsState } from '../../../../domains/accounts'
+import { evmSignableAccountsState, writeableEvmAccountsState } from '../../../../domains/accounts'
 import { ChainProvider } from '../../../../domains/chains'
 import { slpxPairsState, useMintForm, type SlpxPair } from '../../../../domains/staking/slpx'
 import { Maybe } from '../../../../util/monads'
 import { SlpxAddStakeForm } from '../../../recipes/AddStakeDialog'
 import { useAccountSelector } from '../../AccountSelector'
+import { walletConnectionSideSheetOpenState } from '../../WalletConnectionSideSheet'
 import Apr from './Apr'
 import UnlockDuration from './UnlockDuration'
 import {
+  Button,
   CircularProgressIndicator,
   InfoCard,
   SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR,
@@ -17,7 +19,7 @@ import {
 import { Zap } from '@talismn/web-icons'
 import { Suspense, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 
 type AddStakeSideSheetProps = {
   slpxPair: SlpxPair
@@ -26,6 +28,8 @@ type AddStakeSideSheetProps = {
 
 const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
   const [[account], accountSelector] = useAccountSelector(useRecoilValue(evmSignableAccountsState), 0)
+  const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
+  const writeableEvmAccounts = useRecoilValue(writeableEvmAccountsState)
 
   const {
     input: { amount, localizedFiatAmount },
@@ -73,14 +77,22 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
       <Surface css={{ padding: '1.6rem', borderRadius: '1.6rem' }}>
         <SlpxAddStakeForm
           confirmState={
-            !ready
+            !ready || +amount === 0
               ? 'disabled'
               : mint.isPending || approve.isPending || approveTransaction.isLoading
               ? 'pending'
               : undefined
           }
           approvalNeeded={approvalNeeded}
-          accountSelector={accountSelector}
+          accountSelector={
+            writeableEvmAccounts.length > 0 ? (
+              accountSelector
+            ) : (
+              <Button className="!w-full !rounded-[12px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
+                Connect Ethereum Wallet
+              </Button>
+            )
+          }
           amount={amount}
           fiatAmount={localizedFiatAmount ?? '...'}
           newAmount={newAmount?.toLocaleString() ?? '...'}
