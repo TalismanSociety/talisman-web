@@ -8,7 +8,6 @@ import RedactableBalance from '../../RedactableBalance'
 import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import Apr from './Apr'
 import UnlockDuration from './UnlockDuration'
-import { githubChainLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import BigNumber from 'bignumber.js'
@@ -82,8 +81,7 @@ const StakeProviders = () => {
   return (
     <>
       {slpxPairs.map((slpxPair, index) => {
-        const logo = githubChainLogoUrl('moonbeam')
-        const { symbol } = slpxPair.nativeToken
+        const { symbol, logo } = slpxPair.nativeToken
         const provider = 'Bifrost SLPx'
         return (
           <ChainProvider

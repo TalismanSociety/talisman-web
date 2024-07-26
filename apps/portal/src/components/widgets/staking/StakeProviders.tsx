@@ -10,6 +10,9 @@ const StakeProviders = () => {
   return (
     <StakeProviderList>
       <ErrorBoundary orientation="horizontal">
+        <SlpxStakeProviders />
+      </ErrorBoundary>
+      <ErrorBoundary orientation="horizontal">
         <NominationPoolsStakeProviders />
       </ErrorBoundary>
       <ErrorBoundary orientation="horizontal">
@@ -20,9 +23,6 @@ const StakeProviders = () => {
       </ErrorBoundary>
       <ErrorBoundary orientation="horizontal">
         <LidoStakeProviders />
-      </ErrorBoundary>
-      <ErrorBoundary orientation="horizontal">
-        <SlpxStakeProviders />
       </ErrorBoundary>
     </StakeProviderList>
   )

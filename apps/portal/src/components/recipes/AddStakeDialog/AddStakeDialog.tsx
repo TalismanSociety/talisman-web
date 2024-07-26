@@ -15,6 +15,7 @@ export type AddStakeFormProps = {
   isError?: boolean
   inputSupportingText?: string
   onConfirm: () => unknown
+  approvalNeeded?: boolean
 }
 
 export type AddStakeDialogProps = AddStakeFormProps & {
@@ -65,7 +66,7 @@ const AddStakeForm = (props: AddStakeFormProps) => (
       loading={props.confirmState === 'pending'}
       css={{ width: '100%', marginTop: '4.6rem' }}
     >
-      Stake
+      {props.approvalNeeded ? 'Approve' : 'Stake'}
     </Button>
   </div>
 )

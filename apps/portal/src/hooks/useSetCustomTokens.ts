@@ -42,21 +42,34 @@ export const useSetCustomTokens = (customTokensConfig: CustomTokensConfig) => {
 
   useEffect(() => {
     if (customTokensConfigMemoised.length === 0) return
-    const customTokens = customTokensConfigMemoised.map(
-      ({ evmChainId, symbol, decimals, contractAddress, coingeckoId, logo }): CustomEvmErc20Token => ({
-        id: `${evmChainId}-evm-erc20-${contractAddress}`.toLowerCase(),
-        type: 'evm-erc20',
-        isTestnet: evmNetworks[evmChainId]?.isTestnet || false,
-        symbol,
-        decimals,
-        logo: logo ?? githubUnknownTokenLogoUrl,
-        coingeckoId,
-        contractAddress,
-        evmNetwork: { id: evmChainId },
-        isCustom: true,
-      })
-    )
+
+    const customTokens = parseCustomEvmErc20Tokens({ customTokensConfig: customTokensConfigMemoised, evmNetworks })
 
     chaindataProvider.setCustomTokens(customTokens)
   }, [chaindataProvider, customTokensConfigMemoised, evmNetworks])
+}
+
+export const parseCustomEvmErc20Tokens = ({
+  customTokensConfig,
+  evmNetworks,
+}: {
+  customTokensConfig: CustomTokensConfig
+  evmNetworks: ReturnType<typeof useEvmNetworks>
+}): CustomEvmErc20Token[] => {
+  const customTokens = customTokensConfig.map(
+    ({ evmChainId, symbol, decimals, contractAddress, coingeckoId, logo }): CustomEvmErc20Token => ({
+      id: `${evmChainId}-evm-erc20-${contractAddress}`.toLowerCase(),
+      type: 'evm-erc20',
+      isTestnet: evmNetworks[evmChainId]?.isTestnet || false,
+      symbol,
+      decimals,
+      logo: logo ?? githubUnknownTokenLogoUrl,
+      coingeckoId,
+      contractAddress,
+      evmNetwork: { id: evmChainId },
+      isCustom: true,
+    })
+  )
+
+  return customTokens
 }

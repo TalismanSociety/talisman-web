@@ -17,6 +17,9 @@ const AddStakeDialog = (props: AddStakeDialogProps) => {
     setAmount,
     newDestTokenAmount: newAmount,
     available,
+    approvalNeeded,
+    approve,
+    approveTransaction,
     mint,
     rate,
     ready,
@@ -31,7 +34,14 @@ const AddStakeDialog = (props: AddStakeDialogProps) => {
 
   return (
     <SlpxAddStakeDialog
-      confirmState={!ready ? 'disabled' : mint.isPending ? 'pending' : undefined}
+      confirmState={
+        !ready
+          ? 'disabled'
+          : mint.isPending || approve.isPending || approveTransaction.isLoading
+          ? 'pending'
+          : undefined
+      }
+      approvalNeeded={approvalNeeded}
       open
       onDismiss={props.onRequestDismiss}
       amount={amount}
@@ -45,7 +55,11 @@ const AddStakeDialog = (props: AddStakeDialogProps) => {
         rate => `1 ${props.slpxPair.nativeToken.symbol} = ${rate.toLocaleString()} ${props.slpxPair.vToken.symbol}`
       )}
       onConfirm={async () => {
-        await mint.writeContractAsync()
+        if (approvalNeeded) {
+          await approve.writeContractAsync()
+        } else {
+          await mint.writeContractAsync()
+        }
       }}
       onRequestMaxAmount={() => {
         if (available !== undefined) {

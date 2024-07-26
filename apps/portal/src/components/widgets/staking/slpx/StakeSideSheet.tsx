@@ -1,12 +1,14 @@
-import { evmSignableAccountsState } from '../../../../domains/accounts'
+import { evmSignableAccountsState, writeableEvmAccountsState } from '../../../../domains/accounts'
 import { ChainProvider } from '../../../../domains/chains'
 import { slpxPairsState, useMintForm, type SlpxPair } from '../../../../domains/staking/slpx'
 import { Maybe } from '../../../../util/monads'
 import { SlpxAddStakeForm } from '../../../recipes/AddStakeDialog'
 import { useAccountSelector } from '../../AccountSelector'
+import { walletConnectionSideSheetOpenState } from '../../WalletConnectionSideSheet'
 import Apr from './Apr'
 import UnlockDuration from './UnlockDuration'
 import {
+  Button,
   CircularProgressIndicator,
   InfoCard,
   SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR,
@@ -17,7 +19,7 @@ import {
 import { Zap } from '@talismn/web-icons'
 import { Suspense, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 
 type AddStakeSideSheetProps = {
   slpxPair: SlpxPair
@@ -26,12 +28,17 @@ type AddStakeSideSheetProps = {
 
 const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
   const [[account], accountSelector] = useAccountSelector(useRecoilValue(evmSignableAccountsState), 0)
+  const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
+  const writeableEvmAccounts = useRecoilValue(writeableEvmAccountsState)
 
   const {
     input: { amount, localizedFiatAmount },
     setAmount,
     newDestTokenAmount: newAmount,
     available,
+    approvalNeeded,
+    approve,
+    approveTransaction,
     mint,
     rate,
     ready,
@@ -69,8 +76,23 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
       </div>
       <Surface css={{ padding: '1.6rem', borderRadius: '1.6rem' }}>
         <SlpxAddStakeForm
-          confirmState={!ready ? 'disabled' : mint.isPending ? 'pending' : undefined}
-          accountSelector={accountSelector}
+          confirmState={
+            !ready || +amount === 0
+              ? 'disabled'
+              : mint.isPending || approve.isPending || approveTransaction.isLoading
+              ? 'pending'
+              : undefined
+          }
+          approvalNeeded={approvalNeeded}
+          accountSelector={
+            writeableEvmAccounts.length > 0 ? (
+              accountSelector
+            ) : (
+              <Button className="!w-full !rounded-[12px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
+                Connect Ethereum Wallet
+              </Button>
+            )
+          }
           amount={amount}
           fiatAmount={localizedFiatAmount ?? '...'}
           newAmount={newAmount?.toLocaleString() ?? '...'}
@@ -82,7 +104,11 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
             rate => `1 ${props.slpxPair.nativeToken.symbol} = ${rate.toLocaleString()} ${props.slpxPair.vToken.symbol}`
           )}
           onConfirm={async () => {
-            await mint.writeContractAsync()
+            if (approvalNeeded) {
+              await approve.writeContractAsync()
+            } else {
+              await mint.writeContractAsync()
+            }
           }}
           onRequestMaxAmount={() => {
             if (available !== undefined) {
@@ -94,16 +120,17 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
         />
       </Surface>
       <Text.Body as="p" css={{ marginTop: '4.8rem' }}>
-        Talisman has integrated the liquid staking protocol by Bifrost, which allows users to easily stake GLMR, without
-        the need for complex staking processes. After staking, users receive vGLMR (voucher GLMR), a liquid staking
-        token of GLMR, which has fully underlying GLMR reserve and is directly yield bearing from GLMR rewards.{' '}
+        {`Talisman has integrated the liquid staking protocol by Bifrost, which allows users to easily stake ${props.slpxPair.nativeToken.symbol}, without
+        the need for complex staking processes. After staking, users receive ${props.slpxPair.vToken.symbol} (voucher ${props.slpxPair.nativeToken.symbol}), a liquid staking
+          token of ${props.slpxPair.nativeToken.symbol}, which has fully underlying ${props.slpxPair.nativeToken.symbol} reserve and is directly yield bearing from ${props.slpxPair.nativeToken.symbol} rewards.
+
+        `}
         <Text.Noop.A
           target="blank"
           href="https://bifrost.finance/news/bifrost-announces-the-official-launch-of-the-first-parachain-derivatives-v-glmr-and-v-movr"
         >
           Learn more
         </Text.Noop.A>
-        .
       </Text.Body>
     </SideSheet>
   )

@@ -294,7 +294,14 @@ const StakePosition = Object.assign(
               </Text.BodySmall>
               <span
                 css={{
-                  [MEDIUM_CONTAINER_QUERY]: { display: 'flex', alignItems: 'center', gap: '1.2rem' },
+                  [MEDIUM_CONTAINER_QUERY]: {
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1.2rem',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis',
+                  },
                 }}
               >
                 <img
