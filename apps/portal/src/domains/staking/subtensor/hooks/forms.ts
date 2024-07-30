@@ -89,7 +89,11 @@ export const useAddStakeForm = (account: Account, stake: Stake, delegate: string
   ])
 
   const tx: SubmittableExtrinsic<any> = useMemo(
-    () => (api.tx as any)?.subtensorModule?.addStake?.(delegate, amount.decimalAmount?.planck ?? 0n),
+    () =>
+      api.tx.utility.batchAll([
+        (api.tx as any)?.subtensorModule?.addStake?.(delegate, amount.decimalAmount?.planck ?? 0n),
+        api.tx.system.remarkWithEvent(`talisman-bittensor`),
+      ]),
     [api.tx, delegate, amount.decimalAmount?.planck]
   )
   const extrinsic = useExtrinsic(tx)
