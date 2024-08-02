@@ -52,8 +52,8 @@ export const createUniqueNetworkNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'
           id: `${type}-${chain}-${nft.collection_id}-${nft.token_id}`,
           name: nft.token_name ?? undefined,
           description: nft.collection?.description ?? undefined,
-          media: { url: nft.image.fullUrl },
-          thumbnail: nft.image.fullUrl,
+          media: { url: typeof nft.image === 'string' ? nft.image : nft.image.fullUrl },
+          thumbnail: typeof nft.image === 'string' ? nft.image : nft.image.fullUrl,
           serialNumber: nft.token_id,
           properties: undefined,
           externalLinks: [
