@@ -16,7 +16,7 @@ const subscribeNfts = (address: string, options: { batchSize: number; acalaRpc: 
   new Observable<Nft | { error: unknown }>(observer => {
     const promises = (
       address.startsWith('0x')
-        ? [createEvmNftAsyncGenerator]
+        ? [createEvmNftAsyncGenerator, createUniqueNetworkNftAsyncGenerator]
         : [
             createAcalaNftAsyncGenerator({ rpc: options.acalaRpc }),
             createBitCountryNftAsyncGenerator({ rpc: options.bitcountryRpc }),
