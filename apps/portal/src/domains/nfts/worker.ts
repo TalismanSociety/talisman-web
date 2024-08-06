@@ -3,7 +3,6 @@ import {
   createBitCountryNftAsyncGenerator,
   createArtZeroNftAsyncGenerator,
   createEvmNftAsyncGenerator,
-  createRmrk2NftAsyncGenerator,
   createSubstrateNftKusamaAssetHubNftAsyncGenerator,
   createSubstrateNftPolkadotAssetHubNftAsyncGenerator,
   createUniqueNetworkNftAsyncGenerator,
@@ -20,7 +19,6 @@ const subscribeNfts = (address: string, options: { batchSize: number; acalaRpc: 
         : [
             createAcalaNftAsyncGenerator({ rpc: options.acalaRpc }),
             createBitCountryNftAsyncGenerator({ rpc: options.bitcountryRpc }),
-            createRmrk2NftAsyncGenerator,
             createSubstrateNftKusamaAssetHubNftAsyncGenerator,
             createSubstrateNftPolkadotAssetHubNftAsyncGenerator,
             createUniqueNetworkNftAsyncGenerator,
