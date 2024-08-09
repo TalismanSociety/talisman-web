@@ -44,6 +44,7 @@ export const ChainflipDetails: React.FC<{ data: QuoteResponse; gas: Decimal | nu
 
   const toQuote = useMemo(() => {
     if (toAmount.state !== 'hasData' || !fromAmount || !toAmount.data) return undefined
+    console.log(toAmount.data.toLocaleString(), (toAmount.data?.toNumber() ?? 0) / (fromAmount.toNumber() ?? 1))
     return toAmount.data.mapNumber(() => (toAmount.data?.toNumber() ?? 0) / (fromAmount.toNumber() ?? 1))
   }, [fromAmount, toAmount])
 
@@ -59,7 +60,7 @@ export const ChainflipDetails: React.FC<{ data: QuoteResponse; gas: Decimal | nu
 
         // get rate and compute fee in fiat
         const rate = rates[swappableAsset.id]?.[currency] ?? 0
-        const amount = Decimal.fromPlanck(fee.amount, swappableAsset.decimals)
+        const amount = Decimal.fromPlanck(fee.amount, chainflipAsset.decimals)
         return { name: fee.type.toLowerCase(), rate, amount, fiatAmount: rate * +amount.toString() }
       })
       .filter(fee => fee !== null)

@@ -3,7 +3,7 @@ import {
   fromAssetAtom,
   getTokenIdForSwappableAsset,
   toAssetAtom,
-  type CommonSwappableAssetType,
+  type SwappableAssetBaseType,
   type BaseQuote,
   type SupportedSwapProtocol,
   type SwapModule,
@@ -22,6 +22,7 @@ import {
   type AssetData,
   type ChainData,
   type SwapStatusResponse,
+  Asset,
 } from '@chainflip/sdk/swap'
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { Decimal } from '@talismn/math'
@@ -49,23 +50,37 @@ const CHAINFLIP_ID_TO_CHAIN_MAP: Record<string, Chain> = {
   unsupported: 'Bitcoin',
 }
 
+type ChainflipAssetContext = {
+  chain: Chain
+  asset: Asset
+}
+
 /**
  * Given an asset and chain from chainflip, convert it to a unified swappable asset type
  */
-export const chainflipAssetToSwappableAsset = (asset: AssetData, chain: ChainData): CommonSwappableAssetType | null => {
+export const chainflipAssetToSwappableAsset = (
+  asset: AssetData,
+  chain: ChainData
+): SwappableAssetBaseType<{ chainflip: ChainflipAssetContext }> | null => {
   const chainId = chain.evmChainId?.toString() ?? CHAINFLIP_CHAIN_TO_ID_MAP[chain.chain] ?? 'unsupported'
   if (chainId === 'unsupported') return null
   return {
     id: getTokenIdForSwappableAsset(chain.chain === 'Polkadot' ? 'substrate' : 'evm', chainId, asset.contractAddress),
     name: asset.name,
     symbol: asset.symbol,
-    decimals: asset.decimals,
     chainId,
     contractAddress: asset.contractAddress,
+    networkType: chain.chain === 'Polkadot' ? 'substrate' : 'evm',
+    context: {
+      chainflip: {
+        chain: chain.chain,
+        asset: asset.asset,
+      },
+    },
   }
 }
 const swappableAssetToChainflipAsset = (
-  swappableAsset: CommonSwappableAssetType,
+  swappableAsset: SwappableAssetBaseType,
   assets: AssetData[]
 ): AssetData | undefined => {
   const chain = CHAINFLIP_ID_TO_CHAIN_MAP[swappableAsset.chainId.toString()]
@@ -114,10 +129,10 @@ export const chainflipAssetsAtom = atom(async get =>
 )
 export const chainflipChainsAtom = atom(async get => await get(swapSdkAtom).getChains())
 
-const tokensSelector = atom(async (get): Promise<CommonSwappableAssetType[]> => {
+const tokensSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {
   const assets = await get(chainflipAssetsAtom)
   const chains = await get(chainflipChainsAtom)
-  const tokens: CommonSwappableAssetType[] = []
+  const tokens: SwappableAssetBaseType[] = []
 
   for (const asset of assets) {
     const chain = chains.find(chain => chain.chain === asset.chain)
@@ -132,6 +147,16 @@ const tokensSelector = atom(async (get): Promise<CommonSwappableAssetType[]> => 
     if (b.symbol === 'FLIP') return -1
     return 0
   })
+})
+
+const fromAssetsSelector = atom(get => get(tokensSelector))
+
+const toAssetsSelector = atom(async get => {
+  const fromAsset = get(fromAssetAtom)
+  const tokens = await get(tokensSelector)
+  if (!fromAsset) return tokens
+  if (fromAsset.chainId === 'polkadot') return tokens.filter(token => token.chainId !== 'polkadot')
+  return tokens.filter(token => token.chainId === 'polkadot')
 })
 
 const quote: QuoteFunction = async (get): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {
@@ -155,11 +180,12 @@ const quote: QuoteFunction = async (get): Promise<(BaseQuote & { data?: QuoteRes
   // asset not supported
   if (!chainflipFromAsset || !chainflipToAsset) return null
 
-  const minFromAmount = Decimal.fromPlanck(chainflipFromAsset.minimumSwapAmount, fromAsset.decimals)
+  const minFromAmount = Decimal.fromPlanck(chainflipFromAsset.minimumSwapAmount, chainflipFromAsset.decimals)
   if (fromAmount.planck < minFromAmount.planck)
     return {
       protocol: PROTOCOL,
       inputAmountBN: fromAmount.planck,
+      outputAmountBN: 0n,
       error: `Minimum input amount: ${minFromAmount.toLocaleString()} ${fromAsset.symbol}`,
       fees: null,
     }
@@ -196,6 +222,7 @@ const quote: QuoteFunction = async (get): Promise<(BaseQuote & { data?: QuoteRes
     return {
       protocol: PROTOCOL,
       inputAmountBN: fromAmount.planck,
+      outputAmountBN: 0n,
       error: errorMessage,
       fees: null,
     }
@@ -364,10 +391,12 @@ const getEstimateGasTx: GetEstimateGasTxFunction = async (get, { getSubstrateApi
 
 export const chainflipSwapModule: SwapModule = {
   protocol: PROTOCOL,
-  tokensSelector,
+  fromAssetsSelector,
+  toAssetsSelector,
   getEstimateGasTx,
   quote,
   swap,
+  decentralisationScore: 2,
 }
 
 // helpers

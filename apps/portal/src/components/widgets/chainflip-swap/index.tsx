@@ -1,31 +1,29 @@
 import { wagmiAccountsState, writeableSubstrateAccountsState } from '../../../domains/accounts'
 import { walletConnectionSideSheetOpenState } from '../WalletConnectionSideSheet'
 import { FromAccount } from './FromAccount'
-import { FromAmount } from './FromAmount'
 import { ToAccount } from './ToAccount'
-import { ToAmount } from './ToAmount'
+import { TokenAmountInput } from './TokenAmountInput'
 import { shouldFocusDetailsAtom, SidePanel, swapInfoTabAtom } from './side-panel'
 import {
   fromAddressAtom,
   fromAmountAtom,
-  fromAmountInputAtom,
   fromAssetAtom,
+  fromEvmAddressAtom,
+  fromSubstrateAddressAtom,
   swapQuoteRefresherAtom,
   toAddressAtom,
   toAssetAtom,
 } from './swap-modules/common.swap-module'
 import {
+  fromAssetsAtom,
   swapQuoteAtom,
   toAmountAtom,
-  useAccountsController,
-  useAssetToken,
-  useLoadTokens,
+  toAssetsAtom,
   useReverse,
   useSwap,
   useSyncPreviousChainflipSwaps,
 } from './swaps.api'
-import { useFastBalance } from '@/hooks/useFastBalance'
-import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
+import { useFastBalance, UseFastBalanceProps } from '@/hooks/useFastBalance'
 import { Button, Surface, TonalIconButton } from '@talismn/ui'
 import { Repeat } from '@talismn/web-icons'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
@@ -33,54 +31,79 @@ import { loadable } from 'jotai/utils'
 import { useEffect, useMemo } from 'react'
 import type React from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
-import { isAddress } from 'viem'
 
 export const ChainFlipSwap: React.FC = () => {
-  useLoadTokens()
   useSyncPreviousChainflipSwaps()
   const quote = useAtomValue(swapQuoteAtom)
   const setQuoteRefresher = useSetAtom(swapQuoteRefresherAtom)
   const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
-  const accounts = useRecoilValue(writeableSubstrateAccountsState)
+  const substrateAccounts = useRecoilValue(writeableSubstrateAccountsState)
   const ethAccount = useRecoilValue(wagmiAccountsState)
 
   const setInfoTab = useSetAtom(swapInfoTabAtom)
   const [shouldFocusDetails, setShouldFocusDetails] = useAtom(shouldFocusDetailsAtom)
 
   const fromAddress = useAtomValue(fromAddressAtom)
-  const fromAmountInput = useAtomValue(fromAmountInputAtom)
-  const fromAmount = useAtomValue(fromAmountAtom)
-  const fromAsset = useAtomValue(fromAssetAtom)
-  const fromToken = useAssetToken(fromAssetAtom)
+  const [fromAmount, setFromAmount] = useAtom(fromAmountAtom)
+  const [fromEvmAddress, setFromEvmAddress] = useAtom(fromEvmAddressAtom)
+  const [fromSubstrateAddress, setFromSubstrateAddress] = useAtom(fromSubstrateAddressAtom)
+  const fromEvmAccount = useMemo(
+    () => ethAccount.find(a => a.address.toLowerCase() === fromEvmAddress?.toLowerCase()),
+    [ethAccount, fromEvmAddress]
+  )
+  const fromSubstrateAccount = useMemo(
+    () => substrateAccounts.find(a => a.address.toLowerCase() === fromSubstrateAddress?.toLowerCase()),
+    [fromSubstrateAddress, substrateAccounts]
+  )
+  const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
+  const [toAsset, setToAsset] = useAtom(toAssetAtom)
+
+  useEffect(() => {
+    if (!fromEvmAccount && ethAccount.length > 0) setFromEvmAddress((ethAccount[0]?.address as `0x${string}`) ?? null)
+    if (!fromSubstrateAccount && substrateAccounts.length > 0)
+      setFromSubstrateAddress(substrateAccounts[0]?.address ?? null)
+  }, [
+    ethAccount,
+    fromAsset,
+    fromEvmAccount,
+    fromSubstrateAccount,
+    setFromEvmAddress,
+    setFromSubstrateAddress,
+    substrateAccounts,
+  ])
 
   const toAddress = useAtomValue(toAddressAtom)
   const toAmount = useAtomValue(loadable(toAmountAtom))
-  const toAsset = useAtomValue(toAssetAtom)
-  useAccountsController()
+  const fromAssets = useAtomValue(loadable(fromAssetsAtom))
+  const toAssets = useAtomValue(loadable(toAssetsAtom))
 
   const { swap, swapping } = useSwap()
   const reverse = useReverse()
 
-  const fastBalance = useFastBalance(
-    useMemo(() => {
-      if (!fromAsset || !fromAddress) return undefined
-      if (fromAsset.chainId === 'polkadot' && !isAddress(fromAddress) && isSubstrateAddress(fromAddress)) {
-        return {
-          type: 'substrate',
-          chainId: fromAsset.chainId,
-          address: fromAddress as string,
-        }
-      }
-      if (isAddress(fromAddress))
-        return {
-          type: 'evm',
-          networkId: +fromAsset.chainId,
-          address: fromAddress as `0x${string}`,
-          tokenAddress: fromAsset.contractAddress as `0x${string}` | undefined,
-        }
-      return undefined
-    }, [fromAddress, fromAsset])
+  const balanceProps: UseFastBalanceProps | undefined = useMemo(
+    () =>
+      fromAsset
+        ? fromAsset.networkType === 'evm'
+          ? fromEvmAddress
+            ? {
+                type: 'evm',
+                address: fromEvmAddress,
+                networkId: +fromAsset.chainId,
+                tokenAddress: fromAsset.contractAddress as `0x${string}`,
+              }
+            : undefined
+          : fromSubstrateAddress
+          ? {
+              type: 'substrate',
+              chainId: fromAsset.chainId.toString(),
+              address: fromSubstrateAddress,
+              assetHubAssetId: fromAsset.assetHubAssetId,
+            }
+          : undefined
+        : undefined,
+    [fromAsset, fromEvmAddress, fromSubstrateAddress]
   )
+  const fastBalance = useFastBalance(balanceProps)
 
   const insufficientBalance = useMemo(() => {
     if (!fastBalance?.balance) return undefined
@@ -88,8 +111,8 @@ export const ChainFlipSwap: React.FC = () => {
   }, [fastBalance, fromAmount.planck])
 
   useEffect(() => {
-    if (fromAmountInput.trim() !== '' && fromAsset && toAsset) setShouldFocusDetails(true)
-  }, [fromAmountInput, fromAsset, toAsset, setShouldFocusDetails])
+    if (fromAmount.planck > 0n && fromAsset && toAsset) setShouldFocusDetails(true)
+  }, [fromAsset, toAsset, setShouldFocusDetails, fromAmount.planck])
 
   // refresh quote every 15 seconds
   useEffect(() => {
@@ -102,7 +125,7 @@ export const ChainFlipSwap: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapping])
 
-  // // bring user back to details page to wait for quote
+  // bring user back to details page to wait for quote
   useEffect(() => {
     if (shouldFocusDetails && !swapping) {
       setShouldFocusDetails(false)
@@ -115,10 +138,17 @@ export const ChainFlipSwap: React.FC = () => {
       <div className="grid gap-[8px] w-full relative">
         <Surface className="bg-card p-[16px] rounded-[8px] w-full">
           <h4 className="text-[18px] font-semibold mb-[8px]">Select Asset</h4>
-          <FromAmount
+          <TokenAmountInput
+            assets={fromAssets.state === 'hasData' ? fromAssets.data : undefined}
+            amount={fromAmount}
+            onChangeAmount={setFromAmount}
+            leadingLabel="You're paying"
+            evmAddress={fromEvmAccount?.address as `0x${string}`}
+            substrateAddress={fromSubstrateAccount?.address}
+            selectedAsset={fromAsset}
             availableBalance={fastBalance?.balance?.transferrable}
             stayAliveBalance={fastBalance?.balance?.stayAlive}
-            insufficientBalance={insufficientBalance}
+            onChangeAsset={setFromAsset}
           />
           <div className="relative w-full h-[12px]">
             <TonalIconButton
@@ -128,7 +158,13 @@ export const ChainFlipSwap: React.FC = () => {
               <Repeat />
             </TonalIconButton>
           </div>
-          <ToAmount />
+          <TokenAmountInput
+            assets={toAssets.state === 'hasData' ? toAssets.data : undefined}
+            leadingLabel="You're receiving"
+            selectedAsset={toAsset}
+            onChangeAsset={setToAsset}
+            disabled
+          />
         </Surface>
         <FromAccount
           fastBalance={
@@ -141,15 +177,15 @@ export const ChainFlipSwap: React.FC = () => {
           }
         />
         <ToAccount />
-        {accounts.length === 0 && ethAccount.length === 0 ? (
+        {substrateAccounts.length === 0 && ethAccount.length === 0 ? (
           <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
             Connect Wallet
           </Button>
-        ) : fromToken?.isEvm && ethAccount.length === 0 ? (
+        ) : fromAsset?.networkType === 'evm' && ethAccount.length === 0 ? (
           <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
             Connect Ethereum Wallet
           </Button>
-        ) : fromToken && !fromToken.isEvm && accounts.length === 0 ? (
+        ) : fromAsset?.networkType === 'substrate' && substrateAccounts.length === 0 ? (
           <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
             Connect Polkadot Wallet
           </Button>

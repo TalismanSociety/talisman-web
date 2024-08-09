@@ -1,26 +1,23 @@
+import { knownEvmNetworksAtom } from './helpers'
 import { swapInfoTabAtom } from './side-panel'
 import { chainflipSwapModule, type ChainflipSwapActivityData } from './swap-modules/chainflip.swap-module'
 import {
-  fromAddressAtom,
   fromAmountAtom,
-  fromAmountInputAtom,
   fromAssetAtom,
   swappingAtom,
   swapQuoteRefresherAtom,
   swapsAtom,
-  toAddressAtom,
   toAssetAtom,
   type BaseQuote,
-  type CommonSwappableAssetType,
+  type SwappableAssetBaseType,
   type EstimateGasTx,
   type SupportedSwapProtocol,
   type SwapActivity,
+  SwappableAssetWithDecimals,
 } from './swap-modules/common.swap-module'
-import { evmSignableAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts'
-import { getCoinGeckoErc20Coin } from '@/domains/balances/coingecko'
+import { simpleswapSwapModule } from './swap-modules/simpleswap-swap-module'
 import { substrateApiState } from '@/domains/common'
 import { connectedSubstrateWalletState } from '@/domains/extension'
-import { useSetCustomTokens, type CustomTokensConfig } from '@/hooks/useSetCustomTokens'
 import { useSubstrateEstimateGas } from '@/hooks/useSubstrateEstimateGas'
 import { tokensByIdAtom, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
@@ -29,10 +26,9 @@ import { atom, useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jot
 import { loadable, useAtomCallback } from 'jotai/utils'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
-import { isAddress } from 'viem'
 import { deepEqual, useEstimateGas, useGasPrice, useWalletClient } from 'wagmi'
 
-const swapModules = [chainflipSwapModule]
+const swapModules = [chainflipSwapModule, simpleswapSwapModule]
 
 /**
  * Unify all tokens we support for swapping on the UI
@@ -40,13 +36,103 @@ const swapModules = [chainflipSwapModule]
  * Users should later be able to paste any arbitrary address to swap any token
  * This will happen when we support other protocols like uniswap, sushiswap, etc
  *  */
-export const swappableTokensAtom = atom(async get => {
-  const allTokensSelector = swapModules.map(module => module.tokensSelector)
+export const fromAssetsAtom = atom(async get => {
+  const allTokensSelector = swapModules.map(module => module.fromAssetsSelector)
+  const knownEvmTokens = await get(knownEvmNetworksAtom)
+  const otherKnownTokens = await get(tokensByIdAtom)
   const tokens = (await Promise.all(allTokensSelector.map(get))).flat()
+  const tokensByChains = tokens.reduce((acc, cur) => {
+    const tokens = acc[cur.chainId.toString()] ?? {}
+    const tokenDetails = knownEvmTokens[cur.chainId.toString()]?.tokens[cur.id] ?? otherKnownTokens[cur.id]
+    if (!tokenDetails) return acc
+    tokens[cur.id] = {
+      ...cur,
+      symbol: tokenDetails.symbol,
+      decimals: tokenDetails.decimals,
+      context: {
+        ...tokens[cur.id]?.context,
+        ...cur.context,
+      },
+    }
+    acc[cur.chainId.toString()] = tokens
+    return acc
+  }, {} as Record<string, Record<string, SwappableAssetWithDecimals>>)
 
-  // make sure each token is only displayed in the list once
-  return tokens.filter((token, index) => tokens.findIndex(t => t.id === token.id) === index)
+  // TODO: Fetch balances here for each chain if from account is selected
+  const allTokens = Object.values(tokensByChains)
+    .map(tokens => Object.values(tokens))
+    .flat()
+
+  return allTokens
 })
+
+export const toAssetsAtom = atom(async get => {
+  const fromAsset = get(fromAssetAtom)
+
+  // only select from the protocols that fromAsset support
+  const allTokensSelector = swapModules
+    .filter(m => (fromAsset ? fromAsset.context[m.protocol] : true))
+    .map(module => module.toAssetsSelector)
+
+  const knownEvmTokens = await get(knownEvmNetworksAtom)
+  const otherKnownTokens = await get(tokensByIdAtom)
+  const tokens = (await Promise.all(allTokensSelector.map(get))).flat()
+  const tokensByChains = tokens.reduce((acc, cur) => {
+    const tokens = acc[cur.chainId.toString()] ?? {}
+    const tokenDetails = knownEvmTokens[cur.chainId.toString()]?.tokens[cur.id] ?? otherKnownTokens[cur.id]
+    if (!tokenDetails) return acc
+    tokens[cur.id] = {
+      ...cur,
+      symbol: tokenDetails.symbol,
+      decimals: tokenDetails.decimals,
+    }
+    acc[cur.chainId.toString()] = tokens
+    return acc
+  }, {} as Record<string, Record<string, SwappableAssetWithDecimals>>)
+
+  // TODO: Fetch balances here for each chain if from account is selected
+  const allTokens = Object.values(tokensByChains)
+    .map(tokens => Object.values(tokens))
+    .flat()
+  return allTokens
+})
+
+export const swapQuotesAtom = loadable(
+  atom(async (get): Promise<(BaseQuote & { decentralisationScore: number })[] | null> => {
+    const fromAsset = get(fromAssetAtom)
+    const allQuoters = swapModules
+      .filter(m => (fromAsset ? fromAsset.context[m.protocol] : true))
+      .map(module => module.quote)
+    const toAsset = get(toAssetAtom)
+    const fromAmount = get(fromAmountAtom)
+
+    // force refresh
+    get(swapQuoteRefresherAtom)
+
+    // nothing to quote
+    if (!fromAsset || !toAsset || !fromAmount.planck) return null
+
+    const allQuotes = await Promise.all(allQuoters.map(quoter => quoter(get)))
+    return allQuotes
+      .filter(a => !!a)
+      .map(a => ({
+        ...a,
+        decentralisationScore: swapModules.find(m => m.protocol === a.protocol)?.decentralisationScore ?? 0,
+      }))
+    // const bestQuote = allQuotes.reduce((best, next): BaseQuote | null => {
+    //   if (!best) return next // return whatever next quote is if best is null
+    //   if (!next) return best // return best if nothing to compare in next
+    //   if (best.outputAmountBN === undefined) return next ?? best
+    //   if (next.outputAmountBN === undefined) return best
+    //   return next.outputAmountBN > best.outputAmountBN ? next : best
+    // }, null)
+
+    // if (!bestQuote || bestQuote.error)
+    //   throw new Error(bestQuote?.error ? bestQuote.error : 'No available path. Please try another asset ')
+
+    // return bestQuote
+  })
+)
 
 /**
  * Get the best quote across all swap modules
@@ -54,8 +140,10 @@ export const swappableTokensAtom = atom(async get => {
  */
 export const swapQuoteAtom = loadable(
   atom(async (get): Promise<BaseQuote | null> => {
-    const allQuoters = swapModules.map(module => module.quote)
     const fromAsset = get(fromAssetAtom)
+    const allQuoters = swapModules
+      .filter(m => (fromAsset ? fromAsset.context[m.protocol] : true))
+      .map(module => module.quote)
     const toAsset = get(toAssetAtom)
     const fromAmount = get(fromAmountAtom)
 
@@ -87,7 +175,7 @@ export const toAmountAtom = atom(async get => {
   const quote = _quote.data
   const toAsset = get(toAssetAtom)
   if (!quote || quote.outputAmountBN === undefined || !toAsset) return null
-  return Decimal.fromPlanck(quote.outputAmountBN, toAsset.decimals, { currency: toAsset.symbol })
+  return Decimal.fromPlanck(quote.outputAmountBN, quote.decimals, { currency: toAsset.symbol })
 })
 
 export const useEstimateSwapGas = () => {
@@ -190,7 +278,7 @@ export const useSwap = () => {
 
           set(swapsAtom, [..._swaps, { ...swapped, timestamp: now }])
           set(swapInfoTabAtom, 'activities')
-          set(fromAmountInputAtom, '')
+          set(fromAmountAtom, Decimal.fromPlanck(0n, 1))
         } catch (e) {
           console.error(e)
           const error = e as any
@@ -212,18 +300,18 @@ export const useReverse = () => {
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
   const [toAsset, setToAsset] = useAtom(toAssetAtom)
   const toAmount = useAtomValue(loadable(toAmountAtom))
-  const setFromAmountInput = useSetAtom(fromAmountInputAtom)
+  const setFromAmount = useSetAtom(fromAmountAtom)
 
   return useCallback(() => {
     if (toAmount.state === 'hasData' && toAmount.data) {
-      setFromAmountInput(Decimal.fromPlanck(toAmount.data.planck, toAmount.data.decimals).toString())
+      setFromAmount(toAmount.data)
     }
     setFromAsset(toAsset)
     setToAsset(fromAsset)
-  }, [fromAsset, setFromAmountInput, setFromAsset, setToAsset, toAmount, toAsset])
+  }, [fromAsset, setFromAmount, setFromAsset, setToAsset, toAmount, toAsset])
 }
 
-export const useAssetToken = (assetAtom: PrimitiveAtom<CommonSwappableAssetType | null>) => {
+export const useAssetToken = (assetAtom: PrimitiveAtom<SwappableAssetBaseType | null>) => {
   const asset = useAtomValue(assetAtom)
   const tokens = useTokens()
 
@@ -236,49 +324,6 @@ export const useAssetToken = (assetAtom: PrimitiveAtom<CommonSwappableAssetType 
       isEvm: token.type === 'evm-erc20' || token.type === 'evm-native' || token.type === 'evm-uniswapv2',
     }
   }, [asset, tokens])
-}
-
-export const missingTokensAtom = atom(async (get): Promise<CustomTokensConfig> => {
-  const allAssets = await get(swappableTokensAtom)
-  const tokens = await get(tokensByIdAtom)
-
-  // only the following type of assets can be added as custom token
-  // - evm chains
-  // - erc20 tokens
-  const evmAssetsMissingInTokens = allAssets.filter(
-    a => !tokens[a.id] && a.id.split('-')[1] === 'evm' && !!a.contractAddress
-  )
-
-  if (evmAssetsMissingInTokens.length === 0) return []
-
-  // get coingecko data
-  const coingeckoData = await Promise.allSettled(
-    evmAssetsMissingInTokens.map(async a => await getCoinGeckoErc20Coin(a.chainId.toString(), a.contractAddress!))
-  )
-
-  return evmAssetsMissingInTokens.map((a, index) => {
-    const coingeckoRes = coingeckoData[index]
-    const coingecko = coingeckoRes?.status === 'fulfilled' ? coingeckoRes.value : null
-    return {
-      contractAddress: a.contractAddress!,
-      decimals: a.decimals,
-      evmChainId: a.chainId.toString(),
-      symbol: a.symbol,
-      coingeckoId: coingecko?.id,
-      logo: coingecko?.image.large,
-    }
-  })
-})
-
-export const useLoadTokens = () => {
-  const missingTokens = useAtomValue(loadable(missingTokensAtom))
-
-  const tokensToSet = useMemo((): CustomTokensConfig => {
-    if (missingTokens.state !== 'hasData') return []
-    return missingTokens.data
-  }, [missingTokens])
-
-  useSetCustomTokens(tokensToSet)
 }
 
 export const useSyncPreviousChainflipSwaps = () => {
@@ -315,57 +360,3 @@ export const useSyncPreviousChainflipSwaps = () => {
 }
 
 export const selectCustomAddressAtom = atom(false)
-
-export const useAccountsController = () => {
-  const [fromAddress, setFromAddress] = useAtom(fromAddressAtom)
-  const [toAddress, setToAddress] = useAtom(toAddressAtom)
-  const fromAsset = useAtomValue(fromAssetAtom)
-  const toAsset = useAtomValue(toAssetAtom)
-  const evmAccounts = useRecoilValue(evmSignableAccountsState)
-  const substrateAccounts = useRecoilValue(writeableSubstrateAccountsState)
-  const [selectCustomAddress, setSelectCustomAddress] = useAtom(selectCustomAddressAtom)
-
-  // handle selecting default account
-  useEffect(() => {
-    if (!fromAsset) {
-      setFromAddress(null)
-    } else {
-      if (fromAsset.id.split('-')[1] === 'evm') {
-        const defaultEvmAccount = evmAccounts[0]
-        if (!fromAddress || !isAddress(fromAddress)) setFromAddress(defaultEvmAccount?.address ?? null)
-      } else {
-        const defaultSubstrateAccount = substrateAccounts[0]
-        if (!fromAddress || isAddress(fromAddress)) setFromAddress(defaultSubstrateAccount?.address ?? null)
-      }
-    }
-  }, [evmAccounts, fromAddress, fromAsset, setFromAddress, substrateAccounts])
-
-  useEffect(() => {
-    if (!toAsset) {
-      setToAddress(null)
-    } else if (!selectCustomAddress) {
-      if (toAsset.id.split('-')[1] === 'evm') {
-        const defaultEvmAccount = evmAccounts[0]
-        const defaultAddress = fromAsset?.id.split('-')[1] === 'evm' ? fromAddress : defaultEvmAccount?.address
-        if (!toAddress || !isAddress(toAddress)) setToAddress(defaultAddress ?? null)
-      } else {
-        const defaultSubstrateAccount = substrateAccounts[0]
-        const defaultAddress = fromAsset?.id.split('-')[1] !== 'evm' ? fromAddress : defaultSubstrateAccount?.address
-        if (!toAddress || isAddress(toAddress)) setToAddress(defaultAddress ?? null)
-      }
-    }
-  }, [
-    evmAccounts,
-    fromAddress,
-    fromAsset?.id,
-    selectCustomAddress,
-    setToAddress,
-    substrateAccounts,
-    toAddress,
-    toAsset,
-  ])
-
-  useEffect(() => {
-    if (toAddress?.toLowerCase() === fromAddress?.toLowerCase()) setSelectCustomAddress(false)
-  }, [fromAddress, setSelectCustomAddress, toAddress])
-}

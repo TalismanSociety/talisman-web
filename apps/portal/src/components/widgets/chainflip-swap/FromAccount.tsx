@@ -1,4 +1,10 @@
-import { fromAddressAtom, fromAssetAtom, toAddressAtom } from './swap-modules/common.swap-module'
+import {
+  fromAddressAtom,
+  fromAssetAtom,
+  fromEvmAddressAtom,
+  fromSubstrateAddressAtom,
+  toAddressAtom,
+} from './swap-modules/common.swap-module'
 import { selectCustomAddressAtom } from './swaps.api'
 import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
 import { selectedCurrencyState } from '@/domains/balances'
@@ -6,10 +12,11 @@ import { cn } from '@/lib/utils'
 import { useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { Surface } from '@talismn/ui'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import type React from 'react'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
+import { isAddress } from 'viem'
 
 type Props = {
   fastBalance?: {
@@ -19,7 +26,9 @@ type Props = {
 }
 export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
   const fromAsset = useAtomValue(fromAssetAtom)
-  const [fromAddress, setFromAddress] = useAtom(fromAddressAtom)
+  const setFromEvmAddress = useSetAtom(fromEvmAddressAtom)
+  const setFromSubstrateAddress = useSetAtom(fromSubstrateAddressAtom)
+  const fromAddress = useAtomValue(fromAddressAtom)
   const [toAddress, setToAddress] = useAtom(toAddressAtom)
   const currency = useRecoilValue(selectedCurrencyState)
   const [selectCustomAddress, setSelectCustomAddress] = useAtom(selectCustomAddressAtom)
@@ -29,6 +38,15 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
     if (!fromAsset) return null
     return tokens[fromAsset.id]
   }, [fromAsset, tokens])
+
+  const onChangeAddress = useCallback(
+    (address: string | null) => {
+      if (!address) return
+      if (isAddress(address)) setFromEvmAddress(address)
+      else setFromSubstrateAddress(address)
+    },
+    [setFromEvmAddress, setFromSubstrateAddress]
+  )
 
   return (
     <Surface className="bg-card p-[16px] rounded-[8px] w-full">
@@ -59,7 +77,7 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
           substrateAccountsFilter={a => !a.readonly}
           evmAccountsFilter={a => !!a.canSignEvm}
           value={fromAddress}
-          onAccountChange={setFromAddress}
+          onAccountChange={onChangeAddress}
           showBalances={{
             // if from asset is not seleted, we return the sum of all balances for that account
             filter: fromAsset

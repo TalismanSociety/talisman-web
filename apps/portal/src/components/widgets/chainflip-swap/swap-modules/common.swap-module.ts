@@ -8,20 +8,28 @@ import { atomWithStorage, createJSONStorage, unstable_withStorageValidator } fro
 import 'recoil'
 import type { TransactionRequest, WalletClient } from 'viem'
 
-export type SupportedSwapProtocol = 'chainflip'
+export type SupportedSwapProtocol = 'chainflip' | 'simpleswap'
 
-export type CommonSwappableAssetType = {
+export type SwappableAssetBaseType<TContext = Partial<Record<SupportedSwapProtocol, any>>> = {
   id: string
   name: string
   symbol: string
-  decimals: number
-  contractAddress?: string
   chainId: number | string
+  contractAddress?: string
+  assetHubAssetId?: number
+  image?: string
+  networkType: 'evm' | 'substrate'
+  /** protocol modules can store context here, like any special identifier */
+  context: TContext
 }
+
+export type SwappableAssetWithDecimals<TContext = Partial<Record<SupportedSwapProtocol, any>>> = {
+  decimals: number
+} & SwappableAssetBaseType<TContext>
 
 export type BaseQuote = {
   protocol: SupportedSwapProtocol
-  outputAmountBN?: bigint
+  outputAmountBN: bigint
   inputAmountBN: bigint
   error?: string
   fees: any
@@ -68,27 +76,31 @@ export type GetEstimateGasTxFunction = (
 
 export type SwapModule = {
   protocol: SupportedSwapProtocol
-  tokensSelector: Atom<Promise<CommonSwappableAssetType[]>>
+  fromAssetsSelector: Atom<Promise<SwappableAssetBaseType[]>>
+  toAssetsSelector: Atom<Promise<SwappableAssetBaseType[]>>
   quote: QuoteFunction
   getEstimateGasTx: GetEstimateGasTxFunction
   /** Returns whether the swap succeeded or not */
   swap: SwapFunction<any>
+
+  // talisman curated data
+  decentralisationScore: number
 }
 
 // atoms shared between swap modules
 
-export const fromAssetAtom = atom<CommonSwappableAssetType | null>(null)
-export const toAssetAtom = atom<CommonSwappableAssetType | null>(null)
-export const fromAmountInputAtom = atom('')
-export const fromAmountAtom = atom(get => {
-  const input = get(fromAmountInputAtom)
-  const asset = get(fromAssetAtom)
-  if (!asset || input.trim() === '') return Decimal.fromUserInput(input, 1)
-  return (
-    Decimal.fromUserInputOrUndefined(input, asset.decimals, { currency: asset.symbol }) ?? Decimal.fromPlanck(0n, 1)
-  )
+export const fromAssetAtom = atom<SwappableAssetWithDecimals | null>(null)
+export const toAssetAtom = atom<SwappableAssetWithDecimals | null>(null)
+export const fromAmountAtom = atom<Decimal>(Decimal.fromPlanck(0n, 1))
+export const fromSubstrateAddressAtom = atom<string | null>(null)
+export const fromEvmAddressAtom = atom<`0x${string}` | null>(null)
+export const fromAddressAtom = atom(get => {
+  const fromAsset = get(fromAssetAtom)
+  const evmAddress = get(fromEvmAddressAtom)
+  const substrateAddress = get(fromSubstrateAddressAtom)
+  if (!fromAsset) return null
+  return fromAsset.networkType === 'evm' ? evmAddress : substrateAddress
 })
-export const fromAddressAtom = atom<string | null>(null)
 export const toAddressAtom = atom<string | null>(null)
 export const swappingAtom = atom(false)
 export const swapQuoteRefresherAtom = atom(new Date().getTime())
