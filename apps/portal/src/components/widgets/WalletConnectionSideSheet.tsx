@@ -232,7 +232,16 @@ export const WalletConnectionSideSheetComponent = (props: WalletConnectionSideSh
                 <AddReadOnlyAccountDialog>
                   {({ onToggleOpen }) => (
                     <button css={{ display: 'contents', cursor: 'pointer' }} onClick={onToggleOpen}>
-                      <Text.BodyLarge as="div" alpha="high" css={{ textAlign: 'center' }}>
+                      <Text.BodyLarge
+                        as="div"
+                        alpha="high"
+                        css={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '2rem',
+                        }}
+                      >
                         <Eye size="2rem" css={{ verticalAlign: 'text-top' }} /> Add watched account
                       </Text.BodyLarge>
                     </button>
