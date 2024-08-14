@@ -1,3 +1,4 @@
+import { substrateApiGetterAtom } from '../../../domains/common/recoils/api'
 import { knownEvmNetworksAtom } from './helpers'
 import { swapInfoTabAtom } from './side-panel'
 import { chainflipSwapModule, type ChainflipSwapActivityData } from './swap-modules/chainflip.swap-module'
@@ -10,23 +11,28 @@ import {
   toAssetAtom,
   type BaseQuote,
   type SwappableAssetBaseType,
-  type EstimateGasTx,
   type SupportedSwapProtocol,
   type SwapActivity,
   SwappableAssetWithDecimals,
+  selectedProtocolAtom,
+  quoteSortingAtom,
+  fromEvmAddressAtom,
+  fromSubstrateAddressAtom,
+  toEvmAddressAtom,
+  toSubstrateAddressAtom,
 } from './swap-modules/common.swap-module'
 import { simpleswapSwapModule } from './swap-modules/simpleswap-swap-module'
+import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts'
 import { substrateApiState } from '@/domains/common'
 import { connectedSubstrateWalletState } from '@/domains/extension'
-import { useSubstrateEstimateGas } from '@/hooks/useSubstrateEstimateGas'
-import { tokensByIdAtom, useTokens } from '@talismn/balances-react'
+import { tokenRatesAtom, tokensByIdAtom, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { toast } from '@talismn/ui'
 import { atom, useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import { loadable, useAtomCallback } from 'jotai/utils'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
-import { deepEqual, useEstimateGas, useGasPrice, useWalletClient } from 'wagmi'
+import { useWalletClient } from 'wagmi'
 
 const swapModules = [chainflipSwapModule, simpleswapSwapModule]
 
@@ -60,7 +66,7 @@ export const fromAssetsAtom = atom(async get => {
 
   // TODO: Fetch balances here for each chain if from account is selected
   const allTokens = Object.values(tokensByChains)
-    .map(tokens => Object.values(tokens))
+    .map(tokens => Object.values(tokens).sort((a, b) => a.symbol.localeCompare(b.symbol)))
     .flat()
 
   return allTokens
@@ -85,6 +91,10 @@ export const toAssetsAtom = atom(async get => {
       ...cur,
       symbol: tokenDetails.symbol,
       decimals: tokenDetails.decimals,
+      context: {
+        ...tokens[cur.id]?.context,
+        ...cur.context,
+      },
     }
     acc[cur.chainId.toString()] = tokens
     return acc
@@ -92,157 +102,98 @@ export const toAssetsAtom = atom(async get => {
 
   // TODO: Fetch balances here for each chain if from account is selected
   const allTokens = Object.values(tokensByChains)
-    .map(tokens => Object.values(tokens))
+    .map(tokens => Object.values(tokens).sort((a, b) => a.symbol.localeCompare(b.symbol)))
     .flat()
+
   return allTokens
 })
 
 export const swapQuotesAtom = loadable(
   atom(async (get): Promise<(BaseQuote & { decentralisationScore: number })[] | null> => {
     const fromAsset = get(fromAssetAtom)
-    const allQuoters = swapModules
-      .filter(m => (fromAsset ? fromAsset.context[m.protocol] : true))
-      .map(module => module.quote)
     const toAsset = get(toAssetAtom)
+    const allQuoters = swapModules
+      .filter(m => (fromAsset && toAsset ? toAsset.context[m.protocol] && fromAsset.context[m.protocol] : true))
+      .map(module => module.quote)
     const fromAmount = get(fromAmountAtom)
+    const substrateApiGetter = get(substrateApiGetterAtom)
 
     // force refresh
     get(swapQuoteRefresherAtom)
 
     // nothing to quote
-    if (!fromAsset || !toAsset || !fromAmount.planck) return null
+    if (!fromAsset || !toAsset || !fromAmount.planck || !substrateApiGetter) return null
 
-    const allQuotes = await Promise.all(allQuoters.map(quoter => quoter(get)))
-    return allQuotes
+    const allQuotes = await Promise.all(
+      allQuoters.map(quoter => quoter(get, { getSubstrateApi: substrateApiGetter.getApi }))
+    )
+    const validQuotes = allQuotes
       .filter(a => !!a)
+      .filter(a => a.outputAmountBN > 0n)
       .map(a => ({
         ...a,
         decentralisationScore: swapModules.find(m => m.protocol === a.protocol)?.decentralisationScore ?? 0,
       }))
-    // const bestQuote = allQuotes.reduce((best, next): BaseQuote | null => {
-    //   if (!best) return next // return whatever next quote is if best is null
-    //   if (!next) return best // return best if nothing to compare in next
-    //   if (best.outputAmountBN === undefined) return next ?? best
-    //   if (next.outputAmountBN === undefined) return best
-    //   return next.outputAmountBN > best.outputAmountBN ? next : best
-    // }, null)
 
-    // if (!bestQuote || bestQuote.error)
-    //   throw new Error(bestQuote?.error ? bestQuote.error : 'No available path. Please try another asset ')
-
-    // return bestQuote
+    if (validQuotes.length === 0) {
+      const quoteWithError = allQuotes.find(q => q?.error)
+      if (quoteWithError) throw new Error(quoteWithError.error)
+    }
+    return validQuotes
   })
 )
 
-/**
- * Get the best quote across all swap modules
- * Each module has their own quoter logic
- */
-export const swapQuoteAtom = loadable(
-  atom(async (get): Promise<BaseQuote | null> => {
-    const fromAsset = get(fromAssetAtom)
-    const allQuoters = swapModules
-      .filter(m => (fromAsset ? fromAsset.context[m.protocol] : true))
-      .map(module => module.quote)
-    const toAsset = get(toAssetAtom)
-    const fromAmount = get(fromAmountAtom)
+export const sortedQuotesAtom = atom(async get => {
+  const quotes = get(swapQuotesAtom)
+  const sort = get(quoteSortingAtom)
+  const tokenRates = await get(tokenRatesAtom)
 
-    // force refresh
-    get(swapQuoteRefresherAtom)
-
-    // nothing to quote
-    if (!fromAsset || !toAsset || !fromAmount.planck) return null
-
-    const allQuotes = await Promise.all(allQuoters.map(quoter => quoter(get)))
-    const bestQuote = allQuotes.reduce((best, next): BaseQuote | null => {
-      if (!best) return next // return whatever next quote is if best is null
-      if (!next) return best // return best if nothing to compare in next
-      if (best.outputAmountBN === undefined) return next ?? best
-      if (next.outputAmountBN === undefined) return best
-      return next.outputAmountBN > best.outputAmountBN ? next : best
-    }, null)
-
-    if (!bestQuote || bestQuote.error)
-      throw new Error(bestQuote?.error ? bestQuote.error : 'No available path. Please try another asset ')
-
-    return bestQuote
-  })
-)
-
-export const toAmountAtom = atom(async get => {
-  const _quote = get(swapQuoteAtom)
-  if (_quote.state !== 'hasData') return null
-  const quote = _quote.data
-  const toAsset = get(toAssetAtom)
-  if (!quote || quote.outputAmountBN === undefined || !toAsset) return null
-  return Decimal.fromPlanck(quote.outputAmountBN, quote.decimals, { currency: toAsset.symbol })
+  if (quotes.state === 'hasError') throw quotes.error
+  if (quotes.state !== 'hasData') return undefined
+  return quotes.data
+    ?.map(q => {
+      const fees = q.fees.reduce((acc, fee) => {
+        const rate = tokenRates[fee.tokenId]?.usd ?? 0
+        return acc + fee.amount.toNumber() * rate
+      }, 0)
+      return {
+        quote: q,
+        fees,
+      }
+    })
+    .sort((a, b) => {
+      switch (sort) {
+        case 'bestRate':
+          return +(b.quote.outputAmountBN - a.quote.outputAmountBN).toString()
+        case 'fastest':
+          return a.quote.timeInSec - b.quote.timeInSec
+        case 'cheapest':
+          return a.fees - b.fees
+        case 'decentalised':
+          return b.quote.decentralisationScore - a.quote.decentralisationScore
+        default:
+          return 0
+      }
+    })
 })
 
-export const useEstimateSwapGas = () => {
-  const fromAsset = useAtomValue(fromAssetAtom)
-  const [tx, setTx] = useState<EstimateGasTx | null>(null)
-  const quoteLoadable = useAtomValue(swapQuoteAtom)
-  const gasPrice = useGasPrice(tx?.type === 'evm' ? { chainId: tx.chainId } : { chainId: 1 })
-  const evmGas = useEstimateGas(
-    tx?.type === 'evm'
-      ? {
-          ...tx.tx,
-          query: {
-            enabled: !!tx && tx.type === 'evm',
-          },
-        }
-      : undefined
-  )
+export const selectedQuoteAtom = atom(async get => {
+  const quotes = await get(sortedQuotesAtom)
+  const selectedProtocol = get(selectedProtocolAtom)
+  if (!quotes) return null
+  const quote = quotes.find(q => q.quote.protocol === selectedProtocol) ?? quotes[0]
+  if (!quote) return null
+  return quote
+})
 
-  const { gas: substrateGas, refetch } = useSubstrateEstimateGas(tx?.type === 'substrate' ? tx : undefined)
+export const toAmountAtom = atom(async get => {
+  const quote = await get(selectedQuoteAtom)
+  if (!quote) return null
 
-  const getSubstrateApi = useRecoilCallback(
-    ({ snapshot }) =>
-      (rpc: string) =>
-        snapshot.getPromise(substrateApiState(rpc))
-  )
-
-  const estimateGas = useAtomCallback(
-    useCallback(
-      get => {
-        if (quoteLoadable.state !== 'hasData') return null
-        const module = swapModules.find(module => module.protocol === quoteLoadable.data?.protocol)
-        if (!module) return null
-        return module.getEstimateGasTx(get, { getSubstrateApi })
-      },
-      [getSubstrateApi, quoteLoadable]
-    )
-  )
-
-  // invalidate tx when fromAsset changes to re-trigger estimate gas
-  useEffect(() => {
-    setTx(null)
-    refetch()
-  }, [fromAsset, refetch])
-
-  useEffect(() => {
-    if (tx || !fromAsset) return
-    const estimateGasPromise = estimateGas()
-    if (!estimateGasPromise) return
-    estimateGasPromise.then(newTx => {
-      if (!deepEqual(newTx, tx)) setTx(newTx)
-    })
-  }, [estimateGas, fromAsset, tx])
-
-  return useMemo(() => {
-    if (!tx) return null
-    if (tx.type === 'evm') {
-      if (gasPrice.data === undefined) return null
-      let gasUsage = evmGas.data
-      // default to 80k gas if estimate gas fails (e.g. user has insufficient balance to estimate gas)
-      if (gasUsage === undefined && !evmGas.isLoading && evmGas.error?.name === 'EstimateGasExecutionError')
-        gasUsage = 80000n
-      // TODO: support other evm gas tokens by not hardcoding decimals and currency
-      if (gasUsage !== undefined) return Decimal.fromPlanck(gasPrice.data * gasUsage, 18, { currency: 'ETH' })
-      return null
-    } else return substrateGas ?? null
-  }, [evmGas, gasPrice.data, substrateGas, tx])
-}
+  const toAsset = get(toAssetAtom)
+  if (!quote || quote.quote.outputAmountBN === undefined || !toAsset) return null
+  return Decimal.fromPlanck(quote.quote.outputAmountBN, toAsset.decimals, { currency: toAsset.symbol })
+})
 
 export const useSwap = () => {
   const { data: walletClient } = useWalletClient()
@@ -359,4 +310,56 @@ export const useSyncPreviousChainflipSwaps = () => {
   }, [sync])
 }
 
-export const selectCustomAddressAtom = atom(false)
+export const useFromAccount = () => {
+  const substrateAccounts = useRecoilValue(writeableSubstrateAccountsState)
+  const ethAccounts = useRecoilValue(wagmiAccountsState)
+
+  const [fromEvmAddress, setFromEvmAddress] = useAtom(fromEvmAddressAtom)
+  const [fromSubstrateAddress, setFromSubstrateAddress] = useAtom(fromSubstrateAddressAtom)
+
+  const fromEvmAccount = useMemo(
+    () => ethAccounts.find(a => a.address.toLowerCase() === fromEvmAddress?.toLowerCase()),
+    [ethAccounts, fromEvmAddress]
+  )
+  const fromSubstrateAccount = useMemo(
+    () => substrateAccounts.find(a => a.address.toLowerCase() === fromSubstrateAddress?.toLowerCase()),
+    [fromSubstrateAddress, substrateAccounts]
+  )
+
+  useEffect(() => {
+    if (!fromEvmAccount && ethAccounts.length > 0) setFromEvmAddress((ethAccounts[0]?.address as `0x${string}`) ?? null)
+    if (!fromSubstrateAccount && substrateAccounts.length > 0)
+      setFromSubstrateAddress(substrateAccounts[0]?.address ?? null)
+  }, [ethAccounts, fromEvmAccount, fromSubstrateAccount, setFromEvmAddress, setFromSubstrateAddress, substrateAccounts])
+
+  return { ethAccounts, substrateAccounts, fromEvmAccount, fromSubstrateAccount, fromEvmAddress, fromSubstrateAddress }
+}
+
+export const useToAccount = () => {
+  const initiated = useRef(false)
+  const substrateAccounts = useRecoilValue(writeableSubstrateAccountsState)
+  const ethAccounts = useRecoilValue(wagmiAccountsState)
+
+  const [toEvmAddress, setToEvmAddress] = useAtom(toEvmAddressAtom)
+  const [toSubstrateAddress, setToSubstrateAddress] = useAtom(toSubstrateAddressAtom)
+
+  const toEvmAccount = useMemo(
+    () => ethAccounts.find(a => a.address.toLowerCase() === toEvmAddress?.toLowerCase()),
+    [ethAccounts, toEvmAddress]
+  )
+  const toSubstrateAccount = useMemo(
+    () => substrateAccounts.find(a => a.address.toLowerCase() === toSubstrateAddress?.toLowerCase()),
+    [substrateAccounts, toSubstrateAddress]
+  )
+
+  useEffect(() => {
+    if (initiated.current) return
+    if (!toEvmAccount && ethAccounts.length > 0) setToEvmAddress((ethAccounts[0]?.address as `0x${string}`) ?? null)
+    if (!toSubstrateAccount && substrateAccounts.length > 0)
+      setToSubstrateAddress(substrateAccounts[0]?.address ?? null)
+  }, [ethAccounts, setToEvmAddress, setToSubstrateAddress, substrateAccounts, toEvmAccount, toSubstrateAccount])
+
+  useEffect(() => {
+    if (toEvmAddress && toSubstrateAddress) initiated.current = true
+  }, [toEvmAddress, toSubstrateAddress])
+}

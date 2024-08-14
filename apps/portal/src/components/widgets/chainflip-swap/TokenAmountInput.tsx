@@ -6,16 +6,16 @@ import { useTokenRates } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, TextInput, Tooltip } from '@talismn/ui'
 import { HelpCircle } from 'lucide-react'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 type Props = {
+  amount?: Decimal
   assets?: SwappableAssetWithDecimals[]
   selectedAsset?: SwappableAssetWithDecimals | null
   evmAddress?: `0x${string}`
   substrateAddress?: string
-  amount?: Decimal
   onChangeAmount?: (value: Decimal) => void
   onChangeAsset?: (asset: SwappableAssetWithDecimals | null) => void
   leadingLabel?: React.ReactNode
@@ -52,15 +52,36 @@ export const TokenAmountInput: React.FC<Props> = ({
     return !!substrateAddress
   }, [evmAddress, selectedAsset, substrateAddress])
 
-  const parsedDecimal = useMemo(() => {
-    if (!selectedAsset) return Decimal.fromPlanck(0, 1)
-    try {
-      const formattedInput = input.endsWith('.') ? `${input}0` : input
-      return Decimal.fromUserInput(formattedInput, selectedAsset.decimals, { currency: selectedAsset.symbol })
-    } catch (e) {
-      return Decimal.fromPlanck(0, 1)
-    }
-  }, [input, selectedAsset])
+  const parseInput = useCallback(
+    (value: string) => {
+      if (!selectedAsset) return Decimal.fromPlanck(0, 1)
+      try {
+        const formattedInput = value.endsWith('.') ? `${value}0` : value
+        return Decimal.fromUserInput(formattedInput, selectedAsset.decimals, { currency: selectedAsset.symbol })
+      } catch (e) {
+        return Decimal.fromPlanck(0, 1)
+      }
+    },
+    [selectedAsset]
+  )
+
+  const handleChangeAsset = useCallback(
+    (asset: SwappableAssetWithDecimals | null) => {
+      setInput('')
+      onChangeAsset?.(asset)
+      onChangeAmount?.(Decimal.fromPlanck(0, asset?.decimals ?? 1))
+    },
+    [onChangeAmount, onChangeAsset]
+  )
+
+  const handleChangeInput = useCallback(
+    (value: string) => {
+      setInput(value)
+      const parsedDecimal = parseInput(value)
+      onChangeAmount?.(parsedDecimal)
+    },
+    [onChangeAmount, parseInput]
+  )
 
   const usdValue = useMemo(() => {
     if (!selectedAsset) return null
@@ -71,10 +92,10 @@ export const TokenAmountInput: React.FC<Props> = ({
     return +amount?.toString() * rateInCurrency
   }, [amount, currency, rates, selectedAsset])
 
-  const insufficientBalance = useMemo(
-    () => parsedDecimal.planck > (availableBalance?.planck ?? 0n),
-    [availableBalance?.planck, parsedDecimal.planck]
-  )
+  const insufficientBalance = useMemo(() => {
+    if (availableBalance === undefined || !amount) return false
+    return amount.planck > (availableBalance?.planck ?? 0n)
+  }, [amount, availableBalance])
 
   const accountWouldBeReaped = useMemo(() => {
     if (!stayAliveBalance || !amount) return false
@@ -96,8 +117,18 @@ export const TokenAmountInput: React.FC<Props> = ({
   }, [availableBalance, selectedAsset])
 
   useEffect(() => {
-    onChangeAmount?.(parsedDecimal)
-  }, [onChangeAmount, parsedDecimal])
+    if (!amount) return setInput('')
+    const parsedDecimal = parseInput(input)
+    if (parsedDecimal.planck !== amount.planck) {
+      if (amount.planck > 0n) {
+        setInput(amount.toString())
+      } else {
+        if (parsedDecimal.planck !== 0n) {
+          setInput('')
+        }
+      }
+    }
+  }, [amount, input, parseInput])
 
   return (
     <TextInput
@@ -121,7 +152,7 @@ export const TokenAmountInput: React.FC<Props> = ({
       leadingLabel={leadingLabel}
       value={input}
       placeholder="0.00"
-      onChange={e => setInput(e.target.value)}
+      onChange={e => handleChangeInput(e.target.value)}
       textBelowInput={
         <div className="flex items-center">
           <p className="text-gray-400 text-[10px] leading-none">
@@ -163,13 +194,13 @@ export const TokenAmountInput: React.FC<Props> = ({
           {maxAfterGas && maxAfterGas.planck > 0 && (
             <TextInput.LabelButton
               css={{ fontSize: 12, paddingTop: 4, paddingBottom: 4 }}
-              onClick={() => setInput(Decimal.fromPlanck(maxAfterGas.planck, maxAfterGas.decimals).toString())}
+              onClick={() => handleChangeInput(Decimal.fromPlanck(maxAfterGas.planck, maxAfterGas.decimals).toString())}
             >
               <p css={{ fontSize: 12, lineHeight: 1 }}>Max</p>
             </TextInput.LabelButton>
           )}
           <SwapTokensModal
-            onSelectAsset={a => onChangeAsset?.(a)}
+            onSelectAsset={handleChangeAsset}
             selectedAsset={selectedAsset}
             assets={assets}
             evmAddress={evmAddress}

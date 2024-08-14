@@ -33,6 +33,7 @@ type KnownTokensById = Record<
 
 type KnownEvmNetworkTokensById = Omit<KnownEvmNetwork, 'balancesConfig'> & {
   tokens: KnownTokensById
+  nativeToken: KnownTokensById[string]
 }
 
 export const knownEvmNetworksAtom = atom(async () => {
@@ -53,6 +54,10 @@ export const knownEvmNetworksAtom = atom(async () => {
     const nativeTokenId = evmNativeTokenId(curNetwork.id)
     const network: KnownEvmNetworkTokensById = acc[curNetwork.id] ?? {
       ...curNetwork,
+      nativeToken: {
+        ...curNetwork.balancesConfig['evm-native'],
+        id: nativeTokenId,
+      },
       tokens: {
         [nativeTokenId]: {
           ...curNetwork.balancesConfig['evm-native'],

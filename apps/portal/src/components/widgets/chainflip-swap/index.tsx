@@ -1,84 +1,78 @@
-import { wagmiAccountsState, writeableSubstrateAccountsState } from '../../../domains/accounts'
 import { walletConnectionSideSheetOpenState } from '../WalletConnectionSideSheet'
 import { FromAccount } from './FromAccount'
-import { ToAccount } from './ToAccount'
 import { TokenAmountInput } from './TokenAmountInput'
 import { shouldFocusDetailsAtom, SidePanel, swapInfoTabAtom } from './side-panel'
 import {
   fromAddressAtom,
   fromAmountAtom,
   fromAssetAtom,
-  fromEvmAddressAtom,
-  fromSubstrateAddressAtom,
+  SwappableAssetWithDecimals,
   swapQuoteRefresherAtom,
   toAddressAtom,
   toAssetAtom,
 } from './swap-modules/common.swap-module'
 import {
   fromAssetsAtom,
-  swapQuoteAtom,
+  selectedQuoteAtom,
   toAmountAtom,
   toAssetsAtom,
+  useFromAccount,
   useReverse,
   useSwap,
   useSyncPreviousChainflipSwaps,
+  useToAccount,
 } from './swaps.api'
+import { useSetJotaiSubstrateApiState } from '@/domains/common'
 import { useFastBalance, UseFastBalanceProps } from '@/hooks/useFastBalance'
 import { Button, Surface, TonalIconButton } from '@talismn/ui'
 import { Repeat } from '@talismn/web-icons'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { loadable } from 'jotai/utils'
-import { useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import type React from 'react'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useSetRecoilState } from 'recoil'
 
 export const ChainFlipSwap: React.FC = () => {
+  useSetJotaiSubstrateApiState()
   useSyncPreviousChainflipSwaps()
-  const quote = useAtomValue(swapQuoteAtom)
-  const setQuoteRefresher = useSetAtom(swapQuoteRefresherAtom)
-  const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
-  const substrateAccounts = useRecoilValue(writeableSubstrateAccountsState)
-  const ethAccount = useRecoilValue(wagmiAccountsState)
 
   const setInfoTab = useSetAtom(swapInfoTabAtom)
   const [shouldFocusDetails, setShouldFocusDetails] = useAtom(shouldFocusDetailsAtom)
+  const setQuoteRefresher = useSetAtom(swapQuoteRefresherAtom)
+  const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
+  const quote = useAtomValue(loadable(selectedQuoteAtom))
 
   const fromAddress = useAtomValue(fromAddressAtom)
-  const [fromAmount, setFromAmount] = useAtom(fromAmountAtom)
-  const [fromEvmAddress, setFromEvmAddress] = useAtom(fromEvmAddressAtom)
-  const [fromSubstrateAddress, setFromSubstrateAddress] = useAtom(fromSubstrateAddressAtom)
-  const fromEvmAccount = useMemo(
-    () => ethAccount.find(a => a.address.toLowerCase() === fromEvmAddress?.toLowerCase()),
-    [ethAccount, fromEvmAddress]
-  )
-  const fromSubstrateAccount = useMemo(
-    () => substrateAccounts.find(a => a.address.toLowerCase() === fromSubstrateAddress?.toLowerCase()),
-    [fromSubstrateAddress, substrateAccounts]
-  )
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
+  const [fromAmount, setFromAmount] = useAtom(fromAmountAtom)
+  useToAccount()
+  const { ethAccounts, substrateAccounts, fromEvmAccount, fromEvmAddress, fromSubstrateAccount, fromSubstrateAddress } =
+    useFromAccount()
+  const toAddress = useAtomValue(toAddressAtom)
   const [toAsset, setToAsset] = useAtom(toAssetAtom)
 
-  useEffect(() => {
-    if (!fromEvmAccount && ethAccount.length > 0) setFromEvmAddress((ethAccount[0]?.address as `0x${string}`) ?? null)
-    if (!fromSubstrateAccount && substrateAccounts.length > 0)
-      setFromSubstrateAddress(substrateAccounts[0]?.address ?? null)
-  }, [
-    ethAccount,
-    fromAsset,
-    fromEvmAccount,
-    fromSubstrateAccount,
-    setFromEvmAddress,
-    setFromSubstrateAddress,
-    substrateAccounts,
-  ])
-
-  const toAddress = useAtomValue(toAddressAtom)
   const toAmount = useAtomValue(loadable(toAmountAtom))
   const fromAssets = useAtomValue(loadable(fromAssetsAtom))
   const toAssets = useAtomValue(loadable(toAssetsAtom))
 
   const { swap, swapping } = useSwap()
   const reverse = useReverse()
+
+  const handleChangeFromAsset = useCallback(
+    (asset: SwappableAssetWithDecimals | null) => {
+      if (asset && toAsset && asset.id === toAsset.id) reverse()
+      else setFromAsset(asset)
+    },
+    [reverse, setFromAsset, toAsset]
+  )
+
+  const handleChangeToAsset = useCallback(
+    (asset: SwappableAssetWithDecimals | null) => {
+      if (asset && fromAsset && asset.id === fromAsset.id) reverse()
+      else setToAsset(asset)
+    },
+    [fromAsset, reverse, setToAsset]
+  )
 
   const balanceProps: UseFastBalanceProps | undefined = useMemo(
     () =>
@@ -148,7 +142,7 @@ export const ChainFlipSwap: React.FC = () => {
             selectedAsset={fromAsset}
             availableBalance={fastBalance?.balance?.transferrable}
             stayAliveBalance={fastBalance?.balance?.stayAlive}
-            onChangeAsset={setFromAsset}
+            onChangeAsset={handleChangeFromAsset}
           />
           <div className="relative w-full h-[12px]">
             <TonalIconButton
@@ -159,10 +153,11 @@ export const ChainFlipSwap: React.FC = () => {
             </TonalIconButton>
           </div>
           <TokenAmountInput
+            amount={toAmount.state === 'hasData' && toAmount.data ? toAmount.data : undefined}
             assets={toAssets.state === 'hasData' ? toAssets.data : undefined}
             leadingLabel="You're receiving"
             selectedAsset={toAsset}
-            onChangeAsset={setToAsset}
+            onChangeAsset={handleChangeToAsset}
             disabled
           />
         </Surface>
@@ -176,12 +171,11 @@ export const ChainFlipSwap: React.FC = () => {
               : undefined
           }
         />
-        <ToAccount />
-        {substrateAccounts.length === 0 && ethAccount.length === 0 ? (
+        {substrateAccounts.length === 0 && ethAccounts.length === 0 ? (
           <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
             Connect Wallet
           </Button>
-        ) : fromAsset?.networkType === 'evm' && ethAccount.length === 0 ? (
+        ) : fromAsset?.networkType === 'evm' && ethAccounts.length === 0 ? (
           <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
             Connect Ethereum Wallet
           </Button>
@@ -205,7 +199,7 @@ export const ChainFlipSwap: React.FC = () => {
             onClick={() => {
               setInfoTab('details')
               if (quote.state === 'hasData' && quote.data && fastBalance?.balance) {
-                swap(quote.data.protocol, fromAmount.planck > fastBalance.balance.stayAlive.planck)
+                swap(quote.data.quote.protocol, fromAmount.planck > fastBalance.balance.stayAlive.planck)
               }
             }}
           >

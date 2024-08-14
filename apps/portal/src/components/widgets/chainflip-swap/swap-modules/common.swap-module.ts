@@ -27,14 +27,21 @@ export type SwappableAssetWithDecimals<TContext = Partial<Record<SupportedSwapPr
   decimals: number
 } & SwappableAssetBaseType<TContext>
 
+type QuoteFee = {
+  name: string
+  amount: Decimal
+  tokenId: string
+}
+
 export type BaseQuote = {
   protocol: SupportedSwapProtocol
   outputAmountBN: bigint
   inputAmountBN: bigint
   error?: string
-  fees: any
+  fees: QuoteFee[]
   talismanFeeBps?: number
   data?: any
+  timeInSec: number
 }
 
 type SwapProps = {
@@ -63,7 +70,10 @@ export type EstimateGasTx =
       tx: SubmittableExtrinsic<'promise'>
     }
 
-export type QuoteFunction = (get: Getter) => Promise<BaseQuote | null>
+export type QuoteFunction = (
+  get: Getter,
+  props: { getSubstrateApi: (rpc: string) => Promise<ApiPromise> }
+) => Promise<BaseQuote | null>
 export type SwapFunction<TData> = (
   get: Getter,
   set: Setter,
@@ -72,14 +82,13 @@ export type SwapFunction<TData> = (
 export type GetEstimateGasTxFunction = (
   get: Getter,
   props: { getSubstrateApi: (rpc: string) => Promise<ApiPromise> }
-) => Promise<EstimateGasTx | null>
+) => Promise<QuoteFee | null>
 
 export type SwapModule = {
   protocol: SupportedSwapProtocol
   fromAssetsSelector: Atom<Promise<SwappableAssetBaseType[]>>
   toAssetsSelector: Atom<Promise<SwappableAssetBaseType[]>>
   quote: QuoteFunction
-  getEstimateGasTx: GetEstimateGasTxFunction
   /** Returns whether the swap succeeded or not */
   swap: SwapFunction<any>
 
@@ -89,8 +98,8 @@ export type SwapModule = {
 
 // atoms shared between swap modules
 
+export const selectedProtocolAtom = atom<SupportedSwapProtocol | null>(null)
 export const fromAssetAtom = atom<SwappableAssetWithDecimals | null>(null)
-export const toAssetAtom = atom<SwappableAssetWithDecimals | null>(null)
 export const fromAmountAtom = atom<Decimal>(Decimal.fromPlanck(0n, 1))
 export const fromSubstrateAddressAtom = atom<string | null>(null)
 export const fromEvmAddressAtom = atom<`0x${string}` | null>(null)
@@ -101,8 +110,20 @@ export const fromAddressAtom = atom(get => {
   if (!fromAsset) return null
   return fromAsset.networkType === 'evm' ? evmAddress : substrateAddress
 })
-export const toAddressAtom = atom<string | null>(null)
+
+export const toAssetAtom = atom<SwappableAssetWithDecimals | null>(null)
+export const toSubstrateAddressAtom = atom<string | null>(null)
+export const toEvmAddressAtom = atom<`0x${string}` | null>(null)
+export const toAddressAtom = atom(get => {
+  const toAsset = get(toAssetAtom)
+  const evmAddress = get(toEvmAddressAtom)
+  const substrateAddress = get(toSubstrateAddressAtom)
+  if (!toAsset) return null
+  return toAsset.networkType === 'evm' ? evmAddress : substrateAddress
+})
+
 export const swappingAtom = atom(false)
+export const quoteSortingAtom = atom<'decentalised' | 'cheapest' | 'fastest' | 'bestRate'>('bestRate')
 export const swapQuoteRefresherAtom = atom(new Date().getTime())
 
 // swaps history related atoms
