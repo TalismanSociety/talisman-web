@@ -120,15 +120,8 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
         />
       </Surface>
       <Text.Body as="p" css={{ marginTop: '4.8rem' }}>
-        {`Talisman has integrated the liquid staking protocol by Bifrost, which allows users to easily stake ${props.slpxPair.nativeToken.symbol}, without
-        the need for complex staking processes. After staking, users receive ${props.slpxPair.vToken.symbol} (voucher ${props.slpxPair.nativeToken.symbol}), a liquid staking
-          token of ${props.slpxPair.nativeToken.symbol}, which has fully underlying ${props.slpxPair.nativeToken.symbol} reserve and is directly yield bearing from ${props.slpxPair.nativeToken.symbol} rewards.
-
-        `}
-        <Text.Noop.A
-          target="blank"
-          href="https://bifrost.finance/news/bifrost-announces-the-official-launch-of-the-first-parachain-derivatives-v-glmr-and-v-movr"
-        >
+        {`To get started with Bifrost liquid standing for ${props.slpxPair.nativeToken.symbol}, you'll need ${props.slpxPair.nativeToken.symbol} on ${props.slpxPair.chain.name}. Once staked, you'll receive ${props.slpxPair.vToken.symbol} (voucher ${props.slpxPair.nativeToken.symbol}) as your liquid staking token, which has fully underlying ${props.slpxPair.nativeToken.symbol} reserve and is directly yield bearing.`}{' '}
+        <Text.Noop.A target="blank" href="https://bifrost.io/#liquidStaking ">
           Learn more
         </Text.Noop.A>
       </Text.Body>
