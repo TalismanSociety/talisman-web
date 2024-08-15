@@ -90,6 +90,28 @@ const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
     symbol: 'ETH',
     networkType: 'evm',
   },
+  ethmanta: {
+    id: '169-evm-native',
+    name: 'Ethereum (Manta Pacific)',
+    chainId: 169,
+    symbol: 'ETH',
+    networkType: 'evm',
+  },
+  manta: {
+    id: '169-evm-erc20-0x95cef13441be50d20ca4558cc0a27b601ac544e5',
+    name: 'Manta Network',
+    chainId: 169,
+    symbol: 'MANTA',
+    networkType: 'evm',
+    contractAddress: '0x95cef13441be50d20ca4558cc0a27b601ac544e5',
+  },
+  tao: {
+    id: 'bittensor-substrate-native',
+    name: 'Bittensor',
+    chainId: 'bittensor',
+    symbol: 'TAO',
+    networkType: 'substrate',
+  },
 }
 
 type Exchange = {

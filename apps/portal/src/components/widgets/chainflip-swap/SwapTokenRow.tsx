@@ -56,13 +56,13 @@ export const SwapTokenRow: React.FC<Props> = ({ asset, networkName, onClick, evm
 
   return (
     <Clickable.WithFeedback className="w-full" onClick={handleClick}>
-      <Surface className="!w-full !h-[72px] !rounded-[8px] grid grid-cols-3 px-[16px]">
+      <Surface className="!w-full !h-[72px] !rounded-[8px] grid grid-cols-3 px-[16px] gap-[8px]">
         <div className="w-full flex items-center gap-[8px]">
           <img
             src={asset.image ?? githubUnknownTokenLogoUrl}
             className="w-[24px] h-[24px] min-w-[24px] sm:min-w-[40px] sm:w-[40px] sm:h-[40px] rounded-full"
           />
-          <div className="flex flex-col gap-[4px]">
+          <div className="flex flex-col gap-[4px] overflow-hidden">
             <p className="text-[14px] leading-none">{asset.symbol}</p>
             <p className="text-[12px] truncate leading-none !text-muted-foreground">{asset.name}</p>
           </div>

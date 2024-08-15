@@ -1,5 +1,6 @@
 import ErrorBoundary from '../../ErrorBoundary'
 import {
+  BaseQuote,
   fromAmountAtom,
   fromAssetAtom,
   quoteSortingAtom,
@@ -17,7 +18,7 @@ import { CircularProgressIndicator, Clickable, Skeleton, Surface } from '@talism
 import { useAtom, useAtomValue } from 'jotai'
 import { loadable } from 'jotai/utils'
 import { ArrowUpDown, Check } from 'lucide-react'
-import { Suspense, useEffect } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 
 const LoadingUI: React.FC<{ title?: string; description?: React.ReactNode }> = ({ title, description }) => (
   <div className="flex items-center justify-center gap-[8px] flex-col border-gray-800 border rounded-[8px] p-[16px]">
@@ -51,11 +52,24 @@ const Details: React.FC = () => {
   const swapping = useAtomValue(swappingAtom)
   const [sort, setSort] = useAtom(quoteSortingAtom)
   const [selectedProtocol, setSelectedProtocol] = useAtom(selectedProtocolAtom)
+  const [cachedQuotes, setCachedQuotes] = useState<{ quote: BaseQuote & { decentralisationScore: number } }[]>([])
+  const fromAmount = useAtomValue(fromAmountAtom)
+  const fromAsset = useAtomValue(fromAssetAtom)
+  const toAsset = useAtomValue(toAssetAtom)
 
   useEffect(() => {
-    if (quotes.state !== 'hasData' || !quotes.data || !selectedProtocol) return
-    if (!quotes.data.find(q => q.quote.protocol === selectedProtocol)) setSelectedProtocol(null)
-  }, [selectedProtocol, setSelectedProtocol, quotes])
+    setCachedQuotes([])
+  }, [fromAmount, fromAsset, toAsset])
+
+  useEffect(() => {
+    if (quotes.state === 'hasData' && quotes.data) {
+      setCachedQuotes(quotes.data)
+    }
+  }, [quotes])
+
+  useEffect(() => {
+    if (!cachedQuotes.find(q => q.quote.protocol === selectedProtocol)) setSelectedProtocol(null)
+  }, [selectedProtocol, setSelectedProtocol, quotes, cachedQuotes])
 
   if (swapping)
     return (
@@ -81,8 +95,8 @@ const Details: React.FC = () => {
   return (
     <div className="w-full flex flex-col gap-[8px]">
       <div className="flex items-center justify-between w-full">
-        {quotes.state === 'hasData' ? (
-          <p className="text-muted-foreground text-[14px]">{quotes.data?.length} Options</p>
+        {cachedQuotes.length > 0 ? (
+          <p className="text-muted-foreground text-[14px]">{cachedQuotes.length} Options</p>
         ) : (
           <Skeleton.Surface className="h-[22.4px] w-[66px]" />
         )}
@@ -110,8 +124,8 @@ const Details: React.FC = () => {
         </DropdownMenu>
       </div>
       <div className=" flex flex-col gap-[8px]">
-        {quotes.state === 'hasData' && quotes.data ? (
-          quotes.data.map((q, index) => (
+        {cachedQuotes.length > 0 ? (
+          cachedQuotes.map((q, index) => (
             <SwapDetailsCard
               selected={selectedProtocol === null ? index === 0 : selectedProtocol === q.quote.protocol}
               quote={q.quote}

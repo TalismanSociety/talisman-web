@@ -1,8 +1,8 @@
 import { useSubstrateToken } from './useSubstrateToken'
 import { substrateApiState } from '@/domains/common'
+import { computeSubstrateBalance } from '@/util/balances'
 import { useChains } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
-import { BigMath } from '@talismn/util'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRecoilValueLoadable } from 'recoil'
 
@@ -47,7 +47,6 @@ export const useSubstrateBalance = (props?: UseSubstrateBalanceProps) => {
       if (props.assetHubAssetId !== undefined) {
         if (!token) return // waiting for token metadata
         if (api.contents.query.assets) {
-          api.contents.query.assets.metadata
           api.contents.query.assets.account(props.assetHubAssetId, props.address, acc => {
             const balanceBN = acc.value?.balance?.toBigInt() ?? 0n
             const balance = Decimal.fromPlanck(balanceBN, token.decimals, { currency: token.symbol })
@@ -60,18 +59,7 @@ export const useSubstrateBalance = (props?: UseSubstrateBalanceProps) => {
       } else {
         api.contents.query.system
           .account(props.address, account => {
-            const ed = api.contents.consts.balances.existentialDeposit
-            const reserved = account.data.reserved.toBigInt()
-            const frozen = account.data.frozen.toBigInt()
-            const untouchable = BigMath.max(frozen - reserved, 0n)
-            const free = account.data.free.toBigInt()
-            const transferableBN = BigMath.max(free - untouchable, 0n)
-
-            const decimals = api.contents.registry.chainDecimals[0] ?? 10
-            const symbol = api.contents.registry.chainTokens[0] ?? 'DOT'
-            const transferrable = Decimal.fromPlanck(transferableBN, decimals, { currency: symbol })
-            const stayAlive = Decimal.fromPlanck(free - ed.toBigInt(), decimals, { currency: symbol })
-            setBalance({ transferrable, stayAlive })
+            setBalance(computeSubstrateBalance(api.contents, account))
           })
           .then(unsub => {
             unsubRef.current = unsub

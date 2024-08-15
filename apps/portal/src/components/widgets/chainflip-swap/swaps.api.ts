@@ -28,7 +28,7 @@ import { connectedSubstrateWalletState } from '@/domains/extension'
 import { tokenRatesAtom, tokensByIdAtom, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { toast } from '@talismn/ui'
-import { atom, useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
+import { Atom, atom, Getter, useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import { loadable, useAtomCallback } from 'jotai/utils'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
@@ -36,18 +36,14 @@ import { useWalletClient } from 'wagmi'
 
 const swapModules = [chainflipSwapModule, simpleswapSwapModule]
 
-/**
- * Unify all tokens we support for swapping on the UI
- * Note that this list is just to get the tokens we display initially on the UI
- * Users should later be able to paste any arbitrary address to swap any token
- * This will happen when we support other protocols like uniswap, sushiswap, etc
- *  */
-export const fromAssetsAtom = atom(async get => {
-  const allTokensSelector = swapModules.map(module => module.fromAssetsSelector)
+const getTokensByChainId = async (
+  get: Getter,
+  allTokensSelector: Atom<Promise<SwappableAssetBaseType<Partial<Record<SupportedSwapProtocol, any>>>[]>>[]
+) => {
   const knownEvmTokens = await get(knownEvmNetworksAtom)
   const otherKnownTokens = await get(tokensByIdAtom)
   const tokens = (await Promise.all(allTokensSelector.map(get))).flat()
-  const tokensByChains = tokens.reduce((acc, cur) => {
+  return tokens.reduce((acc, cur) => {
     const tokens = acc[cur.chainId.toString()] ?? {}
     const tokenDetails = knownEvmTokens[cur.chainId.toString()]?.tokens[cur.id] ?? otherKnownTokens[cur.id]
     if (!tokenDetails) return acc
@@ -63,13 +59,22 @@ export const fromAssetsAtom = atom(async get => {
     acc[cur.chainId.toString()] = tokens
     return acc
   }, {} as Record<string, Record<string, SwappableAssetWithDecimals>>)
+}
 
-  // TODO: Fetch balances here for each chain if from account is selected
-  const allTokens = Object.values(tokensByChains)
-    .map(tokens => Object.values(tokens).sort((a, b) => a.symbol.localeCompare(b.symbol)))
+/**
+ * Unify all tokens we support for swapping on the UI
+ * Note that this list is just to get the tokens we display initially on the UI
+ * Users should later be able to paste any arbitrary address to swap any token
+ * This will happen when we support other protocols like uniswap, sushiswap, etc
+ *  */
+export const fromAssetsAtom = atom(async get => {
+  const allTokensSelector = swapModules.map(module => module.fromAssetsSelector)
+  const tokensByChains = await getTokensByChainId(get, allTokensSelector)
+  return Object.values(tokensByChains)
+    .map(tokens =>
+      Object.values(tokens).sort((a, b) => a.symbol.replaceAll('$', '').localeCompare(b.symbol.replaceAll('$', '')))
+    )
     .flat()
-
-  return allTokens
 })
 
 export const toAssetsAtom = atom(async get => {
@@ -80,32 +85,12 @@ export const toAssetsAtom = atom(async get => {
     .filter(m => (fromAsset ? fromAsset.context[m.protocol] : true))
     .map(module => module.toAssetsSelector)
 
-  const knownEvmTokens = await get(knownEvmNetworksAtom)
-  const otherKnownTokens = await get(tokensByIdAtom)
-  const tokens = (await Promise.all(allTokensSelector.map(get))).flat()
-  const tokensByChains = tokens.reduce((acc, cur) => {
-    const tokens = acc[cur.chainId.toString()] ?? {}
-    const tokenDetails = knownEvmTokens[cur.chainId.toString()]?.tokens[cur.id] ?? otherKnownTokens[cur.id]
-    if (!tokenDetails) return acc
-    tokens[cur.id] = {
-      ...cur,
-      symbol: tokenDetails.symbol,
-      decimals: tokenDetails.decimals,
-      context: {
-        ...tokens[cur.id]?.context,
-        ...cur.context,
-      },
-    }
-    acc[cur.chainId.toString()] = tokens
-    return acc
-  }, {} as Record<string, Record<string, SwappableAssetWithDecimals>>)
-
-  // TODO: Fetch balances here for each chain if from account is selected
-  const allTokens = Object.values(tokensByChains)
-    .map(tokens => Object.values(tokens).sort((a, b) => a.symbol.localeCompare(b.symbol)))
+  const tokensByChains = await getTokensByChainId(get, allTokensSelector)
+  return Object.values(tokensByChains)
+    .map(tokens =>
+      Object.values(tokens).sort((a, b) => a.symbol.replaceAll('$', '').localeCompare(b.symbol.replaceAll('$', '')))
+    )
     .flat()
-
-  return allTokens
 })
 
 export const swapQuotesAtom = loadable(

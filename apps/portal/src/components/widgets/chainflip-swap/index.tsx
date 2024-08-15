@@ -28,7 +28,7 @@ import { Button, Surface, TonalIconButton } from '@talismn/ui'
 import { Repeat } from '@talismn/web-icons'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { loadable } from 'jotai/utils'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type React from 'react'
 import { useSetRecoilState } from 'recoil'
 
@@ -54,6 +54,16 @@ export const ChainFlipSwap: React.FC = () => {
   const toAmount = useAtomValue(loadable(toAmountAtom))
   const fromAssets = useAtomValue(loadable(fromAssetsAtom))
   const toAssets = useAtomValue(loadable(toAssetsAtom))
+  const [cachedToAmount, setCachedToAmount] = useState(toAmount.state === 'hasData' ? toAmount.data : undefined)
+
+  // reset when any of the inputs change
+  useEffect(() => {
+    setCachedToAmount(undefined)
+  }, [fromAmount, fromAsset, toAsset])
+
+  useEffect(() => {
+    if (toAmount.state === 'hasData' && toAmount.data) setCachedToAmount(toAmount.data)
+  }, [toAmount])
 
   const { swap, swapping } = useSwap()
   const reverse = useReverse()
@@ -153,7 +163,7 @@ export const ChainFlipSwap: React.FC = () => {
             </TonalIconButton>
           </div>
           <TokenAmountInput
-            amount={toAmount.state === 'hasData' && toAmount.data ? toAmount.data : undefined}
+            amount={cachedToAmount ?? undefined}
             assets={toAssets.state === 'hasData' ? toAssets.data : undefined}
             leadingLabel="You're receiving"
             selectedAsset={toAsset}
