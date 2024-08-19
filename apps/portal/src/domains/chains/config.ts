@@ -68,7 +68,7 @@ export const chainConfigs: ChainConfig[] = [
     genesisHash: '0xb91746b45e0346cc2f815a520b9c6cb4d5c0902af848db0a80f85932d2e8276a',
     hasNominationPools: true,
     priorityPool: 2,
-    talismanPools: [2],
+    talismanPools: [2, 66, 68],
     novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-avail',
   },
   // Bittensor
