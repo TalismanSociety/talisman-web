@@ -23,6 +23,7 @@ type Props = {
   stayAliveBalance?: Decimal
   disabled?: boolean
   balances?: Record<string, Decimal>
+  hideBalance?: boolean
 }
 
 const hardcodedGasBufferByTokenSymbol: Record<string, number> = {
@@ -35,6 +36,7 @@ export const TokenAmountInput: React.FC<Props> = ({
   assets,
   availableBalance,
   balances,
+  hideBalance,
   leadingLabel,
   onChangeAsset,
   selectedAsset,
@@ -49,10 +51,10 @@ export const TokenAmountInput: React.FC<Props> = ({
   const currency = useRecoilValue(selectedCurrencyState)
   const rates = useTokenRates()
   const shouldDisplayBalance = useMemo(() => {
-    if (!selectedAsset) return false
+    if (hideBalance || !selectedAsset) return false
     if (selectedAsset?.networkType === 'evm') return !!evmAddress
     return !!substrateAddress
-  }, [evmAddress, selectedAsset, substrateAddress])
+  }, [evmAddress, hideBalance, selectedAsset, substrateAddress])
 
   const parseInput = useCallback(
     (value: string) => {

@@ -175,6 +175,7 @@ export const ChainFlipSwap: React.FC = () => {
             evmAddress={fromEvmAccount?.address as `0x${string}`}
             substrateAddress={fromSubstrateAccount?.address}
             disabled
+            hideBalance
           />
         </Surface>
         <FromAccount
