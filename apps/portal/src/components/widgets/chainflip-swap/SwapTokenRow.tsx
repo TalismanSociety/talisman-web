@@ -1,9 +1,9 @@
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
 import { selectedCurrencyState } from '@/domains/balances'
-import { useFastBalance, UseFastBalanceProps } from '@/hooks/useFastBalance'
 import { useTokenRates } from '@talismn/balances-react'
 import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
-import { Clickable, Surface } from '@talismn/ui'
+import { Decimal } from '@talismn/math'
+import { Clickable, Skeleton, Surface } from '@talismn/ui'
 import { useCallback, useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
@@ -13,42 +13,20 @@ type Props = {
   evmAddress?: `0x${string}`
   substrateAddress?: string
   onClick: (asset: SwappableAssetWithDecimals) => void
+  balance?: Decimal
 }
 
-export const SwapTokenRow: React.FC<Props> = ({ asset, networkName, onClick, evmAddress, substrateAddress }) => {
+export const SwapTokenRow: React.FC<Props> = ({
+  asset,
+  balance,
+  networkName,
+  evmAddress,
+  substrateAddress,
+  onClick,
+}) => {
   const currency = useRecoilValue(selectedCurrencyState)
   const rates = useTokenRates()
   const rate = useMemo(() => rates?.[asset.id], [asset.id, rates])
-
-  const balanceProps: UseFastBalanceProps | undefined = useMemo(
-    () =>
-      asset.networkType === 'evm'
-        ? evmAddress
-          ? {
-              type: 'evm',
-              address: evmAddress,
-              networkId: +asset.chainId,
-              tokenAddress: asset.contractAddress as `0x${string}`,
-            }
-          : undefined
-        : substrateAddress
-        ? {
-            type: 'substrate',
-            chainId: asset.chainId.toString(),
-            address: substrateAddress,
-            assetHubAssetId: asset.assetHubAssetId,
-          }
-        : undefined,
-    [asset.assetHubAssetId, asset.chainId, asset.contractAddress, asset.networkType, evmAddress, substrateAddress]
-  )
-  const balance = useFastBalance(balanceProps)
-
-  const value = useMemo(() => {
-    return (rate?.[currency] ?? 0 * (balance?.balance?.transferrable.toNumber() ?? 0)).toLocaleString(undefined, {
-      currency,
-      style: 'currency',
-    })
-  }, [balance?.balance?.transferrable, currency, rate])
 
   const handleClick = useCallback(() => {
     onClick(asset)
@@ -72,16 +50,32 @@ export const SwapTokenRow: React.FC<Props> = ({ asset, networkName, onClick, evm
           <p className="text-[14px]">{networkName}</p>
         </div>
 
-        <div className="flex items-end flex-col justify-center">
-          <p className="text-[14px] font-medium">{balance?.balance?.transferrable.toLocaleString(undefined, {})}</p>
-          {balanceProps && asset && balance?.balance ? (
-            <p className="text-muted-foreground text-[12px]">{value}</p>
+        {(asset.networkType === 'evm' && evmAddress) || (asset.networkType === 'substrate' && substrateAddress) ? (
+          balance ? (
+            <div className="flex items-end flex-col justify-center">
+              <p className="text-[14px] font-medium">{balance?.toLocaleString(undefined, {})}</p>
+              {rate ? (
+                <p className="text-muted-foreground text-[12px]">
+                  {((rate[currency] ?? 0) * balance.toNumber()).toLocaleString(undefined, {
+                    currency,
+                    style: 'currency',
+                  })}
+                </p>
+              ) : null}
+            </div>
           ) : (
-            <p className="text-[14px] font-medium">
+            <div className="flex items-end flex-col justify-center">
+              <Skeleton.Surface className="h-[20px] w-[72px]" />
+              <Skeleton.Surface className="h-[16px] w-[36px] mt-[4px]" />
+            </div>
+          )
+        ) : (
+          <div>
+            <p className="font-medium text-[14px] text-right">
               {rate?.[currency]?.toLocaleString(undefined, { currency, style: 'currency' }) ?? '-'}
             </p>
-          )}
-        </div>
+          </div>
+        )}
       </Surface>
     </Clickable.WithFeedback>
   )

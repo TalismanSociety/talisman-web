@@ -22,6 +22,7 @@ type Props = {
   availableBalance?: Decimal
   stayAliveBalance?: Decimal
   disabled?: boolean
+  balances?: Record<string, Decimal>
 }
 
 const hardcodedGasBufferByTokenSymbol: Record<string, number> = {
@@ -33,6 +34,7 @@ export const TokenAmountInput: React.FC<Props> = ({
   amount,
   assets,
   availableBalance,
+  balances,
   leadingLabel,
   onChangeAsset,
   selectedAsset,
@@ -205,6 +207,7 @@ export const TokenAmountInput: React.FC<Props> = ({
             assets={assets}
             evmAddress={evmAddress}
             substrateAddress={substrateAddress}
+            balances={balances}
           />
         </div>
       }

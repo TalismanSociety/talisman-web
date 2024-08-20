@@ -2,6 +2,7 @@ import { walletConnectionSideSheetOpenState } from '../WalletConnectionSideSheet
 import { FromAccount } from './FromAccount'
 import { TokenAmountInput } from './TokenAmountInput'
 import { shouldFocusDetailsAtom, SidePanel, swapInfoTabAtom } from './side-panel'
+import { fromAssetsBalancesAtom } from './swap-balances.api'
 import {
   fromAddressAtom,
   fromAmountAtom,
@@ -55,6 +56,7 @@ export const ChainFlipSwap: React.FC = () => {
   const fromAssets = useAtomValue(loadable(fromAssetsAtom))
   const toAssets = useAtomValue(loadable(toAssetsAtom))
   const [cachedToAmount, setCachedToAmount] = useState(toAmount.state === 'hasData' ? toAmount.data : undefined)
+  const balances = useAtomValue(loadable(fromAssetsBalancesAtom))
 
   // reset when any of the inputs change
   useEffect(() => {
@@ -143,6 +145,7 @@ export const ChainFlipSwap: React.FC = () => {
         <Surface className="bg-card p-[16px] rounded-[8px] w-full">
           <h4 className="text-[18px] font-semibold mb-[8px]">Select Asset</h4>
           <TokenAmountInput
+            balances={balances.state === 'hasData' ? balances.data : undefined}
             assets={fromAssets.state === 'hasData' ? fromAssets.data : undefined}
             amount={fromAmount}
             onChangeAmount={setFromAmount}
@@ -163,11 +166,14 @@ export const ChainFlipSwap: React.FC = () => {
             </TonalIconButton>
           </div>
           <TokenAmountInput
+            balances={balances.state === 'hasData' ? balances.data : undefined}
             amount={cachedToAmount ?? undefined}
             assets={toAssets.state === 'hasData' ? toAssets.data : undefined}
             leadingLabel="You're receiving"
             selectedAsset={toAsset}
             onChangeAsset={handleChangeToAsset}
+            evmAddress={fromEvmAccount?.address as `0x${string}`}
+            substrateAddress={fromSubstrateAccount?.address}
             disabled
           />
         </Surface>

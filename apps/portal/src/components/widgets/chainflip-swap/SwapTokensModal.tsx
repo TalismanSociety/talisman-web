@@ -2,6 +2,7 @@ import { SwapTokenRow } from './SwapTokenRow'
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
 import { useChains, useEvmNetworks } from '@talismn/balances-react'
 import { Chain, EvmNetwork, githubUnknownChainLogoUrl, githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
+import { Decimal } from '@talismn/math'
 import { AlertDialog, SearchBar, Select, Skeleton, SurfaceButton } from '@talismn/ui'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { Globe, X } from 'lucide-react'
@@ -13,10 +14,12 @@ type Props = {
   onSelectAsset: (asset: SwappableAssetWithDecimals | null) => void
   evmAddress?: `0x${string}`
   substrateAddress?: string
+  balances?: Record<string, Decimal>
 }
 
 export const SwapTokensModal: React.FC<Props> = ({
   assets,
+  balances,
   selectedAsset,
   onSelectAsset,
   evmAddress,
@@ -67,6 +70,16 @@ export const SwapTokensModal: React.FC<Props> = ({
       }, {} as Record<string, Chain | EvmNetwork>) ?? {}
     )
   }, [assets, chains, networks])
+
+  const sortedTokensByBalances = useMemo(() => {
+    if (!balances) return filteredAssets
+    return filteredAssets.sort((a, b) => {
+      const aBalance = balances[a.id]?.toNumber()
+      const bBalance = balances[b.id]?.toNumber()
+      if (aBalance === undefined || bBalance === undefined) return 0
+      return bBalance - aBalance
+    })
+  }, [balances, filteredAssets])
 
   return (
     <>
@@ -132,7 +145,7 @@ export const SwapTokensModal: React.FC<Props> = ({
         <div className="flex flex-col gap-[8px] h-[420px] relative overflow-y-auto" ref={parentRef}>
           {assets ? (
             rowVirtualizer.getVirtualItems().map(item => {
-              const asset = filteredAssets[item.index]
+              const asset = sortedTokensByBalances[item.index]
               if (!asset) return null
               return (
                 <div
@@ -151,6 +164,7 @@ export const SwapTokensModal: React.FC<Props> = ({
                     networkName={chains[asset.chainId]?.name ?? networks[asset.chainId]?.name ?? 'Unknown Chain'}
                     evmAddress={evmAddress}
                     substrateAddress={substrateAddress}
+                    balance={balances?.[asset.id]}
                     onClick={a => {
                       setOpen(false)
                       onSelectAsset(a)
