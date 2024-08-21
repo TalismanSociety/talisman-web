@@ -7,6 +7,7 @@ import { encodeAddress } from '@polkadot/util-crypto'
 import DotPoolSelector, { ValidatorSelector, defaultOptions } from '@talismn/dot-pool-selector'
 import { Decimal } from '@talismn/math'
 import { fromUnixTime, isAfter, isBefore, max as maxDate, startOfDay } from 'date-fns'
+import sample from 'lodash/sample'
 import { selectorFamily, waitForAll, type SerializableParam } from 'recoil'
 
 export const allPendingPoolRewardsState = selectorFamily({
@@ -78,14 +79,31 @@ export const recommendedPoolsState = selectorFamily({
 
       const names = await api.query.nominationPools.metadata.multi(pools.map(({ poolId }) => poolId))
 
+      const priorityPool =
+        typeof chain?.priorityPool === 'number'
+          ? chain?.priorityPool
+          : Array.isArray(chain?.priorityPool)
+          ? sample(chain?.priorityPool)
+          : undefined
+      const priorityPools =
+        typeof chain?.priorityPool === 'number'
+          ? [chain?.priorityPool]
+          : Array.isArray(chain?.priorityPool)
+          ? chain?.priorityPool
+          : []
+
       return pools
         .map((pool, index) => ({ ...pool, name: names[index]?.toUtf8() }))
         .filter(pool => pool.bondedPool.isSome)
         .map(pool => ({ ...pool, bondedPool: pool.bondedPool.unwrap() }))
         .sort((a, b) =>
-          a.poolId === chain?.priorityPool && b.poolId !== chain.priorityPool
+          a.poolId === priorityPool && b.poolId !== priorityPool
             ? -1
-            : b.poolId === chain?.priorityPool && a.poolId !== chain.priorityPool
+            : b.poolId === priorityPool && a.poolId !== priorityPool
+            ? 1
+            : priorityPools.includes(a.poolId) && !priorityPools.includes(b.poolId)
+            ? -1
+            : priorityPools.includes(b.poolId) && !priorityPools.includes(a.poolId)
             ? 1
             : recommendedPoolIds.includes(a.poolId) && !recommendedPoolIds.includes(b.poolId)
             ? -1
