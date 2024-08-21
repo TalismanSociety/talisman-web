@@ -1,4 +1,5 @@
 import { substrateApiGetterAtom } from '../../../domains/common/recoils/api'
+import { popularTokens } from './curated-tokens'
 import { knownEvmNetworksAtom } from './helpers'
 import { swapInfoTabAtom } from './side-panel'
 import { chainflipSwapModule, type ChainflipSwapActivityData } from './swap-modules/chainflip.swap-module'
@@ -61,6 +62,50 @@ const getTokensByChainId = async (
   }, {} as Record<string, Record<string, SwappableAssetWithDecimals>>)
 }
 
+export const tokenTabs: {
+  value: string
+  label: string
+  filter?: (token: SwappableAssetWithDecimals) => boolean
+  sort?: (a: SwappableAssetWithDecimals, b: SwappableAssetWithDecimals) => number
+}[] = [
+  {
+    value: 'all',
+    label: 'All',
+  },
+  {
+    value: 'popular',
+    label: 'Popular',
+    filter: token => popularTokens.includes(token.id) ?? false,
+    sort: (a, b) => popularTokens.indexOf(a.id) - popularTokens.indexOf(b.id),
+  },
+  {
+    value: 'polkadot',
+    label: 'Polkadot & Substrate',
+    filter: token => token.networkType === 'substrate',
+  },
+  {
+    value: 'ethereum',
+    label: 'Ethereum',
+    filter: token => token.chainId.toString() === '1',
+  },
+  {
+    value: 'binance',
+    label: 'Binance',
+    filter: token => token.chainId.toString() === '56',
+  },
+  {
+    value: 'arbitrum',
+    label: 'Arbitrum',
+    filter: token => token.chainId.toString() === '42161',
+  },
+  {
+    value: 'optimism',
+    label: 'Optimism',
+    filter: token => token.chainId.toString() === '10',
+  },
+]
+
+export const tokenTabAtom = atom<string>('popular')
 /**
  * Unify all tokens we support for swapping on the UI
  * Note that this list is just to get the tokens we display initially on the UI
@@ -70,11 +115,19 @@ const getTokensByChainId = async (
 export const fromAssetsAtom = atom(async get => {
   const allTokensSelector = swapModules.map(module => module.fromAssetsSelector)
   const tokensByChains = await getTokensByChainId(get, allTokensSelector)
-  return Object.values(tokensByChains)
+
+  let tokens = Object.values(tokensByChains)
     .map(tokens =>
       Object.values(tokens).sort((a, b) => a.symbol.replaceAll('$', '').localeCompare(b.symbol.replaceAll('$', '')))
     )
     .flat()
+
+  const tab = get(tokenTabAtom)
+  const filter = tokenTabs.find(t => t.value === tab)?.filter
+  const sort = tokenTabs.find(t => t.value === tab)?.sort
+  if (filter) tokens = tokens.filter(filter)
+  if (sort) tokens = tokens.sort(sort)
+  return tokens
 })
 
 export const toAssetsAtom = atom(async get => {
@@ -86,11 +139,18 @@ export const toAssetsAtom = atom(async get => {
     .map(module => module.toAssetsSelector)
 
   const tokensByChains = await getTokensByChainId(get, allTokensSelector)
-  return Object.values(tokensByChains)
+  let tokens = Object.values(tokensByChains)
     .map(tokens =>
       Object.values(tokens).sort((a, b) => a.symbol.replaceAll('$', '').localeCompare(b.symbol.replaceAll('$', '')))
     )
     .flat()
+
+  const tab = get(tokenTabAtom)
+  const filter = tokenTabs.find(t => t.value === tab)?.filter
+  const sort = tokenTabs.find(t => t.value === tab)?.sort
+  if (filter) tokens = tokens.filter(filter)
+  if (sort) tokens = tokens.sort(sort)
+  return tokens
 })
 
 export const swapQuotesAtom = loadable(
