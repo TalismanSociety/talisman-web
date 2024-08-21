@@ -7,6 +7,7 @@ import { useAccountSelector } from '../../AccountSelector'
 import { walletConnectionSideSheetOpenState } from '../../WalletConnectionSideSheet'
 import Apr from './Apr'
 import UnlockDuration from './UnlockDuration'
+import { Tooltip } from '@talismn/ui'
 import {
   Button,
   CircularProgressIndicator,
@@ -15,8 +16,9 @@ import {
   SideSheet,
   Surface,
   Text,
+  SurfaceChip,
 } from '@talismn/ui'
-import { Zap } from '@talismn/web-icons'
+import { Zap, Clock } from '@talismn/web-icons'
 import { Suspense, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
@@ -121,10 +123,18 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
       </Surface>
       <Text.Body as="p" css={{ marginTop: '4.8rem' }}>
         {`To get started with Bifrost Liquid Staking for ${props.slpxPair.nativeToken.symbol}, you'll need ${props.slpxPair.nativeToken.symbol} on ${props.slpxPair.chain.name}. Once staked, you'll receive ${props.slpxPair.vToken.symbol} (voucher ${props.slpxPair.nativeToken.symbol}) as your liquid staking token, which has fully underlying ${props.slpxPair.nativeToken.symbol} reserve and is directly yield bearing.`}{' '}
-        <Text.Noop.A target="blank" href="https://bifrost.io/#liquidStaking ">
+        <Text.Noop.A target="blank" href="https://bifrost.io/#liquidStaking">
           Learn more
         </Text.Noop.A>
       </Text.Body>
+      <div className="flex justify-end mt-2">
+        <Tooltip content="Transaction may take several minutes to complete">
+          <SurfaceChip className="cursor-default">
+            <Clock />
+            5-10 minutes
+          </SurfaceChip>
+        </Tooltip>
+      </div>
     </SideSheet>
   )
 }
