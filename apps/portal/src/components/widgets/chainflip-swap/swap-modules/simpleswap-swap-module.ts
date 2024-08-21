@@ -281,7 +281,10 @@ export const toAssetsSelector = atom(async get => {
   if (!symbol) return [] // not supported
   const pairs = await simpleSwapSdk.getPairs({ symbol, fixed: false })
   if (!pairs || !Array.isArray(pairs)) return []
-  return allAssets.filter(asset => pairs.find(p => p.toLowerCase() === asset.context.simpleswap?.symbol.toLowerCase()))
+  return [
+    fromAsset,
+    ...allAssets.filter(asset => pairs.find(p => p.toLowerCase() === asset.context.simpleswap?.symbol.toLowerCase())),
+  ]
 })
 
 const quote: QuoteFunction = async (
@@ -398,8 +401,7 @@ const swap: SwapFunction<{ id: string }> = async (
   // verify that the created exchange has the same assets we are trying to swap
   if (exchange.currency_from !== currency_from || exchange.currency_to !== currency_to)
     throw new Error('Incorrect currencies from provider. Please try again later')
-  if (+exchange.expected_amount !== amount.toNumber())
-    throw new Error('Incorrect amount from provider. Please try again later')
+  if (+exchange.expected_amount > amount.toNumber()) throw new Error('Quote changed. Please try again.')
   if (exchange.address_to !== address_to)
     throw new Error('Incorrect destination address from provider. Please try again later')
 

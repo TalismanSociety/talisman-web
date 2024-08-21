@@ -154,10 +154,7 @@ const tokensSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {
 const fromAssetsSelector = atom(get => get(tokensSelector))
 
 const toAssetsSelector = atom(async get => {
-  const fromAsset = get(fromAssetAtom)
-  const tokens = await get(tokensSelector)
-  if (!fromAsset) return tokens
-  return tokens.filter(token => token.networkType !== fromAsset.networkType)
+  return await get(tokensSelector)
 })
 
 const quote: QuoteFunction = async (

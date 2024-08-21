@@ -69,39 +69,10 @@ export const tokenTabs: {
   sort?: (a: SwappableAssetWithDecimals, b: SwappableAssetWithDecimals) => number
 }[] = [
   {
-    value: 'all',
-    label: 'All',
-  },
-  {
     value: 'popular',
     label: 'Popular',
     filter: token => popularTokens.includes(token.id) ?? false,
     sort: (a, b) => popularTokens.indexOf(a.id) - popularTokens.indexOf(b.id),
-  },
-  {
-    value: 'polkadot',
-    label: 'Polkadot & Substrate',
-    filter: token => token.networkType === 'substrate',
-  },
-  {
-    value: 'ethereum',
-    label: 'Ethereum',
-    filter: token => token.chainId.toString() === '1',
-  },
-  {
-    value: 'binance',
-    label: 'Binance',
-    filter: token => token.chainId.toString() === '56',
-  },
-  {
-    value: 'arbitrum',
-    label: 'Arbitrum',
-    filter: token => token.chainId.toString() === '42161',
-  },
-  {
-    value: 'optimism',
-    label: 'Optimism',
-    filter: token => token.chainId.toString() === '10',
   },
 ]
 
@@ -150,6 +121,13 @@ export const toAssetsAtom = atom(async get => {
   const sort = tokenTabs.find(t => t.value === tab)?.sort
   if (filter) tokens = tokens.filter(filter)
   if (sort) tokens = tokens.sort(sort)
+
+  // temp solution to disable eth <> arb routes
+  if (fromAsset) {
+    if (fromAsset.chainId.toString() === '1' || fromAsset.chainId.toString() === '42161') {
+      tokens = tokens.filter(t => t.chainId.toString() !== '1' && t.chainId.toString() !== '42161')
+    }
+  }
   return tokens
 })
 

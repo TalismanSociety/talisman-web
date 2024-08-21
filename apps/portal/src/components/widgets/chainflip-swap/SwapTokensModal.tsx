@@ -151,13 +151,15 @@ export const SwapTokensModal: React.FC<Props> = ({
           </Select>
         </div>
         <div className="w-full overflow-hidden relative">
-          <Tabs className="overflow-y-auto no-scrollbar w-full px-[16px]">
-            {tokenTabs.map(t => (
-              <Tabs.Item key={t.value} value={t.value} selected={tab === t.value} onClick={() => setTab(t.value)}>
-                <p className="!text-[14px] !leading-none whitespace-nowrap !mb-[4px]">{t.label}</p>
-              </Tabs.Item>
-            ))}
-          </Tabs>
+          {tokenTabs.length > 1 && (
+            <Tabs className="overflow-y-auto no-scrollbar w-full px-[16px]">
+              {tokenTabs.map(t => (
+                <Tabs.Item key={t.value} value={t.value} selected={tab === t.value} onClick={() => setTab(t.value)}>
+                  <p className="!text-[14px] !leading-none whitespace-nowrap !mb-[4px]">{t.label}</p>
+                </Tabs.Item>
+              ))}
+            </Tabs>
+          )}
           <div className="absolute left-0 top-0 h-full w-[20px] bg-gradient-to-r from-[#1b1b1b] to-[#1b1b1b]/0" />
           <div className="absolute right-0 top-0 h-full w-[20px] bg-gradient-to-l from-[#1b1b1b] to-[#1b1b1b]/0" />
         </div>
