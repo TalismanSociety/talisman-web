@@ -1,4 +1,10 @@
-import { BaseQuote, selectedProtocolAtom, toAssetAtom } from '../../swap-modules/common.swap-module'
+import {
+  BaseQuote,
+  fromAmountAtom,
+  fromAssetAtom,
+  selectedProtocolAtom,
+  toAssetAtom,
+} from '../../swap-modules/common.swap-module'
 import chainflipLogo from './logos/chainflip-logo.png'
 import simpleSwapLogo from './logos/simpleswap-logo.svg'
 import { selectedCurrencyState } from '@/domains/balances'
@@ -36,9 +42,11 @@ const DecentralisationScore: React.FC<{ score: number }> = ({ score }) => {
 }
 export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ selected, amountOverride, quote }) => {
   const toAsset = useAtomValue(toAssetAtom)
+  const fromAsset = useAtomValue(fromAssetAtom)
   const tokenRates = useTokenRates()
   const currency = useRecoilValue(selectedCurrencyState)
   const setSelectedProtocol = useSetAtom(selectedProtocolAtom)
+  const fromAmount = useAtomValue(fromAmountAtom)
 
   const amount = useMemo(() => {
     if (!toAsset) return null
@@ -58,6 +66,11 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
     if (duration.seconds && duration.seconds > 0) parts.push(`${duration.seconds}s`)
     return parts.join(' ')
   }, [quote.timeInSec])
+
+  const toQuote = useMemo(() => {
+    if (!amount || !fromAmount) return undefined
+    return amount.mapNumber(() => (amount.toNumber() ?? 0) / (fromAmount.toNumber() ?? 1))
+  }, [fromAmount, amount])
 
   const totalFee = useMemo(
     () =>
@@ -96,13 +109,13 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
   return (
     <Clickable.WithFeedback onClick={() => setSelectedProtocol(quote.protocol)}>
       <Surface
-        className={cn('rounded-[8px] p-[12px]', {
+        className={cn('rounded-[8px] p-[12px] pb-[8px]', {
           'border-white border': selected,
         })}
       >
         <div className="flex items-center justify-between w-full mb-[16px]">
           <p className="font-bold text-[14px]">
-            {amount?.toLocaleString()}{' '}
+            {amount?.toLocaleString(undefined, { maximumFractionDigits: 4 })}{' '}
             <span className="font-normal text-[12px] text-muted-foreground">
               ~ {usdValue?.toLocaleString(undefined, { style: 'currency', currency })}
             </span>
@@ -122,6 +135,12 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
             <p className="text-[12px] leading-[12px] pt-[4px] text-muted-foreground">Decentralization</p>
             <DecentralisationScore score={quote.decentralisationScore} />
           </div>
+        </div>
+
+        <div className=" pt-[4px] mt-[12px] border-t border-t-[#3f3f3f]">
+          <p className="text-[12px] text-muted-foreground">
+            1 {fromAsset?.symbol} = {toQuote?.toLocaleString(undefined, { maximumFractionDigits: 4 })}
+          </p>
         </div>
       </Surface>
     </Clickable.WithFeedback>
