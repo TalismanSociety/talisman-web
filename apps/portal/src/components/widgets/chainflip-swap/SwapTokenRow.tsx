@@ -1,6 +1,6 @@
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
 import { selectedCurrencyState } from '@/domains/balances'
-import { useTokenRates } from '@talismn/balances-react'
+import { useTokenRates, useTokens } from '@talismn/balances-react'
 import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { Clickable, Skeleton, Surface } from '@talismn/ui'
@@ -26,7 +26,14 @@ export const SwapTokenRow: React.FC<Props> = ({
 }) => {
   const currency = useRecoilValue(selectedCurrencyState)
   const rates = useTokenRates()
-  const rate = useMemo(() => rates?.[asset.id], [asset.id, rates])
+  const tokens = useTokens()
+
+  const bestGuessRate = useMemo(() => {
+    if (!tokens) return undefined
+    return Object.entries(rates ?? {}).find(([id]) => tokens[id]?.symbol === asset.symbol)?.[1]
+  }, [asset.symbol, rates, tokens])
+
+  const rate = useMemo(() => rates?.[asset.id] ?? bestGuessRate, [asset.id, bestGuessRate, rates])
 
   const handleClick = useCallback(() => {
     onClick(asset)
@@ -70,8 +77,8 @@ export const SwapTokenRow: React.FC<Props> = ({
             </div>
           )
         ) : (
-          <div>
-            <p className="font-medium text-[14px] text-right">
+          <div className="flex flex-col items-end justify-center">
+            <p className="font-medium text-[12px] text-right text-muted-foreground">
               {rate?.[currency]?.toLocaleString(undefined, { currency, style: 'currency' }) ?? '-'}
             </p>
           </div>
