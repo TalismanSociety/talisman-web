@@ -11,9 +11,10 @@ import { selectedCurrencyState } from '@/domains/balances'
 import { cn } from '@/lib/utils'
 import { useTokenRates } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
-import { Clickable, Surface } from '@talismn/ui'
+import { Clickable, Surface, Tooltip } from '@talismn/ui'
 import { intervalToDuration } from 'date-fns'
 import { useAtomValue, useSetAtom } from 'jotai'
+import { Clock, Info } from 'lucide-react'
 import React, { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
@@ -22,24 +23,6 @@ type Props = {
   amountOverride?: bigint
 }
 
-const DecentralisationScore: React.FC<{ score: number }> = ({ score }) => {
-  return (
-    <div className="flex items-end gap-[2px]">
-      <div
-        className={cn('w-[4px] rounded-[2px] h-[6px] bg-gray-600', {
-          'bg-[#FD4848]': score > 0,
-          'bg-primary': score > 1,
-        })}
-      />
-      <div
-        className={cn('w-[4px] rounded-[2px] h-[9px] bg-gray-600', {
-          'bg-primary': score > 1,
-        })}
-      />
-      <div className={cn('w-[4px] rounded-[2px] h-[12px] bg-gray-600')} />
-    </div>
-  )
-}
 export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ selected, amountOverride, quote }) => {
   const toAsset = useAtomValue(toAssetAtom)
   const fromAsset = useAtomValue(fromAssetAtom)
@@ -113,34 +96,41 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
           'border-white border': selected,
         })}
       >
-        <div className="flex items-center justify-between w-full mb-[16px]">
-          <p className="font-bold text-[14px]">
-            {amount?.toLocaleString(undefined, { maximumFractionDigits: 4 })}{' '}
-            <span className="font-normal text-[12px] text-muted-foreground">
-              ~ {usdValue?.toLocaleString(undefined, { style: 'currency', currency })}
-            </span>
-          </p>
+        <div className="flex items-center justify-between w-full ">
+          <p className="font-bold text-[14px]">{amount?.toLocaleString(undefined, { maximumFractionDigits: 4 })} </p>
           {brand}
         </div>
-        <div className="flex items-center gap-[12px]">
-          <div className="flex items-center gap-[4px]">
-            <p className="text-[12px] leading-[12px] pt-[4px] text-muted-foreground">Fee</p>
-            <p className="text-[12px] leading-[12px] pt-[4px]">~{totalFee}</p>
-          </div>
-          <div className="flex items-center gap-[4px]">
-            <p className="text-[12px] leading-[12px] pt-[4px] text-muted-foreground">Time</p>
-            <p className="text-[12px] leading-[12px] pt-[4px]">~{time}</p>
-          </div>
-          <div className="flex items-center gap-[4px]">
-            <p className="text-[12px] leading-[12px] pt-[4px] text-muted-foreground">Decentralization</p>
-            <DecentralisationScore score={quote.decentralisationScore} />
-          </div>
+        <div className="flex items-center gap-[8px] mb-[16px] text-muted-foreground">
+          <p className="font-normal text-[12px]">
+            {usdValue?.toLocaleString(undefined, { style: 'currency', currency })}
+          </p>
+          <Tooltip
+            content={
+              <p className="max-w-[240px] text-[14px]">
+                This is the estimated amount, including the provider costs for exchange liquidity, gas fees, provider
+                rates and a 1.5% Talisman fee on this path.
+              </p>
+            }
+            placement="top"
+          >
+            <Info className="w-[14px] h-[14px]" />
+          </Tooltip>
         </div>
 
-        <div className=" pt-[4px] mt-[12px] border-t border-t-[#3f3f3f]">
-          <p className="text-[12px] text-muted-foreground">
-            1 {fromAsset?.symbol} = {toQuote?.toLocaleString(undefined, { maximumFractionDigits: 4 })}
-          </p>
+        <div className="pt-[8px] mt-[12px] border-t border-t-[#3f3f3f] flex items-center gap-[12px]">
+          <div className="flex items-center gap-[12px]">
+            <p className="text-[12px] leading-[12px]">
+              1 {fromAsset?.symbol} = {toQuote?.toLocaleString(undefined, { maximumFractionDigits: 4 })}
+            </p>
+            <p className="text-[12px] leading-[12px] text-muted-foreground">
+              Fees <span className="text-[12px] leading-[12px] text-white">~{totalFee}</span>
+            </p>
+          </div>
+
+          <div className="flex items-center gap-[4px] ml-auto">
+            <Clock className="w-[14px] h-[14px] text-muted-foreground" />
+            <p className="text-[12px] leading-[12px]">{time}</p>
+          </div>
         </div>
       </Surface>
     </Clickable.WithFeedback>
