@@ -23,7 +23,7 @@ import { atomFamily } from 'jotai/utils'
 import { createPublicClient, encodeFunctionData, erc20Abi, http, isAddress } from 'viem'
 import { mainnet, bsc, arbitrum, optimism, blast, polygon } from 'viem/chains'
 
-const APIKEY = 'cd797f84-f852-4efe-9ab8-b49464c4d632'
+const APIKEY = import.meta.env.REACT_APP_SIMPLESWAP_API_KEY
 const PROTOCOL = 'simpleswap'
 
 type SimpleSwapCurrency = {
