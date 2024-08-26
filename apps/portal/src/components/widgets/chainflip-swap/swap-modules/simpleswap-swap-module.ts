@@ -23,7 +23,8 @@ import { atomFamily } from 'jotai/utils'
 import { createPublicClient, encodeFunctionData, erc20Abi, http, isAddress } from 'viem'
 import { mainnet, bsc, arbitrum, optimism, blast, polygon } from 'viem/chains'
 
-const APIKEY = import.meta.env.REACT_APP_SIMPLESWAP_API_KEY
+const APIKEY = import.meta.env.SIMPLESWAP_API_KEY
+if (!APIKEY && import.meta.env.DEV) throw new Error('env var REACT_APP_CHAINDATA not set')
 const PROTOCOL = 'simpleswap'
 
 type SimpleSwapCurrency = {
