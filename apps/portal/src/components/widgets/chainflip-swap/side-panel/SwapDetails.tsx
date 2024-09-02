@@ -110,16 +110,18 @@ const Details: React.FC = () => {
             </Clickable.WithFeedback>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {Object.entries(SORTS).map(([key, value]) => (
-              <DropdownMenuItem
-                key={key}
-                className="flex items-center justify-between"
-                onClick={() => setSort(key as keyof typeof SORTS)}
-              >
-                <p className={cn('text-[14px]')}>{value.name}</p>
-                {key === sort ? <Check className="w-[16px] h-[16px]" /> : null}
-              </DropdownMenuItem>
-            ))}
+            {Object.entries(SORTS).map(([key, value]) =>
+              key === 'decentalised' ? null : (
+                <DropdownMenuItem
+                  key={key}
+                  className="flex items-center justify-between gap-[8px]"
+                  onClick={() => setSort(key as keyof typeof SORTS)}
+                >
+                  <p className={cn('text-[14px]')}>{value.name}</p>
+                  {key === sort ? <Check className="w-[16px] h-[16px]" /> : null}
+                </DropdownMenuItem>
+              )
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
