@@ -128,7 +128,7 @@ export const TokenSelectDialog = (props: TokenSelectDialogProps) => {
         </Select>
       </div>
       <div css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', maxHeight: '60dvh', overflow: 'auto' }}>
-        {filteredTokens.slice(0, 100).map((token, index) => (
+        {filteredTokens.map((token, index) => (
           <TokenSelectDialogItem
             key={index}
             {...token}
