@@ -27,7 +27,6 @@ const APIKEY = import.meta.env.REACT_APP_SIMPLESWAP_API_KEY
 if (!APIKEY && import.meta.env.DEV) throw new Error('env var REACT_APP_SIMPLESWAP_API_KEY not set')
 const PROTOCOL = 'simpleswap'
 
-console.log(APIKEY)
 type SimpleSwapCurrency = {
   name: string
   network: string
