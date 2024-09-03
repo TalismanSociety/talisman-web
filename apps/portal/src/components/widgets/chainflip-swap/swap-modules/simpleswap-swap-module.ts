@@ -21,7 +21,7 @@ import { encodeAnyAddress } from '@talismn/util'
 import { atom, Getter, Setter } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { createPublicClient, encodeFunctionData, erc20Abi, http, isAddress } from 'viem'
-import { mainnet, bsc, arbitrum, optimism, blast, polygon } from 'viem/chains'
+import { mainnet, bsc, arbitrum, optimism, blast, polygon, manta } from 'viem/chains'
 
 const APIKEY = import.meta.env.REACT_APP_SIMPLESWAP_API_KEY
 if (!APIKEY && import.meta.env.DEV) throw new Error('env var REACT_APP_SIMPLESWAP_API_KEY not set')
@@ -47,6 +47,7 @@ const supportedEvmChains = {
   optimism: optimism,
   blast: blast,
   polygon: polygon,
+  manta: manta,
 }
 
 type SimpleSwapAssetContext = {
@@ -151,6 +152,8 @@ type Exchange = {
     }
   >
   trace_id: string
+  code?: number
+  error?: string
 }
 
 const simpleSwapSdk = {
@@ -537,7 +540,7 @@ const retryStatus = async (
     const exchange = await simpleSwapSdk.getExchange(id)
     const expired = false
 
-    if (exchange.status !== 'finished') {
+    if (exchange.status !== 'finished' && exchange.code !== 401) {
       get(swapQuoteRefresherAtom)
     }
 

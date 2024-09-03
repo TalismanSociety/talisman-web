@@ -7,7 +7,7 @@ import { ArrowRight, ArrowUpRight, Check, X } from 'lucide-react'
 import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
-export const SimpleswapActivity: React.FC<{ data: { id: string }; timestamp: number }> = ({ data }) => {
+export const SimpleswapActivity: React.FC<{ data: { id: string }; timestamp: number }> = ({ data, timestamp }) => {
   const status = useAtomValue(simpleswapSwapStatusAtom(data.id))
   const assets = useAtomValue(fromAssetsAtom)
 
@@ -28,6 +28,26 @@ export const SimpleswapActivity: React.FC<{ data: { id: string }; timestamp: num
     if (!destAsset) return status.exchange.amount_to
     return Decimal.fromUserInput(status.exchange.amount_to, destAsset.decimals).toLocaleString()
   }, [destAsset, status.exchange.amount_to])
+
+  if (status.exchange.error) {
+    return (
+      <Link to={`https://simpleswap.io/exchange?id=${data.id}`} target="_blank">
+        <SurfaceButton className="!rounded-[8px] min-h-[56px] !w-full [&>div]:!justify-start [&>div>span]:!w-full !px-[8px] py-[12px]">
+          <div className="flex items-center justify-between w-full h-full">
+            <div className="text-left">
+              <div className="flex items-center gap-[4px]">
+                <span className="text-white text-[14px] font-semibold">??</span>
+                <ArrowRight className="text-gray-600" size={16} />
+                <span className="text-white text-[14px] font-semibold">??</span>
+              </div>
+              <p className="text-gray-400 text-[12px] !leading-none">{new Date(timestamp).toLocaleString()}</p>
+            </div>
+            <ArrowUpRight className="text-primary" size={20} />
+          </div>
+        </SurfaceButton>
+      </Link>
+    )
+  }
 
   return (
     <Link to={`https://simpleswap.io/exchange?id=${data.id}`} target="_blank">
