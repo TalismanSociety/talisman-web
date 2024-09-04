@@ -36,6 +36,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil'
 import { useWalletClient } from 'wagmi'
 
 const swapModules = [chainflipSwapModule, simpleswapSwapModule]
+const ETH_LOGO = 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg'
 
 const getTokensByChainId = async (
   get: Getter,
@@ -52,6 +53,7 @@ const getTokensByChainId = async (
       ...cur,
       symbol: tokenDetails.symbol,
       decimals: tokenDetails.decimals,
+      image: tokenDetails.symbol.toLowerCase() === 'eth' ? ETH_LOGO : cur.image,
       context: {
         ...tokens[cur.id]?.context,
         ...cur.context,
