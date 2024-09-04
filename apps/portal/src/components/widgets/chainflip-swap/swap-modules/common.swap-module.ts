@@ -8,25 +8,40 @@ import { atomWithStorage, createJSONStorage, unstable_withStorageValidator } fro
 import 'recoil'
 import type { TransactionRequest, WalletClient } from 'viem'
 
-export type SupportedSwapProtocol = 'chainflip'
+export type SupportedSwapProtocol = 'chainflip' | 'simpleswap'
 
-export type CommonSwappableAssetType = {
+export type SwappableAssetBaseType<TContext = Partial<Record<SupportedSwapProtocol, any>>> = {
   id: string
   name: string
   symbol: string
-  decimals: number
-  contractAddress?: string
   chainId: number | string
+  contractAddress?: string
+  assetHubAssetId?: number
+  image?: string
+  networkType: 'evm' | 'substrate'
+  /** protocol modules can store context here, like any special identifier */
+  context: TContext
+}
+
+export type SwappableAssetWithDecimals<TContext = Partial<Record<SupportedSwapProtocol, any>>> = {
+  decimals: number
+} & SwappableAssetBaseType<TContext>
+
+type QuoteFee = {
+  name: string
+  amount: Decimal
+  tokenId: string
 }
 
 export type BaseQuote = {
   protocol: SupportedSwapProtocol
-  outputAmountBN?: bigint
+  outputAmountBN: bigint
   inputAmountBN: bigint
   error?: string
-  fees: any
+  fees: QuoteFee[]
   talismanFeeBps?: number
   data?: any
+  timeInSec: number
 }
 
 type SwapProps = {
@@ -55,7 +70,10 @@ export type EstimateGasTx =
       tx: SubmittableExtrinsic<'promise'>
     }
 
-export type QuoteFunction = (get: Getter) => Promise<BaseQuote | null>
+export type QuoteFunction = (
+  get: Getter,
+  props: { getSubstrateApi: (rpc: string) => Promise<ApiPromise> }
+) => Promise<BaseQuote | null>
 export type SwapFunction<TData> = (
   get: Getter,
   set: Setter,
@@ -64,33 +82,48 @@ export type SwapFunction<TData> = (
 export type GetEstimateGasTxFunction = (
   get: Getter,
   props: { getSubstrateApi: (rpc: string) => Promise<ApiPromise> }
-) => Promise<EstimateGasTx | null>
+) => Promise<QuoteFee | null>
 
 export type SwapModule = {
   protocol: SupportedSwapProtocol
-  tokensSelector: Atom<Promise<CommonSwappableAssetType[]>>
+  fromAssetsSelector: Atom<Promise<SwappableAssetBaseType[]>>
+  toAssetsSelector: Atom<Promise<SwappableAssetBaseType[]>>
   quote: QuoteFunction
-  getEstimateGasTx: GetEstimateGasTxFunction
   /** Returns whether the swap succeeded or not */
   swap: SwapFunction<any>
+
+  // talisman curated data
+  decentralisationScore: number
 }
 
 // atoms shared between swap modules
 
-export const fromAssetAtom = atom<CommonSwappableAssetType | null>(null)
-export const toAssetAtom = atom<CommonSwappableAssetType | null>(null)
-export const fromAmountInputAtom = atom('')
-export const fromAmountAtom = atom(get => {
-  const input = get(fromAmountInputAtom)
-  const asset = get(fromAssetAtom)
-  if (!asset || input.trim() === '') return Decimal.fromUserInput(input, 1)
-  return (
-    Decimal.fromUserInputOrUndefined(input, asset.decimals, { currency: asset.symbol }) ?? Decimal.fromPlanck(0n, 1)
-  )
+export const selectedProtocolAtom = atom<SupportedSwapProtocol | null>(null)
+export const fromAssetAtom = atom<SwappableAssetWithDecimals | null>(null)
+export const fromAmountAtom = atom<Decimal>(Decimal.fromPlanck(0n, 1))
+export const fromSubstrateAddressAtom = atom<string | null>(null)
+export const fromEvmAddressAtom = atom<`0x${string}` | null>(null)
+export const fromAddressAtom = atom(get => {
+  const fromAsset = get(fromAssetAtom)
+  const evmAddress = get(fromEvmAddressAtom)
+  const substrateAddress = get(fromSubstrateAddressAtom)
+  if (!fromAsset) return null
+  return fromAsset.networkType === 'evm' ? evmAddress : substrateAddress
 })
-export const fromAddressAtom = atom<string | null>(null)
-export const toAddressAtom = atom<string | null>(null)
+
+export const toAssetAtom = atom<SwappableAssetWithDecimals | null>(null)
+export const toSubstrateAddressAtom = atom<string | null>(null)
+export const toEvmAddressAtom = atom<`0x${string}` | null>(null)
+export const toAddressAtom = atom(get => {
+  const toAsset = get(toAssetAtom)
+  const evmAddress = get(toEvmAddressAtom)
+  const substrateAddress = get(toSubstrateAddressAtom)
+  if (!toAsset) return null
+  return toAsset.networkType === 'evm' ? evmAddress : substrateAddress
+})
+
 export const swappingAtom = atom(false)
+export const quoteSortingAtom = atom<'decentalised' | 'cheapest' | 'fastest' | 'bestRate'>('bestRate')
 export const swapQuoteRefresherAtom = atom(new Date().getTime())
 
 // swaps history related atoms

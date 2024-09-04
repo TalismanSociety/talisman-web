@@ -3,7 +3,7 @@ import type { PropsWithChildren } from 'react'
 import type { EIP1193Provider } from 'viem'
 import { WagmiProvider, createConfig, http } from 'wagmi'
 import type {} from 'wagmi/'
-import { arbitrum, mainnet, moonbeam, moonriver, manta } from 'wagmi/chains'
+import { arbitrum, mainnet, moonbeam, moonriver, manta, bsc, optimism, blast, polygon } from 'wagmi/chains'
 import { injected } from 'wagmi/connectors'
 
 declare global {
@@ -14,7 +14,7 @@ declare global {
 }
 
 export const wagmiConfig = createConfig({
-  chains: [mainnet, moonbeam, moonriver, arbitrum, manta],
+  chains: [bsc, mainnet, moonbeam, moonriver, arbitrum, polygon, optimism, blast, manta],
   connectors: [injected()],
   transports: {
     [mainnet.id]: http(),
@@ -22,6 +22,10 @@ export const wagmiConfig = createConfig({
     [moonbeam.id]: http(),
     [moonriver.id]: http(),
     [manta.id]: http(),
+    [bsc.id]: http(),
+    [polygon.id]: http(),
+    [optimism.id]: http(),
+    [blast.id]: http(),
   },
 })
 

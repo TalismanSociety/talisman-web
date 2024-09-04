@@ -85,10 +85,12 @@ export const ChainflipActivity: React.FC<{ data: ChainflipSwapActivityData; time
             </div>
             <div>
               <div className="flex items-center gap-[4px]">
-                <p className="text-[14px] font-semibold text-white !leading-none whitespace-nowrap">
-                  {fromAmount?.toLocaleString()}
-                </p>
-                <ArrowRight className="text-gray-600" size={16} />
+                {!status.expired && (
+                  <p className="text-[14px] font-semibold text-white !leading-none whitespace-nowrap">
+                    {fromAmount?.toLocaleString()}
+                  </p>
+                )}
+                {!status.expired && <ArrowRight className="text-gray-600" size={16} />}
                 {destAmount ? (
                   <p className="text-[14px] font-semibold text-white !leading-none whitespace-nowrap">
                     {destAmount.toLocaleString()}

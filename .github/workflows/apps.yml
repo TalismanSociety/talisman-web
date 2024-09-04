@@ -58,7 +58,8 @@ jobs:
         KSM_CROWDLOAN_INDEXER,
         BASEROW_EXPLORE_AUTH,
         BASEROW_CROWDLOANS_AUTH,
-        LIDO_REWARDS_ADDRESS
+        LIDO_REWARDS_ADDRESS,
+        SIMPLESWAP_API_KEY
       environmentVariableVariables: >-
         APPLICATION_NAME
       environmentVariablePrefix: REACT_APP_

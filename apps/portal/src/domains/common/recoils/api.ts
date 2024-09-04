@@ -2,7 +2,9 @@ import { useSubstrateApiEndpoint } from '..'
 import { chainsState } from '@/domains/chains'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import * as AvailJsSdk from 'avail-js-sdk'
-import { selectorFamily } from 'recoil'
+import { atom, useAtom } from 'jotai'
+import { useEffect } from 'react'
+import { selectorFamily, useRecoilCallback } from 'recoil'
 
 export const substrateApiState = selectorFamily<ApiPromise, string | undefined>({
   key: 'SubstrateApiState',
@@ -26,3 +28,19 @@ export const substrateApiState = selectorFamily<ApiPromise, string | undefined>(
 })
 
 export const useSubstrateApiState = () => substrateApiState(useSubstrateApiEndpoint())
+
+export const substrateApiGetterAtom = atom<{ getApi: (endpoint: string) => Promise<ApiPromise> } | null>(null)
+
+export const useSetJotaiSubstrateApiState = () => {
+  const [substrateApiGetter, setSubstrateApiGetter] = useAtom(substrateApiGetterAtom)
+
+  const getSubstrateApi = useRecoilCallback(
+    ({ snapshot }) =>
+      (rpc: string) =>
+        snapshot.getPromise(substrateApiState(rpc))
+  )
+
+  useEffect(() => {
+    if (substrateApiGetter === null) setSubstrateApiGetter({ getApi: getSubstrateApi })
+  }, [getSubstrateApi, setSubstrateApiGetter, substrateApiGetter])
+}

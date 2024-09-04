@@ -1,5 +1,6 @@
 import { swapsAtom, type SwapActivity } from '../swap-modules/common.swap-module'
 import { ChainflipActivity } from './activities/ChainflipActivity'
+import { SimpleswapActivity } from './activities/SimpleswapActivity'
 import { ErrorBoundary } from '@sentry/react'
 import { Skeleton } from '@talismn/ui'
 import { useAtomValue } from 'jotai'
@@ -13,6 +14,8 @@ export const SwapHistory: React.FC = () => {
     switch (swap.protocol) {
       case 'chainflip':
         return <ChainflipActivity key={swap.timestamp} timestamp={swap.timestamp} data={swap.data} />
+      case 'simpleswap':
+        return <SimpleswapActivity key={swap.timestamp} timestamp={swap.timestamp} data={swap.data} />
       default:
         return null
     }
