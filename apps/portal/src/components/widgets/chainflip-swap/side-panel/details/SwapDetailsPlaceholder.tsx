@@ -45,9 +45,9 @@ export const SwapDetailsPlaceholder: React.FC = () => (
       </div>
     </div>
     <div>
-      <h4 className="font-bold text-[14px] text-center">Seamless native cross-chain swaps</h4>
+      <h4 className="font-bold text-[14px] text-center">Seamless cross-chain swaps</h4>
       <p className="text-gray-400 text-[14px] text-center">
-        Swap assets effortlessly across different chains and enjoy the convenience of fire-and-forget transactions.
+        Swap assets effortlessly across different chains and enjoy the convenience of comparing providers.
       </p>
     </div>
   </div>
