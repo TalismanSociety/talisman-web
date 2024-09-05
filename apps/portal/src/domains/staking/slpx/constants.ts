@@ -1,4 +1,7 @@
 import { utils } from 'ethers'
 
 export const _dstGasForCall = 3000000n
-export const _adapterParams = utils.solidityPack(['uint16', 'uint256'], [1, 3200000]) as `0x${string}`
+
+const remark = import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman'
+
+export const _adapterParams = utils.solidityPack(['uint16', 'uint256', 'string'], [1, 3200000, remark]) as `0x${string}`
