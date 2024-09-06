@@ -37,25 +37,27 @@ export const useTotalStaked = () => {
     return 0
   }
 
-  return ledgerLoadables.contents
-    ?.map((x, chainIndex) => {
-      if (x.state !== 'hasValue') {
-        return 0
-      }
+  return (
+    ledgerLoadables.contents
+      ?.map((x, chainIndex) => {
+        if (x.state !== 'hasValue') {
+          return 0
+        }
 
-      return (
-        x.contents[1]
-          .map(y => {
-            const staked = Maybe.of(
-              [y.stakedFuture.unwrapOrDefault(), y.staked].find(z =>
-                z.period.unwrap().eq(x.contents[0].periodInfo.number.unwrap())
-              )
-            ).mapOr(0n, z => z.voting.toBigInt() + z.buildAndEarn.toBigInt())
+        return (
+          x.contents[1]
+            .map(y => {
+              const staked = Maybe.of(
+                [y.stakedFuture.unwrapOrDefault(), y.staked].find(z =>
+                  z.period.unwrap().eq(x.contents[0].periodInfo.number.unwrap())
+                )
+              ).mapOr(0n, z => z.voting.toBigInt() + z.buildAndEarn.toBigInt())
 
-            return nativeTokenAmounts.contents?.at(chainIndex)?.valueMaybe()?.fromPlanck(staked).fiatAmount ?? 0
-          })
-          .reduce((prev, curr) => prev + curr, 0) ?? 0
-      )
-    })
-    .reduce((prev, curr) => prev + curr, 0)
+              return nativeTokenAmounts.contents?.at(chainIndex)?.valueMaybe()?.fromPlanck(staked).fiatAmount ?? 0
+            })
+            .reduce((prev, curr) => prev + curr, 0) ?? 0
+        )
+      })
+      .reduce((prev, curr) => prev + curr, 0) || 0
+  )
 }
