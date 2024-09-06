@@ -1,12 +1,13 @@
 import { useRef, useEffect } from 'react'
 import { useRecoilValueLoadable, RecoilValue, Loadable } from 'recoil'
 
-type CachedRecoilValueLoadableReturnTest<T> = {
+type CachedRecoilValueLoadableReturn<T> = {
   state: Loadable<T>['state']
   contents: T | null
 }
 
-export function useCachedRecoilValueLoadable<T>(selector: RecoilValue<T>): CachedRecoilValueLoadableReturnTest<T> {
+// Accept the output of waitForAll or waitForAny as a selector
+export function useCachedRecoilValueLoadable<T>(selector: RecoilValue<T>): CachedRecoilValueLoadableReturn<T> {
   const loadable = useRecoilValueLoadable(selector)
   const lastLoadedValue = useRef<T | null>(null)
 

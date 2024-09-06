@@ -4,18 +4,20 @@ import { usePoolStakeLoadable } from '../../../../domains/staking/substrate/nomi
 import ErrorBoundary from '../../ErrorBoundary'
 import PoolStakeItem from './PoolStakeItem'
 import { StakePositionErrorBoundary } from '@talismn/ui-recipes'
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { useRecoilValueLoadable } from 'recoil'
 
 type PoolStakeProps = {
   setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const PoolStakes = ({ setShouldRenderLoadingSkeleton }: PoolStakeProps) => {
-  const { data: pools, state } = usePoolStakeLoadable(useRecoilValue(selectedSubstrateAccountsState))
+  const accLoadable = useRecoilValueLoadable(selectedSubstrateAccountsState)
+  const accState = accLoadable.contents ?? []
+  const { data: pools, state } = usePoolStakeLoadable(accState)
   const chainLoadable = useRecoilValueLoadable(useChainState())
   const chain = chainLoadable.valueMaybe()
 
-  if (state === 'hasValue' || pools.length) {
+  if (state === 'hasValue' || pools?.length) {
     setShouldRenderLoadingSkeleton(false)
   }
 
