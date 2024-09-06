@@ -2,15 +2,16 @@ import { Maybe } from '../../../../util/monads'
 import { selectedSubstrateAccountsState } from '../../../accounts'
 import { dappStakingEnabledChainsState, nativeTokenAmountState } from '../../../chains'
 import { chainQueryState } from '../../../common'
+import { useCachedRecoilValueLoadable } from '@/hooks/useCachedRecoilValueLoadable'
 import { useMemo } from 'react'
-import { useRecoilValue, useRecoilValueLoadable, waitForAll, waitForAny } from 'recoil'
+import { useRecoilValue, waitForAll, waitForAny } from 'recoil'
 
 export const useTotalStaked = () => {
   const [chains, accounts] = useRecoilValue(waitForAll([dappStakingEnabledChainsState, selectedSubstrateAccountsState]))
 
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
 
-  const nativeTokenAmounts = useRecoilValueLoadable(
+  const nativeTokenAmounts = useCachedRecoilValueLoadable(
     waitForAny(
       chains.map(chain =>
         nativeTokenAmountState({
@@ -21,7 +22,7 @@ export const useTotalStaked = () => {
     )
   )
 
-  const ledgerLoadables = useRecoilValueLoadable(
+  const ledgerLoadables = useCachedRecoilValueLoadable(
     waitForAny(
       chains.map(chain =>
         waitForAll([
@@ -37,7 +38,7 @@ export const useTotalStaked = () => {
   }
 
   return ledgerLoadables.contents
-    .map((x, chainIndex) => {
+    ?.map((x, chainIndex) => {
       if (x.state !== 'hasValue') {
         return 0
       }
@@ -51,7 +52,7 @@ export const useTotalStaked = () => {
               )
             ).mapOr(0n, z => z.voting.toBigInt() + z.buildAndEarn.toBigInt())
 
-            return nativeTokenAmounts.contents.at(chainIndex)?.valueMaybe()?.fromPlanck(staked).fiatAmount ?? 0
+            return nativeTokenAmounts.contents?.at(chainIndex)?.valueMaybe()?.fromPlanck(staked).fiatAmount ?? 0
           })
           .reduce((prev, curr) => prev + curr, 0) ?? 0
       )
