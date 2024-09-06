@@ -17,9 +17,10 @@ import ClaimStakeDialog from './ClaimStakeDialog'
 import NominationPoolsStatisticsSideSheet from './NominationPoolsStatisticsSideSheet'
 import PoolClaimPermissionDialog from './PoolClaimPermissionDialog'
 import UnstakeDialog from './UnstakeDialog'
+import { useCachedRecoilValueLoadable } from '@/hooks/useCachedRecoilValueLoadable'
 import { StakePosition } from '@talismn/ui-recipes'
 import { useCallback, useState } from 'react'
-import { useRecoilValue, waitForAll } from 'recoil'
+import { waitForAll } from 'recoil'
 
 const PoolTotalRewards = (props: { account: Account }) => useTotalNominationPoolRewards(props.account).toLocaleString()
 
@@ -27,28 +28,34 @@ const PoolTotalFiatRewards = (props: { account: Account }) =>
   useNativeTokenLocalizedFiatAmount(useTotalNominationPoolRewards(props.account))
 
 const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account[]>>[number] }) => {
-  const [chain, decimal, nativeTokenPrice] = useRecoilValue(
+  const [statsDialogOpen, setStatsDialogOpen] = useState(false)
+  const [claimPermissionDialogOpen, setClaimPermissionDialogOpen] = useState(false)
+  const [isUnstaking, setIsUnstaking] = useState(false)
+  const [isAddingStake, setIsAddingStake] = useState(false)
+  const [claimDialogOpen, setClaimDialogOpen] = useState(false)
+
+  // TODO: Consider moving this data fetching to usePoolStakeLoadable hook
+  const { state, contents } = useCachedRecoilValueLoadable(
     waitForAll([useChainState(), useNativeTokenDecimalState(), useNativeTokenPriceState()])
   )
 
-  const [isUnstaking, setIsUnstaking] = useState(false)
-  const [isAddingStake, setIsAddingStake] = useState(false)
-
-  const [claimDialogOpen, setClaimDialogOpen] = useState(false)
   const [claimPayoutLoadable, setClaimPayoutLoadable] = useSubmittableResultLoadableState()
   const [restakeLoadable, setRestakeLoadable] = useSubmittableResultLoadableState()
-
   const withdrawExtrinsic = useExtrinsic('nominationPools', 'withdrawUnbonded')
-
   const eraEtaFormatter = useEraEtaFormatter()
+
+  const handleSetIsAddingStake = useCallback(() => setIsAddingStake(false), [])
+  const handleSetIsUnstaking = useCallback(() => setIsUnstaking(false), [])
+
+  const [chain, decimal, nativeTokenPrice] = state === 'hasValue' && contents ? contents : []
+  if (!chain || !decimal || !nativeTokenPrice) {
+    return null
+  }
+
   const unlocks = item.unlockings?.map(x => ({
     amount: <RedactableBalance>{decimal.fromPlanck(x.amount).toLocaleString()}</RedactableBalance>,
     eta: eraEtaFormatter(x.erasTilWithdrawable),
   }))
-
-  const [statsDialogOpen, setStatsDialogOpen] = useState(false)
-
-  const [claimPermissionDialogOpen, setClaimPermissionDialogOpen] = useState(false)
 
   const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
 
@@ -137,21 +144,24 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
           )
         }
       />
-      <AddStakeDialog
-        account={isAddingStake ? item.account?.address : undefined}
-        onDismiss={useCallback(() => setIsAddingStake(false), [])}
-      />
-      <UnstakeDialog
-        account={isUnstaking ? item.account?.address : undefined}
-        onDismiss={useCallback(() => setIsUnstaking(false), [])}
-      />
-      <ClaimStakeDialog
-        open={claimDialogOpen}
-        onRequestDismiss={() => setClaimDialogOpen(false)}
-        account={item.account}
-        onChangeClaimPayoutLoadable={setClaimPayoutLoadable}
-        onChangeRestakeLoadable={setRestakeLoadable}
-      />
+      {isAddingStake && (
+        <AddStakeDialog
+          account={isAddingStake ? item.account?.address : undefined}
+          onDismiss={handleSetIsAddingStake}
+        />
+      )}
+      {isUnstaking && (
+        <UnstakeDialog account={isUnstaking ? item.account?.address : undefined} onDismiss={handleSetIsUnstaking} />
+      )}
+      {claimDialogOpen && (
+        <ClaimStakeDialog
+          open={claimDialogOpen}
+          onRequestDismiss={() => setClaimDialogOpen(false)}
+          account={item.account}
+          onChangeClaimPayoutLoadable={setClaimPayoutLoadable}
+          onChangeRestakeLoadable={setRestakeLoadable}
+        />
+      )}
       {statsDialogOpen && (
         <NominationPoolsStatisticsSideSheet account={item.account} onRequestDismiss={() => setStatsDialogOpen(false)} />
       )}
