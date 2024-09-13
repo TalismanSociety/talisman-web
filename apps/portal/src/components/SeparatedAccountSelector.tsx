@@ -1,6 +1,7 @@
 import AccountIcon from './molecules/AccountIcon'
 import { walletConnectionSideSheetOpenState } from './widgets/WalletConnectionSideSheet'
-import { evmAccountsState, substrateAccountsState, type Account } from '@/domains/accounts'
+import { evmAccountsState, substrateAccountsState } from '@/domains/accounts'
+import { AccountWithBtc, isBtcAddress } from '@/lib/btc'
 import { cn } from '@/lib/utils'
 import { shortenAddress } from '@/util/format'
 import { isAddress as isSubstrateAddress, decodeAddress, encodeAddress } from '@polkadot/util-crypto'
@@ -15,16 +16,17 @@ import { isAddress } from 'viem'
 
 type Props = {
   allowInput?: boolean
-  accountsType?: 'substrate' | 'ethereum' | 'all'
+  accountsType?: 'substrate' | 'ethereum' | 'all' | 'btc'
   /** Selected Account Address */
   onAccountChange?: (address: string | null) => void
-  evmAccountsFilter?: (account: Account) => boolean
+  evmAccountsFilter?: (account: AccountWithBtc) => boolean
   showBalances?: {
     filter?: BalanceSearchQuery | BalanceSearchQuery[]
     output?: (address: string, addressBalances: Balances) => React.ReactNode
   }
-  substrateAccountsFilter?: (account: Account) => boolean
+  substrateAccountsFilter?: (account: AccountWithBtc) => boolean
   substrateAccountPrefix?: number
+  disableBtc?: boolean
   value?: string | null
 }
 
@@ -35,7 +37,7 @@ const AccountRow: React.FC<{
   substrateAccountPrefix?: number
 }> = ({ address, name, balance, substrateAccountPrefix }) => {
   const formattedAddress = useMemo(() => {
-    if (address.startsWith('0x') || substrateAccountPrefix === undefined) return address
+    if (address.startsWith('0x') || substrateAccountPrefix === undefined || isBtcAddress(address)) return address
     return encodeAddress(decodeAddress(address), substrateAccountPrefix)
   }, [address, substrateAccountPrefix])
 
@@ -60,6 +62,7 @@ const AccountRow: React.FC<{
     </div>
   )
 }
+
 export const SeparatedAccountSelector: React.FC<Props> = ({
   accountsType = 'substrate',
   allowInput = false,
@@ -69,35 +72,50 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
   substrateAccountsFilter,
   substrateAccountPrefix,
   value,
+  disableBtc = false,
 }) => {
   const defaultEvmAccounts = useRecoilValue(evmAccountsState)
   const defaultSubstrateAccounts = useRecoilValue(substrateAccountsState)
-  const balances = useBalances()
   const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
   const [query, setQuery] = useState('')
 
+  const balances = useBalances()
   const filteredBalances = useMemo(() => {
     if (showBalances && showBalances.filter) return balances.find(showBalances.filter)
     return balances
   }, [showBalances, balances])
 
-  const accountFromInput = useMemo((): Account | null => {
+  const accountFromInput = useMemo((): AccountWithBtc | null => {
     if (!allowInput) return null
-    if (isAddress(query))
-      return {
-        address: query,
-        type: 'ethereum',
-        partOfPortfolio: false,
-        readonly: true,
-      }
-    if (isSubstrateAddress(query))
-      return {
-        // computation will always be done in generic format
-        address: encodeAddress(decodeAddress(query), 42),
-        type: 'sr25519',
-        partOfPortfolio: false,
-        readonly: true,
-      }
+
+    const btcAddress = isBtcAddress(query)
+    if (btcAddress) return btcAddress
+
+    try {
+      if (isAddress(query))
+        return {
+          address: query,
+          type: 'ethereum',
+          partOfPortfolio: false,
+          readonly: true,
+        }
+    } catch (e) {
+      // do nothing
+    }
+
+    try {
+      if (isSubstrateAddress(query))
+        return {
+          // computation will always be done in generic format
+          address: encodeAddress(decodeAddress(query), 42),
+          type: 'sr25519',
+          partOfPortfolio: false,
+          readonly: true,
+        }
+    } catch (e) {
+      // do nothing
+    }
+
     return null
   }, [allowInput, query])
 
@@ -121,7 +139,9 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
       filtered.find(a => a.address.toLowerCase() === accountFromInput.address.toLowerCase())
     )
       return filtered
-    return [accountFromInput, ...filtered]
+    return [accountFromInput, ...filtered].filter(
+      a => a.type === 'sr25519' || a.type === 'ed25519' || a.type === 'ecdsa'
+    )
   }, [accountFromInput, substrateAccountsFilter, defaultSubstrateAccounts])
 
   const queriedEvmAccounts = useMemo(() => {
@@ -145,15 +165,23 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
     )
   }, [query, substrateAccountPrefix, substrateAccounts])
 
+  const btcAccounts = useMemo(() => {
+    if (accountFromInput?.type === 'btc-base58' || accountFromInput?.type === 'btc-bench32') return [accountFromInput]
+    return []
+  }, [accountFromInput])
+
   const selectedAccount = useMemo(() => {
-    const allowedAccounts =
-      accountsType === 'ethereum'
-        ? evmAccounts
-        : accountsType === 'substrate'
-        ? substrateAccounts
-        : [...evmAccounts, ...substrateAccounts]
-    return allowedAccounts.find(account => account.address === value)
-  }, [accountsType, evmAccounts, value, substrateAccounts])
+    switch (accountsType) {
+      case 'ethereum':
+        return evmAccounts.find(account => account.address === value)
+      case 'substrate':
+        return substrateAccounts.find(account => account.address === value)
+      case 'all':
+        return [...evmAccounts, ...substrateAccounts].find(account => account.address === value)
+      case 'btc':
+        return btcAccounts.find(account => account.address === value)
+    }
+  }, [accountsType, evmAccounts, substrateAccounts, btcAccounts, value])
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -172,6 +200,78 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
       setQuery('')
     }
   }, [onAccountChange, selectedAccount, value])
+
+  const renderNetworkAccounts = useCallback(
+    ({
+      type,
+      accounts,
+      emptyQueryMessage,
+      emptyState,
+      queriedAccounts,
+    }: {
+      type: Required<Props>['accountsType']
+      accounts: AccountWithBtc[]
+      emptyQueryMessage?: string
+      emptyState?: React.ReactNode
+      queriedAccounts: AccountWithBtc[]
+    }) => {
+      if (accountsType !== 'all' && type !== accountsType) return null
+
+      return (
+        <div>
+          {accountsType === 'all' && (
+            <div className="px-[12px]">
+              <p className="text-gray-400 text-[12px]">Ethereum Accounts</p>
+            </div>
+          )}
+          {accounts.length > 0 ? (
+            queriedAccounts.length > 0 ? (
+              queriedAccounts.map(account => (
+                <Select.Option
+                  leadingIcon={<AccountIcon account={{ address: account.address }} size="32px" />}
+                  headlineContent={
+                    <AccountRow
+                      substrateAccountPrefix={substrateAccountPrefix}
+                      address={account.address}
+                      name={account.name}
+                      balance={
+                        showBalances
+                          ? showBalances.output?.(
+                              account.address,
+                              filteredBalances.find(b => b.address.toLowerCase() === account.address.toLowerCase())
+                            ) ?? null
+                          : null
+                      }
+                    />
+                  }
+                  key={account.address}
+                  value={account.address}
+                  className="!w-full [&>div]:w-full "
+                />
+              ))
+            ) : (
+              <div className="px-[12px] pb-[16px]">
+                <p className="text-[14px]">{emptyQueryMessage ?? 'No account found.'}</p>
+              </div>
+            )
+          ) : (
+            emptyState ?? (
+              <div className="px-[12px] pb-[16px]">
+                <p className="text-[14px]">{emptyQueryMessage ?? 'No account found.'}</p>
+              </div>
+            )
+          )}
+        </div>
+      )
+    },
+    [accountsType, filteredBalances, showBalances, substrateAccountPrefix]
+  )
+  if (accountsType === 'btc' && disableBtc)
+    return (
+      <Surface className="[&>p]:text-[14px] p-[12px] rounded-[8px]">
+        <p className="text-center">BTC accounts not supported.</p>
+      </Surface>
+    )
 
   if (accountsType === 'ethereum' && !allowInput) {
     const evmAccount = evmAccounts[0]
@@ -215,96 +315,37 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
       onInputChange={handleInputChange}
       inputValue={query}
     >
-      {accountsType !== 'substrate' && (
-        <Surface>
-          {accountsType === 'all' && (
-            <div className="px-[12px]">
-              <p className="text-gray-400 text-[12px]">Ethereum Accounts</p>
+      {renderNetworkAccounts({
+        accounts: evmAccounts,
+        queriedAccounts: queriedEvmAccounts,
+        type: 'ethereum',
+        emptyState: (
+          <div
+            className="!w-full !rounded-none p-[12px] py-[8px] mt-[4px] flex items-center gap-[4px] cursor-pointer group hover:bg-gray-700"
+            onClick={() => {
+              setWalletConnectionSideSheetOpen(true)
+            }}
+          >
+            <div className="w-[32px] h-[32px] flex items-center justify-center">
+              <Ethereum className="text-gray-400 group-hover:text-white " size={16} />
             </div>
-          )}
-          {evmAccounts.length > 0 ? (
-            queriedEvmAccounts.length > 0 ? (
-              queriedEvmAccounts.map(account => (
-                <Select.Option
-                  leadingIcon={<AccountIcon account={{ address: account.address }} size="32px" />}
-                  headlineContent={
-                    <AccountRow
-                      substrateAccountPrefix={substrateAccountPrefix}
-                      address={account.address}
-                      name={account.name}
-                      balance={
-                        showBalances
-                          ? showBalances.output?.(
-                              account.address,
-                              filteredBalances.find(b => b.address.toLowerCase() === account.address.toLowerCase())
-                            ) ?? null
-                          : null
-                      }
-                    />
-                  }
-                  key={account.address}
-                  value={account.address}
-                  className="!w-full [&>div]:w-full"
-                />
-              ))
-            ) : (
-              <div className="px-[12px] pb-[16px]">
-                <p className="text-[14px]">No Ethereum account found.</p>
-              </div>
-            )
-          ) : (
-            <div
-              className="!w-full !rounded-none p-[12px] py-[8px] mt-[4px] flex items-center gap-[4px] cursor-pointer group hover:bg-gray-700"
-              onClick={() => {
-                setWalletConnectionSideSheetOpen(true)
-              }}
-            >
-              <div className="w-[32px] h-[32px] flex items-center justify-center">
-                <Ethereum className="text-gray-400 group-hover:text-white " size={16} />
-              </div>
-              <p className="text-gray-400 group-hover:text-white text-[14px]">Connect Ethereum Wallet</p>
-            </div>
-          )}
-        </Surface>
-      )}
-      {accountsType !== 'ethereum' && (
-        <div>
-          {accountsType === 'all' && (
-            <div className="px-[12px] mt-[8px]">
-              <p className="text-gray-400 text-[12px]">Polkadot Accounts</p>
-            </div>
-          )}
-          {queriedSubstrateAccounts.length > 0 ? (
-            queriedSubstrateAccounts.map(account => (
-              <Select.Option
-                leadingIcon={<AccountIcon account={{ address: account.address }} size="32px" />}
-                headlineContent={
-                  <AccountRow
-                    substrateAccountPrefix={substrateAccountPrefix}
-                    address={account.address}
-                    name={account.name}
-                    balance={
-                      showBalances
-                        ? showBalances.output?.(
-                            account.address,
-                            filteredBalances.find(b => b.address === account.address)
-                          ) ?? null
-                        : null
-                    }
-                  />
-                }
-                className="!w-full [&>div]:w-full"
-                key={account.address}
-                value={account.address}
-              />
-            ))
-          ) : (
-            <div className="px-[12px] pb-[16px]">
-              <p className="text-[14px]">No Polkadot account found.</p>
-            </div>
-          )}
-        </div>
-      )}
+            <p className="text-gray-400 group-hover:text-white text-[14px]">Connect Ethereum Wallet</p>
+          </div>
+        ),
+        emptyQueryMessage: 'No Ethereum account found.',
+      })}
+      {renderNetworkAccounts({
+        type: 'substrate',
+        accounts: substrateAccounts,
+        queriedAccounts: queriedSubstrateAccounts,
+        emptyQueryMessage: 'No Polkadot account found.',
+      })}
+      {renderNetworkAccounts({
+        type: 'btc',
+        accounts: btcAccounts,
+        queriedAccounts: btcAccounts,
+        emptyQueryMessage: 'Please provide a valid Bitcoin address.',
+      })}
     </Select>
   )
 }

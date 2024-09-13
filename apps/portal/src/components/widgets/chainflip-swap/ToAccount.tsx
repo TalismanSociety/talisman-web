@@ -1,5 +1,12 @@
-import { toAddressAtom, toAssetAtom, toEvmAddressAtom, toSubstrateAddressAtom } from './swap-modules/common.swap-module'
+import {
+  toAddressAtom,
+  toAssetAtom,
+  toBtcAddressAtom,
+  toEvmAddressAtom,
+  toSubstrateAddressAtom,
+} from './swap-modules/common.swap-module'
 import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
+import { isBtcAddress } from '@/lib/btc'
 import { cn } from '@/lib/utils'
 import { useTokens } from '@talismn/balances-react'
 import { useAtomValue, useSetAtom } from 'jotai'
@@ -12,6 +19,7 @@ export const ToAccount: React.FC = () => {
   const toAddress = useAtomValue(toAddressAtom)
   const setEvmAddress = useSetAtom(toEvmAddressAtom)
   const setSubstrate = useSetAtom(toSubstrateAddressAtom)
+  const setBtcAddress = useSetAtom(toBtcAddressAtom)
   const tokens = useTokens()
 
   const token = useMemo(() => {
@@ -25,16 +33,25 @@ export const ToAccount: React.FC = () => {
       {toAsset && (
         <SeparatedAccountSelector
           allowInput
-          accountsType={!token ? 'all' : token?.evmNetwork ? 'ethereum' : 'substrate'}
+          accountsType={
+            toAsset.id === 'btc-native' ? 'btc' : !token ? 'all' : token?.evmNetwork ? 'ethereum' : 'substrate'
+          }
           substrateAccountsFilter={a => !a.readonly}
           substrateAccountPrefix={0}
           value={toAddress}
           onAccountChange={address => {
             if (address) {
-              isAddress(address) ? setEvmAddress(address) : setSubstrate(address)
+              if (isBtcAddress(address)) {
+                setBtcAddress(address)
+              } else if (isAddress(address)) {
+                setEvmAddress(address)
+              } else {
+                setSubstrate(address)
+              }
             } else {
               setEvmAddress(null)
               setSubstrate(null)
+              setBtcAddress(null)
             }
           }}
         />

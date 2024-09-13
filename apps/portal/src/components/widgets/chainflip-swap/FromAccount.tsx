@@ -68,11 +68,15 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
     ]
   )
 
+  const isSwappingFromBtc = useMemo(() => {
+    return fromAsset?.id === 'btc-native'
+  }, [fromAsset])
+
   const shouldShowToAccount = useMemo(() => {
-    if (!fromAsset || !toAsset) return false
+    if (!fromAsset || !toAsset || isSwappingFromBtc) return false
     if (fromAsset.networkType !== toAsset.networkType) return true
     return toAddress?.toLowerCase() !== fromAddress?.toLowerCase()
-  }, [fromAddress, fromAsset, toAddress, toAsset])
+  }, [fromAddress, fromAsset, isSwappingFromBtc, toAddress, toAsset])
 
   return (
     <Surface className="bg-card p-[16px] rounded-[8px] w-full flex flex-col gap-[12px]">
@@ -107,17 +111,14 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
           <p className="text-[14px] font-medium">Destination</p>
         </div>
       </div>
-      {!!fromAsset && (
+      {!!fromAsset && !isSwappingFromBtc && (
         <div>
           <p className="text-[14px] text-gray-500">Origin Account</p>
           <SeparatedAccountSelector
             accountsType={
-              !token
-                ? 'all'
-                : token.type === 'evm-erc20' || token.type === 'evm-native' || token.type === 'evm-uniswapv2'
-                ? 'ethereum'
-                : 'substrate'
+              fromAsset.id === 'btc-native' ? 'btc' : !token ? 'all' : token.evmNetwork ? 'ethereum' : 'substrate'
             }
+            disableBtc
             substrateAccountPrefix={0}
             substrateAccountsFilter={a => !a.readonly}
             evmAccountsFilter={a => !!a.canSignEvm}

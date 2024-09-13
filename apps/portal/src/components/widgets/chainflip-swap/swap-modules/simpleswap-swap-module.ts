@@ -13,6 +13,7 @@ import {
   swapQuoteRefresherAtom,
   toAddressAtom,
   toAssetAtom,
+  validateAddress,
 } from './common.swap-module'
 import { QuoteResponse } from '@chainflip/sdk/swap'
 import { chainsAtom } from '@talismn/balances-react'
@@ -113,6 +114,13 @@ const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
     chainId: 'bittensor',
     symbol: 'TAO',
     networkType: 'substrate',
+  },
+  btc: {
+    id: 'btc-native',
+    name: 'Bitcoin',
+    chainId: 'bitcoin',
+    symbol: 'BTC',
+    networkType: 'btc',
   },
 }
 
@@ -362,14 +370,14 @@ const swap: SwapFunction<{ id: string }> = async (
   const toAsset = get(toAssetAtom)
   const substrateChains = await get(chainsAtom)
 
-  let address_to = toAddress
-  if (toAsset?.networkType === 'substrate' && address_to) {
+  let addressTo = toAddress
+  if (toAsset?.networkType === 'substrate' && addressTo) {
     const substrateChain = substrateChains.find(c => c.id.toString() === toAsset.chainId.toString())
     if (substrateChain) {
-      address_to = encodeAnyAddress(address_to, substrateChain.prefix ?? 42)
+      addressTo = encodeAnyAddress(addressTo, substrateChain.prefix ?? 42)
     }
   }
-  if (!address_to) throw new Error('Missing to address')
+  if (!addressTo) throw new Error('Missing to address')
 
   let addressFrom = fromAddress
   if (fromAsset?.networkType === 'substrate' && addressFrom) {
@@ -378,9 +386,8 @@ const swap: SwapFunction<{ id: string }> = async (
       addressFrom = encodeAnyAddress(addressFrom, substrateChain.prefix ?? 42)
     }
   }
-  if (!addressFrom) throw new Error('Missing to address')
+  if (!addressFrom) throw new Error('Missing from address')
 
-  if (!fromAddress) throw new Error('Missing from address')
   if (!fromAsset) throw new Error('Missing from asset')
   if (!toAsset) throw new Error('Missing to asset')
   const currency_from = fromAsset.context?.simpleswap?.symbol as string
@@ -389,9 +396,20 @@ const swap: SwapFunction<{ id: string }> = async (
   if (!currency_from) throw new Error('Missing currency from')
   if (!currency_to) throw new Error('Missing currency to')
 
+  // validate from address for the source chain
+  if (!validateAddress(addressFrom, fromAsset.networkType))
+    throw new Error(`Cannot swap from ${fromAsset.chainId} chain with address: ${fromAddress}`)
+
+  // validate to address for the target chain
+  if (!validateAddress(addressTo, toAsset.networkType))
+    throw new Error(`Cannot swap to ${toAsset.chainId} chain with address: ${toAddress}`)
+
+  // cannot swap from BTC
+  if (fromAsset.networkType === 'btc') throw new Error('Swapping from BTC is not supported.')
+
   const exchange = await simpleSwapSdk.createExchange({
     fixed: false,
-    address_to,
+    address_to: addressTo,
     amount: amount.toNumber(),
     currency_from,
     currency_to,
@@ -406,7 +424,7 @@ const swap: SwapFunction<{ id: string }> = async (
   if (exchange.currency_from !== currency_from || exchange.currency_to !== currency_to)
     throw new Error('Incorrect currencies from provider. Please try again later')
   if (+exchange.expected_amount > amount.toNumber()) throw new Error('Quote changed. Please try again.')
-  if (exchange.address_to !== address_to)
+  if (exchange.address_to !== addressTo)
     throw new Error('Incorrect destination address from provider. Please try again later')
 
   const depositAmount = Decimal.fromUserInput(exchange.expected_amount, fromAsset.decimals)
@@ -435,8 +453,6 @@ const swap: SwapFunction<{ id: string }> = async (
           args: [exchange.address_from as `0x${string}`, depositAmount.planck],
         })
       }
-      // TODO:
-      // saveAddressForQuest(exchange.id, fromAddress)
 
       return { protocol: PROTOCOL, data: { id: exchange.id } }
     } else if (fromAsset.networkType === 'substrate') {
@@ -451,10 +467,7 @@ const swap: SwapFunction<{ id: string }> = async (
       await polkadotApi.tx.balances[allowReap ? 'transferAllowDeath' : 'transferKeepAlive'](
         exchange.address_from,
         depositAmount.planck
-      ).signAndSend(fromAddress, { signer, withSignedTransaction: true })
-
-      // TODO:
-      // saveAddressForQuest(exchange.id, fromAddress)
+      ).signAndSend(addressFrom, { signer, withSignedTransaction: true })
 
       return { protocol: PROTOCOL, data: { id: exchange.id } }
     }
@@ -504,6 +517,10 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
 
     return null
   }
+
+  // cannot swap from BTC
+  const swappingFromBtc = fromAsset.id === 'btc-native'
+  if (swappingFromBtc) return null
 
   // swapping from Polkadot
   const chains = await get(chainsAtom)
