@@ -353,7 +353,7 @@ const StakePosition = Object.assign(
               </Text.BodySmall>
               <Text.BodyLarge as="div" alpha="high">
                 <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                  {props.rewards ?? <Text alpha="medium">Coming soon</Text>}
+                  {props.rewards ?? <Text alpha="medium">--</Text>}
                 </Suspense>
                 <div css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }} />{' '}
                 <Suspense>
