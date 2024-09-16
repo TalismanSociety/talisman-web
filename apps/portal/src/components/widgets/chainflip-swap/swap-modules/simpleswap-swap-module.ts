@@ -7,6 +7,7 @@ import {
   GetEstimateGasTxFunction,
   getTokenIdForSwappableAsset,
   QuoteFunction,
+  saveAddressForQuest,
   SwapFunction,
   SwapModule,
   SwappableAssetBaseType,
@@ -454,6 +455,7 @@ const swap: SwapFunction<{ id: string }> = async (
         })
       }
 
+      saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
       return { protocol: PROTOCOL, data: { id: exchange.id } }
     } else if (fromAsset.networkType === 'substrate') {
       const signer = substrateWallet?.signer
@@ -469,6 +471,7 @@ const swap: SwapFunction<{ id: string }> = async (
         depositAmount.planck
       ).signAndSend(addressFrom, { signer, withSignedTransaction: true })
 
+      saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
       return { protocol: PROTOCOL, data: { id: exchange.id } }
     }
   } catch (e) {

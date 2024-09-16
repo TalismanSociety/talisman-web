@@ -209,3 +209,15 @@ export const getTokenIdForSwappableAsset = (
       return 'not-supported'
   }
 }
+
+export const saveAddressForQuest = async (swapId: string, fromAddress: string, provider: string) => {
+  const api = import.meta.env.REACT_APP_QUEST_API
+  if (!api) return
+  await fetch(`${api}/api/quests/swap`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ swapId, fromAddress, provider }),
+  })
+}

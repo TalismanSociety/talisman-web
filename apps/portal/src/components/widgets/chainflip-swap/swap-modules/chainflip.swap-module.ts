@@ -15,6 +15,7 @@ import {
   swapQuoteRefresherAtom,
   type GetEstimateGasTxFunction,
   validateAddress,
+  saveAddressForQuest,
 } from './common.swap-module'
 import {
   SwapSDK,
@@ -260,18 +261,6 @@ export type ChainflipSwapActivityData = {
   network: ChainflipNetwork
 }
 
-const saveAddressForQuest = async (swapId: string, fromAddress: string) => {
-  const api = import.meta.env.REACT_APP_QUEST_API
-  if (!api) return
-  await fetch(`${api}/api/quests/chainflip`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ swapId, fromAddress }),
-  })
-}
-
 const swap: SwapFunction<ChainflipSwapActivityData> = async (
   get: Getter,
   _: Setter,
@@ -348,8 +337,8 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
           args: [depositAddress.depositAddress as `0x${string}`, BigInt(depositAddress.amount)],
         })
       }
-      saveAddressForQuest(depositAddress.depositChannelId, fromAddress)
 
+      saveAddressForQuest(depositAddress.depositChannelId, fromAddress, PROTOCOL)
       return { protocol: PROTOCOL, data: { id: depositAddress.depositChannelId, network } }
     } else if (fromAsset.networkType === 'substrate') {
       const signer = substrateWallet?.signer
@@ -365,7 +354,7 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
         depositAddress.amount
       ).signAndSend(fromAddress, { signer, withSignedTransaction: true })
 
-      saveAddressForQuest(depositAddress.depositChannelId, fromAddress)
+      saveAddressForQuest(depositAddress.depositChannelId, fromAddress, PROTOCOL)
       return { protocol: PROTOCOL, data: { id: depositAddress.depositChannelId, network } }
     } else {
       // should never reach here
