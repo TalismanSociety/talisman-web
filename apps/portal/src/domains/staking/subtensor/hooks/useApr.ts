@@ -6,5 +6,7 @@ export const useApr = (genesisHash: string | undefined) => {
 }
 
 export const useAprFormatted = (genesisHash: string | undefined) => {
-  return useApr(genesisHash).toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
+  const apr = useApr(genesisHash)
+
+  return apr ? apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 }) : '--'
 }
