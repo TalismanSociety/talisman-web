@@ -12,7 +12,6 @@ import {
 import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
 import { selectedCurrencyState } from '@/domains/balances'
 import { cn } from '@/lib/utils'
-import { useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { Surface } from '@talismn/ui'
 import { Wallet } from '@talismn/web-icons'
@@ -39,12 +38,6 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
   const [toEvmAddress, setToEvmAddress] = useAtom(toEvmAddressAtom)
   const [toSubstrateAddress, setToSubstrateAddress] = useAtom(toSubstrateAddressAtom)
 
-  const tokens = useTokens()
-  const token = useMemo(() => {
-    if (!fromAsset) return null
-    return tokens[fromAsset.id]
-  }, [fromAsset, tokens])
-
   const onChangeAddress = useCallback(
     (address: string | null) => {
       if (!address) return
@@ -68,11 +61,15 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
     ]
   )
 
+  const isSwappingFromBtc = useMemo(() => {
+    return fromAsset?.id === 'btc-native'
+  }, [fromAsset])
+
   const shouldShowToAccount = useMemo(() => {
-    if (!fromAsset || !toAsset) return false
+    if (!fromAsset || !toAsset || isSwappingFromBtc) return false
     if (fromAsset.networkType !== toAsset.networkType) return true
     return toAddress?.toLowerCase() !== fromAddress?.toLowerCase()
-  }, [fromAddress, fromAsset, toAddress, toAsset])
+  }, [fromAddress, fromAsset, isSwappingFromBtc, toAddress, toAsset])
 
   return (
     <Surface className="bg-card p-[16px] rounded-[8px] w-full flex flex-col gap-[12px]">
@@ -107,17 +104,20 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
           <p className="text-[14px] font-medium">Destination</p>
         </div>
       </div>
-      {!!fromAsset && (
+      {!!fromAsset && !isSwappingFromBtc && (
         <div>
           <p className="text-[14px] text-gray-500">Origin Account</p>
           <SeparatedAccountSelector
             accountsType={
-              !token
+              fromAsset.id === 'btc-native'
+                ? 'btc'
+                : !fromAsset
                 ? 'all'
-                : token.type === 'evm-erc20' || token.type === 'evm-native' || token.type === 'evm-uniswapv2'
+                : fromAsset.networkType === 'evm'
                 ? 'ethereum'
                 : 'substrate'
             }
+            disableBtc
             substrateAccountPrefix={0}
             substrateAccountsFilter={a => !a.readonly}
             evmAccountsFilter={a => !!a.canSignEvm}

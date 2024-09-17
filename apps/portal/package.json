@@ -55,6 +55,7 @@
     "@visx/visx": "^3.1.2",
     "avail-js-sdk": "^0.2.13",
     "bignumber.js": "^9.1.1",
+    "bitcoinjs-lib": "^7.0.0-rc.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "csv-stringify": "^6.2.3",

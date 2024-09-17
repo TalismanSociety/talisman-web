@@ -186,7 +186,11 @@ export const SwapTokensModal: React.FC<Props> = ({
                   >
                     <SwapTokenRow
                       asset={asset}
-                      networkName={chains[asset.chainId]?.name ?? networks[asset.chainId]?.name ?? 'Unknown Chain'}
+                      networkName={
+                        chains[asset.chainId]?.name ??
+                        networks[asset.chainId]?.name ??
+                        (asset.chainId === 'bitcoin' ? 'Bitcoin' : 'Unknown Chain')
+                      }
                       evmAddress={evmAddress}
                       substrateAddress={substrateAddress}
                       balance={balances?.[asset.id]}
