@@ -1,7 +1,6 @@
 import { SwapDetails } from './SwapDetails'
 import { SwapHistory } from './SwapHistory'
 import { cn } from '@/lib/utils'
-import { Chip } from '@talismn/ui'
 import { Activity, FileSearch } from '@talismn/web-icons'
 import { atom, useAtom } from 'jotai'
 import { useMemo } from 'react'
@@ -60,20 +59,6 @@ export const SidePanel: React.FC = () => {
         </div>
         <div className="flex-1 flex flex-col w-full">
           <div className="md:h-0 md:min-h-full overflow-auto max-h-[340px] md:max-h-auto">{content}</div>
-        </div>
-        <div className="bg-background mt-auto pt-3">
-          <p className="text-center text-[12px] text-gray-500">
-            Swap powered by {/* eslint-disable-next-line react/jsx-no-target-blank */}
-            <a href="https://docs.chainflip.io/concepts/welcome" target="_blank" css={{ display: 'contents' }}>
-              <Chip
-                containerColor="linear-gradient(90deg, rgba(255, 73, 162, 0.10) 0%, rgba(70, 221, 147, 0.10) 100%)"
-                size="sm"
-                css={{ textTransform: 'uppercase', cursor: 'pointer' }}
-              >
-                <img src="https://chainflip.io/images/home/logo-white.svg" css={{ height: '1em' }} />
-              </Chip>
-            </a>
-          </p>
         </div>
       </div>
     </div>

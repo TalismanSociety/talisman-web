@@ -176,7 +176,7 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
   if (accountsType === 'ethereum' && !allowInput) {
     const evmAccount = evmAccounts[0]
     return (
-      <Surface className="[&>p]:text-[14px] p-[12px] rounded-[8px] mt-[9px]">
+      <Surface className="[&>p]:text-[14px] p-[12px] rounded-[8px]">
         {evmAccount ? (
           <div className="flex items-center gap-[10px]">
             <AccountIcon account={{ address: evmAccount.address }} size="32px" />
@@ -203,7 +203,7 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
 
   return (
     <Select
-      className="w-full [&>button]:!py-[12px] [&>button]:!rounded-[8px] [&>button>div]:w-full mt-[8px]"
+      className="w-full [&>button]:!py-[12px] [&>button]:!rounded-[8px] [&>button>div]:w-full"
       placeholder={allowInput ? 'Enter or select an address' : 'Select an account'}
       value={value}
       onChangeValue={val => {

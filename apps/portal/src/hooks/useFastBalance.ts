@@ -13,7 +13,9 @@ type EvmProps = {
 export type UseFastBalanceProps = EvmProps | UseSubstrateBalanceProps
 
 export const useFastBalance = (props?: UseFastBalanceProps) => {
-  const substrateBalance = useSubstrateBalance(props?.type === 'substrate' ? props : undefined)
+  const substrateBalance = useSubstrateBalance(
+    useMemo(() => (props?.type === 'substrate' ? props : undefined), [props])
+  )
   const evmBalance = useBalance(
     props?.type === 'evm'
       ? {

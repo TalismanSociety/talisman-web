@@ -5,12 +5,12 @@
 @layer base {
   :root {
     --background: 0 0% 7.06%;
-    --foreground: 224 71.4% 4.1%;
+    --foreground: 0 0% 98%;
 
     --card: 0 0% 10.59%;
     --card-foreground: 224 71.4% 4.1%;
 
-    --popover: 0 0% 100%;
+    --popover: 0 0% 7%;
     --popover-foreground: 224 71.4% 4.1%;
 
     --primary: 75.46 100% 68.04%;
@@ -20,10 +20,10 @@
     --secondary-foreground: 220.9 39.3% 11%;
 
     --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
+    --accent: 0 0% 11%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 20% 98%;
@@ -37,12 +37,12 @@
 
   .dark {
     --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
+    --foreground: 0 0% 98%;
 
     --card: 224 71.4% 4.1%;
     --card-foreground: 210 20% 98%;
 
-    --popover: 224 71.4% 4.1%;
+    --popover: 0 0% 7%;
     --popover-foreground: 210 20% 98%;
 
     --primary: 210 20% 98%;
@@ -52,10 +52,10 @@
     --secondary-foreground: 210 20% 98%;
 
     --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
+    --muted-foreground: 0 0% 89%;
 
     --accent: 215 27.9% 16.9%;
-    --accent-foreground: 210 20% 98%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 20% 98%;
@@ -72,5 +72,17 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 }
