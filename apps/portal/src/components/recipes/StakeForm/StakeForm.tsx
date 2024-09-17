@@ -333,6 +333,7 @@ export type StakeFormProps = {
   poolInfo: ReactNode
   estimatedYield: ReactNode
   claimPermission: ReactNode
+  commissionFee: ReactNode
   stakeButton: ReactNode
   existingPool: ReactNode
 }
@@ -361,6 +362,7 @@ const StakeForm = Object.assign(
                 {props.amountInput}
                 {props.poolInfo}
                 {props.estimatedYield}
+                {props.commissionFee}
                 {props.claimPermission}
                 {props.stakeButton}
               </>

@@ -34,6 +34,7 @@ import PoolClaimPermissionDialog, {
   toUiPermission,
 } from './PoolClaimPermissionDialog'
 import UnstakeDialog from './UnstakeDialog'
+import { usePoolCommission } from '@/domains/staking/substrate/nominationPools/hooks/usePoolCommission'
 import type { ApiPromise } from '@polkadot/api'
 import { type Decimal } from '@talismn/math'
 import { CircularProgressIndicator, Select } from '@talismn/ui'
@@ -267,6 +268,18 @@ const DeferredEstimatedYield = (props: { amount: Decimal }) => (
   <EstimatedYield amount={useDeferredValue(props.amount)} />
 )
 
+const CommissionFee = ({ poolId }: { poolId: number }) => {
+  const { getCurrentCommission } = usePoolCommission()
+
+  const poolCommission = getCurrentCommission(poolId)
+
+  return (
+    <div className="text-[14px] flex justify-between">
+      <div>Commission fee</div> <div>{`${poolCommission}%`}</div>
+    </div>
+  )
+}
+
 export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?: string }) => {
   const location = useLocation()
 
@@ -476,6 +489,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
             </Suspense>
           )
         }
+        commissionFee={<CommissionFee poolId={selectedPoolId || 0} />}
         claimPermission={
           <StakeFormComponent.ClaimPermission
             permission={toUiPermission(claimPermission)}
