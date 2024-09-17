@@ -33,6 +33,7 @@ export const taostatsAtom = atom(async () => {
     return Array.isArray(stats) ? (stats as Taostats) : []
   } catch (cause) {
     console.error('Failed to fetch TAO stats', { cause })
+    return []
   }
 })
 
