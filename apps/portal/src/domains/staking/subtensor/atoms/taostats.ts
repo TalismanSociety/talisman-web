@@ -32,7 +32,8 @@ export const taostatsAtom = atom(async () => {
     const stats = await (await fetch(TAOSTATS_DATA_URL)).json()
     return Array.isArray(stats) ? (stats as Taostats) : []
   } catch (cause) {
-    throw new Error('Failed to fetch TAO stats', { cause })
+    console.error('Failed to fetch TAO stats', { cause })
+    return []
   }
 })
 
@@ -42,7 +43,7 @@ export const taostatsByChainAtomFamily = atomFamily((genesisHash: string | undef
   const networkName = TaostatsNetworkByGenesisHash.get(genesisHash)
   if (!networkName) return atom(() => Promise.resolve(undefined))
 
-  return atom(async get => (await get(taostatsAtom)).find(stats => stats.network === networkName))
+  return atom(async get => (await get(taostatsAtom))?.find(stats => stats.network === networkName))
 })
 
 export const stakingAprByChainAtomFamily = atomFamily((genesisHash: string | undefined) =>
