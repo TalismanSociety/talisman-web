@@ -12,7 +12,6 @@ import {
 import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
 import { selectedCurrencyState } from '@/domains/balances'
 import { cn } from '@/lib/utils'
-import { useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { Surface } from '@talismn/ui'
 import { Wallet } from '@talismn/web-icons'
@@ -38,12 +37,6 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
   const currency = useRecoilValue(selectedCurrencyState)
   const [toEvmAddress, setToEvmAddress] = useAtom(toEvmAddressAtom)
   const [toSubstrateAddress, setToSubstrateAddress] = useAtom(toSubstrateAddressAtom)
-
-  const tokens = useTokens()
-  const token = useMemo(() => {
-    if (!fromAsset) return null
-    return tokens[fromAsset.id]
-  }, [fromAsset, tokens])
 
   const onChangeAddress = useCallback(
     (address: string | null) => {
@@ -116,7 +109,13 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
           <p className="text-[14px] text-gray-500">Origin Account</p>
           <SeparatedAccountSelector
             accountsType={
-              fromAsset.id === 'btc-native' ? 'btc' : !token ? 'all' : token.evmNetwork ? 'ethereum' : 'substrate'
+              fromAsset.id === 'btc-native'
+                ? 'btc'
+                : !fromAsset
+                ? 'all'
+                : fromAsset.networkType === 'evm'
+                ? 'ethereum'
+                : 'substrate'
             }
             disableBtc
             substrateAccountPrefix={0}

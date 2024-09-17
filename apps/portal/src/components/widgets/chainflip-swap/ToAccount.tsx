@@ -20,12 +20,6 @@ export const ToAccount: React.FC = () => {
   const setEvmAddress = useSetAtom(toEvmAddressAtom)
   const setSubstrate = useSetAtom(toSubstrateAddressAtom)
   const setBtcAddress = useSetAtom(toBtcAddressAtom)
-  const tokens = useTokens()
-
-  const token = useMemo(() => {
-    if (!toAsset) return null
-    return tokens[toAsset.id]
-  }, [toAsset, tokens])
 
   return (
     <div className="w-full">
@@ -34,7 +28,13 @@ export const ToAccount: React.FC = () => {
         <SeparatedAccountSelector
           allowInput
           accountsType={
-            toAsset.id === 'btc-native' ? 'btc' : !token ? 'all' : token?.evmNetwork ? 'ethereum' : 'substrate'
+            toAsset.id === 'btc-native'
+              ? 'btc'
+              : !toAsset
+              ? 'all'
+              : toAsset.networkType === 'evm'
+              ? 'ethereum'
+              : 'substrate'
           }
           substrateAccountsFilter={a => !a.readonly}
           substrateAccountPrefix={0}
