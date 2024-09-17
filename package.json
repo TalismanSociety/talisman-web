@@ -23,6 +23,7 @@
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@w3ux/types": "^0.2.0",
     "eslint": "^9.2.0",
     "husky": "^8.0.3",
     "prettier": "^2.8.8",
