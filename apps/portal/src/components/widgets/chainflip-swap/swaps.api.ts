@@ -37,6 +37,14 @@ import { useWalletClient } from 'wagmi'
 
 const swapModules = [chainflipSwapModule, simpleswapSwapModule]
 const ETH_LOGO = 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg'
+const BTC_LOGO = 'https://assets.coingecko.com/coins/images/1/standard/bitcoin.png?1696501400'
+const btcTokens = {
+  'btc-native': {
+    symbol: 'BTC',
+    decimals: 8,
+    image: BTC_LOGO,
+  },
+}
 
 const getTokensByChainId = async (
   get: Getter,
@@ -47,7 +55,11 @@ const getTokensByChainId = async (
   const tokens = (await Promise.all(allTokensSelector.map(get))).flat()
   return tokens.reduce((acc, cur) => {
     const tokens = acc[cur.chainId.toString()] ?? {}
-    const tokenDetails = knownEvmTokens[cur.chainId.toString()]?.tokens[cur.id] ?? otherKnownTokens[cur.id]
+    const tokenDetails =
+      knownEvmTokens[cur.chainId.toString()]?.tokens[cur.id] ??
+      otherKnownTokens[cur.id] ??
+      btcTokens[cur.id as 'btc-native']
+
     if (!tokenDetails) return acc
     tokens[cur.id] = {
       ...cur,
@@ -100,6 +112,9 @@ export const fromAssetsAtom = atom(async get => {
   const sort = tokenTabs.find(t => t.value === tab)?.sort
   if (filter) tokens = tokens.filter(filter)
   if (sort) tokens = tokens.sort(sort)
+
+  // from assets should not include btc
+  tokens = tokens.filter(t => t.networkType !== 'btc')
   return tokens
 })
 
