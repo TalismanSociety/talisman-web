@@ -38,6 +38,8 @@ import { usePoolCommission } from '@/domains/staking/substrate/nominationPools/h
 import type { ApiPromise } from '@polkadot/api'
 import { type Decimal } from '@talismn/math'
 import { CircularProgressIndicator, Select } from '@talismn/ui'
+import { Tooltip } from '@talismn/ui'
+import { Info } from '@talismn/web-icons'
 import BN from 'bn.js'
 import {
   Suspense,
@@ -165,6 +167,7 @@ const PoolSelector = (props: {
   const [chain, recommendedPools, nativeTokenDecimal] = useRecoilValue(
     waitForAll([useChainRecoilState(), useRecommendedPoolsState(), useNativeTokenDecimalState()])
   )
+  const { getCurrentCommission } = usePoolCommission()
 
   return (
     <PoolSelectorDialog
@@ -181,22 +184,27 @@ const PoolSelector = (props: {
         props.onDismiss()
       }, [newPoolId, props])}
     >
-      {recommendedPools.map((pool, index) => (
-        <PoolSelectorDialog.Item
-          key={pool.poolId}
-          selected={props.selectedPoolId !== undefined && pool.poolId === props.selectedPoolId}
-          highlighted={newPoolId !== undefined && pool.poolId === newPoolId}
-          talismanRecommended={index === 0}
-          name={pool.name ?? ''}
-          detailUrl={
-            chain?.subscanUrl ? new URL(`nomination_pool/${pool.poolId}`, chain.subscanUrl).toString() : undefined
-          }
-          balance={`${nativeTokenDecimal.fromPlanck(pool.bondedPool.points.toBigInt()).toLocaleString()} staked`}
-          rating={3}
-          count={pool.bondedPool.memberCounter.toString()}
-          onClick={() => setNewPoolId(pool.poolId)}
-        />
-      ))}
+      {recommendedPools.map((pool, index) => {
+        return (
+          <PoolSelectorDialog.Item
+            key={pool.poolId}
+            selected={props.selectedPoolId !== undefined && pool.poolId === props.selectedPoolId}
+            highlighted={newPoolId !== undefined && pool.poolId === newPoolId}
+            talismanRecommended={index === 0}
+            name={pool.name ?? ''}
+            detailUrl={
+              chain?.subscanUrl ? new URL(`nomination_pool/${pool.poolId}`, chain.subscanUrl).toString() : undefined
+            }
+            balance={`${nativeTokenDecimal.fromPlanck(pool.bondedPool.points.toBigInt()).toLocaleString()} staked`}
+            rating={3}
+            count={pool.bondedPool.memberCounter.toString()}
+            onClick={() => setNewPoolId(pool.poolId)}
+            commissionFeeDescription="Actual earnings reflect commissions charged by validators and pools. The amount of fees charged by pools cannot be determined by Talisman.
+But Talisman charges 1.5% on certain pools."
+            commissionFee={getCurrentCommission(pool.poolId).toString() + '%'}
+          />
+        )
+      })}
     </PoolSelectorDialog>
   )
 }
@@ -275,7 +283,20 @@ const CommissionFee = ({ poolId }: { poolId: number }) => {
 
   return (
     <div className="text-[14px] flex justify-between">
-      <div>Commission fee</div> <div>{`${poolCommission}%`}</div>
+      <div className="flex gap-2 items-center">
+        <div>Commission fee</div>
+        <Tooltip
+          content={
+            <div className="max-w-[276px] text-[12px]">
+              Actual earnings reflect commissions charged by validators and pools. The amount of fees charged by pools
+              cannot be determined by Talisman. But Talisman charges 1.5% on certain pools.
+            </div>
+          }
+        >
+          <Info size="1.4rem" />
+        </Tooltip>
+      </div>
+      <div>{`${poolCommission}%`}</div>
     </div>
   )
 }
