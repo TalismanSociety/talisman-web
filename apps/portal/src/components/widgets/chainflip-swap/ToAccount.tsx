@@ -8,10 +8,8 @@ import {
 import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
 import { isBtcAddress } from '@/lib/btc'
 import { cn } from '@/lib/utils'
-import { useTokens } from '@talismn/balances-react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import type React from 'react'
-import { useMemo } from 'react'
 import { isAddress } from 'viem'
 
 export const ToAccount: React.FC = () => {
