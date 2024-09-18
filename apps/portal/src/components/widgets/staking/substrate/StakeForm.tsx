@@ -199,8 +199,7 @@ const PoolSelector = (props: {
             rating={3}
             count={pool.bondedPool.memberCounter.toString()}
             onClick={() => setNewPoolId(pool.poolId)}
-            commissionFeeDescription="Actual earnings reflect commissions charged by validators and pools. The amount of fees charged by pools cannot be determined by Talisman.
-But Talisman charges 1.5% on certain pools."
+            commissionFeeDescription="Commission shown is only for the nomination pool, but actual earnings will reflect fees charged by both validators and nomination pools. The total amount of fees can change regularly and can't be determined by Talisman."
             commissionFee={getCurrentCommission(pool.poolId).toString() + '%'}
           />
         )
@@ -288,8 +287,9 @@ const CommissionFee = ({ poolId }: { poolId: number }) => {
         <Tooltip
           content={
             <div className="max-w-[276px] text-[12px]">
-              Actual earnings reflect commissions charged by validators and pools. The amount of fees charged by pools
-              cannot be determined by Talisman. But Talisman charges 1.5% on certain pools.
+              Commission shown is only for the nomination pool, but actual earnings will reflect fees charged by both
+              validators and nomination pools. The total amount of fees can change regularly and can't be determined by
+              Talisman.
             </div>
           }
         >
