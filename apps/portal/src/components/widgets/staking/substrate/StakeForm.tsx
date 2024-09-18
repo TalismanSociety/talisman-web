@@ -34,9 +34,12 @@ import PoolClaimPermissionDialog, {
   toUiPermission,
 } from './PoolClaimPermissionDialog'
 import UnstakeDialog from './UnstakeDialog'
+import { usePoolCommission } from '@/domains/staking/substrate/nominationPools/hooks/usePoolCommission'
 import type { ApiPromise } from '@polkadot/api'
 import { type Decimal } from '@talismn/math'
 import { CircularProgressIndicator, Select } from '@talismn/ui'
+import { Tooltip } from '@talismn/ui'
+import { Info } from '@talismn/web-icons'
 import BN from 'bn.js'
 import {
   Suspense,
@@ -164,6 +167,7 @@ const PoolSelector = (props: {
   const [chain, recommendedPools, nativeTokenDecimal] = useRecoilValue(
     waitForAll([useChainRecoilState(), useRecommendedPoolsState(), useNativeTokenDecimalState()])
   )
+  const { getCurrentCommission } = usePoolCommission()
 
   return (
     <PoolSelectorDialog
@@ -180,22 +184,26 @@ const PoolSelector = (props: {
         props.onDismiss()
       }, [newPoolId, props])}
     >
-      {recommendedPools.map((pool, index) => (
-        <PoolSelectorDialog.Item
-          key={pool.poolId}
-          selected={props.selectedPoolId !== undefined && pool.poolId === props.selectedPoolId}
-          highlighted={newPoolId !== undefined && pool.poolId === newPoolId}
-          talismanRecommended={index === 0}
-          name={pool.name ?? ''}
-          detailUrl={
-            chain?.subscanUrl ? new URL(`nomination_pool/${pool.poolId}`, chain.subscanUrl).toString() : undefined
-          }
-          balance={`${nativeTokenDecimal.fromPlanck(pool.bondedPool.points.toBigInt()).toLocaleString()} staked`}
-          rating={3}
-          count={pool.bondedPool.memberCounter.toString()}
-          onClick={() => setNewPoolId(pool.poolId)}
-        />
-      ))}
+      {recommendedPools.map((pool, index) => {
+        return (
+          <PoolSelectorDialog.Item
+            key={pool.poolId}
+            selected={props.selectedPoolId !== undefined && pool.poolId === props.selectedPoolId}
+            highlighted={newPoolId !== undefined && pool.poolId === newPoolId}
+            talismanRecommended={index === 0}
+            name={pool.name ?? ''}
+            detailUrl={
+              chain?.subscanUrl ? new URL(`nomination_pool/${pool.poolId}`, chain.subscanUrl).toString() : undefined
+            }
+            balance={`${nativeTokenDecimal.fromPlanck(pool.bondedPool.points.toBigInt()).toLocaleString()} staked`}
+            rating={3}
+            count={pool.bondedPool.memberCounter.toString()}
+            onClick={() => setNewPoolId(pool.poolId)}
+            commissionFeeDescription="Commission shown is only for the nomination pool, but actual earnings will reflect fees charged by both validators and nomination pools. The total amount of fees can change regularly and can't be determined by Talisman."
+            commissionFee={getCurrentCommission(pool.poolId).toString() + '%'}
+          />
+        )
+      })}
     </PoolSelectorDialog>
   )
 }
@@ -266,6 +274,32 @@ const EstimatedYield = memo(
 const DeferredEstimatedYield = (props: { amount: Decimal }) => (
   <EstimatedYield amount={useDeferredValue(props.amount)} />
 )
+
+const CommissionFee = ({ poolId }: { poolId: number }) => {
+  const { getCurrentCommission } = usePoolCommission()
+
+  const poolCommission = getCurrentCommission(poolId)
+
+  return (
+    <div className="text-[14px] flex justify-between">
+      <div className="flex gap-2 items-center">
+        <div>Commission fee</div>
+        <Tooltip
+          content={
+            <div className="max-w-[276px] text-[12px]">
+              Commission shown is only for the nomination pool, but actual earnings will reflect fees charged by both
+              validators and nomination pools. The total amount of fees can change regularly and can't be determined by
+              Talisman.
+            </div>
+          }
+        >
+          <Info size="1.4rem" />
+        </Tooltip>
+      </div>
+      <div>{`${poolCommission}%`}</div>
+    </div>
+  )
+}
 
 export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?: string }) => {
   const location = useLocation()
@@ -476,6 +510,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
             </Suspense>
           )
         }
+        commissionFee={<CommissionFee poolId={selectedPoolId || 0} />}
         claimPermission={
           <StakeFormComponent.ClaimPermission
             permission={toUiPermission(claimPermission)}

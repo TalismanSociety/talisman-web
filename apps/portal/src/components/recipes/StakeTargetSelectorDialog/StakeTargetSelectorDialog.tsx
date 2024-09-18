@@ -131,7 +131,7 @@ const StakeTargetSelectorDialog = Object.assign(
                     : []),
                 ])}
             </motion.div>
-            <div css={{ display: 'flex', justifyContent: 'end', marginTop: '0.6rem' }}>
+            <div css={{ display: 'flex', justifyContent: 'end', marginTop: '0.6rem', gap: '1rem' }}>
               <Button variant="noop" onClick={() => setPage(page => page - 1)} hidden={!hasPreviousPage}>
                 <div css={{ display: 'flex', alignItems: 'center', userSelect: 'none' }}>
                   <ChevronLeft />

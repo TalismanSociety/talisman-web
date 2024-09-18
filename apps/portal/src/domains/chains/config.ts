@@ -28,8 +28,8 @@ export const chainConfigs: ChainConfig[] = [
   {
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
     hasNominationPools: true,
-    priorityPool: 16,
-    talismanPools: [12, 16],
+    priorityPool: 282,
+    talismanPools: [12, 16, 282],
     novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-polkadot',
   },
   // Kusama

@@ -83,7 +83,7 @@ const PoolInfo = (props: PoolInfoProps) => {
       >
         <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
           <StakeStatusIndicator status={props.status} />
-          <Text.Body css={{ fontSize: '1.4rem' }} alpha={expanded ? 'high' : 'medium'}>
+          <Text.Body alpha={expanded ? 'high' : 'medium'} className="md:max-w-[31rem] md:truncate text-[1.4rem]">
             {props.noPoolsAvailable ? 'No pools available' : props.name}
           </Text.Body>
         </div>
@@ -333,6 +333,7 @@ export type StakeFormProps = {
   poolInfo: ReactNode
   estimatedYield: ReactNode
   claimPermission: ReactNode
+  commissionFee: ReactNode
   stakeButton: ReactNode
   existingPool: ReactNode
 }
@@ -361,6 +362,7 @@ const StakeForm = Object.assign(
                 {props.amountInput}
                 {props.poolInfo}
                 {props.estimatedYield}
+                {props.commissionFee}
                 {props.claimPermission}
                 {props.stakeButton}
               </>

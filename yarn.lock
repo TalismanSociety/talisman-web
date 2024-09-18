@@ -12620,6 +12620,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@w3ux/types@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@w3ux/types@npm:0.2.0"
+  checksum: 10c0/dae057b008f110f99da6c97c6f43849708234fbabeb5fa7370a3f9908513227f420ba48c6183b421ec9f8c758cd2c98e45a8a380efe6491012341bcc08b3063b
+  languageName: node
+  linkType: hard
+
 "@wagmi/connectors@npm:5.0.21":
   version: 5.0.21
   resolution: "@wagmi/connectors@npm:5.0.21"
@@ -25472,6 +25479,7 @@ __metadata:
     "@commitlint/cli": "npm:^18.4.3"
     "@commitlint/config-conventional": "npm:^18.4.3"
     "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
+    "@w3ux/types": "npm:^0.2.0"
     eslint: "npm:^9.2.0"
     husky: "npm:^8.0.3"
     prettier: "npm:^2.8.8"
