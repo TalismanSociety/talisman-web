@@ -145,6 +145,7 @@ export const ChainFlipSwap: React.FC = () => {
         <Surface className="bg-card p-[16px] rounded-[8px] w-full">
           <h4 className="text-[18px] font-semibold mb-[8px]">Select Asset</h4>
           <TokenAmountInput
+            hideBalance={fromAsset?.id === 'btc-native'}
             balances={balances.state === 'hasData' ? balances.data : undefined}
             assets={fromAssets.state === 'hasData' ? fromAssets.data : undefined}
             amount={fromAmount}
@@ -156,6 +157,7 @@ export const ChainFlipSwap: React.FC = () => {
             availableBalance={fastBalance?.balance?.transferrable}
             stayAliveBalance={fastBalance?.balance?.stayAlive}
             onChangeAsset={handleChangeFromAsset}
+            disableBtc
           />
           <div className="relative w-full h-[12px]">
             <TonalIconButton
@@ -191,6 +193,10 @@ export const ChainFlipSwap: React.FC = () => {
         {substrateAccounts.length === 0 && ethAccounts.length === 0 ? (
           <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
             Connect Wallet
+          </Button>
+        ) : fromAsset?.networkType === 'btc' ? (
+          <Button className="!w-full !rounded-[8px]" disabled>
+            Swapping from BTC is not supported
           </Button>
         ) : fromAsset?.networkType === 'evm' && ethAccounts.length === 0 ? (
           <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
