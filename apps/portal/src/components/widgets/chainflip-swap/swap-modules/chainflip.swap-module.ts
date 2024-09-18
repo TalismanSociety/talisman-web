@@ -14,6 +14,8 @@ import {
   type QuoteFunction,
   swapQuoteRefresherAtom,
   type GetEstimateGasTxFunction,
+  validateAddress,
+  saveAddressForQuest,
 } from './common.swap-module'
 import {
   SwapSDK,
@@ -25,7 +27,6 @@ import {
   type SwapStatusResponse,
   Asset,
 } from '@chainflip/sdk/swap'
-import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { chainsAtom } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { atom, type Getter, type Setter } from 'jotai'
@@ -40,7 +41,7 @@ const CHAINFLIP_CHAIN_TO_ID_MAP: Record<Chain, string> = {
   Arbitrum: '42161',
   Ethereum: '1',
   Polkadot: 'polkadot',
-  Bitcoin: 'unsupported',
+  Bitcoin: 'bitcoin',
 }
 
 const CHAINFLIP_ID_TO_CHAIN_MAP: Record<string, Chain> = {
@@ -49,7 +50,7 @@ const CHAINFLIP_ID_TO_CHAIN_MAP: Record<string, Chain> = {
   '1': 'Ethereum',
   '11155111': 'Ethereum', // sepolia testnet
   polkadot: 'Polkadot',
-  unsupported: 'Bitcoin',
+  bitcoin: 'Bitcoin',
 }
 
 type ChainflipAssetContext = {
@@ -65,14 +66,15 @@ export const chainflipAssetToSwappableAsset = (
   chain: ChainData
 ): SwappableAssetBaseType<{ chainflip: ChainflipAssetContext }> | null => {
   const chainId = chain.evmChainId?.toString() ?? CHAINFLIP_CHAIN_TO_ID_MAP[chain.chain] ?? 'unsupported'
+  const networkType = chain.chain === 'Polkadot' ? 'substrate' : chain.chain === 'Bitcoin' ? 'btc' : 'evm'
   if (chainId === 'unsupported') return null
   return {
-    id: getTokenIdForSwappableAsset(chain.chain === 'Polkadot' ? 'substrate' : 'evm', chainId, asset.contractAddress),
+    id: getTokenIdForSwappableAsset(networkType, chainId, asset.contractAddress),
     name: asset.name,
     symbol: asset.symbol,
     chainId,
     contractAddress: asset.contractAddress,
-    networkType: chain.chain === 'Polkadot' ? 'substrate' : 'evm',
+    networkType,
     context: {
       chainflip: {
         chain: chain.chain,
@@ -81,16 +83,18 @@ export const chainflipAssetToSwappableAsset = (
     },
   }
 }
+
 const swappableAssetToChainflipAsset = (
   swappableAsset: SwappableAssetBaseType,
   assets: AssetData[]
 ): AssetData | undefined => {
   const chain = CHAINFLIP_ID_TO_CHAIN_MAP[swappableAsset.chainId.toString()]
-  if (chain === 'Bitcoin') return undefined
   return assets.find(a => {
     if (a.chain !== chain) return false
     if (chain === 'Polkadot') {
       return a.asset === 'DOT'
+    } else if (chain === 'Bitcoin') {
+      return a.chain === chain
     } else if (swappableAsset.contractAddress) {
       return a.contractAddress?.toLowerCase() === swappableAsset.contractAddress.toLowerCase()
     } else {
@@ -257,18 +261,6 @@ export type ChainflipSwapActivityData = {
   network: ChainflipNetwork
 }
 
-const saveAddressForQuest = async (swapId: string, fromAddress: string) => {
-  const api = import.meta.env.REACT_APP_QUEST_API
-  if (!api) return
-  await fetch(`${api}/api/quests/chainflip`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ swapId, fromAddress }),
-  })
-}
-
 const swap: SwapFunction<ChainflipSwapActivityData> = async (
   get: Getter,
   _: Setter,
@@ -300,18 +292,15 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
   if (!chainflipFromChain) throw new Error(`Chain ${fromAsset.chainId} not supported on Chainflip`)
 
   // validate from address for the source chain
-  const swappingFromEVM = EVM_CHAINS.some(c => c.id.toString() === fromAsset.chainId.toString())
-  if (swappingFromEVM && !isAddress(fromAddress))
-    throw new Error(`Cannot swap from EVM chain with non-EVM address: ${fromAddress}`)
-  if (!swappingFromEVM && !isSubstrateAddress(fromAddress))
-    throw new Error(`Cannot swap from Polkadot chain with non-Polkadot address: ${fromAddress}`)
+  if (!validateAddress(fromAddress, fromAsset.networkType))
+    throw new Error(`Cannot swap from ${fromAsset.chainId} chain with address: ${fromAddress}`)
 
-  // validate to address for the source chain
-  const swappingToEVM = EVM_CHAINS.some(c => c.id.toString() === toAsset.chainId.toString())
-  if (swappingToEVM && !isAddress(toAddress))
-    throw new Error(`Cannot swap to EVM chain with non-EVM address: ${toAddress}`)
-  if (!swappingToEVM && !isSubstrateAddress(toAddress))
-    throw new Error(`Cannot swap to Polkadot chain with non-Polkadot address: ${toAddress}`)
+  // validate to address for the target chain
+  if (!validateAddress(toAddress, toAsset.networkType))
+    throw new Error(`Cannot swap to ${toAsset.chainId} chain with address: ${toAddress}`)
+
+  // cannot swap from BTC
+  if (fromAsset.networkType === 'btc') throw new Error('Swapping from BTC is not supported.')
 
   try {
     // request a deposit address to send funds to
@@ -325,7 +314,7 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
     })
 
     // begin swap
-    if (swappingFromEVM) {
+    if (fromAsset.networkType === 'evm') {
       if (!evmWalletClient) throw new Error('Ethereum account not connected')
       const chain = EVM_CHAINS.find(c => c.id.toString() === fromAsset.chainId.toString())
       if (!chain) throw new Error('Chain not found')
@@ -348,10 +337,10 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
           args: [depositAddress.depositAddress as `0x${string}`, BigInt(depositAddress.amount)],
         })
       }
-      saveAddressForQuest(depositAddress.depositChannelId, fromAddress)
 
+      saveAddressForQuest(depositAddress.depositChannelId, fromAddress, PROTOCOL)
       return { protocol: PROTOCOL, data: { id: depositAddress.depositChannelId, network } }
-    } else {
+    } else if (fromAsset.networkType === 'substrate') {
       const signer = substrateWallet?.signer
       if (!signer) throw new Error('Substrate wallet not connected.')
       const chains = await get(chainsAtom)
@@ -365,8 +354,11 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
         depositAddress.amount
       ).signAndSend(fromAddress, { signer, withSignedTransaction: true })
 
-      saveAddressForQuest(depositAddress.depositChannelId, fromAddress)
+      saveAddressForQuest(depositAddress.depositChannelId, fromAddress, PROTOCOL)
       return { protocol: PROTOCOL, data: { id: depositAddress.depositChannelId, network } }
+    } else {
+      // should never reach here
+      throw new Error('Source asset not supported.')
     }
   } catch (e) {
     console.error(e)
@@ -413,6 +405,10 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
 
     return null
   }
+
+  // cannot swap from BTC
+  const swappingFromBtc = fromAsset.id === 'btc-native'
+  if (swappingFromBtc) return null
 
   // swapping from Polkadot
   const chains = await get(chainsAtom)
