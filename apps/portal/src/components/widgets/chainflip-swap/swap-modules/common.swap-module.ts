@@ -1,12 +1,14 @@
+import { isBtcAddress } from '@/lib/btc'
 import type { BaseWallet } from '@polkadot-onboard/core'
 import { ApiPromise } from '@polkadot/api'
 import type { SubmittableExtrinsic } from '@polkadot/api/types'
+import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { evmErc20TokenId, evmNativeTokenId, subNativeTokenId } from '@talismn/balances'
 import { Decimal } from '@talismn/math'
 import { type Atom, atom, type Getter, type SetStateAction, type Setter } from 'jotai'
 import { atomWithStorage, createJSONStorage, unstable_withStorageValidator } from 'jotai/utils'
 import 'recoil'
-import type { TransactionRequest, WalletClient } from 'viem'
+import { isAddress, type TransactionRequest, type WalletClient } from 'viem'
 
 export type SupportedSwapProtocol = 'chainflip' | 'simpleswap'
 
@@ -18,7 +20,7 @@ export type SwappableAssetBaseType<TContext = Partial<Record<SupportedSwapProtoc
   contractAddress?: string
   assetHubAssetId?: number
   image?: string
-  networkType: 'evm' | 'substrate'
+  networkType: 'evm' | 'substrate' | 'btc'
   /** protocol modules can store context here, like any special identifier */
   context: TContext
 }
@@ -98,6 +100,19 @@ export type SwapModule = {
 
 // atoms shared between swap modules
 
+export const validateAddress = (address: string, networkType: 'evm' | 'substrate' | 'btc') => {
+  switch (networkType) {
+    case 'evm':
+      return isAddress(address)
+    case 'substrate':
+      return isSubstrateAddress(address)
+    case 'btc':
+      return isBtcAddress(address)
+    default:
+      throw new Error('Invalid network type')
+  }
+}
+
 export const selectedProtocolAtom = atom<SupportedSwapProtocol | null>(null)
 export const fromAssetAtom = atom<SwappableAssetWithDecimals | null>(null)
 export const fromAmountAtom = atom<Decimal>(Decimal.fromPlanck(0n, 1))
@@ -114,12 +129,24 @@ export const fromAddressAtom = atom(get => {
 export const toAssetAtom = atom<SwappableAssetWithDecimals | null>(null)
 export const toSubstrateAddressAtom = atom<string | null>(null)
 export const toEvmAddressAtom = atom<`0x${string}` | null>(null)
+export const toBtcAddressAtom = atom<string | null>(null)
+
 export const toAddressAtom = atom(get => {
   const toAsset = get(toAssetAtom)
   const evmAddress = get(toEvmAddressAtom)
   const substrateAddress = get(toSubstrateAddressAtom)
+  const btcAddress = get(toBtcAddressAtom)
   if (!toAsset) return null
-  return toAsset.networkType === 'evm' ? evmAddress : substrateAddress
+  switch (toAsset.networkType) {
+    case 'evm':
+      return evmAddress
+    case 'substrate':
+      return substrateAddress
+    case 'btc':
+      return btcAddress
+    default:
+      return null
+  }
 })
 
 export const swappingAtom = atom(false)
@@ -165,7 +192,7 @@ export const swapsAtom = atom(
 // helpers
 
 export const getTokenIdForSwappableAsset = (
-  chainType: 'substrate' | 'evm',
+  chainType: 'substrate' | 'evm' | 'btc',
   chainId: number | string,
   contractAddress?: string
 ) => {
@@ -176,7 +203,21 @@ export const getTokenIdForSwappableAsset = (
         : evmNativeTokenId(chainId.toString())
     case 'substrate':
       return subNativeTokenId(chainId.toString())
+    case 'btc':
+      return 'btc-native'
     default:
       return 'not-supported'
   }
+}
+
+export const saveAddressForQuest = async (swapId: string, fromAddress: string, provider: string) => {
+  const api = import.meta.env.REACT_APP_QUEST_API
+  if (!api) return
+  await fetch(`${api}/api/quests/swap`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ swapId, fromAddress, provider }),
+  })
 }

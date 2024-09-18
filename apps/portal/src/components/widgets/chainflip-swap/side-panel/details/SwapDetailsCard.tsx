@@ -9,7 +9,7 @@ import chainflipLogo from './logos/chainflip-logo.png'
 import simpleSwapLogo from './logos/simpleswap-logo.svg'
 import { selectedCurrencyState } from '@/domains/balances'
 import { cn } from '@/lib/utils'
-import { useTokenRates } from '@talismn/balances-react'
+import { useTokenRates, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { Clickable, Surface, Tooltip } from '@talismn/ui'
 import { intervalToDuration } from 'date-fns'
@@ -30,17 +30,24 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
   const currency = useRecoilValue(selectedCurrencyState)
   const setSelectedProtocol = useSetAtom(selectedProtocolAtom)
   const fromAmount = useAtomValue(fromAmountAtom)
+  const tokens = useTokens()
 
   const amount = useMemo(() => {
     if (!toAsset) return null
     return Decimal.fromPlanck(amountOverride ?? quote.outputAmountBN, toAsset.decimals, { currency: toAsset.symbol })
   }, [amountOverride, quote.outputAmountBN, toAsset])
 
+  const bestGuessRate = useMemo(() => {
+    if (!toAsset) return null
+    const confirmedRate = tokenRates[toAsset.id]
+    if (confirmedRate) return confirmedRate
+    return Object.entries(tokenRates ?? {}).find(([id]) => tokens[id]?.symbol === toAsset.symbol)?.[1]
+  }, [toAsset, tokenRates, tokens])
+
   const usdValue = useMemo(() => {
-    if (!toAsset || !amount) return null
-    const rates = tokenRates[toAsset.id]
-    return (rates?.[currency] ?? 0) * amount.toNumber()
-  }, [amount, currency, toAsset, tokenRates])
+    if (!bestGuessRate || !amount) return null
+    return (bestGuessRate?.[currency] ?? 0) * amount.toNumber()
+  }, [amount, bestGuessRate, currency])
 
   const time = useMemo(() => {
     const duration = intervalToDuration({ start: 0, end: quote.timeInSec * 1000 })
@@ -120,7 +127,8 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
         <div className="pt-[8px] mt-[12px] border-t border-t-[#3f3f3f] flex items-center gap-[12px]">
           <div className="flex items-center gap-[12px]">
             <p className="text-[12px] leading-[12px]">
-              1 {fromAsset?.symbol} = {toQuote?.toLocaleString(undefined, { maximumFractionDigits: 4 })}
+              1 {fromAsset?.symbol} ={' '}
+              {toQuote?.toLocaleString(undefined, { maximumFractionDigits: toQuote.toNumber() > 1000 ? 0 : 4 })}
             </p>
             <p className="text-[12px] leading-[12px] text-muted-foreground">
               Fees <span className="text-[12px] leading-[12px] text-white">~{totalFee}</span>

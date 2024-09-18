@@ -2,7 +2,7 @@ import { SwapTokensModal } from './SwapTokensModal'
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
 import { selectedCurrencyState } from '@/domains/balances'
 import { cn } from '@/lib/utils'
-import { useTokenRates } from '@talismn/balances-react'
+import { useTokenRates, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, TextInput, Tooltip } from '@talismn/ui'
 import { HelpCircle } from 'lucide-react'
@@ -24,6 +24,7 @@ type Props = {
   disabled?: boolean
   balances?: Record<string, Decimal>
   hideBalance?: boolean
+  disableBtc?: boolean
 }
 
 const hardcodedGasBufferByTokenSymbol: Record<string, number> = {
@@ -36,6 +37,7 @@ export const TokenAmountInput: React.FC<Props> = ({
   assets,
   availableBalance,
   balances,
+  disableBtc,
   hideBalance,
   leadingLabel,
   onChangeAsset,
@@ -49,6 +51,7 @@ export const TokenAmountInput: React.FC<Props> = ({
   const [input, setInput] = useState((amount?.planck ?? 0n) > 0n ? amount?.toString() ?? '' : '')
 
   const currency = useRecoilValue(selectedCurrencyState)
+  const tokens = useTokens()
   const rates = useTokenRates()
   const shouldDisplayBalance = useMemo(() => {
     if (hideBalance || !selectedAsset) return false
@@ -87,14 +90,20 @@ export const TokenAmountInput: React.FC<Props> = ({
     [onChangeAmount, parseInput]
   )
 
+  const bestGuessRate = useMemo(() => {
+    if (!selectedAsset) return null
+    const confirmedRate = rates[selectedAsset.id]
+    if (confirmedRate) return confirmedRate
+    return Object.entries(rates ?? {}).find(([id]) => tokens[id]?.symbol === selectedAsset.symbol)?.[1]
+  }, [selectedAsset, rates, tokens])
+
   const usdValue = useMemo(() => {
     if (!selectedAsset) return null
-    const rate = rates[selectedAsset.id]
-    if (!rate || amount === undefined) return null
-    const rateInCurrency = rate[currency]
+    if (!bestGuessRate || amount === undefined) return null
+    const rateInCurrency = bestGuessRate[currency]
     if (!rateInCurrency) return null
     return +amount?.toString() * rateInCurrency
-  }, [amount, currency, rates, selectedAsset])
+  }, [amount, bestGuessRate, currency, selectedAsset])
 
   const insufficientBalance = useMemo(() => {
     if (availableBalance === undefined || !amount) return false
@@ -141,7 +150,8 @@ export const TokenAmountInput: React.FC<Props> = ({
       containerClassName={cn(
         '[&>div:nth-child(2)]:!py-[8px] [&>div]:!pr-[8px] [&>div:nth-child(2)]:border [&>div:nth-child(2)]:border-red-500/0',
         {
-          '[&>div:nth-child(2)]:border-red-400 ': insufficientBalance,
+          '[&>div:nth-child(2)]:border-red-400 ':
+            insufficientBalance || (disableBtc && selectedAsset?.id === 'btc-native'),
         }
       )}
       trailingLabel={
@@ -190,6 +200,10 @@ export const TokenAmountInput: React.FC<Props> = ({
                 </Link>
               </Tooltip>
             </div>
+          ) : disableBtc && selectedAsset?.id === 'btc-native' ? (
+            <p className="text-red-400 text-[10px] leading-none pl-[8px] ml-[8px] border-l border-l-gray-600">
+              Swapping from BTC not supported.
+            </p>
           ) : null}
         </div>
       }
