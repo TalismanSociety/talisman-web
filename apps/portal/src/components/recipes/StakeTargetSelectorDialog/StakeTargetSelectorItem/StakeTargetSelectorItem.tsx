@@ -11,6 +11,8 @@ export type StakeTargetSelectorItemProps = {
   balance: string
   balancePlanck?: bigint
   balanceDescription: string
+  commissionFeeDescription?: string
+  commissionFee?: string
   estimatedReturn?: number | bigint
   estimatedApr?: string
   estimatedAprDescription?: string
@@ -106,17 +108,27 @@ const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => {
                 </div>
               ) : null}
             </Tooltip>
-            <Tooltip content={props.estimatedAprDescription}>
-              {props.estimatedApr ? <div>{props.estimatedApr}</div> : null}
-            </Tooltip>
           </div>
         </div>
+        <Tooltip content={props.estimatedAprDescription}>
+          {props.estimatedApr ? <div>{props.estimatedApr}</div> : null}
+        </Tooltip>
         {props.talismanRecommended && (
           <Tooltip content={props.talismanRecommendedDescription}>
             <TalismanHand size="1.4rem" />
           </Tooltip>
         )}
       </Text.Body>
+      <Tooltip content={<div className="max-w-[276px]">{props.commissionFeeDescription}</div>}>
+        {props.commissionFee ? (
+          <div className="text-[14px] flex justify-between">
+            <div className="flex gap-2 items-center">
+              <Text.Body alpha={alpha}>Commission fee</Text.Body>
+            </div>
+            <Text.Body alpha={alpha}>{props.commissionFee}</Text.Body>
+          </div>
+        ) : null}
+      </Tooltip>
     </article>
   )
 }

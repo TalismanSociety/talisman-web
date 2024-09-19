@@ -16,7 +16,13 @@ export const createUniqueNetworkNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'
           tokens(
             offset: $offset
             limit: $limit
-            where: { _or: [{ owner: { _eq: $address } }, { owner_normalized: { _eq: $address } }] }
+            where: {
+              _or: [
+                { owner: { _eq: $address } }
+                { owner_normalized: { _eq: $address } }
+                { tokens_owner: { _eq: $address } }
+              ]
+            }
           ) {
             data {
               token_id
@@ -32,7 +38,7 @@ export const createUniqueNetworkNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'
         }
       `),
       {
-        address,
+        address: address.toLowerCase(),
         offset,
         limit: batchSize,
       }
@@ -52,8 +58,8 @@ export const createUniqueNetworkNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'
           id: `${type}-${chain}-${nft.collection_id}-${nft.token_id}`,
           name: nft.token_name ?? undefined,
           description: nft.collection?.description ?? undefined,
-          media: { url: typeof nft.image === 'string' ? nft.image : nft.image.fullUrl },
-          thumbnail: typeof nft.image === 'string' ? nft.image : nft.image.fullUrl,
+          media: { url: typeof nft.image === 'string' ? nft.image : undefined },
+          thumbnail: typeof nft.image === 'string' ? nft.image : undefined,
           serialNumber: nft.token_id,
           properties: undefined,
           externalLinks: [

@@ -4,7 +4,7 @@ type BaseChain = {
 
 type ChainWithNominationPools = {
   hasNominationPools: true
-  priorityPool: number | undefined
+  priorityPool: number | number[] | undefined
   talismanPools: number[] | undefined
   novaIndexerUrl: string
 }
@@ -28,8 +28,8 @@ export const chainConfigs: ChainConfig[] = [
   {
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
     hasNominationPools: true,
-    priorityPool: 16,
-    talismanPools: [12, 16],
+    priorityPool: 282,
+    talismanPools: [12, 16, 282],
     novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-polkadot',
   },
   // Kusama
@@ -67,8 +67,8 @@ export const chainConfigs: ChainConfig[] = [
   {
     genesisHash: '0xb91746b45e0346cc2f815a520b9c6cb4d5c0902af848db0a80f85932d2e8276a',
     hasNominationPools: true,
-    priorityPool: 2,
-    talismanPools: [2],
+    priorityPool: [2, 66, 68],
+    talismanPools: [2, 66, 68],
     novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-avail',
   },
   // Bittensor

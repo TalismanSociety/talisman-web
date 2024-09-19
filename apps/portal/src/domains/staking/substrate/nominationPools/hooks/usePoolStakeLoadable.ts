@@ -10,27 +10,26 @@ import { useRecoilValueLoadable, waitForAll } from 'recoil'
 export const usePoolStakeLoadable = <T extends Account | Account[]>(account: T) => {
   const accounts = useMemo(() => (Array.isArray(account) ? (account as Account[]) : [account as Account]), [account])
 
+  const apiLoadable = useRecoilValueLoadable(useSubstrateApiState())
+  const api = useMemo(() => apiLoadable.valueMaybe(), [apiLoadable])
+
   // TODO: recoil freeze if we use `useRecoilValue_TRANSITION_SUPPORT_UNSTABLE` here
   // and perform a stake operation inside the staking dialog & wait for the transition to finish
   // try again with next recoil version or when recoil transition hook is stable
   const pendingRewardsLoadable = useRecoilValueLoadable(useAllPendingRewardsState())
   const pendingRewards = useMemo(() => pendingRewardsLoadable.valueMaybe() ?? [], [pendingRewardsLoadable])
 
-  const { state, contents } = useRecoilValueLoadable(
-    waitForAll([
-      useSubstrateApiState(),
-      useQueryState(
-        'nominationPools',
-        'poolMembers.multi',
-        accounts.map(({ address }) => address)
-      ),
-    ])
+  const poolMembersLoadable = useRecoilValueLoadable(
+    useQueryState(
+      'nominationPools',
+      'poolMembers.multi',
+      accounts.map(({ address }) => address)
+    )
   )
-
-  const [api, _poolMembers] = state === 'hasValue' ? contents : []
+  const _poolMembers = useMemo(() => poolMembersLoadable.valueMaybe() ?? [], [poolMembersLoadable])
 
   const accountPools = useMemo(() => {
-    if (state !== 'hasValue' || !_poolMembers || !api) return []
+    if (!_poolMembers || !api) return []
     return _poolMembers
       .map((x, index) => ({
         account: accounts[index]!,
@@ -39,27 +38,22 @@ export const usePoolStakeLoadable = <T extends Account | Account[]>(account: T) 
       }))
       .filter(x => x.poolMembers.isSome)
       .map(x => ({ ...x, poolMember: x.poolMembers.unwrap() }))
-  }, [_poolMembers, accounts, api, pendingRewards, state])
+  }, [_poolMembers, accounts, api, pendingRewards])
 
   const stashIds = useMemo(() => {
     if (!api || !accountPools.length) return []
     return accountPools.map(x => createAccounts(api, x.poolMember.poolId).stashId)
   }, [api, accountPools])
 
+  const poolIds = useMemo(() => accountPools.map(x => x.poolMember.poolId), [accountPools])
+  const poolAccountAddresses = useMemo(() => accountPools.map(x => x.account.address), [accountPools])
+
   const { state: loadableState, contents: loadableContents } = useRecoilValueLoadable(
     waitForAll([
       useQueryState('staking', 'nominators.multi', stashIds),
       useQueryState('staking', 'slashingSpans.multi', stashIds),
-      useQueryState(
-        'nominationPools',
-        'metadata.multi',
-        useMemo(() => accountPools.map(x => x.poolMember.poolId), [accountPools])
-      ),
-      useQueryState(
-        'nominationPools',
-        'claimPermissions.multi',
-        useMemo(() => accountPools.map(x => x.account.address), [accountPools])
-      ),
+      useQueryState('nominationPools', 'metadata.multi', poolIds),
+      useQueryState('nominationPools', 'claimPermissions.multi', poolAccountAddresses),
       useQueryState('staking', 'activeEra', []),
       useDeriveState('session', 'progress', []),
     ])
@@ -76,15 +70,7 @@ export const usePoolStakeLoadable = <T extends Account | Account[]>(account: T) 
   }, [_eraStakers])
 
   const pools = useMemo(() => {
-    if (
-      loadableState !== 'hasValue' ||
-      !poolNominators ||
-      !slashingSpans ||
-      !poolMetadatum ||
-      !claimPermissions ||
-      !activeEra ||
-      !sessionProgress
-    )
+    if (!poolNominators || !slashingSpans || !poolMetadatum || !claimPermissions || !activeEra || !sessionProgress)
       return []
     return (
       accountPools
@@ -127,7 +113,6 @@ export const usePoolStakeLoadable = <T extends Account | Account[]>(account: T) 
     activeEra,
     claimPermissions,
     eraStakers,
-    loadableState,
     poolMetadatum,
     poolNominators,
     sessionProgress,
@@ -139,7 +124,19 @@ export const usePoolStakeLoadable = <T extends Account | Account[]>(account: T) 
   type Return = T extends Account[] ? Result : Result[number] | undefined
 
   const data = useMemo(() => (Array.isArray(account) ? pools : pools.at(0)) as Return, [account, pools])
-  return { state: eraStakersLoadable.state, data }
+
+  const state = useMemo(
+    () => mergeState(loadableState, eraStakersLoadable.state),
+    [loadableState, eraStakersLoadable.state]
+  )
+
+  return { state, data }
+}
+
+const mergeState = (...states: ('hasValue' | 'loading' | 'hasError')[]) => {
+  if (states.includes('hasError')) return 'hasError' as const
+  if (states.includes('loading')) return 'loading' as const
+  return 'hasValue' as const
 }
 
 export type DerivedPoolLoadable = NonNullable<ReturnType<typeof usePoolStakeLoadable<Account>>>

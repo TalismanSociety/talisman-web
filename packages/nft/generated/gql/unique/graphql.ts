@@ -61,7 +61,7 @@ export type AllEventsResponseItemDto = {
   section: Scalars['String']['output']
 }
 
-export type AttributeFilterValue = {
+export type AttributeV1FilterValue = {
   /** The 'key' of attribute from 'attributes' object from the attributes query */
   key: Scalars['String']['input']
   /** The 'raw_value' of the attribute value from 'attributes[key].values[N]' object from the attributes query */
@@ -76,12 +76,33 @@ export type AttributesDataResponse = {
 }
 
 export type AttributesOrderByParams = {
+  collection_id?: InputMaybe<GqlOrderByParamsArgs>
+  token_id?: InputMaybe<GqlOrderByParamsArgs>
+  trait_type?: InputMaybe<GqlOrderByParamsArgs>
+  value?: InputMaybe<GqlOrderByParamsArgs>
+  value_number?: InputMaybe<GqlOrderByParamsArgs>
+  value_string?: InputMaybe<GqlOrderByParamsArgs>
+}
+
+export type AttributesV1DataResponse = {
+  __typename?: 'AttributesV1DataResponse'
+  count: Scalars['Int']['output']
+  data?: Maybe<Array<Attribute_V1>>
+  timestamp: Scalars['Float']['output']
+}
+
+export type AttributesV1OrderByParams = {
   key?: InputMaybe<GqlOrderByParamsArgs>
   name?: InputMaybe<GqlOrderByParamsArgs>
 }
 
-export type AttributesWhereParams = {
+export type AttributesV1WhereParams = {
   collection_id: GqlWhereOpsIntEq
+}
+
+export type AttributesWhereParams = {
+  collection_id?: InputMaybe<GqlWhereOpsIntEq>
+  token_id?: InputMaybe<GqlWhereOpsIntEq>
 }
 
 export type BlockDataResponse = {
@@ -141,7 +162,11 @@ export type CollectionEntity = {
   collection_cover?: Maybe<Scalars['String']['output']>
   collection_id: Scalars['Int']['output']
   const_chain_schema?: Maybe<Scalars['JSON']['output']>
+  created_at_block_hash?: Maybe<Scalars['String']['output']>
+  created_at_block_number?: Maybe<Scalars['Int']['output']>
+  customizing?: Maybe<Scalars['JSONObject']['output']>
   date_of_creation?: Maybe<Scalars['Int']['output']>
+  default_token_image?: Maybe<Scalars['JSONObject']['output']>
   description?: Maybe<Scalars['String']['output']>
   holders_count: Scalars['Int']['output']
   limits_account_ownership?: Maybe<Scalars['Int']['output']>
@@ -152,12 +177,15 @@ export type CollectionEntity = {
   name: Scalars['String']['output']
   nesting_enabled: Scalars['Boolean']['output']
   offchain_schema?: Maybe<Scalars['String']['output']>
+  original_schema_version?: Maybe<Scalars['String']['output']>
   owner: Scalars['String']['output']
   owner_can_destroy?: Maybe<Scalars['Boolean']['output']>
   owner_can_transfer?: Maybe<Scalars['Boolean']['output']>
   owner_normalized: Scalars['String']['output']
   permissions?: Maybe<Scalars['JSONObject']['output']>
+  potential_attributes?: Maybe<Scalars['JSON']['output']>
   properties?: Maybe<Scalars['JSON']['output']>
+  schema_v2?: Maybe<Scalars['JSONObject']['output']>
   schema_version?: Maybe<Scalars['String']['output']>
   sponsorship?: Maybe<Scalars['String']['output']>
   token_limit: Scalars['Float']['output']
@@ -166,11 +194,13 @@ export type CollectionEntity = {
   tokens?: Maybe<Array<Token>>
   tokens_count: Scalars['Int']['output']
   transfers_count: Scalars['Int']['output']
+  updated_at_block_hash?: Maybe<Scalars['String']['output']>
+  updated_at_block_number?: Maybe<Scalars['Int']['output']>
   variable_on_chain_schema?: Maybe<Scalars['JSON']['output']>
 }
 
 export type CollectionEntityTokensArgs = {
-  attributes_filter?: InputMaybe<Array<AttributeFilterValue>>
+  attributes_v1_filter?: InputMaybe<Array<AttributeV1FilterValue>>
   distinct_on?: InputMaybe<TokenEnum>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
@@ -213,6 +243,7 @@ export type CollectionOrderByParams = {
   actions_count?: InputMaybe<GqlOrderByParamsArgs>
   collection_cover?: InputMaybe<GqlOrderByParamsArgs>
   collection_id?: InputMaybe<GqlOrderByParamsArgs>
+  created_at_block_number?: InputMaybe<GqlOrderByParamsArgs>
   date_of_creation?: InputMaybe<GqlOrderByParamsArgs>
   description?: InputMaybe<GqlOrderByParamsArgs>
   holders_count?: InputMaybe<GqlOrderByParamsArgs>
@@ -227,6 +258,7 @@ export type CollectionOrderByParams = {
   token_limit?: InputMaybe<GqlOrderByParamsArgs>
   tokens_count?: InputMaybe<GqlOrderByParamsArgs>
   transfers_count?: InputMaybe<GqlOrderByParamsArgs>
+  updated_at_block_number?: InputMaybe<GqlOrderByParamsArgs>
 }
 
 export type CollectionWhereParams = {
@@ -234,6 +266,8 @@ export type CollectionWhereParams = {
   _or?: InputMaybe<Array<CollectionWhereParams>>
   burned?: InputMaybe<GqlWhereOpsString>
   collection_id?: InputMaybe<GqlWhereOpsInt>
+  created_at_block_hash?: InputMaybe<GqlWhereOpsString>
+  created_at_block_number?: InputMaybe<GqlWhereOpsInt>
   description?: InputMaybe<GqlWhereOpsString>
   mint_mode?: InputMaybe<GqlWhereOpsString>
   mode?: InputMaybe<GqlWhereOpsString>
@@ -244,6 +278,8 @@ export type CollectionWhereParams = {
   token_prefix?: InputMaybe<GqlWhereOpsString>
   tokens?: InputMaybe<TokenWhereParams>
   tokens_count?: InputMaybe<GqlWhereOpsInt>
+  updated_at_block_hash?: InputMaybe<GqlWhereOpsString>
+  updated_at_block_number?: InputMaybe<GqlWhereOpsInt>
 }
 
 export type EmvTransactionDataResponse = {
@@ -429,25 +465,41 @@ export type NestingArgs = {
 export type NestingToken = {
   __typename?: 'NestingToken'
   amount?: Maybe<Scalars['String']['output']>
-  attributes?: Maybe<Scalars['JSONObject']['output']>
+  animation_details?: Maybe<Scalars['JSONObject']['output']>
+  animation_url?: Maybe<Scalars['String']['output']>
+  attributes?: Maybe<Scalars['JSON']['output']>
+  attributes_v1?: Maybe<Scalars['JSONObject']['output']>
+  background_color?: Maybe<Scalars['String']['output']>
   bundle_created?: Maybe<Scalars['Int']['output']>
   burned: Scalars['Boolean']['output']
   children_count?: Maybe<Scalars['Int']['output']>
   collection_id: Scalars['Int']['output']
+  created_by?: Maybe<Scalars['String']['output']>
+  customizing?: Maybe<Scalars['JSONObject']['output']>
+  customizing_overrides?: Maybe<Scalars['JSONObject']['output']>
   date_of_creation?: Maybe<Scalars['Int']['output']>
-  image?: Maybe<Scalars['JSONObject']['output']>
+  description?: Maybe<Scalars['String']['output']>
+  external_url?: Maybe<Scalars['String']['output']>
+  image?: Maybe<Scalars['String']['output']>
+  image_details?: Maybe<Scalars['JSONObject']['output']>
+  image_v1?: Maybe<Scalars['JSONObject']['output']>
   is_sold: Scalars['Boolean']['output']
+  locale?: Maybe<Scalars['String']['output']>
+  media?: Maybe<Scalars['JSONObject']['output']>
+  name?: Maybe<Scalars['String']['output']>
   nested: Scalars['Boolean']['output']
   nestingChildren?: Maybe<Array<NestingToken>>
   owner: Scalars['String']['output']
   owner_normalized: Scalars['String']['output']
   parent_id?: Maybe<Scalars['String']['output']>
   properties?: Maybe<Scalars['JSON']['output']>
+  royalties?: Maybe<Scalars['JSONObject']['output']>
   token_id: Scalars['Int']['output']
   token_name?: Maybe<Scalars['String']['output']>
   token_prefix: Scalars['String']['output']
   total_pieces?: Maybe<Scalars['String']['output']>
   type?: Maybe<TokenTypeEnum>
+  youtube_url?: Maybe<Scalars['String']['output']>
 }
 
 export type Query = {
@@ -457,6 +509,7 @@ export type Query = {
   allEvents: AllEventsResponseDto
   allExtrinsics: AllEventsResponseDto
   attributes: AttributesDataResponse
+  attributes_v1: AttributesV1DataResponse
   block: BlockDataResponse
   blockNumbersByInterval: BlockNumbersResponseDto
   bundleTree?: Maybe<NestingToken>
@@ -493,8 +546,15 @@ export type QueryAccountsStatisticsArgs = {
 }
 
 export type QueryAttributesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
   order_by?: InputMaybe<AttributesOrderByParams>
-  where: AttributesWhereParams
+  where?: InputMaybe<AttributesWhereParams>
+}
+
+export type QueryAttributes_V1Args = {
+  order_by?: InputMaybe<AttributesV1OrderByParams>
+  where: AttributesV1WhereParams
 }
 
 export type QueryBlockArgs = {
@@ -599,7 +659,7 @@ export type QueryStatisticsArgs = {
 }
 
 export type QueryTokenBundlesArgs = {
-  attributes_filter?: InputMaybe<Array<AttributeFilterValue>>
+  attributes_v1_filter?: InputMaybe<Array<AttributeV1FilterValue>>
   distinct_on?: InputMaybe<TokenEnum>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
@@ -635,7 +695,7 @@ export type QueryToken_OwnersArgs = {
 }
 
 export type QueryTokensArgs = {
-  attributes_filter?: InputMaybe<Array<AttributeFilterValue>>
+  attributes_v1_filter?: InputMaybe<Array<AttributeV1FilterValue>>
   distinct_on?: InputMaybe<TokenEnum>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
@@ -695,7 +755,11 @@ export type TokenDataResponse = {
 export type TokenEntity = {
   __typename?: 'TokenEntity'
   amount?: Maybe<Scalars['String']['output']>
-  attributes?: Maybe<Scalars['JSONObject']['output']>
+  animation_details?: Maybe<Scalars['JSONObject']['output']>
+  animation_url?: Maybe<Scalars['String']['output']>
+  attributes?: Maybe<Scalars['JSON']['output']>
+  attributes_v1?: Maybe<Scalars['JSONObject']['output']>
+  background_color?: Maybe<Scalars['String']['output']>
   bundle_created?: Maybe<Scalars['Int']['output']>
   burned: Scalars['Boolean']['output']
   children_count?: Maybe<Scalars['Int']['output']>
@@ -706,14 +770,28 @@ export type TokenEntity = {
   collection_name: Scalars['String']['output']
   collection_owner?: Maybe<Scalars['String']['output']>
   collection_owner_normalized?: Maybe<Scalars['String']['output']>
+  created_at_block_hash?: Maybe<Scalars['String']['output']>
+  created_at_block_number?: Maybe<Scalars['Int']['output']>
+  created_by?: Maybe<Scalars['String']['output']>
+  customizing?: Maybe<Scalars['JSONObject']['output']>
+  customizing_overrides?: Maybe<Scalars['JSONObject']['output']>
   date_of_creation?: Maybe<Scalars['Int']['output']>
-  image?: Maybe<Scalars['JSONObject']['output']>
+  description?: Maybe<Scalars['String']['output']>
+  external_url?: Maybe<Scalars['String']['output']>
+  image?: Maybe<Scalars['String']['output']>
+  image_details?: Maybe<Scalars['JSONObject']['output']>
+  image_v1?: Maybe<Scalars['JSONObject']['output']>
   is_sold: Scalars['Boolean']['output']
+  locale?: Maybe<Scalars['String']['output']>
+  media?: Maybe<Scalars['JSONObject']['output']>
+  name?: Maybe<Scalars['String']['output']>
   nested: Scalars['Boolean']['output']
   owner: Scalars['String']['output']
   owner_normalized: Scalars['String']['output']
   parent_id?: Maybe<Scalars['String']['output']>
   properties?: Maybe<Scalars['JSON']['output']>
+  royalties?: Maybe<Scalars['JSONObject']['output']>
+  schema_v2?: Maybe<Scalars['JSONObject']['output']>
   token_id: Scalars['Int']['output']
   token_name?: Maybe<Scalars['String']['output']>
   token_prefix: Scalars['String']['output']
@@ -725,6 +803,9 @@ export type TokenEntity = {
   total_pieces?: Maybe<Scalars['String']['output']>
   transfers_count?: Maybe<Scalars['Int']['output']>
   type?: Maybe<TokenTypeEnum>
+  updated_at_block_hash?: Maybe<Scalars['String']['output']>
+  updated_at_block_number?: Maybe<Scalars['Int']['output']>
+  youtube_url?: Maybe<Scalars['String']['output']>
 }
 
 export enum TokenEnum {
@@ -774,6 +855,7 @@ export type TokenOrderByParams = {
   children_count?: InputMaybe<GqlOrderByParamsArgs>
   collection_id?: InputMaybe<GqlOrderByParamsArgs>
   collection_name?: InputMaybe<GqlOrderByParamsArgs>
+  created_at_block_number?: InputMaybe<GqlOrderByParamsArgs>
   date_of_creation?: InputMaybe<GqlOrderByParamsArgs>
   is_sold?: InputMaybe<GqlOrderByParamsArgs>
   owner?: InputMaybe<GqlOrderByParamsArgs>
@@ -787,6 +869,7 @@ export type TokenOrderByParams = {
   tokens_parent?: InputMaybe<GqlOrderByParamsArgs>
   total_pieces?: InputMaybe<GqlOrderByParamsArgs>
   transfers_count?: InputMaybe<GqlOrderByParamsArgs>
+  updated_at_block_number?: InputMaybe<GqlOrderByParamsArgs>
 }
 
 export type TokenOwnersDataResponse = {
@@ -838,6 +921,8 @@ export type TokenWhereParams = {
   collection_name?: InputMaybe<GqlWhereOpsString>
   collection_owner?: InputMaybe<GqlWhereOpsString>
   collection_owner_normalized?: InputMaybe<GqlWhereOpsString>
+  created_at_block_hash?: InputMaybe<GqlWhereOpsString>
+  created_at_block_number?: InputMaybe<GqlWhereOpsInt>
   is_sold?: InputMaybe<GqlWhereOpsString>
   nested?: InputMaybe<GqlWhereOpsString>
   owner?: InputMaybe<GqlWhereOpsString>
@@ -851,6 +936,8 @@ export type TokenWhereParams = {
   tokens_parent?: InputMaybe<GqlWhereOpsString>
   total_pieces?: InputMaybe<GqlWhereOpsString>
   type?: InputMaybe<GqlWhereTokensType>
+  updated_at_block_hash?: InputMaybe<GqlWhereOpsString>
+  updated_at_block_number?: InputMaybe<GqlWhereOpsInt>
 }
 
 export type TransactionWhereParams = {
@@ -913,13 +1000,23 @@ export type Account = {
 
 export type Attribute = {
   __typename?: 'attribute'
-  key: Scalars['String']['output']
-  name: Scalars['JSONObject']['output']
-  values: Array<Attribute_Value>
+  collection_id: Scalars['Int']['output']
+  display_type?: Maybe<Scalars['String']['output']>
+  token_id: Scalars['Int']['output']
+  trait_type: Scalars['String']['output']
+  value_number?: Maybe<Scalars['Float']['output']>
+  value_string?: Maybe<Scalars['String']['output']>
 }
 
-export type Attribute_Value = {
-  __typename?: 'attribute_value'
+export type Attribute_V1 = {
+  __typename?: 'attribute_v1'
+  key: Scalars['String']['output']
+  name: Scalars['JSONObject']['output']
+  values: Array<Attribute_V1_Value>
+}
+
+export type Attribute_V1_Value = {
+  __typename?: 'attribute_v1_value'
   raw_value?: Maybe<Scalars['String']['output']>
   tokens_count?: Maybe<Scalars['Int']['output']>
   value?: Maybe<Scalars['JSONObject']['output']>
@@ -949,7 +1046,11 @@ export type Collection = {
   collection_cover?: Maybe<Scalars['String']['output']>
   collection_id: Scalars['Int']['output']
   const_chain_schema?: Maybe<Scalars['JSON']['output']>
+  created_at_block_hash?: Maybe<Scalars['String']['output']>
+  created_at_block_number?: Maybe<Scalars['Int']['output']>
+  customizing?: Maybe<Scalars['JSONObject']['output']>
   date_of_creation?: Maybe<Scalars['Int']['output']>
+  default_token_image?: Maybe<Scalars['JSONObject']['output']>
   description?: Maybe<Scalars['String']['output']>
   holders_count: Scalars['Int']['output']
   limits_account_ownership?: Maybe<Scalars['Int']['output']>
@@ -960,12 +1061,15 @@ export type Collection = {
   name: Scalars['String']['output']
   nesting_enabled: Scalars['Boolean']['output']
   offchain_schema?: Maybe<Scalars['String']['output']>
+  original_schema_version?: Maybe<Scalars['String']['output']>
   owner: Scalars['String']['output']
   owner_can_destroy?: Maybe<Scalars['Boolean']['output']>
   owner_can_transfer?: Maybe<Scalars['Boolean']['output']>
   owner_normalized: Scalars['String']['output']
   permissions?: Maybe<Scalars['JSONObject']['output']>
+  potential_attributes?: Maybe<Scalars['JSON']['output']>
   properties?: Maybe<Scalars['JSON']['output']>
+  schema_v2?: Maybe<Scalars['JSONObject']['output']>
   schema_version?: Maybe<Scalars['String']['output']>
   sponsorship?: Maybe<Scalars['String']['output']>
   token_limit: Scalars['Float']['output']
@@ -973,6 +1077,8 @@ export type Collection = {
   token_property_permissions?: Maybe<Scalars['JSON']['output']>
   tokens_count: Scalars['Int']['output']
   transfers_count: Scalars['Int']['output']
+  updated_at_block_hash?: Maybe<Scalars['String']['output']>
+  updated_at_block_number?: Maybe<Scalars['Int']['output']>
   variable_on_chain_schema?: Maybe<Scalars['JSON']['output']>
 }
 
@@ -1052,7 +1158,11 @@ export type Statistics = {
 export type Token = {
   __typename?: 'token'
   amount?: Maybe<Scalars['String']['output']>
-  attributes?: Maybe<Scalars['JSONObject']['output']>
+  animation_details?: Maybe<Scalars['JSONObject']['output']>
+  animation_url?: Maybe<Scalars['String']['output']>
+  attributes?: Maybe<Scalars['JSON']['output']>
+  attributes_v1?: Maybe<Scalars['JSONObject']['output']>
+  background_color?: Maybe<Scalars['String']['output']>
   bundle_created?: Maybe<Scalars['Int']['output']>
   burned: Scalars['Boolean']['output']
   children_count?: Maybe<Scalars['Int']['output']>
@@ -1062,14 +1172,28 @@ export type Token = {
   collection_name: Scalars['String']['output']
   collection_owner?: Maybe<Scalars['String']['output']>
   collection_owner_normalized?: Maybe<Scalars['String']['output']>
+  created_at_block_hash?: Maybe<Scalars['String']['output']>
+  created_at_block_number?: Maybe<Scalars['Int']['output']>
+  created_by?: Maybe<Scalars['String']['output']>
+  customizing?: Maybe<Scalars['JSONObject']['output']>
+  customizing_overrides?: Maybe<Scalars['JSONObject']['output']>
   date_of_creation?: Maybe<Scalars['Int']['output']>
-  image?: Maybe<Scalars['JSONObject']['output']>
+  description?: Maybe<Scalars['String']['output']>
+  external_url?: Maybe<Scalars['String']['output']>
+  image?: Maybe<Scalars['String']['output']>
+  image_details?: Maybe<Scalars['JSONObject']['output']>
+  image_v1?: Maybe<Scalars['JSONObject']['output']>
   is_sold: Scalars['Boolean']['output']
+  locale?: Maybe<Scalars['String']['output']>
+  media?: Maybe<Scalars['JSONObject']['output']>
+  name?: Maybe<Scalars['String']['output']>
   nested: Scalars['Boolean']['output']
   owner: Scalars['String']['output']
   owner_normalized: Scalars['String']['output']
   parent_id?: Maybe<Scalars['String']['output']>
   properties?: Maybe<Scalars['JSON']['output']>
+  royalties?: Maybe<Scalars['JSONObject']['output']>
+  schema_v2?: Maybe<Scalars['JSONObject']['output']>
   token_id: Scalars['Int']['output']
   token_name?: Maybe<Scalars['String']['output']>
   token_prefix: Scalars['String']['output']
@@ -1080,6 +1204,9 @@ export type Token = {
   total_pieces?: Maybe<Scalars['String']['output']>
   transfers_count?: Maybe<Scalars['Int']['output']>
   type?: Maybe<TokenTypeEnum>
+  updated_at_block_hash?: Maybe<Scalars['String']['output']>
+  updated_at_block_number?: Maybe<Scalars['Int']['output']>
+  youtube_url?: Maybe<Scalars['String']['output']>
 }
 
 export type Token_Event = {
@@ -1114,7 +1241,7 @@ export type Transaction = {
   block_index: Scalars['String']['output']
   collection_id: Scalars['Int']['output']
   collection_name?: Maybe<Scalars['String']['output']>
-  image?: Maybe<Scalars['JSONObject']['output']>
+  image?: Maybe<Scalars['String']['output']>
   owner: Scalars['String']['output']
   owner_normalized: Scalars['String']['output']
   timestamp?: Maybe<Scalars['Int']['output']>
@@ -1147,7 +1274,7 @@ export type NftsQuery = {
       __typename?: 'TokenEntity'
       token_id: number
       token_name?: string | null
-      image?: any | null
+      image?: string | null
       collection_id: number
       collection?: { __typename?: 'collection'; name: string; description?: string | null } | null
     }> | null
@@ -1232,6 +1359,25 @@ export const NftsDocument = {
                               {
                                 kind: 'ObjectField',
                                 name: { kind: 'Name', value: 'owner_normalized' },
+                                value: {
+                                  kind: 'ObjectValue',
+                                  fields: [
+                                    {
+                                      kind: 'ObjectField',
+                                      name: { kind: 'Name', value: '_eq' },
+                                      value: { kind: 'Variable', name: { kind: 'Name', value: 'address' } },
+                                    },
+                                  ],
+                                },
+                              },
+                            ],
+                          },
+                          {
+                            kind: 'ObjectValue',
+                            fields: [
+                              {
+                                kind: 'ObjectField',
+                                name: { kind: 'Name', value: 'tokens_owner' },
                                 value: {
                                   kind: 'ObjectValue',
                                   fields: [
