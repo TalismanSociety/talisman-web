@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils'
 import { CircularProgressIndicator, Clickable, Skeleton, Surface } from '@talismn/ui'
 import { useAtom, useAtomValue } from 'jotai'
 import { loadable } from 'jotai/utils'
+import { Loadable } from 'jotai/vanilla/utils/loadable'
 import { ArrowUpDown, Check } from 'lucide-react'
 import { Suspense, useEffect, useState } from 'react'
 
@@ -52,7 +53,7 @@ const Details: React.FC = () => {
   const swapping = useAtomValue(swappingAtom)
   const [sort, setSort] = useAtom(quoteSortingAtom)
   const [selectedProtocol, setSelectedProtocol] = useAtom(selectedProtocolAtom)
-  const [cachedQuotes, setCachedQuotes] = useState<{ quote: BaseQuote & { decentralisationScore: number } }[]>([])
+  const [cachedQuotes, setCachedQuotes] = useState<{ fees?: number; quote: Loadable<BaseQuote | null> }[]>([])
   const fromAmount = useAtomValue(fromAmountAtom)
   const fromAsset = useAtomValue(fromAssetAtom)
   const toAsset = useAtomValue(toAssetAtom)
@@ -68,7 +69,8 @@ const Details: React.FC = () => {
   }, [quotes])
 
   useEffect(() => {
-    if (!cachedQuotes.find(q => q.quote.protocol === selectedProtocol)) setSelectedProtocol(null)
+    if (!cachedQuotes.find(q => q.quote.state === 'hasData' && q.quote.data?.protocol === selectedProtocol))
+      setSelectedProtocol(null)
   }, [selectedProtocol, setSelectedProtocol, quotes, cachedQuotes])
 
   if (swapping)
@@ -127,13 +129,21 @@ const Details: React.FC = () => {
       </div>
       <div className=" flex flex-col gap-[8px]">
         {cachedQuotes.length > 0 ? (
-          cachedQuotes.map((q, index) => (
-            <SwapDetailsCard
-              selected={selectedProtocol === null ? index === 0 : selectedProtocol === q.quote.protocol}
-              quote={q.quote}
-              key={q.quote.protocol}
-            />
-          ))
+          cachedQuotes.map((q, index) =>
+            q.quote.state === 'hasData' && q.quote.data ? (
+              <SwapDetailsCard
+                selected={
+                  selectedProtocol === null
+                    ? index === 0
+                    : q.quote.state === 'hasData' && selectedProtocol === q.quote.data?.protocol
+                }
+                quote={q.quote.data}
+                key={q.quote.data.protocol}
+              />
+            ) : q.quote.state === 'loading' ? (
+              <Skeleton.Surface key={index} className="w-full h-[79.39px] rounded-[8px]" />
+            ) : null
+          )
         ) : (
           <>
             <Skeleton.Surface className="w-full h-[79.39px] rounded-[8px]" />

@@ -221,8 +221,14 @@ export const ChainFlipSwap: React.FC = () => {
             loading={swapping}
             onClick={() => {
               setInfoTab('details')
-              if (quote.state === 'hasData' && quote.data && fastBalance?.balance) {
-                swap(quote.data.quote.protocol, fromAmount.planck > fastBalance.balance.stayAlive.planck)
+              if (
+                quote.state === 'hasData' &&
+                quote.data &&
+                fastBalance?.balance &&
+                quote.data.quote.state === 'hasData' &&
+                quote.data.quote.data
+              ) {
+                swap(quote.data.quote.data.protocol, fromAmount.planck > fastBalance.balance.stayAlive.planck)
               }
             }}
           >

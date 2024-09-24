@@ -31,6 +31,7 @@ import { Decimal } from '@talismn/math'
 import { toast } from '@talismn/ui'
 import { Atom, atom, Getter, useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import { loadable, useAtomCallback } from 'jotai/utils'
+import { Loadable } from 'jotai/vanilla/utils/loadable'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
 import { useWalletClient } from 'wagmi'
@@ -149,7 +150,7 @@ export const toAssetsAtom = atom(async get => {
 })
 
 export const swapQuotesAtom = loadable(
-  atom(async (get): Promise<(BaseQuote & { decentralisationScore: number })[] | null> => {
+  atom(async (get): Promise<Loadable<Promise<BaseQuote | null>>[] | null> => {
     const fromAsset = get(fromAssetAtom)
     const toAsset = get(toAssetAtom)
     const allQuoters = swapModules
@@ -164,22 +165,14 @@ export const swapQuotesAtom = loadable(
     // nothing to quote
     if (!fromAsset || !toAsset || !fromAmount.planck || !substrateApiGetter) return null
 
-    const allQuotes = await Promise.all(
-      allQuoters.map(quoter => quoter(get, { getSubstrateApi: substrateApiGetter.getApi }))
-    )
-    const validQuotes = allQuotes
-      .filter(a => !!a)
-      .filter(a => a.outputAmountBN > 0n)
-      .map(a => ({
-        ...a,
-        decentralisationScore: swapModules.find(m => m.protocol === a.protocol)?.decentralisationScore ?? 0,
-      }))
+    const allQuotes = allQuoters.map(get)
 
-    if (validQuotes.length === 0) {
-      const quoteWithError = allQuotes.find(q => q?.error)
-      if (quoteWithError) throw new Error(quoteWithError.error)
-    }
-    return validQuotes
+    // map each, if loaded, return only if output > 0
+    return allQuotes.filter(q => {
+      if (q.state !== 'hasData') return true
+      if (!q.data) return false
+      return q.data.outputAmountBN > 0n
+    })
   })
 )
 
@@ -192,7 +185,8 @@ export const sortedQuotesAtom = atom(async get => {
   if (quotes.state !== 'hasData') return undefined
   return quotes.data
     ?.map(q => {
-      const fees = q.fees.reduce((acc, fee) => {
+      if (q.state !== 'hasData') return { quote: q, fees: 0 }
+      const fees = q.data?.fees.reduce((acc, fee) => {
         const rate = tokenRates[fee.tokenId]?.usd ?? 0
         return acc + fee.amount.toNumber() * rate
       }, 0)
@@ -202,15 +196,18 @@ export const sortedQuotesAtom = atom(async get => {
       }
     })
     .sort((a, b) => {
+      // all loading quotes should be at the end
+      if (a.quote.state !== 'hasData' || !a.quote.data) return 1
+      if (b.quote.state !== 'hasData' || !b.quote.data) return -1
       switch (sort) {
         case 'bestRate':
-          return +(b.quote.outputAmountBN - a.quote.outputAmountBN).toString()
+          return +(b.quote.data.outputAmountBN - a.quote.data.outputAmountBN).toString()
         case 'fastest':
-          return a.quote.timeInSec - b.quote.timeInSec
+          return a.quote.data.timeInSec - b.quote.data.timeInSec
         case 'cheapest':
-          return a.fees - b.fees
+          return (a.fees ?? 0) - (b.fees ?? 0)
         case 'decentalised':
-          return b.quote.decentralisationScore - a.quote.decentralisationScore
+          return b.quote.data.decentralisationScore - a.quote.data.decentralisationScore
         default:
           return 0
       }
@@ -221,7 +218,9 @@ export const selectedQuoteAtom = atom(async get => {
   const quotes = await get(sortedQuotesAtom)
   const selectedProtocol = get(selectedProtocolAtom)
   if (!quotes) return null
-  const quote = quotes.find(q => q.quote.protocol === selectedProtocol) ?? quotes[0]
+  const quote =
+    quotes.find(q => q.quote.state === 'hasData' && q.quote.data && q.quote.data.protocol === selectedProtocol) ??
+    quotes[0]
   if (!quote) return null
   return quote
 })
@@ -231,8 +230,9 @@ export const toAmountAtom = atom(async get => {
   if (!quote) return null
 
   const toAsset = get(toAssetAtom)
-  if (!quote || quote.quote.outputAmountBN === undefined || !toAsset) return null
-  return Decimal.fromPlanck(quote.quote.outputAmountBN, toAsset.decimals, { currency: toAsset.symbol })
+  if (!quote || quote.quote.state !== 'hasData' || quote.quote.data?.outputAmountBN === undefined || !toAsset)
+    return null
+  return Decimal.fromPlanck(quote.quote.data.outputAmountBN, toAsset.decimals, { currency: toAsset.symbol })
 })
 
 export const useSwap = () => {

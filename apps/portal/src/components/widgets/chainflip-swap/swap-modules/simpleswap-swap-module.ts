@@ -16,18 +16,20 @@ import {
   toAssetAtom,
   validateAddress,
 } from './common.swap-module'
+import { substrateApiGetterAtom } from '@/domains/common'
 import { QuoteResponse } from '@chainflip/sdk/swap'
 import { chainsAtom } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { encodeAnyAddress } from '@talismn/util'
 import { atom, Getter, Setter } from 'jotai'
-import { atomFamily } from 'jotai/utils'
+import { atomFamily, loadable } from 'jotai/utils'
 import { createPublicClient, encodeFunctionData, erc20Abi, http, isAddress } from 'viem'
 import { mainnet, bsc, arbitrum, optimism, blast, polygon, manta } from 'viem/chains'
 
 const APIKEY = import.meta.env.REACT_APP_SIMPLESWAP_API_KEY
 if (!APIKEY && import.meta.env.DEV) throw new Error('env var REACT_APP_SIMPLESWAP_API_KEY not set')
 const PROTOCOL = 'simpleswap'
+const DECENTRALISATION_SCORE = 1
 
 type SimpleSwapCurrency = {
   name: string
@@ -300,64 +302,70 @@ export const toAssetsSelector = atom(async get => {
   ]
 })
 
-const quote: QuoteFunction = async (
-  get,
-  { getSubstrateApi }
-): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {
-  const fromAsset = get(fromAssetAtom)
-  const toAsset = get(toAssetAtom)
-  const fromAmount = get(fromAmountAtom)
+const quote: QuoteFunction = loadable(
+  atom(async (get): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {
+    const substrateApiGetter = get(substrateApiGetterAtom)
+    if (!substrateApiGetter) return null
 
-  try {
-    if (!fromAsset || !toAsset || !fromAmount || fromAmount.planck === 0n) return null
-    const currencyFrom = fromAsset.context.simpleswap?.symbol
-    const currencyTo = toAsset.context.simpleswap?.symbol
-    if (!currencyFrom || !currencyTo) return null
+    const getSubstrateApi = substrateApiGetter.getApi
+    const fromAsset = get(fromAssetAtom)
+    const toAsset = get(toAssetAtom)
+    const fromAmount = get(fromAmountAtom)
 
-    const output = await simpleSwapSdk.getEstimated({
-      amount: fromAmount.toString(),
-      currencyFrom,
-      currencyTo,
-      fixed: false,
-    })
+    try {
+      if (!fromAsset || !toAsset || !fromAmount || fromAmount.planck === 0n) return null
+      const currencyFrom = fromAsset.context.simpleswap?.symbol
+      const currencyTo = toAsset.context.simpleswap?.symbol
+      if (!currencyFrom || !currencyTo) return null
 
-    // check for error object
-    if (!output || typeof output !== 'string') {
-      if (output && typeof output !== 'string') {
-        return {
-          protocol: PROTOCOL,
-          inputAmountBN: fromAmount.planck,
-          outputAmountBN: 0n,
-          error: output.description,
-          timeInSec: 5 * 60,
-          fees: [],
+      const output = await simpleSwapSdk.getEstimated({
+        amount: fromAmount.toString(),
+        currencyFrom,
+        currencyTo,
+        fixed: false,
+      })
+
+      // check for error object
+      if (!output || typeof output !== 'string') {
+        if (output && typeof output !== 'string') {
+          return {
+            decentralisationScore: DECENTRALISATION_SCORE,
+            protocol: PROTOCOL,
+            inputAmountBN: fromAmount.planck,
+            outputAmountBN: 0n,
+            error: output.description,
+            timeInSec: 5 * 60,
+            fees: [],
+          }
         }
+        return null
       }
-      return null
-    }
 
-    const gasFee = await estimateGas(get, { getSubstrateApi })
+      const gasFee = await estimateGas(get, { getSubstrateApi })
 
-    return {
-      protocol: PROTOCOL,
-      inputAmountBN: fromAmount.planck,
-      outputAmountBN: Decimal.fromUserInput(output, toAsset.decimals).planck,
-      // swaps take about 5mins according to their faq: https://simpleswap.io/faq#crypto-to-crypto-exchanges--how-long-does-it-take-to-exchange-coins
-      timeInSec: 5 * 60,
-      fees: gasFee ? [gasFee] : [],
+      return {
+        decentralisationScore: DECENTRALISATION_SCORE,
+        protocol: PROTOCOL,
+        inputAmountBN: fromAmount.planck,
+        outputAmountBN: Decimal.fromUserInput(output, toAsset.decimals).planck,
+        // swaps take about 5mins according to their faq: https://simpleswap.io/faq#crypto-to-crypto-exchanges--how-long-does-it-take-to-exchange-coins
+        timeInSec: 5 * 60,
+        fees: gasFee ? [gasFee] : [],
+      }
+    } catch (e) {
+      console.error(e)
+      return {
+        decentralisationScore: DECENTRALISATION_SCORE,
+        protocol: PROTOCOL,
+        inputAmountBN: fromAmount.planck,
+        outputAmountBN: 0n,
+        timeInSec: 5 * 60,
+        error: 'Error fetching quote',
+        fees: [],
+      }
     }
-  } catch (e) {
-    console.error(e)
-    return {
-      protocol: PROTOCOL,
-      inputAmountBN: fromAmount.planck,
-      outputAmountBN: 0n,
-      timeInSec: 5 * 60,
-      error: 'Error fetching quote',
-      fees: [],
-    }
-  }
-}
+  })
+)
 
 const swap: SwapFunction<{ id: string }> = async (
   get: Getter,
@@ -548,7 +556,7 @@ export const simpleswapSwapModule: SwapModule = {
   toAssetsSelector,
   quote,
   swap,
-  decentralisationScore: 1,
+  decentralisationScore: DECENTRALISATION_SCORE,
 }
 
 const retryStatus = async (
