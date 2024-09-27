@@ -8,7 +8,6 @@ import {
 import { DEFAULT_DELEGATE, MIN_SUBTENSOR_STAKE } from '../../../../domains/staking/subtensor/atoms/delegates'
 import { useAprFormatted } from '../../../../domains/staking/subtensor/hooks/useApr'
 import { useDelegates } from '../../../../domains/staking/subtensor/hooks/useDelegates'
-import { useTaostatsToken } from '../../../../domains/staking/subtensor/hooks/useTaostatsToken'
 import { useTaostatsVolume24hFormatted } from '../../../../domains/staking/subtensor/hooks/useTaostatsVolume24h'
 import { Maybe } from '../../../../util/monads'
 import { TalismanHandLoader } from '../../../legacy/TalismanHandLoader'
@@ -101,10 +100,10 @@ const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismis
 }
 
 const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
-  const genesisHash = useRecoilValue(useChainState())?.genesisHash
+  const { genesisHash, nativeToken } = useRecoilValue(useChainState())
+
   const volume24h = useTaostatsVolume24hFormatted(genesisHash)
   const rewards = useAprFormatted(genesisHash)
-  const token = useTaostatsToken(genesisHash)
 
   return (
     <SubtensorStakingSideSheet
@@ -122,7 +121,7 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
       )}
       minimumStake={
         <>
-          {MIN_SUBTENSOR_STAKE} {token}
+          {MIN_SUBTENSOR_STAKE} {nativeToken?.symbol}
         </>
       }
     >
