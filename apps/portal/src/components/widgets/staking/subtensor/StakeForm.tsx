@@ -1,5 +1,5 @@
 import { type Account } from '../../../../domains/accounts'
-import { useChainState, useNativeTokenAmountState } from '../../../../domains/chains'
+import { useNativeTokenAmountState } from '../../../../domains/chains'
 import { useAddStakeForm } from '../../../../domains/staking/subtensor/hooks/forms'
 import { useApr } from '../../../../domains/staking/subtensor/hooks/useApr'
 import { useStake } from '../../../../domains/staking/subtensor/hooks/useStake'
@@ -86,8 +86,7 @@ export const IncompleteSelectionStakeForm = (props: IncompleteSelectionStakeForm
 
 const EstimatedRewards = (props: { amount: bigint }) => {
   const tokenAmount = useRecoilValue(useNativeTokenAmountState())
-  const genesisHash = useRecoilValue(useChainState())?.genesisHash
-  const apr = useApr(genesisHash)
+  const apr = useApr()
   const amount = useMemo(
     () => tokenAmount.fromPlanck(new BN(props.amount.toString()).muln(apr).toString()),
     [apr, props.amount, tokenAmount]
