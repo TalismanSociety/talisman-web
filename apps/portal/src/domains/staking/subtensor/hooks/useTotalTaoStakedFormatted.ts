@@ -1,11 +1,11 @@
-import { totalStakedTaoAtom } from '../atoms/taostats'
+import { taoTotalStakedTaoAtom } from '../atoms/taostats'
 import { useNativeTokenAmountState } from '@/domains/chains'
 import BN from 'bn.js'
 import { useAtomValue } from 'jotai'
 import { useRecoilValue } from 'recoil'
 
 export const useTotalTaoStakedFormatted = () => {
-  const totalStaked = useAtomValue(totalStakedTaoAtom)
+  const totalStaked = useAtomValue(taoTotalStakedTaoAtom)
   const tokenAmount = useRecoilValue(useNativeTokenAmountState())
   const {
     fiatAmount,
