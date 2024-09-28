@@ -1,7 +1,7 @@
 import { type Account } from '../../../../domains/accounts'
 import { useNativeTokenAmountState } from '../../../../domains/chains'
 import { useAddStakeForm } from '../../../../domains/staking/subtensor/hooks/forms'
-import { useApr } from '../../../../domains/staking/subtensor/hooks/useApr'
+import { useDelegateApr } from '../../../../domains/staking/subtensor/hooks/useApr'
 import { useStake } from '../../../../domains/staking/subtensor/hooks/useStake'
 import { SubtensorStakingForm } from './SubtensorStakingForm'
 import { CircularProgressIndicator } from '@talismn/ui'
@@ -53,6 +53,7 @@ export const StakeForm = (props: StakeFormProps) => {
       estimatedRewards={
         <Suspense fallback={<CircularProgressIndicator size="1em" />}>
           <EstimatedRewards
+            delegateHotkey={props.delegate}
             amount={(amount.decimalAmount?.planck ?? 0n) + (stake.totalStaked.decimalAmount?.planck ?? 0n)}
           />
         </Suspense>
@@ -84,12 +85,13 @@ export const IncompleteSelectionStakeForm = (props: IncompleteSelectionStakeForm
   />
 )
 
-const EstimatedRewards = (props: { amount: bigint }) => {
+const EstimatedRewards = (props: { amount: bigint; delegateHotkey: string }) => {
   const tokenAmount = useRecoilValue(useNativeTokenAmountState())
-  const apr = useApr()
+  // const apr = useApr()
+  const delegateApr = useDelegateApr(props.delegateHotkey)
   const amount = useMemo(
-    () => tokenAmount.fromPlanck(new BN(props.amount.toString()).muln(apr).toString()),
-    [apr, props.amount, tokenAmount]
+    () => tokenAmount.fromPlanck(new BN(props.amount.toString()).muln(delegateApr).toString()),
+    [delegateApr, props.amount, tokenAmount]
   )
 
   if (amount.decimalAmount === undefined) return null

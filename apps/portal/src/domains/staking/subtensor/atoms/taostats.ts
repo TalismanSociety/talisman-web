@@ -1,6 +1,7 @@
 import { ValidatorsData } from '../types'
 import { delegatesAtom } from './delegates'
 import { atom } from 'jotai'
+import { atomFamily } from 'jotai/utils'
 
 const TAOSTATS_API_KEY = import.meta.env.REACT_APP_TAOSTATS_API_KEY
 const TAOSTATS_API_URL = 'https://api.taostats.io/api/v1'
@@ -35,7 +36,7 @@ export const taostatsAtom = atom(async () => {
   return stats
 })
 
-const activeTaoDelegatesStatsAtom = atom(async get => {
+export const activeTaoDelegatesStatsAtom = atom(async get => {
   const taostats = await get(taostatsAtom)
   const delegates = await get(delegatesAtom)
 
@@ -60,7 +61,14 @@ export const highestAprTaoValidatorAtom = atom(async get => {
   return highestAprValidatorStats
 })
 
-export const totalStakedTaoAtom = atom(async get => {
+export const taoDelegateStatsAtomFamily = atomFamily((hotKey: string) =>
+  atom(async get => {
+    const activeDelegatesStats = await get(activeTaoDelegatesStatsAtom)
+    return activeDelegatesStats.find(validator => validator.hot_key.ss58 === hotKey)
+  })
+)
+
+export const taoTotalStakedTaoAtom = atom(async get => {
   const { system_total_stake } = await get(highestAprTaoValidatorAtom)
 
   return system_total_stake
