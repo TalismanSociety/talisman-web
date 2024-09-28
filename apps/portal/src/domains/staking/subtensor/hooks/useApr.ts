@@ -12,3 +12,8 @@ export const useDelegateApr = (hotkey: string) => {
   const delegate = useDelegateStats(hotkey)
   return Number(delegate?.apr)
 }
+
+export const useDelegateAprFormatted = (hotkey: string) => {
+  const apr = useDelegateApr(hotkey)
+  return apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
+}
