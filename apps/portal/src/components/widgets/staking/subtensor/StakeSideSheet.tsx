@@ -8,7 +8,7 @@ import {
 import { DEFAULT_DELEGATE, MIN_SUBTENSOR_STAKE } from '../../../../domains/staking/subtensor/atoms/delegates'
 import { useHighestAprFormatted } from '../../../../domains/staking/subtensor/hooks/useApr'
 import { useDelegates } from '../../../../domains/staking/subtensor/hooks/useDelegates'
-// import { useTaostatsVolume24hFormatted } from '../../../../domains/staking/subtensor/hooks/useTaostatsVolume24h'
+import { useTotalTaoStakedFormatted } from '../../../../domains/staking/subtensor/hooks/useTotalTaoStakedFormatted'
 import { Maybe } from '../../../../util/monads'
 import { TalismanHandLoader } from '../../../legacy/TalismanHandLoader'
 import { useAccountSelector } from '../../AccountSelector'
@@ -102,8 +102,7 @@ const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismis
 const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
   const { nativeToken } = useRecoilValue(useChainState())
 
-  // const volume24h = useTaostatsVolume24hFormatted(genesisHash)
-  const volume24h = '1,234,567'
+  const totalStaked = useTotalTaoStakedFormatted()
   const rewards = useHighestAprFormatted()
 
   return (
@@ -113,12 +112,12 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
       info={useMemo(
         () => [
           {
-            title: '24h Volume',
-            content: <>{volume24h}</>,
+            title: 'Total Staked',
+            content: <>{totalStaked}</>,
           },
           { title: 'Estimated APR', content: <>{rewards}</> },
         ],
-        [rewards, volume24h]
+        [rewards, totalStaked]
       )}
       minimumStake={
         <>
