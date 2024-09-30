@@ -90,7 +90,8 @@ const Details: React.FC = () => {
         }
       />
     )
-  if (quotes.state === 'hasError') return <SwapDetailsError message={(quotes.error as any)?.message ?? ''} />
+  if (quotes.state === 'hasError' || cachedQuotes.every(q => q.quote?.state === 'hasError'))
+    return <SwapDetailsError message={(quotes.state === 'hasError' ? (quotes.error as any) : {})?.message ?? ''} />
   if (quotes.state === 'hasData' && quotes.data?.length === 0)
     return <SwapDetailsError message="Pair is unavailable." />
 

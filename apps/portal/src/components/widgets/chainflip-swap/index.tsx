@@ -12,6 +12,7 @@ import {
   toAddressAtom,
   toAssetAtom,
 } from './swap-modules/common.swap-module'
+import { useSwapErc20Approval } from './swaps.api'
 import {
   fromAssetsAtom,
   selectedQuoteAtom,
@@ -116,6 +117,8 @@ export const ChainFlipSwap: React.FC = () => {
     return fromAmount.planck > fastBalance.balance.transferrable.planck
   }, [fastBalance, fromAmount.planck])
 
+  const { data: approvalData, loading: approvalLoading, approve, approving } = useSwapErc20Approval()
+
   useEffect(() => {
     if (fromAmount.planck > 0n && fromAsset && toAsset) setShouldFocusDetails(true)
   }, [fromAsset, toAsset, setShouldFocusDetails, fromAmount.planck])
@@ -126,7 +129,7 @@ export const ChainFlipSwap: React.FC = () => {
     const id = setInterval(() => {
       setShouldFocusDetails(false)
       setQuoteRefresher(new Date().getTime())
-    }, 15_000)
+    }, 20_000)
     return () => clearInterval(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapping])
@@ -206,6 +209,10 @@ export const ChainFlipSwap: React.FC = () => {
           <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
             Connect Polkadot Wallet
           </Button>
+        ) : approvalData ? (
+          <Button loading={approving} disabled={approving} onClick={approve} className="!w-full !rounded-[8px]">
+            Allow {approvalData.protocolName} to spend {fromAsset?.symbol}
+          </Button>
         ) : (
           <Button
             className="!w-full !rounded-[8px]"
@@ -216,9 +223,10 @@ export const ChainFlipSwap: React.FC = () => {
               !fromAddress ||
               !toAddress ||
               insufficientBalance !== false ||
-              swapping
+              swapping ||
+              approvalLoading
             }
-            loading={swapping}
+            loading={swapping || approvalLoading}
             onClick={() => {
               setInfoTab('details')
               if (

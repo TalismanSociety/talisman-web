@@ -22,6 +22,7 @@ import {
   toEvmAddressAtom,
   toSubstrateAddressAtom,
 } from './swap-modules/common.swap-module'
+import { lifiSwapModule } from './swap-modules/lifi.swap-module'
 import { simpleswapSwapModule } from './swap-modules/simpleswap-swap-module'
 import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts'
 import { substrateApiState } from '@/domains/common'
@@ -32,11 +33,13 @@ import { toast } from '@talismn/ui'
 import { Atom, atom, Getter, useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
 import { loadable, useAtomCallback } from 'jotai/utils'
 import { Loadable } from 'jotai/vanilla/utils/loadable'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
+import { createPublicClient, erc20Abi, http } from 'viem'
+import * as allEvmChains from 'viem/chains'
 import { useWalletClient } from 'wagmi'
 
-const swapModules = [chainflipSwapModule, simpleswapSwapModule]
+const swapModules = [chainflipSwapModule, simpleswapSwapModule, lifiSwapModule]
 const ETH_LOGO = 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg'
 const BTC_LOGO = 'https://assets.coingecko.com/coins/images/1/standard/bitcoin.png?1696501400'
 const btcTokens = {
@@ -61,12 +64,15 @@ const getTokensByChainId = async (
       otherKnownTokens[cur.id] ??
       btcTokens[cur.id as 'btc-native']
 
-    if (!tokenDetails) return acc
+    const symbol = tokenDetails?.symbol ?? cur.symbol
+    const decimals = tokenDetails?.decimals ?? cur.decimals
+    const image = symbol?.toLowerCase() === 'eth' ? ETH_LOGO : cur.image
+    if (!symbol || !decimals) return acc
     tokens[cur.id] = {
       ...cur,
-      symbol: tokenDetails.symbol,
-      decimals: tokenDetails.decimals,
-      image: tokenDetails.symbol.toLowerCase() === 'eth' ? ETH_LOGO : cur.image,
+      symbol,
+      decimals,
+      image,
       context: {
         ...tokens[cur.id]?.context,
         ...cur.context,
@@ -83,6 +89,11 @@ export const tokenTabs: {
   filter?: (token: SwappableAssetWithDecimals) => boolean
   sort?: (a: SwappableAssetWithDecimals, b: SwappableAssetWithDecimals) => number
 }[] = [
+  {
+    value: 'evm',
+    label: 'EVM',
+    filter: token => token.networkType === 'evm',
+  },
   {
     value: 'popular',
     label: 'Popular',
@@ -140,12 +151,6 @@ export const toAssetsAtom = atom(async get => {
   if (filter) tokens = tokens.filter(filter)
   if (sort) tokens = tokens.sort(sort)
 
-  // temp solution to disable eth <> arb routes
-  if (fromAsset) {
-    if (fromAsset.chainId.toString() === '1' || fromAsset.chainId.toString() === '42161') {
-      tokens = tokens.filter(t => t.chainId.toString() !== '1' && t.chainId.toString() !== '42161')
-    }
-  }
   return tokens
 })
 
@@ -223,6 +228,41 @@ export const selectedQuoteAtom = atom(async get => {
     quotes[0]
   if (!quote) return null
   return quote
+})
+
+const approvalCounterAtom = atom(0)
+export const approvalAtom = atom(async get => {
+  const protocol = get(selectedProtocolAtom)
+  const quotes = await get(sortedQuotesAtom)
+
+  const defaultQuote = quotes?.[0]
+  const selectedProtocol =
+    protocol ?? (defaultQuote?.quote.state === 'hasData' ? defaultQuote.quote.data?.protocol : null)
+  const module = swapModules.find(module => module.protocol === selectedProtocol)
+
+  if (!module?.approvalAtom || !selectedProtocol) return null
+
+  const approval = get(module.approvalAtom)
+  if (!approval) return null
+
+  const chain = Object.values(allEvmChains).find(c => c.id === approval.chainId)
+  // chain unsupported
+  if (!chain) return null
+
+  // trigger approval check when updated
+  get(approvalCounterAtom)
+
+  const client = createPublicClient({ transport: http(), chain })
+  const allowance = await client.readContract({
+    abi: erc20Abi,
+    address: approval.tokenAddress as `0x${string}`,
+    functionName: 'allowance',
+    args: [approval.fromAddress as `0x${string}`, approval.contractAddress as `0x${string}`],
+  })
+
+  console.log(allowance, approval.amount)
+  if (allowance >= approval.amount) return null
+  return { ...approval, chain }
 })
 
 export const toAmountAtom = atom(async get => {
@@ -402,4 +442,67 @@ export const useToAccount = () => {
   useEffect(() => {
     if (toEvmAddress && toSubstrateAddress) initiated.current = true
   }, [toEvmAddress, toSubstrateAddress])
+}
+
+export const categoriesAtom = atom(async () => {
+  const api = import.meta.env.REACT_APP_COIN_GECKO_API
+  const apiKey = import.meta.env.REACT_APP_COIN_GECKO_API_KEY
+
+  const response = await fetch(`${api}/api/v3//coins/markets?vs_currency=usd&category=wallets`, {
+    headers: {
+      'x-cg-pro-api-key': apiKey!,
+    },
+  })
+
+  return await response.json()
+})
+
+export const useSwapErc20Approval = () => {
+  const approval = useAtomValue(loadable(approvalAtom))
+  const { data: walletClient } = useWalletClient()
+  const [approving, setApproving] = useState(false)
+  const setApprovalCounter = useSetAtom(approvalCounterAtom)
+
+  const approvalData = useMemo(() => {
+    if (approval.state !== 'hasData' || !approval.data) return null
+    return approval.data
+  }, [approval])
+
+  const approve = useCallback(async () => {
+    if (!walletClient) {
+      toast.error('Wallet not connected')
+      return
+    }
+    if (!approvalData) {
+      toast.error('Approval not ready yet')
+      return
+    }
+
+    // start approve spending flow
+    setApproving(true)
+    try {
+      const approveTxHash = await walletClient.writeContract({
+        abi: erc20Abi,
+        functionName: 'approve',
+        address: approvalData.tokenAddress as `0x${string}`,
+        args: [approvalData.contractAddress as `0x${string}`, approvalData.amount],
+        chain: approvalData.chain,
+      })
+
+      // wait for approval tx to be included
+      const client = createPublicClient({ transport: http(), chain: approvalData.chain })
+      const approved = await client.waitForTransactionReceipt({ hash: approveTxHash })
+
+      if (approved.status === 'success') setApprovalCounter(c => c + 1)
+      if (approved.status === 'reverted') throw new Error('Approval reverted')
+    } catch (e) {
+      console.error(e)
+      toast.error('Failed to approve token.')
+    } finally {
+      setApproving(false)
+    }
+  }, [approvalData, setApprovalCounter, walletClient])
+
+  console.log(approvalData, approval.state, approving)
+  return { data: approvalData, approve, approving, loading: approval.state === 'loading' }
 }

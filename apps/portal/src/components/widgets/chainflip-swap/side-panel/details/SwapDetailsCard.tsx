@@ -6,6 +6,7 @@ import {
   toAssetAtom,
 } from '../../swap-modules/common.swap-module'
 import chainflipLogo from './logos/chainflip-logo.png'
+import lifiLogo from './logos/lifi-logo.svg'
 import simpleSwapLogo from './logos/simpleswap-logo.svg'
 import { selectedCurrencyState } from '@/domains/balances'
 import { cn } from '@/lib/utils'
@@ -87,6 +88,12 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
           <div className="flex items-center gap-[4px]">
             <img src={simpleSwapLogo} className="w-[16px] h-[16px] rounded-full" />
             <p className="text-muted-foreground text-[12px]">SimpleSwap</p>
+          </div>
+        )
+      case 'lifi':
+        return (
+          <div className="flex items-center gap-[4px]">
+            <img src={lifiLogo} className="h-[16px]" />
           </div>
         )
       default:

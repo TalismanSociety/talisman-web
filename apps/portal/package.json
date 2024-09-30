@@ -23,6 +23,7 @@
     "@chainflip/sdk": "1.3.0",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
+    "@lifi/sdk": "^3.2.3",
     "@polkadot-api/descriptors": "^0.0.1",
     "@polkadot-api/utils": "^0.1.0",
     "@polkadot-onboard/core": "^1.1.0",

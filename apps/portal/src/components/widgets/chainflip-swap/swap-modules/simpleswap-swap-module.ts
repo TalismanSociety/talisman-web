@@ -15,6 +15,7 @@ import {
   toAddressAtom,
   toAssetAtom,
   validateAddress,
+  supportedEvmChains,
 } from './common.swap-module'
 import { substrateApiGetterAtom } from '@/domains/common'
 import { QuoteResponse } from '@chainflip/sdk/swap'
@@ -24,7 +25,6 @@ import { encodeAnyAddress } from '@talismn/util'
 import { atom, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
 import { createPublicClient, encodeFunctionData, erc20Abi, http, isAddress } from 'viem'
-import { mainnet, bsc, arbitrum, optimism, blast, polygon, manta } from 'viem/chains'
 
 const APIKEY = import.meta.env.REACT_APP_SIMPLESWAP_API_KEY
 if (!APIKEY && import.meta.env.DEV) throw new Error('env var REACT_APP_SIMPLESWAP_API_KEY not set')
@@ -42,16 +42,6 @@ type SimpleSwapCurrency = {
   confirmations_from: string
   image: string
   isFiat: boolean
-}
-
-const supportedEvmChains = {
-  eth: mainnet,
-  bsc: bsc,
-  arbitrum: arbitrum,
-  optimism: optimism,
-  blast: blast,
-  polygon: polygon,
-  manta: manta,
 }
 
 type SimpleSwapAssetContext = {
@@ -318,6 +308,8 @@ const quote: QuoteFunction = loadable(
       const currencyTo = toAsset.context.simpleswap?.symbol
       if (!currencyFrom || !currencyTo) return null
 
+      // force refresh
+      get(swapQuoteRefresherAtom)
       const output = await simpleSwapSdk.getEstimated({
         amount: fromAmount.toString(),
         currencyFrom,

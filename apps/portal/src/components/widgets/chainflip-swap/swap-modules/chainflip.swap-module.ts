@@ -203,6 +203,8 @@ const quote: QuoteFunction = loadable(
       }
 
     try {
+      // force refresh
+      get(swapQuoteRefresherAtom)
       const quote = await sdk.getQuote({
         amount: fromAmount.planck.toString(),
         srcAsset: chainflipFromAsset.asset,
