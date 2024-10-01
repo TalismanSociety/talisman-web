@@ -171,7 +171,7 @@ const Stats = (props: {
                     angle={-35}
                     textAnchor="end"
                     style={{
-                      fontFamily: 'Surt',
+                      fontFamily: "'Surt', sans-serif",
                       fontSize: 10,
                       fill: `color-mix(in srgb, ${theme.color.onSurface}, transparent 50%)`,
                       padding: 1000,
@@ -192,7 +192,7 @@ const Stats = (props: {
                 style={{
                   axis: { stroke: 'transparent' },
                   ticks: { stroke: 'transparent' },
-                  tickLabels: { fill: theme.color.onSurface, fontFamily: 'Surt', fontSize: 12 },
+                  tickLabels: { fill: theme.color.onSurface, fontFamily: "'Surt', sans-serif", fontSize: 12 },
                   grid: {
                     stroke: `color-mix(in srgb, ${theme.color.onSurface}, transparent 90%)`,
                     strokeDasharray: 4,
@@ -210,7 +210,9 @@ const Stats = (props: {
                   <VictoryTooltip
                     flyoutStyle={{ fill: useSurfaceColorAtElevation(x => x + 2) }}
                     labelComponent={
-                      <VictoryLabel style={{ fill: theme.color.onSurface, fontFamily: 'Surt', fontSize: 10 }} />
+                      <VictoryLabel
+                        style={{ fill: theme.color.onSurface, fontFamily: "'Surt', sans-serif", fontSize: 10 }}
+                      />
                     }
                   />
                 }
