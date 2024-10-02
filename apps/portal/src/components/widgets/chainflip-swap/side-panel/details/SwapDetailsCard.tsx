@@ -3,11 +3,9 @@ import {
   fromAmountAtom,
   fromAssetAtom,
   selectedProtocolAtom,
+  selectedSubProtocolAtom,
   toAssetAtom,
 } from '../../swap-modules/common.swap-module'
-import chainflipLogo from './logos/chainflip-logo.png'
-import lifiLogo from './logos/lifi-logo.svg'
-import simpleSwapLogo from './logos/simpleswap-logo.svg'
 import { selectedCurrencyState } from '@/domains/balances'
 import { cn } from '@/lib/utils'
 import { useTokenRates, useTokens } from '@talismn/balances-react'
@@ -30,6 +28,7 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
   const tokenRates = useTokenRates()
   const currency = useRecoilValue(selectedCurrencyState)
   const setSelectedProtocol = useSetAtom(selectedProtocolAtom)
+  const setSelectedSubProtocol = useSetAtom(selectedSubProtocolAtom)
   const fromAmount = useAtomValue(fromAmountAtom)
   const tokens = useTokens()
 
@@ -74,37 +73,15 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
     [currency, quote.fees, tokenRates]
   )
 
-  const brand = useMemo(() => {
-    switch (quote.protocol) {
-      case 'chainflip':
-        return (
-          <div className="flex items-center gap-[4px]">
-            <img src={chainflipLogo} className="w-[16px] h-[16px] rounded-full" />
-            <p className="text-muted-foreground text-[12px]">Chainflip</p>
-          </div>
-        )
-      case 'simpleswap':
-        return (
-          <div className="flex items-center gap-[4px]">
-            <img src={simpleSwapLogo} className="w-[16px] h-[16px] rounded-full" />
-            <p className="text-muted-foreground text-[12px]">SimpleSwap</p>
-          </div>
-        )
-      case 'lifi':
-        return (
-          <div className="flex items-center gap-[4px]">
-            <img src={lifiLogo} className="h-[16px]" />
-          </div>
-        )
-      default:
-        return null
-    }
-  }, [quote.protocol])
-
   if (!toAsset) return null
 
   return (
-    <Clickable.WithFeedback onClick={() => setSelectedProtocol(quote.protocol)}>
+    <Clickable.WithFeedback
+      onClick={() => {
+        setSelectedProtocol(quote.protocol)
+        setSelectedSubProtocol(quote.subProtocol)
+      }}
+    >
       <Surface
         className={cn('rounded-[8px] p-[12px] pb-[8px]', {
           'border-white border': selected,
@@ -112,7 +89,10 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
       >
         <div className="flex items-center justify-between w-full ">
           <p className="font-bold text-[14px]">{amount?.toLocaleString(undefined, { maximumFractionDigits: 4 })} </p>
-          {brand}
+          <div className="flex items-center justify-end gap-[8px]">
+            <img src={quote.providerLogo} className="h-[20px] mb-[2px] rounded-full" />
+            <p className="text-[12px] truncate max-w-32 font-semibold">{quote.providerName}</p>
+          </div>
         </div>
         <div className="flex items-center gap-[8px] mb-[16px] text-muted-foreground">
           <p className="font-normal text-[12px]">

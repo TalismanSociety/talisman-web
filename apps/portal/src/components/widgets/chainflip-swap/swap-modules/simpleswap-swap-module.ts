@@ -1,4 +1,5 @@
 import { knownEvmNetworksAtom } from '../helpers'
+import simpleswapLogo from '../side-panel/details/logos/simpleswap-logo.svg'
 import {
   BaseQuote,
   fromAddressAtom,
@@ -29,7 +30,10 @@ import { createPublicClient, encodeFunctionData, erc20Abi, http, isAddress } fro
 const APIKEY = import.meta.env.REACT_APP_SIMPLESWAP_API_KEY
 if (!APIKEY && import.meta.env.DEV) throw new Error('env var REACT_APP_SIMPLESWAP_API_KEY not set')
 const PROTOCOL = 'simpleswap'
+const PROTOCOL_NAME = 'SimpleSwap'
 const DECENTRALISATION_SCORE = 1
+
+const LOGO = simpleswapLogo
 
 type SimpleSwapCurrency = {
   name: string
@@ -328,6 +332,8 @@ const quote: QuoteFunction = loadable(
             error: output.description,
             timeInSec: 5 * 60,
             fees: [],
+            providerLogo: LOGO,
+            providerName: PROTOCOL_NAME,
           }
         }
         return null
@@ -343,6 +349,8 @@ const quote: QuoteFunction = loadable(
         // swaps take about 5mins according to their faq: https://simpleswap.io/faq#crypto-to-crypto-exchanges--how-long-does-it-take-to-exchange-coins
         timeInSec: 5 * 60,
         fees: gasFee ? [gasFee] : [],
+        providerLogo: LOGO,
+        providerName: PROTOCOL_NAME,
       }
     } catch (e) {
       console.error(e)
@@ -354,6 +362,8 @@ const quote: QuoteFunction = loadable(
         timeInSec: 5 * 60,
         error: 'Error fetching quote',
         fees: [],
+        providerLogo: LOGO,
+        providerName: PROTOCOL_NAME,
       }
     }
   })

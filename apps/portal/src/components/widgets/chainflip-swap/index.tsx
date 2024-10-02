@@ -12,7 +12,7 @@ import {
   toAddressAtom,
   toAssetAtom,
 } from './swap-modules/common.swap-module'
-import { useSwapErc20Approval } from './swaps.api'
+import { swapQuotesAtom, useSwapErc20Approval } from './swaps.api'
 import {
   fromAssetsAtom,
   selectedQuoteAtom,
@@ -58,6 +58,7 @@ export const ChainFlipSwap: React.FC = () => {
   const toAssets = useAtomValue(loadable(toAssetsAtom))
   const [cachedToAmount, setCachedToAmount] = useState(toAmount.state === 'hasData' ? toAmount.data : undefined)
   const balances = useAtomValue(loadable(fromAssetsBalancesAtom))
+  const quotes = useAtomValue(swapQuotesAtom)
 
   // reset when any of the inputs change
   useEffect(() => {
@@ -125,7 +126,10 @@ export const ChainFlipSwap: React.FC = () => {
 
   // refresh quote every 15 seconds
   useEffect(() => {
-    if (swapping) return
+    if (swapping || quotes.state === 'loading') return
+    if (quotes.state === 'hasData') {
+      if (quotes.data?.some(d => d.state === 'loading')) return
+    }
     const id = setInterval(() => {
       setShouldFocusDetails(false)
       setQuoteRefresher(new Date().getTime())

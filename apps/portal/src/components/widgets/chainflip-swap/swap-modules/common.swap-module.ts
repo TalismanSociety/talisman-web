@@ -51,6 +51,7 @@ type QuoteFee = {
 export type BaseQuote<TData = any> = {
   decentralisationScore: number
   protocol: SupportedSwapProtocol
+  subProtocol?: string
   outputAmountBN: bigint
   inputAmountBN: bigint
   error?: string
@@ -58,6 +59,8 @@ export type BaseQuote<TData = any> = {
   talismanFeeBps?: number
   data?: TData
   timeInSec: number
+  providerLogo: string
+  providerName: string
 }
 
 type SwapProps = {
@@ -86,7 +89,7 @@ export type EstimateGasTx =
       tx: SubmittableExtrinsic<'promise'>
     }
 
-export type QuoteFunction<TData = any> = Atom<Loadable<Promise<BaseQuote<TData> | null>>>
+export type QuoteFunction<TData = any> = Atom<Loadable<Promise<BaseQuote<TData> | BaseQuote<TData>[] | null>>>
 export type SwapFunction<TData> = (
   get: Getter,
   set: Setter,
@@ -133,6 +136,7 @@ export const validateAddress = (address: string, networkType: 'evm' | 'substrate
 }
 
 export const selectedProtocolAtom = atom<SupportedSwapProtocol | null>(null)
+export const selectedSubProtocolAtom = atom<string | undefined>(undefined)
 export const fromAssetAtom = atom<SwappableAssetWithDecimals | null>(null)
 export const fromAmountAtom = atom<Decimal>(Decimal.fromPlanck(0n, 1))
 export const fromSubstrateAddressAtom = atom<string | null>(null)

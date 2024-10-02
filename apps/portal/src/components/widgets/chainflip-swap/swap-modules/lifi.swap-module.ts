@@ -5,6 +5,7 @@ import {
   fromAmountAtom,
   fromAssetAtom,
   QuoteFunction,
+  selectedSubProtocolAtom,
   SwapFunction,
   SwapModule,
   SwappableAssetBaseType,
@@ -17,8 +18,8 @@ import { evmErc20TokenId, evmNativeTokenId } from '@talismn/balances'
 import { evmNetworksByIdAtom } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { atom, Getter, Setter } from 'jotai'
-import { loadable } from 'jotai/utils'
-import { createPublicClient, http, zeroAddress } from 'viem'
+import { atomFamily, loadable } from 'jotai/utils'
+import { zeroAddress } from 'viem'
 import * as allEvmChains from 'viem/chains'
 
 const PROTOCOL = 'lifi' as const
@@ -56,96 +57,89 @@ export const fromAssetsSelector = atom(async (get): Promise<SwappableAssetBaseTy
   return tokens.flat()
 })
 
-const quoteAtom: QuoteFunction<sdk.LiFiStep> = loadable(
-  atom(
-    async (
-      get
-    ): Promise<
-      | (BaseQuote & {
-          data?: sdk.LiFiStep
-        })
-      | null
-    > => {
-      const fromAddress = get(fromAddressAtom) ?? '0x70045A9F59A354550EC0272f73AAe03B01Fb8a7a'
-      const toAddress = get(toAddressAtom) ?? '0x70045A9F59A354550EC0272f73AAe03B01Fb8a7a'
-      const fromAsset = get(fromAssetAtom)
-      const toAsset = get(toAssetAtom)
-      const fromAmount = get(fromAmountAtom)
-      const networks = await get(knownEvmNetworksAtom)
+const quoteAtom: QuoteFunction<sdk.Route & { transactionRequest: sdk.TransactionRequest }> = loadable(
+  atom(async (get): Promise<BaseQuote<sdk.Route & { transactionRequest: sdk.TransactionRequest }>[] | null> => {
+    const fromAddress = get(fromAddressAtom) ?? '0x70045A9F59A354550EC0272f73AAe03B01Fb8a7a'
+    const toAddress = get(toAddressAtom) ?? '0x70045A9F59A354550EC0272f73AAe03B01Fb8a7a'
+    const fromAsset = get(fromAssetAtom)
+    const toAsset = get(toAssetAtom)
+    const fromAmount = get(fromAmountAtom)
+    const networks = await get(knownEvmNetworksAtom)
 
-      // assets not supported
-      if (fromAsset?.networkType !== 'evm' || toAsset?.networkType !== 'evm') return null
-      const evmNetwork = networks[fromAsset.chainId.toString()]
-      // network not supported
-      if (!evmNetwork) return null
+    if (fromAmount.planck === 0n) return null
+    // assets not supported
+    if (fromAsset?.networkType !== 'evm' || toAsset?.networkType !== 'evm') return null
+    const evmNetwork = networks[fromAsset.chainId.toString()]
+    // network not supported
+    if (!evmNetwork) return null
 
-      // force refresh
-      get(swapQuoteRefresherAtom)
+    // force refresh
+    get(swapQuoteRefresherAtom)
 
-      const quote = await sdk.getQuote({
-        fromAddress,
-        toAddress,
-        fromChain: fromAsset.chainId.toString(),
-        toChain: toAsset.chainId.toString(),
-        fromAmount: fromAmount.planck.toString(),
-        fromToken: fromAsset.contractAddress ?? fromAsset.symbol,
-        toToken: toAsset.contractAddress ?? toAsset.symbol,
+    const routes = await sdk.getRoutes({
+      fromAddress,
+      toAddress,
+      fromChainId: +fromAsset.chainId,
+      toChainId: +toAsset.chainId,
+      fromAmount: fromAmount.planck.toString(),
+      fromTokenAddress: fromAsset.contractAddress ?? zeroAddress,
+      toTokenAddress: toAsset.contractAddress ?? zeroAddress,
+      options: {
+        integrator: 'talisman',
+      },
+    })
+
+    // for each route, we should load the stepTransaction as loadable in a cached atom
+    const transactionRequests = await Promise.all(
+      routes.routes.map(r => {
+        const defaultStep = r.steps[0]
+        if (!defaultStep) return null
+        return sdk.getStepTransaction(defaultStep)
       })
+    )
+    return routes.routes
+      .map((r, index): BaseQuote<sdk.Route & { transactionRequest: sdk.TransactionRequest }> | null => {
+        const step = r.steps[0]
+        const transactionRequest = transactionRequests[index]
+        if (!step || !transactionRequest?.transactionRequest) return null
 
-      if (!quote.transactionRequest) return null
-
-      const fees =
-        quote.estimate.feeCosts?.map(fee => ({
-          amount: Decimal.fromPlanck(BigInt(fee.amount), fee.token.decimals),
-          name: fee.name,
-          tokenId:
-            fee.token.address === zeroAddress
-              ? evmNativeTokenId(fee.token.chainId.toString())
-              : evmErc20TokenId(fee.token.chainId.toString(), fee.token.address),
-        })) ?? []
-
-      try {
-        const client = createPublicClient({
-          transport: http(evmNetwork.rpcs[0]),
-        })
-
-        const gasPrice = await client.getGasPrice()
-        const gas = await client.estimateGas({
-          data: quote.transactionRequest.data as `0x${string}`,
-          value: BigInt(quote.transactionRequest.value as `0x${string}`),
-          to: quote.transactionRequest.to as `0x${string}`,
-          account: fromAddress as `0x${string}`,
-        })
-
-        fees.push({
-          amount: Decimal.fromPlanck(gasPrice * gas, evmNetwork.nativeToken.decimals),
-          name: 'Gas',
-          tokenId: evmNativeTokenId(fromAsset.chainId.toString()),
-        })
-      } catch (e) {
-        // failed to estimate gas, swap may fail due to insufficient balance
-        // but we still show the swap in case users just want to check the rate
-      }
-
-      return {
-        decentralisationScore: DECENTRALISATION_SCORE,
-        fees:
-          quote.estimate.feeCosts?.map(fee => ({
+        const fees =
+          step.estimate.feeCosts?.map(fee => ({
             amount: Decimal.fromPlanck(BigInt(fee.amount), fee.token.decimals),
             name: fee.name,
             tokenId:
               fee.token.address === zeroAddress
                 ? evmNativeTokenId(fee.token.chainId.toString())
                 : evmErc20TokenId(fee.token.chainId.toString(), fee.token.address),
-          })) ?? [],
-        inputAmountBN: fromAmount.planck,
-        outputAmountBN: BigInt(quote.estimate.toAmountMin),
-        protocol: PROTOCOL,
-        timeInSec: quote.estimate.executionDuration,
-        data: quote,
-      }
-    }
-  )
+          })) ?? []
+
+        if (step.estimate.gasCosts) {
+          step.estimate.gasCosts.forEach(c => {
+            fees.push({
+              amount: Decimal.fromPlanck(c.amount, c.token.decimals),
+              name: 'Gas',
+              tokenId:
+                c.token.address === zeroAddress
+                  ? evmNativeTokenId(c.token.chainId.toString())
+                  : evmErc20TokenId(c.token.chainId.toString(), c.token.address),
+            })
+          })
+        }
+        return {
+          decentralisationScore: DECENTRALISATION_SCORE,
+          fees,
+          inputAmountBN: BigInt(step.estimate.fromAmount),
+          outputAmountBN: BigInt(r.toAmountMin),
+          protocol: PROTOCOL,
+          timeInSec: step.estimate.executionDuration,
+          data: { ...r, transactionRequest: transactionRequest.transactionRequest },
+          providerLogo: step.toolDetails.logoURI,
+          providerName: step.toolDetails.name,
+          subProtocol: step.tool,
+        }
+      })
+      .filter(r => r !== null)
+  })
 )
 
 // if approval is required, returns the contract to approve for, the amount, and token contract
@@ -154,14 +148,16 @@ const approvalAtom = atom(get => {
   const fromAsset = get(fromAssetAtom)
   if (quote.state !== 'hasData' || !quote.data || !fromAsset || !fromAsset.contractAddress) return null
 
-  const lifiData = quote.data.data as sdk.LiFiStep
-  if (!lifiData.transactionRequest) return null
+  const selectedSubProtocol = get(selectedSubProtocolAtom)
+  const quoteData = Array.isArray(quote.data) ? quote.data.find(q => q.subProtocol === selectedSubProtocol) : quote.data
+  const lifiData = quoteData?.data
+  if (!lifiData?.transactionRequest) return null
   const contractAddress = lifiData.transactionRequest.to
   const chainId = lifiData.transactionRequest.chainId
   const fromAddress = lifiData.transactionRequest.from
   if (!contractAddress || chainId === undefined || !fromAddress) return null
 
-  const amount = BigInt(lifiData.estimate.fromAmount)
+  const amount = BigInt(lifiData.fromAmount)
 
   return {
     contractAddress,
@@ -175,6 +171,7 @@ const approvalAtom = atom(get => {
 
 const swap: SwapFunction<{ id: string }> = async (get: Getter, _: Setter, { evmWalletClient }) => {
   const quote = get(quoteAtom)
+  const selectedSubProtocol = get(selectedSubProtocolAtom)
 
   if (quote.state !== 'hasData' || !quote.data) throw new Error('Swap not ready yet.')
 
@@ -187,7 +184,9 @@ const swap: SwapFunction<{ id: string }> = async (get: Getter, _: Setter, { evmW
   const evmNetwork = networks[fromAsset.chainId.toString()]
   if (!evmNetwork) throw new Error('Network not supported')
 
-  const lifiData = quote.data.data as sdk.LiFiStep
+  const quoteData = Array.isArray(quote.data) ? quote.data.find(q => q.subProtocol === selectedSubProtocol) : quote.data
+  const lifiData = quoteData?.data
+  if (!lifiData?.transactionRequest) throw new Error('Please select the quote again.')
   const txRequest = lifiData.transactionRequest
   if (
     !txRequest ||
@@ -216,10 +215,9 @@ const swap: SwapFunction<{ id: string }> = async (get: Getter, _: Setter, { evmW
     chain,
   })
 
-  console.log(swapHash)
   return {
     data: {
-      id: lifiData.id,
+      id: swapHash,
     },
     protocol: PROTOCOL,
   }
@@ -234,3 +232,33 @@ export const lifiSwapModule: SwapModule = {
   decentralisationScore: DECENTRALISATION_SCORE,
   approvalAtom,
 }
+
+const retryStatus = async (
+  get: Getter,
+  id: string,
+  attempts = 0
+): Promise<{ status: sdk.StatusResponse; expired?: boolean }> => {
+  try {
+    const status = await sdk.getStatus({ txHash: id })
+    const expired = false
+
+    console.log(status)
+    if (status.substatus !== 'COMPLETED') {
+      get(swapQuoteRefresherAtom)
+    }
+
+    return { status, expired }
+  } catch (e) {
+    const error = e as Error & { response?: { status: number } }
+    // because we're using a broker, the tx isnt always available immediately in their api service
+    // so we wait a bit and retry
+    if (error.name === 'AxiosError' && error?.response?.status === 404 && attempts < 10) {
+      await new Promise(resolve => setTimeout(resolve, 5000))
+      console.log('status error')
+      get(swapQuoteRefresherAtom)
+    }
+    throw e
+  }
+}
+
+export const lifiSwapStatusAtom = atomFamily((id: string) => atom(async get => await retryStatus(get, id)))

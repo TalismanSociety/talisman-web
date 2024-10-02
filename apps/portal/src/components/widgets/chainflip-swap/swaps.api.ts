@@ -170,14 +170,23 @@ export const swapQuotesAtom = loadable(
     // nothing to quote
     if (!fromAsset || !toAsset || !fromAmount.planck || !substrateApiGetter) return null
 
-    const allQuotes = allQuoters.map(get)
+    const allQuotes = allQuoters
+      .map(get)
+      .map(q =>
+        q.state === 'hasData'
+          ? Array.isArray(q.data)
+            ? q.data.map(d => ({ state: 'hasData' as const, data: d })).flat()
+            : q
+          : q
+      )
+      .flat()
 
     // map each, if loaded, return only if output > 0
     return allQuotes.filter(q => {
       if (q.state !== 'hasData') return true
-      if (!q.data) return false
+      if (!q.data || Array.isArray(q.data)) return false
       return q.data.outputAmountBN > 0n
-    })
+    }) as Loadable<Promise<BaseQuote | null>>[] | null
   })
 )
 
@@ -260,7 +269,6 @@ export const approvalAtom = atom(async get => {
     args: [approval.fromAddress as `0x${string}`, approval.contractAddress as `0x${string}`],
   })
 
-  console.log(allowance, approval.amount)
   if (allowance >= approval.amount) return null
   return { ...approval, chain }
 })
@@ -503,6 +511,5 @@ export const useSwapErc20Approval = () => {
     }
   }, [approvalData, setApprovalCounter, walletClient])
 
-  console.log(approvalData, approval.state, approving)
   return { data: approvalData, approve, approving, loading: approval.state === 'loading' }
 }

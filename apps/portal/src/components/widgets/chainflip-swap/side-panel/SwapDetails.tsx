@@ -5,6 +5,7 @@ import {
   fromAssetAtom,
   quoteSortingAtom,
   selectedProtocolAtom,
+  selectedSubProtocolAtom,
   swappingAtom,
   toAssetAtom,
 } from '../swap-modules/common.swap-module'
@@ -53,6 +54,7 @@ const Details: React.FC = () => {
   const swapping = useAtomValue(swappingAtom)
   const [sort, setSort] = useAtom(quoteSortingAtom)
   const [selectedProtocol, setSelectedProtocol] = useAtom(selectedProtocolAtom)
+  const [selectedSubProtocol, setSelectedSubProtocol] = useAtom(selectedSubProtocolAtom)
   const [cachedQuotes, setCachedQuotes] = useState<{ fees?: number; quote: Loadable<BaseQuote | null> }[]>([])
   const fromAmount = useAtomValue(fromAmountAtom)
   const fromAsset = useAtomValue(fromAssetAtom)
@@ -64,14 +66,28 @@ const Details: React.FC = () => {
 
   useEffect(() => {
     if (quotes.state === 'hasData' && quotes.data) {
-      setCachedQuotes(quotes.data)
+      if (quotes.data.every(q => q.quote.state === 'hasData')) setCachedQuotes(quotes.data)
     }
   }, [quotes])
 
   useEffect(() => {
-    if (!cachedQuotes.find(q => q.quote.state === 'hasData' && q.quote.data?.protocol === selectedProtocol))
+    if (cachedQuotes.length === 0 && quotes.state === 'hasData' && quotes.data?.length) setCachedQuotes(quotes.data)
+  }, [cachedQuotes, quotes])
+
+  useEffect(() => {
+    if (!cachedQuotes.find(q => q.quote.state === 'hasData' && q.quote.data?.protocol === selectedProtocol)) {
       setSelectedProtocol(null)
-  }, [selectedProtocol, setSelectedProtocol, quotes, cachedQuotes])
+      setSelectedSubProtocol(undefined)
+    }
+  }, [selectedProtocol, setSelectedProtocol, quotes, cachedQuotes, setSelectedSubProtocol])
+
+  useEffect(() => {
+    if ((!selectedSubProtocol || !selectedProtocol) && cachedQuotes.length > 0) {
+      const defaultQuote = cachedQuotes[0]
+      if (defaultQuote?.quote.state === 'hasData' && defaultQuote.quote.data?.subProtocol)
+        setSelectedSubProtocol(defaultQuote.quote.data?.subProtocol)
+    }
+  }, [cachedQuotes, selectedProtocol, selectedSubProtocol, setSelectedSubProtocol])
 
   if (swapping)
     return (
@@ -136,10 +152,12 @@ const Details: React.FC = () => {
                 selected={
                   selectedProtocol === null
                     ? index === 0
-                    : q.quote.state === 'hasData' && selectedProtocol === q.quote.data?.protocol
+                    : q.quote.state === 'hasData' &&
+                      selectedProtocol === q.quote.data?.protocol &&
+                      q.quote.data.subProtocol === selectedSubProtocol
                 }
                 quote={q.quote.data}
-                key={q.quote.data.protocol}
+                key={`${q.quote.data.protocol}${q.quote.data.subProtocol}`}
               />
             ) : q.quote.state === 'loading' ? (
               <Skeleton.Surface key={index} className="w-full h-[79.39px] rounded-[8px]" />
