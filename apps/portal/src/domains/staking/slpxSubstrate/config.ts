@@ -1,7 +1,7 @@
 import type { SlpxSubstratePair } from './types'
 
 export const dotSlpxPair = {
-  // chain: moonbeam,
+  chainName: 'Bifrost',
   substrateChainGenesisHash: '0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b',
   splx: '2F551a80e79e02213dd918190892af5034002909c5',
   nativeToken: {

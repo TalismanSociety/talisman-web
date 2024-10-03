@@ -8,6 +8,7 @@ export type SlpxSubstrateToken = {
 }
 
 export type SlpxSubstratePair = {
+  chainName: string
   substrateChainGenesisHash: `0x${string}`
   splx: string
   nativeToken: SlpxSubstrateToken
