@@ -4,7 +4,7 @@ import StakeProvider from '../../../recipes/StakeProvider'
 import Apr from '../slpx/Apr'
 import { AvailableBalance, AvailableFiatBalance } from '../slpx/AvailableBalances'
 import StakePercentage from './StakePercentage'
-// import UnlockDuration from '../slpx/UnlockDuration'
+import UnlockDuration from './UnlockDuration'
 import { useAtomValue } from 'jotai'
 
 const SlpxSubstrateStakeProviders = () => {
@@ -29,8 +29,7 @@ const SlpxSubstrateStakeProviders = () => {
               apr={<Apr slpxPair={slpxPair} />}
               type="Liquid staking"
               provider={provider}
-              unbondingPeriod={'123'}
-              // unbondingPeriod={<UnlockDuration slpxPair={slpxPair} />}
+              unbondingPeriod={<UnlockDuration slpxPair={slpxPair} />}
               availableBalance={<AvailableBalance slpxPair={slpxPair} />}
               availableFiatBalance={<AvailableFiatBalance slpxPair={slpxPair} />}
               stakePercentage={<StakePercentage slpxPair={slpxPair} />}

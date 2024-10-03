@@ -25,5 +25,5 @@ export const dotSlpxPair = {
     },
   },
   apiEndpoint: 'https://dapi.bifrost.io/',
-  estimatedRoundDuration: 21_600_000, // TODO: Check this value
+  estimatedRoundDuration: 86_400_000,
 } as const satisfies SlpxSubstratePair
