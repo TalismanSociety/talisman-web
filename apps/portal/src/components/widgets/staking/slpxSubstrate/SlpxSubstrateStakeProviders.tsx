@@ -6,6 +6,7 @@ import { AvailableBalance, AvailableFiatBalance } from '../slpx/AvailableBalance
 import StakePercentage from './StakePercentage'
 import UnlockDuration from './UnlockDuration'
 import { useAtomValue } from 'jotai'
+import { Link } from 'react-router-dom'
 
 const SlpxSubstrateStakeProviders = () => {
   const slpxSubstratePairs = useAtomValue(slpxSubstratePairsState)
@@ -35,9 +36,8 @@ const SlpxSubstrateStakeProviders = () => {
               stakePercentage={<StakePercentage slpxPair={slpxPair} />}
               stakeButton={
                 <StakeProvider.StakeButton
-                  // as={Link}
-                  // to={`?action=stake&type=slpx&contract-address=${slpxPair.splx}`}
-                  to={`?action=stake&type=slpx&contract-address=${'123'}`}
+                  as={Link}
+                  to={`?action=stake&type=slpx-substrate&native-token=${slpxPair.nativeToken.symbol}`}
                 />
               }
             />
