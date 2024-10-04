@@ -1,10 +1,11 @@
 import { SwapTokenRow } from './SwapTokenRow'
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
 import { tokenTabAtom, tokenTabs } from './swaps.api'
+import { cn } from '@/lib/utils'
 import { useChains, useEvmNetworks } from '@talismn/balances-react'
 import { Chain, EvmNetwork, githubUnknownChainLogoUrl, githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
-import { AlertDialog, SearchBar, Select, Skeleton, SurfaceButton, Tabs } from '@talismn/ui'
+import { AlertDialog, Button, SearchBar, Select, Skeleton, SurfaceButton } from '@talismn/ui'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useAtom } from 'jotai'
 import { Globe, X } from 'lucide-react'
@@ -121,102 +122,118 @@ export const SwapTokensModal: React.FC<Props> = ({
           )}
         </div>
       </SurfaceButton>
-      <AlertDialog title="Select token" onRequestDismiss={handleClose} open={open} className="!w-[60rem]">
-        <div className="mb-[12px] flex flex-1 gap-[12px] w-full flex-col sm:flex-row">
-          <div className="flex-1">
-            <SearchBar
-              placeholder="Search token name or symbol"
-              value={search}
-              onChangeText={setSearch}
-              css={{ width: '100%' }}
-              className="w-full"
-            />
-          </div>
-          <Select
-            value={uniqueChains.length === 1 ? uniqueChains[0]?.id : filteredChain}
-            onChangeValue={setFilteredChain}
-            className="[&>button]:!rounded-[8px]"
-          >
-            <Select.Option value={undefined} leadingIcon={<Globe />} headlineContent="All Networks" />
-            {uniqueChains.map(chain => (
-              <Select.Option
-                key={chain.id}
-                value={chain.id}
-                leadingIcon={
-                  <img className="w-[24px] h-[24px] rounded-full" src={chain.logo ?? githubUnknownChainLogoUrl} />
-                }
-                headlineContent={chain.name}
+      <div className="[&>dialog>header]:hidden">
+        <AlertDialog onRequestDismiss={handleClose} open={open} className="!w-[60rem]">
+          <div className="mb-[8px] flex flex-1 gap-[12px] w-full flex-col sm:flex-row">
+            <div className="flex-1">
+              <SearchBar
+                placeholder="Search token name or symbol"
+                value={search}
+                onChangeText={setSearch}
+                css={{ width: '100%' }}
+                className="w-full"
               />
-            ))}
-          </Select>
-        </div>
-        <div className="w-full overflow-hidden relative">
-          {tokenTabs.length > 1 && (
-            <Tabs className="overflow-y-auto no-scrollbar w-full px-[16px]">
-              {tokenTabs.map(t => (
-                <Tabs.Item key={t.value} value={t.value} selected={tab === t.value} onClick={() => setTab(t.value)}>
-                  <p className="!text-[14px] !leading-none whitespace-nowrap !mb-[4px]">{t.label}</p>
-                </Tabs.Item>
+            </div>
+            <Select
+              value={uniqueChains.length === 1 ? uniqueChains[0]?.id : filteredChain}
+              onChangeValue={setFilteredChain}
+              className="[&>button]:!rounded-[8px]"
+            >
+              <Select.Option value={undefined} leadingIcon={<Globe />} headlineContent="All Networks" />
+              {uniqueChains.map(chain => (
+                <Select.Option
+                  key={chain.id}
+                  value={chain.id}
+                  leadingIcon={
+                    <img className="w-[24px] h-[24px] rounded-full" src={chain.logo ?? githubUnknownChainLogoUrl} />
+                  }
+                  headlineContent={chain.name}
+                />
               ))}
-            </Tabs>
-          )}
-          <div className="absolute left-0 top-0 h-full w-[20px] bg-gradient-to-r from-[#1b1b1b] to-[#1b1b1b]/0" />
-          <div className="absolute right-0 top-0 h-full w-[20px] bg-gradient-to-l from-[#1b1b1b] to-[#1b1b1b]/0" />
-        </div>
-        <div className="flex relative w-full h-[420px]">
-          <div
-            className="flex flex-col w-full gap-[8px] h-[420px] relative overflow-y-auto no-scrollbar"
-            ref={parentRef}
-          >
-            {assets ? (
-              rowVirtualizer.getVirtualItems().map(item => {
-                const asset = sortedTokensByBalances[item.index]
-                if (!asset) return null
-                return (
-                  <div
-                    key={item.key}
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: `${item.size}px`,
-                      transform: `translateY(${item.start}px)`,
-                    }}
+            </Select>
+          </div>
+          <div className="w-full overflow-hidden relative mb-[24px]">
+            {tokenTabs.length > 1 && (
+              <div className="overflow-y-auto flex gap-[8px] no-scrollbar w-full pl-[8px] !pr-[24px]">
+                {tokenTabs.map(t => (
+                  <Button
+                    className={cn(
+                      '!rounded-[12px] !h-max !py-[4px] !px-[12px]',
+                      t.value === tab ? '!bg-primary' : '!bg-white/5 !text-gray-400'
+                    )}
+                    key={t.value}
+                    value={t.value}
+                    onClick={() => setTab(t.value)}
                   >
-                    <SwapTokenRow
-                      asset={asset}
-                      networkName={
-                        chains[asset.chainId]?.name ??
-                        networks[asset.chainId]?.name ??
-                        (asset.chainId === 'bitcoin' ? 'Bitcoin' : 'Unknown Chain')
-                      }
-                      evmAddress={evmAddress}
-                      substrateAddress={substrateAddress}
-                      balance={balances?.[asset.id]}
-                      onClick={a => {
-                        setOpen(false)
-                        onSelectAsset(a)
+                    <p className="!text-[14px] !leading-none whitespace-nowrap !mt-[1px] ">{t.label}</p>
+                  </Button>
+                ))}
+              </div>
+            )}
+            <div className="absolute left-0 top-0 h-full w-[12px] bg-gradient-to-r from-[#1b1b1b] to-[#1b1b1b]/0" />
+            <div className="absolute right-0 top-0 h-full w-[20px] bg-gradient-to-l from-[#1b1b1b] to-[#1b1b1b]/0" />
+          </div>
+          <div className="flex items-center justify-between px-[16px]">
+            <p className="text-[12px] text-gray-500 w-full">Token</p>
+            <p className="text-[12px] text-gray-500 w-full">Network</p>
+            <p className="text-[12px] text-gray-500 w-full text-right">Balance</p>
+          </div>
+          <div className="flex relative w-full h-[420px]">
+            <div
+              className="flex flex-col w-full gap-[8px] h-[420px] relative overflow-y-auto no-scrollbar"
+              ref={parentRef}
+            >
+              {assets ? (
+                rowVirtualizer.getVirtualItems().map(item => {
+                  const asset = sortedTokensByBalances[item.index]
+                  if (!asset) return null
+                  return (
+                    <div
+                      key={item.key}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: `${item.size}px`,
+                        transform: `translateY(${item.start}px)`,
                       }}
-                    />
-                  </div>
-                )
-              })
-            ) : (
-              <>
-                <Skeleton.Surface className="w-full h-[72px] rounded-[8px]" />
-                <Skeleton.Surface className="w-full h-[72px] rounded-[8px]" />
-                <Skeleton.Surface className="w-full h-[72px] rounded-[8px]" />
-                <Skeleton.Surface className="w-full h-[72px] rounded-[8px]" />
-                <Skeleton.Surface className="w-full h-[72px] rounded-[8px]" />
-              </>
+                    >
+                      <SwapTokenRow
+                        asset={asset}
+                        networkLogo={chains[asset.chainId]?.logo ?? networks[asset.chainId]?.logo ?? undefined}
+                        networkName={
+                          chains[asset.chainId]?.name ??
+                          networks[asset.chainId]?.name ??
+                          (asset.chainId === 'bitcoin' ? 'Bitcoin' : 'Unknown Chain')
+                        }
+                        evmAddress={evmAddress}
+                        substrateAddress={substrateAddress}
+                        balance={balances?.[asset.id]}
+                        onClick={a => {
+                          setOpen(false)
+                          onSelectAsset(a)
+                        }}
+                      />
+                    </div>
+                  )
+                })
+              ) : (
+                <>
+                  <Skeleton.Surface className="w-full h-[72px] rounded-[8px]" />
+                  <Skeleton.Surface className="w-full h-[72px] rounded-[8px]" />
+                  <Skeleton.Surface className="w-full h-[72px] rounded-[8px]" />
+                  <Skeleton.Surface className="w-full h-[72px] rounded-[8px]" />
+                  <Skeleton.Surface className="w-full h-[72px] rounded-[8px]" />
+                </>
+              )}
+            </div>
+            {sortedTokensByBalances.length > 5 && (
+              <div className="absolute left-0 bottom-0 h-[24px] w-full bg-gradient-to-t from-[#1b1b1b] to-[#1b1b1b]/0" />
             )}
           </div>
-          {sortedTokensByBalances.length > 5 && (
-            <div className="absolute left-0 bottom-0 h-[24px] w-full bg-gradient-to-t from-[#1b1b1b] to-[#1b1b1b]/0" />
-          )}
-        </div>
-      </AlertDialog>
+        </AlertDialog>
+      </div>
     </>
   )
 }

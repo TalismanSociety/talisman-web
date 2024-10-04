@@ -91,7 +91,7 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
           <p className="font-bold text-[14px]">{amount?.toLocaleString(undefined, { maximumFractionDigits: 4 })} </p>
           <div className="flex items-center justify-end gap-[8px]">
             <img src={quote.providerLogo} className="h-[20px] mb-[2px] rounded-full" />
-            <p className="text-[12px] truncate max-w-32 font-semibold">{quote.providerName}</p>
+            <p className="text-[12px] truncate max-w-60 font-semibold">{quote.providerName}</p>
           </div>
         </div>
         <div className="flex items-center gap-[8px] mb-[16px] text-muted-foreground">

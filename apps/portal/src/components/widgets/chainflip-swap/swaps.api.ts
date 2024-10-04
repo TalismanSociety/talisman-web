@@ -31,13 +31,17 @@ import { tokenRatesAtom, tokensByIdAtom, useTokens } from '@talismn/balances-rea
 import { Decimal } from '@talismn/math'
 import { toast } from '@talismn/ui'
 import { Atom, atom, Getter, useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
-import { loadable, useAtomCallback } from 'jotai/utils'
+import { atomFamily, loadable, useAtomCallback } from 'jotai/utils'
 import { Loadable } from 'jotai/vanilla/utils/loadable'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
 import { createPublicClient, erc20Abi, http } from 'viem'
 import * as allEvmChains from 'viem/chains'
 import { useWalletClient } from 'wagmi'
+
+const coingeckoApiUrl = import.meta.env.REACT_APP_COIN_GECKO_API
+const coingeckoApiKey = import.meta.env.REACT_APP_COIN_GECKO_API_KEY
+const coingeckoTier = import.meta.env.REACT_APP_COIN_GECKO_API_TIER
 
 const swapModules = [chainflipSwapModule, simpleswapSwapModule, lifiSwapModule]
 const ETH_LOGO = 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg'
@@ -83,26 +87,137 @@ const getTokensByChainId = async (
   }, {} as Record<string, Record<string, SwappableAssetWithDecimals>>)
 }
 
+const getCoingeckoCategoryTokens = async (
+  get: Getter,
+  categoryId: string,
+  tokens: SwappableAssetWithDecimals[]
+): Promise<SwappableAssetWithDecimals[]> => {
+  const platforms = await get(coingeckoAssetPlatformsAtom)
+  const coinsList = await get(coingeckoListAtom)
+
+  const coins = (await get(coingeckoCoinsByCategoryAtom(categoryId))) as {
+    symbol: string
+    id: string
+    image?: string
+  }[]
+  return coins
+    .map(c => {
+      const coinPlatforms = Object.entries(coinsList.find(coin => coin.id === c.id)?.platforms ?? {})
+      if (coinPlatforms.length === 0) {
+        const token = tokens.find(t => t.symbol.toLowerCase() === c.symbol.toLowerCase())
+        if (token && !token.image && c.image) token.image = c.image
+        return token
+      }
+
+      return coinPlatforms.map(([platformId, address]) => {
+        const platform = platforms.find(p => p.id === platformId)
+        const token = tokens.find(
+          t =>
+            (t.networkType === 'evm' ? +t.chainId : t.chainId) === platform?.chain_identifier &&
+            t.contractAddress?.toLowerCase() === address.toLowerCase()
+        )
+        if (token && !token.image && c.image) token.image = c.image
+        return token
+      })
+    })
+    .flat()
+    .filter(c => !!c)
+}
+
 export const tokenTabs: {
   value: string
   label: string
+  coingecko?: boolean
   filter?: (token: SwappableAssetWithDecimals) => boolean
   sort?: (a: SwappableAssetWithDecimals, b: SwappableAssetWithDecimals) => number
 }[] = [
-  {
-    value: 'evm',
-    label: 'EVM',
-    filter: token => token.networkType === 'evm',
-  },
   {
     value: 'popular',
     label: 'Popular',
     filter: token => popularTokens.includes(token.id) ?? false,
     sort: (a, b) => popularTokens.indexOf(a.id) - popularTokens.indexOf(b.id),
   },
+  {
+    value: 'artificial-intelligence',
+    label: 'Artificial Intelligence',
+    coingecko: true,
+  },
+  {
+    value: 'governance',
+    label: 'Governance',
+    coingecko: true,
+  },
+  {
+    value: 'dog-themed-coins',
+    label: 'Dog Themed',
+    coingecko: true,
+  },
+  {
+    value: 'liquid-staking-tokens',
+    label: 'Liquid Staking',
+    coingecko: true,
+  },
+  {
+    value: 'gaming',
+    label: 'Gaming',
+    coingecko: true,
+  },
 ]
 
 export const tokenTabAtom = atom<string>('popular')
+export const coingeckoAssetPlatformsAtom = atom(async () => {
+  const response = await fetch(`${coingeckoApiUrl}/api/v3/asset_platforms`, {
+    headers: {
+      [`x-cg-${coingeckoTier}-api-key`]: coingeckoApiKey!,
+    },
+  })
+
+  return (await response.json()) as {
+    id: string
+    chain_identifier: string | number | null
+    name: string
+    shortname: string
+    native_coin_id: string
+  }[]
+})
+
+export const coingeckoListAtom = atom(async () => {
+  const response = await fetch(`${coingeckoApiUrl}/api/v3/coins/list?include_platform=true`, {
+    headers: {
+      [`x-cg-${coingeckoTier}-api-key`]: coingeckoApiKey!,
+    },
+  })
+
+  return (await response.json()) as { id: string; platforms: Record<string, string> }[]
+})
+
+export const coingeckoCategoriesAtom = atom(async () => {
+  const response = await fetch(`${coingeckoApiUrl}/api/v3/coins/categories`, {
+    headers: {
+      [`x-cg-${coingeckoTier}-api-key`]: coingeckoApiKey!,
+    },
+  })
+
+  return await response.json()
+})
+
+export const coingeckoCoinsByCategoryAtom = atomFamily((category: string) =>
+  atom(async () => {
+    const apiUrl = import.meta.env.REACT_APP_COIN_GECKO_API
+    const apiKey = import.meta.env.REACT_APP_COIN_GECKO_API_KEY
+    const tier = import.meta.env.REACT_APP_COIN_GECKO_API_TIER
+    const response = await fetch(
+      `${apiUrl}/api/v3/coins/markets?vs_currency=usd&category=${category}&include_platform=true`,
+      {
+        headers: {
+          [`x-cg-${tier}-api-key`]: apiKey!,
+        },
+      }
+    )
+
+    return await response.json()
+  })
+)
 /**
  * Unify all tokens we support for swapping on the UI
  * Note that this list is just to get the tokens we display initially on the UI
@@ -122,9 +237,10 @@ export const fromAssetsAtom = atom(async get => {
   const tab = get(tokenTabAtom)
   const filter = tokenTabs.find(t => t.value === tab)?.filter
   const sort = tokenTabs.find(t => t.value === tab)?.sort
+  const coingeckoCategoryId = tokenTabs.find(t => t.value === tab && t.coingecko)?.value
   if (filter) tokens = tokens.filter(filter)
   if (sort) tokens = tokens.sort(sort)
-
+  if (coingeckoCategoryId) tokens = await getCoingeckoCategoryTokens(get, coingeckoCategoryId, tokens)
   // from assets should not include btc
   tokens = tokens.filter(t => t.networkType !== 'btc')
   return tokens
@@ -148,8 +264,10 @@ export const toAssetsAtom = atom(async get => {
   const tab = get(tokenTabAtom)
   const filter = tokenTabs.find(t => t.value === tab)?.filter
   const sort = tokenTabs.find(t => t.value === tab)?.sort
+  const coingeckoCategoryId = tokenTabs.find(t => t.value === tab && t.coingecko)?.value
   if (filter) tokens = tokens.filter(filter)
   if (sort) tokens = tokens.sort(sort)
+  if (coingeckoCategoryId) tokens = await getCoingeckoCategoryTokens(get, coingeckoCategoryId, tokens)
 
   return tokens
 })
@@ -172,13 +290,7 @@ export const swapQuotesAtom = loadable(
 
     const allQuotes = allQuoters
       .map(get)
-      .map(q =>
-        q.state === 'hasData'
-          ? Array.isArray(q.data)
-            ? q.data.map(d => ({ state: 'hasData' as const, data: d })).flat()
-            : q
-          : q
-      )
+      .map(q => (q.state === 'hasData' ? (Array.isArray(q.data) ? q.data.flat() : q) : q))
       .flat()
 
     // map each, if loaded, return only if output > 0

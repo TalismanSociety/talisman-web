@@ -89,7 +89,9 @@ export type EstimateGasTx =
       tx: SubmittableExtrinsic<'promise'>
     }
 
-export type QuoteFunction<TData = any> = Atom<Loadable<Promise<BaseQuote<TData> | BaseQuote<TData>[] | null>>>
+export type QuoteFunction<TData = any> = Atom<
+  Loadable<Promise<BaseQuote<TData> | Loadable<Promise<BaseQuote<TData> | null>>[] | null>>
+>
 export type SwapFunction<TData> = (
   get: Getter,
   set: Setter,

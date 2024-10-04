@@ -1,6 +1,5 @@
 import { knownEvmNetworksAtom } from '../helpers'
 import {
-  BaseQuote,
   fromAddressAtom,
   fromAmountAtom,
   fromAssetAtom,
@@ -31,7 +30,7 @@ sdk.createConfig({
 })
 
 export const fromAssetsSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {
-  const res = await sdk.getTokens()
+  const res = await sdk.getTokens({ chainTypes: [sdk.ChainType.EVM, sdk.ChainType.SVM] })
   const networks = await get(evmNetworksByIdAtom)
   const tokens = Object.entries(res.tokens)
     .filter(([id]) => {
@@ -57,88 +56,92 @@ export const fromAssetsSelector = atom(async (get): Promise<SwappableAssetBaseTy
   return tokens.flat()
 })
 
-const quoteAtom: QuoteFunction<sdk.Route & { transactionRequest: sdk.TransactionRequest }> = loadable(
-  atom(async (get): Promise<BaseQuote<sdk.Route & { transactionRequest: sdk.TransactionRequest }>[] | null> => {
-    const fromAddress = get(fromAddressAtom) ?? '0x70045A9F59A354550EC0272f73AAe03B01Fb8a7a'
-    const toAddress = get(toAddressAtom) ?? '0x70045A9F59A354550EC0272f73AAe03B01Fb8a7a'
-    const fromAsset = get(fromAssetAtom)
-    const toAsset = get(toAssetAtom)
-    const fromAmount = get(fromAmountAtom)
-    const networks = await get(knownEvmNetworksAtom)
+const routesAtom = atom(async get => {
+  const fromAddress = get(fromAddressAtom) ?? '0x70045A9F59A354550EC0272f73AAe03B01Fb8a7a'
+  const toAddress = get(toAddressAtom) ?? '0x70045A9F59A354550EC0272f73AAe03B01Fb8a7a'
+  const fromAsset = get(fromAssetAtom)
+  const toAsset = get(toAssetAtom)
+  const fromAmount = get(fromAmountAtom)
+  const networks = await get(knownEvmNetworksAtom)
 
-    if (fromAmount.planck === 0n) return null
-    // assets not supported
-    if (fromAsset?.networkType !== 'evm' || toAsset?.networkType !== 'evm') return null
-    const evmNetwork = networks[fromAsset.chainId.toString()]
-    // network not supported
-    if (!evmNetwork) return null
+  if (fromAmount.planck === 0n) return null
+  // assets not supported
+  if (fromAsset?.networkType !== 'evm' || toAsset?.networkType !== 'evm') return null
+  const evmNetwork = networks[fromAsset.chainId.toString()]
+  // network not supported
+  if (!evmNetwork) return null
 
-    // force refresh
-    get(swapQuoteRefresherAtom)
+  get(swapQuoteRefresherAtom)
 
-    const routes = await sdk.getRoutes({
-      fromAddress,
-      toAddress,
-      fromChainId: +fromAsset.chainId,
-      toChainId: +toAsset.chainId,
-      fromAmount: fromAmount.planck.toString(),
-      fromTokenAddress: fromAsset.contractAddress ?? zeroAddress,
-      toTokenAddress: toAsset.contractAddress ?? zeroAddress,
-      options: {
-        integrator: 'talisman',
-      },
-    })
+  return await sdk.getRoutes({
+    fromAddress,
+    toAddress,
+    fromChainId: +fromAsset.chainId,
+    toChainId: +toAsset.chainId,
+    fromAmount: fromAmount.planck.toString(),
+    fromTokenAddress: fromAsset.contractAddress ?? zeroAddress,
+    toTokenAddress: toAsset.contractAddress ?? zeroAddress,
+    options: {
+      integrator: 'talisman',
+      fee: 0.002,
+    },
+  })
+})
+const subProviderQuoteAtom = atomFamily((id: string) =>
+  loadable(
+    atom(async get => {
+      const routes = await get(routesAtom)
+      if (!routes) return null
+      const route = routes.routes.find(r => r.id === id)
+      const step = route?.steps[0]
+      if (!step) return null
+      const transaction = await sdk.getStepTransaction(step)
+      if (!transaction?.transactionRequest) return null
 
-    // for each route, we should load the stepTransaction as loadable in a cached atom
-    const transactionRequests = await Promise.all(
-      routes.routes.map(r => {
-        const defaultStep = r.steps[0]
-        if (!defaultStep) return null
-        return sdk.getStepTransaction(defaultStep)
-      })
-    )
-    return routes.routes
-      .map((r, index): BaseQuote<sdk.Route & { transactionRequest: sdk.TransactionRequest }> | null => {
-        const step = r.steps[0]
-        const transactionRequest = transactionRequests[index]
-        if (!step || !transactionRequest?.transactionRequest) return null
+      const fees =
+        step.estimate.feeCosts?.map(fee => ({
+          amount: Decimal.fromPlanck(BigInt(fee.amount), fee.token.decimals),
+          name: fee.name,
+          tokenId:
+            fee.token.address === zeroAddress
+              ? evmNativeTokenId(fee.token.chainId.toString())
+              : evmErc20TokenId(fee.token.chainId.toString(), fee.token.address),
+        })) ?? []
 
-        const fees =
-          step.estimate.feeCosts?.map(fee => ({
-            amount: Decimal.fromPlanck(BigInt(fee.amount), fee.token.decimals),
-            name: fee.name,
+      if (step.estimate.gasCosts) {
+        step.estimate.gasCosts.forEach(c => {
+          fees.push({
+            amount: Decimal.fromPlanck(c.amount, c.token.decimals),
+            name: 'Gas',
             tokenId:
-              fee.token.address === zeroAddress
-                ? evmNativeTokenId(fee.token.chainId.toString())
-                : evmErc20TokenId(fee.token.chainId.toString(), fee.token.address),
-          })) ?? []
-
-        if (step.estimate.gasCosts) {
-          step.estimate.gasCosts.forEach(c => {
-            fees.push({
-              amount: Decimal.fromPlanck(c.amount, c.token.decimals),
-              name: 'Gas',
-              tokenId:
-                c.token.address === zeroAddress
-                  ? evmNativeTokenId(c.token.chainId.toString())
-                  : evmErc20TokenId(c.token.chainId.toString(), c.token.address),
-            })
+              c.token.address === zeroAddress
+                ? evmNativeTokenId(c.token.chainId.toString())
+                : evmErc20TokenId(c.token.chainId.toString(), c.token.address),
           })
-        }
-        return {
-          decentralisationScore: DECENTRALISATION_SCORE,
-          fees,
-          inputAmountBN: BigInt(step.estimate.fromAmount),
-          outputAmountBN: BigInt(r.toAmountMin),
-          protocol: PROTOCOL,
-          timeInSec: step.estimate.executionDuration,
-          data: { ...r, transactionRequest: transactionRequest.transactionRequest },
-          providerLogo: step.toolDetails.logoURI,
-          providerName: step.toolDetails.name,
-          subProtocol: step.tool,
-        }
-      })
-      .filter(r => r !== null)
+        })
+      }
+      return {
+        decentralisationScore: DECENTRALISATION_SCORE,
+        fees,
+        inputAmountBN: BigInt(step.estimate.fromAmount),
+        outputAmountBN: BigInt(route.toAmountMin),
+        protocol: PROTOCOL,
+        timeInSec: step.estimate.executionDuration,
+        data: { ...route, transactionRequest: transaction.transactionRequest },
+        providerLogo: step.toolDetails.logoURI,
+        providerName: step.toolDetails.name,
+        subProtocol: step.tool,
+      }
+    })
+  )
+)
+
+const quoteAtom: QuoteFunction<sdk.Route & { transactionRequest: sdk.TransactionRequest }> = loadable(
+  atom(async get => {
+    const routes = await get(routesAtom)
+    if (!routes) return null
+
+    return routes.routes.map(r => get(subProviderQuoteAtom(r.id)))
   })
 )
 
@@ -149,7 +152,9 @@ const approvalAtom = atom(get => {
   if (quote.state !== 'hasData' || !quote.data || !fromAsset || !fromAsset.contractAddress) return null
 
   const selectedSubProtocol = get(selectedSubProtocolAtom)
-  const quoteData = Array.isArray(quote.data) ? quote.data.find(q => q.subProtocol === selectedSubProtocol) : quote.data
+  const quoteData = Array.isArray(quote.data)
+    ? quote.data.map(d => (d.state === 'hasData' ? d.data : null)).find(d => d?.subProtocol === selectedSubProtocol)
+    : quote.data
   const lifiData = quoteData?.data
   if (!lifiData?.transactionRequest) return null
   const contractAddress = lifiData.transactionRequest.to
@@ -184,7 +189,9 @@ const swap: SwapFunction<{ id: string }> = async (get: Getter, _: Setter, { evmW
   const evmNetwork = networks[fromAsset.chainId.toString()]
   if (!evmNetwork) throw new Error('Network not supported')
 
-  const quoteData = Array.isArray(quote.data) ? quote.data.find(q => q.subProtocol === selectedSubProtocol) : quote.data
+  const quoteData = Array.isArray(quote.data)
+    ? quote.data.map(d => (d.state === 'hasData' ? d.data : null)).find(d => d?.subProtocol === selectedSubProtocol)
+    : quote.data
   const lifiData = quoteData?.data
   if (!lifiData?.transactionRequest) throw new Error('Please select the quote again.')
   const txRequest = lifiData.transactionRequest
@@ -242,7 +249,6 @@ const retryStatus = async (
     const status = await sdk.getStatus({ txHash: id })
     const expired = false
 
-    console.log(status)
     if (status.substatus !== 'COMPLETED') {
       get(swapQuoteRefresherAtom)
     }
@@ -254,7 +260,6 @@ const retryStatus = async (
     // so we wait a bit and retry
     if (error.name === 'AxiosError' && error?.response?.status === 404 && attempts < 10) {
       await new Promise(resolve => setTimeout(resolve, 5000))
-      console.log('status error')
       get(swapQuoteRefresherAtom)
     }
     throw e
