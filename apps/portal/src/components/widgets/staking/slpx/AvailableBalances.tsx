@@ -7,9 +7,15 @@ import { Decimal } from '@talismn/math'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-export const useAvailableBalance = (slpxPair: SlpxPair | SlpxSubstratePair) => {
+export const useAvailableBalance = (slpxPair: SlpxPair | SlpxSubstratePair, isSubstrate?: boolean) => {
   const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))
-  const nativeBalance = balances.find(x => x.token?.symbol.toLowerCase() === slpxPair.nativeToken.symbol.toLowerCase())
+  const nativeBalance = isSubstrate
+    ? balances.find(
+        x =>
+          //@ts-expect-error
+          x.token?.symbol.toLowerCase() === slpxPair.nativeToken.symbol.toLowerCase() && x.chainId === slpxPair.chainId
+      )
+    : balances.find(x => x.token?.symbol.toLowerCase() === slpxPair.nativeToken.symbol.toLowerCase())
 
   return useMemo(
     () => ({
@@ -22,10 +28,10 @@ export const useAvailableBalance = (slpxPair: SlpxPair | SlpxSubstratePair) => {
   )
 }
 
-export const AvailableBalance = (props: { slpxPair: SlpxPair | SlpxSubstratePair }) => (
-  <RedactableBalance>{useAvailableBalance(props.slpxPair).amount}</RedactableBalance>
+export const AvailableBalance = (props: { slpxPair: SlpxPair | SlpxSubstratePair; isSubstrate?: boolean }) => (
+  <RedactableBalance>{useAvailableBalance(props.slpxPair, props.isSubstrate).amount}</RedactableBalance>
 )
 
-export const AvailableFiatBalance = (props: { slpxPair: SlpxPair | SlpxSubstratePair }) => (
-  <AnimatedFiatNumber end={useAvailableBalance(props.slpxPair).fiatAmount} />
+export const AvailableFiatBalance = (props: { slpxPair: SlpxPair | SlpxSubstratePair; isSubstrate?: boolean }) => (
+  <AnimatedFiatNumber end={useAvailableBalance(props.slpxPair, props.isSubstrate).fiatAmount} />
 )

@@ -31,8 +31,8 @@ const SlpxSubstrateStakeProviders = () => {
               type="Liquid staking"
               provider={provider}
               unbondingPeriod={<UnlockDuration slpxPair={slpxPair} />}
-              availableBalance={<AvailableBalance slpxPair={slpxPair} />}
-              availableFiatBalance={<AvailableFiatBalance slpxPair={slpxPair} />}
+              availableBalance={<AvailableBalance slpxPair={slpxPair} isSubstrate />}
+              availableFiatBalance={<AvailableFiatBalance slpxPair={slpxPair} isSubstrate />}
               stakePercentage={<StakePercentage slpxPair={slpxPair} />}
               stakeButton={
                 <StakeProvider.StakeButton

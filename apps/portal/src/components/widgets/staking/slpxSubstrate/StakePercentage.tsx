@@ -9,8 +9,12 @@ const StakePercentage = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   const balances = useRecoilValue(selectedBalancesState)
 
   const nativeBalance = useMemo(
-    () => balances.find(x => x.token?.symbol.toLowerCase() === slpxPair.nativeToken.symbol.toLowerCase()),
-    [balances, slpxPair.nativeToken.symbol]
+    () =>
+      balances.find(
+        x =>
+          x.token?.symbol.toLowerCase() === slpxPair.nativeToken.symbol.toLowerCase() && x.chainId === slpxPair.chainId
+      ),
+    [balances, slpxPair.chainId, slpxPair.nativeToken.symbol]
   )
 
   const liquidBalance = useMemo(
