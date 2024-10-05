@@ -76,7 +76,7 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
           newAmount={newStakedTotal?.toLocaleString() ?? '...'}
           newFiatAmount={null}
           onChangeAmount={setAmount}
-          availableToStake={amountAvailable}
+          availableToStake={amountAvailable.toLocaleString()}
           rate={`1 ${slpxPair.nativeToken.symbol} = ${rate.toLocaleString()} ${slpxPair.vToken.symbol}`}
           // onConfirm={async () => {
           //   if (approvalNeeded) {
@@ -86,14 +86,12 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
           //   }
           // }}
           onConfirm={() => console.log('Confirmed')}
-          // onRequestMaxAmount={() => {
-          //   if (available !== undefined) {
-          //     setAmount(available.toString())
-          //   }
-          // }}
-          onRequestMaxAmount={() => console.log('Requested max amount')}
-          // isError={error !== undefined}
-          isError
+          onRequestMaxAmount={() => {
+            if (amountAvailable !== undefined) {
+              setAmount(amountAvailable.toString())
+            }
+          }}
+          // isError
           // inputSupportingText={error?.message}
         />
       </Surface>

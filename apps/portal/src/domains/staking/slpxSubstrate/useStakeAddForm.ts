@@ -94,7 +94,7 @@ const useAvailableBalance = ({ slpxPair, fee }: { slpxPair: SlpxSubstratePair; f
     () => ({
       amount: Decimal.fromPlanck(nativeBalance.sum.planck.transferable - fee, nativeBalance.each.at(0)?.decimals ?? 0, {
         currency: slpxPair.nativeToken.symbol,
-      }).toLocaleString(),
+      }),
       fiatAmount: Intl.NumberFormat('en', {
         style: 'currency',
         notation: 'compact',
