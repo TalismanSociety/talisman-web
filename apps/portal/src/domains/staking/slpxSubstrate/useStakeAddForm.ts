@@ -54,7 +54,7 @@ const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   const rate = rateLoadable.valueMaybe() ?? 0
 
   const newStakedTotal = Decimal.fromPlanck(
-    liquidBalance.sum.planck.total + (decimalAmount?.planck || 0n),
+    liquidBalance.sum.planck.total + ((decimalAmount?.planck || 0n) * BigInt(Math.floor(rate * 1000))) / BigInt(1000),
     originTokenDecimals,
     {
       currency: slpxPair.vToken.symbol,
