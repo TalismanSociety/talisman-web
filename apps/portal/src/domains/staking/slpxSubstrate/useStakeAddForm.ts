@@ -1,8 +1,9 @@
 import type { Account } from '../../accounts'
 import { useSubstrateApiEndpoint, useTokenAmountFromPlanck, useTokenAmountState } from '../../common/hooks'
 import { paymentInfoState, useSubstrateApiState } from '../../common/recoils'
-// import { useAvailableBalance } from '@/components/widgets/staking/slpx/AvailableBalances'
 import { selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
+// import { useAvailableBalance } from '@/components/widgets/staking/slpx/AvailableBalances'
+import { useExtrinsic } from '@/domains/common/hooks'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import type { SubmittableExtrinsic } from '@polkadot/api/types'
 import { BN } from '@polkadot/util'
@@ -21,13 +22,13 @@ const useStakeAddForm = ({ account, slpxPair }: { account: Account | undefined; 
   )
 
   const originTokenDecimals = 10
+  const remark = import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman'
+  const channelId = '3'
 
   const decimalAmount = useMemo(
     () => (amount.trim() === '' ? undefined : Decimal.fromUserInputOrUndefined(amount, originTokenDecimals)),
     [amount]
   )
-
-  console.log({ decimalAmount })
 
   const nativeBalance = useMemo(
     () =>
@@ -45,18 +46,9 @@ const useStakeAddForm = ({ account, slpxPair }: { account: Account | undefined; 
 
   const transferablePlanck = nativeBalance.sum.planck.transferable
 
-  const mockedTxData = {
-    token_id: {
-      Token2: 3,
-    },
-
-    token_amount: 5100000000,
-    remark: '',
-    channel_id: '3',
-  }
-
   // @ts-expect-error
-  const tx = api.tx.vtokenMinting.mint({ Token2: 0 }, mockedTxData.token_amount, '', '3')
+  const tx = api.tx.vtokenMinting.mint({ Token2: 0 }, decimalAmount?.planck ?? 0n, remark, channelId)
+  const extrinsic = useExtrinsic(tx)
 
   // const [feeEstimate] = useStakeFormFeeEstimate(account?.address || '', tx) // TODO: Fee estimate is too High
 
@@ -78,7 +70,7 @@ const useStakeAddForm = ({ account, slpxPair }: { account: Account | undefined; 
     }
   )
 
-  return { amount, setAmount, maxTransferablePlanck, availableBalance, rate, newStakedTotal }
+  return { amount, setAmount, maxTransferablePlanck, availableBalance, rate, newStakedTotal, extrinsic }
 }
 
 export default useStakeAddForm

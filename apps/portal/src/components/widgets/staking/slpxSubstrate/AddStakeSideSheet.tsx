@@ -17,6 +17,7 @@ import {
 } from '@talismn/ui'
 import { Zap, Clock } from '@talismn/web-icons'
 import { Suspense } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 type Props = {
@@ -25,9 +26,13 @@ type Props = {
 }
 
 const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
+  const navigate = useNavigate()
   const [[account], accountSelector] = useAccountSelector(useRecoilValue(writeableSubstrateAccountsState), 0)
 
-  const { amount, setAmount, availableBalance, rate, newStakedTotal } = useStakeAddForm({ account, slpxPair })
+  const { amount, setAmount, availableBalance, rate, newStakedTotal, extrinsic } = useStakeAddForm({
+    account,
+    slpxPair,
+  })
 
   const { amount: amountAvailable, fiatAmount: fiatAmountAvailable } = availableBalance
 
@@ -62,14 +67,7 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
       </div>
       <Surface css={{ padding: '1.6rem', borderRadius: '1.6rem' }}>
         <SlpxAddStakeForm
-          // confirmState={
-          //   !ready || +amount === 0
-          //     ? 'disabled'
-          //     : mint.isPending || approve.isPending || approveTransaction.isLoading
-          //     ? 'pending'
-          //     : undefined
-          // }
-          confirmState={undefined}
+          confirmState={!amount ? 'disabled' : extrinsic.state === 'loading' ? 'pending' : undefined}
           accountSelector={accountSelector}
           amount={amount}
           fiatAmount={fiatAmountAvailable}
@@ -78,14 +76,7 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
           onChangeAmount={setAmount}
           availableToStake={amountAvailable.toLocaleString()}
           rate={`1 ${slpxPair.nativeToken.symbol} = ${rate.toLocaleString()} ${slpxPair.vToken.symbol}`}
-          // onConfirm={async () => {
-          //   if (approvalNeeded) {
-          //     await approve.writeContractAsync()
-          //   } else {
-          //     await mint.writeContractAsync()
-          //   }
-          // }}
-          onConfirm={() => console.log('Confirmed')}
+          onConfirm={() => extrinsic.signAndSend(account?.address ?? '').then(() => navigate('/staking/positions'))}
           onRequestMaxAmount={() => {
             if (amountAvailable !== undefined) {
               setAmount(amountAvailable.toString())
