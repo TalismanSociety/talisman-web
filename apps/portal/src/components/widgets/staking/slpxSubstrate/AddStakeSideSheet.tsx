@@ -4,6 +4,7 @@ import { useAccountSelector } from '../../AccountSelector'
 import Apr from '../slpx/Apr'
 import UnlockDuration from './UnlockDuration'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
+import useStakeAddForm from '@/domains/staking/slpxSubstrate/useStakeAddForm'
 import { Tooltip } from '@talismn/ui'
 import {
   CircularProgressIndicator,
@@ -25,6 +26,10 @@ type Props = {
 
 const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
   const [[account], accountSelector] = useAccountSelector(useRecoilValue(writeableSubstrateAccountsState), 0)
+
+  const { amount, setAmount, availableBalance, rate, newStakedTotal } = useStakeAddForm({ account, slpxPair })
+
+  const { amount: amountAvailable, fiatAmount: fiatAmountAvailable } = availableBalance
 
   return (
     <SideSheet
@@ -65,25 +70,14 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
           //     : undefined
           // }
           confirmState={undefined}
-          approvalNeeded={false}
-          // approvalNeeded={approvalNeeded}
           accountSelector={accountSelector}
-          // amount={amount}
-          amount="123"
-          // fiatAmount={localizedFiatAmount ?? '...'}
-          fiatAmount="999 BRL"
-          // newAmount={newAmount?.toLocaleString() ?? '...'}
-          newAmount="10000 BRL"
+          amount={amount}
+          fiatAmount={fiatAmountAvailable}
+          newAmount={newStakedTotal?.toLocaleString() ?? '...'}
           newFiatAmount={null}
-          // onChangeAmount={setAmount}
-          onChangeAmount={() => console.log('Changed amount')}
-          // availableToStake={available?.toLocaleString() ?? '...'}
-          availableToStake="12345 BRL"
-          // rate={Maybe.of(rate).mapOr(
-          //   '...',
-          //   rate => `1 ${props.slpxPair.nativeToken.symbol} = ${rate.toLocaleString()} ${props.slpxPair.vToken.symbol}`
-          // )}
-          rate={'1 BRL = 1 vBRL'}
+          onChangeAmount={setAmount}
+          availableToStake={amountAvailable}
+          rate={`1 ${slpxPair.nativeToken.symbol} = ${rate.toLocaleString()} ${slpxPair.vToken.symbol}`}
           // onConfirm={async () => {
           //   if (approvalNeeded) {
           //     await approve.writeContractAsync()
