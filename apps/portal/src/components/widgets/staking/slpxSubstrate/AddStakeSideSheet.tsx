@@ -30,7 +30,6 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
   const [[account], accountSelector] = useAccountSelector(useRecoilValue(writeableSubstrateAccountsState), 0)
 
   const { amount, setAmount, availableBalance, rate, newStakedTotal, extrinsic } = useStakeAddForm({
-    account,
     slpxPair,
   })
 

@@ -1,25 +1,16 @@
-import type { Account } from '../../accounts'
-import { useSubstrateApiEndpoint, useTokenAmountFromPlanck, useTokenAmountState } from '../../common/hooks'
-import { paymentInfoState, useSubstrateApiState } from '../../common/recoils'
+import { useSubstrateApiState } from '../../common/recoils'
 import { selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
-// import { useAvailableBalance } from '@/components/widgets/staking/slpx/AvailableBalances'
 import { useExtrinsic } from '@/domains/common/hooks'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
-import type { SubmittableExtrinsic } from '@polkadot/api/types'
-import { BN } from '@polkadot/util'
 import { Decimal } from '@talismn/math'
-import { useDeriveState, useQueryMultiState } from '@talismn/react-polkadot-api'
-import { BigMath } from '@talismn/util'
+import { useQueryMultiState } from '@talismn/react-polkadot-api'
 import BigNumber from 'bignumber.js'
 import { useState, useMemo } from 'react'
-import { useRecoilValue, useRecoilValueLoadable, waitForAll, constSelector } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
-const useStakeAddForm = ({ account, slpxPair }: { account: Account | undefined; slpxPair: SlpxSubstratePair }) => {
+const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   const [amount, setAmount] = useState<string>('')
-  const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))
-  const [api, [accountInfo]] = useRecoilValue(
-    waitForAll([useSubstrateApiState(), useQueryMultiState([['system.account', account?.address ?? '']])])
-  )
+  const [balances, api] = useRecoilValue(waitForAll([selectedBalancesState, useSubstrateApiState()]))
 
   const originTokenDecimals = 10
   const remark = import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman'
