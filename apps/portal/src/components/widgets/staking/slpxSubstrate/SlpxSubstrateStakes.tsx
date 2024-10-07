@@ -34,6 +34,7 @@ const SlpxSubstrateStake = ({
     >
       <StakePosition
         account={stake.account}
+        readonly={stake.account.readonly}
         provider="Bifrost liquid staking"
         stakeStatus={stake.balance.planck > 0n ? 'earning_rewards' : 'not_earning_rewards'}
         balance={<RedactableBalance>{stake.balance?.toLocaleString()}</RedactableBalance>}
