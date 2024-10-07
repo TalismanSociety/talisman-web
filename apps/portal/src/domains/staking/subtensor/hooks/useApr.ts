@@ -1,14 +1,19 @@
-import { stakingAprByChainAtomFamily } from '../atoms/taostats'
+import { highestAprTaoValidatorAtom } from '../atoms/taostats'
+import { useDelegateStats } from './useDelegateStats'
 import { useAtomValue } from 'jotai'
 
-export const useApr = (genesisHash: string | undefined) => {
-  return useAtomValue(stakingAprByChainAtomFamily(genesisHash))
+export const useHighestAprFormatted = () => {
+  const { apr } = useAtomValue(highestAprTaoValidatorAtom)
+
+  return Number(apr).toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 }
 
-const TAO_APY_PLACEHOLDER = '~16%'
+export const useDelegateApr = (hotkey: string) => {
+  const delegate = useDelegateStats(hotkey)
+  return Number(delegate?.apr)
+}
 
-export const useAprFormatted = (genesisHash: string | undefined) => {
-  const apr = useApr(genesisHash)
-
-  return apr ? apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 }) : TAO_APY_PLACEHOLDER
+export const useDelegateAprFormatted = (hotkey: string) => {
+  const apr = useDelegateApr(hotkey)
+  return apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 }

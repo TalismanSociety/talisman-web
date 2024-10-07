@@ -59,7 +59,8 @@ jobs:
         BASEROW_EXPLORE_AUTH,
         BASEROW_CROWDLOANS_AUTH,
         LIDO_REWARDS_ADDRESS,
-        SIMPLESWAP_API_KEY
+        SIMPLESWAP_API_KEY,
+        TAOSTATS_API_KEY
       environmentVariableVariables: >-
         APPLICATION_NAME
       environmentVariablePrefix: REACT_APP_
