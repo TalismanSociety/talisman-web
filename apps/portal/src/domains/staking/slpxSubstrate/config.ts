@@ -19,7 +19,7 @@ export const dotSlpxPair = {
     type: 'vToken',
     address: '2F9658598ef1eace56a0662d4a067a260e42b36f2a',
     symbol: 'vDOT',
-    logo: 'https://github.com/TalismanSociety/chaindata/blob/main/assets/tokens/vdot.svg',
+    logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/vdot.svg',
     coingeckoId: 'voucher-dot',
     tokenId: {
       VToken2: 0,
