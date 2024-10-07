@@ -19,7 +19,7 @@ import React, { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 type Props = {
-  quote: BaseQuote & { decentralisationScore: number }
+  quote: BaseQuote
   amountOverride?: bigint
 }
 

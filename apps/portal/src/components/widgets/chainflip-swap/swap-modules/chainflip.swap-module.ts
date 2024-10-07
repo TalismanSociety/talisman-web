@@ -17,6 +17,7 @@ import {
   validateAddress,
   saveAddressForQuest,
 } from './common.swap-module'
+import { substrateApiGetterAtom } from '@/domains/common'
 import {
   SwapSDK,
   type ChainflipNetwork,
@@ -30,11 +31,12 @@ import {
 import { chainsAtom } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { atom, type Getter, type Setter } from 'jotai'
-import { atomFamily } from 'jotai/utils'
+import { atomFamily, loadable } from 'jotai/utils'
 import { createPublicClient, encodeFunctionData, erc20Abi, http, isAddress } from 'viem'
 import { arbitrum, mainnet, sepolia } from 'viem/chains'
 
 const PROTOCOL: SupportedSwapProtocol = 'chainflip'
+const DECENTRALISATION_SCORE = 2
 const EVM_CHAINS = [mainnet, sepolia, arbitrum]
 
 const CHAINFLIP_CHAIN_TO_ID_MAP: Record<Chain, string> = {
@@ -161,100 +163,106 @@ const toAssetsSelector = atom(async get => {
   return await get(tokensSelector)
 })
 
-const quote: QuoteFunction = async (
-  get,
-  { getSubstrateApi }
-): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {
-  const sdk = get(swapSdkAtom)
-  const fromAsset = get(fromAssetAtom)
-  const toAsset = get(toAssetAtom)
-  const fromAmount = get(fromAmountAtom)
-  const assets = await get(chainflipAssetsAtom)
-  const chains = await get(chainflipChainsAtom)
-  if (!fromAsset || !toAsset || !fromAmount || fromAmount.planck === 0n) return null
+const quote: QuoteFunction = loadable(
+  atom(async (get): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {
+    const substrateApiGetter = get(substrateApiGetterAtom)
+    if (!substrateApiGetter) return null
 
-  const chainflipFromAsset = assets.find(
-    asset =>
-      asset.symbol.toLowerCase() === fromAsset.symbol.toLowerCase() &&
-      asset.chain === CHAINFLIP_ID_TO_CHAIN_MAP[fromAsset.chainId.toString()]
-  )
-  const chainflipToAsset = assets.find(
-    asset =>
-      asset.symbol.toLowerCase() === toAsset.symbol.toLowerCase() &&
-      asset.chain === CHAINFLIP_ID_TO_CHAIN_MAP[toAsset.chainId.toString()]
-  )
-  // asset not supported
-  if (!chainflipFromAsset || !chainflipToAsset) return null
+    const getSubstrateApi = substrateApiGetter.getApi
+    const sdk = get(swapSdkAtom)
+    const fromAsset = get(fromAssetAtom)
+    const toAsset = get(toAssetAtom)
+    const fromAmount = get(fromAmountAtom)
+    const assets = await get(chainflipAssetsAtom)
+    const chains = await get(chainflipChainsAtom)
+    if (!fromAsset || !toAsset || !fromAmount || fromAmount.planck === 0n) return null
 
-  const minFromAmount = Decimal.fromPlanck(chainflipFromAsset.minimumSwapAmount, chainflipFromAsset.decimals)
-  if (fromAmount.planck < minFromAmount.planck)
-    return {
-      protocol: PROTOCOL,
-      inputAmountBN: fromAmount.planck,
-      outputAmountBN: 0n,
-      error: `Minimum input amount: ${minFromAmount.toLocaleString()} ${fromAsset.symbol}`,
-      fees: [],
-      timeInSec: 0,
-    }
+    const chainflipFromAsset = assets.find(
+      asset =>
+        asset.symbol.toLowerCase() === fromAsset.symbol.toLowerCase() &&
+        asset.chain === CHAINFLIP_ID_TO_CHAIN_MAP[fromAsset.chainId.toString()]
+    )
+    const chainflipToAsset = assets.find(
+      asset =>
+        asset.symbol.toLowerCase() === toAsset.symbol.toLowerCase() &&
+        asset.chain === CHAINFLIP_ID_TO_CHAIN_MAP[toAsset.chainId.toString()]
+    )
+    // asset not supported
+    if (!chainflipFromAsset || !chainflipToAsset) return null
 
-  try {
-    const quote = await sdk.getQuote({
-      amount: fromAmount.planck.toString(),
-      srcAsset: chainflipFromAsset.asset,
-      destAsset: chainflipToAsset.asset,
-      srcChain: chainflipFromAsset.chain,
-      destChain: chainflipToAsset.chain,
-      boostFeeBps: CHAINFLIP_COMMISSION_BPS,
-    })
+    const minFromAmount = Decimal.fromPlanck(chainflipFromAsset.minimumSwapAmount, chainflipFromAsset.decimals)
+    if (fromAmount.planck < minFromAmount.planck)
+      return {
+        decentralisationScore: DECENTRALISATION_SCORE,
+        protocol: PROTOCOL,
+        inputAmountBN: fromAmount.planck,
+        outputAmountBN: 0n,
+        error: `Minimum input amount: ${minFromAmount.toLocaleString()} ${fromAsset.symbol}`,
+        fees: [],
+        timeInSec: 0,
+      }
 
-    const fees = quote.quote.includedFees
-      .map(fee => {
-        const asset = assets.find(a => a.chain === fee.chain && a.asset === fee.asset)
-        const chain = chains.find(c => c.chain === fee.chain)
-        if (!asset || !chain) return null
-
-        const swappableAsset = chainflipAssetToSwappableAsset(asset, chain)
-        if (!swappableAsset) return null
-
-        // get rate and compute fee in fiat
-        const amount = Decimal.fromPlanck(fee.amount, asset.decimals, { currency: asset.symbol })
-        return { name: fee.type.toLowerCase(), tokenId: swappableAsset.id, amount }
+    try {
+      const quote = await sdk.getQuote({
+        amount: fromAmount.planck.toString(),
+        srcAsset: chainflipFromAsset.asset,
+        destAsset: chainflipToAsset.asset,
+        srcChain: chainflipFromAsset.chain,
+        destChain: chainflipToAsset.chain,
+        boostFeeBps: CHAINFLIP_COMMISSION_BPS,
       })
-      .filter(fee => fee !== null)
 
-    const gasFee = await estimateGas(get, { getSubstrateApi })
-    if (gasFee) fees.push(gasFee)
+      const fees = quote.quote.includedFees
+        .map(fee => {
+          const asset = assets.find(a => a.chain === fee.chain && a.asset === fee.asset)
+          const chain = chains.find(c => c.chain === fee.chain)
+          if (!asset || !chain) return null
 
-    return {
-      protocol: PROTOCOL,
-      inputAmountBN: fromAmount.planck,
-      outputAmountBN: BigInt(quote.quote.egressAmount),
-      talismanFeeBps: CHAINFLIP_COMMISSION_BPS,
-      fees,
-      data: quote,
-      timeInSec: quote.quote.estimatedDurationSeconds,
+          const swappableAsset = chainflipAssetToSwappableAsset(asset, chain)
+          if (!swappableAsset) return null
+
+          // get rate and compute fee in fiat
+          const amount = Decimal.fromPlanck(fee.amount, asset.decimals, { currency: asset.symbol })
+          return { name: fee.type.toLowerCase(), tokenId: swappableAsset.id, amount }
+        })
+        .filter(fee => fee !== null)
+
+      const gasFee = await estimateGas(get, { getSubstrateApi })
+      if (gasFee) fees.push(gasFee)
+
+      return {
+        decentralisationScore: DECENTRALISATION_SCORE,
+        protocol: PROTOCOL,
+        inputAmountBN: fromAmount.planck,
+        outputAmountBN: BigInt(quote.quote.egressAmount),
+        talismanFeeBps: CHAINFLIP_COMMISSION_BPS,
+        fees,
+        data: quote,
+        timeInSec: quote.quote.estimatedDurationSeconds,
+      }
+    } catch (_error) {
+      console.error(_error)
+      const error = _error as Error & { response?: { data?: { message: string } } }
+      const errorMessage =
+        error.name === 'AxiosError'
+          ? error.response?.data?.message.includes('InsufficientLiquidity') ||
+            error.response?.data?.message.toLowerCase().includes('insufficient liquidity')
+            ? 'Chainflip: Insufficient liquidity. Please try again with a smaller amount'
+            : `Chainflip: ${error.response?.data?.message}`
+          : error.message ?? 'Unknown error'
+
+      return {
+        decentralisationScore: DECENTRALISATION_SCORE,
+        protocol: PROTOCOL,
+        inputAmountBN: fromAmount.planck,
+        outputAmountBN: 0n,
+        error: errorMessage,
+        fees: [],
+        timeInSec: 0,
+      }
     }
-  } catch (_error) {
-    console.error(_error)
-    const error = _error as Error & { response?: { data?: { message: string } } }
-    const errorMessage =
-      error.name === 'AxiosError'
-        ? error.response?.data?.message.includes('InsufficientLiquidity') ||
-          error.response?.data?.message.toLowerCase().includes('insufficient liquidity')
-          ? 'Chainflip: Insufficient liquidity. Please try again with a smaller amount'
-          : `Chainflip: ${error.response?.data?.message}`
-        : error.message ?? 'Unknown error'
-
-    return {
-      protocol: PROTOCOL,
-      inputAmountBN: fromAmount.planck,
-      outputAmountBN: 0n,
-      error: errorMessage,
-      fees: [],
-      timeInSec: 0,
-    }
-  }
-}
+  })
+)
 
 export type ChainflipSwapActivityData = {
   id: string
@@ -433,7 +441,7 @@ export const chainflipSwapModule: SwapModule = {
   toAssetsSelector,
   quote,
   swap,
-  decentralisationScore: 2,
+  decentralisationScore: DECENTRALISATION_SCORE,
 }
 
 // helpers

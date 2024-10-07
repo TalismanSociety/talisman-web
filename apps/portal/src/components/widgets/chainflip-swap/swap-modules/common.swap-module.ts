@@ -7,6 +7,7 @@ import { evmErc20TokenId, evmNativeTokenId, subNativeTokenId } from '@talismn/ba
 import { Decimal } from '@talismn/math'
 import { type Atom, atom, type Getter, type SetStateAction, type Setter } from 'jotai'
 import { atomWithStorage, createJSONStorage, unstable_withStorageValidator } from 'jotai/utils'
+import { Loadable } from 'jotai/vanilla/utils/loadable'
 import 'recoil'
 import { isAddress, type TransactionRequest, type WalletClient } from 'viem'
 
@@ -36,6 +37,7 @@ type QuoteFee = {
 }
 
 export type BaseQuote = {
+  decentralisationScore: number
   protocol: SupportedSwapProtocol
   outputAmountBN: bigint
   inputAmountBN: bigint
@@ -72,10 +74,7 @@ export type EstimateGasTx =
       tx: SubmittableExtrinsic<'promise'>
     }
 
-export type QuoteFunction = (
-  get: Getter,
-  props: { getSubstrateApi: (rpc: string) => Promise<ApiPromise> }
-) => Promise<BaseQuote | null>
+export type QuoteFunction = Atom<Loadable<Promise<BaseQuote | null>>>
 export type SwapFunction<TData> = (
   get: Getter,
   set: Setter,
