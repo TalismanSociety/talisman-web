@@ -24,7 +24,7 @@ const useStakes = ({ slpxSubstratePair }: { slpxSubstratePair: SlpxSubstratePair
     const formattedBalance = Decimal.fromPlanck(balance?.sum.planck.total ?? 0n, vTokenDecimals, {
       currency: slpxSubstratePair.vToken.symbol,
     })
-    const fiatBalance = balance?.sum.fiat(currency ?? defaultCurrency).total
+    const fiatBalance = balance?.sum.fiat(currency ?? defaultCurrency).total ?? 0
     const unlocking = 999
     return { account: account as Account, balance: formattedBalance, fiatBalance, unlocking }
   })
