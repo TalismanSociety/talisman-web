@@ -59,7 +59,11 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
 
   const toQuote = useMemo(() => {
     if (!amount || !fromAmount) return undefined
-    return amount.mapNumber(() => (amount.toNumber() ?? 0) / (fromAmount.toNumber() ?? 1))
+    return amount.mapNumber(() => {
+      const res = (amount.toNumber() ?? 0) / (fromAmount.toNumber() ?? 1)
+      if (res < 0.0001) return 0
+      return res
+    })
   }, [fromAmount, amount])
 
   const totalFee = useMemo(

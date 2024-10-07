@@ -57,35 +57,39 @@ export const fromAssetsSelector = atom(async (get): Promise<SwappableAssetBaseTy
 })
 
 const routesAtom = atom(async get => {
-  const fromAddress = get(fromAddressAtom) ?? '0x70045A9F59A354550EC0272f73AAe03B01Fb8a7a'
-  const toAddress = get(toAddressAtom) ?? '0x70045A9F59A354550EC0272f73AAe03B01Fb8a7a'
-  const fromAsset = get(fromAssetAtom)
-  const toAsset = get(toAssetAtom)
-  const fromAmount = get(fromAmountAtom)
-  const networks = await get(knownEvmNetworksAtom)
+  try {
+    const fromAddress = get(fromAddressAtom) ?? '0x70045A9F59A354550EC0272f73AAe03B01Fb8a7a'
+    const toAddress = get(toAddressAtom) ?? '0x70045A9F59A354550EC0272f73AAe03B01Fb8a7a'
+    const fromAsset = get(fromAssetAtom)
+    const toAsset = get(toAssetAtom)
+    const fromAmount = get(fromAmountAtom)
+    const networks = await get(knownEvmNetworksAtom)
 
-  if (fromAmount.planck === 0n) return null
-  // assets not supported
-  if (fromAsset?.networkType !== 'evm' || toAsset?.networkType !== 'evm') return null
-  const evmNetwork = networks[fromAsset.chainId.toString()]
-  // network not supported
-  if (!evmNetwork) return null
+    if (fromAmount.planck === 0n) return null
+    // assets not supported
+    if (fromAsset?.networkType !== 'evm' || toAsset?.networkType !== 'evm') return null
+    const evmNetwork = networks[fromAsset.chainId.toString()]
+    // network not supported
+    if (!evmNetwork) return null
 
-  get(swapQuoteRefresherAtom)
+    get(swapQuoteRefresherAtom)
 
-  return await sdk.getRoutes({
-    fromAddress,
-    toAddress,
-    fromChainId: +fromAsset.chainId,
-    toChainId: +toAsset.chainId,
-    fromAmount: fromAmount.planck.toString(),
-    fromTokenAddress: fromAsset.contractAddress ?? zeroAddress,
-    toTokenAddress: toAsset.contractAddress ?? zeroAddress,
-    options: {
-      integrator: 'talisman',
-      fee: 0.002,
-    },
-  })
+    return await sdk.getRoutes({
+      fromAddress,
+      toAddress,
+      fromChainId: +fromAsset.chainId,
+      toChainId: +toAsset.chainId,
+      fromAmount: fromAmount.planck.toString(),
+      fromTokenAddress: fromAsset.contractAddress ?? zeroAddress,
+      toTokenAddress: toAsset.contractAddress ?? zeroAddress,
+      options: {
+        integrator: 'talisman',
+        fee: 0.002,
+      },
+    })
+  } catch (e) {
+    return { routes: [], unavailableRoutes: { failed: [], filteredOut: [] } } as sdk.RoutesResponse
+  }
 })
 const subProviderQuoteAtom = atomFamily((id: string) =>
   loadable(

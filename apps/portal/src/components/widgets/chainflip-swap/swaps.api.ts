@@ -27,6 +27,8 @@ import { simpleswapSwapModule } from './swap-modules/simpleswap-swap-module'
 import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts'
 import { substrateApiState } from '@/domains/common'
 import { connectedSubstrateWalletState } from '@/domains/extension'
+import * as sdk from '@lifi/sdk'
+import { evmErc20TokenId } from '@talismn/balances'
 import { tokenRatesAtom, tokensByIdAtom, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { toast } from '@talismn/ui'
@@ -35,7 +37,7 @@ import { atomFamily, loadable, useAtomCallback } from 'jotai/utils'
 import { Loadable } from 'jotai/vanilla/utils/loadable'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
-import { createPublicClient, erc20Abi, http } from 'viem'
+import { createPublicClient, erc20Abi, http, isAddress } from 'viem'
 import * as allEvmChains from 'viem/chains'
 import { useWalletClient } from 'wagmi'
 
@@ -94,7 +96,6 @@ const getCoingeckoCategoryTokens = async (
 ): Promise<SwappableAssetWithDecimals[]> => {
   const platforms = await get(coingeckoAssetPlatformsAtom)
   const coinsList = await get(coingeckoListAtom)
-
   const coins = (await get(coingeckoCoinsByCategoryAtom(categoryId))) as {
     symbol: string
     id: string
@@ -218,6 +219,139 @@ export const coingeckoCoinsByCategoryAtom = atomFamily((category: string) =>
     return await response.json()
   })
 )
+const coingeckoCoinByAddressAtom = atomFamily((addressPlatform: string) =>
+  atom(async () => {
+    const [address, platform] = addressPlatform.split(':')
+    if (!address || !platform) return null
+    const response = await fetch(`${coingeckoApiUrl}/api/v3/coins/${platform}/contract/${address}`, {
+      headers: {
+        [`x-cg-${coingeckoTier}-api-key`]: coingeckoApiKey!,
+      },
+    })
+
+    return (await response.json()) as {
+      image?: {
+        large: string
+        small: string
+        thumb: string
+      }
+    }
+  })
+)
+
+export const swapFromSearchAtom = atom<string>('')
+export const swapToSearchAtom = atom<string>('')
+
+const erc20Atom = atomFamily((addressChainId: string) =>
+  atom(async (get): Promise<SwappableAssetWithDecimals | null> => {
+    const [address, chainIdString] = addressChainId.split(':')
+    if (!address || !chainIdString) return null
+    const chainId = +chainIdString
+    const isValidAddress = isAddress(address)
+    if (!isValidAddress || isNaN(chainId)) return null
+
+    const chain = Object.values(allEvmChains).find(c => c.id === chainId)
+    if (!chain) return null
+    const platforms = await get(coingeckoAssetPlatformsAtom)
+    const platform = platforms.find(p => p.chain_identifier === chainId)
+    if (!platform) return null
+
+    const client = createPublicClient({ transport: http(), chain })
+
+    const [symbolData, decimalsData, namedata] = await client.multicall({
+      contracts: [
+        {
+          abi: erc20Abi,
+          address,
+          functionName: 'symbol',
+        },
+        {
+          abi: erc20Abi,
+          address,
+          functionName: 'decimals',
+        },
+        {
+          abi: erc20Abi,
+          address,
+          functionName: 'name',
+        },
+      ],
+    })
+
+    const symbol = symbolData.status === 'success' ? symbolData.result : null
+    const decimals = decimalsData.status === 'success' ? decimalsData.result : null
+    const name = namedata.status === 'success' ? namedata.result : null
+    if (!symbol || !decimals || !name) return null
+
+    const coingeckoData = await get(coingeckoCoinByAddressAtom(`${address}:${platform.id}`))
+    const id = evmErc20TokenId(address, chainIdString)
+
+    return {
+      id,
+      chainId,
+      context: {
+        lifi: {
+          address,
+          chainId,
+          decimals,
+          name,
+          symbol,
+          priceUSD: '0.00',
+        } as sdk.Token,
+      },
+      decimals,
+      name,
+      symbol,
+      networkType: 'evm',
+      contractAddress: address,
+      image: coingeckoData?.image?.small,
+    }
+  })
+)
+
+const filterAndSortTokens = async (
+  get: Getter,
+  tokens: SwappableAssetWithDecimals[],
+  search: string
+): Promise<SwappableAssetWithDecimals[]> => {
+  if (search.trim().length > 0) {
+    const isSearchingAddress = search.startsWith('0x')
+    const knownFilteredTokens = tokens.filter(
+      t =>
+        t.symbol.toLowerCase().startsWith(search.toLowerCase()) ||
+        t.name.toLowerCase().startsWith(search.toLowerCase()) ||
+        (isSearchingAddress && t.contractAddress?.startsWith(search.toLowerCase()))
+    )
+
+    if (isSearchingAddress && knownFilteredTokens.length === 0) {
+      // find token details from on chain
+      const allOnChainTokens = await Promise.all(
+        [
+          allEvmChains.mainnet,
+          allEvmChains.arbitrum,
+          allEvmChains.base,
+          allEvmChains.bsc,
+          allEvmChains.polygon,
+          allEvmChains.optimism,
+          allEvmChains.blast,
+          allEvmChains.zkSync,
+        ].map(chain => get(erc20Atom(`${search}:${chain.id}`)))
+      )
+      return allOnChainTokens.filter(t => t !== null)
+    }
+    return knownFilteredTokens
+  }
+  const tab = get(tokenTabAtom)
+  const filter = tokenTabs.find(t => t.value === tab)?.filter
+  const sort = tokenTabs.find(t => t.value === tab)?.sort
+  const coingeckoCategoryId = tokenTabs.find(t => t.value === tab && t.coingecko)?.value
+  if (filter) tokens = tokens.filter(filter)
+  if (sort) tokens = tokens.sort(sort)
+  if (coingeckoCategoryId) tokens = await getCoingeckoCategoryTokens(get, coingeckoCategoryId, tokens)
+
+  return tokens
+}
+
 /**
  * Unify all tokens we support for swapping on the UI
  * Note that this list is just to get the tokens we display initially on the UI
@@ -227,27 +361,22 @@ export const coingeckoCoinsByCategoryAtom = atomFamily((category: string) =>
 export const fromAssetsAtom = atom(async get => {
   const allTokensSelector = swapModules.map(module => module.fromAssetsSelector)
   const tokensByChains = await getTokensByChainId(get, allTokensSelector)
+  const search = get(swapFromSearchAtom)
 
-  let tokens = Object.values(tokensByChains)
+  const tokens = Object.values(tokensByChains)
     .map(tokens =>
       Object.values(tokens).sort((a, b) => a.symbol.replaceAll('$', '').localeCompare(b.symbol.replaceAll('$', '')))
     )
     .flat()
 
-  const tab = get(tokenTabAtom)
-  const filter = tokenTabs.find(t => t.value === tab)?.filter
-  const sort = tokenTabs.find(t => t.value === tab)?.sort
-  const coingeckoCategoryId = tokenTabs.find(t => t.value === tab && t.coingecko)?.value
-  if (filter) tokens = tokens.filter(filter)
-  if (sort) tokens = tokens.sort(sort)
-  if (coingeckoCategoryId) tokens = await getCoingeckoCategoryTokens(get, coingeckoCategoryId, tokens)
+  const filteredTokens = await filterAndSortTokens(get, tokens, search)
   // from assets should not include btc
-  tokens = tokens.filter(t => t.networkType !== 'btc')
-  return tokens
+  return filteredTokens.filter(t => t.networkType !== 'btc')
 })
 
 export const toAssetsAtom = atom(async get => {
   const fromAsset = get(fromAssetAtom)
+  const search = get(swapToSearchAtom)
 
   // only select from the protocols that fromAsset support
   const allTokensSelector = swapModules
@@ -255,21 +384,13 @@ export const toAssetsAtom = atom(async get => {
     .map(module => module.toAssetsSelector)
 
   const tokensByChains = await getTokensByChainId(get, allTokensSelector)
-  let tokens = Object.values(tokensByChains)
+  const tokens = Object.values(tokensByChains)
     .map(tokens =>
       Object.values(tokens).sort((a, b) => a.symbol.replaceAll('$', '').localeCompare(b.symbol.replaceAll('$', '')))
     )
     .flat()
 
-  const tab = get(tokenTabAtom)
-  const filter = tokenTabs.find(t => t.value === tab)?.filter
-  const sort = tokenTabs.find(t => t.value === tab)?.sort
-  const coingeckoCategoryId = tokenTabs.find(t => t.value === tab && t.coingecko)?.value
-  if (filter) tokens = tokens.filter(filter)
-  if (sort) tokens = tokens.sort(sort)
-  if (coingeckoCategoryId) tokens = await getCoingeckoCategoryTokens(get, coingeckoCategoryId, tokens)
-
-  return tokens
+  return await filterAndSortTokens(get, tokens, search)
 })
 
 export const swapQuotesAtom = loadable(

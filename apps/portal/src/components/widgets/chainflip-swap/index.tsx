@@ -12,7 +12,7 @@ import {
   toAddressAtom,
   toAssetAtom,
 } from './swap-modules/common.swap-module'
-import { swapQuotesAtom, useSwapErc20Approval } from './swaps.api'
+import { swapFromSearchAtom, swapQuotesAtom, swapToSearchAtom, useSwapErc20Approval } from './swaps.api'
 import {
   fromAssetsAtom,
   selectedQuoteAtom,
@@ -165,6 +165,7 @@ export const ChainFlipSwap: React.FC = () => {
             stayAliveBalance={fastBalance?.balance?.stayAlive}
             onChangeAsset={handleChangeFromAsset}
             disableBtc
+            searchAtom={swapFromSearchAtom}
           />
           <div className="relative w-full h-[12px]">
             <TonalIconButton
@@ -185,6 +186,7 @@ export const ChainFlipSwap: React.FC = () => {
             substrateAddress={fromSubstrateAccount?.address}
             disabled
             hideBalance
+            searchAtom={swapToSearchAtom}
           />
         </Surface>
         <FromAccount

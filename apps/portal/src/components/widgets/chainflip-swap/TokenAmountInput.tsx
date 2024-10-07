@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { useTokenRates, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, TextInput, Tooltip } from '@talismn/ui'
+import { PrimitiveAtom } from 'jotai'
 import { HelpCircle } from 'lucide-react'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -25,6 +26,7 @@ type Props = {
   balances?: Record<string, Decimal>
   hideBalance?: boolean
   disableBtc?: boolean
+  searchAtom: PrimitiveAtom<string>
 }
 
 const hardcodedGasBufferByTokenSymbol: Record<string, number> = {
@@ -47,6 +49,7 @@ export const TokenAmountInput: React.FC<Props> = ({
   onChangeAmount,
   stayAliveBalance,
   disabled = false,
+  searchAtom,
 }) => {
   const [input, setInput] = useState((amount?.planck ?? 0n) > 0n ? amount?.toString() ?? '' : '')
 
@@ -218,6 +221,7 @@ export const TokenAmountInput: React.FC<Props> = ({
             </TextInput.LabelButton>
           )}
           <SwapTokensModal
+            searchAtom={searchAtom}
             onSelectAsset={handleChangeAsset}
             selectedAsset={selectedAsset}
             assets={assets}

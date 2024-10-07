@@ -19,7 +19,6 @@ export const LifiActivity: React.FC<{ data: { id: string }; timestamp: number }>
       default: {
         const sending = status.sending as ExtendedTransactionInfo
         if (!sending.token) return null
-        console.log({ sending })
         const amount = sending.amount ? Decimal.fromPlanck(sending.amount, sending.token.decimals) : null
         return {
           logo: sending.token.logoURI,
@@ -39,7 +38,6 @@ export const LifiActivity: React.FC<{ data: { id: string }; timestamp: number }>
       default: {
         const receiving = status.receiving as ExtendedTransactionInfo
         if (!receiving.token) return null
-        console.log({ receiving })
         const amount = receiving.amount ? Decimal.fromPlanck(receiving.amount, receiving.token.decimals) : null
         return {
           logo: receiving.token.logoURI,
