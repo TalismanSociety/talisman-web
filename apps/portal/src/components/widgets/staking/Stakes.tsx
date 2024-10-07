@@ -6,6 +6,7 @@ import ErrorBoundary from '../ErrorBoundary'
 import DappStakes from './dappStaking/Stakes'
 import LidoStakes from './lido/Stakes'
 import SlpxStakes from './slpx/Stakes'
+import SlpxSubstrateStakes from './slpxSubstrate/SlpxSubstrateStakes'
 import PoolStakes from './substrate/PoolStakes'
 import ValidatorStakes from './substrate/ValidatorStakes'
 import SubtensorStakes from './subtensor/Stakes'
@@ -84,6 +85,10 @@ const Stakes = (props: { hideHeader?: boolean }) => {
         <ErrorBoundary orientation="horizontal">
           <SuspenseSkeleton>
             <SlpxStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
+          </SuspenseSkeleton>
+          <ErrorBoundary orientation="horizontal"></ErrorBoundary>
+          <SuspenseSkeleton>
+            <SlpxSubstrateStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
           </SuspenseSkeleton>
         </ErrorBoundary>
         {chains.map((chain, index) => {
