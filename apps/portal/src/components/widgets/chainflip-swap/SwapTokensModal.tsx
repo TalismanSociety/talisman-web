@@ -12,6 +12,7 @@ import { PrimitiveAtom, useAtom } from 'jotai'
 import { Globe, X } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { isAddress } from 'viem'
+import * as allChains from 'viem/chains'
 
 type Props = {
   assets?: SwappableAssetWithDecimals[]
@@ -52,26 +53,6 @@ export const SwapTokensModal: React.FC<Props> = ({
 
   const parentRef = useRef<HTMLDivElement>(null)
 
-  const filteredAssets = useMemo(() => {
-    if (!assets) return []
-    return assets.filter(asset => {
-      if (!search && !filteredChain) return true
-      const queryMatch =
-        !search ||
-        asset.symbol.toLowerCase().includes(search.toLowerCase()) ||
-        asset.name.toLowerCase().includes(search.toLowerCase()) ||
-        (isAddress(search) && asset.contractAddress?.toLowerCase() === search.toLowerCase())
-      const chainMatch = !filteredChain || `${asset.chainId}` === `${filteredChain}`
-      return queryMatch && chainMatch
-    })
-  }, [assets, filteredChain, search])
-
-  const rowVirtualizer = useVirtualizer({
-    count: filteredAssets?.length ?? 0,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 80,
-  })
-
   const uniqueChains = useMemo(() => {
     return Object.values(
       assets?.reduce((acc, cur) => {
@@ -83,6 +64,30 @@ export const SwapTokensModal: React.FC<Props> = ({
       }, {} as Record<string, Chain | EvmNetwork>) ?? {}
     )
   }, [assets, chains, networks])
+
+  const selectedChain = useMemo(() => {
+    return uniqueChains.find(c => c.id === filteredChain)
+  }, [filteredChain, uniqueChains])
+
+  const filteredAssets = useMemo(() => {
+    if (!assets) return []
+    return assets.filter(asset => {
+      if (!search && !selectedChain) return true
+      const queryMatch =
+        !search ||
+        asset.symbol.toLowerCase().includes(search.toLowerCase()) ||
+        asset.name.toLowerCase().includes(search.toLowerCase()) ||
+        (isAddress(search) && asset.contractAddress?.toLowerCase() === search.toLowerCase())
+      const chainMatch = !selectedChain || `${asset.chainId}` === `${selectedChain?.id}`
+      return queryMatch && chainMatch
+    })
+  }, [assets, search, selectedChain])
+
+  const rowVirtualizer = useVirtualizer({
+    count: filteredAssets?.length ?? 0,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 72,
+  })
 
   const sortedTokensByBalances = useMemo(() => {
     const sortOverride = tokenTabs.find(t => t.value === tab)?.sort
@@ -102,6 +107,7 @@ export const SwapTokensModal: React.FC<Props> = ({
         leadingIcon={
           selectedAsset ? (
             <img
+              key={selectedAsset?.image ?? githubUnknownTokenLogoUrl}
               src={selectedAsset?.image ?? githubUnknownTokenLogoUrl}
               className="w-[24px] h-[24px] min-w-[24px] rounded-full"
             />
@@ -144,7 +150,7 @@ export const SwapTokensModal: React.FC<Props> = ({
               />
             </div>
             <Select
-              value={uniqueChains.length === 1 ? uniqueChains[0]?.id : filteredChain}
+              value={uniqueChains.length === 1 ? uniqueChains[0]?.id : selectedChain?.id}
               onChangeValue={setFilteredChain}
               className="[&>button]:!rounded-[8px]"
             >
@@ -176,7 +182,7 @@ export const SwapTokensModal: React.FC<Props> = ({
               )}
             </div>
           ) : (
-            <div className="w-full overflow-hidden relative mb-[24px]">
+            <div className="w-full overflow-hidden relative mb-[16px]">
               {tokenTabs.length > 1 && (
                 <div className="overflow-y-auto flex gap-[8px] no-scrollbar w-full pl-[8px] !pr-[24px]">
                   {tokenTabs.map(t => (
@@ -232,9 +238,13 @@ export const SwapTokensModal: React.FC<Props> = ({
                           networks[asset.chainId]?.name ??
                           (asset.chainId === 'bitcoin' ? 'Bitcoin' : 'Unknown Chain')
                         }
+                        erc20Address={asset.contractAddress}
                         evmAddress={evmAddress}
                         substrateAddress={substrateAddress}
                         balance={balances?.[asset.id]}
+                        explorerUrl={
+                          Object.values(allChains).find(c => c.id === +asset.chainId)?.blockExplorers?.default.url
+                        }
                         onClick={a => {
                           setOpen(false)
                           onSelectAsset(a)

@@ -1,10 +1,14 @@
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
 import { selectedCurrencyState } from '@/domains/balances'
+import { useCopied } from '@/hooks/useCopied'
+import { truncateAddress } from '@/util/helpers'
 import { useTokenRates, useTokens } from '@talismn/balances-react'
 import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
-import { Skeleton } from '@talismn/ui'
+import { Skeleton, toast } from '@talismn/ui'
+import { Check, Copy, ExternalLink } from '@talismn/web-icons'
 import { useCallback, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 type Props = {
@@ -13,8 +17,10 @@ type Props = {
   networkLogo?: string
   evmAddress?: `0x${string}`
   substrateAddress?: string
+  erc20Address?: string
   onClick: (asset: SwappableAssetWithDecimals) => void
   balance?: Decimal
+  explorerUrl?: string
 }
 
 export const SwapTokenRow: React.FC<Props> = ({
@@ -22,13 +28,16 @@ export const SwapTokenRow: React.FC<Props> = ({
   balance,
   networkLogo,
   networkName,
+  erc20Address,
   evmAddress,
+  explorerUrl,
   substrateAddress,
   onClick,
 }) => {
   const currency = useRecoilValue(selectedCurrencyState)
   const rates = useTokenRates()
   const tokens = useTokens()
+  const { copied, copy } = useCopied()
 
   const bestGuessRate = useMemo(() => {
     if (!tokens) return undefined
@@ -43,7 +52,7 @@ export const SwapTokenRow: React.FC<Props> = ({
 
   return (
     <div
-      className="!w-full !h-[72px] !rounded-[12px] grid grid-cols-3 px-[16px] gap-[8px] hover:bg-gray-800 cursor-pointer"
+      className="!w-full !h-[64px] !rounded-[12px] grid grid-cols-3 px-[16px] gap-[8px] hover:bg-gray-800 cursor-pointer"
       onClick={handleClick}
     >
       <div className="w-full flex items-center gap-[8px]">
@@ -51,10 +60,12 @@ export const SwapTokenRow: React.FC<Props> = ({
           {networkLogo ? (
             <img
               src={networkLogo}
+              key={networkLogo}
               className="border-[2px] bg-gray-800 border-gray-800 w-[12px] absolute -top-[4px] -right-[4px] h-[12px] min-w-[12px] sm:min-w-[20px] sm:w-[20px] sm:h-[20px] rounded-full"
             />
           ) : null}
           <img
+            key={asset.image ?? githubUnknownTokenLogoUrl}
             src={asset.image ?? githubUnknownTokenLogoUrl}
             className="w-[24px] h-[24px] min-w-[24px] sm:min-w-[40px] sm:w-[40px] sm:h-[40px] rounded-full"
           />
@@ -65,8 +76,38 @@ export const SwapTokenRow: React.FC<Props> = ({
         </div>
       </div>
 
-      <div className="flex items-center">
+      <div className="flex flex-col justify-center">
         <p className="text-[14px]">{networkName}</p>
+        {erc20Address ? (
+          explorerUrl ? (
+            <Link to={`${explorerUrl}/token/${erc20Address}`} target="_blank" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center gap-[4px] group cursor-pointer">
+                <p className="text-[12px] text-muted-foreground mt-[2px] group-hover:text-primary">
+                  {truncateAddress(erc20Address)}
+                </p>
+                <ExternalLink className="group-hover:text-primary" size={14} />
+              </div>
+            </Link>
+          ) : (
+            <div
+              className="flex items-center gap-[4px] group cursor-pointer"
+              onClick={e => {
+                e.stopPropagation()
+                copy(erc20Address)
+                toast('Copied token address!')
+              }}
+            >
+              <p className="text-[12px] text-muted-foreground mt-[2px] group-hover:text-primary">
+                {truncateAddress(erc20Address)}
+              </p>
+              {copied ? (
+                <Check size={14} className="text-green-400" />
+              ) : (
+                <Copy size={14} className="group-hover:text-primary" />
+              )}
+            </div>
+          )
+        ) : null}
       </div>
 
       {(asset.networkType === 'evm' && evmAddress) || (asset.networkType === 'substrate' && substrateAddress) ? (

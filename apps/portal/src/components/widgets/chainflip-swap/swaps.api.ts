@@ -134,33 +134,43 @@ export const tokenTabs: {
 }[] = [
   {
     value: 'popular',
-    label: 'Popular',
+    label: '🔥 Popular',
     filter: token => popularTokens.includes(token.id) ?? false,
     sort: (a, b) => popularTokens.indexOf(a.id) - popularTokens.indexOf(b.id),
   },
   {
     value: 'artificial-intelligence',
-    label: 'Artificial Intelligence',
+    label: 'AI',
     coingecko: true,
   },
   {
-    value: 'governance',
-    label: 'Governance',
+    value: 'meme-token',
+    label: 'Meme',
     coingecko: true,
   },
   {
-    value: 'dog-themed-coins',
-    label: 'Dog Themed',
+    value: 'layer-2',
+    label: 'L2s',
     coingecko: true,
   },
   {
-    value: 'liquid-staking-tokens',
-    label: 'Liquid Staking',
+    value: 'decentralized-finance-defi',
+    label: 'Defi',
     coingecko: true,
   },
   {
-    value: 'gaming',
-    label: 'Gaming',
+    value: 'depin',
+    label: 'DePIN',
+    coingecko: true,
+  },
+  {
+    value: 'real-world-assets-rwa',
+    label: 'RWA',
+    coingecko: true,
+  },
+  {
+    value: 'metaverse',
+    label: 'Metaverse',
     coingecko: true,
   },
 ]
@@ -722,6 +732,7 @@ export const useSwapErc20Approval = () => {
     // start approve spending flow
     setApproving(true)
     try {
+      await walletClient.switchChain(approvalData.chain)
       const approveTxHash = await walletClient.writeContract({
         abi: erc20Abi,
         functionName: 'approve',
