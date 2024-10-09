@@ -13,7 +13,7 @@ type UnstakeDialogProps = {
 }
 
 const UnstakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: UnstakeDialogProps) => {
-  const { amount, setAmount, localizedFiatAmount, newAmount, rate, availableBalance } = useStakeRemoveForm({
+  const { amount, setAmount, newAmount, rate, availableBalance, extrinsic } = useStakeRemoveForm({
     slpxPair: slpxSubstratePair,
   })
 
@@ -21,13 +21,7 @@ const UnstakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: Unstake
 
   return (
     <SlpxUnstakeDialog
-      // confirmState={
-      //   !ready
-      //     ? 'disabled'
-      //     : redeem.isPending || approve.isPending || approveTransaction.isLoading
-      //     ? 'pending'
-      //     : undefined
-      // }
+      confirmState={!amount ? 'disabled' : extrinsic.state === 'loading' ? 'pending' : undefined}
       open
       onDismiss={onRequestDismiss}
       amount={amount}
@@ -46,25 +40,13 @@ const UnstakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: Unstake
         rate =>
           `1 ${slpxSubstratePair.vToken.symbol} = ${rate.toLocaleString()} ${slpxSubstratePair.nativeToken.symbol}`
       )}
-      // approvalNeeded={approvalNeeded}
-      // onConfirm={async () => {
-      //   if (approvalNeeded) {
-      //     await approve.writeContractAsync()
-      //   } else {
-      //     await redeem.writeContractAsync()
-      //   }
-      // }}
-      onConfirm={() => console.log('Confirmed')}
+      onConfirm={() => extrinsic.signAndSend(account?.address ?? '').then(() => onRequestDismiss())}
       onRequestMaxAmount={() => {
         if (amountAvailable !== undefined) {
           setAmount(amountAvailable.toString())
         }
       }}
-      // onRequestMaxAmount={() => {
-      //   if (available !== undefined) {
-      //     setAmount(available.toString())
-      //   }
-      // }}
+
       // isError={error !== undefined}
       // inputSupportingText={error?.message}
     />

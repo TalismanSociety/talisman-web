@@ -1,8 +1,7 @@
-import { Maybe } from '../../../util/monads'
 import { useSubstrateApiState } from '../../common/recoils'
 import { SlpxSubstratePair } from './types'
 import { selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
-import { tokenPriceState } from '@/domains/chains'
+import { useExtrinsic } from '@/domains/common/hooks'
 import { Decimal } from '@talismn/math'
 import { useQueryMultiState } from '@talismn/react-polkadot-api'
 import BigNumber from 'bignumber.js'
@@ -12,8 +11,6 @@ import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 const useStakeRemoveForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   const [amount, setAmount] = useState<string>('')
   const [balances, api] = useRecoilValue(waitForAll([selectedBalancesState, useSubstrateApiState()]))
-  const originTokenRate = useRecoilValueLoadable(tokenPriceState({ coingeckoId: slpxPair.vToken.coingeckoId }))
-  const currency = useRecoilValue(selectedCurrencyState)
 
   const originTokenDecimals = 10
 
@@ -22,14 +19,8 @@ const useStakeRemoveForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
     [amount]
   )
 
-  // const nativeBalance = useMemo(
-  //   () =>
-  //     balances.find(
-  //       x =>
-  //         x.token?.symbol.toLowerCase() === slpxPair.nativeToken.symbol.toLowerCase() && x.chainId === slpxPair.chainId
-  //     ),
-  //   [balances, slpxPair.chainId, slpxPair.nativeToken.symbol]
-  // )
+  const tx = api.tx.vtokenMinting.redeem({ VToken2: 0 }, decimalAmount?.planck ?? 0n)
+  const extrinsic = useExtrinsic(tx)
 
   const availableBalance = useAvailableBalance({ slpxPair, fee: 0n })
 
@@ -48,7 +39,7 @@ const useStakeRemoveForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
     { currency: slpxPair.vToken.symbol }
   )
 
-  return { amount, setAmount, newAmount, rate, availableBalance }
+  return { amount, setAmount, newAmount, rate, availableBalance, extrinsic }
 }
 
 export default useStakeRemoveForm
