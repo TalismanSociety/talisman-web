@@ -4,10 +4,12 @@ import useStakes from '../../../../domains/staking/slpxSubstrate/useStakes'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
+import AddStakeDialog from './AddStakeDialog'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import { StakePosition } from '@talismn/ui-recipes'
 import { StakePositionErrorBoundary } from '@talismn/ui-recipes'
 import { useAtomValue } from 'jotai'
+import { useState } from 'react'
 
 const SlpxSubstrateStake = ({
   slpxSubstratePair,
@@ -16,6 +18,7 @@ const SlpxSubstrateStake = ({
   slpxSubstratePair: SlpxSubstratePair
   setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
+  const [increaseStakeDialogOpen, setIncreaseStakeDialogOpen] = useState<boolean>(false)
   const { stakes, isLoading } = useStakes({ slpxSubstratePair })
 
   if (!isLoading) {
@@ -47,7 +50,7 @@ const SlpxSubstrateStake = ({
           chain={slpxSubstratePair.chainName}
           assetSymbol={slpxSubstratePair.vToken.symbol}
           assetLogoSrc={slpxSubstratePair.vToken.logo}
-          // increaseStakeButton={<StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeDialogOpen(true)} />}
+          increaseStakeButton={<StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeDialogOpen(true)} />}
           // unstakeButton={
           //   props.position.balance.planck > 0n && (
           //     <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} />
@@ -60,6 +63,13 @@ const SlpxSubstrateStake = ({
             )
           }
         />
+        {increaseStakeDialogOpen && (
+          <AddStakeDialog
+            account={stake.account}
+            slpxSubstratePair={slpxSubstratePair}
+            onRequestDismiss={() => setIncreaseStakeDialogOpen(false)}
+          />
+        )}
       </ErrorBoundary>
     )
   })
