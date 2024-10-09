@@ -13,7 +13,7 @@ type UnstakeDialogProps = {
 }
 
 const UnstakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: UnstakeDialogProps) => {
-  const { amount, setAmount, newAmount, rate, availableBalance, extrinsic } = useStakeRemoveForm({
+  const { amount, setAmount, newAmount, rate, availableBalance, extrinsic, error } = useStakeRemoveForm({
     slpxPair: slpxSubstratePair,
   })
 
@@ -21,7 +21,7 @@ const UnstakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: Unstake
 
   return (
     <SlpxUnstakeDialog
-      confirmState={!amount ? 'disabled' : extrinsic.state === 'loading' ? 'pending' : undefined}
+      confirmState={!amount || !!error ? 'disabled' : extrinsic.state === 'loading' ? 'pending' : undefined}
       open
       onDismiss={onRequestDismiss}
       amount={amount}
@@ -46,9 +46,8 @@ const UnstakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: Unstake
           setAmount(amountAvailable.toString())
         }
       }}
-
-      // isError={error !== undefined}
-      // inputSupportingText={error?.message}
+      isError={!!error}
+      inputSupportingText={error?.message}
     />
   )
 }

@@ -39,7 +39,27 @@ const useStakeRemoveForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
     { currency: slpxPair.vToken.symbol }
   )
 
-  return { amount, setAmount, newAmount, rate, availableBalance, extrinsic }
+  const minAmount = Decimal.fromPlanck(slpxPair.minRedeem, originTokenDecimals, {
+    currency: slpxPair.nativeToken.symbol,
+  })
+
+  const error = useMemo(() => {
+    if (
+      decimalAmount !== undefined &&
+      availableBalance !== undefined &&
+      decimalAmount.planck > availableBalance.amountAfterFee.planck
+    ) {
+      return new Error('Insufficient balance')
+    }
+
+    if (decimalAmount !== undefined && minAmount !== undefined && decimalAmount.planck < minAmount.planck) {
+      return new Error(`Minimum ${minAmount.toLocaleString()} needed`)
+    }
+
+    return undefined
+  }, [availableBalance, decimalAmount, minAmount])
+
+  return { amount, setAmount, newAmount, rate, availableBalance, extrinsic, error }
 }
 
 export default useStakeRemoveForm
@@ -56,6 +76,13 @@ const useAvailableBalance = ({ slpxPair, fee }: { slpxPair: SlpxSubstratePair; f
       amount: Decimal.fromPlanck(nativeBalance.sum.planck.transferable - fee, nativeBalance.each.at(0)?.decimals ?? 0, {
         currency: slpxPair.vToken.symbol,
       }),
+      amountAfterFee: Decimal.fromPlanck(
+        nativeBalance.sum.planck.transferable - fee,
+        nativeBalance.each.at(0)?.decimals ?? 0,
+        {
+          currency: slpxPair.nativeToken.symbol,
+        }
+      ),
       fiatAmount: Intl.NumberFormat('en', {
         style: 'currency',
         notation: 'compact',
