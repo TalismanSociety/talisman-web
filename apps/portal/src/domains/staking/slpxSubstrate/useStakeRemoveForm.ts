@@ -10,7 +10,9 @@ import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 const useStakeRemoveForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   const [amount, setAmount] = useState<string>('')
-  const [balances, api] = useRecoilValue(waitForAll([selectedBalancesState, useSubstrateApiState()]))
+
+  const valueLoadable = useRecoilValueLoadable(waitForAll([selectedBalancesState, useSubstrateApiState()]))
+  const [balances, api] = valueLoadable.valueMaybe() ?? []
 
   const originTokenDecimals = 10
 
@@ -19,7 +21,10 @@ const useStakeRemoveForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
     [amount]
   )
 
-  const tx = api.tx.vtokenMinting.redeem({ VToken2: 0 }, decimalAmount?.planck ?? 0n)
+  const tx = useMemo(
+    () => api?.tx.vtokenMinting.redeem({ VToken2: 0 }, decimalAmount?.planck ?? 0n),
+    [api?.tx.vtokenMinting, decimalAmount?.planck]
+  )
   const extrinsic = useExtrinsic(tx)
 
   const availableBalance = useAvailableBalance({ slpxPair, fee: 0n })
@@ -29,12 +34,12 @@ const useStakeRemoveForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   const rate = rateLoadable.valueMaybe() ?? 0
 
   const liquidBalance = useMemo(
-    () => balances.find(x => x.token?.symbol.toLowerCase() === slpxPair.vToken.symbol.toLowerCase()),
+    () => balances?.find(x => x.token?.symbol.toLowerCase() === slpxPair.vToken.symbol.toLowerCase()),
     [balances, slpxPair.vToken.symbol]
   )
 
   const newAmount = Decimal.fromPlanck(
-    (liquidBalance.sum.planck.total ?? 0n) - (decimalAmount?.planck ?? 0n),
+    (liquidBalance?.sum.planck.total ?? 0n) - (decimalAmount?.planck ?? 0n),
     originTokenDecimals,
     { currency: slpxPair.vToken.symbol }
   )

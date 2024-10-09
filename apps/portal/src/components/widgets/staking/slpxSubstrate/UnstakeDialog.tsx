@@ -21,7 +21,9 @@ const UnstakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: Unstake
 
   return (
     <SlpxUnstakeDialog
-      confirmState={!amount || !!error ? 'disabled' : extrinsic.state === 'loading' ? 'pending' : undefined}
+      confirmState={
+        !amount || !!error ? 'disabled' : extrinsic?.state === 'loading' || !extrinsic ? 'pending' : undefined
+      }
       open
       onDismiss={onRequestDismiss}
       amount={amount}
@@ -40,7 +42,7 @@ const UnstakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: Unstake
         rate =>
           `1 ${slpxSubstratePair.vToken.symbol} = ${rate.toLocaleString()} ${slpxSubstratePair.nativeToken.symbol}`
       )}
-      onConfirm={() => extrinsic.signAndSend(account?.address ?? '').then(() => onRequestDismiss())}
+      onConfirm={() => extrinsic?.signAndSend(account?.address ?? '').then(() => onRequestDismiss())}
       onRequestMaxAmount={() => {
         if (amountAvailable !== undefined) {
           setAmount(amountAvailable.toString())
