@@ -27,7 +27,10 @@ const useStakes = ({ slpxSubstratePair }: { slpxSubstratePair: SlpxSubstratePair
 
   const userUnlockLedgers = userUnlockLedgersLoadable.valueMaybe()
 
-  const data = accounts
+  const isLoading =
+    accountsLoadable.state === 'loading' || loadableState === 'loading' || userUnlockLedgersLoadable.state === 'loading'
+
+  const stakes = accounts
     ?.map((account, index) => {
       const balance = balances?.find(
         x =>
@@ -44,7 +47,7 @@ const useStakes = ({ slpxSubstratePair }: { slpxSubstratePair: SlpxSubstratePair
       return { account: account as Account, balance: formattedBalance, fiatBalance, unlocking }
     })
     .filter(x => x.balance.planck !== 0n || (x.unlocking !== undefined && x.unlocking.planck !== 0n))
-  return data
+  return { stakes, isLoading }
 }
 
 export default useStakes

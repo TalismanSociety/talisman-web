@@ -16,8 +16,12 @@ const SlpxSubstrateStake = ({
   slpxSubstratePair: SlpxSubstratePair
   setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
-  const stakes = useStakes({ slpxSubstratePair })
-  console.log({ setShouldRenderLoadingSkeleton })
+  const { stakes, isLoading } = useStakes({ slpxSubstratePair })
+
+  if (!isLoading) {
+    setShouldRenderLoadingSkeleton(false)
+  }
+
   return stakes?.map((stake, index) => {
     return (
       <ErrorBoundary
