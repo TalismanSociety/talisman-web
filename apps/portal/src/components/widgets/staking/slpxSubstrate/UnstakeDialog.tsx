@@ -1,5 +1,4 @@
 import { type Account } from '../../../../domains/accounts'
-// import { useRedeemForm, type  } from '../../../../domains/staking/slpx'
 import { Maybe } from '../../../../util/monads'
 import { SlpxUnstakeDialog } from '../../../recipes/UnstakeDialog'
 import UnlockDuration from './UnlockDuration'
@@ -14,29 +13,11 @@ type UnstakeDialogProps = {
 }
 
 const UnstakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: UnstakeDialogProps) => {
-  const { amount, setAmount, localizedFiatAmount, newAmount, rate } = useStakeRemoveForm({
+  const { amount, setAmount, localizedFiatAmount, newAmount, rate, availableBalance } = useStakeRemoveForm({
     slpxPair: slpxSubstratePair,
   })
 
-  // const {
-  //   input: { amount, localizedFiatAmount },
-  //   setAmount,
-  //   newOriginTokenAmount: newAmount,
-  //   available,
-  //   approve,
-  //   approveTransaction,
-  //   approvalNeeded,
-  //   redeem,
-  //   rate,
-  //   ready,
-  //   error,
-  // } = useRedeemForm(props.account, props.slpxPair)
-
-  // useEffect(() => {
-  //   if (redeem.status === 'success' || redeem.status === 'error') {
-  //     props.onRequestDismiss()
-  //   }
-  // }, [props, redeem.status])
+  const { amount: amountAvailable, fiatAmount: fiatAmountAvailable } = availableBalance
 
   return (
     <SlpxUnstakeDialog
@@ -50,12 +31,11 @@ const UnstakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: Unstake
       open
       onDismiss={onRequestDismiss}
       amount={amount}
-      fiatAmount={localizedFiatAmount ?? '...'}
+      fiatAmount={fiatAmountAvailable}
       newAmount={newAmount?.toLocaleString() ?? '...'}
       newFiatAmount={null}
       onChangeAmount={setAmount}
-      // availableAmount={available?.toLocaleString() ?? '...'}
-      availableAmount="123456789"
+      availableAmount={amountAvailable?.toLocaleString() ?? '...'}
       lockDuration={
         <Suspense fallback="...">
           <UnlockDuration slpxPair={slpxSubstratePair} />
@@ -75,7 +55,11 @@ const UnstakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: Unstake
       //   }
       // }}
       onConfirm={() => console.log('Confirmed')}
-      onRequestMaxAmount={() => console.log('Request maximum amount')}
+      onRequestMaxAmount={() => {
+        if (amountAvailable !== undefined) {
+          setAmount(amountAvailable.toString())
+        }
+      }}
       // onRequestMaxAmount={() => {
       //   if (available !== undefined) {
       //     setAmount(available.toString())

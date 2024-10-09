@@ -31,22 +31,9 @@ const useStakeRemoveForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   //   [balances, slpxPair.chainId, slpxPair.nativeToken.symbol]
   // )
 
-  const useSwapRateLoadable = (tokenId: any, vTokenId: any, reverse?: boolean) => {
-    const loadable = useRecoilValueLoadable(
-      useQueryMultiState([
-        ['tokens.totalIssuance', vTokenId],
-        ['vtokenMinting.tokenPool', tokenId],
-      ])
-    )
+  const availableBalance = useAvailableBalance({ slpxPair, fee: 0n })
 
-    return loadable.map(([totalIssuance, staked]) => {
-      const rate = new BigNumber(totalIssuance.toString()).div(staked.toString()).toNumber()
-
-      return reverse ? 1 / rate : rate
-    })
-  }
-
-  const rateLoadable = useSwapRateLoadable(slpxPair.nativeToken.tokenId, slpxPair.vToken.tokenId)
+  const rateLoadable = useSwapRateLoadable(slpxPair.nativeToken.tokenId, slpxPair.vToken.tokenId, true)
 
   const rate = rateLoadable.valueMaybe() ?? 0
 
@@ -55,21 +42,51 @@ const useStakeRemoveForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
     [balances, slpxPair.vToken.symbol]
   )
 
-  const localizedFiatAmount = useMemo(
-    () =>
-      Maybe.of(
-        originTokenRate.state !== 'hasValue' ? undefined : (decimalAmount?.toNumber() ?? 0) * originTokenRate.contents
-      ).mapOrUndefined(x => x.toLocaleString(undefined, { style: 'currency', currency })),
-    [currency, decimalAmount, originTokenRate.contents, originTokenRate.state]
-  )
-
   const newAmount = Decimal.fromPlanck(
     (liquidBalance.sum.planck.total ?? 0n) - (decimalAmount?.planck ?? 0n),
     originTokenDecimals,
     { currency: slpxPair.vToken.symbol }
   )
 
-  return { amount, setAmount, localizedFiatAmount, newAmount, rate }
+  return { amount, setAmount, newAmount, rate, availableBalance }
 }
 
 export default useStakeRemoveForm
+
+const useAvailableBalance = ({ slpxPair, fee }: { slpxPair: SlpxSubstratePair; fee: bigint }) => {
+  const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))
+  const recoilCurrency = useRecoilValue(selectedCurrencyState)
+  const nativeBalance = balances.find(
+    x => x.token?.symbol.toLowerCase() === slpxPair.vToken.symbol.toLowerCase() && x.chainId === slpxPair.chainId
+  )
+
+  return useMemo(
+    () => ({
+      amount: Decimal.fromPlanck(nativeBalance.sum.planck.transferable - fee, nativeBalance.each.at(0)?.decimals ?? 0, {
+        currency: slpxPair.vToken.symbol,
+      }),
+      fiatAmount: Intl.NumberFormat('en', {
+        style: 'currency',
+        notation: 'compact',
+        maximumFractionDigits: 2,
+        currency: recoilCurrency,
+      }).format(nativeBalance.sum.fiat(currency).total),
+    }),
+    [currency, fee, nativeBalance.each, nativeBalance.sum, recoilCurrency, slpxPair.vToken.symbol]
+  )
+}
+
+const useSwapRateLoadable = (tokenId: any, vTokenId: any, reverse?: boolean) => {
+  const loadable = useRecoilValueLoadable(
+    useQueryMultiState([
+      ['tokens.totalIssuance', vTokenId],
+      ['vtokenMinting.tokenPool', tokenId],
+    ])
+  )
+
+  return loadable.map(([totalIssuance, staked]) => {
+    const rate = new BigNumber(totalIssuance.toString()).div(staked.toString()).toNumber()
+
+    return reverse ? 1 / rate : rate
+  })
+}
