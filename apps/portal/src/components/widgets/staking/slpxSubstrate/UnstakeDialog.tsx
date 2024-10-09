@@ -3,7 +3,7 @@ import { Maybe } from '../../../../util/monads'
 import { SlpxUnstakeDialog } from '../../../recipes/UnstakeDialog'
 import UnlockDuration from './UnlockDuration'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
-import useStakeRemoveForm from '@/domains/staking/slpxSubstrate/useStakeRemoveForm'
+import useStakeRedeemForm from '@/domains/staking/slpxSubstrate/useStakeRedeemForm'
 import { Suspense } from 'react'
 
 type UnstakeDialogProps = {
@@ -13,7 +13,7 @@ type UnstakeDialogProps = {
 }
 
 const UnstakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: UnstakeDialogProps) => {
-  const { amount, setAmount, newAmount, rate, availableBalance, extrinsic, error } = useStakeRemoveForm({
+  const { amount, setAmount, newAmount, rate, availableBalance, extrinsic, error } = useStakeRedeemForm({
     slpxPair: slpxSubstratePair,
   })
 

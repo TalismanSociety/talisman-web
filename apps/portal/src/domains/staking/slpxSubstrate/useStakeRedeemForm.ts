@@ -8,7 +8,7 @@ import BigNumber from 'bignumber.js'
 import { useState, useMemo } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
-const useStakeRemoveForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
+const useStakeRedeemForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   const [amount, setAmount] = useState<string>('')
 
   const valueLoadable = useRecoilValueLoadable(waitForAll([selectedBalancesState, useSubstrateApiState()]))
@@ -67,7 +67,7 @@ const useStakeRemoveForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   return { amount, setAmount, newAmount, rate, availableBalance, extrinsic, error }
 }
 
-export default useStakeRemoveForm
+export default useStakeRedeemForm
 
 const useAvailableBalance = ({ slpxPair, fee }: { slpxPair: SlpxSubstratePair; fee: bigint }) => {
   const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))
@@ -95,7 +95,15 @@ const useAvailableBalance = ({ slpxPair, fee }: { slpxPair: SlpxSubstratePair; f
         currency: recoilCurrency,
       }).format(nativeBalance.sum.fiat(currency).total),
     }),
-    [currency, fee, nativeBalance.each, nativeBalance.sum, recoilCurrency, slpxPair.vToken.symbol]
+    [
+      currency,
+      fee,
+      nativeBalance.each,
+      nativeBalance.sum,
+      recoilCurrency,
+      slpxPair.nativeToken.symbol,
+      slpxPair.vToken.symbol,
+    ]
   )
 }
 
