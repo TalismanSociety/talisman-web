@@ -48,7 +48,27 @@ const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
     }
   )
 
-  return { amount, setAmount, availableBalance, rate, newStakedTotal, extrinsic }
+  const minAmount = Decimal.fromPlanck(slpxPair.minStake, originTokenDecimals, {
+    currency: slpxPair.nativeToken.symbol,
+  })
+
+  const error = useMemo(() => {
+    if (
+      decimalAmount !== undefined &&
+      availableBalance !== undefined &&
+      decimalAmount.planck > availableBalance.amountAfterFee.planck
+    ) {
+      return new Error('Insufficient balance')
+    }
+
+    if (decimalAmount !== undefined && minAmount !== undefined && decimalAmount.planck < minAmount.planck) {
+      return new Error(`Minimum ${minAmount.toLocaleString()} needed`)
+    }
+
+    return undefined
+  }, [availableBalance, decimalAmount, minAmount])
+
+  return { amount, setAmount, availableBalance, rate, newStakedTotal, extrinsic, error }
 }
 
 export default useStakeAddForm

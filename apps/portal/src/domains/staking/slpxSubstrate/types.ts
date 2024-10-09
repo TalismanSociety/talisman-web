@@ -16,4 +16,6 @@ export type SlpxSubstratePair = {
   vToken: SlpxSubstrateToken
   apiEndpoint: string
   estimatedRoundDuration: number
+  minStake: bigint
+  minRedeem: bigint
 }

@@ -29,7 +29,7 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
   const navigate = useNavigate()
   const [[account], accountSelector] = useAccountSelector(useRecoilValue(writeableSubstrateAccountsState), 0)
 
-  const { amount, setAmount, availableBalance, rate, newStakedTotal, extrinsic } = useStakeAddForm({
+  const { amount, setAmount, availableBalance, rate, newStakedTotal, extrinsic, error } = useStakeAddForm({
     slpxPair,
   })
 
@@ -66,7 +66,7 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
       </div>
       <Surface css={{ padding: '1.6rem', borderRadius: '1.6rem' }}>
         <SlpxAddStakeForm
-          confirmState={!amount ? 'disabled' : extrinsic.state === 'loading' ? 'pending' : undefined}
+          confirmState={!amount || !!error ? 'disabled' : extrinsic.state === 'loading' ? 'pending' : undefined}
           accountSelector={accountSelector}
           amount={amount}
           fiatAmount={fiatAmountAvailable}
@@ -81,8 +81,8 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
               setAmount(amountAfterFee.toString())
             }
           }}
-          // isError
-          // inputSupportingText={error?.message}
+          isError={!!error}
+          inputSupportingText={error?.message}
         />
       </Surface>
       <Text.Body as="p" css={{ marginTop: '4.8rem' }}>
