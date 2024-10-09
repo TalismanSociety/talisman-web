@@ -21,21 +21,10 @@ const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
     [amount]
   )
 
-  const nativeBalance = useMemo(
-    () =>
-      balances.find(
-        x =>
-          x.token?.symbol.toLowerCase() === slpxPair.nativeToken.symbol.toLowerCase() && x.chainId === slpxPair.chainId
-      ),
-    [balances, slpxPair.chainId, slpxPair.nativeToken.symbol]
-  )
-
   const liquidBalance = useMemo(
     () => balances.find(x => x.token?.symbol.toLowerCase() === slpxPair.vToken.symbol.toLowerCase()),
     [balances, slpxPair.vToken.symbol]
   )
-
-  const transferablePlanck = nativeBalance.sum.planck.transferable
 
   // @ts-expect-error
   const tx = api.tx.vtokenMinting.mint({ Token2: 0 }, decimalAmount?.planck ?? 0n, remark, channelId)
@@ -44,8 +33,6 @@ const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   // const [feeEstimate] = useStakeFormFeeEstimate(account?.address || '', tx) // TODO: Fee estimate is too High
 
   const mockedFeeEstimate = 1000000000n
-
-  const maxTransferablePlanck = transferablePlanck - mockedFeeEstimate
 
   const availableBalance = useAvailableBalance({ slpxPair, fee: mockedFeeEstimate })
 
@@ -61,7 +48,7 @@ const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
     }
   )
 
-  return { amount, setAmount, maxTransferablePlanck, availableBalance, rate, newStakedTotal, extrinsic }
+  return { amount, setAmount, availableBalance, rate, newStakedTotal, extrinsic }
 }
 
 export default useStakeAddForm
@@ -75,9 +62,16 @@ const useAvailableBalance = ({ slpxPair, fee }: { slpxPair: SlpxSubstratePair; f
 
   return useMemo(
     () => ({
-      amount: Decimal.fromPlanck(nativeBalance.sum.planck.transferable - fee, nativeBalance.each.at(0)?.decimals ?? 0, {
+      amount: Decimal.fromPlanck(nativeBalance.sum.planck.transferable, nativeBalance.each.at(0)?.decimals ?? 0, {
         currency: slpxPair.nativeToken.symbol,
       }),
+      amountAfterFee: Decimal.fromPlanck(
+        nativeBalance.sum.planck.transferable - fee,
+        nativeBalance.each.at(0)?.decimals ?? 0,
+        {
+          currency: slpxPair.nativeToken.symbol,
+        }
+      ),
       fiatAmount: Intl.NumberFormat('en', {
         style: 'currency',
         notation: 'compact',

@@ -33,7 +33,7 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
     slpxPair,
   })
 
-  const { amount: amountAvailable, fiatAmount: fiatAmountAvailable } = availableBalance
+  const { amount: amountAvailable, amountAfterFee, fiatAmount: fiatAmountAvailable } = availableBalance
 
   return (
     <SideSheet
@@ -77,8 +77,8 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
           rate={`1 ${slpxPair.nativeToken.symbol} = ${rate.toLocaleString()} ${slpxPair.vToken.symbol}`}
           onConfirm={() => extrinsic.signAndSend(account?.address ?? '').then(() => navigate('/staking/positions'))}
           onRequestMaxAmount={() => {
-            if (amountAvailable !== undefined) {
-              setAmount(amountAvailable.toString())
+            if (amountAfterFee !== undefined && amountAfterFee.planck > 0) {
+              setAmount(amountAfterFee.toString())
             }
           }}
           // isError
