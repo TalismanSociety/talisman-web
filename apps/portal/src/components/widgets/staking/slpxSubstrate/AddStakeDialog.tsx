@@ -10,7 +10,7 @@ type AddStakeDialogProps = {
 }
 
 const AddStakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: AddStakeDialogProps) => {
-  const { amount, setAmount, availableBalance, rate, newStakedTotal, extrinsic } = useStakeAddForm({
+  const { amount, setAmount, availableBalance, rate, newStakedTotal, extrinsic, error } = useStakeAddForm({
     slpxPair: slpxSubstratePair,
   })
 
@@ -18,7 +18,7 @@ const AddStakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: AddSta
 
   return (
     <SlpxAddStakeDialog
-      confirmState={!amount ? 'disabled' : extrinsic.state === 'loading' ? 'pending' : undefined}
+      confirmState={!amount ? 'disabled' : extrinsic?.state === 'loading' || !extrinsic ? 'pending' : undefined}
       open
       onDismiss={onRequestDismiss}
       amount={amount}
@@ -28,14 +28,14 @@ const AddStakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: AddSta
       onChangeAmount={setAmount}
       availableToStake={amountAvailable.toLocaleString()}
       rate={`1 ${slpxSubstratePair.nativeToken.symbol} = ${rate.toLocaleString()} ${slpxSubstratePair.vToken.symbol}`}
-      onConfirm={() => extrinsic.signAndSend(account?.address ?? '').then(() => onRequestDismiss())}
+      onConfirm={() => extrinsic?.signAndSend(account?.address ?? '').then(() => onRequestDismiss())}
       onRequestMaxAmount={() => {
         if (amountAvailable !== undefined) {
           setAmount(amountAvailable.toString())
         }
       }}
-      // isError={error !== undefined}
-      // inputSupportingText={error?.message}
+      isError={!!error}
+      inputSupportingText={error?.message}
     />
   )
 }

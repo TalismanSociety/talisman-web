@@ -10,7 +10,8 @@ import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   const [amount, setAmount] = useState<string>('')
-  const [balances, api] = useRecoilValue(waitForAll([selectedBalancesState, useSubstrateApiState()]))
+  const valueLoadable = useRecoilValueLoadable(waitForAll([selectedBalancesState, useSubstrateApiState()]))
+  const [balances, api] = valueLoadable.valueMaybe() ?? []
 
   const originTokenDecimals = 10
   const remark = import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman'
@@ -22,12 +23,16 @@ const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   )
 
   const liquidBalance = useMemo(
-    () => balances.find(x => x.token?.symbol.toLowerCase() === slpxPair.vToken.symbol.toLowerCase()),
+    () => balances?.find(x => x.token?.symbol.toLowerCase() === slpxPair.vToken.symbol.toLowerCase()),
     [balances, slpxPair.vToken.symbol]
   )
 
-  // @ts-expect-error
-  const tx = api.tx.vtokenMinting.mint({ Token2: 0 }, decimalAmount?.planck ?? 0n, remark, channelId)
+  const tx = useMemo(
+    // @ts-expect-error
+    () => api?.tx.vtokenMinting.mint({ Token2: 0 }, decimalAmount?.planck ?? 0n, remark, channelId),
+    [api?.tx.vtokenMinting, decimalAmount?.planck, remark]
+  )
+
   const extrinsic = useExtrinsic(tx)
 
   // const [feeEstimate] = useStakeFormFeeEstimate(account?.address || '', tx) // TODO: Fee estimate is too High
@@ -41,7 +46,8 @@ const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   const rate = rateLoadable.valueMaybe() ?? 0
 
   const newStakedTotal = Decimal.fromPlanck(
-    liquidBalance.sum.planck.total + ((decimalAmount?.planck || 0n) * BigInt(Math.floor(rate * 1000))) / BigInt(1000),
+    (liquidBalance?.sum.planck.total ?? 0n) +
+      ((decimalAmount?.planck || 0n) * BigInt(Math.floor(rate * 1000))) / BigInt(1000),
     originTokenDecimals,
     {
       currency: slpxPair.vToken.symbol,

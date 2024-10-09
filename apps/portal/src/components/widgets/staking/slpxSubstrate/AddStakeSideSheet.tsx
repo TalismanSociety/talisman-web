@@ -66,7 +66,9 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
       </div>
       <Surface css={{ padding: '1.6rem', borderRadius: '1.6rem' }}>
         <SlpxAddStakeForm
-          confirmState={!amount || !!error ? 'disabled' : extrinsic.state === 'loading' ? 'pending' : undefined}
+          confirmState={
+            !amount || !!error ? 'disabled' : extrinsic?.state === 'loading' || !extrinsic ? 'pending' : undefined
+          }
           accountSelector={accountSelector}
           amount={amount}
           fiatAmount={fiatAmountAvailable}
@@ -75,7 +77,7 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
           onChangeAmount={setAmount}
           availableToStake={amountAvailable.toLocaleString()}
           rate={`1 ${slpxPair.nativeToken.symbol} = ${rate.toLocaleString()} ${slpxPair.vToken.symbol}`}
-          onConfirm={() => extrinsic.signAndSend(account?.address ?? '').then(() => navigate('/staking/positions'))}
+          onConfirm={() => extrinsic?.signAndSend(account?.address ?? '').then(() => navigate('/staking/positions'))}
           onRequestMaxAmount={() => {
             if (amountAfterFee !== undefined && amountAfterFee.planck > 0) {
               setAmount(amountAfterFee.toString())
