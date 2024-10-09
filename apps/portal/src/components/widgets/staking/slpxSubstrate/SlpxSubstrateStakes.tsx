@@ -5,6 +5,7 @@ import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
+import UnstakeDialog from './UnstakeDialog'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import { StakePosition } from '@talismn/ui-recipes'
 import { StakePositionErrorBoundary } from '@talismn/ui-recipes'
@@ -19,6 +20,7 @@ const SlpxSubstrateStake = ({
   setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const [increaseStakeDialogOpen, setIncreaseStakeDialogOpen] = useState<boolean>(false)
+  const [unstakeDialogOpen, setUnstakeDialogOpen] = useState<boolean>(false)
   const { stakes, isLoading } = useStakes({ slpxSubstratePair })
 
   if (!isLoading) {
@@ -51,11 +53,9 @@ const SlpxSubstrateStake = ({
           assetSymbol={slpxSubstratePair.vToken.symbol}
           assetLogoSrc={slpxSubstratePair.vToken.logo}
           increaseStakeButton={<StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeDialogOpen(true)} />}
-          // unstakeButton={
-          //   props.position.balance.planck > 0n && (
-          //     <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} />
-          //   )
-          // }
+          unstakeButton={
+            stake.balance.planck > 0n && <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} />
+          }
           unstakingStatus={
             stake.unlocking !== undefined &&
             stake.unlocking.planck > 0n && (
@@ -68,6 +68,13 @@ const SlpxSubstrateStake = ({
             account={stake.account}
             slpxSubstratePair={slpxSubstratePair}
             onRequestDismiss={() => setIncreaseStakeDialogOpen(false)}
+          />
+        )}
+        {unstakeDialogOpen && (
+          <UnstakeDialog
+            slpxSubstratePair={slpxSubstratePair}
+            account={stake.account}
+            onRequestDismiss={() => setUnstakeDialogOpen(false)}
           />
         )}
       </ErrorBoundary>
