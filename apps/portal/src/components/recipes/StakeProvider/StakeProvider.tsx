@@ -12,7 +12,7 @@ import { Suspense, type ElementType, type PropsWithChildren, type ReactNode } fr
 export type StakeProviderProps = {
   logo: string
   symbol: ReactNode
-  chain: ReactNode
+  chain: string
   apr: ReactNode
   type: ReactNode
   provider: ReactNode
@@ -92,7 +92,7 @@ const StakeProvider = Object.assign(
               <Text.Body as="div" alpha="high">
                 {props.symbol}
               </Text.Body>
-              <Text.BodySmall as="div">{props.provider}</Text.BodySmall>
+              <Text.BodySmall as="div">{props.chain}</Text.BodySmall>
             </div>
           </div>
           <div css={{ gridArea: 'action', justifySelf: 'end', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
