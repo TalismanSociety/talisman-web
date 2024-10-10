@@ -27,6 +27,7 @@ const SlpxSubstrateStakeProviders = () => {
               symbol={symbol}
               logo={logo}
               chain={'Bifrost'}
+              chainId={slpxPair.chainId}
               apr={<Apr slpxPair={slpxPair} />}
               type="Liquid staking"
               provider={provider}

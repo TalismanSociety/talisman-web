@@ -78,6 +78,7 @@ const StakeProviders = () => {
                 symbol={symbol}
                 logo={logo}
                 chain={slpxPair.chain.name}
+                chainId={slpxPair.chain.id}
                 apr={<Apr slpxPair={slpxPair} />}
                 type="Liquid staking"
                 provider={provider}
