@@ -82,7 +82,7 @@ const StakeProvider = Object.assign(
     return (
       <div css={{ containerType: 'inline-size' }}>
         <Grid>
-          <div css={{ gridArea: 'asset', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <div css={{ gridArea: 'asset', display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
             <AssetLogoWithChain assetLogoUrl={props.logo} chainId={props.chainId ?? ''} />
 
             <div>

@@ -563,7 +563,7 @@ export const StakePositionList = (props: PropsWithChildren<{ className?: string 
         <Text.BodySmall css={{ width: '8.8rem', textAlign: 'end' }}>Actions</Text.BodySmall>
       </header>
     </div>
-    <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>{props.children}</div>
+    <div css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>{props.children}</div>
   </section>
 )
 
