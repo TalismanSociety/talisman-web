@@ -22,8 +22,8 @@ const useStakeRedeemForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   )
 
   const tx = useMemo(
-    () => api?.tx.vtokenMinting.redeem({ VToken2: 0 }, decimalAmount?.planck ?? 0n),
-    [api?.tx.vtokenMinting, decimalAmount?.planck]
+    () => api?.tx.vtokenMinting.redeem(slpxPair.vToken.tokenId, decimalAmount?.planck ?? 0n),
+    [api?.tx.vtokenMinting, decimalAmount?.planck, slpxPair.vToken.tokenId]
   )
   const extrinsic = useExtrinsic(tx)
 

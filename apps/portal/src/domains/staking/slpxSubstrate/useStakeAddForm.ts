@@ -29,8 +29,8 @@ const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
 
   const tx = useMemo(
     // @ts-expect-error
-    () => api?.tx.vtokenMinting.mint({ Token2: 0 }, decimalAmount?.planck ?? 0n, remark, channelId),
-    [api?.tx.vtokenMinting, decimalAmount?.planck, remark]
+    () => api?.tx.vtokenMinting.mint(slpxPair.nativeToken.tokenId, decimalAmount?.planck ?? 0n, remark, channelId),
+    [api?.tx.vtokenMinting, decimalAmount?.planck, remark, slpxPair.nativeToken.tokenId]
   )
 
   const extrinsic = useExtrinsic(tx)
