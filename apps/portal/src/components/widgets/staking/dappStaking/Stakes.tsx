@@ -12,7 +12,7 @@ import ErrorBoundary from '../../ErrorBoundary'
 import AddStakeDialog from './AddStakeDialog'
 import UnlockDuration from './UnlockDuration'
 import UnstakeDialog from './UnstakeDialog'
-import { StakePosition } from '@talismn/ui-recipes'
+import StakePosition from '@/components/recipes/StakePosition'
 import { StakePositionErrorBoundary } from '@talismn/ui-recipes'
 import { useState, useTransition } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -63,6 +63,7 @@ const Stake = ({
       <StakePosition
         readonly={account.readonly}
         chain={name}
+        chainId={chain.id}
         assetSymbol={symbol}
         assetLogoSrc={logo}
         account={account}

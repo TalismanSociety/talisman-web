@@ -6,8 +6,8 @@ import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
+import StakePosition from '@/components/recipes/StakePosition'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
-import { StakePosition } from '@talismn/ui-recipes'
 import { StakePositionErrorBoundary } from '@talismn/ui-recipes'
 import { useAtomValue } from 'jotai'
 import { useState } from 'react'
@@ -50,6 +50,7 @@ const SlpxSubstrateStake = ({
           balance={<RedactableBalance>{stake.balance?.toLocaleString()}</RedactableBalance>}
           fiatBalance={<AnimatedFiatNumber end={stake.fiatBalance} />}
           chain={slpxSubstratePair.chainName}
+          chainId={slpxSubstratePair.chainId || ''}
           assetSymbol={slpxSubstratePair.vToken.symbol}
           assetLogoSrc={slpxSubstratePair.vToken.logo}
           increaseStakeButton={<StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeDialogOpen(true)} />}

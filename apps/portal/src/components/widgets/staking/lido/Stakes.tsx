@@ -5,8 +5,8 @@ import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
 import LidoWidgetSideSheet from './LidoWidgetSideSheet'
+import StakePosition from '@/components/recipes/StakePosition'
 import { StakePositionErrorBoundary } from '@talismn/ui-recipes'
-import { StakePosition } from '@talismn/ui-recipes'
 import { useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
@@ -76,6 +76,7 @@ const LidoStakes = (props: {
               balance={<RedactableBalance>{stake.balance.toLocaleString()}</RedactableBalance>}
               fiatBalance={<AnimatedFiatNumber end={stake.fiatBalance} />}
               chain={props.lidoSuite.chain.name}
+              chainId={props.lidoSuite.chain.id}
               assetSymbol={symbol}
               assetLogoSrc={logo}
               withdrawButton={
