@@ -5,8 +5,8 @@ import { useInjectedAccountFastUnstakeEligibility } from '../../../../domains/fa
 import { useStakersRewardState } from '../../../../domains/staking/substrate/validator/recoils'
 import ErrorBoundary from '../../ErrorBoundary'
 import ValidatorStakeItem from './ValidatorStakeItem'
+import { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
 import { useDeriveState, useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
-import { StakePositionErrorBoundary } from '@talismn/ui-recipes'
 import { useMemo } from 'react'
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 

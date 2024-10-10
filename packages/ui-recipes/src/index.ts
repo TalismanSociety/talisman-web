@@ -1,7 +1,5 @@
 export * from './AccountIcon'
 export { default as AccountIcon } from './AccountIcon'
-export * from './StakePosition'
-export { default as StakePosition } from './StakePosition'
 export * from './DexForm/SwapForm'
 export { default as SwapForm } from './DexForm/SwapForm'
 export * from './DexForm/TransportForm'

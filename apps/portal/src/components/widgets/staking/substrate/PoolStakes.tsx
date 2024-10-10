@@ -3,7 +3,7 @@ import { useChainState } from '../../../../domains/chains'
 import { usePoolStakeLoadable } from '../../../../domains/staking/substrate/nominationPools/hooks'
 import ErrorBoundary from '../../ErrorBoundary'
 import PoolStakeItem from './PoolStakeItem'
-import { StakePositionErrorBoundary } from '@talismn/ui-recipes'
+import { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 type PoolStakeProps = {

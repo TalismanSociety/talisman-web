@@ -5,7 +5,7 @@ import ErrorBoundary from '../../ErrorBoundary'
 import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
-import { StakePosition } from '@talismn/ui-recipes'
+import StakePosition from '@/components/recipes/StakePosition'
 import { useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
@@ -57,6 +57,7 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
       <StakePosition
         readonly={account.readonly}
         chain={name}
+        chainId={chain?.id || ''}
         assetSymbol={symbol}
         assetLogoSrc={logo}
         account={account}

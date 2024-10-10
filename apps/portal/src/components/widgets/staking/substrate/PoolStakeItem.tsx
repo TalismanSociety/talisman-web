@@ -17,7 +17,7 @@ import ClaimStakeDialog from './ClaimStakeDialog'
 import NominationPoolsStatisticsSideSheet from './NominationPoolsStatisticsSideSheet'
 import PoolClaimPermissionDialog from './PoolClaimPermissionDialog'
 import UnstakeDialog from './UnstakeDialog'
-import { StakePosition } from '@talismn/ui-recipes'
+import StakePosition from '@/components/recipes/StakePosition'
 import { useCallback, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
@@ -56,6 +56,7 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
     <>
       <StakePosition
         chain={name}
+        chainId={chain?.id ?? ''}
         assetSymbol={symbol}
         assetLogoSrc={logo}
         readonly={item.account.readonly}

@@ -89,6 +89,7 @@ const StakeProviderItem = () => {
         symbol={symbol}
         logo={logo}
         chain={name}
+        chainId={chain?.id}
         apr={<Apr genesisHash={chain.genesisHash} />}
         type="Delegation"
         provider={name}

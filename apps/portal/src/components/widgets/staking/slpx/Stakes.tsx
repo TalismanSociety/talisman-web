@@ -8,8 +8,7 @@ import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
-import { StakePosition } from '@talismn/ui-recipes'
-import { StakePositionErrorBoundary } from '@talismn/ui-recipes'
+import StakePosition, { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
 import { useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
@@ -38,6 +37,7 @@ const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStake
         balance={<RedactableBalance>{props.position.balance.toLocaleString()}</RedactableBalance>}
         fiatBalance={<AnimatedFiatNumber end={props.position.fiatBalance} />}
         chain={props.slpxPair.chain.name}
+        chainId={props.slpxPair.chain.id}
         assetSymbol={props.position.balance.options?.currency}
         assetLogoSrc={props.slpxPair.vToken.logo}
         increaseStakeButton={<StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeDialogOpen(true)} />}
