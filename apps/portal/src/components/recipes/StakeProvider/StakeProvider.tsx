@@ -56,7 +56,7 @@ const Grid = (props: PropsWithChildren<{ className?: string }>) => (
   <Surface
     as="article"
     css={{
-      borderRadius: '0.8rem',
+      borderRadius: '1.6rem',
       padding: '1.6rem',
       display: 'grid',
       gridTemplateAreas: `
@@ -82,7 +82,17 @@ const StakeProvider = Object.assign(
     return (
       <div css={{ containerType: 'inline-size' }}>
         <Grid>
-          <div css={{ gridArea: 'asset', display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
+          <div
+            css={{
+              gridArea: 'asset',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1.2rem',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+          >
             <AssetLogoWithChain assetLogoUrl={props.logo} chainId={props.chainId ?? ''} />
 
             <div>

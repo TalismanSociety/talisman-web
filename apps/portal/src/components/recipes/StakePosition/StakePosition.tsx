@@ -187,7 +187,6 @@ export const FastUnstakingStatus = (props: { amount: ReactNode; status: 'in-head
 
 const StakePosition = Object.assign(
   (props: StakePositionProps) => {
-    const theme = useTheme()
     const shouldRenderMenuBtn = props.unstakeButton || props.lockedButton || props.menuButton
     return (
       <StakePositionContext.Provider value={{ readonly: props.readonly ?? false }}>
@@ -222,7 +221,6 @@ const StakePosition = Object.assign(
                     alignItems: 'center',
                     gap: '1.2rem',
                     width: '24rem',
-                    fontSize: theme.typography.bodyLarge.fontSize,
                   },
                 }}
               >
@@ -254,13 +252,7 @@ const StakePosition = Object.assign(
                     <span css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }}>
                       <StakeStatusIndicator status={props.stakeStatus} />{' '}
                     </span>
-                    <span
-                      css={{
-                        [MEDIUM_CONTAINER_QUERY]: { fontSize: theme.typography.body.fontSize },
-                      }}
-                    >
-                      {props.provider}
-                    </span>
+                    <span>{props.provider}</span>
                   </span>
                 </div>
               </Text.BodySmall>
@@ -315,12 +307,10 @@ const StakePosition = Object.assign(
                     [LARGE_CONTAINER_QUERY]: { display: 'contents' },
                   }}
                 >
-                  {' '}
-                  <Text.BodyLarge alpha="high">
+                  <Text.Body as="div" alpha="high">
                     {props.assetSymbol}
-                    <div css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }} />{' '}
-                    <Text.Body alpha="medium">{props.chain}</Text.Body>
-                  </Text.BodyLarge>
+                    <Text.BodySmall as="div">{props.chain}</Text.BodySmall>
+                  </Text.Body>
                 </span>
               </span>
             </section>
@@ -332,11 +322,11 @@ const StakePosition = Object.assign(
               >
                 Staked balance
               </Text.BodySmall>
-              <Text.BodyLarge as="div" alpha="high">
+              <Text.Body as="div" alpha="high">
                 {props.balance}
                 <div css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }} />{' '}
                 <Text.Body alpha="medium">{props.fiatBalance}</Text.Body>
-              </Text.BodyLarge>
+              </Text.Body>
             </section>
             <section css={{ flex: 1 }}>
               <Text.BodySmall
@@ -346,7 +336,7 @@ const StakePosition = Object.assign(
               >
                 Total rewards (all time)
               </Text.BodySmall>
-              <Text.BodyLarge as="div" alpha="high">
+              <Text.Body as="div" alpha="high">
                 <Suspense fallback={<CircularProgressIndicator size="1em" />}>
                   {props.rewards ?? <Text alpha="medium">--</Text>}
                 </Suspense>
@@ -356,7 +346,7 @@ const StakePosition = Object.assign(
                     {props.fiatRewards}
                   </Text.Body>
                 </Suspense>
-              </Text.BodyLarge>
+              </Text.Body>
             </section>
             <div css={{ [MEDIUM_CONTAINER_QUERY]: { width: '20rem', display: 'flex', justifyContent: 'start' } }}>
               <div>{props.withdrawButton || props.unstakingStatus}</div>
@@ -438,11 +428,11 @@ export const StakePositionErrorBoundary = (props: StakePositionErrorBoundaryProp
               }}
             >
               {' '}
-              <Text.BodyLarge alpha="high">
+              <Text.Body alpha="high">
                 {props.assetSymbol}
                 <div css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }} />{' '}
                 <Text.Body alpha="medium">{props.chain}</Text.Body>
-              </Text.BodyLarge>
+              </Text.Body>
             </span>
           </span>
         </section>
@@ -463,7 +453,6 @@ export const StakePositionErrorBoundary = (props: StakePositionErrorBoundaryProp
                 alignItems: 'center',
                 gap: '1.2rem',
                 width: '24rem',
-                fontSize: theme.typography.bodyLarge.fontSize,
               },
             }}
           >
@@ -495,13 +484,7 @@ export const StakePositionErrorBoundary = (props: StakePositionErrorBoundaryProp
                 <span css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }}>
                   <StakeStatusIndicator status={props.stakeStatus ?? 'not_earning_rewards'} />{' '}
                 </span>
-                <span
-                  css={{
-                    [MEDIUM_CONTAINER_QUERY]: { fontSize: theme.typography.body.fontSize },
-                  }}
-                >
-                  {props.provider}
-                </span>
+                <span>{props.provider}</span>
               </span>
             </div>
           </Text.BodySmall>
