@@ -28,6 +28,7 @@ type AmountInputProps =
       fiatAmount: ReactNode
       availableToStake: ReactNode
       error?: string
+      isLoading: boolean
     }
   | {
       disabled: true
@@ -50,7 +51,9 @@ const AmountInput = (props: AmountInputProps) => {
       leadingSupportingText={
         props.disabled
           ? ''
-          : Maybe.of(props.error).mapOr(props.fiatAmount, x => <TextInput.ErrorLabel>{x}</TextInput.ErrorLabel>)
+          : Maybe.of(props.isLoading ? undefined : props.error).mapOr(props.fiatAmount, x => (
+              <TextInput.ErrorLabel>{x}</TextInput.ErrorLabel>
+            ))
       }
       trailingSupportingText={
         <Button

@@ -36,6 +36,7 @@ export const StakeForm = (props: StakeFormProps) => {
           availableToStake={transferable.decimalAmount.toLocaleString()}
           assetSelector={props.assetSelector}
           error={error?.message}
+          isLoading={extrinsic.state === 'loading'}
         />
       }
       selectionInProgress={props.selectionInProgress}

@@ -29,6 +29,7 @@ type AmountInputProps = {
   fiatAmount: ReactNode
   availableToStake: ReactNode
   error?: string
+  isLoading: boolean
 }
 
 const AmountInput = (props: AmountInputProps) => (
@@ -42,7 +43,11 @@ const AmountInput = (props: AmountInputProps) => (
     leadingLabel="Available to stake"
     trailingLabel={props.availableToStake}
     leadingSupportingText={
-      isNilOrWhitespace(props.error) ? props.fiatAmount : <TextInput.ErrorLabel>{props.error}</TextInput.ErrorLabel>
+      isNilOrWhitespace(props.error) || props.isLoading ? (
+        props.fiatAmount
+      ) : (
+        <TextInput.ErrorLabel>{props.error}</TextInput.ErrorLabel>
+      )
     }
     trailingSupportingText={<SurfaceChip onClick={props.onRequestMaxAmount}>Max</SurfaceChip>}
     css={{ fontSize: '3rem' }}
