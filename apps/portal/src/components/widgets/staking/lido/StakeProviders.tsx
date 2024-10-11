@@ -102,6 +102,7 @@ const StakeProviders = () => {
               symbol={symbol}
               logo={logo}
               chain={lidoSuite.chain.name}
+              chainId={lidoSuite.chain.id}
               apr={<Apr lidoSuite={lidoSuite} />}
               type="Liquid staking"
               provider={provider}
