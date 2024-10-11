@@ -3,6 +3,7 @@ import ErrorBoundary from '../ErrorBoundary'
 import DappStakingProviders from './dappStaking/StakeProviders'
 import LidoStakeProviders from './lido/StakeProviders'
 import SlpxStakeProviders from './slpx/StakeProviders'
+import SlpxSubstrateStakeProviders from './slpxSubstrate/SlpxSubstrateStakeProviders'
 import NominationPoolsStakeProviders from './substrate/StakeProviders'
 import SubtensorStakeProviders from './subtensor/StakeProviders'
 
@@ -10,10 +11,13 @@ const StakeProviders = () => {
   return (
     <StakeProviderList>
       <ErrorBoundary orientation="horizontal">
+        <NominationPoolsStakeProviders />
+      </ErrorBoundary>
+      <ErrorBoundary orientation="horizontal">
         <SlpxStakeProviders />
       </ErrorBoundary>
       <ErrorBoundary orientation="horizontal">
-        <NominationPoolsStakeProviders />
+        <SlpxSubstrateStakeProviders />
       </ErrorBoundary>
       <ErrorBoundary orientation="horizontal">
         <SubtensorStakeProviders />

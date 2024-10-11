@@ -105,6 +105,7 @@ const StakeProviderItem = () => {
         symbol={symbol}
         logo={logo}
         chain={name}
+        chainId={chain?.id}
         apr={<Apr />}
         type="DApp staking"
         provider={name}

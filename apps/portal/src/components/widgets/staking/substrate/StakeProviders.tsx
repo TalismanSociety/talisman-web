@@ -82,7 +82,8 @@ const StakeProviderItem = () => {
       <StakeProvider
         symbol={chain.nativeToken?.symbol}
         logo={chain.nativeToken?.logo ?? ''}
-        chain={chain.name}
+        chain={chain.name ?? ''}
+        chainId={chain.id}
         apr={<Apr />}
         type="Nomination pool"
         provider={chain.name}

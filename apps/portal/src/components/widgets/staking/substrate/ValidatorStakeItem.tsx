@@ -13,10 +13,10 @@ import FastUnstakeDialog from '../../../recipes/FastUnstakeDialog'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import RedactableBalance from '../../RedactableBalance'
 import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
+import StakePosition from '@/components/recipes/StakePosition'
 import { type DeriveStakingAccount } from '@polkadot/api-derive/types'
 import { useDeriveState } from '@talismn/react-polkadot-api'
 import { CircularProgressIndicator } from '@talismn/ui'
-import { StakePosition } from '@talismn/ui-recipes'
 import BN from 'bn.js'
 import { useMemo, useState } from 'react'
 import { waitForAll, useRecoilValueLoadable } from 'recoil'
@@ -96,6 +96,7 @@ const ValidatorStakeItem = (props: {
     <>
       <StakePosition
         chain={name}
+        chainId={chain?.id ?? ''}
         assetSymbol={symbol}
         assetLogoSrc={logo}
         provider="Validator staking"

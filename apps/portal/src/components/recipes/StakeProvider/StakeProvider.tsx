@@ -1,3 +1,4 @@
+import AssetLogoWithChain from '../AssetLogoWithChain'
 import {
   Button,
   LinearProgressIndicator,
@@ -12,7 +13,8 @@ import { Suspense, type ElementType, type PropsWithChildren, type ReactNode } fr
 export type StakeProviderProps = {
   logo: string
   symbol: ReactNode
-  chain: ReactNode
+  chain: string
+  chainId?: string | number
   apr: ReactNode
   type: ReactNode
   provider: ReactNode
@@ -21,6 +23,7 @@ export type StakeProviderProps = {
   availableFiatBalance: ReactNode
   stakePercentage: ReactNode
   stakeButton: ReactNode
+  networkLogo?: string
 }
 
 const StakeButton = <T extends ElementType>(props: Omit<ButtonProps<T>, 'children'>) => (
@@ -53,7 +56,7 @@ const Grid = (props: PropsWithChildren<{ className?: string }>) => (
   <Surface
     as="article"
     css={{
-      borderRadius: '0.8rem',
+      borderRadius: '1.6rem',
       padding: '1.6rem',
       display: 'grid',
       gridTemplateAreas: `
@@ -79,20 +82,24 @@ const StakeProvider = Object.assign(
     return (
       <div css={{ containerType: 'inline-size' }}>
         <Grid>
-          <div css={{ gridArea: 'asset', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <img
-              src={props.logo}
-              css={{
-                width: '2em',
-                height: '2em',
-                borderRadius: '50%',
-              }}
-            />
+          <div
+            css={{
+              gridArea: 'asset',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1.2rem',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            <AssetLogoWithChain assetLogoUrl={props.logo} chainId={props.chainId ?? ''} />
+
             <div>
               <Text.Body as="div" alpha="high">
                 {props.symbol}
               </Text.Body>
-              <Text.BodySmall as="div">{props.provider}</Text.BodySmall>
+              <Text.BodySmall as="div">{props.chain}</Text.BodySmall>
             </div>
           </div>
           <div css={{ gridArea: 'action', justifySelf: 'end', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
