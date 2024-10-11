@@ -6,10 +6,10 @@ import {
   type ChainInfo,
 } from '../../../../domains/chains'
 import { DEFAULT_DELEGATE, MIN_SUBTENSOR_STAKE } from '../../../../domains/staking/subtensor/atoms/delegates'
-import { useAprFormatted } from '../../../../domains/staking/subtensor/hooks/useApr'
+import { Delegate } from '../../../../domains/staking/subtensor/atoms/delegates'
+import { useDelegateAprFormatted } from '../../../../domains/staking/subtensor/hooks/useApr'
 import { useDelegates } from '../../../../domains/staking/subtensor/hooks/useDelegates'
-import { useTaostatsToken } from '../../../../domains/staking/subtensor/hooks/useTaostatsToken'
-import { useTaostatsVolume24hFormatted } from '../../../../domains/staking/subtensor/hooks/useTaostatsVolume24h'
+import { useTotalTaoStakedFormatted } from '../../../../domains/staking/subtensor/hooks/useTotalTaoStakedFormatted'
 import { Maybe } from '../../../../util/monads'
 import { TalismanHandLoader } from '../../../legacy/TalismanHandLoader'
 import { useAccountSelector } from '../../AccountSelector'
@@ -28,18 +28,22 @@ type StakeSideSheetProps = {
   onRequestDismiss: () => unknown
 }
 
-const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismiss'>) => {
+type StakeSideSheetContentProps = Omit<StakeSideSheetProps, 'onRequestDismiss'> & {
+  delegate: Delegate | undefined
+  setDelegate: React.Dispatch<React.SetStateAction<Delegate | undefined>>
+}
+
+const StakeSideSheetContent = (props: StakeSideSheetContentProps) => {
   const [searchParams] = useSearchParams()
 
   const chain = useRecoilValue(useChainState())
-  const delegates = useDelegates()
   const [[account], accountSelector] = useAccountSelector(
     useRecoilValue(writeableSubstrateAccountsState),
     searchParams.get('account') === null
       ? 0
       : accounts => accounts?.find(x => x.address === searchParams.get('account'))
   )
-  const [delegate, setDelegate] = useState(delegates[DEFAULT_DELEGATE] ?? Object.values(delegates)[0])
+  const { delegate, setDelegate } = props
 
   const [delegateSelectorOpen, setDelegateSelectorOpen] = useState(false)
   const [delegateSelectorInTransition, startDelegateSelectorTransition] = useTransition()
@@ -101,10 +105,12 @@ const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, 'onRequestDismis
 }
 
 const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
-  const genesisHash = useRecoilValue(useChainState())?.genesisHash
-  const volume24h = useTaostatsVolume24hFormatted(genesisHash)
-  const rewards = useAprFormatted(genesisHash)
-  const token = useTaostatsToken(genesisHash)
+  const delegates = useDelegates()
+  const [delegate, setDelegate] = useState(delegates[DEFAULT_DELEGATE] ?? Object.values(delegates)[0])
+  const { nativeToken } = useRecoilValue(useChainState())
+
+  const totalStaked = useTotalTaoStakedFormatted()
+  const delegateApr = useDelegateAprFormatted(delegate?.address ?? DEFAULT_DELEGATE)
 
   return (
     <SubtensorStakingSideSheet
@@ -113,16 +119,16 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
       info={useMemo(
         () => [
           {
-            title: '24h Volume',
-            content: <>{volume24h}</>,
+            title: 'Total Staked',
+            content: <>{totalStaked}</>,
           },
-          { title: 'Estimated APR', content: <>{rewards}</> },
+          { title: 'Estimated APR', content: <>{delegateApr}</> },
         ],
-        [rewards, volume24h]
+        [delegateApr, totalStaked]
       )}
       minimumStake={
         <>
-          {MIN_SUBTENSOR_STAKE} {token}
+          {MIN_SUBTENSOR_STAKE} {nativeToken?.symbol}
         </>
       }
     >
@@ -144,7 +150,7 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
             </div>
           }
         >
-          <StakeSideSheetContent {...props} />
+          <StakeSideSheetContent {...props} delegate={delegate!} setDelegate={setDelegate} />
         </Suspense>
       </ErrorBoundary>
     </SubtensorStakingSideSheet>

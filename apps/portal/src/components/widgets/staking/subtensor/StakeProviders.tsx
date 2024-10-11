@@ -6,7 +6,7 @@ import {
   substrateApiState,
   useTokenAmountFromPlanck,
 } from '../../../../domains/common'
-import { useAprFormatted } from '../../../../domains/staking/subtensor/hooks/useApr'
+import { useHighestAprFormatted } from '../../../../domains/staking/subtensor/hooks/useApr'
 import StakeProvider from '../../../recipes/StakeProvider'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import ErrorBoundary from '../../ErrorBoundary'
@@ -20,7 +20,7 @@ import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-const Apr = ({ genesisHash }: { genesisHash?: string }) => <>{useAprFormatted(genesisHash)}</>
+const Apr = () => <>{useHighestAprFormatted()}</>
 
 const useAvailableBalance = () => {
   const apiId = usePolkadotApiId()
@@ -90,7 +90,7 @@ const StakeProviderItem = () => {
         logo={logo}
         chain={name}
         chainId={chain?.id}
-        apr={<Apr genesisHash={chain.genesisHash} />}
+        apr={<Apr />}
         type="Delegation"
         provider={name}
         unbondingPeriod={<UnlockDuration />}
