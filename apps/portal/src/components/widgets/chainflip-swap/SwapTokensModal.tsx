@@ -216,6 +216,7 @@ export const SwapTokensModal: React.FC<Props> = ({
                     onChangeText={setSearchText}
                     css={{ width: '100%' }}
                     className="w-full"
+                    autoComplete="off"
                   />
                 </div>
                 <Select

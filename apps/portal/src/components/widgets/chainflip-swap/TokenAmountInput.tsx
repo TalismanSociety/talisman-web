@@ -154,6 +154,7 @@ export const TokenAmountInput: React.FC<Props> = ({
 
   return (
     <TextInput
+      autoComplete="off"
       disabled={disabled}
       className="text-ellipsis !text-[18px] !font-semibold"
       containerClassName={cn(

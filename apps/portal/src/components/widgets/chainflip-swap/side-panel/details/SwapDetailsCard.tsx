@@ -85,7 +85,7 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
           const rate = tokenRates[fee.tokenId]?.[currency] ?? 0
           return acc + fee.amount.toNumber() * rate
         }, 0)
-        .toLocaleString(undefined, { style: 'currency', currency }),
+        .toLocaleString(undefined, { style: 'currency', currency, maximumSignificantDigits: 3 }),
     [currency, quote.fees, tokenRates]
   )
 
@@ -104,7 +104,9 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
         })}
       >
         <div className="flex items-center justify-between w-full ">
-          <p className="font-bold text-[14px]">{amount?.toLocaleString(undefined, { maximumFractionDigits: 4 })} </p>
+          <p className="font-bold text-[14px] truncate">
+            {amount?.toLocaleString(undefined, { maximumFractionDigits: 4 })}{' '}
+          </p>
           <div className="flex items-center justify-end gap-[8px]">
             <img src={quote.providerLogo} className="h-[20px] mb-[2px] rounded-full" />
             <p className="text-[12px] truncate max-w-60 font-semibold">{quote.providerName}</p>
@@ -131,7 +133,11 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
           <div className="flex items-center gap-[12px]">
             <p className="text-[12px] leading-[12px]">
               1 {fromAsset?.symbol} ={' '}
-              {toQuote?.toLocaleString(undefined, { maximumFractionDigits: toQuote.toNumber() > 1000 ? 0 : 4 })}
+              {toQuote?.toLocaleString(undefined, {
+                maximumFractionDigits: toQuote.toNumber() > 100 ? 0 : 4,
+                compactDisplay: 'short',
+                notation: 'compact',
+              })}
             </p>
             <p className="text-[12px] leading-[12px] text-muted-foreground">
               Fees <span className="text-[12px] leading-[12px] text-white">~{totalFee}</span>
