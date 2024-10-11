@@ -49,9 +49,11 @@ const AmountInput = (props: AmountInputProps) => {
       trailingLabel={props.disabled ? '...' : props.availableToStake}
       trailingIcon={props.assetSelector}
       leadingSupportingText={
-        props.disabled || props.isLoading
+        props.disabled
           ? ''
-          : Maybe.of(props.error).mapOr(props.fiatAmount, x => <TextInput.ErrorLabel>{x}</TextInput.ErrorLabel>)
+          : Maybe.of(props.isLoading ? undefined : props.error).mapOr(props.fiatAmount, x => (
+              <TextInput.ErrorLabel>{x}</TextInput.ErrorLabel>
+            ))
       }
       trailingSupportingText={
         <Button
