@@ -1,6 +1,7 @@
 import { SwapTokensModal } from './SwapTokensModal'
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
 import { selectedCurrencyState } from '@/domains/balances'
+import { useTokenRatesFromUsd } from '@/hooks/useTokenRatesFromUsd'
 import { cn } from '@/lib/utils'
 import { useTokenRates, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
@@ -27,6 +28,7 @@ type Props = {
   hideBalance?: boolean
   disableBtc?: boolean
   searchAtom: PrimitiveAtom<string>
+  usdOverride?: number
 }
 
 const hardcodedGasBufferByTokenSymbol: Record<string, number> = {
@@ -50,12 +52,14 @@ export const TokenAmountInput: React.FC<Props> = ({
   stayAliveBalance,
   disabled = false,
   searchAtom,
+  usdOverride,
 }) => {
   const [input, setInput] = useState((amount?.planck ?? 0n) > 0n ? amount?.toString() ?? '' : '')
 
   const currency = useRecoilValue(selectedCurrencyState)
   const tokens = useTokens()
   const rates = useTokenRates()
+
   const shouldDisplayBalance = useMemo(() => {
     if (hideBalance || !selectedAsset) return false
     if (selectedAsset?.networkType === 'evm') return !!evmAddress
@@ -93,6 +97,8 @@ export const TokenAmountInput: React.FC<Props> = ({
     [onChangeAmount, parseInput]
   )
 
+  const fiatOverride = useTokenRatesFromUsd(usdOverride)
+
   const bestGuessRate = useMemo(() => {
     if (!selectedAsset) return null
     const confirmedRate = rates[selectedAsset.id]
@@ -100,13 +106,13 @@ export const TokenAmountInput: React.FC<Props> = ({
     return Object.entries(rates ?? {}).find(([id]) => tokens[id]?.symbol === selectedAsset.symbol)?.[1]
   }, [selectedAsset, rates, tokens])
 
-  const usdValue = useMemo(() => {
+  const fiatValue = useMemo(() => {
     if (!selectedAsset) return null
-    if (!bestGuessRate || amount === undefined) return null
+    if (!bestGuessRate || amount === undefined) return fiatOverride?.[currency]
     const rateInCurrency = bestGuessRate[currency]
     if (!rateInCurrency) return null
     return +amount?.toString() * rateInCurrency
-  }, [amount, bestGuessRate, currency, selectedAsset])
+  }, [amount, bestGuessRate, currency, fiatOverride, selectedAsset])
 
   const insufficientBalance = useMemo(() => {
     if (availableBalance === undefined || !amount) return false
@@ -173,7 +179,7 @@ export const TokenAmountInput: React.FC<Props> = ({
       textBelowInput={
         <div className="flex items-center">
           <p className="text-gray-400 text-[10px] leading-none">
-            {(usdValue ?? 0)?.toLocaleString(undefined, { currency, style: 'currency' })}
+            {(fiatValue ?? 0)?.toLocaleString(undefined, { currency, style: 'currency' })}
           </p>
           {insufficientBalance ? (
             <p className="text-red-400 text-[10px] leading-none pl-[8px] ml-[8px] border-l border-l-gray-600">

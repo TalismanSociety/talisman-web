@@ -118,8 +118,10 @@ const Details: React.FC = () => {
   return (
     <div className="w-full flex flex-col gap-[8px]">
       <div className="flex items-center justify-between w-full">
-        {cachedQuotes.length > 0 ? (
-          <p className="text-muted-foreground text-[14px]">{cachedQuotes.length} Options</p>
+        {cachedQuotes.length > 0 && cachedQuotes.every(c => c.quote.state !== 'loading') ? (
+          <p className="text-muted-foreground text-[14px]">
+            {cachedQuotes.length} Option{cachedQuotes.length > 1 ? 's' : ''}
+          </p>
         ) : (
           <Skeleton.Surface className="h-[22.4px] w-[66px]" />
         )}

@@ -7,6 +7,7 @@ import {
   toAssetAtom,
 } from '../../swap-modules/common.swap-module'
 import { selectedCurrencyState } from '@/domains/balances'
+import { useTokenRatesFromUsd } from '@/hooks/useTokenRatesFromUsd'
 import { cn } from '@/lib/utils'
 import { useTokenRates, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
@@ -37,6 +38,17 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
     return Decimal.fromPlanck(amountOverride ?? quote.outputAmountBN, toAsset.decimals, { currency: toAsset.symbol })
   }, [amountOverride, quote.outputAmountBN, toAsset])
 
+  const usdOverride = useMemo(() => {
+    switch (quote.protocol) {
+      case 'lifi':
+        return quote.data?.toAmountUSD
+      default:
+        return null
+    }
+  }, [quote.data?.toAmountUSD, quote.protocol])
+
+  const fiatOverride = useTokenRatesFromUsd(usdOverride)
+
   const bestGuessRate = useMemo(() => {
     if (!toAsset) return null
     const confirmedRate = tokenRates[toAsset.id]
@@ -44,10 +56,10 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
     return Object.entries(tokenRates ?? {}).find(([id]) => tokens[id]?.symbol === toAsset.symbol)?.[1]
   }, [toAsset, tokenRates, tokens])
 
-  const usdValue = useMemo(() => {
-    if (!bestGuessRate || !amount) return null
-    return (bestGuessRate?.[currency] ?? 0) * amount.toNumber()
-  }, [amount, bestGuessRate, currency])
+  const fiatValue = useMemo(() => {
+    if (!bestGuessRate || !amount) return fiatOverride?.[currency]
+    return (bestGuessRate[currency] ?? 0) * amount.toNumber()
+  }, [amount, bestGuessRate, currency, fiatOverride])
 
   const time = useMemo(() => {
     const duration = intervalToDuration({ start: 0, end: quote.timeInSec * 1000 })
@@ -100,13 +112,13 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
         </div>
         <div className="flex items-center gap-[8px] mb-[16px] text-muted-foreground">
           <p className="font-normal text-[12px]">
-            {usdValue?.toLocaleString(undefined, { style: 'currency', currency })}
+            {(fiatValue ?? 0)?.toLocaleString(undefined, { style: 'currency', currency })}
           </p>
           <Tooltip
             content={
               <p className="max-w-[240px] text-[14px]">
                 This is the estimated amount, including the provider costs for exchange liquidity, gas fees, provider
-                rates and a 1.5% Talisman fee on this path.
+                rates and a {((quote.talismanFeeBps ?? 0) * 100).toFixed(2)}% Talisman fee on this path.
               </p>
             }
             placement="top"

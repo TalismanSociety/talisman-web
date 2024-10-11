@@ -21,6 +21,7 @@ import {
   fromSubstrateAddressAtom,
   toEvmAddressAtom,
   toSubstrateAddressAtom,
+  selectedSubProtocolAtom,
 } from './swap-modules/common.swap-module'
 import { lifiSwapModule } from './swap-modules/lifi.swap-module'
 import { simpleswapSwapModule } from './swap-modules/simpleswap-swap-module'
@@ -229,6 +230,17 @@ export const coingeckoCoinsByCategoryAtom = atomFamily((category: string) =>
     return await response.json()
   })
 )
+
+export const uniswapSafeTokensList = atom(async () => {
+  const response = await fetch('https://tokens.uniswap.org/')
+  return (await response.json()).tokens as { chainId: number; address: string }[]
+})
+
+export const uniswapExtendedTokensList = atom(async () => {
+  const response = await fetch('https://extendedtokens.uniswap.org/')
+  return (await response.json()).tokens as { chainId: number; address: string }[]
+})
+
 const coingeckoCoinByAddressAtom = atomFamily((addressPlatform: string) =>
   atom(async () => {
     const [address, platform] = addressPlatform.split(':')
@@ -408,7 +420,14 @@ export const swapQuotesAtom = loadable(
     const fromAsset = get(fromAssetAtom)
     const toAsset = get(toAssetAtom)
     const allQuoters = swapModules
-      .filter(m => (fromAsset && toAsset ? toAsset.context[m.protocol] && fromAsset.context[m.protocol] : true))
+      .filter(m =>
+        fromAsset && toAsset
+          ? // if both assets are evm, we automatically attempt to get quote from lifi
+            fromAsset.networkType === 'evm' && toAsset.networkType === 'evm' && m.protocol === 'lifi'
+            ? true
+            : toAsset.context[m.protocol] && fromAsset.context[m.protocol]
+          : true
+      )
       .map(module => module.quote)
     const fromAmount = get(fromAmountAtom)
     const substrateApiGetter = get(substrateApiGetterAtom)
@@ -474,10 +493,16 @@ export const sortedQuotesAtom = atom(async get => {
 export const selectedQuoteAtom = atom(async get => {
   const quotes = await get(sortedQuotesAtom)
   const selectedProtocol = get(selectedProtocolAtom)
+  const subProtocol = get(selectedSubProtocolAtom)
   if (!quotes) return null
   const quote =
-    quotes.find(q => q.quote.state === 'hasData' && q.quote.data && q.quote.data.protocol === selectedProtocol) ??
-    quotes[0]
+    quotes.find(
+      q =>
+        q.quote.state === 'hasData' &&
+        q.quote.data &&
+        q.quote.data.protocol === selectedProtocol &&
+        q.quote.data.subProtocol === subProtocol
+    ) ?? quotes[0]
   if (!quote) return null
   return quote
 })

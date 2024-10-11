@@ -1,4 +1,5 @@
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
+import { uniswapExtendedTokensList, uniswapSafeTokensList } from './swaps.api'
 import { selectedCurrencyState } from '@/domains/balances'
 import { useCopied } from '@/hooks/useCopied'
 import { truncateAddress } from '@/util/helpers'
@@ -7,6 +8,9 @@ import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { Skeleton, toast } from '@talismn/ui'
 import { Check, Copy, ExternalLink } from '@talismn/web-icons'
+import { useAtomValue } from 'jotai'
+import { loadable } from 'jotai/utils'
+import { AlertTriangle } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
@@ -18,7 +22,7 @@ type Props = {
   evmAddress?: `0x${string}`
   substrateAddress?: string
   erc20Address?: string
-  onClick: (asset: SwappableAssetWithDecimals) => void
+  onClick: (asset: SwappableAssetWithDecimals, showWarning: boolean) => void
   balance?: Decimal
   explorerUrl?: string
 }
@@ -38,6 +42,23 @@ export const SwapTokenRow: React.FC<Props> = ({
   const rates = useTokenRates()
   const tokens = useTokens()
   const { copied, copy } = useCopied()
+  const uniswapSafeList = useAtomValue(loadable(uniswapSafeTokensList))
+  const uniswapExtendedList = useAtomValue(loadable(uniswapExtendedTokensList))
+
+  const isSafe = useMemo(
+    () =>
+      uniswapSafeList.state === 'hasData'
+        ? uniswapSafeList.data.some(t => t.address.toLowerCase() === erc20Address?.toLowerCase())
+        : false,
+    [erc20Address, uniswapSafeList]
+  )
+  const isExtended = useMemo(
+    () =>
+      uniswapExtendedList.state === 'hasData'
+        ? uniswapExtendedList.data.some(t => t.address.toLowerCase() === erc20Address?.toLowerCase())
+        : false,
+    [erc20Address, uniswapExtendedList]
+  )
 
   const bestGuessRate = useMemo(() => {
     if (!tokens) return undefined
@@ -46,9 +67,14 @@ export const SwapTokenRow: React.FC<Props> = ({
 
   const rate = useMemo(() => rates?.[asset.id] ?? bestGuessRate, [asset.id, bestGuessRate, rates])
 
+  const shouldShowWarning = useMemo(
+    () => !isExtended && !isSafe && erc20Address !== undefined,
+    [erc20Address, isExtended, isSafe]
+  )
+
   const handleClick = useCallback(() => {
-    onClick(asset)
-  }, [asset, onClick])
+    onClick(asset, shouldShowWarning)
+  }, [asset, onClick, shouldShowWarning])
 
   return (
     <div
@@ -71,7 +97,10 @@ export const SwapTokenRow: React.FC<Props> = ({
           />
         </div>
         <div className="flex flex-col gap-[4px] overflow-hidden">
-          <p className="text-[14px] leading-none">{asset.symbol}</p>
+          <div className="flex items-center gap-[4px]">
+            <p className="text-[14px] leading-none">{asset.symbol}</p>
+            {shouldShowWarning && <AlertTriangle className="text-gray-400" size={14} />}
+          </div>
           <p className="text-[12px] truncate leading-none !text-muted-foreground">{asset.name}</p>
         </div>
       </div>

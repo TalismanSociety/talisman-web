@@ -241,7 +241,7 @@ const quote: QuoteFunction = loadable(
         protocol: PROTOCOL,
         inputAmountBN: fromAmount.planck,
         outputAmountBN: BigInt(quote.quote.egressAmount),
-        talismanFeeBps: CHAINFLIP_COMMISSION_BPS,
+        talismanFeeBps: CHAINFLIP_COMMISSION_BPS / 10000,
         fees,
         data: quote,
         timeInSec: quote.quote.estimatedDurationSeconds,

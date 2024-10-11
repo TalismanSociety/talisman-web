@@ -60,6 +60,18 @@ export const ChainFlipSwap: React.FC = () => {
   const balances = useAtomValue(loadable(fromAssetsBalancesAtom))
   const quotes = useAtomValue(swapQuotesAtom)
 
+  const toAmountUsdOverride = useMemo(() => {
+    if (quote.state !== 'hasData' || !quote.data) return undefined
+    if (quote.data.quote.state !== 'hasData' || !quote.data.quote.data) return undefined
+
+    switch (quote.data.quote.data.protocol) {
+      case 'lifi':
+        return +(quote.data.quote.data.data?.toAmountUSD ?? 0)
+      default:
+        return undefined
+    }
+  }, [quote])
+
   // reset when any of the inputs change
   useEffect(() => {
     setCachedToAmount(undefined)
@@ -187,6 +199,7 @@ export const ChainFlipSwap: React.FC = () => {
             disabled
             hideBalance
             searchAtom={swapToSearchAtom}
+            usdOverride={toAmountUsdOverride}
           />
         </Surface>
         <FromAccount

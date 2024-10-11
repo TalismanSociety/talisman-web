@@ -32,6 +32,7 @@ if (!APIKEY && import.meta.env.DEV) throw new Error('env var REACT_APP_SIMPLESWA
 const PROTOCOL = 'simpleswap'
 const PROTOCOL_NAME = 'SimpleSwap'
 const DECENTRALISATION_SCORE = 1
+const TALISMAN_FEE = 0.015
 
 const LOGO = simpleswapLogo
 
@@ -334,6 +335,7 @@ const quote: QuoteFunction = loadable(
             fees: [],
             providerLogo: LOGO,
             providerName: PROTOCOL_NAME,
+            talismanFeeBps: TALISMAN_FEE,
           }
         }
         return null
@@ -351,6 +353,7 @@ const quote: QuoteFunction = loadable(
         fees: gasFee ? [gasFee] : [],
         providerLogo: LOGO,
         providerName: PROTOCOL_NAME,
+        talismanFeeBps: TALISMAN_FEE,
       }
     } catch (e) {
       console.error(e)
@@ -364,6 +367,7 @@ const quote: QuoteFunction = loadable(
         fees: [],
         providerLogo: LOGO,
         providerName: PROTOCOL_NAME,
+        talismanFeeBps: TALISMAN_FEE,
       }
     }
   })

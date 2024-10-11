@@ -23,6 +23,7 @@ import * as allEvmChains from 'viem/chains'
 
 const PROTOCOL = 'lifi' as const
 const DECENTRALISATION_SCORE = 2
+const TALISMAN_FEE = 0.002
 
 sdk.createConfig({
   integrator: 'talisman',
@@ -84,7 +85,7 @@ const routesAtom = atom(async get => {
       toTokenAddress: toAsset.contractAddress ?? zeroAddress,
       options: {
         integrator: 'talisman',
-        fee: 0.002,
+        fee: TALISMAN_FEE,
       },
     })
   } catch (e) {
@@ -127,6 +128,7 @@ const subProviderQuoteAtom = atomFamily((id: string) =>
       return {
         decentralisationScore: DECENTRALISATION_SCORE,
         fees,
+        talismanFeeBps: TALISMAN_FEE,
         inputAmountBN: BigInt(step.estimate.fromAmount),
         outputAmountBN: BigInt(route.toAmountMin),
         protocol: PROTOCOL,
