@@ -491,6 +491,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
             fiatAmount={localizedFiatAmount}
             availableToStake={availableBalance.decimalAmount?.toLocaleString() ?? '...'}
             error={inputError?.message}
+            isLoading={joinPoolExtrinsic.state === 'loading'}
           />
         }
         poolInfo={
