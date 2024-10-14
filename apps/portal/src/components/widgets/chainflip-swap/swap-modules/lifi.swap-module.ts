@@ -59,8 +59,9 @@ export const fromAssetsSelector = atom(async (get): Promise<SwappableAssetBaseTy
 
 const routesAtom = atom(async get => {
   try {
-    const fromAddress = get(fromAddressAtom) ?? '0x70045A9F59A354550EC0272f73AAe03B01Fb8a7a'
-    const toAddress = get(toAddressAtom) ?? '0x70045A9F59A354550EC0272f73AAe03B01Fb8a7a'
+    const SWAP_PLACEHOLDER_ADDRESS = '0x70045A9F59A354550EC0272f73AAe03B01Fb8a7a'
+    const fromAddress = get(fromAddressAtom) ?? SWAP_PLACEHOLDER_ADDRESS
+    const toAddress = get(toAddressAtom) ?? SWAP_PLACEHOLDER_ADDRESS
     const fromAsset = get(fromAssetAtom)
     const toAsset = get(toAssetAtom)
     const fromAmount = get(fromAmountAtom)

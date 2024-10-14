@@ -60,34 +60,36 @@ const Details: React.FC = () => {
   const fromAsset = useAtomValue(fromAssetAtom)
   const toAsset = useAtomValue(toAssetAtom)
 
+  // Reset cached quotes when any of the swap parameters change
   useEffect(() => {
     setCachedQuotes([])
   }, [fromAmount, fromAsset, toAsset])
 
+  // Update cached quotes when quotes change
   useEffect(() => {
     if (quotes.state === 'hasData' && quotes.data) {
-      if (quotes.data.every(q => q.quote.state === 'hasData')) setCachedQuotes(quotes.data)
+      const allQuotesLoaded = quotes.data.every(q => q.quote.state !== 'loading')
+      setCachedQuotes(prev => (prev.length === 0 || allQuotesLoaded ? quotes.data! : prev))
     }
   }, [quotes])
 
   useEffect(() => {
-    if (cachedQuotes.length === 0 && quotes.state === 'hasData' && quotes.data?.length) setCachedQuotes(quotes.data)
-  }, [cachedQuotes, quotes])
-
-  useEffect(() => {
-    if (!cachedQuotes.find(q => q.quote.state === 'hasData' && q.quote.data?.protocol === selectedProtocol)) {
+    // Reset protocol selection if no valid protocol found in cached quotes
+    const isSelectedProtocolAvailable = !cachedQuotes.find(
+      q => q.quote.state === 'hasData' && q.quote.data?.protocol === selectedProtocol
+    )
+    if (isSelectedProtocolAvailable) {
       setSelectedProtocol(null)
       setSelectedSubProtocol(undefined)
     }
-  }, [selectedProtocol, setSelectedProtocol, quotes, cachedQuotes, setSelectedSubProtocol])
 
-  useEffect(() => {
+    // Select default subprotocol if nothing is selected and the first quote has a subprotocol
     if ((!selectedSubProtocol || !selectedProtocol) && cachedQuotes.length > 0) {
       const defaultQuote = cachedQuotes[0]
       if (defaultQuote?.quote.state === 'hasData' && defaultQuote.quote.data?.subProtocol)
         setSelectedSubProtocol(defaultQuote.quote.data?.subProtocol)
     }
-  }, [cachedQuotes, selectedProtocol, selectedSubProtocol, setSelectedSubProtocol])
+  }, [selectedProtocol, setSelectedProtocol, quotes, cachedQuotes, setSelectedSubProtocol, selectedSubProtocol])
 
   if (swapping)
     return (
