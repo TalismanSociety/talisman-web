@@ -10,7 +10,7 @@ import { atomWithStorage, createJSONStorage, unstable_withStorageValidator } fro
 import { Loadable } from 'jotai/vanilla/utils/loadable'
 import 'recoil'
 import { isAddress, type TransactionRequest, type WalletClient } from 'viem'
-import { mainnet, bsc, arbitrum, optimism, blast, polygon, manta } from 'viem/chains'
+import { mainnet, bsc, arbitrum, optimism, blast, polygon, manta, moonriver, moonbeam } from 'viem/chains'
 
 export const supportedEvmChains = {
   eth: mainnet,
@@ -20,6 +20,8 @@ export const supportedEvmChains = {
   blast: blast,
   polygon: polygon,
   manta: manta,
+  movr: moonriver,
+  glmr: moonbeam,
 }
 
 export type SupportedSwapProtocol = 'chainflip' | 'simpleswap' | 'lifi'

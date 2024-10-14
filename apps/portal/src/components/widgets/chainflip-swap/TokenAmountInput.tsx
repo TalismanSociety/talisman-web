@@ -120,7 +120,7 @@ export const TokenAmountInput: React.FC<Props> = ({
   }, [amount, availableBalance])
 
   const accountWouldBeReaped = useMemo(() => {
-    if (!stayAliveBalance || !amount) return false
+    if (!stayAliveBalance || !amount || amount.planck === 0n) return false
     return stayAliveBalance.planck < amount.planck
   }, [amount, stayAliveBalance])
 

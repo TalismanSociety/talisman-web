@@ -1,5 +1,5 @@
 import { substrateApiGetterAtom } from '../../../domains/common/recoils/api'
-import { popularTokens } from './curated-tokens'
+import { popularTokens, talismanTokens } from './curated-tokens'
 import { knownEvmNetworksAtom } from './helpers'
 import { swapInfoTabAtom } from './side-panel'
 import { chainflipSwapModule, type ChainflipSwapActivityData } from './swap-modules/chainflip.swap-module'
@@ -140,9 +140,10 @@ export const tokenTabs: {
     sort: (a, b) => popularTokens.indexOf(a.id) - popularTokens.indexOf(b.id),
   },
   {
-    value: 'artificial-intelligence',
-    label: 'AI',
-    coingecko: true,
+    value: 'talisman',
+    label: 'Talisman',
+    filter: token => talismanTokens.includes(token.id) ?? false,
+    sort: (a, b) => talismanTokens.indexOf(a.id) - talismanTokens.indexOf(b.id),
   },
   {
     value: 'meme-token',
@@ -150,13 +151,13 @@ export const tokenTabs: {
     coingecko: true,
   },
   {
-    value: 'layer-2',
-    label: 'L2s',
+    value: 'liquid-staking-tokens',
+    label: 'LSTs',
     coingecko: true,
   },
   {
-    value: 'decentralized-finance-defi',
-    label: 'Defi',
+    value: 'artificial-intelligence',
+    label: 'AI',
     coingecko: true,
   },
   {
@@ -165,13 +166,13 @@ export const tokenTabs: {
     coingecko: true,
   },
   {
-    value: 'real-world-assets-rwa',
-    label: 'RWA',
+    value: 'decentralized-finance-defi',
+    label: 'Defi',
     coingecko: true,
   },
   {
-    value: 'metaverse',
-    label: 'Metaverse',
+    value: 'layer-2',
+    label: 'L2s',
     coingecko: true,
   },
 ]

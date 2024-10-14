@@ -109,7 +109,9 @@ const Details: React.FC = () => {
   if (quotes.state === 'hasError' || cachedQuotes.every(q => q.quote?.state === 'hasError'))
     return (
       <SwapDetailsError
-        message={(quotes.state === 'hasError' ? (quotes.error as any) : {})?.message ?? 'No route found.'}
+        message={
+          (quotes.state === 'hasError' ? (quotes.error as any) : {})?.message ?? 'No route found. Try larger amount.'
+        }
       />
     )
   if (quotes.state === 'hasData' && quotes.data?.length === 0)
