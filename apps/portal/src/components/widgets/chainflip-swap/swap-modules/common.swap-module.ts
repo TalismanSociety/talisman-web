@@ -10,8 +10,21 @@ import { atomWithStorage, createJSONStorage, unstable_withStorageValidator } fro
 import { Loadable } from 'jotai/vanilla/utils/loadable'
 import 'recoil'
 import { isAddress, type TransactionRequest, type WalletClient } from 'viem'
+import { mainnet, bsc, arbitrum, optimism, blast, polygon, manta, moonriver, moonbeam } from 'viem/chains'
 
-export type SupportedSwapProtocol = 'chainflip' | 'simpleswap'
+export const supportedEvmChains = {
+  eth: mainnet,
+  bsc: bsc,
+  arbitrum: arbitrum,
+  optimism: optimism,
+  blast: blast,
+  polygon: polygon,
+  manta: manta,
+  movr: moonriver,
+  glmr: moonbeam,
+}
+
+export type SupportedSwapProtocol = 'chainflip' | 'simpleswap' | 'lifi'
 
 export type SwappableAssetBaseType<TContext = Partial<Record<SupportedSwapProtocol, any>>> = {
   id: string
@@ -24,6 +37,7 @@ export type SwappableAssetBaseType<TContext = Partial<Record<SupportedSwapProtoc
   networkType: 'evm' | 'substrate' | 'btc'
   /** protocol modules can store context here, like any special identifier */
   context: TContext
+  decimals?: number
 }
 
 export type SwappableAssetWithDecimals<TContext = Partial<Record<SupportedSwapProtocol, any>>> = {
@@ -36,16 +50,19 @@ type QuoteFee = {
   tokenId: string
 }
 
-export type BaseQuote = {
+export type BaseQuote<TData = any> = {
   decentralisationScore: number
   protocol: SupportedSwapProtocol
+  subProtocol?: string
   outputAmountBN: bigint
   inputAmountBN: bigint
   error?: string
   fees: QuoteFee[]
   talismanFeeBps?: number
-  data?: any
+  data?: TData
   timeInSec: number
+  providerLogo: string
+  providerName: string
 }
 
 type SwapProps = {
@@ -74,7 +91,9 @@ export type EstimateGasTx =
       tx: SubmittableExtrinsic<'promise'>
     }
 
-export type QuoteFunction = Atom<Loadable<Promise<BaseQuote | null>>>
+export type QuoteFunction<TData = any> = Atom<
+  Loadable<Promise<BaseQuote<TData> | Loadable<Promise<BaseQuote<TData> | null>>[] | null>>
+>
 export type SwapFunction<TData> = (
   get: Getter,
   set: Setter,
@@ -95,6 +114,14 @@ export type SwapModule = {
 
   // talisman curated data
   decentralisationScore: number
+  approvalAtom?: Atom<{
+    contractAddress: string
+    amount: bigint
+    tokenAddress: string
+    chainId: number
+    fromAddress: string
+    protocolName: string
+  } | null>
 }
 
 // atoms shared between swap modules
@@ -113,6 +140,7 @@ export const validateAddress = (address: string, networkType: 'evm' | 'substrate
 }
 
 export const selectedProtocolAtom = atom<SupportedSwapProtocol | null>(null)
+export const selectedSubProtocolAtom = atom<string | undefined>(undefined)
 export const fromAssetAtom = atom<SwappableAssetWithDecimals | null>(null)
 export const fromAmountAtom = atom<Decimal>(Decimal.fromPlanck(0n, 1))
 export const fromSubstrateAddressAtom = atom<string | null>(null)

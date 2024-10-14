@@ -44,7 +44,7 @@ export const SidePanel: React.FC = () => {
   }, [tab])
 
   return (
-    <div className="mt-[16px] md:mt-0 w-full md:w-3/4 border border-gray-700 border-r border-b rounded-[12px] md:rounded-l-0 md:border-l-[64px] md:border-l-[transparent]">
+    <div className="mt-[16px] md:mt-0 w-full md:w-4/5 border border-gray-700 border-r border-b rounded-[12px] md:rounded-l-0 md:border-l-[64px] md:border-l-[transparent]">
       <div className="md:ml-[-64px] w-full md:w-[calc(100%+64px)] p-[16px] flex flex-col jsutify-between h-full gap-[16px] flex-1">
         <div className="flex items-center justify-between">
           <h4 className="text-[16px] font-semibold">Swap</h4>

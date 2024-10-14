@@ -23,11 +23,16 @@ export const useAddStakeForm = (account: Account, stake: Stake, delegate: string
   const [input, setInput] = useState('')
   const amount = useTokenAmount(input)
 
-  const feeEstimateTx: SubmittableExtrinsic<any> = useMemo(
-    () => (api.tx as any)?.subtensorModule?.addStake?.(delegate, accountInfo.data.free.toBigInt() ?? 0n),
-    [accountInfo.data.free, api.tx, delegate]
+  const tx: SubmittableExtrinsic<any> = useMemo(
+    () =>
+      api.tx.utility.batchAll([
+        (api.tx as any)?.subtensorModule?.addStake?.(delegate, amount.decimalAmount?.planck ?? 0n),
+        api.tx.system.remarkWithEvent(`talisman-bittensor`),
+      ]),
+    [api.tx, delegate, amount.decimalAmount?.planck]
   )
-  const [feeEstimate, isFeeEstimateReady] = useStakeFormFeeEstimate(account.address, feeEstimateTx)
+
+  const [feeEstimate, isFeeEstimateReady] = useStakeFormFeeEstimate(account.address, tx)
 
   const existentialDeposit = useMemo(
     () => api.consts.balances.existentialDeposit.toBigInt(),
@@ -88,14 +93,6 @@ export const useAddStakeForm = (account: Account, stake: Stake, delegate: string
     transferable.decimalAmount.planck,
   ])
 
-  const tx: SubmittableExtrinsic<any> = useMemo(
-    () =>
-      api.tx.utility.batchAll([
-        (api.tx as any)?.subtensorModule?.addStake?.(delegate, amount.decimalAmount?.planck ?? 0n),
-        api.tx.system.remarkWithEvent(`talisman-bittensor`),
-      ]),
-    [api.tx, delegate, amount.decimalAmount?.planck]
-  )
   const extrinsic = useExtrinsic(tx)
 
   const ready = isFeeEstimateReady && (amount.decimalAmount?.planck ?? 0n) > 0n && error === undefined

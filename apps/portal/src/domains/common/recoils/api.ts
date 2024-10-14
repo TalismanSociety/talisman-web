@@ -2,7 +2,7 @@ import { useSubstrateApiEndpoint } from '..'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import * as AvailJsSdk from 'avail-js-sdk'
 import { atom, useAtom } from 'jotai'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { selectorFamily, useRecoilCallback } from 'recoil'
 
 export const substrateApiState = selectorFamily<ApiPromise, string | undefined>({
@@ -27,9 +27,12 @@ export const substrateApiState = selectorFamily<ApiPromise, string | undefined>(
 
 export const useSubstrateApiState = () => substrateApiState(useSubstrateApiEndpoint())
 
-export const substrateApiGetterAtom = atom<{ getApi: (endpoint: string) => Promise<ApiPromise> } | null>(null)
+export const substrateApiGetterAtom = atom<{
+  getApi: (endpoint: string) => Promise<ApiPromise>
+} | null>(null)
 
 export const useSetJotaiSubstrateApiState = () => {
+  const initRef = useRef(false)
   const [substrateApiGetter, setSubstrateApiGetter] = useAtom(substrateApiGetterAtom)
 
   const getSubstrateApi = useRecoilCallback(
@@ -39,6 +42,11 @@ export const useSetJotaiSubstrateApiState = () => {
   )
 
   useEffect(() => {
-    if (substrateApiGetter === null) setSubstrateApiGetter({ getApi: getSubstrateApi })
+    if (substrateApiGetter === null && !initRef.current) {
+      // somehow this causes infinite rerender and substrateApiGetter is always null
+      setSubstrateApiGetter({ getApi: getSubstrateApi })
+      // this is a hack to prevent infinite rerender
+      initRef.current = true
+    }
   }, [getSubstrateApi, setSubstrateApiGetter, substrateApiGetter])
 }

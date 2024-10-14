@@ -13,3 +13,18 @@ export const popularTokens: string[] = [
   '169-evm-native',
   '169-evm-erc20-0x95cef13441be50d20ca4558cc0a27b601ac544e5',
 ]
+
+export const talismanTokens: string[] = [
+  'astar-substrate-native',
+  '1-evm-erc20-0xb59490ab09a0f526cc7305822ac65f2ab12f9723',
+  'aleph-zero-substrate-native',
+  'kusama-substrate-native',
+  '1-evm-erc20-0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
+  'acala-substrate-native',
+  '1-evm-erc20-0x2da719db753dfa10a62e140f436e1d67f2ddb0d6',
+  '1284-evm-native',
+  '1285-evm-native',
+  'avail-substrate-native',
+  '1-evm-erc20-0xaa7a9ca87d3694b5755f213b5d04094b8d0f0a6f',
+  '1-evm-erc20-0xc221b7e65ffc80de234bbb6667abdd46593d34f0',
+]

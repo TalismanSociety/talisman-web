@@ -1,4 +1,5 @@
 import { knownEvmNetworksAtom } from '../helpers'
+import chainflipLogo from '../side-panel/details/logos/chainflip-logo.png'
 import {
   fromAmountAtom,
   fromAssetAtom,
@@ -36,6 +37,7 @@ import { createPublicClient, encodeFunctionData, erc20Abi, http, isAddress } fro
 import { arbitrum, mainnet, sepolia } from 'viem/chains'
 
 const PROTOCOL: SupportedSwapProtocol = 'chainflip'
+const PROTOCOL_NAME = 'Chainflip'
 const DECENTRALISATION_SCORE = 2
 const EVM_CHAINS = [mainnet, sepolia, arbitrum]
 
@@ -200,9 +202,13 @@ const quote: QuoteFunction = loadable(
         error: `Minimum input amount: ${minFromAmount.toLocaleString()} ${fromAsset.symbol}`,
         fees: [],
         timeInSec: 0,
+        providerLogo: chainflipLogo,
+        providerName: PROTOCOL_NAME,
       }
 
     try {
+      // force refresh
+      get(swapQuoteRefresherAtom)
       const quote = await sdk.getQuote({
         amount: fromAmount.planck.toString(),
         srcAsset: chainflipFromAsset.asset,
@@ -235,10 +241,12 @@ const quote: QuoteFunction = loadable(
         protocol: PROTOCOL,
         inputAmountBN: fromAmount.planck,
         outputAmountBN: BigInt(quote.quote.egressAmount),
-        talismanFeeBps: CHAINFLIP_COMMISSION_BPS,
+        talismanFeeBps: CHAINFLIP_COMMISSION_BPS / 10000,
         fees,
         data: quote,
         timeInSec: quote.quote.estimatedDurationSeconds,
+        providerLogo: chainflipLogo,
+        providerName: PROTOCOL_NAME,
       }
     } catch (_error) {
       console.error(_error)
@@ -259,6 +267,8 @@ const quote: QuoteFunction = loadable(
         error: errorMessage,
         fees: [],
         timeInSec: 0,
+        providerLogo: chainflipLogo,
+        providerName: PROTOCOL_NAME,
       }
     }
   })
