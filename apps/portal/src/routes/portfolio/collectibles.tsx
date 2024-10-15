@@ -52,14 +52,22 @@ const NFT_CARD_WIDTH = 290
 
 const NftTagContext = createContext<NftTag | undefined>(undefined)
 
-const toIpfsCompatibleUrl = (url: string, options?: { imgWidth?: number }) => {
+const toIpfsCompatibleUrl = (url: string, options?: { imgWidth?: number }, nft?: Nft) => {
   const pattern = /ipfs:\/\/(ipfs\/)?/
 
   if (!url.match(pattern)) {
     return url
   }
 
-  const gatewayUrl = new URL(url.replace(/ipfs:\/\/(ipfs\/)?/, 'https://talisman.mypinata.cloud/ipfs/'))
+  const OG_WUD_BURN_COLLECTION_ID = '244'
+  const shouldUseKodadot = nft?.chain === 'polkadot-asset-hub' && nft.collection?.id === OG_WUD_BURN_COLLECTION_ID
+
+  const gatewayUrl = new URL(
+    url.replace(
+      /ipfs:\/\/(ipfs\/)?/,
+      shouldUseKodadot ? 'https://image.w.kodadot.xyz/ipfs/' : 'https://talisman.mypinata.cloud/ipfs/'
+    )
+  )
 
   if (options?.imgWidth !== undefined) {
     // x3 for high DPI display
@@ -114,8 +122,8 @@ const NftCard = ({ nft }: { nft: Nft }) => {
         media={
           <Card.Preview
             src={Maybe.of(nft.thumbnail ?? nft.media.url).mapOrUndefined(x => [
-              toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH }),
-              toIpfsCompatibleUrl(x),
+              toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH }, nft),
+              toIpfsCompatibleUrl(x, undefined, nft),
             ])}
             type={nft.thumbnail !== undefined ? undefined : (nft.media.mimeType?.split('/').at(0) as any)}
             fetchMime
@@ -229,8 +237,8 @@ const NftCollectionCard = ({ collection }: { collection: NftCollection }) => (
               <Card.Preview
                 key={nft.id}
                 src={Maybe.of(nft.thumbnail ?? nft.media.url).mapOrUndefined(x => [
-                  toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH / 4 }),
-                  toIpfsCompatibleUrl(x),
+                  toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH / 4 }, nft),
+                  toIpfsCompatibleUrl(x, undefined, nft),
                 ])}
                 fetchMime
               />
