@@ -26,5 +26,6 @@ export const talismanTokens: string[] = [
   '1285-evm-native',
   'avail-substrate-native',
   '1-evm-erc20-0xaa7a9ca87d3694b5755f213b5d04094b8d0f0a6f',
+  'centrifuge-polkadot-substrate-native',
   '1-evm-erc20-0xc221b7e65ffc80de234bbb6667abdd46593d34f0',
 ]

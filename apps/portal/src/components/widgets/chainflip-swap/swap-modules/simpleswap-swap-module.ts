@@ -189,6 +189,13 @@ const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
     chainId: 'avail',
     networkType: 'substrate',
   },
+  cfgmainnet: {
+    id: 'centrifuge-polkadot-substrate-native',
+    name: 'Centrifuge',
+    symbol: 'CFG',
+    chainId: 'centrifuge-polkadot',
+    networkType: 'substrate',
+  },
 }
 
 type Exchange = {
