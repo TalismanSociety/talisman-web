@@ -1,9 +1,12 @@
-import react from '@vitejs/plugin-react'
 import path from 'path'
+
+import react from '@vitejs/plugin-react'
 import tailwindcss from 'tailwindcss'
 import { defineConfig } from 'vite'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import svgr from 'vite-plugin-svgr'
+import topLevelAwait from 'vite-plugin-top-level-await'
+import wasm from 'vite-plugin-wasm'
 
 export default defineConfig({
   optimizeDeps: {
@@ -24,6 +27,8 @@ export default defineConfig({
     }),
     svgr(),
     nodePolyfills(),
+    wasm(),
+    topLevelAwait(),
   ],
   envPrefix: 'REACT_APP_',
   build: {

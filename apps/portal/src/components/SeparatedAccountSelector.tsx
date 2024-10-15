@@ -1,18 +1,21 @@
-import AccountIcon from './molecules/AccountIcon'
-import { walletConnectionSideSheetOpenState } from './widgets/WalletConnectionSideSheet'
+import type React from 'react'
+import { decodeAddress, encodeAddress, isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
+import { type Balances, type BalanceSearchQuery } from '@talismn/balances'
+import { useBalances } from '@talismn/balances-react'
+import { Select, Surface } from '@talismn/ui'
+import { encodeAnyAddress } from '@talismn/util'
+import { Ethereum } from '@talismn/web-icons'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { isAddress } from 'viem'
+
 import { evmAccountsState, substrateAccountsState } from '@/domains/accounts'
 import { AccountWithBtc, isBtcAddress } from '@/lib/btc'
 import { cn } from '@/lib/utils'
 import { shortenAddress } from '@/util/format'
-import { isAddress as isSubstrateAddress, decodeAddress, encodeAddress } from '@polkadot/util-crypto'
-import { type BalanceSearchQuery, type Balances } from '@talismn/balances'
-import { useBalances } from '@talismn/balances-react'
-import { Select, Surface } from '@talismn/ui'
-import { Ethereum } from '@talismn/web-icons'
-import type React from 'react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
-import { isAddress } from 'viem'
+
+import AccountIcon from './molecules/AccountIcon'
+import { walletConnectionSideSheetOpenState } from './widgets/WalletConnectionSideSheet'
 
 type Props = {
   allowInput?: boolean
@@ -42,17 +45,17 @@ const AccountRow: React.FC<{
   }, [address, substrateAccountPrefix])
 
   return (
-    <div className="flex items-center justify-between w-full">
+    <div className="flex w-full items-center justify-between">
       <div className="grid gap-[1px]">
         <p
-          className={cn('!leading-none font-semibold whitespace-nowrap overflow-hidden text-ellipsis', {
+          className={cn('overflow-hidden text-ellipsis whitespace-nowrap font-semibold !leading-none', {
             'text-[14px]': formattedAddress.startsWith('0x'),
           })}
         >
           {name ?? shortenAddress(formattedAddress, 6)}
         </p>
         {name ? (
-          <p className="!text-[12px] !text-gray-300 brightness-100 !leading-none mt-[2px]">
+          <p className="mt-[2px] !text-[12px] !leading-none !text-gray-300 brightness-100">
             {shortenAddress(formattedAddress, 6)}
           </p>
         ) : null}
@@ -175,9 +178,11 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
       case 'ethereum':
         return evmAccounts.find(account => account.address === value)
       case 'substrate':
-        return substrateAccounts.find(account => account.address === value)
+        return substrateAccounts.find(account => value && encodeAnyAddress(account.address) === encodeAnyAddress(value))
       case 'all':
-        return [...evmAccounts, ...substrateAccounts].find(account => account.address === value)
+        return [...evmAccounts, ...substrateAccounts].find(
+          account => value && encodeAnyAddress(account.address) === encodeAnyAddress(value)
+        )
       case 'btc':
         return btcAccounts.find(account => account.address === value)
     }
@@ -221,7 +226,7 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
         <div>
           {accountsType === 'all' && (
             <div className="px-[12px]">
-              <p className="text-gray-400 text-[12px]">Ethereum Accounts</p>
+              <p className="text-[12px] text-gray-400">Ethereum Accounts</p>
             </div>
           )}
           {accounts.length > 0 ? (
@@ -268,7 +273,7 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
   )
   if (accountsType === 'btc' && disableBtc)
     return (
-      <Surface className="[&>p]:text-[14px] p-[12px] rounded-[8px]">
+      <Surface className="rounded-[8px] p-[12px] [&>p]:text-[14px]">
         <p className="text-center">BTC accounts not supported.</p>
       </Surface>
     )
@@ -276,7 +281,7 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
   if (accountsType === 'ethereum' && !allowInput) {
     const evmAccount = evmAccounts[0]
     return (
-      <Surface className="[&>p]:text-[14px] p-[12px] rounded-[8px]">
+      <Surface className="rounded-[8px] p-[12px] [&>p]:text-[14px]">
         {evmAccount ? (
           <div className="flex items-center gap-[10px]">
             <AccountIcon account={{ address: evmAccount.address }} size="32px" />
@@ -303,7 +308,7 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
 
   return (
     <Select
-      className="w-full [&>button]:!py-[12px] [&>button]:!rounded-[8px] [&>button>div]:w-full"
+      className="w-full [&>button>div]:w-full [&>button]:!rounded-[8px] [&>button]:!py-[12px]"
       placeholder={allowInput ? 'Enter or select an address' : 'Select an account'}
       value={value}
       onChangeValue={val => {
@@ -321,15 +326,15 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
         type: 'ethereum',
         emptyState: (
           <div
-            className="!w-full !rounded-none p-[12px] py-[8px] mt-[4px] flex items-center gap-[4px] cursor-pointer group hover:bg-gray-700"
+            className="group mt-[4px] flex !w-full cursor-pointer items-center gap-[4px] !rounded-none p-[12px] py-[8px] hover:bg-gray-700"
             onClick={() => {
               setWalletConnectionSideSheetOpen(true)
             }}
           >
-            <div className="w-[32px] h-[32px] flex items-center justify-center">
+            <div className="flex h-[32px] w-[32px] items-center justify-center">
               <Ethereum className="text-gray-400 group-hover:text-white " size={16} />
             </div>
-            <p className="text-gray-400 group-hover:text-white text-[14px]">Connect Ethereum Wallet</p>
+            <p className="text-[14px] text-gray-400 group-hover:text-white">Connect Ethereum Wallet</p>
           </div>
         ),
         emptyQueryMessage: 'No Ethereum account found.',
