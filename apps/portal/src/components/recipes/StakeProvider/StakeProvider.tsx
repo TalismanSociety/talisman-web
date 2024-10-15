@@ -88,14 +88,10 @@ const StakeProvider = Object.assign(
               display: 'flex',
               alignItems: 'center',
               gap: '1.2rem',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
             }}
           >
             <AssetLogoWithChain assetLogoUrl={props.logo} chainId={props.chainId ?? ''} />
-
-            <div>
+            <div className="truncate">
               <Text.Body as="div" alpha="high">
                 {props.symbol}
               </Text.Body>
