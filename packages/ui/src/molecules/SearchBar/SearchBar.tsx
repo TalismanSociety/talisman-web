@@ -1,6 +1,8 @@
-import { TextInput, type TextInputProps } from '..'
 import { Search, XCircle } from '@talismn/web-icons'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
+
+import type { TextInputProps } from '..'
+import { TextInput } from '..'
 
 export type SearchBarProps = TextInputProps
 

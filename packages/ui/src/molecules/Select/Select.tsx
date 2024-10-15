@@ -1,5 +1,4 @@
-import { CircularProgressIndicator, Surface, Text, useSurfaceColor } from '../../atoms'
-import FloatingPortal from '../../atoms/FloatingPortal'
+import type { ReactElement, ReactNode } from 'react'
 import { useTheme } from '@emotion/react'
 import {
   autoPlacement,
@@ -13,17 +12,10 @@ import {
 } from '@floating-ui/react'
 import { ChevronDown, X } from '@talismn/web-icons'
 import { motion } from 'framer-motion'
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactElement,
-  type ReactNode,
-} from 'react'
+import React, { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+
+import { CircularProgressIndicator, Surface, Text, useSurfaceColor } from '../../atoms'
+import FloatingPortal from '../../atoms/FloatingPortal'
 
 export type SelectProps<TValue, TClear extends boolean = false> = {
   className?: string
@@ -47,6 +39,7 @@ type SelectItemProps = {
   headlineContent: ReactNode
   supportingContent?: ReactNode
   className?: string
+  skipOffscreenRender?: boolean
 }
 
 const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
@@ -57,6 +50,7 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
       display: 'flex',
       alignItems: 'center',
       gap: '1rem',
+      overflowX: 'hidden',
     }}
   >
     {props.leadingIcon && (
@@ -64,11 +58,13 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
         {props.leadingIcon}
       </figure>
     )}
-    <div>
-      <Text.Body as="div" alpha="high">
+    <div css={{ overflowX: 'hidden' }}>
+      <Text.Body as="div" alpha="high" css={{ overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {props.headlineContent}
       </Text.Body>
-      <Text.Body as="div">{props.supportingContent}</Text.Body>
+      <Text.Body as="div" css={{ overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {props.supportingContent}
+      </Text.Body>
     </div>
   </div>
 ))
