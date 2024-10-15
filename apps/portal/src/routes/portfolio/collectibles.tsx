@@ -172,8 +172,8 @@ const NftCard = ({ nft }: { nft: Nft }) => {
         overline={nft.collection?.name}
         media={
           <MediaDialog.Player
-            src={Maybe.of(nft.media.url).mapOrUndefined(toIpfsCompatibleUrl)}
-            type={nft.media.mimeType?.split('/').at(0) as any}
+            src={Maybe.of(nft.media.url).mapOrUndefined(x => toIpfsCompatibleUrl(x, undefined, nft))}
+            type={(nft.media.mimeType?.split('/').at(0) as any) ?? 'image'}
           />
         }
         content={
