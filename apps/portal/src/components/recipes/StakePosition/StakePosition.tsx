@@ -289,14 +289,9 @@ const StakePosition = Object.assign(
 
               <span
                 css={{
-                  [MEDIUM_CONTAINER_QUERY]: {
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '1.2rem',
-                    overflow: 'hidden',
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis',
-                  },
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1.2rem',
                 }}
               >
                 <AssetLogoWithChain assetLogoUrl={props.assetLogoSrc} chainId={props.chainId} />
@@ -305,6 +300,9 @@ const StakePosition = Object.assign(
                     display: 'contents',
                     [MEDIUM_CONTAINER_QUERY]: { display: 'none' },
                     [LARGE_CONTAINER_QUERY]: { display: 'contents' },
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis',
                   }}
                 >
                   <Text.Body as="div" alpha="high">
