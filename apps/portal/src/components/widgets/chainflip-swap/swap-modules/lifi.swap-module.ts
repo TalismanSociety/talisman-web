@@ -21,8 +21,8 @@ import { atomFamily, loadable } from 'jotai/utils'
 import { zeroAddress } from 'viem'
 import * as allEvmChains from 'viem/chains'
 
-const PROTOCOL = 'lifi' as const
 const DECENTRALISATION_SCORE = 2
+const PROTOCOL = 'lifi' as const
 const TALISMAN_FEE = 0.002
 
 sdk.createConfig({
