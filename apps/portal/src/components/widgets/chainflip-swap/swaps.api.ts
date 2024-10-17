@@ -1,5 +1,5 @@
 import { substrateApiGetterAtom } from '../../../domains/common/recoils/api'
-import { popularTokens } from './curated-tokens'
+import { popularTokens, talismanTokens } from './curated-tokens'
 import { knownEvmNetworksAtom } from './helpers'
 import { swapInfoTabAtom } from './side-panel'
 import { chainflipSwapModule, type ChainflipSwapActivityData } from './swap-modules/chainflip.swap-module'
@@ -21,21 +21,32 @@ import {
   fromSubstrateAddressAtom,
   toEvmAddressAtom,
   toSubstrateAddressAtom,
+  selectedSubProtocolAtom,
 } from './swap-modules/common.swap-module'
+import { lifiSwapModule } from './swap-modules/lifi.swap-module'
 import { simpleswapSwapModule } from './swap-modules/simpleswap-swap-module'
 import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts'
 import { substrateApiState } from '@/domains/common'
 import { connectedSubstrateWalletState } from '@/domains/extension'
+import * as sdk from '@lifi/sdk'
+import { evmErc20TokenId } from '@talismn/balances'
 import { tokenRatesAtom, tokensByIdAtom, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { toast } from '@talismn/ui'
 import { Atom, atom, Getter, useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
-import { loadable, useAtomCallback } from 'jotai/utils'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { atomFamily, loadable, useAtomCallback } from 'jotai/utils'
+import { Loadable } from 'jotai/vanilla/utils/loadable'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
+import { createPublicClient, erc20Abi, http, isAddress } from 'viem'
+import * as allEvmChains from 'viem/chains'
 import { useWalletClient } from 'wagmi'
 
-const swapModules = [chainflipSwapModule, simpleswapSwapModule]
+const coingeckoApiUrl = import.meta.env.REACT_APP_COIN_GECKO_API
+const coingeckoApiKey = import.meta.env.REACT_APP_COIN_GECKO_API_KEY
+const coingeckoTier = import.meta.env.REACT_APP_COIN_GECKO_API_TIER
+
+const swapModules = [chainflipSwapModule, simpleswapSwapModule, lifiSwapModule]
 const ETH_LOGO = 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg'
 const BTC_LOGO = 'https://assets.coingecko.com/coins/images/1/standard/bitcoin.png?1696501400'
 const btcTokens = {
@@ -60,12 +71,15 @@ const getTokensByChainId = async (
       otherKnownTokens[cur.id] ??
       btcTokens[cur.id as 'btc-native']
 
-    if (!tokenDetails) return acc
+    const symbol = tokenDetails?.symbol ?? cur.symbol
+    const decimals = tokenDetails?.decimals ?? cur.decimals
+    const image = symbol?.toLowerCase() === 'eth' ? ETH_LOGO : cur.image
+    if (!symbol || !decimals) return acc
     tokens[cur.id] = {
       ...cur,
-      symbol: tokenDetails.symbol,
-      decimals: tokenDetails.decimals,
-      image: tokenDetails.symbol.toLowerCase() === 'eth' ? ETH_LOGO : cur.image,
+      symbol,
+      decimals,
+      image,
       context: {
         ...tokens[cur.id]?.context,
         ...cur.context,
@@ -76,21 +90,291 @@ const getTokensByChainId = async (
   }, {} as Record<string, Record<string, SwappableAssetWithDecimals>>)
 }
 
+const getCoingeckoCategoryTokens = async (
+  get: Getter,
+  categoryId: string,
+  tokens: SwappableAssetWithDecimals[]
+): Promise<SwappableAssetWithDecimals[]> => {
+  const platforms = await get(coingeckoAssetPlatformsAtom)
+  const coinsList = await get(coingeckoListAtom)
+  const coins = (await get(coingeckoCoinsByCategoryAtom(categoryId))) as {
+    symbol: string
+    id: string
+    image?: string
+  }[]
+  return coins
+    .map(c => {
+      const coinPlatforms = Object.entries(coinsList.find(coin => coin.id === c.id)?.platforms ?? {})
+      if (coinPlatforms.length === 0) {
+        const token = tokens.find(t => t.symbol.toLowerCase() === c.symbol.toLowerCase())
+        if (token && !token.image && c.image) token.image = c.image
+        return token
+      }
+
+      return coinPlatforms.map(([platformId, address]) => {
+        const platform = platforms.find(p => p.id === platformId)
+        const token = tokens.find(
+          t =>
+            (t.networkType === 'evm' ? +t.chainId : t.chainId) === platform?.chain_identifier &&
+            t.contractAddress?.toLowerCase() === address.toLowerCase()
+        )
+        if (token && !token.image && c.image) token.image = c.image
+        return token
+      })
+    })
+    .flat()
+    .filter(c => !!c)
+}
+
 export const tokenTabs: {
   value: string
   label: string
+  coingecko?: boolean
   filter?: (token: SwappableAssetWithDecimals) => boolean
   sort?: (a: SwappableAssetWithDecimals, b: SwappableAssetWithDecimals) => number
 }[] = [
   {
     value: 'popular',
-    label: 'Popular',
+    label: '🔥 Popular',
     filter: token => popularTokens.includes(token.id) ?? false,
     sort: (a, b) => popularTokens.indexOf(a.id) - popularTokens.indexOf(b.id),
+  },
+  {
+    value: 'talisman',
+    label: 'Talisman',
+    filter: token => talismanTokens.includes(token.id) ?? false,
+    sort: (a, b) => talismanTokens.indexOf(a.id) - talismanTokens.indexOf(b.id),
+  },
+  {
+    value: 'meme-token',
+    label: 'Meme',
+    coingecko: true,
+  },
+  {
+    value: 'liquid-staking-tokens',
+    label: 'LSTs',
+    coingecko: true,
+  },
+  {
+    value: 'artificial-intelligence',
+    label: 'AI',
+    coingecko: true,
+  },
+  {
+    value: 'depin',
+    label: 'DePIN',
+    coingecko: true,
+  },
+  {
+    value: 'decentralized-finance-defi',
+    label: 'Defi',
+    coingecko: true,
+  },
+  {
+    value: 'layer-2',
+    label: 'L2s',
+    coingecko: true,
   },
 ]
 
 export const tokenTabAtom = atom<string>('popular')
+export const coingeckoAssetPlatformsAtom = atom(async () => {
+  const response = await fetch(`${coingeckoApiUrl}/api/v3/asset_platforms`, {
+    headers: {
+      [`x-cg-${coingeckoTier}-api-key`]: coingeckoApiKey!,
+    },
+  })
+
+  return (await response.json()) as {
+    id: string
+    chain_identifier: string | number | null
+    name: string
+    shortname: string
+    native_coin_id: string
+  }[]
+})
+
+export const coingeckoListAtom = atom(async () => {
+  const response = await fetch(`${coingeckoApiUrl}/api/v3/coins/list?include_platform=true`, {
+    headers: {
+      [`x-cg-${coingeckoTier}-api-key`]: coingeckoApiKey!,
+    },
+  })
+
+  return (await response.json()) as { id: string; platforms: Record<string, string> }[]
+})
+
+export const coingeckoCategoriesAtom = atom(async () => {
+  const response = await fetch(`${coingeckoApiUrl}/api/v3/coins/categories`, {
+    headers: {
+      [`x-cg-${coingeckoTier}-api-key`]: coingeckoApiKey!,
+    },
+  })
+
+  return await response.json()
+})
+
+export const coingeckoCoinsByCategoryAtom = atomFamily((category: string) =>
+  atom(async () => {
+    const apiUrl = import.meta.env.REACT_APP_COIN_GECKO_API
+    const apiKey = import.meta.env.REACT_APP_COIN_GECKO_API_KEY
+    const tier = import.meta.env.REACT_APP_COIN_GECKO_API_TIER
+    const response = await fetch(
+      `${apiUrl}/api/v3/coins/markets?vs_currency=usd&category=${category}&include_platform=true`,
+      {
+        headers: {
+          [`x-cg-${tier}-api-key`]: apiKey!,
+        },
+      }
+    )
+
+    return await response.json()
+  })
+)
+
+export const uniswapSafeTokensList = atom(async () => {
+  const response = await fetch('https://tokens.uniswap.org/')
+  return (await response.json()).tokens as { chainId: number; address: string }[]
+})
+
+export const uniswapExtendedTokensList = atom(async () => {
+  const response = await fetch('https://extendedtokens.uniswap.org/')
+  return (await response.json()).tokens as { chainId: number; address: string }[]
+})
+
+const coingeckoCoinByAddressAtom = atomFamily((addressPlatform: string) =>
+  atom(async () => {
+    const [address, platform] = addressPlatform.split(':')
+    if (!address || !platform) return null
+    const response = await fetch(`${coingeckoApiUrl}/api/v3/coins/${platform}/contract/${address}`, {
+      headers: {
+        [`x-cg-${coingeckoTier}-api-key`]: coingeckoApiKey!,
+      },
+    })
+
+    return (await response.json()) as {
+      image?: {
+        large: string
+        small: string
+        thumb: string
+      }
+    }
+  })
+)
+
+export const swapFromSearchAtom = atom<string>('')
+export const swapToSearchAtom = atom<string>('')
+
+const erc20Atom = atomFamily((addressChainId: string) =>
+  atom(async (get): Promise<SwappableAssetWithDecimals | null> => {
+    const [address, chainIdString] = addressChainId.split(':')
+    if (!address || !chainIdString) return null
+    const chainId = +chainIdString
+    const isValidAddress = isAddress(address)
+    if (!isValidAddress || isNaN(chainId)) return null
+
+    const chain = Object.values(allEvmChains).find(c => c.id === chainId)
+    if (!chain) return null
+    const platforms = await get(coingeckoAssetPlatformsAtom)
+    const platform = platforms.find(p => p.chain_identifier === chainId)
+    if (!platform) return null
+
+    const client = createPublicClient({ transport: http(), chain })
+
+    const [symbolData, decimalsData, namedata] = await client.multicall({
+      contracts: [
+        {
+          abi: erc20Abi,
+          address,
+          functionName: 'symbol',
+        },
+        {
+          abi: erc20Abi,
+          address,
+          functionName: 'decimals',
+        },
+        {
+          abi: erc20Abi,
+          address,
+          functionName: 'name',
+        },
+      ],
+    })
+
+    const symbol = symbolData.status === 'success' ? symbolData.result : null
+    const decimals = decimalsData.status === 'success' ? decimalsData.result : null
+    const name = namedata.status === 'success' ? namedata.result : null
+    if (!symbol || !decimals || !name) return null
+
+    const coingeckoData = await get(coingeckoCoinByAddressAtom(`${address}:${platform.id}`))
+    const id = evmErc20TokenId(address, chainIdString)
+
+    return {
+      id,
+      chainId,
+      context: {
+        lifi: {
+          address,
+          chainId,
+          decimals,
+          name,
+          symbol,
+          priceUSD: '0.00',
+        } as sdk.Token,
+      },
+      decimals,
+      name,
+      symbol,
+      networkType: 'evm',
+      contractAddress: address,
+      image: coingeckoData?.image?.small,
+    }
+  })
+)
+
+const filterAndSortTokens = async (
+  get: Getter,
+  tokens: SwappableAssetWithDecimals[],
+  search: string
+): Promise<SwappableAssetWithDecimals[]> => {
+  if (search.trim().length > 0) {
+    const isSearchingAddress = search.startsWith('0x')
+    const knownFilteredTokens = tokens.filter(
+      t =>
+        t.symbol.toLowerCase().startsWith(search.toLowerCase()) ||
+        t.name.toLowerCase().startsWith(search.toLowerCase()) ||
+        (isSearchingAddress && t.contractAddress?.startsWith(search.toLowerCase()))
+    )
+
+    if (isSearchingAddress && knownFilteredTokens.length === 0) {
+      // find token details from on chain
+      const allOnChainTokens = await Promise.all(
+        [
+          allEvmChains.mainnet,
+          allEvmChains.arbitrum,
+          allEvmChains.base,
+          allEvmChains.bsc,
+          allEvmChains.polygon,
+          allEvmChains.optimism,
+          allEvmChains.blast,
+          allEvmChains.zkSync,
+        ].map(chain => get(erc20Atom(`${search}:${chain.id}`)))
+      )
+      return allOnChainTokens.filter(t => t !== null)
+    }
+    return knownFilteredTokens
+  }
+  const tab = get(tokenTabAtom)
+  const filter = tokenTabs.find(t => t.value === tab)?.filter
+  const sort = tokenTabs.find(t => t.value === tab)?.sort
+  const coingeckoCategoryId = tokenTabs.find(t => t.value === tab && t.coingecko)?.value
+  if (filter) tokens = tokens.filter(filter)
+  if (sort) tokens = tokens.sort(sort)
+  if (coingeckoCategoryId) tokens = await getCoingeckoCategoryTokens(get, coingeckoCategoryId, tokens)
+
+  return tokens
+}
+
 /**
  * Unify all tokens we support for swapping on the UI
  * Note that this list is just to get the tokens we display initially on the UI
@@ -100,26 +384,22 @@ export const tokenTabAtom = atom<string>('popular')
 export const fromAssetsAtom = atom(async get => {
   const allTokensSelector = swapModules.map(module => module.fromAssetsSelector)
   const tokensByChains = await getTokensByChainId(get, allTokensSelector)
+  const search = get(swapFromSearchAtom)
 
-  let tokens = Object.values(tokensByChains)
+  const tokens = Object.values(tokensByChains)
     .map(tokens =>
       Object.values(tokens).sort((a, b) => a.symbol.replaceAll('$', '').localeCompare(b.symbol.replaceAll('$', '')))
     )
     .flat()
 
-  const tab = get(tokenTabAtom)
-  const filter = tokenTabs.find(t => t.value === tab)?.filter
-  const sort = tokenTabs.find(t => t.value === tab)?.sort
-  if (filter) tokens = tokens.filter(filter)
-  if (sort) tokens = tokens.sort(sort)
-
+  const filteredTokens = await filterAndSortTokens(get, tokens, search)
   // from assets should not include btc
-  tokens = tokens.filter(t => t.networkType !== 'btc')
-  return tokens
+  return filteredTokens.filter(t => t.networkType !== 'btc')
 })
 
 export const toAssetsAtom = atom(async get => {
   const fromAsset = get(fromAssetAtom)
+  const search = get(swapToSearchAtom)
 
   // only select from the protocols that fromAsset support
   const allTokensSelector = swapModules
@@ -127,33 +407,28 @@ export const toAssetsAtom = atom(async get => {
     .map(module => module.toAssetsSelector)
 
   const tokensByChains = await getTokensByChainId(get, allTokensSelector)
-  let tokens = Object.values(tokensByChains)
+  const tokens = Object.values(tokensByChains)
     .map(tokens =>
       Object.values(tokens).sort((a, b) => a.symbol.replaceAll('$', '').localeCompare(b.symbol.replaceAll('$', '')))
     )
     .flat()
 
-  const tab = get(tokenTabAtom)
-  const filter = tokenTabs.find(t => t.value === tab)?.filter
-  const sort = tokenTabs.find(t => t.value === tab)?.sort
-  if (filter) tokens = tokens.filter(filter)
-  if (sort) tokens = tokens.sort(sort)
-
-  // temp solution to disable eth <> arb routes
-  if (fromAsset) {
-    if (fromAsset.chainId.toString() === '1' || fromAsset.chainId.toString() === '42161') {
-      tokens = tokens.filter(t => t.chainId.toString() !== '1' && t.chainId.toString() !== '42161')
-    }
-  }
-  return tokens
+  return await filterAndSortTokens(get, tokens, search)
 })
 
 export const swapQuotesAtom = loadable(
-  atom(async (get): Promise<(BaseQuote & { decentralisationScore: number })[] | null> => {
+  atom(async (get): Promise<Loadable<Promise<BaseQuote | null>>[] | null> => {
     const fromAsset = get(fromAssetAtom)
     const toAsset = get(toAssetAtom)
     const allQuoters = swapModules
-      .filter(m => (fromAsset && toAsset ? toAsset.context[m.protocol] && fromAsset.context[m.protocol] : true))
+      .filter(m =>
+        fromAsset && toAsset
+          ? // if both assets are evm, we automatically attempt to get quote from lifi
+            fromAsset.networkType === 'evm' && toAsset.networkType === 'evm' && m.protocol === 'lifi'
+            ? true
+            : toAsset.context[m.protocol] && fromAsset.context[m.protocol]
+          : true
+      )
       .map(module => module.quote)
     const fromAmount = get(fromAmountAtom)
     const substrateApiGetter = get(substrateApiGetterAtom)
@@ -164,22 +439,17 @@ export const swapQuotesAtom = loadable(
     // nothing to quote
     if (!fromAsset || !toAsset || !fromAmount.planck || !substrateApiGetter) return null
 
-    const allQuotes = await Promise.all(
-      allQuoters.map(quoter => quoter(get, { getSubstrateApi: substrateApiGetter.getApi }))
-    )
-    const validQuotes = allQuotes
-      .filter(a => !!a)
-      .filter(a => a.outputAmountBN > 0n)
-      .map(a => ({
-        ...a,
-        decentralisationScore: swapModules.find(m => m.protocol === a.protocol)?.decentralisationScore ?? 0,
-      }))
+    const allQuotes = allQuoters
+      .map(get)
+      .map(q => (q.state === 'hasData' ? (Array.isArray(q.data) ? q.data.flat() : q) : q))
+      .flat()
 
-    if (validQuotes.length === 0) {
-      const quoteWithError = allQuotes.find(q => q?.error)
-      if (quoteWithError) throw new Error(quoteWithError.error)
-    }
-    return validQuotes
+    // map each, if loaded, return only if output > 0
+    return allQuotes.filter(q => {
+      if (q.state !== 'hasData') return true
+      if (!q.data || Array.isArray(q.data)) return false
+      return q.data.outputAmountBN > 0n
+    }) as Loadable<Promise<BaseQuote | null>>[] | null
   })
 )
 
@@ -192,7 +462,8 @@ export const sortedQuotesAtom = atom(async get => {
   if (quotes.state !== 'hasData') return undefined
   return quotes.data
     ?.map(q => {
-      const fees = q.fees.reduce((acc, fee) => {
+      if (q.state !== 'hasData') return { quote: q, fees: 0 }
+      const fees = q.data?.fees.reduce((acc, fee) => {
         const rate = tokenRates[fee.tokenId]?.usd ?? 0
         return acc + fee.amount.toNumber() * rate
       }, 0)
@@ -202,15 +473,18 @@ export const sortedQuotesAtom = atom(async get => {
       }
     })
     .sort((a, b) => {
+      // all loading quotes should be at the end
+      if (a.quote.state !== 'hasData' || !a.quote.data) return 1
+      if (b.quote.state !== 'hasData' || !b.quote.data) return -1
       switch (sort) {
         case 'bestRate':
-          return +(b.quote.outputAmountBN - a.quote.outputAmountBN).toString()
+          return +(b.quote.data.outputAmountBN - a.quote.data.outputAmountBN).toString()
         case 'fastest':
-          return a.quote.timeInSec - b.quote.timeInSec
+          return a.quote.data.timeInSec - b.quote.data.timeInSec
         case 'cheapest':
-          return a.fees - b.fees
+          return (a.fees ?? 0) - (b.fees ?? 0)
         case 'decentalised':
-          return b.quote.decentralisationScore - a.quote.decentralisationScore
+          return b.quote.data.decentralisationScore - a.quote.data.decentralisationScore
         default:
           return 0
       }
@@ -220,10 +494,52 @@ export const sortedQuotesAtom = atom(async get => {
 export const selectedQuoteAtom = atom(async get => {
   const quotes = await get(sortedQuotesAtom)
   const selectedProtocol = get(selectedProtocolAtom)
+  const subProtocol = get(selectedSubProtocolAtom)
   if (!quotes) return null
-  const quote = quotes.find(q => q.quote.protocol === selectedProtocol) ?? quotes[0]
+  const quote =
+    quotes.find(
+      q =>
+        q.quote.state === 'hasData' &&
+        q.quote.data &&
+        q.quote.data.protocol === selectedProtocol &&
+        q.quote.data.subProtocol === subProtocol
+    ) ?? quotes[0]
   if (!quote) return null
   return quote
+})
+
+const approvalCounterAtom = atom(0)
+export const approvalAtom = atom(async get => {
+  const protocol = get(selectedProtocolAtom)
+  const quotes = await get(sortedQuotesAtom)
+
+  const defaultQuote = quotes?.[0]
+  const selectedProtocol =
+    protocol ?? (defaultQuote?.quote.state === 'hasData' ? defaultQuote.quote.data?.protocol : null)
+  const module = swapModules.find(module => module.protocol === selectedProtocol)
+
+  if (!module?.approvalAtom || !selectedProtocol) return null
+
+  const approval = get(module.approvalAtom)
+  if (!approval) return null
+
+  const chain = Object.values(allEvmChains).find(c => c.id === approval.chainId)
+  // chain unsupported
+  if (!chain) return null
+
+  // trigger approval check when updated
+  get(approvalCounterAtom)
+
+  const client = createPublicClient({ transport: http(), chain })
+  const allowance = await client.readContract({
+    abi: erc20Abi,
+    address: approval.tokenAddress as `0x${string}`,
+    functionName: 'allowance',
+    args: [approval.fromAddress as `0x${string}`, approval.contractAddress as `0x${string}`],
+  })
+
+  if (allowance >= approval.amount) return null
+  return { ...approval, chain }
 })
 
 export const toAmountAtom = atom(async get => {
@@ -231,8 +547,9 @@ export const toAmountAtom = atom(async get => {
   if (!quote) return null
 
   const toAsset = get(toAssetAtom)
-  if (!quote || quote.quote.outputAmountBN === undefined || !toAsset) return null
-  return Decimal.fromPlanck(quote.quote.outputAmountBN, toAsset.decimals, { currency: toAsset.symbol })
+  if (!quote || quote.quote.state !== 'hasData' || quote.quote.data?.outputAmountBN === undefined || !toAsset)
+    return null
+  return Decimal.fromPlanck(quote.quote.data.outputAmountBN, toAsset.decimals, { currency: toAsset.symbol })
 })
 
 export const useSwap = () => {
@@ -402,4 +719,67 @@ export const useToAccount = () => {
   useEffect(() => {
     if (toEvmAddress && toSubstrateAddress) initiated.current = true
   }, [toEvmAddress, toSubstrateAddress])
+}
+
+export const categoriesAtom = atom(async () => {
+  const api = import.meta.env.REACT_APP_COIN_GECKO_API
+  const apiKey = import.meta.env.REACT_APP_COIN_GECKO_API_KEY
+
+  const response = await fetch(`${api}/api/v3//coins/markets?vs_currency=usd&category=wallets`, {
+    headers: {
+      'x-cg-pro-api-key': apiKey!,
+    },
+  })
+
+  return await response.json()
+})
+
+export const useSwapErc20Approval = () => {
+  const approval = useAtomValue(loadable(approvalAtom))
+  const { data: walletClient } = useWalletClient()
+  const [approving, setApproving] = useState(false)
+  const setApprovalCounter = useSetAtom(approvalCounterAtom)
+
+  const approvalData = useMemo(() => {
+    if (approval.state !== 'hasData' || !approval.data) return null
+    return approval.data
+  }, [approval])
+
+  const approve = useCallback(async () => {
+    if (!walletClient) {
+      toast.error('Wallet not connected')
+      return
+    }
+    if (!approvalData) {
+      toast.error('Approval not ready yet')
+      return
+    }
+
+    // start approve spending flow
+    setApproving(true)
+    try {
+      await walletClient.switchChain(approvalData.chain)
+      const approveTxHash = await walletClient.writeContract({
+        abi: erc20Abi,
+        functionName: 'approve',
+        address: approvalData.tokenAddress as `0x${string}`,
+        args: [approvalData.contractAddress as `0x${string}`, approvalData.amount],
+        chain: approvalData.chain,
+      })
+
+      // wait for approval tx to be included
+      const client = createPublicClient({ transport: http(), chain: approvalData.chain })
+      const approved = await client.waitForTransactionReceipt({ hash: approveTxHash })
+
+      if (approved.status === 'success') setApprovalCounter(c => c + 1)
+      if (approved.status === 'reverted') throw new Error('Approval reverted')
+    } catch (e) {
+      console.error(e)
+      toast.error('Failed to approve token.')
+    } finally {
+      setApproving(false)
+    }
+  }, [approvalData, setApprovalCounter, walletClient])
+
+  return { data: approvalData, approve, approving, loading: approval.state === 'loading' }
 }

@@ -1,4 +1,5 @@
 import { knownEvmNetworksAtom } from '../helpers'
+import simpleswapLogo from '../side-panel/details/logos/simpleswap-logo.svg'
 import {
   BaseQuote,
   fromAddressAtom,
@@ -15,19 +16,25 @@ import {
   toAddressAtom,
   toAssetAtom,
   validateAddress,
+  supportedEvmChains,
 } from './common.swap-module'
+import { substrateApiGetterAtom } from '@/domains/common'
 import { QuoteResponse } from '@chainflip/sdk/swap'
 import { chainsAtom } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { encodeAnyAddress } from '@talismn/util'
 import { atom, Getter, Setter } from 'jotai'
-import { atomFamily } from 'jotai/utils'
+import { atomFamily, loadable } from 'jotai/utils'
 import { createPublicClient, encodeFunctionData, erc20Abi, http, isAddress } from 'viem'
-import { mainnet, bsc, arbitrum, optimism, blast, polygon, manta } from 'viem/chains'
 
 const APIKEY = import.meta.env.REACT_APP_SIMPLESWAP_API_KEY
 if (!APIKEY && import.meta.env.DEV) throw new Error('env var REACT_APP_SIMPLESWAP_API_KEY not set')
 const PROTOCOL = 'simpleswap'
+const PROTOCOL_NAME = 'SimpleSwap'
+const DECENTRALISATION_SCORE = 1
+const TALISMAN_FEE = 0.015
+
+const LOGO = simpleswapLogo
 
 type SimpleSwapCurrency = {
   name: string
@@ -42,20 +49,19 @@ type SimpleSwapCurrency = {
   isFiat: boolean
 }
 
-const supportedEvmChains = {
-  eth: mainnet,
-  bsc: bsc,
-  arbitrum: arbitrum,
-  optimism: optimism,
-  blast: blast,
-  polygon: polygon,
-  manta: manta,
-}
-
 type SimpleSwapAssetContext = {
   symbol: string
 }
 
+/**
+ * specialAssets list defines a mappings of assets from simpleswap
+ * to our internal asset representation. Many assets on simpleswap are not tradeable
+ * in an onchain context because they dont come with contract addresses.
+ * To avoid displaying a token which we dont have contract address for (which could result in a bunch of issues like, not being able to display the token balance, not being able to transfer the token for swapping and etc),
+ * We support mainly 2 types of assets:
+ * - ERC20 tokens: we only support ERC20 tokens from Simpleswap that comes with contract addresses
+ * - Special assets: all substrate and evm native assets from simpleswap are whitelisted as special assets
+ */
 const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
   dot: {
     id: 'polkadot-substrate-native',
@@ -94,6 +100,20 @@ const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
     symbol: 'ETH',
     networkType: 'evm',
   },
+  etharb: {
+    id: '42161-evm-native',
+    name: 'Ethereum',
+    chainId: 42161,
+    symbol: 'ETH',
+    networkType: 'evm',
+  },
+  ethop: {
+    id: '10-evm-native',
+    name: 'Ethereum',
+    chainId: 10,
+    symbol: 'ETH',
+    networkType: 'evm',
+  },
   ethmanta: {
     id: '169-evm-native',
     name: 'Ethereum (Manta Pacific)',
@@ -122,6 +142,52 @@ const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
     chainId: 'bitcoin',
     symbol: 'BTC',
     networkType: 'btc',
+  },
+  /** SS expects substrate address when swapping ASTR */
+  astr: {
+    id: 'astar-substrate-native',
+    name: 'Astar',
+    symbol: 'ASTR',
+    chainId: 'astar',
+    networkType: 'substrate',
+  },
+  azero: {
+    id: 'aleph-zero-substrate-native',
+    name: 'Aleph Zero',
+    symbol: 'AZERO',
+    chainId: 'aleph-zero',
+    networkType: 'substrate',
+  },
+  /** SS expects substrate address when swapping ACA */
+  aca: {
+    id: 'acala-substrate-native',
+    name: 'ACALA',
+    symbol: 'ACA',
+    chainId: 'acala',
+    networkType: 'substrate',
+  },
+  /** SS expects EVM address when swapping GLMR */
+  glmr: {
+    id: '1284-evm-native',
+    name: 'Moonbeam',
+    symbol: 'GLMR',
+    chainId: 'moonbeam',
+    networkType: 'evm',
+  },
+  /** SS expects EVM address when swapping MOVR */
+  movr: {
+    id: '1285-evm-native',
+    name: 'Moonriver',
+    symbol: 'MOVR',
+    chainId: 'moonriver',
+    networkType: 'evm',
+  },
+  avail: {
+    id: 'avail-substrate-native',
+    name: 'Avail',
+    symbol: 'AVAIL',
+    chainId: 'avail',
+    networkType: 'substrate',
   },
 }
 
@@ -248,8 +314,10 @@ const simpleswapAssetsAtom = atom(async () => {
     const isEvmNetwork = supportedEvmChains[currency.network as keyof typeof supportedEvmChains]
     const isSpecialAsset = specialAssets[currency.symbol]
     if (isEvmNetwork) {
-      return currency.name.toLowerCase() === 'ethereum' || !!currency.contract_address
+      // evm assets must be whitelisted as a special asset or have a contract address
+      return isSpecialAsset || !!currency.contract_address
     }
+    // substrate assets must be whitelisted as a special asset
     return isSpecialAsset
   })
 
@@ -300,64 +368,81 @@ export const toAssetsSelector = atom(async get => {
   ]
 })
 
-const quote: QuoteFunction = async (
-  get,
-  { getSubstrateApi }
-): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {
-  const fromAsset = get(fromAssetAtom)
-  const toAsset = get(toAssetAtom)
-  const fromAmount = get(fromAmountAtom)
+const quote: QuoteFunction = loadable(
+  atom(async (get): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {
+    const substrateApiGetter = get(substrateApiGetterAtom)
+    if (!substrateApiGetter) return null
 
-  try {
-    if (!fromAsset || !toAsset || !fromAmount || fromAmount.planck === 0n) return null
-    const currencyFrom = fromAsset.context.simpleswap?.symbol
-    const currencyTo = toAsset.context.simpleswap?.symbol
-    if (!currencyFrom || !currencyTo) return null
+    const getSubstrateApi = substrateApiGetter.getApi
+    const fromAsset = get(fromAssetAtom)
+    const toAsset = get(toAssetAtom)
+    const fromAmount = get(fromAmountAtom)
 
-    const output = await simpleSwapSdk.getEstimated({
-      amount: fromAmount.toString(),
-      currencyFrom,
-      currencyTo,
-      fixed: false,
-    })
+    try {
+      if (!fromAsset || !toAsset || !fromAmount || fromAmount.planck === 0n) return null
+      const currencyFrom = fromAsset.context.simpleswap?.symbol
+      const currencyTo = toAsset.context.simpleswap?.symbol
+      if (!currencyFrom || !currencyTo) return null
 
-    // check for error object
-    if (!output || typeof output !== 'string') {
-      if (output && typeof output !== 'string') {
-        return {
-          protocol: PROTOCOL,
-          inputAmountBN: fromAmount.planck,
-          outputAmountBN: 0n,
-          error: output.description,
-          timeInSec: 5 * 60,
-          fees: [],
+      // force refresh
+      get(swapQuoteRefresherAtom)
+      const output = await simpleSwapSdk.getEstimated({
+        amount: fromAmount.toString(),
+        currencyFrom,
+        currencyTo,
+        fixed: false,
+      })
+
+      // check for error object
+      if (!output || typeof output !== 'string') {
+        if (output && typeof output !== 'string') {
+          return {
+            decentralisationScore: DECENTRALISATION_SCORE,
+            protocol: PROTOCOL,
+            inputAmountBN: fromAmount.planck,
+            outputAmountBN: 0n,
+            error: output.description,
+            timeInSec: 5 * 60,
+            fees: [],
+            providerLogo: LOGO,
+            providerName: PROTOCOL_NAME,
+            talismanFeeBps: TALISMAN_FEE,
+          }
         }
+        return null
       }
-      return null
-    }
 
-    const gasFee = await estimateGas(get, { getSubstrateApi })
+      const gasFee = await estimateGas(get, { getSubstrateApi })
 
-    return {
-      protocol: PROTOCOL,
-      inputAmountBN: fromAmount.planck,
-      outputAmountBN: Decimal.fromUserInput(output, toAsset.decimals).planck,
-      // swaps take about 5mins according to their faq: https://simpleswap.io/faq#crypto-to-crypto-exchanges--how-long-does-it-take-to-exchange-coins
-      timeInSec: 5 * 60,
-      fees: gasFee ? [gasFee] : [],
+      return {
+        decentralisationScore: DECENTRALISATION_SCORE,
+        protocol: PROTOCOL,
+        inputAmountBN: fromAmount.planck,
+        outputAmountBN: Decimal.fromUserInput(output, toAsset.decimals).planck,
+        // swaps take about 5mins according to their faq: https://simpleswap.io/faq#crypto-to-crypto-exchanges--how-long-does-it-take-to-exchange-coins
+        timeInSec: 5 * 60,
+        fees: gasFee ? [gasFee] : [],
+        providerLogo: LOGO,
+        providerName: PROTOCOL_NAME,
+        talismanFeeBps: TALISMAN_FEE,
+      }
+    } catch (e) {
+      console.error(e)
+      return {
+        decentralisationScore: DECENTRALISATION_SCORE,
+        protocol: PROTOCOL,
+        inputAmountBN: fromAmount.planck,
+        outputAmountBN: 0n,
+        timeInSec: 5 * 60,
+        error: 'Error fetching quote',
+        fees: [],
+        providerLogo: LOGO,
+        providerName: PROTOCOL_NAME,
+        talismanFeeBps: TALISMAN_FEE,
+      }
     }
-  } catch (e) {
-    console.error(e)
-    return {
-      protocol: PROTOCOL,
-      inputAmountBN: fromAmount.planck,
-      outputAmountBN: 0n,
-      timeInSec: 5 * 60,
-      error: 'Error fetching quote',
-      fees: [],
-    }
-  }
-}
+  })
+)
 
 const swap: SwapFunction<{ id: string }> = async (
   get: Getter,
@@ -548,7 +633,7 @@ export const simpleswapSwapModule: SwapModule = {
   toAssetsSelector,
   quote,
   swap,
-  decentralisationScore: 1,
+  decentralisationScore: DECENTRALISATION_SCORE,
 }
 
 const retryStatus = async (

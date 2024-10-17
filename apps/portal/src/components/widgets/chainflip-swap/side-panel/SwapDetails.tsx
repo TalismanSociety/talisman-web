@@ -5,6 +5,7 @@ import {
   fromAssetAtom,
   quoteSortingAtom,
   selectedProtocolAtom,
+  selectedSubProtocolAtom,
   swappingAtom,
   toAssetAtom,
 } from '../swap-modules/common.swap-module'
@@ -17,6 +18,7 @@ import { cn } from '@/lib/utils'
 import { CircularProgressIndicator, Clickable, Skeleton, Surface } from '@talismn/ui'
 import { useAtom, useAtomValue } from 'jotai'
 import { loadable } from 'jotai/utils'
+import { Loadable } from 'jotai/vanilla/utils/loadable'
 import { ArrowUpDown, Check } from 'lucide-react'
 import { Suspense, useEffect, useState } from 'react'
 
@@ -52,24 +54,42 @@ const Details: React.FC = () => {
   const swapping = useAtomValue(swappingAtom)
   const [sort, setSort] = useAtom(quoteSortingAtom)
   const [selectedProtocol, setSelectedProtocol] = useAtom(selectedProtocolAtom)
-  const [cachedQuotes, setCachedQuotes] = useState<{ quote: BaseQuote & { decentralisationScore: number } }[]>([])
+  const [selectedSubProtocol, setSelectedSubProtocol] = useAtom(selectedSubProtocolAtom)
+  const [cachedQuotes, setCachedQuotes] = useState<{ fees?: number; quote: Loadable<BaseQuote | null> }[]>([])
   const fromAmount = useAtomValue(fromAmountAtom)
   const fromAsset = useAtomValue(fromAssetAtom)
   const toAsset = useAtomValue(toAssetAtom)
 
+  // Reset cached quotes when any of the swap parameters change
   useEffect(() => {
     setCachedQuotes([])
   }, [fromAmount, fromAsset, toAsset])
 
+  // Update cached quotes when quotes change
   useEffect(() => {
     if (quotes.state === 'hasData' && quotes.data) {
-      setCachedQuotes(quotes.data)
+      const allQuotesLoaded = quotes.data.every(q => q.quote.state !== 'loading')
+      setCachedQuotes(prev => (prev.length === 0 || allQuotesLoaded ? quotes.data! : prev))
     }
   }, [quotes])
 
   useEffect(() => {
-    if (!cachedQuotes.find(q => q.quote.protocol === selectedProtocol)) setSelectedProtocol(null)
-  }, [selectedProtocol, setSelectedProtocol, quotes, cachedQuotes])
+    // Reset protocol selection if no valid protocol found in cached quotes
+    const isSelectedProtocolAvailable = !cachedQuotes.find(
+      q => q.quote.state === 'hasData' && q.quote.data?.protocol === selectedProtocol
+    )
+    if (isSelectedProtocolAvailable) {
+      setSelectedProtocol(null)
+      setSelectedSubProtocol(undefined)
+    }
+
+    // Select default subprotocol if nothing is selected and the first quote has a subprotocol
+    if ((!selectedSubProtocol || !selectedProtocol) && cachedQuotes.length > 0) {
+      const defaultQuote = cachedQuotes[0]
+      if (defaultQuote?.quote.state === 'hasData' && defaultQuote.quote.data?.subProtocol)
+        setSelectedSubProtocol(defaultQuote.quote.data?.subProtocol)
+    }
+  }, [selectedProtocol, setSelectedProtocol, quotes, cachedQuotes, setSelectedSubProtocol, selectedSubProtocol])
 
   if (swapping)
     return (
@@ -88,15 +108,24 @@ const Details: React.FC = () => {
         }
       />
     )
-  if (quotes.state === 'hasError') return <SwapDetailsError message={(quotes.error as any)?.message ?? ''} />
+  if (quotes.state === 'hasError' || cachedQuotes.every(q => q.quote?.state === 'hasError'))
+    return (
+      <SwapDetailsError
+        message={
+          (quotes.state === 'hasError' ? (quotes.error as any) : {})?.message ?? 'No route found. Try larger amount.'
+        }
+      />
+    )
   if (quotes.state === 'hasData' && quotes.data?.length === 0)
     return <SwapDetailsError message="Pair is unavailable." />
 
   return (
     <div className="w-full flex flex-col gap-[8px]">
       <div className="flex items-center justify-between w-full">
-        {cachedQuotes.length > 0 ? (
-          <p className="text-muted-foreground text-[14px]">{cachedQuotes.length} Options</p>
+        {cachedQuotes.length > 0 && cachedQuotes.every(c => c.quote.state !== 'loading') ? (
+          <p className="text-muted-foreground text-[14px]">
+            {cachedQuotes.length} Option{cachedQuotes.length > 1 ? 's' : ''}
+          </p>
         ) : (
           <Skeleton.Surface className="h-[22.4px] w-[66px]" />
         )}
@@ -127,13 +156,23 @@ const Details: React.FC = () => {
       </div>
       <div className=" flex flex-col gap-[8px]">
         {cachedQuotes.length > 0 ? (
-          cachedQuotes.map((q, index) => (
-            <SwapDetailsCard
-              selected={selectedProtocol === null ? index === 0 : selectedProtocol === q.quote.protocol}
-              quote={q.quote}
-              key={q.quote.protocol}
-            />
-          ))
+          cachedQuotes.map((q, index) =>
+            q.quote.state === 'hasData' && q.quote.data ? (
+              <SwapDetailsCard
+                selected={
+                  selectedProtocol === null
+                    ? index === 0
+                    : q.quote.state === 'hasData' &&
+                      selectedProtocol === q.quote.data?.protocol &&
+                      q.quote.data.subProtocol === selectedSubProtocol
+                }
+                quote={q.quote.data}
+                key={`${q.quote.data.protocol}${q.quote.data.subProtocol}`}
+              />
+            ) : q.quote.state === 'loading' ? (
+              <Skeleton.Surface key={index} className="w-full h-[79.39px] rounded-[8px]" />
+            ) : null
+          )
         ) : (
           <>
             <Skeleton.Surface className="w-full h-[79.39px] rounded-[8px]" />
