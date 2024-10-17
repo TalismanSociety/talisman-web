@@ -30,6 +30,7 @@ Default.args = {
   amountInput: (
     <StakeForm.AmountInput
       amount="1000"
+      isLoading={false}
       onChangeAmount={() => {}}
       onRequestMaxAmount={() => {}}
       fiatAmount="$0.00"

@@ -19,6 +19,7 @@ export const Default: Story = {
     amountInput: (
       <DappStakingForm.AmountInput
         amount="2 ASTAR"
+        isLoading={false}
         fiatAmount="$1.00"
         availableToStake="1 ASTAR"
         onChangeAmount={() => {}}

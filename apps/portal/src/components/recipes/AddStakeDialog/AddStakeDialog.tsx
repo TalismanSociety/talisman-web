@@ -37,7 +37,7 @@ const AddStakeForm = (props: AddStakeFormProps) => (
       leadingLabel="Available to stake"
       trailingLabel={props.availableToStake}
       leadingSupportingText={props.fiatAmount}
-      trailingSupportingText={props.inputSupportingText}
+      trailingSupportingText={props.confirmState !== 'pending' && props.inputSupportingText}
       trailingIcon={<TextInput.LabelButton onClick={props.onRequestMaxAmount}>Max</TextInput.LabelButton>}
       value={props.amount}
       onChange={event => props.onChangeAmount(event.target.value)}

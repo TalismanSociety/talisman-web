@@ -6,11 +6,12 @@ import ErrorBoundary from '../ErrorBoundary'
 import DappStakes from './dappStaking/Stakes'
 import LidoStakes from './lido/Stakes'
 import SlpxStakes from './slpx/Stakes'
+import SlpxSubstrateStakes from './slpxSubstrate/SlpxSubstrateStakes'
 import PoolStakes from './substrate/PoolStakes'
 import ValidatorStakes from './substrate/ValidatorStakes'
 import SubtensorStakes from './subtensor/Stakes'
+import StakePosition, { StakePositionList } from '@/components/recipes/StakePosition'
 import { Button, HiddenDetails, Text } from '@talismn/ui'
-import { StakePosition, StakePositionList } from '@talismn/ui-recipes'
 import { useState } from 'react'
 import { Fragment, Suspense, type PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
@@ -81,11 +82,7 @@ const Stakes = (props: { hideHeader?: boolean }) => {
         }}
       >
         {shouldRenderLoadingSkeleton && <StakePosition.Skeleton className={skellyClassName} css={{ order: 1 }} />}
-        <ErrorBoundary orientation="horizontal">
-          <SuspenseSkeleton>
-            <SlpxStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
-          </SuspenseSkeleton>
-        </ErrorBoundary>
+
         {chains.map((chain, index) => {
           return (
             <Fragment key={index}>
@@ -104,6 +101,15 @@ const Stakes = (props: { hideHeader?: boolean }) => {
             </Fragment>
           )
         })}
+        <ErrorBoundary orientation="horizontal">
+          <SuspenseSkeleton>
+            <SlpxStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
+          </SuspenseSkeleton>
+          <ErrorBoundary orientation="horizontal"></ErrorBoundary>
+          <SuspenseSkeleton>
+            <SlpxSubstrateStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
+          </SuspenseSkeleton>
+        </ErrorBoundary>
         <ErrorBoundary orientation="horizontal">
           <SuspenseSkeleton>
             <SubtensorStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />

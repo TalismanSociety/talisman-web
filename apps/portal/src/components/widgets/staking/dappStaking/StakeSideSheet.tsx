@@ -160,6 +160,7 @@ const StakeForm = (props: StakeFormProps) => {
           availableToStake={available.decimalAmount.toLocaleString()}
           assetSelector={props.assetSelector}
           error={error?.message}
+          isLoading={extrinsic.state === 'loading'}
         />
       }
       dappSelectionInProgress={props.dappSelectionInProgress}
