@@ -2,11 +2,12 @@ import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
 import { uniswapExtendedTokensList, uniswapSafeTokensList } from './swaps.api'
 import { selectedCurrencyState } from '@/domains/balances'
 import { useCopied } from '@/hooks/useCopied'
+import { useTokenRatesFromUsd } from '@/hooks/useTokenRatesFromUsd'
 import { truncateAddress } from '@/util/helpers'
 import { useTokenRates, useTokens } from '@talismn/balances-react'
 import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
-import { Skeleton, toast } from '@talismn/ui'
+import { Skeleton, toast, Tooltip } from '@talismn/ui'
 import { Check, Copy, ExternalLink } from '@talismn/web-icons'
 import { useAtomValue } from 'jotai'
 import { loadable } from 'jotai/utils'
@@ -60,10 +61,19 @@ export const SwapTokenRow: React.FC<Props> = ({
     [erc20Address, uniswapExtendedList]
   )
 
+  const usdOverride = useMemo(() => {
+    if (asset.context.lifi) {
+      return asset.context.lifi?.priceUSD
+    }
+    return null
+  }, [asset.context])
+
+  const ratesOverride = useTokenRatesFromUsd(usdOverride)
+
   const bestGuessRate = useMemo(() => {
     if (!tokens) return undefined
-    return Object.entries(rates ?? {}).find(([id]) => tokens[id]?.symbol === asset.symbol)?.[1]
-  }, [asset.symbol, rates, tokens])
+    return Object.entries(rates ?? {}).find(([id]) => tokens[id]?.symbol === asset.symbol)?.[1] ?? ratesOverride
+  }, [asset.symbol, rates, ratesOverride, tokens])
 
   const rate = useMemo(() => rates?.[asset.id] ?? bestGuessRate, [asset.id, bestGuessRate, rates])
 
@@ -81,29 +91,33 @@ export const SwapTokenRow: React.FC<Props> = ({
       className="!w-full !h-[64px] !rounded-[12px] grid grid-cols-3 px-[16px] gap-[8px] hover:bg-gray-800 cursor-pointer"
       onClick={handleClick}
     >
-      <div className="w-full flex items-center gap-[8px]">
-        <div className="relative">
-          {networkLogo ? (
+      <Tooltip content={<p className="text-[12px] truncate leading-none !text-muted-foreground">{asset.name}</p>}>
+        <div className="w-full flex items-center gap-[8px]">
+          <div className="relative">
+            {networkLogo ? (
+              <img
+                src={networkLogo}
+                key={networkLogo}
+                className="border-[2px] bg-gray-800 border-gray-800 w-[12px] absolute -top-[4px] -right-[4px] h-[12px] min-w-[12px] sm:min-w-[20px] sm:w-[20px] sm:h-[20px] rounded-full"
+              />
+            ) : null}
             <img
-              src={networkLogo}
-              key={networkLogo}
-              className="border-[2px] bg-gray-800 border-gray-800 w-[12px] absolute -top-[4px] -right-[4px] h-[12px] min-w-[12px] sm:min-w-[20px] sm:w-[20px] sm:h-[20px] rounded-full"
+              key={asset.image ?? githubUnknownTokenLogoUrl}
+              src={asset.image ?? githubUnknownTokenLogoUrl}
+              className="w-[24px] h-[24px] min-w-[24px] sm:min-w-[40px] sm:w-[40px] sm:h-[40px] rounded-full"
             />
-          ) : null}
-          <img
-            key={asset.image ?? githubUnknownTokenLogoUrl}
-            src={asset.image ?? githubUnknownTokenLogoUrl}
-            className="w-[24px] h-[24px] min-w-[24px] sm:min-w-[40px] sm:w-[40px] sm:h-[40px] rounded-full"
-          />
-        </div>
-        <div className="flex flex-col gap-[4px] overflow-hidden">
-          <div className="flex items-center gap-[4px]">
-            <p className="text-[14px] leading-none">{asset.symbol}</p>
-            {shouldShowWarning && <AlertTriangle className="text-gray-400" size={14} />}
           </div>
-          <p className="text-[12px] truncate leading-none !text-muted-foreground">{asset.name}</p>
+          <div className="flex flex-col gap-[4px] overflow-hidden">
+            <div className="flex items-center gap-[4px]">
+              <p className="text-[14px] leading-none">{asset.symbol}</p>
+              {shouldShowWarning && <AlertTriangle className="text-gray-400" size={14} />}
+            </div>
+            <p className="font-medium text-[12px] text-muted-foreground">
+              {rate?.[currency]?.toLocaleString(undefined, { currency, style: 'currency' }) ?? '-'}
+            </p>
+          </div>
         </div>
-      </div>
+      </Tooltip>
 
       <div className="flex flex-col justify-center">
         <p className="text-[14px]">{networkName}</p>
@@ -159,10 +173,8 @@ export const SwapTokenRow: React.FC<Props> = ({
           </div>
         )
       ) : (
-        <div className="flex flex-col items-end justify-center">
-          <p className="font-medium text-[12px] text-right text-muted-foreground">
-            {rate?.[currency]?.toLocaleString(undefined, { currency, style: 'currency' }) ?? '-'}
-          </p>
+        <div className="flex items-center justify-end">
+          <p className="text-muted-foreground text-[12px] text-right">-</p>
         </div>
       )}
     </div>
