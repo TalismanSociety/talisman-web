@@ -52,22 +52,14 @@ const NFT_CARD_WIDTH = 290
 
 const NftTagContext = createContext<NftTag | undefined>(undefined)
 
-const toIpfsCompatibleUrl = (url: string, options?: { imgWidth?: number }, nft?: Nft) => {
+const toIpfsCompatibleUrl = (url: string, options?: { imgWidth?: number }) => {
   const pattern = /ipfs:\/\/(ipfs\/)?/
 
   if (!url.match(pattern)) {
     return url
   }
 
-  const OG_WUD_BURN_COLLECTION_ID = '244'
-  const shouldUseKodadot = nft?.chain === 'polkadot-asset-hub' && nft.collection?.id === OG_WUD_BURN_COLLECTION_ID
-
-  const gatewayUrl = new URL(
-    url.replace(
-      /ipfs:\/\/(ipfs\/)?/,
-      shouldUseKodadot ? 'https://image.w.kodadot.xyz/ipfs/' : 'https://talisman.mypinata.cloud/ipfs/'
-    )
-  )
+  const gatewayUrl = new URL(url.replace(/ipfs:\/\/(ipfs\/)?/, 'https://talisman.mypinata.cloud/ipfs/'))
 
   if (options?.imgWidth !== undefined) {
     // x3 for high DPI display
@@ -122,8 +114,8 @@ const NftCard = ({ nft }: { nft: Nft }) => {
         media={
           <Card.Preview
             src={Maybe.of(nft.thumbnail ?? nft.media.url).mapOrUndefined(x => [
-              toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH }, nft),
-              toIpfsCompatibleUrl(x, undefined, nft),
+              toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH }),
+              toIpfsCompatibleUrl(x),
             ])}
             type={nft.thumbnail !== undefined ? undefined : (nft.media.mimeType?.split('/').at(0) as any)}
             fetchMime
@@ -172,8 +164,8 @@ const NftCard = ({ nft }: { nft: Nft }) => {
         overline={nft.collection?.name}
         media={
           <MediaDialog.Player
-            src={Maybe.of(nft.media.url).mapOrUndefined(x => toIpfsCompatibleUrl(x, undefined, nft))}
-            type={(nft.media.mimeType?.split('/').at(0) as any) ?? 'image'}
+            src={Maybe.of(nft.media.url).mapOrUndefined(toIpfsCompatibleUrl)}
+            type={nft.media.mimeType?.split('/').at(0) as any}
           />
         }
         content={
@@ -237,8 +229,8 @@ const NftCollectionCard = ({ collection }: { collection: NftCollection }) => (
               <Card.Preview
                 key={nft.id}
                 src={Maybe.of(nft.thumbnail ?? nft.media.url).mapOrUndefined(x => [
-                  toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH / 4 }, nft),
-                  toIpfsCompatibleUrl(x, undefined, nft),
+                  toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH / 4 }),
+                  toIpfsCompatibleUrl(x),
                 ])}
                 fetchMime
               />
