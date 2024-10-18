@@ -21,7 +21,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
   const columns = useMemo<ColumnDef<Provider>[]>(
     () => [
       {
-        accessorKey: 'assetName',
+        accessorKey: 'symbol',
         header: 'Asset',
         cell: info => info.getValue(),
       },

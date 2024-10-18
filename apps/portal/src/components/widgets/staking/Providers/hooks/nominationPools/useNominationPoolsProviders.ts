@@ -35,13 +35,15 @@ const useNominationPoolsProviders = () => {
       type: 'Nomination pool',
       provider: chainName,
       unbondingPeriod: '5 days',
-      availableBalance: Decimal.fromPlanck(reducedBalancesByRpc[index] ?? 0n, decimals ?? 0, { currency: symbol }),
+      availableBalance: Decimal.fromPlanck(reducedBalancesByRpc[index] ?? 0n, decimals ?? 0, {
+        currency: symbol,
+      }).toLocaleString(),
       stakePercentage: 0.5,
       actionLink: `?action=stake&type=nomination-pools&chain=${id}`,
     }
   })
 
-  console.log({ nominationPoolProviders })
+  return nominationPoolProviders
 }
 
 export default useNominationPoolsProviders
