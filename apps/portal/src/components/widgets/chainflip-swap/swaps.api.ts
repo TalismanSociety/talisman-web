@@ -242,6 +242,12 @@ export const uniswapExtendedTokensList = atom(async () => {
   return (await response.json()).tokens as { chainId: number; address: string }[]
 })
 
+export const safeTokensListAtom = atom(async get => {
+  const uniswapSafeTokens = await get(uniswapSafeTokensList)
+  const uniswapExtendedTokens = await get(uniswapExtendedTokensList)
+  return [...uniswapSafeTokens, ...uniswapExtendedTokens]
+})
+
 const coingeckoCoinByAddressAtom = atomFamily((addressPlatform: string) =>
   atom(async () => {
     const [address, platform] = addressPlatform.split(':')
@@ -338,12 +344,13 @@ const filterAndSortTokens = async (
   search: string
 ): Promise<SwappableAssetWithDecimals[]> => {
   if (search.trim().length > 0) {
-    const isSearchingAddress = search.startsWith('0x')
+    const isSearchingAddress = isAddress(search)
+    const searchLoweredCase = search.toLowerCase()
     const knownFilteredTokens = tokens.filter(
       t =>
-        t.symbol.toLowerCase().startsWith(search.toLowerCase()) ||
-        t.name.toLowerCase().startsWith(search.toLowerCase()) ||
-        (isSearchingAddress && t.contractAddress?.startsWith(search.toLowerCase()))
+        t.symbol.toLowerCase().startsWith(searchLoweredCase) ||
+        t.name.toLowerCase().startsWith(searchLoweredCase) ||
+        (isSearchingAddress && t.contractAddress?.startsWith(searchLoweredCase))
     )
 
     if (isSearchingAddress && knownFilteredTokens.length === 0) {
@@ -362,7 +369,34 @@ const filterAndSortTokens = async (
       )
       return allOnChainTokens.filter(t => t !== null)
     }
-    return knownFilteredTokens
+    const safeTokens = await get(safeTokensListAtom)
+    return knownFilteredTokens.sort((a, b) => {
+      // prioritize native tokens
+      if (a.id.includes('native') && !b.id.includes('native')) return -1
+      if (b.id.includes('native') && !a.id.includes('native')) return 1
+
+      // prioritize tokens in safe tokens list
+      const aSafe = safeTokens.some(t => t.address.toLowerCase() === a.contractAddress?.toLowerCase())
+      const bSafe = safeTokens.some(t => t.address.toLowerCase() === b.contractAddress?.toLowerCase())
+      if (aSafe && !bSafe) return -1
+      if (bSafe && !aSafe) return 1
+
+      // prioritize tokens with exact symbol match
+      const aSymbol = a.symbol.toLowerCase()
+      const bSymbol = b.symbol.toLowerCase()
+      if (aSymbol === searchLoweredCase && bSymbol !== searchLoweredCase) return -1
+      if (bSymbol === searchLoweredCase && aSymbol !== searchLoweredCase) return 1
+      // if both are same symbol and both match search, sort by chain id
+      if (aSymbol === searchLoweredCase && bSymbol === searchLoweredCase) return +a.chainId - +b.chainId
+
+      // then prioritize tokens with exact start of symbol match
+      if (aSymbol.startsWith(searchLoweredCase) && !bSymbol.startsWith(searchLoweredCase)) return -1
+      if (bSymbol.startsWith(searchLoweredCase) && !aSymbol.startsWith(searchLoweredCase)) return 1
+      // if both have matching start, sort by chain id
+      if (aSymbol.startsWith(searchLoweredCase) && bSymbol.startsWith(searchLoweredCase)) return +a.chainId - +b.chainId
+
+      return a.symbol.localeCompare(b.symbol)
+    })
   }
   const tab = get(tokenTabAtom)
   const filter = tokenTabs.find(t => t.value === tab)?.filter
