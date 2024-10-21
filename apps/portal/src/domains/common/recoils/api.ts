@@ -1,9 +1,10 @@
-import { useSubstrateApiEndpoint } from '..'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import * as AvailJsSdk from 'avail-js-sdk'
 import { atom, useAtom } from 'jotai'
 import { useEffect, useRef } from 'react'
 import { selectorFamily, useRecoilCallback } from 'recoil'
+
+import { useSubstrateApiEndpoint } from '..'
 
 export const substrateApiState = selectorFamily<ApiPromise, string | undefined>({
   key: 'SubstrateApiState',
@@ -17,9 +18,10 @@ export const substrateApiState = selectorFamily<ApiPromise, string | undefined>(
         types: AvailJsSdk.spec.types,
         rpc: AvailJsSdk.spec.rpc,
         signedExtensions: AvailJsSdk.spec.signedExtensions,
+        noInitWarn: true,
       })
 
-    return await ApiPromise.create({ provider: new WsProvider(endpoint) })
+    return await ApiPromise.create({ provider: new WsProvider(endpoint), noInitWarn: true })
   },
   dangerouslyAllowMutability: true,
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },

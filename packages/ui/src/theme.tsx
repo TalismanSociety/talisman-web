@@ -1,5 +1,6 @@
-import { ThemeProvider as EmotionThemeProvider, Global, css, useTheme as useEmotionTheme } from '@emotion/react'
-import { createContext, useContext, type PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
+import { css, ThemeProvider as EmotionThemeProvider, Global, useTheme as useEmotionTheme } from '@emotion/react'
+import { createContext, useContext } from 'react'
 
 type Typography = {
   fontFamily: string

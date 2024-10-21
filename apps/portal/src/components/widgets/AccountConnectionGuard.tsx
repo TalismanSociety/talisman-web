@@ -1,13 +1,16 @@
-import { lookupAccountAddressState, popularAccounts } from '../../domains/accounts'
-import { readOnlyAccountsState } from '../../domains/accounts/recoils'
-import { useHasActiveWalletConnection } from '../../domains/extension'
-import { shortenAddress } from '../../util/format'
-import Welcome from '../recipes/Welcome'
-import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
-import { useState, type PropsWithChildren } from 'react'
+import type { ReactNode } from 'react'
+import { useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
-export type AccountConnectionGuardProps = PropsWithChildren
+import Welcome from '@/components/recipes/Welcome'
+import { lookupAccountAddressState, popularAccounts } from '@/domains/accounts'
+import { readOnlyAccountsState } from '@/domains/accounts/recoils'
+import { useHasActiveWalletConnection, useWalletConnectionInitialised } from '@/domains/extension'
+import { shortenAddress } from '@/util/format'
+
+import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
+
+export type AccountConnectionGuardProps = { children?: ReactNode; noSuspense?: boolean }
 
 export const useShouldShowAccountConnectionGuard = () => {
   const hasActiveWalletConnection = useHasActiveWalletConnection()
@@ -17,16 +20,18 @@ export const useShouldShowAccountConnectionGuard = () => {
   return !hasActiveWalletConnection && readonlyAccounts.length === 0 && lookupAccount === undefined
 }
 
-const AccountConnectionGuard = (props: AccountConnectionGuardProps) => {
+const AccountConnectionGuard = ({ children, noSuspense }: AccountConnectionGuardProps) => {
   const shouldShowGuard = useShouldShowAccountConnectionGuard()
   const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
 
   const [addressInput, setAddressInput] = useState('')
   const setLookupAddress = useSetRecoilState(lookupAccountAddressState)
 
-  if (!shouldShowGuard) {
-    return <>{props.children}</>
-  }
+  const walletConnectionInitialised = useWalletConnectionInitialised()
+  // triggers parent <Suspense />
+  if (!walletConnectionInitialised && !noSuspense) throw new Promise<void>(resolve => resolve())
+
+  if (!shouldShowGuard) return children
 
   return (
     <div css={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center' }}>
