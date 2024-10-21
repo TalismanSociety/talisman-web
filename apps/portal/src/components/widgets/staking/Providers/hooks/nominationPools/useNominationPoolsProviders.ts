@@ -1,4 +1,5 @@
 import useAprs from './useAprs'
+import useUnlockDurations from './useUnlockDurations'
 import { selectedSubstrateAccountsState } from '@/domains/accounts'
 import { nominationPoolsEnabledChainsState } from '@/domains/chains'
 import { chainDeriveState } from '@/domains/common'
@@ -17,6 +18,7 @@ const useNominationPoolsProviders = () => {
   )
 
   const aprs = useAprs({ rpcIds })
+  const unlockDurations = useUnlockDurations({ rpcIds })
 
   const reducedBalancesByRpc = rpcIds.map((_, index) => {
     // groups balances of multiple addresses by rpc
@@ -34,7 +36,7 @@ const useNominationPoolsProviders = () => {
       apr: aprs[index]?.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 }),
       type: 'Nomination pool',
       provider: chainName,
-      unbondingPeriod: '5 days',
+      unbondingPeriod: unlockDurations[index],
       availableBalance: Decimal.fromPlanck(reducedBalancesByRpc[index] ?? 0n, decimals ?? 0, {
         currency: symbol,
       }).toLocaleString(),
