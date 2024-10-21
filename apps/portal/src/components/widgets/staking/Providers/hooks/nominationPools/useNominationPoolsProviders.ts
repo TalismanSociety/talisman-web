@@ -1,4 +1,3 @@
-// import useAvailableBalances from './useAvailableBalances'
 // import useStakePercentages from './useStakePercentages'
 import { Provider } from '../useProvidersData'
 import useUnlockDurations from './useUnlockDurations'
@@ -11,7 +10,6 @@ const useNominationPoolsProviders = (): Provider[] => {
   const rpcIds = nominationPools?.map(({ rpc }) => rpc ?? '') ?? []
 
   const unlockDurations = useUnlockDurations({ rpcIds })
-  // const availableBalances = useAvailableBalances({ rpcIds })
   // const stakedPercentages = useStakePercentages({ rpcIds })
 
   const nominationPoolProviders: Provider[] =
@@ -24,9 +22,7 @@ const useNominationPoolsProviders = (): Provider[] => {
         type: 'Nomination pool',
         provider: chainName,
         unbondingPeriod: unlockDurations?.[index],
-        // availableBalance: availableBalances[index] ?? 0n,
         // stakePercentage: stakedPercentages[index],
-        availableBalance: 0n,
         stakePercentage: 0,
         actionLink: `?action=stake&type=nomination-pools&chain=${id}`,
         nativeToken,

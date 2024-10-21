@@ -1,7 +1,7 @@
 import { Provider } from '../hooks/useProvidersData'
 import Apr from './Apr'
+import AvailableBalance from './AvailableBalance'
 import { cn } from '@/lib/utils'
-import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator } from '@talismn/ui'
 import {
   useReactTable,
@@ -62,11 +62,11 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
         cell: ({ row }) => {
           return (
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-              <div>
-                {Decimal.fromPlanck(row.original.availableBalance ?? 0n, row.original.nativeToken?.decimals ?? 0, {
-                  currency: row.original.nativeToken?.symbol,
-                }).toLocaleString()}
-              </div>
+              <AvailableBalance
+                type={row.original.type}
+                rpcId={row.original.rpc || ''}
+                nativeToken={row.original.nativeToken}
+              />
             </Suspense>
           )
         },
