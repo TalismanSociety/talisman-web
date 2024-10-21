@@ -1,5 +1,6 @@
 import useAprs from './useAprs'
 import useAvailableBalances from './useAvailableBalances'
+import useStakePercentages from './useStakePercentages'
 import useUnlockDurations from './useUnlockDurations'
 import { nominationPoolsEnabledChainsState } from '@/domains/chains'
 import { Decimal } from '@talismn/math'
@@ -12,6 +13,7 @@ const useNominationPoolsProviders = () => {
   const aprs = useAprs({ rpcIds })
   const unlockDurations = useUnlockDurations({ rpcIds })
   const availableBalances = useAvailableBalances({ rpcIds })
+  const stakedPercentages = useStakePercentages({ rpcIds })
 
   const nominationPoolProviders = nominationPools?.map(({ chainName, id, nativeToken }, index) => {
     const { symbol, logo, decimals } = nativeToken ?? {}
@@ -27,7 +29,7 @@ const useNominationPoolsProviders = () => {
       availableBalance: Decimal.fromPlanck(availableBalances[index] ?? 0n, decimals ?? 0, {
         currency: symbol,
       }).toLocaleString(),
-      stakePercentage: 0.5,
+      stakePercentage: stakedPercentages[index],
       actionLink: `?action=stake&type=nomination-pools&chain=${id}`,
     }
   })

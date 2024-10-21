@@ -51,6 +51,11 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
         cell: info => info.getValue(),
       },
       {
+        accessorKey: 'stakePercentage',
+        header: 'Available Staked (%)',
+        cell: info => info.getValue(),
+      },
+      {
         accessorKey: 'action',
         header: '',
         cell: () => <button>Stake</button>,
@@ -75,7 +80,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
     <div className="pt-4 w-full flex flex-col flex-1">
       <div className="grid gap-[8px]">
         {/* Column Headers */}
-        <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-4 font-semibold px-4">
+        <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-4 font-semibold px-4">
           {table.getHeaderGroups().map(headerGroup =>
             headerGroup.headers.map(header => (
               <div
@@ -108,7 +113,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
         {table.getRowModel().rows.map(row => (
           <div
             key={row.id}
-            className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-4 bg-[#1B1B1B] rounded-[16px] py-4 px-4 items-center"
+            className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-4 bg-[#1B1B1B] rounded-[16px] py-4 px-4 items-center"
           >
             {row.getVisibleCells().map(cell => (
               <div key={cell.id} className="p-2 flex-grow truncate last:text-right">
