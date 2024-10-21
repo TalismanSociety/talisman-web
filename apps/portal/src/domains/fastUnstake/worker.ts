@@ -1,8 +1,9 @@
-import { getErasToCheck } from './utils'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { encodeAddress } from '@polkadot/util-crypto'
 import { Observable } from 'rxjs'
 import { expose } from 'threads/worker'
+
+import { getErasToCheck } from './utils'
 
 export type WorkerFunction = typeof getExposure
 
@@ -55,7 +56,7 @@ const generateExposure = async function* (
   addresses: readonly string[],
   precomputedExposure?: ExposureRecord
 ) {
-  const api = await ApiPromise.create({ provider: new WsProvider(endpoint), initWasm: false })
+  const api = await ApiPromise.create({ provider: new WsProvider(endpoint), initWasm: false, noInitWarn: true })
   const encodedAddresses = addresses.map(x => encodeAddress(x, api.registry.chainSS58))
 
   try {

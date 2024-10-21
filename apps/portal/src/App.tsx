@@ -1,8 +1,8 @@
 import ThemeProvider from './App.Theme'
-import { TalismanHandLoader } from './components/legacy/TalismanHandLoader'
 import FairyBreadBanner from './components/legacy/archetypes/FairyBreadBanner'
-import ErrorBoundary from './components/widgets/ErrorBoundary'
+import { TalismanHandLoader } from './components/legacy/TalismanHandLoader'
 import Development from './components/widgets/development'
+import ErrorBoundary from './components/widgets/ErrorBoundary'
 import { AccountWatcher, SignetWatcher } from './domains/accounts'
 import { BalancesWatcher } from './domains/balances'
 import { chainDeriveState, chainQueryMultiState, chainQueryState } from './domains/common'
@@ -11,33 +11,33 @@ import { EvmProvider } from './domains/extension/wagmi'
 import * as Portfolio from './libs/portfolio'
 import TalismanProvider from './libs/talisman'
 import router from './routes'
+
 import '@polkadot/api-augment/polkadot'
 import '@polkadot/api-augment/substrate'
 import '@talismn/astar-types/augment-api'
 import '@talismn/astar-types/types-lookup'
+
 import { PolkadotApiProvider } from '@talismn/react-polkadot-api'
 import { PostHogProvider } from 'posthog-js/react'
 import { Suspense } from 'react'
 import { RouterProvider } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
 
-const Loader = () => {
-  return (
-    <div
-      style={{
-        height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'absolute',
-        left: 0,
-        right: 0,
-      }}
-    >
-      <TalismanHandLoader />
-    </div>
-  )
-}
+const Loader = () => (
+  <div
+    style={{
+      height: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'absolute',
+      left: 0,
+      right: 0,
+    }}
+  >
+    <TalismanHandLoader />
+  </div>
+)
 
 const App = () => (
   <ThemeProvider>
@@ -49,30 +49,30 @@ const App = () => (
           </div>
         )}
       >
-        <Suspense fallback={<Loader />}>
-          <PostHogProvider apiKey={import.meta.env.REACT_APP_POSTHOG_AUTH_TOKEN}>
-            <EvmProvider>
-              <PolkadotApiProvider
-                queryState={chainQueryState}
-                deriveState={chainDeriveState}
-                queryMultiState={chainQueryMultiState}
-              >
-                <Portfolio.Provider>
-                  <TalismanProvider>
-                    <ExtensionWatcher />
-                    <AccountWatcher />
-                    <SignetWatcher />
-                    <TalismanExtensionSynchronizer />
-                    <BalancesWatcher />
+        <PostHogProvider apiKey={import.meta.env.REACT_APP_POSTHOG_AUTH_TOKEN}>
+          <EvmProvider>
+            <PolkadotApiProvider
+              queryState={chainQueryState}
+              deriveState={chainDeriveState}
+              queryMultiState={chainQueryMultiState}
+            >
+              <Portfolio.Provider>
+                <TalismanProvider>
+                  <ExtensionWatcher />
+                  <AccountWatcher />
+                  <SignetWatcher />
+                  <TalismanExtensionSynchronizer />
+                  <BalancesWatcher />
+                  <Suspense fallback={<Loader />}>
                     <RouterProvider router={router} />
-                    <FairyBreadBanner />
-                    <Development />
-                  </TalismanProvider>
-                </Portfolio.Provider>
-              </PolkadotApiProvider>
-            </EvmProvider>
-          </PostHogProvider>
-        </Suspense>
+                  </Suspense>
+                  <FairyBreadBanner />
+                  <Development />
+                </TalismanProvider>
+              </Portfolio.Provider>
+            </PolkadotApiProvider>
+          </EvmProvider>
+        </PostHogProvider>
       </ErrorBoundary>
     </RecoilRoot>
   </ThemeProvider>

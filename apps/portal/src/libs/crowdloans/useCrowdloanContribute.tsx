@@ -1,4 +1,15 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+import type { SubmittableResult } from '@polkadot/api'
+import type { MemberType } from 'safety-match'
+import { ApiPromise, WsProvider } from '@polkadot/api'
+import { type SubmittableExtrinsic } from '@polkadot/api/submittable/types'
+import { isEthereumChecksum } from '@polkadot/util-crypto'
+import { encodeAnyAddress, planckToTokens, tokensToPlanck } from '@talismn/util'
+import BigNumber from 'bignumber.js'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useRecoilValue } from 'recoil'
+import { makeTaggedUnion, none } from 'safety-match'
+
 import { useConnectedSubstrateWallet } from '../../domains/extension'
 import customRpcs from '../../util/customRpcs'
 import { Maybe } from '../../util/monads'
@@ -6,14 +17,6 @@ import { parachainDetails, supportedRelayChainsState } from '../talisman/util/_c
 import { Acala, Astar, Moonbeam, Zeitgeist } from './crowdloanOverrides'
 import { submitTermsAndConditions } from './moonbeam/remarkFlow'
 import { useCrowdloanContributions } from './useCrowdloanContributions'
-import { ApiPromise, WsProvider, type SubmittableResult } from '@polkadot/api'
-import { type SubmittableExtrinsic } from '@polkadot/api/submittable/types'
-import { isEthereumChecksum } from '@polkadot/util-crypto'
-import { encodeAnyAddress, planckToTokens, tokensToPlanck } from '@talismn/util'
-import BigNumber from 'bignumber.js'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useRecoilValue } from 'recoil'
-import { makeTaggedUnion, none, type MemberType } from 'safety-match'
 
 //
 // TODO: Move tx handling into a generic queue, store queue in react context
@@ -458,7 +461,7 @@ function useApiThunk(state: ContributeState, dispatch: DispatchContributeEvent) 
 
     let shouldDisconnect = false
 
-    void ApiPromise.create({ provider: new WsProvider(relayRpcs) }).then(async api => {
+    void ApiPromise.create({ provider: new WsProvider(relayRpcs), noInitWarn: true }).then(async api => {
       if (shouldDisconnect) return await api.disconnect()
       dispatch(ContributeEvent._setApi(api))
     })

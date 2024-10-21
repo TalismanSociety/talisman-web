@@ -1,15 +1,17 @@
-import polkadotJsWalletLogo from '../../assets/polkadot-js-wallet.svg'
-import talismanWalletLogo from '../../assets/talisman-wallet.svg'
-import { substrateInjectedAccountsState } from '../accounts/recoils'
-import { storageEffect } from '../common/effects'
-import { WalletAggregator, type BaseWallet } from '@polkadot-onboard/core'
-import { InjectedWalletProvider } from '@polkadot-onboard/injected-wallets'
+import type { BaseWallet } from '@polkadot-onboard/core'
 import type { InjectedWindow } from '@polkadot/extension-inject/types'
+import { WalletAggregator } from '@polkadot-onboard/core'
+import { InjectedWalletProvider } from '@polkadot-onboard/injected-wallets'
 import { jsonParser, string } from '@recoiljs/refine'
 import { toast } from '@talismn/ui'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect } from 'react'
 import { atom, selector, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+
+import polkadotJsWalletLogo from '@/assets/polkadot-js-wallet.svg'
+import talismanWalletLogo from '@/assets/talisman-wallet.svg'
+import { substrateInjectedAccountsState } from '@/domains/accounts/recoils'
+import { storageEffect } from '@/domains/common/effects'
 
 const walletAggregator = new WalletAggregator([
   new InjectedWalletProvider(
@@ -30,6 +32,11 @@ const walletAggregator = new WalletAggregator([
     import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman'
   ),
 ])
+
+export const initialisedSubstrateWalletsState = atom({
+  key: 'InitialisedSubstrateWallets',
+  default: false,
+})
 
 const installedSubstrateWalletsState = selector({
   key: 'InstalledSubstrateWallets',
@@ -68,6 +75,7 @@ export const useSubstrateWalletConnect = () => {
 export const useSubstrateExtensionEffect = () => {
   const connectedWallet = useRecoilValue(connectedSubstrateWalletState)
   const setInjectedAccounts = useSetRecoilState(substrateInjectedAccountsState)
+  const setWalletConnectionInitialised = useSetRecoilState(initialisedSubstrateWalletsState)
 
   useEffect(() => {
     const subscriptions = connectedWallet?.subscribeAccounts(accounts => setInjectedAccounts(accounts))
@@ -111,8 +119,10 @@ export const useSubstrateExtensionEffect = () => {
           }
         }
       }
+
+      setWalletConnectionInitialised(true)
     })()
-  }, [connectedWalletId, posthog, setConnectedWallet, setConnectedWalletId])
+  }, [connectedWalletId, posthog, setConnectedWallet, setConnectedWalletId, setWalletConnectionInitialised])
 
   // Auto connect on launch if Talisman extension is installed
   // and user has not explicitly disable wallet connection

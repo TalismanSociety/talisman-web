@@ -7,13 +7,8 @@ export default tseslint.config(eslint.configs.recommended, ...tseslint.configs.r
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     '@typescript-eslint/no-unused-vars': [
-      'error',
-      {
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-        caughtErrorsIgnorePattern: '^_',
-        ignoreRestSiblings: true,
-      },
+      'warn',
+      { argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_', ignoreRestSiblings: true, varsIgnorePattern: '^_' },
     ],
   },
 })
