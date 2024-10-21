@@ -11,7 +11,7 @@ const UnlockDuration = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   const rounds = unlockDuration.unwrapOrDefault().toHuman().Era
   const duration = rounds * slpxPair.estimatedRoundDuration
 
-  return <>{formatDistance(0, Number(duration))}</>
+  return <>0-{formatDistance(0, Number(duration))}</>
 }
 
 export default UnlockDuration
