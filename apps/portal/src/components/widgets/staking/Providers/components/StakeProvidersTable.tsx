@@ -1,5 +1,6 @@
 import { Provider } from '../hooks/useProvidersData'
 import { cn } from '@/lib/utils'
+import { Decimal } from '@talismn/math'
 import {
   useReactTable,
   getCoreRowModel,
@@ -11,7 +12,7 @@ import {
 import { useState, useMemo } from 'react'
 
 type StakeProviderProps = {
-  dataQuery: any[]
+  dataQuery: Provider[]
 }
 
 const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
@@ -28,7 +29,9 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
       {
         accessorKey: 'apr',
         header: 'Est. return',
-        cell: info => info.getValue(),
+        cell: ({ row }) => (
+          <div>{row.original.apr?.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</div>
+        ),
       },
       {
         accessorKey: 'type',
@@ -48,7 +51,15 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
       {
         accessorKey: 'availableBalance',
         header: 'Available balance',
-        cell: info => info.getValue(),
+        cell: ({ row }) => {
+          return (
+            <div>
+              {Decimal.fromPlanck(row.original.availableBalance ?? 0n, row.original.nativeToken?.decimals ?? 0, {
+                currency: row.original.nativeToken?.symbol,
+              }).toLocaleString()}
+            </div>
+          )
+        },
       },
       {
         accessorKey: 'stakePercentage',
