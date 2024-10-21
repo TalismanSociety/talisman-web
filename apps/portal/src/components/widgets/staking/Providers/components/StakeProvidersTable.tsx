@@ -1,6 +1,8 @@
 import { Provider } from '../hooks/useProvidersData'
+import Apr from './Apr'
 import { cn } from '@/lib/utils'
 import { Decimal } from '@talismn/math'
+import { CircularProgressIndicator } from '@talismn/ui'
 import {
   useReactTable,
   getCoreRowModel,
@@ -9,7 +11,7 @@ import {
   SortingState,
   ColumnDef,
 } from '@tanstack/react-table'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, Suspense } from 'react'
 
 type StakeProviderProps = {
   dataQuery: Provider[]
@@ -29,9 +31,13 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
       {
         accessorKey: 'apr',
         header: 'Est. return',
-        cell: ({ row }) => (
-          <div>{row.original.apr?.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</div>
-        ),
+        cell: ({ row }) => {
+          return (
+            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+              <Apr type={row.original.type} rpcId={row.original.rpc || ''} />
+            </Suspense>
+          )
+        },
       },
       {
         accessorKey: 'type',
@@ -46,25 +52,31 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
       {
         accessorKey: 'unbondingPeriod',
         header: 'Unbonding period',
-        cell: info => info.getValue(),
+        cell: ({ row }) => (
+          <Suspense fallback={<CircularProgressIndicator size="1em" />}>{row.original.unbondingPeriod}</Suspense>
+        ),
       },
       {
         accessorKey: 'availableBalance',
         header: 'Available balance',
         cell: ({ row }) => {
           return (
-            <div>
-              {Decimal.fromPlanck(row.original.availableBalance ?? 0n, row.original.nativeToken?.decimals ?? 0, {
-                currency: row.original.nativeToken?.symbol,
-              }).toLocaleString()}
-            </div>
+            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+              <div>
+                {Decimal.fromPlanck(row.original.availableBalance ?? 0n, row.original.nativeToken?.decimals ?? 0, {
+                  currency: row.original.nativeToken?.symbol,
+                }).toLocaleString()}
+              </div>
+            </Suspense>
           )
         },
       },
       {
         accessorKey: 'stakePercentage',
         header: 'Available Staked (%)',
-        cell: info => info.getValue(),
+        cell: ({ row }) => (
+          <Suspense fallback={<CircularProgressIndicator size="1em" />}>{row.original.stakePercentage}</Suspense>
+        ),
       },
       {
         accessorKey: 'action',
