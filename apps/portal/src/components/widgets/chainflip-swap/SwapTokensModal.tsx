@@ -2,7 +2,7 @@ import { SwapTokenRow } from './SwapTokenRow'
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
 import { tokenTabAtom, tokenTabs } from './swaps.api'
 import { cn } from '@/lib/utils'
-import { useChains, useEvmNetworks } from '@talismn/balances-react'
+import { useChains, useEvmNetworks, useTokenRates } from '@talismn/balances-react'
 import { Chain, EvmNetwork, githubUnknownChainLogoUrl, githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { AlertDialog, Button, CircularProgressIndicator, SearchBar, Select, Skeleton, SurfaceButton } from '@talismn/ui'
@@ -58,6 +58,7 @@ export const SwapTokensModal: React.FC<Props> = ({
   }, [debouncedSearch, setSearch])
 
   const parentRef = useRef<HTMLDivElement>(null)
+  const rates = useTokenRates()
 
   const uniqueChains = useMemo(() => {
     return Object.values(
@@ -96,15 +97,25 @@ export const SwapTokensModal: React.FC<Props> = ({
   })
 
   const sortedTokensByBalances = useMemo(() => {
-    const sortOverride = tokenTabs.find(t => t.value === tab)?.sort
-    if (!balances || sortOverride) return filteredAssets
+    if (!balances) return filteredAssets
     return filteredAssets.sort((a, b) => {
       const aBalance = balances[a.id]?.toNumber()
       const bBalance = balances[b.id]?.toNumber()
-      if (aBalance === undefined || bBalance === undefined) return 0
-      return bBalance - aBalance
+
+      // put tokens with undefined balance last
+      if (aBalance === undefined) return 1
+      if (bBalance === undefined) return -1
+
+      const aRate = rates[a.id]?.usd ?? +(a.context?.lifi?.priceUSD ?? '0')
+      const bRate = rates[b.id]?.usd ?? +(b.context?.lifi?.priceUSD ?? '0')
+
+      // prioritize tokens with balances
+      if (aRate === 0 && bRate === 0) return bBalance - aBalance
+
+      // if both have rates, sort by largest fiat value
+      return bBalance * bRate - aBalance * aRate
     })
-  }, [balances, filteredAssets, tab])
+  }, [balances, filteredAssets, rates])
 
   const handleSelectAsset = useCallback(
     (asset: SwappableAssetWithDecimals, showWarning: boolean) => {
