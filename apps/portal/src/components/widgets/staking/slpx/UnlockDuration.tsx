@@ -6,7 +6,7 @@ export type UnlockDurationProps = { slpxPair: SlpxPair }
 
 const UnlockDuration = (props: UnlockDurationProps) => {
   const unlockDuration = useVTokenUnlockDuration(props.slpxPair)
-  return <>{useMemo(() => formatDistance(0, unlockDuration), [unlockDuration])}</>
+  return <>0-{useMemo(() => formatDistance(0, unlockDuration), [unlockDuration])}</>
 }
 
 export default UnlockDuration
