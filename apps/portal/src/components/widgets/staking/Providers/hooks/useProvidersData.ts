@@ -1,9 +1,10 @@
 import useSlpxProviders from './bifrost/useSlpxProviders'
 import useSlpxSubstrateProviders from './bifrost/useSlpxSubstrateProviders'
 import useNominationPoolsProviders from './nominationPools/useNominationPoolsProviders'
+import useSubtensorProviders from './subtensor/useSubtensorProviders'
 import { IToken } from '@talismn/chaindata-provider'
 
-export type StakeProvider = 'Nomination pool' | 'Liquid staking' | 'Liquid staking substrate'
+export type StakeProvider = 'Nomination pool' | 'Liquid staking' | 'Delegation'
 
 export type Provider = {
   symbol: string | undefined
@@ -25,8 +26,14 @@ const useProvidersData = () => {
   const nominationPoolProviders = useNominationPoolsProviders()
   const slpxProviders = useSlpxProviders()
   const slpxSubstrateProviders = useSlpxSubstrateProviders()
+  const subtensorProviders = useSubtensorProviders()
 
-  const providersData: Provider[] = [...nominationPoolProviders, ...slpxProviders, ...slpxSubstrateProviders]
+  const providersData: Provider[] = [
+    ...nominationPoolProviders,
+    ...slpxProviders,
+    ...slpxSubstrateProviders,
+    ...subtensorProviders,
+  ]
 
   return providersData
 }
