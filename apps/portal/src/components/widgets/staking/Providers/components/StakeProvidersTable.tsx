@@ -42,6 +42,8 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
                 rowId={row.id}
                 apr={aprValues[row.id]}
                 setAprValues={setAprValues}
+                symbol={row.original.nativeToken?.symbol}
+                apiEndpoint={row.original.apiEndpoint}
               />
             </Suspense>
           )
