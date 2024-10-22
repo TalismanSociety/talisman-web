@@ -1,21 +1,23 @@
-import useApr from '../hooks/nominationPools/useApr'
 import { StakeProvider } from '../hooks/useProvidersData'
+import { ChainProvider } from '@/domains/chains'
+import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nominationPools'
 
-const aprFormatter = (apr: number) => {
-  return apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
+const NominationPoolApr = () => {
+  return <>{useNominationPoolApr().toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</>
 }
 
-const NominationPoolApr = ({ rpcId }: { rpcId: string }) => {
-  const apr = useApr({ rpcId })
-
-  return <>{aprFormatter(apr)}</>
-}
-
-const Apr = ({ type, rpcId }: { type: StakeProvider; rpcId: string }) => {
+const Apr = ({ type, genesisHash }: { type: StakeProvider; rpcId: string; genesisHash: `0x${string}` }) => {
   switch (type) {
     case 'Nomination pool':
-      return <NominationPoolApr rpcId={rpcId} />
-
+      return (
+        <ChainProvider
+          chain={{
+            genesisHash: genesisHash,
+          }}
+        >
+          <NominationPoolApr />
+        </ChainProvider>
+      )
     default:
       return <div>Banana</div>
   }

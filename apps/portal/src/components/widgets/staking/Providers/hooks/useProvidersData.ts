@@ -1,7 +1,7 @@
 import useNominationPoolsProviders from './nominationPools/useNominationPoolsProviders'
 import { IToken } from '@talismn/chaindata-provider'
 
-export type StakeProvider = 'Nomination pool'
+export type StakeProvider = 'Nomination pool' | 'Lido'
 
 export type Provider = {
   symbol: string | undefined
@@ -15,6 +15,7 @@ export type Provider = {
   actionLink: string
   nativeToken: IToken | undefined
   rpc: string | undefined
+  genesisHash: `0x${string}`
 }
 
 const useProvidersData = () => {

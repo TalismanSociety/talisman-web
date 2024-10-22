@@ -34,7 +34,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
         cell: ({ row }) => {
           return (
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-              <Apr type={row.original.type} rpcId={row.original.rpc || ''} />
+              <Apr type={row.original.type} rpcId={row.original.rpc || ''} genesisHash={row.original.genesisHash} />
             </Suspense>
           )
         },

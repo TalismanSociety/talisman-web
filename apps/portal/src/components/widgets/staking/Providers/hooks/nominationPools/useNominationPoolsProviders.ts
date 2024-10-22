@@ -13,7 +13,7 @@ const useNominationPoolsProviders = (): Provider[] => {
   // const stakedPercentages = useStakePercentages({ rpcIds })
 
   const nominationPoolProviders: Provider[] =
-    nominationPools?.map(({ chainName, id, nativeToken, rpc }, index) => {
+    nominationPools?.map(({ chainName, id, nativeToken, rpc, genesisHash }, index) => {
       return {
         symbol: nativeToken?.symbol,
         logo: nativeToken?.logo,
@@ -27,6 +27,7 @@ const useNominationPoolsProviders = (): Provider[] => {
         actionLink: `?action=stake&type=nomination-pools&chain=${id}`,
         nativeToken,
         rpc,
+        genesisHash,
       }
     }) ?? []
 
