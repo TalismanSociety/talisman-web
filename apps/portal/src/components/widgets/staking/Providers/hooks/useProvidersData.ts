@@ -1,11 +1,12 @@
 import useSlpxProviders from './bifrost/useSlpxProviders'
 import useSlpxSubstrateProviders from './bifrost/useSlpxSubstrateProviders'
 import useDappProviders from './dapp/useDappProviders'
+import useLidoProviders from './lido/useLidoProviders'
 import useNominationPoolsProviders from './nominationPools/useNominationPoolsProviders'
 import useSubtensorProviders from './subtensor/useSubtensorProviders'
 import { IToken } from '@talismn/chaindata-provider'
 
-export type StakeProvider = 'Nomination pool' | 'Liquid staking' | 'Delegation' | 'DApp staking'
+export type StakeProvider = 'Nomination pool' | 'Liquid staking' | 'Delegation' | 'DApp staking' | 'Liquid staking Lido'
 
 export type Provider = {
   symbol: string | undefined
@@ -18,8 +19,8 @@ export type Provider = {
   stakePercentage: number | undefined
   actionLink: string
   nativeToken: IToken | any // TODO: Fix any
-  rpc: string | undefined
-  genesisHash: `0x${string}`
+  rpc?: string | undefined
+  genesisHash?: `0x${string}` | undefined
   apiEndpoint?: string
 }
 
@@ -29,6 +30,7 @@ const useProvidersData = () => {
   const slpxSubstrateProviders = useSlpxSubstrateProviders()
   const subtensorProviders = useSubtensorProviders()
   const dappProviders = useDappProviders()
+  const lidoProviders = useLidoProviders()
 
   const providersData: Provider[] = [
     ...nominationPoolProviders,
@@ -36,6 +38,7 @@ const useProvidersData = () => {
     ...slpxSubstrateProviders,
     ...subtensorProviders,
     ...dappProviders,
+    ...lidoProviders,
   ]
 
   return providersData
