@@ -1,5 +1,6 @@
 import { StakeProvider } from '../hooks/useProvidersData'
 import { ChainProvider } from '@/domains/chains'
+import { useApr as useDappApr } from '@/domains/staking/dappStaking'
 import { slpxAprState } from '@/domains/staking/slpx'
 import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nominationPools'
 import { highestAprTaoValidatorAtom } from '@/domains/staking/subtensor/atoms/taostats'
@@ -52,6 +53,19 @@ const SubtensorApr = ({ rowId, apr, setAprValues }: NominationPoolAprProps) => {
   return <>{aprFormatter(subtensorApr)}</>
 }
 
+const DappApr = ({ rowId, apr, setAprValues }: NominationPoolAprProps) => {
+  const dappAprData = useDappApr()
+  const dappApr = dappAprData.totalApr
+
+  useEffect(() => {
+    if (apr !== dappApr && !!dappApr) {
+      setAprValues(prev => ({ ...prev, [rowId]: dappApr }))
+    }
+  }, [apr, dappApr, rowId, setAprValues])
+
+  return <>{aprFormatter(dappApr)}</>
+}
+
 type AprProps = {
   type: StakeProvider
   genesisHash: `0x${string}`
@@ -92,6 +106,16 @@ const Apr = ({ type, genesisHash, rowId, apr, symbol, apiEndpoint, setAprValues 
           }}
         >
           <SubtensorApr setAprValues={setAprValues} rowId={rowId} apr={apr} />
+        </ChainProvider>
+      )
+    case 'DApp staking':
+      return (
+        <ChainProvider
+          chain={{
+            genesisHash: genesisHash,
+          }}
+        >
+          <DappApr setAprValues={setAprValues} rowId={rowId} apr={apr} />
         </ChainProvider>
       )
     default:
