@@ -6,11 +6,12 @@ import {
 import { fromAssetsAtom } from './swaps.api'
 import { substrateApiGetterAtom } from '@/domains/common'
 import { computeSubstrateBalance } from '@/util/balances'
+import { getMultibalance } from '@/util/multibalance'
 import { chainsAtom, evmNetworksAtom } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
-import { createPublicClient, erc20Abi, http } from 'viem'
+import { createPublicClient, http } from 'viem'
 import * as chains from 'viem/chains'
 
 const fromAssetsByChainIdAtom = atom(async get => {
@@ -71,19 +72,17 @@ const evmBalancesAtom = atomFamily((chainId: string) =>
       // get all erc20 tokens balances
       const erc20Tokens = assets.filter(asset => asset.contractAddress)
       if (erc20Tokens.length > 0) {
-        const balancesRes = await client.multicall({
-          contracts: erc20Tokens.map(({ contractAddress }) => ({
-            abi: erc20Abi,
-            functionName: 'balanceOf',
-            address: contractAddress! as `0x${string}`,
-            args: [fromEvmAddress],
-          })),
-        })
+        const multibalances = await getMultibalance(
+          client,
+          Number(chainId),
+          erc20Tokens.map(({ contractAddress }) => ({ owner: fromEvmAddress, token: contractAddress! }))
+        )
 
-        balancesRes.forEach(({ result, status }, index) => {
-          const erc20 = erc20Tokens[index]
-          if (status === 'failure' || !erc20?.contractAddress) return
-          balances[erc20.id] = Decimal.fromPlanck(result, erc20.decimals, { currency: erc20.symbol })
+        multibalances.forEach((balanceBN, index) => {
+          const token = erc20Tokens[index]
+          if (!token) return
+          const balance = Decimal.fromPlanck(balanceBN, token.decimals, { currency: token.symbol })
+          balances[token.id] = balance
         })
       }
       return { balances }

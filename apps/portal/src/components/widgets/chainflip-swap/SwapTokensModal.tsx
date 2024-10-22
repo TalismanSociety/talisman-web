@@ -106,8 +106,8 @@ export const SwapTokensModal: React.FC<Props> = ({
       if (aBalance === undefined) return 1
       if (bBalance === undefined) return -1
 
-      const aRate = rates[a.id]?.usd ?? +(a.context.lifi.priceUSD ?? '0')
-      const bRate = rates[b.id]?.usd ?? +(b.context.lifi.priceUSD ?? '0')
+      const aRate = rates[a.id]?.usd ?? +(a.context?.lifi?.priceUSD ?? '0')
+      const bRate = rates[b.id]?.usd ?? +(b.context?.lifi?.priceUSD ?? '0')
 
       // prioritize tokens with balances
       if (aRate === 0 && bRate === 0) return bBalance - aBalance
