@@ -19,6 +19,8 @@ type StakeProviderProps = {
 
 const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
   const [sorting, setSorting] = useState<SortingState>([])
+  const [aprValues, setAprValues] = useState<{ [key: string]: number }>({})
+
   const defaultData = useMemo(() => [], [])
 
   const columns = useMemo<ColumnDef<Provider>[]>(
@@ -34,9 +36,21 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
         cell: ({ row }) => {
           return (
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-              <Apr type={row.original.type} rpcId={row.original.rpc || ''} genesisHash={row.original.genesisHash} />
+              <Apr
+                type={row.original.type}
+                genesisHash={row.original.genesisHash}
+                rowId={row.id}
+                apr={aprValues[row.id]}
+                setAprValues={setAprValues}
+              />
             </Suspense>
           )
+        },
+        sortingFn: (rowA, rowB) => {
+          const aprA = aprValues[rowA.id]
+          const aprB = aprValues[rowB.id]
+          if (aprA === undefined || aprB === undefined) return 0
+          return aprA > aprB ? 1 : -1
         },
       },
       {
@@ -85,7 +99,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
         enableSorting: false,
       },
     ],
-    []
+    [aprValues]
   )
 
   const table = useReactTable({
