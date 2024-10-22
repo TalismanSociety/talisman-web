@@ -2,6 +2,8 @@ import { StakeProvider } from '../hooks/useProvidersData'
 import { ChainProvider } from '@/domains/chains'
 import { slpxAprState } from '@/domains/staking/slpx'
 import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nominationPools'
+import { highestAprTaoValidatorAtom } from '@/domains/staking/subtensor/atoms/taostats'
+import { useAtomValue } from 'jotai'
 import { useEffect } from 'react'
 import { useRecoilValue } from 'recoil'
 
@@ -36,6 +38,20 @@ const SlpxApr = ({ rowId, apr, setAprValues, symbol, apiEndpoint }: SlpxAprProps
   return <>{aprFormatter(slpxApr)}</>
 }
 
+const SubtensorApr = ({ rowId, apr, setAprValues }: NominationPoolAprProps) => {
+  const { apr: taoApr } = useAtomValue(highestAprTaoValidatorAtom)
+
+  const subtensorApr = Number(taoApr)
+
+  useEffect(() => {
+    if (apr !== subtensorApr && !!subtensorApr) {
+      setAprValues(prev => ({ ...prev, [rowId]: subtensorApr }))
+    }
+  }, [apr, subtensorApr, rowId, setAprValues])
+
+  return <>{aprFormatter(subtensorApr)}</>
+}
+
 type AprProps = {
   type: StakeProvider
   genesisHash: `0x${string}`
@@ -66,6 +82,16 @@ const Apr = ({ type, genesisHash, rowId, apr, symbol, apiEndpoint, setAprValues 
           }}
         >
           <SlpxApr setAprValues={setAprValues} rowId={rowId} apr={apr} symbol={symbol} apiEndpoint={apiEndpoint} />
+        </ChainProvider>
+      )
+    case 'Delegation':
+      return (
+        <ChainProvider
+          chain={{
+            genesisHash: genesisHash,
+          }}
+        >
+          <SubtensorApr setAprValues={setAprValues} rowId={rowId} apr={apr} />
         </ChainProvider>
       )
     default:
