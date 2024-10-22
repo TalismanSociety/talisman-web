@@ -5,7 +5,7 @@ import { selectedCurrencyState } from '../balances'
 import { substrateApiState, useSubstrateApiEndpoint } from '../common'
 import { storageEffect } from '../common/effects'
 import { chainConfigs } from './config'
-import { type Chain as ChainData, type IToken } from '@talismn/chaindata-provider'
+import { type Chain as ChainData, type Token } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { useContext } from 'react'
 import { atom, selector, selectorFamily, waitForAll, type RecoilValueReadOnly } from 'recoil'
@@ -28,7 +28,7 @@ export const chainState = selectorFamily({
           nativeToken: await Maybe.of(x.nativeToken).mapOrUndefined(
             async token =>
               await fetch(new URL(`./tokens/byId/${token.id}.json`, CHAINDATA_API)).then(
-                async response => (await response.json()) as IToken
+                async response => (await response.json()) as Token
               )
           ),
           rpc: x.rpcs?.at(0)?.url,

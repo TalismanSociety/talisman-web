@@ -551,7 +551,9 @@ const swap: SwapFunction<{ id: string }> = async (
       if (!rpc) throw new Error('RPC not found!')
       const polkadotApi = await getSubstrateApi(substrateChain?.rpcs?.[0]?.url ?? '')
 
-      await polkadotApi.tx.balances[allowReap ? 'transferAllowDeath' : 'transferKeepAlive'](
+      const transfer =  (polkadotApi.tx.balances['transferAllowDeath'] ?? polkadotApi.tx.balances['transfer'])
+      const transferKeepAlive = polkadotApi.tx.balances['transferKeepAlive']
+      await (allowReap ? transfer : transferKeepAlive)(
         exchange.address_from,
         depositAmount.planck
       ).signAndSend(addressFrom, { signer, withSignedTransaction: true })
@@ -616,7 +618,8 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
   const polkadotApi = await getSubstrateApi(substrateChain?.rpcs?.[0]?.url ?? '')
   const fromAmount = get(fromAmountAtom)
 
-  const transferTx = polkadotApi.tx.balances.transferAllowDeath(fromAddress, fromAmount.planck)
+  const transfer = polkadotApi.tx.balances["transferAllowDeath"] ?? polkadotApi.tx.balances["transfer"]
+  const transferTx = transfer(fromAddress, fromAmount.planck)
   const decimals = transferTx.registry.chainDecimals[0] ?? 10 // default to polkadot decimals 10
   const symbol = transferTx.registry.chainTokens[0] ?? 'DOT' // default to polkadot symbol 'DOT'
   const paymentInfo = await transferTx.paymentInfo(fromAddress)

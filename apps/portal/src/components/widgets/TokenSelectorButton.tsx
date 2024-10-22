@@ -1,22 +1,23 @@
-import type { Account } from '../../domains/accounts'
-import { selectedBalancesState, selectedCurrencyState } from '../../domains/balances'
-import Cryptoticon from '../recipes/Cryptoticon/Cryptoticon'
-import TokenSelectorDialog from '../recipes/TokenSelectorDialog'
+import type { Token } from '@talismn/chaindata-provider'
 import { useTokens } from '@talismn/balances-react'
-import type { IToken } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { Button } from '@talismn/ui'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-export type TokenSelectorProps<T extends IToken | string> = {
+import type { Account } from '../../domains/accounts'
+import { selectedBalancesState, selectedCurrencyState } from '../../domains/balances'
+import Cryptoticon from '../recipes/Cryptoticon/Cryptoticon'
+import TokenSelectorDialog from '../recipes/TokenSelectorDialog'
+
+export type TokenSelectorProps<T extends Token | string> = {
   account?: Account
   tokens: T[]
   selectedToken: T | undefined
   onChangeToken: (token: T) => unknown
 }
 
-const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProps<T>) => {
+const TokenSelectorButton = <T extends Token | string>(props: TokenSelectorProps<T>) => {
   const tokens = useTokens()
   const [tokenSelectorDialogOpen, setTokenSelectorDialogOpen] = useState(false)
   const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))
@@ -47,7 +48,7 @@ const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProp
     [filteredBalances, currency, props.tokens]
   )
 
-  const selectedToken = useMemo<IToken | undefined>(
+  const selectedToken = useMemo<Token | undefined>(
     () =>
       typeof props.selectedToken === 'string'
         ? Object.values(tokens).find(x => x.symbol.toLowerCase() === (props.selectedToken as string).toLowerCase())
