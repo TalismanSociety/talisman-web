@@ -20,6 +20,7 @@ const useLidoProviders = () => {
       stakePercentage: 0,
       actionLink: `?action=stake&type=lido&token-address=${lidoSuite.token.address}`,
       nativeToken: { symbol, decimals },
+      apiEndpoint: lidoSuite.apiEndpoint,
     }
   })
 

@@ -1,6 +1,7 @@
 import { StakeProvider } from '../hooks/useProvidersData'
 import { ChainProvider } from '@/domains/chains'
 import { useApr as useDappApr } from '@/domains/staking/dappStaking'
+import { lidoAprState } from '@/domains/staking/lido/recoils'
 import { slpxAprState } from '@/domains/staking/slpx'
 import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nominationPools'
 import { highestAprTaoValidatorAtom } from '@/domains/staking/subtensor/atoms/taostats'
@@ -66,6 +67,18 @@ const DappApr = ({ rowId, apr, setAprValues }: NominationPoolAprProps) => {
   return <>{aprFormatter(dappApr)}</>
 }
 
+const LidoApr = ({ rowId, apr, setAprValues, apiEndpoint }: SlpxAprProps) => {
+  const lidoApr = useRecoilValue(lidoAprState(apiEndpoint ?? ''))
+
+  useEffect(() => {
+    if (apr !== lidoApr && !!lidoApr) {
+      setAprValues(prev => ({ ...prev, [rowId]: lidoApr }))
+    }
+  }, [apr, lidoApr, rowId, setAprValues])
+
+  return <>{aprFormatter(lidoApr)}</>
+}
+
 type AprProps = {
   type: StakeProvider
   genesisHash: `0x${string}`
@@ -119,7 +132,15 @@ const Apr = ({ type, genesisHash, rowId, apr, symbol, apiEndpoint, setAprValues 
         </ChainProvider>
       )
     default:
-      return <div>Banana</div>
+      return (
+        <LidoApr
+          setAprValues={setAprValues}
+          rowId={rowId}
+          apr={apr}
+          symbol={symbol} // symbol is not needed
+          apiEndpoint={apiEndpoint}
+        />
+      )
   }
 }
 
