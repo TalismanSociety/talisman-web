@@ -14,7 +14,7 @@ const useLidoProviders = () => {
       logo,
       chainName: lidoSuite.chain.name,
       chainId: lidoSuite.chain.id,
-      type: 'Liquid staking Lido',
+      type: 'Liquid staking',
       provider: 'Lido',
       unbondingPeriod: '999',
       stakePercentage: 0,

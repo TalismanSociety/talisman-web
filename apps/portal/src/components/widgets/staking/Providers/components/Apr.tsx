@@ -2,82 +2,13 @@ import { StakeProvider } from '../hooks/useProvidersData'
 import { ChainProvider } from '@/domains/chains'
 import { useApr as useDappApr } from '@/domains/staking/dappStaking'
 import { lidoAprState } from '@/domains/staking/lido/recoils'
-import { slpxAprState } from '@/domains/staking/slpx'
+import { useSlpxAprState } from '@/domains/staking/slpx'
 import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nominationPools'
-import { highestAprTaoValidatorAtom } from '@/domains/staking/subtensor/atoms/taostats'
-import { useAtomValue } from 'jotai'
+import { useHighestApr } from '@/domains/staking/subtensor/hooks/useApr'
 import { useEffect } from 'react'
 import { useRecoilValue } from 'recoil'
 
-const aprFormatter = (apr: number) => {
-  return apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
-}
-
-type NominationPoolAprProps = Omit<AprProps, 'type' | 'genesisHash' | 'symbol' | 'apiEndpoint'>
-type SlpxAprProps = Omit<AprProps, 'type' | 'genesisHash'>
-
-const NominationPoolApr = ({ rowId, apr, setAprValues }: NominationPoolAprProps) => {
-  const nomPoolApr = useNominationPoolApr()
-
-  useEffect(() => {
-    if (apr !== nomPoolApr && !!nomPoolApr) {
-      setAprValues(prev => ({ ...prev, [rowId]: nomPoolApr }))
-    }
-  }, [apr, nomPoolApr, rowId, setAprValues])
-
-  return <>{aprFormatter(nomPoolApr)}</>
-}
-
-const SlpxApr = ({ rowId, apr, setAprValues, symbol, apiEndpoint }: SlpxAprProps) => {
-  const slpxApr = useRecoilValue(slpxAprState({ apiEndpoint: apiEndpoint ?? '', nativeTokenSymbol: symbol }))
-
-  useEffect(() => {
-    if (apr !== slpxApr && !!slpxApr) {
-      setAprValues(prev => ({ ...prev, [rowId]: slpxApr }))
-    }
-  }, [apr, slpxApr, rowId, setAprValues])
-
-  return <>{aprFormatter(slpxApr)}</>
-}
-
-const SubtensorApr = ({ rowId, apr, setAprValues }: NominationPoolAprProps) => {
-  const { apr: taoApr } = useAtomValue(highestAprTaoValidatorAtom)
-
-  const subtensorApr = Number(taoApr)
-
-  useEffect(() => {
-    if (apr !== subtensorApr && !!subtensorApr) {
-      setAprValues(prev => ({ ...prev, [rowId]: subtensorApr }))
-    }
-  }, [apr, subtensorApr, rowId, setAprValues])
-
-  return <>{aprFormatter(subtensorApr)}</>
-}
-
-const DappApr = ({ rowId, apr, setAprValues }: NominationPoolAprProps) => {
-  const dappAprData = useDappApr()
-  const dappApr = dappAprData.totalApr
-
-  useEffect(() => {
-    if (apr !== dappApr && !!dappApr) {
-      setAprValues(prev => ({ ...prev, [rowId]: dappApr }))
-    }
-  }, [apr, dappApr, rowId, setAprValues])
-
-  return <>{aprFormatter(dappApr)}</>
-}
-
-const LidoApr = ({ rowId, apr, setAprValues, apiEndpoint }: SlpxAprProps) => {
-  const lidoApr = useRecoilValue(lidoAprState(apiEndpoint ?? ''))
-
-  useEffect(() => {
-    if (apr !== lidoApr && !!lidoApr) {
-      setAprValues(prev => ({ ...prev, [rowId]: lidoApr }))
-    }
-  }, [apr, lidoApr, rowId, setAprValues])
-
-  return <>{aprFormatter(lidoApr)}</>
-}
+const aprFormatter = (apr: number) => apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 
 type AprProps = {
   type: StakeProvider
@@ -85,63 +16,94 @@ type AprProps = {
   rowId: string
   setAprValues: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>
   apr: number | undefined
-  symbol: string
-  apiEndpoint: string | undefined
+  symbol?: string
+  apiEndpoint?: string
+}
+type AprDisplayProps = Omit<AprProps, 'genesisHash'>
+type LidoAprProps = Omit<AprDisplayProps, 'symbol' | 'symbol' | 'genesisHash' | 'type'>
+
+/**
+ * This is a custom hook that is used to set the APR value in the state.
+ * It is used to keep track of the APR value for each row that is rendered after the table is mounted,
+ * and is used to allow sorting of the table rows by the APR values
+ */
+const useSetApr = ({
+  aprValue,
+  rowId,
+  apr,
+  setAprValues,
+}: {
+  aprValue: number | undefined
+  rowId: string
+  apr: number | undefined
+  setAprValues: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>
+}) => {
+  useEffect(() => {
+    if (apr !== aprValue && aprValue !== undefined) {
+      setAprValues(prev => ({ ...prev, [rowId]: aprValue }))
+    }
+  }, [apr, aprValue, rowId, setAprValues])
+
+  return aprValue
+}
+
+// This component is used to get around the react rules of conditional hooks
+const AprDisplay = ({ type, rowId, symbol, apiEndpoint, apr, setAprValues }: AprDisplayProps) => {
+  const hookMap = {
+    'Nomination pool': useNominationPoolApr,
+    'Liquid staking': useSlpxAprState,
+    Delegation: useHighestApr,
+    'DApp staking': useDappApr,
+  }
+
+  let aprValue: number = 0
+  switch (type) {
+    case 'Nomination pool':
+      aprValue = hookMap['Nomination pool']()
+      break
+    case 'Liquid staking':
+      aprValue = hookMap['Liquid staking']({ apiEndpoint: apiEndpoint ?? '', nativeTokenSymbol: symbol ?? '' })
+      break
+    case 'Delegation':
+      aprValue = hookMap['Delegation']()
+      break
+    case 'DApp staking':
+      aprValue = hookMap['DApp staking']().totalApr
+      break
+    default:
+      aprValue = 0
+  }
+
+  useSetApr({ aprValue, rowId, apr, setAprValues })
+
+  return <>{aprFormatter(aprValue ?? 0)}</>
+}
+
+const LidoApr = ({ rowId, apr, setAprValues, apiEndpoint }: LidoAprProps) => {
+  const aprValue = useRecoilValue(lidoAprState(apiEndpoint ?? ''))
+
+  useSetApr({ aprValue, rowId, apr, setAprValues })
+
+  return <>{aprFormatter(aprValue)}</>
 }
 
 const Apr = ({ type, genesisHash, rowId, apr, symbol, apiEndpoint, setAprValues }: AprProps) => {
-  switch (type) {
-    case 'Nomination pool':
-      return (
-        <ChainProvider
-          chain={{
-            genesisHash: genesisHash,
-          }}
-        >
-          <NominationPoolApr setAprValues={setAprValues} rowId={rowId} apr={apr} />
-        </ChainProvider>
-      )
-    case 'Liquid staking':
-      return (
-        <ChainProvider
-          chain={{
-            genesisHash: genesisHash,
-          }}
-        >
-          <SlpxApr setAprValues={setAprValues} rowId={rowId} apr={apr} symbol={symbol} apiEndpoint={apiEndpoint} />
-        </ChainProvider>
-      )
-    case 'Delegation':
-      return (
-        <ChainProvider
-          chain={{
-            genesisHash: genesisHash,
-          }}
-        >
-          <SubtensorApr setAprValues={setAprValues} rowId={rowId} apr={apr} />
-        </ChainProvider>
-      )
-    case 'DApp staking':
-      return (
-        <ChainProvider
-          chain={{
-            genesisHash: genesisHash,
-          }}
-        >
-          <DappApr setAprValues={setAprValues} rowId={rowId} apr={apr} />
-        </ChainProvider>
-      )
-    default:
-      return (
-        <LidoApr
-          setAprValues={setAprValues}
-          rowId={rowId}
-          apr={apr}
-          symbol={symbol} // symbol is not needed
-          apiEndpoint={apiEndpoint}
-        />
-      )
+  if (type === 'Liquid staking' && symbol === 'ETH') {
+    return <LidoApr rowId={rowId} apr={apr} setAprValues={setAprValues} apiEndpoint={apiEndpoint} />
   }
+
+  return (
+    <ChainProvider chain={{ genesisHash }}>
+      <AprDisplay
+        type={type}
+        rowId={rowId}
+        apr={apr}
+        setAprValues={setAprValues}
+        symbol={symbol}
+        apiEndpoint={apiEndpoint}
+      />
+    </ChainProvider>
+  )
 }
 
 export default Apr

@@ -6,7 +6,7 @@ import useNominationPoolsProviders from './nominationPools/useNominationPoolsPro
 import useSubtensorProviders from './subtensor/useSubtensorProviders'
 import { IToken } from '@talismn/chaindata-provider'
 
-export type StakeProvider = 'Nomination pool' | 'Liquid staking' | 'Delegation' | 'DApp staking' | 'Liquid staking Lido'
+export type StakeProvider = 'Nomination pool' | 'Liquid staking' | 'Delegation' | 'DApp staking'
 
 export type Provider = {
   symbol: string | undefined
