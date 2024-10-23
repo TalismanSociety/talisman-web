@@ -111,7 +111,7 @@ const Select = Object.assign(
     const optionsArray = useMemo(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (): React.ReactElement<SelectItemProps>[] => React.Children.map(children as any, findOption)?.flat() ?? [],
-      [children]
+      [children],
     )
 
     const selectedChild =
@@ -178,7 +178,7 @@ const Select = Object.assign(
         // @ts-expect-error
         props.onChangeValue?.(value)
       },
-      [props]
+      [props],
     )
 
     useEffect(() => {
@@ -247,7 +247,7 @@ const Select = Object.assign(
           children: children.props.children ? injectChildren(children.props.children, index) : children.props.children,
         })
       },
-      [selectedChild, select, activeIndex]
+      [selectedChild, select, activeIndex],
     )
 
     return (
@@ -271,7 +271,7 @@ const Select = Object.assign(
               borderRadius: cappedShape,
             },
             false: {
-              border: 'solid transparent',
+              border: `solid ${theme.color.outlineVariant}00`,
               borderWidth: '1px 1px 0 1px',
               borderRadius: theme.shape.full,
             },
@@ -342,7 +342,7 @@ const Select = Object.assign(
               },
               false: {
                 height: 0,
-                border: 'solid transparent',
+                border: `solid ${theme.color.outlineVariant}00`,
                 borderWidth: '0 1px 1px 1px',
                 overflow: 'hidden',
                 transitionEnd: { visibility: 'hidden' },
@@ -397,7 +397,7 @@ const Select = Object.assign(
      */
     Item: SelectItem,
     Option: SelectItem,
-  }
+  },
 )
 
 export default Select

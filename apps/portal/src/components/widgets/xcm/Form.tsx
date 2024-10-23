@@ -1,15 +1,16 @@
 import type { PropsWithChildren, ReactNode } from 'react'
-import { Button, Details, Surface, Text, TextInput } from '@talismn/ui'
+import { Button, CircularProgressIndicator, Details, Surface, Text, TextInput } from '@talismn/ui'
 
 import { ReverseRouteButton } from './ReverseRouteButton'
 
 export type FormProps = {
   accountSelect: ReactNode
-  amount: string
+  amount?: string
   onChangeAmount: (value: string) => unknown
   onRequestMaxAmount: () => unknown
-  fiatAmount?: ReactNode
-  availableAmount?: ReactNode
+  fiat?: ReactNode
+  available?: ReactNode
+  max?: ReactNode
   amountError?: string
   tokenSelect?: ReactNode
   destTokenSelect?: ReactNode
@@ -65,16 +66,15 @@ export const Form = ({ tokenSelect, destTokenSelect, ...props }: FormProps) => {
           inputMode="decimal"
           placeholder="0.00"
           leadingLabel={
-            props.availableAmount !== undefined && (
-              <div className="flex flex-row items-center gap-1">
-                Available balance: <Text.BodySmall alpha="high">{props.availableAmount}</Text.BodySmall>
-              </div>
-            )
+            <div className="flex flex-row items-center gap-1">
+              <span>Available:</span> {props.available ?? <CircularProgressIndicator size="1em" />}
+              {props.max ?? null}
+            </div>
           }
           trailingLabel={
-            props.fiatAmount !== undefined && (
+            props.fiat !== undefined && (
               <div className="flex items-center gap-1">
-                Value: <Text.BodySmall alpha="high">{props.fiatAmount}</Text.BodySmall>
+                Value: <Text.BodySmall alpha="high">{props.fiat}</Text.BodySmall>
               </div>
             )
           }

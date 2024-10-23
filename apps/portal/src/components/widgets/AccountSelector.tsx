@@ -34,9 +34,9 @@ const AccountSelector = ({
   const onChangeAccount = useCallback(
     (address: string | undefined) =>
       onChangeSelectedAccount(
-        address ? accounts.find(x => encodeAnyAddress(x.address) === encodeAnyAddress(address)) : undefined
+        address ? accounts.find(x => encodeAnyAddress(x.address) === encodeAnyAddress(address)) : undefined,
       ),
-    [accounts, onChangeSelectedAccount]
+    [accounts, onChangeSelectedAccount],
   )
 
   if (!hasActiveWalletConnection) {
@@ -63,7 +63,6 @@ const AccountSelector = ({
                 : undefined
               return (
                 <Select.Option
-                  className=""
                   leadingIcon={<CircularProgressIndicator size="4rem" />}
                   supportingContent={
                     selectedAccount && selectedAccount.name
@@ -71,9 +70,9 @@ const AccountSelector = ({
                       : ''
                   }
                   headlineContent={
-                    selectedAccount === undefined
-                      ? ''
-                      : selectedAccount.name ?? shortenAddress(encodeAnyAddress(selectedAccount.address, prefix))
+                    selectedAccount
+                      ? selectedAccount.name ?? shortenAddress(encodeAnyAddress(selectedAccount.address, prefix))
+                      : ''
                   }
                 />
               )
@@ -83,8 +82,8 @@ const AccountSelector = ({
     >
       {accounts.map(x => (
         <Select.Option
-          key={x.address}
-          value={x.address}
+          key={encodeAnyAddress(x.address, prefix)}
+          value={encodeAnyAddress(x.address, prefix)}
           leadingIcon={<AccountIcon account={x} size="32px" />}
           className="!w-full [&>div]:w-full"
           headlineContent={
@@ -121,7 +120,7 @@ export const useAccountSelector = (
   accounts: Account[],
   initialAccount?: Account | number | ((accounts?: Account[]) => Account | undefined),
   accountSelectorProps?: Omit<AccountSelectorProps, 'accounts' | 'selectedAccount' | 'onChangeSelectedAccount'>,
-  withToken?: boolean
+  withToken?: boolean,
 ) => {
   // TODO: remove this
   const [inTransition] = useTransition()
@@ -131,9 +130,9 @@ export const useAccountSelector = (
       typeof initialAccount === 'function'
         ? initialAccount(accounts)
         : typeof initialAccount === 'number'
-        ? accounts.at(initialAccount)
-        : initialAccount,
-    [initialAccount]
+          ? accounts.at(initialAccount)
+          : initialAccount,
+    [initialAccount],
   )
 
   const [account, setAccount] = useState<Account | undefined>(getInitialAccount(accounts))
@@ -141,7 +140,7 @@ export const useAccountSelector = (
   const previousAccounts = usePrevious(accounts)
   const accountsUpdated = useMemo(
     () => JSON.stringify(previousAccounts) !== JSON.stringify(accounts),
-    [accounts, previousAccounts]
+    [accounts, previousAccounts],
   )
 
   useEffect(() => {
@@ -152,7 +151,7 @@ export const useAccountSelector = (
 
   const selectedAccount = account
     ? accounts.find(
-        x => encodeAnyAddress(x.address) === encodeAnyAddress(account.address) && x.origin === account.origin
+        x => encodeAnyAddress(x.address) === encodeAnyAddress(account.address) && x.origin === account.origin,
       )
     : undefined
 
