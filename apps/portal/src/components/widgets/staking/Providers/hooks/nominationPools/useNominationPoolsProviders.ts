@@ -15,6 +15,7 @@ const useNominationPoolsProviders = (): Provider[] => {
         chainName,
         chainId: id,
         type: 'Nomination pool',
+        typeId: 'nominationPool',
         provider: chainName,
         stakePercentage: 0,
         actionLink: `?action=stake&type=nomination-pools&chain=${id}`,

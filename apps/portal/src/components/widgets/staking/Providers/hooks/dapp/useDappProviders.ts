@@ -11,6 +11,7 @@ const useDappProviders = (): Provider[] => {
       chainName: chain.name,
       chainId: chain.id,
       type: 'DApp staking',
+      typeId: 'dappStaking',
       provider: chain.name,
       stakePercentage: 0,
       actionLink: `?action=stake&type=dapp-staking&chain=${chain?.id ?? ''}`,

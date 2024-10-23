@@ -12,6 +12,7 @@ const useSubtensorProviders = () => {
       chainName: chain.name ?? '',
       chainId: chain.id,
       type: 'Delegation',
+      typeId: 'delegationSubtensor',
       provider: chain.name,
       stakePercentage: 0,
       actionLink: `?action=stake&type=subtensor&chain=${chain.id ?? ''}`,

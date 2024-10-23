@@ -39,7 +39,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
           return (
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
               <Apr
-                type={row.original.type}
+                typeId={row.original.typeId}
                 genesisHash={row.original.genesisHash ?? '0x'}
                 rowId={row.id}
                 apr={aprValues[row.id]}
@@ -74,13 +74,14 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
           <Suspense fallback={<CircularProgressIndicator size="1em" />}>
             {/* {row.original.unbondingPeriod} */}
             <UnbondingPeriod
-              type={row.original.type}
+              typeId={row.original.typeId}
               genesisHash={row.original.genesisHash ?? '0x'}
               rowId={row.id}
               unbonding={unbondingValues[row.id]}
               setUnbondingValues={setUnbondingValues}
               symbol={row.original.nativeToken?.symbol}
               apiEndpoint={row.original.apiEndpoint}
+              tokenPair={row.original.tokenPair}
             />
           </Suspense>
         ),

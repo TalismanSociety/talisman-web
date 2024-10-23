@@ -1,4 +1,5 @@
-import { StakeProvider } from '../hooks/useProvidersData'
+// import { StakeProvider } from '../hooks/useProvidersData'
+import { StakeProviderTypeId } from '../hooks/useProvidersData'
 import { ChainProvider } from '@/domains/chains'
 import { useApr as useDappApr } from '@/domains/staking/dappStaking'
 import { lidoAprState } from '@/domains/staking/lido/recoils'
@@ -11,7 +12,7 @@ import { useRecoilValue } from 'recoil'
 const aprFormatter = (apr: number) => apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 
 type AprProps = {
-  type: StakeProvider
+  typeId: StakeProviderTypeId
   genesisHash: `0x${string}`
   rowId: string
   setAprValues: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>
@@ -20,7 +21,7 @@ type AprProps = {
   apiEndpoint?: string
 }
 type AprDisplayProps = Omit<AprProps, 'genesisHash'>
-type LidoAprProps = Omit<AprDisplayProps, 'symbol' | 'symbol' | 'genesisHash' | 'type'>
+type LidoAprProps = Omit<AprDisplayProps, 'symbol' | 'symbol' | 'genesisHash' | 'typeId'>
 
 /**
  * This is a custom hook that is used to set the APR value in the state.
@@ -48,27 +49,30 @@ const useSetApr = ({
 }
 
 // This component is used to get around the react rules of conditional hooks
-const AprDisplay = ({ type, rowId, symbol, apiEndpoint, apr, setAprValues }: AprDisplayProps) => {
-  const hookMap = {
-    'Nomination pool': useNominationPoolApr,
-    'Liquid staking': useSlpxAprState,
-    Delegation: useHighestApr,
-    'DApp staking': useDappApr,
+const AprDisplay = ({ typeId, rowId, symbol, apiEndpoint, apr, setAprValues }: AprDisplayProps) => {
+  const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
+    nominationPool: useNominationPoolApr,
+    liquidStakingSlpx: useSlpxAprState,
+    delegationSubtensor: useHighestApr,
+    // @ts-expect-error
+    dappStaking: useDappApr,
   }
 
   let aprValue: number = 0
-  switch (type) {
-    case 'Nomination pool':
-      aprValue = hookMap['Nomination pool']()
+  switch (typeId) {
+    case 'nominationPool':
+      aprValue = hookMap['nominationPool']()
       break
-    case 'Liquid staking':
-      aprValue = hookMap['Liquid staking']({ apiEndpoint: apiEndpoint ?? '', nativeTokenSymbol: symbol ?? '' })
+    case 'liquidStakingSlpx':
+    case 'liquidStakingSlpxSubstrate':
+      aprValue = hookMap['liquidStakingSlpx']({ apiEndpoint: apiEndpoint ?? '', nativeTokenSymbol: symbol ?? '' })
       break
-    case 'Delegation':
-      aprValue = hookMap['Delegation']()
+    case 'delegationSubtensor':
+      aprValue = hookMap['delegationSubtensor']()
       break
-    case 'DApp staking':
-      aprValue = hookMap['DApp staking']().totalApr
+    case 'dappStaking':
+      // @ts-expect-error
+      aprValue = hookMap['dappStaking']().totalApr
       break
     default:
       aprValue = 0
@@ -87,15 +91,15 @@ const LidoApr = ({ rowId, apr, setAprValues, apiEndpoint }: LidoAprProps) => {
   return <>{aprFormatter(aprValue)}</>
 }
 
-const Apr = ({ type, genesisHash, rowId, apr, symbol, apiEndpoint, setAprValues }: AprProps) => {
-  if (type === 'Liquid staking' && symbol === 'ETH') {
+const Apr = ({ typeId, genesisHash, rowId, apr, symbol, apiEndpoint, setAprValues }: AprProps) => {
+  if (typeId === 'liquidStakingLido') {
     return <LidoApr rowId={rowId} apr={apr} setAprValues={setAprValues} apiEndpoint={apiEndpoint} />
   }
 
   return (
     <ChainProvider chain={{ genesisHash }}>
       <AprDisplay
-        type={type}
+        typeId={typeId}
         rowId={rowId}
         apr={apr}
         setAprValues={setAprValues}

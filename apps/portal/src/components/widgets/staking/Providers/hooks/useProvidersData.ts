@@ -4,9 +4,18 @@ import useDappProviders from './dapp/useDappProviders'
 import useLidoProviders from './lido/useLidoProviders'
 import useNominationPoolsProviders from './nominationPools/useNominationPoolsProviders'
 import useSubtensorProviders from './subtensor/useSubtensorProviders'
+import { SlpxPair } from '@/domains/staking/slpx/types'
+// import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import { IToken } from '@talismn/chaindata-provider'
 
 export type StakeProvider = 'Nomination pool' | 'Liquid staking' | 'Delegation' | 'DApp staking'
+export type StakeProviderTypeId =
+  | 'liquidStakingSlpx'
+  | 'liquidStakingSlpxSubstrate'
+  | 'delegationSubtensor'
+  | 'dappStaking'
+  | 'nominationPool'
+  | 'liquidStakingLido'
 
 export type Provider = {
   symbol: string | undefined
@@ -14,6 +23,7 @@ export type Provider = {
   chainName: string | undefined
   chainId: string | number
   type: StakeProvider
+  typeId: StakeProviderTypeId
   provider: string | undefined
   stakePercentage: number | undefined
   actionLink: string
@@ -21,6 +31,7 @@ export type Provider = {
   rpc?: string | undefined
   genesisHash?: `0x${string}` | undefined
   apiEndpoint?: string
+  tokenPair?: SlpxPair
 }
 
 const useProvidersData = () => {

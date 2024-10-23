@@ -15,6 +15,7 @@ const useLidoProviders = () => {
       chainName: lidoSuite.chain.name,
       chainId: lidoSuite.chain.id,
       type: 'Liquid staking',
+      typeId: 'liquidStakingLido',
       provider: 'Lido',
       stakePercentage: 0,
       actionLink: `?action=stake&type=lido&token-address=${lidoSuite.token.address}`,
