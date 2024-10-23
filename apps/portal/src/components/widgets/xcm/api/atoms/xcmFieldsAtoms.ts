@@ -7,10 +7,6 @@ import { formatDestAddress } from '../utils/formatDestAddress'
 import { validPrefix } from '../utils/validPrefix'
 import { configServiceAtom } from './configServiceAtom'
 
-// TODO: Fix crash (infinite render) when switching from an evm parachain destination
-// (with an ethereum account selected as the destination) to a substrate parachain destination
-// also occurs when switching back the other way
-// also occurs when disconnecting wallet / all accounts
 export const senderAtom = atom(
   get => {
     const { sender, sourceChain } = get(xcmFieldsAtom)

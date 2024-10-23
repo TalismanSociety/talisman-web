@@ -27,7 +27,6 @@ import { xcmTokenPickerSourceBySenderAtom } from './atoms/xcmTokenPickerSourceAt
 export const useXcmApi = () => {
   const allLoadables: Array<ExtractAtomValue<ReturnType<typeof loadable>>> = []
 
-  // TODO: Provide an overall loading / error state based on the state of any loadable atoms in this hook
   const tokenPickerSourceBySenderLoadable = useAtomValue(loadable(xcmTokenPickerSourceBySenderAtom))
   const tokenPickerSourceBySender =
     tokenPickerSourceBySenderLoadable?.state === 'hasData' ? tokenPickerSourceBySenderLoadable.data : undefined
@@ -47,7 +46,6 @@ export const useXcmApi = () => {
   const [sourceChain, setSourceChain] = useAtom(sourceChainAtom)
   const [destChain, setDestChain] = useAtom(destChainAtom)
   const [asset, setAsset] = useAtom(assetAtom)
-  // TODO: Separate UI amount (decimals) from extrinsic amount (planck)
   const [amount, setAmount] = useAtom(amountAtom)
 
   const sourceAssetLoadable = useAtomValue(loadable(sourceAssetAtom))

@@ -1,7 +1,7 @@
 import { atomEffect } from 'jotai-effect'
 import { isAddress as isEvmAddress } from 'viem'
 
-import { assetAtom, destChainAtom, senderAtom, sourceChainAtom } from './xcmFieldsAtoms'
+import { assetAtom, destChainAtom, recipientAtom, senderAtom, sourceChainAtom } from './xcmFieldsAtoms'
 import { xcmTokenPickerDestAtom } from './xcmTokenPickerDestAtom'
 import { xcmTokenPickerSourceAtom } from './xcmTokenPickerSourceAtom'
 
@@ -15,6 +15,7 @@ export const xcmAutoselectEffect = atomEffect((get, set) => {
   const ac = new AbortController()
 
   const sender = get(senderAtom)
+  const recipient = get(recipientAtom)
   const sourceChain = get(sourceChainAtom)
   const destChain = get(destChainAtom)
   const tokenPickerSourcePromise = get(xcmTokenPickerSourceAtom)
@@ -63,6 +64,12 @@ export const xcmAutoselectEffect = atomEffect((get, set) => {
       (!destChain || !tokenPickerDest.some(dest => dest.chain.key === destChain?.key))
     )
       return set.recurse(destChainAtom, defaultDest.chain.key)
+
+    //
+    // Step 4: If no recipient is selected, but source and dest chains use the same accounts,
+    // set recipient to be the same as sender
+    //
+    if (!recipient && sourceChain?.usesH160Acc === destChain?.usesH160Acc) return set.recurse(recipientAtom, sender)
   })()
 
   return () => ac.abort()
