@@ -1,15 +1,10 @@
+import useSlpxSubstrateUnlockDuration from '@/components/widgets/staking/Providers/hooks/bifrost/useSlpxSubstrateUnlockDuration'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
-import { useQueryState } from '@talismn/react-polkadot-api'
 import { formatDistance } from 'date-fns'
-import { useRecoilValue } from 'recoil'
 
+// TODO: Delete  UnlockDuration
 const UnlockDuration = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
-  const unlockDuration = useRecoilValue(
-    useQueryState('vtokenMinting', 'unlockDuration', [slpxPair.nativeToken.tokenId])
-  )
-
-  const rounds = unlockDuration.unwrapOrDefault().toHuman().Era
-  const duration = rounds * slpxPair.estimatedRoundDuration
+  const duration = useSlpxSubstrateUnlockDuration({ slpxPair })
 
   return <>{formatDistance(0, Number(duration))}</>
 }

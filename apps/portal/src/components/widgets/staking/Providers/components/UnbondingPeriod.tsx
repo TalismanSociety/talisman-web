@@ -1,5 +1,8 @@
-import { StakeProvider } from '../hooks/useProvidersData'
+import useSlpxSubstrateUnlockDuration from '../hooks/bifrost/useSlpxSubstrateUnlockDuration'
+import { StakeProviderTypeId } from '../hooks/useProvidersData'
 import { ChainProvider } from '@/domains/chains'
+import { useVTokenUnlockDuration } from '@/domains/staking/slpx'
+import { SlpxPair } from '@/domains/staking/slpx/types'
 // import { useApr as useDappApr } from '@/domains/staking/dappStaking'
 // import { lidoAprState } from '@/domains/staking/lido/recoils'
 // import { useSlpxAprState } from '@/domains/staking/slpx'
@@ -8,21 +11,24 @@ import { formatDistance } from 'date-fns'
 // import { useHighestApr } from '@/domains/staking/subtensor/hooks/useApr'
 import { useEffect } from 'react'
 
+// import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
+
 // import { useRecoilValue } from 'recoil'
 
 const unbondingFormatter = (unlockValue: number) => formatDistance(0, unlockValue)
 
-type AprProps = {
-  type: StakeProvider
+type UnbondingPeriodProps = {
+  typeId: StakeProviderTypeId
   genesisHash: `0x${string}`
   rowId: string
   setUnbondingValues: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>
   unbonding: number | undefined
   symbol?: string
   apiEndpoint?: string
+  tokenPair: SlpxPair | undefined
 }
-type AprDisplayProps = Omit<AprProps, 'genesisHash'>
-// type LidoAprProps = Omit<AprDisplayProps, 'symbol' | 'symbol' | 'genesisHash' | 'type'>
+type AprDisplayProps = Omit<UnbondingPeriodProps, 'genesisHash'>
+// type LidoUnbondingPeriodProps = Omit<AprDisplayProps, 'symbol' | 'symbol' | 'genesisHash' | 'type'>
 
 /**
  * This is a custom hook that is used to set the APR value in the state.
@@ -51,27 +57,34 @@ const useSetUnbonding = ({
 
 // This component is used to get around the react rules of conditional hooks
 const UnbondingDisplay = ({
-  type,
+  typeId,
   rowId,
   //  symbol, apiEndpoint,
   unbonding,
+  tokenPair,
   setUnbondingValues,
 }: AprDisplayProps) => {
-  const hookMap = {
-    'Nomination pool': useNominationPoolUnlockDuration,
-    // 'Liquid staking': useSlpxAprState,
-    // Delegation: useHighestApr,
-    // 'DApp staking': useDappApr,
+  const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
+    nominationPool: useNominationPoolUnlockDuration,
+    liquidStakingSlpx: useVTokenUnlockDuration,
+    liquidStakingSlpxSubstrate: useSlpxSubstrateUnlockDuration,
+    delegationSubtensor: () => 0,
+    dappStaking: () => 0,
+    liquidStakingLido: () => 0,
   }
 
   let unlockValue: number = 0
-  switch (type) {
-    case 'Nomination pool':
-      unlockValue = hookMap['Nomination pool']()
+  switch (typeId) {
+    case 'nominationPool':
+      unlockValue = hookMap['nominationPool']()
       break
-    // case 'Liquid staking':
-    //   unlockValue = hookMap['Liquid staking']({ apiEndpoint: apiEndpoint ?? '', nativeTokenSymbol: symbol ?? '' })
-    //   break
+    case 'liquidStakingSlpx':
+      unlockValue = hookMap['liquidStakingSlpx'](tokenPair)
+      break
+    case 'liquidStakingSlpxSubstrate':
+      console.log({ tokenPair })
+      unlockValue = hookMap['liquidStakingSlpxSubstrate']({ slpxPair: tokenPair })
+      break
     // case 'Delegation':
     //   unlockValue = hookMap['Delegation']()
     //   break
@@ -87,7 +100,7 @@ const UnbondingDisplay = ({
   return <>{unbondingFormatter(unlockValue ?? 0)}</>
 }
 
-// const LidoApr = ({ rowId, apr, setUnbondingValues, apiEndpoint }: LidoAprProps) => {
+// const LidoApr = ({ rowId, apr, setUnbondingValues, apiEndpoint }: LidoUnbondingPeriodProps) => {
 //   const aprValue = useRecoilValue(lidoAprState(apiEndpoint ?? ''))
 
 //   useSetUnbonding({ aprValue, rowId, apr, setUnbondingValues })
@@ -96,15 +109,16 @@ const UnbondingDisplay = ({
 // }
 
 const UnbondingPeriod = ({
-  type,
+  typeId,
   genesisHash,
   rowId,
   unbonding,
   symbol,
   apiEndpoint,
   setUnbondingValues,
-}: AprProps) => {
-  if (type === 'Liquid staking' && symbol === 'ETH') {
+  tokenPair,
+}: UnbondingPeriodProps) => {
+  if (typeId === 'liquidStakingLido') {
     return 54321
     // return <LidoApr rowId={rowId} apr={apr} setUnbondingValues={setUnbondingValues} apiEndpoint={apiEndpoint} />
   }
@@ -112,12 +126,13 @@ const UnbondingPeriod = ({
   return (
     <ChainProvider chain={{ genesisHash }}>
       <UnbondingDisplay
-        type={type}
+        typeId={typeId}
         rowId={rowId}
         unbonding={unbonding}
         setUnbondingValues={setUnbondingValues}
         symbol={symbol}
         apiEndpoint={apiEndpoint}
+        tokenPair={tokenPair}
       />
     </ChainProvider>
   )

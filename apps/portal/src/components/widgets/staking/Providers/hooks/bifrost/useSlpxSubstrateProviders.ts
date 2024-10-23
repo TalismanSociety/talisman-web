@@ -20,7 +20,7 @@ const useSlpxSubstrateProviders = () => {
       rpc: '1234',
       genesisHash: substrateChainGenesisHash,
       apiEndpoint,
-      // tokenPair: slpxPair,
+      tokenPair: slpxPair,
     }
   })
   return slpxSubstrateProviders
