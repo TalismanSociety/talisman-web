@@ -15,7 +15,6 @@ export type Provider = {
   chainId: string | number
   type: StakeProvider
   provider: string | undefined
-  unbondingPeriod: string | undefined
   stakePercentage: number | undefined
   actionLink: string
   nativeToken: IToken | any // TODO: Fix any

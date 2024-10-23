@@ -16,7 +16,6 @@ const useLidoProviders = () => {
       chainId: lidoSuite.chain.id,
       type: 'Liquid staking',
       provider: 'Lido',
-      unbondingPeriod: '999',
       stakePercentage: 0,
       actionLink: `?action=stake&type=lido&token-address=${lidoSuite.token.address}`,
       nativeToken: { symbol, decimals },

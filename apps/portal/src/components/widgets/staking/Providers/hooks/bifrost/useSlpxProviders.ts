@@ -14,7 +14,6 @@ const useSlpxProviders = () => {
         chainId: chain.id,
         type: 'Liquid staking',
         provider: 'Bifrost SLPx',
-        unbondingPeriod: '123',
         stakePercentage: 0,
         actionLink: `?action=stake&type=slpx&contract-address=${splx}`,
         nativeToken,

@@ -12,7 +12,6 @@ const useDappProviders = (): Provider[] => {
       chainId: chain.id,
       type: 'DApp staking',
       provider: chain.name,
-      unbondingPeriod: '123',
       stakePercentage: 0,
       actionLink: `?action=stake&type=dapp-staking&chain=${chain?.id ?? ''}`,
       nativeToken: chain.nativeToken,

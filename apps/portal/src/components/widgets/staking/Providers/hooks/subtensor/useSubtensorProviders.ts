@@ -13,7 +13,6 @@ const useSubtensorProviders = () => {
       chainId: chain.id,
       type: 'Delegation',
       provider: chain.name,
-      unbondingPeriod: '9999',
       stakePercentage: 0,
       actionLink: `?action=stake&type=subtensor&chain=${chain.id ?? ''}`,
       nativeToken: chain.nativeToken,

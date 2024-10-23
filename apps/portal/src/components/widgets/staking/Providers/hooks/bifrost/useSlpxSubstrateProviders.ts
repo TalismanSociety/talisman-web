@@ -13,7 +13,6 @@ const useSlpxSubstrateProviders = () => {
         chainId,
         type: 'Liquid staking',
         provider: 'Bifrost SLPx',
-        unbondingPeriod: '123',
         stakePercentage: 0,
         actionLink: `?action=stake&type=slpx-substrate&native-token=${nativeToken.symbol}`,
         nativeToken,
