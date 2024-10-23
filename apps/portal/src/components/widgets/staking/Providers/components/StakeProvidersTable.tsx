@@ -22,6 +22,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [aprValues, setAprValues] = useState<{ [key: string]: number }>({})
   const [unbondingValues, setUnbondingValues] = useState<{ [key: string]: number }>({})
+  const [availableBalanceValues, setAvailableBalanceValue] = useState<{ [key: string]: number }>({})
 
   const defaultData = useMemo(() => [], [])
 
@@ -97,9 +98,13 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
           return (
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
               <AvailableBalance
-                type={row.original.type}
-                rpcId={row.original.rpc || ''}
-                nativeToken={row.original.nativeToken}
+                typeId={row.original.typeId}
+                genesisHash={row.original.genesisHash ?? '0x'}
+                rowId={row.id}
+                availableBalance={availableBalanceValues[row.id]}
+                setAvailableBalanceValue={setAvailableBalanceValue}
+                apiEndpoint={row.original.apiEndpoint}
+                tokenPair={row.original.tokenPair}
               />
             </Suspense>
           )
