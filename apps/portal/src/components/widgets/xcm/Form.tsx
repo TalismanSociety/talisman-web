@@ -1,6 +1,8 @@
 import type { PropsWithChildren, ReactNode } from 'react'
 import { Button, CircularProgressIndicator, Details, Surface, Text, TextInput } from '@talismn/ui'
 
+import { cn } from '@/lib/utils'
+
 import { ReverseRouteButton } from './ReverseRouteButton'
 
 export type FormProps = {
@@ -79,12 +81,20 @@ export const Form = ({ tokenSelect, destTokenSelect, ...props }: FormProps) => {
             )
           }
           leadingSupportingText={props.amountError && <TextInput.ErrorLabel>{props.amountError}</TextInput.ErrorLabel>}
-          value={props.amount}
+          value={props.amount ?? ''}
           onChangeText={props.onChangeAmount}
           trailingIcon={
-            <TextInput.LabelButton className="!rounded-[0.6rem]" onClick={props.onRequestMaxAmount}>
+            <button
+              className={cn(
+                'text-foreground/60 rounded-[0.6rem] border border-current px-4 py-1',
+                'hover:text-foreground/80 active:text-foreground/70',
+                'disabled:text-foreground/40 disabled:cursor-not-allowed'
+              )}
+              onClick={props.onRequestMaxAmount}
+              disabled={!props.max}
+            >
               Max
-            </TextInput.LabelButton>
+            </button>
           }
         />
       </Section>

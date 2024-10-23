@@ -15,6 +15,7 @@ import { writeableAccountsState } from '@/domains/accounts'
 import { useExtrinsic, useSetJotaiSubstrateApiState } from '@/domains/common'
 
 import { useXcmApi } from './api'
+import { toPreciseDecimals } from './api/utils/toPreciseDecimals'
 import { validPrefix } from './api/utils/validPrefix'
 import { ErrorMessage } from './ErrorMessage'
 import { Faq } from './Faq'
@@ -124,18 +125,18 @@ export function XcmForm() {
         // }
         available={
           sourceBalance ? (
-            <Tooltip content={`${sourceBalance.toDecimal()} ${sourceBalance.symbol}`}>
+            <Tooltip content={`${toPreciseDecimals(sourceBalance)} ${sourceBalance.symbol}`}>
               <span className="text-foreground shrink-0">
-                {formatDecimals(sourceBalance.toDecimal())}&nbsp;{sourceBalance.symbol}
+                {formatDecimals(toPreciseDecimals(sourceBalance))}&nbsp;{sourceBalance.symbol}
               </span>
             </Tooltip>
           ) : undefined
         }
         max={
           minMaxAmounts?.max && sourceBalance?.amount !== minMaxAmounts.max.amount ? (
-            <Tooltip content={`${minMaxAmounts.max.toDecimal()} ${minMaxAmounts.max.symbol} after fees`}>
+            <Tooltip content={`${toPreciseDecimals(minMaxAmounts.max)} ${minMaxAmounts.max.symbol} after fees`}>
               <span className="shrink-0">
-                ({formatDecimals(minMaxAmounts.max.toDecimal())}&nbsp;{minMaxAmounts.max.symbol} after fees)
+                ({formatDecimals(toPreciseDecimals(minMaxAmounts.max))}&nbsp;{minMaxAmounts.max.symbol} after fees)
               </span>
             </Tooltip>
           ) : undefined
