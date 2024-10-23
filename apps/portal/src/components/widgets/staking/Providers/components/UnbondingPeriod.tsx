@@ -5,16 +5,10 @@ import { ChainProvider } from '@/domains/chains'
 import { useVTokenUnlockDuration } from '@/domains/staking/slpx'
 import { SlpxPair } from '@/domains/staking/slpx/types'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
-// import { useApr as useDappApr } from '@/domains/staking/dappStaking'
-// import { lidoAprState } from '@/domains/staking/lido/recoils'
-// import { useSlpxAprState } from '@/domains/staking/slpx'
 import { useUnlockDuration as useNominationPoolUnlockDuration } from '@/domains/staking/substrate/nominationPools'
 import { formatDistance } from 'date-fns'
-// import { useHighestApr } from '@/domains/staking/subtensor/hooks/useApr'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-
-// import { useRecoilValue } from 'recoil'
 
 const unbondingFormatter = (unlockValue: number) => formatDistance(0, unlockValue)
 
@@ -24,17 +18,19 @@ type UnbondingPeriodProps = {
   rowId: string
   setUnbondingValues: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>
   unbonding: number | undefined
-  symbol?: string
   apiEndpoint?: string
   tokenPair: SlpxPair | SlpxSubstratePair | undefined
 }
-type AprDisplayProps = Omit<UnbondingPeriodProps, 'genesisHash'>
-// type LidoUnbondingPeriodProps = Omit<AprDisplayProps, 'symbol' | 'symbol' | 'genesisHash' | 'type'>
+type UnbondingDisplayProps = Omit<UnbondingPeriodProps, 'genesisHash'>
+type LidoUnbondingPeriodProps = Omit<
+  UnbondingDisplayProps,
+  'symbol' | 'symbol' | 'genesisHash' | 'typeId' | 'tokenPair'
+>
 
 /**
- * This is a custom hook that is used to set the APR value in the state.
- * It is used to keep track of the APR value for each row that is rendered after the table is mounted,
- * and is used to allow sorting of the table rows by the APR values
+ * This is a custom hook that is used to set the unbonding value in the state.
+ * It is used to keep track of the unbonding value for each row that is rendered after the table is mounted,
+ * and is used to allow sorting of the table rows by the unbonding values
  */
 const useSetUnbonding = ({
   unlockValue,
@@ -57,14 +53,7 @@ const useSetUnbonding = ({
 }
 
 // This component is used to get around the react rules of conditional hooks
-const UnbondingDisplay = ({
-  typeId,
-  rowId,
-  //  symbol, apiEndpoint,
-  unbonding,
-  tokenPair,
-  setUnbondingValues,
-}: AprDisplayProps) => {
+const UnbondingDisplay = ({ typeId, rowId, unbonding, tokenPair, setUnbondingValues }: UnbondingDisplayProps) => {
   const { t } = useTranslation()
 
   const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
@@ -85,7 +74,6 @@ const UnbondingDisplay = ({
       unlockValue = hookMap['liquidStakingSlpx'](tokenPair)
       break
     case 'liquidStakingSlpxSubstrate':
-      console.log({ tokenPair })
       unlockValue = hookMap['liquidStakingSlpxSubstrate']({ slpxPair: tokenPair })
       break
     case 'delegationSubtensor':
@@ -103,27 +91,32 @@ const UnbondingDisplay = ({
   return <>{unlockValue === 0 ? t('None') : unbondingFormatter(unlockValue)}</>
 }
 
-// const LidoApr = ({ rowId, apr, setUnbondingValues, apiEndpoint }: LidoUnbondingPeriodProps) => {
-//   const aprValue = useRecoilValue(lidoAprState(apiEndpoint ?? ''))
+const LidoUnbonding = ({ rowId, setUnbondingValues, unbonding }: LidoUnbondingPeriodProps) => {
+  const unlockValue = 5
 
-//   useSetUnbonding({ aprValue, rowId, apr, setUnbondingValues })
+  useSetUnbonding({ unlockValue, rowId, unbonding, setUnbondingValues })
 
-//   return <>{unbondingFormatter(aprValue)}</>
-// }
+  return <>1-5 day(s)</>
+}
 
 const UnbondingPeriod = ({
   typeId,
   genesisHash,
   rowId,
   unbonding,
-  symbol,
   apiEndpoint,
   setUnbondingValues,
   tokenPair,
 }: UnbondingPeriodProps) => {
   if (typeId === 'liquidStakingLido') {
-    return 54321
-    // return <LidoApr rowId={rowId} apr={apr} setUnbondingValues={setUnbondingValues} apiEndpoint={apiEndpoint} />
+    return (
+      <LidoUnbonding
+        rowId={rowId}
+        unbonding={unbonding}
+        setUnbondingValues={setUnbondingValues}
+        apiEndpoint={apiEndpoint}
+      />
+    )
   }
 
   return (
@@ -133,7 +126,6 @@ const UnbondingPeriod = ({
         rowId={rowId}
         unbonding={unbonding}
         setUnbondingValues={setUnbondingValues}
-        symbol={symbol}
         apiEndpoint={apiEndpoint}
         tokenPair={tokenPair}
       />

@@ -72,19 +72,23 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
         header: 'Unbonding period',
         cell: ({ row }) => (
           <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-            {/* {row.original.unbondingPeriod} */}
             <UnbondingPeriod
               typeId={row.original.typeId}
               genesisHash={row.original.genesisHash ?? '0x'}
               rowId={row.id}
               unbonding={unbondingValues[row.id]}
               setUnbondingValues={setUnbondingValues}
-              symbol={row.original.nativeToken?.symbol}
               apiEndpoint={row.original.apiEndpoint}
               tokenPair={row.original.tokenPair}
             />
           </Suspense>
         ),
+        sortingFn: (rowA, rowB) => {
+          const unbondingA = unbondingValues[rowA.id]
+          const unbondingB = unbondingValues[rowB.id]
+          if (unbondingA === undefined || unbondingB === undefined) return 0
+          return unbondingA > unbondingB ? 1 : -1
+        },
       },
       {
         accessorKey: 'availableBalance',
