@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { DEX_FORM_WIDE_MEDIA_SELECTOR } from './constants'
 
 export type InfoProps = {
-  summary: ReactNode
+  details: ReactNode
   footer: ReactNode
   faq: ReactNode
   focusedSection?: 'details' | 'faq'
@@ -34,7 +34,7 @@ export function Info(props: InfoProps) {
       }
       footer={props.footer}
     >
-      {focusedSection === 'details' ? props.summary : focusedSection === 'faq' ? props.faq : null}
+      {focusedSection === 'details' ? props.details : focusedSection === 'faq' ? props.faq : null}
     </Container>
   )
 }

@@ -1,4 +1,4 @@
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { ExtractAtomValue, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { loadable } from 'jotai/utils'
 import { useMemo } from 'react'
 
@@ -20,27 +20,27 @@ import {
   sourceChainAtom,
 } from './atoms/xcmFieldsAtoms'
 import { xcmReverseRouteAtom } from './atoms/xcmReverseRouteAtom'
-import { xcmSourceChainsAtom } from './atoms/xcmSourceChainsAtom'
+import { xcmSourceChainsBySenderAtom } from './atoms/xcmSourceChainsAtom'
 import { xcmTokenPickerDestAtom } from './atoms/xcmTokenPickerDestAtom'
-import { xcmTokenPickerSourceAtom } from './atoms/xcmTokenPickerSourceAtom'
-
-type Loadable = ReturnType<typeof useAtomValue<ReturnType<typeof loadable>>>
+import { xcmTokenPickerSourceBySenderAtom } from './atoms/xcmTokenPickerSourceAtom'
 
 export const useXcmApi = () => {
-  const allLoadables: Array<Loadable> = []
+  const allLoadables: Array<ExtractAtomValue<ReturnType<typeof loadable>>> = []
 
   // TODO: Provide an overall loading / error state based on the state of any loadable atoms in this hook
-  const tokenPickerSourceLoadable = useAtomValue(loadable(xcmTokenPickerSourceAtom))
-  const tokenPickerSource = tokenPickerSourceLoadable?.state === 'hasData' ? tokenPickerSourceLoadable.data : undefined
+  const tokenPickerSourceBySenderLoadable = useAtomValue(loadable(xcmTokenPickerSourceBySenderAtom))
+  const tokenPickerSourceBySender =
+    tokenPickerSourceBySenderLoadable?.state === 'hasData' ? tokenPickerSourceBySenderLoadable.data : undefined
   const tokenPickerDestLoadable = useAtomValue(loadable(xcmTokenPickerDestAtom))
   const tokenPickerDest = tokenPickerDestLoadable?.state === 'hasData' ? tokenPickerDestLoadable.data : undefined
-  allLoadables.push([tokenPickerSourceLoadable as Loadable, tokenPickerDestLoadable as Loadable])
+  allLoadables.push(...[tokenPickerSourceBySenderLoadable, tokenPickerDestLoadable])
 
-  const sourceChainsLoadable = useAtomValue(loadable(xcmSourceChainsAtom))
-  const sourceChains = sourceChainsLoadable?.state === 'hasData' ? sourceChainsLoadable.data : undefined
+  const sourceChainsBySenderLoadable = useAtomValue(loadable(xcmSourceChainsBySenderAtom))
+  const sourceChainsBySender =
+    sourceChainsBySenderLoadable?.state === 'hasData' ? sourceChainsBySenderLoadable.data : undefined
   const destChainsLoadable = useAtomValue(loadable(xcmDestChainsAtom))
   const destChains = destChainsLoadable?.state === 'hasData' ? destChainsLoadable.data : undefined
-  allLoadables.push([sourceChainsLoadable as Loadable, destChainsLoadable as Loadable])
+  allLoadables.push(...[sourceChainsBySenderLoadable, destChainsLoadable])
 
   const [sender, setSender] = useAtom(senderAtom)
   const [recipient, setRecipient] = useAtom(recipientAtom)
@@ -54,25 +54,25 @@ export const useXcmApi = () => {
   const sourceAsset = sourceAssetLoadable.state === 'hasData' ? sourceAssetLoadable.data : undefined
   const destAssetLoadable = useAtomValue(loadable(destAssetAtom))
   const destAsset = destAssetLoadable.state === 'hasData' ? destAssetLoadable.data : undefined
-  allLoadables.push([sourceAssetLoadable as Loadable, destAssetLoadable as Loadable])
+  allLoadables.push(...[sourceAssetLoadable, destAssetLoadable])
 
   const [canReverse, reverseRoute] = useAtom(xcmReverseRouteAtom)
 
   const sourceBalance = useAtomValue(xcmBalancesAtom).get(asset?.key ?? '')
   const feesLoadable = useAtomValue(loadable(feesAtom))
   const fees = feesLoadable.state === 'hasData' ? feesLoadable.data : undefined
-  allLoadables.push([feesLoadable as Loadable])
+  allLoadables.push(feesLoadable)
 
   const minMaxAmountsLoadable = useAtomValue(loadable(minMaxAmountsAtom))
   const minMaxAmounts = minMaxAmountsLoadable.state === 'hasData' ? minMaxAmountsLoadable.data : undefined
-  allLoadables.push([minMaxAmountsLoadable as Loadable])
+  allLoadables.push(minMaxAmountsLoadable)
 
   const requestMax = useSetAtom(requestMaxAtom)
 
   const extrinsicLoadable = useAtomValue(loadable(extrinsicAtom))
   const extrinsic = extrinsicLoadable.state === 'hasData' ? extrinsicLoadable.data : undefined
   const extrinsicError = extrinsicLoadable.state === 'hasError' ? (extrinsicLoadable.error as Error) : undefined
-  allLoadables.push([extrinsicLoadable as Loadable])
+  allLoadables.push(extrinsicLoadable)
 
   const loading = useMemo(
     () => allLoadables.some(loadable => loadable.state === 'loading'),
@@ -96,9 +96,9 @@ export const useXcmApi = () => {
     setAmount,
     requestMax,
 
-    tokenPickerSource,
+    tokenPickerSourceBySender,
     tokenPickerDest,
-    sourceChains,
+    sourceChainsBySender,
     destChains,
     sourceAsset,
     destAsset,

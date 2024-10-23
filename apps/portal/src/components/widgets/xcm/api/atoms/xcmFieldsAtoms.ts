@@ -3,8 +3,8 @@ import { encodeAnyAddress } from '@talismn/util'
 import { atom } from 'jotai'
 import { atomWithReducer } from 'jotai/utils'
 
-import { formatAddress } from '../utils/formatAddress'
 import { formatDestAddress } from '../utils/formatDestAddress'
+import { validPrefix } from '../utils/validPrefix'
 import { configServiceAtom } from './configServiceAtom'
 
 // TODO: Fix crash (infinite render) when switching from an evm parachain destination
@@ -16,7 +16,9 @@ export const senderAtom = atom(
     const { sender, sourceChain } = get(xcmFieldsAtom)
     if (!sender) return
 
-    return sourceChain ? formatAddress(sender, sourceChain) : sender
+    if (!sourceChain) return sender
+    if (sourceChain.usesH160Acc) return sender
+    return encodeAnyAddress(sender, validPrefix(sourceChain.ss58Format))
   },
   (get, set, sender: XcmFields['sender']) => {
     // If there's no recipient, or if the previous recipient is the same as the previous sender,
@@ -46,24 +48,25 @@ export const amountAtom = atom(
 
 export const assetAtom = atom(
   get => get(xcmFieldsAtom).asset,
-  (get, set, assetKey: string) => {
+  (get, set, assetKey?: string) => {
     const { assets } = get(configServiceAtom)
-    set(xcmFieldsAtom, { asset: assets.get(assetKey) })
+    const asset = assetKey ? assets.get(assetKey) : undefined
+    set(xcmFieldsAtom, { asset })
   }
 )
 export const sourceChainAtom = atom(
   get => get(xcmFieldsAtom).sourceChain,
-  (get, set, chain?: string) => {
+  (get, set, chainKey?: string) => {
     const { chains } = get(configServiceAtom)
-    const sourceChain = chain ? chains.get(chain) : undefined
+    const sourceChain = chainKey ? chains.get(chainKey) : undefined
     set(xcmFieldsAtom, { sourceChain: sourceChain instanceof Parachain ? sourceChain : undefined })
   }
 )
 export const destChainAtom = atom(
   get => get(xcmFieldsAtom).destChain,
-  (get, set, chain?: string) => {
+  (get, set, chainKey?: string) => {
     const { chains } = get(configServiceAtom)
-    const destChain = chain ? chains.get(chain) : undefined
+    const destChain = chainKey ? chains.get(chainKey) : undefined
     set(xcmFieldsAtom, { destChain: destChain instanceof Parachain ? destChain : undefined })
   }
 )

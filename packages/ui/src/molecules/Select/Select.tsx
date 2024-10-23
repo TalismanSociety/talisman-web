@@ -271,7 +271,7 @@ const Select = Object.assign(
               borderRadius: cappedShape,
             },
             false: {
-              border: 'solid transparent',
+              border: `solid ${theme.color.outlineVariant}00`,
               borderWidth: '1px 1px 0 1px',
               borderRadius: theme.shape.full,
             },
@@ -342,7 +342,7 @@ const Select = Object.assign(
               },
               false: {
                 height: 0,
-                border: 'solid transparent',
+                border: `solid ${theme.color.outlineVariant}00`,
                 borderWidth: '0 1px 1px 1px',
                 overflow: 'hidden',
                 transitionEnd: { visibility: 'hidden' },

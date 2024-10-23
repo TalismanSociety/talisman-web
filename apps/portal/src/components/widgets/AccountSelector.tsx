@@ -63,7 +63,6 @@ const AccountSelector = ({
                 : undefined
               return (
                 <Select.Option
-                  className=""
                   leadingIcon={<CircularProgressIndicator size="4rem" />}
                   supportingContent={
                     selectedAccount && selectedAccount.name
@@ -71,9 +70,9 @@ const AccountSelector = ({
                       : ''
                   }
                   headlineContent={
-                    selectedAccount === undefined
-                      ? ''
-                      : selectedAccount.name ?? shortenAddress(encodeAnyAddress(selectedAccount.address, prefix))
+                    selectedAccount
+                      ? selectedAccount.name ?? shortenAddress(encodeAnyAddress(selectedAccount.address, prefix))
+                      : ''
                   }
                 />
               )
@@ -83,8 +82,8 @@ const AccountSelector = ({
     >
       {accounts.map(x => (
         <Select.Option
-          key={x.address}
-          value={x.address}
+          key={encodeAnyAddress(x.address, prefix)}
+          value={encodeAnyAddress(x.address, prefix)}
           leadingIcon={<AccountIcon account={x} size="32px" />}
           className="!w-full [&>div]:w-full"
           headlineContent={
@@ -131,8 +130,8 @@ export const useAccountSelector = (
       typeof initialAccount === 'function'
         ? initialAccount(accounts)
         : typeof initialAccount === 'number'
-        ? accounts.at(initialAccount)
-        : initialAccount,
+          ? accounts.at(initialAccount)
+          : initialAccount,
     [initialAccount]
   )
 

@@ -1,7 +1,7 @@
 import { atom } from 'jotai'
 
 import { configServiceAtom } from './configServiceAtom'
-import { assetAtom, destChainAtom, sourceChainAtom } from './xcmFieldsAtoms'
+import { assetAtom, destChainAtom, senderAtom, sourceChainAtom } from './xcmFieldsAtoms'
 
 export const xcmReverseRouteAtom = atom(
   get => {
@@ -22,8 +22,14 @@ export const xcmReverseRouteAtom = atom(
     const canReverse = get(xcmReverseRouteAtom)
     if (!canReverse) return
 
-    const sourceKey = get(sourceChainAtom)?.key
-    const destKey = get(destChainAtom)?.key
+    const sourceChain = get(sourceChainAtom)
+    const destChain = get(destChainAtom)
+    const resetSender = Boolean(sourceChain?.usesH160Acc) !== Boolean(destChain?.usesH160Acc)
+    if (resetSender) set(senderAtom, undefined)
+
+    const sourceKey = sourceChain?.key
+    const destKey = destChain?.key
+
     set(sourceChainAtom, destKey)
     set(destChainAtom, sourceKey)
   }

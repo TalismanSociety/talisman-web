@@ -1,29 +1,18 @@
-import type { Loadable } from 'recoil'
-import { FixedPointNumber } from '@acala-network/sdk-core'
-import * as Sentry from '@sentry/react'
-import {
-  chainsByGenesisHashAtom,
-  useTokens as useBalancesLibTokens,
-  useChains,
-  useChainsByGenesisHash,
-} from '@talismn/balances-react'
-import { Decimal } from '@talismn/math'
-import { CircularProgressIndicator, Text, toast } from '@talismn/ui'
-import { useAtomValue } from 'jotai'
-import { loadable } from 'jotai/utils'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { constSelector, RecoilLoadable, selector, useRecoilValue, useRecoilValueLoadable } from 'recoil'
-import { Observable } from 'rxjs'
+// import { chainsByGenesisHashAtom, useTokens as useBalancesLibTokens } from '@talismn/balances-react'
+import { Tooltip } from '@talismn/ui'
+import { formatDecimals } from '@talismn/util'
+// import { useAtomValue } from 'jotai'
+// import { loadable } from 'jotai/utils'
+import { useEffect, useState } from 'react'
+import { useRecoilValue } from 'recoil'
+import { isAddress as isEvmAddress } from 'viem'
 
-import type { Account } from '@/domains/accounts'
-// import { bridgeAdapterState, bridgeState } from './api/old'
 import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
-import { useAccountSelector } from '@/components/widgets/AccountSelector'
-import { evmAccountsState, substrateAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts'
-import { balancesState, selectedCurrencyState } from '@/domains/balances'
-import { tokenPriceState } from '@/domains/chains'
+import AccountSelector from '@/components/widgets/AccountSelector'
+import { writeableAccountsState } from '@/domains/accounts'
+// import { selectedCurrencyState } from '@/domains/balances'
+// import { tokenPriceState } from '@/domains/chains'
 import { useExtrinsic, useSetJotaiSubstrateApiState } from '@/domains/common'
-import { Maybe } from '@/util/monads'
 
 import { useXcmApi } from './api'
 import { validPrefix } from './api/utils/validPrefix'
@@ -37,11 +26,6 @@ import { ProgressIndicator } from './ProgressIndicator'
 import { TokenSelectButton } from './TokenSelectButton'
 import { TokenSelectDialog } from './TokenSelectDialog'
 
-// const routesState = selector({
-//   key: 'Transport/Routes',
-//   get: ({ get }) => get(bridgeState).router.getAvailableRouters(),
-// })
-
 export function XcmForm() {
   useSetJotaiSubstrateApiState()
   const {
@@ -53,15 +37,15 @@ export function XcmForm() {
     setSourceChain,
     destChain,
     setDestChain,
-    asset,
+    // asset,
     setAsset,
     amount,
     setAmount,
     requestMax,
 
-    tokenPickerSource,
+    tokenPickerSourceBySender,
     tokenPickerDest,
-    sourceChains,
+    sourceChainsBySender,
     destChains,
     sourceAsset,
     destAsset,
@@ -70,233 +54,55 @@ export function XcmForm() {
 
     sourceBalance,
     fees,
+    minMaxAmounts,
     extrinsic: pjsExtrinsic,
     extrinsicError,
     loading,
   } = useXcmApi()
 
-  const currency = useRecoilValue(selectedCurrencyState)
-  // const balances = useRecoilValue(balancesState)
+  const extrinsic = useExtrinsic(pjsExtrinsic)
 
-  const firstAccountIndex = 0
-  const [[senderAccount], senderAccountSelector] = useAccountSelector(
-    useRecoilValue(writeableSubstrateAccountsState),
-    firstAccountIndex, // default to first user account
-    { prefix: validPrefix(sourceChain?.ss58Format) }
-  )
-  useEffect(() => void setSender(senderAccount?.address), [senderAccount, setSender])
+  // select first account on mount
+  const validSenders = useRecoilValue(writeableAccountsState)
+  useEffect(() => {
+    const firstSubSender = validSenders.find(({ address }) => !isEvmAddress(address))?.address
+    const firstSender = firstSubSender ?? validSenders[0]?.address
+    setSender(firstSender)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const chainsByGenesisHash = useAtomValue(loadable(chainsByGenesisHashAtom))
-  const balancesLibTokens = useBalancesLibTokens()
+  const [sourceTokenSelectOpen, setSourceTokenSelectOpen] = useState(false)
+  const [destTokenSelectOpen, setDestTokenSelectOpen] = useState(false)
 
-  // const routes = useMemo(
-  //   () =>
-  //     availableRoutes.filter(route => {
-  //       switch (senderAccount?.type) {
-  //         case 'ethereum':
-  //           return isEvmChain(route.from)
-  //         case 'ecdsa':
-  //         case 'ed25519':
-  //         case 'sr25519':
-  //           return !isEvmChain(route.from)
-  //         case undefined:
-  //           return true
-  //         default:
-  //           throw new Error(`Unknown account type: ${senderAccount?.type ?? 'undefined'}`)
-  //       }
-  //     }),
-  //   [availableRoutes, senderAccount?.type]
-  // )
+  // reset back to details focus when sourceChain, destChain or amount is changed
+  const [focusedSection, setFocusedSection] = useState<'details' | 'faq'>('details')
+  useEffect(() => void setFocusedSection('details'), [sourceChain, destChain, amount])
 
+  // TODO
+  // const currency = useRecoilValue(selectedCurrencyState)
+  // const chainsByGenesisHash = useAtomValue(loadable(chainsByGenesisHashAtom))
+  // const balancesLibTokens = useBalancesLibTokens()
   // const tokenPriceLoadable = useRecoilValueLoadable(
   //   !token?.coingeckoId ? constSelector(undefined) : tokenPriceState({ coingeckoId: token.coingeckoId })
   // )
-
-  // useEffect(() => {
-  //   if (sender !== undefined) {
-  //     setRecipient(sender)
-  //   }
-  // }, [sender, setRecipient])
-
-  const [sourceTokenSelectOpen, setSourceTokenSelectOpen] = useState(false)
-  const fromTokens = useMemo(() => [], [])
-  // const fromTokens = useMemo(
-  //   () =>
-  //     Array.from(
-  //       new Map(
-  //         routes
-  //           .map(route => {
-  //             const token = Object.values(balancesLibTokens).find(
-  //               token => token.symbol.toLowerCase() === route.token.toLowerCase()
-  //             )
-  //             const balance = balances
-  //               .find({ address: sender })
-  //               .find(
-  //                 balance =>
-  //                   balance.token?.symbol.toLowerCase() === route.token.toLowerCase() &&
-  //                   !!balance.chain &&
-  //                   (route.from.paraChainId === -1
-  //                     ? balancesLibChains[balance.chain.id]?.paraId === null
-  //                     : balancesLibChains[balance.chain.id]?.paraId === route.from.paraChainId)
-  //               )
-
-  //             return [
-  //               `${route.from.id}-${route.token}`,
-  //               {
-  //                 id: route.token,
-  //                 name: route.token,
-  //                 code: route.token,
-  //                 chain: route.from.display,
-  //                 chainId: route.from.id,
-  //                 iconSrc:
-  //                   token?.logo ??
-  //                   'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/tokens/unknown.svg',
-  //                 amount: Decimal.fromPlanck(balance.sum.planck.transferable, balance.each.at(0)?.decimals ?? 0, {
-  //                   currency: route.token,
-  //                 }).toLocaleString(),
-  //                 fiatAmount: balance.sum
-  //                   .fiat(currency)
-  //                   .transferable.toLocaleString(undefined, { style: 'currency', currency }),
-  //                 sortKey: balance.sum.fiat(currency).transferable,
-  //               },
-  //             ] as const
-  //           })
-  //           .toSorted((a, b) => b[1].sortKey - a[1].sortKey || a[1].name.localeCompare(b[1].name))
-  //       ).values()
-  //     ),
-  //   [balances, balancesLibChains, balancesLibTokens, currency, routes, sender]
-  // )
-
-  const [destTokenSelectOpen, setDestTokenSelectOpen] = useState(false)
-  const toTokens = useMemo(() => [], [])
-  // const toTokens = useMemo(
-  //   () =>
-  //     Array.from(
-  //       new Map(
-  //         routes
-  //           .filter(x => x.from.id === route.from.id && x.token === route.token)
-  //           .map(route => {
-  //             const token = Object.values(balancesLibTokens).find(
-  //               token => token.symbol.toLowerCase() === route.token.toLowerCase()
-  //             )
-  //             const balance = balances
-  //               .find({ address: sender })
-  //               .find(
-  //                 balance =>
-  //                   balance.token?.symbol.toLowerCase() === route.token.toLowerCase() &&
-  //                   !!balance.chain &&
-  //                   (route.to.paraChainId === -1
-  //                     ? balancesLibChains[balance.chain.id]?.paraId === null
-  //                     : balancesLibChains[balance.chain.id]?.paraId === route.to.paraChainId)
-  //               )
-
-  //             return [
-  //               `${route.to.id}-${route.token}`,
-  //               {
-  //                 id: route.token,
-  //                 name: route.token,
-  //                 code: route.token,
-  //                 chain: route.to.display,
-  //                 chainId: route.to.id,
-  //                 iconSrc:
-  //                   token?.logo ??
-  //                   'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/tokens/unknown.svg',
-  //                 amount: Decimal.fromPlanck(balance.sum.planck.transferable, balance.each.at(0)?.decimals ?? 0, {
-  //                   currency: route.token,
-  //                 }).toLocaleString(),
-  //                 fiatAmount: balance.sum
-  //                   .fiat(currency)
-  //                   .transferable.toLocaleString(undefined, { style: 'currency', currency }),
-  //                 sortKey: balance.sum.fiat(currency).transferable,
-  //               },
-  //             ] as const
-  //           })
-  //           .toSorted((a, b) => b[1].sortKey - a[1].sortKey || a[1].name.localeCompare(b[1].name))
-  //       ).values()
-  //     ),
-  //   [balances, balancesLibChains, balancesLibTokens, currency, route.from.id, route.token, routes, sender]
-  // )
-
-  // const originChains = useMemo(
-  //   () => Array.from(new Map(routes.map(route => [route.from.id, route.from] as const)).values()),
-  //   [routes]
-  // )
-
-  // const destinationChains = useMemo(
-  //   () =>
-  //     Array.from(
-  //       new Map(
-  //         routes
-  //           .filter(x => x.from.id === route.from.id && x.token === route.token)
-  //           .map(route => [route.to.id, route.from] as const)
-  //       ).values()
-  //     ),
-  //   [route.from.id, route.token, routes]
-  // )
-
-  // const [inputConfigLoadable, setInputConfigLoadable] = useState<Loadable<InputConfig>>()
-  // useEffect(() => {
-  //   if (inputConfigLoadable?.state === 'hasError') {
-  //     toast.error('Failed to get transferable amount')
-  //     Sentry.captureException(inputConfigLoadable.contents)
-  //     console.error(inputConfigLoadable.contents)
-  //   }
-  // }, [inputConfigLoadable?.contents, inputConfigLoadable?.state])
-
   // const fiatAmount = useMemo(() => {
   //   const price = undefined // tokenPriceLoadable.valueMaybe()
-
   //   return price === undefined || decimalAmount === undefined ? undefined : price * decimalAmount.toNumber()
   // }, [decimalAmount])
 
-  // const parsedInputConfigLoadable = useMemo(
-  //   () =>
-  //     inputConfigLoadable?.map(x => ({
-  //       ...x,
-  //       estimateFee: fixedPointNumberToDecimal(x.estimateFee.balance, x.estimateFee.token),
-  //       minInput: fixedPointNumberToDecimal(x.minInput, route.token),
-  //       maxInput: fixedPointNumberToDecimal(x.maxInput, route.token),
-  //       destFee: fixedPointNumberToDecimal(x.destFee.balance, x.destFee.token),
-  //     })),
-  //   [inputConfigLoadable, route.token]
-  // )
-
-  // const inputError = useMemo(() => {
-  //   if (parsedInputConfigLoadable?.state !== 'hasValue' || decimalAmount === undefined) {
-  //     return
-  //   }
-
-  //   if (amount === '') {
-  //     return
-  //   }
-
-  //   if (decimalAmount.planck > parsedInputConfigLoadable.contents.maxInput.planck) {
-  //     return `Insufficient balance`
-  //   }
-
-  //   if (decimalAmount.planck < parsedInputConfigLoadable.contents.minInput.planck) {
-  //     return `Minimum ${parsedInputConfigLoadable.contents.minInput.toLocaleString()}`
-  //   }
-
-  //   return undefined
-  // }, [amount, decimalAmount, parsedInputConfigLoadable])
-
-  const extrinsic = useExtrinsic(pjsExtrinsic)
-
-  const [focusedSection, setFocusedSection] = useState<'details' | 'faq'>('details')
-  useEffect(() => {
-    setFocusedSection('details')
-  }, [amount /*,route*/])
-
-  // // TODO: Use this to select the destination account (and maybe also the source account?)
-  // <SeparatedAccountSelector />
+  const details = extrinsicError ? (
+    <ErrorMessage title="Unable to process transfer" text={String(extrinsicError.message ?? extrinsicError)} />
+  ) : fees ? (
+    <Fees originFee={fees.sourceFee} destinationFee={fees.destFee} />
+  ) : (
+    <ProgressIndicator />
+  )
 
   return (
     <>
       {sourceTokenSelectOpen && (
         <TokenSelectDialog
-          assets={tokenPickerSource}
-          chains={sourceChains}
+          assets={tokenPickerSourceBySender}
+          chains={sourceChainsBySender}
           onChange={asset => (setSourceChain(asset.chain.key), setAsset(asset.token.key))}
           onRequestDismiss={() => setSourceTokenSelectOpen(false)}
         />
@@ -310,23 +116,43 @@ export function XcmForm() {
         />
       )}
       <Form
-        amount={amount ?? '0'}
-        // fiatAmount={
+        amount={amount}
+        // fiat={
         //   fiatAmount?.toLocaleString(undefined, { style: 'currency', currency }) ?? (
         //     <CircularProgressIndicator size="1em" />
         //   )
         // }
-        availableAmount={
+        available={
           sourceBalance ? (
-            `${sourceBalance.toDecimal()} ${sourceBalance.symbol}`
-          ) : (
-            <CircularProgressIndicator size="1em" />
-          )
+            <Tooltip content={`${sourceBalance.toDecimal()} ${sourceBalance.symbol}`}>
+              <span className="text-foreground shrink-0">
+                {formatDecimals(sourceBalance.toDecimal())}&nbsp;{sourceBalance.symbol}
+              </span>
+            </Tooltip>
+          ) : undefined
+        }
+        max={
+          minMaxAmounts?.max && sourceBalance?.amount !== minMaxAmounts.max.amount ? (
+            <Tooltip content={`${minMaxAmounts.max.toDecimal()} ${minMaxAmounts.max.symbol} after fees`}>
+              <span className="shrink-0">
+                ({formatDecimals(minMaxAmounts.max.toDecimal())}&nbsp;{minMaxAmounts.max.symbol} after fees)
+              </span>
+            </Tooltip>
+          ) : undefined
         }
         onChangeAmount={setAmount}
         onRequestMaxAmount={requestMax}
         amountError={extrinsicError?.message}
-        accountSelect={<div className="[&>div>button]:!rounded-[1.2rem]">{senderAccountSelector}</div>}
+        accountSelect={
+          <div className="[&>div>button]:!rounded-[1.2rem]">
+            <AccountSelector
+              accounts={validSenders}
+              prefix={validPrefix(sourceChain?.ss58Format)}
+              selectedAccount={sender}
+              onChangeSelectedAccount={account => setSender(account?.address)}
+            />
+          </div>
+        }
         tokenSelect={<TokenSelectButton asset={sourceAsset} onClick={() => setSourceTokenSelectOpen(true)} />}
         destTokenSelect={<TokenSelectButton asset={destAsset} onClick={() => setDestTokenSelectOpen(true)} />}
         reversible={canReverse}
@@ -367,17 +193,7 @@ export function XcmForm() {
           <Info
             focusedSection={focusedSection}
             onChangeFocusedSection={setFocusedSection}
-            summary={(() => {
-              if (extrinsicError)
-                return (
-                  <ErrorMessage
-                    title="Unable to process transfer"
-                    text={String(extrinsicError.message ?? extrinsicError)}
-                  />
-                )
-              if (!fees) return <ProgressIndicator />
-              return <Fees originFee={fees.sourceFee} destinationFee={fees.destFee} />
-            })()}
+            details={details}
             faq={<Faq />}
             footer={<Footer />}
           />
