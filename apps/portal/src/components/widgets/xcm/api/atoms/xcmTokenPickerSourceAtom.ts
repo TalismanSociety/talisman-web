@@ -4,7 +4,6 @@ import { isAddress as isEvmAddress } from 'viem'
 
 import { sortTokenPickerAssets } from '../utils/sortTokenPickerAssets'
 import { configServiceAtom } from './configServiceAtom'
-import { xcmBalancesAtom } from './xcmBalancesAtom'
 import { xcmChainsAtom } from './xcmChainsAtom'
 import { senderAtom } from './xcmFieldsAtoms'
 
@@ -15,7 +14,6 @@ import { senderAtom } from './xcmFieldsAtoms'
 export const xcmTokenPickerSourceAtom = atom(async get => {
   const xcmChains = get(xcmChainsAtom)
   const routes = get(configServiceAtom).routes
-  const balances = get(xcmBalancesAtom)
   const chaindataChainsByGenesisHash = await get(chainsByGenesisHashAtom)
   const chaindataTokensById = await get(tokensByIdAtom)
 
@@ -33,9 +31,6 @@ export const xcmTokenPickerSourceAtom = atom(async get => {
         token,
         chaindataId: chaindataChain?.id,
         chaindataTokenLogo: chaindataTokensBySymbol.get(token.originSymbol)?.logo,
-        // TODO: use @talismn/balances
-        // in this context, `balances` is only valid for the sourceChain that we are connected to
-        balance: balances.get(token.key),
       }))
     })
     .sort(sortTokenPickerAssets)

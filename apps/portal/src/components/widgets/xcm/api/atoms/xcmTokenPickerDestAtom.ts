@@ -37,9 +37,6 @@ export const xcmTokenPickerDestAtom = atom(async get => {
         token,
         chaindataId: chaindataChain?.id,
         chaindataTokenLogo: chaindataTokensBySymbol.get(token.originSymbol)?.logo,
-        // TODO: use @talismn/balances
-        // in this context, `balances` is only valid for the sourceChain that we are connected to
-        // balance: balances.get(token.key),
       }))
     })
     .sort(sortTokenPickerAssets)
