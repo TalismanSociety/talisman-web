@@ -1,8 +1,10 @@
 import useSlpxSubstrateUnlockDuration from '../hooks/bifrost/useSlpxSubstrateUnlockDuration'
+import useDappUnlockDuration from '../hooks/dapp/useUnlockDuration'
 import { StakeProviderTypeId } from '../hooks/useProvidersData'
 import { ChainProvider } from '@/domains/chains'
 import { useVTokenUnlockDuration } from '@/domains/staking/slpx'
 import { SlpxPair } from '@/domains/staking/slpx/types'
+import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 // import { useApr as useDappApr } from '@/domains/staking/dappStaking'
 // import { lidoAprState } from '@/domains/staking/lido/recoils'
 // import { useSlpxAprState } from '@/domains/staking/slpx'
@@ -10,8 +12,7 @@ import { useUnlockDuration as useNominationPoolUnlockDuration } from '@/domains/
 import { formatDistance } from 'date-fns'
 // import { useHighestApr } from '@/domains/staking/subtensor/hooks/useApr'
 import { useEffect } from 'react'
-
-// import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
+import { useTranslation } from 'react-i18next'
 
 // import { useRecoilValue } from 'recoil'
 
@@ -25,7 +26,7 @@ type UnbondingPeriodProps = {
   unbonding: number | undefined
   symbol?: string
   apiEndpoint?: string
-  tokenPair: SlpxPair | undefined
+  tokenPair: SlpxPair | SlpxSubstratePair | undefined
 }
 type AprDisplayProps = Omit<UnbondingPeriodProps, 'genesisHash'>
 // type LidoUnbondingPeriodProps = Omit<AprDisplayProps, 'symbol' | 'symbol' | 'genesisHash' | 'type'>
@@ -64,12 +65,14 @@ const UnbondingDisplay = ({
   tokenPair,
   setUnbondingValues,
 }: AprDisplayProps) => {
+  const { t } = useTranslation()
+
   const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
     nominationPool: useNominationPoolUnlockDuration,
     liquidStakingSlpx: useVTokenUnlockDuration,
     liquidStakingSlpxSubstrate: useSlpxSubstrateUnlockDuration,
     delegationSubtensor: () => 0,
-    dappStaking: () => 0,
+    dappStaking: useDappUnlockDuration,
     liquidStakingLido: () => 0,
   }
 
@@ -85,19 +88,19 @@ const UnbondingDisplay = ({
       console.log({ tokenPair })
       unlockValue = hookMap['liquidStakingSlpxSubstrate']({ slpxPair: tokenPair })
       break
-    // case 'Delegation':
-    //   unlockValue = hookMap['Delegation']()
-    //   break
-    // case 'DApp staking':
-    //   unlockValue = hookMap['DApp staking']().totalApr
-    //   break
+    case 'delegationSubtensor':
+      unlockValue = hookMap['delegationSubtensor']()
+      break
+    case 'dappStaking':
+      unlockValue = hookMap['dappStaking']()
+      break
     default:
       unlockValue = 0
   }
 
   useSetUnbonding({ unlockValue, rowId, unbonding, setUnbondingValues })
 
-  return <>{unbondingFormatter(unlockValue ?? 0)}</>
+  return <>{unlockValue === 0 ? t('None') : unbondingFormatter(unlockValue)}</>
 }
 
 // const LidoApr = ({ rowId, apr, setUnbondingValues, apiEndpoint }: LidoUnbondingPeriodProps) => {
