@@ -29,7 +29,7 @@ export const xcmTokenPickerDestAtom = atom(async get => {
       ]
       const chaindataChain = chaindataChainsByGenesisHash?.[chain.genesisHash]
       const chaindataTokensBySymbol = new Map(
-        chaindataChain?.tokens?.map(({ id }) => [chaindataTokensById[id]?.symbol, chaindataTokensById[id]] as const)
+        chaindataChain?.tokens?.map(({ id }) => [chaindataTokensById[id]?.symbol, chaindataTokensById[id]] as const),
       )
 
       return tokens.map(token => ({
@@ -37,9 +37,6 @@ export const xcmTokenPickerDestAtom = atom(async get => {
         token,
         chaindataId: chaindataChain?.id,
         chaindataTokenLogo: chaindataTokensBySymbol.get(token.originSymbol)?.logo,
-        // TODO: use @talismn/balances
-        // in this context, `balances` is only valid for the sourceChain that we are connected to
-        // balance: balances.get(token.key),
       }))
     })
     .sort(sortTokenPickerAssets)
