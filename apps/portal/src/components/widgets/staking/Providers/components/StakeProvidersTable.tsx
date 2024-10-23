@@ -1,6 +1,7 @@
 import { Provider } from '../hooks/useProvidersData'
 import Apr from './Apr'
 import AvailableBalance from './AvailableBalance'
+import UnbondingPeriod from './UnbondingPeriod'
 import { cn } from '@/lib/utils'
 import { CircularProgressIndicator } from '@talismn/ui'
 import {
@@ -20,6 +21,7 @@ type StakeProviderProps = {
 const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [aprValues, setAprValues] = useState<{ [key: string]: number }>({})
+  const [unbondingValues, setUnbondingValues] = useState<{ [key: string]: number }>({})
 
   const defaultData = useMemo(() => [], [])
 
@@ -38,7 +40,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
               <Apr
                 type={row.original.type}
-                genesisHash={row.original.genesisHash}
+                genesisHash={row.original.genesisHash ?? '0x'}
                 rowId={row.id}
                 apr={aprValues[row.id]}
                 setAprValues={setAprValues}
@@ -69,7 +71,18 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
         accessorKey: 'unbondingPeriod',
         header: 'Unbonding period',
         cell: ({ row }) => (
-          <Suspense fallback={<CircularProgressIndicator size="1em" />}>{row.original.unbondingPeriod}</Suspense>
+          <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+            {/* {row.original.unbondingPeriod} */}
+            <UnbondingPeriod
+              type={row.original.type}
+              genesisHash={row.original.genesisHash ?? '0x'}
+              rowId={row.id}
+              unbonding={unbondingValues[row.id]}
+              setUnbondingValues={setUnbondingValues}
+              symbol={row.original.nativeToken?.symbol}
+              apiEndpoint={row.original.apiEndpoint}
+            />
+          </Suspense>
         ),
       },
       {
