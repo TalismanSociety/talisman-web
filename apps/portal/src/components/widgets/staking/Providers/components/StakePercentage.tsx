@@ -1,6 +1,7 @@
 // import { useAvailableBalance as useSlpxAvailableBalance } from '../hooks/bifrost/useAvailableBalance'
 // import useLidoStakePercentage from '../hooks/lido/useAvailableBalance'
 // import useAvailableBalance from '../hooks/useAvailableBalance'
+import PercentageBar from '../components/PercentageBar'
 import useNominationPoolStakePercentage from '../hooks/nominationPools/useStakePercentage'
 import { StakeProviderTypeId } from '../hooks/useProvidersData'
 import { ChainProvider } from '@/domains/chains'
@@ -82,7 +83,9 @@ const StakePercentageDisplay = ({
     setStakePercentage,
   })
 
-  return <div>{stakeValue}</div>
+  // return <div>{stakeValue}</div>
+
+  return <PercentageBar percentage={stakeValue} />
 }
 
 const LidoStakePercentage = ({ rowId, setStakePercentage, stakePercentage }: LidoStakePercentageProps) => {
