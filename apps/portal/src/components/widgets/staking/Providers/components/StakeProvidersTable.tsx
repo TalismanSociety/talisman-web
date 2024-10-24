@@ -109,6 +109,12 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
             </Suspense>
           )
         },
+        sortingFn: (rowA, rowB) => {
+          const availableBalanceA = availableBalanceValues[rowA.id]
+          const availableBalanceB = availableBalanceValues[rowB.id]
+          if (availableBalanceA === undefined || availableBalanceB === undefined) return 0
+          return availableBalanceA > availableBalanceB ? 1 : -1
+        },
       },
       {
         accessorKey: 'stakePercentage',
@@ -124,7 +130,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
         enableSorting: false,
       },
     ],
-    [aprValues]
+    [aprValues, availableBalanceValues, unbondingValues]
   )
 
   const table = useReactTable({

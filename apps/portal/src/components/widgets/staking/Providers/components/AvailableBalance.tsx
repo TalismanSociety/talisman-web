@@ -1,16 +1,15 @@
 // import useSlpxSubstrateUnlockDuration from '../hooks/bifrost/useSlpxSubstrateUnlockDuration'
 // import useDappUnlockDuration from '../hooks/dapp/useUnlockDuration'
+import useNominationPoolAvailableBalance from '../hooks/nominationPools/useAvailableBalance'
 import { StakeProviderTypeId } from '../hooks/useProvidersData'
+import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
 import { ChainProvider } from '@/domains/chains'
 // import { useVTokenUnlockDuration } from '@/domains/staking/slpx'
 import { SlpxPair } from '@/domains/staking/slpx/types'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
+import { Decimal } from '@talismn/math'
 // import { useUnlockDuration as useNominationPoolUnlockDuration } from '@/domains/staking/substrate/nominationPools'
-import { formatDistance } from 'date-fns'
-import { useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-
-const availableBalanceFormatter = (balanceValue: number) => formatDistance(0, balanceValue)
+import { useEffect, useMemo } from 'react'
 
 type AvailableBalanceProps = {
   typeId: StakeProviderTypeId
@@ -52,6 +51,11 @@ const useSetAvailableBalance = ({
   return balanceValue
 }
 
+type AvailableBalance = {
+  availableBalance: Decimal
+  fiatAmount: number
+}
+
 // This component is used to get around the react rules of conditional hooks
 const AvailableBalanceDisplay = ({
   typeId,
@@ -60,11 +64,9 @@ const AvailableBalanceDisplay = ({
   // tokenPair,
   setAvailableBalanceValue,
 }: AvailableBalanceDisplayProps) => {
-  const { t } = useTranslation()
-
   // @ts-expect-error
-  const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
-    nominationPool: () => 0,
+  const hookMap: Record<StakeProviderTypeId, (arg0?: any) => AvailableBalance> = {
+    nominationPool: useNominationPoolAvailableBalance,
     // liquidStakingSlpx: useVTokenUnlockDuration,
     // liquidStakingSlpxSubstrate: useSlpxSubstrateUnlockDuration,
     // delegationSubtensor: () => 0,
@@ -72,7 +74,7 @@ const AvailableBalanceDisplay = ({
     // liquidStakingLido: () => 0,
   }
 
-  let balanceValue: number = 0
+  let balanceValue: AvailableBalance
   switch (typeId) {
     case 'nominationPool':
       balanceValue = hookMap['nominationPool']()
@@ -90,12 +92,25 @@ const AvailableBalanceDisplay = ({
     //   balanceValue = hookMap['dappStaking']()
     //   break
     default:
-      balanceValue = 9999
+      balanceValue = {
+        availableBalance: Decimal.fromPlanck(0n, 0),
+        fiatAmount: 0,
+      }
   }
 
-  useSetAvailableBalance({ balanceValue, rowId, availableBalance, setAvailableBalanceValue })
+  useSetAvailableBalance({
+    balanceValue: balanceValue.fiatAmount,
+    rowId,
+    availableBalance,
+    setAvailableBalanceValue,
+  })
 
-  return <>{balanceValue === 0 ? t('None') : availableBalanceFormatter(balanceValue)}</>
+  return (
+    <div>
+      <div>{balanceValue.availableBalance.toLocaleString()}</div>
+      <AnimatedFiatNumber end={useMemo(() => balanceValue.fiatAmount ?? 0, [balanceValue.fiatAmount])} />
+    </div>
+  )
 }
 
 const LidoAvailableBalance = ({ rowId, setAvailableBalanceValue, availableBalance }: LidoAvailableBalanceProps) => {

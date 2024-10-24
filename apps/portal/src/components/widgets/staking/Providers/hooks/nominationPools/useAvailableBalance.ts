@@ -1,18 +1,33 @@
 import { selectedSubstrateAccountsState } from '@/domains/accounts'
-import { chainDeriveState } from '@/domains/common'
+import { chainDeriveState, substrateApiState } from '@/domains/common'
+import { useTokenAmountFromPlanck } from '@/domains/common'
+import { Decimal } from '@talismn/math'
+import { usePolkadotApiId } from '@talismn/react-polkadot-api'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-const useAvailableBalance = ({ rpcId }: { rpcId: string }) => {
+const useAvailableBalance = () => {
+  const apiId = usePolkadotApiId()
+  const api = useRecoilValue(substrateApiState(apiId as any))
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
 
   const balances = useRecoilValue(
-    waitForAll(addresses.map(address => chainDeriveState(rpcId, 'balances', 'all', [address])))
+    waitForAll(addresses.map(address => chainDeriveState(apiId, 'balances', 'all', [address])))
+  )
+  const availableBalance = useMemo(
+    () =>
+      Decimal.fromPlanck(
+        balances.reduce((prev, curr) => prev + curr.availableBalance.toBigInt(), 0n),
+        api.registry.chainDecimals.at(0) ?? 0,
+        { currency: api.registry.chainTokens.at(0) }
+      ),
+    [api.registry.chainDecimals, api.registry.chainTokens, balances]
   )
 
-  const availableBalance = balances.reduce((prev, curr) => prev + curr.availableBalance.toBigInt(), 0n)
+  const fiatAmount = useTokenAmountFromPlanck(availableBalance.planck).fiatAmount
 
-  return availableBalance
+  return { availableBalance, fiatAmount }
 }
+
 export default useAvailableBalance
