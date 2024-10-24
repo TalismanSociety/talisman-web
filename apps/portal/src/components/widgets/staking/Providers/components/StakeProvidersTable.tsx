@@ -119,7 +119,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
       },
       {
         accessorKey: 'stakePercentage',
-        header: 'Available Staked (%)',
+        header: 'Staked (%)',
         cell: ({ row }) => (
           <Suspense fallback={<CircularProgressIndicator size="1em" />}>{row.original.stakePercentage}</Suspense>
         ),
