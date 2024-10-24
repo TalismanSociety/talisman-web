@@ -2,6 +2,7 @@ import { Provider } from '../hooks/useProvidersData'
 import Apr from './Apr'
 import AvailableBalance from './AvailableBalance'
 import PercentageBar from './PercentageBar'
+import StakeButton from './StakeButton'
 import StakePercentage from './StakePercentage'
 import UnbondingPeriod from './UnbondingPeriod'
 import { cn } from '@/lib/utils'
@@ -15,6 +16,7 @@ import {
   ColumnDef,
 } from '@tanstack/react-table'
 import { useState, useMemo, Suspense } from 'react'
+import { Link } from 'react-router-dom'
 
 type StakeProviderProps = {
   dataQuery: Provider[]
@@ -132,7 +134,6 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
                 rowId={row.id}
                 stakePercentage={stakePercentageValues[row.id]}
                 setStakePercentage={setStakePercentage}
-                apiEndpoint={row.original.apiEndpoint}
                 tokenPair={row.original.tokenPair}
                 nativeTokenAddress={row.original.nativeToken.address}
                 symbol={row.original.nativeToken?.symbol}
@@ -151,7 +152,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
       {
         accessorKey: 'action',
         header: '',
-        cell: () => <button>Stake</button>,
+        cell: ({ row }) => <StakeButton as={Link} to={row.original.actionLink} />,
         enableSorting: false,
       },
     ],

@@ -17,7 +17,6 @@ type StakePercentageProps = {
   rowId: string
   setStakePercentage: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>
   stakePercentage: number | undefined
-  apiEndpoint?: string
   tokenPair: SlpxPair | SlpxSubstratePair | undefined
   symbol?: string
   nativeTokenAddress?: `0x${string}`
@@ -127,7 +126,6 @@ const AvailableBalance = ({
   genesisHash,
   rowId,
   stakePercentage,
-  apiEndpoint,
   setStakePercentage,
   tokenPair,
   symbol,
@@ -140,7 +138,6 @@ const AvailableBalance = ({
         rowId={rowId}
         stakePercentage={stakePercentage}
         setStakePercentage={setStakePercentage}
-        apiEndpoint={apiEndpoint}
         symbol={symbol}
         nativeTokenAddress={nativeTokenAddress}
         chainId={chainId}
@@ -155,7 +152,6 @@ const AvailableBalance = ({
         rowId={rowId}
         stakePercentage={stakePercentage}
         setStakePercentage={setStakePercentage}
-        apiEndpoint={apiEndpoint}
         tokenPair={tokenPair}
       />
     </ChainProvider>
