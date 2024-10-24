@@ -5,8 +5,9 @@ import PercentageBar from './PercentageBar'
 import StakeButton from './StakeButton'
 import StakePercentage from './StakePercentage'
 import UnbondingPeriod from './UnbondingPeriod'
+import AssetLogoWithChain from '@/components/recipes/AssetLogoWithChain'
 import { cn } from '@/lib/utils'
-import { CircularProgressIndicator } from '@talismn/ui'
+import { CircularProgressIndicator, Text } from '@talismn/ui'
 import {
   useReactTable,
   getCoreRowModel,
@@ -36,7 +37,24 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
       {
         accessorKey: 'symbol',
         header: 'Asset',
-        cell: info => info.getValue(),
+        cell: ({ row }) => (
+          <div
+            css={{
+              gridArea: 'asset',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1.2rem',
+            }}
+          >
+            <AssetLogoWithChain chainId={row.original.chainId} assetLogoUrl={row.original.logo} />
+            <div className="truncate">
+              <Text.Body as="div" alpha="high">
+                {row.original.symbol}
+              </Text.Body>
+              <Text.BodySmall as="div">{row.original.chainName}</Text.BodySmall>
+            </div>
+          </div>
+        ),
       },
       {
         accessorKey: 'apr',

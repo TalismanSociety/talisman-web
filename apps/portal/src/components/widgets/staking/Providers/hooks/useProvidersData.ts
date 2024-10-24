@@ -24,7 +24,7 @@ export type StakeProviderTypeId =
 
 export type Provider = {
   symbol: string | undefined
-  logo: string | undefined
+  logo: string
   chainName: string | undefined
   chainId: string | number
   type: StakeProvider
