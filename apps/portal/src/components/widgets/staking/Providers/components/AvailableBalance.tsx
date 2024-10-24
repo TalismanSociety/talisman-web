@@ -1,6 +1,7 @@
 // import useSlpxSubstrateUnlockDuration from '../hooks/bifrost/useSlpxSubstrateUnlockDuration'
 // import useDappUnlockDuration from '../hooks/dapp/useUnlockDuration'
 import useNominationPoolAvailableBalance from '../hooks/nominationPools/useAvailableBalance'
+import useSubtensorAvailableBalance from '../hooks/subtensor/useAvailableBalance'
 import { StakeProviderTypeId } from '../hooks/useProvidersData'
 import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
 // import { useAvailableBalance } from '../../slpx/AvailableBalances'
@@ -70,8 +71,7 @@ const AvailableBalanceDisplay = ({
     nominationPool: useNominationPoolAvailableBalance,
     liquidStakingSlpx: useSlpxAvailableBalance,
     liquidStakingSlpxSubstrate: useSlpxAvailableBalance,
-    // liquidStakingSlpxSubstrate: useSlpxSubstrateUnlockDuration,
-    // delegationSubtensor: () => 0,
+    delegationSubtensor: useSubtensorAvailableBalance,
     // dappStaking: useDappUnlockDuration,
     // liquidStakingLido: () => 0,
   }
@@ -84,13 +84,12 @@ const AvailableBalanceDisplay = ({
     case 'liquidStakingSlpx':
       balanceValue = hookMap['liquidStakingSlpx'](tokenPair)
       break
-
     case 'liquidStakingSlpxSubstrate':
       balanceValue = hookMap['liquidStakingSlpxSubstrate'](tokenPair, true)
       break
-    // case 'delegationSubtensor':
-    //   balanceValue = hookMap['delegationSubtensor']()
-    //   break
+    case 'delegationSubtensor':
+      balanceValue = hookMap['delegationSubtensor']()
+      break
     // case 'dappStaking':
     //   balanceValue = hookMap['dappStaking']()
     //   break
