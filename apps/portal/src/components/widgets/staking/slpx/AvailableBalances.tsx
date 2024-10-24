@@ -19,9 +19,13 @@ export const useAvailableBalance = (slpxPair: SlpxPair | SlpxSubstratePair, isSu
 
   return useMemo(
     () => ({
-      amount: Decimal.fromPlanck(nativeBalance.sum.planck.transferable ?? 0n, nativeBalance.each.at(0)?.decimals ?? 0, {
-        currency: slpxPair.nativeToken.symbol,
-      }).toLocaleString(),
+      availableBalance: Decimal.fromPlanck(
+        nativeBalance.sum.planck.transferable ?? 0n,
+        nativeBalance.each.at(0)?.decimals ?? 0,
+        {
+          currency: slpxPair.nativeToken.symbol,
+        }
+      ),
       fiatAmount: nativeBalance.sum.fiat(currency).total,
     }),
     [currency, nativeBalance.each, nativeBalance.sum, slpxPair.nativeToken.symbol]
@@ -29,7 +33,9 @@ export const useAvailableBalance = (slpxPair: SlpxPair | SlpxSubstratePair, isSu
 }
 
 export const AvailableBalance = (props: { slpxPair: SlpxPair | SlpxSubstratePair; isSubstrate?: boolean }) => (
-  <RedactableBalance>{useAvailableBalance(props.slpxPair, props.isSubstrate).amount}</RedactableBalance>
+  <RedactableBalance>
+    {useAvailableBalance(props.slpxPair, props.isSubstrate).availableBalance.toLocaleString()}
+  </RedactableBalance>
 )
 
 export const AvailableFiatBalance = (props: { slpxPair: SlpxPair | SlpxSubstratePair; isSubstrate?: boolean }) => (

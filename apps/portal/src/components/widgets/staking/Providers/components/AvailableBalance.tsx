@@ -3,8 +3,9 @@
 import useNominationPoolAvailableBalance from '../hooks/nominationPools/useAvailableBalance'
 import { StakeProviderTypeId } from '../hooks/useProvidersData'
 import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
+// import { useAvailableBalance } from '../../slpx/AvailableBalances'
+import { useAvailableBalance as useSlpxAvailableBalance } from '@/components/widgets/staking/slpx/AvailableBalances'
 import { ChainProvider } from '@/domains/chains'
-// import { useVTokenUnlockDuration } from '@/domains/staking/slpx'
 import { SlpxPair } from '@/domains/staking/slpx/types'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import { Decimal } from '@talismn/math'
@@ -61,13 +62,14 @@ const AvailableBalanceDisplay = ({
   typeId,
   rowId,
   availableBalance,
-  // tokenPair,
+  tokenPair,
   setAvailableBalanceValue,
 }: AvailableBalanceDisplayProps) => {
   // @ts-expect-error
-  const hookMap: Record<StakeProviderTypeId, (arg0?: any) => AvailableBalance> = {
+  const hookMap: Record<StakeProviderTypeId, (arg0?: any, arg1?: bool) => AvailableBalance> = {
     nominationPool: useNominationPoolAvailableBalance,
-    // liquidStakingSlpx: useVTokenUnlockDuration,
+    liquidStakingSlpx: useSlpxAvailableBalance,
+    liquidStakingSlpxSubstrate: useSlpxAvailableBalance,
     // liquidStakingSlpxSubstrate: useSlpxSubstrateUnlockDuration,
     // delegationSubtensor: () => 0,
     // dappStaking: useDappUnlockDuration,
@@ -79,12 +81,13 @@ const AvailableBalanceDisplay = ({
     case 'nominationPool':
       balanceValue = hookMap['nominationPool']()
       break
-    // case 'liquidStakingSlpx':
-    //   balanceValue = hookMap['liquidStakingSlpx'](tokenPair)
-    //   break
-    // case 'liquidStakingSlpxSubstrate':
-    //   balanceValue = hookMap['liquidStakingSlpxSubstrate']({ slpxPair: tokenPair })
-    //   break
+    case 'liquidStakingSlpx':
+      balanceValue = hookMap['liquidStakingSlpx'](tokenPair)
+      break
+
+    case 'liquidStakingSlpxSubstrate':
+      balanceValue = hookMap['liquidStakingSlpxSubstrate'](tokenPair, true)
+      break
     // case 'delegationSubtensor':
     //   balanceValue = hookMap['delegationSubtensor']()
     //   break
