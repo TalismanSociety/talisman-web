@@ -83,7 +83,7 @@ export function XcmForm() {
   )
   const fiat = useMemo(() => {
     const price = assetPriceLoadable.valueMaybe()
-    return price !== undefined && amount !== undefined
+    return typeof price === 'number' && typeof amount === 'string' && amount.length > 0
       ? (price * parseFloat(amount)).toLocaleString(undefined, { style: 'currency', currency })
       : undefined
   }, [amount, assetPriceLoadable, currency])
