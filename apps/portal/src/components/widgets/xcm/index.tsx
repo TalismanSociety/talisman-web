@@ -1,17 +1,14 @@
-// import { chainsByGenesisHashAtom, useTokens as useBalancesLibTokens } from '@talismn/balances-react'
-import { Tooltip } from '@talismn/ui'
+import { CircularProgressIndicator, Tooltip } from '@talismn/ui'
 import { formatDecimals } from '@talismn/util'
-// import { useAtomValue } from 'jotai'
-// import { loadable } from 'jotai/utils'
-import { useEffect, useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useEffect, useMemo, useState } from 'react'
+import { constSelector, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import { isAddress as isEvmAddress } from 'viem'
 
 import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
 import AccountSelector from '@/components/widgets/AccountSelector'
 import { writeableAccountsState } from '@/domains/accounts'
-// import { selectedCurrencyState } from '@/domains/balances'
-// import { tokenPriceState } from '@/domains/chains'
+import { selectedCurrencyState } from '@/domains/balances'
+import { tokenPriceState } from '@/domains/chains'
 import { useExtrinsic, useSetJotaiSubstrateApiState } from '@/domains/common'
 
 import { useXcmApi } from './api'
@@ -38,7 +35,6 @@ export function XcmForm() {
     setSourceChain,
     destChain,
     setDestChain,
-    // asset,
     setAsset,
     amount,
     setAmount,
@@ -78,17 +74,19 @@ export function XcmForm() {
   const [focusedSection, setFocusedSection] = useState<'details' | 'faq'>('details')
   useEffect(() => void setFocusedSection('details'), [sourceChain, destChain, amount])
 
-  // TODO
-  // const currency = useRecoilValue(selectedCurrencyState)
-  // const chainsByGenesisHash = useAtomValue(loadable(chainsByGenesisHashAtom))
-  // const balancesLibTokens = useBalancesLibTokens()
-  // const tokenPriceLoadable = useRecoilValueLoadable(
-  //   !token?.coingeckoId ? constSelector(undefined) : tokenPriceState({ coingeckoId: token.coingeckoId })
-  // )
-  // const fiatAmount = useMemo(() => {
-  //   const price = undefined // tokenPriceLoadable.valueMaybe()
-  //   return price === undefined || decimalAmount === undefined ? undefined : price * decimalAmount.toNumber()
-  // }, [decimalAmount])
+  // get the fiat value of the selected asset
+  const currency = useRecoilValue(selectedCurrencyState)
+  const assetPriceLoadable = useRecoilValueLoadable(
+    sourceAsset?.chaindataCoingeckoId
+      ? tokenPriceState({ coingeckoId: sourceAsset.chaindataCoingeckoId })
+      : constSelector(undefined)
+  )
+  const fiat = useMemo(() => {
+    const price = assetPriceLoadable.valueMaybe()
+    return price !== undefined && amount !== undefined
+      ? (price * parseFloat(amount)).toLocaleString(undefined, { style: 'currency', currency })
+      : undefined
+  }, [amount, assetPriceLoadable, currency])
 
   const details = extrinsicError ? (
     <ErrorMessage title="Unable to process transfer" text={String(extrinsicError.message ?? extrinsicError)} />
@@ -118,11 +116,12 @@ export function XcmForm() {
       )}
       <Form
         amount={amount}
-        // fiat={
-        //   fiatAmount?.toLocaleString(undefined, { style: 'currency', currency }) ?? (
-        //     <CircularProgressIndicator size="1em" />
-        //   )
-        // }
+        fiat={
+          fiat ??
+          (typeof amount === 'number' && sourceAsset?.chaindataCoingeckoId ? (
+            <CircularProgressIndicator size="1em" />
+          ) : undefined)
+        }
         available={
           sourceBalance ? (
             <Tooltip content={`${toPreciseDecimals(sourceBalance)} ${sourceBalance.symbol}`}>
@@ -159,32 +158,18 @@ export function XcmForm() {
         reversible={canReverse}
         onRequestReverse={reverseRoute}
         destAccountSelect={
-          <>
-            <div className="[&>div>button]:!rounded-[1.2rem]">
-              <SeparatedAccountSelector
-                accountsType={destChain?.usesH160Acc ? 'ethereum' : 'substrate'}
-                allowInput
-                substrateAccountPrefix={validPrefix(destChain?.ss58Format)}
-                substrateAccountsFilter={account => !account.readonly}
-                evmAccountsFilter={account => !account.canSignEvm}
-                value={recipient}
-                // only invoked if a valid address is pasted
-                onAccountChange={recipient => setRecipient(recipient ?? undefined)}
-                // showBalances={{
-                //   // use this to filter out irrelevant assets
-                //   filter: selectedAsset
-                //     ? balance => balance.tokenId === selectedAsset.id
-                //     : undefined,
-                //   output: (account, b) => {
-                //     // use this to format the output, can be string / jsx
-                //     return Decimal.fromPlanck(b.sum.planck.transferable, selectedAsset.decimals, {
-                //           currency: selectedAsset.symbol ?? undefined,
-                //         }).toLocaleString()
-                //   }
-                // }}
-              />
-            </div>
-          </>
+          <div className="[&>div>button]:!rounded-[1.2rem]">
+            <SeparatedAccountSelector
+              accountsType={destChain?.usesH160Acc ? 'ethereum' : 'substrate'}
+              allowInput
+              substrateAccountPrefix={validPrefix(destChain?.ss58Format)}
+              substrateAccountsFilter={account => !account.readonly}
+              evmAccountsFilter={account => !account.canSignEvm}
+              value={recipient}
+              // only invoked if a valid address is pasted
+              onAccountChange={recipient => setRecipient(recipient ?? undefined)}
+            />
+          </div>
         }
         canTransport={Boolean(extrinsic)}
         onRequestTransport={() => (extrinsic && sender ? extrinsic.signAndSend(sender) : undefined)}
