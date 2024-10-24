@@ -7,7 +7,8 @@ import StakeButton from './StakeButton'
 import StakePercentage from './StakePercentage'
 import UnbondingPeriod from './UnbondingPeriod'
 import { cn } from '@/lib/utils'
-import { CircularProgressIndicator } from '@talismn/ui'
+import { CircularProgressIndicator, Surface } from '@talismn/ui'
+import { ChevronUp, ChevronDown } from '@talismn/web-icons'
 import {
   useReactTable,
   getCoreRowModel,
@@ -179,14 +180,14 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
   })
 
   return (
-    <div className="pt-4 w-full flex flex-col flex-1">
-      <div className="grid gap-[8px]">
+    <div className="w-full flex flex-col flex-1">
+      <div className="grid gap-[0.8rem]">
         {/* Column Headers */}
-        <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-4 font-semibold px-4">
+        <div className="grid grid-cols-8">
           {table.getHeaderGroups().map(headerGroup =>
             headerGroup.headers.map(header => (
               <div
-                className={cn('p-2 text-left last:text-right text-[14px]', {
+                className={cn('text-left last:text-right text-[14px] px-[1.6rem]', {
                   'cursor-pointer select-none': header.column.getCanSort(),
                 })}
                 key={header.id}
@@ -203,8 +204,8 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
               >
                 {flexRender(header.column.columnDef.header, header.getContext())}{' '}
                 {{
-                  asc: ' 🔼',
-                  desc: ' 🔽',
+                  asc: <ChevronUp size={'1.5rem'} />,
+                  desc: <ChevronDown size={'1.5rem'} />,
                 }[header.column.getIsSorted() as string] ?? null}
               </div>
             ))
@@ -213,16 +214,18 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
 
         {/* Rows */}
         {table.getRowModel().rows.map(row => (
-          <div
+          <Surface
+            as="article"
             key={row.id}
-            className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-4 bg-[#1B1B1B] rounded-[16px] py-4 px-4 items-center"
+            // className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr]"
+            className="grid grid-cols-8 rounded-[16px] items-center"
           >
             {row.getVisibleCells().map(cell => (
-              <div key={cell.id} className="p-2 flex-grow truncate last:text-right">
+              <div key={cell.id} className="flex-grow truncate last:text-right p-[1.6rem]">
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </div>
             ))}
-          </div>
+          </Surface>
         ))}
       </div>
     </div>
