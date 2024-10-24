@@ -1,8 +1,5 @@
-import AssetLogoWithChain from '../AssetLogoWithChain'
-import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
-import StakePositionSkeleton from './StakePosition.skeleton'
-import { Account } from '@/domains/accounts/recoils'
-import { shortenAddress } from '@/util/format'
+import type { ButtonProps, IconButtonProps, MenuItemProps } from '@talismn/ui'
+import type { PropsWithChildren, ReactNode } from 'react'
 import {
   Badge,
   BadgedBox,
@@ -17,13 +14,18 @@ import {
   TonalIconButton,
   Tooltip,
   useTheme,
-  type ButtonProps,
-  type IconButtonProps,
-  type MenuItemProps,
 } from '@talismn/ui'
 import { AccountIcon } from '@talismn/ui-recipes'
 import { ArrowDown, Clock, Earn, MoreHorizontal, ZapPlus } from '@talismn/web-icons'
-import { Suspense, createContext, useContext, type PropsWithChildren, type ReactNode } from 'react'
+import React, { createContext, Suspense, useContext } from 'react'
+
+import { Account } from '@/domains/accounts/recoils'
+import { shortenAddress } from '@/util/format'
+
+import type { StakeStatus } from '../StakeStatusIndicator'
+import AssetLogoWithChain from '../AssetLogoWithChain'
+import { StakeStatusIndicator } from '../StakeStatusIndicator'
+import StakePositionSkeleton from './StakePosition.skeleton'
 
 const MEDIUM_CONTAINER_QUERY = '@container(min-width: 100rem)'
 
@@ -101,7 +103,7 @@ const MenuButton = Object.assign(
       </Menu>
     )
   },
-  { Item: Menu.Item }
+  { Item: Menu.Item },
 )
 
 const ClaimButton = (props: Omit<ButtonProps, 'children'> & { amount: ReactNode }) => (
@@ -131,7 +133,7 @@ const WithdrawButton = (props: Omit<ButtonProps, 'children'> & { amount: ReactNo
 )
 
 const LockedButton = (
-  props: Omit<ButtonProps, 'children' | 'onClick'> & { amount: ReactNode; onClick: () => unknown }
+  props: Omit<ButtonProps, 'children' | 'onClick'> & { amount: ReactNode; onClick: () => unknown },
 ) => {
   const theme = useTheme()
   return (
@@ -159,13 +161,13 @@ export const UnstakingStatus = (props: {
     content={
       <div>
         {props.unlocks.map((x, index, array) => (
-          <>
+          <React.Fragment key={index}>
             <Text.Body as="div" alpha="high">
               {x.amount}
             </Text.Body>
             <Text.Body as="div">{x.eta}</Text.Body>
             {index < array.length - 1 && <Hr />}
-          </>
+          </React.Fragment>
         ))}
       </div>
     }
@@ -367,7 +369,7 @@ const StakePosition = Object.assign(
     UnstakingStatus,
     FastUnstakingStatus,
     Skeleton: StakePositionSkeleton,
-  }
+  },
 )
 
 export type StakePositionErrorBoundaryProps = {
