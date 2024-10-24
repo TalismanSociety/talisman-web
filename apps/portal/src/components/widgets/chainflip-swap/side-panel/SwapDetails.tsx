@@ -164,7 +164,7 @@ const Details: React.FC = () => {
                     ? index === 0
                     : q.quote.state === 'hasData' &&
                       selectedProtocol === q.quote.data?.protocol &&
-                      q.quote.data.subProtocol === selectedSubProtocol
+                      (q.quote.data.subProtocol ? q.quote.data.subProtocol === selectedSubProtocol : true)
                 }
                 quote={q.quote.data}
                 key={`${q.quote.data.protocol}${q.quote.data.subProtocol}`}

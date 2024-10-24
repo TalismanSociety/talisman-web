@@ -536,7 +536,7 @@ export const selectedQuoteAtom = atom(async get => {
         q.quote.state === 'hasData' &&
         q.quote.data &&
         q.quote.data.protocol === selectedProtocol &&
-        q.quote.data.subProtocol === subProtocol
+        (q.quote.data.subProtocol ? q.quote.data.subProtocol === subProtocol : true)
     ) ?? quotes[0]
   if (!quote) return null
   return quote

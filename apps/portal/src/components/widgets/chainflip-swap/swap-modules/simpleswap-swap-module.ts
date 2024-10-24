@@ -443,6 +443,15 @@ const quote: QuoteFunction = loadable(
     }
   })
 )
+const saveIdForMonitoring = async (swapId: string) => {
+  await fetch(`https://swap-providers-monitor.fly.dev/simpleswap/exchange`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id: swapId }),
+  })
+}
 
 const swap: SwapFunction<{ id: string }> = async (
   get: Getter,
@@ -540,6 +549,7 @@ const swap: SwapFunction<{ id: string }> = async (
         })
       }
 
+      saveIdForMonitoring(exchange.id)
       saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
       return { protocol: PROTOCOL, data: { id: exchange.id } }
     } else if (fromAsset.networkType === 'substrate') {
@@ -556,6 +566,7 @@ const swap: SwapFunction<{ id: string }> = async (
         depositAmount.planck
       ).signAndSend(addressFrom, { signer, withSignedTransaction: true })
 
+      saveIdForMonitoring(exchange.id)
       saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
       return { protocol: PROTOCOL, data: { id: exchange.id } }
     }
