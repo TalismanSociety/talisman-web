@@ -1,5 +1,6 @@
-import { ThemeProvider as EmotionThemeProvider, Global, css, useTheme as useEmotionTheme } from '@emotion/react'
-import { createContext, useContext, type PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
+import { css, ThemeProvider as EmotionThemeProvider, Global, useTheme as useEmotionTheme } from '@emotion/react'
+import { createContext, useContext } from 'react'
 
 type Typography = {
   fontFamily: string
@@ -61,13 +62,13 @@ declare module '@emotion/react' {
 
 const greenDark: Theme = {
   typography: {
-    h1: { fontFamily: 'SurtExpanded', fontSize: 56, margin: 0 },
-    h2: { fontFamily: 'SurtExpanded', fontSize: 32, margin: 0 },
-    h3: { fontFamily: 'SurtExpanded', fontSize: 24, margin: 0 },
-    h4: { fontFamily: 'SurtExpanded', fontSize: 18, margin: 0 },
-    bodyLarge: { fontFamily: 'Surt', fontSize: 16, fontWeight: 'normal', margin: 0 },
-    body: { fontFamily: 'Surt', fontSize: 14, fontWeight: 'normal', margin: 0 },
-    bodySmall: { fontFamily: 'Surt', fontSize: 12, fontWeight: 'normal', margin: 0 },
+    h1: { fontFamily: "'SurtExpanded', sans-serif", fontSize: 56, margin: 0 },
+    h2: { fontFamily: "'SurtExpanded', sans-serif", fontSize: 32, margin: 0 },
+    h3: { fontFamily: "'SurtExpanded', sans-serif", fontSize: 24, margin: 0 },
+    h4: { fontFamily: "'SurtExpanded', sans-serif", fontSize: 18, margin: 0 },
+    bodyLarge: { fontFamily: "'Surt', sans-serif", fontSize: 16, fontWeight: 'normal', margin: 0 },
+    body: { fontFamily: "'Surt', sans-serif", fontSize: 14, fontWeight: 'normal', margin: 0 },
+    bodySmall: { fontFamily: "'Surt', sans-serif", fontSize: 12, fontWeight: 'normal', margin: 0 },
   },
   color: {
     primary: '#d5ff5c',

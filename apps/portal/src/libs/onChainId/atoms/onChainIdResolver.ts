@@ -1,10 +1,10 @@
-import { typeRegistryFamily } from './typeRegistry'
 import { chainConnectorsAtom } from '@talismn/balances-react'
 import { OnChainId } from '@talismn/on-chain-id'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 
-const chainIdPolkadot = 'polkadot'
+import { typeRegistryFamily } from './typeRegistry'
+
 const chainIdAlephZero = 'aleph-zero'
 const aznsSupportedChainIdAlephZero = 'alephzero'
 
@@ -17,16 +17,13 @@ export const lookupAddressFamily = atomFamily((address?: string) =>
 )
 
 export const onChainIdResolverAtom = atom(async get => {
-  const registryPolkadot = await get(typeRegistryFamily(chainIdPolkadot))
   const registryAlephZero = await get(typeRegistryFamily(chainIdAlephZero))
   const chainConnectors = get(chainConnectorsAtom)
 
   return new OnChainId({
-    registryPolkadot,
     registryAlephZero,
     chainConnectors,
 
-    chainIdPolkadot,
     chainIdAlephZero,
     aznsSupportedChainIdAlephZero,
   })
