@@ -226,9 +226,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azns/resolver-core@https://gitpkg.vercel.app/api/pkg.tgz?url=TalismanSociety%2Fazero-id-resolver%2Fpackages%2Fresolver-core&commit=main":
+"@azns/resolver-core@https://gitpkg.now.sh/api/pkg.tgz?url=TalismanSociety%2Fazero-id-resolver%2Fpackages%2Fresolver-core&commit=main":
   version: 1.6.0
-  resolution: "@azns/resolver-core@https://gitpkg.vercel.app/api/pkg.tgz?url=TalismanSociety%2Fazero-id-resolver%2Fpackages%2Fresolver-core&commit=main"
+  resolution: "@azns/resolver-core@https://gitpkg.now.sh/api/pkg.tgz?url=TalismanSociety%2Fazero-id-resolver%2Fpackages%2Fresolver-core&commit=main"
   dependencies:
     bufferutil: "npm:^4.0.7"
     loglevel: "npm:^1.8.1"
@@ -10581,7 +10581,7 @@ __metadata:
   version: 0.0.0-pr1640-20241008075233
   resolution: "@talismn/on-chain-id@npm:0.0.0-pr1640-20241008075233"
   dependencies:
-    "@azns/resolver-core": "https://gitpkg.vercel.app/api/pkg.tgz?url=TalismanSociety%2Fazero-id-resolver%2Fpackages%2Fresolver-core&commit=main"
+    "@azns/resolver-core": "https://gitpkg.now.sh/api/pkg.tgz?url=TalismanSociety%2Fazero-id-resolver%2Fpackages%2Fresolver-core&commit=main"
     "@talismn/balances": "npm:0.0.0-pr1640-20241008075233"
     "@talismn/util": "npm:0.0.0-pr1640-20241008075233"
     anylogger: "npm:^1.0.11"
