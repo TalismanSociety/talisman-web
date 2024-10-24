@@ -5,6 +5,7 @@ import PercentageBar from '../components/PercentageBar'
 // import { Decimal } from '@talismn/math'
 import useSlpxStakePercentage from '../hooks/bifrost/useSlpxStakePercentage'
 import useSlpxSubstrateStakePercentage from '../hooks/bifrost/useSlpxSubstrateStakePercentage'
+import useDappStakePercentage from '../hooks/dapp/useStakePercentage'
 import useNominationPoolStakePercentage from '../hooks/nominationPools/useStakePercentage'
 import useSubtensorStakePercentage from '../hooks/subtensor/useStakePercentage'
 import { StakeProviderTypeId } from '../hooks/useProvidersData'
@@ -65,12 +66,11 @@ const StakePercentageDisplay = ({
     liquidStakingSlpx: useSlpxStakePercentage,
     liquidStakingSlpxSubstrate: useSlpxSubstrateStakePercentage,
     delegationSubtensor: useSubtensorStakePercentage,
+    dappStaking: useDappStakePercentage,
   }
-  let stakeValue: number = 321
+  let stakeValue: number
   switch (typeId) {
     case 'nominationPool':
-      // case 'delegationSubtensor':
-      // case 'dappStaking':
       stakeValue = hookMap['nominationPool']()
       break
     case 'liquidStakingSlpx':
@@ -82,8 +82,11 @@ const StakePercentageDisplay = ({
     case 'delegationSubtensor':
       stakeValue = hookMap['delegationSubtensor']()
       break
+    case 'dappStaking':
+      stakeValue = hookMap['dappStaking']()
+      break
     default:
-      stakeValue = 123
+      stakeValue = 0
   }
 
   useSetAvailableBalance({
