@@ -37,6 +37,7 @@ export const xcmTokenPickerDestAtom = atom(async get => {
         token,
         chaindataId: chaindataChain?.id,
         chaindataTokenLogo: chaindataTokensBySymbol.get(token.originSymbol)?.logo,
+        chaindataCoingeckoId: chaindataTokensBySymbol.get(token.originSymbol)?.coingeckoId,
       }))
     })
     .sort(sortTokenPickerAssets)
