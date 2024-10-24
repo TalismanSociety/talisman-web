@@ -40,6 +40,10 @@ module.exports = {
   printWidth: 120,
   semi: false,
   singleQuote: true,
+  // prettier now defaults to 'all',
+  // but the files in this project have all been formatted with 'es5'
+  trailingComma: 'es5',
+
   overrides: [
     {
       files: ['tsconfig.json'],

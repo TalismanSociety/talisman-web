@@ -103,7 +103,7 @@ const MenuButton = Object.assign(
       </Menu>
     )
   },
-  { Item: Menu.Item },
+  { Item: Menu.Item }
 )
 
 const ClaimButton = (props: Omit<ButtonProps, 'children'> & { amount: ReactNode }) => (
@@ -133,7 +133,7 @@ const WithdrawButton = (props: Omit<ButtonProps, 'children'> & { amount: ReactNo
 )
 
 const LockedButton = (
-  props: Omit<ButtonProps, 'children' | 'onClick'> & { amount: ReactNode; onClick: () => unknown },
+  props: Omit<ButtonProps, 'children' | 'onClick'> & { amount: ReactNode; onClick: () => unknown }
 ) => {
   const theme = useTheme()
   return (
@@ -369,7 +369,7 @@ const StakePosition = Object.assign(
     UnstakingStatus,
     FastUnstakingStatus,
     Skeleton: StakePositionSkeleton,
-  },
+  }
 )
 
 export type StakePositionErrorBoundaryProps = {
