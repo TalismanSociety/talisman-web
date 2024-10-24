@@ -139,6 +139,12 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
             </Suspense>
           )
         },
+        sortingFn: (rowA, rowB) => {
+          const stakePercentageA = stakePercentageValues[rowA.id]
+          const stakePercentageB = stakePercentageValues[rowB.id]
+          if (stakePercentageA === undefined || stakePercentageB === undefined) return 0
+          return stakePercentageA > stakePercentageB ? 1 : -1
+        },
       },
       {
         accessorKey: 'action',
