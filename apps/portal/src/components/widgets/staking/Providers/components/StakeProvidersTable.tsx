@@ -1,6 +1,7 @@
 import { Provider } from '../hooks/useProvidersData'
 import Apr from './Apr'
 import AvailableBalance from './AvailableBalance'
+import PercentageBar from './PercentageBar'
 import StakePercentage from './StakePercentage'
 import UnbondingPeriod from './UnbondingPeriod'
 import { cn } from '@/lib/utils'
@@ -122,12 +123,9 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
       {
         accessorKey: 'stakePercentage',
         header: 'Staked (%)',
-        // cell: ({ row }) => (
-        //   <Suspense fallback={<CircularProgressIndicator size="1em" />}>{row.original.stakePercentage}</Suspense>
-        // ),
         cell: ({ row }) => {
           return (
-            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+            <Suspense fallback={<PercentageBar isLoading />}>
               <StakePercentage
                 typeId={row.original.typeId}
                 genesisHash={row.original.genesisHash ?? '0x'}

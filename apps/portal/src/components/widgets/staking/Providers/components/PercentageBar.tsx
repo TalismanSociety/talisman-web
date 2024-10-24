@@ -1,17 +1,17 @@
 import { LinearProgressIndicator, Text, CircularProgressIndicator } from '@talismn/ui'
 
-type PercentageBarProps = { loading?: false; percentage: number }
+type PercentageBarProps = { isLoading?: boolean; percentage?: number }
 
-const PercentageBar = (props: PercentageBarProps) => (
+const PercentageBar = ({ isLoading, percentage = 0 }: PercentageBarProps) => (
   <>
-    <Text.BodySmall as="div" alpha="high" css={{ textAlign: 'end', marginBottom: '0.6rem' }}>
-      {props.loading ? (
+    <Text.BodySmall as="div" alpha="high" className="mb-[0.6rem] flex justify-end">
+      {isLoading ? (
         <CircularProgressIndicator size="1em" />
       ) : (
-        props.percentage.toLocaleString(undefined, { style: 'percent' })
+        percentage.toLocaleString(undefined, { style: 'percent' })
       )}
     </Text.BodySmall>
-    <LinearProgressIndicator value={props.loading ? 0 : props.percentage} least={0.25} optimum={0.5} />
+    <LinearProgressIndicator value={percentage} least={0.25} optimum={0.5} />
   </>
 )
 
