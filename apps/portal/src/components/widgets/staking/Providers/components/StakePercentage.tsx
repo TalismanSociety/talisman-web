@@ -4,6 +4,7 @@
 import PercentageBar from '../components/PercentageBar'
 // import { Decimal } from '@talismn/math'
 import useSlpxStakePercentage from '../hooks/bifrost/useSlpxStakePercentage'
+import useSlpxSubstrateStakePercentage from '../hooks/bifrost/useSlpxSubstrateStakePercentage'
 import useNominationPoolStakePercentage from '../hooks/nominationPools/useStakePercentage'
 import { StakeProviderTypeId } from '../hooks/useProvidersData'
 import { ChainProvider } from '@/domains/chains'
@@ -61,6 +62,7 @@ const StakePercentageDisplay = ({
   const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
     nominationPool: useNominationPoolStakePercentage,
     liquidStakingSlpx: useSlpxStakePercentage,
+    liquidStakingSlpxSubstrate: useSlpxSubstrateStakePercentage,
     // slpx: () => 999,
   }
   let stakeValue: number = 321
@@ -73,9 +75,9 @@ const StakePercentageDisplay = ({
     case 'liquidStakingSlpx':
       stakeValue = hookMap['liquidStakingSlpx'](tokenPair)
       break
-    // case 'liquidStakingSlpxSubstrate':
-    //   stakeValue = hookMap['slpx']()
-    //   break
+    case 'liquidStakingSlpxSubstrate':
+      stakeValue = hookMap['liquidStakingSlpxSubstrate'](tokenPair)
+      break
     default:
       stakeValue = 123
   }
