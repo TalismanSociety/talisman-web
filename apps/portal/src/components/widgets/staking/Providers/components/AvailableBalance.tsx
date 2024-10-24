@@ -1,4 +1,5 @@
 import { useAvailableBalance as useSlpxAvailableBalance } from '../hooks/bifrost/useAvailableBalance'
+import useLidoAvailableBalance from '../hooks/lido/useAvailableBalance'
 import useAvailableBalance from '../hooks/useAvailableBalance'
 import { StakeProviderTypeId } from '../hooks/useProvidersData'
 import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
@@ -16,12 +17,10 @@ type AvailableBalanceProps = {
   availableBalance: number | undefined
   apiEndpoint?: string
   tokenPair: SlpxPair | SlpxSubstratePair | undefined
+  symbol?: string
 }
 type AvailableBalanceDisplayProps = Omit<AvailableBalanceProps, 'genesisHash'>
-type LidoAvailableBalanceProps = Omit<
-  AvailableBalanceDisplayProps,
-  'symbol' | 'symbol' | 'genesisHash' | 'typeId' | 'tokenPair'
->
+type LidoAvailableBalanceProps = Omit<AvailableBalanceDisplayProps, 'genesisHash' | 'typeId' | 'tokenPair'>
 
 /**
  * This is a custom hook that is used to set the availableBalance value in the state.
@@ -99,12 +98,27 @@ const AvailableBalanceDisplay = ({
   )
 }
 
-const LidoAvailableBalance = ({ rowId, setAvailableBalanceValue, availableBalance }: LidoAvailableBalanceProps) => {
-  const balanceValue = 5
+const LidoAvailableBalance = ({
+  rowId,
+  setAvailableBalanceValue,
+  availableBalance,
+  symbol,
+}: LidoAvailableBalanceProps) => {
+  const balanceValue = useLidoAvailableBalance(symbol ?? '')
 
-  useSetAvailableBalance({ balanceValue, rowId, availableBalance, setAvailableBalanceValue })
+  useSetAvailableBalance({
+    balanceValue: balanceValue.fiatAmount,
+    rowId,
+    availableBalance,
+    setAvailableBalanceValue,
+  })
 
-  return <>1-5 day(s)</>
+  return (
+    <div>
+      <div>{balanceValue.availableBalance.toLocaleString()}</div>
+      <AnimatedFiatNumber end={useMemo(() => balanceValue.fiatAmount ?? 0, [balanceValue.fiatAmount])} />
+    </div>
+  )
 }
 
 const AvailableBalance = ({
@@ -115,6 +129,7 @@ const AvailableBalance = ({
   apiEndpoint,
   setAvailableBalanceValue,
   tokenPair,
+  symbol,
 }: AvailableBalanceProps) => {
   if (typeId === 'liquidStakingLido') {
     return (
@@ -123,6 +138,7 @@ const AvailableBalance = ({
         availableBalance={availableBalance}
         setAvailableBalanceValue={setAvailableBalanceValue}
         apiEndpoint={apiEndpoint}
+        symbol={symbol}
       />
     )
   }

@@ -105,6 +105,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
                 setAvailableBalanceValue={setAvailableBalanceValue}
                 apiEndpoint={row.original.apiEndpoint}
                 tokenPair={row.original.tokenPair}
+                symbol={row.original.nativeToken?.symbol}
               />
             </Suspense>
           )
