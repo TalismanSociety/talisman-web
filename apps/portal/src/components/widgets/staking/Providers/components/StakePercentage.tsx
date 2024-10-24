@@ -1,20 +1,20 @@
-import { useAvailableBalance as useSlpxAvailableBalance } from '../hooks/bifrost/useAvailableBalance'
-import useLidoAvailableBalance from '../hooks/lido/useAvailableBalance'
-import useAvailableBalance from '../hooks/useAvailableBalance'
+// import { useAvailableBalance as useSlpxAvailableBalance } from '../hooks/bifrost/useAvailableBalance'
+// import useLidoStakePercentage from '../hooks/lido/useAvailableBalance'
+// import useAvailableBalance from '../hooks/useAvailableBalance'
+import useNominationPoolStakePercentage from '../hooks/nominationPools/useStakePercentage'
 import { StakeProviderTypeId } from '../hooks/useProvidersData'
-import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
 import { ChainProvider } from '@/domains/chains'
 import { SlpxPair } from '@/domains/staking/slpx/types'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
-import { Decimal } from '@talismn/math'
-import { useEffect, useMemo } from 'react'
+// import { Decimal } from '@talismn/math'
+import { useEffect } from 'react'
 
 type StakePercentageProps = {
   typeId: StakeProviderTypeId
   genesisHash: `0x${string}`
   rowId: string
   setStakePercentage: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>
-  availableBalance: number | undefined
+  stakePercentage: number | undefined
   apiEndpoint?: string
   tokenPair: SlpxPair | SlpxSubstratePair | undefined
   symbol?: string
@@ -23,104 +23,86 @@ type StakePercentageDisplayProps = Omit<StakePercentageProps, 'genesisHash'>
 type LidoStakePercentageProps = Omit<StakePercentageDisplayProps, 'genesisHash' | 'typeId' | 'tokenPair'>
 
 /**
- * This is a custom hook that is used to set the availableBalance value in the state.
- * It is used to keep track of the availableBalance value for each row that is rendered after the table is mounted,
- * and is used to allow sorting of the table rows by the availableBalance values
+ * This is a custom hook that is used to set the stakePercentage value in the state.
+ * It is used to keep track of the stakePercentage value for each row that is rendered after the table is mounted,
+ * and is used to allow sorting of the table rows by the stakePercentage values
  */
 const useSetAvailableBalance = ({
   stakeValue,
   rowId,
-  availableBalance,
+  stakePercentage,
   setStakePercentage,
 }: {
   stakeValue: number | undefined
   rowId: string
-  availableBalance: number | undefined
+  stakePercentage: number | undefined
   setStakePercentage: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>
 }) => {
   useEffect(() => {
-    if (availableBalance !== stakeValue && stakeValue !== undefined) {
+    if (stakePercentage !== stakeValue && stakeValue !== undefined) {
       setStakePercentage(prev => ({ ...prev, [rowId]: stakeValue }))
     }
-  }, [availableBalance, stakeValue, rowId, setStakePercentage])
+  }, [stakePercentage, stakeValue, rowId, setStakePercentage])
 
   return stakeValue
 }
 
-type AvailableBalance = {
-  availableBalance: Decimal
-  fiatAmount: number
-}
-type hookMapKey = 'substrate' | 'slpx'
-
 // This component is used to get around the react rules of conditional hooks
-const AvailableBalanceDisplay = ({
+const StakePercentageDisplay = ({
   typeId,
   rowId,
-  availableBalance,
-  tokenPair,
+  stakePercentage,
+  // tokenPair,
   setStakePercentage,
 }: StakePercentageDisplayProps) => {
-  const hookMap: Record<hookMapKey, (arg0?: any, arg1?: boolean) => AvailableBalance> = {
-    substrate: useAvailableBalance,
-    slpx: useSlpxAvailableBalance,
+  // @ts-expect-error
+  const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
+    nominationPool: useNominationPoolStakePercentage,
+    // slpx: () => 999,
   }
-  let stakeValue: AvailableBalance
+  let stakeValue: number = 321
   switch (typeId) {
     case 'nominationPool':
-    case 'delegationSubtensor':
-    case 'dappStaking':
-      stakeValue = hookMap['substrate']()
+      // case 'delegationSubtensor':
+      // case 'dappStaking':
+      stakeValue = hookMap['nominationPool']()
       break
-    case 'liquidStakingSlpx':
-    case 'liquidStakingSlpxSubstrate':
-      stakeValue = hookMap['slpx'](tokenPair, tokenPair?.nativeToken.symbol === 'DOT')
-      break
+    // case 'liquidStakingSlpx':
+    // case 'liquidStakingSlpxSubstrate':
+    //   stakeValue = hookMap['slpx']()
+    //   break
     default:
-      stakeValue = {
-        availableBalance: Decimal.fromPlanck(0n, 0),
-        fiatAmount: 0,
-      }
+      stakeValue = 123
   }
 
   useSetAvailableBalance({
-    stakeValue: stakeValue.fiatAmount,
+    stakeValue: stakeValue,
     rowId,
-    availableBalance,
+    stakePercentage,
     setStakePercentage,
   })
 
-  return (
-    <div>
-      <div>{stakeValue.availableBalance.toLocaleString()}</div>
-      <AnimatedFiatNumber end={useMemo(() => stakeValue.fiatAmount ?? 0, [stakeValue.fiatAmount])} />
-    </div>
-  )
+  return <div>{stakeValue}</div>
 }
 
-const LidoAvailableBalance = ({ rowId, setStakePercentage, availableBalance, symbol }: LidoStakePercentageProps) => {
-  const stakeValue = useLidoAvailableBalance(symbol ?? '')
+const LidoStakePercentage = ({ rowId, setStakePercentage, stakePercentage }: LidoStakePercentageProps) => {
+  const stakeValue = 123
 
   useSetAvailableBalance({
-    stakeValue: stakeValue.fiatAmount,
+    stakeValue: stakeValue,
     rowId,
-    availableBalance,
+    stakePercentage,
     setStakePercentage,
   })
 
-  return (
-    <div>
-      <div>{stakeValue.availableBalance.toLocaleString()}</div>
-      <AnimatedFiatNumber end={useMemo(() => stakeValue.fiatAmount ?? 0, [stakeValue.fiatAmount])} />
-    </div>
-  )
+  return <div>{stakeValue}</div>
 }
 
 const AvailableBalance = ({
   typeId,
   genesisHash,
   rowId,
-  availableBalance,
+  stakePercentage,
   apiEndpoint,
   setStakePercentage,
   tokenPair,
@@ -128,9 +110,9 @@ const AvailableBalance = ({
 }: StakePercentageProps) => {
   if (typeId === 'liquidStakingLido') {
     return (
-      <LidoAvailableBalance
+      <LidoStakePercentage
         rowId={rowId}
-        availableBalance={availableBalance}
+        stakePercentage={stakePercentage}
         setStakePercentage={setStakePercentage}
         apiEndpoint={apiEndpoint}
         symbol={symbol}
@@ -140,10 +122,10 @@ const AvailableBalance = ({
 
   return (
     <ChainProvider chain={{ genesisHash }}>
-      <AvailableBalanceDisplay
+      <StakePercentageDisplay
         typeId={typeId}
         rowId={rowId}
-        availableBalance={availableBalance}
+        stakePercentage={stakePercentage}
         setStakePercentage={setStakePercentage}
         apiEndpoint={apiEndpoint}
         tokenPair={tokenPair}

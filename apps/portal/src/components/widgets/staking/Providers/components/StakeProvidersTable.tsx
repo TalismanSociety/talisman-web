@@ -1,6 +1,7 @@
 import { Provider } from '../hooks/useProvidersData'
 import Apr from './Apr'
 import AvailableBalance from './AvailableBalance'
+import StakePercentage from './StakePercentage'
 import UnbondingPeriod from './UnbondingPeriod'
 import { cn } from '@/lib/utils'
 import { CircularProgressIndicator } from '@talismn/ui'
@@ -23,6 +24,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
   const [aprValues, setAprValues] = useState<{ [key: string]: number }>({})
   const [unbondingValues, setUnbondingValues] = useState<{ [key: string]: number }>({})
   const [availableBalanceValues, setAvailableBalanceValue] = useState<{ [key: string]: number }>({})
+  const [stakePercentageValues, setStakePercentage] = useState<{ [key: string]: number }>({})
 
   const defaultData = useMemo(() => [], [])
 
@@ -120,9 +122,25 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
       {
         accessorKey: 'stakePercentage',
         header: 'Staked (%)',
-        cell: ({ row }) => (
-          <Suspense fallback={<CircularProgressIndicator size="1em" />}>{row.original.stakePercentage}</Suspense>
-        ),
+        // cell: ({ row }) => (
+        //   <Suspense fallback={<CircularProgressIndicator size="1em" />}>{row.original.stakePercentage}</Suspense>
+        // ),
+        cell: ({ row }) => {
+          return (
+            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+              <StakePercentage
+                typeId={row.original.typeId}
+                genesisHash={row.original.genesisHash ?? '0x'}
+                rowId={row.id}
+                stakePercentage={stakePercentageValues[row.id]}
+                setStakePercentage={setStakePercentage}
+                apiEndpoint={row.original.apiEndpoint}
+                tokenPair={row.original.tokenPair}
+                symbol={row.original.nativeToken?.symbol}
+              />
+            </Suspense>
+          )
+        },
       },
       {
         accessorKey: 'action',
@@ -131,7 +149,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
         enableSorting: false,
       },
     ],
-    [aprValues, availableBalanceValues, unbondingValues]
+    [aprValues, availableBalanceValues, stakePercentageValues, unbondingValues]
   )
 
   const table = useReactTable({
