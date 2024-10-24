@@ -6,6 +6,7 @@ import PercentageBar from '../components/PercentageBar'
 import useSlpxStakePercentage from '../hooks/bifrost/useSlpxStakePercentage'
 import useSlpxSubstrateStakePercentage from '../hooks/bifrost/useSlpxSubstrateStakePercentage'
 import useNominationPoolStakePercentage from '../hooks/nominationPools/useStakePercentage'
+import useSubtensorStakePercentage from '../hooks/subtensor/useStakePercentage'
 import { StakeProviderTypeId } from '../hooks/useProvidersData'
 import { ChainProvider } from '@/domains/chains'
 import { SlpxPair } from '@/domains/staking/slpx/types'
@@ -63,7 +64,7 @@ const StakePercentageDisplay = ({
     nominationPool: useNominationPoolStakePercentage,
     liquidStakingSlpx: useSlpxStakePercentage,
     liquidStakingSlpxSubstrate: useSlpxSubstrateStakePercentage,
-    // slpx: () => 999,
+    delegationSubtensor: useSubtensorStakePercentage,
   }
   let stakeValue: number = 321
   switch (typeId) {
@@ -77,6 +78,9 @@ const StakePercentageDisplay = ({
       break
     case 'liquidStakingSlpxSubstrate':
       stakeValue = hookMap['liquidStakingSlpxSubstrate'](tokenPair)
+      break
+    case 'delegationSubtensor':
+      stakeValue = hookMap['delegationSubtensor']()
       break
     default:
       stakeValue = 123
