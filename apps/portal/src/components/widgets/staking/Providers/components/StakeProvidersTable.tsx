@@ -1,13 +1,13 @@
 import { Provider } from '../hooks/useProvidersData'
 import Apr from './Apr'
+import Asset from './Asset'
 import AvailableBalance from './AvailableBalance'
 import PercentageBar from './PercentageBar'
 import StakeButton from './StakeButton'
 import StakePercentage from './StakePercentage'
 import UnbondingPeriod from './UnbondingPeriod'
-import AssetLogoWithChain from '@/components/recipes/AssetLogoWithChain'
 import { cn } from '@/lib/utils'
-import { CircularProgressIndicator, Text } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui'
 import {
   useReactTable,
   getCoreRowModel,
@@ -38,22 +38,12 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
         accessorKey: 'symbol',
         header: 'Asset',
         cell: ({ row }) => (
-          <div
-            css={{
-              gridArea: 'asset',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1.2rem',
-            }}
-          >
-            <AssetLogoWithChain chainId={row.original.chainId} assetLogoUrl={row.original.logo} />
-            <div className="truncate">
-              <Text.Body as="div" alpha="high">
-                {row.original.symbol}
-              </Text.Body>
-              <Text.BodySmall as="div">{row.original.chainName}</Text.BodySmall>
-            </div>
-          </div>
+          <Asset
+            chainId={row.original.chainId}
+            logo={row.original.logo}
+            symbol={row.original.symbol}
+            chainName={row.original.chainName}
+          />
         ),
       },
       {
@@ -153,7 +143,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
                 stakePercentage={stakePercentageValues[row.id]}
                 setStakePercentage={setStakePercentage}
                 tokenPair={row.original.tokenPair}
-                nativeTokenAddress={row.original.nativeToken.address}
+                nativeTokenAddress={row.original.nativeToken?.address ?? '0x'}
                 symbol={row.original.nativeToken?.symbol}
                 chainId={row.original.chainId}
               />

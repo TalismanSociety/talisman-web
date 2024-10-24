@@ -17,7 +17,6 @@ const useLidoProviders = () => {
       type: 'Liquid staking',
       typeId: 'liquidStakingLido',
       provider: 'Lido',
-      stakePercentage: 0,
       actionLink: `?action=stake&type=lido&token-address=${lidoSuite.token.address}`,
       nativeToken: { symbol, decimals, address: lidoSuite.token.address },
       apiEndpoint: lidoSuite.apiEndpoint,

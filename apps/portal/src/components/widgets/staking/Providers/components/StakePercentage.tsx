@@ -19,7 +19,7 @@ type StakePercentageProps = {
   stakePercentage: number | undefined
   tokenPair: SlpxPair | SlpxSubstratePair | undefined
   symbol?: string
-  nativeTokenAddress?: `0x${string}`
+  nativeTokenAddress?: `0x${string}` | string
   chainId?: string | number
 }
 type StakePercentageDisplayProps = Omit<StakePercentageProps, 'genesisHash'>
@@ -107,7 +107,7 @@ const LidoStakePercentage = ({
 }: LidoStakePercentageProps) => {
   const stakeValue = useLidoStakePercentage({
     symbol: symbol ?? '',
-    nativeTokenAddress: nativeTokenAddress ?? '0x',
+    nativeTokenAddress: (nativeTokenAddress as `0x${string}`) ?? '0x',
     chainId: chainId ?? 0,
   })
 

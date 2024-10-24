@@ -6,12 +6,11 @@ import useNominationPoolsProviders from './nominationPools/useNominationPoolsPro
 import useSubtensorProviders from './subtensor/useSubtensorProviders'
 import { SlpxPair } from '@/domains/staking/slpx/types'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
-import { IToken } from '@talismn/chaindata-provider'
 
 export type NativeToken = {
-  decimals: number
+  decimals?: number
   symbol: string
-  address?: string
+  address?: `0x${string}` | string
 }
 export type StakeProvider = 'Nomination pool' | 'Liquid staking' | 'Delegation' | 'DApp staking'
 export type StakeProviderTypeId =
@@ -23,17 +22,15 @@ export type StakeProviderTypeId =
   | 'liquidStakingLido'
 
 export type Provider = {
-  symbol: string | undefined
+  symbol: string
   logo: string
-  chainName: string | undefined
+  chainName: string
   chainId: string | number
   type: StakeProvider
   typeId: StakeProviderTypeId
   provider: string | undefined
-  stakePercentage: number | undefined
   actionLink: string
-  nativeToken: IToken | NativeToken | any // TODO: Fix any
-  rpc?: string | undefined
+  nativeToken?: NativeToken
   genesisHash?: `0x${string}` | undefined
   apiEndpoint?: string
   tokenPair?: SlpxPair | SlpxSubstratePair
