@@ -1,16 +1,11 @@
-// import useSlpxSubstrateUnlockDuration from '../hooks/bifrost/useSlpxSubstrateUnlockDuration'
-// import useDappUnlockDuration from '../hooks/dapp/useUnlockDuration'
-import useNominationPoolAvailableBalance from '../hooks/nominationPools/useAvailableBalance'
-import useSubtensorAvailableBalance from '../hooks/subtensor/useAvailableBalance'
+import { useAvailableBalance as useSlpxAvailableBalance } from '../hooks/bifrost/useAvailableBalance'
+import useAvailableBalance from '../hooks/useAvailableBalance'
 import { StakeProviderTypeId } from '../hooks/useProvidersData'
 import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
-// import { useAvailableBalance } from '../../slpx/AvailableBalances'
-import { useAvailableBalance as useSlpxAvailableBalance } from '@/components/widgets/staking/slpx/AvailableBalances'
 import { ChainProvider } from '@/domains/chains'
 import { SlpxPair } from '@/domains/staking/slpx/types'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import { Decimal } from '@talismn/math'
-// import { useUnlockDuration as useNominationPoolUnlockDuration } from '@/domains/staking/substrate/nominationPools'
 import { useEffect, useMemo } from 'react'
 
 type AvailableBalanceProps = {
@@ -57,6 +52,7 @@ type AvailableBalance = {
   availableBalance: Decimal
   fiatAmount: number
 }
+type hookMapKey = 'substrate' | 'slpx'
 
 // This component is used to get around the react rules of conditional hooks
 const AvailableBalanceDisplay = ({
@@ -66,33 +62,21 @@ const AvailableBalanceDisplay = ({
   tokenPair,
   setAvailableBalanceValue,
 }: AvailableBalanceDisplayProps) => {
-  // @ts-expect-error
-  const hookMap: Record<StakeProviderTypeId, (arg0?: any, arg1?: bool) => AvailableBalance> = {
-    nominationPool: useNominationPoolAvailableBalance,
-    liquidStakingSlpx: useSlpxAvailableBalance,
-    liquidStakingSlpxSubstrate: useSlpxAvailableBalance,
-    delegationSubtensor: useSubtensorAvailableBalance,
-    // dappStaking: useDappUnlockDuration,
-    // liquidStakingLido: () => 0,
+  const hookMap: Record<hookMapKey, (arg0?: any, arg1?: boolean) => AvailableBalance> = {
+    substrate: useAvailableBalance,
+    slpx: useSlpxAvailableBalance,
   }
-
   let balanceValue: AvailableBalance
   switch (typeId) {
     case 'nominationPool':
-      balanceValue = hookMap['nominationPool']()
+    case 'delegationSubtensor':
+    case 'dappStaking':
+      balanceValue = hookMap['substrate']()
       break
     case 'liquidStakingSlpx':
-      balanceValue = hookMap['liquidStakingSlpx'](tokenPair)
-      break
     case 'liquidStakingSlpxSubstrate':
-      balanceValue = hookMap['liquidStakingSlpxSubstrate'](tokenPair, true)
+      balanceValue = hookMap['slpx'](tokenPair, tokenPair?.nativeToken.symbol === 'DOT')
       break
-    case 'delegationSubtensor':
-      balanceValue = hookMap['delegationSubtensor']()
-      break
-    // case 'dappStaking':
-    //   balanceValue = hookMap['dappStaking']()
-    //   break
     default:
       balanceValue = {
         availableBalance: Decimal.fromPlanck(0n, 0),
