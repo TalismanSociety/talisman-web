@@ -134,7 +134,9 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
                 setStakePercentage={setStakePercentage}
                 apiEndpoint={row.original.apiEndpoint}
                 tokenPair={row.original.tokenPair}
+                nativeTokenAddress={row.original.nativeToken.address}
                 symbol={row.original.nativeToken?.symbol}
+                chainId={row.original.chainId}
               />
             </Suspense>
           )

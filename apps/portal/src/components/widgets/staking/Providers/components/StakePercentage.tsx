@@ -1,11 +1,8 @@
-// import { useAvailableBalance as useSlpxAvailableBalance } from '../hooks/bifrost/useAvailableBalance'
-// import useLidoStakePercentage from '../hooks/lido/useAvailableBalance'
-// import useAvailableBalance from '../hooks/useAvailableBalance'
 import PercentageBar from '../components/PercentageBar'
-// import { Decimal } from '@talismn/math'
 import useSlpxStakePercentage from '../hooks/bifrost/useSlpxStakePercentage'
 import useSlpxSubstrateStakePercentage from '../hooks/bifrost/useSlpxSubstrateStakePercentage'
 import useDappStakePercentage from '../hooks/dapp/useStakePercentage'
+import useLidoStakePercentage from '../hooks/lido/useStakePercentage'
 import useNominationPoolStakePercentage from '../hooks/nominationPools/useStakePercentage'
 import useSubtensorStakePercentage from '../hooks/subtensor/useStakePercentage'
 import { StakeProviderTypeId } from '../hooks/useProvidersData'
@@ -23,6 +20,8 @@ type StakePercentageProps = {
   apiEndpoint?: string
   tokenPair: SlpxPair | SlpxSubstratePair | undefined
   symbol?: string
+  nativeTokenAddress?: `0x${string}`
+  chainId?: string | number
 }
 type StakePercentageDisplayProps = Omit<StakePercentageProps, 'genesisHash'>
 type LidoStakePercentageProps = Omit<StakePercentageDisplayProps, 'genesisHash' | 'typeId' | 'tokenPair'>
@@ -96,13 +95,22 @@ const StakePercentageDisplay = ({
     setStakePercentage,
   })
 
-  // return <div>{stakeValue}</div>
-
   return <PercentageBar percentage={stakeValue} />
 }
 
-const LidoStakePercentage = ({ rowId, setStakePercentage, stakePercentage }: LidoStakePercentageProps) => {
-  const stakeValue = 123
+const LidoStakePercentage = ({
+  rowId,
+  setStakePercentage,
+  stakePercentage,
+  symbol,
+  nativeTokenAddress,
+  chainId,
+}: LidoStakePercentageProps) => {
+  const stakeValue = useLidoStakePercentage({
+    symbol: symbol ?? '',
+    nativeTokenAddress: nativeTokenAddress ?? '0x',
+    chainId: chainId ?? 0,
+  })
 
   useSetAvailableBalance({
     stakeValue: stakeValue,
@@ -111,7 +119,7 @@ const LidoStakePercentage = ({ rowId, setStakePercentage, stakePercentage }: Lid
     setStakePercentage,
   })
 
-  return <div>{stakeValue}</div>
+  return <PercentageBar percentage={stakeValue} />
 }
 
 const AvailableBalance = ({
@@ -123,6 +131,8 @@ const AvailableBalance = ({
   setStakePercentage,
   tokenPair,
   symbol,
+  nativeTokenAddress,
+  chainId,
 }: StakePercentageProps) => {
   if (typeId === 'liquidStakingLido') {
     return (
@@ -132,6 +142,8 @@ const AvailableBalance = ({
         setStakePercentage={setStakePercentage}
         apiEndpoint={apiEndpoint}
         symbol={symbol}
+        nativeTokenAddress={nativeTokenAddress}
+        chainId={chainId}
       />
     )
   }

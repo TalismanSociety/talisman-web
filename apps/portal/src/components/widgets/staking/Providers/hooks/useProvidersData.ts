@@ -8,6 +8,11 @@ import { SlpxPair } from '@/domains/staking/slpx/types'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import { IToken } from '@talismn/chaindata-provider'
 
+export type NativeToken = {
+  decimals: number
+  symbol: string
+  address?: string
+}
 export type StakeProvider = 'Nomination pool' | 'Liquid staking' | 'Delegation' | 'DApp staking'
 export type StakeProviderTypeId =
   | 'liquidStakingSlpx'
@@ -27,7 +32,7 @@ export type Provider = {
   provider: string | undefined
   stakePercentage: number | undefined
   actionLink: string
-  nativeToken: IToken | any // TODO: Fix any
+  nativeToken: IToken | NativeToken | any // TODO: Fix any
   rpc?: string | undefined
   genesisHash?: `0x${string}` | undefined
   apiEndpoint?: string
