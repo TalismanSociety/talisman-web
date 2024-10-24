@@ -2,12 +2,13 @@
 // import useLidoStakePercentage from '../hooks/lido/useAvailableBalance'
 // import useAvailableBalance from '../hooks/useAvailableBalance'
 import PercentageBar from '../components/PercentageBar'
+// import { Decimal } from '@talismn/math'
+import useSlpxStakePercentage from '../hooks/bifrost/useSlpxStakePercentage'
 import useNominationPoolStakePercentage from '../hooks/nominationPools/useStakePercentage'
 import { StakeProviderTypeId } from '../hooks/useProvidersData'
 import { ChainProvider } from '@/domains/chains'
 import { SlpxPair } from '@/domains/staking/slpx/types'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
-// import { Decimal } from '@talismn/math'
 import { useEffect } from 'react'
 
 type StakePercentageProps = {
@@ -53,12 +54,13 @@ const StakePercentageDisplay = ({
   typeId,
   rowId,
   stakePercentage,
-  // tokenPair,
+  tokenPair,
   setStakePercentage,
 }: StakePercentageDisplayProps) => {
   // @ts-expect-error
   const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
     nominationPool: useNominationPoolStakePercentage,
+    liquidStakingSlpx: useSlpxStakePercentage,
     // slpx: () => 999,
   }
   let stakeValue: number = 321
@@ -68,7 +70,9 @@ const StakePercentageDisplay = ({
       // case 'dappStaking':
       stakeValue = hookMap['nominationPool']()
       break
-    // case 'liquidStakingSlpx':
+    case 'liquidStakingSlpx':
+      stakeValue = hookMap['liquidStakingSlpx'](tokenPair)
+      break
     // case 'liquidStakingSlpxSubstrate':
     //   stakeValue = hookMap['slpx']()
     //   break
