@@ -88,7 +88,7 @@ export const Form = ({ tokenSelect, destTokenSelect, ...props }: FormProps) => {
               className={cn(
                 'text-foreground/60 rounded-[0.6rem] border border-current px-4 py-1',
                 'hover:text-foreground/80 active:text-foreground/70',
-                'disabled:text-foreground/40 disabled:cursor-not-allowed',
+                'disabled:text-foreground/40 disabled:cursor-not-allowed'
               )}
               onClick={props.onRequestMaxAmount}
               disabled={!props.max}

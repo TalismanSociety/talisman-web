@@ -33,7 +33,7 @@ export type SelectProps<TValue, TClear extends boolean = false> = {
 }
 
 type SelectItemProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   value?: any
   leadingIcon?: ReactNode
   headlineContent: ReactNode
@@ -79,7 +79,7 @@ const findOption = (children: ReactElement): ReactElement<SelectItemProps>[] => 
   if (
     typeof children.type === 'object' &&
     'displayName' in children.type &&
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (children.type as any).displayName === 'SelectItem'
   ) {
     return [children as React.ReactElement<SelectItemProps>]
@@ -109,9 +109,9 @@ const Select = Object.assign(
     const inputRef = useRef<HTMLInputElement | null>(null)
 
     const optionsArray = useMemo(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       (): React.ReactElement<SelectItemProps>[] => React.Children.map(children as any, findOption)?.flat() ?? [],
-      [children],
+      [children]
     )
 
     const selectedChild =
@@ -178,7 +178,7 @@ const Select = Object.assign(
         // @ts-expect-error
         props.onChangeValue?.(value)
       },
-      [props],
+      [props]
     )
 
     useEffect(() => {
@@ -210,7 +210,7 @@ const Select = Object.assign(
         if (
           typeof children.type === 'object' &&
           'displayName' in children.type &&
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+           
           (children.type as any).displayName === 'SelectItem'
         ) {
           const child = children as ReactElement<SelectItemProps>
@@ -247,7 +247,7 @@ const Select = Object.assign(
           children: children.props.children ? injectChildren(children.props.children, index) : children.props.children,
         })
       },
-      [selectedChild, select, activeIndex],
+      [selectedChild, select, activeIndex]
     )
 
     return (
@@ -384,7 +384,7 @@ const Select = Object.assign(
               },
             })}
           >
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            { }
             {React.Children.map(children as any, injectChildren)}
           </motion.ul>
         </FloatingPortal>
@@ -397,7 +397,7 @@ const Select = Object.assign(
      */
     Item: SelectItem,
     Option: SelectItem,
-  },
+  }
 )
 
 export default Select

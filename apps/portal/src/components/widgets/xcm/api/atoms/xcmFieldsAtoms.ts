@@ -26,7 +26,7 @@ export const senderAtom = atom(
     const recipient = hasPrevRecipient && !prevRecipientIsPrevSender ? prevRecipient : sender
 
     set(xcmFieldsAtom, { sender, recipient })
-  },
+  }
 )
 export const recipientAtom = atom(
   get => {
@@ -35,11 +35,11 @@ export const recipientAtom = atom(
 
     return destChain ? formatDestAddress(recipient, destChain) : recipient
   },
-  (_, set, recipient: XcmFields['recipient']) => set(xcmFieldsAtom, { recipient }),
+  (_, set, recipient: XcmFields['recipient']) => set(xcmFieldsAtom, { recipient })
 )
 export const amountAtom = atom(
   get => get(xcmFieldsAtom).amount,
-  (_, set, amount: XcmFields['amount']) => set(xcmFieldsAtom, { amount }),
+  (_, set, amount: XcmFields['amount']) => set(xcmFieldsAtom, { amount })
 )
 
 export const assetAtom = atom(
@@ -48,7 +48,7 @@ export const assetAtom = atom(
     const { assets } = get(configServiceAtom)
     const asset = assetKey ? assets.get(assetKey) : undefined
     set(xcmFieldsAtom, { asset })
-  },
+  }
 )
 export const sourceChainAtom = atom(
   get => get(xcmFieldsAtom).sourceChain,
@@ -56,7 +56,7 @@ export const sourceChainAtom = atom(
     const { chains } = get(configServiceAtom)
     const sourceChain = chainKey ? chains.get(chainKey) : undefined
     set(xcmFieldsAtom, { sourceChain: sourceChain instanceof Parachain ? sourceChain : undefined })
-  },
+  }
 )
 export const destChainAtom = atom(
   get => get(xcmFieldsAtom).destChain,
@@ -64,7 +64,7 @@ export const destChainAtom = atom(
     const { chains } = get(configServiceAtom)
     const destChain = chainKey ? chains.get(chainKey) : undefined
     set(xcmFieldsAtom, { destChain: destChain instanceof Parachain ? destChain : undefined })
-  },
+  }
 )
 
 export type XcmFields = {
@@ -90,5 +90,5 @@ const xcmFieldsAtom = atomWithReducer(
     sourceChain: undefined,
     destChain: undefined,
   },
-  (state: XcmFields, action: Partial<XcmFields>): XcmFields => ({ ...state, ...action }),
+  (state: XcmFields, action: Partial<XcmFields>): XcmFields => ({ ...state, ...action })
 )

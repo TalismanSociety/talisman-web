@@ -23,7 +23,7 @@ const AssetLogoWithChain = ({ className, assetLogoUrl, chainId }: Props) => {
           className={cn(
             'absolute right-0 top-0 h-[0.5rem] min-h-[0.5em] w-[0.5em] min-w-[0.5em] -translate-y-1/4 translate-x-1/4',
             'rounded-full border-[0.05em] border-gray-800 bg-gray-800',
-            className,
+            className
           )}
         />
       ) : null}

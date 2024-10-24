@@ -29,7 +29,7 @@ export const xcmTokenPickerDestAtom = atom(async get => {
       ]
       const chaindataChain = chaindataChainsByGenesisHash?.[chain.genesisHash]
       const chaindataTokensBySymbol = new Map(
-        chaindataChain?.tokens?.map(({ id }) => [chaindataTokensById[id]?.symbol, chaindataTokensById[id]] as const),
+        chaindataChain?.tokens?.map(({ id }) => [chaindataTokensById[id]?.symbol, chaindataTokensById[id]] as const)
       )
 
       return tokens.map(token => ({

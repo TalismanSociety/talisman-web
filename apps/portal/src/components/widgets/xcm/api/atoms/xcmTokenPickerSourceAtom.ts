@@ -23,7 +23,7 @@ export const xcmTokenPickerSourceAtom = atom(async get => {
       const tokens = [...new Set((chainRoutes ?? []).map(route => route.source.asset))]
       const chaindataChain = chaindataChainsByGenesisHash?.[chain.genesisHash]
       const chaindataTokensBySymbol = new Map(
-        chaindataChain?.tokens?.map(({ id }) => [chaindataTokensById[id]?.symbol, chaindataTokensById[id]] as const),
+        chaindataChain?.tokens?.map(({ id }) => [chaindataTokensById[id]?.symbol, chaindataTokensById[id]] as const)
       )
 
       return tokens.map(token => ({

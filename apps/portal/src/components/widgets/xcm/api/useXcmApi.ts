@@ -74,7 +74,7 @@ export const useXcmApi = () => {
 
   const loading = useMemo(
     () => allLoadables.some(loadable => loadable.state === 'loading'),
-    allLoadables, // eslint-disable-line react-hooks/exhaustive-deps
+    allLoadables // eslint-disable-line react-hooks/exhaustive-deps
   )
 
   useAtom(xcmAutoselectEffect)

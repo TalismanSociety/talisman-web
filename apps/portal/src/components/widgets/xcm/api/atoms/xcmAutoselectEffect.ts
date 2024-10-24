@@ -34,7 +34,7 @@ export const xcmAutoselectEffect = atomEffect((get, set) => {
     //
     const defaultSource =
       tokenPickerSource.find(
-        asset => asset.chain.key === DEFAULT_SOURCE.chain && asset.token.key === DEFAULT_SOURCE.token,
+        asset => asset.chain.key === DEFAULT_SOURCE.chain && asset.token.key === DEFAULT_SOURCE.token
       ) ??
       tokenPickerSource.find(asset => asset.chain.key === DEFAULT_SOURCE.chain) ??
       tokenPickerSource[0]

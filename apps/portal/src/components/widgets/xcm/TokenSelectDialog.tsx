@@ -35,8 +35,8 @@ export function TokenSelectDialog({ assets = [], chains = [], onChange, onReques
       ? assets =>
           assets.filter(asset =>
             [asset.chain.name, asset.token.key, asset.token.originSymbol].some(attr =>
-              attr.toLowerCase().includes(normalisedSearch),
-            ),
+              attr.toLowerCase().includes(normalisedSearch)
+            )
           )
       : assets => assets
 
@@ -118,7 +118,7 @@ function Asset({ asset, onClick }: AssetProps) {
       }
 
       const tokens = await delayExec(() =>
-        balances.each.reduce((sum, b) => sum.plus(b.transferable.tokens), new BigNumber(0)).toString(),
+        balances.each.reduce((sum, b) => sum.plus(b.transferable.tokens), new BigNumber(0)).toString()
       )
       if (abort.signal.aborted) return
 
@@ -230,5 +230,5 @@ const delayExec = async <T,>(callback: () => T, delayMs = 20): Promise<T> =>
       } catch (e) {
         reject(e)
       }
-    }, delayMs),
+    }, delayMs)
   )

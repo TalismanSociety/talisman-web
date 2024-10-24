@@ -32,5 +32,5 @@ export const xcmReverseRouteAtom = atom(
 
     set(sourceChainAtom, destKey)
     set(destChainAtom, sourceKey)
-  },
+  }
 )

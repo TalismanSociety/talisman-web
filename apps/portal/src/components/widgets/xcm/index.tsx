@@ -79,7 +79,7 @@ export function XcmForm() {
   const assetPriceLoadable = useRecoilValueLoadable(
     sourceAsset?.chaindataCoingeckoId
       ? tokenPriceState({ coingeckoId: sourceAsset.chaindataCoingeckoId })
-      : constSelector(undefined),
+      : constSelector(undefined)
   )
   const fiat = useMemo(() => {
     const price = assetPriceLoadable.valueMaybe()
