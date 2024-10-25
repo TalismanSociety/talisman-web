@@ -18,6 +18,7 @@ import {
   flexRender,
   SortingState,
   ColumnDef,
+  Row,
 } from '@tanstack/react-table'
 import { useState, useMemo, Suspense } from 'react'
 import { Link } from 'react-router-dom'
@@ -192,11 +193,11 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
   return (
     <div className="w-full flex flex-col flex-1 gap-[0.8rem]">
       {/* Column Headers */}
-      <div className="grid grid-cols-8 px-[1.6rem] mb-[0.4rem]">
+      <div className="hidden xl:grid grid-cols-8 px-[1.6rem] mb-[0.4rem]">
         {table.getHeaderGroups().map(headerGroup =>
           headerGroup.headers.map(header => (
             <Text.BodySmall
-              className={cn('text-left last:text-right', {
+              className={cn('text-left last:text-right flex gap-2', {
                 'cursor-pointer select-none': header.column.getCanSort(),
               })}
               key={header.id}
@@ -230,17 +231,47 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
             orientation="horizontal"
             renderFallback={() => <ErrorBoundaryFallback logo={logo} symbol={symbol} provider={provider ?? ''} />}
           >
-            <Surface as="article" className="grid grid-cols-8 rounded-[16px] p-[1.6rem] items-center">
+            {/* Render as table in xl > screens */}
+            <Surface as="article" className="hidden xl:grid grid-cols-8 rounded-[16px] p-[1.6rem] items-center">
               {row.getVisibleCells().map(cell => (
                 <div key={cell.id} className="flex-grow truncate last:text-right">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </div>
               ))}
             </Surface>
+            {/* Render as card in xl > screens */}
+            <RenderCard row={row} />
           </ErrorBoundary>
         )
       })}
     </div>
+  )
+}
+
+const RenderCard = ({ row }: { row: Row<Provider> }) => {
+  const [symbol, apr, type, action] = row.getVisibleCells().filter(cell => {
+    const { id } = cell.column
+    return id === 'symbol' || id === 'apr' || id === 'type' || id === 'action'
+  })
+
+  return (
+    <Surface as="article" className="flex flex-col space-y-2 xl:hidden rounded-[16px] p-[1.6rem]">
+      <div className="flex justify-between">
+        <div>{flexRender(symbol!.column.columnDef.cell, symbol!.getContext())}</div>
+        <div>{flexRender(action!.column.columnDef.cell, action!.getContext())}</div>
+      </div>
+      <Surface className="divide-x divide-gray-200 h-[2px]" />
+      <div className="flex justify-between">
+        <div>
+          <Text.BodySmall as="div">Est. return</Text.BodySmall>
+          <div>{flexRender(apr!.column.columnDef.cell, apr!.getContext())}</div>
+        </div>
+        <div>
+          <Text.BodySmall as="div">Type</Text.BodySmall>
+          <div>{flexRender(type!.column.columnDef.cell, type!.getContext())}</div>
+        </div>
+      </div>
+    </Surface>
   )
 }
 
