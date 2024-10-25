@@ -3,9 +3,14 @@ import { useDelegateStats } from './useDelegateStats'
 import { useAtomValue } from 'jotai'
 
 export const useHighestAprFormatted = () => {
-  const { apr } = useAtomValue(highestAprTaoValidatorAtom)
+  const apr = useHighestApr()
 
   return Number(apr).toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
+}
+export const useHighestApr = () => {
+  const { apr } = useAtomValue(highestAprTaoValidatorAtom)
+
+  return Number(apr)
 }
 
 export const useDelegateApr = (hotkey: string) => {

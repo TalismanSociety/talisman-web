@@ -1,7 +1,4 @@
-// TODO: Delete this file
-import { selectedBalancesState, selectedCurrencyState } from '../../../../domains/balances'
-import AnimatedFiatNumber from '../../AnimatedFiatNumber'
-import RedactableBalance from '../../RedactableBalance'
+import { selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
 import { SlpxPair } from '@/domains/staking/slpx'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import { Decimal } from '@talismn/math'
@@ -32,13 +29,3 @@ export const useAvailableBalance = (slpxPair: SlpxPair | SlpxSubstratePair, isSu
     [currency, nativeBalance.each, nativeBalance.sum, slpxPair.nativeToken.symbol]
   )
 }
-
-export const AvailableBalance = (props: { slpxPair: SlpxPair | SlpxSubstratePair; isSubstrate?: boolean }) => (
-  <RedactableBalance>
-    {useAvailableBalance(props.slpxPair, props.isSubstrate).availableBalance.toLocaleString()}
-  </RedactableBalance>
-)
-
-export const AvailableFiatBalance = (props: { slpxPair: SlpxPair | SlpxSubstratePair; isSubstrate?: boolean }) => (
-  <AnimatedFiatNumber end={useAvailableBalance(props.slpxPair, props.isSubstrate).fiatAmount} />
-)

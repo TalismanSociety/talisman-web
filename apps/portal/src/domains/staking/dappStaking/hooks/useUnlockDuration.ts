@@ -1,16 +1,9 @@
-import { useEraLengthState } from '..'
-import { expectedBlockTime, useSubstrateApiState } from '../../../common'
+import useUnlockDuration from '@/components/widgets/staking/Providers/hooks/dapp/useUnlockDuration'
 import { formatDistance } from 'date-fns'
-import { useMemo } from 'react'
-import { useRecoilValue, waitForAll } from 'recoil'
 
+// TODO: Delete this hook
 export const useLocalizedUnlockDuration = () => {
-  const [api, { standardEraLength }] = useRecoilValue(waitForAll([useSubstrateApiState(), useEraLengthState()]))
+  const unlockDuration = useUnlockDuration()
 
-  const ms = useMemo(
-    () => api.consts.dappStaking.unlockingPeriod.muln(standardEraLength).mul(expectedBlockTime(api)),
-    [api, standardEraLength]
-  )
-
-  return formatDistance(0, ms.toNumber())
+  return formatDistance(0, unlockDuration)
 }

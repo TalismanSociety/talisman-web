@@ -5,6 +5,12 @@ import { formatDistance } from 'date-fns'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 export const useLocalizedUnlockDuration = () => {
+  const unlockDuration = useUnlockDuration()
+
+  return formatDistance(0, unlockDuration)
+}
+
+export const useUnlockDuration = () => {
   const [api, sessionProgress] = useRecoilValue(
     waitForAll([useSubstrateApiState(), useDeriveState('session', 'progress', [])])
   )
@@ -12,12 +18,14 @@ export const useLocalizedUnlockDuration = () => {
   const erasOrSessions = sessionProgress.eraLength.mul(api.consts.staking.bondingDuration)
 
   if (!sessionProgress.isEpoch) {
-    return Maybe.of(expectedSessionTime(api)).mapOr(`${erasOrSessions.toString()} sessions`, sessionLength =>
-      formatDistance(0, erasOrSessions.mul(sessionLength).toNumber())
+    return Number(
+      Maybe.of(expectedSessionTime(api)).mapOr(`${erasOrSessions.toString()} sessions`, sessionLength =>
+        erasOrSessions.mul(sessionLength).toString()
+      )
     )
   }
 
   const ms = erasOrSessions.mul(expectedBlockTime(api))
 
-  return formatDistance(0, ms.toNumber())
+  return ms.toNumber()
 }
