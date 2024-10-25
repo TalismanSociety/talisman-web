@@ -217,7 +217,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
             {/* Render as table in xl > screens */}
             <Surface as="article" className="hidden xl:grid grid-cols-8 rounded-[16px] p-[1.6rem] items-center">
               {row.getVisibleCells().map(cell => (
-                <div key={cell.id} className="flex-grow truncate last:text-right">
+                <div key={cell.id} className="flex-grow last:text-right">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </div>
               ))}
