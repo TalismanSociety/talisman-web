@@ -14,7 +14,7 @@ const useAvailableBalance = (symbol: string) => {
         {
           currency: symbol,
         }
-      ).toLocaleString(),
+      ),
       fiatAmount: nativeBalance.sum.fiat(currency).total,
     }),
     [currency, symbol, nativeBalance.each, nativeBalance.sum]

@@ -23,7 +23,6 @@ type StakePercentageProps = {
   chainId?: string | number
 }
 type StakePercentageDisplayProps = Omit<StakePercentageProps, 'genesisHash'>
-type LidoStakePercentageProps = Omit<StakePercentageDisplayProps, 'genesisHash' | 'typeId' | 'tokenPair'>
 
 /**
  * This is a custom hook that is used to set the stakePercentage value in the state.
@@ -56,15 +55,18 @@ const StakePercentageDisplay = ({
   rowId,
   stakePercentage,
   tokenPair,
+  symbol,
+  nativeTokenAddress,
+  chainId,
   setStakePercentage,
 }: StakePercentageDisplayProps) => {
-  // @ts-expect-error
   const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
     nominationPool: useNominationPoolStakePercentage,
     liquidStakingSlpx: useSlpxStakePercentage,
     liquidStakingSlpxSubstrate: useSlpxSubstrateStakePercentage,
     delegationSubtensor: useSubtensorStakePercentage,
     dappStaking: useDappStakePercentage,
+    liquidStakingLido: useLidoStakePercentage,
   }
   let stakeValue: number
   switch (typeId) {
@@ -83,33 +85,16 @@ const StakePercentageDisplay = ({
     case 'dappStaking':
       stakeValue = hookMap['dappStaking']()
       break
+    case 'liquidStakingLido':
+      stakeValue = hookMap['liquidStakingLido']({
+        symbol: symbol ?? '',
+        nativeTokenAddress: (nativeTokenAddress as `0x${string}`) ?? '0x',
+        chainId: chainId ?? 0,
+      })
+      break
     default:
       stakeValue = 0
   }
-
-  useSetAvailableBalance({
-    stakeValue: stakeValue,
-    rowId,
-    stakePercentage,
-    setStakePercentage,
-  })
-
-  return <PercentageBar percentage={stakeValue} />
-}
-
-const LidoStakePercentage = ({
-  rowId,
-  setStakePercentage,
-  stakePercentage,
-  symbol,
-  nativeTokenAddress,
-  chainId,
-}: LidoStakePercentageProps) => {
-  const stakeValue = useLidoStakePercentage({
-    symbol: symbol ?? '',
-    nativeTokenAddress: (nativeTokenAddress as `0x${string}`) ?? '0x',
-    chainId: chainId ?? 0,
-  })
 
   useSetAvailableBalance({
     stakeValue: stakeValue,
@@ -132,19 +117,6 @@ const AvailableBalance = ({
   nativeTokenAddress,
   chainId,
 }: StakePercentageProps) => {
-  if (typeId === 'liquidStakingLido') {
-    return (
-      <LidoStakePercentage
-        rowId={rowId}
-        stakePercentage={stakePercentage}
-        setStakePercentage={setStakePercentage}
-        symbol={symbol}
-        nativeTokenAddress={nativeTokenAddress}
-        chainId={chainId}
-      />
-    )
-  }
-
   return (
     <ChainProvider chain={{ genesisHash }}>
       <StakePercentageDisplay
@@ -153,6 +125,9 @@ const AvailableBalance = ({
         stakePercentage={stakePercentage}
         setStakePercentage={setStakePercentage}
         tokenPair={tokenPair}
+        symbol={symbol}
+        nativeTokenAddress={nativeTokenAddress}
+        chainId={chainId}
       />
     </ChainProvider>
   )

@@ -23,10 +23,6 @@ type UnbondingPeriodProps = {
   tokenPair: SlpxPair | SlpxSubstratePair | undefined
 }
 type UnbondingDisplayProps = Omit<UnbondingPeriodProps, 'genesisHash'>
-type LidoUnbondingPeriodProps = Omit<
-  UnbondingDisplayProps,
-  'symbol' | 'symbol' | 'genesisHash' | 'typeId' | 'tokenPair'
->
 
 /**
  * This is a custom hook that is used to set the unbonding value in the state.
@@ -63,10 +59,11 @@ const UnbondingDisplay = ({ typeId, rowId, unbonding, tokenPair, setUnbondingVal
     liquidStakingSlpxSubstrate: useSlpxSubstrateUnlockDuration,
     delegationSubtensor: () => 0,
     dappStaking: useDappUnlockDuration,
-    liquidStakingLido: () => 0,
+    liquidStakingLido: () => 5,
   }
 
   let unlockValue: number = 0
+  let label: string = ''
   switch (typeId) {
     case 'nominationPool':
       unlockValue = hookMap['nominationPool']()
@@ -79,9 +76,14 @@ const UnbondingDisplay = ({ typeId, rowId, unbonding, tokenPair, setUnbondingVal
       break
     case 'delegationSubtensor':
       unlockValue = hookMap['delegationSubtensor']()
+      label = t('None')
       break
     case 'dappStaking':
       unlockValue = hookMap['dappStaking']()
+      break
+    case 'liquidStakingLido':
+      unlockValue = hookMap['liquidStakingLido']()
+      label = '1-5 day(s)'
       break
     default:
       unlockValue = 0
@@ -91,17 +93,9 @@ const UnbondingDisplay = ({ typeId, rowId, unbonding, tokenPair, setUnbondingVal
 
   return (
     <Text.BodySmall as="div" alpha="high">
-      {unlockValue === 0 ? t('None') : unbondingFormatter(unlockValue)}
+      {label || unbondingFormatter(unlockValue)}
     </Text.BodySmall>
   )
-}
-
-const LidoUnbonding = ({ rowId, setUnbondingValues, unbonding }: LidoUnbondingPeriodProps) => {
-  const unlockValue = 5
-
-  useSetUnbonding({ unlockValue, rowId, unbonding, setUnbondingValues })
-
-  return <>1-5 day(s)</>
 }
 
 const UnbondingPeriod = ({
@@ -113,17 +107,6 @@ const UnbondingPeriod = ({
   setUnbondingValues,
   tokenPair,
 }: UnbondingPeriodProps) => {
-  if (typeId === 'liquidStakingLido') {
-    return (
-      <LidoUnbonding
-        rowId={rowId}
-        unbonding={unbonding}
-        setUnbondingValues={setUnbondingValues}
-        apiEndpoint={apiEndpoint}
-      />
-    )
-  }
-
   return (
     <ChainProvider chain={{ genesisHash }}>
       <UnbondingDisplay

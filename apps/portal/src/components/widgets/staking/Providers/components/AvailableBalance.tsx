@@ -21,7 +21,6 @@ type AvailableBalanceProps = {
   symbol?: string
 }
 type AvailableBalanceDisplayProps = Omit<AvailableBalanceProps, 'genesisHash'>
-type LidoAvailableBalanceProps = Omit<AvailableBalanceDisplayProps, 'genesisHash' | 'typeId' | 'tokenPair'>
 
 /**
  * This is a custom hook that is used to set the availableBalance value in the state.
@@ -52,7 +51,7 @@ type AvailableBalance = {
   availableBalance: Decimal
   fiatAmount: number
 }
-type hookMapKey = 'substrate' | 'slpx'
+type hookMapKey = 'substrate' | 'slpx' | 'liquidStakingLido'
 
 // This component is used to get around the react rules of conditional hooks
 const AvailableBalanceDisplay = ({
@@ -60,11 +59,13 @@ const AvailableBalanceDisplay = ({
   rowId,
   availableBalance,
   tokenPair,
+  symbol,
   setAvailableBalanceValue,
 }: AvailableBalanceDisplayProps) => {
   const hookMap: Record<hookMapKey, (arg0?: any, arg1?: boolean) => AvailableBalance> = {
     substrate: useAvailableBalance,
     slpx: useSlpxAvailableBalance,
+    liquidStakingLido: useLidoAvailableBalance,
   }
   let balanceValue: AvailableBalance
   switch (typeId) {
@@ -76,6 +77,9 @@ const AvailableBalanceDisplay = ({
     case 'liquidStakingSlpx':
     case 'liquidStakingSlpxSubstrate':
       balanceValue = hookMap['slpx'](tokenPair, tokenPair?.nativeToken.symbol === 'DOT')
+      break
+    case 'liquidStakingLido':
+      balanceValue = hookMap['liquidStakingLido'](symbol)
       break
     default:
       balanceValue = {
@@ -103,29 +107,6 @@ const AvailableBalanceDisplay = ({
   )
 }
 
-const LidoAvailableBalance = ({
-  rowId,
-  setAvailableBalanceValue,
-  availableBalance,
-  symbol,
-}: LidoAvailableBalanceProps) => {
-  const balanceValue = useLidoAvailableBalance(symbol ?? '')
-
-  useSetAvailableBalance({
-    balanceValue: balanceValue.fiatAmount,
-    rowId,
-    availableBalance,
-    setAvailableBalanceValue,
-  })
-
-  return (
-    <div>
-      <div>{balanceValue.availableBalance.toLocaleString()}</div>
-      <AnimatedFiatNumber end={useMemo(() => balanceValue.fiatAmount ?? 0, [balanceValue.fiatAmount])} />
-    </div>
-  )
-}
-
 const AvailableBalance = ({
   typeId,
   genesisHash,
@@ -136,18 +117,6 @@ const AvailableBalance = ({
   tokenPair,
   symbol,
 }: AvailableBalanceProps) => {
-  if (typeId === 'liquidStakingLido') {
-    return (
-      <LidoAvailableBalance
-        rowId={rowId}
-        availableBalance={availableBalance}
-        setAvailableBalanceValue={setAvailableBalanceValue}
-        apiEndpoint={apiEndpoint}
-        symbol={symbol}
-      />
-    )
-  }
-
   return (
     <ChainProvider chain={{ genesisHash }}>
       <AvailableBalanceDisplay
@@ -157,6 +126,7 @@ const AvailableBalance = ({
         setAvailableBalanceValue={setAvailableBalanceValue}
         apiEndpoint={apiEndpoint}
         tokenPair={tokenPair}
+        symbol={symbol}
       />
     </ChainProvider>
   )

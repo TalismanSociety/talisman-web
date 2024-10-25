@@ -1,13 +1,12 @@
+import useLidoApr from '../hooks/lido/useApr'
 import { StakeProviderTypeId } from '../hooks/useProvidersData'
 import { ChainProvider } from '@/domains/chains'
 import { useApr as useDappApr } from '@/domains/staking/dappStaking'
-import { lidoAprState } from '@/domains/staking/lido/recoils'
 import { useSlpxAprState } from '@/domains/staking/slpx'
 import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nominationPools'
 import { useHighestApr } from '@/domains/staking/subtensor/hooks/useApr'
 import { Text } from '@talismn/ui'
 import { useEffect } from 'react'
-import { useRecoilValue } from 'recoil'
 
 const aprFormatter = (apr: number) => apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 
@@ -21,7 +20,6 @@ type AprProps = {
   apiEndpoint?: string
 }
 type AprDisplayProps = Omit<AprProps, 'genesisHash'>
-type LidoAprProps = Omit<AprDisplayProps, 'symbol' | 'symbol' | 'genesisHash' | 'typeId'>
 
 /**
  * This is a custom hook that is used to set the APR value in the state.
@@ -54,6 +52,7 @@ const AprDisplay = ({ typeId, rowId, symbol, apiEndpoint, apr, setAprValues }: A
     nominationPool: useNominationPoolApr,
     liquidStakingSlpx: useSlpxAprState,
     delegationSubtensor: useHighestApr,
+    liquidStakingLido: useLidoApr,
     // @ts-expect-error
     dappStaking: useDappApr,
   }
@@ -74,6 +73,9 @@ const AprDisplay = ({ typeId, rowId, symbol, apiEndpoint, apr, setAprValues }: A
       // @ts-expect-error
       aprValue = hookMap['dappStaking']().totalApr
       break
+    case 'liquidStakingLido':
+      aprValue = hookMap['liquidStakingLido']({ apiEndpoint })
+      break
     default:
       aprValue = 0
   }
@@ -87,21 +89,9 @@ const AprDisplay = ({ typeId, rowId, symbol, apiEndpoint, apr, setAprValues }: A
   )
 }
 
-const LidoApr = ({ rowId, apr, setAprValues, apiEndpoint }: LidoAprProps) => {
-  const aprValue = useRecoilValue(lidoAprState(apiEndpoint ?? ''))
-
-  useSetApr({ aprValue, rowId, apr, setAprValues })
-
-  return <>{aprFormatter(aprValue)}</>
-}
-
 const Apr = ({ typeId, genesisHash, rowId, apr, symbol, apiEndpoint, setAprValues }: AprProps) => {
-  if (typeId === 'liquidStakingLido') {
-    return <LidoApr rowId={rowId} apr={apr} setAprValues={setAprValues} apiEndpoint={apiEndpoint} />
-  }
-
   return (
-    <ChainProvider chain={{ genesisHash }}>
+    <ChainProvider chain={{ genesisHash: genesisHash }}>
       <AprDisplay
         typeId={typeId}
         rowId={rowId}
