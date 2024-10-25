@@ -1,7 +1,6 @@
-import { TitlePortal } from '../layout'
-import React from 'react'
+import { XcmForm } from '@/components/widgets/xcm'
 
-const XcmForm = React.lazy(async () => await import('../../components/widgets/dex/TransportForm'))
+import { TitlePortal } from '../layout'
 
 const Xcm = () => (
   <>

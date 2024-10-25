@@ -1,5 +1,4 @@
-import { CircularProgressIndicator, Surface, Text, useSurfaceColor } from '../../atoms'
-import FloatingPortal from '../../atoms/FloatingPortal'
+import type { ReactElement, ReactNode } from 'react'
 import { useTheme } from '@emotion/react'
 import {
   autoPlacement,
@@ -13,17 +12,10 @@ import {
 } from '@floating-ui/react'
 import { ChevronDown, X } from '@talismn/web-icons'
 import { motion } from 'framer-motion'
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactElement,
-  type ReactNode,
-} from 'react'
+import React, { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+
+import { CircularProgressIndicator, Surface, Text, useSurfaceColor } from '../../atoms'
+import FloatingPortal from '../../atoms/FloatingPortal'
 
 export type SelectProps<TValue, TClear extends boolean = false> = {
   className?: string
@@ -41,12 +33,13 @@ export type SelectProps<TValue, TClear extends boolean = false> = {
 }
 
 type SelectItemProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   value?: any
   leadingIcon?: ReactNode
   headlineContent: ReactNode
   supportingContent?: ReactNode
   className?: string
+  skipOffscreenRender?: boolean
 }
 
 const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
@@ -57,6 +50,7 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
       display: 'flex',
       alignItems: 'center',
       gap: '1rem',
+      overflowX: 'hidden',
     }}
   >
     {props.leadingIcon && (
@@ -64,11 +58,13 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
         {props.leadingIcon}
       </figure>
     )}
-    <div>
-      <Text.Body as="div" alpha="high">
+    <div css={{ overflowX: 'hidden' }}>
+      <Text.Body as="div" alpha="high" css={{ overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {props.headlineContent}
       </Text.Body>
-      <Text.Body as="div">{props.supportingContent}</Text.Body>
+      <Text.Body as="div" css={{ overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {props.supportingContent}
+      </Text.Body>
     </div>
   </div>
 ))
@@ -83,7 +79,7 @@ const findOption = (children: ReactElement): ReactElement<SelectItemProps>[] => 
   if (
     typeof children.type === 'object' &&
     'displayName' in children.type &&
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (children.type as any).displayName === 'SelectItem'
   ) {
     return [children as React.ReactElement<SelectItemProps>]
@@ -113,7 +109,7 @@ const Select = Object.assign(
     const inputRef = useRef<HTMLInputElement | null>(null)
 
     const optionsArray = useMemo(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       (): React.ReactElement<SelectItemProps>[] => React.Children.map(children as any, findOption)?.flat() ?? [],
       [children]
     )
@@ -214,7 +210,7 @@ const Select = Object.assign(
         if (
           typeof children.type === 'object' &&
           'displayName' in children.type &&
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+           
           (children.type as any).displayName === 'SelectItem'
         ) {
           const child = children as ReactElement<SelectItemProps>
@@ -275,7 +271,7 @@ const Select = Object.assign(
               borderRadius: cappedShape,
             },
             false: {
-              border: 'solid transparent',
+              border: `solid ${theme.color.outlineVariant}00`,
               borderWidth: '1px 1px 0 1px',
               borderRadius: theme.shape.full,
             },
@@ -346,7 +342,7 @@ const Select = Object.assign(
               },
               false: {
                 height: 0,
-                border: 'solid transparent',
+                border: `solid ${theme.color.outlineVariant}00`,
                 borderWidth: '0 1px 1px 1px',
                 overflow: 'hidden',
                 transitionEnd: { visibility: 'hidden' },
@@ -388,7 +384,7 @@ const Select = Object.assign(
               },
             })}
           >
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            { }
             {React.Children.map(children as any, injectChildren)}
           </motion.ul>
         </FloatingPortal>
