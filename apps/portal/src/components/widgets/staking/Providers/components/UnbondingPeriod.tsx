@@ -6,6 +6,7 @@ import { useVTokenUnlockDuration } from '@/domains/staking/slpx'
 import { SlpxPair } from '@/domains/staking/slpx/types'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import { useUnlockDuration as useNominationPoolUnlockDuration } from '@/domains/staking/substrate/nominationPools'
+import { Text } from '@talismn/ui'
 import { formatDistance } from 'date-fns'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -88,7 +89,11 @@ const UnbondingDisplay = ({ typeId, rowId, unbonding, tokenPair, setUnbondingVal
 
   useSetUnbonding({ unlockValue, rowId, unbonding, setUnbondingValues })
 
-  return <>{unlockValue === 0 ? t('None') : unbondingFormatter(unlockValue)}</>
+  return (
+    <Text.BodySmall as="div" alpha="high">
+      {unlockValue === 0 ? t('None') : unbondingFormatter(unlockValue)}
+    </Text.BodySmall>
+  )
 }
 
 const LidoUnbonding = ({ rowId, setUnbondingValues, unbonding }: LidoUnbondingPeriodProps) => {

@@ -7,6 +7,7 @@ import { ChainProvider } from '@/domains/chains'
 import { SlpxPair } from '@/domains/staking/slpx/types'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import { Decimal } from '@talismn/math'
+import { Text } from '@talismn/ui'
 import { useEffect, useMemo } from 'react'
 
 type AvailableBalanceProps = {
@@ -92,8 +93,12 @@ const AvailableBalanceDisplay = ({
 
   return (
     <div>
-      <div>{balanceValue.availableBalance.toLocaleString()}</div>
-      <AnimatedFiatNumber end={useMemo(() => balanceValue.fiatAmount ?? 0, [balanceValue.fiatAmount])} />
+      <Text.Body as="div" alpha="high">
+        {balanceValue.availableBalance.toLocaleString()}
+      </Text.Body>
+      <Text.Body as="div">
+        <AnimatedFiatNumber end={useMemo(() => balanceValue.fiatAmount ?? 0, [balanceValue.fiatAmount])} />
+      </Text.Body>
     </div>
   )
 }

@@ -7,7 +7,7 @@ import StakeButton from './StakeButton'
 import StakePercentage from './StakePercentage'
 import UnbondingPeriod from './UnbondingPeriod'
 import { cn } from '@/lib/utils'
-import { CircularProgressIndicator, Surface } from '@talismn/ui'
+import { CircularProgressIndicator, Surface, Text } from '@talismn/ui'
 import { ChevronUp, ChevronDown } from '@talismn/web-icons'
 import {
   useReactTable,
@@ -75,12 +75,20 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
       {
         accessorKey: 'type',
         header: 'Type',
-        cell: info => info.getValue(),
+        cell: ({ row }) => (
+          <Text.BodySmall as="div" alpha="high">
+            {row.original.type}
+          </Text.BodySmall>
+        ),
       },
       {
         accessorKey: 'provider',
         header: 'Provider',
-        cell: info => info.getValue(),
+        cell: ({ row }) => (
+          <Text.BodySmall as="div" alpha="high">
+            {row.original.provider}
+          </Text.BodySmall>
+        ),
       },
       {
         accessorKey: 'unbondingPeriod',
@@ -180,54 +188,47 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
   })
 
   return (
-    <div className="w-full flex flex-col flex-1">
-      <div className="grid gap-[0.8rem]">
-        {/* Column Headers */}
-        <div className="grid grid-cols-8">
-          {table.getHeaderGroups().map(headerGroup =>
-            headerGroup.headers.map(header => (
-              <div
-                className={cn('text-left last:text-right text-[14px] px-[1.6rem]', {
-                  'cursor-pointer select-none': header.column.getCanSort(),
-                })}
-                key={header.id}
-                onClick={header.column.getToggleSortingHandler()}
-                title={
-                  header.column.getCanSort()
-                    ? header.column.getNextSortingOrder() === 'asc'
-                      ? 'Sort ascending'
-                      : header.column.getNextSortingOrder() === 'desc'
-                      ? 'Sort descending'
-                      : 'Clear sort'
-                    : undefined
-                }
-              >
-                {flexRender(header.column.columnDef.header, header.getContext())}{' '}
-                {{
-                  asc: <ChevronUp size={'1.5rem'} />,
-                  desc: <ChevronDown size={'1.5rem'} />,
-                }[header.column.getIsSorted() as string] ?? null}
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* Rows */}
-        {table.getRowModel().rows.map(row => (
-          <Surface
-            as="article"
-            key={row.id}
-            // className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr]"
-            className="grid grid-cols-8 rounded-[16px] items-center"
-          >
-            {row.getVisibleCells().map(cell => (
-              <div key={cell.id} className="flex-grow truncate last:text-right p-[1.6rem]">
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </div>
-            ))}
-          </Surface>
-        ))}
+    <div className="w-full flex flex-col flex-1 gap-[0.8rem]">
+      {/* Column Headers */}
+      <div className="grid grid-cols-8 px-[1.6rem] mb-[0.4rem]">
+        {table.getHeaderGroups().map(headerGroup =>
+          headerGroup.headers.map(header => (
+            <Text.BodySmall
+              className={cn('text-left last:text-right', {
+                'cursor-pointer select-none': header.column.getCanSort(),
+              })}
+              key={header.id}
+              onClick={header.column.getToggleSortingHandler()}
+              title={
+                header.column.getCanSort()
+                  ? header.column.getNextSortingOrder() === 'asc'
+                    ? 'Sort ascending'
+                    : header.column.getNextSortingOrder() === 'desc'
+                    ? 'Sort descending'
+                    : 'Clear sort'
+                  : undefined
+              }
+            >
+              {flexRender(header.column.columnDef.header, header.getContext())}{' '}
+              {{
+                asc: <ChevronUp size={'1.5rem'} />,
+                desc: <ChevronDown size={'1.5rem'} />,
+              }[header.column.getIsSorted() as string] ?? null}
+            </Text.BodySmall>
+          ))
+        )}
       </div>
+
+      {/* Rows */}
+      {table.getRowModel().rows.map(row => (
+        <Surface as="article" key={row.id} className="grid grid-cols-8 rounded-[16px] p-[1.6rem] items-center">
+          {row.getVisibleCells().map(cell => (
+            <div key={cell.id} className="flex-grow truncate last:text-right">
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </div>
+          ))}
+        </Surface>
+      ))}
     </div>
   )
 }

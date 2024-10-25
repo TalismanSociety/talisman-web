@@ -1,4 +1,3 @@
-// import { StakeProvider } from '../hooks/useProvidersData'
 import { StakeProviderTypeId } from '../hooks/useProvidersData'
 import { ChainProvider } from '@/domains/chains'
 import { useApr as useDappApr } from '@/domains/staking/dappStaking'
@@ -6,6 +5,7 @@ import { lidoAprState } from '@/domains/staking/lido/recoils'
 import { useSlpxAprState } from '@/domains/staking/slpx'
 import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nominationPools'
 import { useHighestApr } from '@/domains/staking/subtensor/hooks/useApr'
+import { Text } from '@talismn/ui'
 import { useEffect } from 'react'
 import { useRecoilValue } from 'recoil'
 
@@ -80,7 +80,11 @@ const AprDisplay = ({ typeId, rowId, symbol, apiEndpoint, apr, setAprValues }: A
 
   useSetApr({ aprValue, rowId, apr, setAprValues })
 
-  return <>{aprFormatter(aprValue ?? 0)}</>
+  return (
+    <Text.BodySmall as="div" alpha="high">
+      {aprFormatter(aprValue ?? 0)}
+    </Text.BodySmall>
+  )
 }
 
 const LidoApr = ({ rowId, apr, setAprValues, apiEndpoint }: LidoAprProps) => {
