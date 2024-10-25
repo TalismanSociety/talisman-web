@@ -9,14 +9,11 @@ import { StakeProviderTypeId } from '../hooks/useProvidersData'
 import { ChainProvider } from '@/domains/chains'
 import { SlpxPair } from '@/domains/staking/slpx/types'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
-import { useEffect } from 'react'
 
 type StakePercentageProps = {
   typeId: StakeProviderTypeId
   genesisHash: `0x${string}`
-  rowId: string
-  setStakePercentage: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>
-  stakePercentage: number | undefined
+  setStakePercentage: (stakePercentage: number) => void
   tokenPair: SlpxPair | SlpxSubstratePair | undefined
   symbol?: string
   nativeTokenAddress?: `0x${string}` | string
@@ -24,36 +21,9 @@ type StakePercentageProps = {
 }
 type StakePercentageDisplayProps = Omit<StakePercentageProps, 'genesisHash'>
 
-/**
- * This is a custom hook that is used to set the stakePercentage value in the state.
- * It is used to keep track of the stakePercentage value for each row that is rendered after the table is mounted,
- * and is used to allow sorting of the table rows by the stakePercentage values
- */
-const useSetAvailableBalance = ({
-  stakeValue,
-  rowId,
-  stakePercentage,
-  setStakePercentage,
-}: {
-  stakeValue: number | undefined
-  rowId: string
-  stakePercentage: number | undefined
-  setStakePercentage: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>
-}) => {
-  useEffect(() => {
-    if (stakePercentage !== stakeValue && stakeValue !== undefined) {
-      setStakePercentage(prev => ({ ...prev, [rowId]: stakeValue }))
-    }
-  }, [stakePercentage, stakeValue, rowId, setStakePercentage])
-
-  return stakeValue
-}
-
 // This component is used to get around the react rules of conditional hooks
 const StakePercentageDisplay = ({
   typeId,
-  rowId,
-  stakePercentage,
   tokenPair,
   symbol,
   nativeTokenAddress,
@@ -68,7 +38,7 @@ const StakePercentageDisplay = ({
     dappStaking: useDappStakePercentage,
     liquidStakingLido: useLidoStakePercentage,
   }
-  let stakeValue: number
+  let stakeValue: number = 0
   switch (typeId) {
     case 'nominationPool':
       stakeValue = hookMap['nominationPool']()
@@ -95,13 +65,7 @@ const StakePercentageDisplay = ({
     default:
       stakeValue = 0
   }
-
-  useSetAvailableBalance({
-    stakeValue: stakeValue,
-    rowId,
-    stakePercentage,
-    setStakePercentage,
-  })
+  setStakePercentage(stakeValue)
 
   return <PercentageBar percentage={stakeValue} />
 }
@@ -109,8 +73,6 @@ const StakePercentageDisplay = ({
 const AvailableBalance = ({
   typeId,
   genesisHash,
-  rowId,
-  stakePercentage,
   setStakePercentage,
   tokenPair,
   symbol,
@@ -121,8 +83,6 @@ const AvailableBalance = ({
     <ChainProvider chain={{ genesisHash }}>
       <StakePercentageDisplay
         typeId={typeId}
-        rowId={rowId}
-        stakePercentage={stakePercentage}
         setStakePercentage={setStakePercentage}
         tokenPair={tokenPair}
         symbol={symbol}

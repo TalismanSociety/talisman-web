@@ -1,4 +1,5 @@
 import { Provider } from '../hooks/useProvidersData'
+import useStakeValues, { StakeType } from '../hooks/useSetValues'
 import Apr from './Apr'
 import Asset from './Asset'
 import AvailableBalance from './AvailableBalance'
@@ -20,7 +21,7 @@ import {
   ColumnDef,
   Row,
 } from '@tanstack/react-table'
-import { useState, useMemo, Suspense } from 'react'
+import { useState, useMemo, Suspense, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 
 type StakeProviderProps = {
@@ -29,10 +30,19 @@ type StakeProviderProps = {
 
 const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
   const [sorting, setSorting] = useState<SortingState>([])
-  const [aprValues, setAprValues] = useState<{ [key: string]: number }>({})
-  const [unbondingValues, setUnbondingValues] = useState<{ [key: string]: number }>({})
-  const [availableBalanceValues, setAvailableBalanceValue] = useState<{ [key: string]: number }>({})
-  const [stakePercentageValues, setStakePercentage] = useState<{ [key: string]: number }>({})
+  const { getValuesForSortType, setValues } = useStakeValues()
+
+  // Generic sorting function that sorts based on the provided sort type
+  const sortingFn = useCallback(
+    (sortType: StakeType) => (rowA: { id: string | number }, rowB: { id: string | number }) => {
+      const values = getValuesForSortType(sortType)
+      console.log({ values })
+      const valueA = values[rowA.id] || 0
+      const valueB = values[rowB.id] || 0
+      return valueA > valueB ? 1 : -1
+    },
+    [getValuesForSortType]
+  )
 
   const defaultData = useMemo(() => [], [])
 
@@ -59,21 +69,15 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
               <Apr
                 typeId={row.original.typeId}
                 genesisHash={row.original.genesisHash ?? '0x'}
-                rowId={row.id}
-                apr={aprValues[row.id]}
-                setAprValues={setAprValues}
+                setAprValues={value => setValues('apr', row.id, value)}
                 symbol={row.original.nativeToken?.symbol}
                 apiEndpoint={row.original.apiEndpoint}
               />
             </Suspense>
           )
         },
-        sortingFn: (rowA, rowB) => {
-          const aprA = aprValues[rowA.id]
-          const aprB = aprValues[rowB.id]
-          if (aprA === undefined || aprB === undefined) return 0
-          return aprA > aprB ? 1 : -1
-        },
+
+        sortingFn: sortingFn('apr'),
       },
       {
         accessorKey: 'type',
@@ -100,21 +104,14 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
           <Suspense fallback={<CircularProgressIndicator size="1em" />}>
             <UnbondingPeriod
               typeId={row.original.typeId}
-              genesisHash={row.original.genesisHash ?? '0x'}
-              rowId={row.id}
-              unbonding={unbondingValues[row.id]}
-              setUnbondingValues={setUnbondingValues}
+              genesisHash={row.original.genesisHash}
+              setUnbondingValues={value => setValues('unbondingPeriod', row.id, value)}
               apiEndpoint={row.original.apiEndpoint}
               tokenPair={row.original.tokenPair}
             />
           </Suspense>
         ),
-        sortingFn: (rowA, rowB) => {
-          const unbondingA = unbondingValues[rowA.id]
-          const unbondingB = unbondingValues[rowB.id]
-          if (unbondingA === undefined || unbondingB === undefined) return 0
-          return unbondingA > unbondingB ? 1 : -1
-        },
+        sortingFn: sortingFn('unbondingPeriod'),
       },
       {
         accessorKey: 'availableBalance',
@@ -124,10 +121,8 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
               <AvailableBalance
                 typeId={row.original.typeId}
-                genesisHash={row.original.genesisHash ?? '0x'}
-                rowId={row.id}
-                availableBalance={availableBalanceValues[row.id]}
-                setAvailableBalanceValue={setAvailableBalanceValue}
+                genesisHash={row.original.genesisHash}
+                setAvailableBalanceValue={value => setValues('availableBalance', row.id, value)}
                 apiEndpoint={row.original.apiEndpoint}
                 tokenPair={row.original.tokenPair}
                 symbol={row.original.nativeToken?.symbol}
@@ -135,12 +130,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
             </Suspense>
           )
         },
-        sortingFn: (rowA, rowB) => {
-          const availableBalanceA = availableBalanceValues[rowA.id]
-          const availableBalanceB = availableBalanceValues[rowB.id]
-          if (availableBalanceA === undefined || availableBalanceB === undefined) return 0
-          return availableBalanceA > availableBalanceB ? 1 : -1
-        },
+        sortingFn: sortingFn('availableBalance'),
       },
       {
         accessorKey: 'stakePercentage',
@@ -151,9 +141,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
               <StakePercentage
                 typeId={row.original.typeId}
                 genesisHash={row.original.genesisHash ?? '0x'}
-                rowId={row.id}
-                stakePercentage={stakePercentageValues[row.id]}
-                setStakePercentage={setStakePercentage}
+                setStakePercentage={value => setValues('stakePercentage', row.id, value)}
                 tokenPair={row.original.tokenPair}
                 nativeTokenAddress={row.original.nativeToken?.address ?? '0x'}
                 symbol={row.original.nativeToken?.symbol}
@@ -162,12 +150,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
             </Suspense>
           )
         },
-        sortingFn: (rowA, rowB) => {
-          const stakePercentageA = stakePercentageValues[rowA.id]
-          const stakePercentageB = stakePercentageValues[rowB.id]
-          if (stakePercentageA === undefined || stakePercentageB === undefined) return 0
-          return stakePercentageA > stakePercentageB ? 1 : -1
-        },
+        sortingFn: sortingFn('stakePercentage'),
       },
       {
         accessorKey: 'action',
@@ -176,7 +159,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
         enableSorting: false,
       },
     ],
-    [aprValues, availableBalanceValues, stakePercentageValues, unbondingValues]
+    [setValues, sortingFn]
   )
 
   const table = useReactTable({

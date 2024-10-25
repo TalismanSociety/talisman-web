@@ -6,48 +6,20 @@ import { useSlpxAprState } from '@/domains/staking/slpx'
 import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nominationPools'
 import { useHighestApr } from '@/domains/staking/subtensor/hooks/useApr'
 import { Text } from '@talismn/ui'
-import { useEffect } from 'react'
 
 const aprFormatter = (apr: number) => apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 
 type AprProps = {
   typeId: StakeProviderTypeId
   genesisHash: `0x${string}`
-  rowId: string
-  setAprValues: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>
-  apr: number | undefined
+  setAprValues: (apr: number) => void
   symbol?: string
   apiEndpoint?: string
 }
 type AprDisplayProps = Omit<AprProps, 'genesisHash'>
 
-/**
- * This is a custom hook that is used to set the APR value in the state.
- * It is used to keep track of the APR value for each row that is rendered after the table is mounted,
- * and is used to allow sorting of the table rows by the APR values
- */
-const useSetApr = ({
-  aprValue,
-  rowId,
-  apr,
-  setAprValues,
-}: {
-  aprValue: number | undefined
-  rowId: string
-  apr: number | undefined
-  setAprValues: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>
-}) => {
-  useEffect(() => {
-    if (apr !== aprValue && aprValue !== undefined) {
-      setAprValues(prev => ({ ...prev, [rowId]: aprValue }))
-    }
-  }, [apr, aprValue, rowId, setAprValues])
-
-  return aprValue
-}
-
 // This component is used to get around the react rules of conditional hooks
-const AprDisplay = ({ typeId, rowId, symbol, apiEndpoint, apr, setAprValues }: AprDisplayProps) => {
+const AprDisplay = ({ typeId, symbol, apiEndpoint, setAprValues }: AprDisplayProps) => {
   const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
     nominationPool: useNominationPoolApr,
     liquidStakingSlpx: useSlpxAprState,
@@ -80,7 +52,7 @@ const AprDisplay = ({ typeId, rowId, symbol, apiEndpoint, apr, setAprValues }: A
       aprValue = 0
   }
 
-  useSetApr({ aprValue, rowId, apr, setAprValues })
+  setAprValues(aprValue)
 
   return (
     <Text.BodySmall as="div" alpha="high">
@@ -89,17 +61,10 @@ const AprDisplay = ({ typeId, rowId, symbol, apiEndpoint, apr, setAprValues }: A
   )
 }
 
-const Apr = ({ typeId, genesisHash, rowId, apr, symbol, apiEndpoint, setAprValues }: AprProps) => {
+const Apr = ({ typeId, genesisHash, symbol, apiEndpoint, setAprValues }: AprProps) => {
   return (
     <ChainProvider chain={{ genesisHash: genesisHash }}>
-      <AprDisplay
-        typeId={typeId}
-        rowId={rowId}
-        apr={apr}
-        setAprValues={setAprValues}
-        symbol={symbol}
-        apiEndpoint={apiEndpoint}
-      />
+      <AprDisplay typeId={typeId} setAprValues={setAprValues} symbol={symbol} apiEndpoint={apiEndpoint} />
     </ChainProvider>
   )
 }
