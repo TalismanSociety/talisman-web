@@ -6,6 +6,8 @@ import PercentageBar from './PercentageBar'
 import StakeButton from './StakeButton'
 import StakePercentage from './StakePercentage'
 import UnbondingPeriod from './UnbondingPeriod'
+import ErrorBoundary from '@/components/widgets/ErrorBoundary'
+import ErrorBoundaryFallback from '@/components/widgets/staking/ErrorBoundaryFallback'
 import { cn } from '@/lib/utils'
 import { CircularProgressIndicator, Surface, Text } from '@talismn/ui'
 import { ChevronUp, ChevronDown } from '@talismn/web-icons'
@@ -220,15 +222,24 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
       </div>
 
       {/* Rows */}
-      {table.getRowModel().rows.map(row => (
-        <Surface as="article" key={row.id} className="grid grid-cols-8 rounded-[16px] p-[1.6rem] items-center">
-          {row.getVisibleCells().map(cell => (
-            <div key={cell.id} className="flex-grow truncate last:text-right">
-              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-            </div>
-          ))}
-        </Surface>
-      ))}
+      {table.getRowModel().rows.map(row => {
+        const { symbol, logo, provider } = row.original
+        return (
+          <ErrorBoundary
+            key={row.id}
+            orientation="horizontal"
+            renderFallback={() => <ErrorBoundaryFallback logo={logo} symbol={symbol} provider={provider ?? ''} />}
+          >
+            <Surface as="article" className="grid grid-cols-8 rounded-[16px] p-[1.6rem] items-center">
+              {row.getVisibleCells().map(cell => (
+                <div key={cell.id} className="flex-grow truncate last:text-right">
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </div>
+              ))}
+            </Surface>
+          </ErrorBoundary>
+        )
+      })}
     </div>
   )
 }
