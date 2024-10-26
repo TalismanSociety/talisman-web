@@ -1,12 +1,15 @@
-import type { Account } from '../../../../domains/accounts'
-import { useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
-import { useUnstakeForm, type StakeLoadable } from '../../../../domains/staking/dappStaking'
-import UnstakeDialogComponent from '../../../recipes/UnstakeDialog'
-import DappPickerDialog from './DappPickerDialog'
-import UnlockDuration from './UnlockDuration'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
 import { CircularProgressIndicator } from '@talismn/ui'
+import { formatDistance } from 'date-fns'
 import { useState } from 'react'
+
+import type { Account } from '../../../../domains/accounts'
+import type { StakeLoadable } from '../../../../domains/staking/dappStaking'
+import { useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
+import { useUnstakeForm } from '../../../../domains/staking/dappStaking'
+import UnstakeDialogComponent from '../../../recipes/UnstakeDialog'
+import useUnlockDuration from '../providers/hooks/dapp/useUnlockDuration'
+import DappPickerDialog from './DappPickerDialog'
 
 type DappUnstakeDialogProps = {
   account: Account
@@ -40,7 +43,7 @@ const DappUnstakeDialog = (props: DappUnstakeDialogProps) => {
       }}
       inputSupportingText={error?.message}
       onDismiss={props.onRequestDismiss}
-      lockDuration={<UnlockDuration />}
+      lockDuration={formatDistance(0, useUnlockDuration())}
     />
   )
 }

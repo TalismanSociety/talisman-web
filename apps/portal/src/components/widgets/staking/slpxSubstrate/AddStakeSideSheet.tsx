@@ -1,24 +1,27 @@
-import { writeableSubstrateAccountsState } from '../../../../domains/accounts/recoils'
-import { SlpxAddStakeForm } from '../../../recipes/AddStakeDialog'
-import { useAccountSelector } from '../../AccountSelector'
-import Apr from '../slpx/Apr'
-import UnlockDuration from './UnlockDuration'
-import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
-import useStakeAddForm from '@/domains/staking/slpxSubstrate/useStakeAddForm'
-import { Tooltip } from '@talismn/ui'
 import {
   CircularProgressIndicator,
   InfoCard,
   SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR,
   SideSheet,
   Surface,
-  Text,
   SurfaceChip,
+  Text,
+  Tooltip,
 } from '@talismn/ui'
-import { Zap, Clock } from '@talismn/web-icons'
+import { Clock, Zap } from '@talismn/web-icons'
+import { formatDistance } from 'date-fns'
 import { Suspense } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
+
+import { useSlpxAprState } from '@/domains/staking/slpx'
+import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
+import useStakeAddForm from '@/domains/staking/slpxSubstrate/useStakeAddForm'
+
+import { writeableSubstrateAccountsState } from '../../../../domains/accounts/recoils'
+import { SlpxAddStakeForm } from '../../../recipes/AddStakeDialog'
+import { useAccountSelector } from '../../AccountSelector'
+import useSlpxSubstrateUnlockDuration from '../providers/hooks/bifrost/useSlpxSubstrateUnlockDuration'
 
 type Props = {
   slpxPair: SlpxSubstratePair
@@ -51,7 +54,10 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
           overlineContent="Rewards"
           headlineContent={
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-              <Apr slpxPair={slpxPair} />
+              {useSlpxAprState({
+                apiEndpoint: slpxPair.apiEndpoint,
+                nativeTokenSymbol: slpxPair.nativeToken.symbol,
+              }).toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}
             </Suspense>
           }
         />
@@ -59,7 +65,7 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
           overlineContent="Unbonding period"
           headlineContent={
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-              <UnlockDuration slpxPair={slpxPair} />
+              {formatDistance(0, useSlpxSubstrateUnlockDuration({ slpxPair }) || 0).toLocaleString()}
             </Suspense>
           }
         />
@@ -93,7 +99,7 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
           Learn more
         </Text.Noop.A>
       </Text.Body>
-      <div className="flex justify-end mt-2">
+      <div className="mt-2 flex justify-end">
         <Tooltip content="Transaction may take several minutes to complete">
           <SurfaceChip className="cursor-default">
             <Clock />

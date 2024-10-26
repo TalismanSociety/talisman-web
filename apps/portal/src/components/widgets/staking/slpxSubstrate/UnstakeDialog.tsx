@@ -1,10 +1,13 @@
+import { formatDistance } from 'date-fns'
+import { Suspense } from 'react'
+
+import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
+import useStakeRedeemForm from '@/domains/staking/slpxSubstrate/useStakeRedeemForm'
+
 import { type Account } from '../../../../domains/accounts'
 import { Maybe } from '../../../../util/monads'
 import { SlpxUnstakeDialog } from '../../../recipes/UnstakeDialog'
-import UnlockDuration from './UnlockDuration'
-import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
-import useStakeRedeemForm from '@/domains/staking/slpxSubstrate/useStakeRedeemForm'
-import { Suspense } from 'react'
+import useSlpxSubstrateUnlockDuration from '../providers/hooks/bifrost/useSlpxSubstrateUnlockDuration'
 
 type UnstakeDialogProps = {
   account?: Account
@@ -34,7 +37,7 @@ const UnstakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: Unstake
       availableAmount={amountAvailable?.toLocaleString() ?? '...'}
       lockDuration={
         <Suspense fallback="...">
-          <UnlockDuration slpxPair={slpxSubstratePair} />
+          {formatDistance(0, useSlpxSubstrateUnlockDuration({ slpxPair: slpxSubstratePair }).toLocaleString())}
         </Suspense>
       }
       rate={Maybe.of(rate).mapOr(

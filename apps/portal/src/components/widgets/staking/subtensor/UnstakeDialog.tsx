@@ -1,12 +1,13 @@
+import { CircularProgressIndicator } from '@talismn/ui'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import type { Account } from '../../../../domains/accounts'
 import { useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
 import { useUnstakeForm } from '../../../../domains/staking/subtensor/hooks/forms'
 import { type Stake } from '../../../../domains/staking/subtensor/hooks/useStake'
 import UnstakeDialogComponent from '../../../recipes/UnstakeDialog'
 import DelegatePickerDialog from './DelegatePickerDialog'
-import UnlockDuration from './UnlockDuration'
-import { CircularProgressIndicator } from '@talismn/ui'
-import { useState } from 'react'
 
 type DelegateUnstakeDialogProps = {
   account: Account
@@ -20,6 +21,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
     props.stake,
     props.delegate
   )
+  const { t } = useTranslation()
 
   useExtrinsicInBlockOrErrorEffect(() => props.onRequestDismiss(), extrinsic)
 
@@ -39,7 +41,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
       }}
       inputSupportingText={error?.message}
       onDismiss={props.onRequestDismiss}
-      lockDuration={<UnlockDuration />}
+      lockDuration={<>{t('None')}</>}
     />
   )
 }

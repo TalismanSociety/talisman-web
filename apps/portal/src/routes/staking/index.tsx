@@ -1,4 +1,3 @@
-// import StakeProviders from '../../components/widgets/staking/StakeProviders'
 import type { RouteObject } from 'react-router-dom'
 import { Navigate } from 'react-router-dom'
 
@@ -12,7 +11,6 @@ const routes = {
   children: [
     { path: '', element: <Navigate to="providers" /> },
     { path: 'positions', element: <Stakes hideHeader /> },
-    // { path: 'providers', element: <StakeProviders /> },
     { path: 'providers', element: <Providers /> },
   ],
 } satisfies RouteObject

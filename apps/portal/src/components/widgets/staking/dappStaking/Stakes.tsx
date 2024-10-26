@@ -1,4 +1,12 @@
-import { selectedSubstrateAccountsState, type Account } from '../../../../domains/accounts'
+import { formatDistance } from 'date-fns'
+import { useState, useTransition } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+
+import StakePosition, { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
+
+import type { Account } from '../../../../domains/accounts'
+import { selectedSubstrateAccountsState } from '../../../../domains/accounts'
 import { ChainProvider, dappStakingEnabledChainsState, useChainState } from '../../../../domains/chains'
 import { useExtrinsic, useNativeTokenLocalizedFiatAmount } from '../../../../domains/common'
 import {
@@ -9,13 +17,9 @@ import {
 } from '../../../../domains/staking/dappStaking'
 import DappStakingLockedAmountDialog from '../../../recipes/DappStakingLockedAmountDialog'
 import ErrorBoundary from '../../ErrorBoundary'
+import useUnlockDuration from '../providers/hooks/dapp/useUnlockDuration'
 import AddStakeDialog from './AddStakeDialog'
-import UnlockDuration from './UnlockDuration'
 import UnstakeDialog from './UnstakeDialog'
-import StakePosition, { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
-import { useState, useTransition } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 const TotalRewards = (props: { account: Account }) => useTotalDappStakingRewards(props.account).toLocaleString()
 
@@ -46,6 +50,7 @@ const Stake = ({
   const unlockExtrinsic = useExtrinsic('dappStaking', 'unlock')
 
   const [requestReStakeInTransition, startRequestRestakeTransition] = useTransition()
+  const unlockDuration = formatDistance(0, useUnlockDuration())
 
   const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
 
@@ -132,7 +137,7 @@ const Stake = ({
         <DappStakingLockedAmountDialog
           amount={stake.locked?.decimalAmount.toLocaleString()}
           fiatAmount={stake.locked?.localizedFiatAmount}
-          unlockDuration={<UnlockDuration />}
+          unlockDuration={unlockDuration}
           onRequestDismiss={() => setLockedDialogOpen(false)}
           onRequestReStake={() => {
             startRequestRestakeTransition(() => {
