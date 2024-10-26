@@ -15,7 +15,7 @@ const Layout = () => {
         <ErrorBoundary>
           <Suspense fallback={<TalismanHandProgressIndicator />}>
             <div className="w-full max-w-[840px] mx-auto">
-              <Tabs css={{ width: 'fit-content', marginBottom: '1.6rem', marginLeft: 16, marginRight: 16 }}>
+              <Tabs css={{ width: 'fit-content', marginLeft: 16, marginRight: 16 }} noBottomBorder>
                 <NavLink to="/transport/swap" css={{ display: 'contents' }} onClick={event => event.preventDefault()}>
                   {({ isActive }) => (
                     <Tabs.Item

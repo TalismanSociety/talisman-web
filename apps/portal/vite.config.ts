@@ -6,6 +6,10 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import svgr from 'vite-plugin-svgr'
 
 export default defineConfig({
+  optimizeDeps: {
+    // getting dev error without this setting
+    exclude: ['node_modules/.vite/deps'],
+  },
   css: {
     postcss: {
       plugins: [tailwindcss()],

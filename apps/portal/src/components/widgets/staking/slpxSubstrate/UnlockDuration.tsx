@@ -6,7 +6,7 @@ import { formatDistance } from 'date-fns'
 const UnlockDuration = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   const duration = useSlpxSubstrateUnlockDuration({ slpxPair })
 
-  return <>{formatDistance(0, Number(duration))}</>
+  return <>0-{formatDistance(0, Number(duration))}</>
 }
 
 export default UnlockDuration

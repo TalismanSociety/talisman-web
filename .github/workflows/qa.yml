@@ -13,7 +13,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - run: yarn install --immutable
-      - run: yarn prettier --check .
       - run: yarn lint -- --max-warnings=0
       - run: yarn check-types
       - run: yarn test
@@ -47,7 +46,8 @@ jobs:
             BASEROW_CROWDLOANS_AUTH,
             LIDO_REWARDS_ADDRESS,
             SIMPLESWAP_API_KEY,
-            TAOSTATS_API_KEY
+            TAOSTATS_API_KEY,
+            LIFI_SECRET
           environmentVariableVariables: >-
             APPLICATION_NAME
           environmentVariablePrefix: REACT_APP_

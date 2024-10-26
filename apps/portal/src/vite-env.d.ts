@@ -20,6 +20,7 @@ interface ImportMetaEnv {
   REACT_APP_LIDO_REWARDS_ADDRESS: string
   REACT_APP_QUEST_API?: string
   REACT_APP_SIMPLESWAP_API_KEY: string
+  REACT_APP_LIFI_SECRET: string
   REACT_APP_TAOSTATS_API_KEY: string
 }
 

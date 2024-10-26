@@ -18,26 +18,25 @@ const CircularProgressIndicator = (props: CircularProgressIndicatorProps) => (
     css={{
       path: {
         animation: `${fade} 1s linear infinite`,
-        '&:nth-child(1)': {},
-        '&:nth-child(8)': {
+        '&:nth-of-type(8)': {
           animationDelay: '0.125s',
         },
-        '&:nth-child(6)': {
+        '&:nth-of-type(6)': {
           animationDelay: '0.25s',
         },
-        '&:nth-child(4)': {
+        '&:nth-of-type(4)': {
           animationDelay: '0.375s',
         },
-        '&:nth-child(2)': {
+        '&:nth-of-type(2)': {
           animationDelay: '0.5s',
         },
-        '&:nth-child(7)': {
+        '&:nth-of-type(7)': {
           animationDelay: '0.625s',
         },
-        '&:nth-child(5)': {
+        '&:nth-of-type(5)': {
           animationDelay: '0.75s',
         },
-        '&:nth-child(3)': {
+        '&:nth-of-type(3)': {
           animationDelay: '0.875s',
         },
       },

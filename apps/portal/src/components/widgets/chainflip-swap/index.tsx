@@ -12,6 +12,7 @@ import {
   toAddressAtom,
   toAssetAtom,
 } from './swap-modules/common.swap-module'
+import { swapFromSearchAtom, swapQuotesAtom, swapToSearchAtom, useSwapErc20Approval } from './swaps.api'
 import {
   fromAssetsAtom,
   selectedQuoteAtom,
@@ -57,6 +58,19 @@ export const ChainFlipSwap: React.FC = () => {
   const toAssets = useAtomValue(loadable(toAssetsAtom))
   const [cachedToAmount, setCachedToAmount] = useState(toAmount.state === 'hasData' ? toAmount.data : undefined)
   const balances = useAtomValue(loadable(fromAssetsBalancesAtom))
+  const quotes = useAtomValue(swapQuotesAtom)
+
+  const toAmountUsdOverride = useMemo(() => {
+    if (quote.state !== 'hasData' || !quote.data) return undefined
+    if (quote.data.quote.state !== 'hasData' || !quote.data.quote.data) return undefined
+
+    switch (quote.data.quote.data.protocol) {
+      case 'lifi':
+        return +(quote.data.quote.data.data?.toAmountUSD ?? 0)
+      default:
+        return undefined
+    }
+  }, [quote])
 
   // reset when any of the inputs change
   useEffect(() => {
@@ -116,17 +130,22 @@ export const ChainFlipSwap: React.FC = () => {
     return fromAmount.planck > fastBalance.balance.transferrable.planck
   }, [fastBalance, fromAmount.planck])
 
+  const { data: approvalData, loading: approvalLoading, approve, approving } = useSwapErc20Approval()
+
   useEffect(() => {
     if (fromAmount.planck > 0n && fromAsset && toAsset) setShouldFocusDetails(true)
   }, [fromAsset, toAsset, setShouldFocusDetails, fromAmount.planck])
 
   // refresh quote every 15 seconds
   useEffect(() => {
-    if (swapping) return
+    if (swapping || quotes.state === 'loading') return
+    if (quotes.state === 'hasData') {
+      if (quotes.data?.some(d => d.state === 'loading')) return
+    }
     const id = setInterval(() => {
       setShouldFocusDetails(false)
       setQuoteRefresher(new Date().getTime())
-    }, 15_000)
+    }, 20_000)
     return () => clearInterval(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapping])
@@ -158,6 +177,7 @@ export const ChainFlipSwap: React.FC = () => {
             stayAliveBalance={fastBalance?.balance?.stayAlive}
             onChangeAsset={handleChangeFromAsset}
             disableBtc
+            searchAtom={swapFromSearchAtom}
           />
           <div className="relative w-full h-[12px]">
             <TonalIconButton
@@ -178,6 +198,8 @@ export const ChainFlipSwap: React.FC = () => {
             substrateAddress={fromSubstrateAccount?.address}
             disabled
             hideBalance
+            searchAtom={swapToSearchAtom}
+            usdOverride={toAmountUsdOverride}
           />
         </Surface>
         <FromAccount
@@ -206,6 +228,10 @@ export const ChainFlipSwap: React.FC = () => {
           <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
             Connect Polkadot Wallet
           </Button>
+        ) : approvalData ? (
+          <Button loading={approving} disabled={approving} onClick={approve} className="!w-full !rounded-[8px]">
+            Allow {approvalData.protocolName} to spend {fromAsset?.symbol}
+          </Button>
         ) : (
           <Button
             className="!w-full !rounded-[8px]"
@@ -216,13 +242,20 @@ export const ChainFlipSwap: React.FC = () => {
               !fromAddress ||
               !toAddress ||
               insufficientBalance !== false ||
-              swapping
+              swapping ||
+              approvalLoading
             }
-            loading={swapping}
+            loading={swapping || approvalLoading}
             onClick={() => {
               setInfoTab('details')
-              if (quote.state === 'hasData' && quote.data && fastBalance?.balance) {
-                swap(quote.data.quote.protocol, fromAmount.planck > fastBalance.balance.stayAlive.planck)
+              if (
+                quote.state === 'hasData' &&
+                quote.data &&
+                fastBalance?.balance &&
+                quote.data.quote.state === 'hasData' &&
+                quote.data.quote.data
+              ) {
+                swap(quote.data.quote.data.protocol, fromAmount.planck > fastBalance.balance.stayAlive.planck)
               }
             }}
           >
