@@ -19,6 +19,7 @@ import { AccountIcon } from '@talismn/ui-recipes'
 import { ArrowDown, Clock, Earn, MoreHorizontal, ZapPlus } from '@talismn/web-icons'
 import React, { createContext, Suspense, useContext } from 'react'
 
+import ErrorBoundary from '@/components/widgets/ErrorBoundary'
 import { Account } from '@/domains/accounts/recoils'
 import { shortenAddress } from '@/util/format'
 
@@ -55,6 +56,21 @@ export type StakePositionProps = {
 }
 
 const StakePositionContext = createContext({ readonly: false })
+
+const CellErrorFallback = () => {
+  const theme = useTheme()
+  return (
+    <TonalButton
+      leadingIcon={<StakeStatusIndicator status={'not_nominating'} />}
+      css={{
+        backgroundColor: `color-mix(in srgb, ${theme.color.error}, transparent 95%)`,
+        color: theme.color.error,
+      }}
+    >
+      Loading Error
+    </TonalButton>
+  )
+}
 
 const IncreaseStakeButton = (props: Omit<IconButtonProps, 'children'>) => (
   <StakePositionContext.Consumer>
@@ -337,15 +353,17 @@ const StakePosition = Object.assign(
                 Total rewards (all time)
               </Text.BodySmall>
               <Text.Body as="div" alpha="high">
-                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                  {props.rewards ?? <Text alpha="medium">--</Text>}
-                </Suspense>
-                <div css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }} />{' '}
-                <Suspense>
-                  <Text.Body alpha="medium" css={{ color: '#38D448' }}>
-                    {props.fiatRewards}
-                  </Text.Body>
-                </Suspense>
+                <ErrorBoundary renderFallback={() => <CellErrorFallback />}>
+                  <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                    {props.rewards ?? <Text alpha="medium">--</Text>}
+                  </Suspense>
+                  <div css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }} />{' '}
+                  <Suspense>
+                    <Text.Body alpha="medium" css={{ color: '#38D448' }}>
+                      {props.fiatRewards}
+                    </Text.Body>
+                  </Suspense>
+                </ErrorBoundary>
               </Text.Body>
             </section>
             <div css={{ [MEDIUM_CONTAINER_QUERY]: { width: '20rem', display: 'flex', justifyContent: 'start' } }}>
