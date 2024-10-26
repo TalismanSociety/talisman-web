@@ -30,7 +30,7 @@ export const chainConfigs: ChainConfig[] = [
     hasNominationPools: true,
     priorityPool: 282,
     talismanPools: [12, 16, 282],
-    novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-polkadot',
+    novaIndexerUrl: 'https://gateway.subquery.network/query/0x1a',
   },
   // Kusama
   {
@@ -38,7 +38,7 @@ export const chainConfigs: ChainConfig[] = [
     hasNominationPools: true,
     priorityPool: 15,
     talismanPools: [15],
-    novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-kusama',
+    novaIndexerUrl: 'https://gateway.subquery.network/query/0x1a',
   },
   // Astar
   {

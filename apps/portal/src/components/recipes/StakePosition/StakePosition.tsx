@@ -206,6 +206,8 @@ export const FastUnstakingStatus = (props: { amount: ReactNode; status: 'in-head
 const StakePosition = Object.assign(
   (props: StakePositionProps) => {
     const shouldRenderMenuBtn = props.unstakeButton || props.lockedButton || props.menuButton
+    const shouldRenderTotalRewards = props.rewards || props.fiatRewards
+
     return (
       <StakePositionContext.Provider value={{ readonly: props.readonly ?? false }}>
         <div css={{ containerType: 'inline-size' }}>
