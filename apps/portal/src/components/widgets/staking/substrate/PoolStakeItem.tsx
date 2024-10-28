@@ -1,3 +1,9 @@
+import { useCallback, useState } from 'react'
+import { useRecoilValue, waitForAll } from 'recoil'
+
+import StakePosition from '@/components/recipes/StakePosition'
+
+import type { usePoolStakes } from '../../../../domains/staking/substrate/nominationPools'
 import { type Account } from '../../../../domains/accounts'
 import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '../../../../domains/chains'
 import {
@@ -6,10 +12,7 @@ import {
   useNativeTokenLocalizedFiatAmount,
   useSubmittableResultLoadableState,
 } from '../../../../domains/common'
-import {
-  useTotalNominationPoolRewards,
-  type usePoolStakes,
-} from '../../../../domains/staking/substrate/nominationPools'
+import { useTotalNominationPoolRewards } from '../../../../domains/staking/substrate/nominationPools'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import RedactableBalance from '../../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
@@ -17,14 +20,17 @@ import ClaimStakeDialog from './ClaimStakeDialog'
 import NominationPoolsStatisticsSideSheet from './NominationPoolsStatisticsSideSheet'
 import PoolClaimPermissionDialog from './PoolClaimPermissionDialog'
 import UnstakeDialog from './UnstakeDialog'
-import StakePosition from '@/components/recipes/StakePosition'
-import { useCallback, useState } from 'react'
-import { useRecoilValue, waitForAll } from 'recoil'
 
-const PoolTotalRewards = (props: { account: Account }) => useTotalNominationPoolRewards(props.account).toLocaleString()
+const PoolTotalRewards = (props: { account: Account }) => {
+  const total = useTotalNominationPoolRewards(props.account)
+  return total?.toLocaleString() ?? undefined
+}
 
-const PoolTotalFiatRewards = (props: { account: Account }) =>
-  useNativeTokenLocalizedFiatAmount(useTotalNominationPoolRewards(props.account))
+const PoolTotalFiatRewards = (props: { account: Account }) => {
+  const total = useTotalNominationPoolRewards(props.account)
+  const totalLocalisedFiat = useNativeTokenLocalizedFiatAmount(total)
+  return totalLocalisedFiat ?? undefined
+}
 
 const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account[]>>[number] }) => {
   const [chain, decimal, nativeTokenPrice] = useRecoilValue(

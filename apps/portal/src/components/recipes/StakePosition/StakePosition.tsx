@@ -190,6 +190,8 @@ export const FastUnstakingStatus = (props: { amount: ReactNode; status: 'in-head
 const StakePosition = Object.assign(
   (props: StakePositionProps) => {
     const shouldRenderMenuBtn = props.unstakeButton || props.lockedButton || props.menuButton
+    const shouldRenderTotalRewards = props.rewards || props.fiatRewards
+
     return (
       <StakePositionContext.Provider value={{ readonly: props.readonly ?? false }}>
         <div css={{ containerType: 'inline-size' }}>
@@ -328,26 +330,28 @@ const StakePosition = Object.assign(
                 <Text.Body alpha="medium">{props.fiatBalance}</Text.Body>
               </Text.Body>
             </section>
-            <section css={{ flex: 1 }}>
-              <Text.BodySmall
-                as="div"
-                alpha="disabled"
-                css={{ marginBottom: '0.6rem', [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}
-              >
-                Total rewards (all time)
-              </Text.BodySmall>
-              <Text.Body as="div" alpha="high">
-                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                  {props.rewards ?? <Text alpha="medium">--</Text>}
-                </Suspense>
-                <div css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }} />{' '}
-                <Suspense>
-                  <Text.Body alpha="medium" css={{ color: '#38D448' }}>
-                    {props.fiatRewards}
-                  </Text.Body>
-                </Suspense>
-              </Text.Body>
-            </section>
+            {shouldRenderTotalRewards && (
+              <section css={{ flex: 1 }}>
+                <Text.BodySmall
+                  as="div"
+                  alpha="disabled"
+                  css={{ marginBottom: '0.6rem', [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}
+                >
+                  Total rewards (all time)
+                </Text.BodySmall>
+                <Text.Body as="div" alpha="high">
+                  <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                    {props.rewards ?? <Text alpha="medium">--</Text>}
+                  </Suspense>
+                  <div css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }} />{' '}
+                  <Suspense>
+                    <Text.Body alpha="medium" css={{ color: '#38D448' }}>
+                      {props.fiatRewards}
+                    </Text.Body>
+                  </Suspense>
+                </Text.Body>
+              </section>
+            )}
             <div css={{ [MEDIUM_CONTAINER_QUERY]: { width: '20rem', display: 'flex', justifyContent: 'start' } }}>
               <div>{props.withdrawButton || props.unstakingStatus}</div>
             </div>
