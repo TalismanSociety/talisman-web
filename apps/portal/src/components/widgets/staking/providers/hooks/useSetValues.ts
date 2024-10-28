@@ -1,10 +1,10 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useRef } from 'react'
 
 export type StakeType = 'apr' | 'unbondingPeriod' | 'availableBalance' | 'stakePercentage'
 type StakeValues = { [key: string]: number }
 
 const useStakeValues = () => {
-  const [stakeValues, setStakeValues] = useState<{ [key in StakeType]?: StakeValues }>({
+  const stakeValues = useRef<{ [key in StakeType]?: StakeValues }>({
     apr: {},
     unbondingPeriod: {},
     availableBalance: {},
@@ -12,23 +12,19 @@ const useStakeValues = () => {
   })
 
   const setValues = (type: StakeType, id: string | number, value: number) => {
-    const previousValue = stakeValues[type]?.[id]
+    const previousValue = stakeValues.current[type]?.[id]
 
-    if (previousValue === value || !value) {
-      return
+    if (previousValue === value || !value) return
+
+    stakeValues.current = {
+      ...stakeValues.current,
+      [type]: { ...stakeValues.current[type], [id]: value },
     }
-    setStakeValues(prevValues => ({
-      ...prevValues,
-      [type]: { ...prevValues[type], [id]: value },
-    }))
   }
 
-  const getValuesForSortType = useCallback(
-    (type: StakeType) => {
-      return stakeValues[type] || {}
-    },
-    [stakeValues]
-  )
+  const getValuesForSortType = useCallback((type: StakeType) => {
+    return stakeValues.current[type] || {}
+  }, [])
 
   return { getValuesForSortType, setValues }
 }
