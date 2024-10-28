@@ -77,7 +77,6 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
             </Suspense>
           )
         },
-
         sortingFn: sortingFn('apr'),
       },
       {
@@ -181,7 +180,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
         {table.getHeaderGroups().map(headerGroup =>
           headerGroup.headers.map(header => (
             <Text.BodySmall
-              className={cn('flex gap-2 text-left last:text-right', {
+              className={cn('flex items-center gap-2 text-left last:text-right', {
                 'cursor-pointer select-none': header.column.getCanSort(),
               })}
               key={header.id}

@@ -23,7 +23,6 @@ const useNominationPoolsProviders = (): Provider[] => {
         type: 'Nomination pool' as Provider['type'],
         typeId: 'nominationPool',
         provider: chain?.name,
-        stakePercentage: 0,
         actionLink: `?action=stake&type=nomination-pools&chain=${id}`,
         nativeToken,
         rpc,
