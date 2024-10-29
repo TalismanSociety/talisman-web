@@ -1,11 +1,14 @@
+import { useState } from 'react'
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from 'recoil'
+
+import { useDelegatesStats } from '@/domains/staking/subtensor/hooks/useDelegatesStats'
+
+import type { Delegate } from '../../../../domains/staking/subtensor/atoms/delegates'
 import { useNativeTokenAmountState } from '../../../../domains/chains'
-import { DEFAULT_DELEGATE, type Delegate } from '../../../../domains/staking/subtensor/atoms/delegates'
+import { DEFAULT_DELEGATE } from '../../../../domains/staking/subtensor/atoms/delegates'
 import { useAllDelegateInfos } from '../../../../domains/staking/subtensor/hooks/useAllDelegateInfos'
 import { useDelegates } from '../../../../domains/staking/subtensor/hooks/useDelegates'
 import StakeTargetSelectorDialog from '../../../recipes/StakeTargetSelectorDialog'
-import { useDelegatesStats } from '@/domains/staking/subtensor/hooks/useDelegatesStats'
-import { useState } from 'react'
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from 'recoil'
 
 type DelegateSelectorDialogProps = {
   selected?: Delegate
@@ -36,8 +39,8 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
           (b.props.balancePlanck ?? 0n) === (a.props.balancePlanck ?? 0n)
             ? 0
             : (b.props.balancePlanck ?? 0n) - (a.props.balancePlanck ?? 0n) < 0
-            ? -1
-            : 1,
+              ? -1
+              : 1,
         'Number of stakers': (a, b) =>
           parseInt(b.props.count?.toString?.() ?? '0') - parseInt(a.props.count?.toString?.() ?? '0'),
         'Estimated APR': (a, b) =>
@@ -53,7 +56,7 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
     >
       {Object.values(delegates).map(delegate => {
         const formattedApr = Number(
-          delegatesStats.find(stat => stat.hot_key.ss58 === delegate.address)?.apr
+          delegatesStats.find(stat => stat.hotkey.ss58 === delegate.address)?.apr
         ).toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 
         return (
