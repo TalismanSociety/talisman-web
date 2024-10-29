@@ -174,15 +174,21 @@ export const SeparatedAccountSelector: React.FC<Props> = ({
   }, [accountFromInput])
 
   const selectedAccount = useMemo(() => {
+    if (value === null || value === undefined) return
+
     switch (accountsType) {
       case 'ethereum':
         return evmAccounts.find(account => account.address === value)
-      case 'substrate':
-        return substrateAccounts.find(account => value && encodeAnyAddress(account.address) === encodeAnyAddress(value))
-      case 'all':
+      case 'substrate': {
+        const encodedValue = encodeAnyAddress(value)
+        return substrateAccounts.find(account => encodeAnyAddress(account.address) === encodedValue)
+      }
+      case 'all': {
+        const encodedValue = encodeAnyAddress(value)
         return [...evmAccounts, ...substrateAccounts].find(
-          account => value && encodeAnyAddress(account.address) === encodeAnyAddress(value)
+          account => encodeAnyAddress(account.address) === encodedValue
         )
+      }
       case 'btc':
         return btcAccounts.find(account => account.address === value)
     }

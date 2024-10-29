@@ -23,7 +23,7 @@ export const extrinsicAtom = atom(async get => {
     const minBn = big.toBigInt(minWithRelay.amount, min.decimals)
 
     if (balance.amount === 0n) {
-      throw new Error('Your transfer is bigger than your balance.')
+      throw new Error('Insufficient balance.')
     }
     if (amountBn < minBn) {
       throw new Error(
@@ -42,29 +42,10 @@ export const extrinsicAtom = atom(async get => {
     const report = await transfer.validate(transfer.source.fee.amount)
     if (!report.length) return
 
-    // const amount = report[0]?.['amount']
-    // const symbol = report[0]?.['asset']
-    // const chain = report[0]?.['chain']
-    // const lookup = {
-    //   'error.required': 'This field is required.',
-    //   'error.notEvmAddr': 'The address is incorrect. Please use valid ethereum address.',
-    //   'error.notNativeAddr': 'The address is incorrect. Please use valid polkadot address.',
-    //   'error.notValidAddr': 'The address is incorrect. Please review it and try again.',
-    //   'error.balance': 'Your transfer is bigger than your balance.',
-    //   'error.maxAmount': `The maximum transferable amount is ${amount} ${asset}.`,
-    //   'error.minAmount': `The minimum transferable amount is ${amount} ${asset}.`,
-
-    //   'error.fee.insufficientBalance': `You need to have ${amount} ${symbol} on ${chain} for fees`,
-    //   'error.destFee.insufficientBalance': `You need to have at least ${amount} ${symbol} on ${chain}`,
-    //   'error.asset.frozen': `Your account on ${chain} has frozen balance for ${symbol}`,
-    //   'error.account.insufficientDeposit': `You need to have ${amount} ${symbol} on ${chain} for existential deposit`,
-    // }
-
-    throw new Error(report[0]?.['error'])
+    throw new Error(report.map(r => String(r['error'])).join('\n'))
   }
   await validateTransfer()
 
-  // TODO: Handle when this throws due to invalid config
   const call = await transfer.buildCall(amount)
   const extrinsic = api.tx(call.data)
 

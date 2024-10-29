@@ -61,11 +61,17 @@ export function XcmForm() {
 
   // select first account on mount
   const validSenders = useRecoilValue(writeableAccountsState)
+  const [hasSetFirstSender, setHasSetFirstSender] = useState(false)
   useEffect(() => {
+    if (!validSenders.length) return
+    if (hasSetFirstSender) return
+
     const firstSubSender = validSenders.find(({ address }) => !isEvmAddress(address))?.address
     const firstSender = firstSubSender ?? validSenders[0]?.address
+
     setSender(firstSender)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    setHasSetFirstSender(true)
+  }, [hasSetFirstSender, sender, setSender, validSenders])
 
   const [sourceTokenSelectOpen, setSourceTokenSelectOpen] = useState(false)
   const [destTokenSelectOpen, setDestTokenSelectOpen] = useState(false)

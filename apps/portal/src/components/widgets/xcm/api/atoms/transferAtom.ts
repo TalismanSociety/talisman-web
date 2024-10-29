@@ -14,7 +14,6 @@ export const transferAtom = atom(async get => {
   const wallet = await get(walletAtom)
   if (!wallet) return
 
-  // TODO: Handle when this throws due to invalid config
   const transfer = await wallet.transfer(asset, sender, sourceChain, recipient, destChain)
 
   return transfer
