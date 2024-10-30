@@ -37,7 +37,21 @@ export const Form = ({ tokenSelect, destTokenSelect, ...props }: FormProps) => {
           {props.accountSelect}
         </label>
       </Section>
-      <Section header="Select asset">
+      <Section
+        header={
+          <div className="flex items-start justify-between">
+            <div>Select asset</div>
+            <a
+              className="text-foreground/70 hover:text-foreground text-sm"
+              href="https://forms.gle/7Xv86Xkf4zmV5V9u7"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Can't find your asset?
+            </a>
+          </div>
+        }
+      >
         <div className="flex flex-col items-center gap-[0.8rem] lg:flex-row">
           <label className="w-full">
             <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
