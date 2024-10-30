@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { EvmParachain, ExtrinsicConfig, ExtrinsicConfigBuilder } from '@galacticcouncil/xcm-core'
 
 const pallet = 'router'

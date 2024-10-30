@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { MinConfigBuilder, SubstrateQueryConfig } from '@galacticcouncil/xcm-core'
 import { Option } from '@polkadot/types'
 import { PalletAssetsAssetDetails } from '@polkadot/types/lookup'

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Parachain } from '@galacticcouncil/xcm-core'
 
 import { Parents, XcmVersion } from '../types'

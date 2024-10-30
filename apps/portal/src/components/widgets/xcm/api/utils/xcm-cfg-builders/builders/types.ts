@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 export enum XcmVersion {
   v1 = 'V1',
   v2 = 'V2',

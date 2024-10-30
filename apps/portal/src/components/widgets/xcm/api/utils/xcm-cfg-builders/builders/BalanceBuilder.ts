@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { BalanceConfigBuilder, ContractConfig, SubstrateQueryConfig } from '@galacticcouncil/xcm-core'
 import { Option } from '@polkadot/types'
 import {

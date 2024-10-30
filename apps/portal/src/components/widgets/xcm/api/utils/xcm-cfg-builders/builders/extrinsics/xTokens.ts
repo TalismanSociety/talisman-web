@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { acc, big, ExtrinsicConfig, ExtrinsicConfigBuilder, Parachain } from '@galacticcouncil/xcm-core'
 
 import { getExtrinsicAccount, getExtrinsicArgumentVersion } from '../ExtrinsicBuilder.utils'

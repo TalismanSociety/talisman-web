@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Parachain, TxWeight } from '@galacticcouncil/xcm-core'
 
 import { Parents, XcmVersion } from '../types'

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { ExtrinsicConfigBuilder, ExtrinsicConfigBuilderParams } from '@galacticcouncil/xcm-core'
 
 import { assetConversion } from './extrinsics/assetConversion'

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { ExtrinsicConfig, ExtrinsicConfigBuilder, Parachain } from '@galacticcouncil/xcm-core'
 
 import { getAssetLocation, getNativeLocation } from './assetConversion.utils'

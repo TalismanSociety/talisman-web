@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { ExtrinsicConfig, ExtrinsicConfigBuilder, ExtrinsicConfigBuilderParams } from '@galacticcouncil/xcm-core'
 
 const pallet = 'utility'

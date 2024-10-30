@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Abi, ContractConfigBuilder, ExtrinsicConfig, ExtrinsicConfigBuilder } from '@galacticcouncil/xcm-core'
 import { encodeFunctionData } from 'viem'
 

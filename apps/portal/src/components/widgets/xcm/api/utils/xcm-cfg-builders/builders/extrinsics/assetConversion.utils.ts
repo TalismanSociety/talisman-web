@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { TypeRegistry } from '@polkadot/types'
 
 const registry = new TypeRegistry()

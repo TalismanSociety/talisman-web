@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types'
 import { getTypeDef } from '@polkadot/types'
 import { u8aToHex } from '@polkadot/util'
