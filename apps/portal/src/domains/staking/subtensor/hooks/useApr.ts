@@ -1,9 +1,10 @@
-import { highestAprTaoValidatorAtom } from '../atoms/taostats'
-import { useDelegateStats } from './useDelegateStats'
 import { useAtomValue } from 'jotai'
 
+import { highestAprTaoValidatorAtom } from '../atoms/taostats'
+import { useDelegateStats } from './useDelegateStats'
+
 export const useHighestAprFormatted = () => {
-  const { apr } = useAtomValue(highestAprTaoValidatorAtom)
+  const { apr = '0' } = useAtomValue(highestAprTaoValidatorAtom) ?? {}
 
   return Number(apr).toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 }
