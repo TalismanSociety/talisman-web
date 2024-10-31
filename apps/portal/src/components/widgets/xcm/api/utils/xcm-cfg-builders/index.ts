@@ -1,3 +1,7 @@
+import { BalanceConfigBuilder, MinConfigBuilder, SubstrateQueryConfig } from '@galacticcouncil/xcm-core'
+import { Option } from '@polkadot/types'
+import { PalletAssetsAssetAccount, PalletAssetsAssetDetails } from '@polkadot/types/lookup'
+
 /**
  * These files are not exported by the `@galacticcouncil/xcm-cfg` npm package.
  * So they must instead be downloaded from https://github.com/galacticcouncil/sdk/tree/master/packages/xcm-cfg/src/builders.
@@ -18,3 +22,35 @@ export const XCM_CFG_BUILDERS_UPDATE_INSTRUCTIONS = null
 export * from './builders/AssetMinBuilder'
 export * from './builders/BalanceBuilder'
 export * from './builders/ExtrinsicBuilder'
+
+export function BalanceBuilderSubstrateForeignAssets() {
+  return {
+    account: (): BalanceConfigBuilder => ({
+      build: ({ address, asset }) =>
+        new SubstrateQueryConfig({
+          module: 'foreignAssets',
+          func: 'account',
+          args: [asset, address],
+          transform: async (response: Option<PalletAssetsAssetAccount>): Promise<bigint> =>
+            response.unwrapOrDefault().balance.toBigInt(),
+        }),
+    }),
+  }
+}
+
+export function ForeignAssetsMinBuilder() {
+  return {
+    assets: () => ({
+      asset: (): MinConfigBuilder => ({
+        build: ({ asset }) =>
+          new SubstrateQueryConfig({
+            module: 'foreignAssets',
+            func: 'asset',
+            args: [asset],
+            transform: async (response: Option<PalletAssetsAssetDetails>): Promise<bigint> =>
+              response.unwrapOrDefault().minBalance.toBigInt(),
+          }),
+      }),
+    }),
+  }
+}

@@ -42,7 +42,9 @@ export const extrinsicAtom = atom(async get => {
     const report = await transfer.validate(transfer.source.fee.amount)
     if (!report.length) return
 
-    throw new Error(report.map(r => String(r['error'])).join('\n'))
+    throw new Error(
+      report.map(r => (r === undefined ? 'Unable to construct extrinsic.' : String(r['error']))).join('\n')
+    )
   }
   await validateTransfer()
 

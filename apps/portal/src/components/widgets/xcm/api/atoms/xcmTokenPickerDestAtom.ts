@@ -3,6 +3,7 @@ import { atom } from 'jotai'
 import groupBy from 'lodash/groupBy'
 
 import { sortTokenPickerAssets } from '../utils/sortTokenPickerAssets'
+import { validRoute } from '../utils/validRoute'
 import { configServiceAtom } from './configServiceAtom'
 import { xcmChainsAtom } from './xcmChainsAtom'
 import { assetAtom, sourceChainAtom } from './xcmFieldsAtoms'
@@ -21,11 +22,15 @@ export const xcmTokenPickerDestAtom = atom(async get => {
 
   return xcmChains
     .flatMap(chain => {
-      const routes = sourceRoutesByDest[chain.key]
-      if (!routes) return []
+      const chainRoutes = sourceRoutesByDest[chain.key]
+      if (!chainRoutes) return []
 
       const tokens = [
-        ...new Set(routes.flatMap(route => (route.destination.asset.key === asset.key ? route.destination.asset : []))),
+        ...new Set(
+          chainRoutes
+            .filter(validRoute)
+            .flatMap(route => (route.destination.asset.key === asset.key ? route.destination.asset : []))
+        ),
       ]
       const chaindataChain = chaindataChainsByGenesisHash?.[chain.genesisHash]
       const chaindataTokensBySymbol = new Map(

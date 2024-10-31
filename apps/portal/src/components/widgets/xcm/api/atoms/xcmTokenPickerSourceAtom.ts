@@ -3,6 +3,7 @@ import { atom } from 'jotai'
 import { isAddress as isEvmAddress } from 'viem'
 
 import { sortTokenPickerAssets } from '../utils/sortTokenPickerAssets'
+import { validRoute } from '../utils/validRoute'
 import { configServiceAtom } from './configServiceAtom'
 import { xcmChainsAtom } from './xcmChainsAtom'
 import { senderAtom } from './xcmFieldsAtoms'
@@ -20,7 +21,7 @@ export const xcmTokenPickerSourceAtom = atom(async get => {
   return xcmChains
     .flatMap(chain => {
       const chainRoutes = routes.get(chain.key)?.getRoutes()
-      const tokens = [...new Set((chainRoutes ?? []).map(route => route.source.asset))]
+      const tokens = [...new Set((chainRoutes ?? []).filter(validRoute).map(route => route.source.asset))]
       const chaindataChain = chaindataChainsByGenesisHash?.[chain.genesisHash]
       const chaindataTokensBySymbol = new Map(
         chaindataChain?.tokens?.map(({ id }) => [chaindataTokensById[id]?.symbol, chaindataTokensById[id]] as const)

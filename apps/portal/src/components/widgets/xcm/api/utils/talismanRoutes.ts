@@ -1,6 +1,12 @@
 import { AnyChain, Asset, AssetRoute, ChainAssetData, ChainRoutes } from '@galacticcouncil/xcm-core'
 
-import { AssetMinBuilder, BalanceBuilder, ExtrinsicBuilder } from './xcm-cfg-builders'
+import {
+  AssetMinBuilder,
+  BalanceBuilder,
+  BalanceBuilderSubstrateForeignAssets,
+  ExtrinsicBuilder,
+  ForeignAssetsMinBuilder,
+} from './xcm-cfg-builders'
 
 const assetHubXcmDeliveryFee = 0.036
 
@@ -15,6 +21,7 @@ export const talismanRoutes: Array<(ctx: TalismanRoutesContext) => TalismanRoute
     const bChainKey = 'centrifuge'
 
     const dot = getAsset('dot')
+    const cfg = getAsset('cfg')
     const usdc = getAsset(assetKey)
     const assethub = getChain(aChainKey)
     const centrifuge = getChain(bChainKey)
@@ -41,7 +48,10 @@ export const talismanRoutes: Array<(ctx: TalismanRoutesContext) => TalismanRoute
         destination: {
           chain: centrifuge,
           asset: usdc,
-          fee: { amount: 0.004, asset: usdc },
+          fee: {
+            amount: 0.004,
+            asset: usdc,
+          },
         },
         extrinsic: ExtrinsicBuilder().polkadotXcm().limitedReserveTransferAssets().X2(),
       }),
@@ -50,7 +60,7 @@ export const talismanRoutes: Array<(ctx: TalismanRoutesContext) => TalismanRoute
           asset: usdc,
           balance: BalanceBuilder().substrate().ormlTokens().accounts(),
           fee: {
-            asset: dot,
+            asset: cfg,
             balance: BalanceBuilder().substrate().system().account(),
             // TODO: Get cfg delivery fee
             // extra: assetHubXcmDeliveryFee,
@@ -65,7 +75,10 @@ export const talismanRoutes: Array<(ctx: TalismanRoutesContext) => TalismanRoute
           chain: assethub,
           asset: usdc,
           // TODO: Find actual amount
-          fee: { amount: 0.7, asset: usdc },
+          fee: {
+            amount: 0.7,
+            asset: usdc,
+          },
         },
         extrinsic: ExtrinsicBuilder().xTokens().transferMultiasset().X3(),
       }),
@@ -76,6 +89,69 @@ export const talismanRoutes: Array<(ctx: TalismanRoutesContext) => TalismanRoute
         metadataId: { ForeignAsset: 6 },
         min: 0.001,
       },
+    }
+  }),
+
+  withHelpers(({ getAsset, getChain }) => {
+    const assetKey = 'myth'
+    const aChainKey = 'assethub'
+    const bChainKey = 'mythos'
+
+    const myth = getAsset(assetKey)
+    const assethub = getChain(aChainKey)
+    const mythos = getChain(bChainKey)
+
+    return {
+      assetKey,
+      aChainKey,
+      bChainKey,
+
+      // TODO: Fix AH -> Mythos route (needs to use ForeignAssets pallet for all interactions, instead of Assets pallet)
+      aRoute: new AssetRoute({
+        source: {
+          asset: myth,
+          balance: BalanceBuilderSubstrateForeignAssets().account(),
+          destinationFee: {
+            balance: BalanceBuilderSubstrateForeignAssets().account(),
+          },
+          min: ForeignAssetsMinBuilder().assets().asset(),
+        },
+        destination: {
+          chain: mythos,
+          asset: myth,
+          // TODO: Find actual amount
+          fee: {
+            amount: 1,
+            asset: myth,
+          },
+        },
+        // extrinsic: ExtrinsicBuilder().polkadotXcm().limitedTeleportAssets(0).here(),
+      }),
+      aAssetData: {
+        asset: myth,
+        decimals: 18,
+        id: { parents: 1, interior: { X1: { Parachain: 3369 } } },
+        balanceId: { parents: 1, interior: { X1: { Parachain: 3369 } } },
+        min: 0.01,
+      },
+      bRoute: new AssetRoute({
+        source: {
+          asset: myth,
+          balance: BalanceBuilder().substrate().system().account(),
+          destinationFee: {
+            balance: BalanceBuilder().substrate().system().account(),
+          },
+        },
+        destination: {
+          chain: assethub,
+          asset: myth,
+          fee: {
+            amount: 0.038,
+            asset: myth,
+          },
+        },
+        extrinsic: ExtrinsicBuilder().polkadotXcm().limitedTeleportAssets(0).here(),
+      }),
     }
   }),
 ]

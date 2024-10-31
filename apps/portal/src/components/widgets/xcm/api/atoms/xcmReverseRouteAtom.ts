@@ -1,5 +1,6 @@
 import { atom } from 'jotai'
 
+import { validRoute } from '../utils/validRoute'
 import { configServiceAtom } from './configServiceAtom'
 import { assetAtom, destChainAtom, senderAtom, sourceChainAtom } from './xcmFieldsAtoms'
 
@@ -14,6 +15,7 @@ export const xcmReverseRouteAtom = atom(
     const canReverse = routes
       .get(destChain.key)
       ?.getRoutes()
+      ?.filter(validRoute)
       ?.some(route => route.source.asset.key === asset.key && route.destination.chain.key === sourceChain.key)
 
     return Boolean(canReverse)
