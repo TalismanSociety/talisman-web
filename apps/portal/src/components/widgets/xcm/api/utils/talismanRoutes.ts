@@ -1,4 +1,12 @@
-import { AnyChain, Asset, AssetRoute, ChainAssetData, ChainRoutes } from '@galacticcouncil/xcm-core'
+import {
+  AnyChain,
+  Asset,
+  AssetRoute,
+  ChainAssetData,
+  ChainRoutes,
+  SubstrateQueryConfig,
+} from '@galacticcouncil/xcm-core'
+import { Option } from '@polkadot/types-codec'
 
 import {
   AssetMinBuilder,
@@ -68,19 +76,26 @@ export const talismanRoutes: Array<(ctx: TalismanRoutesContext) => TalismanRoute
           destinationFee: {
             balance: BalanceBuilder().substrate().ormlTokens().accounts(),
           },
-          // TODO: Find min amount
-          // min: 0.001,
+          min: {
+            build: ({ asset }) =>
+              new SubstrateQueryConfig({
+                module: 'ormlAssetRegistry',
+                func: 'metadata',
+                args: [asset],
+                transform: async (response: Option<any>): Promise<bigint> =>
+                  response.unwrapOrDefault().existentialDeposit.toBigInt(),
+              }),
+          },
         },
         destination: {
           chain: assethub,
           asset: usdc,
-          // TODO: Find actual amount
           fee: {
-            amount: 0.7,
+            amount: 0.014141,
             asset: usdc,
           },
         },
-        extrinsic: ExtrinsicBuilder().xTokens().transferMultiasset().X3(),
+        extrinsic: ExtrinsicBuilder().xTokens().transfer(),
       }),
       bAssetData: {
         asset: usdc,
