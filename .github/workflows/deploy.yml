@@ -37,21 +37,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
 
-      # this will inject all github secrets and variables as environment variables
-      - name: Set environment variables
-        shell: bash
-        run: |
-          # Export secrets one by one
-          for secret in $(echo '${{ toJSON(secrets) }}' | jq -r 'keys[]'); do
-            value=$(echo '${{ toJSON(secrets) }}' | jq -r --arg key "$secret" '.[$key]')
-            echo "$secret=$value" >> $GITHUB_ENV
-          done
+      - name: Set secrets
+        env: ${{ secrets }}
+        run: env >> $GITHUB_ENV
 
-          # Export variables one by one
-          for var in $(echo '${{ toJSON(vars) }}' | jq -r 'keys[]'); do
-            value=$(echo '${{ toJSON(vars) }}' | jq -r --arg key "$var" '.[$key]')
-            echo "$var=$value" >> $GITHUB_ENV
-          done
+      - name: Set variables
+        env: ${{ vars }}
+        run: env >> $GITHUB_ENV
       # - uses: ./.github/actions/load-environment-variables
       #   with:
       #     secrets: ${{ toJson(secrets) }}
