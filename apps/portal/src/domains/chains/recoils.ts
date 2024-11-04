@@ -1,3 +1,9 @@
+import type { RecoilValueReadOnly } from 'recoil'
+import { type Chain as ChainData, type Token } from '@talismn/chaindata-provider'
+import { Decimal } from '@talismn/math'
+import { useContext } from 'react'
+import { atom, selector, selectorFamily, waitForAll } from 'recoil'
+
 import { ChainContext } from '.'
 import { Maybe } from '../../util/monads'
 import { nullToUndefined } from '../../util/nullToUndefine'
@@ -5,13 +11,9 @@ import { selectedCurrencyState } from '../balances'
 import { substrateApiState, useSubstrateApiEndpoint } from '../common'
 import { storageEffect } from '../common/effects'
 import { chainConfigs } from './config'
-import { type Chain as ChainData, type Token } from '@talismn/chaindata-provider'
-import { Decimal } from '@talismn/math'
-import { useContext } from 'react'
-import { atom, selector, selectorFamily, waitForAll, type RecoilValueReadOnly } from 'recoil'
 
-const CHAINDATA_API = import.meta.env.REACT_APP_CHAINDATA
-if (!CHAINDATA_API && import.meta.env.DEV) throw new Error('env var REACT_APP_CHAINDATA not set')
+const CHAINDATA_API = import.meta.env.VITE_CHAINDATA
+if (!CHAINDATA_API && import.meta.env.DEV) throw new Error('env var VITE_CHAINDATA not set')
 
 export const chainState = selectorFamily({
   key: 'Chain',
@@ -87,19 +89,19 @@ export const tokenPriceState = selectorFamily({
     async ({ get }) => {
       const currency = params.currency ?? get(selectedCurrencyState)
       try {
-        const url = new URL('/api/v3/simple/price', import.meta.env.REACT_APP_COIN_GECKO_API)
+        const url = new URL('/api/v3/simple/price', import.meta.env.VITE_COIN_GECKO_API)
         url.searchParams.set('ids', coingeckoId)
         url.searchParams.set('vs_currencies', currency)
 
         const result = await fetch(url, {
           headers:
-            import.meta.env.REACT_APP_COIN_GECKO_API_KEY === undefined
+            import.meta.env.VITE_COIN_GECKO_API_KEY === undefined
               ? undefined
-              : import.meta.env.REACT_APP_COIN_GECKO_API_TIER === 'pro'
-              ? { 'x-cg-pro-api-key': import.meta.env.REACT_APP_COIN_GECKO_API_KEY }
-              : import.meta.env.REACT_APP_COIN_GECKO_API_TIER === 'demo'
-              ? { 'x-cg-demo-api-key': import.meta.env.REACT_APP_COIN_GECKO_API_KEY }
-              : undefined,
+              : import.meta.env.VITE_COIN_GECKO_API_TIER === 'pro'
+                ? { 'x-cg-pro-api-key': import.meta.env.VITE_COIN_GECKO_API_KEY }
+                : import.meta.env.VITE_COIN_GECKO_API_TIER === 'demo'
+                  ? { 'x-cg-demo-api-key': import.meta.env.VITE_COIN_GECKO_API_KEY }
+                  : undefined,
         }).then(async x => await x.json())
 
         return result[coingeckoId][currency] as number

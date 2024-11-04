@@ -1,12 +1,14 @@
-import { useSubstrateApiState } from '../../common/recoils'
-import { selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
-import { useExtrinsic } from '@/domains/common/hooks'
-import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import { Decimal } from '@talismn/math'
 import { useQueryMultiState } from '@talismn/react-polkadot-api'
 import BigNumber from 'bignumber.js'
-import { useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+
+import { selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
+import { useExtrinsic } from '@/domains/common/hooks'
+import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
+
+import { useSubstrateApiState } from '../../common/recoils'
 
 const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   const [amount, setAmount] = useState<string>('')
@@ -14,7 +16,7 @@ const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   const [balances, api] = valueLoadable.valueMaybe() ?? []
 
   const originTokenDecimals = 10
-  const remark = import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman'
+  const remark = import.meta.env.VITE_APPLICATION_NAME ?? 'Talisman'
   const channelId = '3'
 
   const decimalAmount = useMemo(

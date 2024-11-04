@@ -49,7 +49,7 @@ const App = () => (
           </div>
         )}
       >
-        <PostHogProvider apiKey={import.meta.env.REACT_APP_POSTHOG_AUTH_TOKEN}>
+        <PostHogProvider apiKey={import.meta.env.VITE_POSTHOG_AUTH_TOKEN}>
           <EvmProvider>
             <PolkadotApiProvider
               queryState={chainQueryState}

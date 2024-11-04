@@ -1,17 +1,20 @@
+import { useState } from 'react'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+
+import StakePosition, { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
+
+import type { LidoSuite } from '../../../../domains/staking/lido'
 import { selectedEvmAccountsState } from '../../../../domains/accounts'
-import { useStakes, type LidoSuite } from '../../../../domains/staking/lido'
+import { useStakes } from '../../../../domains/staking/lido'
 import { lidoSuitesState } from '../../../../domains/staking/lido/recoils'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
 import LidoWidgetSideSheet from './LidoWidgetSideSheet'
-import StakePosition, { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
-import { useState } from 'react'
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 const IncreaseStakeSideSheet = (props: { onRequestDismiss: () => unknown; lidoSuite: LidoSuite }) => (
   <LidoWidgetSideSheet
-    url={`https://stake.lido.fi?ref=${import.meta.env.REACT_APP_LIDO_REWARDS_ADDRESS}`}
+    url={`https://stake.lido.fi?ref=${import.meta.env.VITE_LIDO_REWARDS_ADDRESS}`}
     lidoSuite={props.lidoSuite}
     onRequestDismiss={props.onRequestDismiss}
   />
@@ -19,7 +22,7 @@ const IncreaseStakeSideSheet = (props: { onRequestDismiss: () => unknown; lidoSu
 
 const UnstakeSideSheet = (props: { onRequestDismiss: () => unknown; lidoSuite: LidoSuite }) => (
   <LidoWidgetSideSheet
-    url={`https://stake.lido.fi/withdrawals/request?ref=${import.meta.env.REACT_APP_LIDO_REWARDS_ADDRESS}`}
+    url={`https://stake.lido.fi/withdrawals/request?ref=${import.meta.env.VITE_LIDO_REWARDS_ADDRESS}`}
     lidoSuite={props.lidoSuite}
     onRequestDismiss={props.onRequestDismiss}
   />
@@ -27,7 +30,7 @@ const UnstakeSideSheet = (props: { onRequestDismiss: () => unknown; lidoSuite: L
 
 const ClaimSideSheet = (props: { onRequestDismiss: () => unknown; lidoSuite: LidoSuite }) => (
   <LidoWidgetSideSheet
-    url={`https://stake.lido.fi/withdrawals/claim?ref=${import.meta.env.REACT_APP_LIDO_REWARDS_ADDRESS}`}
+    url={`https://stake.lido.fi/withdrawals/claim?ref=${import.meta.env.VITE_LIDO_REWARDS_ADDRESS}`}
     lidoSuite={props.lidoSuite}
     onRequestDismiss={props.onRequestDismiss}
   />

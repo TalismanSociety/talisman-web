@@ -1,11 +1,3 @@
-import { ExtrinsicOrderByInput } from '../../../../generated/gql/extrinsicHistory/gql/graphql'
-import { accountsState, selectedAccountsState, type Account } from '../../../domains/accounts'
-import { Maybe } from '../../../util/monads'
-import { ExtrinsicDetailsSideSheet, type ExtrinsicDetailsSideSheetProps } from '../../recipes/ExtrinsicDetailsSideSheet'
-import TransactionLineItem, { TransactionList } from '../../recipes/TransactionLineItem'
-import { graphql } from './../../../../generated/gql/extrinsicHistory/gql'
-import HistoryExportFloatingActionButton from './HistoryExportFloatingActionButton'
-import { getExtrinsicTotalAmount, type ExtrinsicNode } from './utils'
 import { CircularProgressIndicator, Text } from '@talismn/ui'
 import { encodeAnyAddress } from '@talismn/util'
 import request from 'graphql-request'
@@ -13,6 +5,18 @@ import { isNil } from 'lodash'
 import { useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
 import { useRecoilValue } from 'recoil'
+
+import type { Account } from '../../../domains/accounts'
+import type { ExtrinsicDetailsSideSheetProps } from '../../recipes/ExtrinsicDetailsSideSheet'
+import type { ExtrinsicNode } from './utils'
+import { ExtrinsicOrderByInput } from '../../../../generated/gql/extrinsicHistory/gql/graphql'
+import { accountsState, selectedAccountsState } from '../../../domains/accounts'
+import { Maybe } from '../../../util/monads'
+import { ExtrinsicDetailsSideSheet } from '../../recipes/ExtrinsicDetailsSideSheet'
+import TransactionLineItem, { TransactionList } from '../../recipes/TransactionLineItem'
+import { graphql } from './../../../../generated/gql/extrinsicHistory/gql'
+import HistoryExportFloatingActionButton from './HistoryExportFloatingActionButton'
+import { getExtrinsicTotalAmount } from './utils'
 
 type HistoryProps = {
   accounts?: Account[]
@@ -50,7 +54,7 @@ const _History = (props: HistoryProps) => {
 
         while (hasNextPage) {
           const response = await request(
-            import.meta.env.REACT_APP_EX_HISTORY_INDEXER,
+            import.meta.env.VITE_EX_HISTORY_INDEXER,
             graphql(`
               query extrinsics(
                 $after: String

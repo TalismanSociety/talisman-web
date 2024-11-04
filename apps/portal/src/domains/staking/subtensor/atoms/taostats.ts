@@ -4,7 +4,7 @@ import { atomFamily } from 'jotai/utils'
 import { ValidatorsData } from '../types'
 import { delegatesAtom } from './delegates'
 
-const TAOSTATS_API_KEY = import.meta.env.REACT_APP_TAOSTATS_API_KEY
+const TAOSTATS_API_KEY = import.meta.env.VITE_TAOSTATS_API_KEY
 const TAOSTATS_API_URL = 'https://api-prod-v2.taostats.io/api'
 const MAX_PAGE_SIZE = 100
 

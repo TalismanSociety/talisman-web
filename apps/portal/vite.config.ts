@@ -1,5 +1,6 @@
-import react from '@vitejs/plugin-react'
 import path from 'path'
+
+import react from '@vitejs/plugin-react'
 import tailwindcss from 'tailwindcss'
 import { defineConfig } from 'vite'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
@@ -25,7 +26,6 @@ export default defineConfig({
     svgr(),
     nodePolyfills(),
   ],
-  envPrefix: 'REACT_APP_',
   build: {
     outDir: 'build',
     rollupOptions: {

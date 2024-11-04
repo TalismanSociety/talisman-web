@@ -1,13 +1,14 @@
-import { graphql } from '../../../generated/gql/crowdloan/gql'
-import type { ContributionsQuery } from '../../../generated/gql/crowdloan/gql/graphql'
-import { selectedSubstrateAccountsState } from '../../domains/accounts'
-import { useChainmetaValue } from '../talisman'
 import { encodeAnyAddress } from '@talismn/util'
 import BigNumber from 'bignumber.js'
 import { request } from 'graphql-request'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useInterval } from 'react-use'
 import { useRecoilValue } from 'recoil'
+
+import type { ContributionsQuery } from '../../../generated/gql/crowdloan/gql/graphql'
+import { graphql } from '../../../generated/gql/crowdloan/gql'
+import { selectedSubstrateAccountsState } from '../../domains/accounts'
+import { useChainmetaValue } from '../talisman'
 
 type ContributionsIndexerConfig = {
   accountIndex: number
@@ -19,12 +20,12 @@ type ContributionsIndexerConfig = {
 
 const ContributionsIndexerConfigs = {
   polkadot: {
-    indexerUrl: import.meta.env.REACT_APP_DOT_CROWDLOAN_INDEXER,
+    indexerUrl: import.meta.env.VITE_DOT_CROWDLOAN_INDEXER,
     accountIndex: 0,
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
   },
   kusama: {
-    indexerUrl: import.meta.env.REACT_APP_KSM_CROWDLOAN_INDEXER,
+    indexerUrl: import.meta.env.VITE_KSM_CROWDLOAN_INDEXER,
     accountIndex: 2,
     genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
   },
