@@ -36,14 +36,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-
-      - uses: ./.github/actions/load-environment-variables
-        with:
-          secrets: ${{ toJson(secrets) }}
-          vars: ${{ toJson(vars) }}
-          environmentVariableSecrets: ${{ inputs.environmentVariableSecrets }}
-          environmentVariableVariables: ${{ inputs.environmentVariableVariables }}
-          environmentVariablePrefix: ${{ inputs.environmentVariablePrefix }}
+        env: ${{ secrets }}
+      # - uses: ./.github/actions/load-environment-variables
+      #   with:
+      #     secrets: ${{ toJson(secrets) }}
+      #     vars: ${{ toJson(vars) }}
+      #     environmentVariableSecrets: ${{ inputs.environmentVariableSecrets }}
+      #     environmentVariableVariables: ${{ inputs.environmentVariableVariables }}
+      #     environmentVariablePrefix: ${{ inputs.environmentVariablePrefix }}
 
       - run: ${{ inputs.buildCommand }}
 
@@ -60,6 +60,7 @@ jobs:
       - if: vars.SENTRY_PROJECT != null
         uses: getsentry/action-release@v1
         env:
+          ${{ insert }}: ${{ secrets }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}

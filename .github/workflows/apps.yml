@@ -47,22 +47,22 @@ jobs:
         yarn turbo run build --filter=portal -- --sourcemap
       outputDirectory: apps/portal/build
       sentryReleaseVersion: ${{ github.sha }}
-      environmentVariableSecrets: >-
-        CHAINDATA,
-        COIN_GECKO_API,
-        ONFINALITY_API_KEY,
-        SENTRY_DSN,
-        POSTHOG_AUTH_TOKEN,
-        EX_HISTORY_INDEXER,
-        DOT_CROWDLOAN_INDEXER,
-        KSM_CROWDLOAN_INDEXER,
-        BASEROW_EXPLORE_AUTH,
-        BASEROW_CROWDLOANS_AUTH,
-        LIDO_REWARDS_ADDRESS,
-        SIMPLESWAP_API_KEY,
-        TAOSTATS_API_KEY,
-        LIFI_SECRET
-      environmentVariableVariables: >-
-        APPLICATION_NAME
-      environmentVariablePrefix: REACT_APP_
+      # environmentVariableSecrets: >-
+      #   CHAINDATA,
+      #   COIN_GECKO_API,
+      #   ONFINALITY_API_KEY,
+      #   SENTRY_DSN,
+      #   POSTHOG_AUTH_TOKEN,
+      #   EX_HISTORY_INDEXER,
+      #   DOT_CROWDLOAN_INDEXER,
+      #   KSM_CROWDLOAN_INDEXER,
+      #   BASEROW_EXPLORE_AUTH,
+      #   BASEROW_CROWDLOANS_AUTH,
+      #   LIDO_REWARDS_ADDRESS,
+      #   SIMPLESWAP_API_KEY,
+      #   TAOSTATS_API_KEY,
+      #   LIFI_SECRET
+      # environmentVariableVariables: >-
+      #   APPLICATION_NAME
+      # environmentVariablePrefix: REACT_APP_
     secrets: inherit
