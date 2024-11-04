@@ -1,16 +1,21 @@
-import { isBtcAddress } from '@/lib/btc'
 import type { BaseWallet } from '@polkadot-onboard/core'
-import { ApiPromise } from '@polkadot/api'
 import type { SubmittableExtrinsic } from '@polkadot/api/types'
+import type { Atom, Getter, SetStateAction, Setter } from 'jotai'
+import { ApiPromise } from '@polkadot/api'
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { evmErc20TokenId, evmNativeTokenId, subNativeTokenId } from '@talismn/balances'
 import { Decimal } from '@talismn/math'
-import { type Atom, atom, type Getter, type SetStateAction, type Setter } from 'jotai'
+import { atom } from 'jotai'
 import { atomWithStorage, createJSONStorage, unstable_withStorageValidator } from 'jotai/utils'
 import { Loadable } from 'jotai/vanilla/utils/loadable'
+
+import { isBtcAddress } from '@/lib/btc'
+
 import 'recoil'
-import { isAddress, type TransactionRequest, type WalletClient } from 'viem'
-import { mainnet, bsc, arbitrum, optimism, blast, polygon, manta, moonriver, moonbeam } from 'viem/chains'
+
+import type { TransactionRequest, WalletClient } from 'viem'
+import { isAddress } from 'viem'
+import { arbitrum, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon } from 'viem/chains'
 
 export const supportedEvmChains = {
   eth: mainnet,
@@ -238,7 +243,7 @@ export const getTokenIdForSwappableAsset = (
 }
 
 export const saveAddressForQuest = async (swapId: string, fromAddress: string, provider: string) => {
-  const api = import.meta.env.REACT_APP_QUEST_API
+  const api = import.meta.env.VITE_QUEST_API
   if (!api) return
   await fetch(`${api}/api/quests/swap`, {
     method: 'POST',

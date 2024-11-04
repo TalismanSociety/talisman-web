@@ -1,3 +1,12 @@
+import * as sdk from '@lifi/sdk'
+import { evmErc20TokenId, evmNativeTokenId } from '@talismn/balances'
+import { evmNetworksByIdAtom } from '@talismn/balances-react'
+import { Decimal } from '@talismn/math'
+import { atom, Getter, Setter } from 'jotai'
+import { atomFamily, loadable } from 'jotai/utils'
+import { zeroAddress } from 'viem'
+import * as allEvmChains from 'viem/chains'
+
 import { knownEvmNetworksAtom } from '../helpers'
 import {
   fromAddressAtom,
@@ -12,14 +21,6 @@ import {
   toAddressAtom,
   toAssetAtom,
 } from './common.swap-module'
-import * as sdk from '@lifi/sdk'
-import { evmErc20TokenId, evmNativeTokenId } from '@talismn/balances'
-import { evmNetworksByIdAtom } from '@talismn/balances-react'
-import { Decimal } from '@talismn/math'
-import { atom, Getter, Setter } from 'jotai'
-import { atomFamily, loadable } from 'jotai/utils'
-import { zeroAddress } from 'viem'
-import * as allEvmChains from 'viem/chains'
 
 const PROTOCOL = 'lifi' as const
 const DECENTRALISATION_SCORE = 2
@@ -27,7 +28,7 @@ const TALISMAN_FEE = 0.002
 
 sdk.createConfig({
   integrator: 'talisman',
-  apiKey: import.meta.env.REACT_APP_LIFI_SECRET,
+  apiKey: import.meta.env.VITE_LIFI_SECRET,
 })
 
 export const fromAssetsSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {

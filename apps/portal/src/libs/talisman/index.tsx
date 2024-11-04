@@ -1,8 +1,9 @@
+import { BalancesProvider } from '@talismn/balances-react'
+import { type PropsWithChildren } from 'react'
+
 import * as Chainmeta from './chainmeta'
 import * as Crowdloan from './crowdloan'
 import * as Parachain from './parachain'
-import { BalancesProvider } from '@talismn/balances-react'
-import { type PropsWithChildren } from 'react'
 
 /* publically exposed hooks */
 
@@ -31,15 +32,15 @@ export {
 const Provider = ({ children }: PropsWithChildren) => (
   <Chainmeta.Provider>
     <BalancesProvider
-      onfinalityApiKey={import.meta.env.REACT_APP_ONFINALITY_API_KEY ?? undefined}
-      coingeckoApiUrl={import.meta.env.REACT_APP_COIN_GECKO_API}
-      coingeckoApiKeyValue={import.meta.env.REACT_APP_COIN_GECKO_API_KEY}
+      onfinalityApiKey={import.meta.env.VITE_ONFINALITY_API_KEY ?? undefined}
+      coingeckoApiUrl={import.meta.env.VITE_COIN_GECKO_API}
+      coingeckoApiKeyValue={import.meta.env.VITE_COIN_GECKO_API_KEY}
       coingeckoApiKeyName={
-        import.meta.env.REACT_APP_COIN_GECKO_API_TIER === 'pro'
+        import.meta.env.VITE_COIN_GECKO_API_TIER === 'pro'
           ? 'x-cg-pro-api-key'
-          : import.meta.env.REACT_APP_COIN_GECKO_API_TIER === 'demo'
-          ? 'x-cg-demo-api-key'
-          : undefined
+          : import.meta.env.VITE_COIN_GECKO_API_TIER === 'demo'
+            ? 'x-cg-demo-api-key'
+            : undefined
       }
     >
       <Parachain.Provider>

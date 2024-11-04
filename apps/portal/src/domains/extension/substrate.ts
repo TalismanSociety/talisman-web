@@ -29,7 +29,7 @@ const walletAggregator = new WalletAggregator([
         },
       ],
     },
-    import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman'
+    import.meta.env.VITE_APPLICATION_NAME ?? 'Talisman'
   ),
 ])
 

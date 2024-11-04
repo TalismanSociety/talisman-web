@@ -1,13 +1,14 @@
-import { HarmlessError } from './errors'
 import { init, reactRouterV6Instrumentation } from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
 import { useEffect } from 'react'
 import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType } from 'react-router-dom'
 
+import { HarmlessError } from './errors'
+
 export const initSentry = () =>
   init({
-    dsn: import.meta.env.REACT_APP_SENTRY_DSN,
-    release: import.meta.env.REACT_APP_SENTRY_RELEASE,
+    dsn: import.meta.env.VITE_SENTRY_DSN,
+    release: import.meta.env.VITE_SENTRY_RELEASE,
     integrations: [
       new BrowserTracing({
         routingInstrumentation: reactRouterV6Instrumentation(

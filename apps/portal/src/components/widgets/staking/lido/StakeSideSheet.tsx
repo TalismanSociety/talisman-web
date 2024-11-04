@@ -1,8 +1,9 @@
-import { lidoSuitesState } from '../../../../domains/staking/lido/recoils'
-import LidoWidgetSideSheet from './LidoWidgetSideSheet'
 import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
+
+import { lidoSuitesState } from '../../../../domains/staking/lido/recoils'
+import LidoWidgetSideSheet from './LidoWidgetSideSheet'
 
 const StakeSideSheet = () => {
   const lidoSuites = useRecoilValue(lidoSuitesState)
@@ -28,7 +29,7 @@ const StakeSideSheet = () => {
 
   return (
     <LidoWidgetSideSheet
-      url={`https://stake.lido.fi/?ref=${import.meta.env.REACT_APP_LIDO_REWARDS_ADDRESS}`}
+      url={`https://stake.lido.fi/?ref=${import.meta.env.VITE_LIDO_REWARDS_ADDRESS}`}
       lidoSuite={lidoSuite}
       onRequestDismiss={() =>
         setSearchParams(sp => {

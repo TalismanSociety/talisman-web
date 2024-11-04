@@ -1,39 +1,10 @@
-import { substrateApiGetterAtom } from '../../../domains/common/recoils/api'
-import { popularTokens, talismanTokens } from './curated-tokens'
-import { knownEvmNetworksAtom } from './helpers'
-import { swapInfoTabAtom } from './side-panel'
-import { chainflipSwapModule, type ChainflipSwapActivityData } from './swap-modules/chainflip.swap-module'
-import {
-  fromAmountAtom,
-  fromAssetAtom,
-  swappingAtom,
-  swapQuoteRefresherAtom,
-  swapsAtom,
-  toAssetAtom,
-  type BaseQuote,
-  type SwappableAssetBaseType,
-  type SupportedSwapProtocol,
-  type SwapActivity,
-  SwappableAssetWithDecimals,
-  selectedProtocolAtom,
-  quoteSortingAtom,
-  fromEvmAddressAtom,
-  fromSubstrateAddressAtom,
-  toEvmAddressAtom,
-  toSubstrateAddressAtom,
-  selectedSubProtocolAtom,
-} from './swap-modules/common.swap-module'
-import { lifiSwapModule } from './swap-modules/lifi.swap-module'
-import { simpleswapSwapModule } from './swap-modules/simpleswap-swap-module'
-import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts'
-import { substrateApiState } from '@/domains/common'
-import { connectedSubstrateWalletState } from '@/domains/extension'
+import type { PrimitiveAtom } from 'jotai'
 import * as sdk from '@lifi/sdk'
 import { evmErc20TokenId } from '@talismn/balances'
 import { tokenRatesAtom, tokensByIdAtom, useTokens } from '@talismn/balances-react'
 import { Decimal } from '@talismn/math'
 import { toast } from '@talismn/ui'
-import { Atom, atom, Getter, useAtom, useAtomValue, useSetAtom, type PrimitiveAtom } from 'jotai'
+import { Atom, atom, Getter, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { atomFamily, loadable, useAtomCallback } from 'jotai/utils'
 import { Loadable } from 'jotai/vanilla/utils/loadable'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -42,9 +13,44 @@ import { createPublicClient, erc20Abi, http, isAddress } from 'viem'
 import * as allEvmChains from 'viem/chains'
 import { useWalletClient } from 'wagmi'
 
-const coingeckoApiUrl = import.meta.env.REACT_APP_COIN_GECKO_API
-const coingeckoApiKey = import.meta.env.REACT_APP_COIN_GECKO_API_KEY
-const coingeckoTier = import.meta.env.REACT_APP_COIN_GECKO_API_TIER
+import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts'
+import { substrateApiState } from '@/domains/common'
+import { connectedSubstrateWalletState } from '@/domains/extension'
+
+import type { ChainflipSwapActivityData } from './swap-modules/chainflip.swap-module'
+import type {
+  BaseQuote,
+  SupportedSwapProtocol,
+  SwapActivity,
+  SwappableAssetBaseType,
+} from './swap-modules/common.swap-module'
+import { substrateApiGetterAtom } from '../../../domains/common/recoils/api'
+import { popularTokens, talismanTokens } from './curated-tokens'
+import { knownEvmNetworksAtom } from './helpers'
+import { swapInfoTabAtom } from './side-panel'
+import { chainflipSwapModule } from './swap-modules/chainflip.swap-module'
+import {
+  fromAmountAtom,
+  fromAssetAtom,
+  fromEvmAddressAtom,
+  fromSubstrateAddressAtom,
+  quoteSortingAtom,
+  selectedProtocolAtom,
+  selectedSubProtocolAtom,
+  SwappableAssetWithDecimals,
+  swappingAtom,
+  swapQuoteRefresherAtom,
+  swapsAtom,
+  toAssetAtom,
+  toEvmAddressAtom,
+  toSubstrateAddressAtom,
+} from './swap-modules/common.swap-module'
+import { lifiSwapModule } from './swap-modules/lifi.swap-module'
+import { simpleswapSwapModule } from './swap-modules/simpleswap-swap-module'
+
+const coingeckoApiUrl = import.meta.env.VITE_COIN_GECKO_API
+const coingeckoApiKey = import.meta.env.VITE_COIN_GECKO_API_KEY
+const coingeckoTier = import.meta.env.VITE_COIN_GECKO_API_TIER
 
 const swapModules = [chainflipSwapModule, simpleswapSwapModule, lifiSwapModule]
 const ETH_LOGO = 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg'
@@ -64,30 +70,33 @@ const getTokensByChainId = async (
   const knownEvmTokens = await get(knownEvmNetworksAtom)
   const otherKnownTokens = await get(tokensByIdAtom)
   const tokens = (await Promise.all(allTokensSelector.map(get))).flat()
-  return tokens.reduce((acc, cur) => {
-    const tokens = acc[cur.chainId.toString()] ?? {}
-    const tokenDetails =
-      knownEvmTokens[cur.chainId.toString()]?.tokens[cur.id] ??
-      otherKnownTokens[cur.id] ??
-      btcTokens[cur.id as 'btc-native']
+  return tokens.reduce(
+    (acc, cur) => {
+      const tokens = acc[cur.chainId.toString()] ?? {}
+      const tokenDetails =
+        knownEvmTokens[cur.chainId.toString()]?.tokens[cur.id] ??
+        otherKnownTokens[cur.id] ??
+        btcTokens[cur.id as 'btc-native']
 
-    const symbol = tokenDetails?.symbol ?? cur.symbol
-    const decimals = tokenDetails?.decimals ?? cur.decimals
-    const image = symbol?.toLowerCase() === 'eth' ? ETH_LOGO : cur.image
-    if (!symbol || !decimals) return acc
-    tokens[cur.id] = {
-      ...cur,
-      symbol,
-      decimals,
-      image,
-      context: {
-        ...tokens[cur.id]?.context,
-        ...cur.context,
-      },
-    }
-    acc[cur.chainId.toString()] = tokens
-    return acc
-  }, {} as Record<string, Record<string, SwappableAssetWithDecimals>>)
+      const symbol = tokenDetails?.symbol ?? cur.symbol
+      const decimals = tokenDetails?.decimals ?? cur.decimals
+      const image = symbol?.toLowerCase() === 'eth' ? ETH_LOGO : cur.image
+      if (!symbol || !decimals) return acc
+      tokens[cur.id] = {
+        ...cur,
+        symbol,
+        decimals,
+        image,
+        context: {
+          ...tokens[cur.id]?.context,
+          ...cur.context,
+        },
+      }
+      acc[cur.chainId.toString()] = tokens
+      return acc
+    },
+    {} as Record<string, Record<string, SwappableAssetWithDecimals>>
+  )
 }
 
 const getCoingeckoCategoryTokens = async (
@@ -216,9 +225,9 @@ export const coingeckoCategoriesAtom = atom(async () => {
 
 export const coingeckoCoinsByCategoryAtom = atomFamily((category: string) =>
   atom(async () => {
-    const apiUrl = import.meta.env.REACT_APP_COIN_GECKO_API
-    const apiKey = import.meta.env.REACT_APP_COIN_GECKO_API_KEY
-    const tier = import.meta.env.REACT_APP_COIN_GECKO_API_TIER
+    const apiUrl = import.meta.env.VITE_COIN_GECKO_API
+    const apiKey = import.meta.env.VITE_COIN_GECKO_API_KEY
+    const tier = import.meta.env.VITE_COIN_GECKO_API_TIER
     const response = await fetch(
       `${apiUrl}/api/v3/coins/markets?vs_currency=usd&category=${category}&include_platform=true`,
       {
@@ -756,8 +765,8 @@ export const useToAccount = () => {
 }
 
 export const categoriesAtom = atom(async () => {
-  const api = import.meta.env.REACT_APP_COIN_GECKO_API
-  const apiKey = import.meta.env.REACT_APP_COIN_GECKO_API_KEY
+  const api = import.meta.env.VITE_COIN_GECKO_API
+  const apiKey = import.meta.env.VITE_COIN_GECKO_API_KEY
 
   const response = await fetch(`${api}/api/v3//coins/markets?vs_currency=usd&category=wallets`, {
     headers: {
