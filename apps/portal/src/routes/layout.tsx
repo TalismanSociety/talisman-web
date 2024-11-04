@@ -213,7 +213,7 @@ const Layout = () => {
   const posthog = usePostHog()
   const location = useLocation()
 
-  console.log(process.env)
+  console.log(import.meta.env)
   useEffect(() => {
     if (location.hash !== '') {
       const observer = new MutationObserver(() => {
