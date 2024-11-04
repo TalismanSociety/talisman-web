@@ -1,40 +1,18 @@
-import Discord from '../assets/icons/discord-header.svg?react'
-import GitHub from '../assets/icons/github-header.svg?react'
-import Medium from '../assets/icons/medium-header.svg?react'
-import Twitter from '../assets/icons/twitter-header.svg?react'
-import { ModalProvider } from '../components/legacy'
-import { Total } from '../components/legacy/archetypes/Wallet'
-import AccountValueInfo from '../components/recipes/AccountValueInfo'
-import { useShouldShowAccountConnectionGuard } from '../components/widgets/AccountConnectionGuard'
-import AccountsManagementMenu from '../components/widgets/AccountsManagementMenu'
-import WalletConnectionSideSheet, {
-  walletConnectionSideSheetOpenState,
-} from '../components/widgets/WalletConnectionSideSheet'
-import DappStakingStakeSideSheet from '../components/widgets/staking/dappStaking/StakeSideSheet'
-import LidoStakeSideSheet from '../components/widgets/staking/lido/StakeSideSheet'
-import SlpxStakeSideSheet from '../components/widgets/staking/slpx/StakeSideSheet'
-import SlpxSubstrateStakeSideSheet from '../components/widgets/staking/slpxSubstrate/StakeSideSheet'
-import NominationPoolsStakeSideSheet from '../components/widgets/staking/substrate/NominationPoolsStakeSideSheet'
-import { StakeSideSheet as SubtensorStakeSideSheet } from '../components/widgets/staking/subtensor/StakeSideSheet'
-import { lookupAccountAddressState, selectedAccountsState } from '../domains/accounts'
-import { currencyConfig, selectedCurrencyState } from '../domains/balances'
-import { useHasActiveWalletConnection } from '../domains/extension'
-import { isNilOrWhitespace } from '../util/nil'
 import { useTheme } from '@emotion/react'
 import {
   Button,
+  createPortal,
   IconButton,
   NavigationBar,
   NavigationDrawer,
   NavigationRail,
-  SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR,
   Scaffold,
+  SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR,
   SearchBar,
   Select,
   SurfaceIconButton,
   Text,
   TopAppBar,
-  createPortal,
 } from '@talismn/ui'
 import {
   Compass,
@@ -53,6 +31,29 @@ import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+
+import Discord from '../assets/icons/discord-header.svg?react'
+import GitHub from '../assets/icons/github-header.svg?react'
+import Medium from '../assets/icons/medium-header.svg?react'
+import Twitter from '../assets/icons/twitter-header.svg?react'
+import { ModalProvider } from '../components/legacy'
+import { Total } from '../components/legacy/archetypes/Wallet'
+import AccountValueInfo from '../components/recipes/AccountValueInfo'
+import { useShouldShowAccountConnectionGuard } from '../components/widgets/AccountConnectionGuard'
+import AccountsManagementMenu from '../components/widgets/AccountsManagementMenu'
+import DappStakingStakeSideSheet from '../components/widgets/staking/dappStaking/StakeSideSheet'
+import LidoStakeSideSheet from '../components/widgets/staking/lido/StakeSideSheet'
+import SlpxStakeSideSheet from '../components/widgets/staking/slpx/StakeSideSheet'
+import SlpxSubstrateStakeSideSheet from '../components/widgets/staking/slpxSubstrate/StakeSideSheet'
+import NominationPoolsStakeSideSheet from '../components/widgets/staking/substrate/NominationPoolsStakeSideSheet'
+import { StakeSideSheet as SubtensorStakeSideSheet } from '../components/widgets/staking/subtensor/StakeSideSheet'
+import WalletConnectionSideSheet, {
+  walletConnectionSideSheetOpenState,
+} from '../components/widgets/WalletConnectionSideSheet'
+import { lookupAccountAddressState, selectedAccountsState } from '../domains/accounts'
+import { currencyConfig, selectedCurrencyState } from '../domains/balances'
+import { useHasActiveWalletConnection } from '../domains/extension'
+import { isNilOrWhitespace } from '../util/nil'
 
 const CurrencySelect = () => {
   const [currency, setCurrency] = useRecoilState(selectedCurrencyState)
@@ -212,6 +213,7 @@ const Layout = () => {
   const posthog = usePostHog()
   const location = useLocation()
 
+  console.log(process.env)
   useEffect(() => {
     if (location.hash !== '') {
       const observer = new MutationObserver(() => {
