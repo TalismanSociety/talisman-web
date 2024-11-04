@@ -50,7 +50,7 @@ jobs:
             LIFI_SECRET
           environmentVariableVariables: >-
             APPLICATION_NAME
-          environmentVariablePrefix: REACT_APP_
+          environmentVariablePrefix: VITE_
 
       - uses: ./.github/actions/setup
       - run: npx playwright install --with-deps

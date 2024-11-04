@@ -43,7 +43,7 @@ jobs:
       projectName: ${{ vars.PORTAL_PROJECT_NAME }}
       buildCommand: >-
         NODE_OPTIONS=--max_old_space_size=10240
-        REACT_APP_SENTRY_RELEASE=${{ github.sha }}
+        VITE_SENTRY_RELEASE=${{ github.sha }}
         yarn turbo run build --filter=portal -- --sourcemap
       outputDirectory: apps/portal/build
       sentryReleaseVersion: ${{ github.sha }}
@@ -64,5 +64,5 @@ jobs:
       #   LIFI_SECRET
       # environmentVariableVariables: >-
       #   APPLICATION_NAME
-      # environmentVariablePrefix: REACT_APP_
+      # environmentVariablePrefix: VITE_
     secrets: inherit

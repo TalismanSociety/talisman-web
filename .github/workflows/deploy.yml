@@ -36,7 +36,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-        env: ${{ secrets }}
+
+      # this will inject all github secrets and variables as environment variables
+      - name: Set environment variables
+        run: |
+          # Export secrets
+          echo "${{ toJSON(secrets) }}" | jq -r 'to_entries | .[] | "echo \(.key)=\(.value) >> $GITHUB_ENV"' | sh
+          # Export variables
+          echo "${{ toJSON(vars) }}" | jq -r 'to_entries | .[] | "echo \(.key)=\(.value) >> $GITHUB_ENV"' | sh
       # - uses: ./.github/actions/load-environment-variables
       #   with:
       #     secrets: ${{ toJson(secrets) }}
@@ -60,8 +67,7 @@ jobs:
       - if: vars.SENTRY_PROJECT != null
         uses: getsentry/action-release@v1
         env:
-          ${{ insert }}: ${{ secrets }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.VITE_SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
         with:

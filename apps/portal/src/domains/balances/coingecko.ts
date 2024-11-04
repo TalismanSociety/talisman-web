@@ -1,14 +1,14 @@
 import urlJoin from 'url-join'
 
 export const coingeckoConfig = {
-  apiUrl: import.meta.env.REACT_APP_COIN_GECKO_API,
-  apiKeyValue: import.meta.env.REACT_APP_COIN_GECKO_API_KEY,
+  apiUrl: import.meta.env.VITE_COIN_GECKO_API,
+  apiKeyValue: import.meta.env.VITE_COIN_GECKO_API_KEY,
   apiKeyName:
-    import.meta.env.REACT_APP_COIN_GECKO_API_TIER === 'pro'
+    import.meta.env.VITE_COIN_GECKO_API_TIER === 'pro'
       ? 'x-cg-pro-api-key'
-      : import.meta.env.REACT_APP_COIN_GECKO_API_TIER === 'demo'
-      ? 'x-cg-demo-api-key'
-      : undefined,
+      : import.meta.env.VITE_COIN_GECKO_API_TIER === 'demo'
+        ? 'x-cg-demo-api-key'
+        : undefined,
 }
 
 type CoinGeckoAssetPlatform = {
