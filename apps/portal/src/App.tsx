@@ -49,30 +49,32 @@ const App = () => (
           </div>
         )}
       >
-        <PostHogProvider apiKey={import.meta.env.VITE_POSTHOG_AUTH_TOKEN}>
-          <EvmProvider>
-            <PolkadotApiProvider
-              queryState={chainQueryState}
-              deriveState={chainDeriveState}
-              queryMultiState={chainQueryMultiState}
-            >
-              <Portfolio.Provider>
-                <TalismanProvider>
-                  <ExtensionWatcher />
-                  <AccountWatcher />
-                  <SignetWatcher />
-                  <TalismanExtensionSynchronizer />
-                  <BalancesWatcher />
-                  <Suspense fallback={<Loader />}>
-                    <RouterProvider router={router} />
-                  </Suspense>
-                  <FairyBreadBanner />
-                  <Development />
-                </TalismanProvider>
-              </Portfolio.Provider>
-            </PolkadotApiProvider>
-          </EvmProvider>
-        </PostHogProvider>
+        <Suspense fallback={<Loader />}>
+          <PostHogProvider apiKey={import.meta.env.VITE_POSTHOG_AUTH_TOKEN}>
+            <EvmProvider>
+              <PolkadotApiProvider
+                queryState={chainQueryState}
+                deriveState={chainDeriveState}
+                queryMultiState={chainQueryMultiState}
+              >
+                <Portfolio.Provider>
+                  <TalismanProvider>
+                    <ExtensionWatcher />
+                    <AccountWatcher />
+                    <SignetWatcher />
+                    <TalismanExtensionSynchronizer />
+                    <BalancesWatcher />
+                    <Suspense fallback={<Loader />}>
+                      <RouterProvider router={router} />
+                    </Suspense>
+                    <FairyBreadBanner />
+                    <Development />
+                  </TalismanProvider>
+                </Portfolio.Provider>
+              </PolkadotApiProvider>
+            </EvmProvider>
+          </PostHogProvider>
+        </Suspense>
       </ErrorBoundary>
     </RecoilRoot>
   </ThemeProvider>

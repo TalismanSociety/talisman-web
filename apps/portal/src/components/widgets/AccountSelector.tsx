@@ -1,30 +1,42 @@
+import { useBalances } from '@talismn/balances-react'
+import { Button, CircularProgressIndicator, Select } from '@talismn/ui'
+import { encodeAnyAddress } from '@talismn/util'
+import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
+import { usePrevious } from 'react-use'
+import { useSetRecoilState } from 'recoil'
+
 import { type Account } from '../../domains/accounts/recoils'
 import { useHasActiveWalletConnection } from '../../domains/extension'
 import { shortenAddress } from '../../util/format'
 import AccountIcon from '../molecules/AccountIcon/AccountIcon'
 import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
-import { useBalances } from '@talismn/balances-react'
-import { Button, CircularProgressIndicator, Select } from '@talismn/ui'
-import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
-import { usePrevious } from 'react-use'
-import { useSetRecoilState } from 'recoil'
 
 export type AccountSelectorProps = {
-  width?: number | string
   accounts: Account[]
+  prefix?: number
   selectedAccount?: Account | string
   onChangeSelectedAccount: (account: Account | undefined) => unknown
   inTransition?: boolean
   withBalance?: boolean
 }
 
-const AccountSelector = (props: AccountSelectorProps) => {
+const AccountSelector = ({
+  accounts,
+  prefix = 42,
+  selectedAccount,
+  onChangeSelectedAccount,
+  inTransition,
+  withBalance,
+}: AccountSelectorProps) => {
   const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
   const hasActiveWalletConnection = useHasActiveWalletConnection()
   const balances = useBalances()
   const onChangeAccount = useCallback(
-    (address: string | undefined) => props.onChangeSelectedAccount(props.accounts.find(x => x.address === address)),
-    [props]
+    (address: string | undefined) =>
+      onChangeSelectedAccount(
+        address ? accounts.find(x => encodeAnyAddress(x.address) === encodeAnyAddress(address)) : undefined
+      ),
+    [accounts, onChangeSelectedAccount]
   )
 
   if (!hasActiveWalletConnection) {
@@ -35,28 +47,32 @@ const AccountSelector = (props: AccountSelectorProps) => {
     )
   }
 
-  const selectedValue =
-    typeof props.selectedAccount === 'string' ? props.selectedAccount : props.selectedAccount?.address
+  const selectedValue = typeof selectedAccount === 'string' ? selectedAccount : selectedAccount?.address
 
   return (
     <Select
-      className="w-full [&>button]:!py-[12px] [&>button]:!rounded-[8px] [&>button>div]:w-full mt-[8px]"
+      className="mt-[8px] w-full [&>button>div]:w-full [&>button]:!rounded-[8px] [&>button]:!py-[12px]"
       placeholder={<Select.Option headlineContent="Select an account" />}
       value={selectedValue}
       onChangeValue={onChangeAccount}
       renderSelected={
-        props.inTransition
+        inTransition
           ? address => {
-              const selectedAccount = props.accounts.find(x => x.address === address)
+              const selectedAccount = address
+                ? accounts.find(x => encodeAnyAddress(x.address) === encodeAnyAddress(address))
+                : undefined
               return (
                 <Select.Option
-                  className=""
                   leadingIcon={<CircularProgressIndicator size="4rem" />}
                   supportingContent={
-                    selectedAccount && selectedAccount.name ? shortenAddress(selectedAccount.address) : ''
+                    selectedAccount && selectedAccount.name
+                      ? shortenAddress(encodeAnyAddress(selectedAccount.address, prefix))
+                      : ''
                   }
                   headlineContent={
-                    selectedAccount === undefined ? '' : selectedAccount.name ?? shortenAddress(selectedAccount.address)
+                    selectedAccount
+                      ? selectedAccount.name ?? shortenAddress(encodeAnyAddress(selectedAccount.address, prefix))
+                      : ''
                   }
                 />
               )
@@ -64,28 +80,30 @@ const AccountSelector = (props: AccountSelectorProps) => {
           : undefined
       }
     >
-      {props.accounts.map(x => (
+      {accounts.map(x => (
         <Select.Option
-          key={x.address}
-          value={x.address}
+          key={encodeAnyAddress(x.address, prefix)}
+          value={encodeAnyAddress(x.address, prefix)}
           leadingIcon={<AccountIcon account={x} size="32px" />}
           className="!w-full [&>div]:w-full"
           headlineContent={
-            <div className="flex items-center justify-between w-full">
-              <div>
-                <p className="!leading-none !mb-[4px] font-semibold">{x.name ?? shortenAddress(x.address)}</p>
+            <div className="flex w-full items-center justify-between">
+              <div className="overflow-hidden">
+                <p className="!mb-[4px] truncate font-semibold !leading-none">
+                  {x.name ?? shortenAddress(encodeAnyAddress(x.address, prefix))}
+                </p>
                 {x.name ? (
-                  <p className="!text-[12px] !text-gray-300 brightness-100 !leading-none">
-                    {shortenAddress(x.address)}
+                  <p className="truncate !text-[12px] !leading-none !text-gray-300 brightness-100">
+                    {shortenAddress(encodeAnyAddress(x.address, prefix))}
                   </p>
                 ) : null}
               </div>
 
-              {props.withBalance ? (
-                <p className="text-gray-400 text-[14px]">
+              {withBalance ? (
+                <p className="text-[14px] text-gray-400">
                   $
                   {balances
-                    .find(q => q.address === x.address)
+                    .find(q => encodeAnyAddress(q.address) === encodeAnyAddress(x.address))
                     .sum.fiat('usd')
                     .transferable.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
@@ -112,8 +130,8 @@ export const useAccountSelector = (
       typeof initialAccount === 'function'
         ? initialAccount(accounts)
         : typeof initialAccount === 'number'
-        ? accounts.at(initialAccount)
-        : initialAccount,
+          ? accounts.at(initialAccount)
+          : initialAccount,
     [initialAccount]
   )
 
@@ -131,8 +149,14 @@ export const useAccountSelector = (
     }
   }, [account, accounts, accountsUpdated, getInitialAccount])
 
+  const selectedAccount = account
+    ? accounts.find(
+        x => encodeAnyAddress(x.address) === encodeAnyAddress(account.address) && x.origin === account.origin
+      )
+    : undefined
+
   return [
-    [accounts.find(x => x.address === account?.address && x.origin === account?.origin), setAccount] as const,
+    [selectedAccount, setAccount] as const,
     // eslint-disable-next-line react/jsx-key
     <AccountSelector
       {...accountSelectorProps}
