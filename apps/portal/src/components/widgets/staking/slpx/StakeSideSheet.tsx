@@ -1,13 +1,3 @@
-import { evmSignableAccountsState, writeableEvmAccountsState } from '../../../../domains/accounts'
-import { ChainProvider } from '../../../../domains/chains'
-import { slpxPairsState, useMintForm, type SlpxPair } from '../../../../domains/staking/slpx'
-import { Maybe } from '../../../../util/monads'
-import { SlpxAddStakeForm } from '../../../recipes/AddStakeDialog'
-import { useAccountSelector } from '../../AccountSelector'
-import { walletConnectionSideSheetOpenState } from '../../WalletConnectionSideSheet'
-import Apr from './Apr'
-import UnlockDuration from './UnlockDuration'
-import { Tooltip } from '@talismn/ui'
 import {
   Button,
   CircularProgressIndicator,
@@ -15,13 +5,26 @@ import {
   SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR,
   SideSheet,
   Surface,
-  Text,
   SurfaceChip,
+  Text,
+  Tooltip,
 } from '@talismn/ui'
-import { Zap, Clock } from '@talismn/web-icons'
+import { Clock, Zap } from '@talismn/web-icons'
 import { Suspense, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
+
+import { useSlpxAprState } from '@/domains/staking/slpx'
+
+import type { SlpxPair } from '../../../../domains/staking/slpx'
+import { evmSignableAccountsState, writeableEvmAccountsState } from '../../../../domains/accounts'
+import { ChainProvider } from '../../../../domains/chains'
+import { slpxPairsState, useMintForm } from '../../../../domains/staking/slpx'
+import { Maybe } from '../../../../util/monads'
+import { SlpxAddStakeForm } from '../../../recipes/AddStakeDialog'
+import { useAccountSelector } from '../../AccountSelector'
+import { walletConnectionSideSheetOpenState } from '../../WalletConnectionSideSheet'
+import UnlockDuration from './UnlockDuration'
 
 type AddStakeSideSheetProps = {
   slpxPair: SlpxPair
@@ -63,7 +66,10 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
           overlineContent="Rewards"
           headlineContent={
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-              <Apr slpxPair={props.slpxPair} />
+              {useSlpxAprState({
+                apiEndpoint: props.slpxPair.apiEndpoint,
+                nativeTokenSymbol: props.slpxPair.nativeToken.symbol,
+              }).toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}
             </Suspense>
           }
         />
@@ -82,8 +88,8 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
             !ready || +amount === 0
               ? 'disabled'
               : mint.isPending || approve.isPending || approveTransaction.isLoading
-              ? 'pending'
-              : undefined
+                ? 'pending'
+                : undefined
           }
           approvalNeeded={approvalNeeded}
           accountSelector={
@@ -127,7 +133,7 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
           Learn more
         </Text.Noop.A>
       </Text.Body>
-      <div className="flex justify-end mt-2">
+      <div className="mt-2 flex justify-end">
         <Tooltip content="Transaction may take several minutes to complete">
           <SurfaceChip className="cursor-default">
             <Clock />

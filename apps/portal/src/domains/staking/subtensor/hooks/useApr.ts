@@ -4,9 +4,14 @@ import { highestAprTaoValidatorAtom } from '../atoms/taostats'
 import { useDelegateStats } from './useDelegateStats'
 
 export const useHighestAprFormatted = () => {
-  const { apr = '0' } = useAtomValue(highestAprTaoValidatorAtom) ?? {}
+  const apr = useHighestApr()
 
   return Number(apr).toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
+}
+export const useHighestApr = () => {
+  const { apr } = useAtomValue(highestAprTaoValidatorAtom) ?? {}
+
+  return Number(apr)
 }
 
 export const useDelegateApr = (hotkey: string) => {
