@@ -1,43 +1,35 @@
+import type { Chain as ChaindataChain, Token as ChaindataToken } from '@talismn/chaindata-provider'
 import type { RecoilValueReadOnly } from 'recoil'
-import { type Chain as ChainData, type Token } from '@talismn/chaindata-provider'
+import { chaindataChainByGenesisHashUrl, chaindataTokenByIdUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { useContext } from 'react'
 import { atom, selector, selectorFamily, waitForAll } from 'recoil'
 
 import { ChainContext } from '.'
-import { Maybe } from '../../util/monads'
 import { nullToUndefined } from '../../util/nullToUndefine'
 import { selectedCurrencyState } from '../balances'
 import { substrateApiState, useSubstrateApiEndpoint } from '../common'
 import { storageEffect } from '../common/effects'
 import { chainConfigs } from './config'
 
-const CHAINDATA_API = import.meta.env.VITE_CHAINDATA
-if (!CHAINDATA_API && import.meta.env.DEV) throw new Error('env var VITE_CHAINDATA not set')
-
 export const chainState = selectorFamily({
   key: 'Chain',
   get:
     ({ genesisHash }: { genesisHash: string }) =>
-    async () =>
-      nullToUndefined(
-        await (
-          fetch(new URL(`./chains/byGenesisHash/${genesisHash}.json`, CHAINDATA_API)).then(
-            async x => await x.json()
-          ) as Promise<ChainData>
-        ).then(async x => ({
-          ...x,
-          nativeToken: await Maybe.of(x.nativeToken).mapOrUndefined(
-            async token =>
-              await fetch(new URL(`./tokens/byId/${token.id}.json`, CHAINDATA_API)).then(
-                async response => (await response.json()) as Token
-              )
-          ),
-          rpc: x.rpcs?.at(0)?.url,
+    async () => {
+      const chain: ChaindataChain = await (await fetch(chaindataChainByGenesisHashUrl(genesisHash))).json()
+      const nativeToken: ChaindataToken | undefined = chain.nativeToken
+        ? await fetch(chaindataTokenByIdUrl(chain.nativeToken.id)).then(response => response.json())
+        : undefined
 
-          ...chainConfigs.find(y => y.genesisHash === x.genesisHash)!,
-        }))
-      ),
+      return nullToUndefined({
+        ...chain,
+        nativeToken,
+        rpc: chain.rpcs?.at(0)?.url,
+
+        ...chainConfigs.find(c => c.genesisHash === chain.genesisHash),
+      })
+    },
 })
 
 export type ChainInfo = ReturnType<typeof chainState> extends RecoilValueReadOnly<infer R> ? R : never
