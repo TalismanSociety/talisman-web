@@ -50,7 +50,7 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
       display: 'flex',
       alignItems: 'center',
       gap: '1rem',
-      overflowX: 'hidden',
+      overflow: 'hidden',
     }}
   >
     {props.leadingIcon && (
@@ -58,11 +58,11 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
         {props.leadingIcon}
       </figure>
     )}
-    <div css={{ overflowX: 'hidden' }}>
-      <Text.Body as="div" alpha="high" css={{ overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+    <div css={{ overflow: 'hidden' }}>
+      <Text.Body as="div" alpha="high" css={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {props.headlineContent}
       </Text.Body>
-      <Text.Body as="div" css={{ overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <Text.Body as="div" css={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {props.supportingContent}
       </Text.Body>
     </div>
