@@ -94,7 +94,7 @@ export const Form = ({ tokenSelect, destTokenSelect, ...props }: FormProps) => {
               </div>
             )
           }
-          leadingSupportingText={props.amountError && <TextInput.ErrorLabel>{props.amountError}</TextInput.ErrorLabel>}
+          leadingSupportingText={props.amountError && <div className="text-orange-400">{props.amountError}</div>}
           value={props.amount ?? ''}
           onChangeText={props.onChangeAmount}
           trailingIcon={
