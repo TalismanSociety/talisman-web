@@ -11,9 +11,9 @@ import { Option } from '@polkadot/types-codec'
 import {
   AssetMinBuilder,
   BalanceBuilder,
-  BalanceBuilderSubstrateForeignAssets,
+  // BalanceBuilderSubstrateForeignAssets,
   ExtrinsicBuilder,
-  ForeignAssetsMinBuilder,
+  // ForeignAssetsMinBuilder,
 } from './xcm-cfg-builders'
 
 const assetHubXcmDeliveryFee = 0.036
@@ -107,68 +107,68 @@ export const talismanRoutes: Array<(ctx: TalismanRoutesContext) => TalismanRoute
     }
   }),
 
-  withHelpers(({ getAsset, getChain }) => {
-    const assetKey = 'myth'
-    const aChainKey = 'assethub'
-    const bChainKey = 'mythos'
+  // withHelpers(({ getAsset, getChain }) => {
+  //   const assetKey = 'myth'
+  //   const aChainKey = 'assethub'
+  //   const bChainKey = 'mythos'
 
-    const myth = getAsset(assetKey)
-    const assethub = getChain(aChainKey)
-    const mythos = getChain(bChainKey)
+  //   const myth = getAsset(assetKey)
+  //   const assethub = getChain(aChainKey)
+  //   const mythos = getChain(bChainKey)
 
-    return {
-      assetKey,
-      aChainKey,
-      bChainKey,
+  //   return {
+  //     assetKey,
+  //     aChainKey,
+  //     bChainKey,
 
-      // TODO: Fix AH -> Mythos route (needs to use ForeignAssets pallet for all interactions, instead of Assets pallet)
-      aRoute: new AssetRoute({
-        source: {
-          asset: myth,
-          balance: BalanceBuilderSubstrateForeignAssets().account(),
-          destinationFee: {
-            balance: BalanceBuilderSubstrateForeignAssets().account(),
-          },
-          min: ForeignAssetsMinBuilder().assets().asset(),
-        },
-        destination: {
-          chain: mythos,
-          asset: myth,
-          // TODO: Find actual amount
-          fee: {
-            amount: 1,
-            asset: myth,
-          },
-        },
-        // extrinsic: ExtrinsicBuilder().polkadotXcm().limitedTeleportAssets(0).here(),
-      }),
-      aAssetData: {
-        asset: myth,
-        decimals: 18,
-        id: { parents: 1, interior: { X1: { Parachain: 3369 } } },
-        balanceId: { parents: 1, interior: { X1: { Parachain: 3369 } } },
-        min: 0.01,
-      },
-      bRoute: new AssetRoute({
-        source: {
-          asset: myth,
-          balance: BalanceBuilder().substrate().system().account(),
-          destinationFee: {
-            balance: BalanceBuilder().substrate().system().account(),
-          },
-        },
-        destination: {
-          chain: assethub,
-          asset: myth,
-          fee: {
-            amount: 0.038,
-            asset: myth,
-          },
-        },
-        extrinsic: ExtrinsicBuilder().polkadotXcm().limitedTeleportAssets(0).here(),
-      }),
-    }
-  }),
+  //     // TODO: Fix AH -> Mythos route (needs to use ForeignAssets pallet for all interactions, instead of Assets pallet)
+  //     aRoute: new AssetRoute({
+  //       source: {
+  //         asset: myth,
+  //         balance: BalanceBuilderSubstrateForeignAssets().account(),
+  //         destinationFee: {
+  //           balance: BalanceBuilderSubstrateForeignAssets().account(),
+  //         },
+  //         min: ForeignAssetsMinBuilder().assets().asset(),
+  //       },
+  //       destination: {
+  //         chain: mythos,
+  //         asset: myth,
+  //         // TODO: Find actual amount
+  //         fee: {
+  //           amount: 1,
+  //           asset: myth,
+  //         },
+  //       },
+  //       // extrinsic: ExtrinsicBuilder().polkadotXcm().limitedTeleportAssets(0).here(),
+  //     }),
+  //     aAssetData: {
+  //       asset: myth,
+  //       decimals: 18,
+  //       id: { parents: 1, interior: { X1: { Parachain: 3369 } } },
+  //       balanceId: { parents: 1, interior: { X1: { Parachain: 3369 } } },
+  //       min: 0.01,
+  //     },
+  //     bRoute: new AssetRoute({
+  //       source: {
+  //         asset: myth,
+  //         balance: BalanceBuilder().substrate().system().account(),
+  //         destinationFee: {
+  //           balance: BalanceBuilder().substrate().system().account(),
+  //         },
+  //       },
+  //       destination: {
+  //         chain: assethub,
+  //         asset: myth,
+  //         fee: {
+  //           amount: 0.038,
+  //           asset: myth,
+  //         },
+  //       },
+  //       extrinsic: ExtrinsicBuilder().polkadotXcm().limitedTeleportAssets(0).here(),
+  //     }),
+  //   }
+  // }),
 ]
 
 export type TalismanRoute = {
