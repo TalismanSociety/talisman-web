@@ -3056,10 +3056,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@galacticcouncil/api-augment@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@galacticcouncil/api-augment@npm:0.2.0"
-  checksum: 10c0/f975d76647190b0c7dafe97dd9ed956ab24c82bbb227c25a1294ff0cb4a0529a223cbef6e8d047a7b6c05cf4b6c12777c10b7cddabc0b7d8da09022dadf11fe6
+"@galacticcouncil/api-augment@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@galacticcouncil/api-augment@npm:0.3.0"
+  checksum: 10c0/18f1789ece1406e68259f05f0d2ad854245cb52b1edc0fb481e121a13acef199ac82d6952799f5fc14b1ce96445f6e011629c987a98644403a7cbbe62323fb0d
   languageName: node
   linkType: hard
 
@@ -3098,9 +3098,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@galacticcouncil/sdk@npm:^4.2.1":
-  version: 4.2.1
-  resolution: "@galacticcouncil/sdk@npm:4.2.1"
+"@galacticcouncil/sdk@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "@galacticcouncil/sdk@npm:4.5.0"
   dependencies:
     "@galacticcouncil/math-lbp": "npm:^1.0.0"
     "@galacticcouncil/math-liquidity-mining": "npm:^1.0.0"
@@ -3111,37 +3111,37 @@ __metadata:
     bignumber.js: "npm:^9.1.0"
     lodash.clonedeep: "npm:^4.5.0"
   peerDependencies:
-    "@polkadot/api": ^12.1.1
-    "@polkadot/api-augment": ^12.1.1
-    "@polkadot/api-base": ^12.1.1
-    "@polkadot/api-derive": ^12.1.1
-    "@polkadot/keyring": ^12.6.2
-    "@polkadot/rpc-augment": ^12.1.1
-    "@polkadot/rpc-core": ^12.1.1
-    "@polkadot/rpc-provider": ^12.1.1
-    "@polkadot/types": ^12.1.1
-    "@polkadot/types-augment": ^12.1.1
-    "@polkadot/types-codec": ^12.1.1
-    "@polkadot/types-create": ^12.1.1
-    "@polkadot/types-known": ^12.1.1
-    "@polkadot/util": ^12.6.2
-    "@polkadot/util-crypto": ^12.6.2
-  checksum: 10c0/3a7d4f16890e7dc5861e4e100a23704f5bc0c2991df03438f27707925cfa87298a23efd09c6007a611a8c23783f71bc5e737c6f05f7e2cd7b7210ab95c86513b
+    "@polkadot/api": ^14.2.3
+    "@polkadot/api-augment": ^14.2.3
+    "@polkadot/api-base": ^14.2.3
+    "@polkadot/api-derive": ^14.2.3
+    "@polkadot/keyring": ^13.2.2
+    "@polkadot/rpc-augment": ^14.2.3
+    "@polkadot/rpc-core": ^14.2.3
+    "@polkadot/rpc-provider": ^14.2.3
+    "@polkadot/types": ^14.2.3
+    "@polkadot/types-augment": ^14.2.3
+    "@polkadot/types-codec": ^14.2.3
+    "@polkadot/types-create": ^14.2.3
+    "@polkadot/types-known": ^14.2.3
+    "@polkadot/util": ^13.2.2
+    "@polkadot/util-crypto": ^13.2.2
+  checksum: 10c0/8bd6692fc3fb99b019936214d8a6e75a0ea101714653df8a806c31c4caa1067777200493bf5f1a059e645c76431cc62a934a2be50cf1f519dafe57e5d6bc5c02
   languageName: node
   linkType: hard
 
-"@galacticcouncil/xcm-cfg@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "@galacticcouncil/xcm-cfg@npm:5.0.1"
+"@galacticcouncil/xcm-cfg@npm:5.3.3":
+  version: 5.3.3
+  resolution: "@galacticcouncil/xcm-cfg@npm:5.3.3"
   dependencies:
-    "@galacticcouncil/xcm-core": "npm:^5.0.0"
-  checksum: 10c0/3dd77cf91c2eb758f4accae5a326fda4fc203849ec874f29b1e910662a03801fe5b08939d87b2fddf31fc671d8c9eb51f0973a3ef46dbea9383ef98d0b4634e2
+    "@galacticcouncil/xcm-core": "npm:^5.2.0"
+  checksum: 10c0/9fcb78598659c0d665d49ce6d73fa97737373ddecaef0ab33cc5148898eac511d1f5a0e1c44bd772bc2edf2795b7a72e5484d3276ec264fe2cabac465dab11a9
   languageName: node
   linkType: hard
 
-"@galacticcouncil/xcm-core@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "@galacticcouncil/xcm-core@npm:5.0.0"
+"@galacticcouncil/xcm-core@npm:^5.2.0, @galacticcouncil/xcm-core@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "@galacticcouncil/xcm-core@npm:5.3.0"
   dependencies:
     "@wormhole-foundation/sdk-base": "npm:^0.5.2"
     "@wormhole-foundation/sdk-connect": "npm:^0.5.2"
@@ -3150,23 +3150,23 @@ __metadata:
     buffer: "npm:^6.0.3"
     lru-cache: "npm:^11.0.0"
   peerDependencies:
-    "@polkadot/api": ^12.1.1
-    "@polkadot/api-augment": ^12.1.1
-    "@polkadot/types": ^12.1.1
-    "@polkadot/util-crypto": ^12.6.2
+    "@polkadot/api": ^14.2.3
+    "@polkadot/api-augment": ^14.2.3
+    "@polkadot/types": ^14.2.3
+    "@polkadot/util-crypto": ^13.2.2
     viem: ^2.15.1
-  checksum: 10c0/7063ac86d177f9674b8ced1b7676eb3fe16ae0a7108ba3c7bf0cac95148f425440b17b33d8d1fb9795ab252a7e768a1093b1aac8b5ffba889c6b28c96707cab1
+  checksum: 10c0/4393a566c314d2f99c4be99757b4af7b2deb8f37f84339cf6967515870387de00a100cfdc1e46da81ec930f6d996b4f4a23f3de78ba5d1a23df1373248af617f
   languageName: node
   linkType: hard
 
-"@galacticcouncil/xcm-sdk@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "@galacticcouncil/xcm-sdk@npm:6.0.0"
+"@galacticcouncil/xcm-sdk@npm:^6.3.0":
+  version: 6.3.0
+  resolution: "@galacticcouncil/xcm-sdk@npm:6.3.0"
   dependencies:
-    "@galacticcouncil/xcm-core": "npm:^5.0.0"
+    "@galacticcouncil/xcm-core": "npm:^5.3.0"
   peerDependencies:
-    "@galacticcouncil/sdk": ^4.2.1
-  checksum: 10c0/c5966ac682acb887f455d5b2cd59fff1f7dbb7bd921358db093eb76fea5121e079b231939b9a20532c892300a6399de004d26ea61159f97856aa59ae16821e70
+    "@galacticcouncil/sdk": ^4.5.0
+  checksum: 10c0/ede3cc5085582c33546e5f46f707d7c44cc1ef0b2c293597dd3228c458103c17e154c9a4f07fced7493270b969500729f408d642fd47180719fde040e0973e22
   languageName: node
   linkType: hard
 
@@ -9963,11 +9963,11 @@ __metadata:
     "@chainflip/sdk": "npm:1.3.0"
     "@emotion/react": "npm:^11.11.3"
     "@emotion/styled": "npm:^11.11.0"
-    "@galacticcouncil/api-augment": "npm:^0.2.0"
-    "@galacticcouncil/sdk": "npm:^4.2.1"
-    "@galacticcouncil/xcm-cfg": "npm:^5.0.1"
-    "@galacticcouncil/xcm-core": "npm:^5.0.0"
-    "@galacticcouncil/xcm-sdk": "npm:^6.0.0"
+    "@galacticcouncil/api-augment": "npm:^0.3.0"
+    "@galacticcouncil/sdk": "npm:^4.5.0"
+    "@galacticcouncil/xcm-cfg": "npm:5.3.3"
+    "@galacticcouncil/xcm-core": "npm:^5.3.0"
+    "@galacticcouncil/xcm-sdk": "npm:^6.3.0"
     "@graphql-codegen/cli": "npm:5.0.0"
     "@graphql-codegen/client-preset": "npm:4.1.0"
     "@lifi/sdk": "npm:^3.3.1"
