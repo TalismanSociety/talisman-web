@@ -5,7 +5,8 @@ import { ValidatorsData } from '../types'
 import { delegatesAtom } from './delegates'
 
 const TAOSTATS_API_KEY = import.meta.env.VITE_TAOSTATS_API_KEY
-const TAOSTATS_API_URL = 'https://api.taostats.io/api'
+const TAOSTATS_API_URL = import.meta.env.VITE_TAOSTATS_API_URL
+
 const MAX_PAGE_SIZE = 100
 
 const fetchTaoStats = async ({
@@ -17,7 +18,7 @@ const fetchTaoStats = async ({
 }): Promise<ValidatorsData> => {
   try {
     return await (
-      await fetch(`${TAOSTATS_API_URL}/validator/latest/v1?page=${page}&limit=${limit}`, {
+      await fetch(`${TAOSTATS_API_URL}/api/validator/latest/v1?page=${page}&limit=${limit}`, {
         method: 'GET',
         headers: {
           Authorization: TAOSTATS_API_KEY,
