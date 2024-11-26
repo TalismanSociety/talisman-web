@@ -1,7 +1,9 @@
 import type { PropsWithChildren, ReactNode } from 'react'
-import { SegmentedButton, useTheme } from '@talismn/ui'
+import { useTheme } from '@talismn/ui'
 import { FileSearch, HelpCircle } from '@talismn/web-icons'
 import { useState } from 'react'
+
+import { cn } from '@/lib/utils'
 
 import { DEX_FORM_WIDE_MEDIA_SELECTOR } from './constants'
 
@@ -21,15 +23,17 @@ export function Info(props: InfoProps) {
   return (
     <Container
       header={
-        <header css={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
-          <SegmentedButton value={focusedSection} onChange={onChangeFocusedSection}>
-            <SegmentedButton.ButtonSegment value="details" leadingIcon={<FileSearch />} css={{ fontSize: '1rem' }}>
-              Details
-            </SegmentedButton.ButtonSegment>
-            <SegmentedButton.ButtonSegment value="faq" leadingIcon={<HelpCircle />} css={{ fontSize: '1rem' }}>
-              FAQ
-            </SegmentedButton.ButtonSegment>
-          </SegmentedButton>
+        <header className="flex items-center justify-end gap-[4px]">
+          <InfoTabIcon
+            selected={focusedSection === 'details'}
+            icon={<FileSearch size={16} />}
+            onClick={() => onChangeFocusedSection?.('details')}
+          />
+          <InfoTabIcon
+            selected={focusedSection === 'faq'}
+            icon={<HelpCircle size={16} />}
+            onClick={() => onChangeFocusedSection?.('faq')}
+          />
         </header>
       }
       footer={props.footer}
@@ -38,6 +42,18 @@ export function Info(props: InfoProps) {
     </Container>
   )
 }
+
+const InfoTabIcon = ({ selected, icon, onClick }: { selected?: boolean; icon?: ReactNode; onClick?: () => void }) => (
+  <div
+    className={cn(
+      'hover:text-primary cursor-pointer p-[8px] duration-150',
+      selected ? 'text-primary' : 'text-gray-600'
+    )}
+    onClick={onClick}
+  >
+    {icon}
+  </div>
+)
 
 type ContainerProps = PropsWithChildren<{ header: ReactNode; footer?: ReactNode }>
 
