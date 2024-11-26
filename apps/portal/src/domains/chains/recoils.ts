@@ -24,6 +24,7 @@ export const chainState = selectorFamily({
 
       return nullToUndefined({
         ...chain,
+        genesisHash: genesisHash as `0x${string}`,
         nativeToken,
         rpc: chain.rpcs?.at(0)?.url,
 

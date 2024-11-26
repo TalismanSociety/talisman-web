@@ -1,5 +1,6 @@
-import { chainState } from '../../../domains/chains'
 import { selector, waitForAll } from 'recoil'
+
+import { chainState } from '../../../domains/chains'
 
 export const statusOptions = {
   INITIALIZED: 'INITIALIZED',
@@ -45,7 +46,7 @@ export const supportedRelayChainsState = selector({
         name: x.name ?? '',
         accountPrefix: x.prefix ?? 0,
         rpc: x.rpcs?.at(0)?.url ?? '',
-        genesisHash: x.genesisHash,
+        genesisHash: x.genesisHash!,
         subscanUrl: x.subscanUrl ?? '',
         tokenDecimals: x.nativeToken?.decimals ?? 0,
         tokenSymbol: x.nativeToken?.symbol ?? '',
