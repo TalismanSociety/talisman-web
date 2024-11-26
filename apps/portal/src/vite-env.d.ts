@@ -23,6 +23,7 @@ interface ImportMetaEnv {
   VITE_LIFI_SECRET: string
   VITE_TAOSTATS_API_KEY: string
   VITE_TAOSTATS_API_URL: string
+  VITE_TALISMAN_BIFROST_CHANNEL_ID: string
 }
 
 declare namespace JSX {
