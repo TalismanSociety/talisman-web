@@ -4,8 +4,9 @@ import { Maybe } from '../../../util/monads'
 import { selectedCurrencyState } from '../../balances'
 import { tokenPriceState } from '../../chains'
 import { useSubstrateApiState, useWagmiWriteContract } from '../../common'
+import { channel_id } from '../constants'
 import slpx from './abi'
-import { _adapterParams, _dstGasForCall, channel_id } from './constants'
+import { _adapterParams, _dstGasForCall } from './constants'
 import mantaPacificSlpxAbi from './mantaPacificSlpxAbi'
 import { mantaPacificOperation } from './types'
 
@@ -418,6 +419,7 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
       address: slpxPair.splx,
       abi: slpx,
       functionName: 'mintVNativeAsset',
+      // TODO: Check if the remark is correct
       args: [(account?.address as `0x${string}`) ?? '0x', import.meta.env.VITE_APPLICATION_NAME ?? 'Talisman'],
       value: planckAmount ?? 0n,
       etherscanUrl: slpxPair.etherscanUrl,
