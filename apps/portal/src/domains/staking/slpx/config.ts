@@ -1,5 +1,6 @@
+import { manta, moonbeam } from 'wagmi/chains'
+
 import type { SlpxPair } from './types'
-import { moonbeam, manta } from 'wagmi/chains'
 
 export const glmrSlpxPair = {
   chain: moonbeam,
@@ -33,7 +34,7 @@ export const glmrSlpxPair = {
 export const mantaSlpxPair = {
   chain: manta,
   substrateChainGenesisHash: '0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b',
-  splx: '0x174aEfe55aaC3894696984A2d6a029e668219593',
+  splx: '0x95A4D4b345c551A9182289F9dD7A018b7Fd0f940',
   etherscanUrl: manta.blockExplorers.default.url,
   nativeToken: {
     type: 'token',

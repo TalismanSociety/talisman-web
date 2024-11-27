@@ -5,6 +5,25 @@ export default [
       {
         indexed: true,
         internalType: 'address',
+        name: 'caller',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'Mint',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
         name: 'previousOwner',
         type: 'address',
       },
@@ -38,6 +57,39 @@ export default [
     type: 'event',
   },
   {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'assetAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint32',
+        name: 'channel_id',
+        type: 'uint32',
+      },
+      {
+        internalType: 'uint64',
+        name: 'dstGasForCall',
+        type: 'uint64',
+      },
+      {
+        internalType: 'bytes',
+        name: 'adapterParams',
+        type: 'bytes',
+      },
+    ],
+    name: 'create_order',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'destChainId',
     outputs: [
@@ -54,27 +106,27 @@ export default [
     inputs: [
       {
         internalType: 'address',
-        name: 'caller',
+        name: 'assetAddress',
         type: 'address',
       },
       {
-        internalType: 'enum Types.Operation',
-        name: 'operation',
-        type: 'uint8',
-      },
-      {
         internalType: 'uint256',
-        name: '_amount',
+        name: 'amount',
         type: 'uint256',
       },
       {
+        internalType: 'uint32',
+        name: 'channel_id',
+        type: 'uint32',
+      },
+      {
         internalType: 'uint64',
-        name: '_dstGasForCall',
+        name: 'dstGasForCall',
         type: 'uint64',
       },
       {
         internalType: 'bytes',
-        name: '_adapterParams',
+        name: 'adapterParams',
         type: 'bytes',
       },
     ],
@@ -84,11 +136,6 @@ export default [
         internalType: 'uint256',
         name: '',
         type: 'uint256',
-      },
-      {
-        internalType: 'bytes',
-        name: '',
-        type: 'bytes',
       },
     ],
     stateMutability: 'view',
@@ -121,13 +168,7 @@ export default [
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'enum Types.Operation',
-        name: '',
-        type: 'uint8',
-      },
-    ],
+    inputs: [],
     name: 'minAmount',
     outputs: [
       {
@@ -137,29 +178,6 @@ export default [
       },
     ],
     stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_amount',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint64',
-        name: '_dstGasForCall',
-        type: 'uint64',
-      },
-      {
-        internalType: 'bytes',
-        name: '_adapterParams',
-        type: 'bytes',
-      },
-    ],
-    name: 'mint',
-    outputs: [],
-    stateMutability: 'payable',
     type: 'function',
   },
   {
@@ -173,29 +191,6 @@ export default [
       },
     ],
     stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_amount',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint64',
-        name: '_dstGasForCall',
-        type: 'uint64',
-      },
-      {
-        internalType: 'bytes',
-        name: '_adapterParams',
-        type: 'bytes',
-      },
-    ],
-    name: 'redeem',
-    outputs: [],
-    stateMutability: 'payable',
     type: 'function',
   },
   {
@@ -220,11 +215,6 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: 'enum Types.Operation',
-        name: '_operation',
-        type: 'uint8',
-      },
       {
         internalType: 'uint256',
         name: '_minAmount',

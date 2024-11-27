@@ -5,7 +5,7 @@ import { selectedCurrencyState } from '../../balances'
 import { tokenPriceState } from '../../chains'
 import { useSubstrateApiState, useWagmiWriteContract } from '../../common'
 import slpx from './abi'
-import { _adapterParams, _dstGasForCall } from './constants'
+import { _adapterParams, _dstGasForCall, channel_id } from './constants'
 import mantaPacificSlpxAbi from './mantaPacificSlpxAbi'
 import { mantaPacificOperation } from './types'
 
@@ -293,9 +293,9 @@ export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) 
       chainId: slpxPair.chain.id,
       address: slpxPair.splx,
       abi: mantaPacificSlpxAbi,
-      functionName: 'redeem',
-      args: [planckAmount ?? 0n, _dstGasForCall, _adapterParams],
-      value: estimatedSendAndCallFee.data?.[0],
+      functionName: 'create_order',
+      args: [slpxPair.vToken.address, planckAmount ?? 0n, channel_id, _dstGasForCall, _adapterParams],
+      value: estimatedSendAndCallFee.data,
       etherscanUrl: slpxPair.etherscanUrl,
     })
 
@@ -428,9 +428,9 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
       chainId: slpxPair.chain.id,
       address: slpxPair.splx,
       abi: mantaPacificSlpxAbi,
-      functionName: 'mint',
-      args: [planckAmount ?? 0n, _dstGasForCall, _adapterParams],
-      value: estimatedSendAndCallFee.data?.[0],
+      functionName: 'create_order',
+      args: [slpxPair.nativeToken.address, planckAmount ?? 0n, channel_id, _dstGasForCall, _adapterParams],
+      value: estimatedSendAndCallFee.data,
       etherscanUrl: slpxPair.etherscanUrl,
     })
   }
@@ -546,14 +546,17 @@ const useEstimateSendAndCallFee = ({
   planckAmount: bigint
   account: Account | undefined
   operation: mantaPacificOperation
-}) =>
-  useReadContract({
+}) => {
+  const tokenContractAddress =
+    operation === mantaPacificOperation.Mint ? slpxPair.nativeToken.address : slpxPair.vToken.address
+  return useReadContract({
     chainId: slpxPair.chain.id,
     address: slpxPair.splx,
     abi: mantaPacificSlpxAbi,
     functionName: 'estimateSendAndCallFee',
-    args: [account?.address as `0x${string}`, operation, planckAmount ?? 0n, _dstGasForCall, _adapterParams],
+    args: [tokenContractAddress, planckAmount, channel_id, _dstGasForCall, _adapterParams],
     query: {
       enabled: account?.address !== undefined && slpxPair.chain.id === manta.id && planckAmount !== undefined,
     },
   })
+}
