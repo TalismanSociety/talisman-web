@@ -22,19 +22,12 @@ export const extrinsicAtom = atom(async get => {
     const maxBn = big.toBigInt(max.amount, max.decimals)
     const minBn = big.toBigInt(minWithRelay.amount, min.decimals)
 
-    if (balance.amount === 0n) {
-      throw new Error('Insufficient balance.')
-    }
-    if (amountBn < minBn) {
+    if (balance.amount === 0n || amountBn > maxBn)
+      throw new Error(`Insufficient ${asset.originSymbol} balance for transfer.`)
+    if (amountBn < minBn)
       throw new Error(
         `The minimum transferable amount is ${minWithRelay.toDecimal(minWithRelay.decimals)} ${asset.originSymbol}.`
       )
-    }
-    if (amountBn > maxBn) {
-      throw new Error(`The maximum transferable amount is ${max.toDecimal(max.decimals)} ${asset.originSymbol}.`)
-    }
-
-    return
   }
   validateAmount()
 

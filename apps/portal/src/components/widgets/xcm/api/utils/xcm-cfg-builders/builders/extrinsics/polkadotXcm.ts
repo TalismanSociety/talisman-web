@@ -4,15 +4,7 @@ import { acc, big, ExtrinsicConfig, ExtrinsicConfigBuilder, Parachain } from '@g
 
 import { getExtrinsicAccount, getExtrinsicArgumentVersion } from '../ExtrinsicBuilder.utils'
 import { Parents, XcmVersion } from '../types'
-import {
-  toAsset,
-  toAssets,
-  toBeneficiary,
-  toCustomXcmOnDest,
-  toDest,
-  toRemoteFeesId,
-  toTransactMessage,
-} from './polkadotXcm.utils'
+import { toAsset, toAssets, toBeneficiary, toDest, toTransactMessage } from './polkadotXcm.utils'
 
 const pallet = 'polkadotXcm'
 
@@ -188,33 +180,6 @@ const teleportAssets = (parent: Parents) => {
   }
 }
 
-const transferAssetsUsingTypeAndThen = (parent: Parents) => {
-  const func = 'transferAssetsUsingTypeAndThen'
-  return {
-    here: (): ExtrinsicConfigBuilder => ({
-      build: ({ address, amount, destination }) =>
-        new ExtrinsicConfig({
-          module: pallet,
-          func,
-          getArgs: () => {
-            const version = XcmVersion.v3
-            const account = getExtrinsicAccount(address)
-            const rcv = destination.chain as Parachain
-            return [
-              toDest(version, rcv),
-              toAssets(version, parent, 'Here', amount),
-              'DestinationReserve',
-              toRemoteFeesId(version, parent, 'Here'),
-              'DestinationReserve',
-              toCustomXcmOnDest(version, account),
-              'Unlimited',
-            ]
-          },
-        }),
-    }),
-  }
-}
-
 type TransactOpts = {
   fee: number
 }
@@ -267,7 +232,6 @@ export const polkadotXcm = () => {
     limitedTeleportAssets,
     reserveTransferAssets,
     teleportAssets,
-    transferAssetsUsingTypeAndThen,
     send,
   }
 }

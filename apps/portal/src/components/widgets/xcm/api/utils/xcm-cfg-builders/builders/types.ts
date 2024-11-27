@@ -7,4 +7,11 @@ export enum XcmVersion {
   v4 = 'V4',
 }
 
-export type Parents = 0 | 1
+export enum XcmTransferType {
+  Teleport = 'Teleport',
+  LocalReserve = 'LocalReserve',
+  DestinationReserve = 'DestinationReserve',
+  RemoteReserve = 'RemoteReserve',
+}
+
+export type Parents = 0 | 1 | 2

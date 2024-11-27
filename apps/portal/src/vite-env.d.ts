@@ -7,7 +7,6 @@ interface ImportMetaEnv {
   VITE_COIN_GECKO_API: string
   VITE_COIN_GECKO_API_KEY?: string
   VITE_COIN_GECKO_API_TIER?: 'pro' | 'demo'
-  VITE_CHAINDATA: string
   VITE_ONFINALITY_API_KEY?: string
   VITE_SENTRY_DSN: string
   VITE_SENTRY_RELEASE?: string

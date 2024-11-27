@@ -1,5 +1,5 @@
 import { Metadata, TypeRegistry } from '@polkadot/types'
-import { isHex, assert } from '@polkadot/util'
+import { assert, isHex } from '@polkadot/util'
 import { chainConnectorsAtom, chaindataProviderAtom } from '@talismn/balances-react'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
@@ -17,7 +17,7 @@ export const typeRegistryFamily = atomFamily((chainIdOrHash: string) =>
       : chaindataProvider.chainById(chainIdOrHash))
     if (!genesisHash) genesisHash = chain?.genesisHash as `0x${string}`
 
-    assert(genesisHash, `Unknown chain: ${chainIdOrHash}`)
+    assert(chain, `Unknown chain: ${chainIdOrHash}`)
 
     const metadataRpc = await chainConnectors.substrate?.send<`0x${string}`>(chain.id, 'state_getMetadata', [])
     if (!metadataRpc) return registry

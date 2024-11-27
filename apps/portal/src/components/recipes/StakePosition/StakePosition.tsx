@@ -19,12 +19,12 @@ import { AccountIcon } from '@talismn/ui-recipes'
 import { ArrowDown, Clock, Earn, MoreHorizontal, ZapPlus } from '@talismn/web-icons'
 import React, { createContext, Suspense, useContext } from 'react'
 
+import type { StakeStatus } from '@/components/recipes/StakeStatusIndicator'
+import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
+import { StakeStatusIndicator } from '@/components/recipes/StakeStatusIndicator'
 import { Account } from '@/domains/accounts/recoils'
 import { shortenAddress } from '@/util/format'
 
-import type { StakeStatus } from '../StakeStatusIndicator'
-import AssetLogoWithChain from '../AssetLogoWithChain'
-import { StakeStatusIndicator } from '../StakeStatusIndicator'
 import StakePositionSkeleton from './StakePosition.skeleton'
 
 const MEDIUM_CONTAINER_QUERY = '@container(min-width: 100rem)'

@@ -1,8 +1,11 @@
-import { chainState } from '.'
-import { chainConfigs, type ChainConfig } from './config'
+import type { PropsWithChildren } from 'react'
 import { PolkadotApiIdProvider } from '@talismn/react-polkadot-api'
-import { createContext, useContext, type PropsWithChildren } from 'react'
+import { createContext, useContext } from 'react'
 import { useRecoilValue } from 'recoil'
+
+import type { ChainConfig } from './config'
+import { chainState } from '.'
+import { chainConfigs } from './config'
 
 export const ChainContext = createContext<ChainConfig>(chainConfigs[0]!)
 

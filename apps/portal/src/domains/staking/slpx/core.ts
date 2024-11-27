@@ -6,7 +6,7 @@ import { tokenPriceState } from '../../chains'
 import { useSubstrateApiState, useWagmiWriteContract } from '../../common'
 import { channel_id } from '../constants'
 import slpx from './abi'
-import { _adapterParams, _dstGasForCall } from './constants'
+import { _adapterParams, _dstGasForCall, channel_id } from './constants'
 import mantaPacificSlpxAbi from './mantaPacificSlpxAbi'
 import { mantaPacificOperation } from './types'
 

@@ -5,6 +5,23 @@ import { Parachain, TxWeight } from '@galacticcouncil/xcm-core'
 import { Parents, XcmVersion } from '../types'
 
 export const toDest = (version: XcmVersion, destination: Parachain) => {
+  if (destination.key === 'ethereum') {
+    return {
+      [version]: {
+        parents: 2,
+        interior: {
+          X1: {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+        },
+      },
+    }
+  }
+
   if (destination.key === 'polkadot' || destination.key === 'kusama') {
     return {
       [version]: {

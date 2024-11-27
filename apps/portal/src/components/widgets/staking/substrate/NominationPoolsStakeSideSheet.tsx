@@ -1,16 +1,19 @@
-import { ChainProvider } from '../../../../domains/chains'
-import { nominationPoolsEnabledChainsState, type ChainInfo } from '../../../../domains/chains/recoils'
-import { useEraEtaFormatter } from '../../../../domains/common/hooks'
-import { useApr } from '../../../../domains/staking/substrate/nominationPools'
-import StakeDialogComponent from '../../../recipes/StakeDialog'
-import StakeForm from '../../../recipes/StakeForm/StakeForm'
-import ErrorBoundary from '../../ErrorBoundary'
-import { AssetSelect, ControlledStakeForm } from './StakeForm'
 import { CircularProgressIndicator } from '@talismn/ui'
 import BN from 'bn.js'
 import { Suspense, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
+
+import type { ChainInfo } from '@/domains/chains/recoils'
+import StakeDialogComponent from '@/components/recipes/StakeDialog'
+import StakeForm from '@/components/recipes/StakeForm/StakeForm'
+import ErrorBoundary from '@/components/widgets/ErrorBoundary'
+import { ChainProvider } from '@/domains/chains'
+import { nominationPoolsEnabledChainsState } from '@/domains/chains/recoils'
+import { useEraEtaFormatter } from '@/domains/common/hooks'
+import { useApr } from '@/domains/staking/substrate/nominationPools'
+
+import { AssetSelect, ControlledStakeForm } from './StakeForm'
 
 const Rewards = () => <>{useApr().toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</>
 

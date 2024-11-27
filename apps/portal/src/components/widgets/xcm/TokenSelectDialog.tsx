@@ -6,11 +6,11 @@ import { Globe } from '@talismn/web-icons'
 import BigNumber from 'bignumber.js'
 import { atom, useAtomValue } from 'jotai'
 import { loadable } from 'jotai/utils'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntersection } from 'react-use'
 import { useRecoilValue } from 'recoil'
 
-import AssetLogoWithChain from '@/components/recipes/AssetLogoWithChain'
+import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
 import ChainLogo from '@/components/recipes/ChainLogo'
 import { selectedCurrencyState } from '@/domains/balances'
 
@@ -18,13 +18,20 @@ import type { TokenPickerAsset, TokenPickerChain } from './api/utils/xcmTokenPic
 import { senderAtom } from './api/atoms/xcmFieldsAtoms'
 
 export type TokenSelectDialogProps = {
+  title?: ReactNode
   assets?: TokenPickerAsset[]
   chains?: TokenPickerChain[]
   onChange: (asset: TokenPickerAsset) => void
   onRequestDismiss: () => unknown
 }
 
-export function TokenSelectDialog({ assets = [], chains = [], onChange, onRequestDismiss }: TokenSelectDialogProps) {
+export function TokenSelectDialog({
+  title = 'Select asset',
+  assets = [],
+  chains = [],
+  onChange,
+  onRequestDismiss,
+}: TokenSelectDialogProps) {
   const [search, setSearch] = useState('')
   const [searchChain, setSearchChain] = useState('')
 
@@ -49,7 +56,7 @@ export function TokenSelectDialog({ assets = [], chains = [], onChange, onReques
 
   return (
     <AlertDialog
-      title="Select asset"
+      title={title}
       targetWidth="60rem"
       onRequestDismiss={onRequestDismiss}
       css={{ marginTop: '10vh', maxHeight: '80vh', minHeight: '45vh' }}
@@ -113,7 +120,8 @@ function Asset({ asset, onClick }: AssetProps) {
       if (abort.signal.aborted) return
       if (!balances) {
         setTokens('0.0')
-        setFiat(0)
+        if (asset.chaindataCoingeckoId) setFiat(0)
+        else setFiat(undefined)
         return
       }
 
@@ -126,11 +134,12 @@ function Asset({ asset, onClick }: AssetProps) {
       if (abort.signal.aborted) return
 
       setTokens(tokens)
-      setFiat(fiat)
+      if (asset.chaindataCoingeckoId) setFiat(fiat)
+      else setFiat(undefined)
     })()
 
     return () => abort.abort()
-  }, [asset.chaindataId, asset.token.originSymbol, balancesBy, currency, sender])
+  }, [asset.chaindataCoingeckoId, asset.chaindataId, asset.token.originSymbol, balancesBy, currency, sender])
 
   // only render visible items to improve performance
   const refContainer = useRef<HTMLDivElement>(null)
@@ -138,6 +147,13 @@ function Asset({ asset, onClick }: AssetProps) {
     root: null,
     rootMargin: '1000px',
   })
+
+  // preload token logo
+  const imgRef = useRef<HTMLImageElement>()
+  useEffect(() => {
+    imgRef.current = new Image()
+    imgRef.current.src = asset.chaindataTokenLogo ?? ''
+  }, [asset.chaindataTokenLogo])
 
   return (
     <div ref={refContainer}>
@@ -174,7 +190,7 @@ function Asset({ asset, onClick }: AssetProps) {
                   )}
                 </div>
               }
-              supportingContent={fiat ? fiat?.toLocaleString(undefined, { currency, style: 'currency' }) : null}
+              supportingContent={fiat?.toLocaleString(undefined, { currency, style: 'currency' })}
             />
           </Surface>
         </Clickable.WithFeedback>
@@ -183,12 +199,12 @@ function Asset({ asset, onClick }: AssetProps) {
           <Surface className="grid w-full grid-cols-3 items-center gap-[4px] rounded-[8px] p-[16px] sm:gap-[8px]">
             <div className="flex items-center gap-3">
               <div className="h-[40px] w-[40px] animate-pulse rounded-full bg-gray-600" />
-              <div className="h-[1em] w-[50px] animate-pulse rounded-sm bg-gray-600" />
+              <div className="h-[1em] w-[50px] animate-pulse rounded bg-gray-600" />
             </div>
-            <div className="h-[1em] w-[80px] animate-pulse rounded-sm bg-gray-600" />
+            <div className="h-[1em] w-[80px] animate-pulse rounded bg-gray-600" />
             <div className="flex flex-col items-end gap-2 justify-self-end">
-              <div className="h-[1em] w-[70px] animate-pulse rounded-sm bg-gray-600" />
-              <div className="h-[1em] w-[60px] animate-pulse rounded-sm bg-gray-600" />
+              <div className="h-[1em] w-[70px] animate-pulse rounded bg-gray-600" />
+              <div className="h-[1em] w-[60px] animate-pulse rounded bg-gray-600" />
             </div>
           </Surface>
         </Clickable.WithFeedback>
