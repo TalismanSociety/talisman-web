@@ -63,7 +63,7 @@ const faq: Array<{ question: string; answer: ReactNode }> = [
         <br />
         <div>
           Talisman Portal can perform a teleport just like any other XCM transfer: specify the asset, amount,{' '}
-          <i>from</i> and <i>to</i> chains that you are interested in, then click <b>Transport</b>.
+          <i>from</i> and <i>to</i> chains that you are interested in, then click <b>Transfer</b>.
         </div>
       </>
     ),

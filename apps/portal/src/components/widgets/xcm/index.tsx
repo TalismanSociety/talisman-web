@@ -35,6 +35,7 @@ export function XcmForm() {
     setSourceChain,
     destChain,
     setDestChain,
+    asset,
     setAsset,
     amount,
     setAmount,
@@ -49,6 +50,8 @@ export function XcmForm() {
     canReverse,
     reverseRoute,
 
+    hasWallet,
+    hasTransfer,
     sourceBalance,
     fees,
     minMaxAmounts,
@@ -98,14 +101,24 @@ export function XcmForm() {
     <ErrorMessage title="Unable to process transfer" text={String(extrinsicError.message ?? extrinsicError)} />
   ) : fees ? (
     <Fees originFee={fees.sourceFee} destinationFee={fees.destFee} />
+  ) : sender && sourceChain && destChain && asset ? (
+    <ProgressIndicator
+      title="Preparing transfer"
+      text={!hasWallet ? `Connecting to ${sourceAsset?.chain?.name}` : !hasTransfer ? 'Calculating fees' : 'Loading'}
+    />
   ) : (
-    <ProgressIndicator />
+    <ErrorMessage title="Select asset" text="To calculate transfer fees" />
   )
 
   return (
     <>
       {sourceTokenSelectOpen && (
         <TokenSelectDialog
+          title={
+            <div>
+              Select <span className="italic">from</span> asset
+            </div>
+          }
           assets={tokenPickerSourceBySender}
           chains={sourceChainsBySender}
           onChange={asset => (setSourceChain(asset.chain.key), setAsset(asset.token.key))}
@@ -114,6 +127,11 @@ export function XcmForm() {
       )}
       {destTokenSelectOpen && (
         <TokenSelectDialog
+          title={
+            <div>
+              Select <span className="italic">to</span> asset
+            </div>
+          }
           assets={tokenPickerDest}
           chains={destChains}
           onChange={asset => (setDestChain(asset.chain.key), setAsset(asset.token.key))}
@@ -121,6 +139,7 @@ export function XcmForm() {
         />
       )}
       <Form
+        empty={!sourceChain || !destChain}
         amount={amount}
         fiat={
           fiat ??
@@ -159,8 +178,30 @@ export function XcmForm() {
             />
           </div>
         }
-        tokenSelect={<TokenSelectButton asset={sourceAsset} onClick={() => setSourceTokenSelectOpen(true)} />}
-        destTokenSelect={<TokenSelectButton asset={destAsset} onClick={() => setDestTokenSelectOpen(true)} />}
+        tokenSelect={
+          <TokenSelectButton
+            title={
+              <div>
+                Select <span className="italic">from</span> asset
+              </div>
+            }
+            empty={!sourceChain}
+            asset={sourceAsset}
+            onClick={() => setSourceTokenSelectOpen(true)}
+          />
+        }
+        destTokenSelect={
+          <TokenSelectButton
+            title={
+              <div>
+                Select <span className="italic">to</span> asset
+              </div>
+            }
+            empty={!destChain}
+            asset={destAsset}
+            onClick={() => setDestTokenSelectOpen(true)}
+          />
+        }
         reversible={canReverse}
         onRequestReverse={reverseRoute}
         destAccountSelect={

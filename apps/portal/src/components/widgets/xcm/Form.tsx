@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { ReverseRouteButton } from './ReverseRouteButton'
 
 export type FormProps = {
+  empty?: boolean
   accountSelect: ReactNode
   amount?: string
   onChangeAmount: (value: string) => unknown
@@ -26,15 +27,35 @@ export type FormProps = {
   loading?: boolean
 }
 
-export const Form = ({ tokenSelect, destTokenSelect, ...props }: FormProps) => {
+export const Form = ({
+  empty,
+  accountSelect,
+  amount,
+  onChangeAmount,
+  onRequestMaxAmount,
+  fiat,
+  available,
+  max,
+  amountError,
+  tokenSelect,
+  destTokenSelect,
+  reversible,
+  onRequestReverse,
+  destAccountSelect,
+  info,
+  onRequestTransport,
+  canTransport,
+  transportInProgress,
+  loading,
+}: FormProps) => {
   return (
-    <Container info={props.info}>
+    <Container info={info}>
       <Section header="Select account">
         <label>
           <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
             Origin account
           </Text.BodySmall>
-          {props.accountSelect}
+          {accountSelect}
         </label>
       </Section>
       <Section
@@ -65,7 +86,7 @@ export const Form = ({ tokenSelect, destTokenSelect, ...props }: FormProps) => {
                 &nbsp;
               </Text.BodySmall>
             </div>
-            <ReverseRouteButton disabled={props.reversible === false} onClick={props.onRequestReverse} />
+            <ReverseRouteButton disabled={reversible === false} onClick={onRequestReverse} />
           </div>
           <label className="w-full">
             <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
@@ -75,28 +96,30 @@ export const Form = ({ tokenSelect, destTokenSelect, ...props }: FormProps) => {
           </label>
         </div>
       </Section>
-      <Section header="Select amount">
+      <Section header="Enter amount">
         <TextInput
           containerClassName="[&>div:nth-of-type(2)]:!px-[1.25rem] [&>div:nth-of-type(2)]:!py-[1.2rem]"
           type="number"
           inputMode="decimal"
           placeholder="0.00"
           leadingLabel={
-            <div className="flex flex-row items-center gap-1">
-              <span>Available:</span> {props.available ?? <CircularProgressIndicator size="1em" />}
-              {props.max ?? null}
-            </div>
-          }
-          trailingLabel={
-            props.fiat !== undefined && (
-              <div className="flex items-center gap-1">
-                Value: <Text.BodySmall alpha="high">{props.fiat}</Text.BodySmall>
+            !empty && (
+              <div className="flex flex-row items-center gap-1">
+                <span>Available:</span> {available ?? <CircularProgressIndicator size="1em" />}
+                {max ?? null}
               </div>
             )
           }
-          leadingSupportingText={props.amountError && <div className="text-orange-400">{props.amountError}</div>}
-          value={props.amount ?? ''}
-          onChangeText={props.onChangeAmount}
+          trailingLabel={
+            fiat !== undefined && (
+              <div className="flex items-center gap-1">
+                Value: <Text.BodySmall alpha="high">{fiat}</Text.BodySmall>
+              </div>
+            )
+          }
+          leadingSupportingText={amountError && <div className="text-orange-400">{amountError}</div>}
+          value={amount ?? ''}
+          onChangeText={onChangeAmount}
           trailingIcon={
             <button
               className={cn(
@@ -104,8 +127,8 @@ export const Form = ({ tokenSelect, destTokenSelect, ...props }: FormProps) => {
                 'hover:text-foreground/80 active:text-foreground/70',
                 'disabled:text-foreground/40 disabled:cursor-not-allowed'
               )}
-              onClick={props.onRequestMaxAmount}
-              disabled={!props.max}
+              onClick={onRequestMaxAmount}
+              disabled={!max}
             >
               Max
             </button>
@@ -119,18 +142,18 @@ export const Form = ({ tokenSelect, destTokenSelect, ...props }: FormProps) => {
               <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
                 Destination account
               </Text.BodySmall>
-              {props.destAccountSelect}
+              {destAccountSelect}
             </label>
           </Details.Content>
         </CollapsibleSection>
       </div>
       <Button
         css={{ width: '100%', borderRadius: '8px' }}
-        disabled={!props.canTransport}
-        loading={props.transportInProgress || props.loading}
-        onClick={props.onRequestTransport}
+        disabled={!canTransport}
+        loading={transportInProgress || loading}
+        onClick={onRequestTransport}
       >
-        Transport
+        Transfer
       </Button>
     </Container>
   )
@@ -138,33 +161,38 @@ export const Form = ({ tokenSelect, destTokenSelect, ...props }: FormProps) => {
 
 type ContainerProps = PropsWithChildren<{ info: ReactNode }>
 
-function Container(props: ContainerProps) {
+function Container({ info, children }: ContainerProps) {
   return (
     <div className="flex w-[min(46rem,100%)] flex-col gap-6 lg:w-[revert] lg:flex-row lg:gap-0">
-      <section className="flex flex-col gap-3 lg:w-[46rem]">{props.children}</section>
-      {props.info}
+      <section className="flex flex-col gap-3 lg:w-[46rem]">{children}</section>
+      {info}
     </div>
   )
 }
 
-function Section(props: PropsWithChildren<{ header: ReactNode }>) {
+function Section({ header, children }: PropsWithChildren<{ header: ReactNode }>) {
   return (
     <Surface css={{ borderRadius: 8, padding: 16 }}>
       <header css={{ marginBottom: 8 }}>
-        <Text.H4>{props.header}</Text.H4>
+        <Text.H4>{header}</Text.H4>
       </header>
-      {props.children}
+      {children}
     </Surface>
   )
 }
 
-function CollapsibleSection(props: PropsWithChildren<{ header: ReactNode; open?: boolean; disabled?: boolean }>) {
+function CollapsibleSection({
+  open,
+  disabled,
+  header,
+  children,
+}: PropsWithChildren<{ header: ReactNode; open?: boolean; disabled?: boolean }>) {
   return (
-    <Details css={{ padding: '1.6rem' }} open={props.open} disabled={props.disabled}>
+    <Details css={{ padding: '1.6rem' }} open={open} disabled={disabled}>
       <Details.Summary>
-        <Text.H4>{props.header}</Text.H4>
+        <Text.H4>{header}</Text.H4>
       </Details.Summary>
-      <Details.Content>{props.children}</Details.Content>
+      <Details.Content>{children}</Details.Content>
     </Details>
   )
 }

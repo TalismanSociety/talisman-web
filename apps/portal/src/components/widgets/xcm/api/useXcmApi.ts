@@ -8,6 +8,8 @@ import { feesAtom } from './atoms/feesAtom'
 import { minMaxAmountsAtom } from './atoms/minMaxAmountsAtom'
 import { requestMaxAtom } from './atoms/requestMaxAtom'
 import { sourceAssetAtom } from './atoms/sourceAssetAtom'
+import { transferAtom } from './atoms/transferAtom'
+import { walletAtom } from './atoms/walletAtom'
 import { xcmAutoselectEffect } from './atoms/xcmAutoselectEffect'
 import { xcmBalancesAtom } from './atoms/xcmBalancesAtom'
 import { xcmDestChainsAtom } from './atoms/xcmDestChainsAtom'
@@ -72,6 +74,13 @@ export const useXcmApi = () => {
   const extrinsicError = extrinsicLoadable.state === 'hasError' ? (extrinsicLoadable.error as Error) : undefined
   allLoadables.push(extrinsicLoadable)
 
+  const walletLoadable = useAtomValue(loadable(walletAtom))
+  const hasWallet = walletLoadable.state === 'hasData' && walletLoadable.data
+  allLoadables.push(walletLoadable)
+  const transferLoadable = useAtomValue(loadable(transferAtom))
+  const hasTransfer = transferLoadable.state === 'hasData' && transferLoadable.data
+  allLoadables.push(transferLoadable)
+
   const loading = useMemo(
     () => allLoadables.some(loadable => loadable.state === 'loading'),
     allLoadables // eslint-disable-line react-hooks/exhaustive-deps
@@ -103,6 +112,8 @@ export const useXcmApi = () => {
     canReverse,
     reverseRoute,
 
+    hasWallet,
+    hasTransfer,
     sourceBalance,
     fees,
     minMaxAmounts,
