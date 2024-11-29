@@ -1,3 +1,12 @@
+import { type DeriveStakingAccount } from '@polkadot/api-derive/types'
+import { useDeriveState } from '@talismn/react-polkadot-api'
+import { CircularProgressIndicator } from '@talismn/ui'
+import BN from 'bn.js'
+import { useMemo, useState } from 'react'
+import { useRecoilValueLoadable, waitForAll } from 'recoil'
+
+import StakePosition from '@/components/recipes/StakePosition'
+
 import { type Account } from '../../../../domains/accounts/recoils'
 import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '../../../../domains/chains'
 import { useSubstrateApiState } from '../../../../domains/common'
@@ -13,18 +22,21 @@ import FastUnstakeDialog from '../../../recipes/FastUnstakeDialog'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import RedactableBalance from '../../RedactableBalance'
 import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
-import StakePosition from '@/components/recipes/StakePosition'
-import { type DeriveStakingAccount } from '@polkadot/api-derive/types'
-import { useDeriveState } from '@talismn/react-polkadot-api'
-import { CircularProgressIndicator } from '@talismn/ui'
-import BN from 'bn.js'
-import { useMemo, useState } from 'react'
-import { waitForAll, useRecoilValueLoadable } from 'recoil'
 
-const TotalRewards = (props: { account: Account }) => useTotalValidatorStakingRewards(props.account).toLocaleString()
+const TotalRewards = (props: { account: Account }) => {
+  const { totalRewards, isError } = useTotalValidatorStakingRewards(props.account)
+  if (isError) return '--'
 
-const TotalFiatRewards = (props: { account: Account }) =>
-  useNativeTokenLocalizedFiatAmount(useTotalValidatorStakingRewards(props.account))
+  return totalRewards.toLocaleString()
+}
+
+const TotalFiatRewards = (props: { account: Account }) => {
+  const { totalRewards, isError } = useTotalValidatorStakingRewards(props.account)
+  const totalFiatRewards = useNativeTokenLocalizedFiatAmount(totalRewards)
+  if (isError) return null
+
+  return totalFiatRewards
+}
 
 const ValidatorStakeItem = (props: {
   account: Account
