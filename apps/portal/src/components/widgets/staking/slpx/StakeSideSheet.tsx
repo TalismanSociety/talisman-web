@@ -128,7 +128,7 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
         />
       </Surface>
       <Text.Body as="p" css={{ marginTop: '4.8rem' }}>
-        {`To get started with Bifrost Liquid Staking for ${props.slpxPair.nativeToken.symbol}, you'll need ${props.slpxPair.nativeToken.symbol} on ${props.slpxPair.chain.name}. Once staked, you'll receive ${props.slpxPair.vToken.symbol} (voucher ${props.slpxPair.nativeToken.symbol}) as your liquid staking token, which has fully underlying ${props.slpxPair.nativeToken.symbol} reserve and is directly yield bearing.`}{' '}
+        {`To get started with Bifrost Liquid Staking for ${props.slpxPair.nativeToken.symbol}, you'll need ${props.slpxPair.nativeToken.symbol} on ${props.slpxPair.chain.name}. Once staked, you'll receive ${props.slpxPair.vToken.symbol} (voucher ${props.slpxPair.nativeToken.symbol}) as your liquid staking token, which has fully underlying ${props.slpxPair.nativeToken.symbol} reserve and is directly yield bearing. Make sure you have ETH on Manta Pacific in order to complete Manta liquid staking on Bifrost.`}{' '}
         <Text.Noop.A target="blank" href="https://bifrost.io/#liquidStaking">
           Learn more
         </Text.Noop.A>
