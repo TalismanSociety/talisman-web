@@ -1,5 +1,5 @@
 import type { PropsWithChildren, ReactNode } from 'react'
-import { Button, CircularProgressIndicator, Details, Surface, Text, TextInput } from '@talismn/ui'
+import { Button, CircularProgressIndicator, Details, Surface, Text, TextInput, Tooltip } from '@talismn/ui'
 
 import { cn } from '@/lib/utils'
 
@@ -117,7 +117,13 @@ export const Form = ({
               </div>
             )
           }
-          leadingSupportingText={amountError && <div className="text-orange-400">{amountError}</div>}
+          leadingSupportingText={
+            amountError && (
+              <Tooltip content={amountError}>
+                <div className="truncate text-orange-400">{amountError}</div>
+              </Tooltip>
+            )
+          }
           value={amount ?? ''}
           onChangeText={onChangeAmount}
           trailingIcon={

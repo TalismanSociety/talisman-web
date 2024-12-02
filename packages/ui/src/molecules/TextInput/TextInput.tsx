@@ -1,14 +1,8 @@
-import { Clickable, Surface, Text, useSurfaceColorAtElevation } from '../../atoms'
+import type { ButtonHTMLAttributes, ChangeEvent, DetailedHTMLProps, PropsWithChildren, ReactNode } from 'react'
 import { useTheme } from '@emotion/react'
-import {
-  useId,
-  type ButtonHTMLAttributes,
-  type DetailedHTMLProps,
-  type PropsWithChildren,
-  type ReactNode,
-  type ChangeEvent,
-  forwardRef,
-} from 'react'
+import { forwardRef, useId } from 'react'
+
+import { Clickable, Surface, Text, useSurfaceColorAtElevation } from '../../atoms'
 
 export type TextInputProps = Omit<
   React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
@@ -89,7 +83,7 @@ const TextInput = Object.assign(
             }}
           >
             {leadingIcon}
-            <div className="flex flex-col flex-1" css={{ width: props.width ?? '100%' }}>
+            <div className="flex flex-1 flex-col" css={{ width: props.width ?? '100%' }}>
               <input
                 ref={ref}
                 {...props}
@@ -129,6 +123,8 @@ const TextInput = Object.assign(
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 marginTop: '0.8rem',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
                 '*:empty::after': {
                   content: `"\u200B"`,
                 },

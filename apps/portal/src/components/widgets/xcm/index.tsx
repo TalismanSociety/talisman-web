@@ -98,7 +98,10 @@ export function XcmForm() {
   }, [amount, assetPriceLoadable, currency])
 
   const details = extrinsicError ? (
-    <ErrorMessage title="Unable to process transfer" text={String(extrinsicError.message ?? extrinsicError)} />
+    <ErrorMessage
+      title="Unable to process transfer"
+      text="An error was thrown while attempting to build the transfer extrinsic"
+    />
   ) : fees ? (
     <Fees originFee={fees.sourceFee} destinationFee={fees.destFee} />
   ) : sender && sourceChain && destChain && asset ? (
@@ -167,7 +170,7 @@ export function XcmForm() {
         }
         onChangeAmount={setAmount}
         onRequestMaxAmount={requestMax}
-        amountError={extrinsicError?.message}
+        amountError={extrinsicError?.message ? `Extrinsic error: ${extrinsicError.message}` : undefined}
         accountSelect={
           <div className="[&>div>button]:!rounded-[1.2rem]">
             <AccountSelector
