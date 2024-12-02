@@ -63,6 +63,7 @@ export function TokenSelectDialog({
     >
       <div className="mb-6 flex flex-col gap-4 lg:flex-row">
         <SearchBar
+          autoFocus
           containerClassName="flex-grow lg:w-3/5 [&>div]:!rounded-[8px]"
           value={search}
           onChangeText={setSearch}

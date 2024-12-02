@@ -90,11 +90,23 @@ export function XcmForm() {
       ? tokenPriceState({ coingeckoId: sourceAsset.chaindataCoingeckoId })
       : constSelector(undefined)
   )
+  const available = useMemo(
+    () =>
+      sourceBalance ? (
+        <Tooltip content={`${toPreciseDecimals(sourceBalance)} ${sourceBalance.symbol}`}>
+          <span className="text-foreground shrink-0">
+            {formatDecimals(toPreciseDecimals(sourceBalance))}&nbsp;{sourceBalance.symbol}
+          </span>
+        </Tooltip>
+      ) : undefined,
+    [sourceBalance]
+  )
   const fiat = useMemo(() => {
     const price = assetPriceLoadable.valueMaybe()
-    return typeof price === 'number' && typeof amount === 'string' && amount.length > 0
-      ? (price * parseFloat(amount)).toLocaleString(undefined, { style: 'currency', currency })
-      : undefined
+    if (typeof price !== 'number') return undefined
+    if (typeof amount !== 'string' || amount.length <= 0)
+      return Number(0).toLocaleString(undefined, { style: 'currency', currency })
+    return (price * parseFloat(amount)).toLocaleString(undefined, { style: 'currency', currency })
   }, [amount, assetPriceLoadable, currency])
 
   const details = extrinsicError ? (
@@ -103,7 +115,7 @@ export function XcmForm() {
       text="An error was thrown while attempting to build the transfer extrinsic"
     />
   ) : fees ? (
-    <Fees originFee={fees.sourceFee} destinationFee={fees.destFee} />
+    <Fees totalBalance={available} originFee={fees.sourceFee} destinationFee={fees.destFee} />
   ) : sender && sourceChain && destChain && asset ? (
     <ProgressIndicator
       title="Preparing transfer"
@@ -145,25 +157,17 @@ export function XcmForm() {
         empty={!sourceChain || !destChain}
         amount={amount}
         fiat={
-          fiat ??
-          (typeof amount === 'number' && sourceAsset?.chaindataCoingeckoId ? (
+          fiat ? (
+            <span className="whitespace-pre">{fiat}</span>
+          ) : typeof amount === 'number' && sourceAsset?.chaindataCoingeckoId ? (
             <CircularProgressIndicator size="1em" />
-          ) : undefined)
-        }
-        available={
-          sourceBalance ? (
-            <Tooltip content={`${toPreciseDecimals(sourceBalance)} ${sourceBalance.symbol}`}>
-              <span className="text-foreground shrink-0">
-                {formatDecimals(toPreciseDecimals(sourceBalance))}&nbsp;{sourceBalance.symbol}
-              </span>
-            </Tooltip>
           ) : undefined
         }
         max={
           minMaxAmounts?.max && sourceBalance?.amount !== minMaxAmounts.max.amount ? (
-            <Tooltip content={`${toPreciseDecimals(minMaxAmounts.max)} ${minMaxAmounts.max.symbol} after fees`}>
-              <span className="shrink-0">
-                ({formatDecimals(toPreciseDecimals(minMaxAmounts.max))}&nbsp;{minMaxAmounts.max.symbol} after fees)
+            <Tooltip content={`${toPreciseDecimals(minMaxAmounts.max)} ${minMaxAmounts.max.symbol}`}>
+              <span className="text-foreground shrink-0">
+                {formatDecimals(toPreciseDecimals(minMaxAmounts.max))}&nbsp;{minMaxAmounts.max.symbol}
               </span>
             </Tooltip>
           ) : undefined

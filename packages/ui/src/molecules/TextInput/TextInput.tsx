@@ -83,7 +83,7 @@ const TextInput = Object.assign(
             }}
           >
             {leadingIcon}
-            <div className="flex flex-1 flex-col" css={{ width: props.width ?? '100%' }}>
+            <div className="flex flex-1 flex-col overflow-hidden" css={{ width: props.width ?? '100%' }}>
               <input
                 ref={ref}
                 {...props}
