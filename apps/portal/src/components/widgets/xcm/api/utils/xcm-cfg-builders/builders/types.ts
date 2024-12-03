@@ -1,5 +1,4 @@
 // @ts-nocheck
-/* eslint-disable */
 
 export enum XcmVersion {
   v1 = 'V1',

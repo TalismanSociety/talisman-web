@@ -1,5 +1,4 @@
 // @ts-nocheck
-/* eslint-disable */
 
 import { MinConfigBuilder, SubstrateQueryConfig } from '@galacticcouncil/xcm-core'
 import { Option } from '@polkadot/types'

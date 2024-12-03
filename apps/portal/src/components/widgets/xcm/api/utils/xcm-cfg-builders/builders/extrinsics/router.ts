@@ -1,5 +1,4 @@
 // @ts-nocheck
-/* eslint-disable */
 
 import { EvmParachain, ExtrinsicConfig, ExtrinsicConfigBuilder } from '@galacticcouncil/xcm-core'
 
