@@ -41,9 +41,7 @@ export function TokenSelectDialog({
     const searchFilter: (assets: TokenPickerAsset[]) => TokenPickerAsset[] = search
       ? assets =>
           assets.filter(asset =>
-            [asset.chain.name, asset.token.key, asset.token.originSymbol].some(attr =>
-              attr.toLowerCase().includes(normalisedSearch)
-            )
+            `${asset.chain.name}${asset.token.key}${asset.token.originSymbol}`.toLowerCase().includes(normalisedSearch)
           )
       : assets => assets
 

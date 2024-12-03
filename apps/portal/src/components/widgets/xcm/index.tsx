@@ -174,7 +174,7 @@ export function XcmForm() {
         }
         onChangeAmount={setAmount}
         onRequestMaxAmount={requestMax}
-        amountError={extrinsicError?.message ? `Extrinsic error: ${extrinsicError.message}` : undefined}
+        amountError={extrinsicError?.message ?? undefined}
         accountSelect={
           <div className="[&>div>button]:!rounded-[1.2rem]">
             <AccountSelector
