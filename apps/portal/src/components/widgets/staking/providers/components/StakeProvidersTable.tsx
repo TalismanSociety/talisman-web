@@ -1,6 +1,7 @@
 import { CircularProgressIndicator, Surface, Text } from '@talismn/ui'
 import { ChevronDown, ChevronUp } from '@talismn/web-icons'
 import {
+  CellContext,
   ColumnDef,
   flexRender,
   getCoreRowModel,
@@ -66,6 +67,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
         header: 'Est. return',
         cell: ({ row }) => {
           return (
+            // <ErrorBoundary renderFallback={() => <>--</>}>
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
               <Apr
                 typeId={row.original.typeId}
@@ -75,6 +77,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
                 apiEndpoint={row.original.apiEndpoint}
               />
             </Suspense>
+            // </ErrorBoundary>
           )
         },
         sortingFn: sortingFn('apr'),
@@ -160,7 +163,14 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
       },
     ],
     [setValues, sortingFn]
-  )
+  ).map(col => ({
+    ...col,
+    cell: (props: CellContext<Provider, unknown>) => (
+      <ErrorBoundary renderFallback={() => <>--</>}>
+        {typeof col.cell === 'function' ? col.cell(props) : null}
+      </ErrorBoundary>
+    ),
+  }))
 
   const table = useReactTable({
     data: dataQuery ?? defaultData,
@@ -217,9 +227,11 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
             {/* Render as table in xl > screens */}
             <Surface as="article" className="hidden grid-cols-8 items-center rounded-[16px] p-[1.6rem] xl:grid">
               {row.getVisibleCells().map(cell => (
-                <div key={cell.id} className="flex-grow last:text-right">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </div>
+                <ErrorBoundary renderFallback={() => <>--</>} key={cell.id}>
+                  <div className="flex-grow last:text-right">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </div>
+                </ErrorBoundary>
               ))}
             </Surface>
             {/* Render as card in xl < screens */}
