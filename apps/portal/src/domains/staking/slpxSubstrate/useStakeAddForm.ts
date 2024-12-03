@@ -18,7 +18,6 @@ const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
 
   const originTokenDecimals = 10
   const remark = import.meta.env.VITE_APPLICATION_NAME ?? 'Talisman'
-  const channelId = channel_id
 
   const decimalAmount = useMemo(
     () => (amount.trim() === '' ? undefined : Decimal.fromUserInputOrUndefined(amount, originTokenDecimals)),
@@ -32,9 +31,8 @@ const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
 
   const tx = useMemo(
     // @ts-expect-error
-    () => api?.tx.vtokenMinting.mint(slpxPair.nativeToken.tokenId, decimalAmount?.planck ?? 0n, remark, channelId),
-    // TODO: Check if the remark is correct
-    [api?.tx.vtokenMinting, channelId, decimalAmount?.planck, remark, slpxPair.nativeToken.tokenId]
+    () => api?.tx.vtokenMinting.mint(slpxPair.nativeToken.tokenId, decimalAmount?.planck ?? 0n, remark, channel_id),
+    [api?.tx.vtokenMinting, decimalAmount?.planck, remark, slpxPair.nativeToken.tokenId]
   )
 
   const extrinsic = useExtrinsic(tx)
