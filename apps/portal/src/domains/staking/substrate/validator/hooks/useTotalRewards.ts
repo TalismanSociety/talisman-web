@@ -1,6 +1,3 @@
-import { graphql } from '../../../../../../generated/gql/nova/gql'
-import type { Account } from '../../../../accounts'
-import { assertChain, useChainState } from '../../../../chains'
 import { encodeAddress } from '@polkadot/util-crypto'
 import { Decimal } from '@talismn/math'
 import request from 'graphql-request'
@@ -8,11 +5,15 @@ import { atom, useAtomValue } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { useRecoilValue } from 'recoil'
 
+import type { Account } from '../../../../accounts'
+import { graphql } from '../../../../../../generated/gql/nova/gql'
+import { assertChain, useChainState } from '../../../../chains'
+
 const totalValidatorStakingRewardsAtomFamily = atomFamily(
   ({ apiUrl, address }: { apiUrl: string; address: string }) =>
-    atom(
-      async () =>
-        await request(
+    atom(async () => {
+      try {
+        const response = await request(
           apiUrl,
           graphql(`
             query ValidatorStakingReward($address: String!) {
@@ -23,7 +24,12 @@ const totalValidatorStakingRewardsAtomFamily = atomFamily(
           `),
           { address }
         )
-    ),
+        return { data: response.accumulatedReward?.amount || null, isError: false }
+      } catch (error) {
+        console.error('Error fetching staking rewards:', error)
+        return { isError: true }
+      }
+    }),
   (a, b) => a.apiUrl === b.apiUrl && a.address === b.address
 )
 
@@ -32,14 +38,19 @@ export const useTotalValidatorStakingRewards = (account: Account) => {
 
   assertChain(chain, { hasNominationPools: true })
 
-  const response = useAtomValue(
+  const { data, isError } = useAtomValue(
     totalValidatorStakingRewardsAtomFamily({
       apiUrl: chain.novaIndexerUrl,
       address: encodeAddress(account.address, chain.prefix),
     })
   )
 
-  const amount = response.accumulatedReward?.amount as string | undefined
+  const amount = data?.accumulatedReward?.amount as string | undefined
 
-  return Decimal.fromPlanck(amount ?? 0, chain.nativeToken?.decimals ?? 0, { currency: chain.nativeToken?.symbol })
+  return {
+    totalRewards: Decimal.fromPlanck(amount ?? 0, chain.nativeToken?.decimals ?? 0, {
+      currency: chain.nativeToken?.symbol,
+    }),
+    isError,
+  }
 }
