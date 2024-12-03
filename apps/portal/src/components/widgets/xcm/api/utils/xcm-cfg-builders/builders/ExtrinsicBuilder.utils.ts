@@ -1,4 +1,5 @@
 // @ts-nocheck
+/* eslint-disable */
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types'
 import { getTypeDef } from '@polkadot/types'

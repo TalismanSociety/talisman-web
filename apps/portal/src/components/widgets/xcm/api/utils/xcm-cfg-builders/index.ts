@@ -14,7 +14,9 @@ import { PalletAssetsAssetAccount, PalletAssetsAssetDetails } from '@polkadot/ty
  *
  * FILES="builders/BalanceBuilder.ts builders/ExtrinsicBuilder.ts builders/ExtrinsicBuilder.utils.ts builders/types.ts builders/extrinsics builders/AssetMinBuilder.ts"
  * curl -sL https://github.com/galacticcouncil/sdk/archive/master.tar.gz | tar -xz --strip=4 $(echo $FILES | sed 's#[^ ]*#sdk-master/packages/xcm-cfg/src/&#g' | xargs -n 1)
- * sed -i '1i// @ts-nocheck\n' $(find $(echo $FILES) -type f)
+ * sed -i '1i/* eslint-disable *' $(find $(echo $FILES) -type f)
+ * sed -i '1{s/$/\/\n/}' $(find $(echo $FILES) -type f)
+ * sed -i '1i// @ts-nocheck' $(find $(echo $FILES) -type f)
  * ```
  */
 export const XCM_CFG_BUILDERS_UPDATE_INSTRUCTIONS = null

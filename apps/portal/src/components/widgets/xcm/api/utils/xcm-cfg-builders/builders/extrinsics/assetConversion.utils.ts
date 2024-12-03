@@ -1,4 +1,5 @@
 // @ts-nocheck
+/* eslint-disable */
 
 import { TypeRegistry } from '@polkadot/types'
 

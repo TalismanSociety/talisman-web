@@ -1,4 +1,5 @@
 // @ts-nocheck
+/* eslint-disable */
 
 import { Parachain, TxWeight } from '@galacticcouncil/xcm-core'
 

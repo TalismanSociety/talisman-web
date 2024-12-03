@@ -1,4 +1,5 @@
 // @ts-nocheck
+/* eslint-disable */
 
 import { multiloc, Parachain } from '@galacticcouncil/xcm-core'
 

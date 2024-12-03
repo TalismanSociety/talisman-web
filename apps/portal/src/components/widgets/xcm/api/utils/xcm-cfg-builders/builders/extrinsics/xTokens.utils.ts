@@ -1,4 +1,5 @@
 // @ts-nocheck
+/* eslint-disable */
 
 import { Parachain } from '@galacticcouncil/xcm-core'
 

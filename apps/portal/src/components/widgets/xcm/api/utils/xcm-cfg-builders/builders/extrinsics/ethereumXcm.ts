@@ -1,4 +1,5 @@
 // @ts-nocheck
+/* eslint-disable */
 
 import { Abi, ContractConfigBuilder, ExtrinsicConfig, ExtrinsicConfigBuilder } from '@galacticcouncil/xcm-core'
 import { encodeFunctionData } from 'viem'
