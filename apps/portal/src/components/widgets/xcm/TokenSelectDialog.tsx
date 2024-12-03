@@ -14,7 +14,7 @@ import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
 import ChainLogo from '@/components/recipes/ChainLogo'
 import { selectedCurrencyState } from '@/domains/balances'
 
-import type { TokenPickerAsset, TokenPickerChain } from './api/utils/xcmTokenPickerTypes'
+import type { TokenPickerAsset, TokenPickerAssetWithBalance, TokenPickerChain } from './api/utils/xcmTokenPickerTypes'
 import { senderAtom } from './api/atoms/xcmFieldsAtoms'
 
 export type TokenSelectDialogProps = {
@@ -35,22 +35,23 @@ export function TokenSelectDialog({
   const [search, setSearch] = useState('')
   const [searchChain, setSearchChain] = useState('')
 
-  const filteredAssets = useMemo(() => {
+  const sortedAssets = useBalanceSortedAssets(assets)
+  const filterSortedAssets = useMemo(() => {
     const normalisedSearch = search.trim().toLowerCase()
 
-    const searchFilter: (assets: TokenPickerAsset[]) => TokenPickerAsset[] = search
+    const searchFilter: (assets: TokenPickerAssetWithBalance[]) => TokenPickerAssetWithBalance[] = search
       ? assets =>
           assets.filter(asset =>
             `${asset.chain.name}${asset.token.key}${asset.token.originSymbol}`.toLowerCase().includes(normalisedSearch)
           )
       : assets => assets
 
-    const chainFilter: (assets: TokenPickerAsset[]) => TokenPickerAsset[] = searchChain
+    const chainFilter: (assets: TokenPickerAssetWithBalance[]) => TokenPickerAssetWithBalance[] = searchChain
       ? assets => assets.filter(asset => asset.chain.key === searchChain)
       : assets => assets
 
-    return searchFilter(chainFilter(assets))
-  }, [assets, search, searchChain])
+    return searchFilter(chainFilter(sortedAssets))
+  }, [sortedAssets, search, searchChain])
 
   return (
     <AlertDialog
@@ -83,7 +84,7 @@ export function TokenSelectDialog({
         </Select>
       </div>
       <div className="flex max-h-[60dvh] flex-col gap-4 overflow-y-auto">
-        {filteredAssets.map((asset, index) => (
+        {filterSortedAssets.map((asset, index) => (
           <Asset key={index} asset={asset} onClick={() => (onRequestDismiss(), onChange(asset))} />
         ))}
       </div>
@@ -92,53 +93,12 @@ export function TokenSelectDialog({
 }
 
 type AssetProps = {
-  asset: TokenPickerAsset
+  asset: TokenPickerAssetWithBalance
   onClick: () => void
 }
 
 function Asset({ asset, onClick }: AssetProps) {
   const currency = useRecoilValue(selectedCurrencyState)
-
-  const sender = useAtomValue(senderAtom)
-  const balancesByLoadable = useAtomValue(loadable(sender ? balancesBySenderByAsset : balancesByAssetAtom))
-  const balancesBy = balancesByLoadable?.state === 'hasData' ? balancesByLoadable.data : undefined
-
-  const [tokens, setTokens] = useState<string | undefined>(undefined)
-  const [fiat, setFiat] = useState<number | undefined>(undefined)
-
-  // This calculation is scheduled outside of the render (i.e. it is in an effect), and it is also split into three pieces
-  // so that we can abort it when the user is scrolling quickly (and this element isn't rendered on-screen for very long)
-  useEffect(() => {
-    const abort = new AbortController()
-
-    void (async () => {
-      const balancesKey = sender
-        ? `${encodeAnyAddress(sender)}:${asset.chaindataId}:${asset.token.originSymbol.toLowerCase()}`
-        : `${asset.chaindataId}:${asset.token.originSymbol.toLowerCase()}`
-      const balances = await delayExec(() => balancesBy?.get(balancesKey))
-      if (abort.signal.aborted) return
-      if (!balances) {
-        setTokens('0.0')
-        if (asset.chaindataCoingeckoId) setFiat(0)
-        else setFiat(undefined)
-        return
-      }
-
-      const tokens = await delayExec(() =>
-        balances.each.reduce((sum, b) => sum.plus(b.transferable.tokens), new BigNumber(0)).toString()
-      )
-      if (abort.signal.aborted) return
-
-      const fiat = await delayExec(() => balances.sum.fiat(currency).total)
-      if (abort.signal.aborted) return
-
-      setTokens(tokens)
-      if (asset.chaindataCoingeckoId) setFiat(fiat)
-      else setFiat(undefined)
-    })()
-
-    return () => abort.abort()
-  }, [asset.chaindataCoingeckoId, asset.chaindataId, asset.token.originSymbol, balancesBy, currency, sender])
 
   // only render visible items to improve performance
   const refContainer = useRef<HTMLDivElement>(null)
@@ -180,16 +140,16 @@ function Asset({ asset, onClick }: AssetProps) {
               css={{ flex: 1, padding: 0, textAlign: 'end' }}
               headlineContent={
                 <div className="flex justify-end">
-                  {tokens ? (
+                  {asset.tokens ? (
                     <>
-                      {formatDecimals(tokens)}&nbsp;{asset.token.originSymbol}
+                      {formatDecimals(asset.tokens)}&nbsp;{asset.token.originSymbol}
                     </>
                   ) : (
                     <CircularProgressIndicator size="1em" />
                   )}
                 </div>
               }
-              supportingContent={fiat?.toLocaleString(undefined, { currency, style: 'currency' })}
+              supportingContent={asset.fiat?.toLocaleString(undefined, { currency, style: 'currency' })}
             />
           </Surface>
         </Clickable.WithFeedback>
@@ -212,7 +172,45 @@ function Asset({ asset, onClick }: AssetProps) {
   )
 }
 
-/** allBalances is organised by asset here so that this work isn't duplicated by every <Asset /> */
+const useBalanceSortedAssets = (assets: TokenPickerAsset[]) => {
+  const currency = useRecoilValue(selectedCurrencyState)
+  const sender = useAtomValue(senderAtom)
+
+  const balanceSortedAssetsAtom = useMemo(
+    () =>
+      atom(get => {
+        const balancesByAtom = sender ? balancesBySenderByAsset : balancesByAssetAtom
+        const balancesByLoadable = get(loadable(balancesByAtom))
+        const balancesBy = balancesByLoadable?.state === 'hasData' ? balancesByLoadable.data : undefined
+        if (!balancesBy)
+          return assets.map<TokenPickerAssetWithBalance>(asset => ({ ...asset, tokens: undefined, fiat: undefined }))
+
+        const addBalanceToAsset = (asset: TokenPickerAsset): TokenPickerAssetWithBalance => {
+          const balancesKey = sender
+            ? `${encodeAnyAddress(sender)}:${asset.chaindataId}:${asset.token.originSymbol.toLowerCase()}`
+            : `${asset.chaindataId}:${asset.token.originSymbol.toLowerCase()}`
+          const balances = balancesBy?.get(balancesKey)
+
+          if (!balances) return { ...asset, tokens: '0.0', fiat: asset.chaindataCoingeckoId ? 0 : undefined }
+          return {
+            ...asset,
+            tokens: balances.each.reduce((sum, b) => sum.plus(b.transferable.tokens), new BigNumber(0)).toString(),
+            fiat: asset.chaindataCoingeckoId ? balances.sum.fiat(currency).total : undefined,
+          }
+        }
+
+        const sortAssetsByBalance = (a: TokenPickerAssetWithBalance, b: TokenPickerAssetWithBalance) =>
+          (b.fiat ?? 0) - (a.fiat ?? 0)
+
+        return assets.map(addBalanceToAsset).sort(sortAssetsByBalance)
+      }),
+    [sender, assets, currency]
+  )
+
+  return useAtomValue(balanceSortedAssetsAtom)
+}
+
+/** allBalances is organised by asset here so that this work is done only once instead of once per asset */
 const balancesByAssetAtom = atom(async get => {
   const allBalances = await get(allBalancesAtom)
   const byAsset = new Map<string, Balances>()
@@ -224,7 +222,7 @@ const balancesByAssetAtom = atom(async get => {
   return byAsset
 })
 
-/** allBalances is organised by sender by asset here so that this work isn't duplicated by every <Asset /> */
+/** allBalances is organised by sender by asset here so that this work is done only once instead of once per asset */
 const balancesBySenderByAsset = atom(async get => {
   const allBalances = await get(allBalancesAtom)
   const bySenderByAsset = new Map<string, Balances>()
@@ -235,15 +233,3 @@ const balancesBySenderByAsset = atom(async get => {
   })
   return bySenderByAsset
 })
-
-/** Schedule a computation to be run `delayMs` in the future. */
-const delayExec = async <T,>(callback: () => T, delayMs = 20): Promise<T> =>
-  await new Promise((resolve, reject) =>
-    setTimeout(() => {
-      try {
-        resolve(callback())
-      } catch (e) {
-        reject(e)
-      }
-    }, delayMs)
-  )
