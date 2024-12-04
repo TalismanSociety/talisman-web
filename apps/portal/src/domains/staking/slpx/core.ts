@@ -24,8 +24,6 @@ import { useBlockNumber, useConfig, useReadContract, useToken, useWaitForTransac
 import { manta, moonbeam } from 'wagmi/chains'
 import { getTokenQueryOptions, readContractsQueryOptions } from 'wagmi/query'
 
-// TODO: Double check moonbeamReceiver address
-const moonbeamReceiver = '0x5e2DBf9659b64C135912DB1cb2f5397c611e8002'
 const remark = import.meta.env.VITE_APPLICATION_NAME ?? 'Talisman'
 
 export const useVTokenUnlockDuration = (slpxPair: SlpxPair) => {
@@ -255,7 +253,10 @@ export const useSlpxSwapForm = (
 }
 
 export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) => {
-  if (account?.address !== undefined && !isAddress(account.address)) {
+  if (!account?.address) {
+    throw new Error('Account address is required')
+  }
+  if (!isAddress(account.address)) {
     throw new Error(`Invalid EVM address ${account.address}`)
   }
 
@@ -291,7 +292,7 @@ export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) 
         slpxPair.vToken.address,
         planckAmount ?? 0n,
         BigInt(slpxPair.chain.id),
-        moonbeamReceiver,
+        account.address as `0x${string}`,
         remark,
         channel_id,
       ],
@@ -362,7 +363,11 @@ export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) 
 }
 
 export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) => {
-  if (account?.address !== undefined && !isAddress(account.address)) {
+  if (!account?.address) {
+    throw new Error('Account address is required')
+  }
+
+  if (!isAddress(account.address)) {
     throw new Error(`Invalid EVM address ${account.address}`)
   }
 
@@ -433,7 +438,7 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
         slpxPair.nativeToken.address,
         planckAmount ?? 0n,
         BigInt(slpxPair.chain.id),
-        moonbeamReceiver,
+        account?.address as `0x${string}`,
         remark,
         channel_id,
       ],
