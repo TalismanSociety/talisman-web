@@ -10,6 +10,9 @@ import {
 } from '@polkadot/types/lookup'
 import { isString } from '@polkadot/util'
 
+import { normalizeInterior } from './ExtrinsicBuilder.utils'
+import { XcmVersion } from './types'
+
 export function BalanceBuilder() {
   return {
     substrate,

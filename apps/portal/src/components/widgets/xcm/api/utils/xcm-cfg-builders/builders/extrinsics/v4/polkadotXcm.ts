@@ -27,7 +27,6 @@ const limitedTeleportAssets = (): ExtrinsicConfigBuilder => ({
         const assets = {
           [version]: [transferAsset],
         }
-
         return [dest, beneficiary, assets, 0, 'Unlimited']
       },
     }),
