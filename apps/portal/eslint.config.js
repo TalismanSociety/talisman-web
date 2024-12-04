@@ -1,7 +1,9 @@
 import recommended from '@talismn/eslint-config/react.js'
 import tseslint from 'typescript-eslint'
 
-export default tseslint.config(...recommended, {
+const ignores = ['src/components/widgets/xcm/api/utils/xcm-cfg-builders/builders']
+
+export default tseslint.config({ ignores }, ...recommended, {
   rules: {
     // TODO: turn this back on
     '@typescript-eslint/no-explicit-any': 'off',

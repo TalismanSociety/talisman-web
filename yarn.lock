@@ -3266,9 +3266,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@galacticcouncil/sdk@npm:^4.5.0":
-  version: 4.5.0
-  resolution: "@galacticcouncil/sdk@npm:4.5.0"
+"@galacticcouncil/sdk@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "@galacticcouncil/sdk@npm:5.0.1"
   dependencies:
     "@galacticcouncil/math-lbp": "npm:^1.0.0"
     "@galacticcouncil/math-liquidity-mining": "npm:^1.0.0"
@@ -3276,40 +3276,41 @@ __metadata:
     "@galacticcouncil/math-stableswap": "npm:^1.0.0"
     "@galacticcouncil/math-xyk": "npm:^1.0.0"
     "@thi.ng/cache": "npm:^2.1.35"
+    "@thi.ng/memoize": "npm:^4.0.2"
     bignumber.js: "npm:^9.1.0"
     lodash.clonedeep: "npm:^4.5.0"
   peerDependencies:
-    "@polkadot/api": ^14.2.3
-    "@polkadot/api-augment": ^14.2.3
-    "@polkadot/api-base": ^14.2.3
-    "@polkadot/api-derive": ^14.2.3
-    "@polkadot/keyring": ^13.2.2
-    "@polkadot/rpc-augment": ^14.2.3
-    "@polkadot/rpc-core": ^14.2.3
-    "@polkadot/rpc-provider": ^14.2.3
-    "@polkadot/types": ^14.2.3
-    "@polkadot/types-augment": ^14.2.3
-    "@polkadot/types-codec": ^14.2.3
-    "@polkadot/types-create": ^14.2.3
-    "@polkadot/types-known": ^14.2.3
-    "@polkadot/util": ^13.2.2
-    "@polkadot/util-crypto": ^13.2.2
-  checksum: 10c0/8bd6692fc3fb99b019936214d8a6e75a0ea101714653df8a806c31c4caa1067777200493bf5f1a059e645c76431cc62a934a2be50cf1f519dafe57e5d6bc5c02
+    "@polkadot/api": ~14.0.1
+    "@polkadot/api-augment": ~14.0.1
+    "@polkadot/api-base": ~14.0.1
+    "@polkadot/api-derive": ~14.0.1
+    "@polkadot/keyring": ~13.1.1
+    "@polkadot/rpc-augment": ~14.0.1
+    "@polkadot/rpc-core": ~14.0.1
+    "@polkadot/rpc-provider": ~14.0.1
+    "@polkadot/types": ~14.0.1
+    "@polkadot/types-augment": ~14.0.1
+    "@polkadot/types-codec": ~14.0.1
+    "@polkadot/types-create": ~14.0.1
+    "@polkadot/types-known": ~14.0.1
+    "@polkadot/util": ~13.1.1
+    "@polkadot/util-crypto": ~13.1.1
+  checksum: 10c0/868fab69eaaa1e50a7b18955b60363a9945cd01733db35eb83dfb255e426583869bf332ab0b580b7cb1d5c3e3b7486269af8ba30d0e4c36e76d08389a2741d2e
   languageName: node
   linkType: hard
 
-"@galacticcouncil/xcm-cfg@npm:5.3.3":
-  version: 5.3.3
-  resolution: "@galacticcouncil/xcm-cfg@npm:5.3.3"
+"@galacticcouncil/xcm-cfg@npm:5.6.0":
+  version: 5.6.0
+  resolution: "@galacticcouncil/xcm-cfg@npm:5.6.0"
   dependencies:
-    "@galacticcouncil/xcm-core": "npm:^5.2.0"
-  checksum: 10c0/9fcb78598659c0d665d49ce6d73fa97737373ddecaef0ab33cc5148898eac511d1f5a0e1c44bd772bc2edf2795b7a72e5484d3276ec264fe2cabac465dab11a9
+    "@galacticcouncil/xcm-core": "npm:^5.4.0"
+  checksum: 10c0/21e44543bcb8736661662183499f188332792c44597afdfb777fe4151f605ee2766a64e4603fe083244a6c7d3c83037a97e63833bde027a2fbb1bed238503032
   languageName: node
   linkType: hard
 
-"@galacticcouncil/xcm-core@npm:^5.2.0, @galacticcouncil/xcm-core@npm:^5.3.0":
-  version: 5.3.0
-  resolution: "@galacticcouncil/xcm-core@npm:5.3.0"
+"@galacticcouncil/xcm-core@npm:^5.4.0":
+  version: 5.4.0
+  resolution: "@galacticcouncil/xcm-core@npm:5.4.0"
   dependencies:
     "@wormhole-foundation/sdk-base": "npm:^0.5.2"
     "@wormhole-foundation/sdk-connect": "npm:^0.5.2"
@@ -3318,23 +3319,23 @@ __metadata:
     buffer: "npm:^6.0.3"
     lru-cache: "npm:^11.0.0"
   peerDependencies:
-    "@polkadot/api": ^14.2.3
-    "@polkadot/api-augment": ^14.2.3
-    "@polkadot/types": ^14.2.3
-    "@polkadot/util-crypto": ^13.2.2
+    "@polkadot/api": ~14.0.1
+    "@polkadot/api-augment": ~14.0.1
+    "@polkadot/types": ~14.0.1
+    "@polkadot/util-crypto": ~13.1.1
     viem: ^2.15.1
-  checksum: 10c0/4393a566c314d2f99c4be99757b4af7b2deb8f37f84339cf6967515870387de00a100cfdc1e46da81ec930f6d996b4f4a23f3de78ba5d1a23df1373248af617f
+  checksum: 10c0/fe28e008f968347f27b0336866af168ed1109d2885eb9e5df14a8ed7eb5a1cdb32afe3bf93b1dab84838e0e1ee9a602d62ac8bbb00070cdda8f957f42a17d7b5
   languageName: node
   linkType: hard
 
-"@galacticcouncil/xcm-sdk@npm:^6.3.0":
-  version: 6.3.0
-  resolution: "@galacticcouncil/xcm-sdk@npm:6.3.0"
+"@galacticcouncil/xcm-sdk@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@galacticcouncil/xcm-sdk@npm:7.0.0"
   dependencies:
-    "@galacticcouncil/xcm-core": "npm:^5.3.0"
+    "@galacticcouncil/xcm-core": "npm:^5.4.0"
   peerDependencies:
-    "@galacticcouncil/sdk": ^4.5.0
-  checksum: 10c0/ede3cc5085582c33546e5f46f707d7c44cc1ef0b2c293597dd3228c458103c17e154c9a4f07fced7493270b969500729f408d642fd47180719fde040e0973e22
+    "@galacticcouncil/sdk": ^5.0.0
+  checksum: 10c0/97d22930995c048c67757d09be245fcf085b80bcd3565ec56abd20e89a50e3ac2d86744151a56d13e367b60006dcd0734644a6dae9fc58293c1c961c5d7e577f
   languageName: node
   linkType: hard
 
@@ -10257,10 +10258,10 @@ __metadata:
     "@emotion/react": "npm:^11.11.3"
     "@emotion/styled": "npm:^11.11.0"
     "@galacticcouncil/api-augment": "npm:^0.3.0"
-    "@galacticcouncil/sdk": "npm:^4.5.0"
-    "@galacticcouncil/xcm-cfg": "npm:5.3.3"
-    "@galacticcouncil/xcm-core": "npm:^5.3.0"
-    "@galacticcouncil/xcm-sdk": "npm:^6.3.0"
+    "@galacticcouncil/sdk": "npm:^5.0.1"
+    "@galacticcouncil/xcm-cfg": "npm:5.6.0"
+    "@galacticcouncil/xcm-core": "npm:^5.4.0"
+    "@galacticcouncil/xcm-sdk": "npm:^7.0.0"
     "@graphql-codegen/cli": "npm:5.0.0"
     "@graphql-codegen/client-preset": "npm:4.1.0"
     "@lifi/sdk": "npm:^3.3.1"
@@ -10690,6 +10691,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@thi.ng/api@npm:^8.11.13":
+  version: 8.11.13
+  resolution: "@thi.ng/api@npm:8.11.13"
+  checksum: 10c0/808cedcd6c44cf9759332d87a8a8710f54451b2e3b95b24bd20e3872a87160ad5086051c3a9927e4335a99ccd706cc91510c6c87e354c663491b486fc8d27fb5
+  languageName: node
+  linkType: hard
+
 "@thi.ng/arrays@npm:^2.10.4":
   version: 2.10.4
   resolution: "@thi.ng/arrays@npm:2.10.4"
@@ -10777,6 +10785,15 @@ __metadata:
   dependencies:
     "@thi.ng/api": "npm:^8.11.11"
   checksum: 10c0/402b284279c8d6973d466a4ae747133d3c5e3ffdf14d6a440594f3852f3bb387b89731a6054531601d21b5214f2cc315cde710f963e8940ebf9fd3734a72d565
+  languageName: node
+  linkType: hard
+
+"@thi.ng/memoize@npm:^4.0.2":
+  version: 4.0.3
+  resolution: "@thi.ng/memoize@npm:4.0.3"
+  dependencies:
+    "@thi.ng/api": "npm:^8.11.13"
+  checksum: 10c0/e2a4377b487bc1755aa940f61aa602053951778f0ae4459c3027eed0ddce93b873594af4f8a2a5c0b88ed389a8014853771da671ad256115ce2c063844d5ba65
   languageName: node
   linkType: hard
 
