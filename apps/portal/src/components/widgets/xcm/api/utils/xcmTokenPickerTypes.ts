@@ -5,6 +5,7 @@ import { xcmSourceChainsAtom } from '../atoms/xcmSourceChainsAtom'
 import { xcmTokenPickerDestAtom } from '../atoms/xcmTokenPickerDestAtom'
 import { xcmTokenPickerSourceAtom } from '../atoms/xcmTokenPickerSourceAtom'
 
+export type TokenPickerAssetWithBalance = TokenPickerAsset & { tokens: string | undefined; fiat: number | undefined }
 export type TokenPickerAsset = TokenPickerSource | TokenPickerDest
 export type TokenPickerSource = Awaited<ExtractAtomValue<typeof xcmTokenPickerSourceAtom>>[0]
 export type TokenPickerDest = Awaited<ExtractAtomValue<typeof xcmTokenPickerDestAtom>>[0]

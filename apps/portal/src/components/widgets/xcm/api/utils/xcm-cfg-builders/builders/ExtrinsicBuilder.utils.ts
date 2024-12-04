@@ -68,7 +68,7 @@ export function getExtrinsicAssetLocation(assetLocation: Record<string, AnyJson>
  * @param version - xcm version
  * @returns normalized x1 interior if <= V3
  */
-function normalizeInterior(assetLocation: Record<string, AnyJson>, version: XcmVersion) {
+export function normalizeInterior(assetLocation: Record<string, AnyJson>, version: XcmVersion) {
   if (version !== XcmVersion.v4) {
     return assetLocation
   }
@@ -78,7 +78,7 @@ function normalizeInterior(assetLocation: Record<string, AnyJson>, version: XcmV
     return {
       parents,
       interior: {
-        X1: [interior.X1],
+        X1: Array.isArray(interior.X1) ? interior.X1 : [interior.X1],
       },
     }
   }

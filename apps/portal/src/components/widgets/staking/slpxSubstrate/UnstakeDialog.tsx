@@ -37,7 +37,7 @@ const UnstakeDialog = ({ account, slpxSubstratePair, onRequestDismiss }: Unstake
       availableAmount={amountAvailable?.toLocaleString() ?? '...'}
       lockDuration={
         <Suspense fallback="...">
-          {formatDistance(0, useSlpxSubstrateUnlockDuration({ slpxPair: slpxSubstratePair }).toLocaleString())}
+          {formatDistance(0, useSlpxSubstrateUnlockDuration({ slpxPair: slpxSubstratePair }) || 0).toLocaleString()}
         </Suspense>
       }
       rate={Maybe.of(rate).mapOr(

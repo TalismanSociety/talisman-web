@@ -178,3 +178,25 @@ const reanchorLocation = (assetLocation: object) => {
     interior: { X1: [{ AccountKey20: erc20Key }] },
   }
 }
+
+export const isParachainPrimaryNativeAsset = (specName: string, assetId?: string) => {
+  // in case of empty array, undefined assetId is considered to be the relay chains primary native asset
+  if (!assetId) {
+    return true
+  }
+
+  // if assetId is an empty string
+  // treat it as the parachains primary native asset
+  if (assetId === '') {
+    return true
+  }
+
+  // const currentChainId = registry.lookupChainIdBySpecName(specName);
+  // const { tokens } = registry.currentRelayRegistry[currentChainId];
+  // const primaryParachainNativeAsset = tokens[0];
+  // if (primaryParachainNativeAsset.toLowerCase() === assetId.toLowerCase()) {
+  // 	return true;
+  // }
+
+  return false
+}
