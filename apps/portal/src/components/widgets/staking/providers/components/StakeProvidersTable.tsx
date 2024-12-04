@@ -67,7 +67,6 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
         header: 'Est. return',
         cell: ({ row }) => {
           return (
-            // <ErrorBoundary renderFallback={() => <>--</>}>
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
               <Apr
                 typeId={row.original.typeId}
@@ -77,7 +76,6 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
                 apiEndpoint={row.original.apiEndpoint}
               />
             </Suspense>
-            // </ErrorBoundary>
           )
         },
         sortingFn: sortingFn('apr'),
