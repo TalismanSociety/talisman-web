@@ -1,9 +1,12 @@
-import ErrorMessage, { type ErrorMessageProps } from '../recipes/ErrorMessage'
+import type { PropsWithChildren, ReactElement, ReactNode } from 'react'
 import * as Sentry from '@sentry/react'
 import { Button, OutlinedButton } from '@talismn/ui'
-import { type PropsWithChildren, type ReactElement, type ReactNode, createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState } from 'react'
 import { useRouteError } from 'react-router-dom'
 import { atom, useRecoilCallback, useRecoilValue } from 'recoil'
+
+import type { ErrorMessageProps } from '@/components/recipes/ErrorMessage'
+import { ErrorMessage } from '@/components/recipes/ErrorMessage'
 
 const OrientationContext = createContext<ErrorMessageProps['orientation']>(undefined)
 

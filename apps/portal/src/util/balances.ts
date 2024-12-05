@@ -1,7 +1,8 @@
 import { ApiPromise } from '@polkadot/api'
 import { FrameSystemAccountInfo } from '@polkadot/types/lookup'
-import { Decimal } from '@talismn/math'
 import { BigMath } from '@talismn/util'
+
+import { Decimal } from '@/util/Decimal'
 
 export const computeSubstrateBalance = (api: ApiPromise, account: FrameSystemAccountInfo) => {
   const ed = api.consts.balances.existentialDeposit

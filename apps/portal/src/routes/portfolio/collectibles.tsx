@@ -1,20 +1,4 @@
-import AccountIcon from '../../components/molecules/AccountIcon/AccountIcon'
-import ErrorBoundary from '../../components/widgets/ErrorBoundary'
-import { selectedAccountsState, type Account } from '../../domains/accounts'
-import {
-  nftCollectionItemsState,
-  nftCollectionsState,
-  nftsByTagState,
-  nftsLoadingState,
-  useSetFavoriteNft,
-  useSetHiddenNft,
-  type CollectionKey,
-  type Nft,
-  type NftCollection,
-  type NftTag,
-} from '../../domains/nfts'
-import { shortenAddress } from '../../util/format'
-import { Maybe } from '../../util/monads'
+import type { PropsWithChildren, RefCallback } from 'react'
 import { useTheme } from '@emotion/react'
 import {
   Button,
@@ -29,22 +13,28 @@ import {
   Text,
   useSurfaceColor,
 } from '@talismn/ui'
-import { usePagination } from '@talismn/utils/react'
 import { ChevronLeft, ChevronRight, ExternalLink, Eye, EyeOff, Heart } from '@talismn/web-icons'
 import { AnimatePresence, motion } from 'framer-motion'
-import {
-  Suspense,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type PropsWithChildren,
-  type RefCallback,
-} from 'react'
+import { createContext, Suspense, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
+
+import type { Account } from '@/domains/accounts'
+import type { CollectionKey, Nft, NftCollection, NftTag } from '@/domains/nfts'
+import AccountIcon from '@/components/molecules/AccountIcon/AccountIcon'
+import ErrorBoundary from '@/components/widgets/ErrorBoundary'
+import { selectedAccountsState } from '@/domains/accounts'
+import {
+  nftCollectionItemsState,
+  nftCollectionsState,
+  nftsByTagState,
+  nftsLoadingState,
+  useSetFavoriteNft,
+  useSetHiddenNft,
+} from '@/domains/nfts'
+import { usePagination } from '@/hooks/usePagination'
+import { Maybe } from '@/util/monads'
+import { shortenAddress } from '@/util/shortenAddress'
 
 const COLLECTION_KEY = 'collectionKey'
 

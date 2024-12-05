@@ -1,9 +1,0 @@
-{
-  "extends": "@talismn/tsconfig/react-library",
-  "compilerOptions": {
-    "outDir": "build"
-  },
-  "include": [
-    "src"
-  ]
-}

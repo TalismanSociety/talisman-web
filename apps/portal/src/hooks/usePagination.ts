@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo, useCallback, type DependencyList } from 'react'
+import type { DependencyList } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 export const usePagination = <T>(items: readonly T[], { limit }: { limit: number }, deps?: DependencyList) => {
   const [offset, setOffset] = useState(0)

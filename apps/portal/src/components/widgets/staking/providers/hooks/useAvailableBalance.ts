@@ -1,10 +1,10 @@
-import { Decimal } from '@talismn/math'
 import { usePolkadotApiId } from '@talismn/react-polkadot-api'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import { selectedSubstrateAccountsState } from '@/domains/accounts'
 import { chainDeriveState, substrateApiState, useTokenAmountFromPlanck } from '@/domains/common'
+import { Decimal } from '@/util/Decimal'
 
 const useAvailableBalance = () => {
   const apiId = usePolkadotApiId()

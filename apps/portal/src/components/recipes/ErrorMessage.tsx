@@ -1,6 +1,7 @@
-import TalismanHand from './TalismanHand'
-import { Text } from '@talismn/ui'
 import type { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react'
+import { Text } from '@talismn/ui'
+
+import { TalismanHand } from './TalismanHand'
 
 export type ErrorMessageProps = {
   title: ReactNode
@@ -9,7 +10,7 @@ export type ErrorMessageProps = {
   orientation?: 'vertical' | 'horizontal'
 }
 
-const ErrorMessage = Object.assign(
+export const ErrorMessage = Object.assign(
   (props: ErrorMessageProps) => (
     <article
       css={[
@@ -47,5 +48,3 @@ const ErrorMessage = Object.assign(
     ),
   }
 )
-
-export default ErrorMessage

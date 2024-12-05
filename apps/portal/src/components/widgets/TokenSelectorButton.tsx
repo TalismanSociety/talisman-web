@@ -1,9 +1,10 @@
 import type { Token } from '@talismn/chaindata-provider'
 import { useTokens } from '@talismn/balances-react'
-import { Decimal } from '@talismn/math'
 import { Button } from '@talismn/ui'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
+
+import { Decimal } from '@/util/Decimal'
 
 import type { Account } from '../../domains/accounts'
 import { selectedBalancesState, selectedCurrencyState } from '../../domains/balances'

@@ -1,10 +1,11 @@
+import type { IdenticonProps } from '@talismn/ui'
 import { useTheme } from '@emotion/react'
-import { Badge, BadgedBox, Identicon, Tooltip, useSurfaceColorAtElevation, type IdenticonProps } from '@talismn/ui'
+import { Badge, BadgedBox, Identicon, Tooltip, useSurfaceColorAtElevation } from '@talismn/ui'
 import { Eye } from '@talismn/web-icons'
 
 export type AccountIconProps = Omit<IdenticonProps, 'value'> & { address: string; readonly?: boolean }
 
-const AccountIcon = ({ address, readonly, ...props }: AccountIconProps) => {
+export const AccountIcon = ({ address, readonly, ...props }: AccountIconProps) => {
   const theme = useTheme()
   const surfaceColor = useSurfaceColorAtElevation(x => x + 1)
   const size = typeof props.size === 'number' ? `${props.size}px` : props.size ?? '2.4rem'
@@ -30,5 +31,3 @@ const AccountIcon = ({ address, readonly, ...props }: AccountIconProps) => {
     </BadgedBox>
   )
 }
-
-export default AccountIcon

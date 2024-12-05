@@ -16,21 +16,21 @@ import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryTooltip } from 'victory'
 
-import type { Account } from '../../../../domains/accounts'
-import type { DerivedPool } from '../../../../domains/staking/substrate/nominationPools'
-import type { StakeStatus } from '../../../recipes/StakeStatusIndicator'
-import { useChainState, useNativeTokenDecimalState } from '../../../../domains/chains'
-import { useEraEtaFormatter, useSubstrateApiState, useTokenAmountFromPlanck } from '../../../../domains/common'
+import type { StakeStatus } from '@/components/recipes/StakeStatusIndicator'
+import type { Account } from '@/domains/accounts'
+import type { DerivedPool } from '@/domains/staking/substrate/nominationPools'
+import AccountIcon from '@/components/molecules/AccountIcon'
+import RedactableBalance from '@/components/widgets/RedactableBalance'
+import { useChainState, useNativeTokenDecimalState } from '@/domains/chains'
+import { useEraEtaFormatter, useSubstrateApiState, useTokenAmountFromPlanck } from '@/domains/common'
 import {
   mostRecentPoolPayoutsState,
   poolPayoutsState,
   totalPoolPayoutsState,
   useApr,
   usePoolStakes,
-} from '../../../../domains/staking/substrate/nominationPools'
-import { shortenAddress } from '../../../../util/format'
-import AccountIcon from '../../../molecules/AccountIcon'
-import RedactableBalance from '../../RedactableBalance'
+} from '@/domains/staking/substrate/nominationPools'
+import { shortenAddress } from '@/util/shortenAddress'
 
 export type NominationPoolsStatisticsSideSheetProps = {
   account: Account

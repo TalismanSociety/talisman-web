@@ -2,7 +2,6 @@ import type { PrimitiveAtom } from 'jotai'
 import * as sdk from '@lifi/sdk'
 import { evmErc20TokenId } from '@talismn/balances'
 import { tokenRatesAtom, tokensByIdAtom, useTokens } from '@talismn/balances-react'
-import { Decimal } from '@talismn/math'
 import { toast } from '@talismn/ui'
 import { Atom, atom, Getter, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { atomFamily, loadable, useAtomCallback } from 'jotai/utils'
@@ -16,6 +15,7 @@ import { useWalletClient } from 'wagmi'
 import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts'
 import { substrateApiState } from '@/domains/common'
 import { connectedSubstrateWalletState } from '@/domains/extension'
+import { Decimal } from '@/util/Decimal'
 
 import type { ChainflipSwapActivityData } from './swap-modules/chainflip.swap-module'
 import type {
@@ -70,33 +70,30 @@ const getTokensByChainId = async (
   const knownEvmTokens = await get(knownEvmNetworksAtom)
   const otherKnownTokens = await get(tokensByIdAtom)
   const tokens = (await Promise.all(allTokensSelector.map(get))).flat()
-  return tokens.reduce(
-    (acc, cur) => {
-      const tokens = acc[cur.chainId.toString()] ?? {}
-      const tokenDetails =
-        knownEvmTokens[cur.chainId.toString()]?.tokens[cur.id] ??
-        otherKnownTokens[cur.id] ??
-        btcTokens[cur.id as 'btc-native']
+  return tokens.reduce((acc, cur) => {
+    const tokens = acc[cur.chainId.toString()] ?? {}
+    const tokenDetails =
+      knownEvmTokens[cur.chainId.toString()]?.tokens[cur.id] ??
+      otherKnownTokens[cur.id] ??
+      btcTokens[cur.id as 'btc-native']
 
-      const symbol = tokenDetails?.symbol ?? cur.symbol
-      const decimals = tokenDetails?.decimals ?? cur.decimals
-      const image = symbol?.toLowerCase() === 'eth' ? ETH_LOGO : cur.image
-      if (!symbol || !decimals) return acc
-      tokens[cur.id] = {
-        ...cur,
-        symbol,
-        decimals,
-        image,
-        context: {
-          ...tokens[cur.id]?.context,
-          ...cur.context,
-        },
-      }
-      acc[cur.chainId.toString()] = tokens
-      return acc
-    },
-    {} as Record<string, Record<string, SwappableAssetWithDecimals>>
-  )
+    const symbol = tokenDetails?.symbol ?? cur.symbol
+    const decimals = tokenDetails?.decimals ?? cur.decimals
+    const image = symbol?.toLowerCase() === 'eth' ? ETH_LOGO : cur.image
+    if (!symbol || !decimals) return acc
+    tokens[cur.id] = {
+      ...cur,
+      symbol,
+      decimals,
+      image,
+      context: {
+        ...tokens[cur.id]?.context,
+        ...cur.context,
+      },
+    }
+    acc[cur.chainId.toString()] = tokens
+    return acc
+  }, {} as Record<string, Record<string, SwappableAssetWithDecimals>>)
 }
 
 const getCoingeckoCategoryTokens = async (

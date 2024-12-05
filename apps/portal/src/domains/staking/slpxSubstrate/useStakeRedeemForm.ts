@@ -1,12 +1,14 @@
-import { useSubstrateApiState } from '../../common/recoils'
-import { SlpxSubstratePair } from './types'
-import { selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
-import { useExtrinsic } from '@/domains/common/hooks'
-import { Decimal } from '@talismn/math'
 import { useQueryMultiState } from '@talismn/react-polkadot-api'
 import BigNumber from 'bignumber.js'
-import { useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+
+import { selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
+import { useExtrinsic } from '@/domains/common/hooks'
+import { Decimal } from '@/util/Decimal'
+
+import { useSubstrateApiState } from '../../common/recoils'
+import { SlpxSubstratePair } from './types'
 
 const useStakeRedeemForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   const [amount, setAmount] = useState<string>('')

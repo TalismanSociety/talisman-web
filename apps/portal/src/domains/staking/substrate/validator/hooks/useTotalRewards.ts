@@ -1,9 +1,10 @@
 import { encodeAddress } from '@polkadot/util-crypto'
-import { Decimal } from '@talismn/math'
 import request from 'graphql-request'
 import { atom, useAtomValue } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { useRecoilValue } from 'recoil'
+
+import { Decimal } from '@/util/Decimal'
 
 import type { Account } from '../../../../accounts'
 import { graphql } from '../../../../../../generated/gql/nova/gql'

@@ -1,6 +1,6 @@
 type DecimalOptions = Pick<Intl.NumberFormatOptions, 'currency'>
 
-export default class Decimal {
+export class Decimal {
   // Too large values lead to massive memory usage. Limit to something sensible.
   static #maxDecimal = 100
 

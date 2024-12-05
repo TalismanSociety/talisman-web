@@ -9,13 +9,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { isAddress } from 'viem'
 
+import AccountIcon from '@/components/molecules/AccountIcon'
+import { walletConnectionSideSheetOpenState } from '@/components/widgets/WalletConnectionSideSheet'
 import { evmAccountsState, substrateAccountsState } from '@/domains/accounts'
 import { AccountWithBtc, isBtcAddress } from '@/lib/btc'
 import { cn } from '@/lib/utils'
-import { shortenAddress } from '@/util/format'
-
-import AccountIcon from './molecules/AccountIcon'
-import { walletConnectionSideSheetOpenState } from './widgets/WalletConnectionSideSheet'
+import { shortenAddress } from '@/util/shortenAddress'
 
 type Props = {
   allowInput?: boolean
