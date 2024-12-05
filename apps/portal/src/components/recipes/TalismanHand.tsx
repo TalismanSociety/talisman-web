@@ -1,6 +1,6 @@
 import type { SVGProps } from 'react'
 
-const TalismanHand = (props: SVGProps<SVGSVGElement>) => (
+export const TalismanHand = (props: SVGProps<SVGSVGElement>) => (
   <svg width="374" height="372" viewBox="0 0 374 372" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <path
       fillRule="evenodd"
@@ -51,5 +51,3 @@ const TalismanHand = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-
-export default TalismanHand

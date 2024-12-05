@@ -1,40 +1,44 @@
-import { knownEvmNetworksAtom } from '../helpers'
-import chainflipLogo from '../side-panel/details/logos/chainflip-logo.png'
-import {
-  fromAmountAtom,
-  fromAssetAtom,
-  getTokenIdForSwappableAsset,
-  toAssetAtom,
-  type SwappableAssetBaseType,
-  type BaseQuote,
-  type SupportedSwapProtocol,
-  type SwapModule,
-  fromAddressAtom,
-  toAddressAtom,
-  type SwapFunction,
-  type QuoteFunction,
-  swapQuoteRefresherAtom,
-  type GetEstimateGasTxFunction,
-  validateAddress,
-  saveAddressForQuest,
-} from './common.swap-module'
-import { substrateApiGetterAtom } from '@/domains/common'
-import {
-  SwapSDK,
-  type ChainflipNetwork,
-  type Chain,
-  type QuoteResponse,
-  type AssetData,
-  type ChainData,
-  type SwapStatusResponse,
-  Asset,
+import type {
+  AssetData,
+  Chain,
+  ChainData,
+  ChainflipNetwork,
+  QuoteResponse,
+  SwapStatusResponse,
 } from '@chainflip/sdk/swap'
+import type { Getter, Setter } from 'jotai'
+import { Asset, SwapSDK } from '@chainflip/sdk/swap'
 import { chainsAtom } from '@talismn/balances-react'
-import { Decimal } from '@talismn/math'
-import { atom, type Getter, type Setter } from 'jotai'
+import { atom } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
 import { createPublicClient, encodeFunctionData, erc20Abi, http, isAddress } from 'viem'
 import { arbitrum, mainnet, sepolia } from 'viem/chains'
+
+import { substrateApiGetterAtom } from '@/domains/common'
+import { Decimal } from '@/util/Decimal'
+
+import type {
+  BaseQuote,
+  GetEstimateGasTxFunction,
+  QuoteFunction,
+  SupportedSwapProtocol,
+  SwapFunction,
+  SwapModule,
+  SwappableAssetBaseType,
+} from './common.swap-module'
+import { knownEvmNetworksAtom } from '../helpers'
+import chainflipLogo from '../side-panel/details/logos/chainflip-logo.png'
+import {
+  fromAddressAtom,
+  fromAmountAtom,
+  fromAssetAtom,
+  getTokenIdForSwappableAsset,
+  saveAddressForQuest,
+  swapQuoteRefresherAtom,
+  toAddressAtom,
+  toAssetAtom,
+  validateAddress,
+} from './common.swap-module'
 
 const PROTOCOL: SupportedSwapProtocol = 'chainflip'
 const PROTOCOL_NAME = 'Chainflip'

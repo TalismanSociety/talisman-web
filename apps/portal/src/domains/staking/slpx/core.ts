@@ -1,18 +1,6 @@
-import type { Account } from '../../accounts'
-import type { SlpxPair, SlpxToken } from './types'
-import { Maybe } from '../../../util/monads'
-import { selectedCurrencyState } from '../../balances'
-import { tokenPriceState } from '../../chains'
-import { useSubstrateApiState, useWagmiWriteContract } from '../../common'
-import { _adapterParams, _dstGasForCall, channel_id } from './constants'
-import mantaPacificSlpxAbi from './mantaPacificSlpxAbi'
-import moonbeamSlpxAbi from './moonbeamSlpxAbi'
-import { mantaPacificOperation } from './types'
-
 import '@bifrost-finance/types/augment/api'
 
 import { evmToAddress } from '@polkadot/util-crypto'
-import { Decimal } from '@talismn/math'
 import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import { useQueries } from '@tanstack/react-query'
 import BigNumber from 'bignumber.js'
@@ -23,6 +11,19 @@ import { erc20Abi, isAddress } from 'viem'
 import { useBlockNumber, useConfig, useReadContract, useToken, useWaitForTransactionReceipt } from 'wagmi'
 import { manta, moonbeam } from 'wagmi/chains'
 import { getTokenQueryOptions, readContractsQueryOptions } from 'wagmi/query'
+
+import type { Account } from '@/domains/accounts'
+import { selectedCurrencyState } from '@/domains/balances'
+import { tokenPriceState } from '@/domains/chains'
+import { useSubstrateApiState, useWagmiWriteContract } from '@/domains/common'
+import { Decimal } from '@/util/Decimal'
+import { Maybe } from '@/util/monads'
+
+import type { SlpxPair, SlpxToken } from './types'
+import { _adapterParams, _dstGasForCall, channel_id } from './constants'
+import mantaPacificSlpxAbi from './mantaPacificSlpxAbi'
+import moonbeamSlpxAbi from './moonbeamSlpxAbi'
+import { mantaPacificOperation } from './types'
 
 const remark = import.meta.env.VITE_APPLICATION_NAME ?? 'Talisman'
 

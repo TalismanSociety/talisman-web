@@ -1,6 +1,11 @@
-import { getAllRewardsClaimExtrinsics, type StakeLoadable } from '.'
-import { Maybe } from '../../../../util/monads'
-import type { Account } from '../../../accounts'
+import type { ApiPromise } from '@polkadot/api'
+import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
+import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
+import BN from 'bn.js'
+import { useCallback, useDeferredValue, useMemo, useState } from 'react'
+import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+
+import type { Account } from '@/domains/accounts'
 import {
   paymentInfoState,
   useExtrinsic,
@@ -8,14 +13,12 @@ import {
   useSubstrateApiState,
   useTokenAmount,
   useTokenAmountFromPlanck,
-} from '../../../common'
-import type { ApiPromise } from '@polkadot/api'
-import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
-import { BigIntMath } from '@talismn/math'
-import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
-import BN from 'bn.js'
-import { useCallback, useDeferredValue, useMemo, useState } from 'react'
-import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+} from '@/domains/common'
+import { BigIntMath } from '@/util/BigIntMath'
+import { Maybe } from '@/util/monads'
+
+import type { StakeLoadable } from '.'
+import { getAllRewardsClaimExtrinsics } from '.'
 
 const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.5
 

@@ -1,10 +1,12 @@
-import { useSubstrateToken } from './useSubstrateToken'
-import { substrateApiState } from '@/domains/common'
-import { computeSubstrateBalance } from '@/util/balances'
 import { useChains } from '@talismn/balances-react'
-import { Decimal } from '@talismn/math'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRecoilValueLoadable } from 'recoil'
+
+import { substrateApiState } from '@/domains/common'
+import { computeSubstrateBalance } from '@/util/balances'
+import { Decimal } from '@/util/Decimal'
+
+import { useSubstrateToken } from './useSubstrateToken'
 
 export type UseSubstrateBalanceProps = {
   type: 'substrate'

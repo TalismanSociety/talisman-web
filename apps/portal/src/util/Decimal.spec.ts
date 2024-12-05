@@ -1,5 +1,4 @@
-import Decimal from './Decimal.js'
-import { describe, expect, it } from 'vitest'
+import { Decimal } from './Decimal'
 
 describe('Decimal', () => {
   describe('fromPlanck', () => {
