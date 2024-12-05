@@ -1,5 +1,5 @@
 import type { PropsWithChildren, ReactNode } from 'react'
-import { Button, CircularProgressIndicator, Details, Surface, Text, TextInput } from '@talismn/ui'
+import { Button, CircularProgressIndicator, Surface, Text, TextInput, Tooltip } from '@talismn/ui'
 
 import { cn } from '@/lib/utils'
 
@@ -12,7 +12,6 @@ export type FormProps = {
   onChangeAmount: (value: string) => unknown
   onRequestMaxAmount: () => unknown
   fiat?: ReactNode
-  available?: ReactNode
   max?: ReactNode
   amountError?: string
   tokenSelect?: ReactNode
@@ -34,7 +33,6 @@ export const Form = ({
   onChangeAmount,
   onRequestMaxAmount,
   fiat,
-  available,
   max,
   amountError,
   tokenSelect,
@@ -98,26 +96,38 @@ export const Form = ({
       </Section>
       <Section header="Enter amount">
         <TextInput
-          containerClassName="[&>div:nth-of-type(2)]:!px-[1.25rem] [&>div:nth-of-type(2)]:!py-[1.2rem]"
+          autoComplete="off"
+          containerClassName={cn(
+            '[&>div:nth-of-type(2)]:!px-[1.25rem] [&>div:nth-of-type(2)]:!py-[1.2rem]',
+            '[&>div:nth-of-type(2)]:border [&>div:nth-of-type(2)]:border-red-400/0',
+            amountError && '[&>div:nth-of-type(2)]:border-red-400'
+          )}
+          className="text-ellipsis !text-[18px] !font-semibold"
           type="number"
           inputMode="decimal"
           placeholder="0.00"
-          leadingLabel={
+          leadingLabel={`You're sending`}
+          trailingLabel={
             !empty && (
               <div className="flex flex-row items-center gap-1">
-                <span>Available:</span> {available ?? <CircularProgressIndicator size="1em" />}
-                {max ?? null}
+                Max transferable: {max ?? <CircularProgressIndicator size="1em" />}
               </div>
             )
           }
-          trailingLabel={
-            fiat !== undefined && (
-              <div className="flex items-center gap-1">
-                Value: <Text.BodySmall alpha="high">{fiat}</Text.BodySmall>
-              </div>
-            )
+          textBelowInput={
+            <div className="flex items-center">
+              <p className="text-[10px] leading-none text-gray-400">{fiat}</p>
+              {amountError && (
+                <div className="flex items-center gap-1 overflow-hidden text-orange-400">
+                  <Tooltip placement="bottom" content={<p className="text-[12px]">{amountError}</p>}>
+                    <p className="ml-[8px] truncate border-l border-l-gray-600 pl-[8px] text-[10px] leading-none">
+                      {amountError}
+                    </p>
+                  </Tooltip>
+                </div>
+              )}
+            </div>
           }
-          leadingSupportingText={amountError && <div className="text-orange-400">{amountError}</div>}
           value={amount ?? ''}
           onChangeText={onChangeAmount}
           trailingIcon={
@@ -135,18 +145,14 @@ export const Form = ({
           }
         />
       </Section>
-      <div className="[&>details]:!rounded-[8px]">
-        <CollapsibleSection header="Select destination" open disabled>
-          <Details.Content>
-            <label>
-              <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
-                Destination account
-              </Text.BodySmall>
-              {destAccountSelect}
-            </label>
-          </Details.Content>
-        </CollapsibleSection>
-      </div>
+      <Section header="Select destination">
+        <label>
+          <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
+            Destination account
+          </Text.BodySmall>
+          {destAccountSelect}
+        </label>
+      </Section>
       <Button
         css={{ width: '100%', borderRadius: '8px' }}
         disabled={!canTransport}
@@ -178,21 +184,5 @@ function Section({ header, children }: PropsWithChildren<{ header: ReactNode }>)
       </header>
       {children}
     </Surface>
-  )
-}
-
-function CollapsibleSection({
-  open,
-  disabled,
-  header,
-  children,
-}: PropsWithChildren<{ header: ReactNode; open?: boolean; disabled?: boolean }>) {
-  return (
-    <Details css={{ padding: '1.6rem' }} open={open} disabled={disabled}>
-      <Details.Summary>
-        <Text.H4>{header}</Text.H4>
-      </Details.Summary>
-      <Details.Content>{children}</Details.Content>
-    </Details>
   )
 }

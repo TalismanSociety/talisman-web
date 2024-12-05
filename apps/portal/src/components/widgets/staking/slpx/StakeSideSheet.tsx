@@ -133,6 +133,9 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
           Learn more
         </Text.Noop.A>
       </Text.Body>
+      <Text.Body as="p" css={{ marginTop: '1.6rem' }}>
+        Make sure you have ETH on Manta Pacific in order to complete Manta liquid staking on Bifrost.
+      </Text.Body>
       <div className="mt-2 flex justify-end">
         <Tooltip content="Transaction may take several minutes to complete">
           <SurfaceChip className="cursor-default">

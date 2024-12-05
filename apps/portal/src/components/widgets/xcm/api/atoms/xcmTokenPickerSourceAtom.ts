@@ -20,7 +20,11 @@ export const xcmTokenPickerSourceAtom = atom(async get => {
 
   return xcmChains
     .flatMap(chain => {
-      const chainRoutes = routes.get(chain.key)?.getRoutes()
+      const chainRoutes = routes
+        .get(chain.key)
+        ?.getRoutes()
+        // filter out routes with a destination which isn't in xcmChains
+        ?.filter(route => xcmChains.some(({ key }) => key === route.destination.chain.key))
       const tokens = [...new Set((chainRoutes ?? []).filter(validRoute).map(route => route.source.asset))]
       const chaindataChain = chaindataChainsByGenesisHash?.[chain.genesisHash]
       const chaindataTokensBySymbol = new Map(

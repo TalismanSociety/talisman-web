@@ -23,10 +23,10 @@ export const extrinsicAtom = atom(async get => {
     const minBn = big.toBigInt(minWithRelay.amount, min.decimals)
 
     if (balance.amount === 0n || amountBn > maxBn)
-      throw new Error(`Insufficient ${asset.originSymbol} balance for transfer.`)
+      throw new Error(`Insufficient ${asset.originSymbol} balance for transfer`)
     if (amountBn < minBn)
       throw new Error(
-        `The minimum transferable amount is ${minWithRelay.toDecimal(minWithRelay.decimals)} ${asset.originSymbol}.`
+        `The minimum transferable amount is ${minWithRelay.toDecimal(minWithRelay.decimals)} ${asset.originSymbol}`
       )
   }
   validateAmount()
@@ -36,7 +36,7 @@ export const extrinsicAtom = atom(async get => {
     if (!report.length) return
 
     throw new Error(
-      report.map(r => (r === undefined ? 'Unable to construct extrinsic.' : String(r['error']))).join('\n')
+      report.map(r => (r === undefined ? 'Unable to construct extrinsic' : `Extrinsic error: ${r['error']}`)).join('\n')
     )
   }
   await validateTransfer()
