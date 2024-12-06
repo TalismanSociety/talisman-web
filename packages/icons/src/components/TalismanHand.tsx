@@ -1,6 +1,5 @@
-import type { SVGProps } from 'react'
-import * as React from 'react'
-import { forwardRef, Ref } from 'react'
+import type { Ref, SVGProps } from 'react'
+import { forwardRef, useContext } from 'react'
 
 import { IconContext } from '../context'
 
@@ -10,7 +9,7 @@ const SvgTalismanHand = (
   },
   ref: Ref<SVGSVGElement>
 ) => {
-  const iconContext = React.useContext(IconContext)
+  const iconContext = useContext(IconContext)
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

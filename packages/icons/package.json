@@ -1,18 +1,13 @@
 {
   "name": "@talismn/web-icons",
+  "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "build/commonjs/index.js",
   "exports": {
-    ".": "./build/index.js",
-    "./utils": "./build/utils.js"
+    ".": "./src/index.ts",
+    "./utils": "./src/utils.ts"
   },
-  "files": [
-    "build"
-  ],
   "scripts": {
-    "dev": "tsc --build --watch tsconfig.json",
-    "build": "rm -rf build && tsc --build tsconfig.json",
     "codegen": "npx @svgr/cli -- src/svgs",
     "lint": "eslint src",
     "check-types": "tsc --noEmit"
