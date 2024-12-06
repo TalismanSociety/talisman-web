@@ -1,14 +1,18 @@
-import type { PortfolioToken } from '../../legacy/archetypes/Portfolio/Assets'
-import AnimatedFiatNumber from '../../widgets/AnimatedFiatNumber'
-import RedactableBalance from '../../widgets/RedactableBalance'
+import type { ReactElement, ReactNode } from 'react'
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
 import { type Balances } from '@talismn/balances'
+import { githubUnknownChainLogoUrl, githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { HiddenDetails, Text, Tooltip, useSurfaceColor } from '@talismn/ui'
 import { AlertTriangle, Lock } from '@talismn/web-icons'
-import { isEmpty, startCase } from 'lodash'
-import { Children, type ReactElement, type ReactNode } from 'react'
+import { isEmpty } from 'lodash'
+import { Children } from 'react'
 import { useNavigate } from 'react-router-dom'
+
+import type { PortfolioToken } from '@/components/legacy/archetypes/Portfolio/Assets'
+import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
+import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
+import RedactableBalance from '@/components/widgets/RedactableBalance'
 
 type AssetBalanceProps = {
   planck: string
@@ -41,26 +45,26 @@ export const AssetBalance = ({ planck, fiat, symbol, locked, stale }: AssetBalan
         <Text.Body
           alpha={locked ? 'medium' : 'high'}
           css={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.25em',
             margin: 0,
             fontSize: '16px',
           }}
         >
           <RedactableBalance>{planck ? `${planck} ${symbol} ` : '- ' + symbol}</RedactableBalance>
           {stale && (
-            <>
-              {' '}
-              <Tooltip
-                content={
-                  <>
-                    Latest balance not available.
-                    <br />
-                    Displayed value may be out of date.
-                  </>
-                }
-              >
-                <AlertTriangle size="0.75em" css={{ color: '#FD8FFF', verticalAlign: 'baseline' }} />
-              </Tooltip>
-            </>
+            <Tooltip
+              content={
+                <>
+                  Latest balance not available.
+                  <br />
+                  Displayed value may be out of date.
+                </>
+              }
+            >
+              <AlertTriangle size="0.75em" css={{ color: '#FD8FFF', verticalAlign: 'baseline' }} />
+            </Tooltip>
           )}
         </Text.Body>
         {locked ? <Lock css={{ width: '16px', height: '16px' }} /> : ''}
@@ -222,18 +226,10 @@ const Asset = Object.assign((props: AssetProps) => {
       <td valign="top">
         {/* First Column */}
         <div css={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <Tooltip content={startCase(token.tokenDetails.chain?.id ?? token.tokenDetails.coingeckoId)}>
-            <img
-              src={token.tokenDetails.logo}
-              css={{
-                width: '2em',
-                height: '2em',
-                margin: '16px',
-                borderRadius: '50%',
-              }}
-              alt="logo"
-            />
-          </Tooltip>
+          <AssetLogoWithChain
+            className="m-[8px] text-[32px] sm:text-[32px]"
+            assetLogoUrl={token.tokenDetails.logo ?? githubUnknownTokenLogoUrl}
+          />
           <div>
             <div css={{ display: 'flex', alignItems: 'center', gap: '0.4em' }}>
               <Text.Body alpha="high" css={{ fontWeight: 600, fontSize: '16px' }}>
@@ -250,11 +246,11 @@ const Asset = Object.assign((props: AssetProps) => {
                 }}
               >
                 <div css={{ width: '1em', height: '1em' }}>
-                  <Tooltip content={startCase(token.tokenDetails.chain?.id ?? token.tokenDetails.coingeckoId)}>
+                  <Tooltip content={token.tokenDetails.chain?.name ?? undefined}>
                     <img
-                      src={token.tokenDetails.logo}
+                      src={token.tokenDetails.chain?.logo ?? githubUnknownChainLogoUrl}
                       css={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                      alt={token.tokenDetails.tokenDisplayName ?? '' + ' logo'}
+                      alt={token.tokenDetails.chain?.name ?? '' + ' logo'}
                     />
                   </Tooltip>
                 </div>

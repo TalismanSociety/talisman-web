@@ -1,12 +1,14 @@
-import { useSingleAsset } from '../../../components/legacy/archetypes/Portfolio/Assets'
-import { AssetBreakdownList } from '../../../components/recipes/AssetBreakdown/AssetBreakdownList'
-import AnimatedFiatNumber from '../../../components/widgets/AnimatedFiatNumber'
-import RedactableBalance from '../../../components/widgets/RedactableBalance'
 import { keyframes } from '@emotion/react'
-import { Button, HiddenDetails, InfoCard, Text, Tooltip } from '@talismn/ui'
+import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
+import { Button, HiddenDetails, InfoCard, Text } from '@talismn/ui'
 import { ChevronLeft } from '@talismn/web-icons'
-import { startCase } from 'lodash'
 import { useNavigate, useParams } from 'react-router-dom'
+
+import { useSingleAsset } from '@/components/legacy/archetypes/Portfolio/Assets'
+import { AssetBreakdownList } from '@/components/recipes/AssetBreakdown/AssetBreakdownList'
+import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
+import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
+import RedactableBalance from '@/components/widgets/RedactableBalance'
 
 const slideDown = keyframes`
     from {
@@ -81,17 +83,10 @@ const AssetItem = () => {
                       alignItems: 'center',
                     }}
                   >
-                    <Tooltip content={startCase(token.tokenDetails.chain?.id ?? token.tokenDetails.coingeckoId)}>
-                      <img
-                        src={token.tokenDetails.logo}
-                        css={{
-                          width: '1em',
-                          height: '1em',
-                        }}
-                        alt={token.tokenDetails.chain?.id ?? (token.tokenDetails.coingeckoId ?? '') + ' logo'}
-                      />
-                    </Tooltip>
-                    <Text.Body alpha="high">{token.tokenDetails.tokenDisplayName}</Text.Body>
+                    <AssetLogoWithChain
+                      className="text-[1em] sm:text-[1em]"
+                      assetLogoUrl={token.tokenDetails.logo ?? githubUnknownTokenLogoUrl}
+                    />
                     <Text.Body>{`(${token.tokenDetails.symbol ?? ''})`}</Text.Body>
                   </div>
                 }

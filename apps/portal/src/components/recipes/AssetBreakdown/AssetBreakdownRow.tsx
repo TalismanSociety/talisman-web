@@ -1,11 +1,13 @@
-import { type Account } from '../../../domains/accounts/recoils'
-import type { PortfolioToken } from '../../legacy/archetypes/Portfolio/Assets'
-import AccountIcon from '../../molecules/AccountIcon/AccountIcon'
-import { AssetBalance } from '../Asset'
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
+import { githubUnknownChainLogoUrl } from '@talismn/chaindata-provider'
 import { Text, Tooltip } from '@talismn/ui'
 import { startCase } from 'lodash'
+
+import type { PortfolioToken } from '@/components/legacy/archetypes/Portfolio/Assets'
+import AccountIcon from '@/components/molecules/AccountIcon/AccountIcon'
+import { AssetBalance } from '@/components/recipes/Asset'
+import { type Account } from '@/domains/accounts/recoils'
 
 const slideDown = keyframes`
     from {
@@ -36,7 +38,7 @@ export const AssetBreakdownRowHeader = ({ token }: { token: PortfolioToken }) =>
         >
           <Tooltip content={token.tokenDetails.chain?.name}>
             <img
-              src={token.tokenDetails.chain?.logo ?? undefined}
+              src={token.tokenDetails.chain?.logo ?? githubUnknownChainLogoUrl}
               alt={token.tokenDetails.chain?.name ?? undefined}
               css={{
                 width: '2em',
