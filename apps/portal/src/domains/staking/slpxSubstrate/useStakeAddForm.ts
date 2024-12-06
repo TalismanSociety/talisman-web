@@ -9,6 +9,7 @@ import { useExtrinsic } from '@/domains/common/hooks'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 
 import { useSubstrateApiState } from '../../common/recoils'
+import { channel_id } from '../constants'
 
 const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
   const [amount, setAmount] = useState<string>('')
@@ -17,7 +18,6 @@ const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
 
   const originTokenDecimals = 10
   const remark = import.meta.env.VITE_APPLICATION_NAME ?? 'Talisman'
-  const channelId = '3'
 
   const decimalAmount = useMemo(
     () => (amount.trim() === '' ? undefined : Decimal.fromUserInputOrUndefined(amount, originTokenDecimals)),
@@ -31,7 +31,7 @@ const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
 
   const tx = useMemo(
     // @ts-expect-error
-    () => api?.tx.vtokenMinting.mint(slpxPair.nativeToken.tokenId, decimalAmount?.planck ?? 0n, remark, channelId),
+    () => api?.tx.vtokenMinting.mint(slpxPair.nativeToken.tokenId, decimalAmount?.planck ?? 0n, remark, channel_id),
     [api?.tx.vtokenMinting, decimalAmount?.planck, remark, slpxPair.nativeToken.tokenId]
   )
 
