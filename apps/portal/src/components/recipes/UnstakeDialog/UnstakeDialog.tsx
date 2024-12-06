@@ -1,5 +1,6 @@
+import type { ReactNode } from 'react'
 import { AlertDialog, Button, CircularProgressIndicator, Text, TextInput } from '@talismn/ui'
-import { Suspense, type ReactNode } from 'react'
+import { Suspense } from 'react'
 
 export type UnstakeDialogProps = {
   open?: boolean
@@ -100,7 +101,7 @@ export const NominationPoolsUnstakeDialog = (props: NominationPoolsUnstakeDialog
 type SlpxUnstakeDialogProps = UnstakeDialogProps & { approvalNeeded?: boolean }
 
 export const SlpxUnstakeDialog = (props: SlpxUnstakeDialogProps) => (
-  <UnstakeDialog {...props} buttonText={props.approvalNeeded ? 'Approve' : undefined} />
+  <UnstakeDialog {...props} buttonText={props.approvalNeeded ? 'Approve Spend' : undefined} />
 )
 
 export default UnstakeDialog
