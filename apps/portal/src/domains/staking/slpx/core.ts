@@ -253,10 +253,7 @@ export const useSlpxSwapForm = (
 }
 
 export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) => {
-  if (!account?.address) {
-    throw new Error('Account address is required')
-  }
-  if (!isAddress(account.address)) {
+  if (account?.address !== undefined && !isAddress(account.address)) {
     throw new Error(`Invalid EVM address ${account.address}`)
   }
 
@@ -292,7 +289,7 @@ export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) 
         slpxPair.vToken.address,
         planckAmount ?? 0n,
         BigInt(slpxPair.chain.id),
-        account.address as `0x${string}`,
+        account?.address as `0x${string}`,
         remark,
         channel_id,
       ],
@@ -363,11 +360,7 @@ export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) 
 }
 
 export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) => {
-  if (!account?.address) {
-    throw new Error('Account address is required')
-  }
-
-  if (!isAddress(account.address)) {
+  if (account?.address !== undefined && !isAddress(account.address)) {
     throw new Error(`Invalid EVM address ${account.address}`)
   }
 

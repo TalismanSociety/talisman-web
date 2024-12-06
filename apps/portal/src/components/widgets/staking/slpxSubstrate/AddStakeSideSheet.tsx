@@ -11,7 +11,6 @@ import {
 import { Clock, Zap } from '@talismn/web-icons'
 import { formatDistance } from 'date-fns'
 import { Suspense } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 import { useSlpxAprState } from '@/domains/staking/slpx'
@@ -29,7 +28,6 @@ type Props = {
 }
 
 const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
-  const navigate = useNavigate()
   const [[account], accountSelector] = useAccountSelector(useRecoilValue(writeableSubstrateAccountsState), 0)
 
   const { amount, setAmount, availableBalance, rate, newStakedTotal, extrinsic, error } = useStakeAddForm({
@@ -83,7 +81,7 @@ const AddStakeSideSheet = ({ slpxPair, onRequestDismiss }: Props) => {
           onChangeAmount={setAmount}
           availableToStake={amountAvailable.toLocaleString()}
           rate={`1 ${slpxPair.nativeToken.symbol} = ${rate.toLocaleString()} ${slpxPair.vToken.symbol}`}
-          onConfirm={() => extrinsic?.signAndSend(account?.address ?? '').then(() => navigate('/staking/positions'))}
+          onConfirm={() => extrinsic?.signAndSend(account?.address ?? '').then(() => onRequestDismiss())}
           onRequestMaxAmount={() => {
             if (amountAfterFee !== undefined && amountAfterFee.planck > 0) {
               setAmount(amountAfterFee.toString())
