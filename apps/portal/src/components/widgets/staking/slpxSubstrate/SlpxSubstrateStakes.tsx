@@ -1,3 +1,9 @@
+import { useAtomValue } from 'jotai'
+import { useState } from 'react'
+
+import StakePosition, { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
+import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
+
 import { ChainProvider } from '../../../../domains/chains'
 import { slpxSubstratePairsState } from '../../../../domains/staking/slpxSubstrate/recoils'
 import useStakes from '../../../../domains/staking/slpxSubstrate/useStakes'
@@ -6,11 +12,6 @@ import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
-import StakePosition from '@/components/recipes/StakePosition'
-import { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
-import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
-import { useAtomValue } from 'jotai'
-import { useState } from 'react'
 
 const SlpxSubstrateStake = ({
   slpxSubstratePair,
@@ -47,20 +48,38 @@ const SlpxSubstrateStake = ({
           readonly={stake.account.readonly}
           provider="Bifrost liquid staking"
           stakeStatus={stake.balance.planck > 0n ? 'earning_rewards' : 'not_earning_rewards'}
-          balance={<RedactableBalance>{stake.balance?.toLocaleString()}</RedactableBalance>}
-          fiatBalance={<AnimatedFiatNumber end={stake.fiatBalance} />}
+          balance={
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <RedactableBalance>{stake.balance?.toLocaleString()}</RedactableBalance>
+            </ErrorBoundary>
+          }
+          fiatBalance={
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <AnimatedFiatNumber end={stake.fiatBalance} />
+            </ErrorBoundary>
+          }
           chain={slpxSubstratePair.chainName}
           chainId={slpxSubstratePair.chainId || ''}
           assetSymbol={slpxSubstratePair.vToken.symbol}
           assetLogoSrc={slpxSubstratePair.vToken.logo}
-          increaseStakeButton={<StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeDialogOpen(true)} />}
+          increaseStakeButton={
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeDialogOpen(true)} />
+            </ErrorBoundary>
+          }
           unstakeButton={
-            stake.balance.planck > 0n && <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} />
+            stake.balance.planck > 0n && (
+              <ErrorBoundary renderFallback={() => <>--</>}>
+                <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} />
+              </ErrorBoundary>
+            )
           }
           unstakingStatus={
             stake.unlocking !== undefined &&
             stake.unlocking.planck > 0n && (
-              <StakePosition.UnstakingStatus amount={stake.unlocking?.toLocaleString()} unlocks={[]} />
+              <ErrorBoundary renderFallback={() => <>--</>}>
+                <StakePosition.UnstakingStatus amount={stake.unlocking?.toLocaleString()} unlocks={[]} />
+              </ErrorBoundary>
             )
           }
         />

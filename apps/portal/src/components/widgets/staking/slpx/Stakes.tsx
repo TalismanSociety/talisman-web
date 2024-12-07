@@ -1,16 +1,18 @@
+import { useState } from 'react'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+
+import StakePosition, { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
+
+import type { SlpxPair } from '../../../../domains/staking/slpx/types'
 import { selectedEvmAccountsState } from '../../../../domains/accounts'
 import { ChainProvider } from '../../../../domains/chains'
 import { slpxPairsState } from '../../../../domains/staking/slpx'
 import { useStakes } from '../../../../domains/staking/slpx/core'
-import type { SlpxPair } from '../../../../domains/staking/slpx/types'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import ErrorBoundary from '../../ErrorBoundary'
 import RedactableBalance from '../../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
-import StakePosition, { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
-import { useState } from 'react'
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStakes>['data'][number] }) => {
   const [increaseStakeDialogOpen, setIncreaseStakeDialogOpen] = useState(false)
@@ -34,22 +36,38 @@ const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStake
         account={props.position.account}
         provider="Bifrost liquid staking"
         stakeStatus={props.position.balance.planck > 0n ? 'earning_rewards' : 'not_earning_rewards'}
-        balance={<RedactableBalance>{props.position.balance.toLocaleString()}</RedactableBalance>}
-        fiatBalance={<AnimatedFiatNumber end={props.position.fiatBalance} />}
+        balance={
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <RedactableBalance>{props.position.balance.toLocaleString()}</RedactableBalance>
+          </ErrorBoundary>
+        }
+        fiatBalance={
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <AnimatedFiatNumber end={props.position.fiatBalance} />
+          </ErrorBoundary>
+        }
         chain={props.slpxPair.chain.name}
         chainId={props.slpxPair.chain.id}
         assetSymbol={props.position.balance.options?.currency}
         assetLogoSrc={props.slpxPair.vToken.logo}
-        increaseStakeButton={<StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeDialogOpen(true)} />}
+        increaseStakeButton={
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeDialogOpen(true)} />
+          </ErrorBoundary>
+        }
         unstakeButton={
           props.position.balance.planck > 0n && (
-            <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} />
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} />
+            </ErrorBoundary>
           )
         }
         unstakingStatus={
           props.position.unlocking !== undefined &&
           props.position.unlocking.planck > 0n && (
-            <StakePosition.UnstakingStatus amount={props.position.unlocking?.toLocaleString()} unlocks={[]} />
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.UnstakingStatus amount={props.position.unlocking?.toLocaleString()} unlocks={[]} />
+            </ErrorBoundary>
           )
         }
       />

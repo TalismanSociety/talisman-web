@@ -75,31 +75,47 @@ const LidoStakes = (props: {
               account={stake.account}
               provider="Lido finance"
               stakeStatus={stake.balance.planck > 0n ? 'earning_rewards' : 'not_earning_rewards'}
-              balance={<RedactableBalance>{stake.balance.toLocaleString()}</RedactableBalance>}
-              fiatBalance={<AnimatedFiatNumber end={stake.fiatBalance} />}
+              balance={
+                <ErrorBoundary renderFallback={() => <>--</>}>
+                  <RedactableBalance>{stake.balance.toLocaleString()}</RedactableBalance>
+                </ErrorBoundary>
+              }
+              fiatBalance={
+                <ErrorBoundary renderFallback={() => <>--</>}>
+                  <AnimatedFiatNumber end={stake.fiatBalance} />
+                </ErrorBoundary>
+              }
               chain={props.lidoSuite.chain.name}
               chainId={props.lidoSuite.chain.id}
               assetSymbol={symbol}
               assetLogoSrc={logo}
               withdrawButton={
                 stake.claimable.planck > 0n && (
-                  <StakePosition.WithdrawButton
-                    amount={<RedactableBalance>{stake.claimable.toLocaleString()}</RedactableBalance>}
-                    onClick={() => setClaimSideSheetOpen(true)}
-                  />
+                  <ErrorBoundary renderFallback={() => <>--</>}>
+                    <StakePosition.WithdrawButton
+                      amount={<RedactableBalance>{stake.claimable.toLocaleString()}</RedactableBalance>}
+                      onClick={() => setClaimSideSheetOpen(true)}
+                    />
+                  </ErrorBoundary>
                 )
               }
               increaseStakeButton={
-                <StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeSideSheetOpen(true)} />
+                <ErrorBoundary renderFallback={() => <>--</>}>
+                  <StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeSideSheetOpen(true)} />
+                </ErrorBoundary>
               }
               unstakeButton={
                 stake.balance.planck > 0n && (
-                  <StakePosition.UnstakeButton onClick={() => setUnstakeSideSheetOpen(true)} />
+                  <ErrorBoundary renderFallback={() => <>--</>}>
+                    <StakePosition.UnstakeButton onClick={() => setUnstakeSideSheetOpen(true)} />
+                  </ErrorBoundary>
                 )
               }
               unstakingStatus={
                 stake.totalUnlocking.planck > 0n && (
-                  <StakePosition.UnstakingStatus amount={stake.totalUnlocking.toLocaleString()} unlocks={[]} />
+                  <ErrorBoundary renderFallback={() => <>--</>}>
+                    <StakePosition.UnstakingStatus amount={stake.totalUnlocking.toLocaleString()} unlocks={[]} />
+                  </ErrorBoundary>
                 )
               }
             />
