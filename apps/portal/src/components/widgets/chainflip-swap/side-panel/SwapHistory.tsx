@@ -1,6 +1,6 @@
 import type React from 'react'
 import { ErrorBoundary } from '@sentry/react'
-import { Skeleton } from '@talismn/ui'
+import { Skeleton } from '@talismn/ui/atoms/Skeleton'
 import { useAtomValue } from 'jotai'
 import { Suspense, useCallback } from 'react'
 

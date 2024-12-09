@@ -1,11 +1,14 @@
-import AccountConnectionGuard from '../../components/widgets/AccountConnectionGuard'
-import AnimatedFiatNumber from '../../components/widgets/AnimatedFiatNumber'
-import { useTotalStaked } from '../../domains/staking'
-import { HeaderWidgetPortal, TitlePortal } from '../layout'
-import { SegmentedButton, Surface, Text } from '@talismn/ui'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { SegmentedButton } from '@talismn/ui/molecules/SegmentedButton'
 import { Layers, Zap } from '@talismn/web-icons'
 import { useMemo } from 'react'
 import { Link, Outlet, useMatch } from 'react-router-dom'
+
+import AccountConnectionGuard from '@/components/widgets/AccountConnectionGuard'
+import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
+import { useTotalStaked } from '@/domains/staking'
+import { HeaderWidgetPortal, TitlePortal } from '@/routes/layout'
 
 const TotalStaked = () => <AnimatedFiatNumber end={useTotalStaked()} />
 

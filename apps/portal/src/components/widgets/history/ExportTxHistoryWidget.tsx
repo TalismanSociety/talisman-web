@@ -1,15 +1,16 @@
 import type { ReactNode } from 'react'
 import * as Sentry from '@sentry/react'
-import { toast } from '@talismn/ui'
+import { toast } from '@talismn/ui/organisms/Toaster'
 import { stringify } from 'csv-stringify/browser/esm'
 import { differenceInYears, subMonths } from 'date-fns'
 import { request } from 'graphql-request'
 import { useCallback, useMemo, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
+import DialogComponent from '@/components/recipes/ExportTxHistoryDialog'
+import { accountsState } from '@/domains/accounts/recoils'
+
 import { graphql } from '../../../../generated/gql/extrinsicHistory/gql'
-import { accountsState } from '../../../domains/accounts/recoils'
-import DialogComponent from '../../recipes/ExportTxHistoryDialog'
 
 export type ExportTxHistoryWidgetProps = {
   children: (props: { onToggleOpen: () => unknown }) => ReactNode

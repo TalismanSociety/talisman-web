@@ -1,5 +1,7 @@
 import { useTokenRates, useTokens } from '@talismn/balances-react'
-import { CircularProgressIndicator, TextInput, Tooltip } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+import { TextInput } from '@talismn/ui/molecules/TextInput'
 import { PrimitiveAtom } from 'jotai'
 import { HelpCircle } from 'lucide-react'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'

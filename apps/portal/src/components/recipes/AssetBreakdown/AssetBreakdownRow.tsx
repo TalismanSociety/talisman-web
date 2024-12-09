@@ -1,7 +1,8 @@
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
 import { githubUnknownChainLogoUrl } from '@talismn/chaindata-provider'
-import { Text, Tooltip } from '@talismn/ui'
+import { Text } from '@talismn/ui/atoms/Text'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { startCase } from 'lodash'
 
 import type { PortfolioToken } from '@/components/legacy/archetypes/Portfolio/Assets'

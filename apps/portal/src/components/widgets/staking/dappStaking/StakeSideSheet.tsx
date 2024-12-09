@@ -1,32 +1,34 @@
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
 import type { ReactNode } from 'react'
 import { useQueryState } from '@talismn/react-polkadot-api'
-import { CircularProgressIndicator, Select } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Select } from '@talismn/ui/molecules/Select'
 import BN from 'bn.js'
 import { formatDistance } from 'date-fns'
 import { Suspense, useMemo, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import type { Account } from '../../../../domains/accounts'
-import type { ChainInfo } from '../../../../domains/chains'
-import type { DappInfo } from '../../../../domains/staking/dappStaking'
-import { writeableSubstrateAccountsState } from '../../../../domains/accounts'
+import type { Account } from '@/domains/accounts'
+import type { ChainInfo } from '@/domains/chains'
+import type { DappInfo } from '@/domains/staking/dappStaking'
+import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
+import DappStakingForm, { DappStakingSideSheet } from '@/components/recipes/DappStakingForm'
+import { DappSelectorDialog as DappSelectorDialogComponent } from '@/components/recipes/StakeTargetSelectorDialog'
+import { useAccountSelector } from '@/components/widgets/AccountSelector'
+import ErrorBoundary from '@/components/widgets/ErrorBoundary'
+import { writeableSubstrateAccountsState } from '@/domains/accounts'
 import {
   ChainProvider,
   dappStakingEnabledChainsState,
   useChainState,
   useNativeTokenAmountState,
   useNativeTokenDecimalState,
-} from '../../../../domains/chains'
-import { useEraEta, useSubstrateApiState, useTokenAmountFromPlanck } from '../../../../domains/common'
-import { useAddStakeForm, useApr, useRegisteredDappsState, useStake } from '../../../../domains/staking/dappStaking'
-import { Maybe } from '../../../../util/monads'
-import { TalismanHandLoader } from '../../../legacy/TalismanHandLoader'
-import DappStakingForm, { DappStakingSideSheet } from '../../../recipes/DappStakingForm'
-import { DappSelectorDialog as DappSelectorDialogComponent } from '../../../recipes/StakeTargetSelectorDialog'
-import { useAccountSelector } from '../../AccountSelector'
-import ErrorBoundary from '../../ErrorBoundary'
+} from '@/domains/chains'
+import { useEraEta, useSubstrateApiState, useTokenAmountFromPlanck } from '@/domains/common'
+import { useAddStakeForm, useApr, useRegisteredDappsState, useStake } from '@/domains/staking/dappStaking'
+import { Maybe } from '@/util/monads'
+
 import useUnlockDuration from '../providers/hooks/dapp/useUnlockDuration'
 
 type DappSelectorDialogProps = {

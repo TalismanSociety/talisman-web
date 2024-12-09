@@ -1,6 +1,9 @@
 import { keyframes } from '@emotion/react'
 import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
-import { Button, HiddenDetails, InfoCard, Text } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { Text } from '@talismn/ui/atoms/Text'
+import { HiddenDetails } from '@talismn/ui/molecules/HiddenDetails'
+import { InfoCard } from '@talismn/ui/molecules/InfoCard'
 import { ChevronLeft } from '@talismn/web-icons'
 import { useNavigate, useParams } from 'react-router-dom'
 

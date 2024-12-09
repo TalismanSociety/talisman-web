@@ -1,9 +1,15 @@
-import { Maybe } from '../../../util/monads'
-import AccountIcon from '../../molecules/AccountIcon'
+import type { AlertDialogProps } from '@talismn/ui/molecules/AlertDialog'
 import { useTheme } from '@emotion/react'
-import { AlertDialog, Button, DateInput, Select, Text, type AlertDialogProps } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { Text } from '@talismn/ui/atoms/Text'
+import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
+import { DateInput } from '@talismn/ui/molecules/DateInput'
+import { Select } from '@talismn/ui/molecules/Select'
 import { endOfDay, startOfDay } from 'date-fns'
 import { useMemo } from 'react'
+
+import AccountIcon from '@/components/molecules/AccountIcon'
+import { Maybe } from '@/util/monads'
 
 type Account = { selected?: boolean; name: string; address: string; balance: string }
 

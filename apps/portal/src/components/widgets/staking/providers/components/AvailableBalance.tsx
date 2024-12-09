@@ -1,4 +1,4 @@
-import { Text } from '@talismn/ui'
+import { Text } from '@talismn/ui/atoms/Text'
 import { useMemo } from 'react'
 
 import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'

@@ -1,20 +1,29 @@
-import talismanWalletLogo from '../../assets/talisman-wallet.svg'
+import type { ButtonHTMLAttributes, DetailedHTMLProps } from 'react'
+import { ClassNames, useTheme } from '@emotion/react'
+import { useSignetSdk } from '@talismn/signet-apps-sdk'
+import { Chip } from '@talismn/ui/atoms/Chip'
+import { Hr } from '@talismn/ui/atoms/Hr'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { ListItem } from '@talismn/ui/molecules/ListItem'
+import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
+import { toast } from '@talismn/ui/organisms/Toaster'
+import { Ethereum, Eye, Polkadot, Wallet } from '@talismn/web-icons'
+import { Suspense, useState } from 'react'
+import { atom, useRecoilState, useRecoilValue } from 'recoil'
+import { useDisconnect as useDisconnectEvm, useAccount as useEvmAccount } from 'wagmi'
+
+import talismanWalletLogo from '@/assets/talisman-wallet.svg'
+import { writeableEvmAccountsState } from '@/domains/accounts'
 import {
-  useConnectEvm,
   useConnectedSubstrateWallet,
+  useConnectEvm,
   useEvmConnectors,
   useInstalledSubstrateWallets,
   useSubstrateWalletConnect,
-} from '../../domains/extension'
+} from '@/domains/extension'
+
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
-import { writeableEvmAccountsState } from '@/domains/accounts'
-import { ClassNames, useTheme } from '@emotion/react'
-import { useSignetSdk } from '@talismn/signet-apps-sdk'
-import { Chip, Hr, ListItem, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Surface, Text, toast } from '@talismn/ui'
-import { Ethereum, Eye, Polkadot, Wallet } from '@talismn/web-icons'
-import { Suspense, useState, type ButtonHTMLAttributes, type DetailedHTMLProps } from 'react'
-import { atom, useRecoilState, useRecoilValue } from 'recoil'
-import { useAccount as useEvmAccount, useDisconnect as useDisconnectEvm } from 'wagmi'
 
 const talismanInstalled = 'talismanEth' in globalThis
 
@@ -135,7 +144,7 @@ const SubstrateWalletConnection = () => {
   console.log(connectedWallet)
   return (
     <section>
-      <div className="flex items-center justify-start gap-[8px] mb-[16px] font-bold">
+      <div className="mb-[16px] flex items-center justify-start gap-[8px] font-bold">
         <Polkadot size="1.6rem" />
         <h4 className="text-[1.8rem]">Substrate wallets</h4>
       </div>
@@ -165,7 +174,7 @@ const EvmWalletConnections = () => {
 
   return (
     <section>
-      <div className="flex items-center justify-start gap-[8px] mb-[16px] font-bold">
+      <div className="mb-[16px] flex items-center justify-start gap-[8px] font-bold">
         <Ethereum size="1.6rem" />
         <h4 className="text-[1.8rem]">Ethereum wallets</h4>
       </div>

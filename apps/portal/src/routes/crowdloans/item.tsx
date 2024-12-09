@@ -1,11 +1,12 @@
-import { Panel, PanelSection, Poster, useModal } from '../../components/legacy'
-import { Crowdloan, Parachain } from '../../components/legacy/archetypes'
-import { useCrowdloanContributions } from '../../libs/crowdloans'
-import { useCrowdloanByParachainId, useParachainAssets, useParachainDetailsBySlug } from '../../libs/talisman'
 import styled from '@emotion/styled'
-import { Button } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
+
+import { Panel, PanelSection, Poster, useModal } from '@/components/legacy'
+import { Crowdloan, Parachain } from '@/components/legacy/archetypes'
+import { useCrowdloanContributions } from '@/libs/crowdloans'
+import { useCrowdloanByParachainId, useParachainAssets, useParachainDetailsBySlug } from '@/libs/talisman'
 
 export const CrowdloanDetail = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()

@@ -4,8 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./assets/css/talismn.css": "./assets/css/talismn.css"
+    "./assets/css/talismn.css": "./assets/css/talismn.css",
+    "./atoms/*": "./src/atoms/*.tsx",
+    "./molecules/*": "./src/molecules/*.tsx",
+    "./organisms/*": "./src/organisms/*.tsx",
+    "./theme": "./src/theme.tsx",
+    "./utils-react/*": "./src/utils-react/*.tsx",
+    "./utils/*": "./src/utils/*.ts"
   },
   "scripts": {
     "lint": "eslint src",

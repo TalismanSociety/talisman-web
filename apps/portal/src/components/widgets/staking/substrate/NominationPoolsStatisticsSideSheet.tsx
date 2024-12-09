@@ -1,15 +1,12 @@
 import type { ReactNode } from 'react'
 import { useTheme } from '@emotion/react'
 import { encodeAddress } from '@polkadot/util-crypto'
-import {
-  DescriptionList,
-  ListItem,
-  SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR,
-  SideSheet,
-  Text,
-  TonalIcon,
-  useSurfaceColorAtElevation,
-} from '@talismn/ui'
+import { TonalIcon } from '@talismn/ui/atoms/Icon'
+import { useSurfaceColorAtElevation } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { DescriptionList } from '@talismn/ui/molecules/DescriptionList'
+import { ListItem } from '@talismn/ui/molecules/ListItem'
+import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
 import { BarChart, Clock, Earn, ExternalLink, Percent, Zap } from '@talismn/web-icons'
 import { eachDayOfInterval, isSameDay, subDays } from 'date-fns'
 import { useMemo } from 'react'

@@ -1,5 +1,10 @@
 import type { PropsWithChildren, ReactNode } from 'react'
-import { Button, CircularProgressIndicator, Surface, Text, TextInput, Tooltip } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+import { TextInput } from '@talismn/ui/molecules/TextInput'
 
 import { cn } from '@/lib/utils'
 

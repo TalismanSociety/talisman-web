@@ -1,6 +1,9 @@
-import type { IdenticonProps } from '@talismn/ui'
+import type { IdenticonProps } from '@talismn/ui/atoms/Identicon'
 import { useTheme } from '@emotion/react'
-import { Badge, BadgedBox, Identicon, Tooltip, useSurfaceColorAtElevation } from '@talismn/ui'
+import { Badge, BadgedBox } from '@talismn/ui/atoms/Badge'
+import { Identicon } from '@talismn/ui/atoms/Identicon'
+import { useSurfaceColorAtElevation } from '@talismn/ui/atoms/Surface'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { Eye } from '@talismn/web-icons'
 
 export type AccountIconProps = Omit<IdenticonProps, 'value'> & { address: string; readonly?: boolean }

@@ -1,5 +1,8 @@
 import { useTheme } from '@emotion/react'
-import { Skeleton, SurfaceChip, Text, type ChipProps, Surface, useSurfaceColor } from '@talismn/ui'
+import { ChipProps, SurfaceChip } from '@talismn/ui/atoms/Chip'
+import { Skeleton } from '@talismn/ui/atoms/Skeleton'
+import { Surface, useSurfaceColor } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
 import { type ReactNode } from 'react'
 import { VictoryPie, VictoryTooltip } from 'victory'
 

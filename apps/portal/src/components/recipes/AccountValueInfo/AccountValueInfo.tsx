@@ -1,5 +1,7 @@
 import { useTheme } from '@emotion/react'
-import { IconButton, Surface, Text, useSurfaceColor } from '@talismn/ui'
+import { IconButton } from '@talismn/ui/atoms/IconButton'
+import { Surface, useSurfaceColor } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
 import { ChevronDown, Users } from '@talismn/web-icons'
 import { type ReactNode } from 'react'
 

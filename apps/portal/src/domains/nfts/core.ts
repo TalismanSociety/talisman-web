@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react'
 import { type Nft as BaseNft } from '@talismn/nft'
-import { toast } from '@talismn/ui'
+import { toast } from '@talismn/ui/organisms/Toaster'
 import { atomFamily, DefaultValue, selectorFamily, waitForNone } from 'recoil'
 import { bufferTime, filter, last, Observable, scan, tap } from 'rxjs'
 import { spawn, Thread } from 'threads'

@@ -1,15 +1,14 @@
 import type { Token } from '@talismn/chaindata-provider'
 import { useTokens } from '@talismn/balances-react'
-import { Button } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
+import type { Account } from '@/domains/accounts'
+import Cryptoticon from '@/components/recipes/Cryptoticon/Cryptoticon'
+import TokenSelectorDialog from '@/components/recipes/TokenSelectorDialog'
+import { selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
 import { Decimal } from '@/util/Decimal'
-
-import type { Account } from '../../domains/accounts'
-import { selectedBalancesState, selectedCurrencyState } from '../../domains/balances'
-import Cryptoticon from '../recipes/Cryptoticon/Cryptoticon'
-import TokenSelectorDialog from '../recipes/TokenSelectorDialog'
 
 export type TokenSelectorProps<T extends Token | string> = {
   account?: Account

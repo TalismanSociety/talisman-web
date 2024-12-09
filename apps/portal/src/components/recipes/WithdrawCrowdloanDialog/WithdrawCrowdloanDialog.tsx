@@ -1,7 +1,11 @@
-import { TalismanHandLoader } from '../../legacy/TalismanHandLoader'
+import type { AlertDialogProps } from '@talismn/ui/molecules/AlertDialog'
 import { useTheme } from '@emotion/react'
-import { AlertDialog, Button, Text, type AlertDialogProps } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { Text } from '@talismn/ui/atoms/Text'
+import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
 import { useTranslation } from 'react-i18next'
+
+import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
 
 export type WithdrawCrowdloanDialogProps = Pick<AlertDialogProps, 'open' | 'onRequestDismiss'> & {
   onRequestWithdraw: () => unknown

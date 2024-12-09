@@ -1,11 +1,16 @@
-import type { Account } from '../../../domains/accounts'
-import ExportHistoryAlertDialog from '../../recipes/ExportHistoryAlertDialog'
-import { getExtrinsicBalanceChangeAmount, getExtrinsicTotalAmount, type ExtrinsicNode } from './utils'
 import * as Sentry from '@sentry/react'
-import { Button, FloatingActionButtonPortal, toast } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { FloatingActionButtonPortal } from '@talismn/ui/organisms/Scaffold'
+import { toast } from '@talismn/ui/organisms/Toaster'
 import { encodeAnyAddress } from '@talismn/util'
 import { stringify as stringifyCsv } from 'csv-stringify/browser/esm'
 import { useMemo, useState } from 'react'
+
+import type { Account } from '@/domains/accounts'
+import ExportHistoryAlertDialog from '@/components/recipes/ExportHistoryAlertDialog'
+
+import type { ExtrinsicNode } from './utils'
+import { getExtrinsicBalanceChangeAmount, getExtrinsicTotalAmount } from './utils'
 
 type HistoryExportFloatingActionButtonProps = {
   accounts: Account[]

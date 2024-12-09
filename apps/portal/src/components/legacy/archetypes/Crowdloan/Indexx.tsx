@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 
 import styled from '@emotion/styled'
-import { SearchBar } from '@talismn/ui'
+import { SearchBar } from '@talismn/ui/molecules/SearchBar'
 import { useTranslation } from 'react-i18next'
 
 import Await from '@/components/legacy/Await'

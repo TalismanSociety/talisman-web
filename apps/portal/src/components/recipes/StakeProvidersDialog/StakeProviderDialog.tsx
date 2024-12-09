@@ -1,6 +1,10 @@
-import { AlertDialog, Button, Hr, Surface, Text } from '@talismn/ui'
-import { Zap } from '@talismn/web-icons'
 import type { PropsWithChildren, ReactNode } from 'react'
+import { Button } from '@talismn/ui/atoms/Button'
+import { Hr } from '@talismn/ui/atoms/Hr'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
+import { Zap } from '@talismn/web-icons'
 
 export type StakeProviderOptionProps = {
   name: ReactNode

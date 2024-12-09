@@ -1,6 +1,8 @@
-import { type SlpxAddStakeDialogProps, SlpxAddStakeDialog } from './AddStakeDialog'
 import { type ComponentMeta, type Story } from '@storybook/react'
-import { Select } from '@talismn/ui'
+import { Select } from '@talismn/ui/molecules/Select'
+
+import type { SlpxAddStakeDialogProps } from './AddStakeDialog'
+import { SlpxAddStakeDialog } from './AddStakeDialog'
 
 export default {
   title: 'Recipes/AddStakeDialog/Slpx',

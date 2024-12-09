@@ -1,9 +1,13 @@
-import type { AlertDialogProps } from '@talismn/ui'
+import type { AlertDialogProps } from '@talismn/ui/molecules/AlertDialog'
 import type { ChangeEventHandler, ReactElement } from 'react'
-import { ALERT_DIALOG_PADDING, AlertDialog, Hr, Text, TextInput, useSurfaceColor } from '@talismn/ui'
+import { Hr } from '@talismn/ui/atoms/Hr'
+import { useSurfaceColor } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { ALERT_DIALOG_PADDING, AlertDialog } from '@talismn/ui/molecules/AlertDialog'
+import { TextInput } from '@talismn/ui/molecules/TextInput'
 import React, { useCallback, useState } from 'react'
 
-import Cryptoticon from '../Cryptoticon'
+import Cryptoticon from '@/components/recipes/Cryptoticon'
 
 export type TokenSelectorItemProps = {
   logoSrc?: string

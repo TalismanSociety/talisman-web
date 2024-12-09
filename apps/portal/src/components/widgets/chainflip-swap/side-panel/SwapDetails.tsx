@@ -1,4 +1,7 @@
-import { CircularProgressIndicator, Clickable, Skeleton, Surface } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Clickable } from '@talismn/ui/atoms/Clickable'
+import { Skeleton } from '@talismn/ui/atoms/Skeleton'
+import { Surface } from '@talismn/ui/atoms/Surface'
 import { useAtom, useAtomValue } from 'jotai'
 import { loadable } from 'jotai/utils'
 import { Loadable } from 'jotai/vanilla/utils/loadable'

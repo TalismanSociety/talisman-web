@@ -1,6 +1,6 @@
 import type { PropsWithChildren, ReactElement, ReactNode } from 'react'
 import * as Sentry from '@sentry/react'
-import { Button, OutlinedButton } from '@talismn/ui'
+import { Button, OutlinedButton } from '@talismn/ui/atoms/Button'
 import { createContext, useContext, useState } from 'react'
 import { useRouteError } from 'react-router-dom'
 import { atom, useRecoilCallback, useRecoilValue } from 'recoil'

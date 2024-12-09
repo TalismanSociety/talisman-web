@@ -1,4 +1,4 @@
-import { CircularProgressIndicator } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import BN from 'bn.js'
 import { Suspense, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'

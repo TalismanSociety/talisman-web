@@ -1,5 +1,7 @@
 import styled from '@emotion/styled'
-import { HiddenDetails, SearchBar, Text } from '@talismn/ui'
+import { Text } from '@talismn/ui/atoms/Text'
+import { HiddenDetails } from '@talismn/ui/molecules/HiddenDetails'
+import { SearchBar } from '@talismn/ui/molecules/SearchBar'
 import { useState } from 'react'
 import { useDebounce } from 'react-use'
 

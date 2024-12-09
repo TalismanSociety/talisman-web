@@ -1,14 +1,11 @@
-import {
-  Button,
-  CircularProgressIndicator,
-  InfoCard,
-  SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR,
-  SideSheet,
-  Surface,
-  SurfaceChip,
-  Text,
-  Tooltip,
-} from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { SurfaceChip } from '@talismn/ui/atoms/Chip'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+import { InfoCard } from '@talismn/ui/molecules/InfoCard'
+import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
 import { Clock, Zap } from '@talismn/web-icons'
 import { Suspense, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'

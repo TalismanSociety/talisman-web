@@ -1,14 +1,17 @@
-import { type Account } from '../../../../domains/accounts'
-import { useNativeTokenAmountState } from '../../../../domains/chains'
-import { useAddStakeForm } from '../../../../domains/staking/subtensor/hooks/forms'
-import { useDelegateApr } from '../../../../domains/staking/subtensor/hooks/useApr'
-import { useStake } from '../../../../domains/staking/subtensor/hooks/useStake'
-import { SubtensorStakingForm } from './SubtensorStakingForm'
-import { CircularProgressIndicator } from '@talismn/ui'
+import type { ReactNode } from 'react'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import BN from 'bn.js'
-import { Suspense, useMemo, type ReactNode } from 'react'
+import { Suspense, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
+
+import { type Account } from '@/domains/accounts'
+import { useNativeTokenAmountState } from '@/domains/chains'
+import { useAddStakeForm } from '@/domains/staking/subtensor/hooks/forms'
+import { useDelegateApr } from '@/domains/staking/subtensor/hooks/useApr'
+import { useStake } from '@/domains/staking/subtensor/hooks/useStake'
+
+import { SubtensorStakingForm } from './SubtensorStakingForm'
 
 type StakeFormProps = IncompleteSelectionStakeFormProps & {
   account: Account

@@ -1,13 +1,5 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type PropsWithChildren,
-  type ReactNode,
-  useCallback,
-} from 'react'
+import type { PropsWithChildren, ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 export const createPortal = () => {
   const Context = createContext<{

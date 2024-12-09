@@ -1,5 +1,7 @@
 import type React from 'react'
-import { Button, Surface, TonalIconButton } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { TonalIconButton } from '@talismn/ui/atoms/IconButton'
+import { Surface } from '@talismn/ui/atoms/Surface'
 import { Repeat } from '@talismn/web-icons'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { loadable } from 'jotai/utils'

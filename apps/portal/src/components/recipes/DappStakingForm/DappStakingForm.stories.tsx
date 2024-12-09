@@ -1,6 +1,7 @@
-import DappStakingForm from './DappStakingForm'
 import { type Meta, type StoryObj } from '@storybook/react'
-import { Select } from '@talismn/ui'
+import { Select } from '@talismn/ui/molecules/Select'
+
+import DappStakingForm from './DappStakingForm'
 
 export default {
   title: 'Recipes/DappStakingForm',

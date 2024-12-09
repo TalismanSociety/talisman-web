@@ -1,14 +1,10 @@
 import type { PropsWithChildren, ReactNode } from 'react'
 import { useTheme } from '@emotion/react'
-import {
-  DescriptionList,
-  ListItem,
-  SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR,
-  SideSheet,
-  Surface,
-  Text,
-  useSurfaceColorAtElevation,
-} from '@talismn/ui'
+import { Surface, useSurfaceColorAtElevation } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { DescriptionList } from '@talismn/ui/molecules/DescriptionList'
+import { ListItem } from '@talismn/ui/molecules/ListItem'
+import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
 import { CheckCircle, Copy, ExternalLink, XCircle } from '@talismn/web-icons'
 import { formatDistanceToNow } from 'date-fns'
 import { useMemo } from 'react'

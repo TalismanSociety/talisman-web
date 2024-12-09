@@ -1,5 +1,9 @@
-import { AlertDialog, Button, CircularProgressIndicator, Text } from '@talismn/ui'
-import { Suspense, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import { Button } from '@talismn/ui/atoms/Button'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Text } from '@talismn/ui/atoms/Text'
+import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
+import { Suspense } from 'react'
 
 export type DappStakingLockedAmountDialogProps = {
   amount: ReactNode

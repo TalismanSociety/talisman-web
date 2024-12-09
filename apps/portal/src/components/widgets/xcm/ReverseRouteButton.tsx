@@ -1,5 +1,5 @@
-import type { ButtonProps } from '@talismn/ui'
-import { TonalIconButton } from '@talismn/ui'
+import type { ButtonProps } from '@talismn/ui/atoms/Button'
+import { TonalIconButton } from '@talismn/ui/atoms/IconButton'
 import { ArrowDown, Repeat } from '@talismn/web-icons'
 
 import { cn } from '@/lib/utils'

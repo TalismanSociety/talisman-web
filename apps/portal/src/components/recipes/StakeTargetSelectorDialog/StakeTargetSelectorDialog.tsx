@@ -1,12 +1,14 @@
-import StakeTargetSelectorItem, {
-  DappSelectorItem,
-  PoolSelectorItem,
-  type StakeTargetSelectorItemProps,
-} from './StakeTargetSelectorItem'
-import { AlertDialog, Button, Text, Select } from '@talismn/ui'
+import type { ReactElement, ReactNode } from 'react'
+import { Button } from '@talismn/ui/atoms/Button'
+import { Text } from '@talismn/ui/atoms/Text'
+import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
+import { Select } from '@talismn/ui/molecules/Select'
 import { ChevronLeft, ChevronRight } from '@talismn/web-icons'
 import { motion } from 'framer-motion'
-import React, { useState, type ReactElement, type ReactNode } from 'react'
+import React, { useState } from 'react'
+
+import type { StakeTargetSelectorItemProps } from './StakeTargetSelectorItem'
+import StakeTargetSelectorItem, { DappSelectorItem, PoolSelectorItem } from './StakeTargetSelectorItem'
 
 export type StakeTargetSelectorDialogProps = {
   open?: boolean

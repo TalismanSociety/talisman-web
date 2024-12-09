@@ -2,7 +2,7 @@ import type { PrimitiveAtom } from 'jotai'
 import * as sdk from '@lifi/sdk'
 import { evmErc20TokenId } from '@talismn/balances'
 import { tokenRatesAtom, tokensByIdAtom, useTokens } from '@talismn/balances-react'
-import { toast } from '@talismn/ui'
+import { toast } from '@talismn/ui/organisms/Toaster'
 import { Atom, atom, Getter, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { atomFamily, loadable, useAtomCallback } from 'jotai/utils'
 import { Loadable } from 'jotai/vanilla/utils/loadable'
@@ -14,6 +14,7 @@ import { useWalletClient } from 'wagmi'
 
 import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts'
 import { substrateApiState } from '@/domains/common'
+import { substrateApiGetterAtom } from '@/domains/common/recoils/api'
 import { connectedSubstrateWalletState } from '@/domains/extension'
 import { Decimal } from '@/util/Decimal'
 
@@ -24,7 +25,6 @@ import type {
   SwapActivity,
   SwappableAssetBaseType,
 } from './swap-modules/common.swap-module'
-import { substrateApiGetterAtom } from '../../../domains/common/recoils/api'
 import { popularTokens, talismanTokens } from './curated-tokens'
 import { knownEvmNetworksAtom } from './helpers'
 import { swapInfoTabAtom } from './side-panel'

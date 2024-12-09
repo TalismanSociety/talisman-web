@@ -1,27 +1,23 @@
 import { type DeriveStakingAccount } from '@polkadot/api-derive/types'
 import { useDeriveState } from '@talismn/react-polkadot-api'
-import { CircularProgressIndicator } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import BN from 'bn.js'
 import { useMemo, useState } from 'react'
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
+import FastUnstakeDialog from '@/components/recipes/FastUnstakeDialog'
 import StakePosition from '@/components/recipes/StakePosition'
+import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
 import ErrorBoundary from '@/components/widgets/ErrorBoundary'
+import RedactableBalance from '@/components/widgets/RedactableBalance'
+import { type Account } from '@/domains/accounts/recoils'
+import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '@/domains/chains'
+import { useSubstrateApiState } from '@/domains/common'
+import { useExtrinsic, useNativeTokenLocalizedFiatAmount, useTokenAmountFromPlanck } from '@/domains/common/hooks'
+import { useEraEtaFormatter } from '@/domains/common/hooks/useEraEta'
+import { useLocalizedUnlockDuration } from '@/domains/staking/substrate/nominationPools'
+import { useTotalValidatorStakingRewards } from '@/domains/staking/substrate/validator'
 
-import { type Account } from '../../../../domains/accounts/recoils'
-import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '../../../../domains/chains'
-import { useSubstrateApiState } from '../../../../domains/common'
-import {
-  useExtrinsic,
-  useNativeTokenLocalizedFiatAmount,
-  useTokenAmountFromPlanck,
-} from '../../../../domains/common/hooks'
-import { useEraEtaFormatter } from '../../../../domains/common/hooks/useEraEta'
-import { useLocalizedUnlockDuration } from '../../../../domains/staking/substrate/nominationPools'
-import { useTotalValidatorStakingRewards } from '../../../../domains/staking/substrate/validator'
-import FastUnstakeDialog from '../../../recipes/FastUnstakeDialog'
-import AnimatedFiatNumber from '../../AnimatedFiatNumber'
-import RedactableBalance from '../../RedactableBalance'
 import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
 
 const TotalRewards = (props: { account: Account }) => {

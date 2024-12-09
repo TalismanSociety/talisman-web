@@ -1,4 +1,6 @@
-import { AlertDialog, Button, Text } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { Text } from '@talismn/ui/atoms/Text'
+import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
 
 export type RemoveWatchedAccountConfirmationDialogProps = {
   open: boolean

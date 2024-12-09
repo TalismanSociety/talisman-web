@@ -1,4 +1,5 @@
-import { CircularProgressIndicator, SurfaceButton } from '@talismn/ui'
+import { SurfaceButton } from '@talismn/ui/atoms/Button'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { useAtomValue } from 'jotai'
 import { ArrowRight, ArrowUpRight, Check, X } from 'lucide-react'
 import React, { useMemo } from 'react'

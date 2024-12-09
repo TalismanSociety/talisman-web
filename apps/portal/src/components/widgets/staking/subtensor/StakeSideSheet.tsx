@@ -1,4 +1,4 @@
-import { Select } from '@talismn/ui'
+import { Select } from '@talismn/ui/molecules/Select'
 import { Suspense, useMemo, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'

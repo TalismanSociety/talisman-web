@@ -1,6 +1,8 @@
-import StakeForm, { type StakeFormProps } from './StakeForm'
 import { type ComponentMeta, type Story } from '@storybook/react'
-import { Select } from '@talismn/ui'
+import { Select } from '@talismn/ui/molecules/Select'
+
+import type { StakeFormProps } from './StakeForm'
+import StakeForm from './StakeForm'
 
 export default {
   title: 'Recipes/StakeForm',

@@ -1,6 +1,9 @@
-import { Button, Text, Tooltip, useSurfaceColor, useSurfaceColorAtElevation } from '@talismn/ui'
-import { ExternalLink, TalismanHand, User } from '@talismn/web-icons'
 import type { ReactNode } from 'react'
+import { Button } from '@talismn/ui/atoms/Button'
+import { useSurfaceColor, useSurfaceColorAtElevation } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+import { ExternalLink, TalismanHand, User } from '@talismn/web-icons'
 
 export type StakeTargetSelectorItemProps = {
   selected?: boolean
@@ -121,8 +124,8 @@ const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => {
       </Text.Body>
       <Tooltip content={<div className="max-w-[276px]">{props.commissionFeeDescription}</div>}>
         {props.commissionFee ? (
-          <div className="text-[14px] flex justify-between">
-            <div className="flex gap-2 items-center">
+          <div className="flex justify-between text-[14px]">
+            <div className="flex items-center gap-2">
               <Text.Body alpha={alpha}>Commission fee</Text.Body>
             </div>
             <Text.Body alpha={alpha}>{props.commissionFee}</Text.Body>

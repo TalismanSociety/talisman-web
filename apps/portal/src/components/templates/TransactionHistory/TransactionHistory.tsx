@@ -1,4 +1,5 @@
-import { Surface, TextInput } from '@talismn/ui'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { TextInput } from '@talismn/ui/molecules/TextInput'
 
 const TransactionHistory = () => {
   return (

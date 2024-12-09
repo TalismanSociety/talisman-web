@@ -1,7 +1,9 @@
+import type { PropsWithChildren } from 'react'
 import { useTokens } from '@talismn/balances-react'
-import { CircularProgressIndicator, useSurfaceColor } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { useSurfaceColor } from '@talismn/ui/atoms/Surface'
 import { IconContext } from '@talismn/web-icons/utils'
-import { createContext, useContext, type PropsWithChildren } from 'react'
+import { createContext, useContext } from 'react'
 
 export type CryptoticonProps = {
   src?: string

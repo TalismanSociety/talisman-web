@@ -1,4 +1,4 @@
-import { SurfaceButton } from '@talismn/ui'
+import { SurfaceButton } from '@talismn/ui/atoms/Button'
 import { ReactNode } from 'react'
 
 import { AssetLogoWithChain, AssetLogoWithChainSkeleton } from '@/components/recipes/AssetLogoWithChain'

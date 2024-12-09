@@ -1,12 +1,14 @@
-import type { Account } from '../../../../domains/accounts'
-import { useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
-import { useAddStakeForm } from '../../../../domains/staking/subtensor/hooks/forms'
-import { useDelegate } from '../../../../domains/staking/subtensor/hooks/useDelegate'
-import { type Stake } from '../../../../domains/staking/subtensor/hooks/useStake'
-import { AddStakeDialog as _AddStakeDialog } from '../../../recipes/AddStakeDialog'
-import DelegatePickerDialog from './DelegatePickerDialog'
-import { CircularProgressIndicator } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { useState } from 'react'
+
+import type { Account } from '@/domains/accounts'
+import { AddStakeDialog as _AddStakeDialog } from '@/components/recipes/AddStakeDialog'
+import { useExtrinsicInBlockOrErrorEffect } from '@/domains/common'
+import { useAddStakeForm } from '@/domains/staking/subtensor/hooks/forms'
+import { useDelegate } from '@/domains/staking/subtensor/hooks/useDelegate'
+import { type Stake } from '@/domains/staking/subtensor/hooks/useStake'
+
+import DelegatePickerDialog from './DelegatePickerDialog'
 
 type SubtensorAddStakeDialogProps = {
   account: Account

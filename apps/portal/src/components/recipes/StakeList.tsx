@@ -1,4 +1,4 @@
-import { useSurfaceColor } from '@talismn/ui'
+import { useSurfaceColor } from '@talismn/ui/atoms/Surface'
 import { type DetailedHTMLProps, type OlHTMLAttributes } from 'react'
 
 const StakeList = (props: DetailedHTMLProps<OlHTMLAttributes<HTMLOListElement>, HTMLOListElement>) => (

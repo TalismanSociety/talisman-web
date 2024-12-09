@@ -1,4 +1,6 @@
-import { CircularProgressIndicator, LinearProgressIndicator, Text } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { LinearProgressIndicator } from '@talismn/ui/atoms/LinearProgressIndicator'
+import { Text } from '@talismn/ui/atoms/Text'
 
 type PercentageBarProps = { isLoading?: boolean; percentage?: number }
 

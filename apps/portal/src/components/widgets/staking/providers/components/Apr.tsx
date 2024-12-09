@@ -1,4 +1,4 @@
-import { Text } from '@talismn/ui'
+import { Text } from '@talismn/ui/atoms/Text'
 
 import { ChainProvider } from '@/domains/chains'
 import { useApr as useDappApr } from '@/domains/staking/dappStaking'

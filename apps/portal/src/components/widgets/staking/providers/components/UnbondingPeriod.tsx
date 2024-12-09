@@ -1,4 +1,4 @@
-import { Text } from '@talismn/ui'
+import { Text } from '@talismn/ui/atoms/Text'
 import { formatDistance } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 

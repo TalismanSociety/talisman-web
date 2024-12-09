@@ -1,5 +1,8 @@
 import type { ReactNode } from 'react'
-import { AlertDialog, Button, Text, TextInput } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { Text } from '@talismn/ui/atoms/Text'
+import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
+import { TextInput } from '@talismn/ui/molecules/TextInput'
 
 export type AddStakeFormProps = {
   accountSelector?: ReactNode

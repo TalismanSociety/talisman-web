@@ -1,25 +1,29 @@
 import type { ApiPromise } from '@polkadot/api'
 import type { ReactNode } from 'react'
-import { CircularProgressIndicator, Select, Tooltip } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+import { Select } from '@talismn/ui/molecules/Select'
 import { Info } from '@talismn/web-icons'
 import BN from 'bn.js'
 import { memo, Suspense, useCallback, useDeferredValue, useEffect, useMemo, useState, useTransition } from 'react'
 import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
+import type { Account } from '@/domains/accounts/recoils'
+import type { ChainInfo } from '@/domains/chains'
 import type { Decimal } from '@/util/Decimal'
-import { usePoolCommission } from '@/domains/staking/substrate/nominationPools/hooks/usePoolCommission'
-
-import type { Account } from '../../../../domains/accounts/recoils'
-import type { ChainInfo } from '../../../../domains/chains'
-import { writeableSubstrateAccountsState } from '../../../../domains/accounts/recoils'
+import StakeFormComponent from '@/components/recipes/StakeForm'
+import { type StakeStatus } from '@/components/recipes/StakeStatusIndicator'
+import { PoolSelectorDialog } from '@/components/recipes/StakeTargetSelectorDialog'
+import { useAccountSelector } from '@/components/widgets/AccountSelector'
+import { writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
 import {
   assertChain,
   ChainProvider,
   nominationPoolsEnabledChainsState,
   useChainState as useChainRecoilState,
   useNativeTokenDecimalState,
-} from '../../../../domains/chains'
+} from '@/domains/chains'
 import {
   useChainState,
   useEraEtaFormatter,
@@ -28,18 +32,13 @@ import {
   useSubstrateApiEndpoint,
   useSubstrateApiState,
   useTokenAmountFromPlanck,
-} from '../../../../domains/common'
-import { useApr, usePoolAddForm, usePoolStakes } from '../../../../domains/staking/substrate/nominationPools/hooks'
-import {
-  eraStakersState,
-  useRecommendedPoolsState,
-} from '../../../../domains/staking/substrate/nominationPools/recoils'
-import { createAccounts } from '../../../../domains/staking/substrate/nominationPools/utils'
-import { Maybe } from '../../../../util/monads'
-import StakeFormComponent from '../../../recipes/StakeForm'
-import { type StakeStatus } from '../../../recipes/StakeStatusIndicator'
-import { PoolSelectorDialog } from '../../../recipes/StakeTargetSelectorDialog'
-import { useAccountSelector } from '../../AccountSelector'
+} from '@/domains/common'
+import { useApr, usePoolAddForm, usePoolStakes } from '@/domains/staking/substrate/nominationPools/hooks'
+import { usePoolCommission } from '@/domains/staking/substrate/nominationPools/hooks/usePoolCommission'
+import { eraStakersState, useRecommendedPoolsState } from '@/domains/staking/substrate/nominationPools/recoils'
+import { createAccounts } from '@/domains/staking/substrate/nominationPools/utils'
+import { Maybe } from '@/util/monads'
+
 import AddStakeDialog from './AddStakeDialog'
 import ClaimStakeDialog from './ClaimStakeDialog'
 import PoolClaimPermissionDialog, {

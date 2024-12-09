@@ -1,12 +1,13 @@
-import { CircularProgressIndicator } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import type { Account } from '../../../../domains/accounts'
-import { useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
-import { useUnstakeForm } from '../../../../domains/staking/subtensor/hooks/forms'
-import { type Stake } from '../../../../domains/staking/subtensor/hooks/useStake'
-import UnstakeDialogComponent from '../../../recipes/UnstakeDialog'
+import type { Account } from '@/domains/accounts'
+import UnstakeDialogComponent from '@/components/recipes/UnstakeDialog'
+import { useExtrinsicInBlockOrErrorEffect } from '@/domains/common'
+import { useUnstakeForm } from '@/domains/staking/subtensor/hooks/forms'
+import { type Stake } from '@/domains/staking/subtensor/hooks/useStake'
+
 import DelegatePickerDialog from './DelegatePickerDialog'
 
 type DelegateUnstakeDialogProps = {

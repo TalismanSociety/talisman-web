@@ -1,7 +1,12 @@
-import { ClassNames } from '@emotion/react'
-import { AlertDialog, Hr, ListItem, Text, TextInput, TonalIcon } from '@talismn/ui'
-import { Calculate, Earn } from '@talismn/web-icons'
 import type { ReactNode } from 'react'
+import { ClassNames } from '@emotion/react'
+import { Hr } from '@talismn/ui/atoms/Hr'
+import { TonalIcon } from '@talismn/ui/atoms/Icon'
+import { Text } from '@talismn/ui/atoms/Text'
+import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
+import { ListItem } from '@talismn/ui/molecules/ListItem'
+import { TextInput } from '@talismn/ui/molecules/TextInput'
+import { Calculate, Earn } from '@talismn/web-icons'
 
 export type StakeCalculatorDialogProps = {
   open?: boolean

@@ -1,5 +1,5 @@
 import type { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react'
-import { Text } from '@talismn/ui'
+import { Text } from '@talismn/ui/atoms/Text'
 
 import { TalismanHand } from './TalismanHand'
 

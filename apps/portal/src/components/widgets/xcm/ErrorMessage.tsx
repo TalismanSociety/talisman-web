@@ -1,4 +1,5 @@
-import { Text, useTheme } from '@talismn/ui'
+import { Text } from '@talismn/ui/atoms/Text'
+import { useTheme } from '@talismn/ui/theme'
 import { type ReactNode } from 'react'
 
 export type ErrorMessageProps = {

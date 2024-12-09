@@ -1,5 +1,9 @@
 import type { ReactNode } from 'react'
-import { AlertDialog, Button, CircularProgressIndicator, Text, TextInput } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Text } from '@talismn/ui/atoms/Text'
+import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
+import { TextInput } from '@talismn/ui/molecules/TextInput'
 import { Suspense } from 'react'
 
 export type UnstakeDialogProps = {

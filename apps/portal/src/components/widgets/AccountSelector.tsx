@@ -1,5 +1,7 @@
 import { useBalances } from '@talismn/balances-react'
-import { Button, CircularProgressIndicator, Select } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Select } from '@talismn/ui/molecules/Select'
 import { encodeAnyAddress } from '@talismn/util'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { usePrevious } from 'react-use'

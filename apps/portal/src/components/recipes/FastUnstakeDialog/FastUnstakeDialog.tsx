@@ -1,6 +1,12 @@
-import { AlertDialog, Button, DescriptionList, EyeOfSauronProgressIndicator, Hr, Text } from '@talismn/ui'
+import type { ReactNode } from 'react'
+import { Button } from '@talismn/ui/atoms/Button'
+import { EyeOfSauronProgressIndicator } from '@talismn/ui/atoms/EyeOfSauronProgressIndicator'
+import { Hr } from '@talismn/ui/atoms/Hr'
+import { Text } from '@talismn/ui/atoms/Text'
+import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
+import { DescriptionList } from '@talismn/ui/molecules/DescriptionList'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useMemo, type ReactNode } from 'react'
+import { useMemo } from 'react'
 
 export type FastUnstakeDialogProps = {
   open?: boolean

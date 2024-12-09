@@ -1,5 +1,7 @@
 import { useTokenRates, useTokens } from '@talismn/balances-react'
-import { Clickable, Surface, Tooltip } from '@talismn/ui'
+import { Clickable } from '@talismn/ui/atoms/Clickable'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { intervalToDuration } from 'date-fns'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { Clock, Info } from 'lucide-react'

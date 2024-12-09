@@ -1,5 +1,5 @@
 import type React from 'react'
-import { Surface } from '@talismn/ui'
+import { Surface } from '@talismn/ui/atoms/Surface'
 import { Wallet } from '@talismn/web-icons'
 import { useAtom, useAtomValue } from 'jotai'
 import { useCallback, useMemo } from 'react'

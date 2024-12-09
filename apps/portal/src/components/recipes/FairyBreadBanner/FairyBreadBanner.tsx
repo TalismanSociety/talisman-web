@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react'
-import { Button, Text } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { Text } from '@talismn/ui/atoms/Text'
 import { X } from '@talismn/web-icons'
 import { AnimatePresence, motion } from 'framer-motion'
 

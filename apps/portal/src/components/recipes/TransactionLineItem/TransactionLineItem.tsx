@@ -1,7 +1,11 @@
 import type React from 'react'
 import type { PropsWithChildren, ReactElement } from 'react'
 import { keyframes, useTheme } from '@emotion/react'
-import { Identicon, Surface, Text, TonalIcon, Tooltip, useSurfaceColorAtElevation } from '@talismn/ui'
+import { TonalIcon } from '@talismn/ui/atoms/Icon'
+import { Identicon } from '@talismn/ui/atoms/Identicon'
+import { Surface, useSurfaceColorAtElevation } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { ArrowDown, ArrowUp, ChevronRight } from '@talismn/web-icons'
 import { Fragment, useMemo } from 'react'
 

@@ -1,9 +1,10 @@
-import type { LidoSuite } from '../../../../domains/staking/lido'
 import { ClassNames } from '@emotion/react'
-import { SideSheet, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR } from '@talismn/ui'
+import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
 import { Zap } from '@talismn/web-icons'
 import { useEffect } from 'react'
 import { useAccount, useSwitchChain } from 'wagmi'
+
+import type { LidoSuite } from '@/domains/staking/lido'
 
 export type LidoWidgetSideSheetProps = {
   url: string

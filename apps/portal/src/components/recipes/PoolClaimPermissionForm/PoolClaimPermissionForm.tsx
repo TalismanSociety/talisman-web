@@ -1,8 +1,17 @@
-import { TalismanHandLoader } from '../../legacy/TalismanHandLoader'
+import type { PropsWithChildren } from 'react'
 import { useTheme } from '@emotion/react'
-import { AlertDialog, Button, HiddenDetails, RadioButton, Surface, Switch, Text, Tooltip } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { RadioButton } from '@talismn/ui/atoms/RadioButton'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { Switch } from '@talismn/ui/atoms/Switch'
+import { Text } from '@talismn/ui/atoms/Text'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
+import { HiddenDetails } from '@talismn/ui/molecules/HiddenDetails'
 import { Calculate, Info } from '@talismn/web-icons'
-import { Suspense, type PropsWithChildren, createContext, useContext } from 'react'
+import { createContext, Suspense, useContext } from 'react'
+
+import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
 
 const Context = createContext({ isSkeleton: false, onRequestDismiss: undefined as (() => unknown) | undefined })
 

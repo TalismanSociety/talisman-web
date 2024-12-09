@@ -1,24 +1,24 @@
-import { isNilOrWhitespace } from '../../../util/nil'
-import type { PoolClaimPermission } from '../PoolClaimPermissionForm'
-import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
-import StakeFormSkeleton from './StakeForm.skeleton'
-import {
-  Button,
-  DescriptionList,
-  Hr,
-  Surface,
-  SurfaceChip,
-  Text,
-  TextInput,
-  TonalChip,
-  Tooltip,
-  useSurfaceColor,
-  type ButtonProps,
-  type ChipProps,
-} from '@talismn/ui'
+import type { ButtonProps } from '@talismn/ui/atoms/Button'
+import type { ChipProps } from '@talismn/ui/atoms/Chip'
+import type { ReactNode } from 'react'
+import { Button } from '@talismn/ui/atoms/Button'
+import { SurfaceChip, TonalChip } from '@talismn/ui/atoms/Chip'
+import { Hr } from '@talismn/ui/atoms/Hr'
+import { Surface, useSurfaceColor } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+import { DescriptionList } from '@talismn/ui/molecules/DescriptionList'
+import { TextInput } from '@talismn/ui/molecules/TextInput'
 import { ChevronRight, Clock, Info, Settings } from '@talismn/web-icons'
 import { LayoutGroup, motion } from 'framer-motion'
-import { createContext, useContext, useId, useState, type ReactNode } from 'react'
+import { createContext, useContext, useId, useState } from 'react'
+
+import type { PoolClaimPermission } from '@/components/recipes/PoolClaimPermissionForm'
+import type { StakeStatus } from '@/components/recipes/StakeStatusIndicator'
+import { StakeStatusIndicator } from '@/components/recipes/StakeStatusIndicator'
+import { isNilOrWhitespace } from '@/util/nil'
+
+import StakeFormSkeleton from './StakeForm.skeleton'
 
 const AssetSelectorContext = createContext<ReactNode>(null)
 
@@ -88,7 +88,7 @@ const PoolInfo = (props: PoolInfoProps) => {
       >
         <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
           <StakeStatusIndicator status={props.status} />
-          <Text.Body alpha={expanded ? 'high' : 'medium'} className="md:max-w-[31rem] md:truncate text-[1.4rem]">
+          <Text.Body alpha={expanded ? 'high' : 'medium'} className="text-[1.4rem] md:max-w-[31rem] md:truncate">
             {props.noPoolsAvailable ? 'No pools available' : props.name}
           </Text.Body>
         </div>

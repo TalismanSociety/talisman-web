@@ -1,6 +1,7 @@
-import StakeCalculatorDialog from './StakeCalculatorDialog'
 import { type Meta, type StoryObj } from '@storybook/react'
-import { Select } from '@talismn/ui'
+import { Select } from '@talismn/ui/molecules/Select'
+
+import StakeCalculatorDialog from './StakeCalculatorDialog'
 
 export default {
   title: 'Recipes/StakeCalculatorDialog',

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
-import { Details, Text } from '@talismn/ui'
+import { Text } from '@talismn/ui/atoms/Text'
+import { Details } from '@talismn/ui/molecules/Details'
 
 export const Faq = () => (
   <section css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>

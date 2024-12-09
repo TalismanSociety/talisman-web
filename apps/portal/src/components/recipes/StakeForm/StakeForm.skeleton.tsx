@@ -1,4 +1,6 @@
-import { Skeleton, useSurfaceColor, type SkeletonProps } from '@talismn/ui'
+import type { SkeletonProps } from '@talismn/ui/atoms/Skeleton'
+import { Skeleton } from '@talismn/ui/atoms/Skeleton'
+import { useSurfaceColor } from '@talismn/ui/atoms/Surface'
 
 const StakeFormSkeleton = (_props: SkeletonProps) => (
   <Skeleton.Surface

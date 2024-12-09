@@ -1,20 +1,17 @@
-import type { ButtonProps, IconButtonProps, MenuItemProps } from '@talismn/ui'
+import type { ButtonProps } from '@talismn/ui/atoms/Button'
+import type { IconButtonProps } from '@talismn/ui/atoms/IconButton'
+import type { MenuItemProps } from '@talismn/ui/molecules/Menu'
 import type { PropsWithChildren, ReactNode } from 'react'
-import {
-  Badge,
-  BadgedBox,
-  CircularProgressIndicator,
-  Hr,
-  Menu,
-  Surface,
-  SurfaceButton,
-  SurfaceIconButton,
-  Text,
-  TonalButton,
-  TonalIconButton,
-  Tooltip,
-  useTheme,
-} from '@talismn/ui'
+import { Badge, BadgedBox } from '@talismn/ui/atoms/Badge'
+import { SurfaceButton, TonalButton } from '@talismn/ui/atoms/Button'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Hr } from '@talismn/ui/atoms/Hr'
+import { SurfaceIconButton, TonalIconButton } from '@talismn/ui/atoms/IconButton'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+import { Menu } from '@talismn/ui/molecules/Menu'
+import { useTheme } from '@talismn/ui/theme'
 import { ArrowDown, Clock, Earn, MoreHorizontal, ZapPlus } from '@talismn/web-icons'
 import React, { createContext, Suspense, useContext } from 'react'
 

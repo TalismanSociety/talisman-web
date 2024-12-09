@@ -1,4 +1,5 @@
-import { CircularProgressIndicator, Tooltip } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { formatDecimals } from '@talismn/util'
 import { useEffect, useMemo, useState } from 'react'
 import { constSelector, useRecoilValue, useRecoilValueLoadable } from 'recoil'

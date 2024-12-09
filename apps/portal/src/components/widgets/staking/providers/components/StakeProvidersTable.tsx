@@ -1,4 +1,6 @@
-import { CircularProgressIndicator, Surface, Text } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
 import { ChevronDown, ChevronUp } from '@talismn/web-icons'
 import {
   CellContext,
@@ -198,8 +200,8 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
                   ? header.column.getNextSortingOrder() === 'asc'
                     ? 'Sort ascending'
                     : header.column.getNextSortingOrder() === 'desc'
-                      ? 'Sort descending'
-                      : 'Clear sort'
+                    ? 'Sort descending'
+                    : 'Clear sort'
                   : undefined
               }
             >

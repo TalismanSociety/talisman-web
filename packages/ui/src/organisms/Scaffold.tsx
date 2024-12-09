@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import { type PropsWithChildren, type ReactNode } from 'react'
 
-import { createPortal } from '../utils/portal'
+import { createPortal } from '../utils-react/portal'
 import { useMediaQuery } from '../utils/useMediaQuery'
 import { Toaster } from './Toaster'
 

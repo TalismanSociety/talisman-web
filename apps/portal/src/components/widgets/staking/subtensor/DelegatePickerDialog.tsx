@@ -1,5 +1,9 @@
 import type { ReactNode } from 'react'
-import { AlertDialog, CircularProgressIndicator, Clickable, Surface, Text } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Clickable } from '@talismn/ui/atoms/Clickable'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
 import { useState, useTransition } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 

@@ -1,4 +1,7 @@
-import { CircularProgressIndicator, HiddenDetails, Tabs, TalismanHandProgressIndicator } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { TalismanHandProgressIndicator } from '@talismn/ui/atoms/TalismanHandProgressIndicator'
+import { HiddenDetails } from '@talismn/ui/molecules/HiddenDetails'
+import { Tabs } from '@talismn/ui/molecules/Tabs'
 import { Suspense, useTransition } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 

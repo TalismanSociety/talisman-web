@@ -1,5 +1,5 @@
 import type { PropsWithChildren, ReactNode } from 'react'
-import { useTheme } from '@talismn/ui'
+import { useTheme } from '@talismn/ui/theme'
 import { FileSearch, HelpCircle } from '@talismn/web-icons'
 import { useState } from 'react'
 

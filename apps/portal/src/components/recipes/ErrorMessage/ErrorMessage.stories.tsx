@@ -1,5 +1,5 @@
 import { type ComponentMeta, type Story } from '@storybook/react'
-import { Button } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
 
 import type { ErrorMessageProps } from './ErrorMessage'
 import ErrorMessage from './ErrorMessage'
