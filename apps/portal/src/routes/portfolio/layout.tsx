@@ -2,7 +2,7 @@ import { Tabs } from '@talismn/ui/molecules/Tabs'
 import { Outlet } from 'react-router'
 import { Link, useMatch } from 'react-router-dom'
 
-import ErrorBoundary from '@/components/widgets/ErrorBoundary'
+import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 
 const Layout = () => {
   // useMatch

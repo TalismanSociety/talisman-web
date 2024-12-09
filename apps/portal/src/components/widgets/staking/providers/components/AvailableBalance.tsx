@@ -1,7 +1,7 @@
 import { Text } from '@talismn/ui/atoms/Text'
 import { useMemo } from 'react'
 
-import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
+import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { ChainProvider } from '@/domains/chains'
 import { SlpxPair } from '@/domains/staking/slpx/types'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 
-const TextLoader = styled.div`
+export const TextLoader = styled.div`
   display: inline-block;
 
   background: linear-gradient(
@@ -31,5 +31,3 @@ const TextLoader = styled.div`
     }
   }
 `
-
-export default TextLoader

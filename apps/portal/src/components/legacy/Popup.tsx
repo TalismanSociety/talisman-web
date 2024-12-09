@@ -1,12 +1,12 @@
-import styled from '@emotion/styled'
 import type { PropsWithChildren } from 'react'
+import styled from '@emotion/styled'
 
 export type InfoProps = PropsWithChildren<{
   className?: string
   text: string
 }>
 
-const Info = styled(({ text, children, className }: InfoProps) => (
+export const Popup = styled(({ text, children, className }: InfoProps) => (
   <div className={`popup ${className ?? ''}`}>
     <div className="trigger">{children}</div>
     <div className="content" dangerouslySetInnerHTML={{ __html: text }} />
@@ -44,5 +44,3 @@ const Info = styled(({ text, children, className }: InfoProps) => (
     }
   }
 `
-
-export default Info

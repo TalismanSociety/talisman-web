@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Spinner = ({ className }: any) => {
+export const Spinner = styled(({ className }: any) => {
   return (
     <div className={className}>
       <div></div>
@@ -10,9 +10,7 @@ const Spinner = ({ className }: any) => {
       <div></div>
     </div>
   )
-}
-
-const StyledSpinner = styled(Spinner)`
+})`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -49,5 +47,3 @@ const StyledSpinner = styled(Spinner)`
     }
   }
 `
-
-export default StyledSpinner

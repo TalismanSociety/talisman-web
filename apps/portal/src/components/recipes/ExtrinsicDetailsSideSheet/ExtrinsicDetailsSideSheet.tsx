@@ -12,7 +12,7 @@ import { useMemo } from 'react'
 import { ObjectView } from 'react-object-view'
 
 import type { Account } from '@/domains/accounts'
-import AccountIcon from '@/components/molecules/AccountIcon/AccountIcon'
+import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { copyAddressToClipboard, copyExtrinsicHashToClipboard } from '@/domains/common'
 import { shortenAddress } from '@/util/shortenAddress'
 

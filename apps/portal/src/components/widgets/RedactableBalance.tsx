@@ -6,11 +6,9 @@ export const redactBalanceState = atom({ key: ' Widget/RedactBalance', default: 
 
 export type RedactableBalanceProps = PropsWithChildren<{ redacted?: boolean }>
 
-const RedactableBalance = (props: RedactableBalanceProps) =>
+export const RedactableBalance = (props: RedactableBalanceProps) =>
   useRecoilValue(redactBalanceState) || props.redacted ? (
     <Text.Noop.Redacted>{props.children}</Text.Noop.Redacted>
   ) : (
     <>{props.children}</>
   )
-
-export default RedactableBalance

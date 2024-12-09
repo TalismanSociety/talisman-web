@@ -6,10 +6,10 @@ import { Fragment, Suspense, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
-import SectionHeader from '@/components/molecules/SectionHeader'
+import { SectionHeader } from '@/components/molecules/SectionHeader'
 import StakePosition, { StakePositionList } from '@/components/recipes/StakePosition'
-import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
-import ErrorBoundary from '@/components/widgets/ErrorBoundary'
+import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
+import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { ChainProvider, nominationPoolsEnabledChainsState } from '@/domains/chains'
 import { useTotalStaked } from '@/domains/staking'
 

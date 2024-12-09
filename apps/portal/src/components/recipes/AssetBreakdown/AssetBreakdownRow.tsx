@@ -5,8 +5,8 @@ import { Text } from '@talismn/ui/atoms/Text'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { startCase } from 'lodash'
 
-import type { PortfolioToken } from '@/components/legacy/archetypes/Portfolio/Assets'
-import AccountIcon from '@/components/molecules/AccountIcon/AccountIcon'
+import type { PortfolioToken } from '@/components/legacy/widgets/useAssets'
+import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { AssetBalance } from '@/components/recipes/Asset'
 import { type Account } from '@/domains/accounts/recoils'
 

@@ -5,8 +5,8 @@ import { Layers, Zap } from '@talismn/web-icons'
 import { useMemo } from 'react'
 import { Link, Outlet, useMatch } from 'react-router-dom'
 
-import AccountConnectionGuard from '@/components/widgets/AccountConnectionGuard'
-import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
+import { AccountConnectionGuard } from '@/components/widgets/AccountConnectionGuard'
+import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { useTotalStaked } from '@/domains/staking'
 import { HeaderWidgetPortal, TitlePortal } from '@/routes/layout'
 

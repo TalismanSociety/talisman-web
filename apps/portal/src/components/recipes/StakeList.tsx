@@ -1,7 +1,7 @@
 import { useSurfaceColor } from '@talismn/ui/atoms/Surface'
 import { type DetailedHTMLProps, type OlHTMLAttributes } from 'react'
 
-const StakeList = (props: DetailedHTMLProps<OlHTMLAttributes<HTMLOListElement>, HTMLOListElement>) => (
+export const StakeList = (props: DetailedHTMLProps<OlHTMLAttributes<HTMLOListElement>, HTMLOListElement>) => (
   <ol
     css={{
       listStyle: 'none',
@@ -22,5 +22,3 @@ const StakeList = (props: DetailedHTMLProps<OlHTMLAttributes<HTMLOListElement>, 
     {...props}
   />
 )
-
-export default StakeList

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default styled((props: any) => (
+export const MaterialLoader = styled((props: any) => (
   <div {...props}>
     <svg viewBox="25 25 50 50">
       <circle cx="50" cy="50" r="20" fill="none" strokeWidth="4" strokeMiterlimit="10" />

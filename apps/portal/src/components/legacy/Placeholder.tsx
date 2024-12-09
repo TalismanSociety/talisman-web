@@ -1,5 +1,6 @@
-import { device } from '../../util/breakpoints'
 import styled from '@emotion/styled'
+
+import { device } from '@/util/breakpoints'
 
 type PlaceholderProps = {
   className?: string

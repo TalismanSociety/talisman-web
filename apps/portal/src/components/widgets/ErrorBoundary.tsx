@@ -110,7 +110,7 @@ type ErrorBoundaryProps = Sentry.ErrorBoundaryProps &
     renderFallback?: (fallback: ReactNode) => ReactElement
   }
 
-const ErrorBoundary = ({ orientation, renderFallback, ...props }: ErrorBoundaryProps) => {
+export const ErrorBoundary = ({ orientation, renderFallback, ...props }: ErrorBoundaryProps) => {
   const fallback = (errorProps: ErrorElementProps) =>
     renderFallback?.(<ErrorElement {...errorProps} />) ?? <ErrorElement {...errorProps} />
 
@@ -146,5 +146,3 @@ const ErrorBoundary = ({ orientation, renderFallback, ...props }: ErrorBoundaryP
     </OrientationContext.Provider>
   )
 }
-
-export default ErrorBoundary

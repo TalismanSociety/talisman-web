@@ -26,7 +26,7 @@ export function useModal(): ContextProps {
 }
 
 type ProviderProps = PropsWithChildren
-export function Provider({ children }: PropsWithChildren<ProviderProps>): JSX.Element {
+export function ModalProvider({ children }: PropsWithChildren<ProviderProps>): JSX.Element {
   const [content, setContent] = useState<JSX.Element | null>(null)
   const [closable, setClosable] = useState(true)
 
@@ -61,5 +61,3 @@ export const Modal = function Modal({ className, closable }: { className?: strin
 
   return <AlertDialog open={open} className={className} onRequestDismiss={closeModal} content={content} />
 }
-
-export default Modal

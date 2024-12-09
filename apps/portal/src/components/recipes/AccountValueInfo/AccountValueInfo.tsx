@@ -6,7 +6,7 @@ import { ChevronDown, Users } from '@talismn/web-icons'
 import { type ReactNode } from 'react'
 
 import type { Account } from '@/domains/accounts'
-import AccountIcon from '@/components/molecules/AccountIcon'
+import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { shortenAddress } from '@/util/shortenAddress'
 
 export type AccountValueInfoProps = {

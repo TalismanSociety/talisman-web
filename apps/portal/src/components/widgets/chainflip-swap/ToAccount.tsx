@@ -1,3 +1,11 @@
+import type React from 'react'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { isAddress } from 'viem'
+
+import { SeparatedAccountSelector } from '@/components/widgets/SeparatedAccountSelector'
+import { isBtcAddress } from '@/lib/btc'
+import { cn } from '@/lib/utils'
+
 import {
   toAddressAtom,
   toAssetAtom,
@@ -5,12 +13,6 @@ import {
   toEvmAddressAtom,
   toSubstrateAddressAtom,
 } from './swap-modules/common.swap-module'
-import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
-import { isBtcAddress } from '@/lib/btc'
-import { cn } from '@/lib/utils'
-import { useAtomValue, useSetAtom } from 'jotai'
-import type React from 'react'
-import { isAddress } from 'viem'
 
 export const ToAccount: React.FC = () => {
   const toAsset = useAtomValue(toAssetAtom)

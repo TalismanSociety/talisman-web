@@ -1,13 +1,13 @@
 import styled from '@emotion/styled'
 
-import { RootNav } from '@/components/legacy/archetypes/Crowdloan/RootNav'
-import ParticipatedCrowdloans from '@/components/legacy/archetypes/Wallet/Crowdloans'
+import { CrowdloanRootNav } from '@/components/legacy/widgets/CrowdloanRootNav'
+import { WalletCrowdloans as ParticipatedCrowdloans } from '@/components/legacy/widgets/WalletCrowdloans'
 import { TitlePortal } from '@/routes/layout'
 
 export const CrowdloanParticipated = styled(({ className }: { className?: string }) => (
   <div className={className} css={{ padding: '2.4rem' }}>
     <TitlePortal>Crowdloans</TitlePortal>
-    <RootNav />
+    <CrowdloanRootNav />
     <ParticipatedCrowdloans />
   </div>
 ))`

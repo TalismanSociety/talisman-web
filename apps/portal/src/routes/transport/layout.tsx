@@ -5,8 +5,8 @@ import { Tabs } from '@talismn/ui/molecules/Tabs'
 import { Suspense, useTransition } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 
-import AccountConnectionGuard from '@/components/widgets/AccountConnectionGuard'
-import ErrorBoundary from '@/components/widgets/ErrorBoundary'
+import { AccountConnectionGuard } from '@/components/widgets/AccountConnectionGuard'
+import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 
 const Layout = () => {
   const navigate = useNavigate()

@@ -7,7 +7,8 @@ type Props = {
   size?: number
   className?: string
 }
-export default styled(({ className, token }: Props) => (
+
+export const TokenLogo = styled(({ className, token }: Props) => (
   <img className={`token-logo ${className ?? ''}`} src={token.logo} alt={`${token.symbol} token logo`} />
 ))`
   display: block;

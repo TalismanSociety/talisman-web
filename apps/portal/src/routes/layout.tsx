@@ -32,18 +32,19 @@ import Discord from '@/assets/icons/discord-header.svg?react'
 import GitHub from '@/assets/icons/github-header.svg?react'
 import Medium from '@/assets/icons/medium-header.svg?react'
 import Twitter from '@/assets/icons/twitter-header.svg?react'
-import { ModalProvider } from '@/components/legacy'
-import { Total } from '@/components/legacy/archetypes/Wallet'
+import { ModalProvider } from '@/components/legacy/Modal'
+import { WalletTotal } from '@/components/legacy/widgets/WalletTotal'
 import AccountValueInfo from '@/components/recipes/AccountValueInfo'
 import { useShouldShowAccountConnectionGuard } from '@/components/widgets/AccountConnectionGuard'
-import AccountsManagementMenu from '@/components/widgets/AccountsManagementMenu'
+import { AccountsManagementMenu } from '@/components/widgets/AccountsManagementMenu'
 import DappStakingStakeSideSheet from '@/components/widgets/staking/dappStaking/StakeSideSheet'
 import LidoStakeSideSheet from '@/components/widgets/staking/lido/StakeSideSheet'
 import SlpxStakeSideSheet from '@/components/widgets/staking/slpx/StakeSideSheet'
 import SlpxSubstrateStakeSideSheet from '@/components/widgets/staking/slpxSubstrate/StakeSideSheet'
 import NominationPoolsStakeSideSheet from '@/components/widgets/staking/substrate/NominationPoolsStakeSideSheet'
 import { StakeSideSheet as SubtensorStakeSideSheet } from '@/components/widgets/staking/subtensor/StakeSideSheet'
-import WalletConnectionSideSheet, {
+import {
+  WalletConnectionSideSheet,
   walletConnectionSideSheetOpenState,
 } from '@/components/widgets/WalletConnectionSideSheet'
 import { lookupAccountAddressState, selectedAccountsState } from '@/domains/accounts'
@@ -196,7 +197,9 @@ const Header = () => {
       <div css={{ display: 'flex', gap: '2.4rem', flexWrap: 'wrap' }}>
         {!shouldExcludeAccountsManagementMenu && (
           <AccountsManagementMenu
-            button={<AccountValueInfo account={accounts.length === 1 ? accounts[0] : undefined} balance={<Total />} />}
+            button={
+              <AccountValueInfo account={accounts.length === 1 ? accounts[0] : undefined} balance={<WalletTotal />} />
+            }
           />
         )}
         <HeaderWidgetPortalElement />

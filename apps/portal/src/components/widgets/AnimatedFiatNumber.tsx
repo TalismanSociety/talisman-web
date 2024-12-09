@@ -2,9 +2,8 @@ import { AnimatedNumber } from '@talismn/ui/atoms/AnimatedNumber'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
+import { RedactableBalance } from '@/components/widgets/RedactableBalance'
 import { selectedCurrencyState } from '@/domains/balances'
-
-import RedactableBalance from './RedactableBalance'
 
 export type AnimatedFiatNumberProps = {
   animate?: boolean
@@ -12,7 +11,7 @@ export type AnimatedFiatNumberProps = {
   currency?: string
 }
 
-const AnimatedFiatNumber = ({ animate = true, end, currency }: AnimatedFiatNumberProps) => {
+export const AnimatedFiatNumber = ({ animate = true, end, currency }: AnimatedFiatNumberProps) => {
   const recoilCurrency = useRecoilValue(selectedCurrencyState)
   return (
     <RedactableBalance>
@@ -32,5 +31,3 @@ const AnimatedFiatNumber = ({ animate = true, end, currency }: AnimatedFiatNumbe
     </RedactableBalance>
   )
 }
-
-export default AnimatedFiatNumber

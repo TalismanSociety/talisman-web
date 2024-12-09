@@ -1,7 +1,7 @@
-import styled from '@emotion/styled'
 import type { DetailedHTMLProps, ImgHTMLAttributes } from 'react'
+import styled from '@emotion/styled'
 
-const Image = styled(
+export const Image = styled(
   ({ src, alt, className, ...rest }: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>) => (
     <div className={`image ${className ?? ''}`} {...rest}>
       <img src={src ?? ''} alt={alt} />
@@ -22,5 +22,3 @@ const Image = styled(
     height: 100%;
   }
 `
-
-export default Image

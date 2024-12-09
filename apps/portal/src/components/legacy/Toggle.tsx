@@ -1,6 +1,7 @@
-import { useBoolean } from '../../util/hooks'
 import styled from '@emotion/styled'
 import { useEffect } from 'react'
+
+import { useBoolean } from '@/util/hooks'
 
 export type ToggleProps = {
   className?: string
@@ -10,7 +11,7 @@ export type ToggleProps = {
   on: boolean
 }
 
-const Toggle = styled(({ value = false, onChange = () => {}, off, on, className, ...rest }: ToggleProps) => {
+export const Toggle = styled(({ value = false, onChange = () => {}, off, on, className, ...rest }: ToggleProps) => {
   const [isActive, toggleActive] = useBoolean(value)
   useEffect(() => onChange(isActive), [isActive]) // eslint-disable-line
 
@@ -67,5 +68,3 @@ const Toggle = styled(({ value = false, onChange = () => {}, off, on, className,
     right: 0.2rem;
   }
 `
-
-export default Toggle

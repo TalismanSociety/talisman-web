@@ -3,20 +3,20 @@ import { useState, useTransition } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
+import type { Account } from '@/domains/accounts'
+import DappStakingLockedAmountDialog from '@/components/recipes/DappStakingLockedAmountDialog'
 import StakePosition, { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
-
-import type { Account } from '../../../../domains/accounts'
-import { selectedSubstrateAccountsState } from '../../../../domains/accounts'
-import { ChainProvider, dappStakingEnabledChainsState, useChainState } from '../../../../domains/chains'
-import { useExtrinsic, useNativeTokenLocalizedFiatAmount } from '../../../../domains/common'
+import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
+import { selectedSubstrateAccountsState } from '@/domains/accounts'
+import { ChainProvider, dappStakingEnabledChainsState, useChainState } from '@/domains/chains'
+import { useExtrinsic, useNativeTokenLocalizedFiatAmount } from '@/domains/common'
 import {
   useClaimAllRewardsExtrinsic,
   useRegisteredDappsState,
   useStakeLoadable,
   useTotalDappStakingRewards,
-} from '../../../../domains/staking/dappStaking'
-import DappStakingLockedAmountDialog from '../../../recipes/DappStakingLockedAmountDialog'
-import ErrorBoundary from '../../ErrorBoundary'
+} from '@/domains/staking/dappStaking'
+
 import useUnlockDuration from '../providers/hooks/dapp/useUnlockDuration'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'

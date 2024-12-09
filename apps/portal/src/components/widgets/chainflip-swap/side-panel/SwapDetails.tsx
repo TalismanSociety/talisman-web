@@ -9,7 +9,7 @@ import { ArrowUpDown, Check } from 'lucide-react'
 import { Suspense, useEffect, useState } from 'react'
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import ErrorBoundary from '@/components/widgets/ErrorBoundary'
+import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { cn } from '@/lib/utils'
 
 import {

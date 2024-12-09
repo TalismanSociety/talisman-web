@@ -2,10 +2,11 @@ import styled from '@emotion/styled'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { isMobileBrowser } from '../../util/helpers'
-import { Button, useModal } from './'
+import { Button } from '@/components/legacy/Button'
+import { useModal } from '@/components/legacy/Modal'
+import { isMobileBrowser } from '@/util/helpers'
 
-export default function DesktopRequired() {
+export const DesktopRequired = () => {
   const { openModal } = useModal()
 
   useEffect(() => {

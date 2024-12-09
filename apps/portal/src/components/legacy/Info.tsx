@@ -9,7 +9,8 @@ type Props = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rest?: any
 }
-const Info = styled(({ title, subtitle, invert, graphic, className, ...rest }: Props) => (
+
+export const Info = styled(({ title, subtitle, invert, graphic, className, ...rest }: Props) => (
   <div className={`info ${invert ? 'style-invert' : ''} ${className ?? ''}`} {...rest}>
     {graphic && <span className="graphic">{graphic}</span>}
     <span className="text">
@@ -61,5 +62,3 @@ const Info = styled(({ title, subtitle, invert, graphic, className, ...rest }: P
     }
   }
 `
-
-export default Info

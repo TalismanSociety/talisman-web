@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 import React, { useRef, useState } from 'react'
 
-import useOnClickOutside from '../../util/useOnClickOutside'
+import useOnClickOutside from '@/util/useOnClickOutside'
 
 type MenuDropdownAlignment = 'left' | 'right'
 
@@ -108,5 +108,3 @@ export const Menu = styled((props: MenuProps) => {
     }
   }
 `
-
-export default Menu

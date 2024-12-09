@@ -1,5 +1,6 @@
-import Loader from '../../assets/icons/loader.svg?react'
 import styled from '@emotion/styled'
+
+import Loader from '@/assets/icons/loader.svg?react'
 
 export const StyledLoader = styled(({ className }: { className?: string }) => (
   <div className={`await ${className ?? ''}`}>
@@ -16,7 +17,5 @@ export const StyledLoader = styled(({ className }: { className?: string }) => (
   }
 `
 
-const Await = ({ until = true, children }: { until: boolean; children: React.ReactNode }) =>
+export const Await = ({ until = true, children }: { until: boolean; children: React.ReactNode }) =>
   until ? <>{children}</> : <StyledLoader />
-
-export default Await

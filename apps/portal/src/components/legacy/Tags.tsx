@@ -1,8 +1,8 @@
 import styled from '@emotion/styled'
 import { useEffect } from 'react'
 
-import { useSet } from '../../util/hooks'
-import { Pill } from './'
+import { Pill } from '@/components/legacy/Pill'
+import { useSet } from '@/util/hooks'
 
 type StyledNoCrowdloansPlaceholderProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -14,7 +14,7 @@ type StyledNoCrowdloansPlaceholderProps = {
   onChange: (e: any) => void
 }
 
-export default styled(
+export const Tags = styled(
   ({ inital = [], options = {}, className, onChange = () => {}, ...rest }: StyledNoCrowdloansPlaceholderProps) => {
     const [tags, { add, remove }] = useSet(inital)
 

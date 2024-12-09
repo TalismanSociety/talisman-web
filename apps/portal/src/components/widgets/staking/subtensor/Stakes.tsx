@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
 import StakePosition from '@/components/recipes/StakePosition'
+import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 
 import type { Account } from '../../../../domains/accounts'
 import { selectedSubstrateAccountsState } from '../../../../domains/accounts'
 import { ChainProvider, subtensorStakingEnabledChainsState, useChainState } from '../../../../domains/chains'
 import { useStake } from '../../../../domains/staking/subtensor/hooks/useStake'
-import ErrorBoundary from '../../ErrorBoundary'
 import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'

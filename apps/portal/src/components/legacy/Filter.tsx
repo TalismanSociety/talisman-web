@@ -1,12 +1,11 @@
 import styled from '@emotion/styled'
 import { useEffect } from 'react'
 
+import { Pill } from '@/components/legacy/Pill'
 import { useSet } from '@/util/hooks'
 
-import { Pill } from './'
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Filter = styled(({ value = [], options = {}, className, onChange = () => {}, ...rest }: any) => {
+export const Filter = styled(({ value = [], options = {}, className, onChange = () => {}, ...rest }: any) => {
   const [selected, { add, remove, set }] = useSet()
 
   // fire onchange when tags change
@@ -50,5 +49,3 @@ const Filter = styled(({ value = [], options = {}, className, onChange = () => {
     margin-left: 1em;
   }
 `
-
-export default Filter

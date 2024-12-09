@@ -12,10 +12,10 @@ import { isEmpty } from 'lodash'
 import { Children } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import type { PortfolioToken } from '@/components/legacy/archetypes/Portfolio/Assets'
+import type { PortfolioToken } from '@/components/legacy/widgets/useAssets'
 import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
-import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
-import RedactableBalance from '@/components/widgets/RedactableBalance'
+import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
+import { RedactableBalance } from '@/components/widgets/RedactableBalance'
 
 type AssetBalanceProps = {
   planck: string

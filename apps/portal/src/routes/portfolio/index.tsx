@@ -1,6 +1,7 @@
 import type { RouteObject } from 'react-router-dom'
 
-import AccountConnectionGuard from '../../components/widgets/AccountConnectionGuard'
+import { AccountConnectionGuard } from '@/components/widgets/AccountConnectionGuard'
+
 import assetRoutes from './assets'
 import Collectibles from './collectibles'
 import Layout from './layout'

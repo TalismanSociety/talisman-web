@@ -3,8 +3,16 @@ import { Button } from '@talismn/ui/atoms/Button'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 
-import { Panel, PanelSection, Poster, useModal } from '@/components/legacy'
-import { Crowdloan, Parachain } from '@/components/legacy/archetypes'
+import { useModal } from '@/components/legacy/Modal'
+import { Panel, PanelSection } from '@/components/legacy/Panel'
+import { Poster } from '@/components/legacy/Poster'
+import { CrowdloanBonus } from '@/components/legacy/widgets/CrowdloanBonus'
+import { CrowdloanContribute } from '@/components/legacy/widgets/CrowdloanContribute'
+import { CrowdloanCountdown } from '@/components/legacy/widgets/CrowdloanCountdown'
+import { CrowdloanRaised } from '@/components/legacy/widgets/CrowdloanRaised'
+import { CrowdloanRewards } from '@/components/legacy/widgets/CrowdloanRewards'
+import { ParachainAsset } from '@/components/legacy/widgets/ParachainAsset'
+import { ParachainLinks } from '@/components/legacy/widgets/ParachainLinks'
 import { useCrowdloanContributions } from '@/libs/crowdloans'
 import { useCrowdloanByParachainId, useParachainAssets, useParachainDetailsBySlug } from '@/libs/talisman'
 
@@ -30,26 +38,26 @@ export const CrowdloanDetail = styled(({ className }: { className?: string }) =>
       />
       <div className="content">
         <article>
-          <Parachain.Asset id={parachainDetails?.id ?? ''} type="logo" />
+          <ParachainAsset id={parachainDetails?.id ?? ''} type="logo" />
           <header>
             <h1>{parachainDetails?.name}</h1>
             <h2>{parachainDetails?.subtitle}</h2>
           </header>
           <p className="info">{parachainDetails?.info}</p>
-          <Parachain.Links id={parachainDetails?.id ?? ''} />
+          <ParachainLinks id={parachainDetails?.id ?? ''} />
         </article>
         <aside>
           <Panel>
             <PanelSection title={t('Raised')}>
-              <Crowdloan.Raised id={id ?? ''} contributed={gqlContributions.find(x => x.id === id) !== undefined} />
+              <CrowdloanRaised id={id ?? ''} contributed={gqlContributions.find(x => x.id === id) !== undefined} />
             </PanelSection>
             <PanelSection title={t('Contribution Window')}>
-              <Crowdloan.Countdown id={id} />
+              <CrowdloanCountdown id={id} />
             </PanelSection>
             <PanelSection>
-              <Crowdloan.Bonus full id={id ?? ''} prefix={<Parachain.Asset id={parachainId ?? ''} type="logo" />} />
+              <CrowdloanBonus full id={id ?? ''} prefix={<ParachainAsset id={parachainId ?? ''} type="logo" />} />
               {parachainDetails?.allowContribute && (
-                <Button onClick={() => openModal(<Crowdloan.Contribute id={id} />)} disabled={uiStatus !== 'active'}>
+                <Button onClick={() => openModal(<CrowdloanContribute id={id} />)} disabled={uiStatus !== 'active'}>
                   {t('Contribute')}
                 </Button>
               )}
@@ -57,7 +65,7 @@ export const CrowdloanDetail = styled(({ className }: { className?: string }) =>
           </Panel>
 
           <Panel title={t('Rewards')}>
-            <Crowdloan.Rewards id={id} />
+            <CrowdloanRewards id={id} />
           </Panel>
 
           {/* <Panel

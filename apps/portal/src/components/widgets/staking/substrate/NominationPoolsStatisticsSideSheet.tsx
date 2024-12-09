@@ -16,8 +16,8 @@ import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryTooltip } f
 import type { StakeStatus } from '@/components/recipes/StakeStatusIndicator'
 import type { Account } from '@/domains/accounts'
 import type { DerivedPool } from '@/domains/staking/substrate/nominationPools'
-import AccountIcon from '@/components/molecules/AccountIcon'
-import RedactableBalance from '@/components/widgets/RedactableBalance'
+import { AccountIcon } from '@/components/molecules/AccountIcon'
+import { RedactableBalance } from '@/components/widgets/RedactableBalance'
 import { useChainState, useNativeTokenDecimalState } from '@/domains/chains'
 import { useEraEtaFormatter, useSubstrateApiState, useTokenAmountFromPlanck } from '@/domains/common'
 import {

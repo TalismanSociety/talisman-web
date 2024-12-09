@@ -1,6 +1,7 @@
+import type { MotionProps } from 'framer-motion'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { type MotionProps, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { type ReactNode } from 'react'
 
 type Props = {
@@ -58,7 +59,7 @@ export const Panel = styled(({ title, subtitle, children, className, ...rest }: 
   }
 `
 
-export const Section = styled(({ title, children, className, comingSoon, ...rest }: Props) => (
+export const PanelSection = styled(({ title, children, className, comingSoon, ...rest }: Props) => (
   <motion.div className={`panel-section ${className ?? ''}`} {...rest}>
     {!!title && <h2>{title}</h2>}
     {children}

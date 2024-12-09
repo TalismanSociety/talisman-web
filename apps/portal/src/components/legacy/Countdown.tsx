@@ -35,7 +35,7 @@ const hour = 60 * minute
 const day = 24 * hour
 const week = 7 * day
 
-const Countdown = ({
+export const Countdown = ({
   seconds: countdownSeconds = 10,
   showSeconds = true,
 }: {
@@ -66,5 +66,3 @@ const Countdown = ({
 
   return <>{segments.join(' ')}</>
 }
-
-export default Countdown

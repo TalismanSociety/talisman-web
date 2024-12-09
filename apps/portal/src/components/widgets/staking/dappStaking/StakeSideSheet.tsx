@@ -16,7 +16,7 @@ import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
 import DappStakingForm, { DappStakingSideSheet } from '@/components/recipes/DappStakingForm'
 import { DappSelectorDialog as DappSelectorDialogComponent } from '@/components/recipes/StakeTargetSelectorDialog'
 import { useAccountSelector } from '@/components/widgets/AccountSelector'
-import ErrorBoundary from '@/components/widgets/ErrorBoundary'
+import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { writeableSubstrateAccountsState } from '@/domains/accounts'
 import {
   ChainProvider,

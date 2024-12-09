@@ -20,7 +20,7 @@ export const useShouldShowAccountConnectionGuard = () => {
   return !hasActiveWalletConnection && readonlyAccounts.length === 0 && lookupAccount === undefined
 }
 
-const AccountConnectionGuard = ({ children, noSuspense }: AccountConnectionGuardProps) => {
+export const AccountConnectionGuard = ({ children, noSuspense }: AccountConnectionGuardProps) => {
   const shouldShowGuard = useShouldShowAccountConnectionGuard()
   const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
 
@@ -53,5 +53,3 @@ const AccountConnectionGuard = ({ children, noSuspense }: AccountConnectionGuard
     </div>
   )
 }
-
-export default AccountConnectionGuard

@@ -10,8 +10,8 @@ import { ArrowDown, ArrowUp, ChevronRight } from '@talismn/web-icons'
 import { Fragment, useMemo } from 'react'
 
 import type { Account } from '@/domains/accounts'
-import AccountIcon from '@/components/molecules/AccountIcon/AccountIcon'
-import { getSubstrateModuleColor } from '@/components/recipes/extrinsicColor'
+import { AccountIcon } from '@/components/molecules/AccountIcon'
+import { getSubstrateModuleColor } from '@/util/getSubstrateModuleColor'
 import { shortenAddress } from '@/util/shortenAddress'
 
 type TokenAmount = {

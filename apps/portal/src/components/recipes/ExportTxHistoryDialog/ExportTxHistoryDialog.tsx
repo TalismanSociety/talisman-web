@@ -8,7 +8,7 @@ import { Select } from '@talismn/ui/molecules/Select'
 import { endOfDay, startOfDay } from 'date-fns'
 import { useMemo } from 'react'
 
-import AccountIcon from '@/components/molecules/AccountIcon'
+import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { Maybe } from '@/util/monads'
 
 type Account = { selected?: boolean; name: string; address: string; balance: string }

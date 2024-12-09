@@ -19,8 +19,8 @@ import { useRecoilValue, waitForAll } from 'recoil'
 
 import type { Account } from '@/domains/accounts'
 import type { CollectionKey, Nft, NftCollection, NftTag } from '@/domains/nfts'
-import AccountIcon from '@/components/molecules/AccountIcon/AccountIcon'
-import ErrorBoundary from '@/components/widgets/ErrorBoundary'
+import { AccountIcon } from '@/components/molecules/AccountIcon'
+import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { selectedAccountsState } from '@/domains/accounts'
 import {
   nftCollectionItemsState,

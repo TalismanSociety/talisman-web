@@ -1,18 +1,14 @@
-import { nftsState, type Nft, type NftTag } from '.'
-import { selectedAccountsState } from '../accounts'
-import { storageEffect } from '../common/effects'
+import type { SetterOrUpdater } from 'recoil'
 import { array, jsonParser, string } from '@recoiljs/refine'
 import { partial } from 'lodash'
 import { useCallback, useMemo } from 'react'
-import {
-  atom,
-  selector,
-  selectorFamily,
-  useRecoilValue,
-  useSetRecoilState,
-  waitForNone,
-  type SetterOrUpdater,
-} from 'recoil'
+import { atom, selector, selectorFamily, useRecoilValue, useSetRecoilState, waitForNone } from 'recoil'
+
+import { selectedAccountsState } from '@/domains/accounts'
+import { storageEffect } from '@/domains/common/effects'
+
+import type { Nft, NftTag } from './core'
+import { nftsState } from './core'
 
 export const favoriteNftIdsState = atom<readonly string[]>({
   key: 'favorite-nft-ids',

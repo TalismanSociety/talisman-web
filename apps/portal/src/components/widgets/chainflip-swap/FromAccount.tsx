@@ -6,7 +6,7 @@ import { useCallback, useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 import { isAddress } from 'viem'
 
-import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
+import { SeparatedAccountSelector } from '@/components/widgets/SeparatedAccountSelector'
 import { selectedCurrencyState } from '@/domains/balances'
 import { cn } from '@/lib/utils'
 import { Decimal } from '@/util/Decimal'

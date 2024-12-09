@@ -17,7 +17,7 @@ export type TokenSelectorProps<T extends Token | string> = {
   onChangeToken: (token: T) => unknown
 }
 
-const TokenSelectorButton = <T extends Token | string>(props: TokenSelectorProps<T>) => {
+export const TokenSelectorButton = <T extends Token | string>(props: TokenSelectorProps<T>) => {
   const tokens = useTokens()
   const [tokenSelectorDialogOpen, setTokenSelectorDialogOpen] = useState(false)
   const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))
@@ -99,5 +99,3 @@ const TokenSelectorButton = <T extends Token | string>(props: TokenSelectorProps
     </>
   )
 }
-
-export default TokenSelectorButton

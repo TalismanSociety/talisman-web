@@ -21,7 +21,7 @@ type GridProps = {
   breakpoints?: any
 }
 
-const Grid = styled(({ className, children }: GridProps) => (
+export const Grid = styled(({ className, children }: GridProps) => (
   <div className={`grid ${className ?? ''}`}>{children}</div>
 ))`
   display: grid;
@@ -49,5 +49,3 @@ const Grid = styled(({ className, children }: GridProps) => (
           `
       )}
 `
-
-export default Grid

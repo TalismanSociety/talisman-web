@@ -6,13 +6,13 @@ import { Suspense, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 
-import { useAssetsFiltered } from '@/components/legacy/archetypes/Portfolio/Assets'
-import { Crowdloans } from '@/components/legacy/archetypes/Wallet'
-import SectionHeader from '@/components/molecules/SectionHeader'
+import { useAssetsFiltered } from '@/components/legacy/widgets/useAssets'
+import { WalletCrowdloans } from '@/components/legacy/widgets/WalletCrowdloans'
+import { SectionHeader } from '@/components/molecules/SectionHeader'
 import Asset, { AssetsList, AssetsListLocked } from '@/components/recipes/Asset'
-import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
-import ErrorBoundary from '@/components/widgets/ErrorBoundary'
-import PortfolioAllocationGraph from '@/components/widgets/PortfolioAllocationGraph'
+import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
+import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
+import { PortfolioAllocationGraph } from '@/components/widgets/PortfolioAllocationGraph'
 import { redactBalanceState } from '@/components/widgets/RedactableBalance'
 import Stakes from '@/components/widgets/staking/Stakes'
 
@@ -197,7 +197,7 @@ const Overview = () => (
       </div>
       <div css={{ order: 3, ':empty': { display: 'none' } }}>
         <ErrorBoundary>
-          <Crowdloans />
+          <WalletCrowdloans />
         </ErrorBoundary>
       </div>
     </div>

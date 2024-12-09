@@ -4,7 +4,7 @@ import { BalanceFormatter } from '@talismn/balances'
 import { formatDecimals } from '@talismn/util'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import type { PortfolioToken } from '@/components/legacy/archetypes/Portfolio/Assets'
+import type { PortfolioToken } from '@/components/legacy/widgets/useAssets'
 import { selectedAccountsState } from '@/domains/accounts/recoils'
 import { selectedCurrencyState } from '@/domains/balances'
 

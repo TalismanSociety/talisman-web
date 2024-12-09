@@ -5,9 +5,8 @@ import { Suspense, useCallback, useMemo, useState } from 'react'
 import { selector, useRecoilValue } from 'recoil'
 
 import PortfolioAllocationGraphComponent from '@/components/recipes/PortfolioAllocationGraph'
+import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { selectedBalancesFiatSumState, selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
-
-import AnimatedFiatNumber from './AnimatedFiatNumber'
 
 const assetDataState = selector({
   key: 'PortfolioAllocationGraph/AssetData',
@@ -107,10 +106,8 @@ const SuspendablePortfolioAllocationGraph = () => {
   )
 }
 
-const PortfolioAllocationGraph = () => (
+export const PortfolioAllocationGraph = () => (
   <Suspense fallback={<PortfolioAllocationGraphComponent.Skeleton />}>
     <SuspendablePortfolioAllocationGraph />
   </Suspense>
 )
-
-export default PortfolioAllocationGraph

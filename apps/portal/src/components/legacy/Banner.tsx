@@ -1,5 +1,6 @@
-import { device } from '../../util/breakpoints'
 import styled from '@emotion/styled'
+
+import { device } from '@/util/breakpoints'
 
 type BannerProps = {
   backgroundImage?: string
@@ -15,10 +16,10 @@ export const Banner = styled.aside<BannerProps>`
   background: ${props => `
     ${
       props.backgroundImage
-        ? `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('${props.backgroundImage}');`
-        : `var(--color-controlBackground);`
+        ? `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('${props.backgroundImage}')`
+        : `var(--color-controlBackground)`
     }
-  `}
+  `};
   background-position: 50%;
   background-size: cover;
   color: var(--color-text);

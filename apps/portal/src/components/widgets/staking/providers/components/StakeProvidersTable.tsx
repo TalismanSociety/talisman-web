@@ -15,7 +15,7 @@ import {
 import { Suspense, useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import ErrorBoundary from '@/components/widgets/ErrorBoundary'
+import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import ErrorBoundaryFallback from '@/components/widgets/staking/ErrorBoundaryFallback'
 import { cn } from '@/lib/utils'
 

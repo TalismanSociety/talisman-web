@@ -14,6 +14,7 @@ import { atom, useRecoilState, useRecoilValue } from 'recoil'
 import { useDisconnect as useDisconnectEvm, useAccount as useEvmAccount } from 'wagmi'
 
 import talismanWalletLogo from '@/assets/talisman-wallet.svg'
+import { AddReadOnlyAccountDialog } from '@/components/widgets/AddReadOnlyAccountDialog'
 import { writeableEvmAccountsState } from '@/domains/accounts'
 import {
   useConnectedSubstrateWallet,
@@ -22,8 +23,6 @@ import {
   useInstalledSubstrateWallets,
   useSubstrateWalletConnect,
 } from '@/domains/extension'
-
-import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
 
 const talismanInstalled = 'talismanEth' in globalThis
 
@@ -267,7 +266,7 @@ export const WalletConnectionSideSheetComponent = (props: WalletConnectionSideSh
 
 export const walletConnectionSideSheetOpenState = atom({ key: 'WalletConnectionSideSheetOpen', default: false })
 
-const WalletConnectionSideSheet = () => {
+export const WalletConnectionSideSheet = () => {
   const [open, setOpen] = useRecoilState(walletConnectionSideSheetOpenState)
 
   if (!open) {
@@ -276,5 +275,3 @@ const WalletConnectionSideSheet = () => {
 
   return <WalletConnectionSideSheetComponent onRequestDismiss={() => setOpen(false)} />
 }
-
-export default WalletConnectionSideSheet

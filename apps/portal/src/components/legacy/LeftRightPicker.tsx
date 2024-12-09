@@ -1,6 +1,7 @@
-import ChevronRight from '../../assets/icons/chevron-right.svg?react'
-import { ButtonIcon } from './Button'
 import styled from '@emotion/styled'
+
+import ChevronRight from '@/assets/icons/chevron-right.svg?react'
+import { ButtonIcon } from '@/components/legacy/Button'
 
 type LeftRightPickerProps = {
   className?: string

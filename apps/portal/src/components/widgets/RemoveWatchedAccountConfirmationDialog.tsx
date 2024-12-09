@@ -12,7 +12,7 @@ export type RemoveWatchedAccountConfirmationDialogProps = {
   children?: ReactNode | ((props: { onToggleOpen: () => unknown }) => ReactNode)
 }
 
-const RemoveWatchedAccountConfirmationDialog = (props: RemoveWatchedAccountConfirmationDialogProps) => {
+export const RemoveWatchedAccountConfirmationDialog = (props: RemoveWatchedAccountConfirmationDialogProps) => {
   const [open, setOpen] = useState(false)
   const { remove } = useSetReadonlyAccounts()
 
@@ -31,5 +31,3 @@ const RemoveWatchedAccountConfirmationDialog = (props: RemoveWatchedAccountConfi
     </>
   )
 }
-
-export default RemoveWatchedAccountConfirmationDialog
