@@ -1,10 +1,11 @@
-import { balancesState, selectedBalancesState, selectedCurrencyState } from '../../../../domains/balances'
 import { BalanceFormatter } from '@talismn/balances'
 import { useChains, useEvmNetworks, useTokenRates, useTokens } from '@talismn/balances-react'
 import { formatDecimals } from '@talismn/util'
-import { compact, groupBy, isEmpty, isNil, startCase } from 'lodash'
+import { compact, groupBy, isEmpty, isNil } from 'lodash'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
+
+import { balancesState, selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
 
 const useFetchAssets = (address: string | undefined) => {
   const _balances = useRecoilValue(address === undefined ? selectedBalancesState : balancesState)
@@ -110,8 +111,6 @@ const useAssets = (customAddress?: string) => {
 
         const locked = lockedAmount > 0n
 
-        const tokenDisplayName = startCase(token.coingeckoId)
-
         return {
           stale: tokenBalances.each.some(x => x.status === 'stale'),
           locked,
@@ -135,7 +134,6 @@ const useAssets = (customAddress?: string) => {
               : token.evmNetwork
               ? evmNetworks[token.evmNetwork.id]
               : undefined,
-            tokenDisplayName,
           },
           // if the token is substrate-native then make it an array else make it undefined
           nonNativeTokens: [],

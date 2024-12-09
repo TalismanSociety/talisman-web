@@ -1,5 +1,5 @@
-import { AlertDialog, Button, Text, TextInput } from '@talismn/ui'
 import type { ReactNode } from 'react'
+import { AlertDialog, Button, Text, TextInput } from '@talismn/ui'
 
 export type AddStakeFormProps = {
   accountSelector?: ReactNode
@@ -66,7 +66,7 @@ const AddStakeForm = (props: AddStakeFormProps) => (
       loading={props.confirmState === 'pending'}
       css={{ width: '100%', marginTop: '4.6rem' }}
     >
-      {props.approvalNeeded ? 'Approve' : 'Stake'}
+      {props.approvalNeeded ? 'Approve Spend' : 'Stake'}
     </Button>
   </div>
 )

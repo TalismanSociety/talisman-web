@@ -115,7 +115,7 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
             if (approvalNeeded) {
               await approve.writeContractAsync()
             } else {
-              await mint.writeContractAsync()
+              await mint.writeContractAsync().then(() => props.onRequestDismiss())
             }
           }}
           onRequestMaxAmount={() => {

@@ -1,0 +1,3 @@
+const TALISMAN_BIFROST_CHANNEL_ID = 4
+
+export const channel_id = Number(import.meta.env.VITE_TALISMAN_BIFROST_CHANNEL_ID ?? TALISMAN_BIFROST_CHANNEL_ID)

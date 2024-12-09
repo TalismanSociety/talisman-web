@@ -4,9 +4,9 @@ import { Maybe } from '../../../util/monads'
 import { selectedCurrencyState } from '../../balances'
 import { tokenPriceState } from '../../chains'
 import { useSubstrateApiState, useWagmiWriteContract } from '../../common'
-import slpx from './abi'
 import { _adapterParams, _dstGasForCall, channel_id } from './constants'
 import mantaPacificSlpxAbi from './mantaPacificSlpxAbi'
+import moonbeamSlpxAbi from './moonbeamSlpxAbi'
 import { mantaPacificOperation } from './types'
 
 import '@bifrost-finance/types/augment/api'
@@ -23,6 +23,8 @@ import { erc20Abi, isAddress } from 'viem'
 import { useBlockNumber, useConfig, useReadContract, useToken, useWaitForTransactionReceipt } from 'wagmi'
 import { manta, moonbeam } from 'wagmi/chains'
 import { getTokenQueryOptions, readContractsQueryOptions } from 'wagmi/query'
+
+const remark = import.meta.env.VITE_APPLICATION_NAME ?? 'Talisman'
 
 export const useVTokenUnlockDuration = (slpxPair: SlpxPair) => {
   const unlockDuration = useRecoilValue(
@@ -191,7 +193,7 @@ export const useSlpxSwapForm = (
   const assetInfo = useReadContract({
     chainId,
     address: splxContractAddress,
-    abi: slpx,
+    abi: moonbeamSlpxAbi,
     functionName: 'addressToAssetInfo',
     args: [originToken?.address ?? '0x'],
     query: {
@@ -281,9 +283,16 @@ export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) 
     await _redeem.writeContractAsync({
       chainId: slpxPair.chain.id,
       address: slpxPair.splx,
-      abi: slpx,
-      functionName: 'redeemAsset',
-      args: [slpxPair.vToken.address, planckAmount ?? 0n, (account?.address as `0x${string}`) ?? '0x'],
+      abi: moonbeamSlpxAbi,
+      functionName: 'create_order',
+      args: [
+        slpxPair.vToken.address,
+        planckAmount ?? 0n,
+        BigInt(slpxPair.chain.id),
+        account?.address as `0x${string}`,
+        remark,
+        channel_id,
+      ],
       etherscanUrl: slpxPair.etherscanUrl,
     })
   }
@@ -416,9 +425,16 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
     await _mint.writeContractAsync({
       chainId: slpxPair.chain.id,
       address: slpxPair.splx,
-      abi: slpx,
-      functionName: 'mintVNativeAsset',
-      args: [(account?.address as `0x${string}`) ?? '0x', import.meta.env.VITE_APPLICATION_NAME ?? 'Talisman'],
+      abi: moonbeamSlpxAbi,
+      functionName: 'create_order',
+      args: [
+        slpxPair.nativeToken.address,
+        planckAmount ?? 0n,
+        BigInt(slpxPair.chain.id),
+        account?.address as `0x${string}`,
+        remark,
+        channel_id,
+      ],
       value: planckAmount ?? 0n,
       etherscanUrl: slpxPair.etherscanUrl,
     })
