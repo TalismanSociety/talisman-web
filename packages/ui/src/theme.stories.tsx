@@ -1,8 +1,10 @@
-import { Text } from './atoms'
-import { type Theme, theme } from './theme'
 import { type ComponentMeta, type Story } from '@storybook/react'
 import { TalismanHand } from '@talismn/web-icons'
 import { type JSXElementConstructor } from 'react'
+
+import type { Theme } from './theme'
+import { Text } from './atoms/Text'
+import { theme } from './theme'
 
 export default {
   title: 'Theme/Color',

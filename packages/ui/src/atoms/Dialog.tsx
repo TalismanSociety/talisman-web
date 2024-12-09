@@ -89,5 +89,3 @@ export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function 
     />
   )
 })
-
-export default Dialog
