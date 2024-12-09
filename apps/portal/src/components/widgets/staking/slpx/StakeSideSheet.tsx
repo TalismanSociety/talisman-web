@@ -113,9 +113,21 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
           )}
           onConfirm={async () => {
             if (approvalNeeded) {
-              await approve.writeContractAsync()
+              try {
+                await approve.writeContractAsync()
+              } catch (error) {
+                console.error(
+                  `An error occurred while approving allowance for asset: ${props.slpxPair.nativeToken.symbol}`,
+                  error
+                )
+              }
             } else {
-              await mint.writeContractAsync().then(() => props.onRequestDismiss())
+              try {
+                await mint.writeContractAsync()
+                props.onRequestDismiss()
+              } catch (error) {
+                console.error(`An error occurred while staking asset: ${props.slpxPair.nativeToken.symbol}`, error)
+              }
             }
           }}
           onRequestMaxAmount={() => {
