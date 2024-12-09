@@ -1,9 +1,11 @@
+import { useMemo } from 'react'
+import { useRecoilValue, useRecoilValueLoadable, waitForAll, waitForAny } from 'recoil'
+
+import { Decimal } from '@/util/Decimal'
+
 import { selectedSubstrateAccountsState } from '../../accounts/recoils'
 import { nativeTokenPriceState, nominationPoolsEnabledChainsState } from '../../chains/recoils'
 import { chainDeriveState, chainQueryState, substrateApiState } from '../../common'
-import { Decimal } from '@talismn/math'
-import { useMemo } from 'react'
-import { useRecoilValue, useRecoilValueLoadable, waitForAll, waitForAny } from 'recoil'
 
 export const useTotalStaked = () => {
   const [chains, accounts] = useRecoilValue(

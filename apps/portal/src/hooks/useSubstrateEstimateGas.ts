@@ -1,6 +1,7 @@
 import type { SubmittableExtrinsic } from '@polkadot/api/types'
-import { Decimal } from '@talismn/math'
 import { useCallback, useEffect, useState } from 'react'
+
+import { Decimal } from '@/util/Decimal'
 
 type Props = {
   tx: SubmittableExtrinsic<'promise'>

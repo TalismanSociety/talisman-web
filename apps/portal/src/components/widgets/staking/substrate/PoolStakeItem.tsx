@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import StakePosition from '@/components/recipes/StakePosition'
+import ErrorBoundary from '@/components/widgets/ErrorBoundary'
 
 import type { usePoolStakes } from '../../../../domains/staking/substrate/nominationPools'
 import { type Account } from '../../../../domains/accounts'
@@ -69,78 +70,108 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
         stakeStatus={item.status}
         account={item.account}
         balance={
-          <RedactableBalance>
-            {decimal.fromPlanckOrUndefined(item.poolMember.points.toBigInt())?.toLocaleString()}
-          </RedactableBalance>
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <RedactableBalance>
+              {decimal.fromPlanckOrUndefined(item.poolMember.points.toBigInt())?.toLocaleString()}
+            </RedactableBalance>
+          </ErrorBoundary>
         }
         fiatBalance={
-          <AnimatedFiatNumber
-            end={(decimal.fromPlanckOrUndefined(item.poolMember.points.toBigInt())?.toNumber() ?? 0) * nativeTokenPrice}
-          />
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <AnimatedFiatNumber
+              end={
+                (decimal.fromPlanckOrUndefined(item.poolMember.points.toBigInt())?.toNumber() ?? 0) * nativeTokenPrice
+              }
+            />
+          </ErrorBoundary>
         }
-        rewards={<PoolTotalRewards account={item.account} />}
-        fiatRewards={<PoolTotalFiatRewards account={item.account} />}
+        rewards={
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <PoolTotalRewards account={item.account} />
+          </ErrorBoundary>
+        }
+        fiatRewards={
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <PoolTotalFiatRewards account={item.account} />
+          </ErrorBoundary>
+        }
         provider={item.poolName ?? ''}
         shortProvider="Nomination pool"
         claimButton={
           item.pendingRewards?.isZero() === false && (
-            <StakePosition.ClaimButton
-              amount={
-                <RedactableBalance>
-                  {decimal.fromPlanck(item.pendingRewards.toBigInt()).toLocaleString()}
-                </RedactableBalance>
-              }
-              onClick={() => setClaimDialogOpen(true)}
-              loading={claimPayoutLoadable.state === 'loading' || restakeLoadable.state === 'loading'}
-            />
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.ClaimButton
+                amount={
+                  <RedactableBalance>
+                    {decimal.fromPlanck(item.pendingRewards.toBigInt()).toLocaleString()}
+                  </RedactableBalance>
+                }
+                onClick={() => setClaimDialogOpen(true)}
+                loading={claimPayoutLoadable.state === 'loading' || restakeLoadable.state === 'loading'}
+              />
+            </ErrorBoundary>
           )
         }
         unstakeButton={
           // Fully unbonding pool can't be interacted with
-          !item.poolMember.points.isZero() && <StakePosition.UnstakeButton onClick={() => setIsUnstaking(true)} />
+          !item.poolMember.points.isZero() && (
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.UnstakeButton onClick={() => setIsUnstaking(true)} />
+            </ErrorBoundary>
+          )
         }
         increaseStakeButton={
           // Fully unbonding pool can't be interacted with
           !item.poolMember.points.isZero() && (
-            <StakePosition.IncreaseStakeButton onClick={() => setIsAddingStake(true)} />
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.IncreaseStakeButton onClick={() => setIsAddingStake(true)} />
+            </ErrorBoundary>
           )
         }
         withdrawButton={
           item.withdrawable > 0n && (
-            <StakePosition.WithdrawButton
-              amount={<RedactableBalance>{decimal.fromPlanck(item.withdrawable).toLocaleString()}</RedactableBalance>}
-              onClick={() => {
-                void withdrawExtrinsic.signAndSend(
-                  item.account?.address ?? '',
-                  item.account?.address ?? '',
-                  item.slashingSpan
-                )
-              }}
-              loading={withdrawExtrinsic.state === 'loading'}
-            />
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.WithdrawButton
+                amount={<RedactableBalance>{decimal.fromPlanck(item.withdrawable).toLocaleString()}</RedactableBalance>}
+                onClick={() => {
+                  void withdrawExtrinsic.signAndSend(
+                    item.account?.address ?? '',
+                    item.account?.address ?? '',
+                    item.slashingSpan
+                  )
+                }}
+                loading={withdrawExtrinsic.state === 'loading'}
+              />
+            </ErrorBoundary>
           )
         }
         menuButton={
-          <StakePosition.MenuButton>
-            <StakePosition.MenuButton.Item.Button
-              headlineContent="Statistics"
-              onClick={() => setStatsDialogOpen(true)}
-              withTransition
-            />
-            {!item.account.readonly && (
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <StakePosition.MenuButton>
               <StakePosition.MenuButton.Item.Button
-                headlineContent="Claim settings"
-                onClick={() => setClaimPermissionDialogOpen(true)}
+                headlineContent="Statistics"
+                onClick={() => setStatsDialogOpen(true)}
+                withTransition
               />
-            )}
-          </StakePosition.MenuButton>
+              {!item.account.readonly && (
+                <StakePosition.MenuButton.Item.Button
+                  headlineContent="Claim settings"
+                  onClick={() => setClaimPermissionDialogOpen(true)}
+                />
+              )}
+            </StakePosition.MenuButton>
+          </ErrorBoundary>
         }
         unstakingStatus={
           item.totalUnlocking > 0n && (
-            <StakePosition.UnstakingStatus
-              amount={<RedactableBalance>{decimal.fromPlanck(item.totalUnlocking).toLocaleString()}</RedactableBalance>}
-              unlocks={unlocks ?? []}
-            />
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.UnstakingStatus
+                amount={
+                  <RedactableBalance>{decimal.fromPlanck(item.totalUnlocking).toLocaleString()}</RedactableBalance>
+                }
+                unlocks={unlocks ?? []}
+              />
+            </ErrorBoundary>
           )
         }
       />

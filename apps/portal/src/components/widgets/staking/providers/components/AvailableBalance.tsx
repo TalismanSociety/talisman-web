@@ -1,4 +1,3 @@
-import { Decimal } from '@talismn/math'
 import { Text } from '@talismn/ui'
 import { useMemo } from 'react'
 
@@ -6,6 +5,7 @@ import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
 import { ChainProvider } from '@/domains/chains'
 import { SlpxPair } from '@/domains/staking/slpx/types'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
+import { Decimal } from '@/util/Decimal'
 
 import { useAvailableBalance as useSlpxAvailableBalance } from '../hooks/bifrost/useAvailableBalance'
 import useLidoAvailableBalance from '../hooks/lido/useAvailableBalance'

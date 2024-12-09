@@ -1,7 +1,4 @@
-import type { Account } from '../../../domains/accounts'
-import { copyAddressToClipboard, copyExtrinsicHashToClipboard } from '../../../domains/common'
-import { shortenAddress } from '../../../util/format'
-import AccountIcon from '../../molecules/AccountIcon/AccountIcon'
+import type { PropsWithChildren, ReactNode } from 'react'
 import { useTheme } from '@emotion/react'
 import {
   DescriptionList,
@@ -14,9 +11,14 @@ import {
 } from '@talismn/ui'
 import { CheckCircle, Copy, ExternalLink, XCircle } from '@talismn/web-icons'
 import { formatDistanceToNow } from 'date-fns'
-import { useMemo, type PropsWithChildren, type ReactNode } from 'react'
+import { useMemo } from 'react'
 // @ts-expect-error
 import { ObjectView } from 'react-object-view'
+
+import type { Account } from '@/domains/accounts'
+import AccountIcon from '@/components/molecules/AccountIcon/AccountIcon'
+import { copyAddressToClipboard, copyExtrinsicHashToClipboard } from '@/domains/common'
+import { shortenAddress } from '@/util/shortenAddress'
 
 export type ExtrinsicDetailsSideSheetProps = {
   onRequestDismiss: () => unknown

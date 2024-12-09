@@ -1,16 +1,18 @@
-import { SwapTokensModal } from './SwapTokensModal'
-import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
-import { selectedCurrencyState } from '@/domains/balances'
-import { useTokenRatesFromUsd } from '@/hooks/useTokenRatesFromUsd'
-import { cn } from '@/lib/utils'
 import { useTokenRates, useTokens } from '@talismn/balances-react'
-import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, TextInput, Tooltip } from '@talismn/ui'
 import { PrimitiveAtom } from 'jotai'
 import { HelpCircle } from 'lucide-react'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
+
+import { selectedCurrencyState } from '@/domains/balances'
+import { useTokenRatesFromUsd } from '@/hooks/useTokenRatesFromUsd'
+import { cn } from '@/lib/utils'
+import { Decimal } from '@/util/Decimal'
+
+import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
+import { SwapTokensModal } from './SwapTokensModal'
 
 type Props = {
   amount?: Decimal
@@ -179,16 +181,16 @@ export const TokenAmountInput: React.FC<Props> = ({
       onChange={e => handleChangeInput(e.target.value)}
       textBelowInput={
         <div className="flex items-center">
-          <p className="text-gray-400 text-[10px] leading-none">
+          <p className="text-[10px] leading-none text-gray-400">
             {(fiatValue ?? 0)?.toLocaleString(undefined, { currency, style: 'currency' })}
           </p>
           {insufficientBalance ? (
-            <p className="text-red-400 text-[10px] leading-none pl-[8px] ml-[8px] border-l border-l-gray-600">
+            <p className="ml-[8px] border-l border-l-gray-600 pl-[8px] text-[10px] leading-none text-red-400">
               Insufficient balance
             </p>
           ) : accountWouldBeReaped ? (
             <div className="flex items-center gap-1 text-orange-400">
-              <p className="text-[10px] leading-none pl-[8px] ml-[8px] border-l border-l-gray-600">
+              <p className="ml-[8px] border-l border-l-gray-600 pl-[8px] text-[10px] leading-none">
                 Account would be reaped
               </p>
 
@@ -206,19 +208,19 @@ export const TokenAmountInput: React.FC<Props> = ({
                 }
               >
                 <Link to="https://support.polkadot.network/support/solutions/articles/65000168651-what-is-the-existential-deposit-">
-                  <HelpCircle className="w-4 h-4" />
+                  <HelpCircle className="h-4 w-4" />
                 </Link>
               </Tooltip>
             </div>
           ) : disableBtc && selectedAsset?.id === 'btc-native' ? (
-            <p className="text-red-400 text-[10px] leading-none pl-[8px] ml-[8px] border-l border-l-gray-600">
+            <p className="ml-[8px] border-l border-l-gray-600 pl-[8px] text-[10px] leading-none text-red-400">
               Swapping from BTC not supported.
             </p>
           ) : null}
         </div>
       }
       trailingIcon={
-        <div className="flex items-center gap-2 justify-end">
+        <div className="flex items-center justify-end gap-2">
           {maxAfterGas && maxAfterGas.planck > 0 && (
             <TextInput.LabelButton
               css={{ fontSize: 12, paddingTop: 4, paddingBottom: 4 }}

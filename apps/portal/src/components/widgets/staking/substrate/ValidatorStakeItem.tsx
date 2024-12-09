@@ -6,6 +6,7 @@ import { useMemo, useState } from 'react'
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import StakePosition from '@/components/recipes/StakePosition'
+import ErrorBoundary from '@/components/widgets/ErrorBoundary'
 
 import { type Account } from '../../../../domains/accounts/recoils'
 import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '../../../../domains/chains'
@@ -117,48 +118,72 @@ const ValidatorStakeItem = (props: {
         }
         readonly={props.account.readonly}
         account={props.account}
-        balance={<RedactableBalance>{active?.toLocaleString()}</RedactableBalance>}
-        fiatBalance={<AnimatedFiatNumber end={active && nativeTokenPrice ? active.toNumber() * nativeTokenPrice : 0} />}
-        rewards={<TotalRewards account={props.account} />}
-        fiatRewards={<TotalFiatRewards account={props.account} />}
-        unstakeButton={<StakePosition.UnstakeButton onClick={onRequestUnstake} />}
+        balance={
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <RedactableBalance>{active?.toLocaleString()}</RedactableBalance>
+          </ErrorBoundary>
+        }
+        fiatBalance={
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <AnimatedFiatNumber end={active && nativeTokenPrice ? active.toNumber() * nativeTokenPrice : 0} />
+          </ErrorBoundary>
+        }
+        rewards={
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <TotalRewards account={props.account} />
+          </ErrorBoundary>
+        }
+        fiatRewards={
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <TotalFiatRewards account={props.account} />
+          </ErrorBoundary>
+        }
+        unstakeButton={
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <StakePosition.UnstakeButton onClick={onRequestUnstake} />
+          </ErrorBoundary>
+        }
         withdrawButton={
           props.stake.redeemable?.isZero() === false && (
-            <StakePosition.WithdrawButton
-              amount={
-                <RedactableBalance>
-                  {decimal?.fromPlanck(props.stake.redeemable.toBigInt()).toLocaleString()}
-                </RedactableBalance>
-              }
-              onClick={() => {
-                void withdrawExtrinsic.signAndSend(props.stake.controllerId ?? '', props.slashingSpan)
-              }}
-              loading={withdrawExtrinsic.state === 'loading'}
-            />
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.WithdrawButton
+                amount={
+                  <RedactableBalance>
+                    {decimal?.fromPlanck(props.stake.redeemable.toBigInt()).toLocaleString()}
+                  </RedactableBalance>
+                }
+                onClick={() => {
+                  void withdrawExtrinsic.signAndSend(props.stake.controllerId ?? '', props.slashingSpan)
+                }}
+                loading={withdrawExtrinsic.state === 'loading'}
+              />
+            </ErrorBoundary>
           )
         }
         unstakingStatus={
-          totalUnlocking?.isZero() === false ? (
-            props.inFastUnstakeHead || props.inFastUnstakeQueue ? (
-              <StakePosition.FastUnstakingStatus
-                amount={
-                  <RedactableBalance>
-                    {decimal?.fromPlanck(totalUnlocking.toString()).toLocaleString()}
-                  </RedactableBalance>
-                }
-                status={props.inFastUnstakeHead ? 'in-head' : props.inFastUnstakeQueue ? 'in-queue' : undefined}
-              />
-            ) : (
-              <StakePosition.UnstakingStatus
-                amount={
-                  <RedactableBalance>
-                    {decimal?.fromPlanck(totalUnlocking.toString()).toLocaleString()}
-                  </RedactableBalance>
-                }
-                unlocks={unlocks ?? []}
-              />
-            )
-          ) : undefined
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            {totalUnlocking?.isZero() === false ? (
+              props.inFastUnstakeHead || props.inFastUnstakeQueue ? (
+                <StakePosition.FastUnstakingStatus
+                  amount={
+                    <RedactableBalance>
+                      {decimal?.fromPlanck(totalUnlocking.toString()).toLocaleString()}
+                    </RedactableBalance>
+                  }
+                  status={props.inFastUnstakeHead ? 'in-head' : props.inFastUnstakeQueue ? 'in-queue' : undefined}
+                />
+              ) : (
+                <StakePosition.UnstakingStatus
+                  amount={
+                    <RedactableBalance>
+                      {decimal?.fromPlanck(totalUnlocking.toString()).toLocaleString()}
+                    </RedactableBalance>
+                  }
+                  unlocks={unlocks ?? []}
+                />
+              )
+            ) : undefined}
+          </ErrorBoundary>
         }
       />
       <ValidatorUnstakeDialog

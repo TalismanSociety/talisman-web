@@ -15,15 +15,15 @@ import {
   Tooltip,
   useTheme,
 } from '@talismn/ui'
-import { AccountIcon } from '@talismn/ui-recipes'
 import { ArrowDown, Clock, Earn, MoreHorizontal, ZapPlus } from '@talismn/web-icons'
 import React, { createContext, Suspense, useContext } from 'react'
 
 import type { StakeStatus } from '@/components/recipes/StakeStatusIndicator'
+import { AccountIcon } from '@/components/recipes/AccountIcon'
 import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
 import { StakeStatusIndicator } from '@/components/recipes/StakeStatusIndicator'
 import { Account } from '@/domains/accounts/recoils'
-import { shortenAddress } from '@/util/format'
+import { shortenAddress } from '@/util/shortenAddress'
 
 import StakePositionSkeleton from './StakePosition.skeleton'
 

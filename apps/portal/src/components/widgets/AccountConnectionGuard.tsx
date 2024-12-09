@@ -6,7 +6,7 @@ import Welcome from '@/components/recipes/Welcome'
 import { lookupAccountAddressState, popularAccounts } from '@/domains/accounts'
 import { readOnlyAccountsState } from '@/domains/accounts/recoils'
 import { useHasActiveWalletConnection, useWalletConnectionInitialised } from '@/domains/extension'
-import { shortenAddress } from '@/util/format'
+import { shortenAddress } from '@/util/shortenAddress'
 
 import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
 
