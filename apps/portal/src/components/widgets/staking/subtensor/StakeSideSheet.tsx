@@ -1,26 +1,23 @@
-import { writeableSubstrateAccountsState } from '../../../../domains/accounts'
-import {
-  ChainProvider,
-  subtensorStakingEnabledChainsState,
-  useChainState,
-  type ChainInfo,
-} from '../../../../domains/chains'
-import { DEFAULT_DELEGATE, MIN_SUBTENSOR_STAKE } from '../../../../domains/staking/subtensor/atoms/delegates'
-import { Delegate } from '../../../../domains/staking/subtensor/atoms/delegates'
-import { useDelegateAprFormatted } from '../../../../domains/staking/subtensor/hooks/useApr'
-import { useDelegates } from '../../../../domains/staking/subtensor/hooks/useDelegates'
-import { useTotalTaoStakedFormatted } from '../../../../domains/staking/subtensor/hooks/useTotalTaoStakedFormatted'
-import { Maybe } from '../../../../util/monads'
-import { TalismanHandLoader } from '../../../legacy/TalismanHandLoader'
-import { useAccountSelector } from '../../AccountSelector'
-import ErrorBoundary from '../../ErrorBoundary'
-import { DelegateSelectorDialog } from './DelegateSelectorDialog'
-import { IncompleteSelectionStakeForm, StakeForm } from './StakeForm'
-import { SubtensorStakingSideSheet } from './SubtensorStakingForm'
 import { Select } from '@talismn/ui'
 import { Suspense, useMemo, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
+
+import type { ChainInfo } from '@/domains/chains'
+import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
+import { useAccountSelector } from '@/components/widgets/AccountSelector'
+import ErrorBoundary from '@/components/widgets/ErrorBoundary'
+import { writeableSubstrateAccountsState } from '@/domains/accounts'
+import { ChainProvider, subtensorStakingEnabledChainsState, useChainState } from '@/domains/chains'
+import { DEFAULT_DELEGATE, Delegate, MIN_SUBTENSOR_STAKE } from '@/domains/staking/subtensor/atoms/delegates'
+import { useDelegateAprFormatted } from '@/domains/staking/subtensor/hooks/useApr'
+import { useDelegates } from '@/domains/staking/subtensor/hooks/useDelegates'
+import { useTotalTaoStakedFormatted } from '@/domains/staking/subtensor/hooks/useTotalTaoStakedFormatted'
+import { Maybe } from '@/util/monads'
+
+import { DelegateSelectorDialog } from './DelegateSelectorDialog'
+import { IncompleteSelectionStakeForm, StakeForm } from './StakeForm'
+import { SubtensorStakingSideSheet } from './SubtensorStakingForm'
 
 type StakeSideSheetProps = {
   chains: Array<Extract<ChainInfo, { hasSubtensorStaking: true }>>

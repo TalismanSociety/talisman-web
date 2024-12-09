@@ -76,6 +76,7 @@ export const talismanRoutes: Array<(ctx: TalismanRoutesContext) => TalismanRoute
                 module: 'ormlAssetRegistry',
                 func: 'metadata',
                 args: [asset],
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 transform: async (response: Option<any>): Promise<bigint> =>
                   response.unwrapOrDefault().existentialDeposit.toBigInt(),
               }),

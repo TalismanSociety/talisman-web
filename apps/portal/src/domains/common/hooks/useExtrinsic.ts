@@ -1,11 +1,3 @@
-import { substrateApiState, useSubstrateApiEndpoint } from '..'
-import { signetAccountState } from '../../accounts'
-import { chainState, useChainState } from '../../chains'
-import { useConnectedSubstrateWallet } from '../../extension'
-import { AnalyticsContext } from '../analytics'
-import { HarmlessError } from '../errors'
-import { extrinsicMiddleware } from '../extrinsicMiddleware'
-import { toastExtrinsic } from '../utils'
 import { type ApiPromise } from '@polkadot/api'
 import { type AddressOrPair, type SubmittableExtrinsic } from '@polkadot/api/types'
 import RpcError from '@polkadot/rpc-provider/coder/error'
@@ -14,18 +6,29 @@ import { useSignetSdk } from '@talismn/signet-apps-sdk'
 import { useContext, useMemo, useState } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
 
+import { signetAccountState } from '@/domains/accounts'
+import { chainState, useChainState } from '@/domains/chains'
+import { substrateApiState, useSubstrateApiEndpoint } from '@/domains/common'
+import { AnalyticsContext } from '@/domains/common/analytics'
+import { HarmlessError } from '@/domains/common/errors'
+import { extrinsicMiddleware } from '@/domains/common/extrinsicMiddleware'
+import { toastExtrinsic } from '@/domains/common/utils'
+import { useConnectedSubstrateWallet } from '@/domains/extension'
+
 type Promisable<T> = T | PromiseLike<T>
 
 export type SubmittableResultLoadable =
   | { state: 'idle'; contents: undefined }
   | { state: 'loading'; contents: ISubmittableResult | undefined }
   | { state: 'hasValue'; contents: ISubmittableResult }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | { state: 'hasError'; contents: any }
 
 export type ExtrinsicLoadable = (
   | { state: 'idle'; contents: undefined }
   | { state: 'loading'; contents: ISubmittableResult | undefined }
   | { state: 'hasValue'; contents: ISubmittableResult }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | { state: 'hasError'; contents: any }
 ) & {
   signAndSend: (account: AddressOrPair) => Promise<ISubmittableResult>

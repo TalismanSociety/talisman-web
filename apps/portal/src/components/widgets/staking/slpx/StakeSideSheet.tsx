@@ -14,16 +14,15 @@ import { Suspense, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
-import { useSlpxAprState } from '@/domains/staking/slpx'
+import type { SlpxPair } from '@/domains/staking/slpx'
+import { SlpxAddStakeForm } from '@/components/recipes/AddStakeDialog'
+import { useAccountSelector } from '@/components/widgets/AccountSelector'
+import { walletConnectionSideSheetOpenState } from '@/components/widgets/WalletConnectionSideSheet'
+import { evmSignableAccountsState, writeableEvmAccountsState } from '@/domains/accounts'
+import { ChainProvider } from '@/domains/chains'
+import { slpxPairsState, useMintForm, useSlpxAprState } from '@/domains/staking/slpx'
+import { Maybe } from '@/util/monads'
 
-import type { SlpxPair } from '../../../../domains/staking/slpx'
-import { evmSignableAccountsState, writeableEvmAccountsState } from '../../../../domains/accounts'
-import { ChainProvider } from '../../../../domains/chains'
-import { slpxPairsState, useMintForm } from '../../../../domains/staking/slpx'
-import { Maybe } from '../../../../util/monads'
-import { SlpxAddStakeForm } from '../../../recipes/AddStakeDialog'
-import { useAccountSelector } from '../../AccountSelector'
-import { walletConnectionSideSheetOpenState } from '../../WalletConnectionSideSheet'
 import UnlockDuration from './UnlockDuration'
 
 type AddStakeSideSheetProps = {
@@ -88,8 +87,8 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
             !ready || +amount === 0
               ? 'disabled'
               : mint.isPending || approve.isPending || approveTransaction.isLoading
-                ? 'pending'
-                : undefined
+              ? 'pending'
+              : undefined
           }
           approvalNeeded={approvalNeeded}
           accountSelector={

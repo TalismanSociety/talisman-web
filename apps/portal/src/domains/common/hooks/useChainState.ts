@@ -1,14 +1,18 @@
-import { useSubstrateApiEndpoint } from '.'
-import { chainQueryState } from '../recoils/query'
-import { type ApiPromise } from '@polkadot/api'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import type {
   GenericStorageEntryFunction,
   PromiseResult,
   QueryableStorageEntry,
   StorageEntryPromiseOverloads,
 } from '@polkadot/api/types'
-import { RecoilLoadable, constSelector, useRecoilValueLoadable, type Loadable } from 'recoil'
+import type { Loadable } from 'recoil'
+import { type ApiPromise } from '@polkadot/api'
+import { constSelector, RecoilLoadable, useRecoilValueLoadable } from 'recoil'
 import { type Observable } from 'rxjs'
+
+import { useSubstrateApiEndpoint } from '.'
+import { chainQueryState } from '../recoils/query'
 
 /**
  * @deprecated use `useQueryState` or `useDeriveState` instead

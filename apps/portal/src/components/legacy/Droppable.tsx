@@ -1,6 +1,9 @@
-import { type DragAndDropCallbacks, useDragAndDrop } from '../../util/useDragAndDrop'
+import type { ReactNode } from 'react'
 import styled from '@emotion/styled'
-import { type ReactNode, useRef } from 'react'
+import { useRef } from 'react'
+
+import type { DragAndDropCallbacks } from '../../util/useDragAndDrop'
+import { useDragAndDrop } from '../../util/useDragAndDrop'
 
 type DraggableProps = {
   children: ReactNode
@@ -17,8 +20,11 @@ type DroppableProps = {
   id: string
   children?: ReactNode
   className?: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onDragEnter?: (e: any) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onDragLeave?: (e: any) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onDrop?: (e: any) => void
 }
 

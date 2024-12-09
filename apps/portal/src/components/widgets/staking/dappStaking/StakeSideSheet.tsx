@@ -140,6 +140,7 @@ const EstimatedRewards = (props: { amount: bigint }) => {
 
 type StakeFormProps = IncompleteStakeFormProps & {
   account: Account
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
 }
 

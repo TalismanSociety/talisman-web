@@ -1,12 +1,13 @@
-import { chainState } from '../chains'
-import { favoriteNftIdsState, hiddenNftIdsState, nftsByTagState } from './tags'
-import type { SubscribeNfts } from './worker'
 import * as Sentry from '@sentry/react'
 import { type Nft as BaseNft } from '@talismn/nft'
 import { toast } from '@talismn/ui'
-import { DefaultValue, atomFamily, selectorFamily, waitForNone } from 'recoil'
-import { Observable, bufferTime, filter, last, scan, tap } from 'rxjs'
-import { Thread, spawn } from 'threads'
+import { atomFamily, DefaultValue, selectorFamily, waitForNone } from 'recoil'
+import { bufferTime, filter, last, Observable, scan, tap } from 'rxjs'
+import { spawn, Thread } from 'threads'
+
+import type { SubscribeNfts } from './worker'
+import { chainState } from '../chains'
+import { favoriteNftIdsState, hiddenNftIdsState, nftsByTagState } from './tags'
 
 export type NftTag = 'favorite' | 'hidden'
 
@@ -23,6 +24,7 @@ const _nftsState = atomFamily<NftsProgress, string>({
       const batchSize = 100
 
       let initialResolve = (_value: NftsProgress) => {}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let initialReject = (_reason?: any) => {}
 
       const initialPromise = new Promise<NftsProgress>((resolve, reject) => {

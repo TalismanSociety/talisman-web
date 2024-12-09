@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import type { BaseWallet } from '@polkadot-onboard/core'
 import type { SubmittableExtrinsic } from '@polkadot/api/types'
 import type { Atom, Getter, SetStateAction, Setter } from 'jotai'

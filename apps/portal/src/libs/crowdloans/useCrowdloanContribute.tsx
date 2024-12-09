@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain, @typescript-eslint/no-explicit-any */
+
 import type { SubmittableResult } from '@polkadot/api'
 import type { MemberType } from 'safety-match'
 import { ApiPromise, WsProvider } from '@polkadot/api'

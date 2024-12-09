@@ -1,8 +1,9 @@
-import { device } from '../../../../util/breakpoints'
-import { type Dapp } from './hooks'
 import styled from '@emotion/styled'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback } from 'react'
+
+import { device } from '../../../../util/breakpoints'
+import { type Dapp } from './hooks'
 
 type CardProps = {
   className?: string
@@ -14,8 +15,10 @@ const Card = ({ className, dapp, setSelectedTag }: CardProps) => {
   const posthog = usePostHog()
 
   const toExternalDapp = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (dapp: any) => {
       const categories = dapp.tags.reduce(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (acc: any, tag: string) => ({
           ...acc,
           [`category_${tag.replace(/[^\w]/, '')}'`]: true,
@@ -42,6 +45,7 @@ const Card = ({ className, dapp, setSelectedTag }: CardProps) => {
         </span>
         <span>
           {!!dapp.tags &&
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             dapp.tags.map((tag: any) => (
               <span
                 className="tag"

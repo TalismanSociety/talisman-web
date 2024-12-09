@@ -1,5 +1,6 @@
 import { fetcher } from './fetcher'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function injectUrl(url: string, res: any) {
   return {
     srcUrl: url,

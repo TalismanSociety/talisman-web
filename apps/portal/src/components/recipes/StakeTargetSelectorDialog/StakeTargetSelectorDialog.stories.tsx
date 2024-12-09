@@ -1,10 +1,14 @@
-import StakeTargetSelectorDialog, { type StakeTargetSelectorDialogProps } from './StakeTargetSelectorDialog'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { type ComponentMeta, type Story } from '@storybook/react'
+
+import type { StakeTargetSelectorDialogProps } from './StakeTargetSelectorDialog'
+import StakeTargetSelectorDialog from './StakeTargetSelectorDialog'
 import StakeTargetSelectorItem from './StakeTargetSelectorItem/StakeTargetSelectorItem'
 import {
   Selected as SelectedStakeTargetSelectorItem,
   UnSelected as UnSelectedStakeTargetSelectorItem,
 } from './StakeTargetSelectorItem/StakeTargetSelectorItem.stories'
-import { type ComponentMeta, type Story } from '@storybook/react'
 
 export default {
   title: 'Recipes/StakeTargetSelectorDialog',

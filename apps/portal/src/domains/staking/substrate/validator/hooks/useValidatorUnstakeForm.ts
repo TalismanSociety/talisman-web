@@ -1,6 +1,7 @@
-import { useExtrinsic, useQueryMulti, useTokenAmountFromPlanck, useTokenAmountState } from '../../../../common/hooks'
 import type { ApiPromise } from '@polkadot/api'
 import { useCallback, useMemo } from 'react'
+
+import { useExtrinsic, useQueryMulti, useTokenAmountFromPlanck, useTokenAmountState } from '../../../../common/hooks'
 
 export const useValidatorUnstakeForm = (account?: string) => {
   const queriesLoadable = useQueryMulti(['staking.minNominatorBond', ['staking.ledger', account]], {
@@ -80,7 +81,8 @@ export const useValidatorUnstakeForm = (account?: string) => {
       // maybe create a hook or function to combine status of multiple distinct extrinsic
       state: (unbondExtrinsic.state === 'loading' || unbondAllExtrinsic.state === 'loading'
         ? ('loading' as const)
-        : ('idle' as const)) as any,
+        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ('idle' as const)) as any,
       unbondAll: async (account: string) => {
         if (stake === undefined) {
           throw new Error('Extrinsic not ready yet')

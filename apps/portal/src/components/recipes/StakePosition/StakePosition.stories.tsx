@@ -1,5 +1,8 @@
-import StakePosition from './StakePosition'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { type Meta, type StoryObj } from '@storybook/react'
+
+import StakePosition from './StakePosition'
 
 export default {
   title: 'Recipes/StakePosition',

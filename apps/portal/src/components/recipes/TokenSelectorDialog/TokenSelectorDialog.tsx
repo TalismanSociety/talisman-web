@@ -1,14 +1,9 @@
+import type { AlertDialogProps } from '@talismn/ui'
+import type { ChangeEventHandler, ReactElement } from 'react'
+import { ALERT_DIALOG_PADDING, AlertDialog, Hr, Text, TextInput, useSurfaceColor } from '@talismn/ui'
+import React, { useCallback, useState } from 'react'
+
 import Cryptoticon from '../Cryptoticon'
-import {
-  ALERT_DIALOG_PADDING,
-  AlertDialog,
-  Hr,
-  Text,
-  TextInput,
-  useSurfaceColor,
-  type AlertDialogProps,
-} from '@talismn/ui'
-import React, { useCallback, useState, type ChangeEventHandler, type ReactElement } from 'react'
 
 export type TokenSelectorItemProps = {
   logoSrc?: string
@@ -84,6 +79,7 @@ const TokenSelectorDialog = Object.assign(
                 },
               }}
             >
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {React.Children.toArray(props.children).filter((x: any) =>
                 x.props.name.toLowerCase().includes(query.toLowerCase())
               )}

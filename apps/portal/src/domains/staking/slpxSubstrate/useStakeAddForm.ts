@@ -110,6 +110,7 @@ const useAvailableBalance = ({ slpxPair, fee }: { slpxPair: SlpxSubstratePair; f
     [currency, fee, nativeBalance.each, nativeBalance.sum, recoilCurrency, slpxPair.nativeToken.symbol]
   )
 }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const useSwapRateLoadable = (tokenId: any, vTokenId: any, reverse?: boolean) => {
   const loadable = useRecoilValueLoadable(
     useQueryMultiState([

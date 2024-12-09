@@ -59,6 +59,7 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
 
   const sortedWithdrawalIds =
     withdrawalIds
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ?.flatMap(x => x as any as bigint[])
       .map(serializableBigInt)
       .sort((a, b) => (a > b ? 1 : -1)) ?? []

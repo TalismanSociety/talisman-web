@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useEffect, useState } from 'react'
 
 export type Dapp = { id: string; name: string; description: string; logoUrl: string; tags: string[] }

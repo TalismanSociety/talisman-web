@@ -38,6 +38,7 @@ export const useVTokenUnlockDuration = (slpxPair: SlpxPair) => {
   }, [slpxPair.estimatedRoundDuration, unlockDuration])
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const useSwapRateLoadable = (tokenId: any, vTokenId: any, reverse?: boolean) => {
   const loadable = useRecoilValueLoadable(
     useQueryMultiState([

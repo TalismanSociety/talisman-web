@@ -1,6 +1,7 @@
+import { type Meta, type StoryObj } from '@storybook/react'
+
 import DappStakingForm, { DappStakingSideSheet } from './DappStakingForm'
 import { Default as DappStakingFormDefault } from './DappStakingForm.stories'
-import { type Meta, type StoryObj } from '@storybook/react'
 
 export default {
   title: 'Recipes/DappStakingForm/SideSheet',
@@ -11,6 +12,7 @@ type Story = StoryObj<typeof DappStakingSideSheet>
 
 export const Default: Story = {
   args: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     children: <DappStakingForm {...(DappStakingFormDefault.args as any)} />,
     chainName: 'Astar',
     rewards: '10%',

@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Spinner = ({ className }: any) => {
   return (
     <div className={className}>

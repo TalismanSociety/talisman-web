@@ -1,7 +1,8 @@
-import crowdloanRowSkeleton from '../../assets/crowdloan-row-skeleton.png'
-import { Placeholder } from './Placeholder'
 import styled from '@emotion/styled'
 import React from 'react'
+
+import crowdloanRowSkeleton from '../../assets/crowdloan-row-skeleton.png'
+import { Placeholder } from './Placeholder'
 
 const NoCrowdloansPlaceholder = styled(({ text, subtext }: { text: string; subtext: string }) => (
   <Placeholder placeholderImage={crowdloanRowSkeleton}>
@@ -20,6 +21,7 @@ const NoCrowdloansPlaceholder = styled(({ text, subtext }: { text: string; subte
 
 type NoCrowdloansProps = {
   require: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   children: any
   text: string
   subtext: string

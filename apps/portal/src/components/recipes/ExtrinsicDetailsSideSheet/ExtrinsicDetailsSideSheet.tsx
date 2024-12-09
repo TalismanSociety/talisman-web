@@ -32,6 +32,7 @@ export type ExtrinsicDetailsSideSheetProps = {
   signer?: Account
   date: Date
   success: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   arguments: any
   transfers?: Array<{ debit: Account; credit: Account; amount: ReactNode }>
   rewards?: Array<{ debit: Account; amount: ReactNode }>

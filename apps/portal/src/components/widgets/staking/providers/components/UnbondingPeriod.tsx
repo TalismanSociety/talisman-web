@@ -27,6 +27,7 @@ type UnbondingDisplayProps = Omit<UnbondingPeriodProps, 'genesisHash'>
 const UnbondingDisplay = ({ typeId, tokenPair, setUnbondingValues }: UnbondingDisplayProps) => {
   const { t } = useTranslation()
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
     nominationPool: useNominationPoolUnlockDuration,
     liquidStakingSlpx: useVTokenUnlockDuration,

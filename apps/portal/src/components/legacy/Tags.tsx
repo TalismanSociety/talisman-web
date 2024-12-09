@@ -1,12 +1,16 @@
-import { useSet } from '../../util/hooks'
-import { Pill } from './'
 import styled from '@emotion/styled'
 import { useEffect } from 'react'
 
+import { useSet } from '../../util/hooks'
+import { Pill } from './'
+
 type StyledNoCrowdloansPlaceholderProps = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   inital: any[]
   className?: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   options?: any // Best to double check what this data type might be
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onChange: (e: any) => void
 }
 

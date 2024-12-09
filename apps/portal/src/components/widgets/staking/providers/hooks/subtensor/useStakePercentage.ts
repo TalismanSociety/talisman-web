@@ -20,6 +20,7 @@ const useStakePercentage = () => {
     // @ts-expect-error
     waitForAll(addresses.map(address => chainQueryState(chain.rpc, 'subtensorModule', 'totalColdkeyStake', [address])))
   )
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const staked = useMemo(() => ledgers.reduce((prev, curr: any) => prev + curr?.toBigInt?.(), 0n), [ledgers])
   const total = useMemo(() => free + staked, [free, staked])
 

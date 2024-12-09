@@ -28,6 +28,7 @@ interface ImportMetaEnv {
 declare namespace JSX {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface IntrinsicElements {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     'model-viewer': any
   }
 }

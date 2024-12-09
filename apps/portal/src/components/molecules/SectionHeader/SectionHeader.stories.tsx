@@ -1,5 +1,7 @@
-import SectionHeader, { type SectionHeaderProps } from './SectionHeader'
 import { type ComponentMeta, type Story } from '@storybook/react'
+
+import type { SectionHeaderProps } from './SectionHeader'
+import SectionHeader from './SectionHeader'
 
 export default {
   title: 'Molecules/SectionHeader',
@@ -9,6 +11,7 @@ export default {
   },
 } as ComponentMeta<typeof SectionHeader>
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<SectionHeaderProps> = (args: any) => <SectionHeader {...args} />
 
 Default.args = {

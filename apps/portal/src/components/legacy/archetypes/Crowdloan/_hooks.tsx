@@ -1,8 +1,10 @@
-import { useLatestCrowdloans, useParachainsDetailsIndexedById } from '../../../../libs/talisman'
 import { filter, find, orderBy } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useLatestCrowdloans, useParachainsDetailsIndexedById } from '../../../../libs/talisman'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Item = { crowdloan: any; parachainDetails?: any }
 
 const orderOptions = [

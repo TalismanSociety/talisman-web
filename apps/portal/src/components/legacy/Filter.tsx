@@ -1,8 +1,11 @@
-import { useSet } from '../../util/hooks'
-import { Pill } from './'
 import styled from '@emotion/styled'
 import { useEffect } from 'react'
 
+import { useSet } from '@/util/hooks'
+
+import { Pill } from './'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Filter = styled(({ value = [], options = {}, className, onChange = () => {}, ...rest }: any) => {
   const [selected, { add, remove, set }] = useSet()
 

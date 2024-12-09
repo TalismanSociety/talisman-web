@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import styled from '@emotion/styled'
 import { sortBy } from 'lodash'
 

@@ -6,6 +6,7 @@ type Props = {
   subtitle?: React.ReactNode | string | null
   graphic?: React.ReactNode
   invert?: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rest?: any
 }
 const Info = styled(({ title, subtitle, invert, graphic, className, ...rest }: Props) => (

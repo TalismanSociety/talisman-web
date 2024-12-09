@@ -1,8 +1,9 @@
-import { selectedSubstrateAccountsState } from '../../../accounts'
-import { subtensorStakingEnabledChainsState, nativeTokenAmountState } from '../../../chains'
-import { chainQueryState } from '../../../common'
 import { useMemo } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll, waitForAny } from 'recoil'
+
+import { selectedSubstrateAccountsState } from '../../../accounts'
+import { nativeTokenAmountState, subtensorStakingEnabledChainsState } from '../../../chains'
+import { chainQueryState } from '../../../common'
 
 export const useTotalStaked = () => {
   const [chains, accounts] = useRecoilValue(
@@ -35,6 +36,7 @@ export const useTotalStaked = () => {
       return (
         loadable.contents
           .map(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (staked: any) =>
               nativeTokenAmounts.contents.at(chainIndex)?.valueMaybe()?.fromPlanck(staked?.toBigInt?.()).fiatAmount ?? 0
           )

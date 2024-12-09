@@ -1,10 +1,13 @@
-import Copy from '../../assets/icons/copy.svg?react'
 import styled from '@emotion/styled'
+
+import Copy from '../../assets/icons/copy.svg?react'
 
 type CopyButtonProps = {
   className?: string
   text: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onCopied: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onFailed: any
 }
 

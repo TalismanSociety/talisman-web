@@ -1,4 +1,10 @@
-import type { Account } from '../../../accounts'
+import type { SubmittableExtrinsic } from '@polkadot/api/types'
+import { useQueryMultiState } from '@talismn/react-polkadot-api'
+import { BigMath } from '@talismn/util'
+import { useMemo, useState } from 'react'
+import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+
+import type { Account } from '@/domains/accounts'
 import {
   paymentInfoState,
   useExtrinsic,
@@ -6,14 +12,10 @@ import {
   useSubstrateApiState,
   useTokenAmount,
   useTokenAmountFromPlanck,
-} from '../../../common'
+} from '@/domains/common'
+
 import { MIN_SUBTENSOR_STAKE } from '../atoms/delegates'
 import { type Stake } from './useStake'
-import type { SubmittableExtrinsic } from '@polkadot/api/types'
-import { useQueryMultiState } from '@talismn/react-polkadot-api'
-import { BigMath } from '@talismn/util'
-import { useMemo, useState } from 'react'
-import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 export const useAddStakeForm = (account: Account, stake: Stake, delegate: string) => {
   const [api, [accountInfo]] = useRecoilValue(
@@ -23,9 +25,11 @@ export const useAddStakeForm = (account: Account, stake: Stake, delegate: string
   const [input, setInput] = useState('')
   const amount = useTokenAmount(input)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tx: SubmittableExtrinsic<any> = useMemo(
     () =>
       api.tx.utility.batchAll([
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (api.tx as any)?.subtensorModule?.addStake?.(delegate, amount.decimalAmount?.planck ?? 0n),
         api.tx.system.remarkWithEvent(`talisman-bittensor`),
       ]),
@@ -115,7 +119,9 @@ export const useUnstakeForm = (stake: Stake, delegate: string) => {
   const [input, setInput] = useState('')
   const amount = useTokenAmount(input)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tx: SubmittableExtrinsic<any> = useMemo(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     () => (api.tx as any)?.subtensorModule?.removeStake?.(delegate, amount.decimalAmount?.planck ?? 0n),
     [api.tx, delegate, amount.decimalAmount?.planck]
   )
@@ -165,6 +171,7 @@ export const useUnstakeForm = (stake: Stake, delegate: string) => {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const useStakeFormFeeEstimate = (origin: string, tx: SubmittableExtrinsic<any>) => {
   const paymentInfoLoadable = useRecoilValueLoadable(
     paymentInfoState([

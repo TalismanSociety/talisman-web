@@ -65,6 +65,7 @@ const btcTokens = {
 
 const getTokensByChainId = async (
   get: Getter,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   allTokensSelector: Atom<Promise<SwappableAssetBaseType<Partial<Record<SupportedSwapProtocol, any>>>[]>>[]
 ) => {
   const knownEvmTokens = await get(knownEvmNetworksAtom)
@@ -629,6 +630,7 @@ export const useSwap = () => {
           set(fromAmountAtom, Decimal.fromPlanck(0n, 1))
         } catch (e) {
           console.error(e)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const error = e as any
           toast.error(error?.shortMessage ?? error?.details ?? error.message ?? 'unknown error')
         } finally {

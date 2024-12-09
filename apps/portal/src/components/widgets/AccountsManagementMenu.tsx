@@ -192,6 +192,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                   trailingContent={
                     <SurfaceIcon
                       size="3.5rem"
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       onClick={(event: any) => {
                         event.stopPropagation()
                         void copyAddressToClipboard(x.address)
@@ -243,6 +244,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                         <div css={{ display: 'flex' }}>
                           <SurfaceIcon
                             size="3.5rem"
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             onClick={(event: any) => {
                               event.stopPropagation()
                               void copyAddressToClipboard(account.address)
@@ -258,6 +260,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                             <div>
                               <SurfaceIcon
                                 size="3.5rem"
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 onClick={(event: any) => {
                                   event.stopPropagation()
                                   toggleRemoveDialog()

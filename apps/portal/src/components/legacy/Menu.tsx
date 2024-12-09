@@ -1,6 +1,7 @@
-import useOnClickOutside from '../../util/useOnClickOutside'
 import styled from '@emotion/styled'
 import React, { useRef, useState } from 'react'
+
+import useOnClickOutside from '../../util/useOnClickOutside'
 
 type MenuDropdownAlignment = 'left' | 'right'
 
@@ -12,6 +13,7 @@ export type MenuProps = {
   dropdownAlignment?: MenuDropdownAlignment
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function MenuItem(props: any) {
   return (
     <li className="cursor-pointer" {...props}>
@@ -25,6 +27,7 @@ export const Menu = styled((props: MenuProps) => {
   const nodeRef = useRef<HTMLDivElement>(null)
   const [showMenu, setShowMenu] = useState(false)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onClickInside = (e: any) => {
     const el = nodeRef?.current
     if (closeOnSelect && el && el.contains(e.target as Node)) {

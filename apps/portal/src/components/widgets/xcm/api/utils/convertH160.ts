@@ -8,6 +8,7 @@ const ETH_PREFIX = 'ETH\0'
 export const convertFromH160 = (h160Addr: string, ss58prefix = HYDRADX_SS58_PREFIX) => {
   const addressBytes = Buffer.from(h160Addr.slice(2), 'hex')
   const prefixBytes = Buffer.from(ETH_PREFIX)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const convertBytes = Uint8Array.from(Buffer.concat([prefixBytes, addressBytes, Buffer.alloc(8)] as any))
   return encodeAddress(convertBytes, ss58prefix)
 }

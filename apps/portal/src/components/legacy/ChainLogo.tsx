@@ -1,6 +1,8 @@
-import { Image } from './'
 import styled from '@emotion/styled'
 
+import { Image } from './'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default styled(({ chain, type, className }: { chain: any; type: string; size?: number; className?: string }) => {
   return (
     <Image

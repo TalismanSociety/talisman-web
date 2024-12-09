@@ -1,21 +1,23 @@
-import { Parachain } from '..'
-import { Button, DesktopRequired, Field, MaterialLoader, useModal } from '../..'
-import XCircle from '../../../../assets/icons/x-circle.svg?react'
-import { writeableSubstrateAccountsState } from '../../../../domains/accounts'
-import { ContributeEvent, useCrowdloanContribute } from '../../../../libs/crowdloans'
-import { Acala, Moonbeam, Polkadex, overrideByIds } from '../../../../libs/crowdloans/crowdloanOverrides'
-import { useCrowdloanById } from '../../../../libs/talisman'
-import { isMobileBrowser } from '../../../../util/helpers'
-import { Maybe } from '../../../../util/monads'
-import { useAccountSelector } from '../../../widgets/AccountSelector'
-import { TalismanHandLike } from '../../TalismanHandLike'
-import { TalismanHandLoader } from '../../TalismanHandLoader'
+import type { MouseEventHandler } from 'react'
 import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { CircularProgressIndicator, Text } from '@talismn/ui'
-import { useCallback, useEffect, useMemo, useState, type MouseEventHandler } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useRecoilValue } from 'recoil'
+
+import XCircle from '@/assets/icons/x-circle.svg?react'
+import { Button, DesktopRequired, Field, MaterialLoader, useModal } from '@/components/legacy'
+import * as Parachain from '@/components/legacy/archetypes/Parachain'
+import { TalismanHandLike } from '@/components/legacy/TalismanHandLike'
+import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
+import { useAccountSelector } from '@/components/widgets/AccountSelector'
+import { writeableSubstrateAccountsState } from '@/domains/accounts'
+import { ContributeEvent, useCrowdloanContribute } from '@/libs/crowdloans'
+import { Acala, Moonbeam, overrideByIds, Polkadex } from '@/libs/crowdloans/crowdloanOverrides'
+import { useCrowdloanById } from '@/libs/talisman'
+import { isMobileBrowser } from '@/util/helpers'
+import { Maybe } from '@/util/monads'
 
 export type ContributeProps = {
   className?: string
@@ -120,7 +122,8 @@ const ContributeTo = styled(
 
     validationError,
     submissionRequested,
-  }: any) => {
+  }: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  any) => {
     const theme = useTheme()
     const { t } = useTranslation()
     const { t: tError } = useTranslation('errors')
@@ -171,6 +174,7 @@ const ContributeTo = styled(
               >
                 {
                   <span>
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {Maybe.of(accountBalance).mapOr<any>(<CircularProgressIndicator size="1em" />, x =>
                       Number(x).toFixed(2)
                     )}{' '}
@@ -433,6 +437,7 @@ const ContributeTo = styled(
   }
 `
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ProgressProps = { className?: string; explorerUrl?: string; closeModal: () => unknown; error?: any }
 
 const InProgress = styled(({ className, explorerUrl, closeModal }: ProgressProps) => {
@@ -504,6 +509,7 @@ const InProgress = styled(({ className, explorerUrl, closeModal }: ProgressProps
   }
 `
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const RegisteringUser = styled(({ className, dispatch, submissionRequested }: any) => {
   const { t } = useTranslation('crowdloan')
 
@@ -759,6 +765,7 @@ function useTerms(relayId: number, paraId: number): [boolean, boolean, MouseEven
   const chainHasTerms = useMemo(() => overrideByIds(relayId, paraId)?.terms !== undefined, [paraId, relayId])
 
   const [termsAgreed, setTermsAgreed] = useState(!chainHasTerms)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onTermsCheckboxClick = useCallback((event: any) => setTermsAgreed(event.target.checked), [])
 
   return [chainHasTerms, termsAgreed, onTermsCheckboxClick]

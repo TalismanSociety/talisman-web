@@ -1,8 +1,9 @@
-import { isMobileBrowser } from '../../util/helpers'
-import { Button, useModal } from './'
 import styled from '@emotion/styled'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import { isMobileBrowser } from '../../util/helpers'
+import { Button, useModal } from './'
 
 export default function DesktopRequired() {
   const { openModal } = useModal()
@@ -16,6 +17,7 @@ export default function DesktopRequired() {
   return null
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const DesktopRequiredModal = styled((props: any) => {
   const { closeModal } = useModal()
   const { t } = useTranslation()

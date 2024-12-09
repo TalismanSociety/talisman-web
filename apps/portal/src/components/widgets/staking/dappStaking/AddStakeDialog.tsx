@@ -1,15 +1,18 @@
-import type { Account } from '../../../../domains/accounts'
-import { useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
-import { useAddStakeForm, type StakeLoadable } from '../../../../domains/staking/dappStaking'
-import { DappStakingAddStakeDialog } from '../../../recipes/AddStakeDialog'
-import DappPickerDialog from './DappPickerDialog'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
 import { CircularProgressIndicator } from '@talismn/ui'
 import { useState } from 'react'
 
+import type { Account } from '../../../../domains/accounts'
+import type { StakeLoadable } from '../../../../domains/staking/dappStaking'
+import { useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
+import { useAddStakeForm } from '../../../../domains/staking/dappStaking'
+import { DappStakingAddStakeDialog } from '../../../recipes/AddStakeDialog'
+import DappPickerDialog from './DappPickerDialog'
+
 type DappAddStakeDialogProps = {
   account: Account
   stake: StakeLoadable['data']
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
   onRequestDismiss: () => void
 }

@@ -107,6 +107,7 @@ const NftCard = ({ nft }: { nft: Nft }) => {
               toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH }),
               toIpfsCompatibleUrl(x),
             ])}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             type={nft.thumbnail !== undefined ? undefined : (nft.media.mimeType?.split('/').at(0) as any)}
             fetchMime
           />
@@ -155,6 +156,7 @@ const NftCard = ({ nft }: { nft: Nft }) => {
         media={
           <MediaDialog.Player
             src={Maybe.of(nft.media.url).mapOrUndefined(toIpfsCompatibleUrl)}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             type={nft.media.mimeType?.split('/').at(0) as any}
           />
         }

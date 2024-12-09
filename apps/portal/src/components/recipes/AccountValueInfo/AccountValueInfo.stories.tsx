@@ -1,5 +1,7 @@
-import AccountValueInfo, { type AccountValueInfoProps } from './AccountValueInfo'
 import { type ComponentMeta, type Story } from '@storybook/react'
+
+import type { AccountValueInfoProps } from './AccountValueInfo'
+import AccountValueInfo from './AccountValueInfo'
 
 export default {
   title: 'Recipes/AccountValueInfo',
@@ -9,6 +11,7 @@ export default {
   },
 } as ComponentMeta<typeof AccountValueInfo>
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<AccountValueInfoProps> = (args: any) => <AccountValueInfo {...args} />
 
 Default.args = {

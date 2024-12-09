@@ -1,5 +1,7 @@
-import Cryptoticon, { type CryptoticonProps } from './Cryptoticon'
 import { type ComponentMeta, type Story } from '@storybook/react'
+
+import type { CryptoticonProps } from './Cryptoticon'
+import Cryptoticon from './Cryptoticon'
 
 export default {
   title: 'Recipes/Cryptoticon',
@@ -10,6 +12,7 @@ export default {
 } as ComponentMeta<typeof Cryptoticon>
 
 const decorators = [
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (Story: any) => (
     <Cryptoticon.Provider>
       <Story />

@@ -1,11 +1,13 @@
-import { Card, CardLoading, TagLoading } from '../components/legacy/archetypes/Explore'
-import { useFetchDapps, type Dapp } from '../components/legacy/archetypes/Explore/hooks'
-import { device } from '../util/breakpoints'
-import { TitlePortal } from './layout'
 import styled from '@emotion/styled'
 import { HiddenDetails, SearchBar, Text } from '@talismn/ui'
 import { useState } from 'react'
 import { useDebounce } from 'react-use'
+
+import type { Dapp } from '@/components/legacy/archetypes/Explore/hooks'
+import { Card, CardLoading, TagLoading } from '@/components/legacy/archetypes/Explore'
+import { useFetchDapps } from '@/components/legacy/archetypes/Explore/hooks'
+import { TitlePortal } from '@/routes/layout'
+import { device } from '@/util/breakpoints'
 
 const ExploreGrid = ({ className }: { className?: string }) => {
   const [searchQuery, setSearchQuery] = useState('')

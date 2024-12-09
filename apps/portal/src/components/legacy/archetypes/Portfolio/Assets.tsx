@@ -67,6 +67,7 @@ const useFetchAssets = (address: string | undefined) => {
   return { assetBalances, fiatTotal, lockedTotal, value: transferable, balances, chains, evmNetworks, isLoading }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getFiatString = (value: any, currency: string) => {
   return (
     value.toLocaleString(undefined, {

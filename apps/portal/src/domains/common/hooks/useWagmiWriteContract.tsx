@@ -1,16 +1,10 @@
-import { Text, toast, ToastMessage } from '@talismn/ui'
 import type { MutateOptions } from '@tanstack/react-query'
-import { usePostHog } from 'posthog-js/react'
 import type { Abi, ContractFunctionArgs, ContractFunctionName, WriteContractErrorType } from 'viem'
-import {
-  useAccount,
-  useSwitchChain,
-  useWriteContract,
-  type Config,
-  type ResolvedRegister,
-  type UseWriteContractParameters,
-} from 'wagmi'
+import type { Config, ResolvedRegister, UseWriteContractParameters } from 'wagmi'
 import type { WriteContractData, WriteContractVariables } from 'wagmi/query'
+import { Text, toast, ToastMessage } from '@talismn/ui'
+import { usePostHog } from 'posthog-js/react'
+import { useAccount, useSwitchChain, useWriteContract } from 'wagmi'
 
 /**
  * PostHog can't handle BigInt
@@ -25,6 +19,7 @@ const sanitizePostHogProperties = (object: unknown) => {
   }
 
   return Object.fromEntries(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Object.entries(object).map(([key, value]): [any, any] => [key, sanitizePostHogProperties(value)])
   )
 }

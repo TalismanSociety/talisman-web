@@ -1,10 +1,13 @@
-import ChevronDown from '../../assets/icons/chevron-down.svg?react'
-import SearchIcon from '../../assets/icons/search.svg?react'
-import IconClear from '../../assets/icons/x-circle.svg?react'
-import { useBoolean } from '../../util/hooks'
-import { Pill } from './'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import styled from '@emotion/styled'
 import { useEffect } from 'react'
+
+import ChevronDown from '@/assets/icons/chevron-down.svg?react'
+import SearchIcon from '@/assets/icons/search.svg?react'
+import IconClear from '@/assets/icons/x-circle.svg?react'
+import Pill from '@/components/legacy/Pill'
+import { useBoolean } from '@/util/hooks'
 
 // framework
 
@@ -121,7 +124,7 @@ const FieldWrapper = styled(({ type, prefix, suffix, label, dim, children, class
     Boolean(inline) &&
     `
       flex-direction: row;
-      label{
+      label {
         margin-right: 0.4em;
       }
     `};
