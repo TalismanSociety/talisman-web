@@ -73,57 +73,83 @@ const Stake = ({
         account={account}
         provider="DApp staking"
         stakeStatus={stake.earningRewards ? 'earning_rewards' : 'not_earning_rewards'}
-        balance={stake.totalStaked?.decimalAmount?.toLocaleString()}
-        fiatBalance={stake.totalStaked?.localizedFiatAmount}
-        rewards={<TotalRewards account={account} />}
-        fiatRewards={<TotalFiatRewards account={account} />}
+        balance={
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            {stake.totalStaked?.decimalAmount?.toLocaleString()}
+          </ErrorBoundary>
+        }
+        fiatBalance={
+          <ErrorBoundary renderFallback={() => <>--</>}>{stake.totalStaked?.localizedFiatAmount}</ErrorBoundary>
+        }
+        rewards={
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <TotalRewards account={account} />
+          </ErrorBoundary>
+        }
+        fiatRewards={
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <TotalFiatRewards account={account} />
+          </ErrorBoundary>
+        }
         increaseStakeButton={
           stake.dapps.length > 0 && (
-            <StakePosition.IncreaseStakeButton onClick={() => setAddStakeDialogOpen(true)} withTransition />
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.IncreaseStakeButton onClick={() => setAddStakeDialogOpen(true)} withTransition />
+            </ErrorBoundary>
           )
         }
         unstakeButton={
           stake.dapps.length > 0 && (
-            <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} withTransition />
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} withTransition />
+            </ErrorBoundary>
           )
         }
         lockedButton={
           (stake.locked?.decimalAmount.planck ?? 0n) > 0n && (
-            <StakePosition.LockedButton
-              loading={unlockExtrinsic.state === 'loading'}
-              amount={stake.locked?.decimalAmount.toLocaleString()}
-              onClick={() => setLockedDialogOpen(true)}
-            />
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.LockedButton
+                loading={unlockExtrinsic.state === 'loading'}
+                amount={stake.locked?.decimalAmount.toLocaleString()}
+                onClick={() => setLockedDialogOpen(true)}
+              />
+            </ErrorBoundary>
           )
         }
         claimButton={
           (stake.totalRewards?.decimalAmount.planck ?? 0n) > 0n && (
-            <StakePosition.ClaimButton
-              loading={claimAllRewardsExtrinsic.state === 'loading'}
-              amount={stake.totalRewards?.decimalAmount.toLocaleString()}
-              onClick={() => {
-                void claimAllRewardsExtrinsic.signAndSend(account.address)
-              }}
-            />
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.ClaimButton
+                loading={claimAllRewardsExtrinsic.state === 'loading'}
+                amount={stake.totalRewards?.decimalAmount.toLocaleString()}
+                onClick={() => {
+                  void claimAllRewardsExtrinsic.signAndSend(account.address)
+                }}
+              />
+            </ErrorBoundary>
           )
         }
         withdrawButton={
           (stake.withdrawable?.decimalAmount.planck ?? 0n) > 0n && (
-            <StakePosition.WithdrawButton
-              loading={withdrawExtrinsic.state === 'loading'}
-              amount={stake.withdrawable?.decimalAmount.toLocaleString()}
-              onClick={() => {
-                void withdrawExtrinsic.signAndSend(account.address)
-              }}
-            />
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.WithdrawButton
+                loading={withdrawExtrinsic.state === 'loading'}
+                amount={stake.withdrawable?.decimalAmount.toLocaleString()}
+                onClick={() => {
+                  void withdrawExtrinsic.signAndSend(account.address)
+                }}
+              />
+            </ErrorBoundary>
           )
         }
         unstakingStatus={
           stake.unlocking.length > 0 && (
-            <StakePosition.UnstakingStatus
-              amount={stake.totalUnlocking?.decimalAmount.toLocaleString()}
-              unlocks={stake.unlocking.map(x => ({ amount: x.amount.decimalAmount.toLocaleString(), eta: x.eta }))}
-            />
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.UnstakingStatus
+                amount={stake.totalUnlocking?.decimalAmount.toLocaleString()}
+                unlocks={stake.unlocking.map(x => ({ amount: x.amount.decimalAmount.toLocaleString(), eta: x.eta }))}
+              />
+            </ErrorBoundary>
           )
         }
       />
