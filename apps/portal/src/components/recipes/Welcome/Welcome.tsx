@@ -1,17 +1,8 @@
-import { shortenAddress } from '../../../util/format'
-import {
-  Button,
-  Clickable,
-  Hr,
-  Identicon,
-  ListItem,
-  Text,
-  TextInput,
-  useSurfaceColor,
-  type ButtonProps,
-  type TextInputProps,
-} from '@talismn/ui'
+import type { ButtonProps, TextInputProps } from '@talismn/ui'
+import { Button, Clickable, Hr, Identicon, ListItem, Text, TextInput, useSurfaceColor } from '@talismn/ui'
 import { type ReactNode } from 'react'
+
+import { shortenAddress } from '@/util/shortenAddress'
 
 export type WelcomeProps = {
   className?: string

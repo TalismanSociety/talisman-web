@@ -5,11 +5,11 @@ import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { usePrevious } from 'react-use'
 import { useSetRecoilState } from 'recoil'
 
-import { type Account } from '../../domains/accounts/recoils'
-import { useHasActiveWalletConnection } from '../../domains/extension'
-import { shortenAddress } from '../../util/format'
-import AccountIcon from '../molecules/AccountIcon/AccountIcon'
-import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
+import AccountIcon from '@/components/molecules/AccountIcon/AccountIcon'
+import { walletConnectionSideSheetOpenState } from '@/components/widgets/WalletConnectionSideSheet'
+import { type Account } from '@/domains/accounts/recoils'
+import { useHasActiveWalletConnection } from '@/domains/extension'
+import { shortenAddress } from '@/util/shortenAddress'
 
 export type AccountSelectorProps = {
   accounts: Account[]
@@ -130,8 +130,8 @@ export const useAccountSelector = (
       typeof initialAccount === 'function'
         ? initialAccount(accounts)
         : typeof initialAccount === 'number'
-          ? accounts.at(initialAccount)
-          : initialAccount,
+        ? accounts.at(initialAccount)
+        : initialAccount,
     [initialAccount]
   )
 

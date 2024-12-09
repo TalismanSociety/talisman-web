@@ -1,9 +1,11 @@
-import type { Account } from '../../../accounts'
-import { assertChain, useChainState } from '../../../chains'
-import { Decimal } from '@talismn/math'
 import { atom, useAtomValue } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { useRecoilValue } from 'recoil'
+
+import { Decimal } from '@/util/Decimal'
+
+import type { Account } from '../../../accounts'
+import { assertChain, useChainState } from '../../../chains'
 
 // Dummy test commit.
 const totalDappStakingRewardsAtomFamily = atomFamily(

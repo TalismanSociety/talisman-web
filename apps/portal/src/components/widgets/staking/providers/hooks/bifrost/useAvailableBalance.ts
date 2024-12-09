@@ -1,10 +1,10 @@
-import { Decimal } from '@talismn/math'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import { selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
 import { SlpxPair } from '@/domains/staking/slpx'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
+import { Decimal } from '@/util/Decimal'
 
 export const useAvailableBalance = (slpxPair: SlpxPair | SlpxSubstratePair, isSubstrate?: boolean) => {
   const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))

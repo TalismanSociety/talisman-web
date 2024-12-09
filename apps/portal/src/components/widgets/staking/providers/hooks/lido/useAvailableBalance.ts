@@ -1,8 +1,8 @@
-import { Decimal } from '@talismn/math'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import { selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
+import { Decimal } from '@/util/Decimal'
 
 const useAvailableBalance = (symbol: string) => {
   const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))

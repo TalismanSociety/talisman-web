@@ -1,17 +1,3 @@
-import ThemeProvider from './App.Theme'
-import FairyBreadBanner from './components/legacy/archetypes/FairyBreadBanner'
-import { TalismanHandLoader } from './components/legacy/TalismanHandLoader'
-import Development from './components/widgets/development'
-import ErrorBoundary from './components/widgets/ErrorBoundary'
-import { AccountWatcher, SignetWatcher } from './domains/accounts'
-import { BalancesWatcher } from './domains/balances'
-import { chainDeriveState, chainQueryMultiState, chainQueryState } from './domains/common'
-import { ExtensionWatcher, TalismanExtensionSynchronizer } from './domains/extension'
-import { EvmProvider } from './domains/extension/wagmi'
-import * as Portfolio from './libs/portfolio'
-import TalismanProvider from './libs/talisman'
-import router from './routes'
-
 import '@polkadot/api-augment/polkadot'
 import '@polkadot/api-augment/substrate'
 import '@talismn/astar-types/augment-api'
@@ -23,33 +9,31 @@ import { Suspense } from 'react'
 import { RouterProvider } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
 
-const Loader = () => (
-  <div
-    style={{
-      height: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      position: 'absolute',
-      left: 0,
-      right: 0,
-    }}
-  >
-    <TalismanHandLoader />
-  </div>
-)
+import ThemeProvider from '@/App.Theme'
+import FairyBreadBanner from '@/components/legacy/archetypes/FairyBreadBanner'
+import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
+import Development from '@/components/widgets/development'
+import ErrorBoundary from '@/components/widgets/ErrorBoundary'
+import { AccountWatcher, SignetWatcher } from '@/domains/accounts'
+import { BalancesWatcher } from '@/domains/balances'
+import { chainDeriveState, chainQueryMultiState, chainQueryState } from '@/domains/common'
+import { ExtensionWatcher, TalismanExtensionSynchronizer } from '@/domains/extension'
+import { EvmProvider } from '@/domains/extension/wagmi'
+import * as Portfolio from '@/libs/portfolio'
+import TalismanProvider from '@/libs/talisman'
+import router from '@/routes'
 
 const App = () => (
   <ThemeProvider>
     <RecoilRoot>
       <ErrorBoundary
         renderFallback={fallback => (
-          <div css={{ height: '100dvh', display: 'flex' }}>
-            <div css={{ margin: 'auto' }}>{fallback}</div>
+          <div className="flex h-[100dvh]">
+            <div className="m-auto">{fallback}</div>
           </div>
         )}
       >
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={<FullscreenLoader />}>
           <PostHogProvider apiKey={import.meta.env.VITE_POSTHOG_AUTH_TOKEN}>
             <EvmProvider>
               <PolkadotApiProvider
@@ -64,7 +48,7 @@ const App = () => (
                     <SignetWatcher />
                     <TalismanExtensionSynchronizer />
                     <BalancesWatcher />
-                    <Suspense fallback={<Loader />}>
+                    <Suspense fallback={<FullscreenLoader />}>
                       <RouterProvider router={router} />
                     </Suspense>
                     <FairyBreadBanner />
@@ -78,6 +62,12 @@ const App = () => (
       </ErrorBoundary>
     </RecoilRoot>
   </ThemeProvider>
+)
+
+const FullscreenLoader = () => (
+  <div className="absolute left-0 right-0 flex h-full items-center justify-center">
+    <TalismanHandLoader />
+  </div>
 )
 
 export default App

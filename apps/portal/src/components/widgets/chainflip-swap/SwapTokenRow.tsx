@@ -1,12 +1,5 @@
-import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
-import { uniswapExtendedTokensList, uniswapSafeTokensList } from './swaps.api'
-import { selectedCurrencyState } from '@/domains/balances'
-import { useCopied } from '@/hooks/useCopied'
-import { useTokenRatesFromUsd } from '@/hooks/useTokenRatesFromUsd'
-import { truncateAddress } from '@/util/helpers'
 import { useTokenRates, useTokens } from '@talismn/balances-react'
 import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
-import { Decimal } from '@talismn/math'
 import { Skeleton, toast, Tooltip } from '@talismn/ui'
 import { Check, Copy, ExternalLink } from '@talismn/web-icons'
 import { useAtomValue } from 'jotai'
@@ -15,6 +8,15 @@ import { AlertTriangle } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
+
+import { selectedCurrencyState } from '@/domains/balances'
+import { useCopied } from '@/hooks/useCopied'
+import { useTokenRatesFromUsd } from '@/hooks/useTokenRatesFromUsd'
+import { Decimal } from '@/util/Decimal'
+import { truncateAddress } from '@/util/helpers'
+
+import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
+import { uniswapExtendedTokensList, uniswapSafeTokensList } from './swaps.api'
 
 type Props = {
   asset: SwappableAssetWithDecimals
@@ -88,23 +90,23 @@ export const SwapTokenRow: React.FC<Props> = ({
 
   return (
     <div
-      className="!w-full !h-[64px] !rounded-[12px] grid grid-cols-3 px-[16px] gap-[8px] hover:bg-gray-800 cursor-pointer"
+      className="grid !h-[64px] !w-full cursor-pointer grid-cols-3 gap-[8px] !rounded-[12px] px-[16px] hover:bg-gray-800"
       onClick={handleClick}
     >
-      <Tooltip content={<p className="text-[12px] truncate leading-none !text-muted-foreground">{asset.name}</p>}>
-        <div className="w-full flex items-center gap-[8px]">
+      <Tooltip content={<p className="!text-muted-foreground truncate text-[12px] leading-none">{asset.name}</p>}>
+        <div className="flex w-full items-center gap-[8px]">
           <div className="relative">
             {networkLogo ? (
               <img
                 src={networkLogo}
                 key={networkLogo}
-                className="border-[2px] bg-gray-800 border-gray-800 w-[12px] absolute -top-[4px] -right-[4px] h-[12px] min-w-[12px] sm:min-w-[20px] sm:w-[20px] sm:h-[20px] rounded-full"
+                className="absolute -right-[4px] -top-[4px] h-[12px] w-[12px] min-w-[12px] rounded-full border-[2px] border-gray-800 bg-gray-800 sm:h-[20px] sm:w-[20px] sm:min-w-[20px]"
               />
             ) : null}
             <img
               key={asset.image ?? githubUnknownTokenLogoUrl}
               src={asset.image ?? githubUnknownTokenLogoUrl}
-              className="w-[24px] h-[24px] min-w-[24px] sm:min-w-[40px] sm:w-[40px] sm:h-[40px] rounded-full"
+              className="h-[24px] w-[24px] min-w-[24px] rounded-full sm:h-[40px] sm:w-[40px] sm:min-w-[40px]"
             />
           </div>
           <div className="flex flex-col gap-[4px] overflow-hidden">
@@ -112,7 +114,7 @@ export const SwapTokenRow: React.FC<Props> = ({
               <p className="text-[14px] leading-none">{asset.symbol}</p>
               {shouldShowWarning && <AlertTriangle className="text-gray-400" size={14} />}
             </div>
-            <p className="font-medium text-[12px] text-muted-foreground">
+            <p className="text-muted-foreground text-[12px] font-medium">
               {rate?.[currency]?.toLocaleString(undefined, { currency, style: 'currency' }) ?? '-'}
             </p>
           </div>
@@ -124,8 +126,8 @@ export const SwapTokenRow: React.FC<Props> = ({
         {erc20Address ? (
           explorerUrl ? (
             <Link to={`${explorerUrl}/token/${erc20Address}`} target="_blank" onClick={e => e.stopPropagation()}>
-              <div className="flex items-center gap-[4px] group cursor-pointer">
-                <p className="text-[12px] text-muted-foreground mt-[2px] group-hover:text-primary">
+              <div className="group flex cursor-pointer items-center gap-[4px]">
+                <p className="text-muted-foreground group-hover:text-primary mt-[2px] text-[12px]">
                   {truncateAddress(erc20Address)}
                 </p>
                 <ExternalLink className="group-hover:text-primary" size={14} />
@@ -133,14 +135,14 @@ export const SwapTokenRow: React.FC<Props> = ({
             </Link>
           ) : (
             <div
-              className="flex items-center gap-[4px] group cursor-pointer"
+              className="group flex cursor-pointer items-center gap-[4px]"
               onClick={e => {
                 e.stopPropagation()
                 copy(erc20Address)
                 toast('Copied token address!')
               }}
             >
-              <p className="text-[12px] text-muted-foreground mt-[2px] group-hover:text-primary">
+              <p className="text-muted-foreground group-hover:text-primary mt-[2px] text-[12px]">
                 {truncateAddress(erc20Address)}
               </p>
               {copied ? (
@@ -155,7 +157,7 @@ export const SwapTokenRow: React.FC<Props> = ({
 
       {(asset.networkType === 'evm' && evmAddress) || (asset.networkType === 'substrate' && substrateAddress) ? (
         balance ? (
-          <div className="flex items-end flex-col justify-center">
+          <div className="flex flex-col items-end justify-center">
             <p className="text-[14px] font-medium">{balance?.toLocaleString(undefined, {})}</p>
             {rate ? (
               <p className="text-muted-foreground text-[12px]">
@@ -167,14 +169,14 @@ export const SwapTokenRow: React.FC<Props> = ({
             ) : null}
           </div>
         ) : (
-          <div className="flex items-end flex-col justify-center">
+          <div className="flex flex-col items-end justify-center">
             <Skeleton.Surface className="h-[20px] w-[72px]" />
-            <Skeleton.Surface className="h-[16px] w-[36px] mt-[4px]" />
+            <Skeleton.Surface className="mt-[4px] h-[16px] w-[36px]" />
           </div>
         )
       ) : (
         <div className="flex items-center justify-end">
-          <p className="text-muted-foreground text-[12px] text-right">-</p>
+          <p className="text-muted-foreground text-right text-[12px]">-</p>
         </div>
       )}
     </div>

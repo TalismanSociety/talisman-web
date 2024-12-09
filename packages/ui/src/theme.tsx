@@ -11,6 +11,29 @@ type Typography = {
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export interface Theme {
+  /** @deprecated */
+  primary: string
+  /** @deprecated */
+  secondary: string
+  /** @deprecated */
+  background: string
+  /** @deprecated */
+  foreground: string
+  /** @deprecated */
+  mid: string
+  /** @deprecated */
+  dim: string
+  /** @deprecated */
+  light: string
+  /** @deprecated */
+  dark: string
+  /** @deprecated */
+  text: string
+  /** @deprecated */
+  activeBackground: string
+  /** @deprecated */
+  controlBackground: string
+
   typography: {
     h1: Typography
     h2: Typography
@@ -61,6 +84,18 @@ declare module '@emotion/react' {
 }
 
 const greenDark: Theme = {
+  primary: '213,255,92',
+  secondary: '0,0,255',
+  background: '18,18,18',
+  foreground: '165,165,165', // #a5a5a5
+  mid: '150,150,150',
+  dim: '90,90,90', // #5a5a5a
+  light: '250,250,250', // #fafafa
+  dark: '0,0,0',
+  text: '250,250,250', // #fafafa
+  activeBackground: '56,56,56', // #383838
+  controlBackground: '38,38,38',
+
   typography: {
     h1: { fontFamily: "'SurtExpanded', sans-serif", fontSize: 56, margin: 0 },
     h2: { fontFamily: "'SurtExpanded', sans-serif", fontSize: 32, margin: 0 },
@@ -130,12 +165,12 @@ export const ThemeProvider = ({ theme: propsTheme = greenDark, merge = false, ch
 
   const theme: Theme = !merge
     ? (propsTheme as Theme)
-    : {
+    : ({
         typography: { ...parentTheme.typography, ...propsTheme.typography },
         color: { ...parentTheme.color, ...propsTheme.color },
         contentAlpha: { ...parentTheme.contentAlpha, ...propsTheme.contentAlpha },
         shape: { ...parentTheme.shape, ...propsTheme.shape },
-      }
+      } as Theme)
 
   return (
     <>

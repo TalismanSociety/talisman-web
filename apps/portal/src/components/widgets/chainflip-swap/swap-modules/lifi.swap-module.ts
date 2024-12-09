@@ -1,11 +1,12 @@
 import * as sdk from '@lifi/sdk'
 import { evmErc20TokenId, evmNativeTokenId } from '@talismn/balances'
 import { evmNetworksByIdAtom } from '@talismn/balances-react'
-import { Decimal } from '@talismn/math'
 import { atom, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
 import { zeroAddress } from 'viem'
 import * as allEvmChains from 'viem/chains'
+
+import { Decimal } from '@/util/Decimal'
 
 import { knownEvmNetworksAtom } from '../helpers'
 import {

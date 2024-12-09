@@ -1,4 +1,16 @@
-import { ToAccount } from './ToAccount'
+import type React from 'react'
+import { Surface } from '@talismn/ui'
+import { Wallet } from '@talismn/web-icons'
+import { useAtom, useAtomValue } from 'jotai'
+import { useCallback, useMemo } from 'react'
+import { useRecoilValue } from 'recoil'
+import { isAddress } from 'viem'
+
+import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
+import { selectedCurrencyState } from '@/domains/balances'
+import { cn } from '@/lib/utils'
+import { Decimal } from '@/util/Decimal'
+
 import {
   fromAddressAtom,
   fromAssetAtom,
@@ -9,17 +21,7 @@ import {
   toEvmAddressAtom,
   toSubstrateAddressAtom,
 } from './swap-modules/common.swap-module'
-import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
-import { selectedCurrencyState } from '@/domains/balances'
-import { cn } from '@/lib/utils'
-import { Decimal } from '@talismn/math'
-import { Surface } from '@talismn/ui'
-import { Wallet } from '@talismn/web-icons'
-import { useAtom, useAtomValue } from 'jotai'
-import type React from 'react'
-import { useCallback, useMemo } from 'react'
-import { useRecoilValue } from 'recoil'
-import { isAddress } from 'viem'
+import { ToAccount } from './ToAccount'
 
 type Props = {
   fastBalance?: {
@@ -72,7 +74,7 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
   }, [fromAddress, fromAsset, isSwappingFromBtc, toAddress, toAsset])
 
   return (
-    <Surface className="bg-card p-[16px] rounded-[8px] w-full flex flex-col gap-[12px]">
+    <Surface className="bg-card flex w-full flex-col gap-[12px] rounded-[8px] p-[16px]">
       <div className="flex items-center justify-between">
         <h4 className={cn('text-[16px]', fromAsset ? 'font-semibold' : 'text-gray-500')}>Swapping From</h4>
         <div
@@ -82,7 +84,7 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
             'cursor-pointer hover:opacity-70':
               toAddress?.toLowerCase() !== fromAddress?.toLowerCase() &&
               fromAsset?.networkType === toAsset?.networkType,
-            'cursor-pointer hover:text-primary':
+            'hover:text-primary cursor-pointer':
               fromAsset?.networkType === toAsset?.networkType &&
               toAsset &&
               fromAsset &&
@@ -100,7 +102,7 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
             }
           }}
         >
-          <Wallet className="w-[16px] h-[16px]" />
+          <Wallet className="h-[16px] w-[16px]" />
           <p className="text-[14px] font-medium">Destination</p>
         </div>
       </div>
@@ -132,7 +134,7 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
               output: (account, b) => {
                 if (!fromAsset) {
                   return (
-                    <p className="text-[14px] text-gray-400 whitespace-nowrap">
+                    <p className="whitespace-nowrap text-[14px] text-gray-400">
                       {b.sum.fiat(currency).transferable.toLocaleString(undefined, {
                         currency,
                         style: 'currency',
@@ -150,7 +152,7 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
                     account.toLowerCase() === fromAddress.toLowerCase()
                   ) {
                     return (
-                      <p className="text-[14px] text-gray-400 whitespace-nowrap">
+                      <p className="whitespace-nowrap text-[14px] text-gray-400">
                         {fastBalance.amount.toLocaleString()}
                       </p>
                     )
@@ -160,7 +162,7 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
                 const loading = b.each.find(b => b.status !== 'live') !== undefined || b.count === 0
 
                 return (
-                  <p className={cn('text-[14px] text-gray-400 whitespace-nowrap', { 'animate-pulse': loading })}>
+                  <p className={cn('whitespace-nowrap text-[14px] text-gray-400', { 'animate-pulse': loading })}>
                     {Decimal.fromPlanck(b.sum.planck.transferable, fromAsset.decimals, {
                       currency: fromAsset.symbol ?? undefined,
                     }).toLocaleString()}

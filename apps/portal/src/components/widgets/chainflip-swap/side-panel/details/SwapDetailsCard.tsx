@@ -1,3 +1,16 @@
+import { useTokenRates, useTokens } from '@talismn/balances-react'
+import { Clickable, Surface, Tooltip } from '@talismn/ui'
+import { intervalToDuration } from 'date-fns'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { Clock, Info } from 'lucide-react'
+import React, { useMemo } from 'react'
+import { useRecoilValue } from 'recoil'
+
+import { selectedCurrencyState } from '@/domains/balances'
+import { useTokenRatesFromUsd } from '@/hooks/useTokenRatesFromUsd'
+import { cn } from '@/lib/utils'
+import { Decimal } from '@/util/Decimal'
+
 import {
   BaseQuote,
   fromAmountAtom,
@@ -6,17 +19,6 @@ import {
   selectedSubProtocolAtom,
   toAssetAtom,
 } from '../../swap-modules/common.swap-module'
-import { selectedCurrencyState } from '@/domains/balances'
-import { useTokenRatesFromUsd } from '@/hooks/useTokenRatesFromUsd'
-import { cn } from '@/lib/utils'
-import { useTokenRates, useTokens } from '@talismn/balances-react'
-import { Decimal } from '@talismn/math'
-import { Clickable, Surface, Tooltip } from '@talismn/ui'
-import { intervalToDuration } from 'date-fns'
-import { useAtomValue, useSetAtom } from 'jotai'
-import { Clock, Info } from 'lucide-react'
-import React, { useMemo } from 'react'
-import { useRecoilValue } from 'recoil'
 
 type Props = {
   quote: BaseQuote
@@ -100,20 +102,20 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
     >
       <Surface
         className={cn('rounded-[8px] p-[12px] pb-[8px]', {
-          'border-white border': selected,
+          'border border-white': selected,
         })}
       >
-        <div className="flex items-center justify-between w-full ">
-          <p className="font-bold text-[14px] truncate">
+        <div className="flex w-full items-center justify-between ">
+          <p className="truncate text-[14px] font-bold">
             {amount?.toLocaleString(undefined, { maximumFractionDigits: 4 })}{' '}
           </p>
           <div className="flex items-center justify-end gap-[8px]">
-            <img src={quote.providerLogo} className="h-[20px] mb-[2px] rounded-full" />
-            <p className="text-[12px] truncate max-w-60 font-semibold">{quote.providerName}</p>
+            <img src={quote.providerLogo} className="mb-[2px] h-[20px] rounded-full" />
+            <p className="max-w-60 truncate text-[12px] font-semibold">{quote.providerName}</p>
           </div>
         </div>
-        <div className="flex items-center gap-[8px] mb-[16px] text-muted-foreground">
-          <p className="font-normal text-[12px]">
+        <div className="text-muted-foreground mb-[16px] flex items-center gap-[8px]">
+          <p className="text-[12px] font-normal">
             {(fiatValue ?? 0)?.toLocaleString(undefined, { style: 'currency', currency })}
           </p>
           <Tooltip
@@ -125,11 +127,11 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
             }
             placement="top"
           >
-            <Info className="w-[14px] h-[14px]" />
+            <Info className="h-[14px] w-[14px]" />
           </Tooltip>
         </div>
 
-        <div className="pt-[8px] mt-[12px] border-t border-t-[#3f3f3f] flex items-center gap-[12px]">
+        <div className="mt-[12px] flex items-center gap-[12px] border-t border-t-[#3f3f3f] pt-[8px]">
           <div className="flex items-center gap-[12px]">
             <p className="text-[12px] leading-[12px]">
               1 {fromAsset?.symbol} ={' '}
@@ -139,13 +141,13 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
                 notation: 'compact',
               })}
             </p>
-            <p className="text-[12px] leading-[12px] text-muted-foreground">
+            <p className="text-muted-foreground text-[12px] leading-[12px]">
               Fees <span className="text-[12px] leading-[12px] text-white">~{totalFee}</span>
             </p>
           </div>
 
-          <div className="flex items-center gap-[4px] ml-auto">
-            <Clock className="w-[14px] h-[14px] text-muted-foreground" />
+          <div className="ml-auto flex items-center gap-[4px]">
+            <Clock className="text-muted-foreground h-[14px] w-[14px]" />
             <p className="text-[12px] leading-[12px]">{time}</p>
           </div>
         </div>

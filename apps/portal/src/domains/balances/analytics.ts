@@ -1,9 +1,12 @@
-import { writeableBalancesState } from '.'
-import { useDebounce, useThrottle } from '@talismn/utils/react'
 import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
 import { useUpdateEffect } from 'react-use'
 import { useRecoilValue } from 'recoil'
+
+import { useDebounce } from '@/hooks/useDebounce'
+import { useThrottle } from '@/hooks/useThrottle'
+
+import { writeableBalancesState } from '.'
 
 const digestMessage = async (message: string) => {
   const msgUint8 = new TextEncoder().encode(message)

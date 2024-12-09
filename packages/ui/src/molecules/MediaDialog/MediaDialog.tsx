@@ -1,8 +1,11 @@
-import { Button, Dialog, Surface, Text, type DialogProps } from '../../atoms'
-import { useMimeType, type MimeTypeSubType, type MimeTypeType } from '../../utils'
 import { Global, keyframes, useTheme } from '@emotion/react'
 import { Volume2, X } from '@talismn/web-icons'
 import { type ReactNode } from 'react'
+
+import type { DialogProps } from '../../atoms'
+import type { MimeTypeSubType, MimeTypeType } from '../../utils'
+import { Button, Dialog, Surface, Text } from '../../atoms'
+import { useMimeType } from '../../utils'
 
 const show = keyframes`
   from {
@@ -44,14 +47,8 @@ const MediaPlayer = (props: MediaPlayerProps) => {
       )
     case 'model':
       import('@google/model-viewer/dist/model-viewer')
-      return (
-        <model-viewer
-          src={props.src}
-          camera-controls
-          // @ts-expect-error
-          style={{ width: '100%', height: '100%' }}
-        />
-      )
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return <model-viewer src={props.src} camera-controls style={{ width: '100%', height: '100%' } as any} />
     case 'application':
       if (subType === 'pdf') {
         return <embed src={props.src} css={{ width: '100%', height: '100%' }} />
