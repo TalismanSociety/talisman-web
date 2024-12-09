@@ -1,9 +1,11 @@
-import { SwapDetails } from './SwapDetails'
-import { SwapHistory } from './SwapHistory'
-import { cn } from '@/lib/utils'
 import { Activity, FileSearch } from '@talismn/web-icons'
 import { atom, useAtom } from 'jotai'
 import { useMemo } from 'react'
+
+import { cn } from '@/lib/utils'
+
+import { SwapDetails } from './SwapDetails'
+import { SwapHistory } from './SwapHistory'
 
 type Tab = 'details' | 'activities'
 
@@ -20,7 +22,7 @@ const TabItem: React.FC<React.PropsWithChildren & { onClick?: () => void; select
     <div
       onClick={onClick}
       className={cn(
-        'p-[8px] hover:text-primary cursor-pointer duration-150',
+        'hover:text-primary cursor-pointer p-[8px] duration-150',
         selected ? 'text-primary' : 'text-gray-600'
       )}
     >
@@ -44,8 +46,8 @@ export const SidePanel: React.FC = () => {
   }, [tab])
 
   return (
-    <div className="mt-[16px] md:mt-0 w-full md:w-4/5 border border-gray-700 border-r border-b rounded-[12px] md:rounded-l-0 md:border-l-[64px] md:border-l-[transparent]">
-      <div className="md:ml-[-64px] w-full md:w-[calc(100%+64px)] p-[16px] flex flex-col jsutify-between h-full gap-[16px] flex-1">
+    <div className="md:rounded-l-0 mt-[16px] w-full rounded-[12px] border border-b border-r border-gray-700 md:mt-0 md:w-4/5 md:border-l-[64px] md:border-l-[transparent]">
+      <div className="jsutify-between flex h-full w-full flex-1 flex-col gap-[16px] p-[16px] md:ml-[-64px] md:w-[calc(100%+64px)]">
         <div className="flex items-center justify-between">
           <h4 className="text-[16px] font-semibold">Swap</h4>
           <div className="flex items-center justify-end gap-[4px]">
@@ -57,8 +59,8 @@ export const SidePanel: React.FC = () => {
             </TabItem>
           </div>
         </div>
-        <div className="flex-1 flex flex-col w-full">
-          <div className="md:h-0 md:min-h-full overflow-auto max-h-[340px] md:max-h-auto">{content}</div>
+        <div className="flex w-full flex-1 flex-col">
+          <div className="md:max-h-auto max-h-[340px] overflow-auto md:h-0 md:min-h-full">{content}</div>
         </div>
       </div>
     </div>
