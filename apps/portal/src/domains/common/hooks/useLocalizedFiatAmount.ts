@@ -1,9 +1,9 @@
-import type { Decimal } from '@talismn/math'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
-import { selectedCurrencyState } from '../../balances'
-import { useNativeTokenPriceState } from '../../chains'
+import type { Decimal } from '@/util/Decimal'
+import { selectedCurrencyState } from '@/domains/balances'
+import { useNativeTokenPriceState } from '@/domains/chains'
 
 /**
  * TODO: this only works with native token for now

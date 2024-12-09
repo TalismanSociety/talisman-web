@@ -1,7 +1,7 @@
+import type { Ref, SVGProps } from 'react'
+import { forwardRef, useContext } from 'react'
+
 import { IconContext } from '../context'
-import * as React from 'react'
-import type { SVGProps } from 'react'
-import { Ref, forwardRef } from 'react'
 
 const SvgPlus = (
   props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
@@ -9,7 +9,7 @@ const SvgPlus = (
   },
   ref: Ref<SVGSVGElement>
 ) => {
-  const iconContext = React.useContext(IconContext)
+  const iconContext = useContext(IconContext)
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

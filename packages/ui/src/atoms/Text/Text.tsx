@@ -1,6 +1,8 @@
-import { type ContentAlpha } from '../..'
-import { useTheme, type Theme } from '@emotion/react'
+import type { Theme } from '@emotion/react'
 import type React from 'react'
+import { useTheme } from '@emotion/react'
+
+import { type ContentAlpha } from '../../theme'
 
 type PolymorphicTextProps<T extends React.ElementType> = {
   as?: T
@@ -51,40 +53,46 @@ const BaseText = <T extends React.ElementType = 'span'>({ as, alpha = 'medium', 
 
 const decorateText = <T extends object>(typographyClass: keyof Theme['typography'] | 'noop' | undefined, element: T) =>
   Object.assign(element, {
-    A: <T extends React.ElementType = 'a'>(props: TextProps<T>) => (
-      <BaseText
-        as="a"
-        alpha="high"
-        {...props}
-        css={theme => [
-          typographyClass === undefined
-            ? {}
-            : typographyClass === 'noop'
-            ? { color: 'inherit', ':hover': { color: 'inherit' } }
-            : theme.typography[typographyClass],
-          { textDecoration: 'underline' },
-        ]}
-      />
-    ),
-    Redacted: <T extends React.ElementType = 'del'>(props: TextProps<T>) => (
-      <BaseText
-        as="del"
-        alpha="disabled"
-        {...props}
-        css={theme => [
-          typographyClass === undefined || typographyClass === 'noop' ? {} : theme.typography[typographyClass],
-          {
-            color: 'transparent',
-            borderRadius: theme.shape.extraSmall,
-            background: 'radial-gradient(rgba(200, 200, 200, 0.1), rgba(0, 0, 0, 0.1))',
-            filter: 'contrast(0.5) brightness(1.5)',
-            ':hover': {
+    A: <T extends React.ElementType = 'a'>(props: TextProps<T>) => {
+      const theme = useTheme()
+      return (
+        <BaseText
+          as="a"
+          alpha="high"
+          {...props}
+          css={[
+            typographyClass === undefined
+              ? {}
+              : typographyClass === 'noop'
+              ? { color: 'inherit', ':hover': { color: 'inherit' } }
+              : theme.typography[typographyClass],
+            { textDecoration: 'underline' },
+          ]}
+        />
+      )
+    },
+    Redacted: <T extends React.ElementType = 'del'>(props: TextProps<T>) => {
+      const theme = useTheme()
+      return (
+        <BaseText
+          as="del"
+          alpha="disabled"
+          {...props}
+          css={[
+            typographyClass === undefined || typographyClass === 'noop' ? {} : theme.typography[typographyClass],
+            {
               color: 'transparent',
+              borderRadius: theme.shape.extraSmall,
+              background: 'radial-gradient(rgba(200, 200, 200, 0.1), rgba(0, 0, 0, 0.1))',
+              filter: 'contrast(0.5) brightness(1.5)',
+              ':hover': {
+                color: 'transparent',
+              },
             },
-          },
-        ]}
-      />
-    ),
+          ]}
+        />
+      )
+    },
   })
 
 const Text = Object.assign(BaseText, {

@@ -1,8 +1,11 @@
-import { useSubstrateBalance, type UseSubstrateBalanceProps } from './useSubstrateBalance'
-import { Decimal } from '@talismn/math'
 import { useMemo } from 'react'
 import { zeroAddress } from 'viem'
 import { useBalance } from 'wagmi'
+
+import { Decimal } from '@/util/Decimal'
+
+import type { UseSubstrateBalanceProps } from './useSubstrateBalance'
+import { useSubstrateBalance } from './useSubstrateBalance'
 
 type EvmProps = {
   type: 'evm'

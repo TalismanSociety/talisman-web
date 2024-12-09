@@ -1,11 +1,13 @@
-import type { Account } from '../../../../domains/accounts'
-import { useNativeTokenAmountState } from '../../../../domains/chains'
-import { useDelegates } from '../../../../domains/staking/subtensor/hooks/useDelegates'
-import { useStake } from '../../../../domains/staking/subtensor/hooks/useStake'
-import { shortenAddress } from '../../../../util/format'
+import type { ReactNode } from 'react'
 import { AlertDialog, CircularProgressIndicator, Clickable, Surface, Text } from '@talismn/ui'
-import { useState, useTransition, type ReactNode } from 'react'
+import { useState, useTransition } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
+
+import type { Account } from '@/domains/accounts'
+import { useNativeTokenAmountState } from '@/domains/chains'
+import { useDelegates } from '@/domains/staking/subtensor/hooks/useDelegates'
+import { useStake } from '@/domains/staking/subtensor/hooks/useStake'
+import { shortenAddress } from '@/util/shortenAddress'
 
 type DelegatePickerDialogProps = {
   title: ReactNode

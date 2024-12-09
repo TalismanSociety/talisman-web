@@ -1,9 +1,10 @@
-import { selectedCurrencyState } from '../../balances'
-import { useNativeTokenDecimalState, useNativeTokenPriceState } from '../../chains/recoils'
-import { type BN } from '@polkadot/util'
-import { type Decimal } from '@talismn/math'
+import type { BN } from '@polkadot/util'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
+
+import type { Decimal } from '@/util/Decimal'
+import { selectedCurrencyState } from '@/domains/balances'
+import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@/domains/chains/recoils'
 
 type Options<TAllowInvalid extends boolean = boolean> = { currency?: string; allowInvalidValue?: TAllowInvalid }
 

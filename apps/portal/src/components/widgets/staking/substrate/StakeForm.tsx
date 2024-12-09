@@ -1,11 +1,24 @@
-import { writeableSubstrateAccountsState, type Account } from '../../../../domains/accounts/recoils'
+import type { ApiPromise } from '@polkadot/api'
+import type { ReactNode } from 'react'
+import { CircularProgressIndicator, Select, Tooltip } from '@talismn/ui'
+import { Info } from '@talismn/web-icons'
+import BN from 'bn.js'
+import { memo, Suspense, useCallback, useDeferredValue, useEffect, useMemo, useState, useTransition } from 'react'
+import { useLocation } from 'react-use'
+import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+
+import type { Decimal } from '@/util/Decimal'
+import { usePoolCommission } from '@/domains/staking/substrate/nominationPools/hooks/usePoolCommission'
+
+import type { Account } from '../../../../domains/accounts/recoils'
+import type { ChainInfo } from '../../../../domains/chains'
+import { writeableSubstrateAccountsState } from '../../../../domains/accounts/recoils'
 import {
-  ChainProvider,
   assertChain,
+  ChainProvider,
   nominationPoolsEnabledChainsState,
   useChainState as useChainRecoilState,
   useNativeTokenDecimalState,
-  type ChainInfo,
 } from '../../../../domains/chains'
 import {
   useChainState,
@@ -34,26 +47,6 @@ import PoolClaimPermissionDialog, {
   toUiPermission,
 } from './PoolClaimPermissionDialog'
 import UnstakeDialog from './UnstakeDialog'
-import { usePoolCommission } from '@/domains/staking/substrate/nominationPools/hooks/usePoolCommission'
-import type { ApiPromise } from '@polkadot/api'
-import { type Decimal } from '@talismn/math'
-import { CircularProgressIndicator, Select } from '@talismn/ui'
-import { Tooltip } from '@talismn/ui'
-import { Info } from '@talismn/web-icons'
-import BN from 'bn.js'
-import {
-  Suspense,
-  memo,
-  useCallback,
-  useDeferredValue,
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-  type ReactNode,
-} from 'react'
-import { useLocation } from 'react-use'
-import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 const ExistingPool = (props: { account: Account }) => {
   const pool = usePoolStakes({ address: props.account.address })
@@ -281,8 +274,8 @@ const CommissionFee = ({ poolId }: { poolId: number }) => {
   const poolCommission = getCurrentCommission(poolId)
 
   return (
-    <div className="text-[14px] flex justify-between">
-      <div className="flex gap-2 items-center">
+    <div className="flex justify-between text-[14px]">
+      <div className="flex items-center gap-2">
         <div>Commission fee</div>
         <Tooltip
           content={

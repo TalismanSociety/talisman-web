@@ -1,11 +1,13 @@
-import { useNativeTokenAmountState } from '../../../../domains/chains'
-import type { StakeLoadable } from '../../../../domains/staking/dappStaking'
-import { useRegisteredDappsState } from '../../../../domains/staking/dappStaking/recoils'
-import { shortenAddress } from '../../../../util/format'
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
+import type { ReactNode } from 'react'
 import { AlertDialog, CircularProgressIndicator, Clickable, Surface, Text } from '@talismn/ui'
-import { useState, useTransition, type ReactNode } from 'react'
+import { useState, useTransition } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
+
+import type { StakeLoadable } from '@/domains/staking/dappStaking'
+import { useNativeTokenAmountState } from '@/domains/chains'
+import { useRegisteredDappsState } from '@/domains/staking/dappStaking/recoils'
+import { shortenAddress } from '@/util/shortenAddress'
 
 type DappPickerDialogProps = {
   title: ReactNode

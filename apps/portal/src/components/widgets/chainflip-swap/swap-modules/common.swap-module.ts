@@ -4,12 +4,12 @@ import type { Atom, Getter, SetStateAction, Setter } from 'jotai'
 import { ApiPromise } from '@polkadot/api'
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { evmErc20TokenId, evmNativeTokenId, subNativeTokenId } from '@talismn/balances'
-import { Decimal } from '@talismn/math'
 import { atom } from 'jotai'
 import { atomWithStorage, createJSONStorage, unstable_withStorageValidator } from 'jotai/utils'
 import { Loadable } from 'jotai/vanilla/utils/loadable'
 
 import { isBtcAddress } from '@/lib/btc'
+import { Decimal } from '@/util/Decimal'
 
 import 'recoil'
 

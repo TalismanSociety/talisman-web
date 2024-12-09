@@ -1,9 +1,10 @@
 import type { Chain as ChaindataChain, Token as ChaindataToken } from '@talismn/chaindata-provider'
 import type { RecoilValueReadOnly } from 'recoil'
 import { chaindataChainByGenesisHashUrl, chaindataTokenByIdUrl } from '@talismn/chaindata-provider'
-import { Decimal } from '@talismn/math'
 import { useContext } from 'react'
 import { atom, selector, selectorFamily, waitForAll } from 'recoil'
+
+import { Decimal } from '@/util/Decimal'
 
 import { ChainContext } from '.'
 import { nullToUndefined } from '../../util/nullToUndefine'
@@ -91,10 +92,10 @@ export const tokenPriceState = selectorFamily({
             import.meta.env.VITE_COIN_GECKO_API_KEY === undefined
               ? undefined
               : import.meta.env.VITE_COIN_GECKO_API_TIER === 'pro'
-                ? { 'x-cg-pro-api-key': import.meta.env.VITE_COIN_GECKO_API_KEY }
-                : import.meta.env.VITE_COIN_GECKO_API_TIER === 'demo'
-                  ? { 'x-cg-demo-api-key': import.meta.env.VITE_COIN_GECKO_API_KEY }
-                  : undefined,
+              ? { 'x-cg-pro-api-key': import.meta.env.VITE_COIN_GECKO_API_KEY }
+              : import.meta.env.VITE_COIN_GECKO_API_TIER === 'demo'
+              ? { 'x-cg-demo-api-key': import.meta.env.VITE_COIN_GECKO_API_KEY }
+              : undefined,
         }).then(async x => await x.json())
 
         return result[coingeckoId][currency] as number
