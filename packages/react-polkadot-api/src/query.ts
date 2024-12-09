@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // TODO: lots of duplicate type definitions
 // but already super burned out, need to de-duplication
-import { ApiIdContext, RecoilStateContext } from './Context.js'
-import { garbageCollectionKey } from './GarbageCollector.js'
-import type { ApiId, Diverge, Leading, Options, PickKnownKeys } from './types.js'
 import type {
   GenericStorageEntryFunction,
   PromiseResult,
@@ -13,9 +10,14 @@ import type {
   UnsubscribePromise,
 } from '@polkadot/api/types'
 import type { AllDerives } from '@polkadot/api/util'
-import { useContext } from 'react'
-import { atomFamily, constSelector, isRecoilValue, type RecoilState, type RecoilValueReadOnly } from 'recoil'
+import type { RecoilState, RecoilValueReadOnly } from 'recoil'
 import type { Observable } from 'rxjs'
+import { useContext } from 'react'
+import { atomFamily, constSelector, isRecoilValue } from 'recoil'
+
+import type { ApiId, Diverge, Leading, Options, PickKnownKeys } from './types'
+import { ApiIdContext, RecoilStateContext } from './Context'
+import { garbageCollectionKey } from './GarbageCollector'
 
 export const queryAtomFamily = (options: Options) => {
   const _state = atomFamily({

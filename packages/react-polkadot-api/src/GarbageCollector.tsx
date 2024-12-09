@@ -1,6 +1,7 @@
-import { RecoilStateContext } from './Context.js'
 import { useCallback, useContext, useEffect } from 'react'
 import { releaseNode, useGetRecoilValueInfo_UNSTABLE, useRecoilCallback, useStoreRef } from 'recoil'
+
+import { RecoilStateContext } from './Context'
 
 export const garbageCollectionKey = Symbol('garbageCollectionKey')
 
