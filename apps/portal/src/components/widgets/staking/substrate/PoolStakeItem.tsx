@@ -1,21 +1,19 @@
 import { useCallback, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import StakePosition from '@/components/recipes/StakePosition'
-import ErrorBoundary from '@/components/widgets/ErrorBoundary'
+import type { usePoolStakes } from '@/domains/staking/substrate/nominationPools'
+import { StakePosition } from '@/components/recipes/StakePosition'
+import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
+import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
+import { RedactableBalance } from '@/components/widgets/RedactableBalance'
+import { type Account } from '@/domains/accounts'
+import { useChainState } from '@/domains/chains'
+import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@/domains/chains/recoils'
+import { useEraEtaFormatter } from '@/domains/common/hooks/useEraEta'
+import { useExtrinsic, useSubmittableResultLoadableState } from '@/domains/common/hooks/useExtrinsic'
+import { useNativeTokenLocalizedFiatAmount } from '@/domains/common/hooks/useLocalizedFiatAmount'
+import { useTotalNominationPoolRewards } from '@/domains/staking/substrate/nominationPools'
 
-import type { usePoolStakes } from '../../../../domains/staking/substrate/nominationPools'
-import { type Account } from '../../../../domains/accounts'
-import { useChainState, useNativeTokenDecimalState, useNativeTokenPriceState } from '../../../../domains/chains'
-import {
-  useEraEtaFormatter,
-  useExtrinsic,
-  useNativeTokenLocalizedFiatAmount,
-  useSubmittableResultLoadableState,
-} from '../../../../domains/common'
-import { useTotalNominationPoolRewards } from '../../../../domains/staking/substrate/nominationPools'
-import AnimatedFiatNumber from '../../AnimatedFiatNumber'
-import RedactableBalance from '../../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
 import ClaimStakeDialog from './ClaimStakeDialog'
 import NominationPoolsStatisticsSideSheet from './NominationPoolsStatisticsSideSheet'

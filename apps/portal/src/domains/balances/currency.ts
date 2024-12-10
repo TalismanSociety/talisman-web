@@ -1,7 +1,8 @@
-import { storageEffect } from '../common/effects'
 import { jsonParser, stringLiterals } from '@recoiljs/refine'
 import { type TokenRateCurrency } from '@talismn/token-rates'
 import { atom } from 'recoil'
+
+import { storageEffect } from '@/domains/common/effects'
 
 export const currencyConfig: Partial<Record<TokenRateCurrency, { unicodeCharacter: string; name: string }>> = {
   usd: {

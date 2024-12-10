@@ -7,7 +7,7 @@ export type ClickableProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonEl
  * to wrap other component that want to act as a button
  * with full accessibility support
  */
-const Clickable = Object.assign(
+export const Clickable = Object.assign(
   (props: ClickableProps) => (
     <button
       {...props}
@@ -37,5 +37,3 @@ const Clickable = Object.assign(
     ),
   }
 )
-
-export default Clickable

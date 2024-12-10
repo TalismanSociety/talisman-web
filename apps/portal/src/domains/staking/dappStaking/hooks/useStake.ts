@@ -1,8 +1,3 @@
-import { Maybe } from '../../../../util/monads'
-import type { Account } from '../../../accounts'
-import { useNativeTokenAmountState } from '../../../chains'
-import { expectedBlockTime, useSubstrateApiEndpoint, useSubstrateApiState } from '../../../common'
-import { stakedDappsState } from '../recoils'
 import { useDeriveState, useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
@@ -10,6 +5,15 @@ import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { range } from 'lodash'
 import { useMemo } from 'react'
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue, waitForAll } from 'recoil'
+
+import type { Account } from '@/domains/accounts'
+import { useNativeTokenAmountState } from '@/domains/chains/recoils'
+import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
+import { useSubstrateApiState } from '@/domains/common/recoils/api'
+import { expectedBlockTime } from '@/domains/common/utils/substratePolyfills'
+import { Maybe } from '@/util/monads'
+
+import { stakedDappsState } from '../recoils'
 
 export const useStake = (account: Account) => {
   // Can't put this in the same waitForAll below
@@ -264,8 +268,11 @@ export const useStake = (account: Account) => {
     bonusRewards,
     totalBonusRewards,
     totalRewards: useMemo(
-      () => nativeTokenAmount.fromPlanck(totalBonusRewards.decimalAmount.planck + stakerRewards.decimalAmount.planck),
-      [nativeTokenAmount, stakerRewards, totalBonusRewards.decimalAmount.planck]
+      () =>
+        nativeTokenAmount.fromPlanck(
+          (totalBonusRewards.decimalAmount?.planck ?? 0n) + (stakerRewards.decimalAmount?.planck ?? 0n)
+        ),
+      [nativeTokenAmount, stakerRewards, totalBonusRewards.decimalAmount?.planck]
     ),
     unlocking,
     totalUnlocking,

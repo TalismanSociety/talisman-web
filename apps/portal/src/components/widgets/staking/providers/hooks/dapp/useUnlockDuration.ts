@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { expectedBlockTime, useSubstrateApiState } from '@/domains/common'
-import { useEraLengthState } from '@/domains/staking/dappStaking'
+import { useSubstrateApiState } from '@/domains/common/recoils/api'
+import { expectedBlockTime } from '@/domains/common/utils/substratePolyfills'
+import { useEraLengthState } from '@/domains/staking/dappStaking/recoils'
 
 const useUnlockDuration = () => {
   const [api, { standardEraLength }] = useRecoilValue(waitForAll([useSubstrateApiState(), useEraLengthState()]))

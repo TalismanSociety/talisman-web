@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import { selectedSubstrateAccountsState } from '@/domains/accounts'
-import { chainDeriveState } from '@/domains/common'
+import { chainDeriveState } from '@/domains/common/recoils/query'
 
 const useStakePercentage = () => {
   const apiId = usePolkadotApiId()

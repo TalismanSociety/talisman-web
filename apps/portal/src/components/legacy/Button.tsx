@@ -1,35 +1,13 @@
-import IconLoading from '../../assets/icons/loader.svg?react'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { omit } from 'lodash'
 import React, { Fragment } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 
-export const ButtonIcon = styled(
-  ({ children, className, ...rest }: { children: any; className?: string; onClick?: (e: any) => void }) => (
-    <button className={`button icon-button ${className ?? ''}`} {...rest}>
-      {children}
-    </button>
-  )
-)`
-  border: none;
-  padding: 0.335em;
-  margin: 0;
-  line-height: 1em;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: opacity 0.2s;
-  background: rgba(${({ theme }) => theme?.foreground}, 0.05);
-  border-radius: 50%;
-  font-size: 1.5em;
+import IconLoading from '@/assets/icons/loader.svg?react'
 
-  > * {
-    line-height: 1em;
-  }
-`
-
+/** @deprecated */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Button = styled(({ loading, children, variant = '', className, ...props }: any) => {
   const wrappedChildren = loading ? (
     <Fragment>
@@ -42,6 +20,7 @@ export const Button = styled(({ loading, children, variant = '', className, ...p
     )
   )
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const _props: any = omit(props, ['loading', 'boxed', 'round', 'primary', 'tight', 'loose', 'small'])
 
   return props?.to ? (

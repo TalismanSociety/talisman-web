@@ -1,4 +1,4 @@
-import { Text } from '@talismn/ui'
+import { Text } from '@talismn/ui/atoms/Text'
 import { formatDistance } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 
@@ -10,7 +10,7 @@ import { useUnlockDuration as useNominationPoolUnlockDuration } from '@/domains/
 
 import useSlpxSubstrateUnlockDuration from '../hooks/bifrost/useSlpxSubstrateUnlockDuration'
 import useDappUnlockDuration from '../hooks/dapp/useUnlockDuration'
-import { StakeProviderTypeId } from '../hooks/useProvidersData'
+import { StakeProviderTypeId } from '../hooks/types'
 
 const unbondingFormatter = (unlockValue: number) => formatDistance(0, unlockValue)
 
@@ -27,6 +27,7 @@ type UnbondingDisplayProps = Omit<UnbondingPeriodProps, 'genesisHash'>
 const UnbondingDisplay = ({ typeId, tokenPair, setUnbondingValues }: UnbondingDisplayProps) => {
   const { t } = useTranslation()
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
     nominationPool: useNominationPoolUnlockDuration,
     liquidStakingSlpx: useVTokenUnlockDuration,

@@ -1,4 +1,5 @@
-import type { ChainConfig, ChainInfo } from '.'
+import type { ChainConfig } from './config'
+import type { ChainInfo } from './recoils'
 
 export function assertChain<
   TChain extends ChainConfig | ChainInfo,

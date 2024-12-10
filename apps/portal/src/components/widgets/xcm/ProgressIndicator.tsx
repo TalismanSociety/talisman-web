@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
-import { CircularProgressIndicator, Text } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Text } from '@talismn/ui/atoms/Text'
 
 export type ProgressIndicatorProps = {
   title: ReactNode

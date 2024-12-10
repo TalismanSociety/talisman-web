@@ -1,26 +1,22 @@
-import {
-  CircularProgressIndicator,
-  InfoCard,
-  SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR,
-  SideSheet,
-  Surface,
-  SurfaceChip,
-  Text,
-  Tooltip,
-} from '@talismn/ui'
+import { SurfaceChip } from '@talismn/ui/atoms/Chip'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+import { InfoCard } from '@talismn/ui/molecules/InfoCard'
+import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
 import { Clock, Zap } from '@talismn/web-icons'
 import { formatDistance } from 'date-fns'
 import { Suspense } from 'react'
 import { useRecoilValue } from 'recoil'
 
+import { SlpxAddStakeForm } from '@/components/recipes/AddStakeDialog'
+import { useAccountSelector } from '@/components/widgets/AccountSelector'
+import useSlpxSubstrateUnlockDuration from '@/components/widgets/staking/providers/hooks/bifrost/useSlpxSubstrateUnlockDuration'
+import { writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { useSlpxAprState } from '@/domains/staking/slpx'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import useStakeAddForm from '@/domains/staking/slpxSubstrate/useStakeAddForm'
-
-import { writeableSubstrateAccountsState } from '../../../../domains/accounts/recoils'
-import { SlpxAddStakeForm } from '../../../recipes/AddStakeDialog'
-import { useAccountSelector } from '../../AccountSelector'
-import useSlpxSubstrateUnlockDuration from '../providers/hooks/bifrost/useSlpxSubstrateUnlockDuration'
 
 type Props = {
   slpxPair: SlpxSubstratePair

@@ -9,7 +9,7 @@ import useDappStakePercentage from '../hooks/dapp/useStakePercentage'
 import useLidoStakePercentage from '../hooks/lido/useStakePercentage'
 import useNominationPoolStakePercentage from '../hooks/nominationPools/useStakePercentage'
 import useSubtensorStakePercentage from '../hooks/subtensor/useStakePercentage'
-import { StakeProviderTypeId } from '../hooks/useProvidersData'
+import { StakeProviderTypeId } from '../hooks/types'
 
 type StakePercentageProps = {
   typeId: StakeProviderTypeId
@@ -31,6 +31,7 @@ const StakePercentageDisplay = ({
   chainId,
   setStakePercentage,
 }: StakePercentageDisplayProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
     nominationPool: useNominationPoolStakePercentage,
     liquidStakingSlpx: useSlpxStakePercentage,

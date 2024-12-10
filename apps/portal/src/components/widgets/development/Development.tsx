@@ -1,8 +1,9 @@
-import { developmentState } from '../../../domains/common'
-import React, { Suspense, useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { useRecoilState } from 'recoil'
 
-const DevMenu = React.lazy(async () => await import('./DevMenu'))
+import { developmentState } from '@/domains/common/recoils/development'
+
+const DevMenu = lazy(async () => await import('./DevMenu'))
 
 const Development = () => {
   const [isDevelopment, setIsDevelopment] = useRecoilState(developmentState)

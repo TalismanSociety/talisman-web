@@ -1,4 +1,6 @@
-import { CircularProgressIndicator, Surface, Text } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
 import { ChevronDown, ChevronUp } from '@talismn/web-icons'
 import {
   CellContext,
@@ -13,11 +15,11 @@ import {
 import { Suspense, useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import ErrorBoundary from '@/components/widgets/ErrorBoundary'
+import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import ErrorBoundaryFallback from '@/components/widgets/staking/ErrorBoundaryFallback'
-import { cn } from '@/lib/utils'
+import { cn } from '@/util/cn'
 
-import { Provider } from '../hooks/useProvidersData'
+import { Provider } from '../hooks/types'
 import useStakeValues, { StakeType } from '../hooks/useSetValues'
 import Apr from './Apr'
 import Asset from './Asset'
@@ -198,8 +200,8 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
                   ? header.column.getNextSortingOrder() === 'asc'
                     ? 'Sort ascending'
                     : header.column.getNextSortingOrder() === 'desc'
-                      ? 'Sort descending'
-                      : 'Clear sort'
+                    ? 'Sort descending'
+                    : 'Clear sort'
                   : undefined
               }
             >

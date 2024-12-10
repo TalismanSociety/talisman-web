@@ -4,7 +4,7 @@ import { atom, useAtom } from 'jotai'
 import { useEffect, useRef } from 'react'
 import { selectorFamily, useRecoilCallback } from 'recoil'
 
-import { useSubstrateApiEndpoint } from '..'
+import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
 
 export const substrateApiState = selectorFamily<ApiPromise, string | undefined>({
   key: 'SubstrateApiState',

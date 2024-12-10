@@ -1,13 +1,16 @@
-import useAssets, { useAssetsFiltered } from '../../../components/legacy/archetypes/Portfolio/Assets'
-import { Total } from '../../../components/legacy/archetypes/Wallet'
-import Asset, { AssetsList, AssetsListLocked } from '../../../components/recipes/Asset'
-import AnimatedFiatNumber from '../../../components/widgets/AnimatedFiatNumber'
 import { ClassNames } from '@emotion/react'
 import styled from '@emotion/styled'
-import { Button, InfoCard, SearchBar } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { InfoCard } from '@talismn/ui/molecules/InfoCard'
+import { SearchBar } from '@talismn/ui/molecules/SearchBar'
 import { ChevronLeft } from '@talismn/web-icons'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+
+import { useAssets, useAssetsFiltered } from '@/components/legacy/widgets/useAssets'
+import { WalletTotal } from '@/components/legacy/widgets/WalletTotal'
+import { Asset, AssetsList, AssetsListLocked } from '@/components/recipes/Asset'
+import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 
 const Assets = () => {
   const navigate = useNavigate()
@@ -51,7 +54,11 @@ const Assets = () => {
             gap: '2rem',
           }}
         >
-          <InfoCard overlineContent={'Total Portfolio Value'} headlineContent={<Total />} css={{ minWidth: '15rem' }} />
+          <InfoCard
+            overlineContent={'Total Portfolio Value'}
+            headlineContent={<WalletTotal />}
+            css={{ minWidth: '15rem' }}
+          />
           <InfoCard
             overlineContent={'Locked Value'}
             headlineContent={<AnimatedFiatNumber end={lockedTotal} />}

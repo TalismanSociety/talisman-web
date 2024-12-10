@@ -42,6 +42,7 @@ const crowdloanDataState = selector<CrowdloanDetail[]>({
       const data = await response.json()
       if (!Array.isArray(data?.results)) throw new Error('Incorrectly formatted crowdloans baserow result')
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const crowdloans: CrowdloanDetail[] = data.results.map((crowdloan: any) => {
         const links: Record<string, string> = Object.keys(crowdloan).reduce(
           (acc: Record<string, string>, key: string) => {

@@ -1,9 +1,10 @@
-import { Maybe } from '../../../../util/monads'
-import { selectedSubstrateAccountsState } from '../../../accounts'
-import { dappStakingEnabledChainsState, nativeTokenAmountState } from '../../../chains'
-import { chainQueryState } from '../../../common'
 import { useMemo } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll, waitForAny } from 'recoil'
+
+import { selectedSubstrateAccountsState } from '@/domains/accounts'
+import { dappStakingEnabledChainsState, nativeTokenAmountState } from '@/domains/chains/recoils'
+import { chainQueryState } from '@/domains/common/recoils/query'
+import { Maybe } from '@/util/monads'
 
 export const useTotalStaked = () => {
   const [chains, accounts] = useRecoilValue(waitForAll([dappStakingEnabledChainsState, selectedSubstrateAccountsState]))

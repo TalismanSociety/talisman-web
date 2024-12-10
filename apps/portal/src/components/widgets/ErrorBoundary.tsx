@@ -1,6 +1,6 @@
 import type { PropsWithChildren, ReactElement, ReactNode } from 'react'
 import * as Sentry from '@sentry/react'
-import { Button, OutlinedButton } from '@talismn/ui'
+import { Button, OutlinedButton } from '@talismn/ui/atoms/Button'
 import { createContext, useContext, useState } from 'react'
 import { useRouteError } from 'react-router-dom'
 import { atom, useRecoilCallback, useRecoilValue } from 'recoil'
@@ -110,7 +110,7 @@ type ErrorBoundaryProps = Sentry.ErrorBoundaryProps &
     renderFallback?: (fallback: ReactNode) => ReactElement
   }
 
-const ErrorBoundary = ({ orientation, renderFallback, ...props }: ErrorBoundaryProps) => {
+export const ErrorBoundary = ({ orientation, renderFallback, ...props }: ErrorBoundaryProps) => {
   const fallback = (errorProps: ErrorElementProps) =>
     renderFallback?.(<ErrorElement {...errorProps} />) ?? <ErrorElement {...errorProps} />
 
@@ -146,5 +146,3 @@ const ErrorBoundary = ({ orientation, renderFallback, ...props }: ErrorBoundaryP
     </OrientationContext.Provider>
   )
 }
-
-export default ErrorBoundary

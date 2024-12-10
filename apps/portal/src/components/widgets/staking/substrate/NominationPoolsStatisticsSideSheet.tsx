@@ -1,15 +1,12 @@
 import type { ReactNode } from 'react'
 import { useTheme } from '@emotion/react'
 import { encodeAddress } from '@polkadot/util-crypto'
-import {
-  DescriptionList,
-  ListItem,
-  SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR,
-  SideSheet,
-  Text,
-  TonalIcon,
-  useSurfaceColorAtElevation,
-} from '@talismn/ui'
+import { TonalIcon } from '@talismn/ui/atoms/Icon'
+import { useSurfaceColorAtElevation } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { DescriptionList } from '@talismn/ui/molecules/DescriptionList'
+import { ListItem } from '@talismn/ui/molecules/ListItem'
+import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
 import { BarChart, Clock, Earn, ExternalLink, Percent, Zap } from '@talismn/web-icons'
 import { eachDayOfInterval, isSameDay, subDays } from 'date-fns'
 import { useMemo } from 'react'
@@ -19,10 +16,13 @@ import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryTooltip } f
 import type { StakeStatus } from '@/components/recipes/StakeStatusIndicator'
 import type { Account } from '@/domains/accounts'
 import type { DerivedPool } from '@/domains/staking/substrate/nominationPools'
-import AccountIcon from '@/components/molecules/AccountIcon'
-import RedactableBalance from '@/components/widgets/RedactableBalance'
-import { useChainState, useNativeTokenDecimalState } from '@/domains/chains'
-import { useEraEtaFormatter, useSubstrateApiState, useTokenAmountFromPlanck } from '@/domains/common'
+import { AccountIcon } from '@/components/molecules/AccountIcon'
+import { RedactableBalance } from '@/components/widgets/RedactableBalance'
+import { useChainState } from '@/domains/chains'
+import { useNativeTokenDecimalState } from '@/domains/chains/recoils'
+import { useEraEtaFormatter } from '@/domains/common/hooks/useEraEta'
+import { useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
+import { useSubstrateApiState } from '@/domains/common/recoils/api'
 import {
   mostRecentPoolPayoutsState,
   poolPayoutsState,
@@ -165,6 +165,7 @@ const Stats = (props: {
           <div css={{ flex: 1 }}>
             <VictoryChart domainPadding={25} height={225} padding={{ top: 5, right: 0, bottom: 40, left: 50 }}>
               <VictoryAxis
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 tickFormat={(x: any) =>
                   new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short' }).format(new Date(x))
                 }

@@ -1,12 +1,16 @@
-import type { Account } from '../../../../domains/accounts'
-import { assertChain, useChainState } from '../../../../domains/chains'
-import { useExtrinsic, useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
-import PoolClaimPermissionFormComponent, {
-  PoolClaimPermissionDialog as PoolClaimPermissionDialogComponent,
-} from '../../../recipes/PoolClaimPermissionForm'
 import { useQueryMultiState } from '@talismn/react-polkadot-api'
 import { useState } from 'react'
 import { useRecoilValue } from 'recoil'
+
+import type { Account } from '@/domains/accounts'
+import {
+  PoolClaimPermissionDialog as PoolClaimPermissionDialogComponent,
+  PoolClaimPermissionForm as PoolClaimPermissionFormComponent,
+} from '@/components/recipes/PoolClaimPermissionForm'
+import { useChainState } from '@/domains/chains'
+import { assertChain } from '@/domains/chains/utils'
+import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
+import { useExtrinsicInBlockOrErrorEffect } from '@/domains/common/hooks/useExtrinsicEffect'
 
 type PoolClaimPermissionDialogProps = {
   account: Account

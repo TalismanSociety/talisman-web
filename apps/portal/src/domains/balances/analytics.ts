@@ -6,7 +6,7 @@ import { useRecoilValue } from 'recoil'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useThrottle } from '@/hooks/useThrottle'
 
-import { writeableBalancesState } from '.'
+import { writeableBalancesState } from './core'
 
 const digestMessage = async (message: string) => {
   const msgUint8 = new TextEncoder().encode(message)

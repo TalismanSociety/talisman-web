@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai'
 
 import { slpxSubstratePairsState } from '@/domains/staking/slpxSubstrate/recoils'
 
-import { Provider } from '../useProvidersData'
+import { Provider } from '../types'
 
 const useSlpxSubstrateProviders = () => {
   const slpxSubstratePairs = useAtomValue(slpxSubstratePairsState)

@@ -37,7 +37,6 @@
     "@polkadot/api-base": "14.0.1",
     "@polkadot/api-contract": "14.0.1",
     "@polkadot/api-derive": "14.0.1",
-    "@polkadot/extension-dapp": "0.53.1",
     "@polkadot/extension-inject": "0.53.1",
     "@polkadot/keyring": "13.1.1",
     "@polkadot/networks": "13.1.1",

@@ -1,8 +1,3 @@
-import { Maybe } from '../../../../util/monads'
-import type { Account } from '../../../accounts'
-import { useNativeTokenAmountState } from '../../../chains'
-import { expectedBlockTime, useSubstrateApiEndpoint, useSubstrateApiState } from '../../../common'
-import { stakedDappsState } from '../recoils'
 import { useDeriveState, useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
@@ -10,6 +5,15 @@ import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { range } from 'lodash'
 import { useMemo } from 'react'
 import { useRecoilValueLoadable_TRANSITION_SUPPORT_UNSTABLE as useRecoilValueLoadable, waitForAll } from 'recoil'
+
+import type { Account } from '@/domains/accounts'
+import { useNativeTokenAmountState } from '@/domains/chains/recoils'
+import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
+import { useSubstrateApiState } from '@/domains/common/recoils/api'
+import { expectedBlockTime } from '@/domains/common/utils/substratePolyfills'
+import { Maybe } from '@/util/monads'
+
+import { stakedDappsState } from '../recoils'
 
 export const useStakeLoadable = (account: Account) => {
   // Can't put this in the same waitForAll below
@@ -269,8 +273,8 @@ export const useStakeLoadable = (account: Account) => {
   )
 
   const isActive = useMemo(() => {
-    return dapps.length > 0 || (ledger?.unlocking.length ?? 0) > 0 || (locked?.decimalAmount.planck ?? 0) > 0
-  }, [dapps.length, ledger?.unlocking.length, locked?.decimalAmount.planck])
+    return dapps.length > 0 || (ledger?.unlocking.length ?? 0) > 0 || (locked?.decimalAmount?.planck ?? 0) > 0
+  }, [dapps.length, ledger?.unlocking.length, locked?.decimalAmount?.planck])
 
   const data = {
     active: isActive,
@@ -291,7 +295,7 @@ export const useStakeLoadable = (account: Account) => {
         nativeTokenAmount?.fromPlanck(
           (totalBonusRewards?.decimalAmount?.planck ?? 0n) + (stakerRewards?.decimalAmount?.planck ?? 0n)
         ),
-      [nativeTokenAmount, stakerRewards, totalBonusRewards?.decimalAmount.planck]
+      [nativeTokenAmount, stakerRewards, totalBonusRewards?.decimalAmount?.planck]
     ),
     unlocking,
     totalUnlocking,

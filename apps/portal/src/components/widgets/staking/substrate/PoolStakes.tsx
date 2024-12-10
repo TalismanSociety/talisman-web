@@ -1,10 +1,12 @@
-import { selectedSubstrateAccountsState } from '../../../../domains/accounts'
-import { useChainState } from '../../../../domains/chains'
-import { usePoolStakeLoadable } from '../../../../domains/staking/substrate/nominationPools/hooks'
-import ErrorBoundary from '../../ErrorBoundary'
-import PoolStakeItem from './PoolStakeItem'
-import { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+
+import { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
+import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
+import { selectedSubstrateAccountsState } from '@/domains/accounts'
+import { useChainState } from '@/domains/chains'
+import { usePoolStakeLoadable } from '@/domains/staking/substrate/nominationPools/hooks'
+
+import PoolStakeItem from './PoolStakeItem'
 
 type PoolStakeProps = {
   setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>

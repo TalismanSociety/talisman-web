@@ -1,10 +1,12 @@
-import { expectedEraTime, useSubstrateApiState } from '../../../../common'
 import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import BigNumber from 'bignumber.js'
 import { hoursToMilliseconds } from 'date-fns'
 import { range } from 'lodash'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
+
+import { useSubstrateApiState } from '@/domains/common/recoils/api'
+import { expectedEraTime } from '@/domains/common/utils/substratePolyfills'
 
 export const useApr = () => {
   const [api, activeEra] = useRecoilValue(

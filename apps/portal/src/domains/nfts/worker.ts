@@ -1,12 +1,12 @@
+import type { Nft } from '@talismn/nft'
 import {
   createAcalaNftAsyncGenerator,
-  createBitCountryNftAsyncGenerator,
   createArtZeroNftAsyncGenerator,
+  createBitCountryNftAsyncGenerator,
   createEvmNftAsyncGenerator,
   createSubstrateNftKusamaAssetHubNftAsyncGenerator,
   createSubstrateNftPolkadotAssetHubNftAsyncGenerator,
   createUniqueNetworkNftAsyncGenerator,
-  type Nft,
 } from '@talismn/nft'
 import { Observable } from 'rxjs'
 import { expose } from 'threads/worker'
