@@ -9,7 +9,7 @@ import type { Dapp } from '@/components/legacy/widgets/useFetchDapps'
 import { ExploreCard } from '@/components/legacy/widgets/ExploreCard'
 import { ExploreCardLoading, ExploreTagLoading } from '@/components/legacy/widgets/ExploreLoading'
 import { useFetchDapps } from '@/components/legacy/widgets/useFetchDapps'
-import { TitlePortal } from '@/routes/layout'
+import { TitlePortal } from '@/components/molecules/PageHeader'
 import { device } from '@/util/breakpoints'
 
 const ExploreGrid = ({ className }: { className?: string }) => {

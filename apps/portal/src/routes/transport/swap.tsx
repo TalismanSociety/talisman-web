@@ -1,4 +1,4 @@
-import { TitlePortal } from '../layout'
+import { TitlePortal } from '@/components/molecules/PageHeader'
 import { ChainFlipSwap } from '@/components/widgets/chainflip-swap'
 
 const Swap = () => {
