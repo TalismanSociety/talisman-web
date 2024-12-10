@@ -19,6 +19,7 @@ import {
   getTokenIdForSwappableAsset,
   QuoteFunction,
   saveAddressForQuest,
+  substrateSwapTransfer,
   supportedEvmChains,
   SwapFunction,
   SwapModule,
@@ -554,7 +555,14 @@ const swap: SwapFunction<{ id: string }> = async (
 
       saveIdForMonitoring(exchange.id, hash)
       saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
-      return { protocol: PROTOCOL, data: { id: exchange.id } }
+      return {
+        protocol: PROTOCOL,
+        depositRes: {
+          txHash: hash,
+          chainId: chain.id,
+        },
+        data: { id: exchange.id },
+      }
     } else if (fromAsset.networkType === 'substrate') {
       const signer = substrateWallet?.signer
       if (!signer) throw new Error('Substrate wallet not connected.')
@@ -562,19 +570,28 @@ const swap: SwapFunction<{ id: string }> = async (
       const substrateChain = chains.find(c => c.id === fromAsset.chainId)
       const rpc = substrateChain?.rpcs?.[0]?.url
       if (!rpc) throw new Error('RPC not found!')
-      const polkadotApi = await getSubstrateApi(substrateChain?.rpcs?.[0]?.url ?? '')
+      const polkadotApi = await getSubstrateApi(rpc)
+      const transferRes = await substrateSwapTransfer(
+        polkadotApi,
+        allowReap,
+        exchange.address_from,
+        addressFrom,
+        depositAmount.planck,
+        signer
+      )
 
-      const transfer = allowReap
-        ? polkadotApi.tx.balances['transferAllowDeath'] ?? polkadotApi.tx.balances['transfer']
-        : polkadotApi.tx.balances['transferKeepAlive']
-      const transferExtrinsic = await transfer(exchange.address_from, depositAmount.planck).signAndSend(addressFrom, {
-        signer,
-        withSignedTransaction: true,
-      })
-
-      saveIdForMonitoring(exchange.id, transferExtrinsic.toHex().toString())
-      saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
-      return { protocol: PROTOCOL, data: { id: exchange.id } }
+      if (transferRes.ok) {
+        saveIdForMonitoring(exchange.id, transferRes.id)
+        saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
+      }
+      return {
+        protocol: PROTOCOL,
+        depositRes: {
+          extrinsicId: transferRes.id,
+          chainId: substrateChain.id,
+        },
+        data: { id: exchange.id },
+      }
     }
   } catch (e) {
     console.error(e)

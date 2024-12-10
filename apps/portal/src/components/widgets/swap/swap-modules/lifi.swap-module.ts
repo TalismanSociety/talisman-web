@@ -235,6 +235,10 @@ const swap: SwapFunction<{ id: string }> = async (get: Getter, _: Setter, { evmW
     data: {
       id: swapHash,
     },
+    depositRes: {
+      chainId: chain.id,
+      txHash: swapHash,
+    },
     protocol: PROTOCOL,
   }
 }
