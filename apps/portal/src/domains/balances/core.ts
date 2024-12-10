@@ -1,17 +1,9 @@
 // TODO: nuke everything and re-write balances lib integration
 import { Balances } from '@talismn/balances'
-import { useBalances as _useBalances, useSetBalancesAddresses } from '@talismn/balances-react'
-import { useEffect, useMemo } from 'react'
-import { atom, selector, useRecoilCallback, useRecoilValue } from 'recoil'
+import { atom, selector } from 'recoil'
 
-import {
-  accountsState,
-  portfolioAccountsState,
-  selectedAccountsState,
-  writeableAccountsState,
-} from '@/domains/accounts/recoils'
+import { portfolioAccountsState, selectedAccountsState, writeableAccountsState } from '@/domains/accounts/recoils'
 
-import { useBalancesReportEffect } from './analytics'
 import { selectedCurrencyState } from './currency'
 
 export const balancesState = atom<Balances>({
@@ -71,27 +63,6 @@ export const writeableBalancesState = selector({
   dangerouslyAllowMutability: true,
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
-
-export const BalancesWatcher = () => {
-  const accounts = useRecoilValue(accountsState)
-  const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
-  useSetBalancesAddresses(addresses)
-
-  const unfilteredBalances = _useBalances()
-  const balances = useMemo(() => unfilteredBalances, [unfilteredBalances])
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(
-    useRecoilCallback(({ set }) => () => {
-      set(balancesState, balances)
-    }),
-    [balances]
-  )
-
-  useBalancesReportEffect()
-
-  return null
-}
 
 export type CoinGeckoErc20Coin = {
   id: string

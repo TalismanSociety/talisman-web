@@ -12,9 +12,8 @@ import { useEffect, useRef, useState } from 'react'
 import { RecoilLoadable, useRecoilValue } from 'recoil'
 import { type Observable } from 'rxjs'
 
+import { useSubstrateApiState } from '@/domains/common/recoils/api'
 import useDeferred from '@/util/useDeferred'
-
-import { useSubstrateApiState } from '..'
 
 type QueryMap = PickKnownKeys<{
   [P in keyof ApiPromise['query']]: `${P}.${keyof PickKnownKeys<ApiPromise['query'][P]>}`
@@ -128,5 +127,3 @@ export const useQueryMulti = <
 
   return loadable
 }
-
-export default useQueryMulti

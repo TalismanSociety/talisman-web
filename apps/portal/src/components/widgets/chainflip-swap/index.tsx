@@ -8,7 +8,7 @@ import { loadable } from 'jotai/utils'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSetRecoilState } from 'recoil'
 
-import { useSetJotaiSubstrateApiState } from '@/domains/common'
+import { useSetJotaiSubstrateApiState } from '@/domains/common/recoils/api'
 import { useFastBalance, UseFastBalanceProps } from '@/hooks/useFastBalance'
 
 import { walletConnectionSideSheetOpenState } from '../WalletConnectionSideSheet'

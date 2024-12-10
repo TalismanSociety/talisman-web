@@ -2,7 +2,7 @@ import type { ButtonProps } from '@talismn/ui/atoms/Button'
 import { TonalIconButton } from '@talismn/ui/atoms/IconButton'
 import { ArrowDown, Repeat } from '@talismn/web-icons'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/util/cn'
 
 export const ReverseRouteButton = ({ onClick, disabled }: Pick<ButtonProps<'button'>, 'onClick' | 'disabled'>) => (
   <TonalIconButton className="group relative lg:-rotate-90" onClick={onClick} disabled={disabled}>

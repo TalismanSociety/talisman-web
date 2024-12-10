@@ -5,10 +5,10 @@ import { find } from 'lodash'
 import { useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 import { selector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
-import type { CrowdloanDetail } from '../@talisman-crowdloans/provider'
-import { chainsState } from '../../domains/chains'
-import { substrateApiState } from '../../domains/common'
-import crowdloanDataState from '../@talisman-crowdloans/provider'
+import type { CrowdloanDetail } from '@/libs/@talisman-crowdloans/provider'
+import { chainsState } from '@/domains/chains/recoils'
+import { substrateApiState } from '@/domains/common/recoils/api'
+import crowdloanDataState from '@/libs/@talisman-crowdloans/provider'
 
 export const useParachainsDetails = () => useContext()
 export const useParachainsDetailsIndexedById = () => {

@@ -13,8 +13,8 @@ import { isAddress } from 'viem'
 import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { walletConnectionSideSheetOpenState } from '@/components/widgets/WalletConnectionSideSheet'
 import { evmAccountsState, substrateAccountsState } from '@/domains/accounts'
-import { AccountWithBtc, isBtcAddress } from '@/lib/btc'
-import { cn } from '@/lib/utils'
+import { AccountWithBtc, isBtcAddress } from '@/util/btc'
+import { cn } from '@/util/cn'
 import { shortenAddress } from '@/util/shortenAddress'
 
 type Props = {

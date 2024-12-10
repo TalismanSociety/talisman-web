@@ -10,6 +10,7 @@ import { CrowdloanCountdown } from './CrowdloanCountdown'
 import { CrowdloanRaised } from './CrowdloanRaised'
 import { ParachainAsset } from './ParachainAsset'
 
+/** @deprecated */
 export const CrowdloanTeaser = styled(
   ({ id, contributed, className }: { id: string; contributed?: boolean; className?: string }) => {
     const { t } = useTranslation()

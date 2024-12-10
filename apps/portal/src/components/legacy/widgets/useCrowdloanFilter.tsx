@@ -76,6 +76,7 @@ const networkOptions = [
   },
 ]
 
+/** @deprecated */
 export const useCrowdloanFilter = () => {
   const { t } = useTranslation('filters')
   const { crowdloans, hydrated } = useLatestCrowdloans()

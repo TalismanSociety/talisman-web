@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { useAssets, useAssetsFiltered } from '@/components/legacy/widgets/useAssets'
 import { WalletTotal } from '@/components/legacy/widgets/WalletTotal'
-import Asset, { AssetsList, AssetsListLocked } from '@/components/recipes/Asset'
+import { Asset, AssetsList, AssetsListLocked } from '@/components/recipes/Asset'
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 
 const Assets = () => {

@@ -8,9 +8,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
-import { selectedCurrencyState } from '@/domains/balances'
+import { selectedCurrencyState } from '@/domains/balances/currency'
 import { useTokenRatesFromUsd } from '@/hooks/useTokenRatesFromUsd'
-import { cn } from '@/lib/utils'
+import { cn } from '@/util/cn'
 import { Decimal } from '@/util/Decimal'
 
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'

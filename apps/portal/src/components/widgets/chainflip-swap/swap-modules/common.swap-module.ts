@@ -10,7 +10,7 @@ import { atom } from 'jotai'
 import { atomWithStorage, createJSONStorage, unstable_withStorageValidator } from 'jotai/utils'
 import { Loadable } from 'jotai/vanilla/utils/loadable'
 
-import { isBtcAddress } from '@/lib/btc'
+import { isBtcAddress } from '@/util/btc'
 import { Decimal } from '@/util/Decimal'
 
 import 'recoil'

@@ -1,11 +1,12 @@
-import { chainReadIdState } from './recoils'
 import type { SubmittableExtrinsic } from '@polkadot/api/types'
 import type { GenericCall } from '@polkadot/types'
 import type { Vec } from '@polkadot/types-codec'
 import type { ISubmittableResult } from '@polkadot/types/types'
+import type { CallbackInterface } from 'recoil'
 import posthog from 'posthog-js'
 import { startTransition } from 'react'
-import type { CallbackInterface } from 'recoil'
+
+import { chainReadIdState } from '@/domains/common/recoils'
 
 type Tag = 'analytics'
 

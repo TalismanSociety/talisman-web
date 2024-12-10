@@ -3,10 +3,11 @@ import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import { selectedSubstrateAccountsState } from '@/domains/accounts'
 import { Account } from '@/domains/accounts/recoils'
-import { selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
+import { selectedBalancesState } from '@/domains/balances/core'
+import { selectedCurrencyState } from '@/domains/balances/currency'
 import { Decimal } from '@/util/Decimal'
+import { Maybe } from '@/util/monads'
 
-import { Maybe } from '../../../util/monads'
 import { SlpxSubstratePair } from './types'
 
 const defaultCurrency = 'usd'

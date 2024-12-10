@@ -21,6 +21,7 @@ type GridProps = {
   breakpoints?: any
 }
 
+/** @deprecated */
 export const Grid = styled(({ className, children }: GridProps) => (
   <div className={`grid ${className ?? ''}`}>{children}</div>
 ))`

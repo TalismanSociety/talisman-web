@@ -8,7 +8,7 @@ import { ChevronLeft } from '@talismn/web-icons'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { useSingleAsset } from '@/components/legacy/widgets/useAssets'
-import { AssetBreakdownList } from '@/components/recipes/AssetBreakdown/AssetBreakdownList'
+import { AssetBreakdownList } from '@/components/recipes/AssetBreakdownList'
 import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { RedactableBalance } from '@/components/widgets/RedactableBalance'

@@ -34,7 +34,7 @@ import Medium from '@/assets/icons/medium-header.svg?react'
 import Twitter from '@/assets/icons/twitter-header.svg?react'
 import { ModalProvider } from '@/components/legacy/Modal'
 import { WalletTotal } from '@/components/legacy/widgets/WalletTotal'
-import AccountValueInfo from '@/components/recipes/AccountValueInfo'
+import { AccountValueInfo } from '@/components/recipes/AccountValueInfo'
 import { useShouldShowAccountConnectionGuard } from '@/components/widgets/AccountConnectionGuard'
 import { AccountsManagementMenu } from '@/components/widgets/AccountsManagementMenu'
 import DappStakingStakeSideSheet from '@/components/widgets/staking/dappStaking/StakeSideSheet'
@@ -48,7 +48,7 @@ import {
   walletConnectionSideSheetOpenState,
 } from '@/components/widgets/WalletConnectionSideSheet'
 import { lookupAccountAddressState, selectedAccountsState } from '@/domains/accounts'
-import { currencyConfig, selectedCurrencyState } from '@/domains/balances'
+import { currencyConfig, selectedCurrencyState } from '@/domains/balances/currency'
 import { useHasActiveWalletConnection } from '@/domains/extension'
 import { isNilOrWhitespace } from '@/util/nil'
 

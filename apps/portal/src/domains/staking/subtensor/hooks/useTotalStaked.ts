@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll, waitForAny } from 'recoil'
 
-import { selectedSubstrateAccountsState } from '../../../accounts'
-import { nativeTokenAmountState, subtensorStakingEnabledChainsState } from '../../../chains'
-import { chainQueryState } from '../../../common'
+import { selectedSubstrateAccountsState } from '@/domains/accounts'
+import { nativeTokenAmountState, subtensorStakingEnabledChainsState } from '@/domains/chains/recoils'
+import { chainQueryState } from '@/domains/common/recoils/query'
 
 export const useTotalStaked = () => {
   const [chains, accounts] = useRecoilValue(

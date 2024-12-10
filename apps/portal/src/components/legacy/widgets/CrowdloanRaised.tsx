@@ -8,6 +8,7 @@ import { Stat } from '@/components/legacy/Stat'
 import { useCrowdloanById } from '@/libs/talisman'
 import { shortNumber } from '@/util/helpers'
 
+/** @deprecated */
 export const CrowdloanRaised = styled(
   ({
     id,

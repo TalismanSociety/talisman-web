@@ -17,8 +17,8 @@ import { useIntersection } from 'react-use'
 import { useRecoilValue } from 'recoil'
 
 import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
-import ChainLogo from '@/components/recipes/ChainLogo'
-import { selectedCurrencyState } from '@/domains/balances'
+import { ChainLogo } from '@/components/recipes/ChainLogo'
+import { selectedCurrencyState } from '@/domains/balances/currency'
 
 import type { TokenPickerAsset, TokenPickerAssetWithBalance, TokenPickerChain } from './api/utils/xcmTokenPickerTypes'
 import { senderAtom } from './api/atoms/xcmFieldsAtoms'

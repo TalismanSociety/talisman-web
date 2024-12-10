@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 
+/** @deprecated */
 export const ProgressBar = styled(({ percent, className }: { className?: string; percent?: number }) => (
   <div className={`${className ?? ''} progress-bar`}>
     <span style={{ width: `${percent ?? 0}%` }} />

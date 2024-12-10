@@ -92,6 +92,7 @@ const FilterBar = styled(
   }
 `
 
+/** @deprecated */
 export const CrowdloanIndex = styled(({ withFilter, className }: { withFilter: boolean; className?: string }) => {
   const { t } = useTranslation()
   const { crowdloans, count, loading, filterProps } = useCrowdloanFilter()

@@ -6,6 +6,7 @@ import { Button } from '@/components/legacy/Button'
 import { useModal } from '@/components/legacy/Modal'
 import { isMobileBrowser } from '@/util/helpers'
 
+/** @deprecated */
 export const DesktopRequired = () => {
   const { openModal } = useModal()
 

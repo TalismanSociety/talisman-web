@@ -8,8 +8,8 @@ import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
 import { useState, useTransition } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import type { StakeLoadable } from '@/domains/staking/dappStaking'
-import { useNativeTokenAmountState } from '@/domains/chains'
+import { useNativeTokenAmountState } from '@/domains/chains/recoils'
+import { StakeLoadable } from '@/domains/staking/dappStaking/hooks/useStakeLoadable'
 import { useRegisteredDappsState } from '@/domains/staking/dappStaking/recoils'
 import { shortenAddress } from '@/util/shortenAddress'
 
@@ -78,7 +78,7 @@ const DappPickerDialog = (props: DappPickerDialogProps) => {
                 </div>
                 <div>
                   <Text.Body as="div" alpha="high">
-                    {total.decimalAmount.toLocaleString()}
+                    {total.decimalAmount?.toLocaleString()}
                   </Text.Body>
                   <Text.BodySmall as="div">{total.localizedFiatAmount}</Text.BodySmall>
                 </div>

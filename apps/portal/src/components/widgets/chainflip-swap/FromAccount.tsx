@@ -7,8 +7,8 @@ import { useRecoilValue } from 'recoil'
 import { isAddress } from 'viem'
 
 import { SeparatedAccountSelector } from '@/components/widgets/SeparatedAccountSelector'
-import { selectedCurrencyState } from '@/domains/balances'
-import { cn } from '@/lib/utils'
+import { selectedCurrencyState } from '@/domains/balances/currency'
+import { cn } from '@/util/cn'
 import { Decimal } from '@/util/Decimal'
 
 import {

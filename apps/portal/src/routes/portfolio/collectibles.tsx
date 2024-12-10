@@ -18,18 +18,21 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import type { Account } from '@/domains/accounts'
-import type { CollectionKey, Nft, NftCollection, NftTag } from '@/domains/nfts'
 import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { selectedAccountsState } from '@/domains/accounts'
 import {
+  CollectionKey,
+  Nft,
+  NftCollection,
   nftCollectionItemsState,
   nftCollectionsState,
   nftsByTagState,
   nftsLoadingState,
+  NftTag,
   useSetFavoriteNft,
   useSetHiddenNft,
-} from '@/domains/nfts'
+} from '@/domains/nfts/core'
 import { usePagination } from '@/hooks/usePagination'
 import { Maybe } from '@/util/monads'
 import { shortenAddress } from '@/util/shortenAddress'

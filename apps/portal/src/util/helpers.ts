@@ -1,14 +1,7 @@
 export const truncateAddress = (addr: string | null | undefined, start = 6, end = 4) =>
   addr ? `${addr.substring(0, start)}...${addr.substring(addr.length - end)}` : null
 
-export const truncateString = (str = '', start = 10, end = 0) =>
-  str?.length
-    ? str.length <= start + end
-      ? str
-      : `${str.substring(0, start)}...` + (end > 0 ? str.substring(str.length - end) : '')
-    : null
-
-export const unitPrefixes = [
+const unitPrefixes = [
   { multiplier: 1e-24, symbol: 'y' },
   { multiplier: 1e-21, symbol: 'z' },
   { multiplier: 1e-18, symbol: 'a' },

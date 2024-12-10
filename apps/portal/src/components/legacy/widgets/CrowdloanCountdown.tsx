@@ -46,6 +46,7 @@ type CountdownProps = {
   className?: string
 }
 
+/** @deprecated */
 export const CrowdloanCountdown = ({ id, showSeconds, className, ...rest }: CountdownProps) => {
   const { crowdloan } = useCrowdloanById(id)
 

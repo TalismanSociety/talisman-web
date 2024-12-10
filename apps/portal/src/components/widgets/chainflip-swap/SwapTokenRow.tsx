@@ -11,7 +11,7 @@ import { useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
-import { selectedCurrencyState } from '@/domains/balances'
+import { selectedCurrencyState } from '@/domains/balances/currency'
 import { useCopied } from '@/hooks/useCopied'
 import { useTokenRatesFromUsd } from '@/hooks/useTokenRatesFromUsd'
 import { Decimal } from '@/util/Decimal'

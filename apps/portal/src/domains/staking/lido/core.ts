@@ -4,11 +4,11 @@ import { useRecoilValueLoadable } from 'recoil'
 import { useBlockNumber, useConfig } from 'wagmi'
 import { getTokenQueryOptions, readContractQueryOptions, readContractsQueryOptions } from 'wagmi/query'
 
+import type { Account } from '@/domains/accounts'
+import { tokenPriceState } from '@/domains/chains/recoils'
 import { Decimal } from '@/util/Decimal'
 
-import type { Account } from '../../accounts'
 import type { LidoSuite } from './types'
-import { tokenPriceState } from '../../chains'
 import { lidoTokenAbi, withdrawalQueueAbi } from './abi'
 
 // https://github.com/wevm/wagmi/issues/3855

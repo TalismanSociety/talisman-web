@@ -9,8 +9,8 @@ import { Decimal } from '@/util/Decimal'
 
 import { useAvailableBalance as useSlpxAvailableBalance } from '../hooks/bifrost/useAvailableBalance'
 import useLidoAvailableBalance from '../hooks/lido/useAvailableBalance'
+import { StakeProviderTypeId } from '../hooks/types'
 import useAvailableBalance from '../hooks/useAvailableBalance'
-import { StakeProviderTypeId } from '../hooks/useProvidersData'
 
 type AvailableBalanceProps = {
   typeId: StakeProviderTypeId

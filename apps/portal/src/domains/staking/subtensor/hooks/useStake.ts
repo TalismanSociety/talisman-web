@@ -1,12 +1,14 @@
-import type { Account } from '../../../accounts'
-import { useNativeTokenAmountState } from '../../../chains'
-import { useSubstrateApiState } from '../../../common'
-import { accountStakeAtom } from '../atoms/accountStake'
-import { delegateInfosAtomFamily } from '../atoms/delegateInfo'
 import { useAtomValue } from 'jotai'
 import uniq from 'lodash/uniq'
 import { useMemo } from 'react'
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from 'recoil'
+
+import type { Account } from '@/domains/accounts'
+import { useNativeTokenAmountState } from '@/domains/chains/recoils'
+import { useSubstrateApiState } from '@/domains/common/recoils/api'
+
+import { accountStakeAtom } from '../atoms/accountStake'
+import { delegateInfosAtomFamily } from '../atoms/delegateInfo'
 
 export type Stake = ReturnType<typeof useStake>
 

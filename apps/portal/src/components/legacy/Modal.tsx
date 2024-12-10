@@ -18,6 +18,7 @@ type ContextProps = {
 }
 
 const Context = createContext<ContextProps | null>(null)
+/** @deprecated */
 export function useModal(): ContextProps {
   const context = useContext(Context)
   if (!context) throw new Error('The modal provider is required in order to use this hook')
@@ -26,6 +27,7 @@ export function useModal(): ContextProps {
 }
 
 type ProviderProps = PropsWithChildren
+/** @deprecated */
 export function ModalProvider({ children }: PropsWithChildren<ProviderProps>): JSX.Element {
   const [content, setContent] = useState<JSX.Element | null>(null)
   const [closable, setClosable] = useState(true)
@@ -49,7 +51,8 @@ export function ModalProvider({ children }: PropsWithChildren<ProviderProps>): J
   )
 }
 
-export const Modal = function Modal({ className, closable }: { className?: string; closable: boolean }) {
+/** @deprecated */
+const Modal = function Modal({ className, closable }: { className?: string; closable: boolean }) {
   const { open, content, closeModal } = useModal()
 
   useKeyDown(

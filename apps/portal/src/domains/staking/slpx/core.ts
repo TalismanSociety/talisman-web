@@ -13,9 +13,10 @@ import { manta, moonbeam } from 'wagmi/chains'
 import { getTokenQueryOptions, readContractsQueryOptions } from 'wagmi/query'
 
 import type { Account } from '@/domains/accounts'
-import { selectedCurrencyState } from '@/domains/balances'
-import { tokenPriceState } from '@/domains/chains'
-import { useSubstrateApiState, useWagmiWriteContract } from '@/domains/common'
+import { selectedCurrencyState } from '@/domains/balances/currency'
+import { tokenPriceState } from '@/domains/chains/recoils'
+import { useWagmiWriteContract } from '@/domains/common/hooks/useWagmiWriteContract'
+import { useSubstrateApiState } from '@/domains/common/recoils/api'
 import { Decimal } from '@/util/Decimal'
 import { Maybe } from '@/util/monads'
 

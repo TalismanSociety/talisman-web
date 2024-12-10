@@ -3,6 +3,7 @@ import { type PropsWithChildren } from 'react'
 
 import useImageWithFallback from '@/util/useImageWithFallback'
 
+/** @deprecated */
 export const Poster = styled(
   ({
     title,

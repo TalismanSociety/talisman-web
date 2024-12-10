@@ -10,7 +10,7 @@ import { useUnlockDuration as useNominationPoolUnlockDuration } from '@/domains/
 
 import useSlpxSubstrateUnlockDuration from '../hooks/bifrost/useSlpxSubstrateUnlockDuration'
 import useDappUnlockDuration from '../hooks/dapp/useUnlockDuration'
-import { StakeProviderTypeId } from '../hooks/useProvidersData'
+import { StakeProviderTypeId } from '../hooks/types'
 
 const unbondingFormatter = (unlockValue: number) => formatDistance(0, unlockValue)
 

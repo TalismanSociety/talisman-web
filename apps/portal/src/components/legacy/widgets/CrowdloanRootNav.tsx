@@ -1,6 +1,7 @@
 import { css, useTheme } from '@emotion/react'
 import { NavLink } from 'react-router-dom'
 
+/** @deprecated */
 export const CrowdloanRootNav = () => {
   const theme = useTheme()
 

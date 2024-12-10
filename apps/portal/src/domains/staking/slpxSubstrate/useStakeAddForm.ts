@@ -3,12 +3,13 @@ import BigNumber from 'bignumber.js'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
-import { selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
-import { useExtrinsic } from '@/domains/common/hooks'
+import { selectedBalancesState } from '@/domains/balances/core'
+import { selectedCurrencyState } from '@/domains/balances/currency'
+import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
+import { useSubstrateApiState } from '@/domains/common/recoils/api'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import { Decimal } from '@/util/Decimal'
 
-import { useSubstrateApiState } from '../../common/recoils'
 import { channel_id } from '../constants'
 
 const useStakeAddForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {

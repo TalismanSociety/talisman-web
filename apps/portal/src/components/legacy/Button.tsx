@@ -6,32 +6,7 @@ import { Link, NavLink } from 'react-router-dom'
 
 import IconLoading from '@/assets/icons/loader.svg?react'
 
-export const ButtonIcon = styled(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ({ children, className, ...rest }: { children: any; className?: string; onClick?: (e: any) => void }) => (
-    <button className={`button icon-button ${className ?? ''}`} {...rest}>
-      {children}
-    </button>
-  )
-)`
-  border: none;
-  padding: 0.335em;
-  margin: 0;
-  line-height: 1em;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: opacity 0.2s;
-  background: rgba(${({ theme }) => theme?.foreground}, 0.05);
-  border-radius: 50%;
-  font-size: 1.5em;
-
-  > * {
-    line-height: 1em;
-  }
-`
-
+/** @deprecated */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Button = styled(({ loading, children, variant = '', className, ...props }: any) => {
   const wrappedChildren = loading ? (

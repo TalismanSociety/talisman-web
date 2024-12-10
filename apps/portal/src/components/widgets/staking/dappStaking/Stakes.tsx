@@ -4,18 +4,18 @@ import { useNavigate } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import type { Account } from '@/domains/accounts'
-import DappStakingLockedAmountDialog from '@/components/recipes/DappStakingLockedAmountDialog'
-import StakePosition, { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
+import { DappStakingLockedAmountDialog } from '@/components/recipes/DappStakingLockedAmountDialog'
+import { StakePosition, StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { selectedSubstrateAccountsState } from '@/domains/accounts'
-import { ChainProvider, dappStakingEnabledChainsState, useChainState } from '@/domains/chains'
-import { useExtrinsic, useNativeTokenLocalizedFiatAmount } from '@/domains/common'
-import {
-  useClaimAllRewardsExtrinsic,
-  useRegisteredDappsState,
-  useStakeLoadable,
-  useTotalDappStakingRewards,
-} from '@/domains/staking/dappStaking'
+import { ChainProvider, useChainState } from '@/domains/chains'
+import { dappStakingEnabledChainsState } from '@/domains/chains/recoils'
+import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
+import { useNativeTokenLocalizedFiatAmount } from '@/domains/common/hooks/useLocalizedFiatAmount'
+import { useClaimAllRewardsExtrinsic } from '@/domains/staking/dappStaking/hooks/useClaimAllRewardsExtrinsic'
+import { useStakeLoadable } from '@/domains/staking/dappStaking/hooks/useStakeLoadable'
+import { useTotalDappStakingRewards } from '@/domains/staking/dappStaking/hooks/useTotalRewards'
+import { useRegisteredDappsState } from '@/domains/staking/dappStaking/recoils'
 
 import useUnlockDuration from '../providers/hooks/dapp/useUnlockDuration'
 import AddStakeDialog from './AddStakeDialog'
@@ -106,22 +106,22 @@ const Stake = ({
           )
         }
         lockedButton={
-          (stake.locked?.decimalAmount.planck ?? 0n) > 0n && (
+          (stake.locked?.decimalAmount?.planck ?? 0n) > 0n && (
             <ErrorBoundary renderFallback={() => <>--</>}>
               <StakePosition.LockedButton
                 loading={unlockExtrinsic.state === 'loading'}
-                amount={stake.locked?.decimalAmount.toLocaleString()}
+                amount={stake.locked?.decimalAmount?.toLocaleString()}
                 onClick={() => setLockedDialogOpen(true)}
               />
             </ErrorBoundary>
           )
         }
         claimButton={
-          (stake.totalRewards?.decimalAmount.planck ?? 0n) > 0n && (
+          (stake.totalRewards?.decimalAmount?.planck ?? 0n) > 0n && (
             <ErrorBoundary renderFallback={() => <>--</>}>
               <StakePosition.ClaimButton
                 loading={claimAllRewardsExtrinsic.state === 'loading'}
-                amount={stake.totalRewards?.decimalAmount.toLocaleString()}
+                amount={stake.totalRewards?.decimalAmount?.toLocaleString()}
                 onClick={() => {
                   void claimAllRewardsExtrinsic.signAndSend(account.address)
                 }}
@@ -130,11 +130,11 @@ const Stake = ({
           )
         }
         withdrawButton={
-          (stake.withdrawable?.decimalAmount.planck ?? 0n) > 0n && (
+          (stake.withdrawable?.decimalAmount?.planck ?? 0n) > 0n && (
             <ErrorBoundary renderFallback={() => <>--</>}>
               <StakePosition.WithdrawButton
                 loading={withdrawExtrinsic.state === 'loading'}
-                amount={stake.withdrawable?.decimalAmount.toLocaleString()}
+                amount={stake.withdrawable?.decimalAmount?.toLocaleString()}
                 onClick={() => {
                   void withdrawExtrinsic.signAndSend(account.address)
                 }}
@@ -146,8 +146,8 @@ const Stake = ({
           stake.unlocking.length > 0 && (
             <ErrorBoundary renderFallback={() => <>--</>}>
               <StakePosition.UnstakingStatus
-                amount={stake.totalUnlocking?.decimalAmount.toLocaleString()}
-                unlocks={stake.unlocking.map(x => ({ amount: x.amount.decimalAmount.toLocaleString(), eta: x.eta }))}
+                amount={stake.totalUnlocking?.decimalAmount?.toLocaleString()}
+                unlocks={stake.unlocking.map(x => ({ amount: x.amount.decimalAmount?.toLocaleString(), eta: x.eta }))}
               />
             </ErrorBoundary>
           )
@@ -161,7 +161,7 @@ const Stake = ({
       )}
       {lockedDialogOpen && (
         <DappStakingLockedAmountDialog
-          amount={stake.locked?.decimalAmount.toLocaleString()}
+          amount={stake.locked?.decimalAmount?.toLocaleString()}
           fiatAmount={stake.locked?.localizedFiatAmount}
           unlockDuration={unlockDuration}
           onRequestDismiss={() => setLockedDialogOpen(false)}
@@ -177,7 +177,7 @@ const Stake = ({
           }}
           requestReStakeInTransition={requestReStakeInTransition}
           onRequestUnlock={() => {
-            void unlockExtrinsic.signAndSend(account.address, stake.locked?.decimalAmount.planck ?? 0n)
+            void unlockExtrinsic.signAndSend(account.address, stake.locked?.decimalAmount?.planck ?? 0n)
             setLockedDialogOpen(false)
           }}
         />

@@ -11,8 +11,8 @@ import { type ApiPromise } from '@polkadot/api'
 import { constSelector, RecoilLoadable, useRecoilValueLoadable } from 'recoil'
 import { type Observable } from 'rxjs'
 
-import { useSubstrateApiEndpoint } from '.'
-import { chainQueryState } from '../recoils/query'
+import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
+import { chainQueryState } from '@/domains/common/recoils/query'
 
 /**
  * @deprecated use `useQueryState` or `useDeriveState` instead
@@ -64,5 +64,3 @@ export const useChainState = <
 
   return !options.enabled ? (RecoilLoadable.loading() as Loadable<TResult>) : loadable
 }
-
-export default useChainState

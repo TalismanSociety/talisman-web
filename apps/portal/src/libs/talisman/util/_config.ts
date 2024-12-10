@@ -1,6 +1,6 @@
 import { selector, waitForAll } from 'recoil'
 
-import { chainState } from '../../../domains/chains'
+import { chainState } from '@/domains/chains/recoils'
 
 export const statusOptions = {
   INITIALIZED: 'INITIALIZED',

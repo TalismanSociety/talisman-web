@@ -24,8 +24,8 @@ import {
   selectedAccountAddressesState,
   selectedAccountsState,
 } from '@/domains/accounts/recoils'
-import { fiatBalanceGetterState, portfolioBalancesFiatSumState } from '@/domains/balances'
-import { copyAddressToClipboard } from '@/domains/common/utils'
+import { fiatBalanceGetterState, portfolioBalancesFiatSumState } from '@/domains/balances/core'
+import { copyAddressToClipboard } from '@/domains/common/utils/clipboard'
 import { useOnChainId } from '@/libs/onChainId/hooks/useOnChainId'
 import { Maybe } from '@/util/monads'
 import { shortenAddress } from '@/util/shortenAddress'

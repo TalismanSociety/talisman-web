@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { type PropsWithChildren, type ReactNode } from 'react'
 
+/** @deprecated */
 export const Stat = styled(
   ({ title, children, className, ...rest }: PropsWithChildren<{ title: ReactNode; className?: string }>) => (
     <span className={`stat ${className ?? ''}`} {...rest}>

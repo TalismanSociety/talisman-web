@@ -16,7 +16,7 @@ import { isAddress } from 'viem'
 import * as allChains from 'viem/chains'
 
 import { useDebounce } from '@/hooks/useDebounce'
-import { cn } from '@/lib/utils'
+import { cn } from '@/util/cn'
 import { Decimal } from '@/util/Decimal'
 
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'

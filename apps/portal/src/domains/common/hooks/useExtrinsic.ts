@@ -7,12 +7,14 @@ import { useContext, useMemo, useState } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
 
 import { signetAccountState } from '@/domains/accounts'
-import { chainState, useChainState } from '@/domains/chains'
-import { substrateApiState, useSubstrateApiEndpoint } from '@/domains/common'
+import { useChainState } from '@/domains/chains'
+import { chainState } from '@/domains/chains/recoils'
 import { AnalyticsContext } from '@/domains/common/analytics'
 import { HarmlessError } from '@/domains/common/errors'
 import { extrinsicMiddleware } from '@/domains/common/extrinsicMiddleware'
-import { toastExtrinsic } from '@/domains/common/utils'
+import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
+import { substrateApiState } from '@/domains/common/recoils/api'
+import { toastExtrinsic } from '@/domains/common/utils/toast'
 import { useConnectedSubstrateWallet } from '@/domains/extension'
 
 type Promisable<T> = T | PromiseLike<T>
@@ -219,5 +221,3 @@ export function useExtrinsic(
     [loadable, moduleOrSubmittable, signAndSend]
   )
 }
-
-export default useExtrinsic

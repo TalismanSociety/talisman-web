@@ -12,6 +12,7 @@ type CardProps = {
   setSelectedTag: (tag: string) => unknown
 }
 
+/** @deprecated */
 export const ExploreCard = styled(({ className, dapp, setSelectedTag }: CardProps) => {
   const posthog = usePostHog()
 

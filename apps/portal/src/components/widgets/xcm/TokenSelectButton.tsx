@@ -2,7 +2,7 @@ import { SurfaceButton } from '@talismn/ui/atoms/Button'
 import { ReactNode } from 'react'
 
 import { AssetLogoWithChain, AssetLogoWithChainSkeleton } from '@/components/recipes/AssetLogoWithChain'
-import { cn } from '@/lib/utils'
+import { cn } from '@/util/cn'
 
 import type { TokenPickerAsset } from './api/utils/xcmTokenPickerTypes'
 

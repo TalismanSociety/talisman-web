@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import type { Decimal } from '@/util/Decimal'
-import { selectedCurrencyState } from '@/domains/balances'
+import { selectedCurrencyState } from '@/domains/balances/currency'
 import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@/domains/chains/recoils'
 
 type Options<TAllowInvalid extends boolean = boolean> = { currency?: string; allowInvalidValue?: TAllowInvalid }

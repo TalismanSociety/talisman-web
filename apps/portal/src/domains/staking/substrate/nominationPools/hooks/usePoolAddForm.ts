@@ -1,12 +1,15 @@
-import { Maybe } from '../../../../../util/monads'
-import usePrevious from '../../../../../util/usePrevious'
-import { useSubstrateApiEndpoint, useTokenAmountFromPlanck, useTokenAmountState } from '../../../../common/hooks'
-import { paymentInfoState, useSubstrateApiState } from '../../../../common/recoils'
 import { BN } from '@polkadot/util'
 import { useDeriveState, useQueryMultiState } from '@talismn/react-polkadot-api'
 import { useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { constSelector, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+
+import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
+import { useTokenAmountFromPlanck, useTokenAmountState } from '@/domains/common/hooks/useTokenAmount'
+import { paymentInfoState } from '@/domains/common/recoils'
+import { useSubstrateApiState } from '@/domains/common/recoils/api'
+import { Maybe } from '@/util/monads'
+import usePrevious from '@/util/usePrevious'
 
 const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.5
 

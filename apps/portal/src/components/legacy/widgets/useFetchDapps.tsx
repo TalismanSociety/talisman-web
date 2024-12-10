@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 
 export type Dapp = { id: string; name: string; description: string; logoUrl: string; tags: string[] }
 
+/** @deprecated */
 export const useFetchDapps = () => {
   const [dapps, setDapps] = useState<Dapp[]>([])
   const [loading, setLoading] = useState<boolean>(true)

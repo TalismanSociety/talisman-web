@@ -8,7 +8,7 @@ import { useState, useTransition } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import type { Account } from '@/domains/accounts'
-import { useNativeTokenAmountState } from '@/domains/chains'
+import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useDelegates } from '@/domains/staking/subtensor/hooks/useDelegates'
 import { useStake } from '@/domains/staking/subtensor/hooks/useStake'
 import { shortenAddress } from '@/util/shortenAddress'
@@ -61,7 +61,7 @@ const DelegatePickerDialog = (props: DelegatePickerDialogProps) => {
                 </div>
                 <div>
                   <Text.Body as="div" alpha="high">
-                    {total.decimalAmount.toLocaleString()}
+                    {total.decimalAmount?.toLocaleString()}
                   </Text.Body>
                   <Text.BodySmall as="div">{total.localizedFiatAmount}</Text.BodySmall>
                 </div>

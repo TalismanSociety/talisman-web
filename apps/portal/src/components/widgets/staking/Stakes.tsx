@@ -7,10 +7,11 @@ import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 import { SectionHeader } from '@/components/molecules/SectionHeader'
-import StakePosition, { StakePositionList } from '@/components/recipes/StakePosition'
+import { StakePosition, StakePositionList } from '@/components/recipes/StakePosition'
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
-import { ChainProvider, nominationPoolsEnabledChainsState } from '@/domains/chains'
+import { ChainProvider } from '@/domains/chains'
+import { nominationPoolsEnabledChainsState } from '@/domains/chains/recoils'
 import { useTotalStaked } from '@/domains/staking'
 
 import DappStakes from './dappStaking/Stakes'

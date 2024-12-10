@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 import { RedactableBalance } from '@/components/widgets/RedactableBalance'
-import { selectedCurrencyState } from '@/domains/balances'
+import { selectedCurrencyState } from '@/domains/balances/currency'
 
 export type AnimatedFiatNumberProps = {
   animate?: boolean

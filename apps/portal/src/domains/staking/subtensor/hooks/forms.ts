@@ -5,14 +5,11 @@ import { useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import type { Account } from '@/domains/accounts'
-import {
-  paymentInfoState,
-  useExtrinsic,
-  useSubstrateApiEndpoint,
-  useSubstrateApiState,
-  useTokenAmount,
-  useTokenAmountFromPlanck,
-} from '@/domains/common'
+import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
+import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
+import { useTokenAmount, useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
+import { paymentInfoState } from '@/domains/common/recoils'
+import { useSubstrateApiState } from '@/domains/common/recoils/api'
 
 import { MIN_SUBTENSOR_STAKE } from '../atoms/delegates'
 import { type Stake } from './useStake'

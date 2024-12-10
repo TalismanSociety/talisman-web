@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import type { Account } from '@/domains/accounts'
 import { AddStakeDialog as _AddStakeDialog } from '@/components/recipes/AddStakeDialog'
-import { useExtrinsicInBlockOrErrorEffect } from '@/domains/common'
+import { useExtrinsicInBlockOrErrorEffect } from '@/domains/common/hooks/useExtrinsicEffect'
 import { useAddStakeForm } from '@/domains/staking/subtensor/hooks/forms'
 import { useDelegate } from '@/domains/staking/subtensor/hooks/useDelegate'
 import { type Stake } from '@/domains/staking/subtensor/hooks/useStake'

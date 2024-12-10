@@ -12,6 +12,7 @@ type Props = {
   comingSoon?: boolean
 } & MotionProps
 
+/** @deprecated */
 export const Panel = styled(({ title, subtitle, children, className, ...rest }: Props) => (
   <motion.div className={`panel ${className ?? ''}`} {...rest}>
     {title !== undefined && (
@@ -59,6 +60,7 @@ export const Panel = styled(({ title, subtitle, children, className, ...rest }: 
   }
 `
 
+/** @deprecated */
 export const PanelSection = styled(({ title, children, className, comingSoon, ...rest }: Props) => (
   <motion.div className={`panel-section ${className ?? ''}`} {...rest}>
     {!!title && <h2>{title}</h2>}

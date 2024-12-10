@@ -5,10 +5,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useInterval } from 'react-use'
 import { useRecoilValue } from 'recoil'
 
-import type { ContributionsQuery } from '../../../generated/gql/crowdloan/gql/graphql'
-import { graphql } from '../../../generated/gql/crowdloan/gql'
-import { selectedSubstrateAccountsState } from '../../domains/accounts'
-import { useChainmetaValue } from '../talisman'
+import type { ContributionsQuery } from '@/generated/gql/crowdloan/gql/graphql'
+import { selectedSubstrateAccountsState } from '@/domains/accounts'
+import { graphql } from '@/generated/gql/crowdloan/gql'
+import { useChainmetaValue } from '@/libs/talisman'
 
 type ContributionsIndexerConfig = {
   accountIndex: number

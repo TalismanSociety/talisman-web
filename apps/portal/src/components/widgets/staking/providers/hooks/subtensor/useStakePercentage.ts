@@ -5,7 +5,7 @@ import { useRecoilValue, waitForAll } from 'recoil'
 
 import { selectedSubstrateAccountsState } from '@/domains/accounts'
 import { useChainState } from '@/domains/chains'
-import { chainDeriveState, chainQueryState } from '@/domains/common'
+import { chainDeriveState, chainQueryState } from '@/domains/common/recoils/query'
 
 const useStakePercentage = () => {
   const apiId = usePolkadotApiId()

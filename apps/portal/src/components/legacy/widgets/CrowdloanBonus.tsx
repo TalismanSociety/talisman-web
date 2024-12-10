@@ -12,6 +12,7 @@ export type BonusProps = {
   prefix?: ReactNode
 }
 
+/** @deprecated */
 export const CrowdloanBonus = ({ id, short, full, info, prefix }: BonusProps) => {
   const bonus = useCrowdloanById(id).crowdloan?.details?.bonus
   const type = short ? 'short' : full ? 'full' : info ? 'info' : undefined

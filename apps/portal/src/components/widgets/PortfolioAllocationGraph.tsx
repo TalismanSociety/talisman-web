@@ -4,9 +4,10 @@ import { groupBy } from 'lodash'
 import { Suspense, useCallback, useMemo, useState } from 'react'
 import { selector, useRecoilValue } from 'recoil'
 
-import PortfolioAllocationGraphComponent from '@/components/recipes/PortfolioAllocationGraph'
+import { PortfolioAllocationGraph as PortfolioAllocationGraphComponent } from '@/components/recipes/PortfolioAllocationGraph'
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
-import { selectedBalancesFiatSumState, selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
+import { selectedBalancesFiatSumState, selectedBalancesState } from '@/domains/balances/core'
+import { selectedCurrencyState } from '@/domains/balances/currency'
 
 const assetDataState = selector({
   key: 'PortfolioAllocationGraph/AssetData',

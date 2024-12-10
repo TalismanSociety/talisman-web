@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 
+/** @deprecated */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Pill = styled(({ children, className, small, large, primary, secondary, active, ...rest }: any) => (
   <span className={`pill ${className ?? ''}`} {...rest}>

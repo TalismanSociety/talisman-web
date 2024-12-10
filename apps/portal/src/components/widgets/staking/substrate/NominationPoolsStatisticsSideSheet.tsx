@@ -18,8 +18,11 @@ import type { Account } from '@/domains/accounts'
 import type { DerivedPool } from '@/domains/staking/substrate/nominationPools'
 import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { RedactableBalance } from '@/components/widgets/RedactableBalance'
-import { useChainState, useNativeTokenDecimalState } from '@/domains/chains'
-import { useEraEtaFormatter, useSubstrateApiState, useTokenAmountFromPlanck } from '@/domains/common'
+import { useChainState } from '@/domains/chains'
+import { useNativeTokenDecimalState } from '@/domains/chains/recoils'
+import { useEraEtaFormatter } from '@/domains/common/hooks/useEraEta'
+import { useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
+import { useSubstrateApiState } from '@/domains/common/recoils/api'
 import {
   mostRecentPoolPayoutsState,
   poolPayoutsState,

@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 
+/** @deprecated */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const MaterialLoader = styled((props: any) => (
   <div {...props}>

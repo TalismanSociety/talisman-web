@@ -10,23 +10,26 @@ import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import type { Account } from '@/domains/accounts'
-import type { ChainInfo } from '@/domains/chains'
-import type { DappInfo } from '@/domains/staking/dappStaking'
 import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
-import DappStakingForm, { DappStakingSideSheet } from '@/components/recipes/DappStakingForm'
+import { DappStakingForm, DappStakingSideSheet } from '@/components/recipes/DappStakingForm'
 import { DappSelectorDialog as DappSelectorDialogComponent } from '@/components/recipes/StakeTargetSelectorDialog'
 import { useAccountSelector } from '@/components/widgets/AccountSelector'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { writeableSubstrateAccountsState } from '@/domains/accounts'
+import { ChainProvider, useChainState } from '@/domains/chains'
 import {
-  ChainProvider,
+  ChainInfo,
   dappStakingEnabledChainsState,
-  useChainState,
   useNativeTokenAmountState,
   useNativeTokenDecimalState,
-} from '@/domains/chains'
-import { useEraEta, useSubstrateApiState, useTokenAmountFromPlanck } from '@/domains/common'
-import { useAddStakeForm, useApr, useRegisteredDappsState, useStake } from '@/domains/staking/dappStaking'
+} from '@/domains/chains/recoils'
+import { useEraEta } from '@/domains/common/hooks/useEraEta'
+import { useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
+import { useSubstrateApiState } from '@/domains/common/recoils/api'
+import { useAddStakeForm } from '@/domains/staking/dappStaking/hooks/forms'
+import { useApr } from '@/domains/staking/dappStaking/hooks/useApr'
+import { useStake } from '@/domains/staking/dappStaking/hooks/useStake'
+import { DappInfo, useRegisteredDappsState } from '@/domains/staking/dappStaking/recoils'
 import { Maybe } from '@/util/monads'
 
 import useUnlockDuration from '../providers/hooks/dapp/useUnlockDuration'

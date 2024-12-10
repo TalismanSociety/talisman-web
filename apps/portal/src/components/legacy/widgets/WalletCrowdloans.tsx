@@ -294,6 +294,7 @@ const SuspendableCrowdloans = ({ className }: { className?: string }) => {
   )
 }
 
+/** @deprecated */
 export const WalletCrowdloans = ({ className }: { className?: string }) => (
   <Suspense>
     <SuspendableCrowdloans className={className} />

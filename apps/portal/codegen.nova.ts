@@ -5,7 +5,7 @@ const config: CodegenConfig = {
   schema: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-polkadot',
   documents: ['src/domains/staking/substrate/**/*.(ts|tsx)'],
   generates: {
-    'generated/gql/nova/gql/': {
+    'src/generated/gql/nova/gql/': {
       preset: 'client',
       plugins: [],
       config: {

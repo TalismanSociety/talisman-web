@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
 import { useCallback, useState } from 'react'
 
-import { popularAccounts, useAddReadonlyAccountForm, useSetReadonlyAccounts } from '../../domains/accounts'
-import { isNilOrWhitespace } from '../../util/nil'
-import AddReadOnlyAccountDialogComponent from '../recipes/AddReadOnlyAccountDialog'
+import { AddReadOnlyAccountDialog as AddReadOnlyAccountDialogComponent } from '@/components/recipes/AddReadOnlyAccountDialog'
+import { popularAccounts, useAddReadonlyAccountForm, useSetReadonlyAccounts } from '@/domains/accounts'
+import { isNilOrWhitespace } from '@/util/nil'
 
 type AddReadOnlyAccountDialogProps = {
   children?: ReactNode | ((props: { onToggleOpen: () => unknown }) => ReactNode)

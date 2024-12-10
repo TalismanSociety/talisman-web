@@ -1,8 +1,8 @@
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
-import { chainState, nominationPoolsEnabledChainsState } from '@/domains/chains'
+import { chainState, nominationPoolsEnabledChainsState } from '@/domains/chains/recoils'
 
-import { Provider } from '../useProvidersData'
+import { Provider } from '../types'
 
 const useNominationPoolsProviders = (): Provider[] => {
   const nominationPoolsLoadable = useRecoilValueLoadable(nominationPoolsEnabledChainsState)

@@ -1,13 +1,15 @@
-import { useExtrinsic } from '../../../common'
-import type { StakeLoadable } from './useStakeLoadable'
 import type { ApiPromise } from '@polkadot/api'
 import { useCallback } from 'react'
 
+import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
+
+import type { StakeLoadable } from './useStakeLoadable'
+
 export const getAllRewardsClaimExtrinsics = (api: ApiPromise, stake: StakeLoadable['data']) =>
-  (stake.totalRewards?.decimalAmount.planck ?? 0n) < 0n
+  (stake.totalRewards?.decimalAmount?.planck ?? 0n) < 0n
     ? []
     : [
-        ...(stake?.stakerRewards?.decimalAmount.planck === 0n
+        ...(stake?.stakerRewards?.decimalAmount?.planck === 0n
           ? []
           : Array.from({ length: stake.claimableSpanCount }).map(() => api.tx.dappStaking.claimStakerRewards())),
         ...stake.bonusRewards.map(x => api.tx.dappStaking.claimBonusReward(x.dapp)),

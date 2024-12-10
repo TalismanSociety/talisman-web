@@ -8,9 +8,14 @@ import { Loadable } from 'jotai/vanilla/utils/loadable'
 import { ArrowUpDown, Check } from 'lucide-react'
 import { Suspense, useEffect, useState } from 'react'
 
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/molecules/DropdownMenu'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
-import { cn } from '@/lib/utils'
+import { cn } from '@/util/cn'
 
 import {
   BaseQuote,

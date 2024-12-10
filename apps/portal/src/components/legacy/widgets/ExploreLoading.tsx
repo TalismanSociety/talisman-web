@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 
 import { device } from '@/util/breakpoints'
 
+/** @deprecated */
 export const ExploreTagLoading = styled(({ className }: { className?: string }) => {
   return (
     <div className={className}>
@@ -46,6 +47,7 @@ export const ExploreTagLoading = styled(({ className }: { className?: string }) 
   }
 `
 
+/** @deprecated */
 export const ExploreCardLoading = styled(({ className, isLoading }: { className?: string; isLoading?: boolean }) => {
   return (
     <div className={className}>

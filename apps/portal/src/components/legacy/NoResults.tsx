@@ -20,11 +20,13 @@ const NoResultsMessage = styled(({ subtitle, text, className }: NoResultsMessage
   width: 100%;
 `
 
+/** @deprecated */
 export type NoResultProps = PropsWithChildren<{
   require: boolean
 }> &
   NoResultsMessageProps
 
+/** @deprecated */
 export const NoResults = ({ require, children, ...props }: NoResultProps) => {
   // undefined not set? await children
   // require is explicitly set to false

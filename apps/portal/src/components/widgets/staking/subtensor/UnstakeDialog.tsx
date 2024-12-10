@@ -3,8 +3,8 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import type { Account } from '@/domains/accounts'
-import UnstakeDialogComponent from '@/components/recipes/UnstakeDialog'
-import { useExtrinsicInBlockOrErrorEffect } from '@/domains/common'
+import { UnstakeDialog as UnstakeDialogComponent } from '@/components/recipes/UnstakeDialog'
+import { useExtrinsicInBlockOrErrorEffect } from '@/domains/common/hooks/useExtrinsicEffect'
 import { useUnstakeForm } from '@/domains/staking/subtensor/hooks/forms'
 import { type Stake } from '@/domains/staking/subtensor/hooks/useStake'
 

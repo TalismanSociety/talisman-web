@@ -5,7 +5,8 @@ import { compact, groupBy, isEmpty, isNil } from 'lodash'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
-import { balancesState, selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
+import { balancesState, selectedBalancesState } from '@/domains/balances/core'
+import { selectedCurrencyState } from '@/domains/balances/currency'
 
 const useFetchAssets = (address: string | undefined) => {
   const _balances = useRecoilValue(address === undefined ? selectedBalancesState : balancesState)
@@ -67,8 +68,9 @@ const useFetchAssets = (address: string | undefined) => {
   return { assetBalances, fiatTotal, lockedTotal, value: transferable, balances, chains, evmNetworks, isLoading }
 }
 
+/** @deprecated */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getFiatString = (value: any, currency: string) => {
+const getFiatString = (value: any, currency: string) => {
   return (
     value.toLocaleString(undefined, {
       style: 'currency',
@@ -77,6 +79,7 @@ export const getFiatString = (value: any, currency: string) => {
   )
 }
 
+/** @deprecated */
 export const useAssets = (customAddress?: string) => {
   const { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading } =
     useFetchAssets(customAddress)
@@ -287,6 +290,7 @@ type useSingleAssetProps = {
   // Could possibly add more ways to get a single asset, perhaps name, id, etc
 }
 
+/** @deprecated */
 export const useSingleAsset = ({ symbol }: useSingleAssetProps) => {
   const { tokens, balances, isLoading } = useAssets()
 
@@ -315,6 +319,7 @@ type Filter = {
   address?: string
 }
 
+/** @deprecated */
 export const useAssetsFiltered = ({ size, search, address }: Filter) => {
   const { tokens, balances, isLoading, fiatTotal } = useAssets(address)
 

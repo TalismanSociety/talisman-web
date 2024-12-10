@@ -15,6 +15,7 @@ type RadioGroupProps = {
   secondary?: boolean
 }
 
+/** @deprecated */
 export const RadioGroup = styled(
   ({ value, options = {}, onChange = () => {}, small, primary, secondary, className }: RadioGroupProps) => (
     <FieldWrapper type="radiogroup" className={className}>

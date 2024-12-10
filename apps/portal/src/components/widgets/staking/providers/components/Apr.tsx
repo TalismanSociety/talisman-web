@@ -1,13 +1,13 @@
 import { Text } from '@talismn/ui/atoms/Text'
 
 import { ChainProvider } from '@/domains/chains'
-import { useApr as useDappApr } from '@/domains/staking/dappStaking'
+import { useApr as useDappApr } from '@/domains/staking/dappStaking/hooks/useApr'
 import { useSlpxAprState } from '@/domains/staking/slpx'
 import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nominationPools'
 import { useHighestApr } from '@/domains/staking/subtensor/hooks/useApr'
 
 import useLidoApr from '../hooks/lido/useApr'
-import { StakeProviderTypeId } from '../hooks/useProvidersData'
+import { StakeProviderTypeId } from '../hooks/types'
 
 const aprFormatter = (apr: number) => apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 

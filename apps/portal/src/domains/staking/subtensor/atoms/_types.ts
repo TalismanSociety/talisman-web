@@ -1,6 +1,6 @@
 import { toHex } from '@polkadot-api/utils'
 import { AccountId } from 'polkadot-api'
-import { Vector, u8 } from 'scale-ts'
+import { u8, Vector } from 'scale-ts'
 
 export const BittensorAccountPrefix = 42
 export const BittensorAccountId = AccountId(BittensorAccountPrefix)

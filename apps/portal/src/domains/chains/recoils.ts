@@ -4,14 +4,15 @@ import { chaindataChainByGenesisHashUrl, chaindataTokenByIdUrl } from '@talismn/
 import { useContext } from 'react'
 import { atom, selector, selectorFamily, waitForAll } from 'recoil'
 
-import { selectedCurrencyState } from '@/domains/balances'
-import { substrateApiState, useSubstrateApiEndpoint } from '@/domains/common'
+import { selectedCurrencyState } from '@/domains/balances/currency'
 import { storageEffect } from '@/domains/common/effects'
+import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
+import { substrateApiState } from '@/domains/common/recoils/api'
 import { Decimal } from '@/util/Decimal'
 import { nullToUndefined } from '@/util/nullToUndefined'
 
-import { ChainContext } from '.'
 import { chainConfigs } from './config'
+import { ChainContext } from './contexts'
 
 export const chainState = selectorFamily({
   key: 'Chain',

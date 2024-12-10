@@ -8,6 +8,7 @@ export type LinksProps = {
   className?: string
 }
 
+/** @deprecated */
 export const ParachainLinks = styled(({ id, className }: LinksProps) => {
   const { parachainDetails: { links = {} } = {} } = useParachainDetailsById(id)
 

@@ -4,11 +4,11 @@ import { atom, useAtomValue } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { useRecoilValue } from 'recoil'
 
+import type { Account } from '@/domains/accounts'
+import { useChainState } from '@/domains/chains'
+import { assertChain } from '@/domains/chains/utils'
+import { graphql } from '@/generated/gql/nova/gql'
 import { Decimal } from '@/util/Decimal'
-
-import type { Account } from '../../../../accounts'
-import { graphql } from '../../../../../../generated/gql/nova/gql'
-import { assertChain, useChainState } from '../../../../chains'
 
 const totalNominationPoolRewardsAtomFamily = atomFamily(
   ({ apiUrl, address }: { apiUrl: string; address: string }) =>

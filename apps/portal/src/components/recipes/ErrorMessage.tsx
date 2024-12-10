@@ -1,7 +1,7 @@
 import type { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react'
 import { Text } from '@talismn/ui/atoms/Text'
 
-import { TalismanHand } from './TalismanHand'
+import { TalismanHand } from '@/components/molecules/TalismanHand'
 
 export type ErrorMessageProps = {
   title: ReactNode

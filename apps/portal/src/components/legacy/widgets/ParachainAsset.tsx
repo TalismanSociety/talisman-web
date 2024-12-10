@@ -14,6 +14,7 @@ const fallbackMap = {
   logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/tokens/unknown.svg',
 }
 
+/** @deprecated */
 export const ParachainAsset = styled(({ id, type, className }: ImageProps) => {
   const assets = useParachainAssets(id)
   const imageSrc = useImageWithFallback(assets[type], fallbackMap[type as keyof typeof fallbackMap])

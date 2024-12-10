@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import type { LidoSuite } from '@/domains/staking/lido'
-import StakePosition, { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
+import { StakePosition, StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { RedactableBalance } from '@/components/widgets/RedactableBalance'

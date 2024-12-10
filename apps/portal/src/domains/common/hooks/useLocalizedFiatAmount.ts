@@ -2,8 +2,8 @@ import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 import type { Decimal } from '@/util/Decimal'
-import { selectedCurrencyState } from '@/domains/balances'
-import { useNativeTokenPriceState } from '@/domains/chains'
+import { selectedCurrencyState } from '@/domains/balances/currency'
+import { useNativeTokenPriceState } from '@/domains/chains/recoils'
 
 /**
  * TODO: this only works with native token for now

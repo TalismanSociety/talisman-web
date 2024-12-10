@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil'
 
 import { slpxPairsState } from '@/domains/staking/slpx'
 
-import { Provider } from '../useProvidersData'
+import { Provider } from '../types'
 
 const useSlpxProviders = () => {
   const slpxPairs = useRecoilValue(slpxPairsState)

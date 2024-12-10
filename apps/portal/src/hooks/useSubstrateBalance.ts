@@ -2,7 +2,7 @@ import { useChains } from '@talismn/balances-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRecoilValueLoadable } from 'recoil'
 
-import { substrateApiState } from '@/domains/common'
+import { substrateApiState } from '@/domains/common/recoils/api'
 import { computeSubstrateBalance } from '@/util/balances'
 import { Decimal } from '@/util/Decimal'
 

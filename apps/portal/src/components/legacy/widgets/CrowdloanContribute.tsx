@@ -29,6 +29,7 @@ export type ContributeProps = {
   id?: string
 }
 
+/** @deprecated */
 export function CrowdloanContribute({ className, id }: ContributeProps) {
   const { closeModal } = useModal()
 

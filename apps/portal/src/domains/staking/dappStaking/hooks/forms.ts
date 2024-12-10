@@ -6,19 +6,16 @@ import { useCallback, useDeferredValue, useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import type { Account } from '@/domains/accounts'
-import {
-  paymentInfoState,
-  useExtrinsic,
-  useSubstrateApiEndpoint,
-  useSubstrateApiState,
-  useTokenAmount,
-  useTokenAmountFromPlanck,
-} from '@/domains/common'
+import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
+import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
+import { useTokenAmount, useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
+import { paymentInfoState } from '@/domains/common/recoils'
+import { useSubstrateApiState } from '@/domains/common/recoils/api'
 import { BigIntMath } from '@/util/BigIntMath'
 import { Maybe } from '@/util/monads'
 
-import type { StakeLoadable } from '.'
-import { getAllRewardsClaimExtrinsics } from '.'
+import { getAllRewardsClaimExtrinsics } from './useClaimAllRewardsExtrinsic'
+import { StakeLoadable } from './useStakeLoadable'
 
 const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.5
 

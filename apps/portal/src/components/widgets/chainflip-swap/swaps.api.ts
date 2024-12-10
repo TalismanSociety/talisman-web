@@ -13,8 +13,7 @@ import * as allEvmChains from 'viem/chains'
 import { useWalletClient } from 'wagmi'
 
 import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts'
-import { substrateApiState } from '@/domains/common'
-import { substrateApiGetterAtom } from '@/domains/common/recoils/api'
+import { substrateApiGetterAtom, substrateApiState } from '@/domains/common/recoils/api'
 import { connectedSubstrateWalletState } from '@/domains/extension'
 import { Decimal } from '@/util/Decimal'
 

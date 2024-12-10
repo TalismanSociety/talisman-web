@@ -3,8 +3,8 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { isAddress } from 'viem'
 
 import { SeparatedAccountSelector } from '@/components/widgets/SeparatedAccountSelector'
-import { isBtcAddress } from '@/lib/btc'
-import { cn } from '@/lib/utils'
+import { isBtcAddress } from '@/util/btc'
+import { cn } from '@/util/cn'
 
 import {
   toAddressAtom,

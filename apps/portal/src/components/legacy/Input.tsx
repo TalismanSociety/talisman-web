@@ -19,6 +19,7 @@ type InputProps = {
   disabled?: boolean
 }
 
+/** @deprecated */
 export const Input = styled(({ className, onChange = _v => {}, prefix, suffix, label, dim, ...rest }: InputProps) => (
   <FieldWrapper type="input" className={className} prefix={prefix} suffix={suffix} label={label} dim={dim}>
     <input type="text" onChange={e => onChange(e?.target?.value)} {...(rest as any)} />

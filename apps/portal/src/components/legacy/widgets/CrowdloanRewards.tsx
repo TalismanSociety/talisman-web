@@ -3,6 +3,7 @@ import styled from '@emotion/styled'
 import { Stat } from '@/components/legacy/Stat'
 import { useCrowdloanById } from '@/libs/talisman'
 
+/** @deprecated */
 export const CrowdloanRewards = styled(({ id, className }: { id?: string; className?: string }) => {
   const { crowdloan } = useCrowdloanById(id)
   const details = crowdloan?.details

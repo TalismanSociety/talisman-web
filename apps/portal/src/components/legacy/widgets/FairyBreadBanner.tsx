@@ -1,7 +1,7 @@
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
 
-import BaseFairyBreadBanner from '@/components/recipes/FairyBreadBanner'
+import { FairyBreadBanner as BaseFairyBreadBanner } from '@/components/recipes/FairyBreadBanner'
 
 const GDPR_TIMEZONES = [
   'Europe/Vienna',
@@ -41,6 +41,7 @@ const GDPR_TIMEZONES = [
 
 const isGdprComplianceRequired = GDPR_TIMEZONES.includes(Intl.DateTimeFormat().resolvedOptions().timeZone)
 
+/** @deprecated */
 export const FairyBreadBanner = () => {
   const posthog = usePostHog()
   const [visible, setVisible] = useState(

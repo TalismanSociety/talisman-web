@@ -9,6 +9,7 @@ export type PendorProps = {
   loader?: ReactElement
 }
 
+/** @deprecated */
 export const Pendor = ({
   prefix = '',
   suffix = '',

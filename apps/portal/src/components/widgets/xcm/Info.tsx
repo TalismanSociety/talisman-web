@@ -3,7 +3,7 @@ import { useTheme } from '@talismn/ui/theme'
 import { FileSearch, HelpCircle } from '@talismn/web-icons'
 import { useState } from 'react'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/util/cn'
 
 import { DEX_FORM_WIDE_MEDIA_SELECTOR } from './constants'
 

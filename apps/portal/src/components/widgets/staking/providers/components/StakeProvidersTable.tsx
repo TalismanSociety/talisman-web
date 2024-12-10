@@ -17,9 +17,9 @@ import { Link } from 'react-router-dom'
 
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import ErrorBoundaryFallback from '@/components/widgets/staking/ErrorBoundaryFallback'
-import { cn } from '@/lib/utils'
+import { cn } from '@/util/cn'
 
-import { Provider } from '../hooks/useProvidersData'
+import { Provider } from '../hooks/types'
 import useStakeValues, { StakeType } from '../hooks/useSetValues'
 import Apr from './Apr'
 import Asset from './Asset'

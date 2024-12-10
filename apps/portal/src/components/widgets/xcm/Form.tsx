@@ -6,7 +6,7 @@ import { Text } from '@talismn/ui/atoms/Text'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/util/cn'
 
 import { ReverseRouteButton } from './ReverseRouteButton'
 

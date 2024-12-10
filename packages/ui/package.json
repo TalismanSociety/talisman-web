@@ -32,8 +32,6 @@
     "react-hot-toast": "^2.4.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.21.0",
-    "@mdx-js/react": "^1.6.22",
     "@storybook/addon-essentials": "^7.6.5",
     "@storybook/addon-interactions": "^7.6.5",
     "@storybook/addon-links": "^7.6.5",
@@ -45,19 +43,18 @@
     "@talismn/development": "workspace:^",
     "@talismn/eslint-config": "workspace:^",
     "@talismn/tsconfig": "workspace:^",
+    "@types/md5": "^2.3.5",
     "@types/mime": "^3.0.4",
-    "@types/mime-types": "^2.1.4",
     "@types/react": "^18.3.1",
-    "babel-loader": "^8.3.0",
     "eslint": "^9.2.0",
     "eslint-plugin-storybook": "^0.6.15",
     "framer-motion": "^11.1.9",
     "mime-db": "^1.53.0",
-    "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "storybook": "^7.6.5",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "vite": "^6.0.1"
   },
   "peerDependencies": {
     "@emotion/react": "11.x",

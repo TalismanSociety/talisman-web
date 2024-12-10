@@ -14,6 +14,7 @@ type FieldWrapperProps = {
   onClick?: any
 }
 
+/** @deprecated */
 export const FieldWrapper = styled(
   ({ type, prefix, suffix, label, dim, children, className, ...rest }: FieldWrapperProps) => (
     <div className={`field field-${type}${dim ? ' dim' : ''} ${className ?? ''}`} {...rest}>
@@ -109,7 +110,8 @@ type FieldLabelProps = {
   children?: string
 }
 
-export const FieldLabel = styled(({ children, className, ...rest }: FieldLabelProps) =>
+/** @deprecated */
+const FieldLabel = styled(({ children, className, ...rest }: FieldLabelProps) =>
   children ? (
     <label
       className={`field-label ${className ?? ''}`}
