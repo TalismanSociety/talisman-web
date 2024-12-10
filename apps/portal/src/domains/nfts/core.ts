@@ -18,7 +18,7 @@ import {
 import { bufferTime, filter, last, Observable, scan, tap } from 'rxjs'
 import { spawn, Thread } from 'threads'
 
-import { selectedAccountsState } from '@/domains/accounts'
+import { selectedAccountsState } from '@/domains/accounts/recoils'
 import { chainState } from '@/domains/chains/recoils'
 import { storageEffect } from '@/domains/common/effects'
 

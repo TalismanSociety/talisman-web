@@ -15,14 +15,13 @@ import { useDisconnect as useDisconnectEvm, useAccount as useEvmAccount } from '
 
 import talismanWalletLogo from '@/assets/talisman-wallet.svg'
 import { AddReadOnlyAccountDialog } from '@/components/widgets/AddReadOnlyAccountDialog'
-import { writeableEvmAccountsState } from '@/domains/accounts'
+import { writeableEvmAccountsState } from '@/domains/accounts/recoils'
+import { useConnectEvm, useEvmConnectors } from '@/domains/extension/evm'
 import {
   useConnectedSubstrateWallet,
-  useConnectEvm,
-  useEvmConnectors,
   useInstalledSubstrateWallets,
   useSubstrateWalletConnect,
-} from '@/domains/extension'
+} from '@/domains/extension/substrate'
 
 const talismanInstalled = 'talismanEth' in globalThis
 

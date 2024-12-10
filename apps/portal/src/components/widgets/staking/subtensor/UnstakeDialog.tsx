@@ -2,7 +2,7 @@ import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressInd
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import type { Account } from '@/domains/accounts'
+import type { Account } from '@/domains/accounts/recoils'
 import { UnstakeDialog as UnstakeDialogComponent } from '@/components/recipes/UnstakeDialog'
 import { useExtrinsicInBlockOrErrorEffect } from '@/domains/common/hooks/useExtrinsicEffect'
 import { useUnstakeForm } from '@/domains/staking/subtensor/hooks/forms'

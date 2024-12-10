@@ -5,9 +5,9 @@ import { useSearchParams } from 'react-router-dom'
 import { constSelector, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
+import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 import { useTokenAmountFromPlanck, useTokenAmountState } from '@/domains/common/hooks/useTokenAmount'
 import { paymentInfoState } from '@/domains/common/recoils'
-import { useSubstrateApiState } from '@/domains/common/recoils/api'
 import { Maybe } from '@/util/monads'
 import usePrevious from '@/util/usePrevious'
 

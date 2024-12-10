@@ -11,7 +11,7 @@ import { useMemo } from 'react'
 // @ts-expect-error
 import { ObjectView } from 'react-object-view'
 
-import type { Account } from '@/domains/accounts'
+import type { Account } from '@/domains/accounts/recoils'
 import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { copyAddressToClipboard, copyExtrinsicHashToClipboard } from '@/domains/common/utils/clipboard'
 import { shortenAddress } from '@/util/shortenAddress'

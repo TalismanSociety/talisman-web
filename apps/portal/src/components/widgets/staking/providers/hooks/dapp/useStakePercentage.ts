@@ -3,7 +3,7 @@ import { BigNumber } from 'bignumber.js'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { selectedSubstrateAccountsState } from '@/domains/accounts'
+import { selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { chainDeriveState } from '@/domains/common/recoils/query'
 import { Maybe } from '@/util/monads'
 

@@ -3,9 +3,9 @@ import uniq from 'lodash/uniq'
 import { useMemo } from 'react'
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from 'recoil'
 
-import type { Account } from '@/domains/accounts'
+import type { Account } from '@/domains/accounts/recoils'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
-import { useSubstrateApiState } from '@/domains/common/recoils/api'
+import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 
 import { accountStakeAtom } from '../atoms/accountStake'
 import { delegateInfosAtomFamily } from '../atoms/delegateInfo'

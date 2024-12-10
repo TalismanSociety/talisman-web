@@ -69,7 +69,7 @@ const Analytics = () => {
   )
 }
 
-const DevMenu = () => {
+export const DevMenu = () => {
   const [x, setX] = useSessionStorage<WinBoxPropType['x']>('dev-menu-x', 'center')
   const [y, setY] = useSessionStorage<WinBoxPropType['y']>('dev-menu-y', 'center')
 

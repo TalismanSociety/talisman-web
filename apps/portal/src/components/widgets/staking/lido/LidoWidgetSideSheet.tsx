@@ -4,7 +4,7 @@ import { Zap } from '@talismn/web-icons'
 import { useEffect } from 'react'
 import { useAccount, useSwitchChain } from 'wagmi'
 
-import type { LidoSuite } from '@/domains/staking/lido'
+import { LidoSuite } from '@/domains/staking/lido/types'
 
 export type LidoWidgetSideSheetProps = {
   url: string

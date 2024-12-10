@@ -47,9 +47,9 @@ import {
   WalletConnectionSideSheet,
   walletConnectionSideSheetOpenState,
 } from '@/components/widgets/WalletConnectionSideSheet'
-import { lookupAccountAddressState, selectedAccountsState } from '@/domains/accounts'
+import { lookupAccountAddressState, selectedAccountsState } from '@/domains/accounts/recoils'
 import { currencyConfig, selectedCurrencyState } from '@/domains/balances/currency'
-import { useHasActiveWalletConnection } from '@/domains/extension'
+import { useHasActiveWalletConnection } from '@/domains/extension/main'
 import { isNilOrWhitespace } from '@/util/nil'
 
 const CurrencySelect = () => {

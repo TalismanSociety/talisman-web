@@ -2,7 +2,7 @@ import { type ApiPromise } from '@polkadot/api'
 import { atom, selectorFamily } from 'recoil'
 
 import { substrateApiState } from '@/domains/common/recoils/api'
-import { connectedSubstrateWalletState } from '@/domains/extension'
+import { connectedSubstrateWalletState } from '@/domains/extension/substrate'
 
 export const paymentInfoState = selectorFamily({
   key: 'PaymentInfo',

@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from 'react'
 import { RecoilLoadable, useRecoilValue } from 'recoil'
 import { type Observable } from 'rxjs'
 
-import { useSubstrateApiState } from '@/domains/common/recoils/api'
+import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 import useDeferred from '@/util/useDeferred'
 
 type QueryMap = PickKnownKeys<{

@@ -6,8 +6,8 @@ import { useSignetSdk } from '@talismn/signet-apps-sdk'
 import { useContext, useMemo, useState } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
 
-import { signetAccountState } from '@/domains/accounts'
-import { useChainState } from '@/domains/chains'
+import { signetAccountState } from '@/domains/accounts/recoils'
+import { useChainState } from '@/domains/chains/hooks'
 import { chainState } from '@/domains/chains/recoils'
 import { AnalyticsContext } from '@/domains/common/analytics'
 import { HarmlessError } from '@/domains/common/errors'
@@ -15,7 +15,7 @@ import { extrinsicMiddleware } from '@/domains/common/extrinsicMiddleware'
 import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
 import { substrateApiState } from '@/domains/common/recoils/api'
 import { toastExtrinsic } from '@/domains/common/utils/toast'
-import { useConnectedSubstrateWallet } from '@/domains/extension'
+import { useConnectedSubstrateWallet } from '@/domains/extension/substrate'
 
 type Promisable<T> = T | PromiseLike<T>
 

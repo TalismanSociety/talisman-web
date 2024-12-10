@@ -8,10 +8,10 @@ import type { ChainInfo } from '@/domains/chains/recoils'
 import { StakeDialog as StakeDialogComponent } from '@/components/recipes/StakeDialog'
 import { StakeForm } from '@/components/recipes/StakeForm'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
-import { ChainProvider } from '@/domains/chains'
+import { ChainProvider } from '@/domains/chains/provider'
 import { nominationPoolsEnabledChainsState } from '@/domains/chains/recoils'
 import { useEraEtaFormatter } from '@/domains/common/hooks/useEraEta'
-import { useApr } from '@/domains/staking/substrate/nominationPools'
+import { useApr } from '@/domains/staking/substrate/nominationPools/hooks'
 
 import { AssetSelect, ControlledStakeForm } from './StakeForm'
 

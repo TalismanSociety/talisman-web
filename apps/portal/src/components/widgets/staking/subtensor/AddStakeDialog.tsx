@@ -1,7 +1,7 @@
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { useState } from 'react'
 
-import type { Account } from '@/domains/accounts'
+import type { Account } from '@/domains/accounts/recoils'
 import { AddStakeDialog as _AddStakeDialog } from '@/components/recipes/AddStakeDialog'
 import { useExtrinsicInBlockOrErrorEffect } from '@/domains/common/hooks/useExtrinsicEffect'
 import { useAddStakeForm } from '@/domains/staking/subtensor/hooks/forms'

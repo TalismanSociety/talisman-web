@@ -11,7 +11,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import { makeTaggedUnion, none } from 'safety-match'
 
-import { useConnectedSubstrateWallet } from '@/domains/extension'
+import { useConnectedSubstrateWallet } from '@/domains/extension/substrate'
 import { parachainDetails, supportedRelayChainsState } from '@/libs/talisman/util/_config'
 import customRpcs from '@/util/customRpcs'
 import { Maybe } from '@/util/monads'

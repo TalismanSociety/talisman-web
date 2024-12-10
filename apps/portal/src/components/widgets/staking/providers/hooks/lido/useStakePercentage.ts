@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil'
 import { useConfig } from 'wagmi'
 import { getTokenQueryOptions } from 'wagmi/query'
 
-import { selectedBalancesState } from '@/domains/balances/core'
+import { selectedBalancesState } from '@/domains/balances/recoils'
 
 type StakePercentageProps = {
   chainId: string | number

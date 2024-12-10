@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { selectedBalancesState } from '@/domains/balances/core'
 import { selectedCurrencyState } from '@/domains/balances/currency'
-import { SlpxPair } from '@/domains/staking/slpx'
+import { selectedBalancesState } from '@/domains/balances/recoils'
+import { SlpxPair } from '@/domains/staking/slpx/types'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import { Decimal } from '@/util/Decimal'
 

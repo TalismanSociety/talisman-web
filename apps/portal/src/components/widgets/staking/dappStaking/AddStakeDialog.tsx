@@ -2,7 +2,7 @@ import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lo
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { useState } from 'react'
 
-import type { Account } from '@/domains/accounts'
+import type { Account } from '@/domains/accounts/recoils'
 import { DappStakingAddStakeDialog } from '@/components/recipes/AddStakeDialog'
 import { useExtrinsicInBlockOrErrorEffect } from '@/domains/common/hooks/useExtrinsicEffect'
 import { useAddStakeForm } from '@/domains/staking/dappStaking/hooks/forms'

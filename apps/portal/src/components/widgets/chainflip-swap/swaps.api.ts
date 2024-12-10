@@ -12,9 +12,9 @@ import { createPublicClient, erc20Abi, http, isAddress } from 'viem'
 import * as allEvmChains from 'viem/chains'
 import { useWalletClient } from 'wagmi'
 
-import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts'
+import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { substrateApiGetterAtom, substrateApiState } from '@/domains/common/recoils/api'
-import { connectedSubstrateWalletState } from '@/domains/extension'
+import { connectedSubstrateWalletState } from '@/domains/extension/substrate'
 import { Decimal } from '@/util/Decimal'
 
 import type { ChainflipSwapActivityData } from './swap-modules/chainflip.swap-module'

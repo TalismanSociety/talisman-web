@@ -2,7 +2,7 @@ import { useDeriveState } from '@talismn/react-polkadot-api'
 import { formatDistance } from 'date-fns'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { useSubstrateApiState } from '@/domains/common/recoils/api'
+import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 import { expectedBlockTime, expectedSessionTime } from '@/domains/common/utils/substratePolyfills'
 import { Maybe } from '@/util/monads'
 

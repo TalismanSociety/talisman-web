@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil'
 
-import { slpxPairsState } from '@/domains/staking/slpx'
+import { slpxPairsState } from '@/domains/staking/slpx/recoils'
 
 import { Provider } from '../types'
 

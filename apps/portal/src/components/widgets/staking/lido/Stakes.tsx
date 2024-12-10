@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
-import type { LidoSuite } from '@/domains/staking/lido'
 import { StakePosition, StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { RedactableBalance } from '@/components/widgets/RedactableBalance'
-import { selectedEvmAccountsState } from '@/domains/accounts'
-import { useStakes } from '@/domains/staking/lido'
+import { selectedEvmAccountsState } from '@/domains/accounts/recoils'
+import { useStakes } from '@/domains/staking/lido/core'
 import { lidoSuitesState } from '@/domains/staking/lido/recoils'
+import { LidoSuite } from '@/domains/staking/lido/types'
 
 import LidoWidgetSideSheet from './LidoWidgetSideSheet'
 

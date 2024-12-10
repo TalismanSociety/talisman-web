@@ -3,8 +3,8 @@ import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { selectedSubstrateAccountsState } from '@/domains/accounts'
-import { useChainState } from '@/domains/chains'
+import { selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
+import { useChainState } from '@/domains/chains/hooks'
 import { chainDeriveState, chainQueryState } from '@/domains/common/recoils/query'
 
 const useStakePercentage = () => {

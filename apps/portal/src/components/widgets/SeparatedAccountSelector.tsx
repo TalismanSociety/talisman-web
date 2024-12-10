@@ -12,7 +12,7 @@ import { isAddress } from 'viem'
 
 import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { walletConnectionSideSheetOpenState } from '@/components/widgets/WalletConnectionSideSheet'
-import { evmAccountsState, substrateAccountsState } from '@/domains/accounts'
+import { evmAccountsState, substrateAccountsState } from '@/domains/accounts/recoils'
 import { AccountWithBtc, isBtcAddress } from '@/util/btc'
 import { cn } from '@/util/cn'
 import { shortenAddress } from '@/util/shortenAddress'

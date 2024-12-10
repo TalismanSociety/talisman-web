@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { selectedBalancesState } from '@/domains/balances/core'
 import { selectedCurrencyState } from '@/domains/balances/currency'
+import { selectedBalancesState } from '@/domains/balances/recoils'
 
 import { useTotalStaked as useDappStakingTotalStaked } from './dappStaking/hooks/useTotalStaked'
 import { lidoSuitesState } from './lido/recoils'
-import { slpxPairsState } from './slpx'
+import { slpxPairsState } from './slpx/recoils'
 import { useTotalStaked as useSubstrateTotalStaked } from './substrate/useTotalStaked'
 import { useTotalStaked as useSubtensorTotalStaked } from './subtensor/hooks/useTotalStaked'
 

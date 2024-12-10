@@ -13,14 +13,15 @@ import { useRecoilValue } from 'recoil'
 
 import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
 import { useAccountSelector } from '@/components/widgets/AccountSelector'
-import { writeableSubstrateAccountsState } from '@/domains/accounts'
-import { ChainProvider, useChainState } from '@/domains/chains'
+import { writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
+import { useChainState } from '@/domains/chains/hooks'
+import { ChainProvider } from '@/domains/chains/provider'
 import { nominationPoolsEnabledChainsState, useNativeTokenPriceState } from '@/domains/chains/recoils'
 import { assertChain } from '@/domains/chains/utils'
 import { AnalyticsContext } from '@/domains/common/analytics'
 import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
+import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 import { useTokenAmountState } from '@/domains/common/hooks/useTokenAmount'
-import { useSubstrateApiState } from '@/domains/common/recoils/api'
 
 const _NominationPoolsRewardsClaim = () => {
   const chain = useRecoilValue(useChainState())

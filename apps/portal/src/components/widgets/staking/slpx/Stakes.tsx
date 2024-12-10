@@ -6,10 +6,10 @@ import { StakePosition, StakePositionErrorBoundary } from '@/components/recipes/
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { RedactableBalance } from '@/components/widgets/RedactableBalance'
-import { selectedEvmAccountsState } from '@/domains/accounts'
-import { ChainProvider } from '@/domains/chains'
-import { slpxPairsState } from '@/domains/staking/slpx'
+import { selectedEvmAccountsState } from '@/domains/accounts/recoils'
+import { ChainProvider } from '@/domains/chains/provider'
 import { useStakes } from '@/domains/staking/slpx/core'
+import { slpxPairsState } from '@/domains/staking/slpx/recoils'
 
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'

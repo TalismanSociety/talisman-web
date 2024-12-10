@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll, waitForAny } from 'recoil'
 
-import { selectedSubstrateAccountsState } from '@/domains/accounts'
+import { selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { nativeTokenAmountState, subtensorStakingEnabledChainsState } from '@/domains/chains/recoils'
 import { chainQueryState } from '@/domains/common/recoils/query'
 

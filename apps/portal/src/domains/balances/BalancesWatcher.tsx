@@ -4,8 +4,8 @@ import { useRecoilCallback, useRecoilValue } from 'recoil'
 
 import { accountsState } from '@/domains/accounts/recoils'
 
-import { useBalancesReportEffect } from './analytics'
-import { balancesState } from './core'
+import { useBalancesReportEffect } from './hooks'
+import { balancesState } from './recoils'
 
 export const BalancesWatcher = () => {
   const accounts = useRecoilValue(accountsState)

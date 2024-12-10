@@ -7,7 +7,7 @@ import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
 import { useState, useTransition } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import type { Account } from '@/domains/accounts'
+import type { Account } from '@/domains/accounts/recoils'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useDelegates } from '@/domains/staking/subtensor/hooks/useDelegates'
 import { useStake } from '@/domains/staking/subtensor/hooks/useStake'

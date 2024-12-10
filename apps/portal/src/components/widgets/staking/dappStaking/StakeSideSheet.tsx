@@ -9,14 +9,15 @@ import { Suspense, useMemo, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import type { Account } from '@/domains/accounts'
+import type { Account } from '@/domains/accounts/recoils'
 import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
 import { DappStakingForm, DappStakingSideSheet } from '@/components/recipes/DappStakingForm'
 import { DappSelectorDialog as DappSelectorDialogComponent } from '@/components/recipes/StakeTargetSelectorDialog'
 import { useAccountSelector } from '@/components/widgets/AccountSelector'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
-import { writeableSubstrateAccountsState } from '@/domains/accounts'
-import { ChainProvider, useChainState } from '@/domains/chains'
+import { writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
+import { useChainState } from '@/domains/chains/hooks'
+import { ChainProvider } from '@/domains/chains/provider'
 import {
   ChainInfo,
   dappStakingEnabledChainsState,
@@ -24,8 +25,8 @@ import {
   useNativeTokenDecimalState,
 } from '@/domains/chains/recoils'
 import { useEraEta } from '@/domains/common/hooks/useEraEta'
+import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 import { useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
-import { useSubstrateApiState } from '@/domains/common/recoils/api'
 import { useAddStakeForm } from '@/domains/staking/dappStaking/hooks/forms'
 import { useApr } from '@/domains/staking/dappStaking/hooks/useApr'
 import { useStake } from '@/domains/staking/dappStaking/hooks/useStake'

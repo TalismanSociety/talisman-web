@@ -6,7 +6,7 @@ import { useInterval } from 'react-use'
 import { useRecoilValue } from 'recoil'
 
 import type { ContributionsQuery } from '@/generated/gql/crowdloan/gql/graphql'
-import { selectedSubstrateAccountsState } from '@/domains/accounts'
+import { selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { graphql } from '@/generated/gql/crowdloan/gql'
 import { useChainmetaValue } from '@/libs/talisman'
 

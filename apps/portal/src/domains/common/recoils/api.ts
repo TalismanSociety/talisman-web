@@ -4,8 +4,6 @@ import { atom, useAtom } from 'jotai'
 import { useEffect, useRef } from 'react'
 import { selectorFamily, useRecoilCallback } from 'recoil'
 
-import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
-
 export const substrateApiState = selectorFamily<ApiPromise, string | undefined>({
   key: 'SubstrateApiState',
   // DO NOT USE any atom dependency here, nothing should invalidate an api object once created
@@ -26,8 +24,6 @@ export const substrateApiState = selectorFamily<ApiPromise, string | undefined>(
   dangerouslyAllowMutability: true,
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
-
-export const useSubstrateApiState = () => substrateApiState(useSubstrateApiEndpoint())
 
 export const substrateApiGetterAtom = atom<{
   getApi: (endpoint: string) => Promise<ApiPromise>

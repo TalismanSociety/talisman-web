@@ -9,7 +9,7 @@ import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { ArrowDown, ArrowUp, ChevronRight } from '@talismn/web-icons'
 import { Fragment, useMemo } from 'react'
 
-import type { Account } from '@/domains/accounts'
+import type { Account } from '@/domains/accounts/recoils'
 import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { getSubstrateModuleColor } from '@/util/getSubstrateModuleColor'
 import { shortenAddress } from '@/util/shortenAddress'

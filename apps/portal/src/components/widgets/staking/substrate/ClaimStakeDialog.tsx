@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 
-import type { Account } from '@/domains/accounts'
+import type { Account } from '@/domains/accounts/recoils'
 import { ClaimStakeDialog as ClaimStakeDialogComponent } from '@/components/recipes/ClaimStakeDialog'
 import { SubmittableResultLoadable, useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
 import { useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
-import { usePoolStakes } from '@/domains/staking/substrate/nominationPools'
+import { usePoolStakes } from '@/domains/staking/substrate/nominationPools/hooks'
 
 type ClaimStakeDialogProps = {
   open?: boolean

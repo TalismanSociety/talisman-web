@@ -3,10 +3,10 @@ import BigNumber from 'bignumber.js'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
-import { selectedBalancesState } from '@/domains/balances/core'
 import { selectedCurrencyState } from '@/domains/balances/currency'
+import { selectedBalancesState } from '@/domains/balances/recoils'
 import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
-import { useSubstrateApiState } from '@/domains/common/recoils/api'
+import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import { Decimal } from '@/util/Decimal'
 

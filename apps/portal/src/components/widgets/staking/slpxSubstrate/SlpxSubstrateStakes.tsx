@@ -5,7 +5,7 @@ import { StakePosition, StakePositionErrorBoundary } from '@/components/recipes/
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { RedactableBalance } from '@/components/widgets/RedactableBalance'
-import { ChainProvider } from '@/domains/chains'
+import { ChainProvider } from '@/domains/chains/provider'
 import { slpxSubstratePairsState } from '@/domains/staking/slpxSubstrate/recoils'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import useStakes from '@/domains/staking/slpxSubstrate/useStakes'

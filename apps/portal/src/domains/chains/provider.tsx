@@ -1,6 +1,5 @@
 import type { PropsWithChildren } from 'react'
 import { PolkadotApiIdProvider } from '@talismn/react-polkadot-api'
-import { useContext } from 'react'
 import { useRecoilValue } from 'recoil'
 
 import type { ChainConfig } from './config'
@@ -14,8 +13,3 @@ export const ChainProvider = (props: PropsWithChildren<{ chain: ChainConfig }>) 
     </PolkadotApiIdProvider>
   </ChainContext.Provider>
 )
-
-export const useChainState = () => {
-  const { genesisHash } = useContext(ChainContext)
-  return chainState({ genesisHash })
-}

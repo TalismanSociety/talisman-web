@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
-import type { Account } from '@/domains/accounts'
+import type { Account } from '@/domains/accounts/recoils'
 import { StakePosition } from '@/components/recipes/StakePosition'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
-import { selectedSubstrateAccountsState } from '@/domains/accounts'
-import { ChainProvider, useChainState } from '@/domains/chains'
+import { selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
+import { useChainState } from '@/domains/chains/hooks'
+import { ChainProvider } from '@/domains/chains/provider'
 import { subtensorStakingEnabledChainsState } from '@/domains/chains/recoils'
 import { useStake } from '@/domains/staking/subtensor/hooks/useStake'
 

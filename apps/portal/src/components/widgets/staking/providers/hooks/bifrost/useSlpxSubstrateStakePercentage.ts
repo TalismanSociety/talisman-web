@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
-import { selectedBalancesState } from '@/domains/balances/core'
+import { selectedBalancesState } from '@/domains/balances/recoils'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 
 const useSlpxSubstrateStakePercentage = (slpxPair: SlpxSubstratePair) => {

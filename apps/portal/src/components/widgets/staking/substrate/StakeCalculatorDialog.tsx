@@ -4,10 +4,11 @@ import { useRecoilValue } from 'recoil'
 
 import { StakeCalculatorDialog as StakeCalculatorDialogComponent } from '@/components/recipes/StakeCalculatorDialog'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
-import { ChainProvider, useChainState } from '@/domains/chains'
+import { useChainState } from '@/domains/chains/hooks'
+import { ChainProvider } from '@/domains/chains/provider'
 import { nominationPoolsEnabledChainsState } from '@/domains/chains/recoils'
 import { useTokenAmount, useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
-import { useApr } from '@/domains/staking/substrate/nominationPools'
+import { useApr } from '@/domains/staking/substrate/nominationPools/hooks'
 
 import { AssetSelect } from './StakeForm'
 

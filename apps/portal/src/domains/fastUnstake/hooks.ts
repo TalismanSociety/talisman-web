@@ -7,7 +7,7 @@ import { spawn, Thread } from 'threads'
 
 import { writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
-import { useSubstrateApiState } from '@/domains/common/recoils/api'
+import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 
 import type { WorkerFunction } from './worker'
 import { getErasToCheck } from './utils'

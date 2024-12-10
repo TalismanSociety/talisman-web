@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { useSubstrateApiState } from '@/domains/common/recoils/api'
+import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 import { expectedBlockTime } from '@/domains/common/utils/substratePolyfills'
 import { useEraLengthState } from '@/domains/staking/dappStaking/recoils'
 

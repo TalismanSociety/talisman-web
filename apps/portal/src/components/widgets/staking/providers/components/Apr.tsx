@@ -1,9 +1,9 @@
 import { Text } from '@talismn/ui/atoms/Text'
 
-import { ChainProvider } from '@/domains/chains'
+import { ChainProvider } from '@/domains/chains/provider'
 import { useApr as useDappApr } from '@/domains/staking/dappStaking/hooks/useApr'
-import { useSlpxAprState } from '@/domains/staking/slpx'
-import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nominationPools'
+import { useSlpxAprState } from '@/domains/staking/slpx/recoils'
+import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nominationPools/hooks/useReturn'
 import { useHighestApr } from '@/domains/staking/subtensor/hooks/useApr'
 
 import useLidoApr from '../hooks/lido/useApr'

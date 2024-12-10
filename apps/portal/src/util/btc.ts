@@ -1,6 +1,6 @@
 import { address } from 'bitcoinjs-lib'
 
-import { type Account } from '@/domains/accounts'
+import { Account } from '@/domains/accounts/recoils'
 
 export type BtcAccountType = 'btc-base58' | 'btc-bench32'
 export type BtcAccount = Omit<Account, 'type'> & {

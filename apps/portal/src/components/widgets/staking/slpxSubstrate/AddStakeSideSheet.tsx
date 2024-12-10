@@ -14,7 +14,7 @@ import { SlpxAddStakeForm } from '@/components/recipes/AddStakeDialog'
 import { useAccountSelector } from '@/components/widgets/AccountSelector'
 import useSlpxSubstrateUnlockDuration from '@/components/widgets/staking/providers/hooks/bifrost/useSlpxSubstrateUnlockDuration'
 import { writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
-import { useSlpxAprState } from '@/domains/staking/slpx'
+import { useSlpxAprState } from '@/domains/staking/slpx/recoils'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import useStakeAddForm from '@/domains/staking/slpxSubstrate/useStakeAddForm'
 

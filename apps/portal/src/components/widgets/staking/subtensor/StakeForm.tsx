@@ -5,7 +5,7 @@ import { Suspense, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
-import { type Account } from '@/domains/accounts'
+import { Account } from '@/domains/accounts/recoils'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useAddStakeForm } from '@/domains/staking/subtensor/hooks/forms'
 import { useDelegateApr } from '@/domains/staking/subtensor/hooks/useApr'

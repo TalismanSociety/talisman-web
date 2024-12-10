@@ -5,7 +5,7 @@ import { Text } from '@talismn/ui/atoms/Text'
 import { ChevronDown, Users } from '@talismn/web-icons'
 import { type ReactNode } from 'react'
 
-import type { Account } from '@/domains/accounts'
+import type { Account } from '@/domains/accounts/recoils'
 import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { shortenAddress } from '@/util/shortenAddress'
 

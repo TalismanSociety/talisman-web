@@ -2,7 +2,7 @@ import { usePolkadotApiId } from '@talismn/react-polkadot-api'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { selectedSubstrateAccountsState } from '@/domains/accounts'
+import { selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
 import { substrateApiState } from '@/domains/common/recoils/api'
 import { chainDeriveState } from '@/domains/common/recoils/query'

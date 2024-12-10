@@ -4,7 +4,7 @@ import { useRecoilValueLoadable } from 'recoil'
 import { useBlockNumber, useConfig } from 'wagmi'
 import { getTokenQueryOptions, readContractQueryOptions, readContractsQueryOptions } from 'wagmi/query'
 
-import type { Account } from '@/domains/accounts'
+import type { Account } from '@/domains/accounts/recoils'
 import { tokenPriceState } from '@/domains/chains/recoils'
 import { Decimal } from '@/util/Decimal'
 

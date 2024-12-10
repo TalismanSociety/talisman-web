@@ -7,7 +7,7 @@ import { Link, Outlet, useMatch } from 'react-router-dom'
 
 import { AccountConnectionGuard } from '@/components/widgets/AccountConnectionGuard'
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
-import { useTotalStaked } from '@/domains/staking'
+import { useTotalStaked } from '@/domains/staking/hooks'
 import { HeaderWidgetPortal, TitlePortal } from '@/routes/layout'
 
 const TotalStaked = () => <AnimatedFiatNumber end={useTotalStaked()} />

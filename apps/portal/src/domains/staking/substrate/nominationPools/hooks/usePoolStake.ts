@@ -4,7 +4,7 @@ import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import { type StakeStatus } from '@/components/recipes/StakeStatusIndicator'
 import { type Account } from '@/domains/accounts/recoils'
-import { useSubstrateApiState } from '@/domains/common/recoils/api'
+import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 
 import { useAllPendingRewardsState, useEraStakersState } from '../recoils'
 import { createAccounts, getPoolUnbonding } from '../utils'

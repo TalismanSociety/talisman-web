@@ -1,4 +1,4 @@
-import { ChainProvider } from '@/domains/chains'
+import { ChainProvider } from '@/domains/chains/provider'
 import { SlpxPair } from '@/domains/staking/slpx/types'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 

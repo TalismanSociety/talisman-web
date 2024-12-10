@@ -5,7 +5,7 @@ import { developmentState } from '@/domains/common/recoils/development'
 
 const DevMenu = lazy(async () => await import('./DevMenu'))
 
-const Development = () => {
+export const Development = () => {
   const [isDevelopment, setIsDevelopment] = useRecoilState(developmentState)
 
   useEffect(() => {
@@ -30,5 +30,3 @@ const Development = () => {
     </Suspense>
   )
 }
-
-export default Development

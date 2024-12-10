@@ -2,7 +2,8 @@ import type { ReactNode } from 'react'
 import { useCallback, useState } from 'react'
 
 import { AddReadOnlyAccountDialog as AddReadOnlyAccountDialogComponent } from '@/components/recipes/AddReadOnlyAccountDialog'
-import { popularAccounts, useAddReadonlyAccountForm, useSetReadonlyAccounts } from '@/domains/accounts'
+import { popularAccounts } from '@/domains/accounts/consts'
+import { useAddReadonlyAccountForm, useSetReadonlyAccounts } from '@/domains/accounts/hooks'
 import { isNilOrWhitespace } from '@/util/nil'
 
 type AddReadOnlyAccountDialogProps = {

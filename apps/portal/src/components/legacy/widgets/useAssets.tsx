@@ -5,8 +5,8 @@ import { compact, groupBy, isEmpty, isNil } from 'lodash'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
-import { balancesState, selectedBalancesState } from '@/domains/balances/core'
 import { selectedCurrencyState } from '@/domains/balances/currency'
+import { balancesState, selectedBalancesState } from '@/domains/balances/recoils'
 
 const useFetchAssets = (address: string | undefined) => {
   const _balances = useRecoilValue(address === undefined ? selectedBalancesState : balancesState)

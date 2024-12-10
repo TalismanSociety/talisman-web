@@ -6,10 +6,10 @@ import { range } from 'lodash'
 import { useMemo } from 'react'
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue, waitForAll } from 'recoil'
 
-import type { Account } from '@/domains/accounts'
+import type { Account } from '@/domains/accounts/recoils'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
-import { useSubstrateApiState } from '@/domains/common/recoils/api'
+import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 import { expectedBlockTime } from '@/domains/common/utils/substratePolyfills'
 import { Maybe } from '@/util/monads'
 

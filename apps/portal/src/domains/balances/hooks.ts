@@ -6,16 +6,16 @@ import { useRecoilValue } from 'recoil'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useThrottle } from '@/hooks/useThrottle'
 
-import { writeableBalancesState } from './core'
-
-const digestMessage = async (message: string) => {
-  const msgUint8 = new TextEncoder().encode(message)
-  const hashBuffer = await crypto.subtle.digest('SHA-512', msgUint8)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
-}
+import { writeableBalancesState } from './recoils'
 
 export const useBalancesReportEffect = () => {
+  const digestMessage = async (message: string) => {
+    const msgUint8 = new TextEncoder().encode(message)
+    const hashBuffer = await crypto.subtle.digest('SHA-512', msgUint8)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  }
+
   const postHog = usePostHog()
   const balances = useThrottle(useDebounce(useRecoilValue(writeableBalancesState), 5_000), 15_000)
   const [updateCount, setUpdateCount] = useState(0)

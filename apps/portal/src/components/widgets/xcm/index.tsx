@@ -7,7 +7,7 @@ import { isAddress as isEvmAddress } from 'viem'
 
 import { AccountSelector } from '@/components/widgets/AccountSelector'
 import { SeparatedAccountSelector } from '@/components/widgets/SeparatedAccountSelector'
-import { writeableAccountsState } from '@/domains/accounts'
+import { writeableAccountsState } from '@/domains/accounts/recoils'
 import { selectedCurrencyState } from '@/domains/balances/currency'
 import { tokenPriceState } from '@/domains/chains/recoils'
 import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'

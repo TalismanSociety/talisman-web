@@ -2,12 +2,12 @@ import { useQueryMultiState } from '@talismn/react-polkadot-api'
 import { useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
-import type { Account } from '@/domains/accounts'
+import type { Account } from '@/domains/accounts/recoils'
 import {
   PoolClaimPermissionDialog as PoolClaimPermissionDialogComponent,
   PoolClaimPermissionForm as PoolClaimPermissionFormComponent,
 } from '@/components/recipes/PoolClaimPermissionForm'
-import { useChainState } from '@/domains/chains'
+import { useChainState } from '@/domains/chains/hooks'
 import { assertChain } from '@/domains/chains/utils'
 import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
 import { useExtrinsicInBlockOrErrorEffect } from '@/domains/common/hooks/useExtrinsicEffect'

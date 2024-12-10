@@ -1,10 +1,9 @@
 import { useQueryState } from '@talismn/react-polkadot-api'
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
-import { selectedSubstrateAccountsState } from '@/domains/accounts'
-import { Account } from '@/domains/accounts/recoils'
-import { selectedBalancesState } from '@/domains/balances/core'
+import { Account, selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { selectedCurrencyState } from '@/domains/balances/currency'
+import { selectedBalancesState } from '@/domains/balances/recoils'
 import { Decimal } from '@/util/Decimal'
 import { Maybe } from '@/util/monads'
 

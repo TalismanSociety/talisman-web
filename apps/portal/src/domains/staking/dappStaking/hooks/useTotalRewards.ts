@@ -2,8 +2,8 @@ import { atom, useAtomValue } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { useRecoilValue } from 'recoil'
 
-import type { Account } from '@/domains/accounts'
-import { useChainState } from '@/domains/chains'
+import type { Account } from '@/domains/accounts/recoils'
+import { useChainState } from '@/domains/chains/hooks'
 import { assertChain } from '@/domains/chains/utils'
 import { Decimal } from '@/util/Decimal'
 

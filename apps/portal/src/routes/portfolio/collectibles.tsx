@@ -17,10 +17,10 @@ import { createContext, Suspense, useCallback, useContext, useEffect, useMemo, u
 import { Link, useSearchParams } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import type { Account } from '@/domains/accounts'
+import type { Account } from '@/domains/accounts/recoils'
 import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
-import { selectedAccountsState } from '@/domains/accounts'
+import { selectedAccountsState } from '@/domains/accounts/recoils'
 import {
   CollectionKey,
   Nft,
