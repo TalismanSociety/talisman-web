@@ -86,6 +86,7 @@ export type SwapActivity<TData> = {
     chainId: string | number
     extrinsicId?: string
     txHash?: string
+    error?: string
   }
 }
 
@@ -316,8 +317,8 @@ export const substrateSwapTransfer = async (
             const error = res.dispatchError?.isToken
               ? handleTokenError(res.dispatchError.asToken)
               : res.dispatchError?.asModule
-                ? res.dispatchError.asModule.registry.findMetaError(res.dispatchError.asModule).docs.join('')
-                : 'Unknown error.'
+              ? res.dispatchError.asModule.registry.findMetaError(res.dispatchError.asModule).docs.join('')
+              : 'Unknown error.'
             resolve({ id, ok: false, error })
             unsub()
           }

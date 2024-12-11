@@ -589,6 +589,7 @@ const swap: SwapFunction<{ id: string }> = async (
         depositRes: {
           extrinsicId: transferRes.id,
           chainId: substrateChain.id,
+          error: transferRes.error,
         },
         data: { id: exchange.id },
       }

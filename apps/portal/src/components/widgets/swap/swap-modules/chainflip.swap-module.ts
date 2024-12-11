@@ -402,6 +402,7 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
         depositRes: {
           chainId: substrateChain.id,
           extrinsicId: transferRes.id,
+          error: transferRes.error,
         },
         data: {
           id: depositAddress.depositChannelId,
