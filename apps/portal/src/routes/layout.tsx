@@ -1,9 +1,9 @@
 import { usePostHog } from 'posthog-js/react'
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 
 import { ModalProvider } from '@/components/legacy/Modal'
-import { HeaderWidgetPortalProvider, TitlePortalProvider } from '@/components/molecules/PageHeader'
+import { FullscreenLoader } from '@/components/molecules/FullscreenLoader'
 import { SiteFooter } from '@/components/widgets/SiteFooter'
 import { SiteNav } from '@/components/widgets/SiteNav'
 import DappStakingStakeSideSheet from '@/components/widgets/staking/dappStaking/StakeSideSheet'
@@ -41,46 +41,27 @@ export const Layout = () => {
     return undefined
   }, [location])
 
-  // const [drawerOpen, setDrawerOpen] = useState(false)
-
   return (
     <div className="flex min-h-screen flex-col gap-8">
       <SiteNav contentClassName="mx-auto w-full max-w-screen-xl px-8" />
 
-      <main className="mx-auto w-full max-w-screen-xl flex-grow px-8">
-        {/* <Scaffold
-    //   breakpoints={{
-    //     topBar: 'narrow',
-    //     bottomBar: 'narrow',
-    //     sideBar: 'wide',
-    //     drawer: 'narrow',
-    //     footer: 'wide',
-    //   }}
-    //   topBar={<SiteNavTopBar openDrawer={() => setDrawerOpen(true)} />}
-    //   bottomBar={<SiteNavBottomBar />}
-    //   sideBar={<SiteNavSidebar />}
-    //   drawer={<SiteNavDrawer isOpen={drawerOpen} close={() => setDrawerOpen(false)} />}
-    //   footer={<SiteFooter />}
-    // > */}
-        {/* TODO: remove legacy imperative modals */}
-        <ModalProvider>
-          <TitlePortalProvider>
-            <HeaderWidgetPortalProvider>
-              {/* <PageHeader /> */}
-              <Outlet />
-              <NominationPoolsStakeSideSheet />
-              <DappStakingStakeSideSheet />
-              <SubtensorStakeSideSheet />
-              <SlpxStakeSideSheet />
-              <LidoStakeSideSheet />
-              <SlpxSubstrateStakeSideSheet />
-              <WalletConnectionSideSheet />
-            </HeaderWidgetPortalProvider>
-          </TitlePortalProvider>
-        </ModalProvider>
-      </main>
+      <Suspense fallback={<FullscreenLoader />}>
+        <main className="mx-auto w-full max-w-screen-xl flex-grow px-8">
+          {/* TODO: remove legacy imperative modals */}
+          <ModalProvider>
+            <Outlet />
+            <NominationPoolsStakeSideSheet />
+            <DappStakingStakeSideSheet />
+            <SubtensorStakeSideSheet />
+            <SlpxStakeSideSheet />
+            <LidoStakeSideSheet />
+            <SlpxSubstrateStakeSideSheet />
+            <WalletConnectionSideSheet />
+          </ModalProvider>
+        </main>
 
-      <SiteFooter className="mx-auto w-full max-w-screen-xl px-8" />
+        <SiteFooter className="mx-auto w-full max-w-screen-xl px-8" />
+      </Suspense>
     </div>
   )
 }

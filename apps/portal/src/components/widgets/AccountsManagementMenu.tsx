@@ -84,7 +84,7 @@ const AccountsManagementAddress = ({
 }
 
 export const AccountsManagementMenu = Object.assign(
-  (props: { button: ReactNode }) => {
+  (props: { className?: string; button: ReactNode }) => {
     const theme = useTheme()
 
     const portfolioBalanceLoadable = useRecoilValueLoadable(portfolioBalancesFiatSumState)
@@ -104,6 +104,7 @@ export const AccountsManagementMenu = Object.assign(
       if (portfolioAccounts.length <= 0) {
         return (
           <Menu.Item.Button
+            className={props.className}
             headlineContent="Connect wallet"
             leadingContent={
               <SurfaceIcon contentColor={theme.color.primary}>

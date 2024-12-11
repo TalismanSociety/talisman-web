@@ -9,6 +9,7 @@ import { PortfolioAddressSearch } from '@/components/recipes/PortfolioAddressSea
 import { AccountsManagementMenu } from '@/components/widgets/AccountsManagementMenu'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { selectedAccountsState } from '@/domains/accounts/recoils'
+import { cn } from '@/util/cn'
 
 const Layout = () => {
   // useMatch
@@ -24,20 +25,22 @@ const Layout = () => {
 
   return (
     <div className="flex w-full flex-col gap-8">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className={cn('flex flex-col items-center justify-stretch', 'lg:flex-row lg:justify-between')}>
+        <div className="flex-1">
           <AccountsManagementMenu
             button={
               <AccountValueInfo account={accounts.length === 1 ? accounts[0] : undefined} balance={<WalletTotal />} />
             }
           />
         </div>
-        <nav className="flex list-none items-center">
+        <nav className="flex flex-1 list-none items-center justify-center gap-4">
           <li>Overview</li>
           <li>Tokens</li>
           <li>NFTs</li>
         </nav>
-        <PortfolioAddressSearch />
+        <div className="flex flex-1 items-center justify-end">
+          <PortfolioAddressSearch />
+        </div>
       </div>
       <Tabs>
         {paths.map(path => (

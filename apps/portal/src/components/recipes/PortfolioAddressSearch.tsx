@@ -10,7 +10,7 @@ import { isNilOrWhitespace } from '@/util/nil'
 
 const MotionSearch = motion(Search)
 
-export const PortfolioAddressSearch = () => {
+export const PortfolioAddressSearch = ({ className }: { className?: string }) => {
   const searchBarRef = useRef<HTMLInputElement>(null)
   const [address, setAddress] = useRecoilState(lookupAccountAddressState)
   const [revealed, setRevealed] = useState(false)
@@ -30,7 +30,7 @@ export const PortfolioAddressSearch = () => {
   return (
     <LayoutGroup>
       {revealed ? (
-        <motion.div layoutId="address-search">
+        <motion.div className={className} layoutId="address-search">
           <SearchBar
             autoFocus
             ref={searchBarRef}
@@ -41,7 +41,7 @@ export const PortfolioAddressSearch = () => {
           />
         </motion.div>
       ) : (
-        <motion.div layoutId="address-search">
+        <motion.div className={className} layoutId="address-search">
           <SurfaceIconButton onClick={() => setRevealed(true)}>
             <MotionSearch layout />
           </SurfaceIconButton>

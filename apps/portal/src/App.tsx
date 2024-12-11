@@ -10,8 +10,8 @@ import { RouterProvider } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
 
 import ThemeProvider from '@/App.Theme'
-import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
 import { FairyBreadBanner } from '@/components/legacy/widgets/FairyBreadBanner'
+import { FullscreenLoader } from '@/components/molecules/FullscreenLoader'
 import { Development } from '@/components/widgets/development/Development'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { AccountWatcher, SignetWatcher } from '@/domains/accounts/recoils'
@@ -63,12 +63,6 @@ const App = () => (
       </ErrorBoundary>
     </RecoilRoot>
   </ThemeProvider>
-)
-
-const FullscreenLoader = () => (
-  <div className="absolute left-0 right-0 flex h-full items-center justify-center">
-    <TalismanHandLoader />
-  </div>
 )
 
 export default App

@@ -14,7 +14,7 @@ import {
   TalismanHand,
   Zap,
 } from '@talismn/web-icons'
-import { HTMLAttributeAnchorTarget, ReactNode } from 'react'
+import { cloneElement, HTMLAttributeAnchorTarget, ReactElement, ReactNode } from 'react'
 import { Link, NavLink, To } from 'react-router-dom'
 
 import Discord from '@/assets/icons/discord-header.svg?react'
@@ -22,7 +22,7 @@ import GitHub from '@/assets/icons/github-header.svg?react'
 import Medium from '@/assets/icons/medium-header.svg?react'
 import Twitter from '@/assets/icons/twitter-header.svg?react'
 import Logotype from '@/assets/logotype.svg?react'
-import { PageHeader } from '@/components/molecules/PageHeader'
+import { CurrencySelect } from '@/components/molecules/CurrencySelect'
 import { WalletConnectionButton } from '@/components/molecules/WalletConnectionButton'
 import { cn } from '@/util/cn'
 
@@ -43,20 +43,19 @@ export const SiteNav = ({ className, contentClassName }: { className?: string; c
           backgroundSize: '100% 400%',
         }}
       />
-      <div className={cn('flex items-center justify-between', contentClassName)}>
-        <div>
-          <Link className="flex items-center gap-1" to="/portfolio">
-            <Logotype />
-          </Link>
-        </div>
+      <div className={cn('flex h-32 items-center justify-between gap-8', contentClassName)}>
+        <Link className="flex items-center gap-1" to="/portfolio">
+          <Logotype />
+        </Link>
         <div className="flex items-center gap-14">
-          <SiteNavItem label="Portfolio" icon={<PieChart className="font-normal" />} to="/portfolio" />
+          <SiteNavItem label="Portfolio" icon={<PieChart />} to="/portfolio" />
           <SiteNavItem label="Staking" icon={<Zap />} to="/staking" />
           <SiteNavItem label="Swap" icon={<Repeat />} to="/transport/swap" />
           <SiteNavItem label="Buy/Sell" icon={<CreditCard />} to="https://checkout.banxa.com/" target="_blank" />
         </div>
-        <div>
-          <PageHeader />
+        <div className="space-between flex items-center gap-3">
+          <CurrencySelect />
+          <WalletConnectionButton />
         </div>
       </div>
     </header>
@@ -69,7 +68,7 @@ const SiteNavItem = ({
   to,
   target,
 }: {
-  icon: ReactNode
+  icon: ReactElement
   label: ReactNode
   to: To
   target?: HTMLAttributeAnchorTarget
@@ -81,7 +80,7 @@ const SiteNavItem = ({
     to={to}
     target={target}
   >
-    {icon}&nbsp;{label}
+    {cloneElement(icon, { className: 'h-[1.2em] w-[1.2em] shrink-0 [&_*]:stroke-[1.6]' })}&nbsp;{label}
   </NavLink>
 )
 
