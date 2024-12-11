@@ -8,7 +8,7 @@ import Admin from './admin'
 import crowdloanRoutes from './crowdloans'
 import Explore from './explore'
 import History from './history'
-import Layout from './layout'
+import { Layout } from './layout'
 import portfolioRoutes from './portfolio'
 import stakingRoutes from './staking'
 import dexRoutes from './transport'
@@ -20,28 +20,15 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
     errorElement: <RouteErrorElement />,
     children: [
       { path: '/', element: <Navigate to="portfolio" /> },
-      {
-        path: 'portfolio',
-        ...portfolioRoutes,
-      },
+      { path: 'portfolio', ...portfolioRoutes },
       { path: 'transport', ...dexRoutes },
-      { path: 'explore', element: <Explore /> },
-      {
-        path: 'crowdloans',
-        ...crowdloanRoutes,
-      },
-      {
-        path: 'history',
-        element: (
-          <AccountConnectionGuard>
-            <History />
-          </AccountConnectionGuard>
-        ),
-      },
+      // { path: 'explore', element: <Explore /> },
+      // { path: 'crowdloans', ...crowdloanRoutes },
+      // { path: 'history', element: ( <AccountConnectionGuard><History /></AccountConnectionGuard> )},
       { path: 'nfts', element: <Navigate to="/portfolio/collectibles" /> },
       { path: 'staking', ...stakingRoutes },
-      // TODO: remove once link on extension side is updated
-      { path: '/portfolio/history', element: <Navigate to="/history" /> },
+      // // TODO: remove once link on extension side is updated
+      // { path: '/portfolio/history', element: <Navigate to="/history" /> },
       { path: '/admin', element: <Admin /> },
     ],
   },

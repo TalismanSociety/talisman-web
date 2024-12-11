@@ -14,13 +14,76 @@ import {
   TalismanHand,
   Zap,
 } from '@talismn/web-icons'
-import { Link } from 'react-router-dom'
+import { HTMLAttributeAnchorTarget, ReactNode } from 'react'
+import { Link, NavLink, To } from 'react-router-dom'
 
 import Discord from '@/assets/icons/discord-header.svg?react'
 import GitHub from '@/assets/icons/github-header.svg?react'
 import Medium from '@/assets/icons/medium-header.svg?react'
 import Twitter from '@/assets/icons/twitter-header.svg?react'
+import Logotype from '@/assets/logotype.svg?react'
+import { PageHeader } from '@/components/molecules/PageHeader'
 import { WalletConnectionButton } from '@/components/molecules/WalletConnectionButton'
+import { cn } from '@/util/cn'
+
+export const SiteNav = ({ className, contentClassName }: { className?: string; contentClassName?: string }) => {
+  return (
+    <header className={cn('relative', className)}>
+      <div
+        className="pointer-events-none absolute bottom-0 left-0 right-0 top-0 z-0 opacity-5"
+        style={{
+          backgroundColor: 'hsla(50,78%,75%,1)',
+          backgroundImage: `
+              radial-gradient(at 31% 67%, hsla(178,35%,52%,1) 0px, transparent 50%),
+              radial-gradient(at 69% 30%, hsla(253,45%,72%,1) 0px, transparent 50%),
+              radial-gradient(at 61% 49%, hsla(237,80%,74%,1) 0px, transparent 50%),
+              radial-gradient(at 27% 27%, hsla(100,48%,70%,1) 0px, transparent 50%),
+              radial-gradient(at 70% 0%, hsla(39,77%,77%,1) 0px, transparent 50%)`,
+          backgroundPosition: 'center',
+          backgroundSize: '100% 400%',
+        }}
+      />
+      <div className={cn('flex items-center justify-between', contentClassName)}>
+        <div>
+          <Link className="flex items-center gap-1" to="/portfolio">
+            <Logotype />
+          </Link>
+        </div>
+        <div className="flex items-center gap-14">
+          <SiteNavItem label="Portfolio" icon={<PieChart className="font-normal" />} to="/portfolio" />
+          <SiteNavItem label="Staking" icon={<Zap />} to="/staking" />
+          <SiteNavItem label="Swap" icon={<Repeat />} to="/transport/swap" />
+          <SiteNavItem label="Buy/Sell" icon={<CreditCard />} to="https://checkout.banxa.com/" target="_blank" />
+        </div>
+        <div>
+          <PageHeader />
+        </div>
+      </div>
+    </header>
+  )
+}
+
+const SiteNavItem = ({
+  icon,
+  label,
+  to,
+  target,
+}: {
+  icon: ReactNode
+  label: ReactNode
+  to: To
+  target?: HTMLAttributeAnchorTarget
+}) => (
+  <NavLink
+    className={({ isActive }) =>
+      cn('text-foreground/60 hover:text-foreground flex items-center gap-2 font-bold', isActive && 'text-foreground')
+    }
+    to={to}
+    target={target}
+  >
+    {icon}&nbsp;{label}
+  </NavLink>
+)
 
 export const SiteNavTopBar = ({ openDrawer }: { openDrawer: () => void }) => (
   <TopAppBar

@@ -14,7 +14,7 @@ const Layout = () => {
 
   return (
     <AccountConnectionGuard>
-      <div className="mt-[64px] flex flex-col items-center">
+      <div className="flex flex-col items-center">
         <ErrorBoundary>
           <Suspense fallback={<TalismanHandProgressIndicator />}>
             <div className="mx-auto w-full max-w-[840px]">

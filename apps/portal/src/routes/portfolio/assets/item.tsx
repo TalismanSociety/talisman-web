@@ -90,7 +90,7 @@ const AssetItem = () => {
                       className="text-[1em] sm:text-[1em]"
                       assetLogoUrl={token.tokenDetails.logo ?? githubUnknownTokenLogoUrl}
                     />
-                    <Text.Body>{`(${token.tokenDetails.symbol ?? ''})`}</Text.Body>
+                    <Text.Body>{`${token.tokenDetails.symbol ?? ''}`}</Text.Body>
                   </div>
                 }
                 supportingContent={token.rate !== undefined && <AnimatedFiatNumber end={token.rate} />}
