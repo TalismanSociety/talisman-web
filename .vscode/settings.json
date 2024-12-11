@@ -1,5 +1,11 @@
 {
-  "eslint.workingDirectories": [{ "mode": "auto" }],
   "eslint.experimental.useFlatConfig": true,
-  "search.exclude": { ".yarn/**": true }
+  "eslint.useFlatConfig": true,
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+  "search.exclude": { ".yarn/**": true },
+
+  // defaults to 1rem=16px, but we use 1rem=10px in the portal
+  // this setting will provide accurate intellisense values
+  "tailwindCSS.rootFontSize": 10
 }
