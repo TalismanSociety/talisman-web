@@ -1,6 +1,6 @@
 import type React from 'react'
 import { ErrorBoundary } from '@sentry/react'
-import { Skeleton } from '@talismn/ui'
+import { Skeleton } from '@talismn/ui/atoms/Skeleton'
 import { useAtomValue } from 'jotai'
 import { Suspense, useCallback } from 'react'
 
@@ -13,6 +13,7 @@ import { SimpleswapActivity } from './activities/SimpleswapActivity'
 export const SwapHistory: React.FC = () => {
   const swaps = useAtomValue(swapsAtom)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderSwap = useCallback((swap: SwapActivity<any>) => {
     switch (swap.protocol) {
       case 'chainflip':

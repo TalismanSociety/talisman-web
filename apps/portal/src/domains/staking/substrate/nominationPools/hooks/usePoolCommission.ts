@@ -1,6 +1,7 @@
-import { useRecommendedPoolsState } from '../recoils'
 import type { AnyJson } from '@w3ux/types'
 import { useRecoilValue } from 'recoil'
+
+import { useRecommendedPoolsState } from '../recoils'
 
 export type BondedPool = {
   commission?: {

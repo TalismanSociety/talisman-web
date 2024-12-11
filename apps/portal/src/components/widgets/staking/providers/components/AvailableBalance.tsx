@@ -1,16 +1,16 @@
-import { Text } from '@talismn/ui'
+import { Text } from '@talismn/ui/atoms/Text'
 import { useMemo } from 'react'
 
-import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
-import { ChainProvider } from '@/domains/chains'
+import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
+import { ChainProvider } from '@/domains/chains/provider'
 import { SlpxPair } from '@/domains/staking/slpx/types'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import { Decimal } from '@/util/Decimal'
 
 import { useAvailableBalance as useSlpxAvailableBalance } from '../hooks/bifrost/useAvailableBalance'
 import useLidoAvailableBalance from '../hooks/lido/useAvailableBalance'
+import { StakeProviderTypeId } from '../hooks/types'
 import useAvailableBalance from '../hooks/useAvailableBalance'
-import { StakeProviderTypeId } from '../hooks/useProvidersData'
 
 type AvailableBalanceProps = {
   typeId: StakeProviderTypeId
@@ -35,6 +35,7 @@ const AvailableBalanceDisplay = ({
   symbol,
   setAvailableBalanceValue,
 }: AvailableBalanceDisplayProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hookMap: Record<hookMapKey, (arg0?: any, arg1?: boolean) => AvailableBalance> = {
     substrate: useAvailableBalance,
     slpx: useSlpxAvailableBalance,

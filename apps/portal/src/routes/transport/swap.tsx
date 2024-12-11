@@ -1,6 +1,5 @@
+import { TitlePortal } from '@/components/molecules/PageHeader'
 import { ChainFlipSwap } from '@/components/widgets/swap'
-
-import { TitlePortal } from '../layout'
 
 const Swap = () => {
   return (

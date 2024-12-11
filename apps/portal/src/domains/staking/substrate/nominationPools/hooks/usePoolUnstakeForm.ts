@@ -1,5 +1,8 @@
-import { useExtrinsic, useQueryMulti, useTokenAmountFromPlanck, useTokenAmountState } from '../../../../common/hooks'
 import { useMemo } from 'react'
+
+import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
+import { useQueryMulti } from '@/domains/common/hooks/useQueryMulti'
+import { useTokenAmountFromPlanck, useTokenAmountState } from '@/domains/common/hooks/useTokenAmount'
 
 export const usePoolUnstakeForm = (account?: string) => {
   const unbondExtrinsic = useExtrinsic('nominationPools', 'unbond')

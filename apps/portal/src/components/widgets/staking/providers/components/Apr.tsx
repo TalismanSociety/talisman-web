@@ -1,13 +1,13 @@
-import { Text } from '@talismn/ui'
+import { Text } from '@talismn/ui/atoms/Text'
 
-import { ChainProvider } from '@/domains/chains'
-import { useApr as useDappApr } from '@/domains/staking/dappStaking'
-import { useSlpxAprState } from '@/domains/staking/slpx'
-import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nominationPools'
+import { ChainProvider } from '@/domains/chains/provider'
+import { useApr as useDappApr } from '@/domains/staking/dappStaking/hooks/useApr'
+import { useSlpxAprState } from '@/domains/staking/slpx/recoils'
+import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nominationPools/hooks/useReturn'
 import { useHighestApr } from '@/domains/staking/subtensor/hooks/useApr'
 
 import useLidoApr from '../hooks/lido/useApr'
-import { StakeProviderTypeId } from '../hooks/useProvidersData'
+import { StakeProviderTypeId } from '../hooks/types'
 
 const aprFormatter = (apr: number) => apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 
@@ -22,6 +22,7 @@ type AprDisplayProps = Omit<AprProps, 'genesisHash'>
 
 // This component is used to get around the react rules of conditional hooks
 const AprDisplay = ({ typeId, symbol, apiEndpoint, setAprValues }: AprDisplayProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
     nominationPool: useNominationPoolApr,
     liquidStakingSlpx: useSlpxAprState,

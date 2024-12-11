@@ -1,8 +1,8 @@
 import { useRecoilValue } from 'recoil'
 
-import { subtensorStakingEnabledChainsState } from '@/domains/chains'
+import { subtensorStakingEnabledChainsState } from '@/domains/chains/recoils'
 
-import { Provider } from '../useProvidersData'
+import { Provider } from '../types'
 
 const useSubtensorProviders = () => {
   const chains = useRecoilValue(subtensorStakingEnabledChainsState)

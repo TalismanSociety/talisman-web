@@ -1,5 +1,5 @@
-import { Account } from '../../../../domains/accounts'
-import { SlpxAddStakeDialog } from '../../../recipes/AddStakeDialog'
+import { SlpxAddStakeDialog } from '@/components/recipes/AddStakeDialog'
+import { Account } from '@/domains/accounts/recoils'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import useStakeAddForm from '@/domains/staking/slpxSubstrate/useStakeAddForm'
 

@@ -1,10 +1,13 @@
-import { selectedBalancesFiatSumState, selectedBalancesState, selectedCurrencyState } from '../../domains/balances'
-import PortfolioAllocationGraphComponent from '../recipes/PortfolioAllocationGraph'
-import AnimatedFiatNumber from './AnimatedFiatNumber'
-import { HiddenDetails, Text } from '@talismn/ui'
+import { Text } from '@talismn/ui/atoms/Text'
+import { HiddenDetails } from '@talismn/ui/molecules/HiddenDetails'
 import { groupBy } from 'lodash'
 import { Suspense, useCallback, useMemo, useState } from 'react'
 import { selector, useRecoilValue } from 'recoil'
+
+import { PortfolioAllocationGraph as PortfolioAllocationGraphComponent } from '@/components/recipes/PortfolioAllocationGraph'
+import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
+import { selectedCurrencyState } from '@/domains/balances/currency'
+import { selectedBalancesFiatSumState, selectedBalancesState } from '@/domains/balances/recoils'
 
 const assetDataState = selector({
   key: 'PortfolioAllocationGraph/AssetData',
@@ -104,10 +107,8 @@ const SuspendablePortfolioAllocationGraph = () => {
   )
 }
 
-const PortfolioAllocationGraph = () => (
+export const PortfolioAllocationGraph = () => (
   <Suspense fallback={<PortfolioAllocationGraphComponent.Skeleton />}>
     <SuspendablePortfolioAllocationGraph />
   </Suspense>
 )
-
-export default PortfolioAllocationGraph

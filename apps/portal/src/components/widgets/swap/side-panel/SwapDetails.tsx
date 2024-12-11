@@ -1,14 +1,22 @@
-import { CircularProgressIndicator, Clickable, Skeleton, Surface } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Clickable } from '@talismn/ui/atoms/Clickable'
+import { Skeleton } from '@talismn/ui/atoms/Skeleton'
+import { Surface } from '@talismn/ui/atoms/Surface'
 import { useAtom, useAtomValue } from 'jotai'
 import { loadable } from 'jotai/utils'
 import { Loadable } from 'jotai/vanilla/utils/loadable'
 import { ArrowUpDown, Check } from 'lucide-react'
 import { Suspense, useEffect, useState } from 'react'
 
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { cn } from '@/lib/utils'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/molecules/DropdownMenu'
+import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
+import { cn } from '@/util/cn'
 
-import ErrorBoundary from '../../ErrorBoundary'
 import {
   BaseQuote,
   fromAmountAtom,
@@ -114,6 +122,7 @@ const Details: React.FC = () => {
     return (
       <SwapDetailsError
         message={
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (quotes.state === 'hasError' ? (quotes.error as any) : {})?.message ?? 'No route found. Try larger amount.'
         }
       />

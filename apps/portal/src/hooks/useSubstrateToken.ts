@@ -1,7 +1,8 @@
-import { substrateApiState } from '@/domains/common'
 import { useChains } from '@talismn/balances-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilValueLoadable } from 'recoil'
+
+import { substrateApiState } from '@/domains/common/recoils/api'
 
 export type UseSubstrateTokenProps = {
   chainId: string

@@ -1,14 +1,16 @@
-import { selectedSubstrateAccountsState } from '../../../../domains/accounts/recoils'
-import { useChainState } from '../../../../domains/chains'
-import { useSubstrateApiState } from '../../../../domains/common'
-import { useInjectedAccountFastUnstakeEligibility } from '../../../../domains/fastUnstake'
-import { useStakersRewardState } from '../../../../domains/staking/substrate/validator/recoils'
-import ErrorBoundary from '../../ErrorBoundary'
-import ValidatorStakeItem from './ValidatorStakeItem'
-import { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
 import { useDeriveState, useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import { useMemo } from 'react'
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
+
+import { StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
+import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
+import { selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
+import { useChainState } from '@/domains/chains/hooks'
+import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
+import { useInjectedAccountFastUnstakeEligibility } from '@/domains/fastUnstake/hooks'
+import { useStakersRewardState } from '@/domains/staking/substrate/validator/recoils'
+
+import ValidatorStakeItem from './ValidatorStakeItem'
 
 const useStakes = () => {
   const accountsLoadable = useRecoilValueLoadable(selectedSubstrateAccountsState)

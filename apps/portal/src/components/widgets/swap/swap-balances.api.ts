@@ -4,7 +4,7 @@ import { atomFamily } from 'jotai/utils'
 import { createPublicClient, http } from 'viem'
 import * as chains from 'viem/chains'
 
-import { substrateApiGetterAtom } from '@/domains/common'
+import { substrateApiGetterAtom } from '@/domains/common/recoils/api'
 import { computeSubstrateBalance } from '@/util/balances'
 import { Decimal } from '@/util/Decimal'
 import { getMultibalance } from '@/util/multibalance'

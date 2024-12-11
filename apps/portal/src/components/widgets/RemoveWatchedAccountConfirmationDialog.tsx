@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { useCallback, useState } from 'react'
 
-import RemoveWatchedAccountConfirmationDialogComponent from '@/components/recipes/RemoveWatchedAccountConfirmationDialog'
+import { RemoveWatchedAccountConfirmationDialog as RemoveWatchedAccountConfirmationDialogComponent } from '@/components/recipes/RemoveWatchedAccountConfirmationDialog'
 import { useSetReadonlyAccounts } from '@/domains/accounts/hooks'
 import { type ReadonlyAccount } from '@/domains/accounts/recoils'
 import { isNilOrWhitespace } from '@/util/nil'
@@ -12,7 +12,7 @@ export type RemoveWatchedAccountConfirmationDialogProps = {
   children?: ReactNode | ((props: { onToggleOpen: () => unknown }) => ReactNode)
 }
 
-const RemoveWatchedAccountConfirmationDialog = (props: RemoveWatchedAccountConfirmationDialogProps) => {
+export const RemoveWatchedAccountConfirmationDialog = (props: RemoveWatchedAccountConfirmationDialogProps) => {
   const [open, setOpen] = useState(false)
   const { remove } = useSetReadonlyAccounts()
 
@@ -31,5 +31,3 @@ const RemoveWatchedAccountConfirmationDialog = (props: RemoveWatchedAccountConfi
     </>
   )
 }
-
-export default RemoveWatchedAccountConfirmationDialog

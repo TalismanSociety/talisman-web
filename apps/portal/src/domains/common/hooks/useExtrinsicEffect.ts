@@ -1,5 +1,7 @@
-import type { ExtrinsicLoadable } from '.'
-import { useEffect, type EffectCallback } from 'react'
+import type { EffectCallback } from 'react'
+import { useEffect } from 'react'
+
+import type { ExtrinsicLoadable } from '@/domains/common/hooks/useExtrinsic'
 
 export const useExtrinsicInBlockOrErrorEffect = (effect: EffectCallback, extrinsicLoadable: ExtrinsicLoadable) => {
   useEffect(

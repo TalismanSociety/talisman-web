@@ -1,29 +1,26 @@
-import {
-  Button,
-  CircularProgressIndicator,
-  InfoCard,
-  SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR,
-  SideSheet,
-  Surface,
-  SurfaceChip,
-  Text,
-  Tooltip,
-} from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { SurfaceChip } from '@talismn/ui/atoms/Chip'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+import { InfoCard } from '@talismn/ui/molecules/InfoCard'
+import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
 import { Clock, Zap } from '@talismn/web-icons'
 import { Suspense, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
-import { useSlpxAprState } from '@/domains/staking/slpx'
+import { SlpxAddStakeForm } from '@/components/recipes/AddStakeDialog'
+import { useAccountSelector } from '@/components/widgets/AccountSelector'
+import { walletConnectionSideSheetOpenState } from '@/components/widgets/WalletConnectionSideSheet'
+import { evmSignableAccountsState, writeableEvmAccountsState } from '@/domains/accounts/recoils'
+import { ChainProvider } from '@/domains/chains/provider'
+import { useMintForm } from '@/domains/staking/slpx/core'
+import { slpxPairsState, useSlpxAprState } from '@/domains/staking/slpx/recoils'
+import { SlpxPair } from '@/domains/staking/slpx/types'
+import { Maybe } from '@/util/monads'
 
-import type { SlpxPair } from '../../../../domains/staking/slpx'
-import { evmSignableAccountsState, writeableEvmAccountsState } from '../../../../domains/accounts'
-import { ChainProvider } from '../../../../domains/chains'
-import { slpxPairsState, useMintForm } from '../../../../domains/staking/slpx'
-import { Maybe } from '../../../../util/monads'
-import { SlpxAddStakeForm } from '../../../recipes/AddStakeDialog'
-import { useAccountSelector } from '../../AccountSelector'
-import { walletConnectionSideSheetOpenState } from '../../WalletConnectionSideSheet'
 import UnlockDuration from './UnlockDuration'
 
 type AddStakeSideSheetProps = {
@@ -88,8 +85,8 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
             !ready || +amount === 0
               ? 'disabled'
               : mint.isPending || approve.isPending || approveTransaction.isLoading
-                ? 'pending'
-                : undefined
+              ? 'pending'
+              : undefined
           }
           approvalNeeded={approvalNeeded}
           accountSelector={

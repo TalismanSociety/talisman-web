@@ -1,17 +1,22 @@
-import { enableTestnetsState } from '../../../domains/chains'
-import { toastExtrinsic, useWagmiWriteContract } from '../../../domains/common'
-import { debugErrorBoundaryState } from '../ErrorBoundary'
-import { counterAbi } from './counterAbi'
+import 'winbox/dist/css/themes/modern.min.css'
+import 'winbox/dist/css/winbox.min.css'
+
+import type { WinBoxPropType } from 'react-winbox'
 import RpcError from '@polkadot/rpc-provider/coder/error'
-import { useSurfaceColor } from '@talismn/ui'
+import { useSurfaceColor } from '@talismn/ui/atoms/Surface'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useSessionStorage } from 'react-use'
-import WinBox, { type WinBoxPropType } from 'react-winbox'
+import WinBox from 'react-winbox'
 import { useRecoilState } from 'recoil'
 import { sepolia } from 'wagmi/chains'
-import 'winbox/dist/css/themes/modern.min.css'
-import 'winbox/dist/css/winbox.min.css'
+
+import { debugErrorBoundaryState } from '@/components/widgets/ErrorBoundary'
+import { enableTestnetsState } from '@/domains/chains/recoils'
+import { useWagmiWriteContract } from '@/domains/common/hooks/useWagmiWriteContract'
+import { toastExtrinsic } from '@/domains/common/utils/toast'
+
+import { counterAbi } from './counterAbi'
 
 const InsufficientFeeToast = () => {
   return (
@@ -64,7 +69,7 @@ const Analytics = () => {
   )
 }
 
-const DevMenu = () => {
+export const DevMenu = () => {
   const [x, setX] = useSessionStorage<WinBoxPropType['x']>('dev-menu-x', 'center')
   const [y, setY] = useSessionStorage<WinBoxPropType['y']>('dev-menu-y', 'center')
 

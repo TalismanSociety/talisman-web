@@ -1,4 +1,4 @@
-import { Text } from '@talismn/ui'
+import { Text } from '@talismn/ui/atoms/Text'
 
 export default () => (
   <section className="flex min-h-[50vh] flex-col items-center justify-center gap-4">

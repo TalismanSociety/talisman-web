@@ -1,9 +1,9 @@
 import '@talismn/ui/assets/css/talismn.css'
 import '@/index.css'
 
-import type { Theme } from '@talismn/ui'
+import type { Theme } from '@talismn/ui/theme'
 import { css, Global } from '@emotion/react'
-import { theme, ThemeProvider } from '@talismn/ui'
+import { theme, ThemeProvider } from '@talismn/ui/theme'
 import { type PropsWithChildren } from 'react'
 
 import ATApocRevelations from '@/assets/fonts/AT-Apoc-Revelations.woff'

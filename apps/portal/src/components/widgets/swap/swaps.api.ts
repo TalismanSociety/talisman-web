@@ -2,7 +2,7 @@ import type { PrimitiveAtom } from 'jotai'
 import * as sdk from '@lifi/sdk'
 import { evmErc20TokenId } from '@talismn/balances'
 import { tokenRatesAtom, tokensByIdAtom, useTokens } from '@talismn/balances-react'
-import { toast } from '@talismn/ui'
+import { toast } from '@talismn/ui/organisms/Toaster'
 import { Atom, atom, Getter, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { atomFamily, loadable, useAtomCallback } from 'jotai/utils'
 import { Loadable } from 'jotai/vanilla/utils/loadable'
@@ -12,9 +12,9 @@ import { createPublicClient, erc20Abi, http, isAddress } from 'viem'
 import * as allEvmChains from 'viem/chains'
 import { useWalletClient } from 'wagmi'
 
-import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts'
-import { substrateApiState } from '@/domains/common'
-import { connectedSubstrateWalletState } from '@/domains/extension'
+import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
+import { substrateApiGetterAtom, substrateApiState } from '@/domains/common/recoils/api'
+import { connectedSubstrateWalletState } from '@/domains/extension/substrate'
 import { Decimal } from '@/util/Decimal'
 
 import type { ChainflipSwapActivityData } from './swap-modules/chainflip.swap-module'
@@ -24,7 +24,6 @@ import type {
   SwapActivity,
   SwappableAssetBaseType,
 } from './swap-modules/common.swap-module'
-import { substrateApiGetterAtom } from '../../../domains/common/recoils/api'
 import { popularTokens, talismanTokens } from './curated-tokens'
 import { knownEvmNetworksAtom } from './helpers'
 import { swapInfoTabAtom } from './side-panel'
@@ -65,6 +64,7 @@ const btcTokens = {
 
 const getTokensByChainId = async (
   get: Getter,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   allTokensSelector: Atom<Promise<SwappableAssetBaseType<Partial<Record<SupportedSwapProtocol, any>>>[]>>[]
 ) => {
   const knownEvmTokens = await get(knownEvmNetworksAtom)
@@ -629,6 +629,7 @@ export const useSwap = () => {
           set(fromAmountAtom, Decimal.fromPlanck(0n, 1))
         } catch (e) {
           console.error(e)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const error = e as any
           toast.error(error?.shortMessage ?? error?.details ?? error.message ?? 'unknown error')
         } finally {

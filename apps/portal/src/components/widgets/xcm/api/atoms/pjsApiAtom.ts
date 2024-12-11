@@ -2,7 +2,7 @@ import { Parachain } from '@galacticcouncil/xcm-core'
 import { chainsAtom } from '@talismn/balances-react'
 import { atom } from 'jotai'
 
-import { substrateApiGetterAtom } from '@/domains/common'
+import { substrateApiGetterAtom } from '@/domains/common/recoils/api'
 
 import { sourceChainAtom } from './xcmFieldsAtoms'
 

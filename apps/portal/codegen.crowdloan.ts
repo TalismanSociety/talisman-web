@@ -5,7 +5,7 @@ const config: CodegenConfig = {
   schema: process.env.VITE_DOT_CROWDLOAN_INDEXER,
   documents: ['src/libs/crowdloans/useCrowdloanContributions.ts'],
   generates: {
-    'generated/gql/crowdloan/gql/': {
+    'src/generated/gql/crowdloan/gql/': {
       preset: 'client',
       plugins: [],
       config: {

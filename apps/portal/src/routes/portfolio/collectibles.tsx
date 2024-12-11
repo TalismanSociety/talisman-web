@@ -1,37 +1,38 @@
 import type { PropsWithChildren, RefCallback } from 'react'
 import { useTheme } from '@emotion/react'
-import {
-  Button,
-  Card,
-  CircularProgressIndicator,
-  FloatingActionButton,
-  Hr,
-  ListItem,
-  MediaDialog,
-  SegmentedButton,
-  Select,
-  Text,
-  useSurfaceColor,
-} from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { FloatingActionButton } from '@talismn/ui/atoms/FloatingActionButton'
+import { Hr } from '@talismn/ui/atoms/Hr'
+import { useSurfaceColor } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { Card } from '@talismn/ui/molecules/Card'
+import { ListItem } from '@talismn/ui/molecules/ListItem'
+import { MediaDialog } from '@talismn/ui/molecules/MediaDialog'
+import { SegmentedButton } from '@talismn/ui/molecules/SegmentedButton'
+import { Select } from '@talismn/ui/molecules/Select'
 import { ChevronLeft, ChevronRight, ExternalLink, Eye, EyeOff, Heart } from '@talismn/web-icons'
 import { AnimatePresence, motion } from 'framer-motion'
 import { createContext, Suspense, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import type { Account } from '@/domains/accounts'
-import type { CollectionKey, Nft, NftCollection, NftTag } from '@/domains/nfts'
-import AccountIcon from '@/components/molecules/AccountIcon/AccountIcon'
-import ErrorBoundary from '@/components/widgets/ErrorBoundary'
-import { selectedAccountsState } from '@/domains/accounts'
+import type { Account } from '@/domains/accounts/recoils'
+import { AccountIcon } from '@/components/molecules/AccountIcon'
+import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
+import { selectedAccountsState } from '@/domains/accounts/recoils'
 import {
+  CollectionKey,
+  Nft,
+  NftCollection,
   nftCollectionItemsState,
   nftCollectionsState,
   nftsByTagState,
   nftsLoadingState,
+  NftTag,
   useSetFavoriteNft,
   useSetHiddenNft,
-} from '@/domains/nfts'
+} from '@/domains/nfts/core'
 import { usePagination } from '@/hooks/usePagination'
 import { Maybe } from '@/util/monads'
 import { shortenAddress } from '@/util/shortenAddress'
@@ -107,6 +108,7 @@ const NftCard = ({ nft }: { nft: Nft }) => {
               toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH }),
               toIpfsCompatibleUrl(x),
             ])}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             type={nft.thumbnail !== undefined ? undefined : (nft.media.mimeType?.split('/').at(0) as any)}
             fetchMime
           />
@@ -155,6 +157,7 @@ const NftCard = ({ nft }: { nft: Nft }) => {
         media={
           <MediaDialog.Player
             src={Maybe.of(nft.media.url).mapOrUndefined(toIpfsCompatibleUrl)}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             type={nft.media.mimeType?.split('/').at(0) as any}
           />
         }

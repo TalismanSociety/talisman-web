@@ -3,7 +3,7 @@ import { BrowserTracing } from '@sentry/tracing'
 import { useEffect } from 'react'
 import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType } from 'react-router-dom'
 
-import { HarmlessError } from './errors'
+import { HarmlessError } from '@/domains/common/errors'
 
 export const initSentry = () =>
   init({

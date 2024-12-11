@@ -5,7 +5,7 @@ import { atom, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
 import { createPublicClient, encodeFunctionData, erc20Abi, http, isAddress } from 'viem'
 
-import { substrateApiGetterAtom } from '@/domains/common'
+import { substrateApiGetterAtom } from '@/domains/common/recoils/api'
 import { Decimal } from '@/util/Decimal'
 
 import { knownEvmNetworksAtom } from '../helpers'

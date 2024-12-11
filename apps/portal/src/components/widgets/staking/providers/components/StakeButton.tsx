@@ -1,5 +1,5 @@
-import type { ButtonProps } from '@talismn/ui'
-import { Button } from '@talismn/ui'
+import type { ButtonProps } from '@talismn/ui/atoms/Button'
+import { Button } from '@talismn/ui/atoms/Button'
 import { Zap } from '@talismn/web-icons'
 import { type ElementType } from 'react'
 

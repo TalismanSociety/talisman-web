@@ -1,22 +1,21 @@
-import { Maybe } from '../../../../util/monads'
+import type { ButtonProps } from '@talismn/ui/atoms/Button'
+import type { SideSheetProps } from '@talismn/ui/molecules/SideSheet'
+import type { ReactNode } from 'react'
 import { useTheme } from '@emotion/react'
-import {
-  Button,
-  CircularProgressIndicator,
-  DescriptionList,
-  InfoCard,
-  ListItem,
-  SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR,
-  Select,
-  SideSheet,
-  Surface,
-  Text,
-  TextInput,
-  type ButtonProps,
-  type SideSheetProps,
-} from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { DescriptionList } from '@talismn/ui/molecules/DescriptionList'
+import { InfoCard } from '@talismn/ui/molecules/InfoCard'
+import { ListItem } from '@talismn/ui/molecules/ListItem'
+import { Select } from '@talismn/ui/molecules/Select'
+import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
+import { TextInput } from '@talismn/ui/molecules/TextInput'
 import { Zap } from '@talismn/web-icons'
-import { Suspense, type ReactNode } from 'react'
+import { Suspense } from 'react'
+
+import { Maybe } from '@/util/monads'
 
 type AmountInputProps =
   | {

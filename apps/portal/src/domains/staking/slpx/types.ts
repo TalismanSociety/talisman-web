@@ -6,6 +6,7 @@ export type SlpxToken = {
   symbol: string
   logo: string
   coingeckoId: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   tokenId: any
 }
 

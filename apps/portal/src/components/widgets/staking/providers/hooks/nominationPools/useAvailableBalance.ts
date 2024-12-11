@@ -2,12 +2,15 @@ import { usePolkadotApiId } from '@talismn/react-polkadot-api'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { selectedSubstrateAccountsState } from '@/domains/accounts'
-import { chainDeriveState, substrateApiState, useTokenAmountFromPlanck } from '@/domains/common'
+import { selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
+import { useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
+import { substrateApiState } from '@/domains/common/recoils/api'
+import { chainDeriveState } from '@/domains/common/recoils/query'
 import { Decimal } from '@/util/Decimal'
 
 const useAvailableBalance = () => {
   const apiId = usePolkadotApiId()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const api = useRecoilValue(substrateApiState(apiId as any))
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])

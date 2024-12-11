@@ -1,12 +1,12 @@
 import { useQueryState } from '@talismn/react-polkadot-api'
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
-import { selectedSubstrateAccountsState } from '@/domains/accounts'
-import { Account } from '@/domains/accounts/recoils'
-import { selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
+import { Account, selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
+import { selectedCurrencyState } from '@/domains/balances/currency'
+import { selectedBalancesState } from '@/domains/balances/recoils'
 import { Decimal } from '@/util/Decimal'
+import { Maybe } from '@/util/monads'
 
-import { Maybe } from '../../../util/monads'
 import { SlpxSubstratePair } from './types'
 
 const defaultCurrency = 'usd'

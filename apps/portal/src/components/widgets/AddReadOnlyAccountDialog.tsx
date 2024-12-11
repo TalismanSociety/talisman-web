@@ -1,13 +1,16 @@
-import { popularAccounts, useAddReadonlyAccountForm, useSetReadonlyAccounts } from '../../domains/accounts'
-import { isNilOrWhitespace } from '../../util/nil'
-import AddReadOnlyAccountDialogComponent from '../recipes/AddReadOnlyAccountDialog'
-import { useCallback, useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import { useCallback, useState } from 'react'
+
+import { AddReadOnlyAccountDialog as AddReadOnlyAccountDialogComponent } from '@/components/recipes/AddReadOnlyAccountDialog'
+import { popularAccounts } from '@/domains/accounts/consts'
+import { useAddReadonlyAccountForm, useSetReadonlyAccounts } from '@/domains/accounts/hooks'
+import { isNilOrWhitespace } from '@/util/nil'
 
 type AddReadOnlyAccountDialogProps = {
   children?: ReactNode | ((props: { onToggleOpen: () => unknown }) => ReactNode)
 }
 
-const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
+export const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
   const [open, setOpen] = useState(false)
   const {
     address: [address, setAddress],
@@ -61,5 +64,3 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
     </>
   )
 }
-
-export default AddReadOnlyAccountDialog

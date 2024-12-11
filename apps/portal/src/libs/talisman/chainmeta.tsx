@@ -1,15 +1,12 @@
-import { supportedRelayChainsState } from './util/_config'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import type { PropsWithChildren } from 'react'
 import { WsProvider } from '@polkadot/api'
 import { get } from 'lodash'
-import {
-  useContext as _useContext,
-  createContext,
-  useEffect,
-  useReducer,
-  useState,
-  type PropsWithChildren,
-} from 'react'
+import { useContext as _useContext, createContext, useEffect, useReducer, useState } from 'react'
 import { useRecoilValue } from 'recoil'
+
+import { supportedRelayChainsState } from './util/_config'
 
 //
 // Types
