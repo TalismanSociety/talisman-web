@@ -1,6 +1,16 @@
+import type React from 'react'
+import { Button, Surface, TonalIconButton } from '@talismn/ui'
+import { Repeat } from '@talismn/web-icons'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { loadable } from 'jotai/utils'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useSetRecoilState } from 'recoil'
+
+import { useSetJotaiSubstrateApiState } from '@/domains/common'
+import { useFastBalance, UseFastBalanceProps } from '@/hooks/useFastBalance'
+
 import { walletConnectionSideSheetOpenState } from '../WalletConnectionSideSheet'
 import { FromAccount } from './FromAccount'
-import { TokenAmountInput } from './TokenAmountInput'
 import { shouldFocusDetailsAtom, SidePanel, swapInfoTabAtom } from './side-panel'
 import { fromAssetsBalancesAtom } from './swap-balances.api'
 import {
@@ -12,27 +22,22 @@ import {
   toAddressAtom,
   toAssetAtom,
 } from './swap-modules/common.swap-module'
-import { swapFromSearchAtom, swapQuotesAtom, swapToSearchAtom, useSwapErc20Approval } from './swaps.api'
 import {
   fromAssetsAtom,
   selectedQuoteAtom,
+  swapFromSearchAtom,
+  swapQuotesAtom,
+  swapToSearchAtom,
   toAmountAtom,
   toAssetsAtom,
   useFromAccount,
   useReverse,
   useSwap,
+  useSwapErc20Approval,
   useSyncPreviousChainflipSwaps,
   useToAccount,
 } from './swaps.api'
-import { useSetJotaiSubstrateApiState } from '@/domains/common'
-import { useFastBalance, UseFastBalanceProps } from '@/hooks/useFastBalance'
-import { Button, Surface, TonalIconButton } from '@talismn/ui'
-import { Repeat } from '@talismn/web-icons'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { loadable } from 'jotai/utils'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import type React from 'react'
-import { useSetRecoilState } from 'recoil'
+import { TokenAmountInput } from './TokenAmountInput'
 
 export const ChainFlipSwap: React.FC = () => {
   useSetJotaiSubstrateApiState()
@@ -113,13 +118,13 @@ export const ChainFlipSwap: React.FC = () => {
               }
             : undefined
           : fromSubstrateAddress
-          ? {
-              type: 'substrate',
-              chainId: fromAsset.chainId.toString(),
-              address: fromSubstrateAddress,
-              assetHubAssetId: fromAsset.assetHubAssetId,
-            }
-          : undefined
+            ? {
+                type: 'substrate',
+                chainId: fromAsset.chainId.toString(),
+                address: fromSubstrateAddress,
+                assetHubAssetId: fromAsset.assetHubAssetId,
+              }
+            : undefined
         : undefined,
     [fromAsset, fromEvmAddress, fromSubstrateAddress]
   )
@@ -159,10 +164,10 @@ export const ChainFlipSwap: React.FC = () => {
   }, [toAmount, setInfoTab, shouldFocusDetails, setShouldFocusDetails, swapping])
 
   return (
-    <div className="w-full flex flex-col md:flex-row mb-[40px]">
-      <div className="grid gap-[8px] w-full relative">
-        <Surface className="bg-card p-[16px] rounded-[8px] w-full">
-          <h4 className="text-[18px] font-semibold mb-[8px]">Select Asset</h4>
+    <div className="mb-[40px] flex w-full flex-col md:flex-row">
+      <div className="relative grid w-full gap-[8px]">
+        <Surface className="bg-card w-full rounded-[8px] p-[16px]">
+          <h4 className="mb-[8px] text-[18px] font-semibold">Select Asset</h4>
           <TokenAmountInput
             hideBalance={fromAsset?.id === 'btc-native'}
             balances={balances.state === 'hasData' ? balances.data : undefined}
@@ -179,9 +184,9 @@ export const ChainFlipSwap: React.FC = () => {
             disableBtc
             searchAtom={swapFromSearchAtom}
           />
-          <div className="relative w-full h-[12px]">
+          <div className="relative h-[12px] w-full">
             <TonalIconButton
-              className="border-3 !border-solid !border-gray-900 -top-[8px] absolute z-10 left-1/2 -translate-x-1/2 !bg-[#2D3121] !w-[48px] !h-[48px] !rounded-full"
+              className="border-3 absolute -top-[8px] left-1/2 z-10 !h-[48px] !w-[48px] -translate-x-1/2 !rounded-full !border-solid !border-gray-900 !bg-[#2D3121]"
               onClick={reverse}
             >
               <Repeat />

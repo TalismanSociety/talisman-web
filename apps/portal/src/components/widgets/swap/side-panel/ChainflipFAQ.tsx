@@ -1,5 +1,6 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Link } from 'react-router-dom'
+
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 
 export const ChainFlipFAQ: React.FC = () => {
   return (
@@ -10,7 +11,7 @@ export const ChainFlipFAQ: React.FC = () => {
             <p>How does the swap work?</p>
           </AccordionTrigger>
           <AccordionContent>
-            <p className="text-[14px] text-gray-400 leading-[18px]">
+            <p className="text-[14px] leading-[18px] text-gray-400">
               Chainflip is a decentralized exchange that uses a consensus-driven software and a network of Validator
               nodes to manage private keys and execute trades. It utilizes Multi Party Computation (MPC) to govern
               high-threshold multi-signature wallets, ensuring a supermajority is required to function.
@@ -25,7 +26,7 @@ export const ChainFlipFAQ: React.FC = () => {
           <AccordionTrigger>
             <p>What is included in the fees?</p>
           </AccordionTrigger>
-          <AccordionContent className="gap-[4px] grid">
+          <AccordionContent className="grid gap-[4px]">
             <div className="flex items-center justify-between [&>p]:text-[14px]">
               <p className="text-gray-400">Deposit Gas Fee</p>
               <p>Varies by chain</p>
@@ -50,7 +51,7 @@ export const ChainFlipFAQ: React.FC = () => {
             <p>How long does the swap take?</p>
           </AccordionTrigger>
           <AccordionContent>
-            <p className="text-[14px] text-gray-400 leading-[18px]">
+            <p className="text-[14px] leading-[18px] text-gray-400">
               During a swap, the transactions into and out of Chainflip are on-chain, so the time depends on the speed
               of the blockchains involved.
               <br />
