@@ -19,6 +19,7 @@ import {
   getTokenIdForSwappableAsset,
   QuoteFunction,
   saveAddressForQuest,
+  substrateSwapTransfer,
   supportedEvmChains,
   SwapFunction,
   SwapModule,
@@ -445,13 +446,13 @@ const quote: QuoteFunction = loadable(
     }
   })
 )
-const saveIdForMonitoring = async (swapId: string) => {
+const saveIdForMonitoring = async (swapId: string, txHash: string) => {
   await fetch(`https://swap-providers-monitor.fly.dev/simpleswap/exchange`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ id: swapId }),
+    body: JSON.stringify({ id: swapId, deposit_tx_hash: txHash }),
   })
 }
 
@@ -533,15 +534,16 @@ const swap: SwapFunction<{ id: string }> = async (
       await evmWalletClient.switchChain({ id: chain.id })
 
       if (!chain) throw new Error('Chain not found')
+      let hash: string
       if (!fromAsset.contractAddress) {
-        await evmWalletClient.sendTransaction({
+        hash = await evmWalletClient.sendTransaction({
           chain,
           to: exchange.address_from as `0x${string}`,
           value: depositAmount.planck,
           account: fromAddress as `0x${string}`,
         })
       } else {
-        await evmWalletClient.writeContract({
+        hash = await evmWalletClient.writeContract({
           chain,
           abi: erc20Abi,
           address: fromAsset.contractAddress as `0x${string}`,
@@ -551,9 +553,16 @@ const swap: SwapFunction<{ id: string }> = async (
         })
       }
 
-      saveIdForMonitoring(exchange.id)
+      saveIdForMonitoring(exchange.id, hash)
       saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
-      return { protocol: PROTOCOL, data: { id: exchange.id } }
+      return {
+        protocol: PROTOCOL,
+        depositRes: {
+          txHash: hash,
+          chainId: chain.id,
+        },
+        data: { id: exchange.id },
+      }
     } else if (fromAsset.networkType === 'substrate') {
       const signer = substrateWallet?.signer
       if (!signer) throw new Error('Substrate wallet not connected.')
@@ -561,19 +570,29 @@ const swap: SwapFunction<{ id: string }> = async (
       const substrateChain = chains.find(c => c.id === fromAsset.chainId)
       const rpc = substrateChain?.rpcs?.[0]?.url
       if (!rpc) throw new Error('RPC not found!')
-      const polkadotApi = await getSubstrateApi(substrateChain?.rpcs?.[0]?.url ?? '')
+      const polkadotApi = await getSubstrateApi(rpc)
+      const transferRes = await substrateSwapTransfer(
+        polkadotApi,
+        allowReap,
+        exchange.address_from,
+        addressFrom,
+        depositAmount.planck,
+        signer
+      )
 
-      const transfer = allowReap
-        ? polkadotApi.tx.balances['transferAllowDeath'] ?? polkadotApi.tx.balances['transfer']
-        : polkadotApi.tx.balances['transferKeepAlive']
-      await transfer(exchange.address_from, depositAmount.planck).signAndSend(addressFrom, {
-        signer,
-        withSignedTransaction: true,
-      })
-
-      saveIdForMonitoring(exchange.id)
-      saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
-      return { protocol: PROTOCOL, data: { id: exchange.id } }
+      if (transferRes.ok) {
+        saveIdForMonitoring(exchange.id, transferRes.id)
+        saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
+      }
+      return {
+        protocol: PROTOCOL,
+        depositRes: {
+          extrinsicId: transferRes.id,
+          chainId: substrateChain.id,
+          error: transferRes.error,
+        },
+        data: { id: exchange.id },
+      }
     }
   } catch (e) {
     console.error(e)
