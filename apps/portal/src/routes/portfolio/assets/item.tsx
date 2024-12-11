@@ -33,7 +33,7 @@ const AssetItem = () => {
   return (
     <>
       <div>
-        <Button variant="secondary" leadingIcon={<ChevronLeft />} onClick={() => navigate(-1)}>
+        <Button variant="secondary" leadingIcon={<ChevronLeft />} onClick={() => navigate('/portfolio/assets')}>
           Back
         </Button>
       </div>

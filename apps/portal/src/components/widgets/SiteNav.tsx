@@ -50,7 +50,7 @@ export const SiteNav = ({ className, contentClassName }: { className?: string; c
         <div className="flex items-center gap-14">
           <SiteNavItem label="Portfolio" icon={<PieChart />} to="/portfolio" />
           <SiteNavItem label="Staking" icon={<Zap />} to="/staking" />
-          <SiteNavItem label="Swap" icon={<Repeat />} to="/transport/swap" />
+          <SiteNavItem label="Swap" icon={<Repeat />} to="/transport" />
           <SiteNavItem label="Buy/Sell" icon={<CreditCard />} to="https://checkout.banxa.com/" target="_blank" />
         </div>
         <div className="space-between flex items-center gap-3">
