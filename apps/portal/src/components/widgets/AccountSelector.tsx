@@ -53,7 +53,7 @@ export const AccountSelector = ({
 
   return (
     <Select
-      className="mt-[8px] w-full [&>button>div]:w-full [&>button]:!rounded-[8px] [&>button]:!py-[12px]"
+      className="w-full [&>button>div]:w-full [&>button]:!rounded-[8px] [&>button]:!py-[12px]"
       placeholder={<Select.Option headlineContent="Select an account" />}
       value={selectedValue}
       onChangeValue={onChangeAccount}

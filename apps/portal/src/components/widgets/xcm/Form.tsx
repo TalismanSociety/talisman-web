@@ -55,7 +55,7 @@ export const Form = ({
     <Container info={info}>
       <Section header="Select account">
         <label>
-          <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
+          <Text.BodySmall as="div" css={{ marginBottom: '0.4rem' }}>
             Origin account
           </Text.BodySmall>
           {accountSelect}
@@ -78,21 +78,21 @@ export const Form = ({
       >
         <div className="flex flex-col items-center gap-[0.8rem] lg:flex-row">
           <label className="w-full">
-            <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
+            <Text.BodySmall as="div" css={{ marginBottom: '0.4rem' }}>
               From
             </Text.BodySmall>
             {tokenSelect}
           </label>
           <div className="self-center">
             <div className="hidden lg:block">
-              <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
+              <Text.BodySmall as="div" css={{ marginBottom: '0.4rem' }}>
                 &nbsp;
               </Text.BodySmall>
             </div>
             <ReverseRouteButton disabled={reversible === false} onClick={onRequestReverse} />
           </div>
           <label className="w-full">
-            <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
+            <Text.BodySmall as="div" css={{ marginBottom: '0.4rem' }}>
               To
             </Text.BodySmall>
             {destTokenSelect}
@@ -152,7 +152,7 @@ export const Form = ({
       </Section>
       <Section header="Select destination">
         <label>
-          <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
+          <Text.BodySmall as="div" css={{ marginBottom: '0.4rem' }}>
             Destination account
           </Text.BodySmall>
           {destAccountSelect}
