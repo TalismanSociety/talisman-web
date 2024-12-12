@@ -18,7 +18,7 @@ export const SiteFooter = ({ className }: { className?: string }) => {
         <Text.BodyLarge
           alpha="high"
           as="a"
-          href="https://docs.talisman.xyz/talisman/legal-and-security/terms-of-use"
+          href="https://docs.talisman.xyz/talisman/about/terms-of-use"
           target="_blank"
         >
           Terms
@@ -26,7 +26,7 @@ export const SiteFooter = ({ className }: { className?: string }) => {
         <Text.BodyLarge
           alpha="high"
           as="a"
-          href="https://docs.talisman.xyz/talisman/legal-and-security/privacy-policy"
+          href="https://docs.talisman.xyz/talisman/about/privacy-policy"
           target="_blank"
         >
           Privacy
