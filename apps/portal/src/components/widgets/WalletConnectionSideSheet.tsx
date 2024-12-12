@@ -15,9 +15,10 @@ import { useDisconnect as useDisconnectEvm, useAccount as useEvmAccount } from '
 
 import talismanWalletLogo from '@/assets/talisman-wallet.svg'
 import { AddReadOnlyAccountDialog } from '@/components/widgets/AddReadOnlyAccountDialog'
-import { writeableEvmAccountsState } from '@/domains/accounts/recoils'
+import { substrateInjectedAccountsState, writeableEvmAccountsState } from '@/domains/accounts/recoils'
 import { useConnectEvm, useEvmConnectors } from '@/domains/extension/evm'
 import {
+  connectedSubstrateWalletState,
   useConnectedSubstrateWallet,
   useInstalledSubstrateWallets,
   useSubstrateWalletConnect,
@@ -139,7 +140,9 @@ const SubstrateWalletConnection = () => {
   const connectedWallet = useConnectedSubstrateWallet()
   const { connect, disconnect } = useSubstrateWalletConnect()
 
-  console.log(connectedWallet)
+  const hasSubWallet = useRecoilValue(connectedSubstrateWalletState) !== undefined
+  const hasSubAccounts = useRecoilValue(substrateInjectedAccountsState).length !== 0
+
   return (
     <section>
       <div className="mb-[16px] flex items-center justify-start gap-[8px] font-bold">
@@ -159,6 +162,11 @@ const SubstrateWalletConnection = () => {
           />
         ))}
       </div>
+      {hasSubWallet && !hasSubAccounts && (
+        <div className="mt-2 text-center text-lg text-orange-400">
+          Please enable some substrate accounts in your wallet.
+        </div>
+      )}
     </section>
   )
 }
@@ -188,7 +196,7 @@ const EvmWalletConnections = () => {
               await disconnectAsync()
               const res = await connectAsync({ connector: x })
               if (res.accounts.length === 0) {
-                toast.error('Please enable ethereum account in your wallet.')
+                toast.error('Please enable an ethereum account in your wallet.')
               }
             }}
             onDisconnectRequest={async () => await disconnectAsync()}
