@@ -139,6 +139,7 @@ export const AccountsManagementMenu = Object.assign(
     }, [
       portfolioAccounts.length,
       portfolioBalanceLoadable,
+      props.className,
       resetLookupAccountAddress,
       resetSelectedAccountAddresses,
       setWalletConnectionSideSheetOpen,
