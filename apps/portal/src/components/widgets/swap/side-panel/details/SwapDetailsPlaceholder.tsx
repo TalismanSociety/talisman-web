@@ -1,6 +1,6 @@
 export const SwapDetailsPlaceholder: React.FC = () => (
-  <div className="flex items-center justify-center gap-[8px] flex-col border-gray-800 border rounded-[8px] p-[16px] py-[12px]">
-    <div className="w-[124px] h-[124px] flex items-center justify-center rounded-full bg-primary/5">
+  <div className="flex flex-col items-center justify-center gap-[8px] rounded-[8px] border border-gray-800 p-[16px] py-[12px]">
+    <div className="bg-primary/5 flex h-[124px] w-[124px] items-center justify-center rounded-full">
       <div className="relative">
         <svg width="48" height="46" viewBox="0 0 48 46" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect y="0.818359" width="47.2911" height="44.8021" rx="7.74211" fill="#D5FF5C" />
@@ -35,7 +35,7 @@ export const SwapDetailsPlaceholder: React.FC = () => (
           viewBox="0 0 12 12"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="absolute top-0 left-[90%] -translate-y-[65%]"
+          className="absolute left-[90%] top-0 -translate-y-[65%]"
         >
           <path
             d="M6.23701 -0.000172048L6.99138 3.41277C7.16865 4.21479 7.79502 4.84117 8.59704 5.01844L12.01 5.7728L8.59704 6.52716C7.79502 6.70443 7.16864 7.33081 6.99138 8.13283L6.23701 11.5458L5.48265 8.13283C5.30538 7.33081 4.679 6.70443 3.87699 6.52716L0.464039 5.7728L3.87699 5.01844C4.679 4.84117 5.30538 4.21479 5.48265 3.41277L6.23701 -0.000172048Z"
@@ -45,8 +45,8 @@ export const SwapDetailsPlaceholder: React.FC = () => (
       </div>
     </div>
     <div>
-      <h4 className="font-bold text-[14px] text-center">Seamless cross-chain swaps</h4>
-      <p className="text-gray-400 text-[14px] text-center">
+      <h4 className="text-center text-[14px] font-bold">Seamless cross-chain swaps</h4>
+      <p className="text-center text-[14px] text-gray-400">
         Swap assets effortlessly across different chains and enjoy the convenience of comparing providers.
       </p>
     </div>

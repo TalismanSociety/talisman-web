@@ -3,8 +3,8 @@ import { atomFamily } from 'jotai/utils'
 
 const DELEGATES_URL = 'https://raw.githubusercontent.com/opentensor/bittensor-delegates/main/public/delegates.json'
 
-// Openτensor Foundaτion
-export const DEFAULT_DELEGATE = '5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3'
+// Taofu
+export const DEFAULT_DELEGATE = '5ELREhApbCahM7FyGLM1V9WDsnnjCRmMCJTmtQD51oAEqwVh'
 export const MIN_SUBTENSOR_STAKE = 0.1
 
 export type Delegates = Record<string, Delegate>

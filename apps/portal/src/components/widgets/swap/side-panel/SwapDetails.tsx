@@ -1,3 +1,13 @@
+import { CircularProgressIndicator, Clickable, Skeleton, Surface } from '@talismn/ui'
+import { useAtom, useAtomValue } from 'jotai'
+import { loadable } from 'jotai/utils'
+import { Loadable } from 'jotai/vanilla/utils/loadable'
+import { ArrowUpDown, Check } from 'lucide-react'
+import { Suspense, useEffect, useState } from 'react'
+
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { cn } from '@/lib/utils'
+
 import ErrorBoundary from '../../ErrorBoundary'
 import {
   BaseQuote,
@@ -13,23 +23,15 @@ import { sortedQuotesAtom } from '../swaps.api'
 import { SwapDetailsCard } from './details/SwapDetailsCard'
 import { SwapDetailsError } from './details/SwapDetailsError'
 import { SwapDetailsPlaceholder } from './details/SwapDetailsPlaceholder'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { cn } from '@/lib/utils'
-import { CircularProgressIndicator, Clickable, Skeleton, Surface } from '@talismn/ui'
-import { useAtom, useAtomValue } from 'jotai'
-import { loadable } from 'jotai/utils'
-import { Loadable } from 'jotai/vanilla/utils/loadable'
-import { ArrowUpDown, Check } from 'lucide-react'
-import { Suspense, useEffect, useState } from 'react'
 
 const LoadingUI: React.FC<{ title?: string; description?: React.ReactNode }> = ({ title, description }) => (
-  <div className="flex items-center justify-center gap-[8px] flex-col border-gray-800 border rounded-[8px] p-[16px]">
-    <div className="flex items-center justify-center h-[94px] w-[94px]">
+  <div className="flex flex-col items-center justify-center gap-[8px] rounded-[8px] border border-gray-800 p-[16px]">
+    <div className="flex h-[94px] w-[94px] items-center justify-center">
       <CircularProgressIndicator size={48} />
     </div>
     <div>
-      <h4 className="font-bold text-[14px] text-center">{title}</h4>
-      <p className="text-gray-400 text-[14px] text-center">{description}</p>
+      <h4 className="text-center text-[14px] font-bold">{title}</h4>
+      <p className="text-center text-[14px] text-gray-400">{description}</p>
     </div>
   </div>
 )
@@ -120,8 +122,8 @@ const Details: React.FC = () => {
     return <SwapDetailsError message="Pair is unavailable." />
 
   return (
-    <div className="w-full flex flex-col gap-[8px]">
-      <div className="flex items-center justify-between w-full">
+    <div className="flex w-full flex-col gap-[8px]">
+      <div className="flex w-full items-center justify-between">
         {cachedQuotes.length > 0 && cachedQuotes.every(c => c.quote.state !== 'loading') ? (
           <p className="text-muted-foreground text-[14px]">
             {cachedQuotes.length} Option{cachedQuotes.length > 1 ? 's' : ''}
@@ -132,9 +134,9 @@ const Details: React.FC = () => {
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Clickable.WithFeedback>
-              <Surface className="flex items-center gap-[8px] px-[12px] py-[8px] rounded-[8px]">
-                <ArrowUpDown className="w-[12px] h-[12px]" />
-                <p className="text-[14px] leading-none text-muted-foreground">{SORTS[sort].name}</p>
+              <Surface className="flex items-center gap-[8px] rounded-[8px] px-[12px] py-[8px]">
+                <ArrowUpDown className="h-[12px] w-[12px]" />
+                <p className="text-muted-foreground text-[14px] leading-none">{SORTS[sort].name}</p>
               </Surface>
             </Clickable.WithFeedback>
           </DropdownMenuTrigger>
@@ -147,7 +149,7 @@ const Details: React.FC = () => {
                   onClick={() => setSort(key as keyof typeof SORTS)}
                 >
                   <p className={cn('text-[14px]')}>{value.name}</p>
-                  {key === sort ? <Check className="w-[16px] h-[16px]" /> : null}
+                  {key === sort ? <Check className="h-[16px] w-[16px]" /> : null}
                 </DropdownMenuItem>
               )
             )}
@@ -170,14 +172,14 @@ const Details: React.FC = () => {
                 key={`${q.quote.data.protocol}${q.quote.data.subProtocol}`}
               />
             ) : q.quote.state === 'loading' ? (
-              <Skeleton.Surface key={index} className="w-full h-[79.39px] rounded-[8px]" />
+              <Skeleton.Surface key={index} className="h-[79.39px] w-full rounded-[8px]" />
             ) : null
           )
         ) : (
           <>
-            <Skeleton.Surface className="w-full h-[79.39px] rounded-[8px]" />
-            <Skeleton.Surface className="w-full h-[79.39px] rounded-[8px]" />
-            <Skeleton.Surface className="w-full h-[79.39px] rounded-[8px]" />
+            <Skeleton.Surface className="h-[79.39px] w-full rounded-[8px]" />
+            <Skeleton.Surface className="h-[79.39px] w-full rounded-[8px]" />
+            <Skeleton.Surface className="h-[79.39px] w-full rounded-[8px]" />
           </>
         )}
       </div>

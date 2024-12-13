@@ -34,6 +34,7 @@ import {
   fromAssetAtom,
   getTokenIdForSwappableAsset,
   saveAddressForQuest,
+  substrateSwapTransfer,
   swapQuoteRefresherAtom,
   toAddressAtom,
   toAssetAtom,
@@ -342,15 +343,16 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
       if (!chain) throw new Error('Chain not found')
 
       await evmWalletClient.switchChain({ id: chain.id })
+      let hash: `0x${string}`
       if (!chainflipFromAsset.contractAddress) {
-        await evmWalletClient.sendTransaction({
+        hash = await evmWalletClient.sendTransaction({
           chain,
           to: depositAddress.depositAddress as `0x${string}`,
           value: BigInt(depositAddress.amount),
           account: fromAddress as `0x${string}`,
         })
       } else {
-        await evmWalletClient.writeContract({
+        hash = await evmWalletClient.writeContract({
           chain,
           abi: erc20Abi,
           address: fromAsset.contractAddress as `0x${string}`,
@@ -361,7 +363,22 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
       }
 
       saveAddressForQuest(depositAddress.depositChannelId, fromAddress, PROTOCOL)
-      return { protocol: PROTOCOL, data: { id: depositAddress.depositChannelId, network } }
+      return {
+        protocol: PROTOCOL,
+        depositRes: {
+          chainId: chain.id,
+          extrinsicId: hash,
+        },
+        data: {
+          id: depositAddress.depositChannelId,
+          network,
+          depositResult: {
+            chainId: chain.id,
+            hash,
+            type: 'evm',
+          },
+        },
+      }
     } else if (fromAsset.networkType === 'substrate') {
       const signer = substrateWallet?.signer
       if (!signer) throw new Error('Substrate wallet not connected.')
@@ -369,17 +386,34 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
       const substrateChain = chains.find(c => c.id === fromAsset.chainId)
       const rpc = substrateChain?.rpcs?.[0]?.url
       if (!rpc) throw new Error('RPC not found!')
-      const polkadotApi = await getSubstrateApi(substrateChain?.rpcs?.[0]?.url ?? '')
-
-      const transfer = polkadotApi.tx.balances['transferAllowDeath'] ?? polkadotApi.tx.balances['transfer']
-      const transferKeepAlive = polkadotApi.tx.balances['transferKeepAlive']
-      await (allowReap ? transfer : transferKeepAlive)(
+      const polkadotApi = await getSubstrateApi(rpc)
+      const transferRes = await substrateSwapTransfer(
+        polkadotApi,
+        allowReap,
         depositAddress.depositAddress,
-        depositAddress.amount
-      ).signAndSend(fromAddress, { signer, withSignedTransaction: true })
+        fromAddress,
+        depositAddress.amount,
+        signer
+      )
 
-      saveAddressForQuest(depositAddress.depositChannelId, fromAddress, PROTOCOL)
-      return { protocol: PROTOCOL, data: { id: depositAddress.depositChannelId, network } }
+      if (transferRes.ok) saveAddressForQuest(depositAddress.depositChannelId, fromAddress, PROTOCOL)
+      return {
+        protocol: PROTOCOL,
+        depositRes: {
+          chainId: substrateChain.id,
+          extrinsicId: transferRes.id,
+          error: transferRes.error,
+        },
+        data: {
+          id: depositAddress.depositChannelId,
+          network,
+          depositResult: {
+            extrinsicId: transferRes.id,
+            chainId: substrateChain.id,
+            type: 'substrate',
+          },
+        },
+      }
     } else {
       // should never reach here
       throw new Error('Source asset not supported.')
