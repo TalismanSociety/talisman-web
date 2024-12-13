@@ -71,6 +71,13 @@ export const chainConfigs: ChainConfig[] = [
     talismanPools: [2, 66, 68],
     novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-avail',
   },
+  // Cere
+  {
+    genesisHash: '0x81443836a9a24caaa23f1241897d1235717535711d1d3fe24eae4fdc942c092c',
+    hasNominationPools: true,
+    priorityPool: [1],
+    talismanPools: [1],
+  },
   // Bittensor
   {
     genesisHash: '0x2f0555cc76fc2840a25a6ea3b9637146806f1f44b090c175ffde2a7e5ab36c03',
