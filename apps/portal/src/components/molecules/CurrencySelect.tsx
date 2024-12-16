@@ -12,14 +12,14 @@ import { cn } from '@/util/cn'
 
 export const CurrencySelect = () => {
   const [currentCurrency, setCurrency] = useRecoilState(selectedCurrencyState)
-  const symbol = currencyConfig[currentCurrency]?.unicodeCharacter ?? '?'
+  const symbol = currencyConfig[currentCurrency]?.symbol ?? '?'
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Clickable.WithFeedback>
           <div className="flex h-12 w-12 select-none items-center justify-center rounded-full border border-gray-600 bg-gray-950 text-white">
-            <div className="text-xl">{symbol}</div>
+            <div className="font-mono text-xl">{symbol}</div>
           </div>
         </Clickable.WithFeedback>
       </DropdownMenuTrigger>
@@ -31,14 +31,14 @@ export const CurrencySelect = () => {
           <DropdownMenuItem
             key={currency}
             className={cn(
-              'flex cursor-pointer items-center gap-4 px-10 py-3 text-3xl',
+              'flex cursor-pointer items-center justify-between gap-2 px-10 py-2',
               'focus:bg-white/15',
               currency === currentCurrency && 'bg-white/10'
             )}
             onClick={() => setCurrency(currency as keyof typeof currencyConfig)}
           >
-            <div className="font-mono">{config.unicodeCharacter}</div>
-            <div>{config.name}</div>
+            <div className="font-mono text-xl">{config.symbol}</div>
+            <div className="text-2xl">{config.name}</div>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
