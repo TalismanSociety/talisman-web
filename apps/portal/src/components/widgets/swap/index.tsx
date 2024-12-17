@@ -169,7 +169,7 @@ export const ChainFlipSwap: React.FC = () => {
     <div className="mb-[40px] flex w-full flex-col md:flex-row">
       <div className="relative grid w-full gap-[8px]">
         <Surface className="bg-card w-full rounded-[8px] p-[16px]">
-          <h4 className="mb-[8px] text-[18px] font-semibold">Select Asset</h4>
+          <h4 className="mb-[8px] text-[18px] font-semibold">Select asset</h4>
           <TokenAmountInput
             hideBalance={fromAsset?.id === 'btc-native'}
             balances={balances.state === 'hasData' ? balances.data : undefined}

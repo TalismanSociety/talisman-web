@@ -9,7 +9,6 @@ import type { Dapp } from '@/components/legacy/widgets/useFetchDapps'
 import { ExploreCard } from '@/components/legacy/widgets/ExploreCard'
 import { ExploreCardLoading, ExploreTagLoading } from '@/components/legacy/widgets/ExploreLoading'
 import { useFetchDapps } from '@/components/legacy/widgets/useFetchDapps'
-import { TitlePortal } from '@/components/molecules/PageHeader'
 import { device } from '@/util/breakpoints'
 
 const ExploreGrid = ({ className }: { className?: string }) => {
@@ -165,7 +164,6 @@ const StyledExploreGrid = styled(ExploreGrid)`
 
 const Explore = styled(({ className }: { className?: string }) => (
   <section className={className}>
-    <TitlePortal>Explore</TitlePortal>
     <StyledExploreGrid />
   </section>
 ))`

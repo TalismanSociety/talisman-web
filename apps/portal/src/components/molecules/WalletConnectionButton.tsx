@@ -1,37 +1,43 @@
-import { useTheme } from '@emotion/react'
-import { Button } from '@talismn/ui/atoms/Button'
-import { useSetRecoilState } from 'recoil'
+import { Clickable } from '@talismn/ui/atoms/Clickable'
+import { ChevronDown, Ethereum, Polkadot } from '@talismn/web-icons'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useAccount as useWagmiAccount } from 'wagmi'
 
 import { walletConnectionSideSheetOpenState } from '@/components/widgets/WalletConnectionSideSheet'
-import { useHasActiveWalletConnection } from '@/domains/extension/main'
+import { substrateInjectedAccountsState, writeableAccountsState } from '@/domains/accounts/recoils'
+import { connectedSubstrateWalletState } from '@/domains/extension/substrate'
+import { cn } from '@/util/cn'
 
 export const WalletConnectionButton = () => {
-  const theme = useTheme()
   const setOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
 
-  const hasActiveConnection = useHasActiveWalletConnection()
+  const hasSubWallet = useRecoilValue(connectedSubstrateWalletState) !== undefined
+  const hasSubAccounts = useRecoilValue(substrateInjectedAccountsState).length !== 0
+  const subConnected = hasSubWallet && hasSubAccounts
+  const evmConnected = useWagmiAccount().isConnected
 
-  const connectionColor = hasActiveConnection ? '#38D448' : theme.color.onSurface
+  const hasActiveConnection = subConnected || evmConnected
+  const accounts = useRecoilValue(writeableAccountsState)
 
   return (
-    <Button
-      variant="surface"
-      leadingIcon={
-        <div
-          css={{
-            position: 'relative',
-            width: '1.4rem',
-            height: '1.4rem',
-            border: `0.2rem solid color-mix(in srgb, ${connectionColor}, transparent 70%)`,
-            borderRadius: '0.7rem',
-          }}
-        >
-          <div css={{ position: 'absolute', inset: '0.2rem', borderRadius: '50%', backgroundColor: connectionColor }} />
+    <Clickable.WithFeedback>
+      <div
+        className={cn(
+          'flex h-12 select-none items-center justify-center gap-2 rounded-full border border-gray-600 bg-gray-950 p-4 text-white'
+        )}
+        onClick={() => setOpen(true)}
+      >
+        <div className="flex items-center">
+          {subConnected && <Polkadot className="shrink-0 text-sm text-[#e6007a]" size="1em" />}
+          {evmConnected && <Ethereum className="shrink-0 text-sm text-[#62688f]" size="1em" />}
         </div>
-      }
-      onClick={() => setOpen(true)}
-    >
-      {hasActiveConnection ? 'Connected' : 'Connect wallet'}
-    </Button>
+
+        <div className="whitespace-pre text-xl">
+          {hasActiveConnection ? `${accounts.length} Connected` : 'Connect wallet'}
+        </div>
+
+        <ChevronDown size="1em" />
+      </div>
+    </Clickable.WithFeedback>
   )
 }

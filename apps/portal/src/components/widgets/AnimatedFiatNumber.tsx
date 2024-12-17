@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 import { RedactableBalance } from '@/components/widgets/RedactableBalance'
-import { selectedCurrencyState } from '@/domains/balances/currency'
+import { currencyConfig, selectedCurrencyState } from '@/domains/balances/currency'
 
 export type AnimatedFiatNumberProps = {
   animate?: boolean
@@ -11,23 +11,27 @@ export type AnimatedFiatNumberProps = {
   currency?: string
 }
 
-export const AnimatedFiatNumber = ({ animate = true, end, currency }: AnimatedFiatNumberProps) => {
+export const AnimatedFiatNumber = ({ animate = true, end, currency: propsCurrency }: AnimatedFiatNumberProps) => {
   const recoilCurrency = useRecoilValue(selectedCurrencyState)
+  const currency = (propsCurrency ?? recoilCurrency) as keyof typeof currencyConfig
+
+  const formatter = useMemo(
+    () =>
+      (value: number): string =>
+        Intl.NumberFormat(undefined, {
+          style: 'currency',
+          currency,
+          currencyDisplay: 'code',
+        })
+          .format(value)
+          .toLowerCase()
+          .replace(currency, currencyConfig[currency]?.symbol ?? currency.toUpperCase()),
+    [currency]
+  )
+
   return (
     <RedactableBalance>
-      <AnimatedNumber
-        animate={animate}
-        end={end}
-        decimals={2}
-        formatter={useMemo(
-          () =>
-            Intl.NumberFormat(undefined, {
-              style: 'currency',
-              currency: currency ?? recoilCurrency,
-            }),
-          [recoilCurrency, currency]
-        )}
-      />
+      <AnimatedNumber animate={animate} end={end} decimals={2} formatter={formatter} />
     </RedactableBalance>
   )
 }

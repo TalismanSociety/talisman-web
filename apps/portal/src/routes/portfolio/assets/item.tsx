@@ -33,7 +33,7 @@ const AssetItem = () => {
   return (
     <>
       <div>
-        <Button variant="secondary" leadingIcon={<ChevronLeft />} onClick={() => navigate(-1)}>
+        <Button variant="secondary" leadingIcon={<ChevronLeft />} onClick={() => navigate('/portfolio/assets')}>
           Back
         </Button>
       </div>
@@ -90,7 +90,7 @@ const AssetItem = () => {
                       className="text-[1em] sm:text-[1em]"
                       assetLogoUrl={token.tokenDetails.logo ?? githubUnknownTokenLogoUrl}
                     />
-                    <Text.Body>{`(${token.tokenDetails.symbol ?? ''})`}</Text.Body>
+                    <Text.Body>{`${token.tokenDetails.symbol ?? ''}`}</Text.Body>
                   </div>
                 }
                 supportingContent={token.rate !== undefined && <AnimatedFiatNumber end={token.rate} />}

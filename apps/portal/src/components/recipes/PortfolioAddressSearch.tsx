@@ -10,46 +10,38 @@ import { isNilOrWhitespace } from '@/util/nil'
 
 const MotionSearch = motion(Search)
 
-export const AddressSearch = () => {
+export const PortfolioAddressSearch = ({ className }: { className?: string }) => {
   const searchBarRef = useRef<HTMLInputElement>(null)
   const [address, setAddress] = useRecoilState(lookupAccountAddressState)
   const [revealed, setRevealed] = useState(false)
 
   useEffect(() => {
-    if (!isNilOrWhitespace(address)) {
-      setRevealed(true)
-    }
+    if (isNilOrWhitespace(address)) return
+    setRevealed(true)
   }, [address])
 
   useEffect(() => {
-    if (
-      searchBarRef.current !== null &&
-      searchBarRef.current !== document.activeElement &&
-      isNilOrWhitespace(address)
-    ) {
-      setRevealed(false)
-    }
+    if (searchBarRef.current === null) return
+    if (searchBarRef.current === document.activeElement) return
+    if (!isNilOrWhitespace(address)) return
+    setRevealed(false)
   }, [address])
 
   return (
     <LayoutGroup>
       {revealed ? (
-        <motion.div layoutId="address-search">
+        <motion.div className={className} layoutId="address-search">
           <SearchBar
             autoFocus
             ref={searchBarRef}
             placeholder="Look up any address"
             value={address ?? ''}
             onChange={event => setAddress(event.target.value)}
-            onBlur={() => {
-              if (isNilOrWhitespace(address)) {
-                setRevealed(false)
-              }
-            }}
+            onBlur={() => isNilOrWhitespace(address) && setRevealed(false)}
           />
         </motion.div>
       ) : (
-        <motion.div layoutId="address-search">
+        <motion.div className={className} layoutId="address-search">
           <SurfaceIconButton onClick={() => setRevealed(true)}>
             <MotionSearch layout />
           </SurfaceIconButton>
