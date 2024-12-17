@@ -1,10 +1,13 @@
 // NOTE: modified version of https://github.com/timolins/react-hot-toast/blob/main/src/components/toaster.tsx
 // to allow customizability later on
-import { ToastBar } from '../molecules'
 import type { CSSObject } from '@emotion/react'
+import type { CSSProperties, ReactNode, RefCallback } from 'react'
+import type { ToasterProps, ToastPosition } from 'react-hot-toast/headless'
 import { useReducedMotion } from 'framer-motion'
-import { useCallback, type CSSProperties, type ReactNode, type RefCallback } from 'react'
-import { resolveValue, useToaster, type ToastPosition, type ToasterProps } from 'react-hot-toast/headless'
+import { useCallback } from 'react'
+import { resolveValue, useToaster } from 'react-hot-toast/headless'
+
+import { ToastBar } from '../molecules/ToastBar'
 
 type ToastWrapperProps = {
   id: string
@@ -67,7 +70,7 @@ const getPositionStyle = (position: ToastPosition, offset: number, prefersReduce
 
 export const TOASTER_DEFAULT_OFFSET = 16
 
-const Toaster = ({
+export const Toaster = ({
   className,
   position = 'top-center',
   reverseOrder,
@@ -131,7 +134,5 @@ const Toaster = ({
     </dialog>
   )
 }
-
-export default Toaster
 
 export { toast } from 'react-hot-toast/headless'

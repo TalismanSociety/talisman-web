@@ -1,17 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ApiIdContext, RecoilStateContext } from './Context.js'
-import { garbageCollectionKey } from './GarbageCollector.js'
-import type { ApiId, Diverge, Options, PickKnownKeys } from './types.js'
-import { type ApiPromise } from '@polkadot/api'
+
 import type {
   GenericStorageEntryFunction,
   PromiseResult,
   QueryableStorageEntry,
   StorageEntryPromiseOverloads,
 } from '@polkadot/api/types'
+import type { RecoilValueReadOnly } from 'recoil'
+import { type ApiPromise } from '@polkadot/api'
 import { useContext } from 'react'
-import { atomFamily, constSelector, isRecoilValue, type RecoilValueReadOnly } from 'recoil'
+import { atomFamily, constSelector, isRecoilValue } from 'recoil'
 import { type Observable } from 'rxjs'
+
+import type { ApiId, Diverge, Options, PickKnownKeys } from './types'
+import { ApiIdContext, RecoilStateContext } from './Context'
+import { garbageCollectionKey } from './GarbageCollector'
 
 type QueryMap = PickKnownKeys<{
   [P in keyof ApiPromise['query']]: `${P}.${keyof PickKnownKeys<ApiPromise['query'][P]>}`

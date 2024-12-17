@@ -1,7 +1,10 @@
 // TODO: remove legacy modal completely
-import useKeyDown from '../../util/useKeyDown'
-import { AlertDialog } from '@talismn/ui'
-import { createContext, useCallback, useContext, useMemo, useState, type PropsWithChildren } from 'react'
+
+import type { PropsWithChildren } from 'react'
+import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
+import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+
+import useKeyDown from '@/util/useKeyDown'
 
 type OpenModalOptions = {
   closable: boolean
@@ -15,6 +18,7 @@ type ContextProps = {
 }
 
 const Context = createContext<ContextProps | null>(null)
+/** @deprecated */
 export function useModal(): ContextProps {
   const context = useContext(Context)
   if (!context) throw new Error('The modal provider is required in order to use this hook')
@@ -23,7 +27,8 @@ export function useModal(): ContextProps {
 }
 
 type ProviderProps = PropsWithChildren
-export function Provider({ children }: PropsWithChildren<ProviderProps>): JSX.Element {
+/** @deprecated */
+export function ModalProvider({ children }: PropsWithChildren<ProviderProps>): JSX.Element {
   const [content, setContent] = useState<JSX.Element | null>(null)
   const [closable, setClosable] = useState(true)
 
@@ -46,7 +51,8 @@ export function Provider({ children }: PropsWithChildren<ProviderProps>): JSX.El
   )
 }
 
-export const Modal = function Modal({ className, closable }: { className?: string; closable: boolean }) {
+/** @deprecated */
+const Modal = function Modal({ className, closable }: { className?: string; closable: boolean }) {
   const { open, content, closeModal } = useModal()
 
   useKeyDown(
@@ -58,5 +64,3 @@ export const Modal = function Modal({ className, closable }: { className?: strin
 
   return <AlertDialog open={open} className={className} onRequestDismiss={closeModal} content={content} />
 }
-
-export default Modal

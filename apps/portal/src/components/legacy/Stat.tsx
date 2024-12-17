@@ -1,7 +1,8 @@
 import styled from '@emotion/styled'
 import { type PropsWithChildren, type ReactNode } from 'react'
 
-const Pill = styled(
+/** @deprecated */
+export const Stat = styled(
   ({ title, children, className, ...rest }: PropsWithChildren<{ title: ReactNode; className?: string }>) => (
     <span className={`stat ${className ?? ''}`} {...rest}>
       {!!title && <span className="title">{title}</span>}
@@ -13,9 +14,4 @@ const Pill = styled(
   justify-content: space-between;
   align-items: center;
   list-style: inherit;
-
-  .title {
-  }
 `
-
-export default Pill

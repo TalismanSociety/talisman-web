@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
+import { selectedCurrencyState } from '@/domains/balances/currency'
+import { selectedBalancesState } from '@/domains/balances/recoils'
 import { Decimal } from '@/util/Decimal'
 
 const useAvailableBalance = (symbol: string) => {

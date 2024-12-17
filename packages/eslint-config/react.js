@@ -18,9 +18,11 @@ export default tseslint.config(
   {
     settings: { react: { version: 'detect' } },
     rules: {
+      'react-hooks/exhaustive-deps': ['warn', { additionalHooks: '(useRecoilCallback|useRecoilTransaction_UNSTABLE)' }],
       'react/display-name': 'off',
       'react/no-unescaped-entities': 'off',
       'react/no-unknown-property': ['error', { ignore: ['css'] }],
+      'react/prop-types': 'off',
     },
   }
 )

@@ -1,9 +1,11 @@
-import { ChainProvider } from '../../../../domains/chains'
-import { slpxSubstratePairsState } from '../../../../domains/staking/slpxSubstrate/recoils'
-import AddStakeSideSheet from './AddStakeSideSheet'
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
+
+import { ChainProvider } from '@/domains/chains/provider'
+import { slpxSubstratePairsState } from '@/domains/staking/slpxSubstrate/recoils'
+
+import AddStakeSideSheet from './AddStakeSideSheet'
 
 const SlpxSubstrateStakeSideSheet = () => {
   const [searchParams, setSearchParams] = useSearchParams()

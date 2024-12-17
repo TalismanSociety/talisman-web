@@ -5,7 +5,7 @@ const config: CodegenConfig = {
   schema: process.env.VITE_EX_HISTORY_INDEXER,
   documents: ['src/components/widgets/history/**/*.tsx', 'src/routes/history.tsx'],
   generates: {
-    'generated/gql/extrinsicHistory/gql/': {
+    'src/generated/gql/extrinsicHistory/gql/': {
       preset: 'client',
       plugins: [],
       config: {

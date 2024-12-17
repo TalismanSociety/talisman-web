@@ -1,9 +1,12 @@
-import { type Account } from '../../../../domains/accounts'
-import { useRedeemForm, type SlpxPair } from '../../../../domains/staking/slpx'
-import { Maybe } from '../../../../util/monads'
-import { SlpxUnstakeDialog } from '../../../recipes/UnstakeDialog'
-import UnlockDuration from './UnlockDuration'
 import { Suspense, useEffect } from 'react'
+
+import { SlpxUnstakeDialog } from '@/components/recipes/UnstakeDialog'
+import { Account } from '@/domains/accounts/recoils'
+import { useRedeemForm } from '@/domains/staking/slpx/core'
+import { SlpxPair } from '@/domains/staking/slpx/types'
+import { Maybe } from '@/util/monads'
+
+import UnlockDuration from './UnlockDuration'
 
 type UnstakeDialogProps = {
   account?: Account

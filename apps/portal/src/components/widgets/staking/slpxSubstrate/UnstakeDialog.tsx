@@ -1,12 +1,12 @@
 import { formatDistance } from 'date-fns'
 import { Suspense } from 'react'
 
+import { SlpxUnstakeDialog } from '@/components/recipes/UnstakeDialog'
+import { Account } from '@/domains/accounts/recoils'
 import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import useStakeRedeemForm from '@/domains/staking/slpxSubstrate/useStakeRedeemForm'
+import { Maybe } from '@/util/monads'
 
-import { type Account } from '../../../../domains/accounts'
-import { Maybe } from '../../../../util/monads'
-import { SlpxUnstakeDialog } from '../../../recipes/UnstakeDialog'
 import useSlpxSubstrateUnlockDuration from '../providers/hooks/bifrost/useSlpxSubstrateUnlockDuration'
 
 type UnstakeDialogProps = {

@@ -1,4 +1,4 @@
-import { Text } from '@talismn/ui'
+import { Text } from '@talismn/ui/atoms/Text'
 
 import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
 

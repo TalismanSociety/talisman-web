@@ -1,9 +1,10 @@
-import { type Account } from '../../../../domains/accounts'
-import { useMintForm } from '../../../../domains/staking/slpx/core'
-import type { SlpxPair } from '../../../../domains/staking/slpx/types'
-import { Maybe } from '../../../../util/monads'
-import { SlpxAddStakeDialog } from '../../../recipes/AddStakeDialog'
 import { useEffect } from 'react'
+
+import type { SlpxPair } from '@/domains/staking/slpx/types'
+import { SlpxAddStakeDialog } from '@/components/recipes/AddStakeDialog'
+import { Account } from '@/domains/accounts/recoils'
+import { useMintForm } from '@/domains/staking/slpx/core'
+import { Maybe } from '@/util/monads'
 
 type AddStakeDialogProps = {
   account: Account

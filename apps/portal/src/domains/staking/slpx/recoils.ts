@@ -1,6 +1,6 @@
+import { selector, selectorFamily, useRecoilValue } from 'recoil'
+
 import { glmrSlpxPair, mantaSlpxPair } from './config'
-import { selector, selectorFamily } from 'recoil'
-import { useRecoilValue } from 'recoil'
 
 export const slpxPairsState = selector({ key: 'SlpxPairs', get: () => [mantaSlpxPair, glmrSlpxPair] })
 

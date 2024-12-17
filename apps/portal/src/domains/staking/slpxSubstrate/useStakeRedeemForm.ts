@@ -3,11 +3,12 @@ import BigNumber from 'bignumber.js'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
-import { selectedBalancesState, selectedCurrencyState } from '@/domains/balances'
-import { useExtrinsic } from '@/domains/common/hooks'
+import { selectedCurrencyState } from '@/domains/balances/currency'
+import { selectedBalancesState } from '@/domains/balances/recoils'
+import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
+import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 import { Decimal } from '@/util/Decimal'
 
-import { useSubstrateApiState } from '../../common/recoils'
 import { SlpxSubstratePair } from './types'
 
 const useStakeRedeemForm = ({ slpxPair }: { slpxPair: SlpxSubstratePair }) => {
@@ -109,6 +110,7 @@ const useAvailableBalance = ({ slpxPair, fee }: { slpxPair: SlpxSubstratePair; f
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const useSwapRateLoadable = (tokenId: any, vTokenId: any, reverse?: boolean) => {
   const loadable = useRecoilValueLoadable(
     useQueryMultiState([

@@ -1,12 +1,14 @@
 import type React from 'react'
-import { Button, Surface, TonalIconButton } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { TonalIconButton } from '@talismn/ui/atoms/IconButton'
+import { Surface } from '@talismn/ui/atoms/Surface'
 import { Repeat } from '@talismn/web-icons'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { loadable } from 'jotai/utils'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSetRecoilState } from 'recoil'
 
-import { useSetJotaiSubstrateApiState } from '@/domains/common'
+import { useSetJotaiSubstrateApiState } from '@/domains/common/recoils/api'
 import { useFastBalance, UseFastBalanceProps } from '@/hooks/useFastBalance'
 
 import { walletConnectionSideSheetOpenState } from '../WalletConnectionSideSheet'
@@ -118,13 +120,13 @@ export const ChainFlipSwap: React.FC = () => {
               }
             : undefined
           : fromSubstrateAddress
-            ? {
-                type: 'substrate',
-                chainId: fromAsset.chainId.toString(),
-                address: fromSubstrateAddress,
-                assetHubAssetId: fromAsset.assetHubAssetId,
-              }
-            : undefined
+          ? {
+              type: 'substrate',
+              chainId: fromAsset.chainId.toString(),
+              address: fromSubstrateAddress,
+              assetHubAssetId: fromAsset.assetHubAssetId,
+            }
+          : undefined
         : undefined,
     [fromAsset, fromEvmAddress, fromSubstrateAddress]
   )

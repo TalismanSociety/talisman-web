@@ -1,45 +1,37 @@
 import type { ApiPromise } from '@polkadot/api'
 import type { ReactNode } from 'react'
-import { CircularProgressIndicator, Select, Tooltip } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+import { Select } from '@talismn/ui/molecules/Select'
 import { Info } from '@talismn/web-icons'
 import BN from 'bn.js'
 import { memo, Suspense, useCallback, useDeferredValue, useEffect, useMemo, useState, useTransition } from 'react'
 import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
+import type { Account } from '@/domains/accounts/recoils'
 import type { Decimal } from '@/util/Decimal'
+import { StakeForm as StakeFormComponent } from '@/components/recipes/StakeForm'
+import { type StakeStatus } from '@/components/recipes/StakeStatusIndicator'
+import { PoolSelectorDialog } from '@/components/recipes/StakeTargetSelectorDialog'
+import { useAccountSelector } from '@/components/widgets/AccountSelector'
+import { writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
+import { useChainState as useChainRecoilState } from '@/domains/chains/hooks'
+import { ChainProvider } from '@/domains/chains/provider'
+import { ChainInfo, nominationPoolsEnabledChainsState, useNativeTokenDecimalState } from '@/domains/chains/recoils'
+import { assertChain } from '@/domains/chains/utils'
+import { useChainState } from '@/domains/common/hooks/useChainState'
+import { useEraEtaFormatter } from '@/domains/common/hooks/useEraEta'
+import { useExtrinsic, useSubmittableResultLoadableState } from '@/domains/common/hooks/useExtrinsic'
+import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
+import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
+import { useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
+import { useApr, usePoolAddForm, usePoolStakes } from '@/domains/staking/substrate/nominationPools/hooks'
 import { usePoolCommission } from '@/domains/staking/substrate/nominationPools/hooks/usePoolCommission'
+import { eraStakersState, useRecommendedPoolsState } from '@/domains/staking/substrate/nominationPools/recoils'
+import { createAccounts } from '@/domains/staking/substrate/nominationPools/utils'
+import { Maybe } from '@/util/monads'
 
-import type { Account } from '../../../../domains/accounts/recoils'
-import type { ChainInfo } from '../../../../domains/chains'
-import { writeableSubstrateAccountsState } from '../../../../domains/accounts/recoils'
-import {
-  assertChain,
-  ChainProvider,
-  nominationPoolsEnabledChainsState,
-  useChainState as useChainRecoilState,
-  useNativeTokenDecimalState,
-} from '../../../../domains/chains'
-import {
-  useChainState,
-  useEraEtaFormatter,
-  useExtrinsic,
-  useSubmittableResultLoadableState,
-  useSubstrateApiEndpoint,
-  useSubstrateApiState,
-  useTokenAmountFromPlanck,
-} from '../../../../domains/common'
-import { useApr, usePoolAddForm, usePoolStakes } from '../../../../domains/staking/substrate/nominationPools/hooks'
-import {
-  eraStakersState,
-  useRecommendedPoolsState,
-} from '../../../../domains/staking/substrate/nominationPools/recoils'
-import { createAccounts } from '../../../../domains/staking/substrate/nominationPools/utils'
-import { Maybe } from '../../../../util/monads'
-import StakeFormComponent from '../../../recipes/StakeForm'
-import { type StakeStatus } from '../../../recipes/StakeStatusIndicator'
-import { PoolSelectorDialog } from '../../../recipes/StakeTargetSelectorDialog'
-import { useAccountSelector } from '../../AccountSelector'
 import AddStakeDialog from './AddStakeDialog'
 import ClaimStakeDialog from './ClaimStakeDialog'
 import PoolClaimPermissionDialog, {
@@ -534,7 +526,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
   )
 }
 
-const StakeForm = () => {
+export const StakeForm = () => {
   const chains = useRecoilValue(nominationPoolsEnabledChainsState)
 
   const [inTransition, startTransition] = useTransition()
@@ -556,5 +548,3 @@ const StakeForm = () => {
     </ChainProvider>
   )
 }
-
-export default StakeForm

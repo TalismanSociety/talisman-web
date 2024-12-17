@@ -1,9 +1,15 @@
-import { ChainContext, assertChain, dappStakingEnabledChainsState } from '../../chains'
-import { chainReadIdState, substrateApiState, useSubstrateApiEndpoint } from '../../common'
 import type { Bytes } from '@polkadot/types'
+import type { RecoilValue } from 'recoil'
 import { u8aToNumber } from '@polkadot/util'
 import { useContext } from 'react'
-import { selectorFamily, type RecoilValue } from 'recoil'
+import { selectorFamily } from 'recoil'
+
+import { ChainContext } from '@/domains/chains/contexts'
+import { dappStakingEnabledChainsState } from '@/domains/chains/recoils'
+import { assertChain } from '@/domains/chains/utils'
+import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
+import { chainReadIdState } from '@/domains/common/recoils'
+import { substrateApiState } from '@/domains/common/recoils/api'
 
 export const eraLengthState = selectorFamily({
   key: 'DappStaking/EraLength',

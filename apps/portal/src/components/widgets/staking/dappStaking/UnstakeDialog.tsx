@@ -1,19 +1,21 @@
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
-import { CircularProgressIndicator } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { formatDistance } from 'date-fns'
 import { useState } from 'react'
 
-import type { Account } from '../../../../domains/accounts'
-import type { StakeLoadable } from '../../../../domains/staking/dappStaking'
-import { useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
-import { useUnstakeForm } from '../../../../domains/staking/dappStaking'
-import UnstakeDialogComponent from '../../../recipes/UnstakeDialog'
+import type { Account } from '@/domains/accounts/recoils'
+import type { StakeLoadable } from '@/domains/staking/dappStaking/hooks/useStakeLoadable'
+import { UnstakeDialog as UnstakeDialogComponent } from '@/components/recipes/UnstakeDialog'
+import { useExtrinsicInBlockOrErrorEffect } from '@/domains/common/hooks/useExtrinsicEffect'
+import { useUnstakeForm } from '@/domains/staking/dappStaking/hooks/forms'
+
 import useUnlockDuration from '../providers/hooks/dapp/useUnlockDuration'
 import DappPickerDialog from './DappPickerDialog'
 
 type DappUnstakeDialogProps = {
   account: Account
   stake: StakeLoadable['data']
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
   onRequestDismiss: () => void
 }

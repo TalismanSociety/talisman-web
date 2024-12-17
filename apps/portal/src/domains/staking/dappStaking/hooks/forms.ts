@@ -5,26 +5,24 @@ import BN from 'bn.js'
 import { useCallback, useDeferredValue, useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
-import type { Account } from '@/domains/accounts'
-import {
-  paymentInfoState,
-  useExtrinsic,
-  useSubstrateApiEndpoint,
-  useSubstrateApiState,
-  useTokenAmount,
-  useTokenAmountFromPlanck,
-} from '@/domains/common'
+import type { Account } from '@/domains/accounts/recoils'
+import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
+import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
+import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
+import { useTokenAmount, useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
+import { paymentInfoState } from '@/domains/common/recoils'
 import { BigIntMath } from '@/util/BigIntMath'
 import { Maybe } from '@/util/monads'
 
-import type { StakeLoadable } from '.'
-import { getAllRewardsClaimExtrinsics } from '.'
+import { getAllRewardsClaimExtrinsics } from './useClaimAllRewardsExtrinsic'
+import { StakeLoadable } from './useStakeLoadable'
 
 const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.5
 
 export const useAddStakeForm = (
   account: Account,
   stake: StakeLoadable['data'],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
 ) => {
   const [amount, setAmount] = useState('')
@@ -216,6 +214,7 @@ export const useAddStakeForm = (
 export const useUnstakeForm = (
   account: Account,
   stake: StakeLoadable['data'],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
 ) => {
   const [amount, setAmount] = useState('')

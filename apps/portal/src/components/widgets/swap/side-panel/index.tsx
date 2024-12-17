@@ -2,7 +2,7 @@ import { Activity, FileSearch } from '@talismn/web-icons'
 import { atom, useAtom } from 'jotai'
 import { useMemo } from 'react'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/util/cn'
 
 import { SwapDetails } from './SwapDetails'
 import { SwapHistory } from './SwapHistory'

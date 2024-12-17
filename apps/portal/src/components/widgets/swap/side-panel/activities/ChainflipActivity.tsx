@@ -1,5 +1,6 @@
 import { useTokens } from '@talismn/balances-react'
-import { CircularProgressIndicator, SurfaceButton } from '@talismn/ui'
+import { SurfaceButton } from '@talismn/ui/atoms/Button'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { ArrowRight, ArrowUpRight, Check, X } from '@talismn/web-icons'
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'

@@ -1,10 +1,11 @@
-import { Text } from '.'
-import { useTheme } from '@emotion/react'
 import type { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from 'react'
+import { useTheme } from '@emotion/react'
+
+import { Text } from './Text'
 
 type HrProps = PropsWithChildren<DetailedHTMLProps<HTMLAttributes<HTMLHRElement>, HTMLHRElement>>
 
-const Hr = ({ children, ...props }: HrProps) => {
+export const Hr = ({ children, ...props }: HrProps) => {
   const theme = useTheme()
   const baseStyle = {
     height: 0,
@@ -24,5 +25,3 @@ const Hr = ({ children, ...props }: HrProps) => {
     </div>
   )
 }
-
-export default Hr

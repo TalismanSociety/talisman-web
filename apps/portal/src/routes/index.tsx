@@ -1,5 +1,9 @@
-import AccountConnectionGuard from '../components/widgets/AccountConnectionGuard'
-import { RouteErrorElement } from '../components/widgets/ErrorBoundary'
+import * as Sentry from '@sentry/react'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
+
+import { AccountConnectionGuard } from '@/components/widgets/AccountConnectionGuard'
+import { RouteErrorElement } from '@/components/widgets/ErrorBoundary'
+
 import Admin from './admin'
 import crowdloanRoutes from './crowdloans'
 import Explore from './explore'
@@ -8,8 +12,6 @@ import Layout from './layout'
 import portfolioRoutes from './portfolio'
 import stakingRoutes from './staking'
 import dexRoutes from './transport'
-import * as Sentry from '@sentry/react'
-import { Navigate, createBrowserRouter } from 'react-router-dom'
 
 export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
   {

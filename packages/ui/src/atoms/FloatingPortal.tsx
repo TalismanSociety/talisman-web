@@ -1,7 +1,8 @@
-import { useLayoutEffect, useState, type PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-const FloatingPortal = (props: PropsWithChildren & { id?: string }) => {
+export const FloatingPortal = (props: PropsWithChildren & { id?: string }) => {
   const [element, setElement] = useState<HTMLDivElement | null>(null)
   const [root, setRoot] = useState<Element>()
 
@@ -22,5 +23,3 @@ const FloatingPortal = (props: PropsWithChildren & { id?: string }) => {
     </>
   )
 }
-
-export default FloatingPortal

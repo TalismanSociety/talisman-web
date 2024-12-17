@@ -2,10 +2,10 @@ import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
-import Welcome from '@/components/recipes/Welcome'
-import { lookupAccountAddressState, popularAccounts } from '@/domains/accounts'
-import { readOnlyAccountsState } from '@/domains/accounts/recoils'
-import { useHasActiveWalletConnection, useWalletConnectionInitialised } from '@/domains/extension'
+import { Welcome } from '@/components/recipes/Welcome'
+import { popularAccounts } from '@/domains/accounts/consts'
+import { lookupAccountAddressState, readOnlyAccountsState } from '@/domains/accounts/recoils'
+import { useHasActiveWalletConnection, useWalletConnectionInitialised } from '@/domains/extension/main'
 import { shortenAddress } from '@/util/shortenAddress'
 
 import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
@@ -20,7 +20,7 @@ export const useShouldShowAccountConnectionGuard = () => {
   return !hasActiveWalletConnection && readonlyAccounts.length === 0 && lookupAccount === undefined
 }
 
-const AccountConnectionGuard = ({ children, noSuspense }: AccountConnectionGuardProps) => {
+export const AccountConnectionGuard = ({ children, noSuspense }: AccountConnectionGuardProps) => {
   const shouldShowGuard = useShouldShowAccountConnectionGuard()
   const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
 
@@ -53,5 +53,3 @@ const AccountConnectionGuard = ({ children, noSuspense }: AccountConnectionGuard
     </div>
   )
 }
-
-export default AccountConnectionGuard

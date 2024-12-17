@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import styled from '@emotion/styled'
 import { sortBy } from 'lodash'
 
@@ -19,7 +21,8 @@ type GridProps = {
   breakpoints?: any
 }
 
-const Grid = styled(({ className, children }: GridProps) => (
+/** @deprecated */
+export const Grid = styled(({ className, children }: GridProps) => (
   <div className={`grid ${className ?? ''}`}>{children}</div>
 ))`
   display: grid;
@@ -47,5 +50,3 @@ const Grid = styled(({ className, children }: GridProps) => (
           `
       )}
 `
-
-export default Grid

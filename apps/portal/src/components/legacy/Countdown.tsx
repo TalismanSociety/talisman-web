@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 
-export const useInterval = (cb = () => {}, ms = 1000) => {
+/** @deprecated */
+const useInterval = (cb = () => {}, ms = 1000) => {
   const savedCallback = useRef<() => void>()
   const [id, setId] = useState<NodeJS.Timer | null>(null)
 
@@ -35,7 +36,8 @@ const hour = 60 * minute
 const day = 24 * hour
 const week = 7 * day
 
-const Countdown = ({
+/** @deprecated */
+export const Countdown = ({
   seconds: countdownSeconds = 10,
   showSeconds = true,
 }: {
@@ -66,5 +68,3 @@ const Countdown = ({
 
   return <>{segments.join(' ')}</>
 }
-
-export default Countdown

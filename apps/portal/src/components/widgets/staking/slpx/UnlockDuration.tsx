@@ -1,6 +1,8 @@
-import { useVTokenUnlockDuration, type SlpxPair } from '../../../../domains/staking/slpx'
 import { formatDistance } from 'date-fns'
 import { useMemo } from 'react'
+
+import { useVTokenUnlockDuration } from '@/domains/staking/slpx/core'
+import { SlpxPair } from '@/domains/staking/slpx/types'
 
 export type UnlockDurationProps = { slpxPair: SlpxPair }
 

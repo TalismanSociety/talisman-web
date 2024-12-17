@@ -1,14 +1,16 @@
 import { useBalances } from '@talismn/balances-react'
-import { Button, CircularProgressIndicator, Select } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Select } from '@talismn/ui/molecules/Select'
 import { encodeAnyAddress } from '@talismn/util'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { usePrevious } from 'react-use'
 import { useSetRecoilState } from 'recoil'
 
-import AccountIcon from '@/components/molecules/AccountIcon/AccountIcon'
+import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { walletConnectionSideSheetOpenState } from '@/components/widgets/WalletConnectionSideSheet'
 import { type Account } from '@/domains/accounts/recoils'
-import { useHasActiveWalletConnection } from '@/domains/extension'
+import { useHasActiveWalletConnection } from '@/domains/extension/main'
 import { shortenAddress } from '@/util/shortenAddress'
 
 export type AccountSelectorProps = {
@@ -20,7 +22,7 @@ export type AccountSelectorProps = {
   withBalance?: boolean
 }
 
-const AccountSelector = ({
+export const AccountSelector = ({
   accounts,
   prefix = 42,
   selectedAccount,
@@ -169,5 +171,3 @@ export const useAccountSelector = (
     inTransition,
   ] as const
 }
-
-export default AccountSelector

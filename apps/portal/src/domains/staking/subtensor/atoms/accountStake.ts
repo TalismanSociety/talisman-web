@@ -1,8 +1,9 @@
-import { BittensorAccountId, vecDecodeResult, vecEncodeParams } from './_types'
 import { ApiPromise } from '@polkadot/api'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
-import { Struct, Vector, compact } from 'scale-ts'
+import { compact, Struct, Vector } from 'scale-ts'
+
+import { BittensorAccountId, vecDecodeResult, vecEncodeParams } from './_types'
 
 const StakeInfo = Struct({
   hotkey: BittensorAccountId,

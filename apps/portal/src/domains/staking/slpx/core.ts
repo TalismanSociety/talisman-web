@@ -12,10 +12,11 @@ import { useBlockNumber, useConfig, useReadContract, useToken, useWaitForTransac
 import { manta, moonbeam } from 'wagmi/chains'
 import { getTokenQueryOptions, readContractsQueryOptions } from 'wagmi/query'
 
-import type { Account } from '@/domains/accounts'
-import { selectedCurrencyState } from '@/domains/balances'
-import { tokenPriceState } from '@/domains/chains'
-import { useSubstrateApiState, useWagmiWriteContract } from '@/domains/common'
+import type { Account } from '@/domains/accounts/recoils'
+import { selectedCurrencyState } from '@/domains/balances/currency'
+import { tokenPriceState } from '@/domains/chains/recoils'
+import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
+import { useWagmiWriteContract } from '@/domains/common/hooks/useWagmiWriteContract'
 import { Decimal } from '@/util/Decimal'
 import { Maybe } from '@/util/monads'
 
@@ -38,6 +39,7 @@ export const useVTokenUnlockDuration = (slpxPair: SlpxPair) => {
   }, [slpxPair.estimatedRoundDuration, unlockDuration])
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const useSwapRateLoadable = (tokenId: any, vTokenId: any, reverse?: boolean) => {
   const loadable = useRecoilValueLoadable(
     useQueryMultiState([

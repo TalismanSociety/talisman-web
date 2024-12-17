@@ -1,14 +1,17 @@
 import { keyframes } from '@emotion/react'
 import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
-import { Button, HiddenDetails, InfoCard, Text } from '@talismn/ui'
+import { Button } from '@talismn/ui/atoms/Button'
+import { Text } from '@talismn/ui/atoms/Text'
+import { HiddenDetails } from '@talismn/ui/molecules/HiddenDetails'
+import { InfoCard } from '@talismn/ui/molecules/InfoCard'
 import { ChevronLeft } from '@talismn/web-icons'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import { useSingleAsset } from '@/components/legacy/archetypes/Portfolio/Assets'
-import { AssetBreakdownList } from '@/components/recipes/AssetBreakdown/AssetBreakdownList'
+import { useSingleAsset } from '@/components/legacy/widgets/useAssets'
+import { AssetBreakdownList } from '@/components/recipes/AssetBreakdownList'
 import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
-import AnimatedFiatNumber from '@/components/widgets/AnimatedFiatNumber'
-import RedactableBalance from '@/components/widgets/RedactableBalance'
+import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
+import { RedactableBalance } from '@/components/widgets/RedactableBalance'
 
 const slideDown = keyframes`
     from {

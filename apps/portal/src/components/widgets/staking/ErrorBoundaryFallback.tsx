@@ -1,5 +1,10 @@
-import { StakeStatusIndicator } from '../../recipes/StakeStatusIndicator'
-import { Surface, Text, Tooltip, TonalButton, useTheme } from '@talismn/ui'
+import { TonalButton } from '@talismn/ui/atoms/Button'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+import { useTheme } from '@talismn/ui/theme'
+
+import { StakeStatusIndicator } from '@/components/recipes/StakeStatusIndicator'
 
 type ErrorBoundaryFallbackProps = {
   symbol: string

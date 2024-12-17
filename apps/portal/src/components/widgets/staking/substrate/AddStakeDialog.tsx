@@ -1,6 +1,7 @@
-import { useExtrinsic, useExtrinsicInBlockOrErrorEffect } from '../../../../domains/common'
-import { usePoolAddForm } from '../../../../domains/staking/substrate/nominationPools/hooks'
-import { NominationPoolsAddStakeDialog } from '../../../recipes/AddStakeDialog'
+import { NominationPoolsAddStakeDialog } from '@/components/recipes/AddStakeDialog'
+import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
+import { useExtrinsicInBlockOrErrorEffect } from '@/domains/common/hooks/useExtrinsicEffect'
+import { usePoolAddForm } from '@/domains/staking/substrate/nominationPools/hooks'
 
 const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) => {
   const {

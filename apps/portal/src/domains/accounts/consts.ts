@@ -1,4 +1,4 @@
-import type { ReadonlyAccount } from '.'
+import type { ReadonlyAccount } from './recoils'
 
 export const popularAccounts: Array<ReadonlyAccount & { description?: string }> = [
   { name: 'Swader', address: '5CK8D1sKNwF473wbuBP6NuhQfPaWUetNsWUNAAzVwTfxqjfr', description: '200+ NFTs' },

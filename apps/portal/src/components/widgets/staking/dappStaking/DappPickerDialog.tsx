@@ -1,11 +1,15 @@
 import type { AstarPrimitivesDappStakingSmartContract } from '@polkadot/types/lookup'
 import type { ReactNode } from 'react'
-import { AlertDialog, CircularProgressIndicator, Clickable, Surface, Text } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Clickable } from '@talismn/ui/atoms/Clickable'
+import { Surface } from '@talismn/ui/atoms/Surface'
+import { Text } from '@talismn/ui/atoms/Text'
+import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
 import { useState, useTransition } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import type { StakeLoadable } from '@/domains/staking/dappStaking'
-import { useNativeTokenAmountState } from '@/domains/chains'
+import { useNativeTokenAmountState } from '@/domains/chains/recoils'
+import { StakeLoadable } from '@/domains/staking/dappStaking/hooks/useStakeLoadable'
 import { useRegisteredDappsState } from '@/domains/staking/dappStaking/recoils'
 import { shortenAddress } from '@/util/shortenAddress'
 
@@ -74,7 +78,7 @@ const DappPickerDialog = (props: DappPickerDialogProps) => {
                 </div>
                 <div>
                   <Text.Body as="div" alpha="high">
-                    {total.decimalAmount.toLocaleString()}
+                    {total.decimalAmount?.toLocaleString()}
                   </Text.Body>
                   <Text.BodySmall as="div">{total.localizedFiatAmount}</Text.BodySmall>
                 </div>

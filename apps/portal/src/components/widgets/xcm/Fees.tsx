@@ -1,4 +1,4 @@
-import { DescriptionList } from '@talismn/ui'
+import { DescriptionList } from '@talismn/ui/molecules/DescriptionList'
 import { type ReactNode } from 'react'
 
 export type FeesProps = {

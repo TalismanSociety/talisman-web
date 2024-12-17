@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain, @typescript-eslint/no-explicit-any */
+
 import type { SubmittableResult } from '@polkadot/api'
 import type { MemberType } from 'safety-match'
 import { ApiPromise, WsProvider } from '@polkadot/api'
@@ -10,10 +11,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import { makeTaggedUnion, none } from 'safety-match'
 
-import { useConnectedSubstrateWallet } from '../../domains/extension'
-import customRpcs from '../../util/customRpcs'
-import { Maybe } from '../../util/monads'
-import { parachainDetails, supportedRelayChainsState } from '../talisman/util/_config'
+import { useConnectedSubstrateWallet } from '@/domains/extension/substrate'
+import { parachainDetails, supportedRelayChainsState } from '@/libs/talisman/util/_config'
+import customRpcs from '@/util/customRpcs'
+import { Maybe } from '@/util/monads'
+
 import { Acala, Astar, Moonbeam, Zeitgeist } from './crowdloanOverrides'
 import { submitTermsAndConditions } from './moonbeam/remarkFlow'
 import { useCrowdloanContributions } from './useCrowdloanContributions'

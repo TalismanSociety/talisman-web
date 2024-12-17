@@ -1,11 +1,16 @@
-import { Card, CardLoading, TagLoading } from '../components/legacy/archetypes/Explore'
-import { useFetchDapps, type Dapp } from '../components/legacy/archetypes/Explore/hooks'
-import { device } from '../util/breakpoints'
-import { TitlePortal } from './layout'
 import styled from '@emotion/styled'
-import { HiddenDetails, SearchBar, Text } from '@talismn/ui'
+import { Text } from '@talismn/ui/atoms/Text'
+import { HiddenDetails } from '@talismn/ui/molecules/HiddenDetails'
+import { SearchBar } from '@talismn/ui/molecules/SearchBar'
 import { useState } from 'react'
 import { useDebounce } from 'react-use'
+
+import type { Dapp } from '@/components/legacy/widgets/useFetchDapps'
+import { ExploreCard } from '@/components/legacy/widgets/ExploreCard'
+import { ExploreCardLoading, ExploreTagLoading } from '@/components/legacy/widgets/ExploreLoading'
+import { useFetchDapps } from '@/components/legacy/widgets/useFetchDapps'
+import { TitlePortal } from '@/components/molecules/PageHeader'
+import { device } from '@/util/breakpoints'
 
 const ExploreGrid = ({ className }: { className?: string }) => {
   const [searchQuery, setSearchQuery] = useState('')
@@ -24,8 +29,8 @@ const ExploreGrid = ({ className }: { className?: string }) => {
     <div className={className}>
       {loading ? (
         <>
-          <TagLoading />
-          <CardLoading isLoading={true} />
+          <ExploreTagLoading />
+          <ExploreCardLoading isLoading={true} />
         </>
       ) : !loading ? (
         // Create a 4 column grid
@@ -72,7 +77,7 @@ const ExploreGrid = ({ className }: { className?: string }) => {
           {filteredDapps.length > 0 ? (
             <div className="grid">
               {filteredDapps.map((dapp, index) => (
-                <Card key={index} dapp={dapp} setSelectedTag={tag => setSelectedTag(tag)} />
+                <ExploreCard key={index} dapp={dapp} setSelectedTag={tag => setSelectedTag(tag)} />
               ))}
             </div>
           ) : (
@@ -86,7 +91,7 @@ const ExploreGrid = ({ className }: { className?: string }) => {
               }
               hidden={filteredDapps.length === 0}
             >
-              <CardLoading isLoading={false} />
+              <ExploreCardLoading isLoading={false} />
             </HiddenDetails>
           )}
         </>

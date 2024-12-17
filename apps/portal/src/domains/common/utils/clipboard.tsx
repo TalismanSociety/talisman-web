@@ -1,4 +1,5 @@
-import { ToastMessage, toast } from '@talismn/ui'
+import { ToastMessage } from '@talismn/ui/molecules/ToastBar'
+import { toast } from '@talismn/ui/organisms/Toaster'
 import { Copy } from '@talismn/web-icons'
 
 export const copyAddressToClipboard = async (address: string) => {

@@ -2,9 +2,9 @@ import type React from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { isAddress } from 'viem'
 
-import { SeparatedAccountSelector } from '@/components/SeparatedAccountSelector'
-import { isBtcAddress } from '@/lib/btc'
-import { cn } from '@/lib/utils'
+import { SeparatedAccountSelector } from '@/components/widgets/SeparatedAccountSelector'
+import { isBtcAddress } from '@/util/btc'
+import { cn } from '@/util/cn'
 
 import {
   toAddressAtom,
@@ -31,10 +31,10 @@ export const ToAccount: React.FC = () => {
             toAsset.id === 'btc-native'
               ? 'btc'
               : !toAsset
-                ? 'all'
-                : toAsset.networkType === 'evm'
-                  ? 'ethereum'
-                  : 'substrate'
+              ? 'all'
+              : toAsset.networkType === 'evm'
+              ? 'ethereum'
+              : 'substrate'
           }
           substrateAccountsFilter={a => !a.readonly}
           substrateAccountPrefix={0}
