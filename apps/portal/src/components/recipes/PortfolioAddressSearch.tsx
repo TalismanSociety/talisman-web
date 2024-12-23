@@ -1,14 +1,12 @@
 import { SurfaceIconButton } from '@talismn/ui/atoms/IconButton'
 import { SearchBar } from '@talismn/ui/molecules/SearchBar'
 import { Search } from '@talismn/web-icons'
-import { LayoutGroup, motion } from 'framer-motion'
+import { LayoutGroup } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
 
 import { lookupAccountAddressState } from '@/domains/accounts/recoils'
 import { isNilOrWhitespace } from '@/util/nil'
-
-const MotionSearch = motion(Search)
 
 export const PortfolioAddressSearch = ({ className }: { className?: string }) => {
   const searchBarRef = useRef<HTMLInputElement>(null)
@@ -30,7 +28,7 @@ export const PortfolioAddressSearch = ({ className }: { className?: string }) =>
   return (
     <LayoutGroup>
       {revealed ? (
-        <motion.div className={className} layoutId="address-search">
+        <div className={className}>
           <SearchBar
             autoFocus
             ref={searchBarRef}
@@ -39,13 +37,13 @@ export const PortfolioAddressSearch = ({ className }: { className?: string }) =>
             onChange={event => setAddress(event.target.value)}
             onBlur={() => isNilOrWhitespace(address) && setRevealed(false)}
           />
-        </motion.div>
+        </div>
       ) : (
-        <motion.div className={className} layoutId="address-search">
+        <div className={className}>
           <SurfaceIconButton onClick={() => setRevealed(true)}>
-            <MotionSearch layout />
+            <Search />
           </SurfaceIconButton>
-        </motion.div>
+        </div>
       )}
     </LayoutGroup>
   )
