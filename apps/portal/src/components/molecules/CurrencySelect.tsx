@@ -10,14 +10,14 @@ import {
 import { currencyConfig, selectedCurrencyState } from '@/domains/balances/currency'
 import { cn } from '@/util/cn'
 
-export const CurrencySelect = () => {
+export const CurrencySelect = ({ className }: { className?: string }) => {
   const [currentCurrency, setCurrency] = useRecoilState(selectedCurrencyState)
   const symbol = currencyConfig[currentCurrency]?.symbol ?? '?'
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Clickable.WithFeedback>
+        <Clickable.WithFeedback className={className}>
           <div className="flex h-12 w-12 select-none items-center justify-center rounded-full border border-gray-600 bg-gray-950 text-white">
             <div className="font-mono text-xl">{symbol}</div>
           </div>

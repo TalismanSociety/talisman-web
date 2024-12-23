@@ -2,7 +2,7 @@ import type { SetterOrUpdater } from 'recoil'
 import { array, jsonParser, string } from '@recoiljs/refine'
 import * as Sentry from '@sentry/react'
 import { type Nft as BaseNft } from '@talismn/nft'
-import { toast } from '@talismn/ui/organisms/Toaster'
+import { toast } from '@talismn/ui/molecules/Toaster'
 import { partial } from 'lodash'
 import { useCallback, useMemo } from 'react'
 import {

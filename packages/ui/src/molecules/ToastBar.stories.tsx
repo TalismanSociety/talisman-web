@@ -2,7 +2,7 @@ import { type ComponentMeta, type Story } from '@storybook/react'
 
 import type { ToastBarProps } from './ToastBar'
 import { Button } from '../atoms/Button'
-import { toast, Toaster } from '../organisms/Toaster'
+import { toast, Toaster } from '../molecules/Toaster'
 import { ToastBar, ToastMessage } from './ToastBar'
 
 export default {

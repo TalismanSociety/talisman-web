@@ -2,7 +2,7 @@ import type RpcError from '@polkadot/rpc-provider/coder/error'
 import { type ISubmittableResult } from '@polkadot/types/types'
 import { Text } from '@talismn/ui/atoms/Text'
 import { ToastMessage } from '@talismn/ui/molecules/ToastBar'
-import { toast } from '@talismn/ui/organisms/Toaster'
+import { toast } from '@talismn/ui/molecules/Toaster'
 import { ExternalLink } from '@talismn/web-icons'
 
 export const toastExtrinsic = (

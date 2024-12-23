@@ -11,6 +11,10 @@ export default {
       padding: '2rem',
     },
     extend: {
+      fontFamily: {
+        surtexpanded: ['SurtExpanded', 'sans-serif'],
+        surt: ['Surt', 'sans-serif'],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
