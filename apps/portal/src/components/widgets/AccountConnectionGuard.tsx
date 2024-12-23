@@ -6,7 +6,7 @@ import { Welcome } from '@/components/recipes/Welcome'
 import { popularAccounts } from '@/domains/accounts/consts'
 import { lookupAccountAddressState, readOnlyAccountsState } from '@/domains/accounts/recoils'
 import { useHasActiveWalletConnection, useWalletConnectionInitialised } from '@/domains/extension/main'
-import { shortenAddress } from '@/util/shortenAddress'
+import { truncateAddress } from '@/util/truncateAddress'
 
 import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
 
@@ -42,7 +42,7 @@ export const AccountConnectionGuard = ({ children, noSuspense }: AccountConnecti
         popularAccounts={popularAccounts.map((x, index) => (
           <Welcome.PopularAccount
             key={index}
-            name={x.name ?? shortenAddress(x.address)}
+            name={x.name ?? truncateAddress(x.address)}
             address={x.address}
             description={x.description}
             onClick={() => setLookupAddress(x.address)}

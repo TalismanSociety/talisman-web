@@ -2,7 +2,6 @@ import { usePostHog } from 'posthog-js/react'
 import { Suspense, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 
-import { ModalProvider } from '@/components/legacy/Modal'
 import { FullscreenLoader } from '@/components/molecules/FullscreenLoader'
 import { SiteFooter } from '@/components/widgets/SiteFooter'
 import { SiteNav } from '@/components/widgets/SiteNav'
@@ -47,17 +46,14 @@ export const Layout = () => {
 
       <Suspense fallback={<FullscreenLoader />}>
         <main className="mx-auto w-full max-w-screen-xl flex-grow px-8">
-          {/* TODO: remove legacy imperative modals */}
-          <ModalProvider>
-            <Outlet />
-            <NominationPoolsStakeSideSheet />
-            <DappStakingStakeSideSheet />
-            <SubtensorStakeSideSheet />
-            <SlpxStakeSideSheet />
-            <LidoStakeSideSheet />
-            <SlpxSubstrateStakeSideSheet />
-            <WalletConnectionSideSheet />
-          </ModalProvider>
+          <Outlet />
+          <NominationPoolsStakeSideSheet />
+          <DappStakingStakeSideSheet />
+          <SubtensorStakeSideSheet />
+          <SlpxStakeSideSheet />
+          <LidoStakeSideSheet />
+          <SlpxSubstrateStakeSideSheet />
+          <WalletConnectionSideSheet />
         </main>
 
         <SiteFooter className="mx-auto w-full max-w-screen-xl px-8" />

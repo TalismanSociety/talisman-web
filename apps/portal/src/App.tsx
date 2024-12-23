@@ -3,6 +3,7 @@ import '@polkadot/api-augment/substrate'
 import '@talismn/astar-types/augment-api'
 import '@talismn/astar-types/types-lookup'
 
+import { BalancesProvider } from '@talismn/balances-react'
 import { PolkadotApiProvider } from '@talismn/react-polkadot-api'
 import { Toaster } from '@talismn/ui/molecules/Toaster'
 import { PostHogProvider } from 'posthog-js/react'
@@ -21,8 +22,6 @@ import { chainDeriveState, chainQueryMultiState, chainQueryState } from '@/domai
 import { ExtensionWatcher } from '@/domains/extension/main'
 import { TalismanExtensionSynchronizer } from '@/domains/extension/TalismanExtensionSynchronizer'
 import { EvmProvider } from '@/domains/extension/wagmi'
-import * as Portfolio from '@/libs/portfolio'
-import TalismanProvider from '@/libs/talisman'
 import router from '@/routes'
 
 const App = () => (
@@ -43,21 +42,30 @@ const App = () => (
                 deriveState={chainDeriveState}
                 queryMultiState={chainQueryMultiState}
               >
-                <Portfolio.Provider>
-                  <TalismanProvider>
-                    <ExtensionWatcher />
-                    <AccountWatcher />
-                    <SignetWatcher />
-                    <TalismanExtensionSynchronizer />
-                    <BalancesWatcher />
-                    <Suspense fallback={<FullscreenLoader />}>
-                      <RouterProvider router={router} />
-                      <Toaster position="bottom-right" />
-                    </Suspense>
-                    <FairyBreadBanner />
-                    <Development />
-                  </TalismanProvider>
-                </Portfolio.Provider>
+                <BalancesProvider
+                  onfinalityApiKey={import.meta.env.VITE_ONFINALITY_API_KEY ?? undefined}
+                  coingeckoApiUrl={import.meta.env.VITE_COIN_GECKO_API}
+                  coingeckoApiKeyValue={import.meta.env.VITE_COIN_GECKO_API_KEY}
+                  coingeckoApiKeyName={
+                    import.meta.env.VITE_COIN_GECKO_API_TIER === 'pro'
+                      ? 'x-cg-pro-api-key'
+                      : import.meta.env.VITE_COIN_GECKO_API_TIER === 'demo'
+                      ? 'x-cg-demo-api-key'
+                      : undefined
+                  }
+                >
+                  <ExtensionWatcher />
+                  <AccountWatcher />
+                  <SignetWatcher />
+                  <TalismanExtensionSynchronizer />
+                  <BalancesWatcher />
+                  <Suspense fallback={<FullscreenLoader />}>
+                    <RouterProvider router={router} />
+                    <Toaster position="bottom-right" />
+                  </Suspense>
+                  <FairyBreadBanner />
+                  <Development />
+                </BalancesProvider>
               </PolkadotApiProvider>
             </EvmProvider>
           </PostHogProvider>

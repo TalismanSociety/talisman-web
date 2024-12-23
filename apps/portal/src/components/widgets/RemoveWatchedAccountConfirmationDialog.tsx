@@ -5,7 +5,7 @@ import { RemoveWatchedAccountConfirmationDialog as RemoveWatchedAccountConfirmat
 import { useSetReadonlyAccounts } from '@/domains/accounts/hooks'
 import { type ReadonlyAccount } from '@/domains/accounts/recoils'
 import { isNilOrWhitespace } from '@/util/nil'
-import { shortenAddress } from '@/util/shortenAddress'
+import { truncateAddress } from '@/util/truncateAddress'
 
 export type RemoveWatchedAccountConfirmationDialogProps = {
   account: ReadonlyAccount
@@ -22,7 +22,7 @@ export const RemoveWatchedAccountConfirmationDialog = (props: RemoveWatchedAccou
       <RemoveWatchedAccountConfirmationDialogComponent
         open={open}
         onRequestDismiss={useCallback(() => setOpen(false), [])}
-        name={isNilOrWhitespace(props.account.name) ? shortenAddress(props.account.address) : props.account.name}
+        name={isNilOrWhitespace(props.account.name) ? truncateAddress(props.account.address) : props.account.name}
         onConfirm={useCallback(() => {
           remove(props.account)
           setOpen(false)

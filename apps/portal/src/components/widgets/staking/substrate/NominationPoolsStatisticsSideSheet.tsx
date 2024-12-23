@@ -28,7 +28,7 @@ import {
   poolPayoutsState,
   totalPoolPayoutsState,
 } from '@/domains/staking/substrate/nominationPools/recoils'
-import { shortenAddress } from '@/util/shortenAddress'
+import { truncateAddress } from '@/util/truncateAddress'
 
 export type NominationPoolsStatisticsSideSheetProps = {
   account: Account
@@ -90,8 +90,8 @@ const Stats = (props: {
         }}
       >
         <ListItem
-          headlineContent={props.account.name ?? shortenAddress(props.account.address)}
-          supportingContent={shortenAddress(props.account.address)}
+          headlineContent={props.account.name ?? truncateAddress(props.account.address)}
+          supportingContent={truncateAddress(props.account.address)}
           leadingContent={<AccountIcon account={props.account} size="4rem" />}
           css={{ paddingRight: 0, paddingLeft: 0 }}
         />

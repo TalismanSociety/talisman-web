@@ -11,7 +11,7 @@ import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { walletConnectionSideSheetOpenState } from '@/components/widgets/WalletConnectionSideSheet'
 import { type Account } from '@/domains/accounts/recoils'
 import { useHasActiveWalletConnection } from '@/domains/extension/main'
-import { shortenAddress } from '@/util/shortenAddress'
+import { truncateAddress } from '@/util/truncateAddress'
 
 export type AccountSelectorProps = {
   accounts: Account[]
@@ -68,12 +68,12 @@ export const AccountSelector = ({
                   leadingIcon={<CircularProgressIndicator size="4rem" />}
                   supportingContent={
                     selectedAccount && selectedAccount.name
-                      ? shortenAddress(encodeAnyAddress(selectedAccount.address, prefix))
+                      ? truncateAddress(encodeAnyAddress(selectedAccount.address, prefix))
                       : ''
                   }
                   headlineContent={
                     selectedAccount
-                      ? selectedAccount.name ?? shortenAddress(encodeAnyAddress(selectedAccount.address, prefix))
+                      ? selectedAccount.name ?? truncateAddress(encodeAnyAddress(selectedAccount.address, prefix))
                       : ''
                   }
                 />
@@ -92,11 +92,11 @@ export const AccountSelector = ({
             <div className="flex w-full items-center justify-between">
               <div className="overflow-hidden">
                 <p className="!mb-[4px] truncate font-semibold !leading-none">
-                  {x.name ?? shortenAddress(encodeAnyAddress(x.address, prefix))}
+                  {x.name ?? truncateAddress(encodeAnyAddress(x.address, prefix))}
                 </p>
                 {x.name ? (
                   <p className="truncate !text-[12px] !leading-none !text-gray-300 brightness-100">
-                    {shortenAddress(encodeAnyAddress(x.address, prefix))}
+                    {truncateAddress(encodeAnyAddress(x.address, prefix))}
                   </p>
                 ) : null}
               </div>

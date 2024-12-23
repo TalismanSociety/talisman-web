@@ -35,7 +35,7 @@ import {
 } from '@/domains/nfts/core'
 import { usePagination } from '@/hooks/usePagination'
 import { Maybe } from '@/util/monads'
-import { shortenAddress } from '@/util/shortenAddress'
+import { truncateAddress } from '@/util/truncateAddress'
 
 const COLLECTION_KEY = 'collectionKey'
 
@@ -66,7 +66,7 @@ const AccountHeader = (props: { className?: string; account: Account; loading?: 
     leadingContent={<AccountIcon account={props.account} size="4rem" />}
     headlineContent={
       <>
-        {props.account.name ?? shortenAddress(props.account.address)}{' '}
+        {props.account.name ?? truncateAddress(props.account.address)}{' '}
         <CircularProgressIndicator
           css={[{ verticalAlign: 'text-bottom' }, !props.loading && { visibility: 'hidden' }]}
         />

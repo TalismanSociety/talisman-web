@@ -15,7 +15,7 @@ import { walletConnectionSideSheetOpenState } from '@/components/widgets/WalletC
 import { evmAccountsState, substrateAccountsState } from '@/domains/accounts/recoils'
 import { AccountWithBtc, isBtcAddress } from '@/util/btc'
 import { cn } from '@/util/cn'
-import { shortenAddress } from '@/util/shortenAddress'
+import { truncateAddress } from '@/util/truncateAddress'
 
 type Props = {
   allowInput?: boolean
@@ -52,11 +52,11 @@ const AccountRow: React.FC<{
             'text-[14px]': formattedAddress.startsWith('0x'),
           })}
         >
-          {name ?? shortenAddress(formattedAddress, 6)}
+          {name ?? truncateAddress(formattedAddress, 6, 6)}
         </p>
         {name ? (
           <p className="mt-[2px] !text-[12px] !leading-none !text-gray-300 brightness-100">
-            {shortenAddress(formattedAddress, 6)}
+            {truncateAddress(formattedAddress, 6, 6)}
           </p>
         ) : null}
       </div>

@@ -20,7 +20,7 @@ import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
 import { StakeStatusIndicator } from '@/components/recipes/StakeStatusIndicator'
 import { Account } from '@/domains/accounts/recoils'
-import { shortenAddress } from '@/util/shortenAddress'
+import { truncateAddress } from '@/util/truncateAddress'
 
 import { StakePositionSkeleton } from './StakePosition.skeleton'
 
@@ -247,7 +247,7 @@ export const StakePosition = Object.assign(
                     },
                   }}
                 >
-                  <Text alpha="high">{props.account.name ?? shortenAddress(props.account.address)}</Text>
+                  <Text alpha="high">{props.account.name ?? truncateAddress(props.account.address)}</Text>
                   <br />
                   <span>
                     <span css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }}>
@@ -479,7 +479,7 @@ export const StakePositionErrorBoundary = (props: StakePositionErrorBoundaryProp
                 },
               }}
             >
-              <Text alpha="high">{props.account.name ?? shortenAddress(props.account.address)}</Text>
+              <Text alpha="high">{props.account.name ?? truncateAddress(props.account.address)}</Text>
               <br />
               <span>
                 <span css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }}>

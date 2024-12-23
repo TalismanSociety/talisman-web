@@ -14,7 +14,7 @@ import { ObjectView } from 'react-object-view'
 import type { Account } from '@/domains/accounts/recoils'
 import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { copyAddressToClipboard, copyExtrinsicHashToClipboard } from '@/domains/common/utils/clipboard'
-import { shortenAddress } from '@/util/shortenAddress'
+import { truncateAddress } from '@/util/truncateAddress'
 
 export type ExtrinsicDetailsSideSheetProps = {
   onRequestDismiss: () => unknown
@@ -51,8 +51,8 @@ const AccountItem = (props: { account: Account }) => (
   <ListItem
     css={{ padding: 0, cursor: 'copy' }}
     leadingContent={<AccountIcon account={props.account} size="3.2rem" />}
-    headlineContent={props.account.name ?? shortenAddress(props.account.address)}
-    supportingContent={props.account.name !== undefined && shortenAddress(props.account.address)}
+    headlineContent={props.account.name ?? truncateAddress(props.account.address)}
+    supportingContent={props.account.name !== undefined && truncateAddress(props.account.address)}
     onClick={() => {
       void copyAddressToClipboard(props.account.address)
     }}
@@ -96,7 +96,7 @@ export const ExtrinsicDetailsSideSheet = (props: ExtrinsicDetailsSideSheetProps)
             }}
           >
             <span>
-              <Copy size="1em" /> <span css={{ textDecoration: 'underline' }}>{shortenAddress(props.hash, 6)}</span>
+              <Copy size="1em" /> <span css={{ textDecoration: 'underline' }}>{truncateAddress(props.hash, 6, 6)}</span>
             </span>
           </DescriptionList.Details>
         </DescriptionList.Description>
@@ -121,7 +121,7 @@ export const ExtrinsicDetailsSideSheet = (props: ExtrinsicDetailsSideSheetProps)
             >
               <span>
                 <Copy size="1em" />{' '}
-                <span css={{ textDecoration: 'underline' }}>{shortenAddress(props.signer.address)}</span>
+                <span css={{ textDecoration: 'underline' }}>{truncateAddress(props.signer.address)}</span>
               </span>
             </DescriptionList.Details>
           </DescriptionList.Description>

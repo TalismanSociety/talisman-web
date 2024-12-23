@@ -28,7 +28,7 @@ import { fiatBalanceGetterState, portfolioBalancesFiatSumState } from '@/domains
 import { copyAddressToClipboard } from '@/domains/common/utils/clipboard'
 import { useOnChainId } from '@/libs/onChainId/hooks/useOnChainId'
 import { Maybe } from '@/util/monads'
-import { shortenAddress } from '@/util/shortenAddress'
+import { truncateAddress } from '@/util/truncateAddress'
 
 const EvmChip = () => {
   const theme = useTheme()
@@ -78,7 +78,7 @@ const AccountsManagementAddress = ({
       {onChainId && (
         <div css={{ display: showOnChainId ? 'block' : 'none', color: theme.color.primary }}>{onChainId}</div>
       )}
-      <div css={{ display: onChainId && showOnChainId ? 'none' : 'block' }}>{name ?? shortenAddress(address)}</div>
+      <div css={{ display: onChainId && showOnChainId ? 'none' : 'block' }}>{name ?? truncateAddress(address)}</div>
     </>
   )
 }

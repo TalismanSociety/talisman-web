@@ -12,7 +12,7 @@ import { Fragment, useMemo } from 'react'
 import type { Account } from '@/domains/accounts/recoils'
 import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { getSubstrateModuleColor } from '@/util/getSubstrateModuleColor'
-import { shortenAddress } from '@/util/shortenAddress'
+import { truncateAddress } from '@/util/truncateAddress'
 
 type TokenAmount = {
   amount: string
@@ -109,7 +109,7 @@ export const TransactionLineItem = (props: TransactionLineItemProps) => {
           </div>
         </div>
         <Text.Body alpha="high" css={{ gridArea: 'account' }}>
-          {props.signer === undefined ? props.chain : props.signer.name ?? shortenAddress(props.signer.address)}
+          {props.signer === undefined ? props.chain : props.signer.name ?? truncateAddress(props.signer.address)}
         </Text.Body>
         <Text.BodySmall alpha="high" css={{ gridArea: 'type', [WIDE_CONTAINER_QUERY]: theme.typography.body }}>
           <span
