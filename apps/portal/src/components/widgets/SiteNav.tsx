@@ -15,7 +15,9 @@ export const SiteNav = ({ className, contentClassName }: { className?: string; c
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
   return (
-    <header className={cn('relative', className)}>
+    // z-50 keeps this above the fullscreen suspense loader,
+    // so we can still navigate between pages while the current one is loading
+    <header className={cn('relative z-50', className)}>
       <div
         className="pointer-events-none absolute bottom-0 left-0 right-0 top-0 z-0 opacity-5"
         style={{
