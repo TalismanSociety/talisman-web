@@ -4,6 +4,7 @@ import { atom } from 'jotai'
 
 import { disableRoute } from '../utils/disableRoute'
 import { insertTalismanRoutes } from '../utils/insertTalismanRoutes'
+import { overrideChainApis, overrideRoutesChainApis } from '../utils/wrapChainApi'
 
 insertTalismanRoutes({ assets, chains, routes })
 
@@ -14,4 +15,10 @@ insertTalismanRoutes({ assets, chains, routes })
 // We can add this route back after we or @galacticcouncil add support for checking asset sufficiency.
 disableRoute(routes, 'mythos', 'myth-assethub')
 
-export const configServiceAtom = atom(new ConfigService({ assets, chains, routes }))
+export const configServiceAtom = atom(
+  new ConfigService({
+    assets,
+    chains: overrideChainApis(chains),
+    routes: overrideRoutesChainApis(routes),
+  })
+)
