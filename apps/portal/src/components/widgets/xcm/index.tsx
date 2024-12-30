@@ -118,13 +118,15 @@ export function XcmForm() {
     />
   ) : fees ? (
     <Fees totalBalance={available} originFee={fees.sourceFee} destinationFee={fees.destFee} />
-  ) : sender && sourceChain && destChain && asset ? (
+  ) : sender && recipient && sourceChain && destChain && asset ? (
     <ProgressIndicator
       title="Preparing transfer"
       text={!hasWallet ? `Connecting to ${sourceAsset?.chain?.name}` : !hasTransfer ? 'Calculating fees' : 'Loading'}
     />
-  ) : (
+  ) : !asset ? (
     <ErrorMessage title="Select asset" text="To calculate transfer fees" />
+  ) : (
+    <ErrorMessage title="Select destination" text="To calculate transfer fees" />
   )
 
   return (
