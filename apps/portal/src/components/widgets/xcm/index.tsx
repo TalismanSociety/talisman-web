@@ -168,7 +168,7 @@ export function XcmForm() {
           ) : undefined
         }
         max={
-          minMaxAmounts?.max && sourceBalance?.amount !== minMaxAmounts.max.amount ? (
+          minMaxAmounts?.max ? (
             <Tooltip content={`${toPreciseDecimals(minMaxAmounts.max)} ${minMaxAmounts.max.symbol}`}>
               <span className="text-foreground shrink-0">
                 {formatDecimals(toPreciseDecimals(minMaxAmounts.max))}&nbsp;{minMaxAmounts.max.symbol}
