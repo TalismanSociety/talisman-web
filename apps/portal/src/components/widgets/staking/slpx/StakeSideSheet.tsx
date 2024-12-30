@@ -50,8 +50,9 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
   return (
     <SideSheet
       title={
-        <div>
-          <Zap /> Stake
+        <div className="flex items-center gap-2">
+          <Zap />
+          Stake
         </div>
       }
       subtitle="Liquid Staking"

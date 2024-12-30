@@ -27,9 +27,10 @@ const LidoWidgetSideSheet = (props: LidoWidgetSideSheetProps) => {
       {({ css }) => (
         <SideSheet
           title={
-            <>
-              <Zap /> Stake
-            </>
+            <div className="flex items-center gap-2">
+              <Zap />
+              Stake
+            </div>
           }
           onRequestDismiss={props.onRequestDismiss}
           css={{

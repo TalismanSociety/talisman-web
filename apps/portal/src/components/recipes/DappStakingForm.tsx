@@ -167,9 +167,10 @@ export const DappStakingSideSheet = ({
     <SideSheet
       {...props}
       title={
-        <>
-          <Zap /> Stake
-        </>
+        <div className="flex items-center gap-2">
+          <Zap />
+          Stake
+        </div>
       }
       subtitle="Astar DApp staking"
     >
