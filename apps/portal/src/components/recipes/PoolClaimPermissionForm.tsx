@@ -70,14 +70,14 @@ export const PoolClaimPermissionForm = (props: PoolClaimPermissionFormProps) => 
 
   return (
     <div>
-      <div css={{ marginBottom: '1.6rem' }}>
-        <label>
+      <div className="flex items-center gap-2" css={{ marginBottom: '1.6rem' }}>
+        <label className="flex items-center gap-2">
           <Switch
             checked={props.permission !== undefined}
             onChange={event => props.onChangePermission(event.target.checked ? 'compound' : undefined)}
-          />{' '}
+          />
           {props.isTalismanPool ? 'Enable auto claiming' : 'Enable permissionless claiming'}
-        </label>{' '}
+        </label>
         <Tooltip
           content={
             <>
@@ -154,9 +154,10 @@ type PoolClaimPermissionDialogProps = PropsWithChildren<{
 export const PoolClaimPermissionDialog = (props: PoolClaimPermissionDialogProps) => (
   <AlertDialog
     title={
-      <>
-        <Calculate css={{ verticalAlign: 'bottom' }} /> Claim method
-      </>
+      <div className="flex items-center gap-2">
+        <Calculate />
+        Claim method
+      </div>
     }
     targetWidth="77rem"
     {...props}
