@@ -220,7 +220,6 @@ export function XcmForm() {
               allowInput
               substrateAccountPrefix={validPrefix(destChain?.ss58Format)}
               substrateAccountsFilter={account => !account.readonly}
-              evmAccountsFilter={account => !account.canSignEvm}
               value={recipient}
               // only invoked if a valid address is pasted
               onAccountChange={recipient => setRecipient(recipient ?? undefined)}
