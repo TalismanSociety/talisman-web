@@ -4,6 +4,7 @@ import '@talismn/astar-types/augment-api'
 import '@talismn/astar-types/types-lookup'
 
 import { PolkadotApiProvider } from '@talismn/react-polkadot-api'
+import { Toaster } from '@talismn/ui/molecules/Toaster'
 import { PostHogProvider } from 'posthog-js/react'
 import { Suspense } from 'react'
 import { RouterProvider } from 'react-router-dom'
@@ -51,6 +52,7 @@ const App = () => (
                     <BalancesWatcher />
                     <Suspense fallback={<FullscreenLoader />}>
                       <RouterProvider router={router} />
+                      <Toaster position="bottom-right" />
                     </Suspense>
                     <FairyBreadBanner />
                     <Development />
