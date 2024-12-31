@@ -9,7 +9,7 @@ import { Text } from '@talismn/ui/atoms/Text'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { Menu } from '@talismn/ui/molecules/Menu'
 import { Copy, Ethereum, Eye, EyePlus, TalismanHand, Trash2, Users, Wallet, X } from '@talismn/web-icons'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, useResetRecoilState, useSetRecoilState } from 'recoil'
 
 import { AccountIcon } from '@/components/molecules/AccountIcon'
@@ -165,8 +165,9 @@ export const AccountsManagementMenu = Object.assign(
                     padding: '0 1.6rem',
                   }}
                 >
-                  <div>
-                    <TalismanHand size="1em" /> My accounts
+                  <div className="flex items-center gap-[0.5rem]">
+                    <TalismanHand size="1.2em" />
+                    <div>My accounts</div>
                   </div>
                   <IconButton size="2rem" onClick={toggleOpen}>
                     <X />
@@ -202,8 +203,7 @@ export const AccountsManagementMenu = Object.assign(
                     trailingContent={
                       <SurfaceIcon
                         size="3.5rem"
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        onClick={(event: any) => {
+                        onClick={(event: React.MouseEvent) => {
                           event.stopPropagation()
                           void copyAddressToClipboard(x.address)
                         }}
@@ -254,8 +254,7 @@ export const AccountsManagementMenu = Object.assign(
                           <div css={{ display: 'flex' }}>
                             <SurfaceIcon
                               size="3.5rem"
-                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                              onClick={(event: any) => {
+                              onClick={(event: React.MouseEvent) => {
                                 event.stopPropagation()
                                 void copyAddressToClipboard(account.address)
                               }}
@@ -270,8 +269,7 @@ export const AccountsManagementMenu = Object.assign(
                               <div>
                                 <SurfaceIcon
                                   size="3.5rem"
-                                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                  onClick={(event: any) => {
+                                  onClick={(event: React.MouseEvent) => {
                                     event.stopPropagation()
                                     toggleRemoveDialog()
                                   }}
