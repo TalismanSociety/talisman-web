@@ -27,13 +27,19 @@ export const WalletConnectionButton = () => {
         )}
         onClick={() => setOpen(true)}
       >
-        <div className="flex items-center">
+        <div className={cn('flex w-0  items-center justify-center', hasActiveConnection && 'w-[2rem]')}>
           {subConnected && <Polkadot className="shrink-0 text-sm text-[#e6007a]" size="1em" />}
           {evmConnected && <Ethereum className="shrink-0 text-sm text-[#62688f]" size="1em" />}
         </div>
 
-        <div className="whitespace-pre text-xl">
-          {hasActiveConnection ? `${accounts.length} Connected` : 'Connect wallet'}
+        <div className="whitespace-pre text-xl leading-none">
+          {hasActiveConnection ? (
+            <div className="flex items-center gap-1">
+              <div className="w-[1rem]">{accounts.length}</div>Connected
+            </div>
+          ) : (
+            <div>Connect wallet</div>
+          )}
         </div>
 
         <ChevronDown size="1em" />
