@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react'
-import { TalismanHand } from '@talismn/web-icons'
+import { Zap } from '@talismn/web-icons'
 
 import { Button } from './Button'
 import { Surface as SurfaceContainer } from './Surface'
@@ -31,11 +31,11 @@ export default {
 type Story = StoryObj<typeof Button>
 
 export const Primary: Story = {
-  args: { children: 'Click me', leadingIcon: <TalismanHand />, trailingIcon: <TalismanHand /> },
+  args: { children: 'Click me', leadingIcon: <Zap />, trailingIcon: <Zap /> },
 }
 
 export const Outlined: Story = {
-  args: { variant: 'outlined', children: 'Click me', leadingIcon: <TalismanHand />, trailingIcon: <TalismanHand /> },
+  args: { variant: 'outlined', children: 'Click me', leadingIcon: <Zap />, trailingIcon: <Zap /> },
 }
 
 export const Tonal: Story = {
@@ -43,7 +43,7 @@ export const Tonal: Story = {
 }
 
 export const Text: Story = {
-  args: { variant: 'text', children: 'Click me', leadingIcon: <TalismanHand />, trailingIcon: <TalismanHand /> },
+  args: { variant: 'text', children: 'Click me', leadingIcon: <Zap />, trailingIcon: <Zap /> },
 }
 
 export const Surface: Story = {
@@ -55,5 +55,5 @@ export const Surface: Story = {
       </SurfaceContainer>
     </SurfaceContainer>
   ),
-  args: { variant: 'surface', children: 'Click me', leadingIcon: <TalismanHand />, trailingIcon: <TalismanHand /> },
+  args: { variant: 'surface', children: 'Click me', leadingIcon: <Zap />, trailingIcon: <Zap /> },
 }

@@ -3,7 +3,9 @@ import { Button } from '@talismn/ui/atoms/Button'
 import { useSurfaceColor, useSurfaceColorAtElevation } from '@talismn/ui/atoms/Surface'
 import { Text } from '@talismn/ui/atoms/Text'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
-import { ExternalLink, TalismanHand, User } from '@talismn/web-icons'
+import { ExternalLink, User } from '@talismn/web-icons'
+
+import Logo from '@/assets/logo.svg?react'
 
 export type StakeTargetSelectorItemProps = {
   selected?: boolean
@@ -118,7 +120,7 @@ export const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => 
         </Tooltip>
         {props.talismanRecommended && (
           <Tooltip content={props.talismanRecommendedDescription}>
-            <TalismanHand size="1.4rem" />
+            <Logo className="h-[1em] w-[1em]" />
           </Tooltip>
         )}
       </Text.Body>
