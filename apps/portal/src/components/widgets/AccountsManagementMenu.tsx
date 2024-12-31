@@ -98,6 +98,7 @@ export const AccountsManagementMenu = Object.assign(
 
     const portfolioAccounts = useRecoilValue(portfolioAccountsState)
     const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
+    const selectedAddresses = useRecoilValue(selectedAccountAddressesState)
 
     const getFiatBalanceLoadable = useRecoilValueLoadable(fiatBalanceGetterState)
 
@@ -178,6 +179,7 @@ export const AccountsManagementMenu = Object.assign(
                 {portfolioAccounts.map((x, index) => (
                   <Menu.Item.Button
                     key={index}
+                    className={selectedAddresses?.includes(x.address) ? 'bg-primary/5' : ''}
                     headlineContent={Maybe.of(getFiatBalanceLoadable.valueMaybe()?.(x.address)).mapOr(
                       <CircularProgressIndicator size="1em" />,
                       balance => (
