@@ -32,7 +32,7 @@ export const WalletConnectionButton = () => {
           {evmConnected && <Ethereum className="shrink-0 text-sm text-[#62688f]" size="1em" />}
         </div>
 
-        <div className="whitespace-pre text-xl">
+        <div className="whitespace-pre text-xl leading-none">
           {hasActiveConnection ? `${accounts.length} Connected` : 'Connect wallet'}
         </div>
 
