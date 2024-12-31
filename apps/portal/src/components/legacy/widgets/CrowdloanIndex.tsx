@@ -8,7 +8,6 @@ import { Await } from '@/components/legacy/Await'
 import { Grid } from '@/components/legacy/Grid'
 import { NoResults } from '@/components/legacy/NoResults'
 import { RadioGroup } from '@/components/legacy/RadioGroup'
-import { TitlePortal } from '@/components/molecules/PageHeader'
 import { useCrowdloanContributions } from '@/libs/crowdloans'
 import { device } from '@/util/breakpoints'
 
@@ -100,7 +99,6 @@ export const CrowdloanIndex = styled(({ withFilter, className }: { withFilter: b
 
   return (
     <div className={`crowdloan-index ${className ?? ''}`}>
-      <TitlePortal>Crowdloans</TitlePortal>
       <CrowdloanRootNav />
 
       {/* TODO: Remove for now as no Learn more link yet. */}

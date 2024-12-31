@@ -4,47 +4,29 @@ import { atom } from 'recoil'
 
 import { storageEffect } from '@/domains/common/effects'
 
-export const currencyConfig: Partial<Record<TokenRateCurrency, { unicodeCharacter: string; name: string }>> = {
-  usd: {
-    unicodeCharacter: '$',
-    name: 'US Dollar',
-  },
-  aud: {
-    unicodeCharacter: '$',
-    name: 'Australian Dollar',
-  },
-  eur: {
-    unicodeCharacter: '€',
-    name: 'Euro',
-  },
-  gbp: {
-    unicodeCharacter: '£',
-    name: 'British Pound',
-  },
-  jpy: {
-    unicodeCharacter: '¥',
-    name: 'Japanese Yen',
-  },
-  cny: {
-    unicodeCharacter: '¥',
-    name: 'Chinese Yuan',
-  },
-  // rub: {
-  //   unicodeCharacter: '₽',
-  //   name: 'Russian Ruble',
-  // },
-  btc: {
-    unicodeCharacter: '₿',
-    name: 'Bitcoin',
-  },
-  eth: {
-    unicodeCharacter: 'Ξ',
-    name: 'Ethereum',
-  },
-  dot: {
-    unicodeCharacter: 'D',
-    name: 'Polkadot',
-  },
+export const currencyConfig: Partial<Record<TokenRateCurrency, { symbol: string; name: string }>> = {
+  usd: { name: 'US Dollar', symbol: '$' },
+  cny: { name: 'Chinese Yuan', symbol: 'CN¥' },
+  eur: { name: 'Euro', symbol: '€' },
+  gbp: { name: 'British Pound', symbol: '£' },
+  cad: { name: 'Canadian Dollar', symbol: 'C$' },
+  aud: { name: 'Australian Dollar', symbol: 'A$' },
+  nzd: { name: 'New Zealand Dollar', symbol: 'NZ$' },
+  jpy: { name: 'Japanese Yen', symbol: 'JP¥' },
+  rub: { name: 'Russian Ruble', symbol: '₽' },
+  krw: { name: 'South Korean Won', symbol: '₩' },
+  idr: { name: 'Indonesian Rupiah', symbol: 'Rp' },
+  php: { name: 'Philippine Peso', symbol: '₱' },
+  thb: { name: 'Thai Baht', symbol: '฿' },
+  vnd: { name: 'Vietnamese Dong', symbol: '₫' },
+  inr: { name: 'Indian Rupee', symbol: '₹' },
+  try: { name: 'Turkish Lira', symbol: '₺' },
+  // hkd: { name: "Hong Kong Dollar", symbol: "HK$" },
+  sgd: { name: 'Singapore Dollar', symbol: 'S$' },
+  // twd: { name: "Taiwanese Dollar", symbol: "NT$" },
+  btc: { name: 'Bitcoin', symbol: '₿' },
+  eth: { name: 'Ethereum', symbol: 'Ξ' },
+  dot: { name: 'Polkadot', symbol: 'D' },
 }
 
 export const selectedCurrencyState = atom<TokenRateCurrency>({
@@ -55,25 +37,25 @@ export const selectedCurrencyState = atom<TokenRateCurrency>({
       parser: jsonParser(
         stringLiterals({
           usd: 'usd',
-          aud: 'aud',
-          nzd: 'nzd',
+          cny: 'cny',
           eur: 'eur',
           gbp: 'gbp',
+          cad: 'cad',
+          aud: 'aud',
+          nzd: 'nzd',
           jpy: 'jpy',
-          krw: 'krw',
-          cny: 'cny',
           rub: 'rub',
+          krw: 'krw',
+          idr: 'idr',
+          php: 'php',
+          thb: 'thb',
+          vnd: 'vnd',
+          inr: 'inr',
+          try: 'try',
+          sgd: 'sgd',
           btc: 'btc',
           eth: 'eth',
           dot: 'dot',
-          cad: 'cad',
-          idr: 'idr',
-          inr: 'inr',
-          php: 'php',
-          sgd: 'sgd',
-          thb: 'thb',
-          try: 'try',
-          vnd: 'vnd',
         } satisfies Record<TokenRateCurrency, TokenRateCurrency>)
       ),
     }),

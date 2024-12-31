@@ -4,7 +4,7 @@ import type { Config, ResolvedRegister, UseWriteContractParameters } from 'wagmi
 import type { WriteContractData, WriteContractVariables } from 'wagmi/query'
 import { Text } from '@talismn/ui/atoms/Text'
 import { ToastMessage } from '@talismn/ui/molecules/ToastBar'
-import { toast } from '@talismn/ui/organisms/Toaster'
+import { toast } from '@talismn/ui/molecules/Toaster'
 import { usePostHog } from 'posthog-js/react'
 import { useAccount, useSwitchChain, useWriteContract } from 'wagmi'
 

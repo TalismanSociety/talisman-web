@@ -1,4 +1,4 @@
-import { toast } from '@talismn/ui/organisms/Toaster'
+import { toast } from '@talismn/ui/molecules/Toaster'
 import { useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 

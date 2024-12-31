@@ -1,4 +1,4 @@
-import { toast } from '@talismn/ui/organisms/Toaster'
+import { toast } from '@talismn/ui/molecules/Toaster'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect } from 'react'
 import { useSetRecoilState } from 'recoil'

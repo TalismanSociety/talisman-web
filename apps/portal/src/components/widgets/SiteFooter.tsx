@@ -1,42 +1,38 @@
-import { Text } from '@talismn/ui/atoms/Text'
+import { ReactNode } from 'react'
 
-export const SiteFooter = () => {
+import Discord from '@/assets/icons/discord.svg?react'
+import GitHub from '@/assets/icons/github.svg?react'
+import XSocial from '@/assets/icons/x-social.svg?react'
+import { cn } from '@/util/cn'
+
+export const SiteFooter = ({ className }: { className?: string }) => {
   return (
-    <div
-      css={theme => ({
-        display: 'flex',
-        justifyContent: 'end',
-        alignItems: 'center',
-        gap: '3.2rem',
-        padding: '2.4rem 2.4rem 2.4rem 0',
-        a: { opacity: theme.contentAlpha.medium, ':hover': { opacity: theme.contentAlpha.high } },
-      })}
-    >
-      <Text.BodyLarge alpha="high" as="a" href="https://twitter.com/wearetalisman" target="_blank">
-        Twitter
-      </Text.BodyLarge>
-      <Text.BodyLarge alpha="high" as="a" href="https://discord.gg/talisman" target="_blank">
-        Discord
-      </Text.BodyLarge>
-      <Text.BodyLarge alpha="high" as="a" href="https://docs.talisman.xyz" target="_blank">
-        Docs
-      </Text.BodyLarge>
-      <Text.BodyLarge
-        alpha="high"
-        as="a"
-        href="https://docs.talisman.xyz/talisman/legal-and-security/terms-of-use"
-        target="_blank"
-      >
-        Terms
-      </Text.BodyLarge>
-      <Text.BodyLarge
-        alpha="high"
-        as="a"
-        href="https://docs.talisman.xyz/talisman/legal-and-security/privacy-policy"
-        target="_blank"
-      >
-        Privacy
-      </Text.BodyLarge>
-    </div>
+    <footer className={cn('pb-8', className)}>
+      <div className="flex items-center justify-center gap-8">
+        <FooterLink href="https://x.com/wearetalisman">
+          <XSocial width="1em" />
+        </FooterLink>
+        <FooterLink href="https://discord.gg/talisman">
+          <Discord width="1em" />
+        </FooterLink>
+        <FooterLink href="https://github.com/talismansociety">
+          <GitHub width="1em" />
+        </FooterLink>
+        <FooterLink href="https://docs.talisman.xyz">Docs</FooterLink>
+        <FooterLink href="https://docs.talisman.xyz/talisman/about/terms-of-use">Terms</FooterLink>
+        <FooterLink href="https://docs.talisman.xyz/talisman/about/privacy-policy">Privacy</FooterLink>
+      </div>
+    </footer>
   )
 }
+
+const FooterLink = ({ href, children }: { href: string; children: ReactNode }) => (
+  <a
+    className="text-foreground/60 hover:text-foreground focus:text-foreground"
+    href={href}
+    target="_blank"
+    rel="noreferrer noopener"
+  >
+    {children}
+  </a>
+)

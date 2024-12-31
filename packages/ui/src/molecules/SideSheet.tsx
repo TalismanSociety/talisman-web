@@ -6,7 +6,7 @@ import type { DialogProps } from '../atoms/Dialog'
 import { Dialog } from '../atoms/Dialog'
 import { IconButton } from '../atoms/IconButton'
 import { Text } from '../atoms/Text'
-import { Toaster } from '../organisms/Toaster'
+import { Toaster } from '../molecules/Toaster'
 import { useMediaQuery } from '../utils/useMediaQuery'
 
 export type SideSheetProps = Omit<DialogProps, 'title'> & {
