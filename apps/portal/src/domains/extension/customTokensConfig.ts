@@ -1,4 +1,12 @@
-import { CustomTokensConfig } from '../../hooks/useSetCustomTokens'
+export type CustomTokensConfig = CustomTokenConfig[]
+export type CustomTokenConfig = {
+  evmChainId: string
+  contractAddress: string
+  symbol: string
+  decimals: number
+  coingeckoId?: string
+  logo?: string
+}
 
 export const customTokensConfig: CustomTokensConfig = [
   {

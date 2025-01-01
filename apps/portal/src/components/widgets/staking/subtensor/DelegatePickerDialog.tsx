@@ -11,7 +11,7 @@ import type { Account } from '@/domains/accounts/recoils'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useDelegates } from '@/domains/staking/subtensor/hooks/useDelegates'
 import { useStake } from '@/domains/staking/subtensor/hooks/useStake'
-import { shortenAddress } from '@/util/shortenAddress'
+import { truncateAddress } from '@/util/truncateAddress'
 
 type DelegatePickerDialogProps = {
   title: ReactNode
@@ -56,7 +56,7 @@ const DelegatePickerDialog = (props: DelegatePickerDialogProps) => {
                     <CircularProgressIndicator size="2rem" />
                   ) : null}
                   <Text.BodyLarge as="div" alpha="high" css={{ fontWeight: 'bold' }}>
-                    {delegate?.name ?? shortenAddress(stake.hotkey)}{' '}
+                    {delegate?.name ?? truncateAddress(stake.hotkey)}{' '}
                   </Text.BodyLarge>
                 </div>
                 <div>

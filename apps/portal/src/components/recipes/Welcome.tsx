@@ -10,7 +10,7 @@ import { ListItem } from '@talismn/ui/molecules/ListItem'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
 import { type ReactNode } from 'react'
 
-import { shortenAddress } from '@/util/shortenAddress'
+import { truncateAddress } from '@/util/truncateAddress'
 
 export type WelcomeProps = {
   className?: string
@@ -41,7 +41,7 @@ const PopularAccount = (props: { address: string; name: string; description?: st
     <ListItem
       leadingContent={<Identicon value={props.address} size="3.2rem" />}
       headlineContent={props.name}
-      supportingContent={props.description ?? shortenAddress(props.address)}
+      supportingContent={props.description ?? truncateAddress(props.address)}
       css={{ borderRadius: '1.2rem', backgroundColor: useSurfaceColor() }}
     />
   </Clickable.WithFeedback>

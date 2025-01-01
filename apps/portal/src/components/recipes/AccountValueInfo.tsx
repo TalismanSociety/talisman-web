@@ -7,7 +7,7 @@ import { type ReactNode } from 'react'
 
 import type { Account } from '@/domains/accounts/recoils'
 import { AccountIcon } from '@/components/molecules/AccountIcon'
-import { shortenAddress } from '@/util/shortenAddress'
+import { truncateAddress } from '@/util/truncateAddress'
 
 export type AccountValueInfoProps = {
   account?: Account
@@ -63,7 +63,7 @@ export const AccountValueInfo = ({ account, balance }: AccountValueInfoProps) =>
           css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.8rem', width: '100%' }}
         >
           <Text.Body css={{ fontSize: '1em' }}>
-            {account === undefined ? 'My accounts' : account.name ?? shortenAddress(account.address)}
+            {account === undefined ? 'My accounts' : account.name ?? truncateAddress(account.address)}
           </Text.Body>
           <ChevronDown />
         </div>

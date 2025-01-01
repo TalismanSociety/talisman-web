@@ -11,7 +11,7 @@ import { TextInput } from '@talismn/ui/molecules/TextInput'
 
 import Loader from '@/assets/icons/loader.svg?react'
 import { isNilOrWhitespace } from '@/util/nil'
-import { shortenAddress } from '@/util/shortenAddress'
+import { truncateAddress } from '@/util/truncateAddress'
 
 export type AddReadOnlyAccountDialogProps = {
   open?: boolean
@@ -33,7 +33,7 @@ const PopularAccount = (props: { address: string; name: string; description?: st
     <ListItem
       leadingContent={<Identicon value={props.address} size="3.2rem" />}
       headlineContent={props.name}
-      supportingContent={props.description ?? shortenAddress(props.address)}
+      supportingContent={props.description ?? truncateAddress(props.address)}
       css={{ borderRadius: '1.2rem', backgroundColor: useSurfaceColor() }}
     />
   </Clickable.WithFeedback>
@@ -71,7 +71,7 @@ export const AddReadOnlyAccountDialog = Object.assign(
               <ListItem
                 leadingContent={<Identicon value={props.resultingAddress} size="4rem" />}
                 headlineContent={isNilOrWhitespace(props.name) ? undefined : props.name}
-                supportingContent={shortenAddress(props.resultingAddress)}
+                supportingContent={truncateAddress(props.resultingAddress)}
                 css={{ marginTop: '0.8rem', border: `2px solid ${theme.color.outlineVariant}`, borderRadius: '0.8rem' }}
               />
             )}

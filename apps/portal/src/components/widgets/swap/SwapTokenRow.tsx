@@ -15,7 +15,7 @@ import { selectedCurrencyState } from '@/domains/balances/currency'
 import { useCopied } from '@/hooks/useCopied'
 import { useTokenRatesFromUsd } from '@/hooks/useTokenRatesFromUsd'
 import { Decimal } from '@/util/Decimal'
-import { truncateAddress } from '@/util/helpers'
+import { truncateAddress } from '@/util/truncateAddress'
 
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
 import { uniswapExtendedTokensList, uniswapSafeTokensList } from './swaps.api'
@@ -130,7 +130,7 @@ export const SwapTokenRow: React.FC<Props> = ({
             <Link to={`${explorerUrl}/token/${erc20Address}`} target="_blank" onClick={e => e.stopPropagation()}>
               <div className="group flex cursor-pointer items-center gap-[4px]">
                 <p className="text-muted-foreground group-hover:text-primary mt-[2px] text-[12px]">
-                  {truncateAddress(erc20Address)}
+                  {truncateAddress(erc20Address, 6)}
                 </p>
                 <ExternalLink className="group-hover:text-primary" size={14} />
               </div>
@@ -145,7 +145,7 @@ export const SwapTokenRow: React.FC<Props> = ({
               }}
             >
               <p className="text-muted-foreground group-hover:text-primary mt-[2px] text-[12px]">
-                {truncateAddress(erc20Address)}
+                {truncateAddress(erc20Address, 6)}
               </p>
               {copied ? (
                 <Check size={14} className="text-green-400" />

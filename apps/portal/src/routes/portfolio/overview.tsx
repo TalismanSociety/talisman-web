@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 
 import { useAssetsFiltered } from '@/components/legacy/widgets/useAssets'
-import { WalletCrowdloans } from '@/components/legacy/widgets/WalletCrowdloans'
 import { SectionHeader } from '@/components/molecules/SectionHeader'
 import { Asset, AssetsList, AssetsListLocked } from '@/components/recipes/Asset'
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
@@ -124,18 +123,6 @@ const AssetsOverview = () => (
   </Suspense>
 )
 
-// const HistoryOverview = () => (
-//   <div>
-//     <SectionHeader headlineContent="History" />
-//     <SelectedAccountsHistory maxCount={8} />
-//     <div css={{ display: 'flex' }}>
-//       <Button variant="secondary" as={Link} to="history" css={{ marginTop: '1.8rem', marginLeft: 'auto' }}>
-//         View all history
-//       </Button>
-//     </div>
-//   </div>
-// )
-
 const Overview = () => (
   <div
     css={{
@@ -168,11 +155,6 @@ const Overview = () => (
           <AssetsOverview />
         </ErrorBoundary>
       </div>
-      {/* <div css={{ order: 4 }}>
-        <ErrorBoundary>
-          <HistoryOverview />
-        </ErrorBoundary>
-      </div> */}
     </div>
     <div
       css={{
@@ -193,11 +175,6 @@ const Overview = () => (
       <div css={{ order: 2 }}>
         <ErrorBoundary>
           <Stakes />
-        </ErrorBoundary>
-      </div>
-      <div css={{ order: 3, ':empty': { display: 'none' } }}>
-        <ErrorBoundary>
-          <WalletCrowdloans />
         </ErrorBoundary>
       </div>
     </div>

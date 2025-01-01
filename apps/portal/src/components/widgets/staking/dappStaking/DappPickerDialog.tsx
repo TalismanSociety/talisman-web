@@ -11,7 +11,7 @@ import { useRecoilValue, waitForAll } from 'recoil'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { StakeLoadable } from '@/domains/staking/dappStaking/hooks/useStakeLoadable'
 import { useRegisteredDappsState } from '@/domains/staking/dappStaking/recoils'
-import { shortenAddress } from '@/util/shortenAddress'
+import { truncateAddress } from '@/util/truncateAddress'
 
 type DappPickerDialogProps = {
   title: ReactNode
@@ -73,7 +73,7 @@ const DappPickerDialog = (props: DappPickerDialogProps) => {
                     />
                   )}
                   <Text.BodyLarge as="div" alpha="high" css={{ fontWeight: 'bold' }}>
-                    {registeredDapp?.name ?? shortenAddress(address)}{' '}
+                    {registeredDapp?.name ?? truncateAddress(address)}{' '}
                   </Text.BodyLarge>
                 </div>
                 <div>
