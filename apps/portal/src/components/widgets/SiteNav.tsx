@@ -80,7 +80,12 @@ export const SiteNav = ({ className, contentClassName }: { className?: string; c
         <Link to="/transport">
           <SiteMobileNav.Item label="Swap" icon={<Repeat />} />
         </Link>
-        <Link to="https://checkout.banxa.com/" target="_blank">
+        <Link
+          to={`https://app.ramp.network/?hostApiKey=${
+            import.meta.env.VITE_RAMP_API_KEY
+          }&hostAppName=Talisman&hostLogoUrl=${TALISMAN_LOGO_URL}&swapAsset=DOT_DOT&enabledFlows=ONRAMP,OFFRAMP`}
+          target="_blank"
+        >
           <SiteMobileNav.Item label="Buy/Sell" icon={<CreditCard />} />
         </Link>
       </SiteMobileNav>
