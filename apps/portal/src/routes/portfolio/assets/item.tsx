@@ -93,7 +93,7 @@ const AssetItem = () => {
                     <Text.Body>{`${token.tokenDetails.symbol ?? ''}`}</Text.Body>
                   </div>
                 }
-                supportingContent={token.rate !== undefined && <AnimatedFiatNumber end={token.rate} />}
+                supportingContent={token.rate !== undefined && <AnimatedFiatNumber end={token.rate.price} />}
               />
               <InfoCard
                 overlineContent={

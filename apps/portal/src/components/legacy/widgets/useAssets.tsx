@@ -3,10 +3,12 @@ import { useChains, useEvmNetworks, useTokenRates, useTokens } from '@talismn/ba
 import { formatDecimals } from '@talismn/util'
 import { compact, groupBy, isEmpty, isNil } from 'lodash'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useRecoilValue } from 'recoil'
 
 import { selectedCurrencyState } from '@/domains/balances/currency'
 import { balancesState, selectedBalancesState } from '@/domains/balances/recoils'
+import { getNetworkInfo } from '@/hooks/useNetworkInfo'
 
 const useFetchAssets = (address: string | undefined) => {
   const _balances = useRecoilValue(address === undefined ? selectedBalancesState : balancesState)
@@ -81,6 +83,7 @@ const getFiatString = (value: any, currency: string) => {
 
 /** @deprecated */
 export const useAssets = (customAddress?: string) => {
+  const { t } = useTranslation()
   const { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading } =
     useFetchAssets(customAddress)
   const currency = useRecoilValue(selectedCurrencyState)
@@ -115,6 +118,13 @@ export const useAssets = (customAddress?: string) => {
 
         const locked = lockedAmount > 0n
 
+        const networkInfo = (() => {
+          const chain = token.chain?.id ? chains[token.chain?.id] : undefined
+          const evmNetwork = token.evmNetwork?.id ? evmNetworks[token.evmNetwork?.id] : undefined
+          const relay = chain?.relay?.id ? chains[chain.relay.id] : undefined
+          return getNetworkInfo(t, { chain, evmNetwork, relay })
+        })()
+
         return {
           stale: tokenBalances.each.some(x => x.status === 'stale'),
           locked,
@@ -138,12 +148,13 @@ export const useAssets = (customAddress?: string) => {
               : token.evmNetwork
               ? evmNetworks[token.evmNetwork.id]
               : undefined,
+            networkInfo,
           },
           // if the token is substrate-native then make it an array else make it undefined
           nonNativeTokens: [],
         }
       }),
-    [assetBalances, balances, chains, currency, evmNetworks, rates]
+    [assetBalances, balances, chains, currency, evmNetworks, rates, t]
   )
 
   const compressedTokens = useMemo(() => compact(tokens), [tokens])

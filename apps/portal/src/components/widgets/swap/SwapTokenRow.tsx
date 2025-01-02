@@ -117,7 +117,7 @@ export const SwapTokenRow: React.FC<Props> = ({
               {shouldShowWarning && <AlertTriangle className="text-gray-400" size={14} />}
             </div>
             <p className="text-muted-foreground text-[12px] font-medium">
-              {rate?.[currency]?.toLocaleString(undefined, { currency, style: 'currency' }) ?? '-'}
+              {rate?.[currency]?.price?.toLocaleString(undefined, { currency, style: 'currency' }) ?? '-'}
             </p>
           </div>
         </div>
@@ -163,7 +163,7 @@ export const SwapTokenRow: React.FC<Props> = ({
             <p className="text-[14px] font-medium">{balance?.toLocaleString(undefined, {})}</p>
             {rate ? (
               <p className="text-muted-foreground text-[12px]">
-                {((rate[currency] ?? 0) * balance.toNumber()).toLocaleString(undefined, {
+                {((rate[currency]?.price ?? 0) * balance.toNumber()).toLocaleString(undefined, {
                   currency,
                   style: 'currency',
                 })}
