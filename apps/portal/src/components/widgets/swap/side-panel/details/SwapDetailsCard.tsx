@@ -62,7 +62,7 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
 
   const fiatValue = useMemo(() => {
     if (!bestGuessRate || !amount) return fiatOverride?.[currency]
-    return (bestGuessRate[currency] ?? 0) * amount.toNumber()
+    return (bestGuessRate[currency]?.price ?? 0) * amount.toNumber()
   }, [amount, bestGuessRate, currency, fiatOverride])
 
   const time = useMemo(() => {
@@ -86,7 +86,7 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
     () =>
       quote.fees
         .reduce((acc, fee) => {
-          const rate = tokenRates[fee.tokenId]?.[currency] ?? 0
+          const rate = tokenRates[fee.tokenId]?.[currency]?.price ?? 0
           return acc + fee.amount.toNumber() * rate
         }, 0)
         .toLocaleString(undefined, { style: 'currency', currency, maximumSignificantDigits: 3 }),

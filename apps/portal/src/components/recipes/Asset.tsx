@@ -249,7 +249,9 @@ export const Asset = Object.assign((props: AssetProps) => {
                 }}
               >
                 <div css={{ width: '1em', height: '1em' }}>
-                  <Tooltip content={token.tokenDetails.chain?.name ?? undefined}>
+                  <Tooltip
+                    content={`${token.tokenDetails.networkInfo?.label} (${token.tokenDetails.networkInfo?.type})`}
+                  >
                     <img
                       src={token.tokenDetails.chain?.logo ?? githubUnknownChainLogoUrl}
                       css={{ width: '100%', height: '100%', borderRadius: '50%' }}
@@ -259,7 +261,9 @@ export const Asset = Object.assign((props: AssetProps) => {
                 </div>
                 {token.nonNativeTokens.map((token, index: number) => (
                   <div key={index} css={{ width: '1em', height: '1em' }}>
-                    <Tooltip content={token.tokenDetails.chain?.name}>
+                    <Tooltip
+                      content={`${token.tokenDetails.networkInfo?.label} (${token.tokenDetails.networkInfo?.type})`}
+                    >
                       <img
                         src={token.tokenDetails.chain?.logo ?? undefined}
                         css={{ width: '100%', height: '100%', borderRadius: '50%' }}
@@ -272,7 +276,7 @@ export const Asset = Object.assign((props: AssetProps) => {
             </div>
             {token.rate !== undefined && (
               <Text.Body>
-                <AnimatedFiatNumber end={token.rate} />
+                <AnimatedFiatNumber end={token.rate.price} />
               </Text.Body>
             )}
           </div>

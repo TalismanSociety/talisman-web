@@ -113,7 +113,7 @@ export const TokenAmountInput: React.FC<Props> = ({
   const fiatValue = useMemo(() => {
     if (!selectedAsset) return null
     if (!bestGuessRate || amount === undefined) return fiatOverride?.[currency]
-    const rateInCurrency = bestGuessRate[currency]
+    const rateInCurrency = bestGuessRate[currency]?.price
     if (!rateInCurrency) return null
     return +amount?.toString() * rateInCurrency
   }, [amount, bestGuessRate, currency, fiatOverride, selectedAsset])

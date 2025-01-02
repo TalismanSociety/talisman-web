@@ -1,5 +1,6 @@
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
+import { useChain, useEvmNetwork } from '@talismn/balances-react'
 import { githubUnknownChainLogoUrl } from '@talismn/chaindata-provider'
 import { Text } from '@talismn/ui/atoms/Text'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
@@ -9,6 +10,7 @@ import type { PortfolioToken } from '@/components/legacy/widgets/useAssets'
 import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { AssetBalance } from '@/components/recipes/Asset'
 import { type Account } from '@/domains/accounts/recoils'
+import { useNetworkInfo } from '@/hooks/useNetworkInfo'
 
 const slideDown = keyframes`
     from {
@@ -22,6 +24,11 @@ const slideDown = keyframes`
 `
 
 export const AssetBreakdownRowHeader = ({ token }: { token: PortfolioToken }) => {
+  const chain = useChain(token.tokenDetails.chain?.id)
+  const relay = useChain(chain?.relay?.id)
+  const evmNetwork = useEvmNetwork(token.tokenDetails.evmNetwork?.id)
+  const networkInfo = useNetworkInfo({ evmNetwork, chain, relay })
+
   return (
     <AssetRow>
       <div
@@ -48,23 +55,9 @@ export const AssetBreakdownRowHeader = ({ token }: { token: PortfolioToken }) =>
               }}
             />
           </Tooltip>
-          <div
-            css={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.4rem',
-              justifyContent: 'center',
-            }}
-          >
-            <Text.Body
-              css={{
-                fontSize: '1.6rem',
-                color: 'var(--color-text)',
-                fontWeight: 'bold',
-              }}
-            >
-              {token.tokenDetails.chain?.name}
-            </Text.Body>
+          <div className="flex flex-col gap-1">
+            <div className="text-2xl font-bold text-white">{networkInfo.label}</div>
+            <div className="text-xl text-white/60">{networkInfo.type}</div>
           </div>
         </td>
         <td align="right">
