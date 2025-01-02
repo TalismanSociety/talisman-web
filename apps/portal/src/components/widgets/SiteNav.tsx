@@ -11,6 +11,9 @@ import { SiteLogo } from './SiteLogo'
 import { SiteMobileNav } from './SiteMobileNav'
 import { SiteNavItem } from './SiteNavItem'
 
+const TALISMAN_LOGO_URL =
+  'https://raw.githubusercontent.com/TalismanSociety/talisman-web/0fa6f5a99b4729f740c1a68bbe3d2ca9c85c9daa/apps/portal/public/talisman.svg'
+
 export const SiteNav = ({ className, contentClassName }: { className?: string; contentClassName?: string }) => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
@@ -40,7 +43,14 @@ export const SiteNav = ({ className, contentClassName }: { className?: string; c
           <SiteNavItem label="Portfolio" icon={<PieChart />} to="/portfolio" />
           <SiteNavItem label="Staking" icon={<Zap />} to="/staking" />
           <SiteNavItem label="Swap" icon={<Repeat />} to="/transport" />
-          <SiteNavItem label="Buy/Sell" icon={<CreditCard />} to="https://checkout.banxa.com/" target="_blank" />
+          <SiteNavItem
+            label="Buy/Sell"
+            icon={<CreditCard />}
+            to={`https://app.ramp.network/?hostApiKey=${
+              import.meta.env.VITE_RAMP_API_KEY
+            }&hostAppName=Talisman&hostLogoUrl=${TALISMAN_LOGO_URL}&swapAsset=DOT_DOT&enabledFlows=ONRAMP,OFFRAMP`}
+            target="_blank"
+          />
         </div>
         <div className="space-between flex items-center gap-3">
           <CurrencySelect className="hidden md:block" />
@@ -70,7 +80,12 @@ export const SiteNav = ({ className, contentClassName }: { className?: string; c
         <Link to="/transport">
           <SiteMobileNav.Item label="Swap" icon={<Repeat />} />
         </Link>
-        <Link to="https://checkout.banxa.com/" target="_blank">
+        <Link
+          to={`https://app.ramp.network/?hostApiKey=${
+            import.meta.env.VITE_RAMP_API_KEY
+          }&hostAppName=Talisman&hostLogoUrl=${TALISMAN_LOGO_URL}&swapAsset=DOT_DOT&enabledFlows=ONRAMP,OFFRAMP`}
+          target="_blank"
+        >
           <SiteMobileNav.Item label="Buy/Sell" icon={<CreditCard />} />
         </Link>
       </SiteMobileNav>
