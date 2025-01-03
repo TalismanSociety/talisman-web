@@ -118,13 +118,15 @@ export function XcmForm() {
     />
   ) : fees ? (
     <Fees totalBalance={available} originFee={fees.sourceFee} destinationFee={fees.destFee} />
-  ) : sender && sourceChain && destChain && asset ? (
+  ) : sender && recipient && sourceChain && destChain && asset ? (
     <ProgressIndicator
       title="Preparing transfer"
       text={!hasWallet ? `Connecting to ${sourceAsset?.chain?.name}` : !hasTransfer ? 'Calculating fees' : 'Loading'}
     />
-  ) : (
+  ) : !asset ? (
     <ErrorMessage title="Select asset" text="To calculate transfer fees" />
+  ) : (
+    <ErrorMessage title="Select destination" text="To calculate transfer fees" />
   )
 
   return (
@@ -166,7 +168,7 @@ export function XcmForm() {
           ) : undefined
         }
         max={
-          minMaxAmounts?.max && sourceBalance?.amount !== minMaxAmounts.max.amount ? (
+          minMaxAmounts?.max ? (
             <Tooltip content={`${toPreciseDecimals(minMaxAmounts.max)} ${minMaxAmounts.max.symbol}`}>
               <span className="text-foreground shrink-0">
                 {formatDecimals(toPreciseDecimals(minMaxAmounts.max))}&nbsp;{minMaxAmounts.max.symbol}
@@ -220,7 +222,6 @@ export function XcmForm() {
               allowInput
               substrateAccountPrefix={validPrefix(destChain?.ss58Format)}
               substrateAccountsFilter={account => !account.readonly}
-              evmAccountsFilter={account => !account.canSignEvm}
               value={recipient}
               // only invoked if a valid address is pasted
               onAccountChange={recipient => setRecipient(recipient ?? undefined)}

@@ -16,12 +16,14 @@ export const CurrencySelect = ({ className }: { className?: string }) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Clickable.WithFeedback className={className}>
-          <div className="flex h-12 w-12 select-none items-center justify-center rounded-full border border-gray-600 bg-gray-950 text-white">
-            <div className="font-mono text-xl">{symbol}</div>
-          </div>
-        </Clickable.WithFeedback>
+      <DropdownMenuTrigger asChild>
+        <div>
+          <Clickable.WithFeedback className={className}>
+            <div className="flex h-12 w-12 select-none items-center justify-center rounded-full border border-gray-600 bg-gray-950 text-white">
+              <div className="font-mono text-xl">{symbol}</div>
+            </div>
+          </Clickable.WithFeedback>
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className={cn('z-50 flex flex-col gap-1 overflow-hidden rounded-3xl bg-gray-950 py-4')}
