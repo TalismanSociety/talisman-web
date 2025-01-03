@@ -23,6 +23,7 @@ import { ExtensionWatcher } from '@/domains/extension/main'
 import { TalismanExtensionSynchronizer } from '@/domains/extension/TalismanExtensionSynchronizer'
 import { EvmProvider } from '@/domains/extension/wagmi'
 import router from '@/routes'
+import { JotaiProvider } from '@/util/jotaiStore'
 
 const App = () => (
   <ThemeProvider>
@@ -35,40 +36,42 @@ const App = () => (
         )}
       >
         <Suspense fallback={<FullscreenLoader />}>
-          <PostHogProvider apiKey={import.meta.env.VITE_POSTHOG_AUTH_TOKEN}>
-            <EvmProvider>
-              <PolkadotApiProvider
-                queryState={chainQueryState}
-                deriveState={chainDeriveState}
-                queryMultiState={chainQueryMultiState}
-              >
-                <BalancesProvider
-                  onfinalityApiKey={import.meta.env.VITE_ONFINALITY_API_KEY ?? undefined}
-                  coingeckoApiUrl={import.meta.env.VITE_COIN_GECKO_API}
-                  coingeckoApiKeyValue={import.meta.env.VITE_COIN_GECKO_API_KEY}
-                  coingeckoApiKeyName={
-                    import.meta.env.VITE_COIN_GECKO_API_TIER === 'pro'
-                      ? 'x-cg-pro-api-key'
-                      : import.meta.env.VITE_COIN_GECKO_API_TIER === 'demo'
-                      ? 'x-cg-demo-api-key'
-                      : undefined
-                  }
+          <JotaiProvider>
+            <PostHogProvider apiKey={import.meta.env.VITE_POSTHOG_AUTH_TOKEN}>
+              <EvmProvider>
+                <PolkadotApiProvider
+                  queryState={chainQueryState}
+                  deriveState={chainDeriveState}
+                  queryMultiState={chainQueryMultiState}
                 >
-                  <ExtensionWatcher />
-                  <AccountWatcher />
-                  <SignetWatcher />
-                  <TalismanExtensionSynchronizer />
-                  <BalancesWatcher />
-                  <Suspense fallback={<FullscreenLoader />}>
-                    <RouterProvider router={router} />
-                    <Toaster position="bottom-right" />
-                  </Suspense>
-                  <FairyBreadBanner />
-                  <Development />
-                </BalancesProvider>
-              </PolkadotApiProvider>
-            </EvmProvider>
-          </PostHogProvider>
+                  <BalancesProvider
+                    onfinalityApiKey={import.meta.env.VITE_ONFINALITY_API_KEY ?? undefined}
+                    coingeckoApiUrl={import.meta.env.VITE_COIN_GECKO_API}
+                    coingeckoApiKeyValue={import.meta.env.VITE_COIN_GECKO_API_KEY}
+                    coingeckoApiKeyName={
+                      import.meta.env.VITE_COIN_GECKO_API_TIER === 'pro'
+                        ? 'x-cg-pro-api-key'
+                        : import.meta.env.VITE_COIN_GECKO_API_TIER === 'demo'
+                        ? 'x-cg-demo-api-key'
+                        : undefined
+                    }
+                  >
+                    <ExtensionWatcher />
+                    <AccountWatcher />
+                    <SignetWatcher />
+                    <TalismanExtensionSynchronizer />
+                    <BalancesWatcher />
+                    <Suspense fallback={<FullscreenLoader />}>
+                      <RouterProvider router={router} />
+                      <Toaster position="bottom-right" />
+                    </Suspense>
+                    <FairyBreadBanner />
+                    <Development />
+                  </BalancesProvider>
+                </PolkadotApiProvider>
+              </EvmProvider>
+            </PostHogProvider>
+          </JotaiProvider>
         </Suspense>
       </ErrorBoundary>
     </RecoilRoot>
