@@ -17,6 +17,10 @@ const TALISMAN_LOGO_URL =
 export const SiteNav = ({ className, contentClassName }: { className?: string; contentClassName?: string }) => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
+  const rampUrl = `https://app.ramp.network/?hostApiKey=${
+    import.meta.env.VITE_RAMP_API_KEY
+  }&hostAppName=Talisman&hostLogoUrl=${TALISMAN_LOGO_URL}&enabledFlows=ONRAMP,OFFRAMP`
+
   return (
     // z-50 keeps this above the fullscreen suspense loader,
     // so we can still navigate between pages while the current one is loading
@@ -43,14 +47,7 @@ export const SiteNav = ({ className, contentClassName }: { className?: string; c
           <SiteNavItem label="Portfolio" icon={<PieChart />} to="/portfolio" />
           <SiteNavItem label="Staking" icon={<Zap />} to="/staking" />
           <SiteNavItem label="Swap" icon={<Repeat />} to="/transport" />
-          <SiteNavItem
-            label="Buy/Sell"
-            icon={<CreditCard />}
-            to={`https://app.ramp.network/?hostApiKey=${
-              import.meta.env.VITE_RAMP_API_KEY
-            }&hostAppName=Talisman&hostLogoUrl=${TALISMAN_LOGO_URL}&swapAsset=DOT_DOT&enabledFlows=ONRAMP,OFFRAMP`}
-            target="_blank"
-          />
+          <SiteNavItem label="Buy/Sell" icon={<CreditCard />} to={rampUrl} target="_blank" />
         </div>
         <div className="space-between flex items-center gap-3">
           <CurrencySelect className="hidden md:block" />
@@ -80,12 +77,7 @@ export const SiteNav = ({ className, contentClassName }: { className?: string; c
         <Link to="/transport">
           <SiteMobileNav.Item label="Swap" icon={<Repeat />} />
         </Link>
-        <Link
-          to={`https://app.ramp.network/?hostApiKey=${
-            import.meta.env.VITE_RAMP_API_KEY
-          }&hostAppName=Talisman&hostLogoUrl=${TALISMAN_LOGO_URL}&swapAsset=DOT_DOT&enabledFlows=ONRAMP,OFFRAMP`}
-          target="_blank"
-        >
+        <Link to={rampUrl} target="_blank">
           <SiteMobileNav.Item label="Buy/Sell" icon={<CreditCard />} />
         </Link>
       </SiteMobileNav>
