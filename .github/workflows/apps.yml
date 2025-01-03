@@ -16,28 +16,7 @@ jobs:
     uses: ./.github/workflows/qa.yml
     secrets: inherit
 
-  deploy-ui-storybook:
-    needs: [qa]
-    uses: ./.github/workflows/deploy.yml
-    with:
-      projectName: ${{ vars.UI_STORYBOOK_PROJECT_NAME }}
-      buildCommand: yarn turbo run build-storybook --filter=ui
-      outputDirectory: packages/ui/storybook-static
-    secrets: inherit
-
-  deploy-portal-storybook:
-    needs: [qa]
-    uses: ./.github/workflows/deploy.yml
-    with:
-      projectName: ${{ vars.PORTAL_STORYBOOK_PROJECT_NAME }}
-      buildCommand: >-
-        NODE_OPTIONS=--max_old_space_size=5120
-        yarn turbo run build-storybook --filter=portal
-      outputDirectory: apps/portal/storybook-static
-    secrets: inherit
-
   deploy-portal:
-    needs: [qa]
     uses: ./.github/workflows/deploy.yml
     with:
       projectName: ${{ vars.PORTAL_PROJECT_NAME }}
