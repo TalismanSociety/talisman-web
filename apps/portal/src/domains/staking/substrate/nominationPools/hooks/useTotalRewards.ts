@@ -33,13 +33,17 @@ export const useTotalNominationPoolRewards = (account: Account) => {
   const chain = useRecoilValue(useChainState())
 
   assertChain(chain, { hasNominationPools: true })
+  if (!chain.novaIndexerUrl)
+    throw new Error(`Cannot fetch totalNominationPoolRewards for chain ${chain.id}: no indexer`)
+
+  const accountFormat = chain.prefix
 
   try {
     // eslint-disable-next-line no-var
     var response = useAtomValue(
       totalNominationPoolRewardsAtomFamily({
         apiUrl: chain.novaIndexerUrl,
-        address: encodeAddress(account.address, chain.prefix),
+        address: encodeAddress(account.address, accountFormat),
       })
     )
   } catch (e) {
