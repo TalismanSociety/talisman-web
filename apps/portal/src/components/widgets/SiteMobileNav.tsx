@@ -52,7 +52,7 @@ export const SiteMobileNav = Object.assign(
       }}
     >
       <Context.Provider value={{ open, onRequestDismiss }}>
-        <div className="mx-auto flex h-full w-full max-w-screen-xl flex-col gap-8 overflow-scroll px-8">
+        <div className="mx-auto flex h-full w-full max-w-screen-xl flex-col gap-8 overflow-auto px-8">
           <header className="flex h-32 shrink-0 items-center justify-between gap-8">
             {headerIcon}
             <button className="block p-4" type="button" onClick={onRequestDismiss}>
