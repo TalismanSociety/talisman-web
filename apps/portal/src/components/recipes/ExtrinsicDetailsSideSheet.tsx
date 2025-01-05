@@ -49,7 +49,7 @@ const Table = (props: PropsWithChildren) => (
 
 const AccountItem = (props: { account: Account }) => (
   <ListItem
-    css={{ padding: 0, cursor: 'copy' }}
+    css={{ padding: 0, cursor: 'pointer' }}
     leadingContent={<AccountIcon account={props.account} size="3.2rem" />}
     headlineContent={props.account.name ?? truncateAddress(props.account.address)}
     supportingContent={props.account.name !== undefined && truncateAddress(props.account.address)}
@@ -90,7 +90,7 @@ export const ExtrinsicDetailsSideSheet = (props: ExtrinsicDetailsSideSheetProps)
         <DescriptionList.Description>
           <DescriptionList.Term>Extrinsic hash</DescriptionList.Term>
           <DescriptionList.Details
-            css={{ cursor: 'copy' }}
+            css={{ cursor: 'pointer' }}
             onClick={() => {
               void copyExtrinsicHashToClipboard(props.hash)
             }}
@@ -112,7 +112,7 @@ export const ExtrinsicDetailsSideSheet = (props: ExtrinsicDetailsSideSheetProps)
           <DescriptionList.Description>
             <DescriptionList.Term>Signer</DescriptionList.Term>
             <DescriptionList.Details
-              css={{ cursor: 'copy' }}
+              css={{ cursor: 'pointer' }}
               onClick={() => {
                 if (props.signer !== undefined) {
                   void copyAddressToClipboard(props.signer.address)

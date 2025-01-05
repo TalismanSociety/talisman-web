@@ -210,7 +210,7 @@ export const AccountsManagementMenu = Object.assign(
                           event.stopPropagation()
                           void copyAddressToClipboard(x.address)
                         }}
-                        css={{ cursor: 'copy' }}
+                        css={{ cursor: 'pointer' }}
                       >
                         <Copy />
                       </SurfaceIcon>
@@ -261,7 +261,7 @@ export const AccountsManagementMenu = Object.assign(
                                 event.stopPropagation()
                                 void copyAddressToClipboard(account.address)
                               }}
-                              css={{ cursor: 'copy' }}
+                              css={{ cursor: 'pointer' }}
                             >
                               <Copy />
                             </SurfaceIcon>
