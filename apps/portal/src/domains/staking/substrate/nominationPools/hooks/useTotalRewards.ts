@@ -36,10 +36,7 @@ export const useTotalNominationPoolRewards = (account: Account) => {
   if (!chain.novaIndexerUrl)
     throw new Error(`Cannot fetch totalNominationPoolRewards for chain ${chain.id}: no indexer`)
 
-  //
-  // NOTE: Novasama's Kusama indexer uses account format `0`, instead of the chain prefix of `2`.
-  //
-  const accountFormat = chain.id === 'kusama' ? 0 : chain.prefix
+  const accountFormat = chain.prefix
 
   try {
     // eslint-disable-next-line no-var

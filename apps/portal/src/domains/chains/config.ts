@@ -30,7 +30,8 @@ export const chainConfigs: ChainConfig[] = [
     hasNominationPools: true,
     priorityPool: 282,
     talismanPools: [12, 16, 282],
-    novaIndexerUrl: 'https://gateway.subquery.network/query/0x1a',
+    // From https://github.com/novasamatech/nova-utils/blob/3f3568fd9c2e068b45b5b378c4d58287d2cda68e/chains/v21/chains_dev.json#L94C29-L94C85
+    novaIndexerUrl: 'https://subquery-history-polkadot-prod.novasama-tech.org',
   },
   // Kusama
   {
@@ -38,7 +39,8 @@ export const chainConfigs: ChainConfig[] = [
     hasNominationPools: true,
     priorityPool: 15,
     talismanPools: [15],
-    novaIndexerUrl: 'https://gateway.subquery.network/query/0x1a',
+    // From https://github.com/novasamatech/nova-utils/blob/3f3568fd9c2e068b45b5b378c4d58287d2cda68e/chains/v21/chains_dev.json#L236C29-L236C83
+    novaIndexerUrl: 'https://subquery-history-kusama-prod.novasama-tech.org',
   },
   // Astar
   {
@@ -47,13 +49,14 @@ export const chainConfigs: ChainConfig[] = [
     dappStakingApi: 'https://api.astar.network/api/v3/astar/dapps-staking/',
     priorityDapp: 'ZdpeaiK28o6DzkdVJardFTZEJTAHKG3HgJn5ZPgsPh345Hg',
   },
-  // Aleph0
+  // Aleph Zero
   {
     genesisHash: '0x70255b4d28de0fc4e1a193d7e175ad1ccef431598211c55538f1018651a0344e',
     hasNominationPools: true,
     priorityPool: 47,
     talismanPools: [47],
-    novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-aleph-zero',
+    // From https://github.com/novasamatech/nova-utils/blob/3f3568fd9c2e068b45b5b378c4d58287d2cda68e/chains/v21/chains_dev.json#L6678C29-L6678C72
+    novaIndexerUrl: 'https://gateway.subquery.network/query/0x1c',
   },
   // Vara
   {
@@ -61,7 +64,8 @@ export const chainConfigs: ChainConfig[] = [
     hasNominationPools: true,
     priorityPool: 8,
     talismanPools: [8],
-    novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet---vara',
+    // From https://github.com/novasamatech/nova-utils/blob/3f3568fd9c2e068b45b5b378c4d58287d2cda68e/chains/v21/chains_dev.json#L9344C29-L9344C81
+    novaIndexerUrl: 'https://subquery-history-vara-prod.novasama-tech.org',
   },
   // Avail
   {
@@ -69,6 +73,7 @@ export const chainConfigs: ChainConfig[] = [
     hasNominationPools: true,
     priorityPool: [2, 66, 68],
     talismanPools: [2, 66, 68],
+    // From https://github.com/novasamatech/nova-utils/blob/3f3568fd9c2e068b45b5b378c4d58287d2cda68e/chains/v21/chains_dev.json#L11271C29-L11271C90
     novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-avail',
   },
   // Cere
@@ -89,6 +94,7 @@ export const chainConfigs: ChainConfig[] = [
     hasNominationPools: true,
     priorityPool: undefined,
     talismanPools: undefined,
+    // From https://github.com/novasamatech/nova-utils/blob/3f3568fd9c2e068b45b5b378c4d58287d2cda68e/chains/v21/chains_dev.json#L335C29-L335C92
     novaIndexerUrl: 'https://api.subquery.network/sq/nova-wallet/nova-wallet-westend',
   },
   // Shibuya
