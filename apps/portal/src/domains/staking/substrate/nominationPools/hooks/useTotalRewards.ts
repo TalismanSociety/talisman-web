@@ -33,13 +33,20 @@ export const useTotalNominationPoolRewards = (account: Account) => {
   const chain = useRecoilValue(useChainState())
 
   assertChain(chain, { hasNominationPools: true })
+  if (!chain.novaIndexerUrl)
+    throw new Error(`Cannot fetch totalNominationPoolRewards for chain ${chain.id}: no indexer`)
+
+  //
+  // NOTE: Novasama's Kusama indexer uses account format `0`, instead of the chain prefix of `2`.
+  //
+  const accountFormat = chain.id === 'kusama' ? 0 : chain.prefix
 
   try {
     // eslint-disable-next-line no-var
     var response = useAtomValue(
       totalNominationPoolRewardsAtomFamily({
         apiUrl: chain.novaIndexerUrl,
-        address: encodeAddress(account.address, chain.prefix),
+        address: encodeAddress(account.address, accountFormat),
       })
     )
   } catch (e) {
