@@ -56,7 +56,7 @@ export const Layout = () => {
           <WalletConnectionSideSheet />
         </main>
 
-        <SiteFooter className="mx-auto w-full max-w-screen-xl px-8" />
+        <SiteFooter className="mx-auto mt-16 w-full max-w-screen-xl px-8" />
       </Suspense>
     </div>
   )
