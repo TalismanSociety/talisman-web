@@ -9239,6 +9239,7 @@ __metadata:
     react-use: "npm:^17.4.0"
     react-winbox: "npm:^1.5.0"
     recoil: "npm:^0.7.7"
+    rxjs: "npm:^7.8.1"
     scale-ts: "npm:^1.6.0"
     storybook: "npm:^7.6.5"
     tailwind-merge: "npm:^2.5.4"
