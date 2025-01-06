@@ -504,7 +504,7 @@ export const sortedQuotesAtom = atom(async get => {
     ?.map(q => {
       if (q.state !== 'hasData') return { quote: q, fees: 0 }
       const fees = q.data?.fees.reduce((acc, fee) => {
-        const rate = tokenRates[fee.tokenId]?.usd ?? 0
+        const rate = tokenRates[fee.tokenId]?.usd?.price ?? 0
         return acc + fee.amount.toNumber() * rate
       }, 0)
       return {

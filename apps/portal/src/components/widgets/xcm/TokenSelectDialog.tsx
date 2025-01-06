@@ -48,7 +48,9 @@ export function TokenSelectDialog({
     const searchFilter: (assets: TokenPickerAssetWithBalance[]) => TokenPickerAssetWithBalance[] = search
       ? assets =>
           assets.filter(asset =>
-            `${asset.chain.name}${asset.token.key}${asset.token.originSymbol}`.toLowerCase().includes(normalisedSearch)
+            `${asset.chain.name}|${asset.token.key}|${asset.token.originSymbol}`
+              .toLowerCase()
+              .includes(normalisedSearch)
           )
       : assets => assets
 
@@ -64,7 +66,7 @@ export function TokenSelectDialog({
       title={title}
       targetWidth="60rem"
       onRequestDismiss={onRequestDismiss}
-      css={{ marginTop: '10vh', maxHeight: '80vh', minHeight: '45vh' }}
+      css={{ display: 'flex', flexDirection: 'column', marginTop: '10vh', maxHeight: '80vh', minHeight: '45vh' }}
     >
       <div className="mb-6 flex flex-col gap-4 lg:flex-row">
         <SearchBar
@@ -89,7 +91,7 @@ export function TokenSelectDialog({
           ))}
         </Select>
       </div>
-      <div className="flex max-h-[60dvh] flex-col gap-4 overflow-y-auto">
+      <div className="flex flex-col gap-4 overflow-y-auto">
         {filterSortedAssets.map((asset, index) => (
           <Asset key={index} asset={asset} onClick={() => (onRequestDismiss(), onChange(asset))} />
         ))}

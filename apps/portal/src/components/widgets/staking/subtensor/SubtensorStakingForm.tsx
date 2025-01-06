@@ -148,9 +148,10 @@ export const SubtensorStakingSideSheet = ({
   <SideSheet
     {...props}
     title={
-      <>
-        <Zap /> Stake
-      </>
+      <div className="flex items-center gap-2">
+        <Zap />
+        Stake
+      </div>
     }
     subtitle="Bittensor delegated staking"
   >

@@ -1,5 +1,5 @@
 import { type ComponentMeta, type Story } from '@storybook/react'
-import { TalismanHand } from '@talismn/web-icons'
+import { Zap } from '@talismn/web-icons'
 import { type JSXElementConstructor } from 'react'
 
 import type { Theme } from './theme'
@@ -47,7 +47,7 @@ export const DarkGreen: Story<Props> = args => {
                       margin: 0,
                     }}
                   >
-                    <TalismanHand css={{ color: contentColor }} />
+                    <Zap css={{ color: contentColor }} />
                   </figure>
                   <Text.H4>{key}</Text.H4>
                   <Text.BodyLarge>{value}</Text.BodyLarge>

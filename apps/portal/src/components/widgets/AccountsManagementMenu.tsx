@@ -8,10 +8,11 @@ import { IconButton } from '@talismn/ui/atoms/IconButton'
 import { Text } from '@talismn/ui/atoms/Text'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { Menu } from '@talismn/ui/molecules/Menu'
-import { Copy, Ethereum, Eye, EyePlus, TalismanHand, Trash2, Users, Wallet, X } from '@talismn/web-icons'
+import { Copy, Ethereum, Eye, EyePlus, Trash2, Users, Wallet, X } from '@talismn/web-icons'
 import React, { useMemo } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, useResetRecoilState, useSetRecoilState } from 'recoil'
 
+import Logo from '@/assets/logo.svg?react'
 import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { AddReadOnlyAccountDialog } from '@/components/widgets/AddReadOnlyAccountDialog'
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
@@ -97,6 +98,7 @@ export const AccountsManagementMenu = Object.assign(
 
     const portfolioAccounts = useRecoilValue(portfolioAccountsState)
     const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
+    const selectedAddresses = useRecoilValue(selectedAccountAddressesState)
 
     const getFiatBalanceLoadable = useRecoilValueLoadable(fiatBalanceGetterState)
 
@@ -165,9 +167,9 @@ export const AccountsManagementMenu = Object.assign(
                     padding: '0 1.6rem',
                   }}
                 >
-                  <div className="flex items-center gap-[0.5rem]">
-                    <TalismanHand size="1.2em" />
-                    <div>My accounts</div>
+                  <div className="flex items-center gap-2">
+                    <Logo className="h-[1em] w-[1em]" />
+                    <span>My accounts</span>
                   </div>
                   <IconButton size="2rem" onClick={toggleOpen}>
                     <X />
@@ -177,6 +179,7 @@ export const AccountsManagementMenu = Object.assign(
                 {portfolioAccounts.map((x, index) => (
                   <Menu.Item.Button
                     key={index}
+                    className={selectedAddresses?.includes(x.address) ? 'bg-primary/5' : ''}
                     headlineContent={Maybe.of(getFiatBalanceLoadable.valueMaybe()?.(x.address)).mapOr(
                       <CircularProgressIndicator size="1em" />,
                       balance => (
@@ -207,7 +210,7 @@ export const AccountsManagementMenu = Object.assign(
                           event.stopPropagation()
                           void copyAddressToClipboard(x.address)
                         }}
-                        css={{ cursor: 'copy' }}
+                        css={{ cursor: 'pointer' }}
                       >
                         <Copy />
                       </SurfaceIcon>
@@ -258,7 +261,7 @@ export const AccountsManagementMenu = Object.assign(
                                 event.stopPropagation()
                                 void copyAddressToClipboard(account.address)
                               }}
-                              css={{ cursor: 'copy' }}
+                              css={{ cursor: 'pointer' }}
                             >
                               <Copy />
                             </SurfaceIcon>

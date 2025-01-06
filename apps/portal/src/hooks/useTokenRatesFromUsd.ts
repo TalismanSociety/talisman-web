@@ -15,13 +15,13 @@ export const useTokenRatesFromUsd = (usdValue: string | number | undefined | nul
 
     const defaultTokenRate = Object.values(tokenRates ?? {})[0]
     if (!defaultTokenRate) return null
-    const baseRate = defaultTokenRate.usd
+    const baseRate = defaultTokenRate.usd?.price
     if (!baseRate) return null
     return Object.entries(defaultTokenRate).reduce((acc, [currency, rate]) => {
       if (rate === null || rate === undefined) return acc
       return {
         ...acc,
-        [currency]: (+usdValue * rate) / baseRate,
+        [currency]: (+usdValue * rate?.price) / baseRate,
       }
     }, {} as TokenRates)
   }, [tokenRates, usdValue])
