@@ -29,4 +29,5 @@ export type Provider = {
   genesisHash: `0x${string}`
   apiEndpoint?: string
   tokenPair?: SlpxPair | SlpxSubstratePair
+  position?: string
 }
