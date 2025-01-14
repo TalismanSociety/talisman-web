@@ -17,6 +17,7 @@ import { Link } from 'react-router-dom'
 
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import ErrorBoundaryFallback from '@/components/widgets/staking/ErrorBoundaryFallback'
+import { getPosition } from '@/domains/staking/utils/getPosition'
 import { cn } from '@/util/cn'
 
 import { Provider } from '../hooks/types'
@@ -37,6 +38,16 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const { getValuesForSortType, setValues } = useStakeValues()
 
+  const sortedData = useMemo(() => {
+    if (!dataQuery) return []
+    return [...dataQuery].sort((a, b) => {
+      // Ascending order by position
+      const aPosition = getPosition({ providerName: a.provider, tokenSymbol: a.nativeToken?.symbol })
+      const bPosition = getPosition({ providerName: b.provider, tokenSymbol: b.nativeToken?.symbol })
+      return aPosition - bPosition
+    })
+  }, [dataQuery])
+
   // Generic sorting function that sorts based on the provided sort type
   const sortingFn = useCallback(
     (sortType: StakeType) => (rowA: { id: string | number }, rowB: { id: string | number }) => {
@@ -47,8 +58,6 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
     },
     [getValuesForSortType]
   )
-
-  const defaultData = useMemo(() => [], [])
 
   const columns = useMemo<ColumnDef<Provider>[]>(
     () => [
@@ -173,7 +182,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
   }))
 
   const table = useReactTable({
-    data: dataQuery ?? defaultData,
+    data: sortedData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
