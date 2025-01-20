@@ -3,6 +3,7 @@
 import type { BaseWallet } from '@polkadot-onboard/core'
 import type { Signer, SubmittableExtrinsic } from '@polkadot/api/types'
 import type { Atom, Getter, SetStateAction, Setter } from 'jotai'
+import type { Chain as ViemChain } from 'viem/chains'
 import { ApiPromise } from '@polkadot/api'
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { evmErc20TokenId, evmNativeTokenId, subNativeTokenId } from '@talismn/balances'
@@ -19,7 +20,7 @@ import type { TransactionRequest, WalletClient } from 'viem'
 import { isAddress } from 'viem'
 import { arbitrum, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon } from 'viem/chains'
 
-export const supportedEvmChains = {
+export const supportedEvmChains: Record<string, ViemChain> = {
   eth: mainnet,
   bsc: bsc,
   arbitrum: arbitrum,

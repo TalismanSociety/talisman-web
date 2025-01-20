@@ -13,7 +13,8 @@ import { Globe, X } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { isAddress } from 'viem'
-import * as allChains from 'viem/chains'
+import { type Chain as ViemChain } from 'viem/chains'
+import * as allEvmChains from 'viem/chains'
 
 import { useDebounce } from '@/hooks/useDebounce'
 import { cn } from '@/util/cn'
@@ -331,7 +332,8 @@ export const SwapTokensModal: React.FC<Props> = ({
                             substrateAddress={substrateAddress}
                             balance={balances?.[asset.id]}
                             explorerUrl={
-                              Object.values(allChains).find(c => c.id === +asset.chainId)?.blockExplorers?.default.url
+                              Object.values(allEvmChains).find((c: ViemChain) => c.id === +asset.chainId)
+                                ?.blockExplorers?.default.url
                             }
                             onClick={handleSelectAsset}
                           />
