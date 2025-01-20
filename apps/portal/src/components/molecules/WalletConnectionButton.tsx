@@ -35,7 +35,8 @@ export const WalletConnectionButton = () => {
         <div className="whitespace-pre text-xl leading-none">
           {hasActiveConnection ? (
             <div className="flex items-center gap-1">
-              <div className="w-[1rem]">{accounts.length}</div>Connected
+              <span>{accounts.length}</span>
+              <span>Connected</span>
             </div>
           ) : (
             <div>Connect wallet</div>
