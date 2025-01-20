@@ -7,6 +7,7 @@ import type {
   SwapStatusResponse,
 } from '@chainflip/sdk/swap'
 import type { Getter, Setter } from 'jotai'
+import type { Chain as ViemChain } from 'viem/chains'
 import { Asset, SwapSDK } from '@chainflip/sdk/swap'
 import { chainsAtom } from '@talismn/balances-react'
 import { atom } from 'jotai'
@@ -44,7 +45,7 @@ import {
 const PROTOCOL: SupportedSwapProtocol = 'chainflip'
 const PROTOCOL_NAME = 'Chainflip'
 const DECENTRALISATION_SCORE = 2
-const EVM_CHAINS = [mainnet, sepolia, arbitrum]
+const EVM_CHAINS: ViemChain[] = [mainnet, sepolia, arbitrum]
 
 const CHAINFLIP_CHAIN_TO_ID_MAP: Record<Chain, string> = {
   Arbitrum: '42161',

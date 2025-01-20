@@ -2,7 +2,8 @@ import { chainsAtom, evmNetworksAtom } from '@talismn/balances-react'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { createPublicClient, http } from 'viem'
-import * as chains from 'viem/chains'
+import { type Chain as ViemChain } from 'viem/chains'
+import * as allEvmChains from 'viem/chains'
 
 import { substrateApiGetterAtom } from '@/domains/common/recoils/api'
 import { computeSubstrateBalance } from '@/util/balances'
@@ -52,7 +53,7 @@ const evmBalancesAtom = atomFamily((chainId: string) =>
       const evmNetworks = await get(evmNetworksAtom)
       const network = evmNetworks.find(network => network.id.toString() === chainId.toString())
       const rpc = network?.rpcs?.[1] ?? network?.rpcs?.[0]
-      const chain = Object.values(chains).find(chain => chain.id.toString() === chainId)
+      const chain: ViemChain | undefined = Object.values(allEvmChains).find(chain => chain.id.toString() === chainId)
       if (!rpc || !chain) return { balances: {} }
 
       // make multicall request here

@@ -9,6 +9,7 @@ import { Loadable } from 'jotai/vanilla/utils/loadable'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
 import { createPublicClient, erc20Abi, http, isAddress } from 'viem'
+import { type Chain as ViemChain } from 'viem/chains'
 import * as allEvmChains from 'viem/chains'
 import { useWalletClient } from 'wagmi'
 
@@ -285,7 +286,7 @@ const erc20Atom = atomFamily((addressChainId: string) =>
     const isValidAddress = isAddress(address)
     if (!isValidAddress || isNaN(chainId)) return null
 
-    const chain = Object.values(allEvmChains).find(c => c.id === chainId)
+    const chain: ViemChain | undefined = Object.values(allEvmChains).find(c => c.id === chainId)
     if (!chain) return null
     const platforms = await get(coingeckoAssetPlatformsAtom)
     const platform = platforms.find(p => p.chain_identifier === chainId)
