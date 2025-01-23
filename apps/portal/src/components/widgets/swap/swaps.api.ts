@@ -28,7 +28,6 @@ import type {
 import { popularTokens, talismanTokens } from './curated-tokens'
 import { knownEvmNetworksAtom } from './helpers'
 import { swapInfoTabAtom } from './side-panel'
-import { chainflipSwapModule } from './swap-modules/chainflip.swap-module'
 import {
   fromAmountAtom,
   fromAssetAtom,
@@ -52,7 +51,8 @@ const coingeckoApiUrl = import.meta.env.VITE_COIN_GECKO_API
 const coingeckoApiKey = import.meta.env.VITE_COIN_GECKO_API_KEY
 const coingeckoTier = import.meta.env.VITE_COIN_GECKO_API_TIER
 
-const swapModules = [chainflipSwapModule, simpleswapSwapModule, lifiSwapModule]
+// import { chainflipSwapModule } from './swap-modules/chainflip.swap-module'
+const swapModules = [/* chainflipSwapModule, */ simpleswapSwapModule, lifiSwapModule]
 const ETH_LOGO = 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg'
 const BTC_LOGO = 'https://assets.coingecko.com/coins/images/1/standard/bitcoin.png?1696501400'
 const btcTokens = {
