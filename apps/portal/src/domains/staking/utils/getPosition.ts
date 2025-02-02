@@ -3,18 +3,20 @@
  * providerName_tokenSymbol: position
  */
 const position: Record<string, number> = {
-  polkadot_dot: 0,
-  bittensor_tao: 1,
-  kusama_ksm: 2,
-  aleph_zero_azero: 3,
-  vara_vara: 4,
-  avail_avail: 5,
-  cere_cere: 6,
-  bifrost_slpx_manta: 7,
-  bifrost_slpx_glmr: 8,
-  bifrost_slpx_dot: 9,
-  lido_eth: 10,
-  astar_astar: 11,
+  // analog_timechain_anlog: 0, // prod
+  analog_temporary_testnet_danlog: 0, // testnet
+  polkadot_dot: 1,
+  bittensor_tao: 2,
+  kusama_ksm: 3,
+  aleph_zero_azero: 4,
+  vara_vara: 5,
+  avail_avail: 6,
+  cere_cere: 7,
+  bifrost_slpx_manta: 8,
+  bifrost_slpx_glmr: 9,
+  bifrost_slpx_dot: 10,
+  lido_eth: 11,
+  astar_astar: 12,
 }
 
 export const getPosition = ({

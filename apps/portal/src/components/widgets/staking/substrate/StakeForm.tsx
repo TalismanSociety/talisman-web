@@ -241,7 +241,7 @@ const EstimatedYield = memo(
   (props: { amount: Decimal }) => {
     const stakedReturn = useApr()
     const annualReturn = useMemo(
-      () => new BN(props.amount.planck.toString()).muln(stakedReturn),
+      () => new BN(props.amount.planck.toString()).muln(isNaN(stakedReturn) ? 0 : stakedReturn),
       [props.amount.planck, stakedReturn]
     )
     const parsedAnnualReturn = useTokenAmountFromPlanck(annualReturn)
