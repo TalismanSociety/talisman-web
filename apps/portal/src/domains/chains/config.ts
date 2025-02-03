@@ -114,3 +114,5 @@ export const chainConfigs: ChainConfig[] = [
     priorityDapp: undefined,
   },
 ]
+
+export const claimPermissionUnsupportedChainIds: string[] = ['analog-temporary-testnet', 'analog-timechain']
