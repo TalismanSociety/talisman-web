@@ -14,6 +14,8 @@ import { paymentInfoState } from '@/domains/common/recoils'
 import { MIN_SUBTENSOR_STAKE } from '../atoms/delegates'
 import { type Stake } from './useStake'
 
+const MAINNET_NETUID = 0
+
 export const useAddStakeForm = (account: Account, stake: Stake, delegate: string) => {
   const [api, [accountInfo]] = useRecoilValue(
     waitForAll([useSubstrateApiState(), useQueryMultiState([['system.account', account.address]])])
@@ -22,16 +24,26 @@ export const useAddStakeForm = (account: Account, stake: Stake, delegate: string
   const [input, setInput] = useState('')
   const amount = useTokenAmount(input)
 
+  const apiEndpoint = useSubstrateApiEndpoint()
+
+  console.log(`apiEndpoint: ${apiEndpoint}`)
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tx: SubmittableExtrinsic<any> = useMemo(
-    () =>
-      api.tx.utility.batchAll([
+  const tx: SubmittableExtrinsic<any> = useMemo(() => {
+    try {
+      return api.tx.utility.batchAll([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (api.tx as any)?.subtensorModule?.addStake?.(delegate, amount.decimalAmount?.planck ?? 0n),
         api.tx.system.remarkWithEvent(`talisman-bittensor`),
-      ]),
-    [api.tx, delegate, amount.decimalAmount?.planck]
-  )
+      ])
+    } catch {
+      return api.tx.utility.batchAll([
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (api.tx as any)?.subtensorModule?.addStake?.(delegate, MAINNET_NETUID, amount.decimalAmount?.planck ?? 0n),
+        api.tx.system.remarkWithEvent(`talisman-bittensor`),
+      ])
+    }
+  }, [api.tx, delegate, amount.decimalAmount?.planck])
 
   const [feeEstimate, isFeeEstimateReady] = useStakeFormFeeEstimate(account.address, tx)
 
@@ -117,11 +129,19 @@ export const useUnstakeForm = (stake: Stake, delegate: string) => {
   const amount = useTokenAmount(input)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tx: SubmittableExtrinsic<any> = useMemo(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    () => (api.tx as any)?.subtensorModule?.removeStake?.(delegate, amount.decimalAmount?.planck ?? 0n),
-    [api.tx, delegate, amount.decimalAmount?.planck]
-  )
+  const tx: SubmittableExtrinsic<any> = useMemo(() => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return (api.tx as any)?.subtensorModule?.removeStake?.(delegate, amount.decimalAmount?.planck ?? 0n)
+    } catch {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return (api.tx as any)?.subtensorModule?.removeStake?.(
+        delegate,
+        MAINNET_NETUID,
+        amount.decimalAmount?.planck ?? 0n
+      )
+    }
+  }, [api.tx, delegate, amount.decimalAmount?.planck])
   const extrinsic = useExtrinsic(tx)
 
   const availablePlanck = useMemo(
