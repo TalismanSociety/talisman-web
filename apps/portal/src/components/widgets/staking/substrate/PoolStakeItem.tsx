@@ -7,6 +7,7 @@ import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { RedactableBalance } from '@/components/widgets/RedactableBalance'
 import { Account } from '@/domains/accounts/recoils'
+import { claimPermissionUnsupportedChainIds } from '@/domains/chains/config'
 import { useChainState } from '@/domains/chains/hooks'
 import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@/domains/chains/recoils'
 import { useEraEtaFormatter } from '@/domains/common/hooks/useEraEta'
@@ -56,6 +57,8 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
   const [claimPermissionDialogOpen, setClaimPermissionDialogOpen] = useState(false)
 
   const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
+
+  const showClaimPermission = !claimPermissionUnsupportedChainIds.includes(chain.id)
 
   return (
     <>
@@ -151,7 +154,7 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
                 onClick={() => setStatsDialogOpen(true)}
                 withTransition
               />
-              {!item.account.readonly && (
+              {!item.account.readonly && showClaimPermission && (
                 <StakePosition.MenuButton.Item.Button
                   headlineContent="Claim settings"
                   onClick={() => setClaimPermissionDialogOpen(true)}

@@ -195,13 +195,17 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
   return (
     <div className="flex w-full flex-1 flex-col gap-[0.8rem]">
       {/* Column Headers */}
-      <div className="mb-[0.4rem] hidden grid-cols-8 px-[1.6rem] xl:grid">
+      <div className="mb-[0.4rem] hidden grid-cols-[repeat(16,_minmax(0,_1fr))] px-[1.6rem] xl:grid">
         {table.getHeaderGroups().map(headerGroup =>
           headerGroup.headers.map(header => (
             <Text.BodySmall
-              className={cn('flex items-center gap-2 text-left last:text-right', {
-                'cursor-pointer select-none': header.column.getCanSort(),
-              })}
+              className={cn(
+                'flex items-center gap-2 text-left last:text-right',
+                header.column.getCanSort() && 'cursor-pointer select-none',
+                'col-span-2',
+                header.column.id === 'symbol' && 'col-span-3',
+                header.column.id === 'apr' && 'col-span-1'
+              )}
               key={header.id}
               onClick={header.column.getToggleSortingHandler()}
               title={
@@ -234,10 +238,20 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
             renderFallback={() => <ErrorBoundaryFallback logo={logo} symbol={symbol} provider={provider ?? ''} />}
           >
             {/* Render as table in xl > screens */}
-            <Surface as="article" className="hidden grid-cols-8 items-center rounded-[16px] p-[1.6rem] xl:grid">
+            <Surface
+              as="article"
+              className="hidden grid-cols-[repeat(16,_minmax(0,_1fr))] items-center rounded-[16px] p-[1.6rem] xl:grid"
+            >
               {row.getVisibleCells().map(cell => (
                 <ErrorBoundary renderFallback={() => <>--</>} key={cell.id}>
-                  <div className="flex-grow last:text-right">
+                  <div
+                    className={cn(
+                      'flex-grow last:text-right',
+                      'col-span-2',
+                      cell.column.id === 'symbol' && 'col-span-3',
+                      cell.column.id === 'apr' && 'col-span-1'
+                    )}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </div>
                 </ErrorBoundary>

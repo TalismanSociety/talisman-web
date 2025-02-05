@@ -24,7 +24,9 @@ const Asset = ({ chainId, logo, symbol, chainName }: AssetProps) => {
         <Text.Body as="div" alpha="high">
           {symbol}
         </Text.Body>
-        <Text.BodySmall as="div">{chainName}</Text.BodySmall>
+        <Text.BodySmall className="truncate" as="div">
+          {chainName}
+        </Text.BodySmall>
       </div>
     </div>
   )

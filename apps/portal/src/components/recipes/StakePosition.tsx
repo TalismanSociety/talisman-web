@@ -293,6 +293,7 @@ export const StakePosition = Object.assign(
                   display: 'flex',
                   alignItems: 'center',
                   gap: '1.2rem',
+                  overflow: 'hidden',
                 }}
               >
                 <AssetLogoWithChain assetLogoUrl={props.assetLogoSrc} chainId={props.chainId} />
@@ -301,14 +302,13 @@ export const StakePosition = Object.assign(
                     display: 'contents',
                     [MEDIUM_CONTAINER_QUERY]: { display: 'none' },
                     [LARGE_CONTAINER_QUERY]: { display: 'contents' },
-                    overflow: 'hidden',
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis',
                   }}
                 >
-                  <Text.Body as="div" alpha="high">
+                  <Text.Body className="truncate" as="div" alpha="high">
                     {props.assetSymbol}
-                    <Text.BodySmall as="div">{props.chain}</Text.BodySmall>
+                    <Text.BodySmall className="truncate" as="div">
+                      {props.chain}
+                    </Text.BodySmall>
                   </Text.Body>
                 </span>
               </span>

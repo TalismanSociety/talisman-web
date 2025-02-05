@@ -24,6 +24,14 @@ export type ChainConfig =
   | (BaseChain & (ChainWithNominationPools | ChainWithDappStaking | ChainWithSubtensorStaking))
 
 export const chainConfigs: ChainConfig[] = [
+  // Analog Timechain
+  {
+    genesisHash: '0x1459b0204b92719ffc978c5da3d6a2057973916bd548f8076df2064bc1cb4cfc',
+    hasNominationPools: true,
+    priorityPool: 1,
+    // TODO: Add novaIndexerUrl for totalRewards calculation
+    // novaIndexerUrl: '',
+  },
   // Polkadot
   {
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
@@ -105,3 +113,5 @@ export const chainConfigs: ChainConfig[] = [
     priorityDapp: undefined,
   },
 ]
+
+export const claimPermissionUnsupportedChainIds: string[] = ['analog-temporary-testnet', 'analog-timechain']
