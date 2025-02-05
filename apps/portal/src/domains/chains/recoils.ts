@@ -128,7 +128,7 @@ export const nativeTokenPriceState = selectorFamily({
 })
 
 export const useNativeTokenPriceState = (currency?: string) =>
-  nativeTokenPriceState({ genesisHash: useContext(ChainContext).genesisHash, currency })
+  nativeTokenPriceState({ genesisHash: useContext(ChainContext).genesisHash, currency }) || 0
 
 export const nativeTokenDecimalState = selectorFamily({
   key: 'NativeTokenDecimal',
