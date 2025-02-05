@@ -66,6 +66,8 @@ type PoolInfoProps = {
 const PoolInfo = (props: PoolInfoProps) => {
   const [expanded, setExpanded] = useState(false)
   const surfaceColor = useSurfaceColor()
+  const chain = props.chain
+  console.log({ chain })
   return (
     <motion.div
       animate={String(expanded)}
@@ -126,11 +128,13 @@ const PoolInfo = (props: PoolInfoProps) => {
             </Text.Body>
           </div>
         </dl>
-        <Text.Body as="p" role="button">
-          {props.chain !== 'polkadot'
-            ? `We recommend joining the Talisman Pool, which curates a selection of high quality validators.`
-            : `Talisman automatically finds you the best available nomination pool.`}
-        </Text.Body>
+        {props.chain !== 'analog-timechain' && (
+          <Text.Body as="p" role="button">
+            {props.chain !== 'polkadot'
+              ? `We recommend joining the Talisman Pool, which curates a selection of high quality validators.`
+              : `Talisman automatically finds you the best available nomination pool.`}
+          </Text.Body>
+        )}
         <Text.Body
           as="div"
           role="button"
