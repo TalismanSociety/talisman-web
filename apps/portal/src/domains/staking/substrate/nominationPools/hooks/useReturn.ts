@@ -64,7 +64,7 @@ export const useApr = () => {
 
     const inflationToStakers = dayRewardRate.multipliedBy(365)
 
-    return inflationToStakers.dividedBy(supplyStaked).toNumber()
+    return inflationToStakers.dividedBy(supplyStaked).toNumber() || 0
   }, [erasPerDay, lastEraTotalStaked, rewards, totalIssuance])
 }
 
