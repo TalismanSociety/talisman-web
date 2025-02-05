@@ -123,7 +123,7 @@ export const nativeTokenPriceState = selectorFamily({
         return 0
       }
 
-      return get(tokenPriceState({ coingeckoId, currency }))
+      return get(tokenPriceState({ coingeckoId, currency })) || 0
     },
 })
 
