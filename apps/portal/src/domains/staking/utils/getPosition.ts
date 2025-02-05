@@ -3,8 +3,7 @@
  * providerName_tokenSymbol: position
  */
 const position: Record<string, number> = {
-  // analog_timechain_anlog: 0, // prod
-  analog_temporary_testnet_danlog: 0, // testnet
+  analog_timechain_anlog: 0,
   polkadot_dot: 1,
   bittensor_tao: 2,
   kusama_ksm: 3,

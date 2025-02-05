@@ -26,8 +26,7 @@ export type ChainConfig =
 export const chainConfigs: ChainConfig[] = [
   // Analog Timechain
   {
-    // genesisHash: '0x1459b0204b92719ffc978c5da3d6a2057973916bd548f8076df2064bc1cb4cfc', // prod
-    genesisHash: '0x65b738fc9aba89839da77729e139b7030b41003c2f88247c5be51b321bc7a779', // testnet
+    genesisHash: '0x1459b0204b92719ffc978c5da3d6a2057973916bd548f8076df2064bc1cb4cfc',
     hasNominationPools: true,
     priorityPool: 1,
     // TODO: Add novaIndexerUrl for totalRewards calculation
