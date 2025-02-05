@@ -66,8 +66,7 @@ type PoolInfoProps = {
 const PoolInfo = (props: PoolInfoProps) => {
   const [expanded, setExpanded] = useState(false)
   const surfaceColor = useSurfaceColor()
-  const chain = props.chain
-  console.log({ chain })
+
   return (
     <motion.div
       animate={String(expanded)}
