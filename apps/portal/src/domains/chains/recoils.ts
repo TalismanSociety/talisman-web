@@ -123,12 +123,12 @@ export const nativeTokenPriceState = selectorFamily({
         return 0
       }
 
-      return get(tokenPriceState({ coingeckoId, currency }))
+      return get(tokenPriceState({ coingeckoId, currency })) || 0
     },
 })
 
 export const useNativeTokenPriceState = (currency?: string) =>
-  nativeTokenPriceState({ genesisHash: useContext(ChainContext).genesisHash, currency }) || 0
+  nativeTokenPriceState({ genesisHash: useContext(ChainContext).genesisHash, currency })
 
 export const nativeTokenDecimalState = selectorFamily({
   key: 'NativeTokenDecimal',
