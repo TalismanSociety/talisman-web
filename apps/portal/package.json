@@ -83,7 +83,7 @@
     "tailwindcss-animate": "^1.0.7",
     "threads": "^1.7.0",
     "victory": "^36.6.8",
-    "viem": "^2.9.27",
+    "viem": "^2.22.22",
     "wagmi": "^2.5.20"
   },
   "devDependencies": {
