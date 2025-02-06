@@ -18,6 +18,7 @@ import { Maybe } from '@/util/monads'
 
 import { DelegateSelectorDialog } from './DelegateSelectorDialog'
 import { IncompleteSelectionStakeForm, StakeForm } from './StakeForm'
+import { SubnetSelectorDialog } from './SubnetSelectorDialog'
 import { SubtensorStakingSideSheet } from './SubtensorStakingForm'
 
 type StakeSideSheetProps = {
@@ -104,6 +105,13 @@ const StakeSideSheetContent = (props: StakeSideSheetContentProps) => {
           selected={delegate}
           onRequestDismiss={() => setDelegateSelectorOpen(false)}
           onConfirm={setDelegate}
+        />
+      )}
+      {subnetSelectorOpen && (
+        <SubnetSelectorDialog
+          selected={delegate}
+          onRequestDismiss={() => setSubnetSelectorOpen(false)}
+          onConfirm={() => console.log('Set subnet')}
         />
       )}
     </>
