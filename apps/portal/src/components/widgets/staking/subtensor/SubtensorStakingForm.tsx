@@ -73,8 +73,11 @@ export type SubtensorStakingFormProps = {
   accountSelector: ReactNode
   amountInput: ReactNode
   selectionInProgress?: boolean
-  selectedName?: ReactNode
-  onRequestChange: () => unknown
+  subnetSelectionInProgress?: boolean
+  selectedName?: string
+  selectedSubnetName?: string
+  onRequestChange: () => void
+  onSelectDelegate: () => void
   estimatedRewards: ReactNode
   currentStakedBalance?: ReactNode
   stakeButton: ReactNode
@@ -104,6 +107,23 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => (
           renderSelected={() =>
             props.selectedName === undefined ? undefined : (
               <ListItem headlineContent={props.selectedName} css={{ padding: '0.8rem', paddingLeft: 0 }} />
+            )
+          }
+          css={{ width: '100%' }}
+        />
+      </label>
+    </div>
+    <div css={{ cursor: 'pointer' }} onClick={props.onSelectDelegate}>
+      <label css={{ pointerEvents: 'none' }}>
+        <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
+          Select Subnet
+        </Text.BodySmall>
+        <Select
+          loading={props.subnetSelectionInProgress}
+          placeholder="Select a subnet"
+          renderSelected={() =>
+            props.selectedSubnetName === undefined ? undefined : (
+              <ListItem headlineContent={props.selectedSubnetName} css={{ padding: '0.8rem', paddingLeft: 0 }} />
             )
           }
           css={{ width: '100%' }}

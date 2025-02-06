@@ -44,8 +44,11 @@ const StakeSideSheetContent = (props: StakeSideSheetContentProps) => {
   const { delegate, setDelegate } = props
 
   const [delegateSelectorOpen, setDelegateSelectorOpen] = useState(false)
+  const [subnetSelectorOpen, setSubnetSelectorOpen] = useState(false)
   const [delegateSelectorInTransition, startDelegateSelectorTransition] = useTransition()
+  const [subnetSelectorInTransition, startSubnetSelectorTransition] = useTransition()
   const openDelegateSelector = () => startDelegateSelectorTransition(() => setDelegateSelectorOpen(true))
+  const openSubnetSelector = () => startSubnetSelectorTransition(() => setSubnetSelectorOpen(true))
 
   const assetSelector = useMemo(
     () => (
@@ -80,15 +83,20 @@ const StakeSideSheetContent = (props: StakeSideSheetContentProps) => {
           accountSelector={accountSelector}
           assetSelector={assetSelector}
           selectionInProgress={delegateSelectorInTransition}
+          subnetSelectionInProgress={subnetSelectorInTransition}
           selectedName={delegate.name}
+          selectedSubnetName="Eu gosto de você"
           onRequestChange={openDelegateSelector}
+          onSelectDelegate={openSubnetSelector}
         />
       ) : (
         <IncompleteSelectionStakeForm
           accountSelector={accountSelector}
           assetSelector={assetSelector}
           selectedName={delegate?.name}
+          selectedSubnetName="Eu gosto de você"
           onRequestChange={openDelegateSelector}
+          onSelectDelegate={openSubnetSelector}
         />
       )}
       {delegateSelectorOpen && (
@@ -140,6 +148,7 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
                   accountSelector={<Select />}
                   assetSelector={<Select />}
                   onRequestChange={() => {}}
+                  onSelectDelegate={() => {}}
                 />
               </div>
               <div css={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

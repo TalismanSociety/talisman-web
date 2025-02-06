@@ -43,8 +43,11 @@ export const StakeForm = (props: StakeFormProps) => {
         />
       }
       selectionInProgress={props.selectionInProgress}
+      subnetSelectionInProgress={props.subnetSelectionInProgress}
       selectedName={props.selectedName}
+      selectedSubnetName={props.selectedSubnetName}
       onRequestChange={props.onRequestChange}
+      onSelectDelegate={props.onSelectDelegate}
       stakeButton={
         <SubtensorStakingForm.StakeButton
           disabled={!ready}
@@ -75,15 +78,27 @@ type IncompleteSelectionStakeFormProps = {
   accountSelector: ReactNode
   assetSelector: ReactNode
   selectionInProgress?: boolean
-  selectedName?: ReactNode
+  subnetSelectionInProgress?: boolean
+  selectedName?: string
+  selectedSubnetName?: string
   onRequestChange: () => unknown
+  onSelectDelegate: () => void
 }
-export const IncompleteSelectionStakeForm = (props: IncompleteSelectionStakeFormProps) => (
+export const IncompleteSelectionStakeForm = ({
+  accountSelector,
+  assetSelector,
+  selectedName,
+  selectedSubnetName,
+  onRequestChange,
+  onSelectDelegate,
+}: IncompleteSelectionStakeFormProps) => (
   <SubtensorStakingForm
-    accountSelector={props.accountSelector}
-    amountInput={<SubtensorStakingForm.AmountInput assetSelector={props.assetSelector} disabled />}
-    selectedName={props.selectedName}
-    onRequestChange={props.onRequestChange}
+    accountSelector={accountSelector}
+    amountInput={<SubtensorStakingForm.AmountInput assetSelector={assetSelector} disabled />}
+    selectedName={selectedName}
+    selectedSubnetName={selectedSubnetName}
+    onRequestChange={onRequestChange}
+    onSelectDelegate={onSelectDelegate}
     stakeButton={<SubtensorStakingForm.StakeButton disabled />}
     estimatedRewards="..."
   />
