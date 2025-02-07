@@ -8,6 +8,7 @@ import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useAllDelegateInfos } from '@/domains/staking/subtensor/hooks/useAllDelegateInfos'
 import { useDelegates } from '@/domains/staking/subtensor/hooks/useDelegates'
 import { useDelegatesStats } from '@/domains/staking/subtensor/hooks/useDelegatesStats'
+import { useGetSubnetPools } from '@/domains/staking/subtensor/hooks/useGetSubnetPools'
 
 const DEFAULT_SUBNET = 0
 
@@ -18,6 +19,8 @@ type SubnetSelectorDialogProps = {
 }
 
 export const SubnetSelectorDialog = (props: SubnetSelectorDialogProps) => {
+  const { data, isLoading, error } = useGetSubnetPools()
+  console.log({ isLoading, error, data })
   const subnets = { 0: { name: 'Root Subnet' } }
   // const delegates = useDelegates()
   const allDelegateInfos = useAllDelegateInfos()

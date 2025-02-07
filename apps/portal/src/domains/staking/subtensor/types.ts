@@ -57,3 +57,34 @@ export type ValidatorsData = {
   pagination: Pagination
   data: ValidatorData[]
 }
+
+type SevenDayPrice = {
+  block_number: number
+  timestamp: string // ISO string date format
+  price: string // Keeping it as string since it's returned as string
+}
+
+type SubnetPool = {
+  netuid: number
+  block_number: number
+  timestamp: string
+  name: string
+  symbol: string
+  market_cap: string
+  liquidity: string
+  total_tao: string
+  total_alpha: string
+  alpha_in_pool: string
+  alpha_staked: string
+  price: string
+  price_change_1_hour: string
+  price_change_1_day: string
+  price_change_1_week: string
+  tao_volume_24_hr: string
+  seven_day_prices: SevenDayPrice[]
+}
+
+export type SubnetApiResponse = {
+  pagination: Pagination
+  data: SubnetPool[]
+}
