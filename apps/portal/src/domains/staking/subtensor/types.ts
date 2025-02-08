@@ -64,7 +64,7 @@ type SevenDayPrice = {
   price: string // Keeping it as string since it's returned as string
 }
 
-type SubnetPool = {
+export type SubnetPool = {
   netuid: number
   block_number: number
   timestamp: string
