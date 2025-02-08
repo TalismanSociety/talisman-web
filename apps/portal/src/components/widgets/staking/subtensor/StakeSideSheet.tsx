@@ -1,11 +1,12 @@
 import { Select } from '@talismn/ui/molecules/Select'
-import { Suspense, useMemo, useState, useTransition } from 'react'
+import { Suspense, useEffect, useMemo, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
 import { useAccountSelector } from '@/components/widgets/AccountSelector'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
+import { ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
 import { writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { useChainState } from '@/domains/chains/hooks'
 import { ChainProvider } from '@/domains/chains/provider'
@@ -13,7 +14,9 @@ import { ChainInfo, subtensorStakingEnabledChainsState } from '@/domains/chains/
 import { DEFAULT_DELEGATE, Delegate, MIN_SUBTENSOR_STAKE } from '@/domains/staking/subtensor/atoms/delegates'
 import { useDelegateAprFormatted } from '@/domains/staking/subtensor/hooks/useApr'
 import { useDelegates } from '@/domains/staking/subtensor/hooks/useDelegates'
+import { useGetSubnetPools } from '@/domains/staking/subtensor/hooks/useGetSubnetPools'
 import { useTotalTaoStakedFormatted } from '@/domains/staking/subtensor/hooks/useTotalTaoStakedFormatted'
+import { SubnetPool } from '@/domains/staking/subtensor/types'
 import { Maybe } from '@/util/monads'
 
 import { DelegateSelectorDialog } from './DelegateSelectorDialog'
@@ -29,10 +32,19 @@ type StakeSideSheetProps = {
 
 type StakeSideSheetContentProps = Omit<StakeSideSheetProps, 'onRequestDismiss'> & {
   delegate: Delegate | undefined
+  subnet: SubnetPool | undefined
   setDelegate: React.Dispatch<React.SetStateAction<Delegate | undefined>>
+  setSubnet: React.Dispatch<React.SetStateAction<SubnetPool | undefined>>
 }
 
-const StakeSideSheetContent = (props: StakeSideSheetContentProps) => {
+const StakeSideSheetContent = ({
+  delegate,
+  chains,
+  subnet,
+  setSubnet,
+  setDelegate,
+  onChangeChain,
+}: StakeSideSheetContentProps) => {
   const [searchParams] = useSearchParams()
 
   const chain = useRecoilValue(useChainState())
@@ -42,7 +54,6 @@ const StakeSideSheetContent = (props: StakeSideSheetContentProps) => {
       ? 0
       : accounts => accounts?.find(x => x.address === searchParams.get('account'))
   )
-  const { delegate, setDelegate } = props
 
   const [delegateSelectorOpen, setDelegateSelectorOpen] = useState(false)
   const [subnetSelectorOpen, setSubnetSelectorOpen] = useState(false)
@@ -56,13 +67,13 @@ const StakeSideSheetContent = (props: StakeSideSheetContentProps) => {
       <Select
         value={chain.id}
         onChangeValue={id => {
-          const chain = props.chains.find(x => x.id === id)
+          const chain = chains.find(x => x.id === id)
           if (chain !== undefined) {
-            props.onChangeChain(chain)
+            onChangeChain(chain)
           }
         }}
       >
-        {props.chains.map(x => (
+        {chains.map(x => (
           <Select.Option
             key={x.id}
             value={x.id}
@@ -72,8 +83,10 @@ const StakeSideSheetContent = (props: StakeSideSheetContentProps) => {
         ))}
       </Select>
     ),
-    [chain.id, props]
+    [chain.id, chains, onChangeChain]
   )
+
+  const subnetName = `${subnet?.netuid}: ${subnet?.symbol}`
 
   return (
     <>
@@ -86,7 +99,7 @@ const StakeSideSheetContent = (props: StakeSideSheetContentProps) => {
           selectionInProgress={delegateSelectorInTransition}
           subnetSelectionInProgress={subnetSelectorInTransition}
           selectedName={delegate.name}
-          selectedSubnetName="Eu gosto de você"
+          selectedSubnetName={subnetName}
           onRequestChange={openDelegateSelector}
           onSelectDelegate={openSubnetSelector}
         />
@@ -95,7 +108,7 @@ const StakeSideSheetContent = (props: StakeSideSheetContentProps) => {
           accountSelector={accountSelector}
           assetSelector={assetSelector}
           selectedName={delegate?.name}
-          selectedSubnetName="Eu gosto de você"
+          selectedSubnetName={subnetName}
           onRequestChange={openDelegateSelector}
           onSelectDelegate={openSubnetSelector}
         />
@@ -109,9 +122,9 @@ const StakeSideSheetContent = (props: StakeSideSheetContentProps) => {
       )}
       {subnetSelectorOpen && (
         <SubnetSelectorDialog
-          selected={delegate}
+          selected={subnet}
           onRequestDismiss={() => setSubnetSelectorOpen(false)}
-          onConfirm={() => console.log('Set subnet')}
+          onConfirm={setSubnet}
         />
       )}
     </>
@@ -120,12 +133,20 @@ const StakeSideSheetContent = (props: StakeSideSheetContentProps) => {
 
 const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
   const delegates = useDelegates()
+  const { data: { data: subnetPools = [] } = {} } = useGetSubnetPools()
   const [delegate, setDelegate] = useState(delegates[DEFAULT_DELEGATE] ?? Object.values(delegates)[0])
+  const [subnet, setSubnet] = useState<SubnetPool | undefined>()
   const { nativeToken } = useRecoilValue(useChainState())
 
   const totalStaked = useTotalTaoStakedFormatted()
   const delegateApr = useDelegateAprFormatted(delegate?.address ?? DEFAULT_DELEGATE)
 
+  useEffect(() => {
+    const rootSubnet = subnetPools.find(subnetPool => subnetPool.netuid === ROOT_NETUID)
+    if (rootSubnet) {
+      setSubnet(rootSubnet)
+    }
+  }, [subnetPools, setSubnet])
   return (
     <SubtensorStakingSideSheet
       onRequestDismiss={props.onRequestDismiss}
@@ -165,7 +186,13 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
             </div>
           }
         >
-          <StakeSideSheetContent {...props} delegate={delegate!} setDelegate={setDelegate} />
+          <StakeSideSheetContent
+            {...props}
+            delegate={delegate!}
+            setDelegate={setDelegate}
+            subnet={subnet}
+            setSubnet={setSubnet}
+          />
         </Suspense>
       </ErrorBoundary>
     </SubtensorStakingSideSheet>

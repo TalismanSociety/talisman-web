@@ -2,23 +2,20 @@ import { useState } from 'react'
 
 import { StakeTargetSelectorDialog } from '@/components/recipes/StakeTargetSelectorDialog'
 import { useGetSubnetPools } from '@/domains/staking/subtensor/hooks/useGetSubnetPools'
+import { SubnetPool } from '@/domains/staking/subtensor/types'
 
 import { SubnetSelectorCard, SubnetSelectorCardProps } from './SubnetSelectorCard'
 
-const DEFAULT_SUBNET = 0
-
 type SubnetSelectorDialogProps = {
-  selected?: unknown
+  selected: SubnetPool | undefined
   onRequestDismiss: () => void
-  onConfirm: (delegate: unknown) => void
+  onConfirm: (subnetPool: SubnetPool) => void
 }
 
-export const SubnetSelectorDialog = (props: SubnetSelectorDialogProps) => {
-  const { data: { data: subnetPools = [] } = {}, isLoading, error } = useGetSubnetPools()
-  console.log({ isLoading, error, subnetPools })
-  const subnets = { 0: { name: 'Root Subnet' } }
+export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: SubnetSelectorDialogProps) => {
+  const { data: { data: subnetPools = [] } = {} } = useGetSubnetPools()
 
-  const [highlighted, setHighlighted] = useState(subnets[DEFAULT_SUBNET] ?? Object.values(subnets)[0])
+  const [highlighted, setHighlighted] = useState(selected)
 
   return (
     <StakeTargetSelectorDialog<SubnetSelectorCardProps>
@@ -26,8 +23,8 @@ export const SubnetSelectorDialog = (props: SubnetSelectorDialogProps) => {
       currentSelectionLabel="Selected subnet"
       selectionLabel="New subnet"
       confirmButtonContent="Swap subnet"
-      onRequestDismiss={props.onRequestDismiss}
-      onConfirm={() => console.log('Confirmed sir')}
+      onRequestDismiss={onRequestDismiss}
+      onConfirm={() => highlighted && onConfirm(highlighted)}
       sortMethods={{
         Default: () => {
           console.log('Default sort method')
@@ -47,9 +44,9 @@ export const SubnetSelectorDialog = (props: SubnetSelectorDialogProps) => {
           <SubnetSelectorCard
             key={subnet.netuid}
             subnetPool={subnet}
-            onClick={() => console.log('Clicked!')}
-            // selected={subnet.netuid === highlighted?.netuid}
-            selected={subnet.netuid === 3}
+            onClick={setHighlighted}
+            selected={subnet.netuid === selected?.netuid}
+            highlighted={subnet.netuid === highlighted?.netuid}
           />
         )
       })}
