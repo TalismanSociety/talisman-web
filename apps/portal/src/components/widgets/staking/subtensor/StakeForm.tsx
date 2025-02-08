@@ -16,6 +16,7 @@ import { SubtensorStakingForm } from './SubtensorStakingForm'
 type StakeFormProps = IncompleteSelectionStakeFormProps & {
   account: Account
   delegate: string
+  netuid: number
 }
 
 export const StakeForm = (props: StakeFormProps) => {
@@ -23,7 +24,8 @@ export const StakeForm = (props: StakeFormProps) => {
   const { input, setInput, amount, transferable, extrinsic, ready, error } = useAddStakeForm(
     props.account,
     stake,
-    props.delegate
+    props.delegate,
+    props.netuid
   )
   const navigate = useNavigate()
 

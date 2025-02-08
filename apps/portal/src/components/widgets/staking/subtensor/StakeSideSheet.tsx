@@ -90,10 +90,11 @@ const StakeSideSheetContent = ({
 
   return (
     <>
-      {account !== undefined && delegate !== undefined ? (
+      {account !== undefined && delegate !== undefined && subnet !== undefined ? (
         <StakeForm
           account={account}
           delegate={delegate.address}
+          netuid={subnet.netuid}
           accountSelector={accountSelector}
           assetSelector={assetSelector}
           selectionInProgress={delegateSelectorInTransition}
