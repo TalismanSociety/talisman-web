@@ -88,7 +88,13 @@ const Stakes = (props: { hideHeader?: boolean }) => {
       >
         {shouldRenderLoadingSkeleton && <StakePosition.Skeleton className={skellyClassName} css={{ order: 1 }} />}
 
-        {chains.map((chain, index) => {
+        <ErrorBoundary orientation="horizontal">
+          <SuspenseSkeleton>
+            <SubtensorStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
+          </SuspenseSkeleton>
+        </ErrorBoundary>
+
+        {/* {chains.map((chain, index) => {
           return (
             <Fragment key={index}>
               <ChainProvider chain={chain}>
@@ -130,7 +136,7 @@ const Stakes = (props: { hideHeader?: boolean }) => {
             <LidoStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
           </SuspenseSkeleton>
         </ErrorBoundary>
-        <NoStakePrompt css={{ display: 'none', ':only-child': { display: 'revert' } }} />
+        <NoStakePrompt css={{ display: 'none', ':only-child': { display: 'revert' } }} /> */}
       </StakePositionList>
     </div>
   )

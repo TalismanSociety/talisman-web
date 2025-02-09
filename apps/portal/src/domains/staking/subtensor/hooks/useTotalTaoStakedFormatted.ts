@@ -12,7 +12,8 @@ export const useTotalTaoStakedFormatted = () => {
   const { fiatAmount, localizedFiatAmount, decimalAmount } = tokenAmount.fromPlanck(new BN(totalStaked).toString())
   const { decimals, options } = decimalAmount ?? {}
 
-  const currency = options?.currency
+  // const currency = options?.currency
+  const currency = 'TAO'
 
   const formattedTokenAmount = (Number(totalStaked) / Math.pow(10, decimals ?? 0)).toLocaleString(undefined, {
     currency,
