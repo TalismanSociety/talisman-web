@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
+import { ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
 import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
 import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
@@ -13,8 +14,6 @@ import { paymentInfoState } from '@/domains/common/recoils'
 
 import { MIN_SUBTENSOR_STAKE } from '../atoms/delegates'
 import { type Stake } from './useStake'
-
-const MAINNET_NETUID = 0
 
 export const useAddStakeForm = (account: Account, stake: Stake, delegate: string) => {
   const [api, [accountInfo]] = useRecoilValue(
@@ -39,7 +38,7 @@ export const useAddStakeForm = (account: Account, stake: Stake, delegate: string
     } catch {
       return api.tx.utility.batchAll([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (api.tx as any)?.subtensorModule?.addStake?.(delegate, MAINNET_NETUID, amount.decimalAmount?.planck ?? 0n),
+        (api.tx as any)?.subtensorModule?.addStake?.(delegate, ROOT_NETUID, amount.decimalAmount?.planck ?? 0n),
         api.tx.system.remarkWithEvent(`talisman-bittensor`),
       ])
     }
@@ -135,11 +134,7 @@ export const useUnstakeForm = (stake: Stake, delegate: string) => {
       return (api.tx as any)?.subtensorModule?.removeStake?.(delegate, amount.decimalAmount?.planck ?? 0n)
     } catch {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (api.tx as any)?.subtensorModule?.removeStake?.(
-        delegate,
-        MAINNET_NETUID,
-        amount.decimalAmount?.planck ?? 0n
-      )
+      return (api.tx as any)?.subtensorModule?.removeStake?.(delegate, ROOT_NETUID, amount.decimalAmount?.planck ?? 0n)
     }
   }, [api.tx, delegate, amount.decimalAmount?.planck])
   const extrinsic = useExtrinsic(tx)
