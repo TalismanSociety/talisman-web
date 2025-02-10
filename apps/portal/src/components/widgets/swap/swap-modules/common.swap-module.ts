@@ -18,7 +18,7 @@ import 'recoil'
 
 import type { TransactionRequest, WalletClient } from 'viem'
 import { isAddress } from 'viem'
-import { arbitrum, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon } from 'viem/chains'
+import { arbitrum, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon, sonic } from 'viem/chains'
 
 export const supportedEvmChains: Record<string, ViemChain> = {
   eth: mainnet,
@@ -30,6 +30,7 @@ export const supportedEvmChains: Record<string, ViemChain> = {
   manta: manta,
   movr: moonriver,
   glmr: moonbeam,
+  s: sonic,
 }
 
 export type SupportedSwapProtocol = 'chainflip' | 'simpleswap' | 'lifi'

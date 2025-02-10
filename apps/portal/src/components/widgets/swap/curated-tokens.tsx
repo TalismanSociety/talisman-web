@@ -1,4 +1,5 @@
 export const popularTokens: string[] = [
+  '146-evm-native',
   'btc-native',
   'polkadot-substrate-native',
   'bittensor-substrate-native',
@@ -15,6 +16,7 @@ export const popularTokens: string[] = [
 ]
 
 export const talismanTokens: string[] = [
+  '146-evm-native',
   'astar-substrate-native',
   '1-evm-erc20-0xb59490ab09a0f526cc7305822ac65f2ab12f9723',
   'aleph-zero-substrate-native',

@@ -16,6 +16,7 @@ import { type StakeStatus } from '@/components/recipes/StakeStatusIndicator'
 import { PoolSelectorDialog } from '@/components/recipes/StakeTargetSelectorDialog'
 import { useAccountSelector } from '@/components/widgets/AccountSelector'
 import { writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
+import { claimPermissionUnsupportedChainIds } from '@/domains/chains/config'
 import { useChainState as useChainRecoilState } from '@/domains/chains/hooks'
 import { ChainProvider } from '@/domains/chains/provider'
 import { ChainInfo, nominationPoolsEnabledChainsState, useNativeTokenDecimalState } from '@/domains/chains/recoils'
@@ -40,7 +41,7 @@ import PoolClaimPermissionDialog, {
 } from './PoolClaimPermissionDialog'
 import UnstakeDialog from './UnstakeDialog'
 
-const ExistingPool = (props: { account: Account }) => {
+const ExistingPool = (props: { account: Account; showClaimPermission: boolean }) => {
   const pool = usePoolStakes({ address: props.account.address })
 
   const amount = useTokenAmountFromPlanck(pool?.poolMember.points)
@@ -102,10 +103,12 @@ const ExistingPool = (props: { account: Account }) => {
           />
         }
         claimPermission={
-          <StakeFormComponent.ClaimPermission
-            permission={toUiPermission(pool?.claimPermission?.type ?? 'Permissioned')}
-            onChangeRequest={() => setClaimPermissionDialogOpen(true)}
-          />
+          props.showClaimPermission && (
+            <StakeFormComponent.ClaimPermission
+              permission={toUiPermission(pool?.claimPermission?.type ?? 'Permissioned')}
+              onChangeRequest={() => setClaimPermissionDialogOpen(true)}
+            />
+          )
         }
         addButton={
           // Fully unbonding pool can't be interacted with
@@ -241,7 +244,7 @@ const EstimatedYield = memo(
   (props: { amount: Decimal }) => {
     const stakedReturn = useApr()
     const annualReturn = useMemo(
-      () => new BN(props.amount.planck.toString()).muln(stakedReturn),
+      () => new BN(props.amount.planck.toString()).muln(isNaN(stakedReturn) ? 0 : stakedReturn),
       [props.amount.planck, stakedReturn]
     )
     const parsedAnnualReturn = useTokenAmountFromPlanck(annualReturn)
@@ -306,6 +309,8 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
   const [chain, api, recommendedPools] = useRecoilValue(
     waitForAll([useChainRecoilState(), useSubstrateApiState(), useRecommendedPoolsState()])
   )
+
+  const showClaimPermission = !claimPermissionUnsupportedChainIds.includes(chain.id)
 
   assertChain(chain, { hasNominationPools: true })
 
@@ -498,10 +503,12 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
         }
         commissionFee={<CommissionFee poolId={selectedPoolId || 0} />}
         claimPermission={
-          <StakeFormComponent.ClaimPermission
-            permission={toUiPermission(claimPermission)}
-            onChangeRequest={() => setClaimPermisssionDialogOpen(true)}
-          />
+          showClaimPermission && (
+            <StakeFormComponent.ClaimPermission
+              permission={toUiPermission(claimPermission)}
+              onChangeRequest={() => setClaimPermisssionDialogOpen(true)}
+            />
+          )
         }
         stakeButton={
           <StakeFormComponent.StakeButton
@@ -519,7 +526,10 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
           />
         }
         existingPool={
-          existingPool !== undefined && selectedAccount !== undefined && <ExistingPool account={selectedAccount} />
+          existingPool !== undefined &&
+          selectedAccount !== undefined && (
+            <ExistingPool account={selectedAccount} showClaimPermission={showClaimPermission} />
+          )
         }
       />
     </>

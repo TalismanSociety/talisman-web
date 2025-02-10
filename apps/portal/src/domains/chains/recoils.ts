@@ -120,10 +120,11 @@ export const nativeTokenPriceState = selectorFamily({
       const coingeckoId = chain.nativeToken?.coingeckoId
 
       if (coingeckoId === undefined) {
-        throw new Error('Chain missing CoinGecko id')
+        console.error('Chain missing CoinGecko id')
+        return 0
       }
 
-      return get(tokenPriceState({ coingeckoId, currency }))
+      return get(tokenPriceState({ coingeckoId, currency })) || 0
     },
 })
 
