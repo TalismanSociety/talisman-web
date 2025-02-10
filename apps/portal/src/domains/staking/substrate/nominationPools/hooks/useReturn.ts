@@ -1,3 +1,4 @@
+import { BN } from '@polkadot/util'
 import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import BigNumber from 'bignumber.js'
 import { hoursToMilliseconds } from 'date-fns'
@@ -33,13 +34,17 @@ export const useApr = () => {
     [activeEra, api.consts.staking.historyDepth, numberOfErasToCheck]
   )
 
+  const lastEra = useMemo(() => {
+    if (activeEra.isNone) return new BN(0)
+    const index = activeEra.unwrapOrDefault().index
+    if (index.eq(0)) return new BN(0)
+    return index.subn(1)
+  }, [activeEra])
+
   const [rewards, [lastEraTotalStaked, totalIssuance]] = useRecoilValue(
     waitForAll([
       useQueryState('staking', 'erasValidatorReward.multi', erasToCheck),
-      useQueryMultiState([
-        ['staking.erasTotalStake', activeEra.unwrapOrDefault().index.subn(1)],
-        ['balances.totalIssuance'],
-      ]),
+      useQueryMultiState([['staking.erasTotalStake', lastEra], ['balances.totalIssuance']]),
     ])
   )
 
@@ -59,7 +64,7 @@ export const useApr = () => {
 
     const inflationToStakers = dayRewardRate.multipliedBy(365)
 
-    return inflationToStakers.dividedBy(supplyStaked).toNumber()
+    return inflationToStakers.dividedBy(supplyStaked).toNumber() || 0
   }, [erasPerDay, lastEraTotalStaked, rewards, totalIssuance])
 }
 

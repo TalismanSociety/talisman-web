@@ -117,6 +117,13 @@ const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
     symbol: 'ETH',
     networkType: 'evm',
   },
+  s: {
+    id: '146-evm-native',
+    name: 'Sonic',
+    chainId: 146,
+    symbol: 'S',
+    networkType: 'evm',
+  },
   ethmanta: {
     id: '169-evm-native',
     name: 'Ethereum (Manta Pacific)',
