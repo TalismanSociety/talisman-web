@@ -6,10 +6,13 @@ import { range } from 'lodash'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
+import { useChainState } from '@/domains/chains/hooks'
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 import { expectedEraTime } from '@/domains/common/utils/substratePolyfills'
 
 export const useApr = () => {
+  const chain = useRecoilValue(useChainState())
+
   const [api, activeEra] = useRecoilValue(
     waitForAll([useSubstrateApiState(), useQueryState('staking', 'activeEra', [])])
   )
@@ -49,6 +52,8 @@ export const useApr = () => {
   )
 
   return useMemo(() => {
+    if (chain.id === 'analog-timechain') return 0.55
+
     const averageValidatorReward = rewards
       .reduce((prev, curr) => prev.plus(curr.unwrapOrDefault().toString()), new BigNumber(0))
       .dividedBy(rewards.length)
@@ -65,7 +70,7 @@ export const useApr = () => {
     const inflationToStakers = dayRewardRate.multipliedBy(365)
 
     return inflationToStakers.dividedBy(supplyStaked).toNumber() || 0
-  }, [erasPerDay, lastEraTotalStaked, rewards, totalIssuance])
+  }, [chain.id, erasPerDay, lastEraTotalStaked, rewards, totalIssuance])
 }
 
 export const useApy = (compoundingPeriodCount: number = 365) => {
