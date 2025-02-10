@@ -3,6 +3,8 @@ import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { compact, Struct, Vector } from 'scale-ts'
 
+import { ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
+
 import { BittensorAccountId, vecDecodeResult, vecEncodeParams } from './_types'
 
 const StakeInfo = Struct({
@@ -10,6 +12,17 @@ const StakeInfo = Struct({
   coldkey: BittensorAccountId,
   stake: compact,
 })
+
+type DTaoStakeInfo = {
+  coldkey: string
+  hotkey: string
+  netuid: string
+  stake: string
+  drain: string
+  emission: string
+  isRegistered: boolean
+  locked: string
+}
 
 const EncodeParams_GetStakeInfoForColdkey = (address: string) => vecEncodeParams(BittensorAccountId.enc(address))
 const DecodeResult_GetStakeInfoForColdkey = (result: string) => Vector(StakeInfo).dec(vecDecodeResult(result))
@@ -35,10 +48,27 @@ export const accountStakeAtom = atomFamily(
         if (stakes?.length === 0) return undefined
         return stakes
       } catch (cause) {
-        console.error(
-          new Error(`Failed to fetch subtensor stake for account ${address} on chain ${api.genesisHash}`, { cause })
-        )
-        return undefined
+        const response = (
+          await api.call['stakeInfoRuntimeApi']?.['getStakeInfoForColdkey']?.(address)
+        )?.toHuman() as DTaoStakeInfo[]
+
+        console.log({ response })
+
+        if (!Array.isArray(response)) return undefined
+
+        const stakes = response
+          // Filter out Subnet stakes for now
+          .filter(stake => Number(stake?.netuid) === ROOT_NETUID)
+          ?.map(({ coldkey, hotkey, stake, netuid }) => ({
+            coldkey,
+            hotkey,
+            netuid,
+            stake: BigInt(Number(stake.replace(/,/g, ''))),
+          }))
+          .filter(({ stake }) => stake !== 0n)
+
+        if (stakes?.length === 0) return undefined
+        return stakes
       }
     }),
 
