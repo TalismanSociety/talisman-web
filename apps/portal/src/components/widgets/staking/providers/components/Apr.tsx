@@ -1,5 +1,9 @@
-import { Text } from '@talismn/ui/atoms/Text'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+import { InfoIcon } from 'lucide-react'
+import { ReactNode } from 'react'
+import { useRecoilValue } from 'recoil'
 
+import { useChainState } from '@/domains/chains/hooks'
 import { ChainProvider } from '@/domains/chains/provider'
 import { useApr as useDappApr } from '@/domains/staking/dappStaking/hooks/useApr'
 import { useSlpxAprState } from '@/domains/staking/slpx/recoils'
@@ -58,9 +62,9 @@ const AprDisplay = ({ typeId, symbol, apiEndpoint, setAprValues }: AprDisplayPro
   setAprValues(aprValue)
 
   return (
-    <Text.BodySmall as="div" alpha="high">
-      {aprFormatter(aprValue ?? 0)}
-    </Text.BodySmall>
+    <div className="text-lg">
+      <WithAprDocsLink>{aprFormatter(aprValue ?? 0)}</WithAprDocsLink>
+    </div>
   )
 }
 
@@ -69,6 +73,33 @@ const Apr = ({ typeId, genesisHash, symbol, apiEndpoint, setAprValues }: AprProp
     <ChainProvider chain={{ genesisHash: genesisHash }}>
       <AprDisplay typeId={typeId} setAprValues={setAprValues} symbol={symbol} apiEndpoint={apiEndpoint} />
     </ChainProvider>
+  )
+}
+
+/**
+ * For chains with a novel staking rewards mechanism, this component adds an info tooltip to the
+ * calculated APR which links to the rewards docs for the chain.
+ */
+const WithAprDocsLink = ({ children }: { children: ReactNode }) => {
+  const chain = useRecoilValue(useChainState())
+
+  // return the APR
+  if (chain?.id !== 'analog-timechain') return children
+
+  // return the APR wrapped with a tooltip
+  return (
+    <div className="flex items-center gap-1">
+      {children}
+      <Tooltip content="Learn more about Analog Timechain staking rewards">
+        <a
+          href="https://docs.analog.one/documentation/analog-network/staking/rewards"
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          <InfoIcon className="h-[1em] w-[1em] text-xl" />
+        </a>
+      </Tooltip>
+    </div>
   )
 }
 
