@@ -23,10 +23,6 @@ export const useAddStakeForm = (account: Account, stake: Stake, delegate: string
   const [input, setInput] = useState('')
   const amount = useTokenAmount(input)
 
-  const apiEndpoint = useSubstrateApiEndpoint()
-
-  console.log(`apiEndpoint: ${apiEndpoint}`)
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tx: SubmittableExtrinsic<any> = useMemo(() => {
     try {
