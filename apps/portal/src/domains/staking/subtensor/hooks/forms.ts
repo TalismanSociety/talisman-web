@@ -5,7 +5,6 @@ import { useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
-import { ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
 import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
 import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
@@ -136,16 +135,11 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
       return (api.tx as any)?.subtensorModule?.removeStake?.(delegate, amount.decimalAmount?.planck ?? 0n)
     } catch {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (api.tx as any)?.subtensorModule?.removeStake?.(delegate, ROOT_NETUID, amount.decimalAmount?.planck ?? 0n)
+      return (api.tx as any)?.subtensorModule?.removeStake?.(delegate, stake.netuid, amount.decimalAmount?.planck ?? 0n)
     }
-  }, [api.tx, delegate, amount.decimalAmount?.planck])
+  }, [api.tx, delegate, amount.decimalAmount?.planck, stake.netuid])
   const extrinsic = useExtrinsic(tx)
 
-  // const availablePlanck = useMemo(
-  //   () => stake.stakes?.find(s => s.hotkey === delegate)?.stake ?? 0n,
-  //   [delegate, stake.stakes]
-  // )
-  // const available = useTokenAmountFromPlanck(availablePlanck)
   const available = useTokenAmountFromPlanck(stake.totalStaked.decimalAmount?.planck ?? 0n)
 
   const minimum = useTokenAmount(String(MIN_SUBTENSOR_STAKE))

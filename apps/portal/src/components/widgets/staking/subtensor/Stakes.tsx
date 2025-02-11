@@ -100,9 +100,9 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
             {addStakeDialogOpen && (
               <AddStakeDialog account={account} stake={stake} onRequestDismiss={() => setAddStakeDialogOpen(false)} />
             )}
-            {/* {unstakeDialogOpen && (
-            <UnstakeDialog account={account} stake={stake} onRequestDismiss={() => setUnstakeDialogOpen(false)} />
-          )} */}
+            {unstakeDialogOpen && (
+              <UnstakeDialog account={account} stake={stake} onRequestDismiss={() => setUnstakeDialogOpen(false)} />
+            )}
           </ErrorBoundary>
         )
       })}
