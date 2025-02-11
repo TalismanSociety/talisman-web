@@ -10,7 +10,8 @@ export const useTotalTaoStakedFormatted = () => {
   const totalStaked = useAtomValue(taoTotalStakedTaoAtom)
   const tokenAmount = useRecoilValue(useNativeTokenAmountState())
   const { fiatAmount, localizedFiatAmount, decimalAmount } = tokenAmount.fromPlanck(new BN(totalStaked).toString())
-  const { decimals, options } = decimalAmount ?? {}
+  // const { decimals, options } = decimalAmount ?? {}
+  const { decimals } = decimalAmount ?? {}
 
   // const currency = options?.currency
   const currency = 'TAO'
