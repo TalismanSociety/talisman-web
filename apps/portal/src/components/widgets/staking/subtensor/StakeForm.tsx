@@ -17,6 +17,7 @@ type StakeFormProps = IncompleteSelectionStakeFormProps & {
   account: Account
   delegate: string
   netuid: number
+  isSelectSubnetDisabled: boolean
 }
 
 export const StakeForm = (props: StakeFormProps) => {
@@ -50,7 +51,8 @@ export const StakeForm = (props: StakeFormProps) => {
       selectedName={props.selectedName}
       selectedSubnetName={props.selectedSubnetName}
       onRequestChange={props.onRequestChange}
-      onSelectDelegate={props.onSelectDelegate}
+      onSelectSubnet={props.onSelectSubnet}
+      isSelectSubnetDisabled={props.isSelectSubnetDisabled}
       stakeButton={
         <SubtensorStakingForm.StakeButton
           disabled={!ready}
@@ -84,16 +86,18 @@ type IncompleteSelectionStakeFormProps = {
   subnetSelectionInProgress?: boolean
   selectedName?: string
   selectedSubnetName?: string
+  isSelectSubnetDisabled: boolean
   onRequestChange: () => unknown
-  onSelectDelegate: () => void
+  onSelectSubnet: () => void
 }
 export const IncompleteSelectionStakeForm = ({
   accountSelector,
   assetSelector,
   selectedName,
   selectedSubnetName,
+  isSelectSubnetDisabled,
   onRequestChange,
-  onSelectDelegate,
+  onSelectSubnet,
 }: IncompleteSelectionStakeFormProps) => (
   <SubtensorStakingForm
     accountSelector={accountSelector}
@@ -101,7 +105,8 @@ export const IncompleteSelectionStakeForm = ({
     selectedName={selectedName}
     selectedSubnetName={selectedSubnetName}
     onRequestChange={onRequestChange}
-    onSelectDelegate={onSelectDelegate}
+    onSelectSubnet={onSelectSubnet}
+    isSelectSubnetDisabled={isSelectSubnetDisabled}
     stakeButton={<SubtensorStakingForm.StakeButton disabled />}
     estimatedRewards="..."
   />

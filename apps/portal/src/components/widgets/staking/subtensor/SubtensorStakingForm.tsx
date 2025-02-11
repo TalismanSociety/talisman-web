@@ -76,11 +76,12 @@ export type SubtensorStakingFormProps = {
   subnetSelectionInProgress?: boolean
   selectedName?: string
   selectedSubnetName?: string
-  onRequestChange: () => void
-  onSelectDelegate: () => void
   estimatedRewards: ReactNode
   currentStakedBalance?: ReactNode
   stakeButton: ReactNode
+  isSelectSubnetDisabled: boolean
+  onRequestChange: () => void
+  onSelectSubnet: () => void
 }
 
 export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => (
@@ -113,7 +114,7 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => (
         />
       </label>
     </div>
-    <div css={{ cursor: 'pointer' }} onClick={props.onSelectDelegate}>
+    <div css={{ cursor: props.isSelectSubnetDisabled ? 'not-allowed' : 'pointer' }} onClick={props.onSelectSubnet}>
       <label css={{ pointerEvents: 'none' }}>
         <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
           Select Subnet

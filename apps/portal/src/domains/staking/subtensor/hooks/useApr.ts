@@ -8,8 +8,9 @@ export const useHighestAprFormatted = () => {
 
   return Number(apr).toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 }
+
 export const useHighestApr = () => {
-  const { apr } = useAtomValue(highestAprTaoValidatorAtom) ?? {}
+  const { apr } = useAtomValue(highestAprTaoValidatorAtom) ?? { apr: 0 }
 
   return Number(apr)
 }

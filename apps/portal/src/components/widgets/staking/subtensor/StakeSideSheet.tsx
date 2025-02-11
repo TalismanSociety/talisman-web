@@ -6,7 +6,7 @@ import { useRecoilValue } from 'recoil'
 import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
 import { useAccountSelector } from '@/components/widgets/AccountSelector'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
-import { ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
+import { DEFAULT_SUBNET, ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
 import { writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { useChainState } from '@/domains/chains/hooks'
 import { ChainProvider } from '@/domains/chains/provider'
@@ -33,6 +33,7 @@ type StakeSideSheetProps = {
 type StakeSideSheetContentProps = Omit<StakeSideSheetProps, 'onRequestDismiss'> & {
   delegate: Delegate | undefined
   subnet: SubnetPool | undefined
+  isSelectSubnetDisabled: boolean
   setDelegate: React.Dispatch<React.SetStateAction<Delegate | undefined>>
   setSubnet: React.Dispatch<React.SetStateAction<SubnetPool | undefined>>
 }
@@ -41,6 +42,7 @@ const StakeSideSheetContent = ({
   delegate,
   chains,
   subnet,
+  isSelectSubnetDisabled,
   setSubnet,
   setDelegate,
   onChangeChain,
@@ -60,7 +62,7 @@ const StakeSideSheetContent = ({
   const [delegateSelectorInTransition, startDelegateSelectorTransition] = useTransition()
   const [subnetSelectorInTransition, startSubnetSelectorTransition] = useTransition()
   const openDelegateSelector = () => startDelegateSelectorTransition(() => setDelegateSelectorOpen(true))
-  const openSubnetSelector = () => startSubnetSelectorTransition(() => setSubnetSelectorOpen(true))
+  const openSubnetSelector = () => startSubnetSelectorTransition(() => setSubnetSelectorOpen(!isSelectSubnetDisabled))
 
   const assetSelector = useMemo(
     () => (
@@ -102,7 +104,8 @@ const StakeSideSheetContent = ({
           selectedName={delegate.name}
           selectedSubnetName={subnetName}
           onRequestChange={openDelegateSelector}
-          onSelectDelegate={openSubnetSelector}
+          onSelectSubnet={openSubnetSelector}
+          isSelectSubnetDisabled={isSelectSubnetDisabled}
         />
       ) : (
         <IncompleteSelectionStakeForm
@@ -111,7 +114,8 @@ const StakeSideSheetContent = ({
           selectedName={delegate?.name}
           selectedSubnetName={subnetName}
           onRequestChange={openDelegateSelector}
-          onSelectDelegate={openSubnetSelector}
+          onSelectSubnet={openSubnetSelector}
+          isSelectSubnetDisabled={isSelectSubnetDisabled}
         />
       )}
       {delegateSelectorOpen && (
@@ -136,7 +140,7 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
   const delegates = useDelegates()
   const { data: { data: subnetPools = [] } = {} } = useGetSubnetPools()
   const [delegate, setDelegate] = useState(delegates[DEFAULT_DELEGATE] ?? Object.values(delegates)[0])
-  const [subnet, setSubnet] = useState<SubnetPool | undefined>()
+  const [subnet, setSubnet] = useState<SubnetPool | undefined>(DEFAULT_SUBNET)
   const { nativeToken } = useRecoilValue(useChainState())
 
   const totalStaked = useTotalTaoStakedFormatted()
@@ -146,6 +150,8 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
     const rootSubnet = subnetPools.find(subnetPool => subnetPool.netuid === ROOT_NETUID)
     if (rootSubnet) {
       setSubnet(rootSubnet)
+    } else {
+      setSubnet(DEFAULT_SUBNET)
     }
   }, [subnetPools, setSubnet])
   return (
@@ -178,7 +184,8 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
                   accountSelector={<Select />}
                   assetSelector={<Select />}
                   onRequestChange={() => {}}
-                  onSelectDelegate={() => {}}
+                  onSelectSubnet={() => {}}
+                  isSelectSubnetDisabled
                 />
               </div>
               <div css={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -190,9 +197,10 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
           <StakeSideSheetContent
             {...props}
             delegate={delegate!}
-            setDelegate={setDelegate}
             subnet={subnet}
+            isSelectSubnetDisabled={subnetPools.length === 0}
             setSubnet={setSubnet}
+            setDelegate={setDelegate}
           />
         </Suspense>
       </ErrorBoundary>

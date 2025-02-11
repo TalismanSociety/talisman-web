@@ -13,7 +13,8 @@ import { useHighestApr } from '@/domains/staking/subtensor/hooks/useApr'
 import useLidoApr from '../hooks/lido/useApr'
 import { StakeProviderTypeId } from '../hooks/types'
 
-const aprFormatter = (apr: number) => apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
+const aprFormatter = (apr: number) =>
+  apr > 0 ? apr?.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 }) : '--'
 
 type AprProps = {
   typeId: StakeProviderTypeId
