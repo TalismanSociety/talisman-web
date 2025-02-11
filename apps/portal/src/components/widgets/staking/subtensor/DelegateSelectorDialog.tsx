@@ -54,9 +54,8 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
       }}
     >
       {Object.values(delegates).map(delegate => {
-        const formattedApr = Number(
-          delegatesStats.find(stat => stat.hotkey.ss58 === delegate.address)?.apr
-        ).toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
+        const apr = Number(delegatesStats.find(stat => stat.hotkey.ss58 === delegate.address)?.apr) || 0
+        const formattedApr = apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 
         return (
           <StakeTargetSelectorDialog.Item

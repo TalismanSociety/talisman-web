@@ -48,6 +48,7 @@ export const taostatsAtom = atom(async () => {
   while (!stats.data.length || stats.pagination.current_page < stats.pagination.total_pages) {
     const taoStats = await fetchTaoStats({ page: page, limit: MAX_PAGE_SIZE })
     stats.pagination = taoStats.pagination
+    if (!taoStats?.data) break
     stats.data.push(...taoStats.data)
     page = taoStats.pagination.current_page + 1
   }
