@@ -3,8 +3,6 @@ import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { compact, Struct, Vector } from 'scale-ts'
 
-import { ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
-
 import { BittensorAccountId, vecDecodeResult, vecEncodeParams } from './_types'
 
 const StakeInfo = Struct({
@@ -40,12 +38,13 @@ export const accountStakeAtom = atomFamily(
           ?.map(({ coldkey, hotkey, stake }) => ({
             coldkey,
             hotkey,
+            netuid: 0,
             // make every stake a `bigint`, instead of a `number | bigint`, for consistency
             stake: typeof stake === 'number' ? BigInt(stake) : stake,
           }))
           .filter(({ stake }) => stake !== 0n)
 
-        if (stakes?.length === 0) return undefined
+        if (stakes?.length === 0) return []
         return stakes
       } catch (cause) {
         const response = (
@@ -55,8 +54,6 @@ export const accountStakeAtom = atomFamily(
         if (!Array.isArray(response)) return undefined
 
         const stakes = response
-          // Filter out Subnet stakes for now
-          .filter(stake => Number(stake?.netuid) === ROOT_NETUID)
           ?.map(({ coldkey, hotkey, stake, netuid }) => ({
             coldkey,
             hotkey,
@@ -65,7 +62,7 @@ export const accountStakeAtom = atomFamily(
           }))
           .filter(({ stake }) => stake !== 0n)
 
-        if (stakes?.length === 0) return undefined
+        if (stakes?.length === 0) return []
         return stakes
       }
     }),
