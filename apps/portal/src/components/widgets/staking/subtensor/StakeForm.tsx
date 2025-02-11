@@ -20,7 +20,8 @@ type StakeFormProps = IncompleteSelectionStakeFormProps & {
 }
 
 export const StakeForm = (props: StakeFormProps) => {
-  const stake = useStake(props.account)
+  const { stakes } = useStake(props.account)
+  const stake = stakes?.find(stake => stake.hotkey === props.delegate && Number(stake.netuid) === Number(props.netuid))
   const { input, setInput, amount, transferable, extrinsic, ready, error } = useAddStakeForm(
     props.account,
     stake,
@@ -63,7 +64,7 @@ export const StakeForm = (props: StakeFormProps) => {
         <Suspense fallback={<CircularProgressIndicator size="1em" />}>
           <EstimatedRewards
             delegateHotkey={props.delegate}
-            amount={(amount.decimalAmount?.planck ?? 0n) + (stake.totalStaked.decimalAmount?.planck ?? 0n)}
+            amount={(amount.decimalAmount?.planck ?? 0n) + (stake?.totalStaked.decimalAmount?.planck ?? 0n)}
           />
         </Suspense>
       }

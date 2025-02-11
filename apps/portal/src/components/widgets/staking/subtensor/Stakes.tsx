@@ -41,7 +41,7 @@ type StakeProps = {
 }
 const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
   const chain = useRecoilValue(useChainState())
-  const stake = useStake(account)
+  const { stakes = [] } = useStake(account)
 
   const [addStakeDialogOpen, setAddStakeDialogOpen] = useState(false)
   const [unstakeDialogOpen, setUnstakeDialogOpen] = useState(false)
@@ -49,54 +49,63 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
   const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
 
   useEffect(() => {
-    if (!stake.stakes || stake.stakes.length === 0) return
+    if (!stakes || stakes.length === 0) return
     setShouldRenderLoadingSkeleton(false)
-  }, [setShouldRenderLoadingSkeleton, stake.stakes])
+  }, [setShouldRenderLoadingSkeleton, stakes])
 
-  if (!stake.stakes) return null
+  if (stakes.length === 0) return null
 
   return (
-    <ErrorBoundary
-      renderFallback={() => <ErrorBoundaryFallback logo={logo} symbol={symbol} provider={name} list="positions" />}
-    >
-      <StakePosition
-        readonly={account.readonly}
-        chain={name}
-        chainId={chain?.id || ''}
-        assetSymbol={symbol}
-        assetLogoSrc={logo}
-        account={account}
-        provider="Delegation"
-        stakeStatus={'earning_rewards'}
-        balance={
-          <ErrorBoundary renderFallback={() => <>--</>}>
-            {stake.totalStaked.decimalAmount?.toLocaleString()}
+    <>
+      {stakes.map(stake => {
+        return (
+          <ErrorBoundary
+            key={stake.hotkey}
+            renderFallback={() => (
+              <ErrorBoundaryFallback logo={logo} symbol={symbol} provider={name} list="positions" />
+            )}
+          >
+            <StakePosition
+              readonly={account.readonly}
+              chain={name}
+              chainId={chain?.id || ''}
+              assetSymbol={symbol}
+              assetLogoSrc={logo}
+              account={account}
+              provider="Delegation"
+              stakeStatus={'earning_rewards'}
+              balance={
+                <ErrorBoundary renderFallback={() => <>--</>}>
+                  {stake.totalStaked.decimalAmount?.toLocaleString()}
+                </ErrorBoundary>
+              }
+              fiatBalance={
+                <ErrorBoundary renderFallback={() => <>--</>}>{stake.totalStaked.localizedFiatAmount}</ErrorBoundary>
+              }
+              increaseStakeButton={
+                stakes.length > 0 && (
+                  <ErrorBoundary renderFallback={() => <>--</>}>
+                    <StakePosition.IncreaseStakeButton onClick={() => setAddStakeDialogOpen(true)} withTransition />
+                  </ErrorBoundary>
+                )
+              }
+              unstakeButton={
+                stakes.length > 0 && (
+                  <ErrorBoundary renderFallback={() => <>--</>}>
+                    <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} withTransition />
+                  </ErrorBoundary>
+                )
+              }
+            />
+            {addStakeDialogOpen && (
+              <AddStakeDialog account={account} stake={stake} onRequestDismiss={() => setAddStakeDialogOpen(false)} />
+            )}
+            {/* {unstakeDialogOpen && (
+            <UnstakeDialog account={account} stake={stake} onRequestDismiss={() => setUnstakeDialogOpen(false)} />
+          )} */}
           </ErrorBoundary>
-        }
-        fiatBalance={
-          <ErrorBoundary renderFallback={() => <>--</>}>{stake.totalStaked.localizedFiatAmount}</ErrorBoundary>
-        }
-        increaseStakeButton={
-          stake.stakes.length > 0 && (
-            <ErrorBoundary renderFallback={() => <>--</>}>
-              <StakePosition.IncreaseStakeButton onClick={() => setAddStakeDialogOpen(true)} withTransition />
-            </ErrorBoundary>
-          )
-        }
-        unstakeButton={
-          stake.stakes.length > 0 && (
-            <ErrorBoundary renderFallback={() => <>--</>}>
-              <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} withTransition />
-            </ErrorBoundary>
-          )
-        }
-      />
-      {addStakeDialogOpen && (
-        <AddStakeDialog account={account} stake={stake} onRequestDismiss={() => setAddStakeDialogOpen(false)} />
-      )}
-      {unstakeDialogOpen && (
-        <UnstakeDialog account={account} stake={stake} onRequestDismiss={() => setUnstakeDialogOpen(false)} />
-      )}
-    </ErrorBoundary>
+        )
+      })}
+    </>
   )
 }

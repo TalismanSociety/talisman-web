@@ -13,11 +13,11 @@ import { useTokenAmount, useTokenAmountFromPlanck } from '@/domains/common/hooks
 import { paymentInfoState } from '@/domains/common/recoils'
 
 import { MIN_SUBTENSOR_STAKE } from '../atoms/delegates'
-import { type Stake } from './useStake'
+import { type StakeItem } from './useStake'
 
 const MOCKED_VALIDATOR = '5FCPTnjevGqAuTttetBy4a24Ej3pH9fiQ8fmvP1ZkrVsLUoT'
 
-export const useAddStakeForm = (account: Account, stake: Stake, delegate: string, netuid: number) => {
+export const useAddStakeForm = (account: Account, stake: StakeItem | undefined, delegate: string, netuid: number) => {
   const [api, [accountInfo]] = useRecoilValue(
     waitForAll([useSubstrateApiState(), useQueryMultiState([['system.account', account.address]])])
   )
@@ -80,10 +80,12 @@ export const useAddStakeForm = (account: Account, stake: Stake, delegate: string
   }, [accountInfo.data.free, accountInfo.data.frozen, accountInfo.data.reserved, existentialDeposit, feeEstimate])
 
   const transferable = useTokenAmountFromPlanck(transferablePlanck)
+
+  // TODO: get/calculate resulting balance for Tao => dTAO conversion
   const resulting = useTokenAmountFromPlanck(
     useMemo(
-      () => (stake.totalStaked.decimalAmount?.planck ?? 0n) + (amount.decimalAmount?.planck ?? 0n),
-      [amount.decimalAmount?.planck, stake.totalStaked.decimalAmount?.planck]
+      () => (stake?.totalStaked.decimalAmount?.planck ?? 0n) + (amount.decimalAmount?.planck ?? 0n),
+      [amount.decimalAmount?.planck, stake?.totalStaked.decimalAmount?.planck]
     )
   )
 
@@ -121,7 +123,7 @@ export const useAddStakeForm = (account: Account, stake: Stake, delegate: string
   }
 }
 
-export const useUnstakeForm = (stake: Stake, delegate: string) => {
+export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
   const api = useRecoilValue(useSubstrateApiState())
 
   const [input, setInput] = useState('')
@@ -139,11 +141,12 @@ export const useUnstakeForm = (stake: Stake, delegate: string) => {
   }, [api.tx, delegate, amount.decimalAmount?.planck])
   const extrinsic = useExtrinsic(tx)
 
-  const availablePlanck = useMemo(
-    () => stake.stakes?.find(s => s.hotkey === delegate)?.stake ?? 0n,
-    [delegate, stake.stakes]
-  )
-  const available = useTokenAmountFromPlanck(availablePlanck)
+  // const availablePlanck = useMemo(
+  //   () => stake.stakes?.find(s => s.hotkey === delegate)?.stake ?? 0n,
+  //   [delegate, stake.stakes]
+  // )
+  // const available = useTokenAmountFromPlanck(availablePlanck)
+  const available = useTokenAmountFromPlanck(stake.totalStaked.decimalAmount?.planck ?? 0n)
 
   const minimum = useTokenAmount(String(MIN_SUBTENSOR_STAKE))
   const error = useMemo(() => {
