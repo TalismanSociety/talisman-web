@@ -45,7 +45,7 @@ export const accountStakeAtom = atomFamily(
             coldkey,
             hotkey,
             // make every stake a `bigint`, instead of a `number | bigint`, for consistency
-            stake: typeof stake === 'number' ? BigInt(stake) : stake,
+            stake: BigInt(stake),
           }))
           .filter(({ stake }) => stake !== 0n)
 
@@ -64,6 +64,7 @@ export const accountStakeAtom = atomFamily(
             coldkey,
             hotkey,
             netuid: BigInt(netuid),
+            // make every stake a `bigint`, instead of a `number | bigint`, for consistency
             stake: BigInt(stake),
           }))
           .filter(({ stake }) => stake !== 0n)
