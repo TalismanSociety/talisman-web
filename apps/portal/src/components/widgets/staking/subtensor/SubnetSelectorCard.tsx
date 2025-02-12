@@ -5,13 +5,13 @@ import { classNames } from '@talismn/util'
 import { useRecoilValue } from 'recoil'
 
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
-import { SubnetPool } from '@/domains/staking/subtensor/types'
+import { type SubnetData } from '@/domains/staking/subtensor/types'
 
 export type SubnetSelectorCardProps = {
   selected?: boolean
   highlighted?: boolean
-  onClick: (subnetPool: SubnetPool) => void
-  subnetPool: SubnetPool
+  onClick: (subnetPool: SubnetData) => void
+  subnetPool: SubnetData
 }
 
 export const SubnetSelectorCard = ({ subnetPool, selected, highlighted, onClick }: SubnetSelectorCardProps) => {

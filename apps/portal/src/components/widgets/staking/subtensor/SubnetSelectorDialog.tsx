@@ -1,19 +1,19 @@
 import { useState } from 'react'
 
 import { StakeTargetSelectorDialog } from '@/components/recipes/StakeTargetSelectorDialog'
-import { useGetSubnetPools } from '@/domains/staking/subtensor/hooks/useGetSubnetPools'
-import { SubnetPool } from '@/domains/staking/subtensor/types'
+import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
+import { type SubnetData } from '@/domains/staking/subtensor/types'
 
 import { SubnetSelectorCard, SubnetSelectorCardProps } from './SubnetSelectorCard'
 
 type SubnetSelectorDialogProps = {
-  selected: SubnetPool | undefined
+  selected: SubnetData | undefined
   onRequestDismiss: () => void
-  onConfirm: (subnetPool: SubnetPool) => void
+  onConfirm: (subnetPool: SubnetData) => void
 }
 
 export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: SubnetSelectorDialogProps) => {
-  const { data: { data: subnetPools = [] } = {} } = useGetSubnetPools()
+  const { subnetData } = useCombineSubnetData()
 
   const [highlighted, setHighlighted] = useState(selected)
 
@@ -39,7 +39,7 @@ export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: 
         },
       }}
     >
-      {subnetPools.map(subnet => {
+      {Object.values(subnetData).map(subnet => {
         return (
           <SubnetSelectorCard
             key={subnet.netuid}

@@ -13,10 +13,10 @@ import { ChainProvider } from '@/domains/chains/provider'
 import { ChainInfo, subtensorStakingEnabledChainsState } from '@/domains/chains/recoils'
 import { DEFAULT_DELEGATE, Delegate, MIN_SUBTENSOR_STAKE } from '@/domains/staking/subtensor/atoms/delegates'
 import { useDelegateAprFormatted } from '@/domains/staking/subtensor/hooks/useApr'
+import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
 import { useDelegates } from '@/domains/staking/subtensor/hooks/useDelegates'
-import { useGetSubnetPools } from '@/domains/staking/subtensor/hooks/useGetSubnetPools'
 import { useTotalTaoStakedFormatted } from '@/domains/staking/subtensor/hooks/useTotalTaoStakedFormatted'
-import { SubnetPool } from '@/domains/staking/subtensor/types'
+import { type SubnetData } from '@/domains/staking/subtensor/types'
 import { Maybe } from '@/util/monads'
 
 import { DelegateSelectorDialog } from './DelegateSelectorDialog'
@@ -32,10 +32,10 @@ type StakeSideSheetProps = {
 
 type StakeSideSheetContentProps = Omit<StakeSideSheetProps, 'onRequestDismiss'> & {
   delegate: Delegate | undefined
-  subnet: SubnetPool | undefined
+  subnet: SubnetData | undefined
   isSelectSubnetDisabled: boolean
   setDelegate: React.Dispatch<React.SetStateAction<Delegate | undefined>>
-  setSubnet: React.Dispatch<React.SetStateAction<SubnetPool | undefined>>
+  setSubnet: React.Dispatch<React.SetStateAction<SubnetData | undefined>>
 }
 
 const StakeSideSheetContent = ({
@@ -96,7 +96,7 @@ const StakeSideSheetContent = ({
         <StakeForm
           account={account}
           delegate={delegate.address}
-          netuid={subnet.netuid}
+          netuid={Number(subnet.netuid)}
           accountSelector={accountSelector}
           assetSelector={assetSelector}
           selectionInProgress={delegateSelectorInTransition}
@@ -138,22 +138,22 @@ const StakeSideSheetContent = ({
 
 const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
   const delegates = useDelegates()
-  const { data: { data: subnetPools = [] } = {} } = useGetSubnetPools()
+  const { subnetData } = useCombineSubnetData()
   const [delegate, setDelegate] = useState(delegates[DEFAULT_DELEGATE] ?? Object.values(delegates)[0])
-  const [subnet, setSubnet] = useState<SubnetPool | undefined>(DEFAULT_SUBNET)
+  const [subnet, setSubnet] = useState<SubnetData | undefined>(DEFAULT_SUBNET)
   const { nativeToken } = useRecoilValue(useChainState())
 
   const totalStaked = useTotalTaoStakedFormatted()
   const delegateApr = useDelegateAprFormatted(delegate?.address ?? DEFAULT_DELEGATE)
 
   useEffect(() => {
-    const rootSubnet = subnetPools.find(subnetPool => subnetPool.netuid === ROOT_NETUID)
+    const rootSubnet = subnetData[ROOT_NETUID]
     if (rootSubnet) {
       setSubnet(rootSubnet)
     } else {
       setSubnet(DEFAULT_SUBNET)
     }
-  }, [subnetPools, setSubnet])
+  }, [subnetData, setSubnet])
   return (
     <SubtensorStakingSideSheet
       onRequestDismiss={props.onRequestDismiss}
@@ -198,7 +198,7 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
             {...props}
             delegate={delegate!}
             subnet={subnet}
-            isSelectSubnetDisabled={subnetPools.length === 0}
+            isSelectSubnetDisabled={!Object.values(subnetData).length}
             setSubnet={setSubnet}
             setDelegate={setDelegate}
           />
