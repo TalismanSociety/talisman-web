@@ -14,6 +14,7 @@ import { paymentInfoState } from '@/domains/common/recoils'
 import { MIN_SUBTENSOR_STAKE } from '../atoms/delegates'
 import { type StakeItem } from './useStake'
 
+// TODO: Remove mocked validator and use the actual validator address when dTAO goes live
 const MOCKED_VALIDATOR = '5FCPTnjevGqAuTttetBy4a24Ej3pH9fiQ8fmvP1ZkrVsLUoT'
 
 export const useAddStakeForm = (account: Account, stake: StakeItem | undefined, delegate: string, netuid: number) => {
