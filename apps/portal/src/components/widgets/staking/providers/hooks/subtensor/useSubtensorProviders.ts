@@ -9,11 +9,11 @@ const useSubtensorProviders = () => {
 
   const subtensorProviders: Provider[] = chains.map(chain => {
     return {
-      symbol: chain.nativeToken?.symbol ?? '',
+      symbol: chain.hasDTaoStaking ? 'Dynamic TAO' : chain.nativeToken?.symbol ?? '',
       logo: chain.nativeToken?.logo ?? '',
       chainName: chain.name ?? '',
       chainId: chain.id,
-      type: 'Delegation',
+      type: chain.hasDTaoStaking ? 'Subnet Staking' : 'Delegation',
       typeId: 'delegationSubtensor',
       provider: chain.name,
       actionLink: `?action=stake&type=subtensor&chain=${chain.id ?? ''}`,

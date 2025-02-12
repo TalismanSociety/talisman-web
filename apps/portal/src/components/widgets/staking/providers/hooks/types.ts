@@ -7,7 +7,7 @@ export type NativeToken = {
   address?: `0x${string}` | string
 }
 
-export type StakeProvider = 'Nomination pool' | 'Liquid staking' | 'Delegation' | 'DApp staking'
+export type StakeProvider = 'Nomination pool' | 'Liquid staking' | 'Delegation' | 'DApp staking' | 'Subnet Staking'
 export type StakeProviderTypeId =
   | 'liquidStakingSlpx'
   | 'liquidStakingSlpxSubstrate'
