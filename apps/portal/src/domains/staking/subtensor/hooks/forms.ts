@@ -24,8 +24,6 @@ export const useAddStakeForm = (account: Account, stake: StakeItem | undefined, 
   const [input, setInput] = useState('')
   const amount = useTokenAmount(input)
 
-  console.log({ netuid })
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tx: SubmittableExtrinsic<any> = useMemo(() => {
     try {
