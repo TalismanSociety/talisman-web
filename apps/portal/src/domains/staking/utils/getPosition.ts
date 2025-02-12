@@ -1,22 +1,27 @@
 /**
- * To add a position to a provider use the following patter:
- * providerName_tokenSymbol: position
+ * To add a provider,insert it into the ordered array.
+ * The index of the array determines its position automatically.
  */
-const position: Record<string, number> = {
-  analog_timechain_anlog: 0,
-  polkadot_dot: 1,
-  bittensor_tao: 2,
-  kusama_ksm: 3,
-  aleph_zero_azero: 4,
-  vara_vara: 5,
-  avail_avail: 6,
-  cere_cere: 7,
-  bifrost_slpx_manta: 8,
-  bifrost_slpx_glmr: 9,
-  bifrost_slpx_dot: 10,
-  lido_eth: 11,
-  astar_astar: 12,
-}
+const orderedProviders: string[] = [
+  'polkadot_dot',
+  'bittensor_tao',
+  'kusama_ksm',
+  'analog_timechain_anlog',
+  'aleph_zero_azero',
+  'vara_vara',
+  'avail_avail',
+  'cere_cere',
+  'bifrost_slpx_manta',
+  'bifrost_slpx_glmr',
+  'bifrost_slpx_dot',
+  'lido_eth',
+  'astar_astar',
+]
+
+/** Convert the array into a map for quick lookup */
+const positionMap: Record<string, number> = Object.fromEntries(orderedProviders.map((key, index) => [key, index]))
+
+console.log({ positionMap })
 
 export const getPosition = ({
   providerName,
@@ -26,5 +31,5 @@ export const getPosition = ({
   tokenSymbol: string | undefined
 }) => {
   const provider = providerName?.trim().replace(/\s+/g, '_').toLowerCase()
-  return position[`${provider}_${tokenSymbol?.toLowerCase()}`] ?? 99
+  return positionMap[`${provider}_${tokenSymbol?.toLowerCase()}`] ?? 99
 }
