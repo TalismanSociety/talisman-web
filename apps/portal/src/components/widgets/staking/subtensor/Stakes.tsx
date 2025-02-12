@@ -5,6 +5,7 @@ import type { Account } from '@/domains/accounts/recoils'
 import type { StakeItem } from '@/domains/staking/subtensor/hooks/useStake'
 import { StakePosition } from '@/components/recipes/StakePosition'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
+import { ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
 import { selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { useChainState } from '@/domains/chains/hooks'
 import { ChainProvider } from '@/domains/chains/provider'
@@ -48,14 +49,10 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
   const [unstakeDialogOpen, setUnstakeDialogOpen] = useState<boolean>(false)
   const [selectedStake, setSelectedStake] = useState<StakeItem | undefined>()
 
-  const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
-
   useEffect(() => {
     if (!stakes || stakes.length === 0) return
     setShouldRenderLoadingSkeleton(false)
   }, [setShouldRenderLoadingSkeleton, stakes])
-
-  if (stakes.length === 0) return null
 
   const handleToggleAddStakeDialog = (stakeItem?: StakeItem | undefined) => {
     setAddStakeDialogOpen(prev => !prev)
@@ -67,21 +64,26 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
     setSelectedStake(stakeItem)
   }
 
+  const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
+
+  if (stakes.length === 0) return null
+
   return (
     <>
       {stakes.map(stake => {
+        const assetSymbol = stake.netuid === ROOT_NETUID ? symbol : `SN${stake.netuid} ${stake.descriptionName ?? ''}`
         return (
           <ErrorBoundary
             key={`${account.address}-${stake.hotkey}-${stake.netuid}`}
             renderFallback={() => (
-              <ErrorBoundaryFallback logo={logo} symbol={symbol} provider={name} list="positions" />
+              <ErrorBoundaryFallback logo={logo} symbol={assetSymbol} provider={name} list="positions" />
             )}
           >
             <StakePosition
               readonly={account.readonly}
               chain={name}
               chainId={chain?.id || ''}
-              assetSymbol={symbol}
+              assetSymbol={assetSymbol}
               assetLogoSrc={logo}
               account={account}
               provider="Delegation"

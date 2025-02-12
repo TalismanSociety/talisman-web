@@ -2,14 +2,16 @@ import { useAtomValue } from 'jotai'
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
+import { ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
+import { type SubnetData } from '@/domains/staking/subtensor/types'
 import { Decimal } from '@/util/Decimal'
 
 import { accountStakeAtom } from '../atoms/accountStake'
-import { useGetSubnetPools } from './useGetSubnetPools'
+import { useCombineSubnetData } from './useCombineSubnetData'
 
-export type StakeItem = {
+export type StakeItem = SubnetData & {
   totalStaked: {
     decimalAmount: Decimal | undefined
     fiatAmount: number
@@ -27,18 +29,19 @@ export type Stake = {
 }
 
 export const useStake = (account: Account): Stake => {
-  const { data: { data: subnetPools = [] } = {} } = useGetSubnetPools()
   const api = useRecoilValue(useSubstrateApiState())
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
   const nativeToken = api.registry.chainTokens[0] || 'TAO'
+  const { subnetData } = useCombineSubnetData()
 
   const stakeInfoForColdKey = useAtomValue(accountStakeAtom({ api, address: account.address }))
 
   const stakes = stakeInfoForColdKey?.map(stake => {
-    const symbol =
-      stake.netuid !== 0 ? subnetPools?.find(pool => Number(pool.netuid) === Number(stake.netuid))?.symbol : nativeToken
+    const subnet = subnetData[Number(stake.netuid)]
+    const symbol = Number(stake.netuid) !== ROOT_NETUID ? subnet?.symbol : nativeToken
     return {
       ...stake,
+      ...subnet,
       netuid: Number(stake.netuid),
       totalStaked: nativeTokenAmount.fromPlanckOrUndefined(stake.stake, symbol || nativeToken),
       symbol,
