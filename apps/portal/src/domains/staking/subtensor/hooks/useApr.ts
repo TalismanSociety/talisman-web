@@ -20,6 +20,6 @@ export const useDelegateApr = (hotkey: string) => {
 }
 
 export const useDelegateAprFormatted = (hotkey: string) => {
-  const apr = useDelegateApr(hotkey)
+  const apr = useDelegateApr(hotkey) || 0
   return apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 }

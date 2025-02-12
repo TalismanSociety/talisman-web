@@ -91,8 +91,7 @@ export const IncompleteSelectionStakeForm = (props: IncompleteSelectionStakeForm
 
 const EstimatedRewards = (props: { amount: bigint; delegateHotkey: string }) => {
   const tokenAmount = useRecoilValue(useNativeTokenAmountState())
-  // const apr = useApr()
-  const delegateApr = useDelegateApr(props.delegateHotkey)
+  const delegateApr = useDelegateApr(props.delegateHotkey) || 0
   const amount = useMemo(
     () => tokenAmount.fromPlanck(new BN(props.amount.toString()).muln(delegateApr).toString()),
     [delegateApr, props.amount, tokenAmount]
