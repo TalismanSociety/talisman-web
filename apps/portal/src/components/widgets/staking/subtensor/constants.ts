@@ -2,6 +2,8 @@ import { SubnetPool } from '@/domains/staking/subtensor/types'
 
 export const ROOT_NETUID = 0
 
+export const DTAO_SYMBOL = 'Dynamic TAO'
+
 export const DEFAULT_SUBNET: SubnetPool = {
   alpha_in_pool: '',
   alpha_staked: '',

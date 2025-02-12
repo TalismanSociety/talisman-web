@@ -30,4 +30,5 @@ export type Provider = {
   apiEndpoint?: string
   tokenPair?: SlpxPair | SlpxSubstratePair
   position?: string
+  hasDTaoStaking?: boolean
 }

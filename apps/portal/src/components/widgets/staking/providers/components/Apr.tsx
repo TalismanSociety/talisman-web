@@ -13,8 +13,13 @@ import { useHighestApr } from '@/domains/staking/subtensor/hooks/useApr'
 import useLidoApr from '../hooks/lido/useApr'
 import { StakeProviderTypeId } from '../hooks/types'
 
-const aprFormatter = (apr: number) =>
-  apr > 0 ? apr?.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 }) : '--'
+const aprFormatter = (apr: number, hasDTaoStaking?: boolean) => {
+  if (hasDTaoStaking) {
+    return 'Variable'
+  }
+
+  return apr > 0 ? apr?.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 }) : '--'
+}
 
 type AprProps = {
   typeId: StakeProviderTypeId
@@ -22,11 +27,12 @@ type AprProps = {
   setAprValues: (apr: number) => void
   symbol?: string
   apiEndpoint?: string
+  hasDTaoStaking?: boolean
 }
 type AprDisplayProps = Omit<AprProps, 'genesisHash'>
 
 // This component is used to get around the react rules of conditional hooks
-const AprDisplay = ({ typeId, symbol, apiEndpoint, setAprValues }: AprDisplayProps) => {
+const AprDisplay = ({ typeId, symbol, apiEndpoint, hasDTaoStaking, setAprValues }: AprDisplayProps) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
     nominationPool: useNominationPoolApr,
@@ -64,15 +70,21 @@ const AprDisplay = ({ typeId, symbol, apiEndpoint, setAprValues }: AprDisplayPro
 
   return (
     <div className="text-lg">
-      <WithAprDocsLink>{aprFormatter(aprValue ?? 0)}</WithAprDocsLink>
+      <WithAprDocsLink>{aprFormatter(aprValue ?? 0, hasDTaoStaking)}</WithAprDocsLink>
     </div>
   )
 }
 
-const Apr = ({ typeId, genesisHash, symbol, apiEndpoint, setAprValues }: AprProps) => {
+const Apr = ({ typeId, genesisHash, symbol, apiEndpoint, setAprValues, hasDTaoStaking }: AprProps) => {
   return (
     <ChainProvider chain={{ genesisHash: genesisHash }}>
-      <AprDisplay typeId={typeId} setAprValues={setAprValues} symbol={symbol} apiEndpoint={apiEndpoint} />
+      <AprDisplay
+        typeId={typeId}
+        setAprValues={setAprValues}
+        symbol={symbol}
+        apiEndpoint={apiEndpoint}
+        hasDTaoStaking={hasDTaoStaking}
+      />
     </ChainProvider>
   )
 }
