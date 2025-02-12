@@ -21,8 +21,6 @@ const orderedProviders: string[] = [
 /** Convert the array into a map for quick lookup */
 const positionMap: Record<string, number> = Object.fromEntries(orderedProviders.map((key, index) => [key, index]))
 
-console.log({ positionMap })
-
 export const getPosition = ({
   providerName,
   tokenSymbol,
