@@ -32,9 +32,9 @@ export const useAddStakeForm = (
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tx: SubmittableExtrinsic<any> = useMemo(() => {
-    if (!delegate || !netuid) {
+    if (!delegate || netuid === undefined) {
       // Return a dummy transaction if delegate or netuid is missing
-      return api.tx.system.remarkWithEvent('dummy-transaction')
+      return api.tx.system.remarkWithEvent('talisman-bittensor')
     }
 
     try {
@@ -118,7 +118,11 @@ export const useAddStakeForm = (
   const extrinsic = useExtrinsic(tx)
 
   const ready =
-    isFeeEstimateReady && (amount.decimalAmount?.planck ?? 0n) > 0n && error === undefined && delegate && netuid
+    isFeeEstimateReady &&
+    (amount.decimalAmount?.planck ?? 0n) > 0n &&
+    error === undefined &&
+    delegate &&
+    netuid !== undefined
 
   return {
     input,

@@ -16,6 +16,7 @@ import { Zap } from '@talismn/web-icons'
 import { Suspense } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
+import { cn } from '@/util/cn'
 import { Maybe } from '@/util/monads'
 
 type AmountInputProps =
@@ -85,71 +86,77 @@ export type SubtensorStakingFormProps = {
   onSelectSubnet: () => void
 }
 
-export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => (
-  <Surface
-    css={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '1.6rem',
-      borderRadius: '1.6rem',
-      padding: '1.6rem',
-      width: 'auto',
-    }}
-  >
-    {props.accountSelector}
-    {props.amountInput}
+export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
+  const [searchParams] = useSearchParams()
+  const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
+  return (
+    <Surface
+      css={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1.6rem',
+        borderRadius: '1.6rem',
+        padding: '1.6rem',
+        width: 'auto',
+      }}
+    >
+      {props.accountSelector}
+      {props.amountInput}
 
-    <div css={{ cursor: props.isSelectSubnetDisabled ? 'not-allowed' : 'pointer' }} onClick={props.onSelectSubnet}>
-      <label css={{ pointerEvents: 'none' }}>
-        <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
-          Select Subnet
-        </Text.BodySmall>
-        <Select
-          loading={props.subnetSelectionInProgress}
-          placeholder={<ListItem headlineContent="Select a subnet" css={{ padding: '0.8rem', paddingLeft: 0 }} />}
-          renderSelected={() =>
-            props.selectedSubnetName === undefined ? undefined : (
-              <ListItem headlineContent={props.selectedSubnetName} css={{ padding: '0.8rem', paddingLeft: 0 }} />
-            )
-          }
-          css={{ width: '100%' }}
-        />
-      </label>
-    </div>
-    <div css={{ cursor: 'pointer' }} onClick={props.onRequestChange}>
-      <label css={{ pointerEvents: 'none' }}>
-        <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
-          Select Delegate
-        </Text.BodySmall>
-        <Select
-          loading={props.selectionInProgress}
-          placeholder={<ListItem headlineContent="Select a delegate" css={{ padding: '0.8rem', paddingLeft: 0 }} />}
-          renderSelected={() =>
-            props.selectedName === undefined ? undefined : (
-              <ListItem headlineContent={props.selectedName} css={{ padding: '0.8rem', paddingLeft: 0 }} />
-            )
-          }
-          css={{ width: '100%' }}
-        />
-      </label>
-    </div>
-    <DescriptionList css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }}>
-      {props.currentStakedBalance !== undefined && (
-        <DescriptionList.Description>
-          <DescriptionList.Term>Already staked</DescriptionList.Term>
-          <DescriptionList.Details>
-            <Text css={{ color: '#38D448' }}>{props.currentStakedBalance}</Text>
-          </DescriptionList.Details>
-        </DescriptionList.Description>
+      {hasDTaoStaking && (
+        <div css={{ cursor: props.isSelectSubnetDisabled ? 'not-allowed' : 'pointer' }} onClick={props.onSelectSubnet}>
+          <label css={{ pointerEvents: 'none' }}>
+            <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
+              Select Subnet
+            </Text.BodySmall>
+            <Select
+              loading={props.subnetSelectionInProgress}
+              placeholder={<ListItem headlineContent="Select a subnet" css={{ padding: '0.8rem', paddingLeft: 0 }} />}
+              renderSelected={() =>
+                props.selectedSubnetName === undefined ? undefined : (
+                  <ListItem headlineContent={props.selectedSubnetName} css={{ padding: '0.8rem', paddingLeft: 0 }} />
+                )
+              }
+              css={{ width: '100%' }}
+            />
+          </label>
+        </div>
       )}
-      <DescriptionList.Description>
-        <DescriptionList.Term>Estimated earning</DescriptionList.Term>
-        <DescriptionList.Details css={{ wordBreak: 'break-all' }}>{props.estimatedRewards}</DescriptionList.Details>
-      </DescriptionList.Description>
-    </DescriptionList>
-    {props.stakeButton}
-  </Surface>
-)
+      <div css={{ cursor: 'pointer' }} onClick={props.onRequestChange}>
+        <label css={{ pointerEvents: 'none' }}>
+          <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
+            Select Delegate
+          </Text.BodySmall>
+          <Select
+            loading={props.selectionInProgress}
+            placeholder={<ListItem headlineContent="Select a delegate" css={{ padding: '0.8rem', paddingLeft: 0 }} />}
+            renderSelected={() =>
+              props.selectedName === undefined ? undefined : (
+                <ListItem headlineContent={props.selectedName} css={{ padding: '0.8rem', paddingLeft: 0 }} />
+              )
+            }
+            css={{ width: '100%' }}
+          />
+        </label>
+      </div>
+      <DescriptionList css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }}>
+        {props.currentStakedBalance !== undefined && (
+          <DescriptionList.Description>
+            <DescriptionList.Term>Already staked</DescriptionList.Term>
+            <DescriptionList.Details>
+              <Text css={{ color: '#38D448' }}>{props.currentStakedBalance}</Text>
+            </DescriptionList.Details>
+          </DescriptionList.Description>
+        )}
+        <DescriptionList.Description>
+          <DescriptionList.Term>Estimated earning</DescriptionList.Term>
+          <DescriptionList.Details css={{ wordBreak: 'break-all' }}>{props.estimatedRewards}</DescriptionList.Details>
+        </DescriptionList.Description>
+      </DescriptionList>
+      {props.stakeButton}
+    </Surface>
+  )
+}
 SubtensorStakingForm.AmountInput = AmountInput
 SubtensorStakingForm.StakeButton = (props: Omit<ButtonProps, 'children'>) => (
   <Button {...props} css={{ marginTop: '1.6rem', width: 'auto' }}>
@@ -200,7 +207,7 @@ export const SubtensorStakingSideSheet = ({
           ))}
         </section>
         {children}
-        <div className="flex flex-col gap-[1rem]">
+        <div className={cn('flex flex-col gap-[1rem]', { 'mt-[6.4rem]': !hasDTaoStaking })}>
           {hasDTaoStaking && (
             <>
               <div className="mt-[2rem] flex items-center justify-between">
