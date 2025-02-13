@@ -17,6 +17,7 @@ import { useTotalTaoStakedFormatted } from '@/domains/staking/subtensor/hooks/us
 import { type SubnetData } from '@/domains/staking/subtensor/types'
 import { Maybe } from '@/util/monads'
 
+import { ROOT_NETUID } from './constants'
 import { DelegateSelectorDialog } from './DelegateSelectorDialog'
 import { IncompleteSelectionStakeForm, StakeForm } from './StakeForm'
 import { SubnetSelectorDialog } from './SubnetSelectorDialog'
@@ -55,6 +56,7 @@ const StakeSideSheetContent = ({
       ? 0
       : accounts => accounts?.find(x => x.address === searchParams.get('account'))
   )
+  const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
 
   const [delegateSelectorOpen, setDelegateSelectorOpen] = useState(false)
   const [subnetSelectorOpen, setSubnetSelectorOpen] = useState(false)
@@ -89,18 +91,21 @@ const StakeSideSheetContent = ({
 
   const subnetName = subnet ? `${subnet?.netuid}: ${subnet?.symbol}` : undefined
 
+  const poolNetuid = subnet?.netuid ? Number(subnet.netuid) : undefined
+  const netuid = !hasDTaoStaking ? ROOT_NETUID : poolNetuid
+
   return (
     <>
-      {account !== undefined && delegate !== undefined && subnet !== undefined ? (
+      {account !== undefined ? (
         <StakeForm
           account={account}
-          delegate={delegate.address}
-          netuid={Number(subnet.netuid)}
+          delegate={delegate?.address}
+          netuid={netuid}
           accountSelector={accountSelector}
           assetSelector={assetSelector}
           selectionInProgress={delegateSelectorInTransition}
           subnetSelectionInProgress={subnetSelectorInTransition}
-          selectedName={delegate.name}
+          selectedName={delegate?.name ?? undefined}
           selectedSubnetName={subnetName}
           onRequestChange={openDelegateSelector}
           onSelectSubnet={openSubnetSelector}
@@ -223,6 +228,7 @@ const StakeSideSheetOpen = () => {
             params.delete('type')
             params.delete('chain')
             params.delete('account')
+            params.delete('hasDTaoStaking')
             return params
           })
         }

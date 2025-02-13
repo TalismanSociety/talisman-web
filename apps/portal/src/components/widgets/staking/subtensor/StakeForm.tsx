@@ -15,8 +15,8 @@ import { SubtensorStakingForm } from './SubtensorStakingForm'
 
 type StakeFormProps = IncompleteSelectionStakeFormProps & {
   account: Account
-  delegate: string
-  netuid: number
+  delegate: string | undefined
+  netuid: number | undefined
   isSelectSubnetDisabled: boolean
 }
 
@@ -65,7 +65,7 @@ export const StakeForm = (props: StakeFormProps) => {
       estimatedRewards={
         <Suspense fallback={<CircularProgressIndicator size="1em" />}>
           <EstimatedRewards
-            delegateHotkey={props.delegate}
+            delegateHotkey={props.delegate || ''}
             amount={(amount.decimalAmount?.planck ?? 0n) + (stake?.totalStaked.decimalAmount?.planck ?? 0n)}
           />
         </Suspense>

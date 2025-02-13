@@ -17,7 +17,12 @@ import { type StakeItem } from './useStake'
 // TODO: Remove mocked validator and use the actual validator address when dTAO goes live
 const MOCKED_VALIDATOR = '5FCPTnjevGqAuTttetBy4a24Ej3pH9fiQ8fmvP1ZkrVsLUoT'
 
-export const useAddStakeForm = (account: Account, stake: StakeItem | undefined, delegate: string, netuid: number) => {
+export const useAddStakeForm = (
+  account: Account,
+  stake: StakeItem | undefined,
+  delegate: string | undefined,
+  netuid: number | undefined
+) => {
   const [api, [accountInfo]] = useRecoilValue(
     waitForAll([useSubstrateApiState(), useQueryMultiState([['system.account', account.address]])])
   )
@@ -27,6 +32,11 @@ export const useAddStakeForm = (account: Account, stake: StakeItem | undefined, 
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tx: SubmittableExtrinsic<any> = useMemo(() => {
+    if (!delegate || !netuid) {
+      // Return a dummy transaction if delegate or netuid is missing
+      return api.tx.system.remarkWithEvent('dummy-transaction')
+    }
+
     try {
       return api.tx.utility.batchAll([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -107,7 +117,8 @@ export const useAddStakeForm = (account: Account, stake: StakeItem | undefined, 
 
   const extrinsic = useExtrinsic(tx)
 
-  const ready = isFeeEstimateReady && (amount.decimalAmount?.planck ?? 0n) > 0n && error === undefined
+  const ready =
+    isFeeEstimateReady && (amount.decimalAmount?.planck ?? 0n) > 0n && error === undefined && delegate && netuid
 
   return {
     input,
