@@ -23,7 +23,7 @@ type StakeFormProps = IncompleteSelectionStakeFormProps & {
 export const StakeForm = (props: StakeFormProps) => {
   const { stakes } = useStake(props.account)
   const stake = stakes?.find(stake => stake.hotkey === props.delegate && Number(stake.netuid) === Number(props.netuid))
-  const { input, setInput, amount, transferable, extrinsic, ready, error } = useAddStakeForm(
+  const { input, setInput, amount, talismanFeeTokenAmount, transferable, extrinsic, ready, error } = useAddStakeForm(
     props.account,
     stake,
     props.delegate,

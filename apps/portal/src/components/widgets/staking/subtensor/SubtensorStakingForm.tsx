@@ -175,6 +175,7 @@ export type SubtensorStakingSideSheetProps = Omit<SideSheetProps, 'title'> & {
   chainName: ReactNode
   info: Array<{ title: ReactNode; content: ReactNode }>
   minimumStake: ReactNode
+  // talismanFeeTokenAmount: ReactNode
 }
 export const SubtensorStakingSideSheet = ({
   children,
@@ -215,6 +216,15 @@ export const SubtensorStakingSideSheet = ({
         </section>
         {children}
         <div className={cn('mt-[2rem] flex flex-col gap-[1rem]', { 'mt-[6.4rem]': !hasDTaoStaking })}>
+          <div className="mt-[2rem] flex items-center justify-between">
+            <Text.Body as="p" alpha="high">
+              0.5% Talisman Fee
+            </Text.Body>
+            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+              <Text.Body alpha="high">123 Symbol</Text.Body>
+            </Suspense>
+          </div>
+
           {hasDTaoStaking && (
             <>
               {/* TODO: Add slippage. Come back when Taostats slippage endpoint is working */}

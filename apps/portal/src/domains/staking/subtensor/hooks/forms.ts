@@ -5,6 +5,10 @@ import { useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
+import {
+  TALISMAN_FEE_BITTENSOR,
+  TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR,
+} from '@/components/widgets/staking/subtensor/constants'
 import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
 import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
@@ -27,8 +31,18 @@ export const useAddStakeForm = (
     waitForAll([useSubstrateApiState(), useQueryMultiState([['system.account', account.address]])])
   )
 
+  const calculateFee = (amount: bigint, fee: number): bigint => {
+    if (fee < 0) {
+      throw new Error('Fee percentage cannot be negative')
+    }
+
+    return (amount * BigInt(Math.round(fee * 100))) / BigInt(10000)
+  }
+
   const [input, setInput] = useState('')
   const amount = useTokenAmount(input)
+  const talismanFee = calculateFee(amount.decimalAmount?.planck ?? 0n, TALISMAN_FEE_BITTENSOR)
+  const talismanFeeTokenAmount = useTokenAmountFromPlanck(talismanFee)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tx: SubmittableExtrinsic<any> = useMemo(() => {
@@ -41,16 +55,18 @@ export const useAddStakeForm = (
       return api.tx.utility.batchAll([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (api.tx as any)?.subtensorModule?.addStake?.(delegate, amount.decimalAmount?.planck ?? 0n),
+        api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, talismanFee),
         api.tx.system.remarkWithEvent(`talisman-bittensor`),
       ])
     } catch {
       return api.tx.utility.batchAll([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (api.tx as any)?.subtensorModule?.addStake?.(MOCKED_VALIDATOR, netuid, amount.decimalAmount?.planck ?? 0n),
+        api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, talismanFee),
         api.tx.system.remarkWithEvent(`talisman-bittensor`),
       ])
     }
-  }, [api.tx, delegate, amount.decimalAmount?.planck, netuid])
+  }, [delegate, netuid, api.tx, amount.decimalAmount?.planck, talismanFee])
 
   const [feeEstimate, isFeeEstimateReady] = useStakeFormFeeEstimate(account.address, tx)
 
@@ -128,6 +144,7 @@ export const useAddStakeForm = (
     input,
     setInput,
     amount,
+    talismanFeeTokenAmount,
     transferable,
     resulting,
     extrinsic,
