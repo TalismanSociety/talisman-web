@@ -13,6 +13,7 @@ import { Select } from '@talismn/ui/molecules/Select'
 import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
 import { Zap } from '@talismn/web-icons'
+import clsx from 'clsx'
 import { Suspense } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
@@ -139,20 +140,26 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
           />
         </label>
       </div>
-      <DescriptionList css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }}>
-        {props.currentStakedBalance !== undefined && (
-          <DescriptionList.Description>
-            <DescriptionList.Term>Already staked</DescriptionList.Term>
-            <DescriptionList.Details>
-              <Text css={{ color: '#38D448' }}>{props.currentStakedBalance}</Text>
-            </DescriptionList.Details>
-          </DescriptionList.Description>
-        )}
-        <DescriptionList.Description>
-          <DescriptionList.Term>Estimated earning</DescriptionList.Term>
-          <DescriptionList.Details css={{ wordBreak: 'break-all' }}>{props.estimatedRewards}</DescriptionList.Details>
-        </DescriptionList.Description>
-      </DescriptionList>
+      <div className={clsx({ 'mb-[1.6rem] mt-[1.6rem]': props.currentStakedBalance !== undefined || !hasDTaoStaking })}>
+        <DescriptionList>
+          {props.currentStakedBalance !== undefined && (
+            <DescriptionList.Description>
+              <DescriptionList.Term>Already staked</DescriptionList.Term>
+              <DescriptionList.Details>
+                <Text css={{ color: '#38D448' }}>{props.currentStakedBalance}</Text>
+              </DescriptionList.Details>
+            </DescriptionList.Description>
+          )}
+          {!hasDTaoStaking && (
+            <DescriptionList.Description>
+              <DescriptionList.Term>Estimated earning</DescriptionList.Term>
+              <DescriptionList.Details css={{ wordBreak: 'break-all' }}>
+                {props.estimatedRewards}
+              </DescriptionList.Details>
+            </DescriptionList.Description>
+          )}
+        </DescriptionList>
+      </div>
       {props.stakeButton}
     </Surface>
   )
@@ -207,15 +214,16 @@ export const SubtensorStakingSideSheet = ({
           ))}
         </section>
         {children}
-        <div className={cn('flex flex-col gap-[1rem]', { 'mt-[6.4rem]': !hasDTaoStaking })}>
+        <div className={cn('mt-[2rem] flex flex-col gap-[1rem]', { 'mt-[6.4rem]': !hasDTaoStaking })}>
           {hasDTaoStaking && (
             <>
-              <div className="mt-[2rem] flex items-center justify-between">
+              {/* TODO: Add slippage. Come back when Taostats slippage endpoint is working */}
+              {/* <div className="mt-[2rem] flex items-center justify-between">
                 <Text.Body as="p">Slippage</Text.Body>
                 <Suspense fallback={<CircularProgressIndicator size="1em" />}>
                   <Text.Body alpha="high">99%</Text.Body>
                 </Suspense>
-              </div>
+              </div> */}
               <Text.Body as="p">
                 Note that Dynamic TAO Subnet staking has more variable rewards than the Legacy TAO Staking
               </Text.Body>
