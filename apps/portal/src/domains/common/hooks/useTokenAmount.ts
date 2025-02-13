@@ -52,6 +52,8 @@ export const useTokenAmount = <TAllowInvalid extends boolean = true>(
   return { decimalAmount, fiatAmount, localizedFiatAmount } as Return
 }
 
+export type TokenAmountFromPlank = ReturnType<typeof useTokenAmountFromPlanck>
+
 export const useTokenAmountFromPlanck = <
   T extends string | number | BN | bigint | undefined,
   TAllowInvalid extends boolean = false

@@ -15,12 +15,8 @@ type SubtensorAddStakeDialogProps = {
 }
 
 const SubtensorAddStakeDialog = ({ account, stake, delegate, onRequestDismiss }: SubtensorAddStakeDialogProps) => {
-  const { input, setInput, amount, transferable, resulting, extrinsic, ready, error } = useAddStakeForm(
-    account,
-    stake,
-    delegate,
-    stake.netuid
-  )
+  const { input, setInput, amount, transferable, resulting, extrinsic, ready, error, talismanFeeTokenAmount } =
+    useAddStakeForm(account, stake, delegate, stake.netuid)
 
   useExtrinsicInBlockOrErrorEffect(() => onRequestDismiss(), extrinsic)
 
@@ -47,6 +43,7 @@ const SubtensorAddStakeDialog = ({ account, stake, delegate, onRequestDismiss }:
       }}
       inputSupportingText={error?.message}
       onDismiss={onRequestDismiss}
+      talismanFeeTokenAmount={talismanFeeTokenAmount}
     />
   )
 }

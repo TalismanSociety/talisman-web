@@ -20,6 +20,8 @@ import { useSearchParams } from 'react-router-dom'
 import { cn } from '@/util/cn'
 import { Maybe } from '@/util/monads'
 
+import { useBittensorStake } from './BittensorStakeContext'
+
 type AmountInputProps =
   | {
       disabled?: false
@@ -175,7 +177,6 @@ export type SubtensorStakingSideSheetProps = Omit<SideSheetProps, 'title'> & {
   chainName: ReactNode
   info: Array<{ title: ReactNode; content: ReactNode }>
   minimumStake: ReactNode
-  // talismanFeeTokenAmount: ReactNode
 }
 export const SubtensorStakingSideSheet = ({
   children,
@@ -185,6 +186,9 @@ export const SubtensorStakingSideSheet = ({
 }: SubtensorStakingSideSheetProps) => {
   const [searchParams] = useSearchParams()
   const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
+
+  const { talismanFeeTokenAmount } = useBittensorStake()
+
   return (
     <SideSheet
       {...props}
@@ -221,7 +225,7 @@ export const SubtensorStakingSideSheet = ({
               0.5% Talisman Fee
             </Text.Body>
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-              <Text.Body alpha="high">123 Symbol</Text.Body>
+              <Text.Body alpha="high">{talismanFeeTokenAmount?.decimalAmount?.toLocaleString()}</Text.Body>
             </Suspense>
           </div>
 

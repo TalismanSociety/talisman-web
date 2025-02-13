@@ -3,6 +3,7 @@ import { Suspense, useMemo, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
+import type { Delegate } from '@/domains/staking/subtensor/atoms/delegates'
 import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
 import { useAccountSelector } from '@/components/widgets/AccountSelector'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
@@ -10,13 +11,14 @@ import { writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { useChainState } from '@/domains/chains/hooks'
 import { ChainProvider } from '@/domains/chains/provider'
 import { ChainInfo, subtensorStakingEnabledChainsState } from '@/domains/chains/recoils'
-import { DEFAULT_DELEGATE, Delegate, MIN_SUBTENSOR_STAKE } from '@/domains/staking/subtensor/atoms/delegates'
+import { DEFAULT_DELEGATE, MIN_SUBTENSOR_STAKE } from '@/domains/staking/subtensor/atoms/delegates'
 import { useDelegateAprFormatted } from '@/domains/staking/subtensor/hooks/useApr'
 import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
 import { useTotalTaoStakedFormatted } from '@/domains/staking/subtensor/hooks/useTotalTaoStakedFormatted'
 import { type SubnetData } from '@/domains/staking/subtensor/types'
 import { Maybe } from '@/util/monads'
 
+import { BittensorStakeProvider } from './BittensorStakeContext'
 import { ROOT_NETUID } from './constants'
 import { DelegateSelectorDialog } from './DelegateSelectorDialog'
 import { IncompleteSelectionStakeForm, StakeForm } from './StakeForm'
@@ -242,5 +244,9 @@ export const StakeSideSheet = () => {
   const open = searchParams.get('action') === 'stake' && searchParams.get('type') === 'subtensor'
 
   if (!open) return null
-  return <StakeSideSheetOpen />
+  return (
+    <BittensorStakeProvider>
+      <StakeSideSheetOpen />
+    </BittensorStakeProvider>
+  )
 }

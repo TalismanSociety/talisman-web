@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import BN from 'bn.js'
-import { Suspense, useMemo } from 'react'
+import { Suspense, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
+import { useBittensorStake } from '@/components/widgets/staking/subtensor/BittensorStakeContext'
 import { Account } from '@/domains/accounts/recoils'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useAddStakeForm } from '@/domains/staking/subtensor/hooks/forms'
@@ -29,7 +30,12 @@ export const StakeForm = (props: StakeFormProps) => {
     props.delegate,
     props.netuid
   )
+  const { setTalismanFeeTokenAmount } = useBittensorStake()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    setTalismanFeeTokenAmount(talismanFeeTokenAmount)
+  }, [setTalismanFeeTokenAmount, talismanFeeTokenAmount])
 
   return (
     <SubtensorStakingForm

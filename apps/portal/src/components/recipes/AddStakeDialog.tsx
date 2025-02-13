@@ -1,8 +1,12 @@
 import type { ReactNode } from 'react'
 import { Button } from '@talismn/ui/atoms/Button'
+import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { Text } from '@talismn/ui/atoms/Text'
 import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
+import { Suspense } from 'react'
+
+import { type TokenAmountFromPlank } from '@/domains/common/hooks/useTokenAmount'
 
 export type AddStakeFormProps = {
   accountSelector?: ReactNode
@@ -19,6 +23,7 @@ export type AddStakeFormProps = {
   inputSupportingText?: string
   onConfirm: () => unknown
   approvalNeeded?: boolean
+  talismanFeeTokenAmount?: TokenAmountFromPlank
 }
 
 export type AddStakeDialogProps = AddStakeFormProps & {
@@ -55,6 +60,16 @@ const AddStakeForm = (props: AddStakeFormProps) => (
         <Text.Body as="div">{props.newFiatAmount}</Text.Body>
       </div>
     </div>
+    {props.talismanFeeTokenAmount && (
+      <div className="mt-[2rem] flex items-center justify-between">
+        <Text.Body as="p" alpha="high">
+          0.5% Talisman Fee
+        </Text.Body>
+        <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+          <Text.Body alpha="high">{props.talismanFeeTokenAmount.decimalAmount?.toLocaleString()}</Text.Body>
+        </Suspense>
+      </div>
+    )}
     {props.rate && (
       <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.6rem' }}>
         <Text.Body alpha="high">Rate</Text.Body>
