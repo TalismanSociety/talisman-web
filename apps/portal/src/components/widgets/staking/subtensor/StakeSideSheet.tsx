@@ -1,12 +1,11 @@
 import { Select } from '@talismn/ui/molecules/Select'
-import { Suspense, useEffect, useMemo, useState, useTransition } from 'react'
+import { Suspense, useMemo, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
 import { useAccountSelector } from '@/components/widgets/AccountSelector'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
-import { DEFAULT_SUBNET, ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
 import { writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { useChainState } from '@/domains/chains/hooks'
 import { ChainProvider } from '@/domains/chains/provider'
@@ -14,7 +13,6 @@ import { ChainInfo, subtensorStakingEnabledChainsState } from '@/domains/chains/
 import { DEFAULT_DELEGATE, Delegate, MIN_SUBTENSOR_STAKE } from '@/domains/staking/subtensor/atoms/delegates'
 import { useDelegateAprFormatted } from '@/domains/staking/subtensor/hooks/useApr'
 import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
-import { useDelegates } from '@/domains/staking/subtensor/hooks/useDelegates'
 import { useTotalTaoStakedFormatted } from '@/domains/staking/subtensor/hooks/useTotalTaoStakedFormatted'
 import { type SubnetData } from '@/domains/staking/subtensor/types'
 import { Maybe } from '@/util/monads'
@@ -28,6 +26,7 @@ type StakeSideSheetProps = {
   chains: Array<Extract<ChainInfo, { hasSubtensorStaking: true }>>
   onChangeChain: (chain: Extract<ChainInfo, { hasSubtensorStaking: true }>) => unknown
   onRequestDismiss: () => unknown
+  hasDTaoStaking: boolean
 }
 
 type StakeSideSheetContentProps = Omit<StakeSideSheetProps, 'onRequestDismiss'> & {
@@ -88,7 +87,7 @@ const StakeSideSheetContent = ({
     [chain.id, chains, onChangeChain]
   )
 
-  const subnetName = `${subnet?.netuid}: ${subnet?.symbol}`
+  const subnetName = subnet ? `${subnet?.netuid}: ${subnet?.symbol}` : undefined
 
   return (
     <>
@@ -137,23 +136,15 @@ const StakeSideSheetContent = ({
 }
 
 const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
-  const delegates = useDelegates()
   const { subnetData } = useCombineSubnetData()
-  const [delegate, setDelegate] = useState(delegates[DEFAULT_DELEGATE] ?? Object.values(delegates)[0])
-  const [subnet, setSubnet] = useState<SubnetData | undefined>(DEFAULT_SUBNET)
+  const [delegate, setDelegate] = useState<Delegate | undefined>()
+  const [subnet, setSubnet] = useState<SubnetData | undefined>()
   const { nativeToken } = useRecoilValue(useChainState())
+  const { hasDTaoStaking } = props
 
   const totalStaked = useTotalTaoStakedFormatted()
   const delegateApr = useDelegateAprFormatted(delegate?.address ?? DEFAULT_DELEGATE)
 
-  useEffect(() => {
-    const rootSubnet = subnetData[ROOT_NETUID]
-    if (rootSubnet) {
-      setSubnet(rootSubnet)
-    } else {
-      setSubnet(DEFAULT_SUBNET)
-    }
-  }, [subnetData, setSubnet])
   return (
     <SubtensorStakingSideSheet
       onRequestDismiss={props.onRequestDismiss}
@@ -162,11 +153,11 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
         () => [
           {
             title: 'Total Staked',
-            content: <>{totalStaked}</>,
+            content: <>{hasDTaoStaking ? 'TBA' : totalStaked}</>,
           },
-          { title: 'Estimated APR', content: <>{delegateApr}</> },
+          { title: 'Estimated APR', content: <>{hasDTaoStaking ? 'Variable' : delegateApr}</> },
         ],
-        [delegateApr, totalStaked]
+        [delegateApr, hasDTaoStaking, totalStaked]
       )}
       minimumStake={
         <>
@@ -211,6 +202,7 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
 const StakeSideSheetOpen = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const initialChain = searchParams.get('chain')
+  const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
 
   const chains = useRecoilValue(subtensorStakingEnabledChainsState)
   const [chain, setChain] = useState(
@@ -224,6 +216,7 @@ const StakeSideSheetOpen = () => {
       <StakeSideSheetForChain
         chains={chains}
         onChangeChain={setChain}
+        hasDTaoStaking={hasDTaoStaking}
         onRequestDismiss={() =>
           setSearchParams(params => {
             params.delete('action')

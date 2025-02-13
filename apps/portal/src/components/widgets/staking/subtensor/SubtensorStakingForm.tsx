@@ -14,6 +14,7 @@ import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/mol
 import { TextInput } from '@talismn/ui/molecules/TextInput'
 import { Zap } from '@talismn/web-icons'
 import { Suspense } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 import { Maybe } from '@/util/monads'
 
@@ -97,23 +98,7 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => (
   >
     {props.accountSelector}
     {props.amountInput}
-    <div css={{ cursor: 'pointer' }} onClick={props.onRequestChange}>
-      <label css={{ pointerEvents: 'none' }}>
-        <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
-          Select Delegate
-        </Text.BodySmall>
-        <Select
-          loading={props.selectionInProgress}
-          placeholder="Select a delegate"
-          renderSelected={() =>
-            props.selectedName === undefined ? undefined : (
-              <ListItem headlineContent={props.selectedName} css={{ padding: '0.8rem', paddingLeft: 0 }} />
-            )
-          }
-          css={{ width: '100%' }}
-        />
-      </label>
-    </div>
+
     <div css={{ cursor: props.isSelectSubnetDisabled ? 'not-allowed' : 'pointer' }} onClick={props.onSelectSubnet}>
       <label css={{ pointerEvents: 'none' }}>
         <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
@@ -121,10 +106,27 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => (
         </Text.BodySmall>
         <Select
           loading={props.subnetSelectionInProgress}
-          placeholder="Select a subnet"
+          placeholder={<ListItem headlineContent="Select a subnet" css={{ padding: '0.8rem', paddingLeft: 0 }} />}
           renderSelected={() =>
             props.selectedSubnetName === undefined ? undefined : (
               <ListItem headlineContent={props.selectedSubnetName} css={{ padding: '0.8rem', paddingLeft: 0 }} />
+            )
+          }
+          css={{ width: '100%' }}
+        />
+      </label>
+    </div>
+    <div css={{ cursor: 'pointer' }} onClick={props.onRequestChange}>
+      <label css={{ pointerEvents: 'none' }}>
+        <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
+          Select Delegate
+        </Text.BodySmall>
+        <Select
+          loading={props.selectionInProgress}
+          placeholder={<ListItem headlineContent="Select a delegate" css={{ padding: '0.8rem', paddingLeft: 0 }} />}
+          renderSelected={() =>
+            props.selectedName === undefined ? undefined : (
+              <ListItem headlineContent={props.selectedName} css={{ padding: '0.8rem', paddingLeft: 0 }} />
             )
           }
           css={{ width: '100%' }}
@@ -165,48 +167,68 @@ export const SubtensorStakingSideSheet = ({
   info,
   minimumStake,
   ...props
-}: SubtensorStakingSideSheetProps) => (
-  <SideSheet
-    {...props}
-    title={
-      <div className="flex items-center gap-2">
-        <Zap />
-        Stake
+}: SubtensorStakingSideSheetProps) => {
+  const [searchParams] = useSearchParams()
+  const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
+  return (
+    <SideSheet
+      {...props}
+      title={
+        <div className="flex items-center gap-2">
+          <Zap />
+          Stake
+        </div>
+      }
+      subtitle="Bittensor delegated staking"
+    >
+      <div css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '42rem' } }}>
+        <section
+          css={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1.6rem',
+            marginBottom: '1.6rem',
+            '> *': { flex: 1 },
+          }}
+        >
+          {info.map(({ title, content }, index) => (
+            <InfoCard
+              key={index}
+              overlineContent={title}
+              headlineContent={<Suspense fallback={<CircularProgressIndicator size="1em" />}>{content}</Suspense>}
+            />
+          ))}
+        </section>
+        {children}
+        <div className="flex flex-col gap-[1rem]">
+          {hasDTaoStaking && (
+            <>
+              <div className="mt-[2rem] flex items-center justify-between">
+                <Text.Body as="p">Slippage</Text.Body>
+                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                  <Text.Body alpha="high">99%</Text.Body>
+                </Suspense>
+              </div>
+              <Text.Body as="p">
+                Note that Dynamic TAO Subnet staking has more variable rewards than the Legacy TAO Staking
+              </Text.Body>
+            </>
+          )}
+
+          <Text.Body as="p">
+            The <Text.Body alpha="high">minimum amount</Text.Body> required to stake is{' '}
+            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+              <Text.Body alpha="high">{minimumStake}</Text.Body>
+            </Suspense>
+            .
+          </Text.Body>
+          <Text.Body as="p">
+            After a successful <Text.Body alpha="high">stake OR unstake</Text.Body> operation, you must wait for{' '}
+            <Text.Body alpha="high">360&nbsp;blocks</Text.Body> (approx. 1 hour 12 minutes) before you can submit
+            another operation for the same account.
+          </Text.Body>
+        </div>
       </div>
-    }
-    subtitle="Bittensor delegated staking"
-  >
-    <div css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '42rem' } }}>
-      <section
-        css={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1.6rem',
-          marginBottom: '1.6rem',
-          '> *': { flex: 1 },
-        }}
-      >
-        {info.map(({ title, content }, index) => (
-          <InfoCard
-            key={index}
-            overlineContent={title}
-            headlineContent={<Suspense fallback={<CircularProgressIndicator size="1em" />}>{content}</Suspense>}
-          />
-        ))}
-      </section>
-      {children}
-      <Text.Body as="p" css={{ marginTop: '6.4rem' }}>
-        The <Text.Body alpha="high">minimum amount</Text.Body> required to stake is{' '}
-        <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-          <Text.Body alpha="high">{minimumStake}</Text.Body>
-        </Suspense>
-        .
-      </Text.Body>
-      <Text.Body as="p" css={{ marginTop: '1rem' }}>
-        After a successful <Text.Body alpha="high">stake OR unstake</Text.Body> operation, you must wait for{' '}
-        <Text.Body alpha="high">360&nbsp;blocks</Text.Body> (approx. 1 hour 12 minutes) before you can submit another
-        operation for the same account.
-      </Text.Body>
-    </div>
-  </SideSheet>
-)
+    </SideSheet>
+  )
+}
