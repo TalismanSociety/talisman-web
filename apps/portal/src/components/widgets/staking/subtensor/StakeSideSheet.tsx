@@ -18,7 +18,6 @@ import { useTotalTaoStakedFormatted } from '@/domains/staking/subtensor/hooks/us
 import { type SubnetData } from '@/domains/staking/subtensor/types'
 import { Maybe } from '@/util/monads'
 
-import { BittensorStakeProvider } from './BittensorStakeContext'
 import { ROOT_NETUID } from './constants'
 import { DelegateSelectorDialog } from './DelegateSelectorDialog'
 import { IncompleteSelectionStakeForm, StakeForm } from './StakeForm'
@@ -244,9 +243,5 @@ export const StakeSideSheet = () => {
   const open = searchParams.get('action') === 'stake' && searchParams.get('type') === 'subtensor'
 
   if (!open) return null
-  return (
-    <BittensorStakeProvider>
-      <StakeSideSheetOpen />
-    </BittensorStakeProvider>
-  )
+  return <StakeSideSheetOpen />
 }

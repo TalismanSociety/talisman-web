@@ -1,13 +1,14 @@
 import type { ReactNode } from 'react'
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import BN from 'bn.js'
+import { useSetAtom } from 'jotai'
 import { Suspense, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
-import { useBittensorStake } from '@/components/widgets/staking/subtensor/BittensorStakeContext'
 import { Account } from '@/domains/accounts/recoils'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
+import { talismanTokenFeeAtom } from '@/domains/staking/subtensor/atoms/talismanTokenFee'
 import { useAddStakeForm } from '@/domains/staking/subtensor/hooks/forms'
 import { useDelegateApr } from '@/domains/staking/subtensor/hooks/useApr'
 import { useStake } from '@/domains/staking/subtensor/hooks/useStake'
@@ -30,12 +31,18 @@ export const StakeForm = (props: StakeFormProps) => {
     props.delegate,
     props.netuid
   )
-  const { setTalismanFeeTokenAmount } = useBittensorStake()
+  const setTalismanTokenFee = useSetAtom(talismanTokenFeeAtom)
   const navigate = useNavigate()
 
+  const memoizedFee = useMemo(() => {
+    talismanFeeTokenAmount
+  }, [talismanFeeTokenAmount])
+
+  console.log({ memoizedFee, talismanFeeTokenAmount })
+
   useEffect(() => {
-    setTalismanFeeTokenAmount(talismanFeeTokenAmount)
-  }, [setTalismanFeeTokenAmount, talismanFeeTokenAmount])
+    setTalismanTokenFee(talismanFeeTokenAmount)
+  }, [setTalismanTokenFee, talismanFeeTokenAmount])
 
   return (
     <SubtensorStakingForm

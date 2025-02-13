@@ -14,13 +14,13 @@ import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/mol
 import { TextInput } from '@talismn/ui/molecules/TextInput'
 import { Zap } from '@talismn/web-icons'
 import clsx from 'clsx'
+import { useAtom } from 'jotai'
 import { Suspense } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
+import { talismanTokenFeeAtom } from '@/domains/staking/subtensor/atoms/talismanTokenFee'
 import { cn } from '@/util/cn'
 import { Maybe } from '@/util/monads'
-
-import { useBittensorStake } from './BittensorStakeContext'
 
 type AmountInputProps =
   | {
@@ -186,8 +186,7 @@ export const SubtensorStakingSideSheet = ({
 }: SubtensorStakingSideSheetProps) => {
   const [searchParams] = useSearchParams()
   const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
-
-  const { talismanFeeTokenAmount } = useBittensorStake()
+  const talismanFeeTokenAmount = useAtom(talismanTokenFeeAtom)[0]
 
   return (
     <SideSheet
