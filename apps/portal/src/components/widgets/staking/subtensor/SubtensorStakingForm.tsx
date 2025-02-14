@@ -238,7 +238,10 @@ export const SubtensorStakingSideSheet = ({
                 </Suspense>
               </div> */}
               <Text.Body as="p">
-                Note that Dynamic TAO Subnet staking has more variable rewards than the Legacy TAO Staking
+                Note that Dynamic TAO Subnet staking has more variable rewards than the Legacy TAO Staking.{' '}
+                <Text.Body.A href="https://taostats.io/subnets" target="_blank">
+                  Learn more
+                </Text.Body.A>
               </Text.Body>
             </>
           )}
