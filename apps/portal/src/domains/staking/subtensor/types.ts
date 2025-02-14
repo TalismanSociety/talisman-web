@@ -77,11 +77,17 @@ export type SubnetPool = {
   alpha_in_pool: string
   alpha_staked: string
   price: string
-  price_change_1_hour: string
-  price_change_1_day: string
-  price_change_1_week: string
+  price_change_1_hour: string | null
+  price_change_1_day: string | null
+  price_change_1_week: string | null
   tao_volume_24_hr: string
+  tao_buy_volume_24_hr: string
+  tao_sell_volume_24_hr: string
   seven_day_prices: SevenDayPrice[]
+  buys_24_hr: number
+  sells_24_hr: number
+  buyers_24_hr: number
+  sellers_24_hr: number
 }
 
 export type SubnetApiResponse = {

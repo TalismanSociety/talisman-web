@@ -34,12 +34,6 @@ export const StakeForm = (props: StakeFormProps) => {
   const setTalismanTokenFee = useSetAtom(talismanTokenFeeAtom)
   const navigate = useNavigate()
 
-  const memoizedFee = useMemo(() => {
-    talismanFeeTokenAmount
-  }, [talismanFeeTokenAmount])
-
-  console.log({ memoizedFee, talismanFeeTokenAmount })
-
   useEffect(() => {
     setTalismanTokenFee(talismanFeeTokenAmount)
   }, [setTalismanTokenFee, talismanFeeTokenAmount])
