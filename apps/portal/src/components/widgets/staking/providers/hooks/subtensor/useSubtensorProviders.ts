@@ -6,7 +6,14 @@ import { DTAO_SYMBOL } from '../../../subtensor/constants'
 import { Provider } from '../types'
 
 const useSubtensorProviders = () => {
-  const chains = useRecoilValue(subtensorStakingEnabledChainsState)
+  const [rootStaking] = useRecoilValue(subtensorStakingEnabledChainsState) ?? {}
+
+  /**
+   * Add dTAO staking to the list of providers
+   * Has to be added here instead of /chains/config.ts due to the way chainsState selector is implemented,
+   *  which doesn't support adding two configs for the same chain genesisHash
+   */
+  const chains = [rootStaking!, { ...rootStaking!, hasDTaoStaking: true }]
 
   const subtensorProviders: Provider[] = chains.map(chain => {
     const actionLink = `?action=stake&type=subtensor&chain=${chain.id ?? ''}`

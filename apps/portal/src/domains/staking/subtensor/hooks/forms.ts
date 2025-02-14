@@ -18,9 +18,6 @@ import { paymentInfoState } from '@/domains/common/recoils'
 import { MIN_SUBTENSOR_STAKE } from '../atoms/delegates'
 import { type StakeItem } from './useStake'
 
-// TODO: Remove mocked validator and use the actual validator address when dTAO goes live
-const MOCKED_VALIDATOR = '5FCPTnjevGqAuTttetBy4a24Ej3pH9fiQ8fmvP1ZkrVsLUoT'
-
 export const useAddStakeForm = (
   account: Account,
   stake: StakeItem | undefined,
@@ -61,7 +58,7 @@ export const useAddStakeForm = (
     } catch {
       return api.tx.utility.batchAll([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (api.tx as any)?.subtensorModule?.addStake?.(MOCKED_VALIDATOR, netuid, amount.decimalAmount?.planck ?? 0n),
+        (api.tx as any)?.subtensorModule?.addStake?.(delegate, netuid, amount.decimalAmount?.planck ?? 0n),
         api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, talismanFee),
         api.tx.system.remarkWithEvent(`talisman-bittensor`),
       ])

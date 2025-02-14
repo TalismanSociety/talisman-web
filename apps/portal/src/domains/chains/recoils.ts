@@ -44,8 +44,7 @@ export const _chainsState = selector({
 
 export const enableTestnetsState = atom({
   key: 'EnableTestnets',
-  // default: false,
-  default: true,
+  default: false,
   effects: [storageEffect(sessionStorage)],
 })
 

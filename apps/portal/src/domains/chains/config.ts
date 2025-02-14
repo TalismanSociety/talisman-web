@@ -97,19 +97,6 @@ export const chainConfigs: ChainConfig[] = [
     genesisHash: '0x2f0555cc76fc2840a25a6ea3b9637146806f1f44b090c175ffde2a7e5ab36c03',
     hasSubtensorStaking: true,
   },
-  // TODO: Uncomment when Bittensor Mainnet DTao staking is live
-  // Bittensor Mainnet DTao staking.
-  // {
-  //   genesisHash: '0x2f0555cc76fc2840a25a6ea3b9637146806f1f44b090c175ffde2a7e5ab36c03',
-  //   hasSubtensorStaking: true,
-  // hasDTaoStaking: true,
-  // },
-  {
-    // Bittensor testnet
-    genesisHash: '0x8f9cf856bf558a14440e75569c9e58594757048d7b3a84b5d25f6bd978263105',
-    hasSubtensorStaking: true,
-    hasDTaoStaking: true,
-  },
   // Westend
   {
     genesisHash: '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
