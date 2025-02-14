@@ -25,4 +25,10 @@ export const DEFAULT_SUBNET: SubnetPool = {
   timestamp: '',
   total_alpha: '',
   total_tao: '',
+  tao_buy_volume_24_hr: '',
+  tao_sell_volume_24_hr: '',
+  buys_24_hr: 0,
+  sells_24_hr: 0,
+  buyers_24_hr: 0,
+  sellers_24_hr: 0,
 }
