@@ -14,6 +14,7 @@ import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiE
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 import { useTokenAmount, useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
 import { paymentInfoState } from '@/domains/common/recoils'
+import { useGetTaoToAlphaSlippage } from '@/domains/staking/subtensor/hooks/useGetTaoToAlphaSlippage'
 
 import { MIN_SUBTENSOR_STAKE } from '../atoms/delegates'
 import { type StakeItem } from './useStake'
@@ -38,6 +39,10 @@ export const useAddStakeForm = (
 
   const [input, setInput] = useState('')
   const amount = useTokenAmount(input)
+  const { taoToAlphaSlippage, isLoading: isSlippageLoading } = useGetTaoToAlphaSlippage({
+    taoInputAmount: amount.decimalAmount?.planck ?? 0n,
+    netuid: netuid ?? 0,
+  })
   const talismanFee = calculateFee(amount.decimalAmount?.planck ?? 0n, TALISMAN_FEE_BITTENSOR)
   const talismanFeeTokenAmount = useTokenAmountFromPlanck(talismanFee)
 
@@ -135,7 +140,8 @@ export const useAddStakeForm = (
     (amount.decimalAmount?.planck ?? 0n) > 0n &&
     error === undefined &&
     delegate &&
-    netuid !== undefined
+    netuid !== undefined &&
+    !isSlippageLoading
 
   return {
     input,
@@ -147,6 +153,7 @@ export const useAddStakeForm = (
     extrinsic,
     ready,
     error,
+    taoToAlphaSlippage,
   }
 }
 

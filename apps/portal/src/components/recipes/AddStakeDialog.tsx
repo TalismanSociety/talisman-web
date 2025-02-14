@@ -24,6 +24,7 @@ export type AddStakeFormProps = {
   onConfirm: () => unknown
   approvalNeeded?: boolean
   talismanFeeTokenAmount?: TokenAmountFromPlank
+  slippage?: number
 }
 
 export type AddStakeDialogProps = AddStakeFormProps & {
@@ -61,12 +62,22 @@ const AddStakeForm = (props: AddStakeFormProps) => (
       </div>
     </div>
     {props.talismanFeeTokenAmount && (
-      <div className="mt-[2rem] flex items-center justify-between">
+      <div className="mt-[0.5rem] flex items-center justify-between">
         <Text.Body as="p" alpha="high">
           0.5% Talisman Fee
         </Text.Body>
         <Suspense fallback={<CircularProgressIndicator size="1em" />}>
           <Text.Body alpha="high">{props.talismanFeeTokenAmount.decimalAmount?.toLocaleString()}</Text.Body>
+        </Suspense>
+      </div>
+    )}
+    {props.slippage !== undefined && (
+      <div className="mt-[0.5rem] flex items-center justify-between">
+        <Text.Body as="p" alpha="high">
+          Slippage
+        </Text.Body>
+        <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+          <Text.Body alpha="high">{`${props.slippage.toFixed(2)}%`}</Text.Body>
         </Suspense>
       </div>
     )}

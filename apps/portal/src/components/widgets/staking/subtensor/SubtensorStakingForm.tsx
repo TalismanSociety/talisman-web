@@ -18,6 +18,7 @@ import { useAtom } from 'jotai'
 import { Suspense } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
+import { bittensorSlippageAtom } from '@/domains/staking/subtensor/atoms/bittensorSlippage'
 import { talismanTokenFeeAtom } from '@/domains/staking/subtensor/atoms/talismanTokenFee'
 import { cn } from '@/util/cn'
 import { Maybe } from '@/util/monads'
@@ -186,7 +187,8 @@ export const SubtensorStakingSideSheet = ({
 }: SubtensorStakingSideSheetProps) => {
   const [searchParams] = useSearchParams()
   const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
-  const talismanFeeTokenAmount = useAtom(talismanTokenFeeAtom)[0]
+  const [talismanFeeTokenAmount] = useAtom(talismanTokenFeeAtom)
+  const [bittensorSlippage] = useAtom(bittensorSlippageAtom)
 
   return (
     <SideSheet
@@ -231,12 +233,12 @@ export const SubtensorStakingSideSheet = ({
           {hasDTaoStaking && (
             <>
               {/* TODO: Add slippage. Come back when Taostats slippage endpoint is working */}
-              {/* <div className="mt-[2rem] flex items-center justify-between">
+              <div className="flex items-center justify-between">
                 <Text.Body as="p">Slippage</Text.Body>
                 <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                  <Text.Body alpha="high">99%</Text.Body>
+                  <Text.Body alpha="high">{`${bittensorSlippage.toFixed(2)}%`}</Text.Body>
                 </Suspense>
-              </div> */}
+              </div>
               <Text.Body as="p">
                 Note that Dynamic TAO Subnet staking has more variable rewards than the Legacy TAO Staking.{' '}
                 <Text.Body.A href="https://taostats.io/subnets" target="_blank">
