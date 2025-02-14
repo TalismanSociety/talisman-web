@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from 'recoil'
 
 import type { Delegate } from '@/domains/staking/subtensor/atoms/delegates'
@@ -19,6 +20,9 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
   const delegates = useDelegates()
   const allDelegateInfos = useAllDelegateInfos()
   const delegatesStats = useDelegatesStats()
+  const [searchParams] = useSearchParams()
+
+  const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
 
   const [highlighted, setHighlighted] = useState(delegates[DEFAULT_DELEGATE] ?? Object.values(delegates)[0])
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
@@ -26,9 +30,9 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
   return (
     <StakeTargetSelectorDialog
       title="Select a delegate"
-      currentSelectionLabel="Selected delegate"
+      currentSelectionLabel={props.selected ? 'Selected delegate' : ''}
       selectionLabel="New delegate"
-      confirmButtonContent="Swap delegate"
+      confirmButtonContent={props.selected ? 'Swap delegate' : 'Select delegate'}
       onRequestDismiss={props.onRequestDismiss}
       onConfirm={() => {
         if (highlighted !== undefined) props.onConfirm(highlighted)
@@ -63,13 +67,13 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
             balanceDescription="Total staked with this delegate"
             countDescription="Number of delegate stakers"
             estimatedAprDescription="Estimated APR"
-            estimatedApr={formattedApr}
+            estimatedApr={!hasDTaoStaking ? formattedApr : undefined}
             talismanRecommendedDescription="Talisman top recommended delegate"
             rating={3}
             selected={delegate.address === props.selected?.address}
             highlighted={delegate.address === highlighted?.address}
             name={delegate.name}
-            talismanRecommended={delegate.address === DEFAULT_DELEGATE}
+            talismanRecommended={false}
             detailUrl={delegate.url}
             count={allDelegateInfos[delegate.address]?.nominators?.length ?? 0}
             balance={

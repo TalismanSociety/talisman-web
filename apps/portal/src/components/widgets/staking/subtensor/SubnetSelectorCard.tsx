@@ -21,32 +21,40 @@ export const SubnetSelectorCard = ({ subnetPool, selected, highlighted, onClick 
 
   const isHighlighted = highlighted || selected
   const alpha = isHighlighted ? 'high' : 'disabled'
-  const { symbol, netuid, total_tao } = subnetPool
-  const name = `${netuid}: ${symbol}`
+  const { symbol, netuid, total_tao, total_alpha, descriptionName } = subnetPool
+  const name = `${netuid} | ${descriptionName}`
 
   const totalTao = nativeTokenAmount.fromPlanckOrUndefined(total_tao).decimalAmount?.toLocaleString() ?? ''
+  const totalAlpha = nativeTokenAmount.fromPlanckOrUndefined(total_alpha, symbol).decimalAmount?.toLocaleString() ?? ''
 
   return (
     <article
       onClick={() => onClick(subnetPool)}
       css={[{ backgroundColor: surfaceColor }, isHighlighted && { borderColor: surfaceVariant }]}
       className={classNames(
-        'min-h-[9.7rem] cursor-pointer rounded-[0.8rem] border border-transparent px-[1.6rem] py-[0.8rem] filter hover:brightness-[1.8]',
+        'flex min-h-[7.5rem] cursor-pointer flex-col justify-between rounded-[0.8rem] border border-transparent px-[1.6rem] py-[0.8rem] filter hover:brightness-[1.8]',
         isHighlighted && 'border-[#000] brightness-[1.6]'
       )}
     >
-      <header className="mb-[0.6rem] flex items-baseline justify-between gap-4">
-        <Tooltip content={name}>
-          <div className="flex items-baseline gap-[0.8rem] overflow-hidden">
-            <Text.Body alpha={alpha} className="m-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-bold">
-              {name}
-            </Text.Body>
-          </div>
-        </Tooltip>
-      </header>
-      <Tooltip content="Total TAO">
-        <Text.Body alpha={alpha}>{totalTao}</Text.Body>
+      <Tooltip content={name}>
+        <div className="flex items-baseline gap-[0.8rem] overflow-hidden">
+          <Text.Body
+            alpha={alpha}
+            className="m-0 flex flex-1 items-center gap-4 overflow-hidden text-ellipsis whitespace-nowrap font-bold"
+          >
+            <div>{name}</div>
+            <div className="rounded-md bg-gray-700 px-2 py-0.5">{symbol}</div>
+          </Text.Body>
+        </div>
       </Tooltip>
+      <div className="flex items-center justify-between">
+        <Tooltip content="Total TAO">
+          <Text.Body alpha={alpha}>{totalTao}</Text.Body>
+        </Tooltip>
+        <Tooltip content="Total Alpha">
+          <Text.Body alpha={alpha}>{totalAlpha}</Text.Body>
+        </Tooltip>
+      </div>
     </article>
   )
 }

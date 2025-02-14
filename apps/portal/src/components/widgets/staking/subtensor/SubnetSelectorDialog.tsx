@@ -4,6 +4,7 @@ import { StakeTargetSelectorDialog } from '@/components/recipes/StakeTargetSelec
 import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
 import { type SubnetData } from '@/domains/staking/subtensor/types'
 
+import { ROOT_NETUID } from './constants'
 import { SubnetSelectorCard, SubnetSelectorCardProps } from './SubnetSelectorCard'
 
 type SubnetSelectorDialogProps = {
@@ -17,18 +18,27 @@ export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: 
 
   const [highlighted, setHighlighted] = useState(selected)
 
+  const filteredSubnets = Object.values(subnetData).filter(subnet => subnet.netuid !== ROOT_NETUID)
+
   return (
     <StakeTargetSelectorDialog<SubnetSelectorCardProps>
-      title="Select a subnet"
+      title={selected ? 'Select a subnet' : ''}
       currentSelectionLabel="Selected subnet"
       selectionLabel="New subnet"
-      confirmButtonContent="Swap subnet"
+      confirmButtonContent={selected ? 'Swap subnet' : 'Select subnet'}
       onRequestDismiss={onRequestDismiss}
       onConfirm={() => highlighted && onConfirm(highlighted)}
       sortMethods={{
         Default: () => {
           console.log('Default sort method')
           return 0
+        },
+        'Subnet ID': (a, b) => {
+          return (b.props.subnetPool.netuid ?? 0) === (a.props.subnetPool.netuid ?? 0)
+            ? 0
+            : (Number(b.props.subnetPool.netuid) || 0) - (Number(a.props.subnetPool.netuid) || 0) < 0
+            ? 1
+            : -1
         },
         'Total TAO': (a, b) => {
           return (b.props.subnetPool.total_tao ?? 0) === (a.props.subnetPool.total_tao ?? 0)
@@ -37,9 +47,16 @@ export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: 
             ? -1
             : 1
         },
+        'Total Alpha': (a, b) => {
+          return (b.props.subnetPool.total_alpha ?? 0) === (a.props.subnetPool.total_alpha ?? 0)
+            ? 0
+            : (Number(b.props.subnetPool.total_alpha) || 0) - (Number(a.props.subnetPool.total_alpha) || 0) < 0
+            ? -1
+            : 1
+        },
       }}
     >
-      {Object.values(subnetData).map(subnet => {
+      {filteredSubnets.map(subnet => {
         return (
           <SubnetSelectorCard
             key={subnet.netuid}
