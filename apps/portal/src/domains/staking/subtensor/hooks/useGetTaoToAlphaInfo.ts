@@ -1,23 +1,69 @@
 import { useSetAtom } from 'jotai'
 import { useEffect } from 'react'
 
+import { useTokenAmount } from '@/domains/common/hooks/useTokenAmount'
+import { Decimal } from '@/util/Decimal'
+
 import { bittensorSlippageAtom } from '../atoms/bittensorSlippage'
 import { type RuntimePoolData } from '../types'
 import { useGetSubnetMetagraphByNetuid } from './useGetSubnetMetagraphByNetuid'
 
-export const useGetTaoToAlphaSlippage = ({ taoInputAmount, netuid }: { taoInputAmount: bigint; netuid: number }) => {
+type Amount = {
+  decimalAmount: Decimal | undefined
+  fiatAmount: number | undefined
+  localizedFiatAmount: string | undefined
+}
+
+export const useGetTaoToAlphaInfo = ({ amount, netuid }: { amount: Amount; netuid: number }) => {
   const { data, isLoading } = useGetSubnetMetagraphByNetuid({ netuid })
   const setBittensorSlippage = useSetAtom(bittensorSlippageAtom)
 
-  const raoInputAmount = taoInputAmount * 10n
+  const raoInputAmount = amount?.decimalAmount?.planck ?? 0n * 10n
 
   const taoToAlphaSlippage = calculateSlippage({ pool: data, taoStaked: raoInputAmount })
+
+  const alphaPrice = calculateAlphaPrice({ pool: data })
+
+  const expectedAlpha = calculateExpectedAlpha({
+    alphaPrice,
+    taoStaked: amount?.decimalAmount?.toNumber() ?? 0,
+    taoToAlphaSlippage,
+  })
+
+  const expectedAlphaAmount = useTokenAmount(expectedAlpha.toString())
 
   useEffect(() => {
     setBittensorSlippage(taoToAlphaSlippage)
   }, [setBittensorSlippage, taoToAlphaSlippage])
 
-  return { taoToAlphaSlippage, isLoading }
+  return { taoToAlphaSlippage, alphaPrice, expectedAlphaAmount, isLoading }
+}
+
+function calculateExpectedAlpha({
+  alphaPrice,
+  taoStaked,
+  taoToAlphaSlippage,
+}: {
+  alphaPrice: number
+  taoStaked: number
+  taoToAlphaSlippage: number
+}): number {
+  if (!taoStaked || !alphaPrice) return 0
+  const expectedAlpha = (taoStaked / alphaPrice) * (1 - taoToAlphaSlippage / 100)
+
+  return expectedAlpha
+}
+
+// Alpha price is calculated by taoIn / alphaIn
+function calculateAlphaPrice({ pool }: { pool: RuntimePoolData | null | undefined }) {
+  if (!pool) return 0
+
+  const { alphaIn: alphaInRaw, taoIn: taoInRaw } = pool
+
+  const alphaIn = Number(alphaInRaw.replace(/,/g, ''))
+  const taoIn = Number(taoInRaw.replace(/,/g, ''))
+
+  return taoIn / alphaIn
 }
 
 /**

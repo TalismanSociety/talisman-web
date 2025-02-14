@@ -11,6 +11,7 @@ import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { talismanTokenFeeAtom } from '@/domains/staking/subtensor/atoms/talismanTokenFee'
 import { useAddStakeForm } from '@/domains/staking/subtensor/hooks/forms'
 import { useDelegateApr } from '@/domains/staking/subtensor/hooks/useApr'
+import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
 import { useStake } from '@/domains/staking/subtensor/hooks/useStake'
 
 import { SubtensorStakingForm } from './SubtensorStakingForm'
@@ -24,15 +25,33 @@ type StakeFormProps = IncompleteSelectionStakeFormProps & {
 
 export const StakeForm = (props: StakeFormProps) => {
   const { stakes } = useStake(props.account)
+  const { subnetData } = useCombineSubnetData()
   const stake = stakes?.find(stake => stake.hotkey === props.delegate && Number(stake.netuid) === Number(props.netuid))
-  const { input, setInput, amount, talismanFeeTokenAmount, transferable, extrinsic, ready, error } = useAddStakeForm(
-    props.account,
-    stake,
-    props.delegate,
-    props.netuid
-  )
+  const stakeData = subnetData[props.netuid ?? 0]
+  const {
+    input,
+    setInput,
+    amount,
+    talismanFeeTokenAmount,
+    transferable,
+    extrinsic,
+    ready,
+    error,
+    expectedAlphaAmount,
+  } = useAddStakeForm(props.account, stake, props.delegate, props.netuid)
   const setTalismanTokenFee = useSetAtom(talismanTokenFeeAtom)
   const navigate = useNavigate()
+  const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
+
+  const alphaTokenSymbol = useMemo(() => {
+    const { netuid, symbol, descriptionName } = stakeData || stake || {}
+    return netuid ? `SN${netuid} ${descriptionName} ${symbol}` : 'DTao'
+  }, [stake, stakeData])
+
+  const formattedExpectedAlphaAmount = nativeTokenAmount.fromPlanckOrUndefined(
+    expectedAlphaAmount?.decimalAmount?.planck ?? 0n,
+    alphaTokenSymbol
+  )
 
   useEffect(() => {
     setTalismanTokenFee(talismanFeeTokenAmount)
@@ -41,6 +60,7 @@ export const StakeForm = (props: StakeFormProps) => {
   return (
     <SubtensorStakingForm
       accountSelector={props.accountSelector}
+      expectedAmount={formattedExpectedAlphaAmount?.decimalAmount?.toLocaleString()}
       amountInput={
         <SubtensorStakingForm.AmountInput
           amount={input}

@@ -88,6 +88,7 @@ export type SubtensorStakingFormProps = {
   isSelectSubnetDisabled: boolean
   onRequestChange: () => void
   onSelectSubnet: () => void
+  expectedAmount?: ReactNode
 }
 
 export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
@@ -142,6 +143,7 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
             css={{ width: '100%' }}
           />
         </label>
+        <div className="mt-[1.6rem]  text-end">{props.expectedAmount}</div>
       </div>
       <div className={clsx({ 'mb-[1.6rem] mt-[1.6rem]': props.currentStakedBalance !== undefined || !hasDTaoStaking })}>
         <DescriptionList>

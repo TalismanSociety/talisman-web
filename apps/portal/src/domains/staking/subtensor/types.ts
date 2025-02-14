@@ -116,6 +116,7 @@ export type SubnetData = Partial<SubnetDescription> &
   }
 
 export type RuntimePoolData = {
-  alphaOut: string // Alpha in the pool
+  alphaOut: string
   taoIn: string // TAO in the pool
+  alphaIn: string // Alpha in the pool
 }
