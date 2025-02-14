@@ -234,7 +234,6 @@ export const SubtensorStakingSideSheet = ({
 
           {hasDTaoStaking && (
             <>
-              {/* TODO: Add slippage. Come back when Taostats slippage endpoint is working */}
               <div className="flex items-center justify-between">
                 <Text.Body as="p">Slippage</Text.Body>
                 <Suspense fallback={<CircularProgressIndicator size="1em" />}>
