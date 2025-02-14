@@ -15,7 +15,7 @@ type DelegateUnstakeDialogProps = {
 }
 
 const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
-  const { input, setInput, amount, available, resulting, extrinsic, ready, error } = useUnstakeForm(
+  const { input, setInput, amount, available, resulting, extrinsic, ready, error, alphaToTaoSlippage } = useUnstakeForm(
     props.stake,
     props.delegate
   )
@@ -40,6 +40,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
       inputSupportingText={error?.message}
       onDismiss={props.onRequestDismiss}
       lockDuration={<>{t('None')}</>}
+      slippage={alphaToTaoSlippage}
     />
   )
 }

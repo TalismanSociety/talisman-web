@@ -14,6 +14,7 @@ import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiE
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 import { useTokenAmount, useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
 import { paymentInfoState } from '@/domains/common/recoils'
+import { useGetAlphaToTaoSlippage } from '@/domains/staking/subtensor/hooks/useGetAlphaToTaoSlippage'
 import { useGetTaoToAlphaSlippage } from '@/domains/staking/subtensor/hooks/useGetTaoToAlphaSlippage'
 
 import { MIN_SUBTENSOR_STAKE } from '../atoms/delegates'
@@ -163,6 +164,11 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
   const [input, setInput] = useState('')
   const amount = useTokenAmount(input)
 
+  const { alphaToTaoSlippage, isLoading: isSlippageLoading } = useGetAlphaToTaoSlippage({
+    alphaInputAmount: amount.decimalAmount?.planck ?? 0n,
+    netuid: stake.netuid,
+  })
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tx: SubmittableExtrinsic<any> = useMemo(() => {
     try {
@@ -201,7 +207,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     )
   )
 
-  const ready = (amount.decimalAmount?.planck ?? 0n) > 0n && error === undefined
+  const ready = (amount.decimalAmount?.planck ?? 0n) > 0n && error === undefined && !isSlippageLoading
 
   return {
     input,
@@ -212,6 +218,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     extrinsic,
     ready,
     error,
+    alphaToTaoSlippage,
   }
 }
 

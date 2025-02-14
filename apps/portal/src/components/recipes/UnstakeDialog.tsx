@@ -23,6 +23,7 @@ export type UnstakeDialogProps = {
   isError?: boolean
   inputSupportingText?: string
   buttonText?: ReactNode
+  slippage?: number
 }
 
 export const UnstakeDialog = (props: UnstakeDialogProps) => (
@@ -76,6 +77,16 @@ export const UnstakeDialog = (props: UnstakeDialogProps) => (
                 <Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.lockDuration}</Suspense>
               </Text.Body>
             </div>
+          </div>
+        )}
+        {props.slippage !== undefined && (
+          <div className="mt-[0.5rem] flex items-center justify-between">
+            <Text.Body as="p" alpha="high">
+              Slippage
+            </Text.Body>
+            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+              <Text.Body alpha="high">{`${props.slippage.toFixed(2)}%`}</Text.Body>
+            </Suspense>
           </div>
         )}
       </>
