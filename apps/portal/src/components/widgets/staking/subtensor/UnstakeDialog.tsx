@@ -1,11 +1,17 @@
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useRecoilValue } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
 import { UnstakeDialog as UnstakeDialogComponent } from '@/components/recipes/UnstakeDialog'
+import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useExtrinsicInBlockOrErrorEffect } from '@/domains/common/hooks/useExtrinsicEffect'
 import { useUnstakeForm } from '@/domains/staking/subtensor/hooks/forms'
+import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
 import { type StakeItem } from '@/domains/staking/subtensor/hooks/useStake'
+
+import { ROOT_NETUID } from './constants'
 
 type DelegateUnstakeDialogProps = {
   account: Account
@@ -20,8 +26,24 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
     props.delegate
   )
   const { t } = useTranslation()
+  const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
   useExtrinsicInBlockOrErrorEffect(() => props.onRequestDismiss(), extrinsic)
+  const { subnetData } = useCombineSubnetData()
+
+  const stakeData = subnetData[props.stake.netuid ?? 0]
+
+  const alphaTokenSymbol = useMemo(() => {
+    const { netuid, symbol, descriptionName } = stakeData || props.stake || {}
+    return netuid ? `SN${netuid} ${descriptionName} ${symbol}` : 'DTao'
+  }, [props.stake, stakeData])
+
+  const resultingAlphaAmount = nativeTokenAmount.fromPlanckOrUndefined(
+    resulting?.decimalAmount?.planck ?? 0n,
+    alphaTokenSymbol
+  )
+
+  const resultingStake = props.stake.netuid === ROOT_NETUID ? resulting : resultingAlphaAmount
 
   return (
     <UnstakeDialogComponent
@@ -32,8 +54,8 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
       onChangeAmount={setInput}
       onRequestMaxAmount={() => setInput(available.decimalAmount.toString())}
       fiatAmount={amount.localizedFiatAmount ?? ''}
-      newAmount={resulting.decimalAmount?.toLocaleString() ?? <CircularProgressIndicator size="1em" />}
-      newFiatAmount={resulting.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
+      newAmount={resultingStake.decimalAmount?.toLocaleString() ?? <CircularProgressIndicator size="1em" />}
+      newFiatAmount={resultingStake.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
       onConfirm={() => {
         void extrinsic.signAndSend(props.account.address)
       }}

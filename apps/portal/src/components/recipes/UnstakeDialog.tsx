@@ -16,7 +16,7 @@ export type UnstakeDialogProps = {
   availableAmount: string
   amount: string
   fiatAmount: string
-  newAmount: string
+  newAmount: ReactNode
   newFiatAmount: ReactNode
   rate?: string
   onRequestMaxAmount: () => unknown
