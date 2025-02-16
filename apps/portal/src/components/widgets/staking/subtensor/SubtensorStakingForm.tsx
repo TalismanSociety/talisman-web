@@ -19,7 +19,6 @@ import { Suspense } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import { SlippageDropdown } from '@/components/widgets/staking/subtensor/SlippageDropdown'
-import { bittensorSlippageAtom } from '@/domains/staking/subtensor/atoms/bittensorSlippage'
 import { talismanTokenFeeAtom } from '@/domains/staking/subtensor/atoms/talismanTokenFee'
 import { cn } from '@/util/cn'
 import { Maybe } from '@/util/monads'
@@ -191,7 +190,6 @@ export const SubtensorStakingSideSheet = ({
   const [searchParams] = useSearchParams()
   const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
   const [talismanFeeTokenAmount] = useAtom(talismanTokenFeeAtom)
-  const [bittensorSlippage] = useAtom(bittensorSlippageAtom)
 
   return (
     <SideSheet
