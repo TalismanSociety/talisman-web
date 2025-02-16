@@ -69,7 +69,7 @@ export const SlippageDropdown = () => {
       </div>
 
       {isOpen && (
-        <div className="absolute left-0 mt-2 w-max rounded-md bg-gray-950 p-4 shadow-lg">
+        <div className="absolute left-0 mt-2 w-max rounded-[16px] bg-gray-950 p-4 shadow-lg">
           <div className="flex items-center gap-4">
             <TextInput
               type="number"

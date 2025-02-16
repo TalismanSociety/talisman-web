@@ -129,11 +129,10 @@ export const useAddStakeForm = (
 
   const transferable = useTokenAmountFromPlanck(transferablePlanck)
 
-  // TODO: get/calculate resulting balance for Tao => dTAO conversion
   const resulting = useTokenAmountFromPlanck(
     useMemo(
-      () => (stake?.totalStaked.decimalAmount?.planck ?? 0n) + (amount.decimalAmount?.planck ?? 0n),
-      [amount.decimalAmount?.planck, stake?.totalStaked.decimalAmount?.planck]
+      () => (stake?.totalStaked.decimalAmount?.planck ?? 0n) + (expectedAlphaAmount.decimalAmount?.planck ?? 0n),
+      [expectedAlphaAmount.decimalAmount?.planck, stake?.totalStaked.decimalAmount?.planck]
     )
   )
 
