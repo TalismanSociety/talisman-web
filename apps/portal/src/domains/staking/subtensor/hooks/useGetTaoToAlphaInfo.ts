@@ -1,10 +1,10 @@
-import { useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useEffect } from 'react'
 
 import { useTokenAmount } from '@/domains/common/hooks/useTokenAmount'
 import { Decimal } from '@/util/Decimal'
 
-import { bittensorSlippageAtom } from '../atoms/bittensorSlippage'
+import { bittensorSlippageAtom, maxSlippageAtom } from '../atoms/bittensorSlippage'
 import { type RuntimePoolData } from '../types'
 import { useGetSubnetMetagraphByNetuid } from './useGetSubnetMetagraphByNetuid'
 
@@ -17,6 +17,7 @@ type Amount = {
 export const useGetTaoToAlphaInfo = ({ amount, netuid }: { amount: Amount; netuid: number }) => {
   const { data, isLoading } = useGetSubnetMetagraphByNetuid({ netuid })
   const setBittensorSlippage = useSetAtom(bittensorSlippageAtom)
+  const maxSlippage = useAtomValue(maxSlippageAtom)
 
   const raoInputAmount = amount?.decimalAmount?.planck ?? 0n * 10n
 
@@ -32,11 +33,20 @@ export const useGetTaoToAlphaInfo = ({ amount, netuid }: { amount: Amount; netui
 
   const expectedAlphaAmount = useTokenAmount(expectedAlpha.toString())
 
+  const alphaPriceWithSlippage = alphaPrice * (1 + maxSlippage / 100)
+  const alphaPriceWithSlippageFormatted = useTokenAmount(alphaPriceWithSlippage.toString())
+
   useEffect(() => {
     setBittensorSlippage(taoToAlphaSlippage)
   }, [setBittensorSlippage, taoToAlphaSlippage])
 
-  return { taoToAlphaSlippage, alphaPrice, expectedAlphaAmount, isLoading }
+  return {
+    taoToAlphaSlippage,
+    alphaPrice,
+    expectedAlphaAmount,
+    alphaPriceWithSlippageFormatted,
+    isLoading,
+  }
 }
 
 function calculateExpectedAlpha({

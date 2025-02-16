@@ -1,4 +1,3 @@
-import { Text } from '@talismn/ui/atoms/Text'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
 import { AlertTriangle, Settings } from '@talismn/web-icons'
 import { useAtom, useAtomValue } from 'jotai'
@@ -23,13 +22,14 @@ export const SlippageDropdown = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        if (!slippage) setSlippage(DEFAULT_MAX_SLIPPAGE)
         setIsOpen(false)
       }
     }
 
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+  }, [setSlippage, slippage])
 
   const leadingSupportingText = () => {
     if (slippage >= 20) {

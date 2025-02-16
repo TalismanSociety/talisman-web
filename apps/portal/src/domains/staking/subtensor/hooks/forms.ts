@@ -44,6 +44,7 @@ export const useAddStakeForm = (
     taoToAlphaSlippage,
     isLoading: isSlippageLoading,
     expectedAlphaAmount,
+    alphaPriceWithSlippageFormatted,
   } = useGetTaoToAlphaInfo({
     amount: amount,
     netuid: netuid ?? 0,
@@ -58,6 +59,9 @@ export const useAddStakeForm = (
       return api.tx.system.remarkWithEvent('talisman-bittensor')
     }
 
+    const limitPrice = alphaPriceWithSlippageFormatted.decimalAmount?.planck || 0n
+    const allowPartial = false
+
     try {
       return api.tx.utility.batchAll([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,12 +72,25 @@ export const useAddStakeForm = (
     } catch {
       return api.tx.utility.batchAll([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (api.tx as any)?.subtensorModule?.addStake?.(delegate, netuid, amount.decimalAmount?.planck ?? 0n),
+        (api.tx as any)?.subtensorModule?.addStakeLimit?.(
+          delegate,
+          netuid,
+          amount.decimalAmount?.planck ?? 0n,
+          limitPrice,
+          allowPartial
+        ),
         api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, talismanFee),
         api.tx.system.remarkWithEvent(`talisman-bittensor`),
       ])
     }
-  }, [delegate, netuid, api.tx, amount.decimalAmount?.planck, talismanFee])
+  }, [
+    delegate,
+    netuid,
+    alphaPriceWithSlippageFormatted.decimalAmount?.planck,
+    api.tx,
+    amount.decimalAmount?.planck,
+    talismanFee,
+  ])
 
   const [feeEstimate, isFeeEstimateReady] = useStakeFormFeeEstimate(account.address, tx)
 
