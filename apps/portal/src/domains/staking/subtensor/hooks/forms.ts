@@ -5,10 +5,7 @@ import { useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
-import {
-  TALISMAN_FEE_BITTENSOR,
-  TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR,
-} from '@/components/widgets/staking/subtensor/constants'
+import { TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR } from '@/components/widgets/staking/subtensor/constants'
 import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
 import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
@@ -29,14 +26,6 @@ export const useAddStakeForm = (
     waitForAll([useSubstrateApiState(), useQueryMultiState([['system.account', account.address]])])
   )
 
-  const calculateFee = (amount: bigint, fee: number): bigint => {
-    if (fee < 0) {
-      throw new Error('Fee percentage cannot be negative')
-    }
-
-    return (amount * BigInt(Math.round(fee * 100))) / BigInt(10000)
-  }
-
   const [input, setInput] = useState('')
   const amount = useTokenAmount(input)
   const {
@@ -44,12 +33,13 @@ export const useAddStakeForm = (
     isLoading: isSlippageLoading,
     expectedAlphaAmount,
     alphaPriceWithSlippageFormatted,
+    taoToAlphaTalismanFee,
+    alphaToTaoTalismanFeeFormatted,
   } = useGetDynamicTaoStakeInfo({
     amount: amount,
     netuid: netuid ?? 0,
   })
-  const talismanFee = calculateFee(amount.decimalAmount?.planck ?? 0n, TALISMAN_FEE_BITTENSOR)
-  const talismanFeeTokenAmount = useTokenAmountFromPlanck(talismanFee)
+  // const talismanFee = calculateFee(amount.decimalAmount?.planck ?? 0n, TALISMAN_FEE_BITTENSOR)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tx: SubmittableExtrinsic<any> = useMemo(() => {
@@ -65,7 +55,7 @@ export const useAddStakeForm = (
       return api.tx.utility.batchAll([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (api.tx as any)?.subtensorModule?.addStake?.(delegate, amount.decimalAmount?.planck ?? 0n),
-        api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, talismanFee),
+        api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, taoToAlphaTalismanFee),
         api.tx.system.remarkWithEvent(`talisman-bittensor`),
       ])
     } catch {
@@ -78,7 +68,7 @@ export const useAddStakeForm = (
           limitPrice,
           allowPartial
         ),
-        api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, talismanFee),
+        api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, taoToAlphaTalismanFee),
         api.tx.system.remarkWithEvent(`talisman-bittensor`),
       ])
     }
@@ -88,7 +78,7 @@ export const useAddStakeForm = (
     alphaPriceWithSlippageFormatted.decimalAmount?.planck,
     api.tx,
     amount.decimalAmount?.planck,
-    talismanFee,
+    taoToAlphaTalismanFee,
   ])
 
   const [feeEstimate, isFeeEstimateReady] = useStakeFormFeeEstimate(account.address, tx)
@@ -167,7 +157,7 @@ export const useAddStakeForm = (
     input,
     setInput,
     amount,
-    talismanFeeTokenAmount,
+    talismanFeeTokenAmount: alphaToTaoTalismanFeeFormatted,
     transferable,
     resulting,
     extrinsic,
@@ -184,10 +174,19 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
   const [input, setInput] = useState('')
   const amount = useTokenAmount(input)
 
-  const { slippage, isLoading: isSlippageLoading } = useGetDynamicTaoStakeInfo({
+  const {
+    slippage,
+    isLoading: isSlippageLoading,
+    expectedTaoAmount,
+    taoPriceWithSlippageFormatted,
+    alphaToTaoTalismanFee,
+  } = useGetDynamicTaoStakeInfo({
     amount: amount,
     netuid: stake.netuid,
   })
+
+  const limitPrice = taoPriceWithSlippageFormatted.decimalAmount?.planck || 0n
+  const allowPartial = false
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tx: SubmittableExtrinsic<any> = useMemo(() => {
@@ -195,10 +194,20 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (api.tx as any)?.subtensorModule?.removeStake?.(delegate, amount.decimalAmount?.planck ?? 0n)
     } catch {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (api.tx as any)?.subtensorModule?.removeStake?.(delegate, stake.netuid, amount.decimalAmount?.planck ?? 0n)
+      return api.tx.utility.batchAll([
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (api.tx as any)?.subtensorModule?.removeStakeLimit?.(
+          delegate,
+          stake.netuid,
+          amount.decimalAmount?.planck ?? 0n,
+          limitPrice,
+          allowPartial
+        ),
+        api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, alphaToTaoTalismanFee),
+        api.tx.system.remarkWithEvent(`talisman-bittensor`),
+      ])
     }
-  }, [api.tx, delegate, amount.decimalAmount?.planck, stake.netuid])
+  }, [api.tx, delegate, amount.decimalAmount?.planck, stake.netuid, limitPrice, allowPartial, alphaToTaoTalismanFee])
   const extrinsic = useExtrinsic(tx)
 
   const available = useTokenAmountFromPlanck(stake.totalStaked.decimalAmount?.planck ?? 0n)
