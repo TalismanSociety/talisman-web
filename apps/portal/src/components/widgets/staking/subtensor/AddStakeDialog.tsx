@@ -31,7 +31,7 @@ const SubtensorAddStakeDialog = ({ account, stake, delegate, onRequestDismiss }:
     ready,
     error,
     talismanFeeTokenAmount,
-    taoToAlphaSlippage,
+    slippage,
   } = useAddStakeForm(account, stake, delegate, stake.netuid)
 
   const { subnetData } = useCombineSubnetData()
@@ -77,7 +77,7 @@ const SubtensorAddStakeDialog = ({ account, stake, delegate, onRequestDismiss }:
       inputSupportingText={error?.message}
       onDismiss={onRequestDismiss}
       talismanFeeTokenAmount={talismanFeeTokenAmount}
-      slippage={taoToAlphaSlippage}
+      slippage={slippage}
     />
   )
 }

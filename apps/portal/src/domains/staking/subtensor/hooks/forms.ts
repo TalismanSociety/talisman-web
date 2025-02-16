@@ -14,8 +14,7 @@ import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiE
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 import { useTokenAmount, useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
 import { paymentInfoState } from '@/domains/common/recoils'
-import { useGetAlphaToTaoSlippage } from '@/domains/staking/subtensor/hooks/useGetAlphaToTaoSlippage'
-import { useGetTaoToAlphaInfo } from '@/domains/staking/subtensor/hooks/useGetTaoToAlphaInfo'
+import { useGetDynamicTaoStakeInfo } from '@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo'
 
 import { MIN_SUBTENSOR_STAKE } from '../atoms/delegates'
 import { type StakeItem } from './useStake'
@@ -41,11 +40,11 @@ export const useAddStakeForm = (
   const [input, setInput] = useState('')
   const amount = useTokenAmount(input)
   const {
-    taoToAlphaSlippage,
+    slippage,
     isLoading: isSlippageLoading,
     expectedAlphaAmount,
     alphaPriceWithSlippageFormatted,
-  } = useGetTaoToAlphaInfo({
+  } = useGetDynamicTaoStakeInfo({
     amount: amount,
     netuid: netuid ?? 0,
   })
@@ -174,7 +173,7 @@ export const useAddStakeForm = (
     extrinsic,
     ready,
     error,
-    taoToAlphaSlippage,
+    slippage,
     expectedAlphaAmount,
   }
 }
@@ -185,8 +184,8 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
   const [input, setInput] = useState('')
   const amount = useTokenAmount(input)
 
-  const { alphaToTaoSlippage, isLoading: isSlippageLoading } = useGetAlphaToTaoSlippage({
-    alphaInputAmount: amount.decimalAmount?.planck ?? 0n,
+  const { slippage, isLoading: isSlippageLoading } = useGetDynamicTaoStakeInfo({
+    amount: amount,
     netuid: stake.netuid,
   })
 
@@ -239,7 +238,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     extrinsic,
     ready,
     error,
-    alphaToTaoSlippage,
+    alphaToTaoSlippage: slippage,
   }
 }
 

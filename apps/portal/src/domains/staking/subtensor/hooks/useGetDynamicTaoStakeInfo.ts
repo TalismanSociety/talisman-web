@@ -14,21 +14,21 @@ type Amount = {
   localizedFiatAmount: string | undefined
 }
 
-export const useGetTaoToAlphaInfo = ({ amount, netuid }: { amount: Amount; netuid: number }) => {
+export const useGetDynamicTaoStakeInfo = ({ amount, netuid }: { amount: Amount; netuid: number }) => {
   const { data, isLoading } = useGetSubnetMetagraphByNetuid({ netuid })
   const setBittensorSlippage = useSetAtom(bittensorSlippageAtom)
   const maxSlippage = useAtomValue(maxSlippageAtom)
 
   const raoInputAmount = amount?.decimalAmount?.planck ?? 0n * 10n
 
-  const taoToAlphaSlippage = calculateSlippage({ pool: data, taoStaked: raoInputAmount })
+  const slippage = calculateSlippage({ pool: data, taoStaked: raoInputAmount })
 
   const alphaPrice = calculateAlphaPrice({ pool: data })
 
   const expectedAlpha = calculateExpectedAlpha({
     alphaPrice,
     taoStaked: amount?.decimalAmount?.toNumber() ?? 0,
-    taoToAlphaSlippage,
+    slippage,
   })
 
   const expectedAlphaAmount = useTokenAmount(expectedAlpha.toString())
@@ -37,11 +37,11 @@ export const useGetTaoToAlphaInfo = ({ amount, netuid }: { amount: Amount; netui
   const alphaPriceWithSlippageFormatted = useTokenAmount(alphaPriceWithSlippage.toString())
 
   useEffect(() => {
-    setBittensorSlippage(taoToAlphaSlippage)
-  }, [setBittensorSlippage, taoToAlphaSlippage])
+    setBittensorSlippage(slippage)
+  }, [setBittensorSlippage, slippage])
 
   return {
-    taoToAlphaSlippage,
+    slippage,
     alphaPrice,
     expectedAlphaAmount,
     alphaPriceWithSlippageFormatted,
@@ -52,14 +52,14 @@ export const useGetTaoToAlphaInfo = ({ amount, netuid }: { amount: Amount; netui
 function calculateExpectedAlpha({
   alphaPrice,
   taoStaked,
-  taoToAlphaSlippage,
+  slippage,
 }: {
   alphaPrice: number
   taoStaked: number
-  taoToAlphaSlippage: number
+  slippage: number
 }): number {
   if (!taoStaked || !alphaPrice) return 0
-  const expectedAlpha = (taoStaked / alphaPrice) * (1 - taoToAlphaSlippage / 100)
+  const expectedAlpha = (taoStaked / alphaPrice) * (1 - slippage / 100)
 
   return expectedAlpha
 }
