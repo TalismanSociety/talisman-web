@@ -6,6 +6,8 @@ import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
 import { Suspense } from 'react'
 
+import { SlippageDropdown } from '../widgets/staking/subtensor/SlippageDropdown'
+
 export type UnstakeDialogProps = {
   open?: boolean
   onDismiss: () => unknown
@@ -80,13 +82,8 @@ export const UnstakeDialog = (props: UnstakeDialogProps) => (
           </div>
         )}
         {props.slippage !== undefined && (
-          <div className="mt-[0.5rem] flex items-center justify-between">
-            <Text.Body as="p" alpha="high">
-              Slippage
-            </Text.Body>
-            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-              <Text.Body alpha="high">{`${props.slippage.toFixed(2)}%`}</Text.Body>
-            </Suspense>
+          <div className="mt-[1rem]">
+            <SlippageDropdown />
           </div>
         )}
       </>

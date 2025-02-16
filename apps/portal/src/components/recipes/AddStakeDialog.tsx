@@ -74,7 +74,7 @@ const AddStakeForm = (props: AddStakeFormProps) => (
       </div>
     )}
     {props.slippage !== undefined && (
-      <div className="mt-1">
+      <div className="mt-[1rem]">
         <SlippageDropdown />
       </div>
     )}
