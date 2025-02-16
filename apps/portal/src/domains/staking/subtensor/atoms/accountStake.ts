@@ -1,8 +1,13 @@
-import { toHex } from '@polkadot-api/utils'
+// import { toHex } from '@polkadot-api/utils'
 import { ApiPromise } from '@polkadot/api'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
-import { bool, compact, Struct, Vector } from 'scale-ts'
+import {
+  // bool,
+  compact,
+  Struct,
+  Vector,
+} from 'scale-ts'
 
 import { BittensorAccountId, vecDecodeResult, vecEncodeParams } from './_types'
 
@@ -16,18 +21,29 @@ const EncodeParams_old_GetStakeInfoForColdkey = (address: string) => vecEncodePa
 const DecodeResult_old_GetStakeInfoForColdkey = (result: string) => Vector(StakeInfo_old).dec(vecDecodeResult(result))
 
 /** For encoding/decoding the GetStakeInfoForColdkey runtime api *after* they added the netuid parameter */
-const StakeInfo = Struct({
-  hotkey: BittensorAccountId,
-  coldkey: BittensorAccountId,
-  netuid: compact,
-  stake: compact,
-  locked: compact,
-  emission: compact,
-  drain: compact,
-  isRegistered: bool,
-})
-const EncodeParams_GetStakeInfoForColdkey = (address: string) => toHex(BittensorAccountId.enc(address))
-const DecodeResult_GetStakeInfoForColdkey = (result: string) => Vector(StakeInfo).dec(result)
+// const StakeInfo = Struct({
+//   hotkey: BittensorAccountId,
+//   coldkey: BittensorAccountId,
+//   netuid: compact,
+//   stake: compact,
+//   locked: compact,
+//   emission: compact,
+//   drain: compact,
+//   isRegistered: bool,
+// })
+// const EncodeParams_GetStakeInfoForColdkey = (address: string) => toHex(BittensorAccountId.enc(address))
+// const DecodeResult_GetStakeInfoForColdkey = (result: string) => Vector(StakeInfo).dec(result)
+
+type DTaoStakeInfo = {
+  coldkey: string
+  hotkey: string
+  netuid: string
+  stake: string
+  drain: string
+  emission: string
+  isRegistered: boolean
+  locked: string
+}
 
 export const accountStakeAtom = atomFamily(
   ({ api, address }: { api: ApiPromise; address: string }) =>
@@ -51,9 +67,16 @@ export const accountStakeAtom = atomFamily(
         if (stakes?.length === 0) return []
         return stakes
       } catch (cause) {
-        const params = EncodeParams_GetStakeInfoForColdkey(address)
-        const response = (await api.rpc.state.call('StakeInfoRuntimeApi_get_stake_info_for_coldkey', params)).toHex()
-        const result = DecodeResult_GetStakeInfoForColdkey(response)
+        // const params = EncodeParams_GetStakeInfoForColdkey(address)
+        // const response = (await api.rpc.state.call('StakeInfoRuntimeApi_get_stake_info_for_coldkey', params)).toHex()
+        // const result = DecodeResult_GetStakeInfoForColdkey(response)
+
+        const result = (
+          await api.call['stakeInfoRuntimeApi']?.['getStakeInfoForColdkey']?.(address)
+        )?.toHuman() as DTaoStakeInfo[]
+
+        console.log({ result })
+
         if (!Array.isArray(result)) return undefined
 
         const stakes = result
@@ -62,7 +85,7 @@ export const accountStakeAtom = atomFamily(
             hotkey,
             netuid: BigInt(netuid),
             // make every stake a `bigint`, instead of a `number | bigint`, for consistency
-            stake: BigInt(stake),
+            stake: BigInt(Number(stake.replace(/,/g, ''))),
           }))
           .filter(({ stake }) => stake !== 0n)
 
