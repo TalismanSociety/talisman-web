@@ -18,6 +18,7 @@ import { useAtom } from 'jotai'
 import { Suspense } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
+import { SlippageDropdown } from '@/components/widgets/staking/subtensor/SlippageDropdown'
 import { bittensorSlippageAtom } from '@/domains/staking/subtensor/atoms/bittensorSlippage'
 import { talismanTokenFeeAtom } from '@/domains/staking/subtensor/atoms/talismanTokenFee'
 import { cn } from '@/util/cn'
@@ -234,12 +235,7 @@ export const SubtensorStakingSideSheet = ({
 
           {hasDTaoStaking && (
             <>
-              <div className="flex items-center justify-between">
-                <Text.Body as="p">Slippage</Text.Body>
-                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                  <Text.Body alpha="high">{`${bittensorSlippage.toFixed(2)}%`}</Text.Body>
-                </Suspense>
-              </div>
+              <SlippageDropdown />
               <Text.Body as="p">
                 Note that Dynamic TAO Subnet staking has more variable rewards than the Legacy TAO Staking.{' '}
                 <Text.Body.A href="https://taostats.io/subnets" target="_blank">
