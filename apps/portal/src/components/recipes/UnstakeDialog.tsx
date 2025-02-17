@@ -90,7 +90,7 @@ export const UnstakeDialog = (props: UnstakeDialogProps) => (
         {props.talismanFeeTokenAmount && (
           <div className="mt-[0.5rem] flex items-center justify-between">
             <Text.Body as="p" alpha="high">
-              {TALISMAN_FEE_BITTENSOR} Talisman Fee
+              {TALISMAN_FEE_BITTENSOR}% Talisman Fee
             </Text.Body>
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
               <Text.Body alpha="high">
