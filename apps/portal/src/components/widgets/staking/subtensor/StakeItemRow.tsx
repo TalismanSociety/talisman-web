@@ -4,7 +4,6 @@ import { StakePosition } from '@/components/recipes/StakePosition'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
 import { ChainInfo } from '@/domains/chains/recoils'
-import { useTotalStaked } from '@/domains/staking/hooks'
 import { useGetDynamicTaoStakeInfo } from '@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo'
 
 import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
