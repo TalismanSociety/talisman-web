@@ -1,5 +1,7 @@
+import { Text } from '@talismn/ui/atoms/Text'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
-import { AlertTriangle, Settings } from '@talismn/web-icons'
+import { AlertTriangle, Info, Settings } from '@talismn/web-icons'
 import { useAtom, useAtomValue } from 'jotai'
 import { useEffect, useRef, useState } from 'react'
 
@@ -34,14 +36,14 @@ export const SlippageDropdown = () => {
   const leadingSupportingText = () => {
     if (slippage >= 20) {
       return (
-        <div className="flex items-center gap-2 text-red-500">
+        <div className="flex items-center gap-2 text-[14px] text-red-500">
           <AlertTriangle size={16} />
           <div>Very high slippage</div>
         </div>
       )
     } else if (slippage >= 10) {
       return (
-        <div className="flex items-center gap-2 text-orange-500">
+        <div className="flex items-center gap-2 text-[14px] text-orange-500">
           <AlertTriangle size={16} />
           <div>High slippage</div>
         </div>
@@ -69,22 +71,39 @@ export const SlippageDropdown = () => {
       </div>
 
       {isOpen && (
-        <div className="absolute left-0 mt-2 w-max rounded-[16px] bg-gray-950 p-4 shadow-lg">
-          <div className="flex items-center gap-4">
+        <div className="absolute left-0 mt-2  w-[40rem] rounded-[16px] bg-gray-950 p-4 shadow-lg">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <Text.Body>Max slippage</Text.Body>
+                <Tooltip
+                  content={
+                    <div className="max-w-[35rem]">
+                      Stake transaction will revert if the price changes more than the allowed slippage percentage.
+                    </div>
+                  }
+                  placement="bottom"
+                >
+                  <Info size={16} />
+                </Tooltip>
+              </div>
+              {leadingSupportingText && leadingSupportingText()}
+            </div>
             <TextInput
               type="number"
               inputMode="decimal"
               min={0}
               step="any"
-              leadingLabel="Max slippage"
-              leadingSupportingText={leadingSupportingText()}
               placeholder="0.00%"
               trailingIcon={
-                <div
-                  className="bg-gray-750 cursor-pointer rounded-[16px] px-[1rem] py-[0.5rem]"
-                  onClick={() => setSlippage(DEFAULT_MAX_SLIPPAGE)}
-                >
-                  Auto
+                <div className="flex items-center gap-2">
+                  <div>%</div>
+                  <div
+                    className="bg-gray-750 cursor-pointer rounded-[16px] border border-gray-500 px-[1rem] py-[0.5rem] text-gray-300"
+                    onClick={() => setSlippage(DEFAULT_MAX_SLIPPAGE)}
+                  >
+                    Auto
+                  </div>
                 </div>
               }
               css={{ fontSize: '2rem' }}
@@ -94,6 +113,8 @@ export const SlippageDropdown = () => {
                 setSlippage(val)
               }}
               value={slippage}
+              containerClassName="w-[20rem] text-[14px]"
+              inputContainerClassName="text-[14px]!"
             />
           </div>
         </div>
