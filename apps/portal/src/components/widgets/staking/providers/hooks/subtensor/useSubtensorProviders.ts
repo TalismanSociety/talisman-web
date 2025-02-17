@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil'
 
 import { subtensorStakingEnabledChainsState } from '@/domains/chains/recoils'
 
-import { DTAO_SYMBOL } from '../../../subtensor/constants'
+import { DTAO_LOGO, DTAO_SYMBOL } from '../../../subtensor/constants'
 import { Provider } from '../types'
 
 const useSubtensorProviders = () => {
@@ -19,7 +19,7 @@ const useSubtensorProviders = () => {
     const actionLink = `?action=stake&type=subtensor&chain=${chain.id ?? ''}`
     return {
       symbol: chain.hasDTaoStaking ? DTAO_SYMBOL : chain.nativeToken?.symbol ?? '',
-      logo: chain.nativeToken?.logo ?? '',
+      logo: chain.hasDTaoStaking ? DTAO_LOGO : chain.nativeToken?.logo ?? '',
       chainName: chain.name ?? '',
       chainId: chain.id,
       type: chain.hasDTaoStaking ? 'Subnet Staking' : 'Delegation',

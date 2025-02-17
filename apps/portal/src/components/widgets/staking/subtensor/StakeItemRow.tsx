@@ -2,7 +2,7 @@ import type { Account } from '@/domains/accounts/recoils'
 import type { StakeItem } from '@/domains/staking/subtensor/hooks/useStake'
 import { StakePosition } from '@/components/recipes/StakePosition'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
-import { ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
+import { DTAO_LOGO, ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
 import { ChainInfo } from '@/domains/chains/recoils'
 import { useGetDynamicTaoStakeInfo } from '@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo'
 
@@ -25,6 +25,7 @@ export const StakeItemRow = ({
 }: StakeItemRowProps) => {
   const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
   const assetSymbol = stake.netuid === ROOT_NETUID ? symbol : `SN${stake.netuid} ${stake.descriptionName ?? ''}`
+  const assetLogo = stake.netuid === ROOT_NETUID ? logo : DTAO_LOGO
 
   const { expectedTaoAmount } = useGetDynamicTaoStakeInfo({
     amount: stake.totalStaked,
@@ -38,14 +39,16 @@ export const StakeItemRow = ({
   return (
     <ErrorBoundary
       key={`${account.address}-${stake.hotkey}-${stake.netuid}`}
-      renderFallback={() => <ErrorBoundaryFallback logo={logo} symbol={assetSymbol} provider={name} list="positions" />}
+      renderFallback={() => (
+        <ErrorBoundaryFallback logo={assetLogo} symbol={assetSymbol} provider={name} list="positions" />
+      )}
     >
       <StakePosition
         readonly={account.readonly}
         chain={name}
         chainId={chain?.id || ''}
         assetSymbol={assetSymbol}
-        assetLogoSrc={logo}
+        assetLogoSrc={assetLogo}
         account={account}
         provider="Delegation"
         stakeStatus={'earning_rewards'}

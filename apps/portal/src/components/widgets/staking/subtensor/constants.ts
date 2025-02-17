@@ -6,6 +6,8 @@ export const TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR = '5DzsVV2L4M9r4uWoyarzPyhf
 export const TALISMAN_FEE_BITTENSOR = 0.5
 
 export const DTAO_SYMBOL = 'Dynamic TAO'
+export const DTAO_LOGO =
+  'https://raw.githubusercontent.com/TalismanSociety/talisman-web/8c5d78676702214c6983b04c9f15c15f34d34109/packages/icons/src/svgs/dtaoLogo.svg'
 
 export const DEFAULT_SUBNET: SubnetPool = {
   alpha_in_pool: '',
