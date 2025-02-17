@@ -25,7 +25,6 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
   const {
     input,
     setInput,
-    amount,
     available,
     resulting,
     extrinsic,
