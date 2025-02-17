@@ -1,14 +1,12 @@
 import type { ReactNode } from 'react'
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import BN from 'bn.js'
-import { useSetAtom } from 'jotai'
-import { Suspense, useEffect, useMemo } from 'react'
+import { Suspense, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 import { Account } from '@/domains/accounts/recoils'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
-import { talismanTokenFeeAtom } from '@/domains/staking/subtensor/atoms/talismanTokenFee'
 import { useAddStakeForm } from '@/domains/staking/subtensor/hooks/forms'
 import { useDelegateApr } from '@/domains/staking/subtensor/hooks/useApr'
 import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
@@ -28,19 +26,8 @@ export const StakeForm = (props: StakeFormProps) => {
   const { subnetData } = useCombineSubnetData()
   const stake = stakes?.find(stake => stake.hotkey === props.delegate && Number(stake.netuid) === Number(props.netuid))
   const stakeData = subnetData[props.netuid ?? 0]
-  const {
-    input,
-    amount,
-    talismanFeeTokenAmount,
-    transferable,
-    extrinsic,
-    ready,
-    error,
-    expectedAlphaAmount,
-    isLoading,
-    setInput,
-  } = useAddStakeForm(props.account, stake, props.delegate, props.netuid)
-  const setTalismanTokenFee = useSetAtom(talismanTokenFeeAtom)
+  const { input, amount, transferable, extrinsic, ready, error, expectedAlphaAmount, isLoading, setInput } =
+    useAddStakeForm(props.account, stake, props.delegate, props.netuid)
   const navigate = useNavigate()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
@@ -53,10 +40,6 @@ export const StakeForm = (props: StakeFormProps) => {
     expectedAlphaAmount?.decimalAmount?.planck ?? 0n,
     alphaTokenSymbol
   )
-
-  useEffect(() => {
-    setTalismanTokenFee(talismanFeeTokenAmount)
-  }, [setTalismanTokenFee, talismanFeeTokenAmount])
 
   return (
     <SubtensorStakingForm

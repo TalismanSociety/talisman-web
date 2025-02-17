@@ -6,6 +6,7 @@ import { useTokenAmount, useTokenAmountFromPlanck } from '@/domains/common/hooks
 import { Decimal } from '@/util/Decimal'
 
 import { bittensorSlippageAtom, maxSlippageAtom } from '../atoms/bittensorSlippage'
+import { talismanTokenFeeAtom } from '../atoms/talismanTokenFee'
 import { type RuntimePoolData } from '../types'
 import { useGetSubnetMetagraphByNetuid } from './useGetSubnetMetagraphByNetuid'
 
@@ -28,6 +29,7 @@ export const useGetDynamicTaoStakeInfo = ({
 }) => {
   const { data, isLoading, error } = useGetSubnetMetagraphByNetuid({ netuid })
   const setBittensorSlippage = useSetAtom(bittensorSlippageAtom)
+  const setTalismanTokenFee = useSetAtom(talismanTokenFeeAtom)
 
   const maxSlippage = useAtomValue(maxSlippageAtom)
   const raoInputAmount = amount?.decimalAmount?.planck ?? 0n * 10n
@@ -67,6 +69,10 @@ export const useGetDynamicTaoStakeInfo = ({
   useEffect(() => {
     setBittensorSlippage(direction === 'taoToAlpha' ? slippage : alphaToTaoSlippage)
   }, [alphaToTaoSlippage, direction, setBittensorSlippage, slippage])
+
+  useEffect(() => {
+    setTalismanTokenFee(direction === 'taoToAlpha' ? taoToAlphaTalismanFeeFormatted : alphaToTaoTalismanFeeFormatted)
+  }, [alphaToTaoTalismanFeeFormatted, direction, setTalismanTokenFee, taoToAlphaTalismanFeeFormatted])
 
   return {
     slippage,

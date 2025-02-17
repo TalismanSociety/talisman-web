@@ -69,7 +69,7 @@ const AddStakeForm = (props: AddStakeFormProps) => (
           0.5% Talisman Fee
         </Text.Body>
         <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-          <Text.Body alpha="high">{props.talismanFeeTokenAmount.decimalAmount?.toLocaleString()}</Text.Body>
+          <Text.Body alpha="high">{props.talismanFeeTokenAmount.decimalAmount?.toLocaleStringPrecision()}</Text.Body>
         </Suspense>
       </div>
     )}

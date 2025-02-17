@@ -6,13 +6,14 @@ import { Button } from '@talismn/ui/atoms/Button'
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { Surface } from '@talismn/ui/atoms/Surface'
 import { Text } from '@talismn/ui/atoms/Text'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { DescriptionList } from '@talismn/ui/molecules/DescriptionList'
 import { InfoCard } from '@talismn/ui/molecules/InfoCard'
 import { ListItem } from '@talismn/ui/molecules/ListItem'
 import { Select } from '@talismn/ui/molecules/Select'
 import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
-import { Zap } from '@talismn/web-icons'
+import { Info, Zap } from '@talismn/web-icons'
 import clsx from 'clsx'
 import { useAtom } from 'jotai'
 import { Suspense } from 'react'
@@ -22,6 +23,8 @@ import { SlippageDropdown } from '@/components/widgets/staking/subtensor/Slippag
 import { talismanTokenFeeAtom } from '@/domains/staking/subtensor/atoms/talismanTokenFee'
 import { cn } from '@/util/cn'
 import { Maybe } from '@/util/monads'
+
+import { TALISMAN_FEE_BITTENSOR } from './constants'
 
 type AmountInputProps =
   | {
@@ -223,11 +226,23 @@ export const SubtensorStakingSideSheet = ({
         {children}
         <div className={cn('mt-[2rem] flex flex-col gap-[1rem]', { 'mt-[6.4rem]': !hasDTaoStaking })}>
           <div className="mt-[2rem] flex items-center justify-between">
-            <Text.Body as="p" alpha="high">
-              0.5% Talisman Fee
-            </Text.Body>
+            <div className="flex items-center gap-2">
+              <Text.Body as="p" alpha="high">
+                Talisman Fee
+              </Text.Body>
+              <Tooltip
+                content={
+                  <div className="max-w-[35rem]">
+                    Talisman applies a {TALISMAN_FEE_BITTENSOR}% fee to each transaction.
+                  </div>
+                }
+                placement="top"
+              >
+                <Info size={16} />
+              </Tooltip>
+            </div>
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-              <Text.Body alpha="high">{talismanFeeTokenAmount?.decimalAmount?.toLocaleString()}</Text.Body>
+              <Text.Body alpha="high">{talismanFeeTokenAmount?.decimalAmount?.toLocaleStringPrecision()}</Text.Body>
             </Suspense>
           </div>
 

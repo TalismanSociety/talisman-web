@@ -36,7 +36,7 @@ export const useAddStakeForm = (
     expectedAlphaAmount,
     alphaPriceWithSlippageFormatted,
     taoToAlphaTalismanFee,
-    alphaToTaoTalismanFeeFormatted,
+    taoToAlphaTalismanFeeFormatted,
   } = useGetDynamicTaoStakeInfo({
     amount: amount,
     netuid: netuid ?? 0,
@@ -187,7 +187,7 @@ export const useAddStakeForm = (
     input,
     setInput,
     amount,
-    talismanFeeTokenAmount: alphaToTaoTalismanFeeFormatted,
+    talismanFeeTokenAmount: taoToAlphaTalismanFeeFormatted,
     transferable,
     resulting,
     extrinsic,
