@@ -1,30 +1,52 @@
 import { useAtomValue } from 'jotai'
-import uniq from 'lodash/uniq'
-import { useMemo } from 'react'
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
+import { ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
+import { type SubnetData } from '@/domains/staking/subtensor/types'
+import { Decimal } from '@/util/Decimal'
 
 import { accountStakeAtom } from '../atoms/accountStake'
-import { delegateInfosAtomFamily } from '../atoms/delegateInfo'
+import { useCombineSubnetData } from './useCombineSubnetData'
 
-export type Stake = ReturnType<typeof useStake>
+export type StakeItem = SubnetData & {
+  totalStaked: {
+    decimalAmount: Decimal | undefined
+    fiatAmount: number
+    localizedFiatAmount: string
+  }
+  symbol: string | undefined
+  coldkey: string
+  hotkey: string
+  netuid: number
+  stake: bigint
+}
 
-export const useStake = (account: Account) => {
+export type Stake = {
+  stakes: StakeItem[] | undefined
+}
+
+export const useStake = (account: Account): Stake => {
   const api = useRecoilValue(useSubstrateApiState())
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
+  const nativeToken = api.registry.chainTokens[0] || 'TAO'
+  const { subnetData } = useCombineSubnetData()
 
-  const stakes = useAtomValue(accountStakeAtom({ api, address: account.address }))
+  const stakeInfoForColdKey = useAtomValue(accountStakeAtom({ api, address: account.address }))
 
-  const totalStaked = useMemo(
-    () => nativeTokenAmount.fromPlanckOrUndefined(stakes?.reduce((acc, stake) => acc + stake.stake, 0n)),
-    [nativeTokenAmount, stakes]
-  )
+  const stakes = stakeInfoForColdKey?.map(stake => {
+    const subnet = subnetData[Number(stake.netuid)]
+    const symbol = Number(stake.netuid) !== ROOT_NETUID ? subnet?.symbol : nativeToken
+    return {
+      ...stake,
+      ...subnet,
+      netuid: Number(stake.netuid),
+      totalStaked: nativeTokenAmount.fromPlanckOrUndefined(stake.stake, symbol || nativeToken),
+      symbol,
+    }
+  })
 
-  const delegateAddresses = useMemo(() => uniq((stakes ?? []).map(stake => stake.hotkey)), [stakes])
-  const delegateInfos = useAtomValue(delegateInfosAtomFamily({ api, delegateAddresses }))
-
-  return { account, stakes, totalStaked, delegateInfos }
+  return { stakes }
 }

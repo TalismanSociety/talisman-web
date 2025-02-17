@@ -399,7 +399,7 @@ export const StakePositionErrorBoundary = (props: StakePositionErrorBoundaryProp
           },
         }}
       >
-        <section css={{ [MEDIUM_CONTAINER_QUERY]: { order: -1 }, [LARGE_CONTAINER_QUERY]: { width: '14rem' } }}>
+        <section css={{ [MEDIUM_CONTAINER_QUERY]: { order: -1 }, [LARGE_CONTAINER_QUERY]: { width: '24rem' } }}>
           <Text.BodySmall
             as="div"
             alpha="disabled"

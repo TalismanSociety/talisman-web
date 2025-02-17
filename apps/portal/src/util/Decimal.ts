@@ -99,6 +99,20 @@ export class Decimal {
     )
   }
 
+  toLocaleStringPrecision(locales?: Intl.LocalesArgument, options?: Omit<Intl.NumberFormatOptions, 'style'>) {
+    const currency = options?.currency ?? this.options?.currency
+    const number = parseFloat(this.toString())
+
+    return (
+      number.toLocaleString(locales, {
+        ...options,
+        style: 'decimal',
+        minimumFractionDigits: number < 0.001 && number !== 0 ? 4 : 0,
+        maximumFractionDigits: this.decimals, // Prevent rounding up
+      }) + (currency === undefined ? '' : ` ${currency}`)
+    )
+  }
+
   map(mapper: (planck: bigint) => bigint) {
     return Decimal.fromPlanck(mapper(this.planck), this.decimals, this.options)
   }

@@ -1,106 +1,110 @@
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
-import { useState } from 'react'
+import { Text } from '@talismn/ui/atoms/Text'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useRecoilValue } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
 import { UnstakeDialog as UnstakeDialogComponent } from '@/components/recipes/UnstakeDialog'
+import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useExtrinsicInBlockOrErrorEffect } from '@/domains/common/hooks/useExtrinsicEffect'
 import { useUnstakeForm } from '@/domains/staking/subtensor/hooks/forms'
-import { type Stake } from '@/domains/staking/subtensor/hooks/useStake'
+import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
+import { type StakeItem } from '@/domains/staking/subtensor/hooks/useStake'
 
-import DelegatePickerDialog from './DelegatePickerDialog'
+import { ROOT_NETUID } from './constants'
 
 type DelegateUnstakeDialogProps = {
   account: Account
-  stake: Stake
+  stake: StakeItem
   delegate: string
   onRequestDismiss: () => void
 }
 
 const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
-  const { input, setInput, amount, available, resulting, extrinsic, ready, error } = useUnstakeForm(
-    props.stake,
-    props.delegate
-  )
+  const {
+    input,
+    setInput,
+    available,
+    resulting,
+    extrinsic,
+    ready,
+    error,
+    alphaToTaoSlippage,
+    expectedTaoAmount,
+    isLoading,
+    talismanFeeTokenAmount,
+    resultingAlphaInTaoAmount,
+  } = useUnstakeForm(props.stake, props.delegate)
   const { t } = useTranslation()
+  const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
   useExtrinsicInBlockOrErrorEffect(() => props.onRequestDismiss(), extrinsic)
+  const { subnetData } = useCombineSubnetData()
+
+  const stakeData = subnetData[props.stake.netuid ?? 0]
+
+  const alphaTokenSymbol = useMemo(() => {
+    const { netuid, symbol, descriptionName } = stakeData || props.stake || {}
+    return netuid ? `SN${netuid} ${descriptionName} ${symbol}` : 'DTao'
+  }, [props.stake, stakeData])
+
+  const resultingAlphaAmount = nativeTokenAmount.fromPlanckOrUndefined(
+    resulting?.decimalAmount?.planck ?? 0n,
+    alphaTokenSymbol
+  )
+
+  const resultingStake = props.stake.netuid === ROOT_NETUID ? resulting : resultingAlphaAmount
+
+  const fiatAmount = props.stake.netuid === ROOT_NETUID ? resultingStake : expectedTaoAmount
+  const newFiatAmount = props.stake.netuid === ROOT_NETUID ? resultingStake : resultingAlphaInTaoAmount
+
+  const expectedAmount = (
+    <div className="flex items-center justify-between">
+      <Text.Body alpha="high">Est TAO to receive</Text.Body>
+      <Text.Body>{expectedTaoAmount.decimalAmount?.toLocaleString()}</Text.Body>
+    </div>
+  )
 
   return (
     <UnstakeDialogComponent
-      confirmState={extrinsic.state === 'loading' ? 'pending' : !ready ? 'disabled' : undefined}
+      confirmState={isLoading ? 'pending' : !ready ? 'disabled' : undefined}
       isError={error !== undefined}
-      availableAmount={available.decimalAmount.toLocaleString()}
+      availableAmount={available?.decimalAmount?.toLocaleString() || `0 ${alphaTokenSymbol}`}
       amount={input}
       onChangeAmount={setInput}
-      onRequestMaxAmount={() => setInput(available.decimalAmount.toString())}
-      fiatAmount={amount.localizedFiatAmount ?? ''}
-      newAmount={resulting.decimalAmount?.toLocaleString() ?? <CircularProgressIndicator size="1em" />}
-      newFiatAmount={resulting.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
+      onRequestMaxAmount={() => setInput(available?.decimalAmount?.toString() || '0')}
+      fiatAmount={fiatAmount.localizedFiatAmount ?? ''}
+      newAmount={resultingStake.decimalAmount?.toLocaleString() ?? <CircularProgressIndicator size="1em" />}
+      newFiatAmount={newFiatAmount.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
       onConfirm={() => {
         void extrinsic.signAndSend(props.account.address)
       }}
       inputSupportingText={error?.message}
       onDismiss={props.onRequestDismiss}
       lockDuration={<>{t('None')}</>}
-    />
-  )
-}
-
-type MultiDelegateUnstakeDialogProps = {
-  account: Account
-  stake: Stake
-  onRequestDismiss: () => void
-}
-
-const MultiDelegateUnstakeDialog = (props: MultiDelegateUnstakeDialogProps) => {
-  const [delegate, setDelegate] = useState<string>()
-
-  return delegate === undefined ? (
-    <DelegatePickerDialog
-      title="Select a delegate to unstake from"
-      account={props.account}
-      onSelect={setDelegate}
-      onRequestDismiss={props.onRequestDismiss}
-    />
-  ) : (
-    <DelegateUnstakeDialog
-      account={props.account}
-      stake={props.stake}
-      delegate={delegate}
-      onRequestDismiss={props.onRequestDismiss}
+      slippage={props.stake.netuid === ROOT_NETUID ? undefined : alphaToTaoSlippage}
+      expectedTokenAmount={stakeData?.netuid !== ROOT_NETUID && expectedAmount}
+      talismanFeeTokenAmount={talismanFeeTokenAmount}
     />
   )
 }
 
 type UnstakeDialogProps = {
   account: Account
-  stake: Stake
+  stake: StakeItem
   onRequestDismiss: () => void
 }
 
 const UnstakeDialog = (props: UnstakeDialogProps) => {
-  if (props.stake.stakes?.length === 1)
-    return (
-      <DelegateUnstakeDialog
-        account={props.account}
-        stake={props.stake}
-        // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-        delegate={props.stake.stakes.at(0)?.hotkey!}
-        onRequestDismiss={props.onRequestDismiss}
-      />
-    )
-
-  if ((props.stake.stakes?.length ?? 0) > 1)
-    return (
-      <MultiDelegateUnstakeDialog
-        account={props.account}
-        stake={props.stake}
-        onRequestDismiss={props.onRequestDismiss}
-      />
-    )
-
-  return null
+  return (
+    <DelegateUnstakeDialog
+      account={props.account}
+      stake={props.stake}
+      delegate={props.stake.hotkey}
+      onRequestDismiss={props.onRequestDismiss}
+    />
+  )
 }
 
 export default UnstakeDialog

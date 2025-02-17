@@ -6,6 +6,11 @@ import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
 import { Suspense } from 'react'
 
+import { type TokenAmountFromPlank } from '@/domains/common/hooks/useTokenAmount'
+
+import { TALISMAN_FEE_BITTENSOR } from '../widgets/staking/subtensor/constants'
+import { SlippageDropdown } from '../widgets/staking/subtensor/SlippageDropdown'
+
 export type UnstakeDialogProps = {
   open?: boolean
   onDismiss: () => unknown
@@ -14,7 +19,7 @@ export type UnstakeDialogProps = {
   availableAmount: string
   amount: string
   fiatAmount: string
-  newAmount: string
+  newAmount: ReactNode
   newFiatAmount: ReactNode
   rate?: string
   onRequestMaxAmount: () => unknown
@@ -23,6 +28,9 @@ export type UnstakeDialogProps = {
   isError?: boolean
   inputSupportingText?: string
   buttonText?: ReactNode
+  slippage?: number
+  expectedTokenAmount?: ReactNode
+  talismanFeeTokenAmount?: TokenAmountFromPlank
 }
 
 export const UnstakeDialog = (props: UnstakeDialogProps) => (
@@ -51,6 +59,7 @@ export const UnstakeDialog = (props: UnstakeDialogProps) => (
           onChange={event => props.onChangeAmount(event.target.value)}
           css={{ fontSize: '3rem' }}
         />
+        {props.expectedTokenAmount && props.expectedTokenAmount}
         <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.6rem' }}>
           <Text.Body alpha="high">New staked total</Text.Body>
           <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
@@ -76,6 +85,23 @@ export const UnstakeDialog = (props: UnstakeDialogProps) => (
                 <Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.lockDuration}</Suspense>
               </Text.Body>
             </div>
+          </div>
+        )}
+        {props.talismanFeeTokenAmount && (
+          <div className="mt-[0.5rem] flex items-center justify-between">
+            <Text.Body as="p" alpha="high">
+              {TALISMAN_FEE_BITTENSOR}% Talisman Fee
+            </Text.Body>
+            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+              <Text.Body alpha="high">
+                {props.talismanFeeTokenAmount.decimalAmount?.toLocaleStringPrecision()}
+              </Text.Body>
+            </Suspense>
+          </div>
+        )}
+        {props.slippage !== undefined && (
+          <div className="mt-[1rem]">
+            <SlippageDropdown />
           </div>
         )}
       </>

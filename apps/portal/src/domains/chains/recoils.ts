@@ -139,9 +139,9 @@ export const nativeTokenDecimalState = selectorFamily({
       return {
         fromPlanck: (value: string | number | bigint) =>
           Decimal.fromPlanck(value, api.registry.chainDecimals[0] ?? 0, { currency: api.registry.chainTokens[0] }),
-        fromPlanckOrUndefined: (value: string | number | bigint | undefined) =>
+        fromPlanckOrUndefined: (value: string | number | bigint | undefined, symbol?: string) =>
           Decimal.fromPlanckOrUndefined(value, api.registry.chainDecimals[0] ?? 0, {
-            currency: api.registry.chainTokens[0],
+            currency: symbol ?? api.registry.chainTokens[0],
           }),
         fromUserInput: (input: string) =>
           Decimal.fromUserInput(input, api.registry.chainDecimals[0] ?? 0, { currency: api.registry.chainTokens[0] }),
@@ -169,9 +169,9 @@ export const nativeTokenAmountState = selectorFamily({
       )
 
       const fromValue =
-        <T, T1 extends Decimal | undefined>(transformFn: (value: T) => T1) =>
-        (value: T) => {
-          const decimalAmount = transformFn(value)
+        <T, T1 extends Decimal | undefined>(transformFn: (value: T, symbol?: string) => T1) =>
+        (value: T, symbol?: string) => {
+          const decimalAmount = transformFn(value, symbol)
           const fiatAmount = (decimalAmount?.toNumber() ?? 0) * price
           const localizedFiatAmount = fiatAmount.toLocaleString(undefined, {
             style: 'currency',

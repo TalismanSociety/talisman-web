@@ -10,7 +10,7 @@ import React, { useState } from 'react'
 import type { StakeTargetSelectorItemProps } from './StakeTargetSelectorItem'
 import { DappSelectorItem, PoolSelectorItem, StakeTargetSelectorItem } from './StakeTargetSelectorItem'
 
-export type StakeTargetSelectorDialogProps = {
+export type StakeTargetSelectorDialogProps<T> = {
   open?: boolean
   title: ReactNode
   currentSelectionLabel: ReactNode
@@ -19,19 +19,16 @@ export type StakeTargetSelectorDialogProps = {
   confirmButtonContent: ReactNode
   onConfirm: () => unknown
   sortMethods?: {
-    [key: string]: (
-      a: ReactElement<StakeTargetSelectorItemProps>,
-      b: ReactElement<StakeTargetSelectorItemProps>
-    ) => number
+    [key: string]: (a: ReactElement<T>, b: ReactElement<T>) => number
   }
-  children: ReactElement<StakeTargetSelectorItemProps> | Array<ReactElement<StakeTargetSelectorItemProps>>
+  children: ReactElement<T> | Array<ReactElement<T>>
 }
 
 const ITEMS_PER_PAGE = 9
 
 export const StakeTargetSelectorDialog = Object.assign(
-  (props: StakeTargetSelectorDialogProps) => {
-    const items = React.Children.toArray(props.children) as Array<ReactElement<StakeTargetSelectorItemProps>>
+  <T extends { highlighted?: boolean; selected?: boolean }>(props: StakeTargetSelectorDialogProps<T>) => {
+    const items = React.Children.toArray(props.children) as Array<ReactElement<T>>
     const [sortMethod, setSortMethod] = useState(
       (props.sortMethods ? Object.keys(props.sortMethods)[0] : undefined) ?? 'Default'
     )
@@ -174,13 +171,13 @@ export const StakeTargetSelectorDialog = Object.assign(
 )
 
 export const PoolSelectorDialog = Object.assign(
-  (
+  <T extends StakeTargetSelectorItemProps>(
     props: Omit<
-      StakeTargetSelectorDialogProps,
+      StakeTargetSelectorDialogProps<T>,
       'title' | 'currentSelectionLabel' | 'selectionLabel' | 'confirmButtonContent'
     >
   ) => (
-    <StakeTargetSelectorDialog
+    <StakeTargetSelectorDialog<T>
       {...props}
       title="Select a pool"
       currentSelectionLabel="Current pool"
@@ -192,9 +189,9 @@ export const PoolSelectorDialog = Object.assign(
 )
 
 export const DappSelectorDialog = Object.assign(
-  (
+  <T extends StakeTargetSelectorItemProps>(
     props: Omit<
-      StakeTargetSelectorDialogProps,
+      StakeTargetSelectorDialogProps<T>,
       'title' | 'currentSelectionLabel' | 'selectionLabel' | 'confirmButtonContent'
     >
   ) => (

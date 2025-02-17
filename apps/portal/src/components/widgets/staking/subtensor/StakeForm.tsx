@@ -9,27 +9,42 @@ import { Account } from '@/domains/accounts/recoils'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useAddStakeForm } from '@/domains/staking/subtensor/hooks/forms'
 import { useDelegateApr } from '@/domains/staking/subtensor/hooks/useApr'
+import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
 import { useStake } from '@/domains/staking/subtensor/hooks/useStake'
 
 import { SubtensorStakingForm } from './SubtensorStakingForm'
 
 type StakeFormProps = IncompleteSelectionStakeFormProps & {
   account: Account
-  delegate: string
+  delegate: string | undefined
+  netuid: number | undefined
+  isSelectSubnetDisabled: boolean
 }
 
 export const StakeForm = (props: StakeFormProps) => {
-  const stake = useStake(props.account)
-  const { input, setInput, amount, transferable, extrinsic, ready, error } = useAddStakeForm(
-    props.account,
-    stake,
-    props.delegate
-  )
+  const { stakes } = useStake(props.account)
+  const { subnetData } = useCombineSubnetData()
+  const stake = stakes?.find(stake => stake.hotkey === props.delegate && Number(stake.netuid) === Number(props.netuid))
+  const stakeData = subnetData[props.netuid ?? 0]
+  const { input, amount, transferable, extrinsic, ready, error, expectedAlphaAmount, isLoading, setInput } =
+    useAddStakeForm(props.account, stake, props.delegate, props.netuid)
   const navigate = useNavigate()
+  const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
+
+  const alphaTokenSymbol = useMemo(() => {
+    const { netuid, symbol, descriptionName } = stakeData || stake || {}
+    return netuid ? `SN${netuid} ${descriptionName} ${symbol}` : 'DTao'
+  }, [stake, stakeData])
+
+  const formattedExpectedAlphaAmount = nativeTokenAmount.fromPlanckOrUndefined(
+    expectedAlphaAmount?.decimalAmount?.planck ?? 0n,
+    alphaTokenSymbol
+  )
 
   return (
     <SubtensorStakingForm
       accountSelector={props.accountSelector}
+      expectedAmount={formattedExpectedAlphaAmount?.decimalAmount?.toLocaleString()}
       amountInput={
         <SubtensorStakingForm.AmountInput
           amount={input}
@@ -39,16 +54,20 @@ export const StakeForm = (props: StakeFormProps) => {
           availableToStake={transferable.decimalAmount.toLocaleString()}
           assetSelector={props.assetSelector}
           error={error?.message}
-          isLoading={extrinsic.state === 'loading'}
+          isLoading={isLoading}
         />
       }
       selectionInProgress={props.selectionInProgress}
+      subnetSelectionInProgress={props.subnetSelectionInProgress}
       selectedName={props.selectedName}
+      selectedSubnetName={props.selectedSubnetName}
       onRequestChange={props.onRequestChange}
+      onSelectSubnet={props.onSelectSubnet}
+      isSelectSubnetDisabled={props.isSelectSubnetDisabled}
       stakeButton={
         <SubtensorStakingForm.StakeButton
           disabled={!ready}
-          loading={extrinsic.state === 'loading'}
+          loading={isLoading}
           onClick={() => {
             extrinsic.signAndSend(props.account.address).then(() => navigate('/staking/positions'))
           }}
@@ -57,8 +76,8 @@ export const StakeForm = (props: StakeFormProps) => {
       estimatedRewards={
         <Suspense fallback={<CircularProgressIndicator size="1em" />}>
           <EstimatedRewards
-            delegateHotkey={props.delegate}
-            amount={(amount.decimalAmount?.planck ?? 0n) + (stake.totalStaked.decimalAmount?.planck ?? 0n)}
+            delegateHotkey={props.delegate || ''}
+            amount={(amount.decimalAmount?.planck ?? 0n) + (stake?.totalStaked.decimalAmount?.planck ?? 0n)}
           />
         </Suspense>
       }
@@ -75,15 +94,30 @@ type IncompleteSelectionStakeFormProps = {
   accountSelector: ReactNode
   assetSelector: ReactNode
   selectionInProgress?: boolean
-  selectedName?: ReactNode
+  subnetSelectionInProgress?: boolean
+  selectedName?: string
+  selectedSubnetName?: string
+  isSelectSubnetDisabled: boolean
   onRequestChange: () => unknown
+  onSelectSubnet: () => void
 }
-export const IncompleteSelectionStakeForm = (props: IncompleteSelectionStakeFormProps) => (
+export const IncompleteSelectionStakeForm = ({
+  accountSelector,
+  assetSelector,
+  selectedName,
+  selectedSubnetName,
+  isSelectSubnetDisabled,
+  onRequestChange,
+  onSelectSubnet,
+}: IncompleteSelectionStakeFormProps) => (
   <SubtensorStakingForm
-    accountSelector={props.accountSelector}
-    amountInput={<SubtensorStakingForm.AmountInput assetSelector={props.assetSelector} disabled />}
-    selectedName={props.selectedName}
-    onRequestChange={props.onRequestChange}
+    accountSelector={accountSelector}
+    amountInput={<SubtensorStakingForm.AmountInput assetSelector={assetSelector} disabled />}
+    selectedName={selectedName}
+    selectedSubnetName={selectedSubnetName}
+    onRequestChange={onRequestChange}
+    onSelectSubnet={onSelectSubnet}
+    isSelectSubnetDisabled={isSelectSubnetDisabled}
     stakeButton={<SubtensorStakingForm.StakeButton disabled />}
     estimatedRewards="..."
   />

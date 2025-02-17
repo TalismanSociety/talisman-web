@@ -19,7 +19,9 @@ export default {
   },
 } as ComponentMeta<typeof StakeTargetSelectorDialog>
 
-export const Default: Story<StakeTargetSelectorDialogProps> = (args: any) => <StakeTargetSelectorDialog {...args} />
+export const Default: Story<StakeTargetSelectorDialogProps<any>> = (args: any) => (
+  <StakeTargetSelectorDialog {...args} />
+)
 
 Default.args = {
   open: true,

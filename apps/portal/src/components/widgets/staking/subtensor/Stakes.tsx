@@ -2,16 +2,15 @@ import { useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
-import { StakePosition } from '@/components/recipes/StakePosition'
-import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
+import type { StakeItem } from '@/domains/staking/subtensor/hooks/useStake'
 import { selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { useChainState } from '@/domains/chains/hooks'
 import { ChainProvider } from '@/domains/chains/provider'
 import { subtensorStakingEnabledChainsState } from '@/domains/chains/recoils'
 import { useStake } from '@/domains/staking/subtensor/hooks/useStake'
 
-import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 import AddStakeDialog from './AddStakeDialog'
+import { StakeItemRow } from './StakeItemRow'
 import UnstakeDialog from './UnstakeDialog'
 
 type StakesProps = {
@@ -40,63 +39,50 @@ type StakeProps = {
   setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
 }
 const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
+  const [addStakeDialogOpen, setAddStakeDialogOpen] = useState<boolean>(false)
+  const [unstakeDialogOpen, setUnstakeDialogOpen] = useState<boolean>(false)
+  const [selectedStake, setSelectedStake] = useState<StakeItem | undefined>()
+
   const chain = useRecoilValue(useChainState())
-  const stake = useStake(account)
-
-  const [addStakeDialogOpen, setAddStakeDialogOpen] = useState(false)
-  const [unstakeDialogOpen, setUnstakeDialogOpen] = useState(false)
-
-  const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
+  const { stakes = [] } = useStake(account)
 
   useEffect(() => {
-    if (!stake.stakes || stake.stakes.length === 0) return
+    if (!stakes || stakes.length === 0) return
     setShouldRenderLoadingSkeleton(false)
-  }, [setShouldRenderLoadingSkeleton, stake.stakes])
+  }, [setShouldRenderLoadingSkeleton, stakes])
 
-  if (!stake.stakes) return null
+  const handleToggleAddStakeDialog = (stakeItem?: StakeItem | undefined) => {
+    setAddStakeDialogOpen(prev => !prev)
+    setSelectedStake(stakeItem)
+  }
+
+  const handleToggleUnstakeDialog = (stakeItem?: StakeItem | undefined) => {
+    setUnstakeDialogOpen(prev => !prev)
+    setSelectedStake(stakeItem)
+  }
+
+  if (stakes.length === 0) return null
 
   return (
-    <ErrorBoundary
-      renderFallback={() => <ErrorBoundaryFallback logo={logo} symbol={symbol} provider={name} list="positions" />}
-    >
-      <StakePosition
-        readonly={account.readonly}
-        chain={name}
-        chainId={chain?.id || ''}
-        assetSymbol={symbol}
-        assetLogoSrc={logo}
-        account={account}
-        provider="Delegation"
-        stakeStatus={'earning_rewards'}
-        balance={
-          <ErrorBoundary renderFallback={() => <>--</>}>
-            {stake.totalStaked.decimalAmount?.toLocaleString()}
-          </ErrorBoundary>
-        }
-        fiatBalance={
-          <ErrorBoundary renderFallback={() => <>--</>}>{stake.totalStaked.localizedFiatAmount}</ErrorBoundary>
-        }
-        increaseStakeButton={
-          stake.stakes.length > 0 && (
-            <ErrorBoundary renderFallback={() => <>--</>}>
-              <StakePosition.IncreaseStakeButton onClick={() => setAddStakeDialogOpen(true)} withTransition />
-            </ErrorBoundary>
-          )
-        }
-        unstakeButton={
-          stake.stakes.length > 0 && (
-            <ErrorBoundary renderFallback={() => <>--</>}>
-              <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} withTransition />
-            </ErrorBoundary>
-          )
-        }
-      />
-      {addStakeDialogOpen && (
-        <AddStakeDialog account={account} stake={stake} onRequestDismiss={() => setAddStakeDialogOpen(false)} />
+    <>
+      {stakes.map(stake => {
+        return (
+          <StakeItemRow
+            key={`${account.address}-${stake.hotkey}-${stake.netuid}`}
+            stake={stake}
+            account={account}
+            chain={chain}
+            handleToggleAddStakeDialog={handleToggleAddStakeDialog}
+            handleToggleUnstakeDialog={handleToggleUnstakeDialog}
+          />
+        )
+      })}
+      {addStakeDialogOpen && selectedStake && (
+        <AddStakeDialog account={account} stake={selectedStake} onRequestDismiss={() => handleToggleAddStakeDialog()} />
       )}
-      {unstakeDialogOpen && (
-        <UnstakeDialog account={account} stake={stake} onRequestDismiss={() => setUnstakeDialogOpen(false)} />
+      {unstakeDialogOpen && selectedStake && (
+        <UnstakeDialog account={account} stake={selectedStake} onRequestDismiss={() => handleToggleUnstakeDialog()} />
       )}
-    </ErrorBoundary>
+    </>
   )
 }
