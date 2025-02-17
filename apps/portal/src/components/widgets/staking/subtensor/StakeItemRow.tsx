@@ -32,6 +32,9 @@ export const StakeItemRow = ({
     direction: 'alphaToTao',
   })
 
+  const fiatBalance =
+    stake.netuid === ROOT_NETUID ? stake.totalStaked.localizedFiatAmount : expectedTaoAmount.localizedFiatAmount
+
   return (
     <ErrorBoundary
       key={`${account.address}-${stake.hotkey}-${stake.netuid}`}
@@ -51,9 +54,7 @@ export const StakeItemRow = ({
             {stake.totalStaked.decimalAmount?.toLocaleString()}
           </ErrorBoundary>
         }
-        fiatBalance={
-          <ErrorBoundary renderFallback={() => <>--</>}>{expectedTaoAmount.localizedFiatAmount}</ErrorBoundary>
-        }
+        fiatBalance={<ErrorBoundary renderFallback={() => <>--</>}>{fiatBalance}</ErrorBoundary>}
         increaseStakeButton={
           <ErrorBoundary renderFallback={() => <>--</>}>
             <StakePosition.IncreaseStakeButton onClick={() => handleToggleAddStakeDialog(stake)} withTransition />
