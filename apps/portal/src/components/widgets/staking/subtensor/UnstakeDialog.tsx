@@ -1,4 +1,5 @@
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { Text } from '@talismn/ui/atoms/Text'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useRecoilValue } from 'recoil'
@@ -21,10 +22,18 @@ type DelegateUnstakeDialogProps = {
 }
 
 const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
-  const { input, setInput, amount, available, resulting, extrinsic, ready, error, alphaToTaoSlippage } = useUnstakeForm(
-    props.stake,
-    props.delegate
-  )
+  const {
+    input,
+    setInput,
+    amount,
+    available,
+    resulting,
+    extrinsic,
+    ready,
+    error,
+    alphaToTaoSlippage,
+    expectedTaoAmount,
+  } = useUnstakeForm(props.stake, props.delegate)
   const { t } = useTranslation()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
@@ -45,14 +54,21 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
 
   const resultingStake = props.stake.netuid === ROOT_NETUID ? resulting : resultingAlphaAmount
 
+  const expectedAmount = (
+    <div className="flex items-center justify-between">
+      <Text.Body alpha="high">Est TAO to receive</Text.Body>
+      <Text.Body>{expectedTaoAmount.decimalAmount?.toLocaleString()}</Text.Body>
+    </div>
+  )
+
   return (
     <UnstakeDialogComponent
       confirmState={extrinsic.state === 'loading' ? 'pending' : !ready ? 'disabled' : undefined}
       isError={error !== undefined}
-      availableAmount={available.decimalAmount.toLocaleString()}
+      availableAmount={available?.decimalAmount?.toLocaleString() || `0 ${alphaTokenSymbol}`}
       amount={input}
       onChangeAmount={setInput}
-      onRequestMaxAmount={() => setInput(available.decimalAmount.toString())}
+      onRequestMaxAmount={() => setInput(available?.decimalAmount?.toString() || '0')}
       fiatAmount={amount.localizedFiatAmount ?? ''}
       newAmount={resultingStake.decimalAmount?.toLocaleString() ?? <CircularProgressIndicator size="1em" />}
       newFiatAmount={resultingStake.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
@@ -63,6 +79,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
       onDismiss={props.onRequestDismiss}
       lockDuration={<>{t('None')}</>}
       slippage={alphaToTaoSlippage}
+      expectedTokenAmount={expectedAmount}
     />
   )
 }

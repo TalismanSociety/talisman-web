@@ -185,8 +185,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
   const {
     slippage,
     isLoading: isSlippageLoading,
-    // expectedTaoAmount, TODO: Add expectedTaoAmount in uns
-
+    expectedTaoAmount,
     taoPriceWithSlippageFormatted,
     alphaToTaoTalismanFee,
   } = useGetDynamicTaoStakeInfo({
@@ -257,6 +256,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     ready,
     error,
     alphaToTaoSlippage: slippage,
+    expectedTaoAmount,
   }
 }
 

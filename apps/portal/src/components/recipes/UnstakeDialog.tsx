@@ -26,6 +26,7 @@ export type UnstakeDialogProps = {
   inputSupportingText?: string
   buttonText?: ReactNode
   slippage?: number
+  expectedTokenAmount?: ReactNode
 }
 
 export const UnstakeDialog = (props: UnstakeDialogProps) => (
@@ -54,6 +55,7 @@ export const UnstakeDialog = (props: UnstakeDialogProps) => (
           onChange={event => props.onChangeAmount(event.target.value)}
           css={{ fontSize: '3rem' }}
         />
+        {props.expectedTokenAmount && props.expectedTokenAmount}
         <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.6rem' }}>
           <Text.Body alpha="high">New staked total</Text.Body>
           <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
