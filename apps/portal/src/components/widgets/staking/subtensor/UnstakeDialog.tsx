@@ -35,6 +35,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
     expectedTaoAmount,
     isLoading,
     talismanFeeTokenAmount,
+    resultingAlphaInTaoAmount,
   } = useUnstakeForm(props.stake, props.delegate)
   const { t } = useTranslation()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
@@ -56,6 +57,9 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
 
   const resultingStake = props.stake.netuid === ROOT_NETUID ? resulting : resultingAlphaAmount
 
+  const fiatAmount = props.stake.netuid === ROOT_NETUID ? resultingStake : expectedTaoAmount
+  const newFiatAmount = props.stake.netuid === ROOT_NETUID ? resultingStake : resultingAlphaInTaoAmount
+
   const expectedAmount = (
     <div className="flex items-center justify-between">
       <Text.Body alpha="high">Est TAO to receive</Text.Body>
@@ -71,9 +75,9 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
       amount={input}
       onChangeAmount={setInput}
       onRequestMaxAmount={() => setInput(available?.decimalAmount?.toString() || '0')}
-      fiatAmount={amount.localizedFiatAmount ?? ''}
+      fiatAmount={fiatAmount.localizedFiatAmount ?? ''}
       newAmount={resultingStake.decimalAmount?.toLocaleString() ?? <CircularProgressIndicator size="1em" />}
-      newFiatAmount={resultingStake.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
+      newFiatAmount={newFiatAmount.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
       onConfirm={() => {
         void extrinsic.signAndSend(props.account.address)
       }}

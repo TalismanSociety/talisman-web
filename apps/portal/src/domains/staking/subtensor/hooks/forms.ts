@@ -294,6 +294,12 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     )
   )
 
+  const resultingAlphaInTao = calculateExpectedTaoFromAlpha({
+    alphaStaked: resulting.decimalAmount?.toNumber() ?? 0,
+  })
+
+  const resultingAlphaInTaoAmount = useTokenAmount(resultingAlphaInTao.toString())
+
   const ready =
     (amount.decimalAmount?.planck ?? 0n) > 0n &&
     error === undefined &&
@@ -313,6 +319,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     expectedTaoAmount,
     isLoading: extrinsic.state === 'loading' || isSlippageLoading,
     talismanFeeTokenAmount: alphaToTaoTalismanFeeFormatted,
+    resultingAlphaInTaoAmount,
   }
 }
 
