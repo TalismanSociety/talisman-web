@@ -40,7 +40,6 @@ export const useAddStakeForm = (
     amount: amount,
     netuid: netuid ?? 0,
   })
-  // const talismanFee = calculateFee(amount.decimalAmount?.planck ?? 0n, TALISMAN_FEE_BITTENSOR)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tx: SubmittableExtrinsic<any> = useMemo(() => {
@@ -112,10 +111,17 @@ export const useAddStakeForm = (
     const untouchableOrEd = BigMath.max(untouchable, existentialDeposit)
 
     const free = accountInfo.data.free.toBigInt()
-    const transferable = BigMath.max(free - untouchableOrEd, 0n)
+    const transferable = BigMath.max(free - (untouchableOrEd + taoToAlphaTalismanFee), 0n)
 
     return transferable - feeEstimate
-  }, [accountInfo.data.free, accountInfo.data.frozen, accountInfo.data.reserved, existentialDeposit, feeEstimate])
+  }, [
+    accountInfo.data.free,
+    accountInfo.data.frozen,
+    accountInfo.data.reserved,
+    existentialDeposit,
+    feeEstimate,
+    taoToAlphaTalismanFee,
+  ])
 
   const transferable = useTokenAmountFromPlanck(transferablePlanck)
 
