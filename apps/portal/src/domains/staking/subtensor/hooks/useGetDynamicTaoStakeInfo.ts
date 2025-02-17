@@ -26,7 +26,7 @@ export const useGetDynamicTaoStakeInfo = ({
   netuid: number
   direction: Direction
 }) => {
-  const { data, isLoading } = useGetSubnetMetagraphByNetuid({ netuid })
+  const { data, isLoading, error } = useGetSubnetMetagraphByNetuid({ netuid })
   const setBittensorSlippage = useSetAtom(bittensorSlippageAtom)
 
   const maxSlippage = useAtomValue(maxSlippageAtom)
@@ -76,11 +76,12 @@ export const useGetDynamicTaoStakeInfo = ({
     expectedAlphaAmount,
     alphaPriceWithSlippageFormatted,
     taoPriceWithSlippageFormatted,
-    isLoading,
     taoToAlphaTalismanFee,
     taoToAlphaTalismanFeeFormatted,
     alphaToTaoTalismanFee,
     alphaToTaoTalismanFeeFormatted,
+    isLoading,
+    error,
   }
 }
 

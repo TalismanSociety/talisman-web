@@ -30,7 +30,6 @@ export const StakeForm = (props: StakeFormProps) => {
   const stakeData = subnetData[props.netuid ?? 0]
   const {
     input,
-    setInput,
     amount,
     talismanFeeTokenAmount,
     transferable,
@@ -38,6 +37,8 @@ export const StakeForm = (props: StakeFormProps) => {
     ready,
     error,
     expectedAlphaAmount,
+    isLoading,
+    setInput,
   } = useAddStakeForm(props.account, stake, props.delegate, props.netuid)
   const setTalismanTokenFee = useSetAtom(talismanTokenFeeAtom)
   const navigate = useNavigate()
@@ -70,7 +71,7 @@ export const StakeForm = (props: StakeFormProps) => {
           availableToStake={transferable.decimalAmount.toLocaleString()}
           assetSelector={props.assetSelector}
           error={error?.message}
-          isLoading={extrinsic.state === 'loading'}
+          isLoading={isLoading}
         />
       }
       selectionInProgress={props.selectionInProgress}
@@ -83,7 +84,7 @@ export const StakeForm = (props: StakeFormProps) => {
       stakeButton={
         <SubtensorStakingForm.StakeButton
           disabled={!ready}
-          loading={extrinsic.state === 'loading'}
+          loading={isLoading}
           onClick={() => {
             extrinsic.signAndSend(props.account.address).then(() => navigate('/staking/positions'))
           }}

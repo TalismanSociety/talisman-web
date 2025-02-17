@@ -26,5 +26,7 @@ export const useGetSubnetMetagraphByNetuid = ({ netuid }: { netuid: number }) =>
     queryFn: () => fetchSubnetMetagraph({ netuid }),
     staleTime: 1000 * 10, // 10 seconds
     enabled: !!api && netuid !== undefined && netuid !== 0,
+    retry: 10,
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000), // tryDelay is set to double (starting at 1000ms) with each attempt, but not exceed 30 seconds
   })
 }

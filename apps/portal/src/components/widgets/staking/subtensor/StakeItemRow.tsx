@@ -33,8 +33,6 @@ export const StakeItemRow = ({
     direction: 'alphaToTao',
   })
 
-  console.log({ expectedTaoAmount, totalStaked: stake.totalStaked })
-
   return (
     <ErrorBoundary
       key={`${account.address}-${stake.hotkey}-${stake.netuid}`}

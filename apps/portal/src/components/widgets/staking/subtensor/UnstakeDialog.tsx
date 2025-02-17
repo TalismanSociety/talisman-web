@@ -33,6 +33,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
     error,
     alphaToTaoSlippage,
     expectedTaoAmount,
+    isLoading,
   } = useUnstakeForm(props.stake, props.delegate)
   const { t } = useTranslation()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
@@ -63,7 +64,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
 
   return (
     <UnstakeDialogComponent
-      confirmState={extrinsic.state === 'loading' ? 'pending' : !ready ? 'disabled' : undefined}
+      confirmState={isLoading ? 'pending' : !ready ? 'disabled' : undefined}
       isError={error !== undefined}
       availableAmount={available?.decimalAmount?.toLocaleString() || `0 ${alphaTokenSymbol}`}
       amount={input}

@@ -32,6 +32,7 @@ export const useAddStakeForm = (
   const {
     slippage,
     isLoading: isSlippageLoading,
+    error: isDynamicTaoStakeInfoError,
     expectedAlphaAmount,
     alphaPriceWithSlippageFormatted,
     taoToAlphaTalismanFee,
@@ -142,10 +143,15 @@ export const useAddStakeForm = (
     if (resulting.decimalAmount && resulting.decimalAmount?.planck < (minimum.decimalAmount?.planck ?? 0n))
       return new Error(`Minimum stake is ${(minimum.decimalAmount ?? 0n).toLocaleString()}`)
 
+    if (isDynamicTaoStakeInfoError) {
+      return new Error('Failed to fetch dynamic tao stake info')
+    }
+
     return undefined
   }, [
     amount.decimalAmount?.planck,
     input,
+    isDynamicTaoStakeInfoError,
     minimum.decimalAmount,
     resulting.decimalAmount,
     transferable.decimalAmount.planck,
@@ -159,7 +165,8 @@ export const useAddStakeForm = (
     error === undefined &&
     delegate &&
     netuid !== undefined &&
-    !isSlippageLoading
+    !isSlippageLoading &&
+    !isDynamicTaoStakeInfoError
 
   return {
     input,
@@ -173,6 +180,7 @@ export const useAddStakeForm = (
     error,
     slippage,
     expectedAlphaAmount,
+    isLoading: extrinsic.state === 'loading' || isSlippageLoading,
   }
 }
 
@@ -186,6 +194,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
   const {
     alphaToTaoSlippage: slippage,
     isLoading: isSlippageLoading,
+    error: isDynamicTaoStakeInfoError,
     expectedTaoAmount,
     taoPriceWithSlippageFormatted,
     alphaToTaoTalismanFee,
@@ -236,8 +245,12 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
       return new Error(`Need ${minimum.decimalAmount?.toLocaleString?.()} to keep staking`)
     }
 
+    if (isDynamicTaoStakeInfoError) {
+      return new Error('Failed to fetch dynamic tao stake info')
+    }
+
     return undefined
-  }, [amount.decimalAmount, available.decimalAmount, input, minimum.decimalAmount])
+  }, [amount.decimalAmount, available.decimalAmount, input, isDynamicTaoStakeInfoError, minimum.decimalAmount])
 
   const resulting = useTokenAmountFromPlanck(
     useMemo(
@@ -246,7 +259,11 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     )
   )
 
-  const ready = (amount.decimalAmount?.planck ?? 0n) > 0n && error === undefined && !isSlippageLoading
+  const ready =
+    (amount.decimalAmount?.planck ?? 0n) > 0n &&
+    error === undefined &&
+    !isSlippageLoading &&
+    !isDynamicTaoStakeInfoError
 
   return {
     input,
@@ -259,6 +276,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     error,
     alphaToTaoSlippage: slippage,
     expectedTaoAmount,
+    isLoading: extrinsic.state === 'loading' || isSlippageLoading,
   }
 }
 
