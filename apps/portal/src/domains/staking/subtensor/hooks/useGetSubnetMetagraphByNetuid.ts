@@ -11,7 +11,7 @@ export const useGetSubnetMetagraphByNetuid = ({ netuid }: { netuid: number }) =>
   const fetchSubnetMetagraph = async ({ netuid }: { netuid: number }) => {
     try {
       const response = (await (
-        await api.call['subnetInfoRuntimeApi']?.['getMetagraph']?.(netuid)
+        await api?.call['subnetInfoRuntimeApi']?.['getMetagraph']?.(netuid)
       )?.toHuman()) as RuntimePoolData
 
       return response

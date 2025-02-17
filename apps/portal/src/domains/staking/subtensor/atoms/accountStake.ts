@@ -75,8 +75,6 @@ export const accountStakeAtom = atomFamily(
           await api.call['stakeInfoRuntimeApi']?.['getStakeInfoForColdkey']?.(address)
         )?.toHuman() as DTaoStakeInfo[]
 
-        console.log({ result })
-
         if (!Array.isArray(result)) return undefined
 
         const stakes = result
