@@ -134,13 +134,20 @@ export const useAddStakeForm = (
     )
   )
 
+  const resultingInTao = useTokenAmountFromPlanck(
+    useMemo(
+      () => (stake?.totalStaked.decimalAmount?.planck ?? 0n) + (amount.decimalAmount?.planck ?? 0n),
+      [amount.decimalAmount?.planck, stake?.totalStaked.decimalAmount?.planck]
+    )
+  )
+
   const minimum = useTokenAmount(String(MIN_SUBTENSOR_STAKE))
   const error = useMemo(() => {
     if (input === '') return
     if ((amount.decimalAmount?.planck ?? 0n) > transferable.decimalAmount.planck)
       return new Error('Insufficient balance')
 
-    if (resulting.decimalAmount && resulting.decimalAmount?.planck < (minimum.decimalAmount?.planck ?? 0n))
+    if (resultingInTao.decimalAmount && resultingInTao.decimalAmount?.planck < (minimum.decimalAmount?.planck ?? 0n))
       return new Error(`Minimum stake is ${(minimum.decimalAmount ?? 0n).toLocaleString()}`)
 
     if (isDynamicTaoStakeInfoError) {
@@ -153,7 +160,7 @@ export const useAddStakeForm = (
     input,
     isDynamicTaoStakeInfoError,
     minimum.decimalAmount,
-    resulting.decimalAmount,
+    resultingInTao.decimalAmount,
     transferable.decimalAmount.planck,
   ])
 
