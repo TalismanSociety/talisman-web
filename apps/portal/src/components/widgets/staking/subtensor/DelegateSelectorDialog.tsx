@@ -61,6 +61,15 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
         const apr = Number(delegatesStats.find(stat => stat.hotkey.ss58 === delegate.address)?.apr) || 0
         const formattedApr = apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 
+        const totalDelegated = allDelegateInfos[delegate.address]?.totalDelegated ?? 0n
+
+        const balance = nativeTokenAmount.fromPlanckOrUndefined(totalDelegated)
+
+        const formattedBalance =
+          totalDelegated > 0n
+            ? balance.decimalAmount?.toLocaleString()
+            : `-- ${balance.decimalAmount?.options?.currency}`
+
         return (
           <StakeTargetSelectorDialog.Item
             key={delegate.address}
@@ -76,11 +85,7 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
             talismanRecommended={false}
             detailUrl={delegate.url}
             count={allDelegateInfos[delegate.address]?.nominators?.length ?? 0}
-            balance={
-              nativeTokenAmount
-                .fromPlanckOrUndefined(allDelegateInfos[delegate.address]?.totalDelegated)
-                .decimalAmount?.toLocaleString() ?? ''
-            }
+            balance={formattedBalance ?? ''}
             balancePlanck={
               nativeTokenAmount.fromPlanckOrUndefined(allDelegateInfos[delegate.address]?.totalDelegated).decimalAmount
                 ?.planck
