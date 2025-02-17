@@ -37,7 +37,7 @@ export function useGetInfiniteSubnetDescriptions() {
   })
 }
 
-const initialData: SubnetApiDescriptionsResponse = {
+export const initialData: SubnetApiDescriptionsResponse = {
   pagination: {
     current_page: 1,
     per_page: 50,
@@ -537,6 +537,151 @@ const initialData: SubnetApiDescriptionsResponse = {
         'A collaborative platform dedicated to revolutionizing deep learning by automating the discovery of improved and novel neural network components.',
       hw_requirements: '',
       github: 'https://github.com/Hivetrain/DistributedAutoML/',
+      image_url: '',
+    },
+    {
+      netuid: 50,
+      bittensor_id: 'shin',
+      name: 'Synth',
+      description:
+        "Synth is a Bittensor Subnet, developed by Mode, leverages Bittensor’s decentralized intelligence network to create the world's most powerful synthetic data for price forecasting. Such price forecasting will be used to power the agentic economy onchain. Unlike traditional price prediction systems that focus on single-point forecasts, Synth specializes in capturing the full distribution of possible price movements and their associated probabilities, to build the most accurate synthetic data in the world, starting with BTC.",
+      hw_requirements: '',
+      github: 'https://github.com/mode-network/synth-subnet',
+      image_url: '',
+    },
+    {
+      netuid: 51,
+      bittensor_id: 'tav',
+      name: 'Compute Subnet',
+      description:
+        'This project enables a decentralized, peer-to-peer GPU rental marketplace, connecting miners who contribute GPU resources with users who need computational power.',
+      hw_requirements: '',
+      github: 'https://github.com/Datura-ai/compute-subnet',
+      image_url: '',
+    },
+    {
+      netuid: 52,
+      bittensor_id: 'alif',
+      name: 'Dojo',
+      description: 'Crowdsource high-quality human-generated datasets.',
+      hw_requirements: '',
+      github: 'https://github.com/tensorplex-labs/dojo',
+      image_url: 'https://github.com/tensorplex-labs/dojo/raw/main/assets/dojo.png',
+    },
+    {
+      netuid: 53,
+      bittensor_id: 'ba',
+      name: 'Efficient Frontier',
+      description:
+        'Our mission is to identify optimal, risk-weighted trading strategies by integrating decentralized machine learning networks with live trading data.',
+      hw_requirements: '',
+      github: 'https://github.com/EfficientFrontier-SignalPlus/EfficientFrontier',
+      image_url: '',
+    },
+    {
+      netuid: 54,
+      bittensor_id: 'ta',
+      name: 'WebGenieAI',
+      description:
+        'WebGenieAI Subnet is a pioneering Bittensor-based subnet designed to revolutionize project generation through advanced AI models. WebGenieAI aims to transform diverse prompts—ranging from texts to concept sketches and images into fully functional, ready-to-deploy projects. This subnet is tailored for developers, designers, and innovators who seek to accelerate their project development process with high-quality, AI-generated outputs.',
+      hw_requirements: 'https://github.com/web-genie-ai/web-genie-ai/blob/main/min_compute.yml',
+      github: 'https://github.com/web-genie-ai/web-genie-ai',
+      image_url:
+        'https://raw.githubusercontent.com/web-genie-ai/web-genie-ai/f7efa10d3eaadded7757a25510f10f628a16361c/Web-Genie-logo.png',
+    },
+    {
+      netuid: 55,
+      bittensor_id: 'tha',
+      name: 'Precog',
+      description:
+        'Precog is an AI-powered high-frequency $BTC price forecasting subnet underpinned by Coin Metrics’ comprehensive and trusted data. Miners produce financial intelligence utilizing the same datasets which power the most prestigious institutions touching cryptoassets.',
+      hw_requirements: '',
+      github: 'https://github.com/coinmetrics/precog',
+      image_url: '',
+    },
+    {
+      netuid: 56,
+      bittensor_id: 'djim',
+      name: 'Gradients',
+      description: 'Anyone Can Train on Bittensor - Gradients on Demand.',
+      hw_requirements: '',
+      github: 'https://github.com/rayonlabs/G.O.D',
+      image_url: '',
+    },
+    {
+      netuid: 57,
+      bittensor_id: 'ha',
+      name: 'Gaia',
+      description: 'Gaia is the hub of geospatial AI on Bittensor',
+      hw_requirements: '',
+      github: 'https://github.com/Nickel5-Inc/Gaia',
+      image_url: '',
+    },
+    {
+      netuid: 58,
+      bittensor_id: 'rro',
+      name: 'Dippy Speech',
+      description:
+        'Developing the world’s most advanced open-source Speech model for immersive, lifelike interactions.',
+      hw_requirements: '',
+      github: 'https://github.com/impel-intelligence/dippy-speech-subnet',
+      image_url: '',
+    },
+    {
+      netuid: 59,
+      bittensor_id: 'dal',
+      name: 'Agent Arena by Masa',
+      description:
+        'Welcome to Agent Arena by Masa - the first competitive agent ecosystem where market forces and real engagement drive the evolution of sentient AI agents.',
+      hw_requirements: '',
+      github: 'https://github.com/masa-finance/agent-arena-subnet',
+      image_url: '',
+    },
+    {
+      netuid: 60,
+      bittensor_id: 'dhal',
+      name: 'Bitsec',
+      description: 'Bitsec is an ecosystem for AI-powered code vulnerability detection.',
+      hw_requirements: '',
+      github: 'https://github.com/Bitsec-AI/subnet',
+      image_url: '',
+    },
+    {
+      netuid: 61,
+      bittensor_id: 'ra',
+      name: 'Red Team',
+      description:
+        'The RedTeam subnet by Innerworks is a decentralized platform designed to drive innovation in cybersecurity through competitive programming challenges.',
+      hw_requirements: '',
+      github: 'https://github.com/RedTeamSubnet/RedTeam',
+      image_url: '',
+    },
+    {
+      netuid: 62,
+      bittensor_id: 'zai',
+      name: 'AgenTao',
+      description:
+        'AgenTao is an initiative to create a decentralized, self-sustaining marketplace of autonomous software engineering agents. Our mission is to incentivize autonomous SWE agents to tackle real-world software problems, solving increasingly complex and general tasks.',
+      hw_requirements: '',
+      github: 'https://github.com/taoagents/agentao',
+      image_url: '',
+    },
+    {
+      netuid: 63,
+      bittensor_id: 'sin',
+      name: 'Unknown',
+      description: '',
+      hw_requirements: '',
+      github: '',
+      image_url: '',
+    },
+    {
+      netuid: 64,
+      bittensor_id: 'shin',
+      name: 'Chutes',
+      description: 'Serverless AI compute. Run any AI model',
+      hw_requirements: '',
+      github: 'https://github.com/rayonlabs/chutes',
       image_url: '',
     },
   ],

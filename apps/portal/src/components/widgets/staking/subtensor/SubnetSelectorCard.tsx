@@ -2,9 +2,10 @@ import { useSurfaceColor, useSurfaceColorAtElevation } from '@talismn/ui/atoms/S
 import { Text } from '@talismn/ui/atoms/Text'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { classNames } from '@talismn/util'
-import { useRecoilValue } from 'recoil'
 
-import { useNativeTokenAmountState } from '@/domains/chains/recoils'
+// import { useRecoilValue } from 'recoil'
+
+// import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { type SubnetData } from '@/domains/staking/subtensor/types'
 
 export type SubnetSelectorCardProps = {
@@ -17,15 +18,20 @@ export type SubnetSelectorCardProps = {
 export const SubnetSelectorCard = ({ subnetPool, selected, highlighted, onClick }: SubnetSelectorCardProps) => {
   const surfaceVariant = useSurfaceColorAtElevation(x => x + 1)
   const surfaceColor = useSurfaceColor()
-  const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
+  // const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
   const isHighlighted = highlighted || selected
   const alpha = isHighlighted ? 'high' : 'disabled'
-  const { symbol, netuid, total_tao, total_alpha, descriptionName } = subnetPool
+  const {
+    symbol,
+    netuid,
+    // total_tao, total_alpha,
+    descriptionName,
+  } = subnetPool
   const name = `${netuid} | ${descriptionName}`
 
-  const totalTao = nativeTokenAmount.fromPlanckOrUndefined(total_tao).decimalAmount?.toLocaleString() ?? ''
-  const totalAlpha = nativeTokenAmount.fromPlanckOrUndefined(total_alpha, symbol).decimalAmount?.toLocaleString() ?? ''
+  // const totalTao = nativeTokenAmount.fromPlanckOrUndefined(total_tao).decimalAmount?.toLocaleString() ?? ''
+  // const totalAlpha = nativeTokenAmount.fromPlanckOrUndefined(total_alpha, symbol).decimalAmount?.toLocaleString() ?? ''
 
   return (
     <article
@@ -49,10 +55,12 @@ export const SubnetSelectorCard = ({ subnetPool, selected, highlighted, onClick 
       </Tooltip>
       <div className="flex items-center justify-between">
         <Tooltip content="Total TAO">
-          <Text.Body alpha={alpha}>{totalTao}</Text.Body>
+          {/* <Text.Body alpha={alpha}>{totalTao}</Text.Body> */}
+          <Text.Body alpha={alpha}>--</Text.Body>
         </Tooltip>
         <Tooltip content="Total Alpha">
-          <Text.Body alpha={alpha}>{totalAlpha}</Text.Body>
+          {/* <Text.Body alpha={alpha}>{totalAlpha}</Text.Body> */}
+          <Text.Body alpha={alpha}>--</Text.Body>
         </Tooltip>
       </div>
     </article>
