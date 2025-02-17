@@ -83,7 +83,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
       inputSupportingText={error?.message}
       onDismiss={props.onRequestDismiss}
       lockDuration={<>{t('None')}</>}
-      slippage={alphaToTaoSlippage}
+      slippage={props.stake.netuid === ROOT_NETUID ? undefined : alphaToTaoSlippage}
       expectedTokenAmount={stakeData?.netuid !== ROOT_NETUID && expectedAmount}
       talismanFeeTokenAmount={talismanFeeTokenAmount}
     />

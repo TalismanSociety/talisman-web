@@ -81,7 +81,7 @@ const SubtensorAddStakeDialog = ({ account, stake, delegate, onRequestDismiss }:
       inputSupportingText={error?.message}
       onDismiss={onRequestDismiss}
       talismanFeeTokenAmount={talismanFeeTokenAmount}
-      slippage={slippage}
+      slippage={stake.netuid === ROOT_NETUID ? undefined : slippage}
     />
   )
 }
