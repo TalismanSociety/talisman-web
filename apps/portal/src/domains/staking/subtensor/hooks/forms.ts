@@ -6,6 +6,7 @@ import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
 import { TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR } from '@/components/widgets/staking/subtensor/constants'
+import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
 import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
@@ -170,6 +171,7 @@ export const useAddStakeForm = (
 
 export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
   const api = useRecoilValue(useSubstrateApiState())
+  const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
   const [input, setInput] = useState('')
   const amount = useTokenAmount(input)
@@ -211,11 +213,11 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
   }, [api.tx, delegate, amount.decimalAmount?.planck, stake.netuid, limitPrice, allowPartial, alphaToTaoTalismanFee])
   const extrinsic = useExtrinsic(tx)
 
-  const available = useTokenAmountFromPlanck(stake.totalStaked.decimalAmount?.planck ?? 0n)
+  const available = nativeTokenAmount.fromPlanckOrUndefined(stake.stake, stake?.symbol)
 
   const minimum = useTokenAmount(String(MIN_SUBTENSOR_STAKE))
   const error = useMemo(() => {
-    if (input === '') return
+    if (input === '' || !available.decimalAmount) return
 
     if ((amount.decimalAmount?.planck ?? 0n) > available.decimalAmount.planck) return new Error('Insufficient balance')
 
@@ -228,11 +230,11 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     }
 
     return undefined
-  }, [amount.decimalAmount, available.decimalAmount.planck, input, minimum.decimalAmount])
+  }, [amount.decimalAmount, available.decimalAmount, input, minimum.decimalAmount])
 
   const resulting = useTokenAmountFromPlanck(
     useMemo(
-      () => BigMath.max(0n, available.decimalAmount?.planck - (amount.decimalAmount?.planck ?? 0n)),
+      () => BigMath.max(0n, (available?.decimalAmount?.planck ?? 0n) - (amount.decimalAmount?.planck ?? 0n)),
       [amount.decimalAmount?.planck, available.decimalAmount?.planck]
     )
   )
