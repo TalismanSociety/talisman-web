@@ -3,7 +3,7 @@ import { SubnetPool } from '@/domains/staking/subtensor/types'
 export const ROOT_NETUID = 0
 // TODO: Update Fee Receiver Address
 export const TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR = '5DzsVV2L4M9r4uWoyarzPyhfeCv6DDAEs5rM2bpHjmerPcGa'
-export const TALISMAN_FEE_BITTENSOR = 0.5
+export const TALISMAN_FEE_BITTENSOR = 0.3
 
 export const DTAO_SYMBOL = 'Dynamic TAO'
 export const DTAO_LOGO =

@@ -8,6 +8,7 @@ import { Suspense } from 'react'
 
 import { type TokenAmountFromPlank } from '@/domains/common/hooks/useTokenAmount'
 
+import { TALISMAN_FEE_BITTENSOR } from '../widgets/staking/subtensor/constants'
 import { SlippageDropdown } from '../widgets/staking/subtensor/SlippageDropdown'
 
 export type AddStakeFormProps = {
@@ -66,7 +67,7 @@ const AddStakeForm = (props: AddStakeFormProps) => (
     {props.talismanFeeTokenAmount && (
       <div className="mt-[0.5rem] flex items-center justify-between">
         <Text.Body as="p" alpha="high">
-          0.5% Talisman Fee
+          {TALISMAN_FEE_BITTENSOR} Talisman Fee
         </Text.Body>
         <Suspense fallback={<CircularProgressIndicator size="1em" />}>
           <Text.Body alpha="high">{props.talismanFeeTokenAmount.decimalAmount?.toLocaleStringPrecision()}</Text.Body>
