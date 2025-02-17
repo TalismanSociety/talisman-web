@@ -34,6 +34,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
     alphaToTaoSlippage,
     expectedTaoAmount,
     isLoading,
+    talismanFeeTokenAmount,
   } = useUnstakeForm(props.stake, props.delegate)
   const { t } = useTranslation()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
@@ -81,6 +82,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
       lockDuration={<>{t('None')}</>}
       slippage={alphaToTaoSlippage}
       expectedTokenAmount={stakeData?.netuid !== ROOT_NETUID && expectedAmount}
+      talismanFeeTokenAmount={talismanFeeTokenAmount}
     />
   )
 }

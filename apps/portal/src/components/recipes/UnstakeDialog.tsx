@@ -6,6 +6,8 @@ import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
 import { Suspense } from 'react'
 
+import { type TokenAmountFromPlank } from '@/domains/common/hooks/useTokenAmount'
+
 import { SlippageDropdown } from '../widgets/staking/subtensor/SlippageDropdown'
 
 export type UnstakeDialogProps = {
@@ -27,6 +29,7 @@ export type UnstakeDialogProps = {
   buttonText?: ReactNode
   slippage?: number
   expectedTokenAmount?: ReactNode
+  talismanFeeTokenAmount?: TokenAmountFromPlank
 }
 
 export const UnstakeDialog = (props: UnstakeDialogProps) => (
@@ -81,6 +84,18 @@ export const UnstakeDialog = (props: UnstakeDialogProps) => (
                 <Suspense fallback={<CircularProgressIndicator size="1em" />}>{props.lockDuration}</Suspense>
               </Text.Body>
             </div>
+          </div>
+        )}
+        {props.talismanFeeTokenAmount && (
+          <div className="mt-[0.5rem] flex items-center justify-between">
+            <Text.Body as="p" alpha="high">
+              0.5% Talisman Fee
+            </Text.Body>
+            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+              <Text.Body alpha="high">
+                {props.talismanFeeTokenAmount.decimalAmount?.toLocaleStringPrecision()}
+              </Text.Body>
+            </Suspense>
           </div>
         )}
         {props.slippage !== undefined && (

@@ -213,6 +213,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     expectedTaoAmount,
     taoPriceWithSlippageFormatted,
     alphaToTaoTalismanFee,
+    alphaToTaoTalismanFeeFormatted,
   } = useGetDynamicTaoStakeInfo({
     amount: amount,
     netuid: stake.netuid,
@@ -300,6 +301,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     alphaToTaoSlippage: slippage,
     expectedTaoAmount,
     isLoading: extrinsic.state === 'loading' || isSlippageLoading,
+    talismanFeeTokenAmount: alphaToTaoTalismanFeeFormatted,
   }
 }
 
