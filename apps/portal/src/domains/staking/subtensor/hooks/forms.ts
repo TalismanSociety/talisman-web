@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
-import { TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR } from '@/components/widgets/staking/subtensor/constants'
+import { ROOT_NETUID, TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR } from '@/components/widgets/staking/subtensor/constants'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
 import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
@@ -61,6 +61,14 @@ export const useAddStakeForm = (
         api.tx.system.remarkWithEvent(`talisman-bittensor`),
       ])
     } catch {
+      if (netuid === ROOT_NETUID) {
+        return api.tx.utility.batchAll([
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (api.tx as any)?.subtensorModule?.addStake?.(delegate, netuid, amount.decimalAmount?.planck ?? 0n),
+          api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, taoToAlphaTalismanFee),
+          api.tx.system.remarkWithEvent(`talisman-bittensor`),
+        ])
+      }
       return api.tx.utility.batchAll([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (api.tx as any)?.subtensorModule?.addStakeLimit?.(
@@ -220,6 +228,14 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (api.tx as any)?.subtensorModule?.removeStake?.(delegate, amount.decimalAmount?.planck ?? 0n)
     } catch {
+      if (stake.netuid === ROOT_NETUID) {
+        return api.tx.utility.batchAll([
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (api.tx as any)?.subtensorModule?.removeStake?.(delegate, stake.netuid, amount.decimalAmount?.planck ?? 0n),
+          api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, alphaToTaoTalismanFee),
+          api.tx.system.remarkWithEvent(`talisman-bittensor`),
+        ])
+      }
       return api.tx.utility.batchAll([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (api.tx as any)?.subtensorModule?.removeStakeLimit?.(

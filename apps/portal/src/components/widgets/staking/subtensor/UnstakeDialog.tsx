@@ -80,7 +80,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
       onDismiss={props.onRequestDismiss}
       lockDuration={<>{t('None')}</>}
       slippage={alphaToTaoSlippage}
-      expectedTokenAmount={expectedAmount}
+      expectedTokenAmount={stakeData?.netuid !== ROOT_NETUID && expectedAmount}
     />
   )
 }

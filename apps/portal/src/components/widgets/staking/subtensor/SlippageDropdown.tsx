@@ -63,7 +63,7 @@ export const SlippageDropdown = () => {
           <button onClick={() => setIsOpen(!isOpen)} className="flex cursor-pointer items-center rounded-md shadow-md">
             <Settings size={20} />
           </button>
-          <div className="text-[14px] text-gray-400">Slippage</div>
+          <div className="text-[14px]">Slippage</div>
         </div>
         <div className="text-[14px]">{`${bittensorSlippage.toFixed(2)}%`}</div>
       </div>
