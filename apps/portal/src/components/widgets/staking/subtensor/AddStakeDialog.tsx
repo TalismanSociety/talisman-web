@@ -32,6 +32,8 @@ const SubtensorAddStakeDialog = ({ account, stake, delegate, onRequestDismiss }:
     error,
     talismanFeeTokenAmount,
     slippage,
+    resultingTao,
+    resultingAlphaInTaoAmount,
   } = useAddStakeForm(account, stake, delegate, stake.netuid)
 
   const { subnetData } = useCombineSubnetData()
@@ -49,7 +51,9 @@ const SubtensorAddStakeDialog = ({ account, stake, delegate, onRequestDismiss }:
     alphaTokenSymbol
   )
 
-  const resultingStake = stake.netuid === ROOT_NETUID ? resulting : resultingAlphaAmount
+  const resultingStake = stake.netuid === ROOT_NETUID ? resultingTao : resultingAlphaAmount
+
+  const newFiatAmount = stake.netuid === ROOT_NETUID ? resultingTao : resultingAlphaInTaoAmount
 
   useExtrinsicInBlockOrErrorEffect(() => onRequestDismiss(), extrinsic)
 
@@ -70,7 +74,7 @@ const SubtensorAddStakeDialog = ({ account, stake, delegate, onRequestDismiss }:
       onRequestMaxAmount={() => setInput(transferable.decimalAmount.toString())}
       fiatAmount={amount.localizedFiatAmount ?? ''}
       newAmount={resultingStake.decimalAmount?.toLocaleString() ?? <CircularProgressIndicator size="1em" />}
-      newFiatAmount={resultingStake.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
+      newFiatAmount={newFiatAmount.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
       onConfirm={() => {
         extrinsic.signAndSend(account.address).then(() => onRequestDismiss())
       }}

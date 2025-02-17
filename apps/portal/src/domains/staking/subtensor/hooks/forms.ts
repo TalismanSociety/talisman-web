@@ -37,6 +37,7 @@ export const useAddStakeForm = (
     alphaPriceWithSlippageFormatted,
     taoToAlphaTalismanFee,
     taoToAlphaTalismanFeeFormatted,
+    calculateExpectedTaoFromAlpha,
   } = useGetDynamicTaoStakeInfo({
     amount: amount,
     netuid: netuid ?? 0,
@@ -135,6 +136,7 @@ export const useAddStakeForm = (
 
   const transferable = useTokenAmountFromPlanck(transferablePlanck)
 
+  // resulting alpha
   const resulting = useTokenAmountFromPlanck(
     useMemo(
       () => (stake?.totalStaked.decimalAmount?.planck ?? 0n) + (expectedAlphaAmount.decimalAmount?.planck ?? 0n),
@@ -142,7 +144,13 @@ export const useAddStakeForm = (
     )
   )
 
-  const resultingInTao = useTokenAmountFromPlanck(
+  const resultingAlphaInTao = calculateExpectedTaoFromAlpha({
+    alphaStaked: resulting.decimalAmount?.toNumber() ?? 0,
+  })
+
+  const resultingAlphaInTaoAmount = useTokenAmount(resultingAlphaInTao.toString())
+
+  const resultingTao = useTokenAmountFromPlanck(
     useMemo(
       () => (stake?.totalStaked.decimalAmount?.planck ?? 0n) + (amount.decimalAmount?.planck ?? 0n),
       [amount.decimalAmount?.planck, stake?.totalStaked.decimalAmount?.planck]
@@ -155,7 +163,7 @@ export const useAddStakeForm = (
     if ((amount.decimalAmount?.planck ?? 0n) > transferable.decimalAmount.planck)
       return new Error('Insufficient balance')
 
-    if (resultingInTao.decimalAmount && resultingInTao.decimalAmount?.planck < (minimum.decimalAmount?.planck ?? 0n))
+    if (resultingTao.decimalAmount && resultingTao.decimalAmount?.planck < (minimum.decimalAmount?.planck ?? 0n))
       return new Error(`Minimum stake is ${(minimum.decimalAmount ?? 0n).toLocaleString()}`)
 
     if (isDynamicTaoStakeInfoError) {
@@ -168,7 +176,7 @@ export const useAddStakeForm = (
     input,
     isDynamicTaoStakeInfoError,
     minimum.decimalAmount,
-    resultingInTao.decimalAmount,
+    resultingTao.decimalAmount,
     transferable.decimalAmount.planck,
   ])
 
@@ -190,12 +198,14 @@ export const useAddStakeForm = (
     talismanFeeTokenAmount: taoToAlphaTalismanFeeFormatted,
     transferable,
     resulting,
+    resultingTao,
     extrinsic,
     ready,
     error,
     slippage,
     expectedAlphaAmount,
     isLoading: extrinsic.state === 'loading' || isSlippageLoading,
+    resultingAlphaInTaoAmount,
   }
 }
 
@@ -214,6 +224,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     taoPriceWithSlippageFormatted,
     alphaToTaoTalismanFee,
     alphaToTaoTalismanFeeFormatted,
+    calculateExpectedTaoFromAlpha,
   } = useGetDynamicTaoStakeInfo({
     amount: amount,
     netuid: stake.netuid,

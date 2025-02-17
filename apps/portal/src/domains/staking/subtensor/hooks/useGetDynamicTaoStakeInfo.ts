@@ -49,6 +49,15 @@ export const useGetDynamicTaoStakeInfo = ({
     slippage,
   })
 
+  const calculateExpectedTaoFromAlpha = ({ alphaStaked }: { alphaStaked: number }) => {
+    const expectedTao = calculateExpectedTao({
+      alphaPrice,
+      taoStaked: alphaStaked,
+      slippage,
+    })
+    return expectedTao
+  }
+
   const expectedAlphaAmount = useTokenAmount(expectedAlpha.toString())
   const expectedTaoAmount = useTokenAmount(expectedTao.toString())
 
@@ -88,6 +97,7 @@ export const useGetDynamicTaoStakeInfo = ({
     alphaToTaoTalismanFeeFormatted,
     isLoading,
     error,
+    calculateExpectedTaoFromAlpha,
   }
 }
 
