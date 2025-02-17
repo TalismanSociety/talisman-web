@@ -39,6 +39,7 @@ export const useAddStakeForm = (
   } = useGetDynamicTaoStakeInfo({
     amount: amount,
     netuid: netuid ?? 0,
+    direction: 'taoToAlpha',
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -183,7 +184,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
   const amount = useTokenAmount(input)
 
   const {
-    slippage,
+    alphaToTaoSlippage: slippage,
     isLoading: isSlippageLoading,
     expectedTaoAmount,
     taoPriceWithSlippageFormatted,
@@ -191,6 +192,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
   } = useGetDynamicTaoStakeInfo({
     amount: amount,
     netuid: stake.netuid,
+    direction: 'alphaToTao',
   })
 
   const limitPrice = taoPriceWithSlippageFormatted.decimalAmount?.planck || 0n

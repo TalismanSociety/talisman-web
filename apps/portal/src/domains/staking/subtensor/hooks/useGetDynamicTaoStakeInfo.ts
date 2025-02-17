@@ -15,7 +15,17 @@ type Amount = {
   localizedFiatAmount: string | undefined
 }
 
-export const useGetDynamicTaoStakeInfo = ({ amount, netuid }: { amount: Amount; netuid: number }) => {
+type Direction = 'taoToAlpha' | 'alphaToTao'
+
+export const useGetDynamicTaoStakeInfo = ({
+  amount,
+  netuid,
+  direction,
+}: {
+  amount: Amount
+  netuid: number
+  direction: Direction
+}) => {
   const { data, isLoading } = useGetSubnetMetagraphByNetuid({ netuid })
   const setBittensorSlippage = useSetAtom(bittensorSlippageAtom)
 
@@ -23,12 +33,14 @@ export const useGetDynamicTaoStakeInfo = ({ amount, netuid }: { amount: Amount; 
   const raoInputAmount = amount?.decimalAmount?.planck ?? 0n * 10n
 
   const slippage = calculateSlippage({ pool: data, taoStaked: raoInputAmount })
+
   const alphaPrice = calculateAlphaPrice({ pool: data })
   const expectedAlpha = calculateExpectedAlpha({
     alphaPrice,
     taoStaked: amount?.decimalAmount?.toNumber() ?? 0,
     slippage,
   })
+
   const expectedTao = calculateExpectedTao({
     alphaPrice,
     taoStaked: amount?.decimalAmount?.toNumber() ?? 0,
@@ -37,6 +49,8 @@ export const useGetDynamicTaoStakeInfo = ({ amount, netuid }: { amount: Amount; 
 
   const expectedAlphaAmount = useTokenAmount(expectedAlpha.toString())
   const expectedTaoAmount = useTokenAmount(expectedTao.toString())
+
+  const alphaToTaoSlippage = calculateSlippage({ pool: data, taoStaked: expectedTaoAmount.decimalAmount?.planck || 0n })
 
   const alphaPriceWithSlippage = alphaPrice * (1 + maxSlippage / 100)
   const alphaPriceWithSlippageFormatted = useTokenAmount(alphaPriceWithSlippage.toString())
@@ -51,11 +65,12 @@ export const useGetDynamicTaoStakeInfo = ({ amount, netuid }: { amount: Amount; 
   const alphaToTaoTalismanFeeFormatted = useTokenAmountFromPlanck(alphaToTaoTalismanFee)
 
   useEffect(() => {
-    setBittensorSlippage(slippage)
-  }, [setBittensorSlippage, slippage])
+    setBittensorSlippage(direction === 'taoToAlpha' ? slippage : alphaToTaoSlippage)
+  }, [alphaToTaoSlippage, direction, setBittensorSlippage, slippage])
 
   return {
     slippage,
+    alphaToTaoSlippage,
     alphaPrice,
     expectedTaoAmount,
     expectedAlphaAmount,
