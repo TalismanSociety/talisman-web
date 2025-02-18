@@ -7,8 +7,8 @@ import { AddStakeDialog as _AddStakeDialog } from '@/components/recipes/AddStake
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useExtrinsicInBlockOrErrorEffect } from '@/domains/common/hooks/useExtrinsicEffect'
 import { useAddStakeForm } from '@/domains/staking/subtensor/hooks/forms'
+import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
 import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
-import { useDelegate } from '@/domains/staking/subtensor/hooks/useDelegate'
 import { type StakeItem } from '@/domains/staking/subtensor/hooks/useStake'
 
 import { ROOT_NETUID } from './constants'
@@ -37,6 +37,7 @@ const SubtensorAddStakeDialog = ({ account, stake, delegate, onRequestDismiss }:
   } = useAddStakeForm(account, stake, delegate, stake.netuid)
 
   const { subnetData } = useCombineSubnetData()
+  const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
   const stakeData = subnetData[stake.netuid ?? 0]
@@ -57,13 +58,14 @@ const SubtensorAddStakeDialog = ({ account, stake, delegate, onRequestDismiss }:
 
   useExtrinsicInBlockOrErrorEffect(() => onRequestDismiss(), extrinsic)
 
-  const delegateName = useDelegate(delegate)?.name
+  const selectedDelegate = combinedValidatorsData.find(validator => validator.poolId === delegate)
+  const { name } = selectedDelegate || { name: '' }
 
   return (
     <_AddStakeDialog
       message={
-        delegateName
-          ? `Increase your stake below. Talisman will automatically stake this towards the ${delegateName} delegate.`
+        name
+          ? `Increase your stake below. Talisman will automatically stake this towards the ${name} delegate.`
           : `Increase your stake below. Talisman will automatically stake this towards your chosen delegate.`
       }
       confirmState={extrinsic.state === 'loading' ? 'pending' : !ready ? 'disabled' : undefined}
