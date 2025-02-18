@@ -12,6 +12,7 @@ import { ChainProvider } from '@/domains/chains/provider'
 import { ChainInfo, subtensorStakingEnabledChainsState } from '@/domains/chains/recoils'
 import { useDelegateAprFormatted } from '@/domains/staking/subtensor/hooks/useApr'
 import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
+import { useTotalSubnetStakedFormatted } from '@/domains/staking/subtensor/hooks/useTotalSubnetStakedFormatted'
 import { useTotalValidatorStakedFormatted } from '@/domains/staking/subtensor/hooks/useTotalValidatorStakedFormatted'
 import { type BondOption, type SubnetData } from '@/domains/staking/subtensor/types'
 import { Maybe } from '@/util/monads'
@@ -146,7 +147,10 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
   const { nativeToken } = useRecoilValue(useChainState())
   const { hasDTaoStaking } = props
 
+  const { netuid } = subnet ?? {}
+
   const totalStaked = useTotalValidatorStakedFormatted(delegate?.poolId ?? '')
+  const totalSubnetStaked = useTotalSubnetStakedFormatted(netuid ? Number(netuid) : undefined)
 
   const delegateApr = useDelegateAprFormatted(delegate?.poolId)
 
@@ -158,11 +162,11 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
         () => [
           {
             title: 'Total Staked',
-            content: <>{hasDTaoStaking ? 'TBA' : totalStaked}</>,
+            content: <>{hasDTaoStaking ? totalSubnetStaked : totalStaked}</>,
           },
           { title: 'Estimated APR', content: <>{hasDTaoStaking ? 'Variable' : delegateApr}</> },
         ],
-        [delegateApr, hasDTaoStaking, totalStaked]
+        [delegateApr, hasDTaoStaking, totalStaked, totalSubnetStaked]
       )}
       minimumStake={
         <>

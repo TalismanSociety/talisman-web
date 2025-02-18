@@ -46,7 +46,7 @@ export const useCombineSubnetData = () => {
       acc[netuid] = { ...desc, ...pool }
       return acc
     }, {} as Record<number, SubnetData>)
-  }, [subnetDescriptionsData, subnetPoolsData.pages])
+  }, [subnetDescriptionsData, subnetPoolsData])
 
   return { subnetData }
 }
