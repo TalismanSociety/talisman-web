@@ -1,7 +1,7 @@
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useEffect } from 'react'
 
-import { TALISMAN_FEE_BITTENSOR } from '@/components/widgets/staking/subtensor/constants'
+import { ROOT_NETUID, TALISMAN_FEE_BITTENSOR } from '@/components/widgets/staking/subtensor/constants'
 import { useTokenAmount, useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
 import { Decimal } from '@/util/Decimal'
 
@@ -22,10 +22,12 @@ export const useGetDynamicTaoStakeInfo = ({
   amount,
   netuid,
   direction,
+  shouldUpdateFeeAndSlippage,
 }: {
   amount: Amount
   netuid: number
   direction: Direction
+  shouldUpdateFeeAndSlippage: boolean
 }) => {
   const { data, isLoading, error } = useGetSubnetMetagraphByNetuid({ netuid })
   const setBittensorSlippage = useSetAtom(bittensorSlippageAtom)
@@ -76,12 +78,27 @@ export const useGetDynamicTaoStakeInfo = ({
   const alphaToTaoTalismanFeeFormatted = useTokenAmountFromPlanck(alphaToTaoTalismanFee)
 
   useEffect(() => {
+    if (!shouldUpdateFeeAndSlippage) return
     setBittensorSlippage(direction === 'taoToAlpha' ? slippage : alphaToTaoSlippage)
-  }, [alphaToTaoSlippage, direction, setBittensorSlippage, slippage])
+  }, [alphaToTaoSlippage, direction, setBittensorSlippage, shouldUpdateFeeAndSlippage, slippage])
 
   useEffect(() => {
-    setTalismanTokenFee(direction === 'taoToAlpha' ? taoToAlphaTalismanFeeFormatted : alphaToTaoTalismanFeeFormatted)
-  }, [alphaToTaoTalismanFeeFormatted, direction, setTalismanTokenFee, taoToAlphaTalismanFeeFormatted])
+    if (!shouldUpdateFeeAndSlippage) return
+    // Rootnet txs should use the taoToAlpha fee calculations
+    if (direction === 'taoToAlpha' || netuid === ROOT_NETUID) {
+      setTalismanTokenFee(taoToAlphaTalismanFeeFormatted)
+    } else {
+      setTalismanTokenFee(alphaToTaoTalismanFeeFormatted)
+    }
+  }, [
+    alphaToTaoTalismanFeeFormatted,
+    direction,
+    netuid,
+    setTalismanTokenFee,
+    shouldUpdateFeeAndSlippage,
+    taoToAlphaTalismanFee,
+    taoToAlphaTalismanFeeFormatted,
+  ])
 
   return {
     slippage,

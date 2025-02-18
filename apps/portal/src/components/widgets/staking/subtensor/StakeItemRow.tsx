@@ -31,6 +31,7 @@ export const StakeItemRow = ({
     amount: stake.totalStaked,
     netuid: stake.netuid,
     direction: 'alphaToTao',
+    shouldUpdateFeeAndSlippage: false,
   })
 
   const fiatBalance =
