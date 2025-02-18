@@ -57,10 +57,7 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
     >
       {/* {Object.values(delegates).map(delegate => { */}
       {combinedValidatorsData.map(delegate => {
-        // const apr = Number(delegatesStats.find(stat => stat.hotkey.ss58 === delegate.address)?.apr) || 0
         const formattedApr = delegate.apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
-
-        // const totalDelegated = allDelegateInfos[delegate.address]?.totalDelegated ?? 0n
 
         const balance = nativeTokenAmount.fromPlanckOrUndefined(delegate.totalStaked)
 
@@ -82,15 +79,10 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
             highlighted={delegate.poolId === highlighted?.poolId}
             name={delegate.name}
             talismanRecommended={false}
-            // detailUrl={delegate.url}
             detailUrl={`${TAOSTATS_INFO_URL}/${delegate.poolId}`}
-            count={delegate.totalStakers}
+            count={delegate.totalStakers ?? 0}
             balance={formattedBalance ?? ''}
             balancePlanck={!hasDTaoStaking ? balance.decimalAmount?.planck : 0n}
-            // balancePlanck={
-            //   nativeTokenAmount.fromPlanckOrUndefined(allDelegateInfos[delegate.address]?.totalDelegated).decimalAmount
-            //     ?.planck
-            // }
             // estimatedReturn={allDelegateInfos[delegate.address]?.return_per_1000}
             onClick={() => setHighlighted(delegate)}
           />
