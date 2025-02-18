@@ -228,7 +228,7 @@ export const SubtensorStakingSideSheet = ({
           <div className="mt-[2rem] flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Text.Body as="p" alpha="high">
-                Talisman Fee
+                Talisman fee
               </Text.Body>
               <Tooltip
                 content={
