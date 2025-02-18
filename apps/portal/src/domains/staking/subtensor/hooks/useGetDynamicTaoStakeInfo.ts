@@ -88,7 +88,6 @@ export const useGetDynamicTaoStakeInfo = ({
     if (direction === 'taoToAlpha' || netuid === ROOT_NETUID) {
       setTalismanTokenFee(taoToAlphaTalismanFeeFormatted)
     } else {
-      console.log("Something's wrong")
       setTalismanTokenFee(alphaToTaoTalismanFeeFormatted)
     }
   }, [
