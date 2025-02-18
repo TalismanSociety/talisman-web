@@ -2,8 +2,10 @@ import type { ReactNode } from 'react'
 import { Button } from '@talismn/ui/atoms/Button'
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { Text } from '@talismn/ui/atoms/Text'
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
+import { Info } from '@talismn/web-icons'
 import { Suspense } from 'react'
 
 import { type TokenAmountFromPlank } from '@/domains/common/hooks/useTokenAmount'
@@ -65,12 +67,22 @@ const AddStakeForm = (props: AddStakeFormProps) => (
       </div>
     </div>
     {props.talismanFeeTokenAmount && (
-      <div className="mt-[0.5rem] flex items-center justify-between">
-        <Text.Body as="p" alpha="high">
-          {TALISMAN_FEE_BITTENSOR}% Talisman Fee
-        </Text.Body>
+      <div className="mt-[2rem] flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Text.Body as="p" alpha="high">
+            Talisman Fee
+          </Text.Body>
+          <Tooltip
+            content={
+              <div className="max-w-[35rem]">Talisman applies a {TALISMAN_FEE_BITTENSOR}% fee to each transaction.</div>
+            }
+            placement="top"
+          >
+            <Info size={16} />
+          </Tooltip>
+        </div>
         <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-          <Text.Body alpha="high">{props.talismanFeeTokenAmount.decimalAmount?.toLocaleStringPrecision()}</Text.Body>
+          <Text.Body alpha="high">{props.talismanFeeTokenAmount?.decimalAmount?.toLocaleStringPrecision()}</Text.Body>
         </Suspense>
       </div>
     )}
