@@ -4,11 +4,7 @@ import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from 're
 
 import { StakeTargetSelectorDialog } from '@/components/recipes/StakeTargetSelectorDialog'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
-// import { DEFAULT_DELEGATE } from '@/domains/staking/subtensor/atoms/delegates'
-// import { useAllDelegateInfos } from '@/domains/staking/subtensor/hooks/useAllDelegateInfos'
 import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
-// import { useDelegates } from '@/domains/staking/subtensor/hooks/useDelegates'
-// import { useDelegatesStats } from '@/domains/staking/subtensor/hooks/useDelegatesStats'
 import { type BondOption } from '@/domains/staking/subtensor/types'
 
 const TAOSTATS_INFO_URL = 'https://taostats.io/validators'
@@ -20,10 +16,6 @@ type DelegateSelectorDialogProps = {
 }
 
 export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
-  // TODO: Chase and remove all these unused hooks
-  // const delegates = useDelegates()
-  // const allDelegateInfos = useAllDelegateInfos()
-  // const delegatesStats = useDelegatesStats()
   const [searchParams] = useSearchParams()
 
   const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
