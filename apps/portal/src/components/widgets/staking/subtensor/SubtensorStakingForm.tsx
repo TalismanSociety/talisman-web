@@ -265,11 +265,6 @@ export const SubtensorStakingSideSheet = ({
             </Suspense>
             .
           </Text.Body>
-          <Text.Body as="p">
-            After a successful <Text.Body alpha="high">stake OR unstake</Text.Body> operation, you must wait for{' '}
-            <Text.Body alpha="high">360&nbsp;blocks</Text.Body> (approx. 1 hour 12 minutes) before you can submit
-            another operation for the same account.
-          </Text.Body>
         </div>
       </div>
     </SideSheet>
