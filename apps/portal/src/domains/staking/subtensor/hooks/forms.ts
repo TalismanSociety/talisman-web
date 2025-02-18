@@ -42,6 +42,7 @@ export const useAddStakeForm = (
     amount: amount,
     netuid: netuid ?? 0,
     direction: 'taoToAlpha',
+    shouldUpdateFeeAndSlippage: true,
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -224,12 +225,19 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     taoPriceWithSlippageFormatted,
     alphaToTaoTalismanFee,
     alphaToTaoTalismanFeeFormatted,
+    taoToAlphaTalismanFee,
+    taoToAlphaTalismanFeeFormatted,
     calculateExpectedTaoFromAlpha,
   } = useGetDynamicTaoStakeInfo({
     amount: amount,
     netuid: stake.netuid,
     direction: 'alphaToTao',
+    shouldUpdateFeeAndSlippage: true,
   })
+
+  const talismanFeeTxTokenAmount = stake.netuid === ROOT_NETUID ? taoToAlphaTalismanFee : alphaToTaoTalismanFee
+  const talismanFeeTokenAmount =
+    stake.netuid === ROOT_NETUID ? taoToAlphaTalismanFeeFormatted : alphaToTaoTalismanFeeFormatted
 
   const limitPrice = taoPriceWithSlippageFormatted.decimalAmount?.planck || 0n
   const allowPartial = false
@@ -244,7 +252,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
         return api.tx.utility.batchAll([
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (api.tx as any)?.subtensorModule?.removeStake?.(delegate, stake.netuid, amount.decimalAmount?.planck ?? 0n),
-          api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, alphaToTaoTalismanFee),
+          api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, talismanFeeTxTokenAmount),
           api.tx.system.remarkWithEvent(`talisman-bittensor`),
         ])
       }
@@ -257,11 +265,11 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
           limitPrice,
           allowPartial
         ),
-        api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, alphaToTaoTalismanFee),
+        api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, talismanFeeTxTokenAmount),
         api.tx.system.remarkWithEvent(`talisman-bittensor`),
       ])
     }
-  }, [api.tx, delegate, amount.decimalAmount?.planck, stake.netuid, limitPrice, allowPartial, alphaToTaoTalismanFee])
+  }, [api.tx, delegate, amount.decimalAmount?.planck, stake.netuid, limitPrice, allowPartial, talismanFeeTxTokenAmount])
   const extrinsic = useExtrinsic(tx)
 
   const available = nativeTokenAmount.fromPlanckOrUndefined(stake.stake, stake?.symbol)
@@ -318,7 +326,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     alphaToTaoSlippage: slippage,
     expectedTaoAmount,
     isLoading: extrinsic.state === 'loading' || isSlippageLoading,
-    talismanFeeTokenAmount: alphaToTaoTalismanFeeFormatted,
+    talismanFeeTokenAmount,
     resultingAlphaInTaoAmount,
   }
 }
