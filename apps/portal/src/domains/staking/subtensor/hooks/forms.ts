@@ -42,7 +42,7 @@ export const useAddStakeForm = (
     amount: amount,
     netuid: netuid ?? 0,
     direction: 'taoToAlpha',
-    shouldUpdateFeeAndSlippage: true,
+    shouldUpdateFeeAndSlippage: netuid !== ROOT_NETUID,
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -67,7 +67,6 @@ export const useAddStakeForm = (
         return api.tx.utility.batchAll([
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (api.tx as any)?.subtensorModule?.addStake?.(delegate, netuid, amount.decimalAmount?.planck ?? 0n),
-          api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, taoToAlphaTalismanFee),
           api.tx.system.remarkWithEvent(`talisman-bittensor`),
         ])
       }
@@ -196,7 +195,7 @@ export const useAddStakeForm = (
     input,
     setInput,
     amount,
-    talismanFeeTokenAmount: taoToAlphaTalismanFeeFormatted,
+    talismanFeeTokenAmount: netuid === ROOT_NETUID ? undefined : taoToAlphaTalismanFeeFormatted,
     transferable,
     resulting,
     resultingTao,
@@ -232,7 +231,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     amount: amount,
     netuid: stake.netuid,
     direction: 'alphaToTao',
-    shouldUpdateFeeAndSlippage: true,
+    shouldUpdateFeeAndSlippage: stake.netuid !== ROOT_NETUID,
   })
 
   const talismanFeeTxTokenAmount = stake.netuid === ROOT_NETUID ? taoToAlphaTalismanFee : alphaToTaoTalismanFee
@@ -252,7 +251,6 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
         return api.tx.utility.batchAll([
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (api.tx as any)?.subtensorModule?.removeStake?.(delegate, stake.netuid, amount.decimalAmount?.planck ?? 0n),
-          api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, talismanFeeTxTokenAmount),
           api.tx.system.remarkWithEvent(`talisman-bittensor`),
         ])
       }
@@ -326,7 +324,7 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     alphaToTaoSlippage: slippage,
     expectedTaoAmount,
     isLoading: extrinsic.state === 'loading' || isSlippageLoading,
-    talismanFeeTokenAmount,
+    talismanFeeTokenAmount: stake.netuid === ROOT_NETUID ? undefined : talismanFeeTokenAmount,
     resultingAlphaInTaoAmount,
   }
 }
