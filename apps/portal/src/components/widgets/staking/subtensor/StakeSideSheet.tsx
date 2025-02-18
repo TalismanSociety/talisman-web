@@ -3,7 +3,7 @@ import { Suspense, useMemo, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
-import type { Delegate } from '@/domains/staking/subtensor/atoms/delegates'
+// import type { Delegate } from '@/domains/staking/subtensor/atoms/delegates'
 import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
 import { useAccountSelector } from '@/components/widgets/AccountSelector'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
@@ -13,9 +13,10 @@ import { ChainProvider } from '@/domains/chains/provider'
 import { ChainInfo, subtensorStakingEnabledChainsState } from '@/domains/chains/recoils'
 import { DEFAULT_DELEGATE, MIN_SUBTENSOR_STAKE } from '@/domains/staking/subtensor/atoms/delegates'
 import { useDelegateAprFormatted } from '@/domains/staking/subtensor/hooks/useApr'
+import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
 import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
 import { useTotalTaoStakedFormatted } from '@/domains/staking/subtensor/hooks/useTotalTaoStakedFormatted'
-import { type SubnetData } from '@/domains/staking/subtensor/types'
+import { type BondOption, type SubnetData } from '@/domains/staking/subtensor/types'
 import { Maybe } from '@/util/monads'
 
 import { ROOT_NETUID } from './constants'
@@ -32,10 +33,10 @@ type StakeSideSheetProps = {
 }
 
 type StakeSideSheetContentProps = Omit<StakeSideSheetProps, 'onRequestDismiss'> & {
-  delegate: Delegate | undefined
+  delegate: BondOption | undefined
   subnet: SubnetData | undefined
   isSelectSubnetDisabled: boolean
-  setDelegate: React.Dispatch<React.SetStateAction<Delegate | undefined>>
+  setDelegate: React.Dispatch<React.SetStateAction<BondOption | undefined>>
   setSubnet: React.Dispatch<React.SetStateAction<SubnetData | undefined>>
 }
 
@@ -100,7 +101,7 @@ const StakeSideSheetContent = ({
       {account !== undefined ? (
         <StakeForm
           account={account}
-          delegate={delegate?.address}
+          delegate={delegate?.poolId}
           netuid={netuid}
           accountSelector={accountSelector}
           assetSelector={assetSelector}
@@ -143,13 +144,13 @@ const StakeSideSheetContent = ({
 
 const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
   const { subnetData } = useCombineSubnetData()
-  const [delegate, setDelegate] = useState<Delegate | undefined>()
+  const [delegate, setDelegate] = useState<BondOption | undefined>()
   const [subnet, setSubnet] = useState<SubnetData | undefined>()
   const { nativeToken } = useRecoilValue(useChainState())
   const { hasDTaoStaking } = props
 
   const totalStaked = useTotalTaoStakedFormatted()
-  const delegateApr = useDelegateAprFormatted(delegate?.address ?? DEFAULT_DELEGATE)
+  const delegateApr = useDelegateAprFormatted(delegate?.poolId ?? DEFAULT_DELEGATE)
 
   return (
     <SubtensorStakingSideSheet
@@ -241,6 +242,8 @@ const StakeSideSheetOpen = () => {
 export const StakeSideSheet = () => {
   const [searchParams] = useSearchParams()
   const open = searchParams.get('action') === 'stake' && searchParams.get('type') === 'subtensor'
+  // Fetch data as soon as the user opens the side sheet.
+  useCombinedBittensorValidatorsData()
 
   if (!open) return null
   return <StakeSideSheetOpen />
