@@ -20,8 +20,6 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
 
   const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
 
-  console.log({ combinedValidatorsData })
-
   const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
 
   const [highlighted, setHighlighted] = useState<BondOption | undefined>()

@@ -21,7 +21,7 @@ const fetchSubnetDescriptions = async ({ pageParam = 1 }) => {
 export function useGetInfiniteSubnetDescriptions() {
   return useInfiniteQuery({
     queryKey: ['infiniteSubnetDescriptions'],
-    initialData: {
+    placeholderData: {
       pages: [initialData],
       pageParams: [1],
     },
@@ -32,8 +32,6 @@ export function useGetInfiniteSubnetDescriptions() {
     staleTime: 5 * 60 * 1000, // 5 mins
     gcTime: 10 * 60 * 1000, // 10 mins
     refetchOnReconnect: true,
-    // Disabled until caching is implemented in our taostats proxy
-    enabled: false,
   })
 }
 

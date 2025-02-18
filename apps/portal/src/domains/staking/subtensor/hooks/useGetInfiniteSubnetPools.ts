@@ -23,7 +23,7 @@ export function useGetInfiniteSubnetPools() {
     queryKey: ['infiniteSubnetPools'],
     queryFn: fetchSubnetPools,
     initialPageParam: 1,
-    initialData: {
+    placeholderData: {
       pages: [initialData],
       pageParams: [1],
     },
@@ -32,8 +32,6 @@ export function useGetInfiniteSubnetPools() {
     staleTime: 5 * 60 * 1000, // 5 mins
     gcTime: 10 * 60 * 1000, // 10 mins
     refetchOnReconnect: true,
-    // Disabled until caching is implemented in our taostats proxy
-    enabled: false,
   })
 }
 

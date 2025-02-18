@@ -3,7 +3,6 @@ import { Suspense, useMemo, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
-// import type { Delegate } from '@/domains/staking/subtensor/atoms/delegates'
 import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
 import { useAccountSelector } from '@/components/widgets/AccountSelector'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
@@ -12,7 +11,6 @@ import { useChainState } from '@/domains/chains/hooks'
 import { ChainProvider } from '@/domains/chains/provider'
 import { ChainInfo, subtensorStakingEnabledChainsState } from '@/domains/chains/recoils'
 import { useDelegateAprFormatted } from '@/domains/staking/subtensor/hooks/useApr'
-import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
 import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
 import { useTotalValidatorStakedFormatted } from '@/domains/staking/subtensor/hooks/useTotalValidatorStakedFormatted'
 import { type BondOption, type SubnetData } from '@/domains/staking/subtensor/types'
@@ -242,8 +240,6 @@ const StakeSideSheetOpen = () => {
 export const StakeSideSheet = () => {
   const [searchParams] = useSearchParams()
   const open = searchParams.get('action') === 'stake' && searchParams.get('type') === 'subtensor'
-  // Fetch data as soon as the user opens the side sheet.
-  useCombinedBittensorValidatorsData()
 
   if (!open) return null
   return <StakeSideSheetOpen />
