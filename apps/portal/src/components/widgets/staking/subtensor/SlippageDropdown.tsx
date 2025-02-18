@@ -62,10 +62,15 @@ export const SlippageDropdown = () => {
         })}
       >
         <div className={'flex items-center gap-2'}>
-          <button onClick={() => setIsOpen(!isOpen)} className="flex cursor-pointer items-center rounded-md shadow-md">
-            <Settings size={20} />
-          </button>
           <div className="text-[14px]">Slippage</div>
+          <Tooltip content={<div className="max-w-[35rem]">Set max slippage</div>} placement="top">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="flex cursor-pointer items-center rounded-md shadow-md"
+            >
+              <Settings size={20} />
+            </button>
+          </Tooltip>
         </div>
         <div className="text-[14px]">{`${bittensorSlippage.toFixed(2)}%`}</div>
       </div>
