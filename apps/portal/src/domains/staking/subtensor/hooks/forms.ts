@@ -5,7 +5,11 @@ import { useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
-import { ROOT_NETUID, TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR } from '@/components/widgets/staking/subtensor/constants'
+import {
+  MIN_SUBTENSOR_STAKE,
+  ROOT_NETUID,
+  TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR,
+} from '@/components/widgets/staking/subtensor/constants'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
 import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
@@ -14,7 +18,6 @@ import { useTokenAmount, useTokenAmountFromPlanck } from '@/domains/common/hooks
 import { paymentInfoState } from '@/domains/common/recoils'
 import { useGetDynamicTaoStakeInfo } from '@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo'
 
-import { MIN_SUBTENSOR_STAKE } from '../atoms/delegates'
 import { type StakeItem } from './useStake'
 
 export const useAddStakeForm = (

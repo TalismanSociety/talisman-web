@@ -30,7 +30,6 @@ export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: 
       onConfirm={() => highlighted && onConfirm(highlighted)}
       sortMethods={{
         Default: () => {
-          console.log('Default sort method')
           return 0
         },
         'Subnet ID': (a, b) => {

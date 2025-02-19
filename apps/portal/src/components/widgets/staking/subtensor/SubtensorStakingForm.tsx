@@ -8,7 +8,6 @@ import { Surface } from '@talismn/ui/atoms/Surface'
 import { Text } from '@talismn/ui/atoms/Text'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { DescriptionList } from '@talismn/ui/molecules/DescriptionList'
-import { InfoCard } from '@talismn/ui/molecules/InfoCard'
 import { ListItem } from '@talismn/ui/molecules/ListItem'
 import { Select } from '@talismn/ui/molecules/Select'
 import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
@@ -181,15 +180,9 @@ SubtensorStakingForm.StakeButton = (props: Omit<ButtonProps, 'children'>) => (
 
 export type SubtensorStakingSideSheetProps = Omit<SideSheetProps, 'title'> & {
   chainName: ReactNode
-  info: Array<{ title: ReactNode; content: ReactNode }>
   minimumStake: ReactNode
 }
-export const SubtensorStakingSideSheet = ({
-  children,
-  info,
-  minimumStake,
-  ...props
-}: SubtensorStakingSideSheetProps) => {
+export const SubtensorStakingSideSheet = ({ children, minimumStake, ...props }: SubtensorStakingSideSheetProps) => {
   const [searchParams] = useSearchParams()
   const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
   const [talismanFeeTokenAmount] = useAtom(talismanTokenFeeAtom)
@@ -206,23 +199,6 @@ export const SubtensorStakingSideSheet = ({
       subtitle="Bittensor delegated staking"
     >
       <div css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '42rem' } }}>
-        <section
-          css={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1.6rem',
-            marginBottom: '1.6rem',
-            '> *': { flex: 1 },
-          }}
-        >
-          {info.map(({ title, content }, index) => (
-            <InfoCard
-              key={index}
-              overlineContent={title}
-              headlineContent={<Suspense fallback={<CircularProgressIndicator size="1em" />}>{content}</Suspense>}
-            />
-          ))}
-        </section>
         {children}
         <div className={cn('mt-[2rem] flex flex-col gap-[1rem]', { 'mt-[6.4rem]': !hasDTaoStaking })}>
           {hasDTaoStaking && (
@@ -266,11 +242,6 @@ export const SubtensorStakingSideSheet = ({
               <Text.Body alpha="high">{minimumStake}</Text.Body>
             </Suspense>
             .
-          </Text.Body>
-          <Text.Body as="p">
-            After a successful <Text.Body alpha="high">stake OR unstake</Text.Body> operation, you must wait for{' '}
-            <Text.Body alpha="high">360&nbsp;blocks</Text.Body> (approx. 1 hour 12 minutes) before you can submit
-            another operation for the same account.
           </Text.Body>
         </div>
       </div>

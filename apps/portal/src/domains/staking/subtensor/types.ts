@@ -120,3 +120,25 @@ export type RuntimePoolData = {
   taoIn: string // TAO in the pool
   alphaIn: string // Alpha in the pool
 }
+
+export type Validator = {
+  name: string
+  url: string
+  description: string
+  signature: string
+}
+
+export type ValidatorsResponse = {
+  [key: string]: Validator // The key is the unique validator hotkey.
+}
+
+export type BondOption = {
+  poolId: string
+  name: string
+  apr: number
+  totalStaked: number
+  totalStakers: number
+  hasData: boolean
+  isError: boolean
+  isRecommended?: boolean
+}

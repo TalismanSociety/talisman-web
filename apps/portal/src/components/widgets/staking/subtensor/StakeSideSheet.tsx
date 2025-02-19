@@ -3,7 +3,6 @@ import { Suspense, useMemo, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
-import type { Delegate } from '@/domains/staking/subtensor/atoms/delegates'
 import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
 import { useAccountSelector } from '@/components/widgets/AccountSelector'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
@@ -11,14 +10,11 @@ import { writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { useChainState } from '@/domains/chains/hooks'
 import { ChainProvider } from '@/domains/chains/provider'
 import { ChainInfo, subtensorStakingEnabledChainsState } from '@/domains/chains/recoils'
-import { DEFAULT_DELEGATE, MIN_SUBTENSOR_STAKE } from '@/domains/staking/subtensor/atoms/delegates'
-import { useDelegateAprFormatted } from '@/domains/staking/subtensor/hooks/useApr'
 import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
-import { useTotalTaoStakedFormatted } from '@/domains/staking/subtensor/hooks/useTotalTaoStakedFormatted'
-import { type SubnetData } from '@/domains/staking/subtensor/types'
+import { type BondOption, type SubnetData } from '@/domains/staking/subtensor/types'
 import { Maybe } from '@/util/monads'
 
-import { ROOT_NETUID } from './constants'
+import { MIN_SUBTENSOR_STAKE, ROOT_NETUID } from './constants'
 import { DelegateSelectorDialog } from './DelegateSelectorDialog'
 import { IncompleteSelectionStakeForm, StakeForm } from './StakeForm'
 import { SubnetSelectorDialog } from './SubnetSelectorDialog'
@@ -32,10 +28,10 @@ type StakeSideSheetProps = {
 }
 
 type StakeSideSheetContentProps = Omit<StakeSideSheetProps, 'onRequestDismiss'> & {
-  delegate: Delegate | undefined
+  delegate: BondOption | undefined
   subnet: SubnetData | undefined
   isSelectSubnetDisabled: boolean
-  setDelegate: React.Dispatch<React.SetStateAction<Delegate | undefined>>
+  setDelegate: React.Dispatch<React.SetStateAction<BondOption | undefined>>
   setSubnet: React.Dispatch<React.SetStateAction<SubnetData | undefined>>
 }
 
@@ -100,7 +96,7 @@ const StakeSideSheetContent = ({
       {account !== undefined ? (
         <StakeForm
           account={account}
-          delegate={delegate?.address}
+          delegate={delegate?.poolId}
           netuid={netuid}
           accountSelector={accountSelector}
           assetSelector={assetSelector}
@@ -143,28 +139,14 @@ const StakeSideSheetContent = ({
 
 const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
   const { subnetData } = useCombineSubnetData()
-  const [delegate, setDelegate] = useState<Delegate | undefined>()
+  const [delegate, setDelegate] = useState<BondOption | undefined>()
   const [subnet, setSubnet] = useState<SubnetData | undefined>()
   const { nativeToken } = useRecoilValue(useChainState())
-  const { hasDTaoStaking } = props
-
-  const totalStaked = useTotalTaoStakedFormatted()
-  const delegateApr = useDelegateAprFormatted(delegate?.address ?? DEFAULT_DELEGATE)
 
   return (
     <SubtensorStakingSideSheet
       onRequestDismiss={props.onRequestDismiss}
       chainName={useRecoilValue(useChainState()).chainName}
-      info={useMemo(
-        () => [
-          {
-            title: 'Total Staked',
-            content: <>{hasDTaoStaking ? 'TBA' : totalStaked}</>,
-          },
-          { title: 'Estimated APR', content: <>{hasDTaoStaking ? 'Variable' : delegateApr}</> },
-        ],
-        [delegateApr, hasDTaoStaking, totalStaked]
-      )}
       minimumStake={
         <>
           {MIN_SUBTENSOR_STAKE} {nativeToken?.symbol}

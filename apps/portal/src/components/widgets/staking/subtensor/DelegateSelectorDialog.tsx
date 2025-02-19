@@ -2,29 +2,27 @@ import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from 'recoil'
 
-import type { Delegate } from '@/domains/staking/subtensor/atoms/delegates'
 import { StakeTargetSelectorDialog } from '@/components/recipes/StakeTargetSelectorDialog'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
-import { DEFAULT_DELEGATE } from '@/domains/staking/subtensor/atoms/delegates'
-import { useAllDelegateInfos } from '@/domains/staking/subtensor/hooks/useAllDelegateInfos'
-import { useDelegates } from '@/domains/staking/subtensor/hooks/useDelegates'
-import { useDelegatesStats } from '@/domains/staking/subtensor/hooks/useDelegatesStats'
+import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
+import { type BondOption } from '@/domains/staking/subtensor/types'
+
+const TAOSTATS_INFO_URL = 'https://taostats.io/validators'
 
 type DelegateSelectorDialogProps = {
-  selected?: Delegate
+  selected?: BondOption
   onRequestDismiss: () => unknown
-  onConfirm: (delegate: Delegate) => unknown
+  onConfirm: (delegate: BondOption) => unknown
 }
 
 export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
-  const delegates = useDelegates()
-  const allDelegateInfos = useAllDelegateInfos()
-  const delegatesStats = useDelegatesStats()
   const [searchParams] = useSearchParams()
+
+  const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
 
   const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
 
-  const [highlighted, setHighlighted] = useState(delegates[DEFAULT_DELEGATE] ?? Object.values(delegates)[0])
+  const [highlighted, setHighlighted] = useState<BondOption | undefined>()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
   return (
@@ -57,39 +55,33 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
         //     : 1,
       }}
     >
-      {Object.values(delegates).map(delegate => {
-        const apr = Number(delegatesStats.find(stat => stat.hotkey.ss58 === delegate.address)?.apr) || 0
-        const formattedApr = apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
+      {combinedValidatorsData.map(delegate => {
+        const formattedApr = delegate.apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 
-        const totalDelegated = allDelegateInfos[delegate.address]?.totalDelegated ?? 0n
-
-        const balance = nativeTokenAmount.fromPlanckOrUndefined(totalDelegated)
+        const balance = nativeTokenAmount.fromPlanckOrUndefined(delegate.totalStaked)
 
         const formattedBalance =
-          totalDelegated > 0n
+          delegate.totalStaked > 0n
             ? balance.decimalAmount?.toLocaleString()
             : `-- ${balance.decimalAmount?.options?.currency}`
 
         return (
           <StakeTargetSelectorDialog.Item
-            key={delegate.address}
+            key={delegate.poolId}
             balanceDescription="Total staked with this delegate"
             countDescription="Number of delegate stakers"
             estimatedAprDescription="Estimated APR"
             estimatedApr={!hasDTaoStaking ? formattedApr : undefined}
             talismanRecommendedDescription="Talisman top recommended delegate"
             rating={3}
-            selected={delegate.address === props.selected?.address}
-            highlighted={delegate.address === highlighted?.address}
+            selected={delegate.poolId === props.selected?.poolId}
+            highlighted={delegate.poolId === highlighted?.poolId}
             name={delegate.name}
             talismanRecommended={false}
-            detailUrl={delegate.url}
-            count={allDelegateInfos[delegate.address]?.nominators?.length ?? 0}
+            detailUrl={`${TAOSTATS_INFO_URL}/${delegate.poolId}`}
+            count={delegate.totalStakers ?? 0}
             balance={formattedBalance ?? ''}
-            balancePlanck={
-              nativeTokenAmount.fromPlanckOrUndefined(allDelegateInfos[delegate.address]?.totalDelegated).decimalAmount
-                ?.planck
-            }
+            balancePlanck={!hasDTaoStaking ? balance.decimalAmount?.planck : 0n}
             // estimatedReturn={allDelegateInfos[delegate.address]?.return_per_1000}
             onClick={() => setHighlighted(delegate)}
           />

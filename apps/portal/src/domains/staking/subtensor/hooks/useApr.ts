@@ -1,7 +1,4 @@
-import { useAtomValue } from 'jotai'
-
-import { highestAprTaoValidatorAtom } from '../atoms/taostats'
-import { useDelegateStats } from './useDelegateStats'
+import { useCombinedBittensorValidatorsData } from './useCombinedBittensorValidatorsData'
 
 export const useHighestAprFormatted = () => {
   const apr = useHighestApr()
@@ -10,17 +7,22 @@ export const useHighestAprFormatted = () => {
 }
 
 export const useHighestApr = () => {
-  const { apr } = useAtomValue(highestAprTaoValidatorAtom) ?? { apr: 0 }
+  const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
+  type ValidatorData = {
+    apr: number
+  }
+
+  const highestAprValidator: ValidatorData = combinedValidatorsData.reduce<ValidatorData>(
+    (acc: ValidatorData, curr: ValidatorData) => (curr.apr > acc.apr ? curr : acc),
+    { apr: 0 }
+  )
+  const { apr } = highestAprValidator ?? { apr: 0 }
 
   return Number(apr)
 }
 
-export const useDelegateApr = (hotkey: string) => {
-  const delegate = useDelegateStats(hotkey)
+export const useDelegateApr = (hotkey: string | undefined) => {
+  const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
+  const delegate = combinedValidatorsData.find(validator => validator?.poolId === hotkey)
   return Number(delegate?.apr)
-}
-
-export const useDelegateAprFormatted = (hotkey: string) => {
-  const apr = useDelegateApr(hotkey) || 0
-  return apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 }
