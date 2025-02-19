@@ -55,7 +55,6 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
         //     : 1,
       }}
     >
-      {/* {Object.values(delegates).map(delegate => { */}
       {combinedValidatorsData.map(delegate => {
         const formattedApr = delegate.apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
 

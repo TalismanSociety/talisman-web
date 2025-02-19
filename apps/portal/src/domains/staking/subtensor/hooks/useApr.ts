@@ -26,8 +26,3 @@ export const useDelegateApr = (hotkey: string | undefined) => {
   const delegate = combinedValidatorsData.find(validator => validator?.poolId === hotkey)
   return Number(delegate?.apr)
 }
-
-export const useDelegateAprFormatted = (hotkey: string | undefined) => {
-  const apr = useDelegateApr(hotkey) || 0
-  return apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
-}
