@@ -225,36 +225,38 @@ export const SubtensorStakingSideSheet = ({
         </section>
         {children}
         <div className={cn('mt-[2rem] flex flex-col gap-[1rem]', { 'mt-[6.4rem]': !hasDTaoStaking })}>
-          <div className="mt-[2rem] flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Text.Body as="p" alpha="high">
-                Talisman fee
-              </Text.Body>
-              <Tooltip
-                content={
-                  <div className="max-w-[35rem]">
-                    Talisman applies a {TALISMAN_FEE_BITTENSOR}% fee to each transaction.
-                  </div>
-                }
-                placement="top"
-              >
-                <Info size={16} />
-              </Tooltip>
-            </div>
-            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-              <Text.Body alpha="high">{talismanFeeTokenAmount?.decimalAmount?.toLocaleStringPrecision()}</Text.Body>
-            </Suspense>
-          </div>
-
           {hasDTaoStaking && (
             <>
-              <SlippageDropdown />
-              <Text.Body as="p">
-                Note that Dynamic TAO Subnet staking has more variable rewards than the Legacy TAO Staking.{' '}
-                <Text.Body.A href="https://taostats.io/subnets" target="_blank">
-                  Learn more
-                </Text.Body.A>
-              </Text.Body>
+              <div className="mt-[2rem] flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Text.Body as="p" alpha="high">
+                    Talisman fee
+                  </Text.Body>
+                  <Tooltip
+                    content={
+                      <div className="max-w-[35rem]">
+                        Talisman applies a {TALISMAN_FEE_BITTENSOR}% fee to each transaction.
+                      </div>
+                    }
+                    placement="top"
+                  >
+                    <Info size={16} />
+                  </Tooltip>
+                </div>
+                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                  <Text.Body alpha="high">{talismanFeeTokenAmount?.decimalAmount?.toLocaleStringPrecision()}</Text.Body>
+                </Suspense>
+              </div>
+
+              <>
+                <SlippageDropdown />
+                <Text.Body as="p">
+                  Note that Dynamic TAO Subnet staking has more variable rewards than the Legacy TAO Staking.{' '}
+                  <Text.Body.A href="https://taostats.io/subnets" target="_blank">
+                    Learn more
+                  </Text.Body.A>
+                </Text.Body>
+              </>
             </>
           )}
 
