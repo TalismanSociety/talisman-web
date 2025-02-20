@@ -1,5 +1,6 @@
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { Text } from '@talismn/ui/atoms/Text'
+import { useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useRecoilValue } from 'recoil'
@@ -42,6 +43,12 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
   useExtrinsicInBlockOrErrorEffect(() => props.onRequestDismiss(), extrinsic)
   const { subnetData } = useCombineSubnetData()
 
+  const queryClient = useQueryClient()
+
+  const handleStakeInfoRefetch = () => {
+    queryClient.invalidateQueries({ queryKey: ['stakeInfoForColdKey', props.account.address] })
+  }
+
   const stakeData = subnetData[props.stake.netuid ?? 0]
 
   const alphaTokenSymbol = useMemo(() => {
@@ -78,7 +85,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
       newAmount={resultingStake.decimalAmount?.toLocaleString() ?? <CircularProgressIndicator size="1em" />}
       newFiatAmount={newFiatAmount.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
       onConfirm={() => {
-        void extrinsic.signAndSend(props.account.address)
+        void extrinsic.signAndSend(props.account.address).then(() => handleStakeInfoRefetch())
       }}
       inputSupportingText={error?.message}
       onDismiss={props.onRequestDismiss}

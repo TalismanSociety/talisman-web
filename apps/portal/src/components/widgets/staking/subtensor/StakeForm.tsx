@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { useQueryClient } from '@tanstack/react-query'
 import BN from 'bn.js'
 import { Suspense, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -30,6 +31,11 @@ export const StakeForm = (props: StakeFormProps) => {
     useAddStakeForm(props.account, stake, props.delegate, props.netuid)
   const navigate = useNavigate()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
+  const queryClient = useQueryClient()
+
+  const handleStakeInfoRefetch = () => {
+    queryClient.invalidateQueries({ queryKey: ['stakeInfoForColdKey', props.account.address] })
+  }
 
   const alphaTokenSymbol = useMemo(() => {
     const { netuid, symbol, descriptionName } = stakeData || stake || {}
@@ -69,7 +75,12 @@ export const StakeForm = (props: StakeFormProps) => {
           disabled={!ready}
           loading={isLoading}
           onClick={() => {
-            extrinsic.signAndSend(props.account.address).then(() => navigate('/staking/positions'))
+            // add cache invalidation here
+            extrinsic.signAndSend(props.account.address).then(() => {
+              handleStakeInfoRefetch()
+
+              navigate('/staking/positions')
+            })
           }}
         />
       }
