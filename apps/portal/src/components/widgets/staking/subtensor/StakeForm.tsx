@@ -75,7 +75,6 @@ export const StakeForm = (props: StakeFormProps) => {
           disabled={!ready}
           loading={isLoading}
           onClick={() => {
-            // add cache invalidation here
             extrinsic.signAndSend(props.account.address).then(() => {
               handleStakeInfoRefetch()
 
