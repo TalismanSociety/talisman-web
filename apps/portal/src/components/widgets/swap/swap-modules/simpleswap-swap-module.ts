@@ -146,6 +146,13 @@ const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
     symbol: 'TAO',
     networkType: 'substrate',
   },
+  anlog: {
+    id: 'analog-timechain-substrate-native',
+    name: 'Analog',
+    chainId: 'analog-timechain',
+    symbol: 'ANLOG',
+    networkType: 'substrate',
+  },
   btc: {
     id: 'btc-native',
     name: 'Bitcoin',
