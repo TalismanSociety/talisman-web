@@ -167,7 +167,7 @@ export const useAddStakeForm = (
       return new Error('Insufficient balance')
 
     if (resultingTao.decimalAmount && resultingTao.decimalAmount?.planck < (minimum.decimalAmount?.planck ?? 0n))
-      return new Error(`Minimum stake is ${(minimum.decimalAmount ?? 0n).toLocaleString()}`)
+      return new Error(`Minimum stake is ${minimum.decimalAmount?.toLocaleStringPrecision()}`)
 
     if (isDynamicTaoStakeInfoError) {
       return new Error('Failed to fetch dynamic tao stake info')
