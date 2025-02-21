@@ -1,4 +1,5 @@
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
+import { useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
@@ -39,6 +40,11 @@ const SubtensorAddStakeDialog = ({ account, stake, delegate, onRequestDismiss }:
   const { subnetData } = useCombineSubnetData()
   const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
+  const queryClient = useQueryClient()
+
+  const handleStakeInfoRefetch = () => {
+    queryClient.invalidateQueries({ queryKey: ['stakeInfoForColdKey', account.address] })
+  }
 
   const stakeData = subnetData[stake.netuid ?? 0]
 
@@ -78,7 +84,10 @@ const SubtensorAddStakeDialog = ({ account, stake, delegate, onRequestDismiss }:
       newAmount={resultingStake.decimalAmount?.toLocaleString() ?? <CircularProgressIndicator size="1em" />}
       newFiatAmount={newFiatAmount.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
       onConfirm={() => {
-        extrinsic.signAndSend(account.address).then(() => onRequestDismiss())
+        extrinsic.signAndSend(account.address).then(() => {
+          handleStakeInfoRefetch()
+          onRequestDismiss()
+        })
       }}
       inputSupportingText={error?.message}
       onDismiss={onRequestDismiss}

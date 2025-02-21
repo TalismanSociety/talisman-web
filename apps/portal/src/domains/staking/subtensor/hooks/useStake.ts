@@ -1,4 +1,3 @@
-import { useAtomValue } from 'jotai'
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
@@ -8,8 +7,8 @@ import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiStat
 import { type SubnetData } from '@/domains/staking/subtensor/types'
 import { Decimal } from '@/util/Decimal'
 
-import { accountStakeAtom } from '../atoms/accountStake'
 import { useCombineSubnetData } from './useCombineSubnetData'
+import { useGetStakeInfoForColdKey } from './useGetStakeInfoForColdKey'
 
 export type StakeItem = SubnetData & {
   totalStaked: {
@@ -33,8 +32,7 @@ export const useStake = (account: Account): Stake => {
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
   const nativeToken = api.registry.chainTokens[0] || 'TAO'
   const { subnetData } = useCombineSubnetData()
-
-  const stakeInfoForColdKey = useAtomValue(accountStakeAtom({ api, address: account.address }))
+  const { data: stakeInfoForColdKey } = useGetStakeInfoForColdKey(account.address)
 
   const stakes = stakeInfoForColdKey?.map(stake => {
     const subnet = subnetData[Number(stake.netuid)]
