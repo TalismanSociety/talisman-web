@@ -4,6 +4,7 @@ import { StakePosition } from '@/components/recipes/StakePosition'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { DTAO_LOGO, ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
 import { ChainInfo } from '@/domains/chains/recoils'
+import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
 import { useGetDynamicTaoStakeInfo } from '@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo'
 
 import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
@@ -23,16 +24,18 @@ export const StakeItemRow = ({
   handleToggleAddStakeDialog,
   handleToggleUnstakeDialog,
 }: StakeItemRowProps) => {
-  const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
-  const assetSymbol = stake.netuid === ROOT_NETUID ? symbol : `SN${stake.netuid} ${stake.descriptionName ?? ''}`
-  const assetLogo = stake.netuid === ROOT_NETUID ? logo : DTAO_LOGO
-
+  const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
   const { expectedTaoAmount } = useGetDynamicTaoStakeInfo({
     amount: stake.totalStaked,
     netuid: stake.netuid,
     direction: 'alphaToTao',
     shouldUpdateFeeAndSlippage: false,
   })
+
+  const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
+  const assetSymbol = stake.netuid === ROOT_NETUID ? symbol : `SN${stake.netuid} ${stake.descriptionName ?? ''}`
+  const assetLogo = stake.netuid === ROOT_NETUID ? logo : DTAO_LOGO
+  const provider = combinedValidatorsData.find(({ poolId }) => poolId === stake.hotkey)?.name ?? ''
 
   const fiatBalance =
     stake.netuid === ROOT_NETUID ? stake.totalStaked.localizedFiatAmount : expectedTaoAmount.localizedFiatAmount
@@ -51,7 +54,7 @@ export const StakeItemRow = ({
         assetSymbol={assetSymbol}
         assetLogoSrc={assetLogo}
         account={account}
-        provider="Delegation"
+        provider={provider}
         stakeStatus={'earning_rewards'}
         balance={
           <ErrorBoundary renderFallback={() => <>--</>}>
