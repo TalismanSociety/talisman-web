@@ -32,6 +32,7 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
       b: ReactElement<StakeTargetSelectorItemProps>
     ) => number
   } = {
+    'Validator name': (a, b) => a.props.name.localeCompare(b.props.name),
     'Total staked': (a, b) =>
       (b.props.balancePlanck ?? 0n) === (a.props.balancePlanck ?? 0n)
         ? 0
@@ -62,25 +63,6 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
         if (highlighted !== undefined) props.onConfirm(highlighted)
       }}
       sortMethods={sortMethods}
-      // sortMethods={{
-      //   'Total staked': (a, b) =>
-      //     (b.props.balancePlanck ?? 0n) === (a.props.balancePlanck ?? 0n)
-      //       ? 0
-      //       : (b.props.balancePlanck ?? 0n) - (a.props.balancePlanck ?? 0n) < 0
-      //       ? -1
-      //       : 1,
-      //   'Number of stakers': (a, b) =>
-      //     parseInt(b.props.count?.toString?.() ?? '0') - parseInt(a.props.count?.toString?.() ?? '0'),
-      //   'Estimated APR': (a, b) =>
-      //     parseFloat(b.props.estimatedApr?.replace('%', '') ?? '0') -
-      //     parseFloat(a.props.estimatedApr?.replace('%', '') ?? '0'),
-      //   // 'Estimated return': (a, b) =>
-      //   //   BigInt(b.props.estimatedReturn ?? 0n) === BigInt(a.props.estimatedReturn ?? 0n)
-      //   //     ? 0
-      //   //     : BigInt(b.props.estimatedReturn ?? 0n) - BigInt(a.props.estimatedReturn ?? 0n) < 0
-      //   //     ? -1
-      //   //     : 1,
-      // }}
     >
       {combinedValidatorsData.map(delegate => {
         const formattedApr = delegate.apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
@@ -106,10 +88,9 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
             name={delegate.name}
             talismanRecommended={false}
             detailUrl={`${TAOSTATS_INFO_URL}/${delegate.poolId}`}
-            count={delegate.totalStakers ?? 0}
+            count={delegate.totalStakers || '--'}
             balance={formattedBalance ?? ''}
-            balancePlanck={!hasDTaoStaking ? balance.decimalAmount?.planck : 0n}
-            // estimatedReturn={allDelegateInfos[delegate.address]?.return_per_1000}
+            balancePlanck={balance.decimalAmount?.planck}
             onClick={() => setHighlighted(delegate)}
           />
         )

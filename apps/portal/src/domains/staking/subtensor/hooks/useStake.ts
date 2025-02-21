@@ -41,7 +41,6 @@ export const useStake = (account: Account): Stake => {
     ?.map(stake => {
       const subnet = subnetData[Number(stake.netuid)]
       const symbol = Number(stake.netuid) !== ROOT_NETUID ? subnet?.symbol : nativeToken
-      console.log({ stakeAmount: stake.stake })
       return {
         ...stake,
         ...subnet,
