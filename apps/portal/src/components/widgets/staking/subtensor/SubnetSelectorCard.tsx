@@ -32,7 +32,7 @@ export const SubnetSelectorCard = ({ subnetPool, selected, highlighted, onClick 
       onClick={() => onClick(subnetPool)}
       css={[{ backgroundColor: surfaceColor }, isHighlighted && { borderColor: surfaceVariant }]}
       className={classNames(
-        'flex min-h-[7.5rem] cursor-pointer flex-col justify-between rounded-[0.8rem] border border-transparent px-[1.6rem] py-[0.8rem] filter hover:brightness-[1.8]',
+        'flex min-h-[9.6rem] cursor-pointer flex-col justify-between rounded-[0.8rem] border border-transparent px-[1.6rem] py-[0.8rem] filter hover:brightness-[1.8]',
         isHighlighted && 'border-[#000] brightness-[1.6]'
       )}
     >
