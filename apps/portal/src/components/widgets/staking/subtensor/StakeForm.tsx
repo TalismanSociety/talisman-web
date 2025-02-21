@@ -39,7 +39,7 @@ export const StakeForm = (props: StakeFormProps) => {
 
   const alphaTokenSymbol = useMemo(() => {
     const { netuid, symbol, descriptionName } = stakeData || stake || {}
-    return netuid ? `SN${netuid} ${descriptionName} ${symbol}` : 'DTao'
+    return netuid ? `SN${netuid} ${descriptionName} ${symbol}` : '-'
   }, [stake, stakeData])
 
   const formattedExpectedAlphaAmount = nativeTokenAmount.fromPlanckOrUndefined(

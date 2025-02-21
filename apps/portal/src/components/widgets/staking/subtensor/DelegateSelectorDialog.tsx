@@ -27,10 +27,10 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
 
   return (
     <StakeTargetSelectorDialog
-      title="Select a delegate"
-      currentSelectionLabel={props.selected ? 'Selected delegate' : ''}
+      title="Select a validator"
+      currentSelectionLabel={props.selected ? 'Selected validator' : ''}
       selectionLabel="New delegate"
-      confirmButtonContent={props.selected ? 'Swap delegate' : 'Select delegate'}
+      confirmButtonContent={props.selected ? 'Swap validator' : 'Select validator'}
       onRequestDismiss={props.onRequestDismiss}
       onConfirm={() => {
         if (highlighted !== undefined) props.onConfirm(highlighted)

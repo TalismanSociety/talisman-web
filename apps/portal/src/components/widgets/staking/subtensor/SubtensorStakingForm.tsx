@@ -132,11 +132,11 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
       <div css={{ cursor: 'pointer' }} onClick={props.onRequestChange}>
         <label css={{ pointerEvents: 'none' }}>
           <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
-            Select Delegate
+            Select Validator
           </Text.BodySmall>
           <Select
             loading={props.selectionInProgress}
-            placeholder={<ListItem headlineContent="Select a delegate" css={{ padding: '0.8rem', paddingLeft: 0 }} />}
+            placeholder={<ListItem headlineContent="Select a validator" css={{ padding: '0.8rem', paddingLeft: 0 }} />}
             renderSelected={() =>
               props.selectedName === undefined ? undefined : (
                 <ListItem headlineContent={props.selectedName} css={{ padding: '0.8rem', paddingLeft: 0 }} />
@@ -145,8 +145,8 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
             css={{ width: '100%' }}
           />
         </label>
-        {hasDTaoStaking && <div className="mt-[1.6rem]  text-end">{props.expectedAmount}</div>}
       </div>
+      {hasDTaoStaking && <div className="mt-[1.6rem]  text-end">{props.expectedAmount}</div>}
       <div className={clsx({ 'mb-[1.6rem] mt-[1.6rem]': props.currentStakedBalance !== undefined || !hasDTaoStaking })}>
         <DescriptionList>
           {props.currentStakedBalance !== undefined && (
