@@ -65,6 +65,7 @@
     "i18next-http-backend": "^1.4.5",
     "jotai": "^2.8.0",
     "jotai-effect": "^1.0.0",
+    "lightweight-charts": "^5.0.2",
     "lodash": "^4.17.21",
     "lucide-react": "^0.394.0",
     "polkadot-api": "^0.8.0",
