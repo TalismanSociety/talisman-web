@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { ReactElement, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from 'recoil'
 
 import { StakeTargetSelectorDialog } from '@/components/recipes/StakeTargetSelectorDialog'
+import { type StakeTargetSelectorItemProps } from '@/components/recipes/StakeTargetSelectorItem'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
 import { type BondOption } from '@/domains/staking/subtensor/types'
@@ -25,35 +26,43 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
   const [highlighted, setHighlighted] = useState<BondOption | undefined>()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
+  let sortMethods: {
+    [key: string]: (
+      a: ReactElement<StakeTargetSelectorItemProps>,
+      b: ReactElement<StakeTargetSelectorItemProps>
+    ) => number
+  } = {
+    'Validator name': (a, b) => a.props.name.localeCompare(b.props.name),
+    'Total staked': (a, b) =>
+      (b.props.balancePlanck ?? 0n) === (a.props.balancePlanck ?? 0n)
+        ? 0
+        : (b.props.balancePlanck ?? 0n) - (a.props.balancePlanck ?? 0n) < 0
+        ? -1
+        : 1,
+    'Number of stakers': (a, b) =>
+      parseInt(b.props.count?.toString?.() ?? '0') - parseInt(a.props.count?.toString?.() ?? '0'),
+  }
+
+  if (!hasDTaoStaking) {
+    sortMethods = {
+      ...sortMethods,
+      'Estimated APR': (a, b) =>
+        parseFloat(b.props.estimatedApr?.replace('%', '') ?? '0') -
+        parseFloat(a.props.estimatedApr?.replace('%', '') ?? '0'),
+    }
+  }
+
   return (
     <StakeTargetSelectorDialog
-      title="Select a delegate"
-      currentSelectionLabel={props.selected ? 'Selected delegate' : ''}
+      title="Select a validator"
+      currentSelectionLabel={props.selected ? 'Selected validator' : ''}
       selectionLabel="New delegate"
-      confirmButtonContent={props.selected ? 'Swap delegate' : 'Select delegate'}
+      confirmButtonContent={props.selected ? 'Swap validator' : 'Select validator'}
       onRequestDismiss={props.onRequestDismiss}
       onConfirm={() => {
         if (highlighted !== undefined) props.onConfirm(highlighted)
       }}
-      sortMethods={{
-        'Total staked': (a, b) =>
-          (b.props.balancePlanck ?? 0n) === (a.props.balancePlanck ?? 0n)
-            ? 0
-            : (b.props.balancePlanck ?? 0n) - (a.props.balancePlanck ?? 0n) < 0
-            ? -1
-            : 1,
-        'Number of stakers': (a, b) =>
-          parseInt(b.props.count?.toString?.() ?? '0') - parseInt(a.props.count?.toString?.() ?? '0'),
-        'Estimated APR': (a, b) =>
-          parseFloat(b.props.estimatedApr?.replace('%', '') ?? '0') -
-          parseFloat(a.props.estimatedApr?.replace('%', '') ?? '0'),
-        // 'Estimated return': (a, b) =>
-        //   BigInt(b.props.estimatedReturn ?? 0n) === BigInt(a.props.estimatedReturn ?? 0n)
-        //     ? 0
-        //     : BigInt(b.props.estimatedReturn ?? 0n) - BigInt(a.props.estimatedReturn ?? 0n) < 0
-        //     ? -1
-        //     : 1,
-      }}
+      sortMethods={sortMethods}
     >
       {combinedValidatorsData.map(delegate => {
         const formattedApr = delegate.apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
@@ -79,10 +88,9 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
             name={delegate.name}
             talismanRecommended={false}
             detailUrl={`${TAOSTATS_INFO_URL}/${delegate.poolId}`}
-            count={delegate.totalStakers ?? 0}
+            count={delegate.totalStakers || '--'}
             balance={formattedBalance ?? ''}
-            balancePlanck={!hasDTaoStaking ? balance.decimalAmount?.planck : 0n}
-            // estimatedReturn={allDelegateInfos[delegate.address]?.return_per_1000}
+            balancePlanck={balance.decimalAmount?.planck}
             onClick={() => setHighlighted(delegate)}
           />
         )

@@ -1,7 +1,7 @@
 import { SubnetPool } from '@/domains/staking/subtensor/types'
 
 export const ROOT_NETUID = 0
-export const MIN_SUBTENSOR_STAKE = 0.1
+export const MIN_SUBTENSOR_STAKE = 0.001
 export const TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR = '5DzsVV2L4M9r4uWoyarzPyhfeCv6DDAEs5rM2bpHjmerPcGa'
 export const TALISMAN_FEE_BITTENSOR = 0.3
 

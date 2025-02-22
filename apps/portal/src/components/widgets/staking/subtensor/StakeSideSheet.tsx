@@ -86,7 +86,7 @@ const StakeSideSheetContent = ({
     [chain.id, chains, onChangeChain]
   )
 
-  const subnetName = subnet ? `${subnet?.netuid}: ${subnet?.symbol}` : undefined
+  const subnetName = subnet ? `${subnet?.netuid}: ${subnet.descriptionName} ${subnet?.symbol}` : undefined
 
   const poolNetuid = subnet?.netuid ? Number(subnet.netuid) : undefined
   const netuid = !hasDTaoStaking ? ROOT_NETUID : poolNetuid

@@ -1,9 +1,10 @@
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
-import { ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
+import { MIN_SUBTENSOR_STAKE, ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
+import { useTokenAmount } from '@/domains/common/hooks/useTokenAmount'
 import { type SubnetData } from '@/domains/staking/subtensor/types'
 import { Decimal } from '@/util/Decimal'
 
@@ -34,17 +35,23 @@ export const useStake = (account: Account): Stake => {
   const { subnetData } = useCombineSubnetData()
   const { data: stakeInfoForColdKey } = useGetStakeInfoForColdKey(account.address)
 
-  const stakes = stakeInfoForColdKey?.map(stake => {
-    const subnet = subnetData[Number(stake.netuid)]
-    const symbol = Number(stake.netuid) !== ROOT_NETUID ? subnet?.symbol : nativeToken
-    return {
-      ...stake,
-      ...subnet,
-      netuid: Number(stake.netuid),
-      totalStaked: nativeTokenAmount.fromPlanckOrUndefined(stake.stake, symbol || nativeToken),
-      symbol,
-    }
-  })
+  const minimumStakeAmount = useTokenAmount(String(MIN_SUBTENSOR_STAKE))
+
+  const stakes = stakeInfoForColdKey
+    ?.map(stake => {
+      const subnet = subnetData[Number(stake.netuid)]
+      const symbol = Number(stake.netuid) !== ROOT_NETUID ? subnet?.symbol : nativeToken
+      return {
+        ...stake,
+        ...subnet,
+        netuid: Number(stake.netuid),
+        totalStaked: nativeTokenAmount.fromPlanckOrUndefined(stake.stake, symbol || nativeToken),
+        symbol,
+      }
+    })
+    .filter(
+      ({ totalStaked }) => (totalStaked.decimalAmount?.planck ?? 0n) > (minimumStakeAmount.decimalAmount?.planck ?? 0n)
+    )
 
   return { stakes }
 }
