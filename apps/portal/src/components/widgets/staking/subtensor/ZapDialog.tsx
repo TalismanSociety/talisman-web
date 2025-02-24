@@ -42,7 +42,7 @@ export const ZapDialog = ({ stake, isOpen, onRequestDismiss }: ZapDialogProps) =
     queryClient.invalidateQueries({ queryKey: ['stakeInfoForColdKey', account?.address] })
   }
 
-  const { extrinsic, available, input, setInput, expectedAlphaAmount } = useZapForm(
+  const { extrinsic, available, input, setInput, expectedAlphaAmount, ready } = useZapForm(
     stake,
     stake.hotkey,
     account,
@@ -59,6 +59,7 @@ export const ZapDialog = ({ stake, isOpen, onRequestDismiss }: ZapDialogProps) =
       onRequestDismiss()
     })
   }
+  const confirmState = extrinsic.state === 'loading' ? 'pending' : !ready ? 'disabled' : undefined
 
   const subnetName = subnet ? `${subnet?.netuid}: ${subnet.descriptionName} ${subnet?.symbol}` : undefined
 
@@ -127,7 +128,11 @@ export const ZapDialog = ({ stake, isOpen, onRequestDismiss }: ZapDialogProps) =
           </div> */}
           </>
         }
-        confirmButton={<Button onClick={onConfirm}>Zap</Button>}
+        confirmButton={
+          <Button disabled={confirmState === 'disabled'} loading={confirmState === 'pending'} onClick={onConfirm}>
+            Zap
+          </Button>
+        }
         onRequestDismiss={onRequestDismiss}
       />
       {subnetSelectorOpen && (

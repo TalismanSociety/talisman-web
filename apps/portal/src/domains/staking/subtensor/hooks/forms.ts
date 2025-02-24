@@ -24,7 +24,8 @@ export const useAddStakeForm = (
   account: Account,
   stake: StakeItem | undefined,
   delegate: string | undefined,
-  netuid: number | undefined
+  netuid: number | undefined,
+  isZap?: boolean
 ) => {
   const [api, [accountInfo]] = useRecoilValue(
     waitForAll([useSubstrateApiState(), useQueryMultiState([['system.account', account.address]])])
@@ -168,7 +169,7 @@ export const useAddStakeForm = (
   const minimum = useTokenAmount(String(MIN_SUBTENSOR_STAKE))
   const error = useMemo(() => {
     if (input === '') return
-    if ((amount.decimalAmount?.planck ?? 0n) > transferable.decimalAmount.planck)
+    if (!isZap && (amount.decimalAmount?.planck ?? 0n) > transferable.decimalAmount.planck)
       return new Error('Insufficient balance')
 
     if (resultingTao.decimalAmount && resultingTao.decimalAmount?.planck < (minimum.decimalAmount?.planck ?? 0n))
@@ -183,6 +184,7 @@ export const useAddStakeForm = (
     amount.decimalAmount?.planck,
     input,
     isDynamicTaoStakeInfoError,
+    isZap,
     minimum.decimalAmount,
     resultingTao.decimalAmount,
     transferable.decimalAmount.planck,
@@ -354,21 +356,26 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
 
 export const useZapForm = (stake: StakeItem, delegate: string, account: Account | undefined, zapNetuid: number) => {
   const api = useRecoilValue(useSubstrateApiState())
+  const isZap = true
 
-  const { input, setInput, available, expectedTaoAmount, unstakeTx, talismanFeeTxTokenAmount } = useUnstakeForm(
-    stake,
-    stake.hotkey
-  )
+  const {
+    input,
+    setInput,
+    available,
+    expectedTaoAmount,
+    unstakeTx,
+    talismanFeeTxTokenAmount,
+    ready: isRemoveStakeReady,
+  } = useUnstakeForm(stake, stake.hotkey)
 
   const {
     input: addStakeInput,
-    // amount: addStakeAmount,
-    // transferable,
+    ready: isAddStakeReady,
     expectedAlphaAmount,
     resulting: resultingZap,
     setInput: setAddStakeInput,
     stakeTx,
-  } = useAddStakeForm(account!, undefined, delegate, zapNetuid)
+  } = useAddStakeForm(account!, undefined, delegate, zapNetuid, isZap)
 
   const handleSetInput = useCallback(
     (dTaoInput: string) => {
@@ -393,7 +400,19 @@ export const useZapForm = (stake: StakeItem, delegate: string, account: Account 
 
   const extrinsic = useExtrinsic(tx)
 
-  return { extrinsic, available, input, addStakeInput, setInput: handleSetInput, resultingZap, expectedAlphaAmount }
+  const isReady = useMemo(() => isAddStakeReady && isRemoveStakeReady, [isAddStakeReady, isRemoveStakeReady])
+
+  return {
+    extrinsic,
+    available,
+    input,
+    addStakeInput,
+    setInput: handleSetInput,
+    resultingZap,
+    expectedAlphaAmount,
+
+    ready: isReady,
+  }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
