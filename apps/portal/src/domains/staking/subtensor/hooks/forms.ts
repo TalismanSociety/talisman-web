@@ -383,7 +383,6 @@ export const useZapForm = (stake: StakeItem, delegate: string, account: Account 
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tx: SubmittableExtrinsic<any> = useMemo(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return api.tx.utility.batchAll([
       unstakeTx,
       stakeTx,
