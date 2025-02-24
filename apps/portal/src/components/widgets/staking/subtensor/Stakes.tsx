@@ -12,6 +12,7 @@ import { useStake } from '@/domains/staking/subtensor/hooks/useStake'
 import AddStakeDialog from './AddStakeDialog'
 import { StakeItemRow } from './StakeItemRow'
 import UnstakeDialog from './UnstakeDialog'
+import { ZapDialog } from './ZapDialog'
 
 type StakesProps = {
   setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
@@ -41,6 +42,7 @@ type StakeProps = {
 const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
   const [addStakeDialogOpen, setAddStakeDialogOpen] = useState<boolean>(false)
   const [unstakeDialogOpen, setUnstakeDialogOpen] = useState<boolean>(false)
+  const [zapDialogOpen, setZapDialogOpen] = useState<boolean>(false)
   const [selectedStake, setSelectedStake] = useState<StakeItem | undefined>()
 
   const chain = useRecoilValue(useChainState())
@@ -57,7 +59,13 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
   }
 
   const handleToggleUnstakeDialog = (stakeItem?: StakeItem | undefined) => {
+    console.log('called handle unstake')
     setUnstakeDialogOpen(prev => !prev)
+    setSelectedStake(stakeItem)
+  }
+  const handleToggleZapDialog = (stakeItem?: StakeItem | undefined) => {
+    console.log('Called handleZap')
+    setZapDialogOpen(prev => !prev)
     setSelectedStake(stakeItem)
   }
 
@@ -74,6 +82,7 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
             chain={chain}
             handleToggleAddStakeDialog={handleToggleAddStakeDialog}
             handleToggleUnstakeDialog={handleToggleUnstakeDialog}
+            handleToggleZapDialog={handleToggleZapDialog}
           />
         )
       })}
@@ -82,6 +91,14 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
       )}
       {unstakeDialogOpen && selectedStake && (
         <UnstakeDialog account={account} stake={selectedStake} onRequestDismiss={() => handleToggleUnstakeDialog()} />
+      )}
+      {zapDialogOpen && selectedStake && (
+        <ZapDialog
+          account={account}
+          stake={selectedStake}
+          onRequestDismiss={() => handleToggleZapDialog()}
+          isOpen={zapDialogOpen}
+        />
       )}
     </>
   )

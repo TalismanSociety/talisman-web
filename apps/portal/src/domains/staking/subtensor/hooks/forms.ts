@@ -1,7 +1,7 @@
 import type { SubmittableExtrinsic } from '@polkadot/api/types'
 import { useQueryMultiState } from '@talismn/react-polkadot-api'
 import { BigMath } from '@talismn/util'
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
@@ -48,15 +48,27 @@ export const useAddStakeForm = (
     shouldUpdateFeeAndSlippage: netuid !== ROOT_NETUID,
   })
 
+  const limitPrice = alphaPriceWithSlippageFormatted.decimalAmount?.planck || 0n
+  const allowPartial = false
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const stakeTx: SubmittableExtrinsic<any> = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (api.tx as any)?.subtensorModule?.addStakeLimit?.(
+      delegate,
+      netuid,
+      amount.decimalAmount?.planck ?? 0n,
+      limitPrice,
+      allowPartial
+    )
+  }, [allowPartial, amount.decimalAmount?.planck, api.tx, delegate, limitPrice, netuid])
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tx: SubmittableExtrinsic<any> = useMemo(() => {
     if (!delegate || netuid === undefined) {
       // Return a dummy transaction if delegate or netuid is missing
       return api.tx.system.remarkWithEvent('talisman-bittensor')
     }
-
-    const limitPrice = alphaPriceWithSlippageFormatted.decimalAmount?.planck || 0n
-    const allowPartial = false
 
     try {
       return api.tx.utility.batchAll([
@@ -86,14 +98,7 @@ export const useAddStakeForm = (
         api.tx.system.remarkWithEvent(`talisman-bittensor`),
       ])
     }
-  }, [
-    delegate,
-    netuid,
-    alphaPriceWithSlippageFormatted.decimalAmount?.planck,
-    api.tx,
-    amount.decimalAmount?.planck,
-    taoToAlphaTalismanFee,
-  ])
+  }, [delegate, netuid, api.tx, amount.decimalAmount?.planck, taoToAlphaTalismanFee, limitPrice, allowPartial])
 
   const [feeEstimate, isFeeEstimateReady] = useStakeFormFeeEstimate(account.address, tx)
 
@@ -209,6 +214,7 @@ export const useAddStakeForm = (
     expectedAlphaAmount,
     isLoading: extrinsic.state === 'loading' || isSlippageLoading,
     resultingAlphaInTaoAmount,
+    stakeTx,
   }
 }
 
@@ -243,6 +249,18 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
 
   const limitPrice = taoPriceWithSlippageFormatted.decimalAmount?.planck || 0n
   const allowPartial = false
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const unstakeTx: SubmittableExtrinsic<any> = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (api.tx as any)?.subtensorModule?.removeStakeLimit?.(
+      delegate,
+      stake.netuid,
+      amount.decimalAmount?.planck ?? 0n,
+      limitPrice,
+      allowPartial
+    )
+  }, [allowPartial, amount.decimalAmount?.planck, api.tx, delegate, limitPrice, stake.netuid])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tx: SubmittableExtrinsic<any> = useMemo(() => {
@@ -329,7 +347,54 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     isLoading: extrinsic.state === 'loading' || isSlippageLoading,
     talismanFeeTokenAmount: stake.netuid === ROOT_NETUID ? undefined : talismanFeeTokenAmount,
     resultingAlphaInTaoAmount,
+    unstakeTx: unstakeTx,
+    talismanFeeTxTokenAmount,
   }
+}
+
+export const useZapForm = (stake: StakeItem, delegate: string, account: Account | undefined, zapNetuid: number) => {
+  const api = useRecoilValue(useSubstrateApiState())
+
+  const { input, setInput, available, expectedTaoAmount, unstakeTx, talismanFeeTxTokenAmount } = useUnstakeForm(
+    stake,
+    stake.hotkey
+  )
+
+  const {
+    input: addStakeInput,
+    // amount: addStakeAmount,
+    // transferable,
+    expectedAlphaAmount,
+    resulting: resultingZap,
+    setInput: setAddStakeInput,
+    stakeTx,
+  } = useAddStakeForm(account!, undefined, delegate, zapNetuid)
+
+  const handleSetInput = useCallback(
+    (dTaoInput: string) => {
+      setInput(dTaoInput)
+    },
+    [setInput]
+  )
+
+  useEffect(() => {
+    setAddStakeInput(expectedTaoAmount.decimalAmount?.toString() || '0')
+  }, [expectedTaoAmount.decimalAmount, setAddStakeInput])
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tx: SubmittableExtrinsic<any> = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return api.tx.utility.batchAll([
+      unstakeTx,
+      stakeTx,
+      api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, talismanFeeTxTokenAmount),
+      api.tx.system.remarkWithEvent('zap'),
+    ])
+  }, [api.tx.balances, api.tx.system, api.tx.utility, stakeTx, talismanFeeTxTokenAmount, unstakeTx])
+
+  const extrinsic = useExtrinsic(tx)
+
+  return { extrinsic, available, input, addStakeInput, setInput: handleSetInput, resultingZap, expectedAlphaAmount }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
