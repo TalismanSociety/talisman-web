@@ -42,7 +42,7 @@ export const ZapDialog = ({ stake, isOpen, onRequestDismiss }: ZapDialogProps) =
     queryClient.invalidateQueries({ queryKey: ['stakeInfoForColdKey', account?.address] })
   }
 
-  const { extrinsic, available, input, setInput, resultingZap, expectedAlphaAmount } = useZapForm(
+  const { extrinsic, available, input, setInput, expectedAlphaAmount } = useZapForm(
     stake,
     stake.hotkey,
     account,
