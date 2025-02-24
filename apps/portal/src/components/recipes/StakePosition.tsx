@@ -45,6 +45,7 @@ export type StakePositionProps = {
   unstakingStatus?: ReactNode
   increaseStakeButton?: ReactNode
   unstakeButton?: ReactNode
+  zapButton?: ReactNode
   lockedButton?: ReactNode
   menuButton?: ReactNode
   claimButton?: ReactNode
@@ -70,6 +71,15 @@ const UnstakeButton = (props: Omit<MenuItemProps, 'children'>) => (
     {({ readonly }) => (
       <Tooltip content="Account is readonly" disabled={!readonly}>
         <Menu.Item.Button headlineContent="Unstake" disabled={readonly} {...props} />
+      </Tooltip>
+    )}
+  </StakePositionContext.Consumer>
+)
+const ZapButton = (props: Omit<MenuItemProps, 'children'>) => (
+  <StakePositionContext.Consumer>
+    {({ readonly }) => (
+      <Tooltip content="Account is readonly" disabled={!readonly}>
+        <Menu.Item.Button headlineContent="Zap" disabled={readonly} {...props} />
       </Tooltip>
     )}
   </StakePositionContext.Consumer>
@@ -186,7 +196,7 @@ export const FastUnstakingStatus = (props: { amount: ReactNode; status: 'in-head
 
 export const StakePosition = Object.assign(
   (props: StakePositionProps) => {
-    const shouldRenderMenuBtn = props.unstakeButton || props.lockedButton || props.menuButton
+    const shouldRenderMenuBtn = props.unstakeButton || props.lockedButton || props.menuButton || props.zapButton
     const shouldRenderTotalRewards = props.rewards || props.fiatRewards
 
     return (
@@ -267,6 +277,7 @@ export const StakePosition = Object.assign(
                         <>
                           {props.unstakeButton}
                           {props.lockedButton}
+                          {props.zapButton}
                         </>
                       ),
                     }}
@@ -363,6 +374,7 @@ export const StakePosition = Object.assign(
   {
     IncreaseStakeButton,
     UnstakeButton,
+    ZapButton,
     MenuButton,
     ClaimButton,
     WithdrawButton,
