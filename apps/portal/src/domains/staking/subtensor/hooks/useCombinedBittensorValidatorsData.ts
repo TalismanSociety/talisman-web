@@ -1,10 +1,11 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { BondOption } from '../types'
 import { useGetBittensorInfiniteValidators } from './useGetBittensorInfiniteValidators'
 import { useGetBittensorSupportedDelegates } from './useGetBittensorSupportedDelegates'
 
 export const useCombinedBittensorValidatorsData = () => {
+  const [combinedValidatorsData, setCombinedValidatorsData] = useState<BondOption[]>([])
   const {
     data: supportedDelegates,
     isLoading: isSupportedDelegatesLoading,
@@ -25,7 +26,7 @@ export const useCombinedBittensorValidatorsData = () => {
     }
   }, [fetchNextPage, hasNextPage, isFetchingNextPage])
 
-  const combinedValidatorsData = useMemo(() => {
+  useEffect(() => {
     if (
       isSupportedDelegatesLoading ||
       isFetchingNextPage ||
@@ -33,7 +34,7 @@ export const useCombinedBittensorValidatorsData = () => {
       !supportedDelegates ||
       !infiniteValidators
     )
-      return []
+      return
 
     const flatInitialValidators = infiniteValidators.pages.flatMap(page => page.data)
 
@@ -51,8 +52,11 @@ export const useCombinedBittensorValidatorsData = () => {
       }
     })
 
-    return combined
+    if (combined.length === 0) return
+
+    setCombinedValidatorsData(combinedValidatorsData)
   }, [
+    combinedValidatorsData,
     infiniteValidators,
     isFetchingNextPage,
     isInfiniteValidatorsError,

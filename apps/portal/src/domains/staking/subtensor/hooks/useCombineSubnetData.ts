@@ -1,10 +1,11 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { type SubnetData } from '../types'
 import { useGetInfiniteSubnetDescriptions } from './useGetInfiniteSubnetDescriptions'
 import { useGetInfiniteSubnetPools } from './useGetInfiniteSubnetPools'
 
 export const useCombineSubnetData = () => {
+  const [subnetData, setSubnetData] = useState<Record<number, SubnetData>>({})
   const {
     data: subnetDescriptionsData,
     hasNextPage: hasSubnetDescriptionsNextPage,
@@ -31,22 +32,26 @@ export const useCombineSubnetData = () => {
     }
   }, [hasSubnetPoolsNextPage, isSubnetPoolsFetchingNextPage, fetchSubnetPoolsNextPage])
 
-  const subnetData = useMemo(() => {
-    if (!subnetDescriptionsData?.pages.length || !subnetPoolsData?.pages.length) return {}
+  useEffect(() => {
+    if (!subnetDescriptionsData?.pages.length || !subnetPoolsData?.pages.length) return
 
     const descriptions = subnetDescriptionsData.pages
       .flatMap(page => page.data)
       .map(desc => ({ ...desc, descriptionName: desc.name }))
     const pools = subnetPoolsData.pages.flatMap(page => page.data)
 
-    return descriptions.reduce((acc, desc) => {
+    const combinedSubnetData = descriptions.reduce((acc, desc) => {
       const netuid = Number(desc.netuid)
       const pool = pools.find(pool => Number(pool.netuid) === netuid) || {}
 
       acc[netuid] = { ...desc, ...pool }
       return acc
     }, {} as Record<number, SubnetData>)
-  }, [subnetDescriptionsData, subnetPoolsData])
 
-  return { subnetData }
+    console.log({ subnetDescriptionsData, subnetPoolsData, combinedSubnetData })
+
+    setSubnetData(combinedSubnetData)
+  }, [subnetDescriptionsData, subnetDescriptionsData?.pages, subnetPoolsData, subnetPoolsData?.pages])
+
+  return { subnetData: subnetData }
 }
