@@ -48,8 +48,6 @@ export const useCombineSubnetData = () => {
       return acc
     }, {} as Record<number, SubnetData>)
 
-    console.log({ subnetDescriptionsData, subnetPoolsData, combinedSubnetData })
-
     setSubnetData(combinedSubnetData)
   }, [subnetDescriptionsData, subnetDescriptionsData?.pages, subnetPoolsData, subnetPoolsData?.pages])
 

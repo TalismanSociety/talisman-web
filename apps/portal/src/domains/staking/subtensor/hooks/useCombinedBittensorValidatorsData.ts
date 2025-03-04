@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { BondOption } from '../types'
 import { useGetBittensorInfiniteValidators } from './useGetBittensorInfiniteValidators'
