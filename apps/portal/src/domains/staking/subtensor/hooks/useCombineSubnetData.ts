@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { type SubnetData } from '../types'
 import { useGetInfiniteSubnetDescriptions } from './useGetInfiniteSubnetDescriptions'
