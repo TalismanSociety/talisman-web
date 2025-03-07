@@ -32,13 +32,13 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
       b: ReactElement<StakeTargetSelectorItemProps>
     ) => number
   } = {
-    'Validator name': (a, b) => a.props.name.localeCompare(b.props.name),
     'Total staked': (a, b) =>
       (b.props.balancePlanck ?? 0n) === (a.props.balancePlanck ?? 0n)
         ? 0
         : (b.props.balancePlanck ?? 0n) - (a.props.balancePlanck ?? 0n) < 0
         ? -1
         : 1,
+    'Validator name': (a, b) => a.props.name.localeCompare(b.props.name),
     'Number of stakers': (a, b) =>
       parseInt(b.props.count?.toString?.() ?? '0') - parseInt(a.props.count?.toString?.() ?? '0'),
   }
