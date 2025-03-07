@@ -10,6 +10,7 @@ export const useCombineSubnetData = () => {
     data: subnetDescriptionsData,
     hasNextPage: hasSubnetDescriptionsNextPage,
     isFetchingNextPage: isSubnetDescriptionsFetchingNextPage,
+    isError: isSubnetDescriptionsError,
     fetchNextPage: fetchSubnetDescriptionsNextPage,
   } = useGetInfiniteSubnetDescriptions()
 
@@ -17,6 +18,7 @@ export const useCombineSubnetData = () => {
     data: subnetPoolsData,
     hasNextPage: hasSubnetPoolsNextPage,
     isFetchingNextPage: isSubnetPoolsFetchingNextPage,
+    isError: isSubnetPoolsError,
     fetchNextPage: fetchSubnetPoolsNextPage,
   } = useGetInfiniteSubnetPools()
 
@@ -51,5 +53,5 @@ export const useCombineSubnetData = () => {
     setSubnetData(combinedSubnetData)
   }, [subnetDescriptionsData, subnetDescriptionsData?.pages, subnetPoolsData, subnetPoolsData?.pages])
 
-  return { subnetData: subnetData }
+  return { subnetData: subnetData, isError: isSubnetDescriptionsError || isSubnetPoolsError }
 }

@@ -10,11 +10,18 @@ import { type SubnetData } from '@/domains/staking/subtensor/types'
 export type SubnetSelectorCardProps = {
   selected?: boolean
   highlighted?: boolean
-  onClick: (subnetPool: SubnetData) => void
   subnetPool: SubnetData
+  isError: boolean
+  onClick: (subnetPool: SubnetData) => void
 }
 
-export const SubnetSelectorCard = ({ subnetPool, selected, highlighted, onClick }: SubnetSelectorCardProps) => {
+export const SubnetSelectorCard = ({
+  subnetPool,
+  selected,
+  highlighted,
+  isError,
+  onClick,
+}: SubnetSelectorCardProps) => {
   const surfaceVariant = useSurfaceColorAtElevation(x => x + 1)
   const surfaceColor = useSurfaceColor()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
@@ -47,14 +54,16 @@ export const SubnetSelectorCard = ({ subnetPool, selected, highlighted, onClick 
           </Text.Body>
         </div>
       </Tooltip>
-      <div className="flex items-center justify-between">
-        <Tooltip content="Total TAO">
-          <Text.Body alpha={alpha}>{totalTao}</Text.Body>
-        </Tooltip>
-        <Tooltip content="Total Alpha">
-          <Text.Body alpha={alpha}>{totalAlpha}</Text.Body>
-        </Tooltip>
-      </div>
+      {!isError && (
+        <div className="flex items-center justify-between">
+          <Tooltip content="Total TAO">
+            <Text.Body alpha={alpha}>{totalTao}</Text.Body>
+          </Tooltip>
+          <Tooltip content="Total Alpha">
+            <Text.Body alpha={alpha}>{totalAlpha}</Text.Body>
+          </Tooltip>
+        </div>
+      )}
     </article>
   )
 }

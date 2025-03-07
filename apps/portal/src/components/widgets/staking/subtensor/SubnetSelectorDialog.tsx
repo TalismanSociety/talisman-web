@@ -14,7 +14,7 @@ type SubnetSelectorDialogProps = {
 }
 
 export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: SubnetSelectorDialogProps) => {
-  const { subnetData } = useCombineSubnetData()
+  const { subnetData, isError } = useCombineSubnetData()
 
   const [highlighted, setHighlighted] = useState(selected)
 
@@ -60,6 +60,7 @@ export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: 
             onClick={setHighlighted}
             selected={subnet.netuid === selected?.netuid}
             highlighted={subnet.netuid === highlighted?.netuid}
+            isError={isError}
           />
         )
       })}
