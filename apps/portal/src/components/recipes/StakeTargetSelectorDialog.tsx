@@ -15,13 +15,14 @@ export type StakeTargetSelectorDialogProps<T> = {
   title: ReactNode
   currentSelectionLabel: ReactNode
   selectionLabel: ReactNode
-  onRequestDismiss: () => unknown
   confirmButtonContent: ReactNode
-  onConfirm: () => unknown
+  children: ReactElement<T> | Array<ReactElement<T>>
+  isSortDisabled?: boolean
   sortMethods?: {
     [key: string]: (a: ReactElement<T>, b: ReactElement<T>) => number
   }
-  children: ReactElement<T> | Array<ReactElement<T>>
+  onRequestDismiss: () => unknown
+  onConfirm: () => unknown
 }
 
 const ITEMS_PER_PAGE = 9
@@ -85,6 +86,7 @@ export const StakeTargetSelectorDialog = Object.assign(
                   value={sortMethod}
                   onChangeValue={setSortMethod}
                   css={{ minWidth: '22rem' }}
+                  isDisabled={props.isSortDisabled}
                 >
                   {Object.keys(props.sortMethods).length === 0 ? (
                     <Select.Option headlineContent="Default" value="Default" />

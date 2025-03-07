@@ -28,6 +28,7 @@ export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: 
       confirmButtonContent={selected ? 'Swap subnet' : 'Select subnet'}
       onRequestDismiss={onRequestDismiss}
       onConfirm={() => highlighted && onConfirm(highlighted)}
+      isSortDisabled={isError}
       sortMethods={{
         'Subnet UID': (a, b) => {
           return (b.props.subnetPool.netuid ?? 0) === (a.props.subnetPool.netuid ?? 0)
