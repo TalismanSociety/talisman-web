@@ -29,10 +29,7 @@ export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: 
       onRequestDismiss={onRequestDismiss}
       onConfirm={() => highlighted && onConfirm(highlighted)}
       sortMethods={{
-        Default: () => {
-          return 0
-        },
-        'Subnet ID': (a, b) => {
+        'Subnet UID': (a, b) => {
           return (b.props.subnetPool.netuid ?? 0) === (a.props.subnetPool.netuid ?? 0)
             ? 0
             : (Number(b.props.subnetPool.netuid) || 0) - (Number(a.props.subnetPool.netuid) || 0) < 0
