@@ -26,6 +26,7 @@ export type StakeTargetSelectorItemProps = {
   rating?: 0 | 1 | 2 | 3
   count: ReactNode
   countDescription: string
+  className?: string
   onClick?: () => unknown
 }
 
@@ -36,6 +37,7 @@ export const StakeTargetSelectorItem = (props: StakeTargetSelectorItemProps) => 
   return (
     <article
       onClick={props.onClick}
+      className={props.className}
       css={[
         {
           padding: '0.8rem 1.6rem',
