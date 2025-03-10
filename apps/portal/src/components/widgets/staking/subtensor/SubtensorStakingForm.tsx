@@ -19,7 +19,7 @@ import { useSearchParams } from 'react-router-dom'
 import { cn } from '@/util/cn'
 import { Maybe } from '@/util/monads'
 
-import { StakeInfo } from './StakeInfo'
+import { StakeTxBreakdown } from './StakeTxBreakdown'
 
 type AmountInputProps =
   | {
@@ -86,7 +86,6 @@ export type SubtensorStakingFormProps = {
   isSelectSubnetDisabled: boolean
   onRequestChange: () => void
   onSelectSubnet: () => void
-  expectedAmount?: ReactNode
 }
 
 export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
@@ -142,7 +141,7 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
           />
         </label>
       </div>
-      {hasDTaoStaking && <StakeInfo />}
+      {hasDTaoStaking && <StakeTxBreakdown />}
       <div className={clsx({ 'mb-[1.6rem] mt-[1.6rem]': props.currentStakedBalance !== undefined || !hasDTaoStaking })}>
         <DescriptionList>
           {props.currentStakedBalance !== undefined && (
