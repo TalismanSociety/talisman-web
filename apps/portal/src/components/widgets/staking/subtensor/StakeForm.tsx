@@ -10,7 +10,6 @@ import { Account } from '@/domains/accounts/recoils'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useAddStakeForm } from '@/domains/staking/subtensor/hooks/forms'
 import { useDelegateApr } from '@/domains/staking/subtensor/hooks/useApr'
-import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
 import { useStake } from '@/domains/staking/subtensor/hooks/useStake'
 
 import { SubtensorStakingForm } from './SubtensorStakingForm'
@@ -24,33 +23,24 @@ type StakeFormProps = IncompleteSelectionStakeFormProps & {
 
 export const StakeForm = (props: StakeFormProps) => {
   const { stakes } = useStake(props.account)
-  const { subnetData } = useCombineSubnetData()
   const stake = stakes?.find(stake => stake.hotkey === props.delegate && Number(stake.netuid) === Number(props.netuid))
-  const stakeData = subnetData[props.netuid ?? 0]
-  const { input, amount, transferable, extrinsic, ready, error, expectedAlphaAmount, isLoading, setInput } =
-    useAddStakeForm(props.account, stake, props.delegate, props.netuid)
+  const { input, amount, transferable, extrinsic, ready, error, isLoading, setInput } = useAddStakeForm(
+    props.account,
+    stake,
+    props.delegate,
+    props.netuid
+  )
   const navigate = useNavigate()
-  const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
+
   const queryClient = useQueryClient()
 
   const handleStakeInfoRefetch = () => {
     queryClient.invalidateQueries({ queryKey: ['stakeInfoForColdKey', props.account.address] })
   }
 
-  const alphaTokenSymbol = useMemo(() => {
-    const { netuid, symbol, descriptionName } = stakeData || stake || {}
-    return netuid ? `SN${netuid} ${descriptionName} ${symbol}` : '-'
-  }, [stake, stakeData])
-
-  const formattedExpectedAlphaAmount = nativeTokenAmount.fromPlanckOrUndefined(
-    expectedAlphaAmount?.decimalAmount?.planck ?? 0n,
-    alphaTokenSymbol
-  )
-
   return (
     <SubtensorStakingForm
       accountSelector={props.accountSelector}
-      expectedAmount={formattedExpectedAlphaAmount?.decimalAmount?.toLocaleString()}
       amountInput={
         <SubtensorStakingForm.AmountInput
           amount={input}

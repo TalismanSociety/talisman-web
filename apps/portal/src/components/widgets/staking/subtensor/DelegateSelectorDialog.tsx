@@ -19,7 +19,7 @@ type DelegateSelectorDialogProps = {
 export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
   const [searchParams] = useSearchParams()
 
-  const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
+  const { combinedValidatorsData, isError } = useCombinedBittensorValidatorsData()
 
   const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
 
@@ -63,16 +63,24 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
         if (highlighted !== undefined) props.onConfirm(highlighted)
       }}
       sortMethods={sortMethods}
+      isSortDisabled={isError}
     >
       {combinedValidatorsData.map(delegate => {
-        const formattedApr = delegate.apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
+        let formattedApr = !hasDTaoStaking
+          ? delegate.apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
+          : ''
 
         const balance = nativeTokenAmount.fromPlanckOrUndefined(delegate.totalStaked)
 
-        const formattedBalance =
+        let formattedBalance =
           delegate.totalStaked > 0n
             ? balance.decimalAmount?.toLocaleString()
             : `-- ${balance.decimalAmount?.options?.currency}`
+
+        if (isError) {
+          formattedBalance = ''
+          formattedApr = ''
+        }
 
         return (
           <StakeTargetSelectorDialog.Item
@@ -82,16 +90,16 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
             estimatedAprDescription="Estimated APR"
             estimatedApr={!hasDTaoStaking ? formattedApr : undefined}
             talismanRecommendedDescription="Talisman top recommended delegate"
-            rating={3}
             selected={delegate.poolId === props.selected?.poolId}
             highlighted={delegate.poolId === highlighted?.poolId}
             name={delegate.name}
             talismanRecommended={false}
             detailUrl={`${TAOSTATS_INFO_URL}/${delegate.poolId}`}
-            count={delegate.totalStakers || '--'}
+            count={!isError ? delegate.totalStakers : 0}
             balance={formattedBalance ?? ''}
             balancePlanck={balance.decimalAmount?.planck}
             onClick={() => setHighlighted(delegate)}
+            className="min-h-[9.6rem]"
           />
         )
       })}

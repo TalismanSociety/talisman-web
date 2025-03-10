@@ -31,6 +31,7 @@ export type SelectProps<TValue, TClear extends boolean = false> = {
   detached?: boolean
   allowInput?: boolean
   inputValue?: string
+  isDisabled?: boolean
   onInputChange?: React.ChangeEventHandler<HTMLInputElement>
 }
 
@@ -127,7 +128,9 @@ export const Select = Object.assign(
     const { context, x, y, refs, strategy } = useFloating({
       open,
       onOpenChange: open => {
-        setOpen(open)
+        if (!props.isDisabled) {
+          setOpen(open)
+        }
         if (clearRequired) {
           // @ts-expect-error
           props.onChangeValue?.(undefined)
@@ -287,7 +290,7 @@ export const Select = Object.assign(
               gap: '1.6rem',
               textAlign: 'start',
               padding: '0.75rem 1.25rem',
-              cursor: 'pointer',
+              cursor: props.isDisabled ? 'not-allowed' : 'pointer',
               width: '100%',
             },
             !detached &&

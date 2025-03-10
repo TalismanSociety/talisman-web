@@ -56,42 +56,44 @@ export const SlippageDropdown = () => {
   return (
     <div ref={dropdownRef} className="relative inline-block w-full text-left">
       <div
-        className={cn('flex w-full items-center justify-between text-gray-400', {
+        className={cn('flex w-full items-center justify-between', {
           'text-red-500': highestSlippage >= 20,
           'text-orange-500': highestSlippage >= 10 && highestSlippage < 20,
         })}
       >
-        <div className={'flex items-center gap-2'}>
-          <div className="text-[14px]">Slippage</div>
+        <div className="flex items-center gap-2">
+          <div className="text-[14px] text-gray-400">Slippage</div>
+          <Tooltip
+            content={
+              <div className="max-w-[35rem]">
+                Stake transaction will revert if the price changes more than the allowed slippage percentage.
+              </div>
+            }
+            placement="bottom"
+          >
+            <Info size={16} className="text-gray-400" />
+          </Tooltip>
+        </div>
+        <div className="flex items-center gap-2">
           <Tooltip content={<div className="max-w-[35rem]">Set max slippage</div>} placement="top">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="flex cursor-pointer items-center rounded-md shadow-md"
             >
-              <Settings size={20} />
+              <Settings size={16} />
             </button>
           </Tooltip>
+          <div>{slippage === DEFAULT_MAX_SLIPPAGE ? 'Auto' : 'Custom'}</div>
+          <div className="text-[14px]">{`${bittensorSlippage.toFixed(2)}%`}</div>
         </div>
-        <div className="text-[14px]">{`${bittensorSlippage.toFixed(2)}%`}</div>
       </div>
 
       {isOpen && (
         <div className="absolute left-0 mt-2  w-[40rem] rounded-[16px] bg-gray-950 p-4 shadow-lg">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2">
-                <Text.Body>Max slippage</Text.Body>
-                <Tooltip
-                  content={
-                    <div className="max-w-[35rem]">
-                      Stake transaction will revert if the price changes more than the allowed slippage percentage.
-                    </div>
-                  }
-                  placement="bottom"
-                >
-                  <Info size={16} />
-                </Tooltip>
-              </div>
+              <Text.Body>Max slippage</Text.Body>
+
               {leadingSupportingText && leadingSupportingText()}
             </div>
             <TextInput
