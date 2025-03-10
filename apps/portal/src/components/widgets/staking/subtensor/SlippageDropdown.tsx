@@ -56,13 +56,13 @@ export const SlippageDropdown = () => {
   return (
     <div ref={dropdownRef} className="relative inline-block w-full text-left">
       <div
-        className={cn('flex w-full items-center justify-between text-gray-400', {
+        className={cn('flex w-full items-center justify-between', {
           'text-red-500': highestSlippage >= 20,
           'text-orange-500': highestSlippage >= 10 && highestSlippage < 20,
         })}
       >
         <div className="flex items-center gap-2">
-          <div className="text-[14px]">Slippage</div>
+          <div className="text-[14px] text-gray-400">Slippage</div>
           <Tooltip
             content={
               <div className="max-w-[35rem]">
@@ -71,7 +71,7 @@ export const SlippageDropdown = () => {
             }
             placement="bottom"
           >
-            <Info size={16} />
+            <Info size={16} className="text-gray-400" />
           </Tooltip>
         </div>
         <div className="flex items-center gap-2">
