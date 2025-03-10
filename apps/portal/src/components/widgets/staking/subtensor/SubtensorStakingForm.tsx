@@ -6,22 +6,19 @@ import { Button } from '@talismn/ui/atoms/Button'
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { Surface } from '@talismn/ui/atoms/Surface'
 import { Text } from '@talismn/ui/atoms/Text'
-import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { DescriptionList } from '@talismn/ui/molecules/DescriptionList'
 import { ListItem } from '@talismn/ui/molecules/ListItem'
 import { Select } from '@talismn/ui/molecules/Select'
 import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
-import { Info, Zap } from '@talismn/web-icons'
+import { Zap } from '@talismn/web-icons'
 import clsx from 'clsx'
 import { Suspense } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import { SlippageDropdown } from '@/components/widgets/staking/subtensor/SlippageDropdown'
 import { cn } from '@/util/cn'
 import { Maybe } from '@/util/monads'
 
-import { TALISMAN_FEE_BITTENSOR } from './constants'
 import { StakeInfo } from './StakeInfo'
 
 type AmountInputProps =
@@ -145,35 +142,7 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
           />
         </label>
       </div>
-      {hasDTaoStaking && (
-        <>
-          <StakeInfo />
-          <div className="space-y-4 text-[14px]">
-            <div className="flex items-center justify-between">
-              <div className="text-gray-400">Expected amount</div>
-              <div className="text-end">{props.expectedAmount}</div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div>Talisman fee</div>
-                <Tooltip
-                  content={
-                    <div className="max-w-[35rem]">
-                      Talisman applies a {TALISMAN_FEE_BITTENSOR}% fee to each transaction.
-                    </div>
-                  }
-                  placement="top"
-                >
-                  <Info size={16} />
-                </Tooltip>
-              </div>
-              <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                <Text.Body alpha="high">{123}</Text.Body>
-              </Suspense>
-            </div>
-          </div>
-        </>
-      )}
+      {hasDTaoStaking && <StakeInfo />}
       <div className={clsx({ 'mb-[1.6rem] mt-[1.6rem]': props.currentStakedBalance !== undefined || !hasDTaoStaking })}>
         <DescriptionList>
           {props.currentStakedBalance !== undefined && (
@@ -228,17 +197,12 @@ export const SubtensorStakingSideSheet = ({ children, minimumStake, ...props }: 
         {children}
         <div className={cn('mt-[2rem] flex flex-col gap-[1rem]', { 'mt-[6.4rem]': !hasDTaoStaking })}>
           {hasDTaoStaking && (
-            <>
-              <>
-                <SlippageDropdown />
-                <Text.Body as="p">
-                  Note that Dynamic TAO Subnet staking has more variable rewards than the Legacy TAO Staking.{' '}
-                  <Text.Body.A href="https://taostats.io/subnets" target="_blank">
-                    Learn more
-                  </Text.Body.A>
-                </Text.Body>
-              </>
-            </>
+            <Text.Body as="p">
+              Note that Dynamic TAO Subnet staking has more variable rewards than the Legacy TAO Staking.{' '}
+              <Text.Body.A href="https://taostats.io/subnets" target="_blank">
+                Learn more
+              </Text.Body.A>
+            </Text.Body>
           )}
 
           <Text.Body as="p">
