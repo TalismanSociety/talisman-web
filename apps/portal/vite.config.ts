@@ -10,7 +10,7 @@ import wasm from 'vite-plugin-wasm'
 export default defineConfig({
   optimizeDeps: {
     // getting dev error without this setting
-    exclude: ['node_modules/.vite/deps'],
+    exclude: ['node_modules/.vite/deps', 'threads/worker'],
   },
   plugins: [
     react({

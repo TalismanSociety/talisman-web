@@ -14,16 +14,15 @@ import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/mol
 import { TextInput } from '@talismn/ui/molecules/TextInput'
 import { Info, Zap } from '@talismn/web-icons'
 import clsx from 'clsx'
-import { useAtom } from 'jotai'
 import { Suspense } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import { SlippageDropdown } from '@/components/widgets/staking/subtensor/SlippageDropdown'
-import { talismanTokenFeeAtom } from '@/domains/staking/subtensor/atoms/talismanTokenFee'
 import { cn } from '@/util/cn'
 import { Maybe } from '@/util/monads'
 
 import { TALISMAN_FEE_BITTENSOR } from './constants'
+import { StakeInfo } from './StakeInfo'
 
 type AmountInputProps =
   | {
@@ -146,7 +145,35 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
           />
         </label>
       </div>
-      {hasDTaoStaking && <div className="mt-[1.6rem]  text-end">{props.expectedAmount}</div>}
+      {hasDTaoStaking && (
+        <>
+          <StakeInfo />
+          <div className="space-y-4 text-[14px]">
+            <div className="flex items-center justify-between">
+              <div className="text-gray-400">Expected amount</div>
+              <div className="text-end">{props.expectedAmount}</div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div>Talisman fee</div>
+                <Tooltip
+                  content={
+                    <div className="max-w-[35rem]">
+                      Talisman applies a {TALISMAN_FEE_BITTENSOR}% fee to each transaction.
+                    </div>
+                  }
+                  placement="top"
+                >
+                  <Info size={16} />
+                </Tooltip>
+              </div>
+              <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                <Text.Body alpha="high">{123}</Text.Body>
+              </Suspense>
+            </div>
+          </div>
+        </>
+      )}
       <div className={clsx({ 'mb-[1.6rem] mt-[1.6rem]': props.currentStakedBalance !== undefined || !hasDTaoStaking })}>
         <DescriptionList>
           {props.currentStakedBalance !== undefined && (
@@ -185,7 +212,6 @@ export type SubtensorStakingSideSheetProps = Omit<SideSheetProps, 'title'> & {
 export const SubtensorStakingSideSheet = ({ children, minimumStake, ...props }: SubtensorStakingSideSheetProps) => {
   const [searchParams] = useSearchParams()
   const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
-  const [talismanFeeTokenAmount] = useAtom(talismanTokenFeeAtom)
 
   return (
     <SideSheet
@@ -203,27 +229,6 @@ export const SubtensorStakingSideSheet = ({ children, minimumStake, ...props }: 
         <div className={cn('mt-[2rem] flex flex-col gap-[1rem]', { 'mt-[6.4rem]': !hasDTaoStaking })}>
           {hasDTaoStaking && (
             <>
-              <div className="mt-[2rem] flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Text.Body as="p" alpha="high">
-                    Talisman fee
-                  </Text.Body>
-                  <Tooltip
-                    content={
-                      <div className="max-w-[35rem]">
-                        Talisman applies a {TALISMAN_FEE_BITTENSOR}% fee to each transaction.
-                      </div>
-                    }
-                    placement="top"
-                  >
-                    <Info size={16} />
-                  </Tooltip>
-                </div>
-                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                  <Text.Body alpha="high">{talismanFeeTokenAmount?.decimalAmount?.toLocaleStringPrecision()}</Text.Body>
-                </Suspense>
-              </div>
-
               <>
                 <SlippageDropdown />
                 <Text.Body as="p">

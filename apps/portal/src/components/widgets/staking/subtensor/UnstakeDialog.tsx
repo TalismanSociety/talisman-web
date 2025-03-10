@@ -36,7 +36,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
     isLoading,
     talismanFeeTokenAmount,
     resultingAlphaInTaoAmount,
-  } = useUnstakeForm(props.stake, props.delegate)
+  } = useUnstakeForm(props.account, props.stake, props.delegate)
   const { t } = useTranslation()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 

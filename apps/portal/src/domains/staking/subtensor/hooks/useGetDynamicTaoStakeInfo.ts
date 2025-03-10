@@ -6,6 +6,9 @@ import { useTokenAmount, useTokenAmountFromPlanck } from '@/domains/common/hooks
 import { Decimal } from '@/util/Decimal'
 
 import { bittensorSlippageAtom, maxSlippageAtom } from '../atoms/bittensorSlippage'
+import { dTaoConversionRateAtom } from '../atoms/dTaoConversionRate'
+import { expectedAlphaAmountAtom } from '../atoms/expectedAlphaAmount'
+import { netuidAtom } from '../atoms/netuid'
 import { talismanTokenFeeAtom } from '../atoms/talismanTokenFee'
 import { type RuntimePoolData } from '../types'
 import { useGetSubnetMetagraphByNetuid } from './useGetSubnetMetagraphByNetuid'
@@ -31,6 +34,9 @@ export const useGetDynamicTaoStakeInfo = ({
 }) => {
   const { data, isLoading, error } = useGetSubnetMetagraphByNetuid({ netuid })
   const setBittensorSlippage = useSetAtom(bittensorSlippageAtom)
+  const setExpectedAlphaAmount = useSetAtom(expectedAlphaAmountAtom)
+  const setDTaoConversionRate = useSetAtom(dTaoConversionRateAtom)
+  const setNetuid = useSetAtom(netuidAtom)
   const setTalismanTokenFee = useSetAtom(talismanTokenFeeAtom)
 
   const maxSlippage = useAtomValue(maxSlippageAtom)
@@ -39,10 +45,18 @@ export const useGetDynamicTaoStakeInfo = ({
   const slippage = calculateSlippage({ pool: data, taoStaked: raoInputAmount })
 
   const alphaPrice = calculateAlphaPrice({ pool: data })
+
   const expectedAlpha = calculateExpectedAlpha({
     alphaPrice,
     taoStaked: amount?.decimalAmount?.toNumber() ?? 0,
     slippage,
+  })
+
+  // calculate the conversion rate of 1 Tao to alpha with zero slippage
+  const alphaToTaoConversionRate = calculateExpectedAlpha({
+    alphaPrice,
+    taoStaked: 1,
+    slippage: 0,
   })
 
   const expectedTao = calculateExpectedTao({
@@ -62,6 +76,7 @@ export const useGetDynamicTaoStakeInfo = ({
 
   const expectedAlphaAmount = useTokenAmount(expectedAlpha.toString())
   const expectedTaoAmount = useTokenAmount(expectedTao.toString())
+  const formattedAlphaToTaoConversionRate = useTokenAmount(alphaToTaoConversionRate.toString())
 
   const alphaToTaoSlippage = calculateSlippage({ pool: data, taoStaked: expectedTaoAmount.decimalAmount?.planck || 0n })
 
@@ -78,12 +93,19 @@ export const useGetDynamicTaoStakeInfo = ({
   const alphaToTaoTalismanFeeFormatted = useTokenAmountFromPlanck(alphaToTaoTalismanFee)
 
   useEffect(() => {
-    if (!shouldUpdateFeeAndSlippage) return
-    setBittensorSlippage(direction === 'taoToAlpha' ? slippage : alphaToTaoSlippage)
-  }, [alphaToTaoSlippage, direction, setBittensorSlippage, shouldUpdateFeeAndSlippage, slippage])
+    setNetuid(netuid)
+  }, [netuid, setNetuid])
 
   useEffect(() => {
     if (!shouldUpdateFeeAndSlippage) return
+    // Update expected alpha amount and conversion rate
+    setExpectedAlphaAmount(expectedAlphaAmount)
+    setDTaoConversionRate(formattedAlphaToTaoConversionRate)
+
+    // Update bittensor slippage
+    setBittensorSlippage(direction === 'taoToAlpha' ? slippage : alphaToTaoSlippage)
+
+    // Update talisman token fee based on direction and netuid
     // Rootnet txs should use the taoToAlpha fee calculations
     if (direction === 'taoToAlpha' || netuid === ROOT_NETUID) {
       setTalismanTokenFee(taoToAlphaTalismanFeeFormatted)
@@ -91,12 +113,18 @@ export const useGetDynamicTaoStakeInfo = ({
       setTalismanTokenFee(alphaToTaoTalismanFeeFormatted)
     }
   }, [
+    alphaToTaoSlippage,
     alphaToTaoTalismanFeeFormatted,
     direction,
+    expectedAlphaAmount,
+    formattedAlphaToTaoConversionRate,
     netuid,
+    setBittensorSlippage,
+    setDTaoConversionRate,
+    setExpectedAlphaAmount,
     setTalismanTokenFee,
     shouldUpdateFeeAndSlippage,
-    taoToAlphaTalismanFee,
+    slippage,
     taoToAlphaTalismanFeeFormatted,
   ])
 
