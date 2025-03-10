@@ -15,7 +15,11 @@ import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombi
 import { ROOT_NETUID, TALISMAN_FEE_BITTENSOR } from './constants'
 import { SlippageDropdown } from './SlippageDropdown'
 
-export const StakeTxBreakdown = () => {
+type StakeTxBreakdownProps = {
+  shouldHideExpectedAmount?: boolean
+}
+
+export const StakeTxBreakdown = ({ shouldHideExpectedAmount }: StakeTxBreakdownProps) => {
   const [talismanFeeTokenAmount] = useAtom(talismanTokenFeeAtom)
   const [expectedAlphaAmount] = useAtom(expectedAlphaAmountAtom)
   const [dTaoConversionRate] = useAtom(dTaoConversionRateAtom)
@@ -44,10 +48,12 @@ export const StakeTxBreakdown = () => {
 
   return (
     <div className="space-y-4 text-[14px]">
-      <div className="flex items-center justify-between">
-        <div className="text-gray-400">Expected amount</div>
-        <div className="text-end">{formattedExpectedAlphaAmount?.decimalAmount?.toLocaleString()}</div>
-      </div>
+      {!shouldHideExpectedAmount && (
+        <div className="flex items-center justify-between">
+          <div className="text-gray-400">Expected amount</div>
+          <div className="text-end">{formattedExpectedAlphaAmount?.decimalAmount?.toLocaleString()}</div>
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <div className="text-gray-400">Conversion Rate</div>
         <div className="text-end">1 TAO = {formattedConversionRate?.decimalAmount?.toLocaleString()}</div>
