@@ -1,10 +1,11 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 
 import { BondOption } from '../types'
 import { useGetBittensorInfiniteValidators } from './useGetBittensorInfiniteValidators'
 import { useGetBittensorSupportedDelegates } from './useGetBittensorSupportedDelegates'
 
 export const useCombinedBittensorValidatorsData = () => {
+  const [validatorsData, setValidatorsData] = useState<BondOption[]>([])
   const {
     data: supportedDelegates,
     isLoading: isSupportedDelegatesLoading,
@@ -25,21 +26,16 @@ export const useCombinedBittensorValidatorsData = () => {
     }
   }, [fetchNextPage, hasNextPage, isFetchingNextPage])
 
-  const combinedValidatorsData = useMemo(() => {
-    if (
-      isSupportedDelegatesLoading ||
-      isFetchingNextPage ||
-      isValidatorsLoading ||
-      !supportedDelegates ||
-      !infiniteValidators
-    )
-      return []
+  useEffect(() => {
+    // supportedDelegates data is mission critical for staking, and it's query is initialized with placeholder data.
+    // If it's not available, do not proceed with combining bad response data.
+    if (!supportedDelegates) return
 
-    const flatInitialValidators = infiniteValidators.pages.flatMap(page => page.data)
+    const flatInitialValidators = infiniteValidators?.pages.flatMap(page => page.data)
 
     const combined: BondOption[] = Object.keys(supportedDelegates).map(key => {
-      const supportedDelegate = supportedDelegates[key]
-      const validator = flatInitialValidators.find(validator => validator?.hotkey?.ss58 === key)
+      const supportedDelegate = supportedDelegates?.[key]
+      const validator = flatInitialValidators?.find(validator => validator?.hotkey?.ss58 === key)
       return {
         poolId: key,
         name: supportedDelegate?.name ?? '',
@@ -51,20 +47,12 @@ export const useCombinedBittensorValidatorsData = () => {
       }
     })
 
-    return combined
-  }, [
-    infiniteValidators,
-    isFetchingNextPage,
-    isInfiniteValidatorsError,
-    isSupportedDelegatesLoading,
-    isValidatorsLoading,
-    supportedDelegates,
-  ])
+    setValidatorsData(combined)
+  }, [infiniteValidators?.pages, isInfiniteValidatorsError, supportedDelegates])
 
   return {
-    combinedValidatorsData,
+    combinedValidatorsData: validatorsData,
     isLoading: isSupportedDelegatesLoading || isValidatorsLoading || isFetchingNextPage,
-    isSupportedValidatorsError: isBittensorSupportedDelegatesError,
-    isInfiniteValidatorsError,
+    isError: isBittensorSupportedDelegatesError || isInfiniteValidatorsError,
   }
 }

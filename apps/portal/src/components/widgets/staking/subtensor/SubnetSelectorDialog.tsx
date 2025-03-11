@@ -14,7 +14,7 @@ type SubnetSelectorDialogProps = {
 }
 
 export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: SubnetSelectorDialogProps) => {
-  const { subnetData } = useCombineSubnetData()
+  const { subnetData, isError } = useCombineSubnetData()
 
   const [highlighted, setHighlighted] = useState(selected)
 
@@ -28,11 +28,9 @@ export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: 
       confirmButtonContent={selected ? 'Swap subnet' : 'Select subnet'}
       onRequestDismiss={onRequestDismiss}
       onConfirm={() => highlighted && onConfirm(highlighted)}
+      isSortDisabled={isError}
       sortMethods={{
-        Default: () => {
-          return 0
-        },
-        'Subnet ID': (a, b) => {
+        'Subnet UID': (a, b) => {
           return (b.props.subnetPool.netuid ?? 0) === (a.props.subnetPool.netuid ?? 0)
             ? 0
             : (Number(b.props.subnetPool.netuid) || 0) - (Number(a.props.subnetPool.netuid) || 0) < 0
@@ -63,6 +61,7 @@ export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: 
             onClick={setHighlighted}
             selected={subnet.netuid === selected?.netuid}
             highlighted={subnet.netuid === highlighted?.netuid}
+            isError={isError}
           />
         )
       })}

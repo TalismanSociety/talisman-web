@@ -1,7 +1,8 @@
 import type { SubmittableExtrinsic } from '@polkadot/api/types'
 import { useQueryMultiState } from '@talismn/react-polkadot-api'
 import { BigMath } from '@talismn/util'
-import { useMemo, useState } from 'react'
+import { useSetAtom } from 'jotai'
+import { useEffect, useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
@@ -18,6 +19,7 @@ import { useTokenAmount, useTokenAmountFromPlanck } from '@/domains/common/hooks
 import { paymentInfoState } from '@/domains/common/recoils'
 import { useGetDynamicTaoStakeInfo } from '@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo'
 
+import { feeEstimateAtom } from '../atoms/feeEstimate'
 import { type StakeItem } from './useStake'
 
 export const useAddStakeForm = (
@@ -26,6 +28,7 @@ export const useAddStakeForm = (
   delegate: string | undefined,
   netuid: number | undefined
 ) => {
+  const setFeeEstimate = useSetAtom(feeEstimateAtom)
   const [api, [accountInfo]] = useRecoilValue(
     waitForAll([useSubstrateApiState(), useQueryMultiState([['system.account', account.address]])])
   )
@@ -96,6 +99,12 @@ export const useAddStakeForm = (
   ])
 
   const [feeEstimate, isFeeEstimateReady] = useStakeFormFeeEstimate(account.address, tx)
+
+  const formattedFeeEstimate = useTokenAmountFromPlanck(feeEstimate)
+
+  useEffect(() => {
+    setFeeEstimate(formattedFeeEstimate)
+  }, [formattedFeeEstimate, setFeeEstimate])
 
   const existentialDeposit = useMemo(
     () => api.consts.balances.existentialDeposit.toBigInt(),
@@ -212,7 +221,8 @@ export const useAddStakeForm = (
   }
 }
 
-export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
+export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: string) => {
+  const setFeeEstimate = useSetAtom(feeEstimateAtom)
   const api = useRecoilValue(useSubstrateApiState())
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
@@ -272,6 +282,14 @@ export const useUnstakeForm = (stake: StakeItem, delegate: string) => {
     }
   }, [api.tx, delegate, amount.decimalAmount?.planck, stake.netuid, limitPrice, allowPartial, talismanFeeTxTokenAmount])
   const extrinsic = useExtrinsic(tx)
+
+  const [feeEstimate] = useStakeFormFeeEstimate(account.address, tx)
+
+  const formattedFeeEstimate = useTokenAmountFromPlanck(feeEstimate)
+
+  useEffect(() => {
+    setFeeEstimate(formattedFeeEstimate)
+  }, [formattedFeeEstimate, setFeeEstimate])
 
   const available = nativeTokenAmount.fromPlanckOrUndefined(stake.stake, stake?.symbol)
 

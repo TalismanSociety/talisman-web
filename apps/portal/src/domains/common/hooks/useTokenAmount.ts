@@ -8,6 +8,8 @@ import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@/domains/
 
 type Options<TAllowInvalid extends boolean = boolean> = { currency?: string; allowInvalidValue?: TAllowInvalid }
 
+export type TokenAmount = ReturnType<typeof useTokenAmount>
+
 export const useTokenAmount = <TAllowInvalid extends boolean = true>(
   amount: string,
   options: Options<TAllowInvalid> = { allowInvalidValue: true as TAllowInvalid }

@@ -6,24 +6,20 @@ import { Button } from '@talismn/ui/atoms/Button'
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { Surface } from '@talismn/ui/atoms/Surface'
 import { Text } from '@talismn/ui/atoms/Text'
-import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { DescriptionList } from '@talismn/ui/molecules/DescriptionList'
 import { ListItem } from '@talismn/ui/molecules/ListItem'
 import { Select } from '@talismn/ui/molecules/Select'
 import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
-import { Info, Zap } from '@talismn/web-icons'
+import { Zap } from '@talismn/web-icons'
 import clsx from 'clsx'
-import { useAtom } from 'jotai'
 import { Suspense } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import { SlippageDropdown } from '@/components/widgets/staking/subtensor/SlippageDropdown'
-import { talismanTokenFeeAtom } from '@/domains/staking/subtensor/atoms/talismanTokenFee'
 import { cn } from '@/util/cn'
 import { Maybe } from '@/util/monads'
 
-import { TALISMAN_FEE_BITTENSOR } from './constants'
+import { StakeTxBreakdown } from './StakeTxBreakdown'
 
 type AmountInputProps =
   | {
@@ -90,7 +86,6 @@ export type SubtensorStakingFormProps = {
   isSelectSubnetDisabled: boolean
   onRequestChange: () => void
   onSelectSubnet: () => void
-  expectedAmount?: ReactNode
 }
 
 export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
@@ -146,7 +141,7 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
           />
         </label>
       </div>
-      {hasDTaoStaking && <div className="mt-[1.6rem]  text-end">{props.expectedAmount}</div>}
+      {hasDTaoStaking && <StakeTxBreakdown />}
       <div className={clsx({ 'mb-[1.6rem] mt-[1.6rem]': props.currentStakedBalance !== undefined || !hasDTaoStaking })}>
         <DescriptionList>
           {props.currentStakedBalance !== undefined && (
@@ -185,7 +180,6 @@ export type SubtensorStakingSideSheetProps = Omit<SideSheetProps, 'title'> & {
 export const SubtensorStakingSideSheet = ({ children, minimumStake, ...props }: SubtensorStakingSideSheetProps) => {
   const [searchParams] = useSearchParams()
   const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
-  const [talismanFeeTokenAmount] = useAtom(talismanTokenFeeAtom)
 
   return (
     <SideSheet
@@ -202,38 +196,12 @@ export const SubtensorStakingSideSheet = ({ children, minimumStake, ...props }: 
         {children}
         <div className={cn('mt-[2rem] flex flex-col gap-[1rem]', { 'mt-[6.4rem]': !hasDTaoStaking })}>
           {hasDTaoStaking && (
-            <>
-              <div className="mt-[2rem] flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Text.Body as="p" alpha="high">
-                    Talisman fee
-                  </Text.Body>
-                  <Tooltip
-                    content={
-                      <div className="max-w-[35rem]">
-                        Talisman applies a {TALISMAN_FEE_BITTENSOR}% fee to each transaction.
-                      </div>
-                    }
-                    placement="top"
-                  >
-                    <Info size={16} />
-                  </Tooltip>
-                </div>
-                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                  <Text.Body alpha="high">{talismanFeeTokenAmount?.decimalAmount?.toLocaleStringPrecision()}</Text.Body>
-                </Suspense>
-              </div>
-
-              <>
-                <SlippageDropdown />
-                <Text.Body as="p">
-                  Note that Dynamic TAO Subnet staking has more variable rewards than the Legacy TAO Staking.{' '}
-                  <Text.Body.A href="https://taostats.io/subnets" target="_blank">
-                    Learn more
-                  </Text.Body.A>
-                </Text.Body>
-              </>
-            </>
+            <Text.Body as="p">
+              Note that Dynamic TAO Subnet staking has more variable rewards than the Legacy TAO Staking.{' '}
+              <Text.Body.A href="https://taostats.io/subnets" target="_blank">
+                Learn more
+              </Text.Body.A>
+            </Text.Body>
           )}
 
           <Text.Body as="p">

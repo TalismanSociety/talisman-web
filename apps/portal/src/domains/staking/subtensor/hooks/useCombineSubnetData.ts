@@ -10,6 +10,7 @@ export const useCombineSubnetData = () => {
     data: subnetDescriptionsData,
     hasNextPage: hasSubnetDescriptionsNextPage,
     isFetchingNextPage: isSubnetDescriptionsFetchingNextPage,
+    isError: isSubnetDescriptionsError,
     fetchNextPage: fetchSubnetDescriptionsNextPage,
   } = useGetInfiniteSubnetDescriptions()
 
@@ -17,6 +18,7 @@ export const useCombineSubnetData = () => {
     data: subnetPoolsData,
     hasNextPage: hasSubnetPoolsNextPage,
     isFetchingNextPage: isSubnetPoolsFetchingNextPage,
+    isError: isSubnetPoolsError,
     fetchNextPage: fetchSubnetPoolsNextPage,
   } = useGetInfiniteSubnetPools()
 
@@ -33,6 +35,8 @@ export const useCombineSubnetData = () => {
   }, [hasSubnetPoolsNextPage, isSubnetPoolsFetchingNextPage, fetchSubnetPoolsNextPage])
 
   useEffect(() => {
+    // subnetDescriptionsData and subnetPoolsData data are mission critical for alpha staking, and their query are initialized with placeholder data.
+    // If they are not available, do not proceed with combining bad response data.
     if (!subnetDescriptionsData?.pages.length || !subnetPoolsData?.pages.length) return
 
     const descriptions = subnetDescriptionsData.pages
@@ -51,5 +55,5 @@ export const useCombineSubnetData = () => {
     setSubnetData(combinedSubnetData)
   }, [subnetDescriptionsData, subnetDescriptionsData?.pages, subnetPoolsData, subnetPoolsData?.pages])
 
-  return { subnetData: subnetData }
+  return { subnetData: subnetData, isError: isSubnetDescriptionsError || isSubnetPoolsError }
 }
