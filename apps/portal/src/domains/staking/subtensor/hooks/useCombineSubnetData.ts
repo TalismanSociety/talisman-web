@@ -35,6 +35,8 @@ export const useCombineSubnetData = () => {
   }, [hasSubnetPoolsNextPage, isSubnetPoolsFetchingNextPage, fetchSubnetPoolsNextPage])
 
   useEffect(() => {
+    // subnetDescriptionsData and subnetPoolsData data are mission critical for alpha staking, and their query are initialized with placeholder data.
+    // If they are not available, do not proceed with combining bad response data.
     if (!subnetDescriptionsData?.pages.length || !subnetPoolsData?.pages.length) return
 
     const descriptions = subnetDescriptionsData.pages
