@@ -7,7 +7,8 @@ import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
 import {
-  MIN_SUBTENSOR_STAKE,
+  MIN_SUBTENSOR_ALPHA_STAKE,
+  MIN_SUBTENSOR_ROOTNET_STAKE,
   ROOT_NETUID,
   TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR,
 } from '@/components/widgets/staking/subtensor/constants'
@@ -28,13 +29,16 @@ export const useAddStakeForm = (
   delegate: string | undefined,
   netuid: number | undefined
 ) => {
+  const [input, setInput] = useState('')
   const setFeeEstimate = useSetAtom(feeEstimateAtom)
+
   const [api, [accountInfo]] = useRecoilValue(
     waitForAll([useSubstrateApiState(), useQueryMultiState([['system.account', account.address]])])
   )
-
-  const [input, setInput] = useState('')
   const amount = useTokenAmount(input)
+
+  const isRootnetStake = netuid === ROOT_NETUID
+
   const {
     slippage,
     isLoading: isSlippageLoading,
@@ -48,7 +52,7 @@ export const useAddStakeForm = (
     amount: amount,
     netuid: netuid ?? 0,
     direction: 'taoToAlpha',
-    shouldUpdateFeeAndSlippage: netuid !== ROOT_NETUID,
+    shouldUpdateFeeAndSlippage: !isRootnetStake,
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,7 +73,7 @@ export const useAddStakeForm = (
         api.tx.system.remarkWithEvent(`talisman-bittensor`),
       ])
     } catch {
-      if (netuid === ROOT_NETUID) {
+      if (isRootnetStake) {
         return api.tx.utility.batchAll([
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (api.tx as any)?.subtensorModule?.addStake?.(delegate, netuid, amount.decimalAmount?.planck ?? 0n),
@@ -96,6 +100,7 @@ export const useAddStakeForm = (
     api.tx,
     amount.decimalAmount?.planck,
     taoToAlphaTalismanFee,
+    isRootnetStake,
   ])
 
   const [feeEstimate, isFeeEstimateReady] = useStakeFormFeeEstimate(account.address, tx)
@@ -169,14 +174,15 @@ export const useAddStakeForm = (
     )
   )
 
-  const minimum = useTokenAmount(String(MIN_SUBTENSOR_STAKE))
+  const minimum = useTokenAmount(String(isRootnetStake ? MIN_SUBTENSOR_ROOTNET_STAKE : MIN_SUBTENSOR_ALPHA_STAKE))
   const error = useMemo(() => {
     if (input === '') return
     if ((amount.decimalAmount?.planck ?? 0n) > transferable.decimalAmount.planck)
       return new Error('Insufficient balance')
 
-    if (resultingTao.decimalAmount && resultingTao.decimalAmount?.planck < (minimum.decimalAmount?.planck ?? 0n))
+    if ((amount.decimalAmount?.planck ?? 0n) < (minimum.decimalAmount?.planck ?? 0n)) {
       return new Error(`Minimum stake is ${minimum.decimalAmount?.toLocaleStringPrecision()}`)
+    }
 
     if (isDynamicTaoStakeInfoError) {
       return new Error('Failed to fetch dynamic tao stake info')
@@ -188,7 +194,6 @@ export const useAddStakeForm = (
     input,
     isDynamicTaoStakeInfoError,
     minimum.decimalAmount,
-    resultingTao.decimalAmount,
     transferable.decimalAmount.planck,
   ])
 
@@ -207,7 +212,7 @@ export const useAddStakeForm = (
     input,
     setInput,
     amount,
-    talismanFeeTokenAmount: netuid === ROOT_NETUID ? undefined : taoToAlphaTalismanFeeFormatted,
+    talismanFeeTokenAmount: isRootnetStake ? undefined : taoToAlphaTalismanFeeFormatted,
     transferable,
     resulting,
     resultingTao,
@@ -228,12 +233,14 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 
   const [input, setInput] = useState('')
   const amount = useTokenAmount(input)
+  const isRootnetStake = stake.netuid === ROOT_NETUID
 
   const {
     alphaToTaoSlippage: slippage,
     isLoading: isSlippageLoading,
     error: isDynamicTaoStakeInfoError,
     expectedTaoAmount,
+    minAlphaUnstake,
     taoPriceWithSlippageFormatted,
     alphaToTaoTalismanFee,
     alphaToTaoTalismanFeeFormatted,
@@ -244,12 +251,11 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
     amount: amount,
     netuid: stake.netuid,
     direction: 'alphaToTao',
-    shouldUpdateFeeAndSlippage: stake.netuid !== ROOT_NETUID,
+    shouldUpdateFeeAndSlippage: isRootnetStake,
   })
 
-  const talismanFeeTxTokenAmount = stake.netuid === ROOT_NETUID ? taoToAlphaTalismanFee : alphaToTaoTalismanFee
-  const talismanFeeTokenAmount =
-    stake.netuid === ROOT_NETUID ? taoToAlphaTalismanFeeFormatted : alphaToTaoTalismanFeeFormatted
+  const talismanFeeTxTokenAmount = isRootnetStake ? taoToAlphaTalismanFee : alphaToTaoTalismanFee
+  const talismanFeeTokenAmount = isRootnetStake ? taoToAlphaTalismanFeeFormatted : alphaToTaoTalismanFeeFormatted
 
   const limitPrice = taoPriceWithSlippageFormatted.decimalAmount?.planck || 0n
   const allowPartial = false
@@ -260,7 +266,7 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (api.tx as any)?.subtensorModule?.removeStake?.(delegate, amount.decimalAmount?.planck ?? 0n)
     } catch {
-      if (stake.netuid === ROOT_NETUID) {
+      if (isRootnetStake) {
         return api.tx.utility.batchAll([
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (api.tx as any)?.subtensorModule?.removeStake?.(delegate, stake.netuid, amount.decimalAmount?.planck ?? 0n),
@@ -280,7 +286,16 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
         api.tx.system.remarkWithEvent(`talisman-bittensor`),
       ])
     }
-  }, [api.tx, delegate, amount.decimalAmount?.planck, stake.netuid, limitPrice, allowPartial, talismanFeeTxTokenAmount])
+  }, [
+    api.tx,
+    delegate,
+    amount.decimalAmount?.planck,
+    isRootnetStake,
+    stake.netuid,
+    limitPrice,
+    allowPartial,
+    talismanFeeTxTokenAmount,
+  ])
   const extrinsic = useExtrinsic(tx)
 
   const [feeEstimate] = useStakeFormFeeEstimate(account.address, tx)
@@ -293,18 +308,24 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 
   const available = nativeTokenAmount.fromPlanckOrUndefined(stake.stake, stake?.symbol)
 
-  const minimum = useTokenAmount(String(MIN_SUBTENSOR_STAKE))
+  const minimum = useTokenAmount(String(isRootnetStake ? MIN_SUBTENSOR_ROOTNET_STAKE : minAlphaUnstake))
+  const minimumFormatted = nativeTokenAmount.fromPlanckOrUndefined(minimum.decimalAmount?.planck ?? 0n, stake?.symbol)
+
   const error = useMemo(() => {
     if (input === '' || !available.decimalAmount) return
 
     if ((amount.decimalAmount?.planck ?? 0n) > available.decimalAmount.planck) return new Error('Insufficient balance')
 
+    if ((amount.decimalAmount?.planck ?? 0n) < (minimumFormatted.decimalAmount?.planck ?? 0n)) {
+      return new Error(`Minimum unstake is ${minimumFormatted.decimalAmount?.toLocaleStringPrecision()}`)
+    }
+
     if (
       amount.decimalAmount &&
       available.decimalAmount.planck - amount.decimalAmount.planck > 0n &&
-      available.decimalAmount.planck - amount.decimalAmount.planck < (minimum.decimalAmount?.planck ?? 0n)
+      available.decimalAmount.planck - amount.decimalAmount.planck < (minimumFormatted.decimalAmount?.planck ?? 0n)
     ) {
-      return new Error(`Need ${minimum.decimalAmount?.toLocaleString?.()} to keep staking`)
+      return new Error(`Need ${minimumFormatted.decimalAmount?.toLocaleString?.()} to keep staking`)
     }
 
     if (isDynamicTaoStakeInfoError) {
@@ -312,7 +333,7 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
     }
 
     return undefined
-  }, [amount.decimalAmount, available.decimalAmount, input, isDynamicTaoStakeInfoError, minimum.decimalAmount])
+  }, [amount.decimalAmount, available.decimalAmount, input, isDynamicTaoStakeInfoError, minimumFormatted.decimalAmount])
 
   const resulting = useTokenAmountFromPlanck(
     useMemo(
@@ -345,7 +366,7 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
     alphaToTaoSlippage: slippage,
     expectedTaoAmount,
     isLoading: extrinsic.state === 'loading' || isSlippageLoading,
-    talismanFeeTokenAmount: stake.netuid === ROOT_NETUID ? undefined : talismanFeeTokenAmount,
+    talismanFeeTokenAmount: isRootnetStake ? undefined : talismanFeeTokenAmount,
     resultingAlphaInTaoAmount,
   }
 }
