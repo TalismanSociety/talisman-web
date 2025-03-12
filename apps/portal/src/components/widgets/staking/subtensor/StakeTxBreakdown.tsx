@@ -51,12 +51,16 @@ export const StakeTxBreakdown = ({ shouldHideExpectedAmount }: StakeTxBreakdownP
       {!shouldHideExpectedAmount && (
         <div className="flex items-center justify-between">
           <div className="text-gray-400">Expected amount</div>
-          <div className="text-end">{formattedExpectedAlphaAmount?.decimalAmount?.toLocaleString()}</div>
+          <div className="text-end">
+            {netuid ? formattedExpectedAlphaAmount?.decimalAmount?.toLocaleString() : 'Select Subnet'}
+          </div>
         </div>
       )}
       <div className="flex items-center justify-between">
         <div className="text-gray-400">Conversion Rate</div>
-        <div className="text-end">1 TAO = {formattedConversionRate?.decimalAmount?.toLocaleString()}</div>
+        <div className="text-end">
+          {netuid ? `1 TAO = ${formattedConversionRate?.decimalAmount?.toLocaleString()}` : 'Select Subnet'}
+        </div>
       </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 leading-none">

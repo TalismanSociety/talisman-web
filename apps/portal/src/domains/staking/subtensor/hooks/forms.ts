@@ -251,7 +251,7 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
     amount: amount,
     netuid: stake.netuid,
     direction: 'alphaToTao',
-    shouldUpdateFeeAndSlippage: isRootnetStake,
+    shouldUpdateFeeAndSlippage: !isRootnetStake,
   })
 
   const talismanFeeTxTokenAmount = isRootnetStake ? taoToAlphaTalismanFee : alphaToTaoTalismanFee
