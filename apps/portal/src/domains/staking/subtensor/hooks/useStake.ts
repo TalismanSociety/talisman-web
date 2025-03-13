@@ -1,7 +1,7 @@
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
-import { MIN_SUBTENSOR_STAKE, ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
+import { MIN_SUBTENSOR_ALPHA_STAKE, ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 import { useTokenAmount } from '@/domains/common/hooks/useTokenAmount'
@@ -35,7 +35,7 @@ export const useStake = (account: Account): Stake => {
   const { subnetData } = useCombineSubnetData()
   const { data: stakeInfoForColdKey } = useGetStakeInfoForColdKey(account.address)
 
-  const minimumStakeAmount = useTokenAmount(String(MIN_SUBTENSOR_STAKE))
+  const minimumStakeAmount = useTokenAmount(String(MIN_SUBTENSOR_ALPHA_STAKE))
 
   const stakes = stakeInfoForColdKey
     ?.map(stake => {
