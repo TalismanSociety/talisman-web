@@ -141,21 +141,19 @@ export const useStake = (account: Account) => {
     [api.consts.dappStaking.eraRewardSpanLength, firstSpanIndex, lastSpanIndex, rewardsExpired]
   )
 
-  const eligibleBonusRewards = useMemo(
-    () =>
-      rewardsExpired
-        ? []
-        : stakedDapps
-            .filter(x => x[1].loyalStaker.isTrue)
-            .filter(
-              x =>
-                x[1].staked.period.unwrap().lt(activeProtocol.periodInfo.number.unwrap()) &&
-                x[1].staked.period
-                  .unwrap()
-                  .gte(activeProtocol.periodInfo.number.unwrap().sub(api.consts.dappStaking.rewardRetentionInPeriods))
-            ),
-    [activeProtocol.periodInfo.number, api.consts.dappStaking.rewardRetentionInPeriods, rewardsExpired, stakedDapps]
-  )
+  const eligibleBonusRewards = useMemo(() => {
+    if (!stakedDapps) return []
+    if (rewardsExpired) return []
+    return stakedDapps
+      .filter(x => x[1].loyalStaker?.isTrue)
+      .filter(
+        x =>
+          x[1].staked.period.unwrap().lt(activeProtocol.periodInfo.number.unwrap()) &&
+          x[1].staked.period
+            .unwrap()
+            .gte(activeProtocol.periodInfo.number.unwrap().sub(api.consts.dappStaking.rewardRetentionInPeriods))
+      )
+  }, [activeProtocol.periodInfo.number, api.consts.dappStaking.rewardRetentionInPeriods, rewardsExpired, stakedDapps])
 
   const bonusRewardsPeriodEnds = useRecoilValue(
     useQueryState(

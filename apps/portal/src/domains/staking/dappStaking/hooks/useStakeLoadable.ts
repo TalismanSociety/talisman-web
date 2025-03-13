@@ -157,19 +157,19 @@ export const useStakeLoadable = (account: Account) => {
   )
 
   const eligibleBonusRewards = useMemo(() => {
-    if (!activeProtocol?.periodInfo.number || !api?.consts.dappStaking.rewardRetentionInPeriods || !stakedDapps)
-      return []
-    return rewardsExpired
-      ? []
-      : stakedDapps
-          .filter(x => x[1].loyalStaker.isTrue)
-          .filter(
-            x =>
-              x[1].staked.period.unwrap().lt(activeProtocol.periodInfo.number.unwrap()) &&
-              x[1].staked.period
-                .unwrap()
-                .gte(activeProtocol.periodInfo.number.unwrap().sub(api.consts.dappStaking.rewardRetentionInPeriods))
-          )
+    if (!activeProtocol?.periodInfo.number) return []
+    if (!api?.consts.dappStaking.rewardRetentionInPeriods) return []
+    if (!stakedDapps) return []
+    if (rewardsExpired) return []
+    return stakedDapps
+      .filter(x => x[1].loyalStaker?.isTrue)
+      .filter(
+        x =>
+          x[1].staked.period.unwrap().lt(activeProtocol.periodInfo.number.unwrap()) &&
+          x[1].staked.period
+            .unwrap()
+            .gte(activeProtocol.periodInfo.number.unwrap().sub(api.consts.dappStaking.rewardRetentionInPeriods))
+      )
   }, [activeProtocol?.periodInfo.number, api?.consts.dappStaking.rewardRetentionInPeriods, rewardsExpired, stakedDapps])
 
   const bonusRewardsPeriodEndsLoadable = useRecoilValueLoadable(
