@@ -317,7 +317,7 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
     if ((amount.decimalAmount?.planck ?? 0n) > available.decimalAmount.planck) return new Error('Insufficient balance')
 
     if ((amount.decimalAmount?.planck ?? 0n) < (minimumFormatted.decimalAmount?.planck ?? 0n)) {
-      return new Error(`Minimum unstake is ${minimumFormatted.decimalAmount?.toLocaleStringPrecision()}`)
+      return new Error(`Minimum unstake amount is ${minimumFormatted.decimalAmount?.toLocaleStringPrecision()}`)
     }
 
     if (
@@ -325,7 +325,7 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
       available.decimalAmount.planck - amount.decimalAmount.planck > 0n &&
       available.decimalAmount.planck - amount.decimalAmount.planck < (minimumFormatted.decimalAmount?.planck ?? 0n)
     ) {
-      return new Error(`Need ${minimumFormatted.decimalAmount?.toLocaleString?.()} to keep staking`)
+      return new Error(`You must keep ${minimumFormatted.decimalAmount?.toLocaleString?.()} to continue staking`)
     }
 
     if (isDynamicTaoStakeInfoError) {
