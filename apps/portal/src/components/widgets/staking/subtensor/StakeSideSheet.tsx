@@ -14,7 +14,7 @@ import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombi
 import { type BondOption, type SubnetData } from '@/domains/staking/subtensor/types'
 import { Maybe } from '@/util/monads'
 
-import { MIN_SUBTENSOR_STAKE, ROOT_NETUID } from './constants'
+import { MIN_SUBTENSOR_ALPHA_STAKE, MIN_SUBTENSOR_ROOTNET_STAKE, ROOT_NETUID } from './constants'
 import { DelegateSelectorDialog } from './DelegateSelectorDialog'
 import { IncompleteSelectionStakeForm, StakeForm } from './StakeForm'
 import { SubnetSelectorDialog } from './SubnetSelectorDialog'
@@ -149,7 +149,7 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
       chainName={useRecoilValue(useChainState()).chainName}
       minimumStake={
         <>
-          {MIN_SUBTENSOR_STAKE} {nativeToken?.symbol}
+          {props.hasDTaoStaking ? MIN_SUBTENSOR_ALPHA_STAKE : MIN_SUBTENSOR_ROOTNET_STAKE} {nativeToken?.symbol}
         </>
       }
     >
