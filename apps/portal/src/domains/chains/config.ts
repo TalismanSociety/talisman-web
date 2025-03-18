@@ -115,4 +115,4 @@ export const chainConfigs: ChainConfig[] = [
   },
 ]
 
-export const claimPermissionUnsupportedChainIds: string[] = ['analog-temporary-testnet', 'analog-timechain']
+export const claimPermissionUnsupportedChainIds: string[] = []
