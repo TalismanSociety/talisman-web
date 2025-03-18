@@ -245,6 +245,7 @@ type Exchange = {
   >
   trace_id: string
   code?: number
+  description?: string
   error?: string
 }
 
@@ -532,6 +533,16 @@ const swap: SwapFunction<{ id: string }> = async (
 
   if (!exchange) throw new Error('Error creating exchange')
 
+  if (exchange.code === 422) {
+    const min = exchange.description?.match(/min: ([0-9.]+)/i)?.[1]
+    const max = exchange.description?.match(/max: ([0-9.]+)/i)?.[1]
+    const message = [
+      'Amount is out of range',
+      min && `(min: ${min} ${fromAsset.symbol})`,
+      max && `(max: ${max} ${fromAsset.symbol})`,
+    ].join(' ')
+    throw new Error(message)
+  }
   // verify that the created exchange has the same assets we are trying to swap
   if (exchange.currency_from !== currency_from || exchange.currency_to !== currency_to)
     throw new Error('Incorrect currencies from provider. Please try again later')
