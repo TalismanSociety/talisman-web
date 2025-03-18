@@ -9,6 +9,7 @@ const orderedProviders: string[] = [
   'kusama_ksm',
   'analog_timechain_anlog',
   'aleph_zero_azero',
+  'astar_astr',
   'vara_vara',
   'avail_avail',
   'cere_cere',
@@ -16,7 +17,6 @@ const orderedProviders: string[] = [
   'bifrost_slpx_glmr',
   'bifrost_slpx_dot',
   'lido_eth',
-  'astar_astar',
 ]
 
 /** Convert the array into a map for quick lookup */
