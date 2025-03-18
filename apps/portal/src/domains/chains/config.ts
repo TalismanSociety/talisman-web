@@ -115,4 +115,5 @@ export const chainConfigs: ChainConfig[] = [
   },
 ]
 
+export const statisticsUnsupportedChainIds: string[] = ['analog-temporary-testnet', 'analog-timechain']
 export const claimPermissionUnsupportedChainIds: string[] = []
