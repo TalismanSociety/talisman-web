@@ -293,7 +293,6 @@ export const StakePosition = Object.assign(
                   display: 'flex',
                   alignItems: 'center',
                   gap: '1.2rem',
-                  overflow: 'hidden',
                 }}
               >
                 <AssetLogoWithChain assetLogoUrl={props.assetLogoSrc} chainId={props.chainId} />
