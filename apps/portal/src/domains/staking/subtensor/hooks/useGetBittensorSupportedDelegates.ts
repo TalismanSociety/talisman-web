@@ -197,7 +197,7 @@ const placeholderData: ValidatorsResponse = {
     signature:
       '16940f904b7946723fc4f27bb01e47cf262201ef76b3d9c2bfd745973da2512d4825910f6fa738a6968c809b26da0a47e7032a7ff95d8b2da5c1fa7a0b85598f',
   },
-  '5HEo565WAy4Dbq3Sv271SAi7syBSofyfhhwRNjFNSM2gP9M2': {
+  '5DXdHixxtCvoa6GHKs2Jgrdzc61882Ftx1zN2sYFQuwgL1S1': {
     name: 'Yuma, a DCG Company',
     url: 'https://yumaai.com',
     description: 'Yuma powers transformative projects on Bittensor that will reshape our futures.',
