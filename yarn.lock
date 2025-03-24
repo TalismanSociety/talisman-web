@@ -8990,6 +8990,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tailwindcss/container-queries@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@tailwindcss/container-queries@npm:0.1.1"
+  peerDependencies:
+    tailwindcss: ">=3.2.0"
+  checksum: 10c0/336546ddcc60280723f2a92e311cac0acb8b05624c6519675d4b11ae13ed01dba5e622705a9be69cd66ca2c8019032551176546e6920d9634750165ac4c15d8e
+  languageName: node
+  linkType: hard
+
 "@talismn/astar-types@TalismanSociety/astar-types":
   version: 0.0.0
   resolution: "@talismn/astar-types@https://github.com/TalismanSociety/astar-types.git#commit=60052c3146ca90e72db6cfd2dcce4f22356789e2"
@@ -9218,6 +9227,7 @@ __metadata:
     "@storybook/react-vite": "npm:^7.6.5"
     "@storybook/testing-library": "npm:^0.2.2"
     "@substrate/txwrapper-core": "npm:^5.0.0"
+    "@tailwindcss/container-queries": "npm:^0.1.1"
     "@talismn/astar-types": TalismanSociety/astar-types
     "@talismn/balances-react": "npm:0.0.0-pr1813-20250228070323"
     "@talismn/chaindata-provider": "npm:0.0.0-pr1813-20250228070323"
