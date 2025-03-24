@@ -24,10 +24,6 @@ import { truncateAddress } from '@/util/truncateAddress'
 
 import { StakePositionSkeleton } from './StakePosition.skeleton'
 
-const MEDIUM_CONTAINER_QUERY = '@container(min-width: 100rem)'
-
-const LARGE_CONTAINER_QUERY = '@container(min-width: 120rem)'
-
 export type StakePositionProps = {
   readonly?: boolean
   account: Account
@@ -107,8 +103,8 @@ const ClaimButton = (props: Omit<ButtonProps, 'children'> & { amount: ReactNode 
   <StakePositionContext.Consumer>
     {({ readonly }) => (
       <Tooltip content="Account is readonly" disabled={!readonly}>
-        <TonalButton {...props} leadingIcon={<Earn />} disabled={readonly} css={{ width: '100%' }}>
-          <span css={{ [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}>Claim </span>
+        <TonalButton {...props} leadingIcon={<Earn />} disabled={readonly} className="!w-full">
+          <span className="@[100rem]:hidden">Claim </span>
           {props.amount}
         </TonalButton>
       </Tooltip>
@@ -120,8 +116,8 @@ const WithdrawButton = (props: Omit<ButtonProps, 'children'> & { amount: ReactNo
   <StakePositionContext.Consumer>
     {({ readonly }) => (
       <Tooltip content="Account is readonly" disabled={!readonly}>
-        <SurfaceButton {...props} leadingIcon={<ArrowDown />} disabled={readonly} css={{ width: '100%' }}>
-          <span css={{ [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}>Withdraw </span>
+        <SurfaceButton {...props} leadingIcon={<ArrowDown />} disabled={readonly} className="!w-full">
+          <span className="@[100rem]:hidden">Withdraw </span>
           {props.amount}
         </SurfaceButton>
       </Tooltip>
@@ -170,16 +166,16 @@ export const UnstakingStatus = (props: {
     }
     disabled={props.unlocks.length === 0}
   >
-    <SurfaceButton leadingIcon={<Clock />} disabled css={{ width: '100%' }}>
-      <span css={{ [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}>Unstaking </span>
+    <SurfaceButton leadingIcon={<Clock />} disabled className="!w-full">
+      <span className="@[100rem]:hidden">Unstaking </span>
       {props.amount}
     </SurfaceButton>
   </Tooltip>
 )
 
 export const FastUnstakingStatus = (props: { amount: ReactNode; status: 'in-head' | 'in-queue' | undefined }) => (
-  <SurfaceButton leadingIcon={<CircularProgressIndicator />} disabled css={{ width: '100%' }}>
-    <span css={{ [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}>Fast unstaking </span>
+  <SurfaceButton leadingIcon={<CircularProgressIndicator />} disabled className="!w-full">
+    <span className="@[100rem]:hidden">Fast unstaking </span>
     {props.amount}
   </SurfaceButton>
 )
@@ -191,75 +187,30 @@ export const StakePosition = Object.assign(
 
     return (
       <StakePositionContext.Provider value={{ readonly: props.readonly ?? false }}>
-        <div css={{ containerType: 'inline-size' }}>
-          <Surface
-            css={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.8rem',
-              borderRadius: '1.6rem',
-              padding: '1.6rem',
-              [MEDIUM_CONTAINER_QUERY]: {
-                flexDirection: 'row',
-                alignItems: 'center',
-              },
-            }}
-          >
-            <div
-              css={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                gap: '0.8rem',
-                [MEDIUM_CONTAINER_QUERY]: { display: 'contents' },
-              }}
-            >
+        <div className="@container">
+          <Surface className="@[100rem]:flex-row @[100rem]:items-center flex flex-col gap-[0.8rem] rounded-[1.6rem] p-[1.6rem]">
+            <div className="@[100rem]:contents flex items-center justify-between gap-[0.8rem]">
               <Text.BodySmall
                 as="header"
-                css={{
-                  [MEDIUM_CONTAINER_QUERY]: {
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '1.2rem',
-                    width: '24rem',
-                  },
-                }}
+                className="@[100rem]:flex @[100rem]:items-center @[100rem]:gap-[1.2rem] @[100rem]:w-[24rem]"
               >
-                <div
-                  css={{
-                    display: 'inline-block',
-                    width: '1.2rem',
-                    height: '1.2rem',
-                    [MEDIUM_CONTAINER_QUERY]: { width: '4rem', height: '4rem' },
-                  }}
-                >
+                <div className="@[100rem]:w-[4rem] @[100rem]:h-[4rem] inline-block h-[1.2rem] w-[1.2rem]">
                   <AccountIcon size="100%" account={props.account} />
                 </div>{' '}
-                <div
-                  css={{
-                    display: 'contents',
-                    [MEDIUM_CONTAINER_QUERY]: {
-                      display: 'block',
-                      width: 'calc(100% - 5rem)',
-                      overflow: 'hidden',
-                      whiteSpace: 'nowrap',
-                      textOverflow: 'ellipsis',
-                    },
-                  }}
-                >
+                <div className="@[100rem]:block @[100rem]:w-[calc(100%_-_5rem)] @[100rem]:truncate contents">
                   <Text alpha="high">{props.account.name ?? truncateAddress(props.account.address)}</Text>
                   <br />
                   <span>
-                    <span css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }}>
+                    <span className="@[100rem]:inline hidden">
                       <StakeStatusIndicator status={props.stakeStatus} />{' '}
                     </span>
                     <span>{props.provider}</span>
                   </span>
                 </div>
               </Text.BodySmall>
-              <div css={{ display: 'flex', gap: '0.8rem', [MEDIUM_CONTAINER_QUERY]: { order: 1 } }}>
-                {props.increaseStakeButton || <div css={{ width: '4rem' }} />}
-                <div css={{ visibility: shouldRenderMenuBtn ? 'visible' : 'hidden' }}>
+              <div className="@[100rem]:order-1 flex gap-[0.8rem]">
+                {props.increaseStakeButton || <div className="w-[4rem]" />}
+                <div className={shouldRenderMenuBtn ? 'visible' : 'invisible'}>
                   <MenuContext.Provider
                     value={{
                       attentionRequired: Boolean(props.lockedButton),
@@ -276,33 +227,17 @@ export const StakePosition = Object.assign(
                 </div>
               </div>
             </div>
-            <div css={{ [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}>
-              <Hr css={{ margin: 0 }} />
+            <div className="@[100rem]:hidden">
+              <Hr className="m-0" />
             </div>
-            <section css={{ [MEDIUM_CONTAINER_QUERY]: { order: -1 }, [LARGE_CONTAINER_QUERY]: { width: '14rem' } }}>
-              <Text.BodySmall
-                as="div"
-                alpha="disabled"
-                css={{ marginBottom: '0.6rem', [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}
-              >
+            <section className="@[100rem]:-order-1 @[120rem]:w-[14rem]">
+              <Text.BodySmall as="div" alpha="disabled" className="@[100rem]:hidden !mb-[0.6rem]">
                 Asset
               </Text.BodySmall>
 
-              <span
-                css={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '1.2rem',
-                }}
-              >
+              <span className="flex items-center gap-[1.2rem]">
                 <AssetLogoWithChain assetLogoUrl={props.assetLogoSrc} chainId={props.chainId} />
-                <span
-                  css={{
-                    display: 'contents',
-                    [MEDIUM_CONTAINER_QUERY]: { display: 'none' },
-                    [LARGE_CONTAINER_QUERY]: { display: 'contents' },
-                  }}
-                >
+                <span className="@[100rem]:hidden @[120rem]:contents contents">
                   <Text.Body className="truncate" as="div" alpha="high">
                     {props.assetSymbol}
                     <Text.BodySmall className="truncate" as="div">
@@ -312,46 +247,37 @@ export const StakePosition = Object.assign(
                 </span>
               </span>
             </section>
-            <section css={{ flex: 1 }}>
-              <Text.BodySmall
-                as="div"
-                alpha="disabled"
-                css={{ marginBottom: '0.6rem', [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}
-              >
+            <section className="flex-1">
+              <Text.BodySmall as="div" alpha="disabled" className="@[100rem]:hidden !mb-[0.6rem]">
                 Staked balance
               </Text.BodySmall>
               <Text.Body as="div" alpha="high">
                 {props.balance}
-                <div css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }} />{' '}
-                <Text.Body alpha="medium">{props.fiatBalance}</Text.Body>
+                <div className="@[100rem]:block hidden" /> <Text.Body alpha="medium">{props.fiatBalance}</Text.Body>
               </Text.Body>
             </section>
             {shouldRenderTotalRewards && (
-              <section css={{ flex: 1 }}>
-                <Text.BodySmall
-                  as="div"
-                  alpha="disabled"
-                  css={{ marginBottom: '0.6rem', [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}
-                >
+              <section className="flex-1">
+                <Text.BodySmall as="div" alpha="disabled" className="@[100rem]:hidden !mb-[0.6rem]">
                   Total rewards (all time)
                 </Text.BodySmall>
                 <Text.Body as="div" alpha="high">
                   <Suspense fallback={<CircularProgressIndicator size="1em" />}>
                     {props.rewards ?? <Text alpha="medium">--</Text>}
                   </Suspense>
-                  <div css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }} />{' '}
+                  <div className="@[100rem]:block hidden" />{' '}
                   <Suspense>
-                    <Text.Body alpha="medium" css={{ color: '#38D448' }}>
+                    <Text.Body alpha="medium" className="!text-[#38D448]">
                       {props.fiatRewards}
                     </Text.Body>
                   </Suspense>
                 </Text.Body>
               </section>
             )}
-            <div css={{ [MEDIUM_CONTAINER_QUERY]: { width: '20rem', display: 'flex', justifyContent: 'start' } }}>
+            <div className="@[100rem]:w-[20rem] @[100rem]:flex @[100rem]:justify-start">
               <div>{props.withdrawButton || props.unstakingStatus}</div>
             </div>
-            <div css={{ [MEDIUM_CONTAINER_QUERY]: { width: '20rem', display: 'flex', justifyContent: 'start' } }}>
+            <div className="@[100rem]:w-[20rem] @[100rem]:flex @[100rem]:justify-start">
               <div>{props.claimButton}</div>
             </div>
           </Surface>
@@ -384,124 +310,52 @@ export type StakePositionErrorBoundaryProps = {
 export const StakePositionErrorBoundary = (props: StakePositionErrorBoundaryProps) => {
   const theme = useTheme()
   return (
-    <div css={{ containerType: 'inline-size' }}>
-      <Surface
-        css={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.8rem',
-          borderRadius: '1.6rem',
-          padding: '1.6rem',
-          [MEDIUM_CONTAINER_QUERY]: {
-            flexDirection: 'row',
-            alignItems: 'center',
-          },
-        }}
-      >
-        <section css={{ [MEDIUM_CONTAINER_QUERY]: { order: -1 }, [LARGE_CONTAINER_QUERY]: { width: '24rem' } }}>
-          <Text.BodySmall
-            as="div"
-            alpha="disabled"
-            css={{ marginBottom: '0.6rem', [MEDIUM_CONTAINER_QUERY]: { display: 'none' } }}
-          >
+    <div className="@container">
+      <Surface className="@[100rem]:flex-row @[100rem]:items-center flex flex-col gap-[0.8rem] rounded-[1.6rem] p-[1.6rem]">
+        <section className="@[100rem]:-order-1 @[120rem]:w-[24rem]">
+          <Text.BodySmall as="div" alpha="disabled" className="@[100rem]:hidden !mb-[0.6rem]">
             Asset
           </Text.BodySmall>
-          <span
-            css={{
-              [MEDIUM_CONTAINER_QUERY]: { display: 'flex', alignItems: 'center', gap: '1.2rem' },
-            }}
-          >
+          <span className="@[100rem]:flex @[100rem]:items-center @[100rem]:gap-[1.2rem]">
             <img
+              className="@[100rem]:w-[4rem] @[100rem]:h-[4rem] h-[2rem] w-[2rem] align-[-0.25em]"
               src={props.assetLogoSrc}
-              css={{
-                width: '2rem',
-                height: '2rem',
-                verticalAlign: '-0.25em',
-                [MEDIUM_CONTAINER_QUERY]: { width: '4rem', height: '4rem' },
-              }}
             />
-            <span
-              css={{
-                display: 'contents',
-                [MEDIUM_CONTAINER_QUERY]: { display: 'none' },
-                [LARGE_CONTAINER_QUERY]: { display: 'contents' },
-              }}
-            >
+            <span className="@[100rem]:hidden @[120rem]:contents contents">
               {' '}
               <Text.Body alpha="high">
                 {props.assetSymbol}
-                <div css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }} />{' '}
-                <Text.Body alpha="medium">{props.chain}</Text.Body>
+                <div className="@[100rem]:block hidden" /> <Text.Body alpha="medium">{props.chain}</Text.Body>
               </Text.Body>
             </span>
           </span>
         </section>
-        <div
-          css={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '0.8rem',
-            [MEDIUM_CONTAINER_QUERY]: { display: 'contents' },
-          }}
-        >
+        <div className="@[100rem]:contents flex items-center justify-between gap-[0.8rem]">
           <Text.BodySmall
             as="header"
-            css={{
-              [MEDIUM_CONTAINER_QUERY]: {
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1.2rem',
-                width: '24rem',
-              },
-            }}
+            className="@[100rem]:flex @[100rem]:items-center @[100rem]:gap-[1.2rem] @[100rem]:w-[24rem]"
           >
-            <div
-              css={{
-                display: 'inline-block',
-                width: '1.2rem',
-                height: '1.2rem',
-                [MEDIUM_CONTAINER_QUERY]: { width: '4rem', height: '4rem' },
-              }}
-            >
+            <div className="@[100rem]:w-[4rem] @[100rem]:h-[4rem] inline-block h-[1.2rem] w-[1.2rem]">
               <AccountIcon size="100%" account={props.account} />
             </div>{' '}
-            <div
-              css={{
-                display: 'contents',
-                [MEDIUM_CONTAINER_QUERY]: {
-                  display: 'block',
-                  width: 'calc(100% - 5rem)',
-                  overflow: 'hidden',
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'ellipsis',
-                },
-              }}
-            >
+            <div className="@[100rem]:block @[100rem]:w-[calc(100%_-_5rem)] @[100rem]:truncate contents">
               <Text alpha="high">{props.account.name ?? truncateAddress(props.account.address)}</Text>
               <br />
               <span>
-                <span css={{ display: 'none', [MEDIUM_CONTAINER_QUERY]: { display: 'revert' } }}>
+                <span className="@[100rem]:inline hidden">
                   <StakeStatusIndicator status={props.stakeStatus ?? 'not_earning_rewards'} />{' '}
                 </span>
                 <span>{props.provider}</span>
               </span>
             </div>
           </Text.BodySmall>
-          <div
-            css={{
-              display: 'flex',
-              marginLeft: 'auto',
-              gap: '0.8rem',
-              [MEDIUM_CONTAINER_QUERY]: { order: 1 },
-            }}
-          >
+          <div className="@[100rem]:order-1 ml-auto flex gap-[0.8rem]">
             <Tooltip content="Error loading staking provider data">
               <TonalButton
                 {...props}
                 leadingIcon={<StakeStatusIndicator status={'not_nominating'} />}
+                className="!w-full"
                 css={{
-                  width: '100%',
                   backgroundColor: `color-mix(in srgb, ${theme.color.error}, transparent 95%)`,
                   color: theme.color.error,
                 }}
@@ -518,34 +372,17 @@ export const StakePositionErrorBoundary = (props: StakePositionErrorBoundaryProp
 
 export const StakePositionList = (props: PropsWithChildren<{ className?: string }>) => (
   <section {...props}>
-    <div css={{ containerType: 'inline-size' }}>
-      <header
-        css={{
-          display: 'none',
-          marginBottom: '1.2rem',
-          [MEDIUM_CONTAINER_QUERY]: { display: 'flex', gap: '0.8rem', padding: '0 1.6rem' },
-        }}
-      >
-        <Text.BodySmall
-          css={{
-            width: '4rem',
-            visibility: 'hidden',
-            [LARGE_CONTAINER_QUERY]: {
-              width: '14rem',
-              visibility: 'visible',
-            },
-          }}
-        >
-          Asset
-        </Text.BodySmall>
-        <Text.BodySmall css={{ width: '24rem' }}>Account</Text.BodySmall>
-        <Text.BodySmall css={{ flex: 1 }}>Staked balance</Text.BodySmall>
-        <Text.BodySmall css={{ flex: 1 }}>Total rewards (all time)</Text.BodySmall>
-        <Text.BodySmall css={{ width: '20rem' }}>Unstake / Withdraw</Text.BodySmall>
-        <Text.BodySmall css={{ width: '20rem' }}>Claim</Text.BodySmall>
-        <Text.BodySmall css={{ width: '8.8rem', textAlign: 'end' }}>Actions</Text.BodySmall>
+    <div className="@container">
+      <header className="@[100rem]:flex mb-[1.2rem] hidden gap-[0.8rem] px-[1.6rem]">
+        <Text.BodySmall className="@[120rem]:visible @[120rem]:w-56 invisible w-16">Asset</Text.BodySmall>
+        <Text.BodySmall className="w-[24rem]">Account</Text.BodySmall>
+        <Text.BodySmall className="flex-1">Staked balance</Text.BodySmall>
+        <Text.BodySmall className="flex-1">Total rewards (all time)</Text.BodySmall>
+        <Text.BodySmall className="w-[20rem]">Unstake / Withdraw</Text.BodySmall>
+        <Text.BodySmall className="w-[20rem]">Claim</Text.BodySmall>
+        <Text.BodySmall className="w-[8.8rem] text-end">Actions</Text.BodySmall>
       </header>
     </div>
-    <div css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>{props.children}</div>
+    <div className="flex flex-col gap-[0.8rem]">{props.children}</div>
   </section>
 )

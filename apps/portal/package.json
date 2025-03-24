@@ -38,6 +38,7 @@
     "@sentry/react": "^7.85.0",
     "@sentry/tracing": "^7.85.0",
     "@substrate/txwrapper-core": "^5.0.0",
+    "@tailwindcss/container-queries": "^0.1.1",
     "@talismn/balances-react": "0.0.0-pr1813-20250228070323",
     "@talismn/chaindata-provider": "0.0.0-pr1813-20250228070323",
     "@talismn/dot-pool-selector": "0.0.0-snapshot.940501",
