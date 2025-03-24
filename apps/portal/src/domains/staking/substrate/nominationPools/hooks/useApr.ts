@@ -1,5 +1,6 @@
 import { BN } from '@polkadot/util'
 import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import BigNumber from 'bignumber.js'
 import { hoursToMilliseconds } from 'date-fns'
 import { range } from 'lodash'
@@ -51,8 +52,35 @@ export const useApr = () => {
     ])
   )
 
+  const { data: analogApr } = useSuspenseQuery({
+    queryKey: ['analog-timechain-apy', chain.id],
+    queryFn: async () => {
+      if (chain.id !== 'analog-timechain') return 0
+
+      try {
+        const analogExplorerApyUrl = 'https://explorer-api.analog.one/api/nominations?projection=apy'
+        const result = await (await fetch(analogExplorerApyUrl)).json()
+        if (result?.status !== 200) {
+          console.warn('Failed to fetch analog apy (non-200 status)', result)
+          return 0
+        }
+
+        const apy = result?.data?.apy
+        if (typeof apy !== 'number') {
+          console.warn('Failed to fetch analog apy (apy is not number)', result)
+          return 0
+        }
+
+        return apy / 100
+      } catch (cause) {
+        console.warn('Failed to fetch analog apy (fetch error)', cause)
+        return 0
+      }
+    },
+  })
+
   return useMemo(() => {
-    if (chain.id === 'analog-timechain') return 0.55
+    if (chain.id === 'analog-timechain') return analogApr
 
     const averageValidatorReward = rewards
       .reduce((prev, curr) => prev.plus(curr.unwrapOrDefault().toString()), new BigNumber(0))
@@ -70,10 +98,5 @@ export const useApr = () => {
     const inflationToStakers = dayRewardRate.multipliedBy(365)
 
     return inflationToStakers.dividedBy(supplyStaked).toNumber() || 0
-  }, [chain.id, erasPerDay, lastEraTotalStaked, rewards, totalIssuance])
-}
-
-export const useApy = (compoundingPeriodCount: number = 365) => {
-  const apr = useApr()
-  return Math.pow(1 + apr / compoundingPeriodCount, compoundingPeriodCount) - 1
+  }, [analogApr, chain.id, erasPerDay, lastEraTotalStaked, rewards, totalIssuance])
 }

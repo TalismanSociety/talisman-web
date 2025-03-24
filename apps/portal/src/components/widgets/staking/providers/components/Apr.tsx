@@ -7,7 +7,7 @@ import { useChainState } from '@/domains/chains/hooks'
 import { ChainProvider } from '@/domains/chains/provider'
 import { useApr as useDappApr } from '@/domains/staking/dappStaking/hooks/useApr'
 import { useSlpxAprState } from '@/domains/staking/slpx/recoils'
-import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nominationPools/hooks/useReturn'
+import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nominationPools/hooks/useApr'
 import { useHighestApr } from '@/domains/staking/subtensor/hooks/useApr'
 
 import useLidoApr from '../hooks/lido/useApr'
