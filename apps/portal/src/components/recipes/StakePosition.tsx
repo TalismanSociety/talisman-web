@@ -190,20 +190,14 @@ export const StakePosition = Object.assign(
         <div className="@container">
           <Surface className="@[100rem]:flex-row @[100rem]:items-center flex flex-col gap-[0.8rem] rounded-[1.6rem] p-[1.6rem]">
             <div className="@[100rem]:contents flex items-center justify-between gap-[0.8rem]">
-              <Text.BodySmall
-                as="header"
-                className="@[100rem]:flex @[100rem]:items-center @[100rem]:gap-[1.2rem] @[100rem]:w-[24rem]"
-              >
-                <div className="@[100rem]:w-[4rem] @[100rem]:h-[4rem] inline-block h-[1.2rem] w-[1.2rem]">
+              <Text.BodySmall as="header" className="@[100rem]:hidden">
+                <div className="inline-block h-[1.2rem] w-[1.2rem]">
                   <AccountIcon size="100%" account={props.account} />
                 </div>{' '}
-                <div className="@[100rem]:block @[100rem]:w-[calc(100%_-_5rem)] @[100rem]:truncate contents">
+                <div className="contents">
                   <Text alpha="high">{props.account.name ?? truncateAddress(props.account.address)}</Text>
                   <br />
                   <span>
-                    <span className="@[100rem]:inline hidden">
-                      <StakeStatusIndicator status={props.stakeStatus} />{' '}
-                    </span>
                     <span>{props.provider}</span>
                   </span>
                 </div>
@@ -230,11 +224,37 @@ export const StakePosition = Object.assign(
             <div className="@[100rem]:hidden">
               <Hr className="m-0" />
             </div>
-            <section className="@[100rem]:-order-1 @[120rem]:w-[14rem]">
+
+            <div className="@[100rem]:hidden flex gap-8">
+              <section>
+                <Text.BodySmall as="div" alpha="disabled" className="!mb-[0.6rem]">
+                  Asset
+                </Text.BodySmall>
+                <div className="flex items-start gap-[1.2rem]">
+                  <AssetLogoWithChain assetLogoUrl={props.assetLogoSrc} chainId={props.chainId} />
+                  <div className="truncate text-[1.4rem] text-[#fafafa]">
+                    {props.assetSymbol}
+                    <div className="truncate text-[1.2rem] opacity-70">{props.chain}</div>
+                  </div>
+                </div>
+              </section>
+              <section>
+                <Text.BodySmall as="div" alpha="disabled" className="!mb-[0.6rem]">
+                  Staked balance
+                </Text.BodySmall>
+                <div className="flex items-start gap-[1.2rem]">
+                  <div className="truncate text-[1.4rem] text-[#fafafa]">
+                    {props.balance}
+                    <div className="truncate text-[1.2rem] opacity-70">{props.fiatBalance}</div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <section className="@[100rem]:block @[120rem]:w-[14rem] hidden">
               <Text.BodySmall as="div" alpha="disabled" className="@[100rem]:hidden !mb-[0.6rem]">
                 Asset
               </Text.BodySmall>
-
               <span className="flex items-center gap-[1.2rem]">
                 <AssetLogoWithChain assetLogoUrl={props.assetLogoSrc} chainId={props.chainId} />
                 <span className="@[100rem]:hidden @[120rem]:contents contents">
@@ -247,7 +267,22 @@ export const StakePosition = Object.assign(
                 </span>
               </span>
             </section>
-            <section className="flex-1">
+            <Text.BodySmall as="header" className="@[100rem]:flex hidden w-[24rem] items-center gap-[1.2rem]">
+              <div className="inline-block h-[4rem] w-[4rem]">
+                <AccountIcon size="100%" account={props.account} />
+              </div>{' '}
+              <div className="w-[calc(100%_-_5rem)] truncate">
+                <Text alpha="high">{props.account.name ?? truncateAddress(props.account.address)}</Text>
+                <br />
+                <span>
+                  <span>
+                    <StakeStatusIndicator status={props.stakeStatus} />{' '}
+                  </span>
+                  <span>{props.provider}</span>
+                </span>
+              </div>
+            </Text.BodySmall>
+            <section className="@[100rem]:block hidden flex-1">
               <Text.BodySmall as="div" alpha="disabled" className="@[100rem]:hidden !mb-[0.6rem]">
                 Staked balance
               </Text.BodySmall>
@@ -256,6 +291,7 @@ export const StakePosition = Object.assign(
                 <div className="@[100rem]:block hidden" /> <Text.Body alpha="medium">{props.fiatBalance}</Text.Body>
               </Text.Body>
             </section>
+
             {shouldRenderTotalRewards && (
               <section className="flex-1">
                 <Text.BodySmall as="div" alpha="disabled" className="@[100rem]:hidden !mb-[0.6rem]">
@@ -312,7 +348,7 @@ export const StakePositionErrorBoundary = (props: StakePositionErrorBoundaryProp
   return (
     <div className="@container">
       <Surface className="@[100rem]:flex-row @[100rem]:items-center flex flex-col gap-[0.8rem] rounded-[1.6rem] p-[1.6rem]">
-        <section className="@[100rem]:-order-1 @[120rem]:w-[24rem]">
+        <section className="@[120rem]:w-[24rem]">
           <Text.BodySmall as="div" alpha="disabled" className="@[100rem]:hidden !mb-[0.6rem]">
             Asset
           </Text.BodySmall>
