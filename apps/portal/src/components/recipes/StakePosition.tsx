@@ -40,6 +40,7 @@ export type StakePositionProps = {
   fiatRewards?: ReactNode
   unstakingStatus?: ReactNode
   increaseStakeButton?: ReactNode
+  changeValidatorButton?: ReactNode
   unstakeButton?: ReactNode
   lockedButton?: ReactNode
   menuButton?: ReactNode
@@ -66,6 +67,16 @@ const UnstakeButton = (props: Omit<MenuItemProps, 'children'>) => (
     {({ readonly }) => (
       <Tooltip content="Account is readonly" disabled={!readonly}>
         <Menu.Item.Button headlineContent="Unstake" disabled={readonly} {...props} />
+      </Tooltip>
+    )}
+  </StakePositionContext.Consumer>
+)
+
+const ChangeValidatorButton = (props: Omit<MenuItemProps, 'children'>) => (
+  <StakePositionContext.Consumer>
+    {({ readonly }) => (
+      <Tooltip content="Account is readonly" disabled={!readonly}>
+        <Menu.Item.Button headlineContent="Change Validator" disabled={readonly} {...props} />
       </Tooltip>
     )}
   </StakePositionContext.Consumer>
@@ -212,6 +223,7 @@ export const StakePosition = Object.assign(
                         <>
                           {props.unstakeButton}
                           {props.lockedButton}
+                          {props.changeValidatorButton}
                         </>
                       ),
                     }}
@@ -324,6 +336,7 @@ export const StakePosition = Object.assign(
   {
     IncreaseStakeButton,
     UnstakeButton,
+    ChangeValidatorButton,
     MenuButton,
     ClaimButton,
     WithdrawButton,

@@ -7,9 +7,12 @@ import { selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { useChainState } from '@/domains/chains/hooks'
 import { ChainProvider } from '@/domains/chains/provider'
 import { subtensorStakingEnabledChainsState } from '@/domains/chains/recoils'
+import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
 import { useStake } from '@/domains/staking/subtensor/hooks/useStake'
+import { type BondOption } from '@/domains/staking/subtensor/types'
 
 import AddStakeDialog from './AddStakeDialog'
+import { DelegateSelectorDialog } from './DelegateSelectorDialog'
 import { StakeItemRow } from './StakeItemRow'
 import UnstakeDialog from './UnstakeDialog'
 
@@ -41,7 +44,11 @@ type StakeProps = {
 const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
   const [addStakeDialogOpen, setAddStakeDialogOpen] = useState<boolean>(false)
   const [unstakeDialogOpen, setUnstakeDialogOpen] = useState<boolean>(false)
+  const [delegateSelectorOpen, setDelegateSelectorOpen] = useState<boolean>(false)
   const [selectedStake, setSelectedStake] = useState<StakeItem | undefined>()
+  const [selectedDelegate, setSelectedDelegate] = useState<BondOption | undefined>()
+
+  const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
 
   const chain = useRecoilValue(useChainState())
   const { stakes = [] } = useStake(account)
@@ -60,6 +67,11 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
     setUnstakeDialogOpen(prev => !prev)
     setSelectedStake(stakeItem)
   }
+  const handleToggleChangeValidator = (stakeItem?: StakeItem | undefined) => {
+    setDelegateSelectorOpen(prev => !prev)
+    const selectedDelegate = combinedValidatorsData.find(({ poolId }) => poolId === stakeItem?.hotkey)
+    setSelectedDelegate(selectedDelegate)
+  }
 
   if (stakes.length === 0) return null
 
@@ -74,6 +86,7 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
             chain={chain}
             handleToggleAddStakeDialog={handleToggleAddStakeDialog}
             handleToggleUnstakeDialog={handleToggleUnstakeDialog}
+            handleToggleChangeValidator={handleToggleChangeValidator}
           />
         )
       })}
@@ -82,6 +95,13 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
       )}
       {unstakeDialogOpen && selectedStake && (
         <UnstakeDialog account={account} stake={selectedStake} onRequestDismiss={() => handleToggleUnstakeDialog()} />
+      )}
+      {delegateSelectorOpen && (
+        <DelegateSelectorDialog
+          selected={selectedDelegate}
+          onRequestDismiss={() => setDelegateSelectorOpen(false)}
+          onConfirm={() => console.log('switch validator')}
+        />
       )}
     </>
   )

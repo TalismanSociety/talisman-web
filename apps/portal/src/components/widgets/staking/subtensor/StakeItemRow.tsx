@@ -15,6 +15,7 @@ type StakeItemRowProps = {
   chain: ChainInfo
   handleToggleAddStakeDialog: (stakeItem?: StakeItem | undefined) => void
   handleToggleUnstakeDialog: (stakeItem?: StakeItem | undefined) => void
+  handleToggleChangeValidator: (stakeItem?: StakeItem | undefined) => void
 }
 
 export const StakeItemRow = ({
@@ -23,6 +24,7 @@ export const StakeItemRow = ({
   chain,
   handleToggleAddStakeDialog,
   handleToggleUnstakeDialog,
+  handleToggleChangeValidator,
 }: StakeItemRowProps) => {
   const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
   const { expectedTaoAmount } = useGetDynamicTaoStakeInfo({
@@ -70,6 +72,11 @@ export const StakeItemRow = ({
         unstakeButton={
           <ErrorBoundary renderFallback={() => <>--</>}>
             <StakePosition.UnstakeButton onClick={() => handleToggleUnstakeDialog(stake)} withTransition />
+          </ErrorBoundary>
+        }
+        changeValidatorButton={
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <StakePosition.ChangeValidatorButton onClick={() => handleToggleChangeValidator(stake)} withTransition />
           </ErrorBoundary>
         }
       />
