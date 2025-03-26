@@ -23,12 +23,14 @@
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
     "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
+    "@tailwindcss/container-queries": "^0.1.1",
     "@w3ux/types": "^0.2.0",
     "eslint": "^9.2.0",
     "husky": "^8.0.3",
     "lint-staged": "^12.5.0",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.4.1",
+    "tailwindcss-animate": "^1.0.7",
     "turbo": "^1.13.3"
   },
   "resolutions": {
