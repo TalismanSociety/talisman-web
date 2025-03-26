@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
@@ -8,6 +8,7 @@ import { useChainState } from '@/domains/chains/hooks'
 import { ChainProvider } from '@/domains/chains/provider'
 import { subtensorStakingEnabledChainsState } from '@/domains/chains/recoils'
 import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
+import { useMoveStake } from '@/domains/staking/subtensor/hooks/useMoveStake'
 import { useStake } from '@/domains/staking/subtensor/hooks/useStake'
 import { type BondOption } from '@/domains/staking/subtensor/types'
 
@@ -47,6 +48,9 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
   const [delegateSelectorOpen, setDelegateSelectorOpen] = useState<boolean>(false)
   const [selectedStake, setSelectedStake] = useState<StakeItem | undefined>()
   const [selectedDelegate, setSelectedDelegate] = useState<BondOption | undefined>()
+  const [highlightedDelegate, setHighlightedDelegate] = useState<BondOption | undefined>()
+
+  const { extrinsic, isReady } = useMoveStake({ stake: selectedStake, destinationHotkey: highlightedDelegate?.poolId })
 
   const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
 
@@ -68,10 +72,22 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
     setSelectedStake(stakeItem)
   }
   const handleToggleChangeValidator = (stakeItem?: StakeItem | undefined) => {
-    setDelegateSelectorOpen(prev => !prev)
     const selectedDelegate = combinedValidatorsData.find(({ poolId }) => poolId === stakeItem?.hotkey)
     setSelectedDelegate(selectedDelegate)
+    setSelectedStake(stakeItem)
+    setDelegateSelectorOpen(prev => !prev)
   }
+
+  const handleChangeValidator = useCallback(() => {
+    if (isReady)
+      extrinsic
+        .signAndSend(account.address)
+        .then(() => console.log('SUCCESS'))
+        .finally(() => {
+          setSelectedDelegate(undefined)
+          setSelectedStake(undefined)
+        })
+  }, [account.address, extrinsic, isReady])
 
   if (stakes.length === 0) return null
 
@@ -100,7 +116,8 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
         <DelegateSelectorDialog
           selected={selectedDelegate}
           onRequestDismiss={() => setDelegateSelectorOpen(false)}
-          onConfirm={() => console.log('switch validator')}
+          onConfirm={handleChangeValidator}
+          setHighlightedDelegate={setHighlightedDelegate}
         />
       )}
     </>
