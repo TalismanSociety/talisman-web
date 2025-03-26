@@ -31,7 +31,7 @@ export const useMoveStake = ({ stake, destinationHotkey }: MoveItem) => {
         originNetuid, // destinationNetuid, in this case, is the same as originNetuid
         alphaAmount
       ),
-      api.tx.system.remarkWithEvent(`talisman-bittensor`),
+      api.tx.system.remarkWithEvent('talisman-bittensor'),
     ])
   }, [stake, destinationHotkey, api.tx, originHotkey, originNetuid, alphaAmount])
 

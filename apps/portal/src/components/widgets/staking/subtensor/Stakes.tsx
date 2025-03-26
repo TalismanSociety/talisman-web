@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
@@ -50,6 +51,8 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
   const [selectedDelegate, setSelectedDelegate] = useState<BondOption | undefined>()
   const [highlightedDelegate, setHighlightedDelegate] = useState<BondOption | undefined>()
 
+  const queryClient = useQueryClient()
+
   const { extrinsic, isReady } = useMoveStake({ stake: selectedStake, destinationHotkey: highlightedDelegate?.poolId })
 
   const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
@@ -82,12 +85,14 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
     if (isReady)
       extrinsic
         .signAndSend(account.address)
-        .then(() => console.log('SUCCESS'))
+        .then(() => {
+          queryClient.invalidateQueries({ queryKey: ['stakeInfoForColdKey', account.address] })
+        })
         .finally(() => {
           setSelectedDelegate(undefined)
           setSelectedStake(undefined)
         })
-  }, [account.address, extrinsic, isReady])
+  }, [account.address, extrinsic, isReady, queryClient])
 
   if (stakes.length === 0) return null
 
