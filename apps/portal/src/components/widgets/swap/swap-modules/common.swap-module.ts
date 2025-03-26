@@ -18,16 +18,17 @@ import 'recoil'
 
 import type { TransactionRequest, WalletClient } from 'viem'
 import { isAddress } from 'viem'
-import { arbitrum, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon, sonic } from 'viem/chains'
+import { arbitrum, base, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon, sonic } from 'viem/chains'
 
 export const supportedEvmChains: Record<string, ViemChain> = {
   eth: mainnet,
-  bsc: bsc,
-  arbitrum: arbitrum,
-  optimism: optimism,
-  blast: blast,
-  polygon: polygon,
-  manta: manta,
+  bsc,
+  base,
+  arbitrum,
+  optimism,
+  blast,
+  polygon,
+  manta,
   movr: moonriver,
   glmr: moonbeam,
   s: sonic,
