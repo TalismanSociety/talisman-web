@@ -53,7 +53,10 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
 
   const queryClient = useQueryClient()
 
-  const { extrinsic, isReady } = useMoveStake({ stake: selectedStake, destinationHotkey: highlightedDelegate?.poolId })
+  const { extrinsic, isReady } = useMoveStake({
+    stake: selectedStake,
+    destinationHotkey: highlightedDelegate?.poolId,
+  })
 
   const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
 
@@ -105,6 +108,7 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
             stake={stake}
             account={account}
             chain={chain}
+            highlightedDelegate={highlightedDelegate}
             handleToggleAddStakeDialog={handleToggleAddStakeDialog}
             handleToggleUnstakeDialog={handleToggleUnstakeDialog}
             handleToggleChangeValidator={handleToggleChangeValidator}

@@ -6,6 +6,8 @@ import { DTAO_LOGO, ROOT_NETUID } from '@/components/widgets/staking/subtensor/c
 import { ChainInfo } from '@/domains/chains/recoils'
 import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
 import { useGetDynamicTaoStakeInfo } from '@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo'
+import { useMoveStake } from '@/domains/staking/subtensor/hooks/useMoveStake'
+import { type BondOption } from '@/domains/staking/subtensor/types'
 
 import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 
@@ -13,6 +15,7 @@ type StakeItemRowProps = {
   stake: StakeItem
   account: Account
   chain: ChainInfo
+  highlightedDelegate?: BondOption
   handleToggleAddStakeDialog: (stakeItem?: StakeItem | undefined) => void
   handleToggleUnstakeDialog: (stakeItem?: StakeItem | undefined) => void
   handleToggleChangeValidator: (stakeItem?: StakeItem | undefined) => void
@@ -22,6 +25,7 @@ export const StakeItemRow = ({
   stake,
   account,
   chain,
+  highlightedDelegate,
   handleToggleAddStakeDialog,
   handleToggleUnstakeDialog,
   handleToggleChangeValidator,
@@ -32,6 +36,11 @@ export const StakeItemRow = ({
     netuid: stake.netuid,
     direction: 'alphaToTao',
     shouldUpdateFeeAndSlippage: false,
+  })
+
+  const { isError, errorMessage } = useMoveStake({
+    stake,
+    destinationHotkey: highlightedDelegate?.poolId,
   })
 
   const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
@@ -58,6 +67,8 @@ export const StakeItemRow = ({
         account={account}
         provider={provider}
         stakeStatus={'earning_rewards'}
+        isError={isError}
+        errorMessage={errorMessage}
         balance={
           <ErrorBoundary renderFallback={() => <>--</>}>
             {stake.totalStaked.decimalAmount?.toLocaleString()}
