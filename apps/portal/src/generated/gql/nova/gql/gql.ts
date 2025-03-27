@@ -14,7 +14,7 @@ import * as types from './graphql'
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-  '\n            query PoolRewards($address: String!) {\n              accumulatedPoolReward(id: $address) {\n                amount\n              }\n            }\n          ':
+  '\n      query PoolRewards($address: String!) {\n        accumulatedPoolReward(id: $address) {\n          amount\n        }\n      }\n    ':
     types.PoolRewardsDocument,
   '\n            query ValidatorStakingReward($address: String!) {\n              accumulatedReward(id: $address) {\n                amount\n              }\n            }\n          ':
     types.ValidatorStakingRewardDocument,
@@ -38,8 +38,8 @@ export function graphql(source: string): unknown
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n            query PoolRewards($address: String!) {\n              accumulatedPoolReward(id: $address) {\n                amount\n              }\n            }\n          '
-): (typeof documents)['\n            query PoolRewards($address: String!) {\n              accumulatedPoolReward(id: $address) {\n                amount\n              }\n            }\n          ']
+  source: '\n      query PoolRewards($address: String!) {\n        accumulatedPoolReward(id: $address) {\n          amount\n        }\n      }\n    '
+): (typeof documents)['\n      query PoolRewards($address: String!) {\n        accumulatedPoolReward(id: $address) {\n          amount\n        }\n      }\n    ']
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
