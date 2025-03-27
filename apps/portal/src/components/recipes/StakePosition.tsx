@@ -26,6 +26,8 @@ import { StakePositionSkeleton } from './StakePosition.skeleton'
 
 export type StakePositionProps = {
   readonly?: boolean
+  isError?: boolean
+  errorMessage?: string | null
   account: Account
   provider: ReactNode
   shortProvider?: ReactNode
@@ -40,6 +42,7 @@ export type StakePositionProps = {
   fiatRewards?: ReactNode
   unstakingStatus?: ReactNode
   increaseStakeButton?: ReactNode
+  changeValidatorButton?: ReactNode
   unstakeButton?: ReactNode
   lockedButton?: ReactNode
   menuButton?: ReactNode
@@ -47,7 +50,7 @@ export type StakePositionProps = {
   withdrawButton?: ReactNode
 }
 
-const StakePositionContext = createContext({ readonly: false })
+const StakePositionContext = createContext({ readonly: false, isError: false, errorMessage: '' })
 
 const IncreaseStakeButton = (props: Omit<IconButtonProps, 'children'>) => (
   <StakePositionContext.Consumer>
@@ -68,6 +71,18 @@ const UnstakeButton = (props: Omit<MenuItemProps, 'children'>) => (
         <Menu.Item.Button headlineContent="Unstake" disabled={readonly} {...props} />
       </Tooltip>
     )}
+  </StakePositionContext.Consumer>
+)
+
+const ChangeValidatorButton = (props: Omit<MenuItemProps, 'children'>) => (
+  <StakePositionContext.Consumer>
+    {({ readonly, isError, errorMessage }) => {
+      return (
+        <Tooltip content={readonly ? 'Account is readonly' : errorMessage} disabled={!readonly && !isError}>
+          <Menu.Item.Button headlineContent="Change Validator" disabled={readonly || isError} {...props} />
+        </Tooltip>
+      )
+    }}
   </StakePositionContext.Consumer>
 )
 
@@ -186,7 +201,13 @@ export const StakePosition = Object.assign(
     const shouldRenderTotalRewards = props.rewards || props.fiatRewards
 
     return (
-      <StakePositionContext.Provider value={{ readonly: props.readonly ?? false }}>
+      <StakePositionContext.Provider
+        value={{
+          readonly: props.readonly ?? false,
+          isError: props.isError ?? false,
+          errorMessage: props.errorMessage ?? '',
+        }}
+      >
         <div className="@container">
           <Surface className="@[100rem]:flex-row @[100rem]:items-center flex flex-col gap-[0.8rem] rounded-[1.6rem] p-[1.6rem]">
             <div className="@[100rem]:contents flex items-center justify-between gap-[0.8rem]">
@@ -212,6 +233,7 @@ export const StakePosition = Object.assign(
                         <>
                           {props.unstakeButton}
                           {props.lockedButton}
+                          {props.changeValidatorButton}
                         </>
                       ),
                     }}
@@ -324,6 +346,7 @@ export const StakePosition = Object.assign(
   {
     IncreaseStakeButton,
     UnstakeButton,
+    ChangeValidatorButton,
     MenuButton,
     ClaimButton,
     WithdrawButton,

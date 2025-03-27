@@ -14,6 +14,7 @@ type DelegateSelectorDialogProps = {
   selected?: BondOption
   onRequestDismiss: () => unknown
   onConfirm: (delegate: BondOption) => unknown
+  setHighlightedDelegate?: React.Dispatch<React.SetStateAction<BondOption | undefined>>
 }
 
 export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
@@ -98,7 +99,10 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
             count={!isError ? delegate.totalStakers : 0}
             balance={formattedBalance ?? ''}
             balancePlanck={balance.decimalAmount?.planck}
-            onClick={() => setHighlighted(delegate)}
+            onClick={() => {
+              setHighlighted(delegate)
+              props.setHighlightedDelegate?.(delegate)
+            }}
             className="min-h-[9.6rem]"
           />
         )
