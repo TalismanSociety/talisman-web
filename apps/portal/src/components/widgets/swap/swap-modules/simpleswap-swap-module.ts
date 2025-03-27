@@ -1,6 +1,7 @@
 import { QuoteResponse } from '@chainflip/sdk/swap'
 import { chainsAtom } from '@talismn/balances-react'
 import { encodeAnyAddress } from '@talismn/util'
+import BigNumber from 'bignumber.js'
 import { atom, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
 import { createPublicClient, encodeFunctionData, erc20Abi, http, isAddress } from 'viem'
@@ -249,6 +250,8 @@ type Exchange = {
   error?: string
 }
 
+type Range = { min: BigNumber }
+
 const simpleSwapSdk = {
   getAllCurrencies: async (): Promise<SimpleSwapCurrency[]> => {
     const allCurrenciesRes = await fetch(`https://api.simpleswap.io/get_all_currencies?api_key=${APIKEY}`)
@@ -322,6 +325,25 @@ const simpleSwapSdk = {
     })
     const exchange = await fetch(`https://api.simpleswap.io/get_exchange?${search.toString()}`)
     return exchange.json()
+  },
+  getRange: async (props: { currency_from: string; currency_to: string }): Promise<Range | undefined> => {
+    const search = new URLSearchParams({
+      api_key: APIKEY,
+      fixed: 'false',
+      ...props,
+    })
+    const json:
+      | { min?: string; trace_id?: string }
+      | { code?: number; error?: string; description?: string; trace_id?: string } = await (
+      await fetch(`https://api.simpleswap.io/get_ranges?${search.toString()}`)
+    ).json()
+
+    if ('error' in json) throw new Error(json.error)
+    if (!('min' in json)) return
+
+    if (typeof json.min !== 'string') return
+
+    return { min: BigNumber(json.min) }
   },
 }
 
@@ -428,6 +450,22 @@ const quote: QuoteFunction = loadable(
           }
         }
         return null
+      }
+
+      const range = await simpleSwapSdk.getRange({ currency_from: currencyFrom, currency_to: currencyTo })
+      if (range && range.min.isGreaterThan(fromAmount.toString())) {
+        return {
+          decentralisationScore: DECENTRALISATION_SCORE,
+          protocol: PROTOCOL,
+          inputAmountBN: fromAmount.planck,
+          outputAmountBN: 0n,
+          error: `Minimum swap is ${range.min.toString()} ${fromAsset.symbol}`,
+          timeInSec: 5 * 60,
+          fees: [],
+          providerLogo: LOGO,
+          providerName: PROTOCOL_NAME,
+          talismanFeeBps: TALISMAN_FEE,
+        }
       }
 
       const gasFee = await estimateGas(get, { getSubstrateApi })
