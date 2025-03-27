@@ -118,15 +118,20 @@ const Details: React.FC = () => {
         }
       />
     )
-  if (quotes.state === 'hasError' || cachedQuotes.every(q => q.quote?.state === 'hasError'))
+  if (quotes.state === 'hasError' || cachedQuotes.every(q => q.quote?.state === 'hasError')) {
+    const cachedQuoteError =
+      cachedQuotes[0]?.quote?.state === 'hasError' && (cachedQuotes[0]?.quote?.error as any)?.message // eslint-disable-line @typescript-eslint/no-explicit-any
     return (
       <SwapDetailsError
         message={
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (quotes.state === 'hasError' ? (quotes.error as any) : {})?.message ?? 'No route found. Try larger amount.'
+          (quotes.state === 'hasError' ? (quotes.error as any) : {})?.message ??
+          cachedQuoteError ??
+          'No route found. Try larger amount.'
         }
       />
     )
+  }
   if (quotes.state === 'hasData' && quotes.data?.length === 0)
     return <SwapDetailsError message="Pair is unavailable." />
 
