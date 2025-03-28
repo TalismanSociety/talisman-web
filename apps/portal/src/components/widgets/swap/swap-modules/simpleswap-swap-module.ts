@@ -1,6 +1,7 @@
 import { QuoteResponse } from '@chainflip/sdk/swap'
 import { chainsAtom } from '@talismn/balances-react'
 import { encodeAnyAddress } from '@talismn/util'
+import BigNumber from 'bignumber.js'
 import { atom, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
 import { createPublicClient, encodeFunctionData, erc20Abi, http, isAddress } from 'viem'
@@ -249,6 +250,8 @@ type Exchange = {
   error?: string
 }
 
+type Range = { min: BigNumber }
+
 const simpleSwapSdk = {
   getAllCurrencies: async (): Promise<SimpleSwapCurrency[]> => {
     const allCurrenciesRes = await fetch(`https://api.simpleswap.io/get_all_currencies?api_key=${APIKEY}`)
@@ -323,6 +326,25 @@ const simpleSwapSdk = {
     const exchange = await fetch(`https://api.simpleswap.io/get_exchange?${search.toString()}`)
     return exchange.json()
   },
+  getRange: async (props: { currency_from: string; currency_to: string }): Promise<Range | undefined> => {
+    const search = new URLSearchParams({
+      api_key: APIKEY,
+      fixed: 'false',
+      ...props,
+    })
+    const json:
+      | { min?: string; trace_id?: string }
+      | { code?: number; error?: string; description?: string; trace_id?: string } = await (
+      await fetch(`https://api.simpleswap.io/get_ranges?${search.toString()}`)
+    ).json()
+
+    if ('error' in json) throw new Error(json.error)
+    if (!('min' in json)) return
+
+    if (typeof json.min !== 'string') return
+
+    return { min: BigNumber(json.min) }
+  },
 }
 
 const simpleswapAssetsAtom = atom(async () => {
@@ -396,68 +418,57 @@ const quote: QuoteFunction = loadable(
     const toAsset = get(toAssetAtom)
     const fromAmount = get(fromAmountAtom)
 
-    try {
-      if (!fromAsset || !toAsset || !fromAmount || fromAmount.planck === 0n) return null
-      const currencyFrom = fromAsset.context.simpleswap?.symbol
-      const currencyTo = toAsset.context.simpleswap?.symbol
-      if (!currencyFrom || !currencyTo) return null
+    if (!fromAsset || !toAsset || !fromAmount || fromAmount.planck === 0n) return null
+    const currencyFrom = fromAsset.context.simpleswap?.symbol
+    const currencyTo = toAsset.context.simpleswap?.symbol
+    if (!currencyFrom || !currencyTo) return null
 
-      // force refresh
-      get(swapQuoteRefresherAtom)
-      const output = await simpleSwapSdk.getEstimated({
-        amount: fromAmount.toString(),
-        currencyFrom,
-        currencyTo,
-        fixed: false,
-      })
+    // force refresh
+    get(swapQuoteRefresherAtom)
 
-      // check for error object
-      if (!output || typeof output !== 'string') {
-        if (output && typeof output !== 'string') {
-          return {
-            decentralisationScore: DECENTRALISATION_SCORE,
-            protocol: PROTOCOL,
-            inputAmountBN: fromAmount.planck,
-            outputAmountBN: 0n,
-            error: output.description,
-            timeInSec: 5 * 60,
-            fees: [],
-            providerLogo: LOGO,
-            providerName: PROTOCOL_NAME,
-            talismanFeeBps: TALISMAN_FEE,
-          }
+    const range = await simpleSwapSdk.getRange({ currency_from: currencyFrom, currency_to: currencyTo })
+    if (range && range.min.isGreaterThan(fromAmount.toString()))
+      throw new Error(`SimpleSwap minimum is ${range.min.toString()} ${fromAsset.symbol}`)
+
+    const output = await simpleSwapSdk.getEstimated({
+      amount: fromAmount.toString(),
+      currencyFrom,
+      currencyTo,
+      fixed: false,
+    })
+
+    // check for error object
+    if (!output || typeof output !== 'string') {
+      if (output && typeof output !== 'string') {
+        return {
+          decentralisationScore: DECENTRALISATION_SCORE,
+          protocol: PROTOCOL,
+          inputAmountBN: fromAmount.planck,
+          outputAmountBN: 0n,
+          error: output.description,
+          timeInSec: 5 * 60,
+          fees: [],
+          providerLogo: LOGO,
+          providerName: PROTOCOL_NAME,
+          talismanFeeBps: TALISMAN_FEE,
         }
-        return null
       }
+      return null
+    }
 
-      const gasFee = await estimateGas(get, { getSubstrateApi })
+    const gasFee = await estimateGas(get, { getSubstrateApi })
 
-      return {
-        decentralisationScore: DECENTRALISATION_SCORE,
-        protocol: PROTOCOL,
-        inputAmountBN: fromAmount.planck,
-        outputAmountBN: Decimal.fromUserInput(output, toAsset.decimals).planck,
-        // swaps take about 5mins according to their faq: https://simpleswap.io/faq#crypto-to-crypto-exchanges--how-long-does-it-take-to-exchange-coins
-        timeInSec: 5 * 60,
-        fees: gasFee ? [gasFee] : [],
-        providerLogo: LOGO,
-        providerName: PROTOCOL_NAME,
-        talismanFeeBps: TALISMAN_FEE,
-      }
-    } catch (e) {
-      console.error(e)
-      return {
-        decentralisationScore: DECENTRALISATION_SCORE,
-        protocol: PROTOCOL,
-        inputAmountBN: fromAmount.planck,
-        outputAmountBN: 0n,
-        timeInSec: 5 * 60,
-        error: 'Error fetching quote',
-        fees: [],
-        providerLogo: LOGO,
-        providerName: PROTOCOL_NAME,
-        talismanFeeBps: TALISMAN_FEE,
-      }
+    return {
+      decentralisationScore: DECENTRALISATION_SCORE,
+      protocol: PROTOCOL,
+      inputAmountBN: fromAmount.planck,
+      outputAmountBN: Decimal.fromUserInput(output, toAsset.decimals).planck,
+      // swaps take about 5mins according to their faq: https://simpleswap.io/faq#crypto-to-crypto-exchanges--how-long-does-it-take-to-exchange-coins
+      timeInSec: 5 * 60,
+      fees: gasFee ? [gasFee] : [],
+      providerLogo: LOGO,
+      providerName: PROTOCOL_NAME,
+      talismanFeeBps: TALISMAN_FEE,
     }
   })
 )
