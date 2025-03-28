@@ -27,11 +27,6 @@ export type Scalars = {
   Cursor: { input: any; output: any }
   /** The day, does not include a time. */
   Date: { input: any; output: any }
-  /**
-   * A point in time as described by the [ISO
-   * 8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
-   */
-  Datetime: { input: any; output: any }
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: { input: any; output: any }
 }
@@ -89,10 +84,6 @@ export type AccountPoolRewardAverageAggregates = {
 
 export type AccountPoolRewardDistinctCountAggregates = {
   __typename?: 'AccountPoolRewardDistinctCountAggregates'
-  /** Distinct count of _blockRange across the matching connection */
-  _blockRange?: Maybe<Scalars['BigInt']['output']>
-  /** Distinct count of _id across the matching connection */
-  _id?: Maybe<Scalars['BigInt']['output']>
   /** Distinct count of accumulatedAmount across the matching connection */
   accumulatedAmount?: Maybe<Scalars['BigInt']['output']>
   /** Distinct count of address across the matching connection */
@@ -273,7 +264,6 @@ export enum AccountPoolRewardsGroupBy {
   Address = 'ADDRESS',
   Amount = 'AMOUNT',
   BlockNumber = 'BLOCK_NUMBER',
-  Id = 'ID',
   PoolId = 'POOL_ID',
   Timestamp = 'TIMESTAMP',
   Type = 'TYPE',
@@ -439,10 +429,6 @@ export type AccountRewardAverageAggregates = {
 
 export type AccountRewardDistinctCountAggregates = {
   __typename?: 'AccountRewardDistinctCountAggregates'
-  /** Distinct count of _blockRange across the matching connection */
-  _blockRange?: Maybe<Scalars['BigInt']['output']>
-  /** Distinct count of _id across the matching connection */
-  _id?: Maybe<Scalars['BigInt']['output']>
   /** Distinct count of accumulatedAmount across the matching connection */
   accumulatedAmount?: Maybe<Scalars['BigInt']['output']>
   /** Distinct count of address across the matching connection */
@@ -605,7 +591,6 @@ export enum AccountRewardsGroupBy {
   Address = 'ADDRESS',
   Amount = 'AMOUNT',
   BlockNumber = 'BLOCK_NUMBER',
-  Id = 'ID',
   Timestamp = 'TIMESTAMP',
   Type = 'TYPE',
 }
@@ -748,10 +733,6 @@ export type AccumulatedPoolRewardAverageAggregates = {
 
 export type AccumulatedPoolRewardDistinctCountAggregates = {
   __typename?: 'AccumulatedPoolRewardDistinctCountAggregates'
-  /** Distinct count of _blockRange across the matching connection */
-  _blockRange?: Maybe<Scalars['BigInt']['output']>
-  /** Distinct count of _id across the matching connection */
-  _id?: Maybe<Scalars['BigInt']['output']>
   /** Distinct count of amount across the matching connection */
   amount?: Maybe<Scalars['BigInt']['output']>
   /** Distinct count of id across the matching connection */
@@ -849,7 +830,6 @@ export type AccumulatedPoolRewardsEdge = {
 /** Grouping methods for `AccumulatedPoolReward` for usage during aggregation. */
 export enum AccumulatedPoolRewardsGroupBy {
   Amount = 'AMOUNT',
-  Id = 'ID',
 }
 
 export type AccumulatedPoolRewardsHavingAverageInput = {
@@ -953,10 +933,6 @@ export type AccumulatedRewardAverageAggregates = {
 
 export type AccumulatedRewardDistinctCountAggregates = {
   __typename?: 'AccumulatedRewardDistinctCountAggregates'
-  /** Distinct count of _blockRange across the matching connection */
-  _blockRange?: Maybe<Scalars['BigInt']['output']>
-  /** Distinct count of _id across the matching connection */
-  _id?: Maybe<Scalars['BigInt']['output']>
   /** Distinct count of amount across the matching connection */
   amount?: Maybe<Scalars['BigInt']['output']>
   /** Distinct count of id across the matching connection */
@@ -1054,7 +1030,6 @@ export type AccumulatedRewardsEdge = {
 /** Grouping methods for `AccumulatedReward` for usage during aggregation. */
 export enum AccumulatedRewardsGroupBy {
   Amount = 'AMOUNT',
-  Id = 'ID',
 }
 
 export type AccumulatedRewardsHavingAverageInput = {
@@ -1145,32 +1120,6 @@ export type BigFloatFilter = {
   notIn?: InputMaybe<Array<Scalars['BigFloat']['input']>>
 }
 
-/** A filter to be used against Datetime fields. All fields are combined with a logical ‘and.’ */
-export type DatetimeFilter = {
-  /** Not equal to the specified value, treating null like an ordinary value. */
-  distinctFrom?: InputMaybe<Scalars['Datetime']['input']>
-  /** Equal to the specified value. */
-  equalTo?: InputMaybe<Scalars['Datetime']['input']>
-  /** Greater than the specified value. */
-  greaterThan?: InputMaybe<Scalars['Datetime']['input']>
-  /** Greater than or equal to the specified value. */
-  greaterThanOrEqualTo?: InputMaybe<Scalars['Datetime']['input']>
-  /** Included in the specified list. */
-  in?: InputMaybe<Array<Scalars['Datetime']['input']>>
-  /** Is null (if `true` is specified) or is not null (if `false` is specified). */
-  isNull?: InputMaybe<Scalars['Boolean']['input']>
-  /** Less than the specified value. */
-  lessThan?: InputMaybe<Scalars['Datetime']['input']>
-  /** Less than or equal to the specified value. */
-  lessThanOrEqualTo?: InputMaybe<Scalars['Datetime']['input']>
-  /** Equal to the specified value, treating null like an ordinary value. */
-  notDistinctFrom?: InputMaybe<Scalars['Datetime']['input']>
-  /** Not equal to the specified value. */
-  notEqualTo?: InputMaybe<Scalars['Datetime']['input']>
-  /** Not included in the specified list. */
-  notIn?: InputMaybe<Array<Scalars['Datetime']['input']>>
-}
-
 export type EraValidatorInfo = Node & {
   __typename?: 'EraValidatorInfo'
   address: Scalars['String']['output']
@@ -1218,10 +1167,6 @@ export type EraValidatorInfoAverageAggregates = {
 
 export type EraValidatorInfoDistinctCountAggregates = {
   __typename?: 'EraValidatorInfoDistinctCountAggregates'
-  /** Distinct count of _blockRange across the matching connection */
-  _blockRange?: Maybe<Scalars['BigInt']['output']>
-  /** Distinct count of _id across the matching connection */
-  _id?: Maybe<Scalars['BigInt']['output']>
   /** Distinct count of address across the matching connection */
   address?: Maybe<Scalars['BigInt']['output']>
   /** Distinct count of era across the matching connection */
@@ -1364,7 +1309,6 @@ export type EraValidatorInfosEdge = {
 export enum EraValidatorInfosGroupBy {
   Address = 'ADDRESS',
   Era = 'ERA',
-  Id = 'ID',
   Others = 'OTHERS',
   Own = 'OWN',
   Total = 'TOTAL',
@@ -1475,10 +1419,6 @@ export type ErrorEventAggregates = {
 
 export type ErrorEventDistinctCountAggregates = {
   __typename?: 'ErrorEventDistinctCountAggregates'
-  /** Distinct count of _blockRange across the matching connection */
-  _blockRange?: Maybe<Scalars['BigInt']['output']>
-  /** Distinct count of _id across the matching connection */
-  _id?: Maybe<Scalars['BigInt']['output']>
   /** Distinct count of description across the matching connection */
   description?: Maybe<Scalars['BigInt']['output']>
   /** Distinct count of id across the matching connection */
@@ -1534,7 +1474,6 @@ export type ErrorEventsEdge = {
 /** Grouping methods for `ErrorEvent` for usage during aggregation. */
 export enum ErrorEventsGroupBy {
   Description = 'DESCRIPTION',
-  Id = 'ID',
 }
 
 /** Conditions for `ErrorEvent` aggregates. */
@@ -1561,15 +1500,6 @@ export type HavingBigfloatFilter = {
   lessThan?: InputMaybe<Scalars['BigFloat']['input']>
   lessThanOrEqualTo?: InputMaybe<Scalars['BigFloat']['input']>
   notEqualTo?: InputMaybe<Scalars['BigFloat']['input']>
-}
-
-export type HavingDatetimeFilter = {
-  equalTo?: InputMaybe<Scalars['Datetime']['input']>
-  greaterThan?: InputMaybe<Scalars['Datetime']['input']>
-  greaterThanOrEqualTo?: InputMaybe<Scalars['Datetime']['input']>
-  lessThan?: InputMaybe<Scalars['Datetime']['input']>
-  lessThanOrEqualTo?: InputMaybe<Scalars['Datetime']['input']>
-  notEqualTo?: InputMaybe<Scalars['Datetime']['input']>
 }
 
 export type HavingIntFilter = {
@@ -1634,10 +1564,6 @@ export type HistoryElementAverageAggregates = {
 
 export type HistoryElementDistinctCountAggregates = {
   __typename?: 'HistoryElementDistinctCountAggregates'
-  /** Distinct count of _blockRange across the matching connection */
-  _blockRange?: Maybe<Scalars['BigInt']['output']>
-  /** Distinct count of _id across the matching connection */
-  _id?: Maybe<Scalars['BigInt']['output']>
   /** Distinct count of address across the matching connection */
   address?: Maybe<Scalars['BigInt']['output']>
   /** Distinct count of assetTransfer across the matching connection */
@@ -1808,7 +1734,6 @@ export enum HistoryElementsGroupBy {
   Extrinsic = 'EXTRINSIC',
   ExtrinsicHash = 'EXTRINSIC_HASH',
   ExtrinsicIdx = 'EXTRINSIC_IDX',
-  Id = 'ID',
   PoolReward = 'POOL_REWARD',
   Reward = 'REWARD',
   Swap = 'SWAP',
@@ -2002,14 +1927,6 @@ export type Query = Node & {
   __typename?: 'Query'
   _metadata?: Maybe<_Metadata>
   _metadatas?: Maybe<_Metadatas>
-  _poi?: Maybe<_Poi>
-  _poiByChainBlockHash?: Maybe<_Poi>
-  _poiByHash?: Maybe<_Poi>
-  /** Reads a single `_Poi` using its globally unique `ID`. */
-  _poiByNodeId?: Maybe<_Poi>
-  _poiByParentHash?: Maybe<_Poi>
-  /** Reads and enables pagination through a set of `_Poi`. */
-  _pois?: Maybe<_PoisConnection>
   accountPoolReward?: Maybe<AccountPoolReward>
   /** Reads a single `AccountPoolReward` using its globally unique `ID`. */
   accountPoolRewardByNodeId?: Maybe<AccountPoolReward>
@@ -2068,46 +1985,7 @@ export type Query_MetadatasArgs = {
 }
 
 /** The root query type which gives access points into the data universe. */
-export type Query_PoiArgs = {
-  id: Scalars['Int']['input']
-}
-
-/** The root query type which gives access points into the data universe. */
-export type Query_PoiByChainBlockHashArgs = {
-  chainBlockHash: Scalars['String']['input']
-}
-
-/** The root query type which gives access points into the data universe. */
-export type Query_PoiByHashArgs = {
-  hash: Scalars['String']['input']
-}
-
-/** The root query type which gives access points into the data universe. */
-export type Query_PoiByNodeIdArgs = {
-  distinct?: InputMaybe<Array<InputMaybe<_Poi_Distinct_Enum>>>
-  nodeId: Scalars['ID']['input']
-}
-
-/** The root query type which gives access points into the data universe. */
-export type Query_PoiByParentHashArgs = {
-  parentHash: Scalars['String']['input']
-}
-
-/** The root query type which gives access points into the data universe. */
-export type Query_PoisArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>
-  before?: InputMaybe<Scalars['Cursor']['input']>
-  distinct?: InputMaybe<Array<InputMaybe<_Poi_Distinct_Enum>>>
-  filter?: InputMaybe<_PoiFilter>
-  first?: InputMaybe<Scalars['Int']['input']>
-  last?: InputMaybe<Scalars['Int']['input']>
-  offset?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Array<_PoisOrderBy>>
-}
-
-/** The root query type which gives access points into the data universe. */
 export type QueryAccountPoolRewardArgs = {
-  blockHeight?: InputMaybe<Scalars['String']['input']>
   id: Scalars['String']['input']
 }
 
@@ -2121,7 +1999,6 @@ export type QueryAccountPoolRewardByNodeIdArgs = {
 export type QueryAccountPoolRewardsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>
   before?: InputMaybe<Scalars['Cursor']['input']>
-  blockHeight?: InputMaybe<Scalars['String']['input']>
   distinct?: InputMaybe<Array<InputMaybe<Account_Pool_Rewards_Distinct_Enum>>>
   filter?: InputMaybe<AccountPoolRewardFilter>
   first?: InputMaybe<Scalars['Int']['input']>
@@ -2132,7 +2009,6 @@ export type QueryAccountPoolRewardsArgs = {
 
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountRewardArgs = {
-  blockHeight?: InputMaybe<Scalars['String']['input']>
   id: Scalars['String']['input']
 }
 
@@ -2146,7 +2022,6 @@ export type QueryAccountRewardByNodeIdArgs = {
 export type QueryAccountRewardsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>
   before?: InputMaybe<Scalars['Cursor']['input']>
-  blockHeight?: InputMaybe<Scalars['String']['input']>
   distinct?: InputMaybe<Array<InputMaybe<Account_Rewards_Distinct_Enum>>>
   filter?: InputMaybe<AccountRewardFilter>
   first?: InputMaybe<Scalars['Int']['input']>
@@ -2157,7 +2032,6 @@ export type QueryAccountRewardsArgs = {
 
 /** The root query type which gives access points into the data universe. */
 export type QueryAccumulatedPoolRewardArgs = {
-  blockHeight?: InputMaybe<Scalars['String']['input']>
   id: Scalars['String']['input']
 }
 
@@ -2171,7 +2045,6 @@ export type QueryAccumulatedPoolRewardByNodeIdArgs = {
 export type QueryAccumulatedPoolRewardsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>
   before?: InputMaybe<Scalars['Cursor']['input']>
-  blockHeight?: InputMaybe<Scalars['String']['input']>
   distinct?: InputMaybe<Array<InputMaybe<Accumulated_Pool_Rewards_Distinct_Enum>>>
   filter?: InputMaybe<AccumulatedPoolRewardFilter>
   first?: InputMaybe<Scalars['Int']['input']>
@@ -2182,7 +2055,6 @@ export type QueryAccumulatedPoolRewardsArgs = {
 
 /** The root query type which gives access points into the data universe. */
 export type QueryAccumulatedRewardArgs = {
-  blockHeight?: InputMaybe<Scalars['String']['input']>
   id: Scalars['String']['input']
 }
 
@@ -2196,7 +2068,6 @@ export type QueryAccumulatedRewardByNodeIdArgs = {
 export type QueryAccumulatedRewardsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>
   before?: InputMaybe<Scalars['Cursor']['input']>
-  blockHeight?: InputMaybe<Scalars['String']['input']>
   distinct?: InputMaybe<Array<InputMaybe<Accumulated_Rewards_Distinct_Enum>>>
   filter?: InputMaybe<AccumulatedRewardFilter>
   first?: InputMaybe<Scalars['Int']['input']>
@@ -2207,7 +2078,6 @@ export type QueryAccumulatedRewardsArgs = {
 
 /** The root query type which gives access points into the data universe. */
 export type QueryEraValidatorInfoArgs = {
-  blockHeight?: InputMaybe<Scalars['String']['input']>
   id: Scalars['String']['input']
 }
 
@@ -2221,7 +2091,6 @@ export type QueryEraValidatorInfoByNodeIdArgs = {
 export type QueryEraValidatorInfosArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>
   before?: InputMaybe<Scalars['Cursor']['input']>
-  blockHeight?: InputMaybe<Scalars['String']['input']>
   distinct?: InputMaybe<Array<InputMaybe<Era_Validator_Infos_Distinct_Enum>>>
   filter?: InputMaybe<EraValidatorInfoFilter>
   first?: InputMaybe<Scalars['Int']['input']>
@@ -2232,7 +2101,6 @@ export type QueryEraValidatorInfosArgs = {
 
 /** The root query type which gives access points into the data universe. */
 export type QueryErrorEventArgs = {
-  blockHeight?: InputMaybe<Scalars['String']['input']>
   id: Scalars['String']['input']
 }
 
@@ -2246,7 +2114,6 @@ export type QueryErrorEventByNodeIdArgs = {
 export type QueryErrorEventsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>
   before?: InputMaybe<Scalars['Cursor']['input']>
-  blockHeight?: InputMaybe<Scalars['String']['input']>
   distinct?: InputMaybe<Array<InputMaybe<Error_Events_Distinct_Enum>>>
   filter?: InputMaybe<ErrorEventFilter>
   first?: InputMaybe<Scalars['Int']['input']>
@@ -2257,7 +2124,6 @@ export type QueryErrorEventsArgs = {
 
 /** The root query type which gives access points into the data universe. */
 export type QueryHistoryElementArgs = {
-  blockHeight?: InputMaybe<Scalars['String']['input']>
   id: Scalars['String']['input']
 }
 
@@ -2271,7 +2137,6 @@ export type QueryHistoryElementByNodeIdArgs = {
 export type QueryHistoryElementsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>
   before?: InputMaybe<Scalars['Cursor']['input']>
-  blockHeight?: InputMaybe<Scalars['String']['input']>
   distinct?: InputMaybe<Array<InputMaybe<History_Elements_Distinct_Enum>>>
   filter?: InputMaybe<HistoryElementFilter>
   first?: InputMaybe<Scalars['Int']['input']>
@@ -2403,8 +2268,9 @@ export type TableEstimate = {
 export type _Metadata = {
   __typename?: '_Metadata'
   chain?: Maybe<Scalars['String']['output']>
+  dbSize?: Maybe<Scalars['BigInt']['output']>
   deployments?: Maybe<Scalars['JSON']['output']>
-  dynamicDatasources?: Maybe<Scalars['String']['output']>
+  dynamicDatasources?: Maybe<Array<Maybe<Scalars['JSON']['output']>>>
   evmChainId?: Maybe<Scalars['String']['output']>
   genesisHash?: Maybe<Scalars['String']['output']>
   indexerHealthy?: Maybe<Scalars['Boolean']['output']>
@@ -2426,267 +2292,6 @@ export type _Metadatas = {
   __typename?: '_Metadatas'
   nodes: Array<Maybe<_Metadata>>
   totalCount: Scalars['Int']['output']
-}
-
-export type _Poi = Node & {
-  __typename?: '_Poi'
-  chainBlockHash?: Maybe<Scalars['String']['output']>
-  createdAt: Scalars['Datetime']['output']
-  hash?: Maybe<Scalars['String']['output']>
-  id: Scalars['Int']['output']
-  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
-  nodeId: Scalars['ID']['output']
-  operationHashRoot?: Maybe<Scalars['String']['output']>
-  parentHash?: Maybe<Scalars['String']['output']>
-  updatedAt: Scalars['Datetime']['output']
-}
-
-export type _PoiAggregates = {
-  __typename?: '_PoiAggregates'
-  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  average?: Maybe<_PoiAverageAggregates>
-  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  distinctCount?: Maybe<_PoiDistinctCountAggregates>
-  keys?: Maybe<Array<Scalars['String']['output']>>
-  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  max?: Maybe<_PoiMaxAggregates>
-  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  min?: Maybe<_PoiMinAggregates>
-  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  stddevPopulation?: Maybe<_PoiStddevPopulationAggregates>
-  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  stddevSample?: Maybe<_PoiStddevSampleAggregates>
-  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  sum?: Maybe<_PoiSumAggregates>
-  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  variancePopulation?: Maybe<_PoiVariancePopulationAggregates>
-  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  varianceSample?: Maybe<_PoiVarianceSampleAggregates>
-}
-
-export type _PoiAverageAggregates = {
-  __typename?: '_PoiAverageAggregates'
-  /** Mean average of id across the matching connection */
-  id?: Maybe<Scalars['BigFloat']['output']>
-}
-
-export type _PoiDistinctCountAggregates = {
-  __typename?: '_PoiDistinctCountAggregates'
-  /** Distinct count of chainBlockHash across the matching connection */
-  chainBlockHash?: Maybe<Scalars['BigInt']['output']>
-  /** Distinct count of createdAt across the matching connection */
-  createdAt?: Maybe<Scalars['BigInt']['output']>
-  /** Distinct count of hash across the matching connection */
-  hash?: Maybe<Scalars['BigInt']['output']>
-  /** Distinct count of id across the matching connection */
-  id?: Maybe<Scalars['BigInt']['output']>
-  /** Distinct count of operationHashRoot across the matching connection */
-  operationHashRoot?: Maybe<Scalars['BigInt']['output']>
-  /** Distinct count of parentHash across the matching connection */
-  parentHash?: Maybe<Scalars['BigInt']['output']>
-  /** Distinct count of updatedAt across the matching connection */
-  updatedAt?: Maybe<Scalars['BigInt']['output']>
-}
-
-/** A filter to be used against `_Poi` object types. All fields are combined with a logical ‘and.’ */
-export type _PoiFilter = {
-  /** Checks for all expressions in this list. */
-  and?: InputMaybe<Array<_PoiFilter>>
-  /** Filter by the object’s `createdAt` field. */
-  createdAt?: InputMaybe<DatetimeFilter>
-  /** Filter by the object’s `id` field. */
-  id?: InputMaybe<IntFilter>
-  /** Negates the expression. */
-  not?: InputMaybe<_PoiFilter>
-  /** Checks for any expressions in this list. */
-  or?: InputMaybe<Array<_PoiFilter>>
-  /** Filter by the object’s `updatedAt` field. */
-  updatedAt?: InputMaybe<DatetimeFilter>
-}
-
-/** Grouping methods for `_Poi` for usage during aggregation. */
-export enum _PoiGroupBy {
-  CreatedAt = 'CREATED_AT',
-  CreatedAtTruncatedToDay = 'CREATED_AT_TRUNCATED_TO_DAY',
-  CreatedAtTruncatedToHour = 'CREATED_AT_TRUNCATED_TO_HOUR',
-  OperationHashRoot = 'OPERATION_HASH_ROOT',
-  UpdatedAt = 'UPDATED_AT',
-  UpdatedAtTruncatedToDay = 'UPDATED_AT_TRUNCATED_TO_DAY',
-  UpdatedAtTruncatedToHour = 'UPDATED_AT_TRUNCATED_TO_HOUR',
-}
-
-export type _PoiHavingAverageInput = {
-  createdAt?: InputMaybe<HavingDatetimeFilter>
-  id?: InputMaybe<HavingIntFilter>
-  updatedAt?: InputMaybe<HavingDatetimeFilter>
-}
-
-export type _PoiHavingDistinctCountInput = {
-  createdAt?: InputMaybe<HavingDatetimeFilter>
-  id?: InputMaybe<HavingIntFilter>
-  updatedAt?: InputMaybe<HavingDatetimeFilter>
-}
-
-/** Conditions for `_Poi` aggregates. */
-export type _PoiHavingInput = {
-  AND?: InputMaybe<Array<_PoiHavingInput>>
-  OR?: InputMaybe<Array<_PoiHavingInput>>
-  average?: InputMaybe<_PoiHavingAverageInput>
-  distinctCount?: InputMaybe<_PoiHavingDistinctCountInput>
-  max?: InputMaybe<_PoiHavingMaxInput>
-  min?: InputMaybe<_PoiHavingMinInput>
-  stddevPopulation?: InputMaybe<_PoiHavingStddevPopulationInput>
-  stddevSample?: InputMaybe<_PoiHavingStddevSampleInput>
-  sum?: InputMaybe<_PoiHavingSumInput>
-  variancePopulation?: InputMaybe<_PoiHavingVariancePopulationInput>
-  varianceSample?: InputMaybe<_PoiHavingVarianceSampleInput>
-}
-
-export type _PoiHavingMaxInput = {
-  createdAt?: InputMaybe<HavingDatetimeFilter>
-  id?: InputMaybe<HavingIntFilter>
-  updatedAt?: InputMaybe<HavingDatetimeFilter>
-}
-
-export type _PoiHavingMinInput = {
-  createdAt?: InputMaybe<HavingDatetimeFilter>
-  id?: InputMaybe<HavingIntFilter>
-  updatedAt?: InputMaybe<HavingDatetimeFilter>
-}
-
-export type _PoiHavingStddevPopulationInput = {
-  createdAt?: InputMaybe<HavingDatetimeFilter>
-  id?: InputMaybe<HavingIntFilter>
-  updatedAt?: InputMaybe<HavingDatetimeFilter>
-}
-
-export type _PoiHavingStddevSampleInput = {
-  createdAt?: InputMaybe<HavingDatetimeFilter>
-  id?: InputMaybe<HavingIntFilter>
-  updatedAt?: InputMaybe<HavingDatetimeFilter>
-}
-
-export type _PoiHavingSumInput = {
-  createdAt?: InputMaybe<HavingDatetimeFilter>
-  id?: InputMaybe<HavingIntFilter>
-  updatedAt?: InputMaybe<HavingDatetimeFilter>
-}
-
-export type _PoiHavingVariancePopulationInput = {
-  createdAt?: InputMaybe<HavingDatetimeFilter>
-  id?: InputMaybe<HavingIntFilter>
-  updatedAt?: InputMaybe<HavingDatetimeFilter>
-}
-
-export type _PoiHavingVarianceSampleInput = {
-  createdAt?: InputMaybe<HavingDatetimeFilter>
-  id?: InputMaybe<HavingIntFilter>
-  updatedAt?: InputMaybe<HavingDatetimeFilter>
-}
-
-export type _PoiMaxAggregates = {
-  __typename?: '_PoiMaxAggregates'
-  /** Maximum of id across the matching connection */
-  id?: Maybe<Scalars['Int']['output']>
-}
-
-export type _PoiMinAggregates = {
-  __typename?: '_PoiMinAggregates'
-  /** Minimum of id across the matching connection */
-  id?: Maybe<Scalars['Int']['output']>
-}
-
-export type _PoiStddevPopulationAggregates = {
-  __typename?: '_PoiStddevPopulationAggregates'
-  /** Population standard deviation of id across the matching connection */
-  id?: Maybe<Scalars['BigFloat']['output']>
-}
-
-export type _PoiStddevSampleAggregates = {
-  __typename?: '_PoiStddevSampleAggregates'
-  /** Sample standard deviation of id across the matching connection */
-  id?: Maybe<Scalars['BigFloat']['output']>
-}
-
-export type _PoiSumAggregates = {
-  __typename?: '_PoiSumAggregates'
-  /** Sum of id across the matching connection */
-  id: Scalars['BigInt']['output']
-}
-
-export type _PoiVariancePopulationAggregates = {
-  __typename?: '_PoiVariancePopulationAggregates'
-  /** Population variance of id across the matching connection */
-  id?: Maybe<Scalars['BigFloat']['output']>
-}
-
-export type _PoiVarianceSampleAggregates = {
-  __typename?: '_PoiVarianceSampleAggregates'
-  /** Sample variance of id across the matching connection */
-  id?: Maybe<Scalars['BigFloat']['output']>
-}
-
-/** A connection to a list of `_Poi` values. */
-export type _PoisConnection = {
-  __typename?: '_PoisConnection'
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<_PoiAggregates>
-  /** A list of edges which contains the `_Poi` and cursor to aid in pagination. */
-  edges: Array<_PoisEdge>
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<_PoiAggregates>>
-  /** A list of `_Poi` objects. */
-  nodes: Array<Maybe<_Poi>>
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo
-  /** The count of *all* `_Poi` you could get from the connection. */
-  totalCount: Scalars['Int']['output']
-}
-
-/** A connection to a list of `_Poi` values. */
-export type _PoisConnectionGroupedAggregatesArgs = {
-  groupBy: Array<_PoiGroupBy>
-  having?: InputMaybe<_PoiHavingInput>
-}
-
-/** A `_Poi` edge in the connection. */
-export type _PoisEdge = {
-  __typename?: '_PoisEdge'
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>
-  /** The `_Poi` at the end of the edge. */
-  node?: Maybe<_Poi>
-}
-
-/** Methods to use when ordering `_Poi`. */
-export enum _PoisOrderBy {
-  ChainBlockHashAsc = 'CHAIN_BLOCK_HASH_ASC',
-  ChainBlockHashDesc = 'CHAIN_BLOCK_HASH_DESC',
-  CreatedAtAsc = 'CREATED_AT_ASC',
-  CreatedAtDesc = 'CREATED_AT_DESC',
-  HashAsc = 'HASH_ASC',
-  HashDesc = 'HASH_DESC',
-  IdAsc = 'ID_ASC',
-  IdDesc = 'ID_DESC',
-  Natural = 'NATURAL',
-  OperationHashRootAsc = 'OPERATION_HASH_ROOT_ASC',
-  OperationHashRootDesc = 'OPERATION_HASH_ROOT_DESC',
-  ParentHashAsc = 'PARENT_HASH_ASC',
-  ParentHashDesc = 'PARENT_HASH_DESC',
-  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  UpdatedAtAsc = 'UPDATED_AT_ASC',
-  UpdatedAtDesc = 'UPDATED_AT_DESC',
-}
-
-export enum _Poi_Distinct_Enum {
-  Chainblockhash = 'CHAINBLOCKHASH',
-  Createdat = 'CREATEDAT',
-  Hash = 'HASH',
-  Id = 'ID',
-  Operationhashroot = 'OPERATIONHASHROOT',
-  Parenthash = 'PARENTHASH',
-  Updatedat = 'UPDATEDAT',
 }
 
 export enum Account_Pool_Rewards_Distinct_Enum {
