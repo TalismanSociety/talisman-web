@@ -12,7 +12,7 @@ import { Asset, SwapSDK } from '@chainflip/sdk/swap'
 import { chainsAtom } from '@talismn/balances-react'
 import { atom } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
-import { createPublicClient, encodeFunctionData, erc20Abi, http, isAddress } from 'viem'
+import { createPublicClient, encodeFunctionData, erc20Abi, fallback, http, isAddress } from 'viem'
 import { arbitrum, mainnet, sepolia } from 'viem/chains'
 
 import { substrateApiGetterAtom } from '@/domains/common/recoils/api'
@@ -444,7 +444,13 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
       : undefined
 
     if (network && evmChain) {
-      const client = createPublicClient({ transport: http(network.rpcs[0]), chain: evmChain })
+      const client = createPublicClient({
+        transport: fallback(
+          network.rpcs.map(rpc => http(rpc, { retryCount: 0 })),
+          { retryCount: 0 }
+        ),
+        chain: evmChain,
+      })
       const gasPrice = await client.getGasPrice()
       // the to address and amount dont matter, we just need to place any address here for the estimation
       const gasLimit = await client.estimateGas({

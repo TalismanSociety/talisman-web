@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { createPublicClient, erc20Abi, http, zeroAddress } from 'viem'
+import { createPublicClient, erc20Abi, fallback, http, zeroAddress } from 'viem'
 import * as allEvmChains from 'viem/chains'
 import { type Chain as ViemChain } from 'viem/chains'
 
@@ -42,10 +42,17 @@ const useEvmBalance = (props?: UseFastBalanceProps) => {
     if (props?.type !== 'evm') return setEvmBalance(undefined)
 
     const chain: ViemChain | undefined = Object.values(allEvmChains).find(chain => chain.id === props.networkId)
-    const rpcUrl = chain?.rpcUrls.default.http[0]
-    if (!rpcUrl || !chain) return setEvmBalance(undefined)
+    const rpcUrls = chain?.rpcUrls.default.http
+    if (!chain || !rpcUrls?.length) return setEvmBalance(undefined)
 
-    const client = createPublicClient({ transport: http(rpcUrl), chain, batch: { multicall: true } })
+    const client = createPublicClient({
+      transport: fallback(
+        rpcUrls.map(rpc => http(rpc, { retryCount: 0 })),
+        { retryCount: 0 }
+      ),
+      chain,
+      batch: { multicall: true },
+    })
 
     const refetch = () => {
       // native token
