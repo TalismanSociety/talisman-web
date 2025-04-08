@@ -15,11 +15,11 @@ export const SimpleswapActivity: React.FC<{ data: { id: string }; timestamp: num
   const assets = useAtomValue(fromAssetsAtom)
 
   const fromAsset = useMemo(() => {
-    return assets.find(asset => asset.context.simpleswap.symbol === status.exchange.currency_from)
+    return assets.find(asset => asset?.context?.simpleswap?.symbol === status.exchange.currency_from)
   }, [assets, status.exchange.currency_from])
 
   const destAsset = useMemo(() => {
-    return assets.find(asset => asset.context.simpleswap.symbol === status.exchange.currency_to)
+    return assets.find(asset => asset?.context?.simpleswap?.symbol === status.exchange.currency_to)
   }, [assets, status.exchange.currency_to])
 
   const fromAmount = useMemo(() => {
