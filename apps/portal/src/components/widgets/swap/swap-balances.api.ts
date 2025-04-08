@@ -1,6 +1,6 @@
 import { chainsAtom, evmNetworksAtom } from '@talismn/balances-react'
 import { atom } from 'jotai'
-import { atomFamily } from 'jotai/utils'
+import { atomFamily, loadable } from 'jotai/utils'
 import { createPublicClient, fallback, http } from 'viem'
 import { type Chain as ViemChain } from 'viem/chains'
 import * as allEvmChains from 'viem/chains'
@@ -148,16 +148,11 @@ export const substrateBalancesAtom = atomFamily((chainId: string) =>
 export const fromAssetsBalancesAtom = atom(async get => {
   const fromAssets = await get(fromAssetsByChainIdAtom)
 
-  const evmBalances = await Promise.all(
-    Object.keys(fromAssets.evmAssetsByChainId).map(chainId => get(evmBalancesAtom(chainId)))
-  )
+  const balanceLoadables = [
+    ...Object.keys(fromAssets.evmAssetsByChainId).map(chainId => get(loadable(evmBalancesAtom(chainId)))),
+    ...Object.keys(fromAssets.substrateAssetsByChainId).map(chainId => get(loadable(substrateBalancesAtom(chainId)))),
+  ]
+  const balances = balanceLoadables.filter(b => b.state === 'hasData').map(b => b.data.balances)
 
-  const substrateBalances = await Promise.all(
-    Object.keys(fromAssets.substrateAssetsByChainId).map(chainId => get(substrateBalancesAtom(chainId)))
-  )
-
-  return [...evmBalances, ...substrateBalances].reduce(
-    (acc, { balances }) => ({ ...acc, ...balances }),
-    {} as Record<string, Decimal>
-  )
+  return balances.reduce((acc, balances) => ({ ...acc, ...balances }), {} as Record<string, Decimal>)
 })
