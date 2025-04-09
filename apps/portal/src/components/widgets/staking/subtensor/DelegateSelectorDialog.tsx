@@ -27,7 +27,7 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
   const [highlighted, setHighlighted] = useState<BondOption | undefined>()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
-  let sortMethods: {
+  const sortMethods: {
     [key: string]: (
       a: ReactElement<StakeTargetSelectorItemProps>,
       b: ReactElement<StakeTargetSelectorItemProps>
@@ -44,14 +44,15 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
       parseInt(b.props.count?.toString?.() ?? '0') - parseInt(a.props.count?.toString?.() ?? '0'),
   }
 
-  if (!hasDTaoStaking) {
-    sortMethods = {
-      ...sortMethods,
-      'Estimated APR': (a, b) =>
-        parseFloat(b.props.estimatedApr?.replace('%', '') ?? '0') -
-        parseFloat(a.props.estimatedApr?.replace('%', '') ?? '0'),
-    }
-  }
+  // TODO: Uncomment this when taostats provide APR data, view useGetBittensorInfiniteValidators api endpoint
+  // if (!hasDTaoStaking) {
+  //   sortMethods = {
+  //     ...sortMethods,
+  //     'Estimated APR': (a, b) =>
+  //       parseFloat(b.props.estimatedApr?.replace('%', '') ?? '0') -
+  //       parseFloat(a.props.estimatedApr?.replace('%', '') ?? '0'),
+  //   }
+  // }
 
   return (
     <StakeTargetSelectorDialog
@@ -67,9 +68,11 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
       isSortDisabled={isError}
     >
       {combinedValidatorsData.map(delegate => {
-        let formattedApr = !hasDTaoStaking
-          ? delegate.apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
-          : ''
+        let formattedApr = '--'
+        // TODO: Uncomment this when taostats provide APR data, view useGetBittensorInfiniteValidators api endpoint
+        // let formattedApr = !hasDTaoStaking
+        //   ? delegate.apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
+        //   : ''
 
         const balance = nativeTokenAmount.fromPlanckOrUndefined(delegate.totalStaked)
 
@@ -80,7 +83,7 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
 
         if (isError) {
           formattedBalance = ''
-          formattedApr = ''
+          formattedApr = '--'
         }
 
         return (

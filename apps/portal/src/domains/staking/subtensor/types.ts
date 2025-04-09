@@ -13,43 +13,30 @@ type Key = {
   hex: string
 }
 
-// Subnet Dominance Type
-type SubnetDominance = {
-  netuid: number
-  dominance: string
-  family_stake: string
-}
-
 // Validator Data Type
 type ValidatorData = {
   hotkey: Key
   coldkey: Key
   name: string
   block_number: number
-  timestamp: string // ISO date format string
+  timestamp: string
+  created_on_date: string
   rank: number
-  nominators: number
-  nominators_24_hr_change: number
-  system_stake: string
-  stake: string
-  stake_24_hr_change: string
-  dominance: string
-  validator_stake: string
+  root_rank: number
+  alpha_rank: number
+  active_subnets: number
+  global_nominators: number
+  global_nominators_24_hr_change: number
   take: string
-  total_daily_return: string
-  validator_return: string
-  nominator_return_per_k: string
-  apr: string
-  nominator_return_per_k_7_day_average: string
-  nominator_return_per_k_30_day_average: string
-  apr_7_day_average: string
-  apr_30_day_average: string
-  pending_emission: string
-  blocks_until_next_reward: number
-  last_reward_block: number
-  registrations: number[]
-  permits: number[]
-  subnet_dominance: SubnetDominance[]
+  global_weighted_stake: string
+  global_weighted_stake_24_hr_change: string
+  global_alpha_stake_as_tao: string
+  root_stake: string
+  weighted_root_stake: string
+  dominance: string
+  dominance_24_hr_change: string
+  nominator_return_per_day: string
+  validator_return_per_day: string
 }
 
 // API Response Type
@@ -136,7 +123,6 @@ export type ValidatorsResponse = {
 export type BondOption = {
   poolId: string
   name: string
-  apr: number
   totalStaked: number
   totalStakers: number
   hasData: boolean
