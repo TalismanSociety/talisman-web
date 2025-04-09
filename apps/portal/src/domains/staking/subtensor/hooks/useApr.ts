@@ -26,7 +26,7 @@ export const useHighestApr = () => {
   return Number(apr)
 }
 
-export const useDelegateApr = (hotkey: string | undefined) => {
+export const useDelegateApr = () => {
   // TODO: Uncomment this when taostats provide APR data, view useGetBittensorInfiniteValidators api endpoint
 
   // const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
