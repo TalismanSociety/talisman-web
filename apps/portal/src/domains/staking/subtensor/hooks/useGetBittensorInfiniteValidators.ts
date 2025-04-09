@@ -10,7 +10,7 @@ const MAX_PAGE_SIZE = 100
 const fetchBittensorInfiniteValidators = async (page: number = 1): Promise<ValidatorsData> => {
   try {
     const response = await (
-      await fetch(`${TAOSTATS_API_URL}/api/validator/latest/v1?page=${page}&limit=${MAX_PAGE_SIZE}`, {
+      await fetch(`${TAOSTATS_API_URL}/api/dtao/validator/latest/v1?page=${page}&limit=${MAX_PAGE_SIZE}`, {
         method: 'GET',
         headers: {
           'X-Extension-ID': TAOSTATS_API_KEY ?? '',
