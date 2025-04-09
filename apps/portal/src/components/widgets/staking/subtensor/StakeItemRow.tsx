@@ -46,7 +46,7 @@ export const StakeItemRow = ({
   const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
   const assetSymbol = stake.netuid === ROOT_NETUID ? symbol : `SN${stake.netuid} ${stake.descriptionName ?? ''}`
   const assetLogo = stake.netuid === ROOT_NETUID ? logo : DTAO_LOGO
-  const provider = combinedValidatorsData.find(({ poolId }) => poolId === stake.hotkey)?.name ?? ''
+  const provider = combinedValidatorsData.find(({ poolId }) => poolId === stake.hotkey)?.name ?? 'Managed delegation'
 
   const fiatBalance =
     stake.netuid === ROOT_NETUID ? stake.totalStaked.localizedFiatAmount : expectedTaoAmount.localizedFiatAmount
