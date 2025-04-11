@@ -9,7 +9,7 @@ import { useRecoilValue } from 'recoil'
 import { Account } from '@/domains/accounts/recoils'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useAddStakeForm } from '@/domains/staking/subtensor/hooks/forms'
-// import { useDelegateApr } from '@/domains/staking/subtensor/hooks/useApr'
+import { useDelegateApr } from '@/domains/staking/subtensor/hooks/useApr'
 import { useStake } from '@/domains/staking/subtensor/hooks/useStake'
 
 import { SubtensorStakingForm } from './SubtensorStakingForm'
@@ -125,9 +125,8 @@ export const IncompleteSelectionStakeForm = ({
 
 const EstimatedRewards = (props: { amount: bigint; delegateHotkey: string }) => {
   const tokenAmount = useRecoilValue(useNativeTokenAmountState())
-  // TODO: Uncomment this when taostats provide APR data, view useGetBittensorInfiniteValidators api endpoint
-  // const delegateApr = useDelegateApr(props.delegateHotkey) || 0
-  const delegateApr = 0
+  const delegateApr = useDelegateApr(props.delegateHotkey) || 0
+
   const amount = useMemo(
     () => tokenAmount.fromPlanck(new BN(props.amount.toString()).muln(delegateApr).toString()),
     [delegateApr, props.amount, tokenAmount]

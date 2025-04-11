@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { ValidatorsYieldApiResponse } from '../types'
 
@@ -38,7 +38,7 @@ export function useGetInfiniteValidatorsYield({ netuid }: { netuid: number }) {
 export function useGetInfiniteValidatorsYieldByNetuid({ netuid }: { netuid: number }) {
   const { data, hasNextPage, isFetchNextPageError, isError, fetchNextPage } = useGetInfiniteValidatorsYield({ netuid })
 
-  const combinedData = data?.pages.flatMap(page => page.data) || []
+  const combinedData = useMemo(() => data?.pages.flatMap(page => page.data) || [], [data])
 
   useEffect(() => {
     if (hasNextPage && !isFetchNextPageError) {
