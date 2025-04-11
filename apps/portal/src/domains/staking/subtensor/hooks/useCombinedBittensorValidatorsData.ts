@@ -3,9 +3,12 @@ import { useEffect, useState } from 'react'
 import { BondOption } from '../types'
 import { useGetBittensorInfiniteValidators } from './useGetBittensorInfiniteValidators'
 import { useGetBittensorSupportedDelegates } from './useGetBittensorSupportedDelegates'
+import { useGetInfiniteValidatorsYieldByNetuid } from './useGetInfiniteValidatorsYield'
 
 export const useCombinedBittensorValidatorsData = () => {
   const [validatorsData, setValidatorsData] = useState<BondOption[]>([])
+  const { data: validatorsYieldData } = useGetInfiniteValidatorsYieldByNetuid({ netuid: 0 })
+
   const {
     data: supportedDelegates,
     isLoading: isSupportedDelegatesLoading,
@@ -36,18 +39,21 @@ export const useCombinedBittensorValidatorsData = () => {
     const combined: BondOption[] = Object.keys(supportedDelegates).map(key => {
       const supportedDelegate = supportedDelegates?.[key]
       const validator = flatInitialValidators?.find(validator => validator?.hotkey?.ss58 === key)
+      const validatorYield = validatorsYieldData?.find(validator => validator?.hotkey?.ss58 === key)
+
       return {
         poolId: key,
         name: supportedDelegate?.name ?? '',
         totalStaked: parseFloat(validator?.global_weighted_stake ?? '0'),
         totalStakers: validator?.global_nominators ?? 0,
+        validatorYield,
         hasData: !!validator,
         isError: isInfiniteValidatorsError,
       }
     })
 
     setValidatorsData(combined)
-  }, [infiniteValidators?.pages, isInfiniteValidatorsError, supportedDelegates])
+  }, [infiniteValidators?.pages, isInfiniteValidatorsError, supportedDelegates, validatorsYieldData])
 
   return {
     combinedValidatorsData: validatorsData,

@@ -6,6 +6,7 @@ import { StakeTargetSelectorDialog } from '@/components/recipes/StakeTargetSelec
 import { type StakeTargetSelectorItemProps } from '@/components/recipes/StakeTargetSelectorItem'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
+import { useGetInfiniteValidatorsYieldByNetuid } from '@/domains/staking/subtensor/hooks/useGetInfiniteValidatorsYield'
 import { type BondOption } from '@/domains/staking/subtensor/types'
 
 const TAOSTATS_INFO_URL = 'https://taostats.io/validators'
@@ -19,15 +20,18 @@ type DelegateSelectorDialogProps = {
 
 export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
   const [searchParams] = useSearchParams()
+  const { data: validatorsYieldData } = useGetInfiniteValidatorsYieldByNetuid({ netuid: 0 })
 
   const { combinedValidatorsData, isError } = useCombinedBittensorValidatorsData()
+
+  console.log({ validatorsYieldData, combinedValidatorsData })
 
   const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
 
   const [highlighted, setHighlighted] = useState<BondOption | undefined>()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
-  const sortMethods: {
+  let sortMethods: {
     [key: string]: (
       a: ReactElement<StakeTargetSelectorItemProps>,
       b: ReactElement<StakeTargetSelectorItemProps>
@@ -44,15 +48,14 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
       parseInt(b.props.count?.toString?.() ?? '0') - parseInt(a.props.count?.toString?.() ?? '0'),
   }
 
-  // TODO: Uncomment this when taostats provide APR data, view useGetBittensorInfiniteValidators api endpoint
-  // if (!hasDTaoStaking) {
-  //   sortMethods = {
-  //     ...sortMethods,
-  //     'Estimated APR': (a, b) =>
-  //       parseFloat(b.props.estimatedApr?.replace('%', '') ?? '0') -
-  //       parseFloat(a.props.estimatedApr?.replace('%', '') ?? '0'),
-  //   }
-  // }
+  if (!hasDTaoStaking) {
+    sortMethods = {
+      ...sortMethods,
+      'Estimated APR': (a, b) =>
+        parseFloat(b.props.estimatedApr?.replace('%', '') ?? '0') -
+        parseFloat(a.props.estimatedApr?.replace('%', '') ?? '0'),
+    }
+  }
 
   return (
     <StakeTargetSelectorDialog
@@ -68,11 +71,12 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
       isSortDisabled={isError}
     >
       {combinedValidatorsData.map(delegate => {
-        let formattedApr = '--'
-        // TODO: Uncomment this when taostats provide APR data, view useGetBittensorInfiniteValidators api endpoint
-        // let formattedApr = !hasDTaoStaking
-        //   ? delegate.apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })
-        //   : ''
+        let formattedApr = !hasDTaoStaking
+          ? Number(delegate.validatorYield?.thirty_day_apy || '0').toLocaleString(undefined, {
+              style: 'percent',
+              maximumFractionDigits: 2,
+            })
+          : ''
 
         const balance = nativeTokenAmount.fromPlanckOrUndefined(delegate.totalStaked)
 
