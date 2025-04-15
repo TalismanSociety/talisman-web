@@ -128,4 +128,29 @@ export type BondOption = {
   hasData: boolean
   isError: boolean
   isRecommended?: boolean
+  validatorYield?: ValidatorYield
+}
+
+type ValidatorYield = {
+  hotkey: {
+    ss58: string
+    hex: string
+  }
+  name: string
+  netuid: number
+  block_number: number
+  timestamp: string // ISO 8601 format
+  stake: string // stringified number, possibly a bigint
+  one_hour_apy: string
+  one_day_apy: string
+  seven_day_apy: string
+  thirty_day_apy: string
+  one_day_epoch_participation: number | null
+  seven_day_epoch_participation: number | null
+  thirty_day_epoch_participation: number | null
+}
+
+export type ValidatorsYieldApiResponse = {
+  pagination: Pagination
+  data: ValidatorYield[]
 }
