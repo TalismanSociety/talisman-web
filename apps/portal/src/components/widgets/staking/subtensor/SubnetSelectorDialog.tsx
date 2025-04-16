@@ -30,12 +30,12 @@ export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: 
       onConfirm={() => highlighted && onConfirm(highlighted)}
       isSortDisabled={isError}
       sortMethods={{
-        'Subnet UID': (a, b) => {
-          return (b.props.subnetPool.netuid ?? 0) === (a.props.subnetPool.netuid ?? 0)
+        'Total Alpha': (a, b) => {
+          return (b.props.subnetPool.total_alpha ?? 0) === (a.props.subnetPool.total_alpha ?? 0)
             ? 0
-            : (Number(b.props.subnetPool.netuid) || 0) - (Number(a.props.subnetPool.netuid) || 0) < 0
-            ? 1
-            : -1
+            : (Number(b.props.subnetPool.total_alpha) || 0) - (Number(a.props.subnetPool.total_alpha) || 0) < 0
+            ? -1
+            : 1
         },
         'Total TAO': (a, b) => {
           return (b.props.subnetPool.total_tao ?? 0) === (a.props.subnetPool.total_tao ?? 0)
@@ -44,12 +44,12 @@ export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: 
             ? -1
             : 1
         },
-        'Total Alpha': (a, b) => {
-          return (b.props.subnetPool.total_alpha ?? 0) === (a.props.subnetPool.total_alpha ?? 0)
+        'Subnet UID': (a, b) => {
+          return (b.props.subnetPool.netuid ?? 0) === (a.props.subnetPool.netuid ?? 0)
             ? 0
-            : (Number(b.props.subnetPool.total_alpha) || 0) - (Number(a.props.subnetPool.total_alpha) || 0) < 0
-            ? -1
-            : 1
+            : (Number(b.props.subnetPool.netuid) || 0) - (Number(a.props.subnetPool.netuid) || 0) < 0
+            ? 1
+            : -1
         },
       }}
     >
