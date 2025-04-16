@@ -27,7 +27,6 @@ export const SubnetSelectorCard = ({
   const surfaceColor = useSurfaceColor()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
   const nativeTokenDecimals = nativeTokenAmount.fromPlanckOrUndefined(0).decimalAmount?.decimals
-  console.log({ nativeTokenDecimals })
 
   const isHighlighted = highlighted || selected
   const alpha = isHighlighted ? 'high' : 'disabled'
