@@ -51,7 +51,7 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
   if (!hasDTaoStaking) {
     sortMethods = {
       ...sortMethods,
-      'Estimated APR': (a, b) =>
+      'Estimated APY': (a, b) =>
         parseFloat(b.props.estimatedApr?.replace('%', '') ?? '0') -
         parseFloat(a.props.estimatedApr?.replace('%', '') ?? '0'),
     }
@@ -95,7 +95,7 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
             key={delegate.poolId}
             balanceDescription="Total staked with this delegate"
             countDescription="Number of delegate stakers"
-            estimatedAprDescription="Estimated APR"
+            estimatedAprDescription="Estimated APY (30d)"
             estimatedApr={!hasDTaoStaking ? formattedApr : undefined}
             talismanRecommendedDescription="Talisman top recommended delegate"
             selected={delegate.poolId === props.selected?.poolId}
