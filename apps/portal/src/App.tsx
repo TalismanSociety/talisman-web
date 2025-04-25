@@ -44,18 +44,7 @@ const App = () => (
                   deriveState={chainDeriveState}
                   queryMultiState={chainQueryMultiState}
                 >
-                  <BalancesProvider
-                    onfinalityApiKey={import.meta.env.VITE_ONFINALITY_API_KEY ?? undefined}
-                    coingeckoApiUrl={import.meta.env.VITE_COIN_GECKO_API}
-                    coingeckoApiKeyValue={import.meta.env.VITE_COIN_GECKO_API_KEY}
-                    coingeckoApiKeyName={
-                      import.meta.env.VITE_COIN_GECKO_API_TIER === 'pro'
-                        ? 'x-cg-pro-api-key'
-                        : import.meta.env.VITE_COIN_GECKO_API_TIER === 'demo'
-                        ? 'x-cg-demo-api-key'
-                        : undefined
-                    }
-                  >
+                  <BalancesProvider onfinalityApiKey={import.meta.env.VITE_ONFINALITY_API_KEY ?? undefined}>
                     <ExtensionWatcher />
                     <AccountWatcher />
                     <SignetWatcher />
