@@ -69,26 +69,33 @@ export const useGetDynamicTaoStakeInfo = ({
     slippage: 0,
   })
 
-  const expectedTao = calculateExpectedTao({
-    alphaPrice,
-    taoStaked: amount?.decimalAmount?.toNumber() ?? 0,
-    slippage,
-  })
+  const taoAmountFromAlpha = calculateTaoFromAlpha({ alphaPrice, alphaStaked: amount?.decimalAmount?.toNumber() ?? 0 })
 
   const calculateExpectedTaoFromAlpha = ({ alphaStaked }: { alphaStaked: number }) => {
     const expectedTao = calculateExpectedTao({
       alphaPrice,
-      taoStaked: alphaStaked,
+      alphaStaked: alphaStaked,
       slippage,
     })
     return expectedTao
   }
 
   const expectedAlphaAmount = useTokenAmount(expectedAlpha.toString())
-  const expectedTaoAmount = useTokenAmount(expectedTao.toString())
+  const taoAmountFromAlphaTokenAmount = useTokenAmount(taoAmountFromAlpha.toString())
   const formattedAlphaToTaoConversionRate = useTokenAmount(alphaToTaoConversionRate.toString())
 
-  const alphaToTaoSlippage = calculateSlippage({ pool: data, taoStaked: expectedTaoAmount.decimalAmount?.planck || 0n })
+  const alphaToTaoSlippage = calculateSlippage({
+    pool: data,
+    taoStaked: taoAmountFromAlphaTokenAmount.decimalAmount?.planck || 0n,
+  })
+
+  const expectedTao = calculateExpectedTao({
+    alphaPrice,
+    alphaStaked: amount?.decimalAmount?.toNumber() ?? 0,
+    slippage: alphaToTaoSlippage, // slippage should be alphaToTaoSlippage
+  })
+
+  const expectedTaoAmount = useTokenAmount(expectedTao.toString())
 
   const alphaPriceWithSlippage = alphaPrice * (1 + maxSlippage / 100)
   const alphaPriceWithSlippageFormatted = useTokenAmount(alphaPriceWithSlippage.toString())
@@ -172,19 +179,26 @@ function calculateExpectedAlpha({
   return expectedAlpha
 }
 
+function calculateTaoFromAlpha({ alphaPrice, alphaStaked }: { alphaPrice: number; alphaStaked: number }): number {
+  if (!alphaStaked || !alphaPrice) return 0
+  const expectedTao = alphaStaked * alphaPrice
+
+  return expectedTao
+}
+
 function calculateExpectedTao({
   alphaPrice,
-  taoStaked,
+  alphaStaked,
   slippage,
 }: {
   alphaPrice: number
-  taoStaked: number
+  alphaStaked: number
   slippage: number
 }): number {
-  if (!taoStaked || !alphaPrice) return 0
-  const expectedAlpha = taoStaked * alphaPrice * (1 - slippage / 100)
+  if (!alphaStaked || !alphaPrice) return 0
+  const expectedTao = alphaStaked * alphaPrice * (1 - slippage / 100)
 
-  return expectedAlpha
+  return expectedTao
 }
 
 // Alpha price is calculated by taoIn / alphaIn
