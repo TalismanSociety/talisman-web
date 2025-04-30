@@ -1,7 +1,8 @@
+import { BalanceFormatter } from '@talismn/balances'
 import { useSurfaceColor, useSurfaceColorAtElevation } from '@talismn/ui/atoms/Surface'
 import { Text } from '@talismn/ui/atoms/Text'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
-import { classNames } from '@talismn/util'
+import { classNames, formatDecimals } from '@talismn/util'
 import { useRecoilValue } from 'recoil'
 
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
@@ -25,14 +26,16 @@ export const SubnetSelectorCard = ({
   const surfaceVariant = useSurfaceColorAtElevation(x => x + 1)
   const surfaceColor = useSurfaceColor()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
+  const nativeTokenDecimals = nativeTokenAmount.fromPlanckOrUndefined(0).decimalAmount?.decimals
 
   const isHighlighted = highlighted || selected
   const alpha = isHighlighted ? 'high' : 'disabled'
   const { symbol, netuid, total_tao, total_alpha, descriptionName } = subnetPool
   const name = `${netuid} | ${descriptionName}`
 
-  const totalTao = nativeTokenAmount.fromPlanckOrUndefined(total_tao).decimalAmount?.toLocaleString() ?? ''
-  const totalAlpha = nativeTokenAmount.fromPlanckOrUndefined(total_alpha, symbol).decimalAmount?.toLocaleString() ?? ''
+  const totalTao = `${formatDecimals(new BalanceFormatter(total_tao, nativeTokenDecimals).tokens)} TAO`
+
+  const totalAlpha = `${formatDecimals(new BalanceFormatter(total_alpha, nativeTokenDecimals).tokens)} ${symbol}`
 
   return (
     <article
