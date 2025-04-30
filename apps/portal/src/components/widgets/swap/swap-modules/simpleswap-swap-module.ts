@@ -705,9 +705,17 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
   const substrateChain = chains.find(c => c.id === fromAsset.chainId)
   const polkadotApi = await getSubstrateApi(substrateChain?.rpcs?.[0]?.url ?? '')
   const fromAmount = get(fromAmountAtom)
-
-  const transfer = polkadotApi.tx.balances['transferAllowDeath'] ?? polkadotApi.tx.balances['transfer']
-  const transferTx = transfer(fromAddress, fromAmount.planck)
+  const transferTx =
+    fromAsset.assetHubAssetId !== undefined
+      ? (polkadotApi.tx.assets['transferAllowDeath'] ?? polkadotApi.tx.assets['transfer'])(
+          fromAsset.assetHubAssetId,
+          fromAddress,
+          fromAmount.planck
+        )
+      : (polkadotApi.tx.balances['transferAllowDeath'] ?? polkadotApi.tx.balances['transfer'])(
+          fromAddress,
+          fromAmount.planck
+        )
   const decimals = transferTx.registry.chainDecimals[0] ?? 10 // default to polkadot decimals 10
   const symbol = transferTx.registry.chainTokens[0] ?? 'DOT' // default to polkadot symbol 'DOT'
   const paymentInfo = await transferTx.paymentInfo(fromAddress)
