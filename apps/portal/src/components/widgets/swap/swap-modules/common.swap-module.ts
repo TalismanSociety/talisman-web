@@ -3,6 +3,7 @@
 import type { BaseWallet } from '@polkadot-onboard/core'
 import type { Signer, SubmittableExtrinsic } from '@polkadot/api/types'
 import type { Atom, Getter, SetStateAction, Setter } from 'jotai'
+import type { TransactionRequest, WalletClient } from 'viem'
 import type { Chain as ViemChain } from 'viem/chains'
 import { ApiPromise } from '@polkadot/api'
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
@@ -10,15 +11,12 @@ import { evmErc20TokenId, evmNativeTokenId, subNativeTokenId } from '@talismn/ba
 import { atom } from 'jotai'
 import { atomWithStorage, createJSONStorage, unstable_withStorageValidator } from 'jotai/utils'
 import { Loadable } from 'jotai/vanilla/utils/loadable'
+import { firstValueFrom, Subject } from 'rxjs'
+import { isAddress } from 'viem'
+import { arbitrum, base, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon, sonic } from 'viem/chains'
 
 import { isBtcAddress } from '@/util/btc'
 import { Decimal } from '@/util/Decimal'
-
-import 'recoil'
-
-import type { TransactionRequest, WalletClient } from 'viem'
-import { isAddress } from 'viem'
-import { arbitrum, base, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon, sonic } from 'viem/chains'
 
 export const supportedEvmChains: Record<string, ViemChain> = {
   eth: mainnet,
@@ -42,7 +40,7 @@ export type SwappableAssetBaseType<TContext = Partial<Record<SupportedSwapProtoc
   symbol: string
   chainId: number | string
   contractAddress?: string
-  assetHubAssetId?: number
+  assetHubAssetId?: string
   image?: string
   networkType: 'evm' | 'substrate' | 'btc'
   /** protocol modules can store context here, like any special identifier */
@@ -292,49 +290,67 @@ const handleTokenError = (tokenError: any) => {
   }
 }
 
-export const substrateSwapTransfer = async (
+export const substrateAssetsSwapTransfer = async (
+  api: ApiPromise,
+  allowReap = false,
+  recipient: string,
+  sender: string,
+  assetId: string,
+  amount: bigint | string,
+  signer: Signer
+) => {
+  const transfer = allowReap
+    ? api.tx.assets['transferAllowDeath'] ?? api.tx.assets['transfer']
+    : api.tx.assets['transferKeepAlive']
+  return substrateSwapTransfer(transfer(assetId, recipient, amount), sender, signer)
+}
+
+export const substrateNativeSwapTransfer = async (
   api: ApiPromise,
   allowReap = false,
   recipient: string,
   sender: string,
   amount: bigint | string,
   signer: Signer
-) =>
-  new Promise<{ id: string; ok: boolean; error?: string }>(resolve => {
-    const transfer = allowReap
-      ? api.tx.balances['transferAllowDeath'] ?? api.tx.balances['transfer']
-      : api.tx.balances['transferKeepAlive']
-    let unsub = () => {}
-    transfer(recipient, amount)
-      .signAndSend(
-        sender,
-        {
-          signer,
-          withSignedTransaction: true,
-        },
-        res => {
-          let id: string = res.txHash.toHex()
-          const blockNumber = (res as any).blockNumber.toNumber() as number
-          // if block blockNumber and txIndex exists, use them as id
-          if (blockNumber !== undefined && res.txIndex !== undefined) id = `${blockNumber}-${res.txIndex}`
+) => {
+  const transfer = allowReap
+    ? api.tx.balances['transferAllowDeath'] ?? api.tx.balances['transfer']
+    : api.tx.balances['transferKeepAlive']
+  return substrateSwapTransfer(transfer(recipient, amount), sender, signer)
+}
 
-          if (res.isError) {
-            const error = res.dispatchError?.isToken
-              ? handleTokenError(res.dispatchError.asToken)
-              : res.dispatchError?.asModule
-              ? res.dispatchError.asModule.registry.findMetaError(res.dispatchError.asModule).docs.join('')
-              : 'Unknown error.'
-            resolve({ id, ok: false, error })
-            unsub()
-          }
+const substrateSwapTransfer = async (tx: SubmittableExtrinsic<'promise'>, sender: string, signer: Signer) => {
+  const done = new Subject<{ id: string; ok: boolean; error?: string }>()
 
-          if (res.status.isInBlock || res.status.isFinalized) {
-            resolve({ id, ok: true })
-            unsub()
-          }
-        }
-      )
-      .then(un => {
-        unsub = un
-      })
-  })
+  const abort = new AbortController()
+  let unsub: () => void
+  abort.signal.onabort = () => unsub?.()
+
+  try {
+    unsub = await tx.signAndSend(sender, { signer, withSignedTransaction: true }, result => {
+      let id: string = result.txHash.toHex()
+      const blockNumber = (result as any).blockNumber.toNumber() as number
+      // if block blockNumber and txIndex exists, use them as id
+      if (blockNumber !== undefined && result.txIndex !== undefined) id = `${blockNumber}-${result.txIndex}`
+
+      if (result.isError) {
+        const error = result.dispatchError?.isToken
+          ? handleTokenError(result.dispatchError.asToken)
+          : result.dispatchError?.asModule
+          ? result.dispatchError.asModule.registry.findMetaError(result.dispatchError.asModule).docs.join('')
+          : 'Unknown error.'
+        done.next({ id, ok: false, error })
+      }
+
+      if (result.status.isInBlock || result.status.isFinalized) {
+        done.next({ id, ok: true })
+      }
+    })
+  } catch (cause) {
+    done.error(cause)
+  }
+
+  const result = await firstValueFrom(done)
+  abort.abort()
+  return result
+}
