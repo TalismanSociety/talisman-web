@@ -350,7 +350,9 @@ const substrateSwapTransfer = async (tx: SubmittableExtrinsic<'promise'>, sender
     done.error(cause)
   }
 
-  const result = await firstValueFrom(done)
-  abort.abort()
-  return result
+  try {
+    return await firstValueFrom(done)
+  } finally {
+    abort.abort()
+  }
 }
