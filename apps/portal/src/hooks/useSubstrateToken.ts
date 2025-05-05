@@ -6,7 +6,7 @@ import { substrateApiState } from '@/domains/common/recoils/api'
 
 export type UseSubstrateTokenProps = {
   chainId: string
-  assethubAssetId?: number
+  assethubAssetId?: string
 }
 
 export const useSubstrateToken = (props?: UseSubstrateTokenProps) => {

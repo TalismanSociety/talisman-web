@@ -35,7 +35,7 @@ import {
   fromAssetAtom,
   getTokenIdForSwappableAsset,
   saveAddressForQuest,
-  substrateSwapTransfer,
+  substrateNativeSwapTransfer,
   swapQuoteRefresherAtom,
   toAddressAtom,
   toAssetAtom,
@@ -388,7 +388,7 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
       const rpc = substrateChain?.rpcs?.[0]?.url
       if (!rpc) throw new Error('RPC not found!')
       const polkadotApi = await getSubstrateApi(rpc)
-      const transferRes = await substrateSwapTransfer(
+      const transferRes = await substrateNativeSwapTransfer(
         polkadotApi,
         allowReap,
         depositAddress.depositAddress,

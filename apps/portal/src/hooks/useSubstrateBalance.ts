@@ -12,7 +12,7 @@ export type UseSubstrateBalanceProps = {
   type: 'substrate'
   chainId: string
   address: string
-  assetHubAssetId?: number
+  assetHubAssetId?: string
 }
 
 type SubstrateBalance = {
