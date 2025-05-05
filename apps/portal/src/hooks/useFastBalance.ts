@@ -54,56 +54,57 @@ const useEvmBalance = (props?: UseFastBalanceProps) => {
       batch: { multicall: true },
     })
 
-    const refetch = () => {
+    let timeoutId: NodeJS.Timeout | null = null
+    const timeoutMs = 15_000 // 15 seconds
+
+    const refetch = async () => {
       // native token
       if (!props.tokenAddress || props.tokenAddress === zeroAddress) {
         setEvmBalance(undefined)
-        client.getBalance({ address: props.address }).then(balance => {
-          if (abortController.signal.aborted) return
+        const balance = await client.getBalance({ address: props.address })
+        if (abortController.signal.aborted) return
 
-          setEvmBalance(
-            Decimal.fromPlanck(balance, chain.nativeCurrency.decimals, { currency: chain.nativeCurrency.symbol })
-          )
-        })
+        setEvmBalance(
+          Decimal.fromPlanck(balance, chain.nativeCurrency.decimals, { currency: chain.nativeCurrency.symbol })
+        )
+        return setTimeout(refetch, timeoutMs)
       }
 
       // erc20 token
-      client
-        .multicall({
-          contracts: [
-            {
-              abi: erc20Abi,
-              functionName: 'balanceOf',
-              address: props.tokenAddress!,
-              args: [props.address],
-            },
-            {
-              abi: erc20Abi,
-              functionName: 'symbol',
-              address: props.tokenAddress!,
-            },
-            {
-              abi: erc20Abi,
-              functionName: 'decimals',
-              address: props.tokenAddress!,
-            },
-          ],
-        })
-        .then(calls => {
-          if (abortController.signal.aborted) return
+      const calls = await client.multicall({
+        contracts: [
+          {
+            abi: erc20Abi,
+            functionName: 'balanceOf',
+            address: props.tokenAddress!,
+            args: [props.address],
+          },
+          {
+            abi: erc20Abi,
+            functionName: 'symbol',
+            address: props.tokenAddress!,
+          },
+          {
+            abi: erc20Abi,
+            functionName: 'decimals',
+            address: props.tokenAddress!,
+          },
+        ],
+      })
+      if (abortController.signal.aborted) return
 
-          const [balanceCall, symbolCall, decimalsCall] = calls
+      const [balanceCall, symbolCall, decimalsCall] = calls
 
-          const symbol = symbolCall.status === 'success' ? symbolCall.result : 'Unknown'
-          const decimals = decimalsCall.status === 'success' ? decimalsCall.result : 18
+      const symbol = symbolCall.status === 'success' ? symbolCall.result : 'Unknown'
+      const decimals = decimalsCall.status === 'success' ? decimalsCall.result : 18
 
-          if (balanceCall.status === 'failure') return setEvmBalance(undefined)
-          setEvmBalance(Decimal.fromPlanck(balanceCall.result as bigint, decimals, { currency: symbol }))
-        })
+      if (balanceCall.status === 'failure') return setEvmBalance(undefined)
+      setEvmBalance(Decimal.fromPlanck(balanceCall.result as bigint, decimals, { currency: symbol }))
+      return setTimeout(refetch, timeoutMs)
     }
 
-    const intervalId = setInterval(refetch, 12_000)
-    abortController.signal.addEventListener = () => clearInterval(intervalId)
+    timeoutId = setTimeout(refetch, timeoutMs)
+    abortController.signal.addEventListener = () => clearTimeout(timeoutId)
 
     refetch()
 
