@@ -20,7 +20,8 @@ import {
   getTokenIdForSwappableAsset,
   QuoteFunction,
   saveAddressForQuest,
-  substrateSwapTransfer,
+  substrateAssetsSwapTransfer,
+  substrateNativeSwapTransfer,
   supportedEvmChains,
   SwapFunction,
   SwapModule,
@@ -81,22 +82,22 @@ const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
     chainId: 'kusama',
     networkType: 'substrate',
   },
-  // usdtdot: {
-  //   id: 'polkadot-asset-hub-substrate-assets-1984-usdt',
-  //   name: 'USDT (Polkadot)',
-  //   chainId: 'polkadot-asset-hub',
-  //   symbol: 'USDT',
-  //   networkType: 'substrate',
-  //   assetHubAssetId: 1984,
-  // },
-  // usdcdot: {
-  //   id: 'polkadot-asset-hub-substrate-assets-1337-usdc',
-  //   name: 'USDC (Polkadot)',
-  //   chainId: 'polkadot-asset-hub',
-  //   symbol: 'USDC',
-  //   networkType: 'substrate',
-  //   assetHubAssetId: 1337,
-  // },
+  usdtdot: {
+    id: 'polkadot-asset-hub-substrate-assets-1984-usdt',
+    name: 'USDT (Polkadot)',
+    chainId: 'polkadot-asset-hub',
+    symbol: 'USDT',
+    networkType: 'substrate',
+    assetHubAssetId: '1984',
+  },
+  usdcdot: {
+    id: 'polkadot-asset-hub-substrate-assets-1337-usdc',
+    name: 'USDC (Polkadot)',
+    chainId: 'polkadot-asset-hub',
+    symbol: 'USDC',
+    networkType: 'substrate',
+    assetHubAssetId: '1337',
+  },
   eth: {
     id: '1-evm-native',
     name: 'Ethereum',
@@ -607,14 +608,26 @@ const swap: SwapFunction<{ id: string }> = async (
       const rpc = substrateChain?.rpcs?.[0]?.url
       if (!rpc) throw new Error('RPC not found!')
       const polkadotApi = await getSubstrateApi(rpc)
-      const transferRes = await substrateSwapTransfer(
-        polkadotApi,
-        allowReap,
-        exchange.address_from,
-        addressFrom,
-        depositAmount.planck,
-        signer
-      )
+
+      const transferRes =
+        fromAsset.assetHubAssetId !== undefined
+          ? await substrateAssetsSwapTransfer(
+              polkadotApi,
+              allowReap,
+              exchange.address_from,
+              addressFrom,
+              fromAsset.assetHubAssetId,
+              depositAmount.planck,
+              signer
+            )
+          : await substrateNativeSwapTransfer(
+              polkadotApi,
+              allowReap,
+              exchange.address_from,
+              addressFrom,
+              depositAmount.planck,
+              signer
+            )
 
       if (transferRes.ok) {
         saveIdForMonitoring(exchange.id, transferRes.id)
@@ -692,9 +705,17 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
   const substrateChain = chains.find(c => c.id === fromAsset.chainId)
   const polkadotApi = await getSubstrateApi(substrateChain?.rpcs?.[0]?.url ?? '')
   const fromAmount = get(fromAmountAtom)
-
-  const transfer = polkadotApi.tx.balances['transferAllowDeath'] ?? polkadotApi.tx.balances['transfer']
-  const transferTx = transfer(fromAddress, fromAmount.planck)
+  const transferTx =
+    fromAsset.assetHubAssetId !== undefined
+      ? (polkadotApi.tx.assets['transferAllowDeath'] ?? polkadotApi.tx.assets['transfer'])(
+          fromAsset.assetHubAssetId,
+          fromAddress,
+          fromAmount.planck
+        )
+      : (polkadotApi.tx.balances['transferAllowDeath'] ?? polkadotApi.tx.balances['transfer'])(
+          fromAddress,
+          fromAmount.planck
+        )
   const decimals = transferTx.registry.chainDecimals[0] ?? 10 // default to polkadot decimals 10
   const symbol = transferTx.registry.chainTokens[0] ?? 'DOT' // default to polkadot symbol 'DOT'
   const paymentInfo = await transferTx.paymentInfo(fromAddress)
