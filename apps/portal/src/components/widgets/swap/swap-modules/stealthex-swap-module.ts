@@ -230,6 +230,11 @@ const stealthexSdk = {
 
     return allCurrencies
   },
+  getPairs: async ({ symbol, network }: { symbol: string; network: boolean }) => {
+    const response = await fetch(`${apiUrl}/v4/currencies/${symbol}/${network}?include_available_routes=true`)
+    const currency: StealthexCurrency = await response.json()
+    return currency?.available_routes
+  },
   // getEstimated: async (props: {
   //   currencyFrom: string
   //   currencyTo: string
@@ -246,23 +251,6 @@ const stealthexSdk = {
   //     })
   //     const allCurrenciesRes = await fetch(`https://api.simpleswap.io/get_estimated?${search.toString()}`)
   //     return await allCurrenciesRes.json()
-  //   } catch (e) {
-  //     console.error(e)
-  //     return null
-  //   }
-  // },
-  // getPairs: async (props: {
-  //   symbol: string
-  //   fixed: boolean
-  // }): Promise<string[] | { code: number; error: string; description: string; trace_id: string } | null> => {
-  //   try {
-  //     const search = new URLSearchParams({
-  //       api_key: APIKEY,
-  //       fixed: `${props.fixed}`,
-  //       symbol: props.symbol,
-  //     })
-  //     const allPairs = await fetch(`https://api.simpleswap.io/get_pairs?${search.toString()}`)
-  //     return await allPairs.json()
   //   } catch (e) {
   //     console.error(e)
   //     return null
@@ -375,14 +363,19 @@ export const toAssetsSelector = atom(async get => {
   const allAssets = await get(assetsAtom)
   const fromAsset = get(fromAssetAtom)
   if (!fromAsset) return allAssets
-  // const symbol = fromAsset.context.simpleswap?.symbol
-  // if (!symbol) return [] // not supported
-  // const pairs = await simpleSwapSdk.getPairs({ symbol, fixed: false })
-  // if (!pairs || !Array.isArray(pairs)) return []
-  // return [
-  //   fromAsset,
-  //   ...allAssets.filter(asset => pairs.find(p => p.toLowerCase() === asset.context.simpleswap?.symbol.toLowerCase())),
-  // ]
+
+  const { symbol, network } = fromAsset.context.stealthex
+  if (!symbol || !network) return [] // not supported
+
+  const pairs = await stealthexSdk.getPairs({ symbol, network })
+  if (!pairs || !Array.isArray(pairs)) return []
+
+  const validDestinations = new Set(pairs.map(pair => `${pair.network}::${pair.symbol}`))
+  const validDestAssets = allAssets.filter(asset =>
+    validDestinations.has(`${asset.context?.stealthex?.network}::${asset.context?.stealthex?.symbol}`)
+  )
+
+  return [fromAsset, ...validDestAssets]
 })
 
 const quote: QuoteFunction = loadable(
