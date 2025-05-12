@@ -1,3 +1,4 @@
+import type { Chain as ViemChain } from 'viem/chains'
 import { QuoteResponse } from '@chainflip/sdk/swap'
 import { chainsAtom } from '@talismn/balances-react'
 import { encodeAnyAddress } from '@talismn/util'
@@ -5,6 +6,7 @@ import BigNumber from 'bignumber.js'
 import { atom, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
 import { createPublicClient, encodeFunctionData, erc20Abi, fallback, http, isAddress } from 'viem'
+import { arbitrum, base, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon, sonic } from 'viem/chains'
 
 import { substrateApiGetterAtom } from '@/domains/common/recoils/api'
 import { Decimal } from '@/util/Decimal'
@@ -22,7 +24,6 @@ import {
   saveAddressForQuest,
   substrateAssetsSwapTransfer,
   substrateNativeSwapTransfer,
-  supportedEvmChains,
   SwapFunction,
   SwapModule,
   SwappableAssetBaseType,
@@ -56,6 +57,20 @@ type SimpleSwapCurrency = {
 
 type SimpleSwapAssetContext = {
   symbol: string
+}
+
+const supportedEvmChains: Record<string, ViemChain | undefined> = {
+  eth: mainnet,
+  bsc,
+  base,
+  arbitrum,
+  optimism,
+  blast,
+  polygon,
+  manta,
+  movr: moonriver,
+  glmr: moonbeam,
+  s: sonic,
 }
 
 /**
@@ -391,10 +406,7 @@ const simpleswapAssetsAtom = atom(async () => {
   )
 })
 
-export const fromAssetsSelector = atom(async get => {
-  return await get(simpleswapAssetsAtom)
-})
-
+export const fromAssetsSelector = atom(async get => await get(simpleswapAssetsAtom))
 export const toAssetsSelector = atom(async get => {
   const allAssets = await get(simpleswapAssetsAtom)
   const fromAsset = get(fromAssetAtom)
@@ -566,7 +578,7 @@ const swap: SwapFunction<{ id: string }> = async (
   try {
     if (fromAsset.networkType === 'evm') {
       if (!evmWalletClient) throw new Error('Ethereum account not connected')
-      const chain = Object.values(supportedEvmChains).find(c => c.id.toString() === fromAsset.chainId.toString())
+      const chain = Object.values(supportedEvmChains).find(c => c?.id.toString() === fromAsset.chainId.toString())
       if (!chain) throw new Error('Network not supported')
       await evmWalletClient.switchChain({ id: chain.id })
 
@@ -662,7 +674,7 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
     if (!isAddress(fromAddress)) return null // invalid ethereum address
     const knownEvmNetworks = await get(knownEvmNetworksAtom)
     const network = knownEvmNetworks[fromAsset.chainId]
-    const evmChain = Object.values(supportedEvmChains).find(c => c.id.toString() === fromAsset.chainId.toString())
+    const evmChain = Object.values(supportedEvmChains).find(c => c?.id.toString() === fromAsset.chainId.toString())
 
     const data = fromAsset.contractAddress
       ? encodeFunctionData({ abi: erc20Abi, functionName: 'transfer', args: [fromAddress, 0n] })
