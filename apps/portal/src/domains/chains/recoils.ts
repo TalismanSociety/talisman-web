@@ -1,6 +1,6 @@
-import type { Chain as ChaindataChain, Token as ChaindataToken } from '@talismn/chaindata-provider'
 import type { RecoilValueReadOnly } from 'recoil'
-import { chaindataChainByGenesisHashUrl, chaindataTokenByIdUrl } from '@talismn/chaindata-provider'
+import { chainsByGenesisHashAtom, tokensByIdAtom } from '@talismn/balances-react'
+import { Chain } from '@talismn/chaindata-provider'
 import { useContext } from 'react'
 import { atom, selector, selectorFamily, waitForAll } from 'recoil'
 
@@ -9,6 +9,7 @@ import { storageEffect } from '@/domains/common/effects'
 import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiEndpoint'
 import { substrateApiState } from '@/domains/common/recoils/api'
 import { Decimal } from '@/util/Decimal'
+import { jotaiStore } from '@/util/jotaiStore'
 import { nullToUndefined } from '@/util/nullToUndefined'
 
 import { chainConfigs } from './config'
@@ -19,18 +20,16 @@ export const chainState = selectorFamily({
   get:
     ({ genesisHash }: { genesisHash: string }) =>
     async () => {
-      const chain: ChaindataChain = await (await fetch(chaindataChainByGenesisHashUrl(genesisHash))).json()
-      const nativeToken: ChaindataToken | undefined = chain.nativeToken
-        ? await fetch(chaindataTokenByIdUrl(chain.nativeToken.id)).then(response => response.json())
-        : undefined
+      const chaindataChainsByGenesisHash = await jotaiStore.get(chainsByGenesisHashAtom)
+      const chain = chaindataChainsByGenesisHash?.[genesisHash] as Chain
+      const nativeToken = chain?.nativeToken ? (await jotaiStore.get(tokensByIdAtom))[chain.nativeToken.id] : undefined
 
       return nullToUndefined({
         ...chain,
         genesisHash: genesisHash as `0x${string}`,
         nativeToken,
-        rpc: chain.rpcs?.at(0)?.url,
-
-        ...chainConfigs.find(c => c.genesisHash === chain.genesisHash),
+        rpc: chain?.rpcs?.at(0)?.url,
+        ...chainConfigs.find(config => config.genesisHash === chain?.genesisHash),
       })
     },
 })

@@ -56,7 +56,7 @@ export const selectedCurrencyState = atom<TokenRateCurrency>({
           btc: 'btc',
           eth: 'eth',
           dot: 'dot',
-        } satisfies Record<TokenRateCurrency, TokenRateCurrency>)
+        } satisfies Record<Exclude<TokenRateCurrency, 'tao'>, Exclude<TokenRateCurrency, 'tao'>>)
       ),
     }),
   ],
