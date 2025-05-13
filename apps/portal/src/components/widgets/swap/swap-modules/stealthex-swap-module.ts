@@ -57,7 +57,9 @@ const apiUrl = import.meta.env.VITE_STEALTHEX_API || 'https://stealthex.talisman
 const PROTOCOL: SupportedSwapProtocol = 'stealthex' as const
 const PROTOCOL_NAME = 'StealthEX'
 const DECENTRALISATION_SCORE = 1.5
-const TALISMAN_FEE = 0.015
+const TALISMAN_TOTAL_FEE = 0.015 // We take a fee of 1.5%
+const BUILT_IN_FEE = 0.004 // StealthEX always includes an affiliate fee of 0.4%
+const TALISMAN_ADDITIONAL_FEE = TALISMAN_TOTAL_FEE - BUILT_IN_FEE // We want a total fee of 1.5%, so subtract the built-in fee of 0.4%
 
 const LOGO = stealthexLogo
 
@@ -235,27 +237,63 @@ const stealthexSdk = {
     const currency: StealthexCurrency = await response.json()
     return currency?.available_routes
   },
-  // getEstimated: async (props: {
-  //   currencyFrom: string
-  //   currencyTo: string
-  //   amount: string
-  //   fixed: boolean
-  // }): Promise<string | { code: number; error: string; description: string; trace_id: string } | null> => {
-  //   try {
-  //     const search = new URLSearchParams({
-  //       api_key: APIKEY,
-  //       fixed: `${props.fixed}`,
-  //       currency_from: props.currencyFrom,
-  //       currency_to: props.currencyTo,
-  //       amount: props.amount,
-  //     })
-  //     const allCurrenciesRes = await fetch(`https://api.simpleswap.io/get_estimated?${search.toString()}`)
-  //     return await allCurrenciesRes.json()
-  //   } catch (e) {
-  //     console.error(e)
-  //     return null
-  //   }
-  // },
+  getRange: async ({
+    route,
+    estimation,
+    rate,
+  }: {
+    route: { from: { network: string; symbol: string }; to: { network: string; symbol: string } }
+    estimation?: 'direct' | 'reversed'
+    rate?: 'floating' | 'fixed'
+  }) => {
+    // default values
+    estimation ||= 'direct'
+    rate ||= 'floating'
+
+    const response = await fetch(`${apiUrl}/v4/rates/range`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        route,
+        estimation,
+        rate,
+        additional_fee_percent: TALISMAN_ADDITIONAL_FEE,
+      }),
+    })
+
+    const range: StealthexRange = await response.json()
+    return { min: BigNumber(range?.min_amount ?? 0) }
+  },
+  getEstimate: async ({
+    route,
+    amount,
+    estimation,
+    rate,
+  }: {
+    route: { from: { network: string; symbol: string }; to: { network: string; symbol: string } }
+    amount: number
+    estimation?: 'direct' | 'reversed'
+    rate?: 'floating' | 'fixed'
+  }) => {
+    // default values
+    estimation ||= 'direct'
+    rate ||= 'floating'
+
+    const response = await fetch(`${apiUrl}/v4/rates/estimated-amount`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        route,
+        amount,
+        estimation,
+        rate,
+        additional_fee_percent: TALISMAN_ADDITIONAL_FEE,
+      }),
+    })
+
+    const estimate: StealthexEstimate = await response.json()
+    return estimate?.estimated_amount
+  },
   // createExchange: async (props: {
   //   fixed: boolean
   //   currency_from: string
@@ -286,25 +324,6 @@ const stealthexSdk = {
   //   })
   //   const exchange = await fetch(`https://api.simpleswap.io/get_exchange?${search.toString()}`)
   //   return exchange.json()
-  // },
-  // getRange: async (props: { currency_from: string; currency_to: string }): Promise<Range | undefined> => {
-  //   const search = new URLSearchParams({
-  //     api_key: APIKEY,
-  //     fixed: 'false',
-  //     ...props,
-  //   })
-  //   const json:
-  //     | { min?: string; trace_id?: string }
-  //     | { code?: number; error?: string; description?: string; trace_id?: string } = await (
-  //     await fetch(`https://api.simpleswap.io/get_ranges?${search.toString()}`)
-  //   ).json()
-
-  //   if ('error' in json) throw new Error(json.error)
-  //   if (!('min' in json)) return
-
-  //   if (typeof json.min !== 'string') return
-
-  //   return { min: BigNumber(json.min) }
   // },
 }
 
@@ -354,7 +373,7 @@ const assetsAtom = atom(async () => {
         },
       }
       return { ...acc, [id]: asset }
-    }, {} as Record<string, SwappableAssetBaseType>)
+    }, {} as Record<string, SwappableAssetBaseType<{ stealthex: AssetContext }>>)
   )
 })
 
@@ -383,74 +402,51 @@ const quote: QuoteFunction = loadable(
     const substrateApiGetter = get(substrateApiGetterAtom)
     if (!substrateApiGetter) return null
 
-    //   const getSubstrateApi = substrateApiGetter.getApi
-    //   const fromAsset = get(fromAssetAtom)
-    //   const toAsset = get(toAssetAtom)
-    //   const fromAmount = get(fromAmountAtom)
+    const getSubstrateApi = substrateApiGetter.getApi
+    const fromAsset = get(fromAssetAtom)
+    const toAsset = get(toAssetAtom)
+    const fromAmount = get(fromAmountAtom)
 
-    //   if (!fromAsset || !toAsset || !fromAmount || fromAmount.planck === 0n) return null
-    //   const currencyFrom = fromAsset.context.simpleswap?.symbol
-    //   const currencyTo = toAsset.context.simpleswap?.symbol
-    //   if (!currencyFrom || !currencyTo) return null
+    if (!fromAsset || !toAsset || !fromAmount || fromAmount.planck === 0n) return null
+    const from: AssetContext = fromAsset.context.stealthex
+    const to: AssetContext = toAsset.context.stealthex
+    if (!from || !to) return null
 
-    //   // force refresh
-    //   get(swapQuoteRefresherAtom)
+    // force refresh
+    get(swapQuoteRefresherAtom)
 
-    //   const range = await simpleSwapSdk.getRange({ currency_from: currencyFrom, currency_to: currencyTo })
-    //   if (range && range.min.isGreaterThan(fromAmount.toString()))
-    //     throw new Error(`SimpleSwap minimum is ${range.min.toString()} ${fromAsset.symbol}`)
+    const range = await stealthexSdk.getRange({ route: { from, to } })
+    if (range && range.min.isGreaterThan(fromAmount.toString()))
+      throw new Error(`StealthEX minimum is ${range.min.toString()} ${fromAsset.symbol}`)
 
-    //   const output = await simpleSwapSdk.getEstimated({
-    //     amount: fromAmount.toString(),
-    //     currencyFrom,
-    //     currencyTo,
-    //     fixed: false,
-    //   })
+    try {
+      // TODO: Return `null` or an error when getRange / getEstimate fails
+      // Error format: `return { decentralisationScore: DECENTRALISATION_SCORE, protocol: PROTOCOL, inputAmountBN: fromAmount.planck, outputAmountBN: 0n, error: '<error here>', timeInSec: 5 * 60, fees: [], providerLogo: LOGO, providerName: PROTOCOL_NAME, talismanFeeBps: TALISMAN_TOTAL_FEE, }`
+      const estimate = await stealthexSdk.getEstimate({
+        route: { from, to },
+        amount: fromAmount.toNumber(),
+      })
 
-    //   // check for error object
-    //   if (!output || typeof output !== 'string') {
-    //     if (output && typeof output !== 'string') {
-    //       return {
-    //         decentralisationScore: DECENTRALISATION_SCORE,
-    //         protocol: PROTOCOL,
-    //         inputAmountBN: fromAmount.planck,
-    //         outputAmountBN: 0n,
-    //         error: output.description,
-    //         timeInSec: 5 * 60,
-    //         fees: [],
-    //         providerLogo: LOGO,
-    //         providerName: PROTOCOL_NAME,
-    //         talismanFeeBps: TALISMAN_FEE,
-    //       }
-    //     }
-    //     return null
-    //   }
+      const gasFee = await estimateGas(get, { getSubstrateApi })
 
-    //   const gasFee = await estimateGas(get, { getSubstrateApi })
-
-    //   return {
-    //     decentralisationScore: DECENTRALISATION_SCORE,
-    //     protocol: PROTOCOL,
-    //     inputAmountBN: fromAmount.planck,
-    //     outputAmountBN: Decimal.fromUserInput(output, toAsset.decimals).planck,
-    //     // swaps take about 5mins according to their faq: https://simpleswap.io/faq#crypto-to-crypto-exchanges--how-long-does-it-take-to-exchange-coins
-    //     timeInSec: 5 * 60,
-    //     fees: gasFee ? [gasFee] : [],
-    //     providerLogo: LOGO,
-    //     providerName: PROTOCOL_NAME,
-    //     talismanFeeBps: TALISMAN_FEE,
-    //   }
+      return {
+        decentralisationScore: DECENTRALISATION_SCORE,
+        protocol: PROTOCOL,
+        inputAmountBN: fromAmount.planck,
+        outputAmountBN: Decimal.fromUserInput(String(estimate), toAsset.decimals).planck,
+        // simpleswap swaps take about 5mins, assuming here that stealthex takes a similar amount of time
+        timeInSec: 5 * 60,
+        fees: gasFee ? [gasFee] : [],
+        providerLogo: LOGO,
+        providerName: PROTOCOL_NAME,
+        talismanFeeBps: TALISMAN_TOTAL_FEE,
+      }
+    } catch (cause) {
+      console.error(`Failed to get StealthEX quote`, cause)
+      return null
+    }
   })
 )
-// const saveIdForMonitoring = async (swapId: string, txHash: string) => {
-//   await fetch(`https://swap-providers-monitor.fly.dev/simpleswap/exchange`, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify({ id: swapId, deposit_tx_hash: txHash }),
-//   })
-// }
 
 const swap: SwapFunction<{ id: string }> = async (
   get: Getter,

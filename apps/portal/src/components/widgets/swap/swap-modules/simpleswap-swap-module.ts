@@ -273,7 +273,7 @@ const simpleSwapSdk = {
     const allCurrenciesRes = await fetch(`https://api.simpleswap.io/get_all_currencies?api_key=${APIKEY}`)
     return await allCurrenciesRes.json()
   },
-  getEstimated: async (props: {
+  getEstimate: async (props: {
     currencyFrom: string
     currencyTo: string
     amount: string
@@ -443,7 +443,7 @@ const quote: QuoteFunction = loadable(
     if (range && range.min.isGreaterThan(fromAmount.toString()))
       throw new Error(`SimpleSwap minimum is ${range.min.toString()} ${fromAsset.symbol}`)
 
-    const output = await simpleSwapSdk.getEstimated({
+    const output = await simpleSwapSdk.getEstimate({
       amount: fromAmount.toString(),
       currencyFrom,
       currencyTo,
