@@ -46,13 +46,14 @@ import {
 } from './swap-modules/common.swap-module'
 import { lifiSwapModule } from './swap-modules/lifi.swap-module'
 import { simpleswapSwapModule } from './swap-modules/simpleswap-swap-module'
+import { stealthexSwapModule } from './swap-modules/stealthex-swap-module'
 
 const coingeckoApiUrl = import.meta.env.VITE_COIN_GECKO_API
 const coingeckoApiKey = import.meta.env.VITE_COIN_GECKO_API_KEY
 const coingeckoTier = import.meta.env.VITE_COIN_GECKO_API_TIER
 
 // import { chainflipSwapModule } from './swap-modules/chainflip.swap-module'
-const swapModules = [/* chainflipSwapModule, */ simpleswapSwapModule, lifiSwapModule]
+const swapModules = [/* chainflipSwapModule, */ simpleswapSwapModule, lifiSwapModule, stealthexSwapModule]
 const ETH_LOGO = 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg'
 const BTC_LOGO = 'https://assets.coingecko.com/coins/images/1/standard/bitcoin.png?1696501400'
 const btcTokens = {

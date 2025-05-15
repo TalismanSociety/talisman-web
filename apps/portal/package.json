@@ -15,7 +15,8 @@
     "e2e": "playwright test",
     "storybook": "storybook dev -p 6008",
     "build-storybook": "storybook build",
-    "codegen:nova": "graphql-codegen --require dotenv/config --config codegen.nova.ts"
+    "codegen:nova": "graphql-codegen --require dotenv/config --config codegen.nova.ts",
+    "codegen:stealthex-swaps": "openapi-typescript https://stealthex.talisman.xyz/docs/openapi.json --export-type --root-types -o src/components/widgets/swap/swap-modules/stealthex.api.d.ts"
   },
   "dependencies": {
     "@chainflip/sdk": "1.3.0",
@@ -67,6 +68,7 @@
     "jotai-effect": "^1.0.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.394.0",
+    "openapi-fetch": "^0.14.0",
     "polkadot-api": "^0.8.0",
     "posthog-js": "^1.93.6",
     "react": "^18.3.1",
@@ -114,6 +116,7 @@
     "eslint": "^9.2.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-storybook": "^0.6.15",
+    "openapi-typescript": "^7.8.0",
     "postcss": "^8.4.49",
     "storybook": "^7.6.5",
     "tailwindcss": "^3.4.16",

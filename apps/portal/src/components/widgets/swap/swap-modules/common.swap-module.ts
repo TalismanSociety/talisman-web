@@ -4,7 +4,6 @@ import type { BaseWallet } from '@polkadot-onboard/core'
 import type { Signer, SubmittableExtrinsic } from '@polkadot/api/types'
 import type { Atom, Getter, SetStateAction, Setter } from 'jotai'
 import type { TransactionRequest, WalletClient } from 'viem'
-import type { Chain as ViemChain } from 'viem/chains'
 import { ApiPromise } from '@polkadot/api'
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { evmErc20TokenId, evmNativeTokenId, subNativeTokenId } from '@talismn/balances'
@@ -13,26 +12,11 @@ import { atomWithStorage, createJSONStorage, unstable_withStorageValidator } fro
 import { Loadable } from 'jotai/vanilla/utils/loadable'
 import { firstValueFrom, Subject } from 'rxjs'
 import { isAddress } from 'viem'
-import { arbitrum, base, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon, sonic } from 'viem/chains'
 
 import { isBtcAddress } from '@/util/btc'
 import { Decimal } from '@/util/Decimal'
 
-export const supportedEvmChains: Record<string, ViemChain> = {
-  eth: mainnet,
-  bsc,
-  base,
-  arbitrum,
-  optimism,
-  blast,
-  polygon,
-  manta,
-  movr: moonriver,
-  glmr: moonbeam,
-  s: sonic,
-}
-
-export type SupportedSwapProtocol = 'chainflip' | 'simpleswap' | 'lifi'
+export type SupportedSwapProtocol = 'chainflip' | 'simpleswap' | 'lifi' | 'stealthex'
 
 export type SwappableAssetBaseType<TContext = Partial<Record<SupportedSwapProtocol, any>>> = {
   id: string

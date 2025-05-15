@@ -16,6 +16,7 @@ import {
   fromAssetAtom,
   QuoteFunction,
   selectedSubProtocolAtom,
+  SupportedSwapProtocol,
   SwapFunction,
   SwapModule,
   SwappableAssetBaseType,
@@ -24,7 +25,8 @@ import {
   toAssetAtom,
 } from './common.swap-module'
 
-const PROTOCOL = 'lifi' as const
+const PROTOCOL: SupportedSwapProtocol = 'lifi' as const
+const PROTOCOL_NAME = 'LI.FI'
 const DECENTRALISATION_SCORE = 2
 const TALISMAN_FEE = 0.002
 
@@ -33,7 +35,7 @@ sdk.createConfig({
   apiKey: import.meta.env.VITE_LIFI_SECRET,
 })
 
-export const fromAssetsSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {
+const assetsSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {
   const res = await sdk.getTokens({ chainTypes: [sdk.ChainType.EVM, sdk.ChainType.SVM] })
   const networks = await get(evmNetworksByIdAtom)
   const tokens = Object.entries(res.tokens)
@@ -59,6 +61,9 @@ export const fromAssetsSelector = atom(async (get): Promise<SwappableAssetBaseTy
     })
   return tokens.flat()
 })
+
+export const fromAssetsSelector = atom(async get => await get(assetsSelector))
+export const toAssetsSelector = atom(async get => await get(assetsSelector))
 
 const routesAtom = atom(async get => {
   try {
@@ -180,7 +185,7 @@ const approvalAtom = atom(get => {
     tokenAddress: fromAsset.contractAddress,
     chainId,
     fromAddress,
-    protocolName: 'LI.FI',
+    protocolName: PROTOCOL_NAME,
   }
 })
 
@@ -247,7 +252,7 @@ const swap: SwapFunction<{ id: string }> = async (get: Getter, _: Setter, { evmW
 export const lifiSwapModule: SwapModule = {
   protocol: PROTOCOL,
   fromAssetsSelector,
-  toAssetsSelector: fromAssetsSelector,
+  toAssetsSelector,
   quote: quoteAtom,
   swap,
   decentralisationScore: DECENTRALISATION_SCORE,

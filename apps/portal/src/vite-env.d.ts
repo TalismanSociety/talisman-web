@@ -20,6 +20,7 @@ interface ImportMetaEnv {
   VITE_QUEST_API?: string
   VITE_SIMPLESWAP_API_KEY: string
   VITE_LIFI_SECRET: string
+  VITE_STEALTHEX_API: string
   VITE_TAOSTATS_API_KEY: string
   VITE_TAOSTATS_API_URL: string
   VITE_TALISMAN_BIFROST_CHANNEL_ID: string

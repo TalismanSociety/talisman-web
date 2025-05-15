@@ -9,6 +9,7 @@ import { swapsAtom } from '../swap-modules/common.swap-module'
 import { ChainflipActivity } from './activities/ChainflipActivity'
 import { LifiActivity } from './activities/LifiActivity'
 import { SimpleswapActivity } from './activities/SimpleswapActivity'
+import { StealthexActivity } from './activities/StealthexActivity'
 
 export const SwapHistory: React.FC = () => {
   const swaps = useAtomValue(swapsAtom)
@@ -20,6 +21,8 @@ export const SwapHistory: React.FC = () => {
         return <ChainflipActivity key={swap.timestamp} timestamp={swap.timestamp} data={swap.data} />
       case 'simpleswap':
         return <SimpleswapActivity key={swap.timestamp} timestamp={swap.timestamp} data={swap.data} />
+      case 'stealthex':
+        return <StealthexActivity key={swap.timestamp} timestamp={swap.timestamp} data={swap.data} />
       case 'lifi':
         return <LifiActivity key={swap.timestamp} timestamp={swap.timestamp} data={swap.data} />
       default:
