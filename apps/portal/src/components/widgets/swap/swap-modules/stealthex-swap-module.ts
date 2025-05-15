@@ -5,6 +5,7 @@ import { encodeAnyAddress } from '@talismn/util'
 import BigNumber from 'bignumber.js'
 import { atom, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
+import createClient from 'openapi-fetch'
 import { createPublicClient, encodeFunctionData, erc20Abi, fallback, http, isAddress } from 'viem'
 import {
   arbitrum,
@@ -25,10 +26,9 @@ import { substrateApiGetterAtom } from '@/domains/common/recoils/api'
 import { Decimal } from '@/util/Decimal'
 
 import type {
+  paths as StealthexApi,
   SchemaCurrency as StealthexCurrency,
-  SchemaEstimate as StealthexEstimate,
   SchemaExchange as StealthexExchange,
-  SchemaRange as StealthexRange,
 } from './stealthex.api.d.ts'
 import { knownEvmNetworksAtom } from '../helpers'
 import stealthexLogo from '../side-panel/details/logos/stealthex-logo.svg'
@@ -215,6 +215,7 @@ const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
   },
 }
 
+const api = createClient<StealthexApi>({ baseUrl: apiUrl })
 const stealthexSdk = {
   getAllCurrencies: async (): Promise<StealthexCurrency[]> => {
     const allCurrencies: StealthexCurrency[] = []
@@ -222,8 +223,7 @@ const stealthexSdk = {
     // TODO: When worker cache isn't warm, this takes too long to fetch all requests.
     const limit = 250
     for (let offset = 0; ; offset += limit) {
-      const response = await fetch(`${apiUrl}/v4/currencies?limit=${limit}&offset=${offset}`)
-      const currencies: StealthexCurrency[] = await response.json()
+      const { data: currencies } = await api.GET('/v4/currencies', { params: { query: { limit, offset } } })
       if (!Array.isArray(currencies)) break
 
       allCurrencies.push(...currencies)
@@ -232,9 +232,17 @@ const stealthexSdk = {
 
     return allCurrencies
   },
-  getPairs: async ({ symbol, network }: { symbol: string; network: boolean }) => {
-    const response = await fetch(`${apiUrl}/v4/currencies/${symbol}/${network}?include_available_routes=true`)
-    const currency: StealthexCurrency = await response.json()
+  getPairs: async ({
+    symbol,
+    network,
+  }: {
+    symbol: string
+    network: string
+  }): Promise<StealthexCurrency['available_routes']> => {
+    const { data: currency, error } = await api.GET('/v4/currencies/{symbol}/{network}', {
+      params: { path: { symbol, network }, query: { include_available_routes: 'true' } },
+    })
+    if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
     return currency?.available_routes
   },
   getRange: async ({
@@ -245,23 +253,15 @@ const stealthexSdk = {
     route: { from: { network: string; symbol: string }; to: { network: string; symbol: string } }
     estimation?: 'direct' | 'reversed'
     rate?: 'floating' | 'fixed'
-  }) => {
+  }): Promise<{ min: BigNumber }> => {
     // default values
     estimation ||= 'direct'
     rate ||= 'floating'
 
-    const response = await fetch(`${apiUrl}/v4/rates/range`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        route,
-        estimation,
-        rate,
-        additional_fee_percent: TALISMAN_ADDITIONAL_FEE,
-      }),
+    const { data: range, error } = await api.POST('/v4/rates/range', {
+      body: { route, estimation, rate, additional_fee_percent: TALISMAN_ADDITIONAL_FEE },
     })
-
-    const range: StealthexRange = await response.json()
+    if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
     return { min: BigNumber(range?.min_amount ?? 0) }
   },
   getEstimate: async ({
@@ -274,57 +274,64 @@ const stealthexSdk = {
     amount: number
     estimation?: 'direct' | 'reversed'
     rate?: 'floating' | 'fixed'
-  }) => {
+  }): Promise<number> => {
     // default values
     estimation ||= 'direct'
     rate ||= 'floating'
 
-    const response = await fetch(`${apiUrl}/v4/rates/estimated-amount`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        route,
-        amount,
-        estimation,
-        rate,
-        additional_fee_percent: TALISMAN_ADDITIONAL_FEE,
-      }),
+    const { data: estimate, error } = await api.POST('/v4/rates/estimated-amount', {
+      body: { route, amount, estimation, rate, additional_fee_percent: TALISMAN_ADDITIONAL_FEE },
     })
-
-    const estimate: StealthexEstimate = await response.json()
+    if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
     return estimate?.estimated_amount
   },
-  // createExchange: async (props: {
-  //   fixed: boolean
-  //   currency_from: string
-  //   currency_to: string
-  //   amount: number
-  //   address_to: string
-  //   extra_id_to?: string
-  //   user_refund_address: string | null
-  //   user_refund_extra_id: string | null
-  // }): Promise<Exchange> => {
-  //   const search = new URLSearchParams({
-  //     api_key: APIKEY,
-  //   })
-  //   const exchange = await fetch(`https://api.simpleswap.io/create_exchange?${search.toString()}`, {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(props),
-  //   })
+  createExchange: async ({
+    route,
+    amount,
+    estimation,
+    rate,
+    address,
+    extra_id,
+    refund_address,
+    refund_extra_id,
+  }: {
+    route: { from: { network: string; symbol: string }; to: { network: string; symbol: string } }
+    amount: number
+    estimation?: 'direct' | 'reversed'
+    rate?: 'floating' | 'fixed'
+    address: string
+    extra_id?: string
+    refund_address?: string
+    refund_extra_id?: string
+  }): Promise<StealthexExchange> => {
+    // default values
+    estimation ||= 'direct'
+    rate ||= 'floating'
 
-  //   return exchange.json()
-  // },
-  // getExchange: async (id: string): Promise<Exchange> => {
-  //   const search = new URLSearchParams({
-  //     api_key: APIKEY,
-  //     id,
-  //   })
-  //   const exchange = await fetch(`https://api.simpleswap.io/get_exchange?${search.toString()}`)
-  //   return exchange.json()
-  // },
+    const params = {
+      route,
+      amount,
+      estimation,
+      rate,
+      address,
+      extra_id,
+      refund_address,
+      refund_extra_id,
+      additional_fee_percent: TALISMAN_ADDITIONAL_FEE,
+    }
+    if (extra_id === undefined) delete params.extra_id
+    if (refund_address === undefined) delete params.refund_address
+    if (refund_extra_id === undefined) delete params.refund_extra_id
+
+    const { data: exchange, error } = await api.POST('/v4/exchanges', { body: params })
+    if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
+    return exchange
+  },
+  getExchange: async (id: string): Promise<StealthexExchange> => {
+    const { data: exchange, error } = await api.GET('/v4/exchanges/{id}', { params: { path: { id } } })
+    if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
+    return exchange
+  },
 }
 
 const assetsAtom = atom(async () => {
@@ -453,53 +460,58 @@ const swap: SwapFunction<{ id: string }> = async (
   _: Setter,
   { evmWalletClient, getSubstrateApi, substrateWallet, allowReap }
 ) => {
-  // const toAddress = get(toAddressAtom)
-  // const fromAddress = get(fromAddressAtom)
-  // const amount = get(fromAmountAtom)
-  // const fromAsset = get(fromAssetAtom)
-  // const toAsset = get(toAssetAtom)
-  // const substrateChains = await get(chainsAtom)
-  // let addressTo = toAddress
-  // if (toAsset?.networkType === 'substrate' && addressTo) {
-  //   const substrateChain = substrateChains.find(c => c.id.toString() === toAsset.chainId.toString())
-  //   if (substrateChain) {
-  //     addressTo = encodeAnyAddress(addressTo, substrateChain.prefix ?? 42)
-  //   }
-  // }
-  // if (!addressTo) throw new Error('Missing to address')
-  // let addressFrom = fromAddress
-  // if (fromAsset?.networkType === 'substrate' && addressFrom) {
-  //   const substrateChain = substrateChains.find(c => c.id.toString() === fromAsset.chainId.toString())
-  //   if (substrateChain) {
-  //     addressFrom = encodeAnyAddress(addressFrom, substrateChain.prefix ?? 42)
-  //   }
-  // }
-  // if (!addressFrom) throw new Error('Missing from address')
-  // if (!fromAsset) throw new Error('Missing from asset')
-  // if (!toAsset) throw new Error('Missing to asset')
-  // const currency_from = fromAsset.context?.simpleswap?.symbol as string
-  // const currency_to = toAsset.context?.simpleswap?.symbol as string
-  // if (!currency_from) throw new Error('Missing currency from')
-  // if (!currency_to) throw new Error('Missing currency to')
-  // // validate from address for the source chain
-  // if (!validateAddress(addressFrom, fromAsset.networkType))
-  //   throw new Error(`Cannot swap from ${fromAsset.chainId} chain with address: ${fromAddress}`)
-  // // validate to address for the target chain
-  // if (!validateAddress(addressTo, toAsset.networkType))
-  //   throw new Error(`Cannot swap to ${toAsset.chainId} chain with address: ${toAddress}`)
-  // // cannot swap from BTC
-  // if (fromAsset.networkType === 'btc') throw new Error('Swapping from BTC is not supported.')
-  // const exchange = await simpleSwapSdk.createExchange({
-  //   fixed: false,
-  //   address_to: addressTo,
-  //   amount: amount.toNumber(),
-  //   currency_from,
-  //   currency_to,
-  //   extra_id_to: '',
-  //   user_refund_address: null,
-  //   user_refund_extra_id: null,
-  // })
-  // if (!exchange) throw new Error('Error creating exchange')
+  const toAddress = get(toAddressAtom)
+  const fromAddress = get(fromAddressAtom)
+  const amount = get(fromAmountAtom)
+  const fromAsset = get(fromAssetAtom)
+  const toAsset = get(toAssetAtom)
+  const substrateChains = await get(chainsAtom)
+
+  let addressTo = toAddress
+  if (toAsset?.networkType === 'substrate' && addressTo) {
+    const substrateChain = substrateChains.find(c => c.id.toString() === toAsset.chainId.toString())
+    if (substrateChain) {
+      addressTo = encodeAnyAddress(addressTo, substrateChain.prefix ?? 42)
+    }
+  }
+  if (!addressTo) throw new Error('Missing to address')
+
+  let addressFrom = fromAddress
+  if (fromAsset?.networkType === 'substrate' && addressFrom) {
+    const substrateChain = substrateChains.find(c => c.id.toString() === fromAsset.chainId.toString())
+    if (substrateChain) {
+      addressFrom = encodeAnyAddress(addressFrom, substrateChain.prefix ?? 42)
+    }
+  }
+  if (!addressFrom) throw new Error('Missing from address')
+
+  if (!fromAsset) throw new Error('Missing from asset')
+  if (!toAsset) throw new Error('Missing to asset')
+
+  const from: AssetContext = fromAsset.context.stealthex
+  const to: AssetContext = toAsset.context.stealthex
+  if (!from) throw new Error('Missing route from')
+  if (!to) throw new Error('Missing route to')
+
+  // validate from address for the source chain
+  if (!validateAddress(addressFrom, fromAsset.networkType))
+    throw new Error(`Cannot swap from ${fromAsset.chainId} chain with address: ${fromAddress}`)
+
+  // validate to address for the target chain
+  if (!validateAddress(addressTo, toAsset.networkType))
+    throw new Error(`Cannot swap to ${toAsset.chainId} chain with address: ${toAddress}`)
+
+  // cannot swap from BTC
+  if (fromAsset.networkType === 'btc') throw new Error('Swapping from BTC is not supported.')
+
+  const exchange = await stealthexSdk.createExchange({
+    route: { from, to },
+    amount: amount.toNumber(),
+    address: addressTo,
+  })
+
+  if (!exchange) throw new Error('Error creating exchange')
+
   // if (exchange.code === 422) {
   //   const min = exchange.description?.match(/min: ([0-9.]+)/i)?.[1]
   //   const max = exchange.description?.match(/max: ([0-9.]+)/i)?.[1]
@@ -510,95 +522,102 @@ const swap: SwapFunction<{ id: string }> = async (
   //   ].join(' ')
   //   throw new Error(message)
   // }
-  // // verify that the created exchange has the same assets we are trying to swap
-  // if (exchange.currency_from !== currency_from || exchange.currency_to !== currency_to)
-  //   throw new Error('Incorrect currencies from provider. Please try again later')
-  // if (+exchange.expected_amount > amount.toNumber()) throw new Error('Quote changed. Please try again.')
-  // if (exchange.address_to !== addressTo)
-  //   throw new Error('Incorrect destination address from provider. Please try again later')
-  // const depositAmount = Decimal.fromUserInput(exchange.expected_amount, fromAsset.decimals)
-  // try {
-  //   if (fromAsset.networkType === 'evm') {
-  //     if (!evmWalletClient) throw new Error('Ethereum account not connected')
-  //     const chain = Object.values(supportedEvmChains).find(c => c?.id.toString() === fromAsset.chainId.toString())
-  //     if (!chain) throw new Error('Network not supported')
-  //     await evmWalletClient.switchChain({ id: chain.id })
-  //     if (!chain) throw new Error('Chain not found')
-  //     let hash: string
-  //     if (!fromAsset.contractAddress) {
-  //       hash = await evmWalletClient.sendTransaction({
-  //         chain,
-  //         to: exchange.address_from as `0x${string}`,
-  //         value: depositAmount.planck,
-  //         account: fromAddress as `0x${string}`,
-  //       })
-  //     } else {
-  //       hash = await evmWalletClient.writeContract({
-  //         chain,
-  //         abi: erc20Abi,
-  //         address: fromAsset.contractAddress as `0x${string}`,
-  //         functionName: 'transfer',
-  //         account: fromAddress as `0x${string}`,
-  //         args: [exchange.address_from as `0x${string}`, depositAmount.planck],
-  //       })
-  //     }
-  //     saveIdForMonitoring(exchange.id, hash)
-  //     saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
-  //     return {
-  //       protocol: PROTOCOL,
-  //       depositRes: {
-  //         txHash: hash,
-  //         chainId: chain.id,
-  //       },
-  //       data: { id: exchange.id },
-  //     }
-  //   } else if (fromAsset.networkType === 'substrate') {
-  //     const signer = substrateWallet?.signer
-  //     if (!signer) throw new Error('Substrate wallet not connected.')
-  //     const chains = await get(chainsAtom)
-  //     const substrateChain = chains.find(c => c.id === fromAsset.chainId)
-  //     const rpc = substrateChain?.rpcs?.[0]?.url
-  //     if (!rpc) throw new Error('RPC not found!')
-  //     const polkadotApi = await getSubstrateApi(rpc)
-  //     const transferRes =
-  //       fromAsset.assetHubAssetId !== undefined
-  //         ? await substrateAssetsSwapTransfer(
-  //             polkadotApi,
-  //             allowReap,
-  //             exchange.address_from,
-  //             addressFrom,
-  //             fromAsset.assetHubAssetId,
-  //             depositAmount.planck,
-  //             signer
-  //           )
-  //         : await substrateNativeSwapTransfer(
-  //             polkadotApi,
-  //             allowReap,
-  //             exchange.address_from,
-  //             addressFrom,
-  //             depositAmount.planck,
-  //             signer
-  //           )
-  //     if (transferRes.ok) {
-  //       saveIdForMonitoring(exchange.id, transferRes.id)
-  //       saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
-  //     }
-  //     return {
-  //       protocol: PROTOCOL,
-  //       depositRes: {
-  //         extrinsicId: transferRes.id,
-  //         chainId: substrateChain.id,
-  //         error: transferRes.error,
-  //       },
-  //       data: { id: exchange.id },
-  //     }
-  //   }
-  // } catch (e) {
-  //   console.error(e)
-  //   // TODO: convert to user friendly error messages
-  //   throw e
-  // }
-  // throw new Error('Unsupported network')
+  // verify that the created exchange has the same assets we are trying to swap
+  if (
+    exchange.deposit.network !== from.network ||
+    exchange.deposit.symbol !== from.symbol ||
+    exchange.withdrawal.network !== to.network ||
+    exchange.withdrawal.symbol !== to.symbol
+  )
+    throw new Error('Incorrect currencies from provider. Please try again later')
+  if (exchange.deposit.amount > amount.toNumber()) throw new Error('Quote changed. Please try again.')
+  if (exchange.withdrawal.address !== addressTo)
+    throw new Error('Incorrect destination address from provider. Please try again later')
+
+  const depositAmount = Decimal.fromUserInput(String(exchange.deposit.expected_amount), fromAsset.decimals)
+  try {
+    if (fromAsset.networkType === 'evm') {
+      if (!evmWalletClient) throw new Error('Ethereum account not connected')
+      const chain = Object.values(supportedEvmChains).find(c => c?.id.toString() === fromAsset.chainId.toString())
+      if (!chain) throw new Error('Network not supported')
+      await evmWalletClient.switchChain({ id: chain.id })
+
+      if (!chain) throw new Error('Chain not found')
+      let hash: string
+      if (!fromAsset.contractAddress) {
+        hash = await evmWalletClient.sendTransaction({
+          chain,
+          to: exchange.deposit.address as `0x${string}`,
+          value: depositAmount.planck,
+          account: fromAddress as `0x${string}`,
+        })
+      } else {
+        hash = await evmWalletClient.writeContract({
+          chain,
+          abi: erc20Abi,
+          address: fromAsset.contractAddress as `0x${string}`,
+          functionName: 'transfer',
+          account: fromAddress as `0x${string}`,
+          args: [exchange.deposit.address as `0x${string}`, depositAmount.planck],
+        })
+      }
+
+      saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
+      return {
+        protocol: PROTOCOL,
+        depositRes: {
+          txHash: hash,
+          chainId: chain.id,
+        },
+        data: { id: exchange.id },
+      }
+    } else if (fromAsset.networkType === 'substrate') {
+      const signer = substrateWallet?.signer
+      if (!signer) throw new Error('Substrate wallet not connected.')
+      const chains = await get(chainsAtom)
+      const substrateChain = chains.find(c => c.id === fromAsset.chainId)
+      const rpc = substrateChain?.rpcs?.[0]?.url
+      if (!rpc) throw new Error('RPC not found!')
+      const polkadotApi = await getSubstrateApi(rpc)
+
+      const transferRes =
+        fromAsset.assetHubAssetId !== undefined
+          ? await substrateAssetsSwapTransfer(
+              polkadotApi,
+              allowReap,
+              exchange.deposit.address,
+              addressFrom,
+              fromAsset.assetHubAssetId,
+              depositAmount.planck,
+              signer
+            )
+          : await substrateNativeSwapTransfer(
+              polkadotApi,
+              allowReap,
+              exchange.deposit.address,
+              addressFrom,
+              depositAmount.planck,
+              signer
+            )
+
+      if (transferRes.ok) saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
+      return {
+        protocol: PROTOCOL,
+        depositRes: {
+          extrinsicId: transferRes.id,
+          chainId: substrateChain.id,
+          error: transferRes.error,
+        },
+        data: { id: exchange.id },
+      }
+    }
+  } catch (e) {
+    console.error(e)
+    // TODO: convert to user friendly error messages
+    throw e
+  }
+
+  throw new Error('Unsupported network')
 }
 
 const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) => {
@@ -684,30 +703,30 @@ export const stealthexSwapModule: SwapModule = {
   decentralisationScore: DECENTRALISATION_SCORE,
 }
 
-// const retryStatus = async (
-//   get: Getter,
-//   id: string,
-//   attempts = 0
-// ): Promise<{ exchange: Exchange; expired?: boolean }> => {
-//   try {
-//     const exchange = await simpleSwapSdk.getExchange(id)
-//     const expired = false
+const retryStatus = async (
+  get: Getter,
+  id: string,
+  attempts = 0
+): Promise<{ exchange: StealthexExchange; expired?: boolean }> => {
+  try {
+    const exchange = await stealthexSdk.getExchange(id)
+    const expired = false
 
-//     if (exchange.status !== 'finished' && exchange.code !== 401) {
-//       get(swapQuoteRefresherAtom)
-//     }
+    if (exchange.status !== 'finished') {
+      get(swapQuoteRefresherAtom)
+    }
 
-//     return { exchange, expired }
-//   } catch (e) {
-//     const error = e as Error & { response?: { status: number } }
-//     // because we're using a broker, the tx isnt always available immediately in their api service
-//     // so we wait a bit and retry
-//     if (error.name === 'AxiosError' && error?.response?.status === 404 && attempts < 10) {
-//       await new Promise(resolve => setTimeout(resolve, 5000))
-//       return retryStatus(get, id, attempts + 1)
-//     }
-//     throw e
-//   }
-// }
+    return { exchange, expired }
+  } catch (e) {
+    const error = e as Error & { response?: { status: number } }
+    // because we're using a broker, the tx isnt always available immediately in their api service
+    // so we wait a bit and retry
+    if (error.name === 'AxiosError' && error?.response?.status === 404 && attempts < 10) {
+      await new Promise(resolve => setTimeout(resolve, 5000))
+      return retryStatus(get, id, attempts + 1)
+    }
+    throw e
+  }
+}
 
-// export const simpleswapSwapStatusAtom = atomFamily((id: string) => atom(async get => await retryStatus(get, id)))
+export const stealthexSwapStatusAtom = atomFamily((id: string) => atom(async get => await retryStatus(get, id)))

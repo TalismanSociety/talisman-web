@@ -527,9 +527,9 @@ const swap: SwapFunction<{ id: string }> = async (
 
   if (!fromAsset) throw new Error('Missing from asset')
   if (!toAsset) throw new Error('Missing to asset')
+
   const currency_from = fromAsset.context?.simpleswap?.symbol as string
   const currency_to = toAsset.context?.simpleswap?.symbol as string
-
   if (!currency_from) throw new Error('Missing currency from')
   if (!currency_to) throw new Error('Missing currency to')
 
