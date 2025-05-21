@@ -42,9 +42,11 @@ import {
   validateAddress,
 } from './common.swap-module'
 
-const PROTOCOL: SupportedSwapProtocol = 'chainflip'
+const PROTOCOL: SupportedSwapProtocol = 'chainflip' as const
 const PROTOCOL_NAME = 'Chainflip'
 const DECENTRALISATION_SCORE = 2
+const CHAINFLIP_COMMISSION_BPS = 150
+
 const EVM_CHAINS: ViemChain[] = [mainnet, sepolia, arbitrum]
 
 const CHAINFLIP_CHAIN_TO_ID_MAP: Record<Chain, string> = {
@@ -130,7 +132,6 @@ const brokerUrlAtom = atom(get => {
   }
 })
 
-export const CHAINFLIP_COMMISSION_BPS = 150
 const swapSdkAtom = atom(get => {
   const network = get(chainflipNetworkAtom)
   const brokerUrl = get(brokerUrlAtom)
@@ -165,11 +166,8 @@ const tokensSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {
   })
 })
 
-const fromAssetsSelector = atom(get => get(tokensSelector))
-
-const toAssetsSelector = atom(async get => {
-  return await get(tokensSelector)
-})
+const fromAssetsSelector = atom(async get => await get(tokensSelector))
+const toAssetsSelector = atom(async get => await get(tokensSelector))
 
 const quote: QuoteFunction = loadable(
   atom(async (get): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {
