@@ -57,7 +57,7 @@ const apiUrl = import.meta.env.VITE_STEALTHEX_API || 'https://stealthex.talisman
 const PROTOCOL: SupportedSwapProtocol = 'stealthex' as const
 const PROTOCOL_NAME = 'StealthEX'
 const DECENTRALISATION_SCORE = 1.5
-const TALISMAN_TOTAL_FEE = 0.015 // We take a fee of 1.5%
+const TALISMAN_TOTAL_FEE = 0.01 // We take a fee of 1.0%
 const BUILT_IN_FEE = 0.004 // StealthEX always includes an affiliate fee of 0.4%
 const TALISMAN_ADDITIONAL_FEE = TALISMAN_TOTAL_FEE - BUILT_IN_FEE // We want a total fee of 1.5%, so subtract the built-in fee of 0.4%
 
