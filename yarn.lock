@@ -1871,6 +1871,40 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@coral-xyz/anchor@npm:0.29.0":
+  version: 0.29.0
+  resolution: "@coral-xyz/anchor@npm:0.29.0"
+  dependencies:
+    "@coral-xyz/borsh": "npm:^0.29.0"
+    "@noble/hashes": "npm:^1.3.1"
+    "@solana/web3.js": "npm:^1.68.0"
+    bn.js: "npm:^5.1.2"
+    bs58: "npm:^4.0.1"
+    buffer-layout: "npm:^1.2.2"
+    camelcase: "npm:^6.3.0"
+    cross-fetch: "npm:^3.1.5"
+    crypto-hash: "npm:^1.3.0"
+    eventemitter3: "npm:^4.0.7"
+    pako: "npm:^2.0.3"
+    snake-case: "npm:^3.0.4"
+    superstruct: "npm:^0.15.4"
+    toml: "npm:^3.0.0"
+  checksum: 10c0/cc863ab22b23c126e83b0804a43d45fdb7836659b917db0a8895146ec8d48637db034a7ae7dbd55d5ec7a058a266dd06878e1f921950df1e899369e49fb36c93
+  languageName: node
+  linkType: hard
+
+"@coral-xyz/borsh@npm:0.29.0, @coral-xyz/borsh@npm:^0.29.0":
+  version: 0.29.0
+  resolution: "@coral-xyz/borsh@npm:0.29.0"
+  dependencies:
+    bn.js: "npm:^5.1.2"
+    buffer-layout: "npm:^1.2.0"
+  peerDependencies:
+    "@solana/web3.js": ^1.68.0
+  checksum: 10c0/25afec48714d9f0c95a02d04215803181f7da0aad85fdd1b076d9f37ef54586342e01e24fc1b2128aba0b5155e970afd6a2c6f8b0343699d8733c0703655ce39
+  languageName: node
+  linkType: hard
+
 "@discoveryjs/json-ext@npm:^0.5.3":
   version: 0.5.7
   resolution: "@discoveryjs/json-ext@npm:0.5.7"
@@ -2514,10 +2548,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@galacticcouncil/api-augment@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "@galacticcouncil/api-augment@npm:0.3.0"
-  checksum: 10c0/18f1789ece1406e68259f05f0d2ad854245cb52b1edc0fb481e121a13acef199ac82d6952799f5fc14b1ce96445f6e011629c987a98644403a7cbbe62323fb0d
+"@galacticcouncil/api-augment@npm:^0.3.1":
+  version: 0.3.1
+  resolution: "@galacticcouncil/api-augment@npm:0.3.1"
+  checksum: 10c0/254e739b560cb479e4763b827c731cba9383b6da48350ca539d2e611cf84500575e78a81eccfa7c25f55a58cdf45b3dc9a572d595a284bfc96a985142283ba0b
   languageName: node
   linkType: hard
 
@@ -2535,17 +2569,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@galacticcouncil/math-omnipool@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@galacticcouncil/math-omnipool@npm:1.0.0"
-  checksum: 10c0/b25e6c60b321628ded072c1006c9925b995d42e28de561d123178da33115a447c46cbab09724871ae67c65735e0076168b0073a771970a417bed6955ab3bf503
+"@galacticcouncil/math-omnipool@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@galacticcouncil/math-omnipool@npm:1.1.0"
+  checksum: 10c0/3798c8ed1b92f0a42173911d1c8e91d536b91139f9e68a62fe1e3a2b65db7495ab8cb0053a05f141496495ec141b464246542dbce53188f121246b24f14f09ee
   languageName: node
   linkType: hard
 
-"@galacticcouncil/math-stableswap@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@galacticcouncil/math-stableswap@npm:1.0.0"
-  checksum: 10c0/a4bfb84154d4aece1902f2f953417091ee1efce5191dd0cd2a50ca7857cd795aaa48121f0948bd0f7954902d978e9b6102b1d4f6d594a75f7eacb6d3c0e3b657
+"@galacticcouncil/math-stableswap@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@galacticcouncil/math-stableswap@npm:2.0.0"
+  checksum: 10c0/b31a717b802b0ba3e21f9f9c77641f449bdce1f549175076c2b165249d2723e1614900ec3c1f432e187d89059c667040083366e484fef8afbdbd93eba24598ec
   languageName: node
   linkType: hard
 
@@ -2556,14 +2590,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@galacticcouncil/sdk@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "@galacticcouncil/sdk@npm:5.0.1"
+"@galacticcouncil/sdk@npm:^7.1.1":
+  version: 7.1.1
+  resolution: "@galacticcouncil/sdk@npm:7.1.1"
   dependencies:
     "@galacticcouncil/math-lbp": "npm:^1.0.0"
     "@galacticcouncil/math-liquidity-mining": "npm:^1.0.0"
-    "@galacticcouncil/math-omnipool": "npm:^1.0.0"
-    "@galacticcouncil/math-stableswap": "npm:^1.0.0"
+    "@galacticcouncil/math-omnipool": "npm:^1.1.0"
+    "@galacticcouncil/math-stableswap": "npm:^2.0.0"
     "@galacticcouncil/math-xyk": "npm:^1.0.0"
     "@thi.ng/cache": "npm:^2.1.35"
     "@thi.ng/memoize": "npm:^4.0.2"
@@ -2585,27 +2619,34 @@ __metadata:
     "@polkadot/types-known": ~14.0.1
     "@polkadot/util": ~13.1.1
     "@polkadot/util-crypto": ~13.1.1
-  checksum: 10c0/868fab69eaaa1e50a7b18955b60363a9945cd01733db35eb83dfb255e426583869bf332ab0b580b7cb1d5c3e3b7486269af8ba30d0e4c36e76d08389a2741d2e
+    viem: ^2.23.7
+  checksum: 10c0/2442fe957965630c5e43fa209fdec88eeb1c146305204f98e89447f4d3c388eb42977154179ac3d952a72b4d686711f1cdd8a18e37e9d0b1138d95eeb775771a
   languageName: node
   linkType: hard
 
-"@galacticcouncil/xcm-cfg@npm:5.6.0":
-  version: 5.6.0
-  resolution: "@galacticcouncil/xcm-cfg@npm:5.6.0"
+"@galacticcouncil/xcm-cfg@npm:9.2.1":
+  version: 9.2.1
+  resolution: "@galacticcouncil/xcm-cfg@npm:9.2.1"
   dependencies:
-    "@galacticcouncil/xcm-core": "npm:^5.4.0"
-  checksum: 10c0/21e44543bcb8736661662183499f188332792c44597afdfb777fe4151f605ee2766a64e4603fe083244a6c7d3c83037a97e63833bde027a2fbb1bed238503032
+    "@galacticcouncil/xcm-core": "npm:^7.1.0"
+  peerDependencies:
+    "@galacticcouncil/sdk": ^7.0.0
+  checksum: 10c0/b75f50f01c0d3b033e731e5cc2f788a9a8a418d804a73059ec07d86bca354eb41a3051bbf060fd8ff87079c066c4a2f0051a90f7edf34faf706d0f3085bc13f3
   languageName: node
   linkType: hard
 
-"@galacticcouncil/xcm-core@npm:^5.4.0":
-  version: 5.4.0
-  resolution: "@galacticcouncil/xcm-core@npm:5.4.0"
+"@galacticcouncil/xcm-core@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "@galacticcouncil/xcm-core@npm:7.1.0"
   dependencies:
-    "@wormhole-foundation/sdk-base": "npm:^0.5.2"
-    "@wormhole-foundation/sdk-connect": "npm:^0.5.2"
-    "@wormhole-foundation/sdk-definitions": "npm:^0.5.2"
+    "@noble/hashes": "npm:^1.6.1"
+    "@wormhole-foundation/sdk-base": "npm:^1.2.0"
+    "@wormhole-foundation/sdk-connect": "npm:^1.2.0"
+    "@wormhole-foundation/sdk-definitions": "npm:^1.2.0"
+    "@wormhole-foundation/sdk-solana": "npm:^1.2.0"
+    "@wormhole-foundation/sdk-solana-tokenbridge": "npm:^1.2.0"
     big.js: "npm:^6.2.1"
+    bigint-buffer: "npm:^1.1.5"
     buffer: "npm:^6.0.3"
     lru-cache: "npm:^11.0.0"
   peerDependencies:
@@ -2613,19 +2654,17 @@ __metadata:
     "@polkadot/api-augment": ~14.0.1
     "@polkadot/types": ~14.0.1
     "@polkadot/util-crypto": ~13.1.1
-    viem: ^2.15.1
-  checksum: 10c0/fe28e008f968347f27b0336866af168ed1109d2885eb9e5df14a8ed7eb5a1cdb32afe3bf93b1dab84838e0e1ee9a602d62ac8bbb00070cdda8f957f42a17d7b5
+    viem: ^2.23.7
+  checksum: 10c0/754e7f13e1baba3419a14ce6c1085735941132412d587d0bbda7cccc5562fda64584727b759a8ec22e7ede37afdc1ed5d90786dd4fa59b28f47c9e3713f47e30
   languageName: node
   linkType: hard
 
-"@galacticcouncil/xcm-sdk@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "@galacticcouncil/xcm-sdk@npm:7.0.0"
+"@galacticcouncil/xcm-sdk@npm:^9.2.1":
+  version: 9.2.1
+  resolution: "@galacticcouncil/xcm-sdk@npm:9.2.1"
   dependencies:
-    "@galacticcouncil/xcm-core": "npm:^5.4.0"
-  peerDependencies:
-    "@galacticcouncil/sdk": ^5.0.0
-  checksum: 10c0/97d22930995c048c67757d09be245fcf085b80bcd3565ec56abd20e89a50e3ac2d86744151a56d13e367b60006dcd0734644a6dae9fc58293c1c961c5d7e577f
+    "@galacticcouncil/xcm-core": "npm:^7.1.0"
+  checksum: 10c0/106750253f8780492bf5e0e12feb7b308428dce7637926469914f4f6730ebe27dc4fb74c0b928e59b24caba9380763178d7776f0e16ba4fdc8c39717b92207e1
   languageName: node
   linkType: hard
 
@@ -4006,7 +4045,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/hashes@npm:^1.2.0, @noble/hashes@npm:^1.3.1, @noble/hashes@npm:^1.3.3, @noble/hashes@npm:^1.4.0, @noble/hashes@npm:^1.5.0, @noble/hashes@npm:^1.7.1":
+"@noble/hashes@npm:^1.2.0, @noble/hashes@npm:^1.3.1, @noble/hashes@npm:^1.3.3, @noble/hashes@npm:^1.4.0, @noble/hashes@npm:^1.5.0, @noble/hashes@npm:^1.6.1, @noble/hashes@npm:^1.7.1":
   version: 1.8.0
   resolution: "@noble/hashes@npm:1.8.0"
   checksum: 10c0/06a0b52c81a6fa7f04d67762e08b2c476a00285858150caeaaff4037356dd5e119f45b2a530f638b77a5eeca013168ec1b655db41bae3236cb2e9d511484fc77
@@ -6763,12 +6802,74 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@solana/buffer-layout@npm:^4.0.1":
+"@solana/buffer-layout-utils@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@solana/buffer-layout-utils@npm:0.2.0"
+  dependencies:
+    "@solana/buffer-layout": "npm:^4.0.0"
+    "@solana/web3.js": "npm:^1.32.0"
+    bigint-buffer: "npm:^1.1.5"
+    bignumber.js: "npm:^9.0.1"
+  checksum: 10c0/ed093999d7c0f93527a9b261a9a2a59e10b5ef78fc416fa896b86036fb4dadf923d17db68bffdc3e91eadecdb8b8cddd8ee37f12429980fcaba321e7b8a35d27
+  languageName: node
+  linkType: hard
+
+"@solana/buffer-layout@npm:^4.0.0, @solana/buffer-layout@npm:^4.0.1":
   version: 4.0.1
   resolution: "@solana/buffer-layout@npm:4.0.1"
   dependencies:
     buffer: "npm:~6.0.3"
   checksum: 10c0/6535f3908cf6dfc405b665795f0c2eaa0482a8c6b1811403945cf7b450e7eb7b40acce3e8af046f2fcc3eea1a15e61d48c418315d813bee4b720d56b00053305
+  languageName: node
+  linkType: hard
+
+"@solana/codecs-core@npm:2.1.1":
+  version: 2.1.1
+  resolution: "@solana/codecs-core@npm:2.1.1"
+  dependencies:
+    "@solana/errors": "npm:2.1.1"
+  peerDependencies:
+    typescript: ">=5.3.3"
+  checksum: 10c0/5748a2cbd433a77c739787c8f7659350e933d7d1d161e1826353eb36563deb84d147c19d0b0bfcc8ce1b34c74279f18276efa6a5315f6888905e1174d48567fb
+  languageName: node
+  linkType: hard
+
+"@solana/codecs-numbers@npm:^2.1.0":
+  version: 2.1.1
+  resolution: "@solana/codecs-numbers@npm:2.1.1"
+  dependencies:
+    "@solana/codecs-core": "npm:2.1.1"
+    "@solana/errors": "npm:2.1.1"
+  peerDependencies:
+    typescript: ">=5.3.3"
+  checksum: 10c0/0db7965df9f07c49d91919b0c675b97acbb1686f4d7b47581b16fc20e6e06526b715d06914c07dab556eb51c3a95fa551f1687b65ec405f4f75bed9391e89bfd
+  languageName: node
+  linkType: hard
+
+"@solana/errors@npm:2.1.1":
+  version: 2.1.1
+  resolution: "@solana/errors@npm:2.1.1"
+  dependencies:
+    chalk: "npm:^5.4.1"
+    commander: "npm:^13.1.0"
+  peerDependencies:
+    typescript: ">=5.3.3"
+  bin:
+    errors: bin/cli.mjs
+  checksum: 10c0/2246339f5a8e4bb654e6ce584dd9bac4e453abda185556b9841c8a8209dd4ab6f4c39b23bb85e52d4e6a1d7676d22e680528a2b5c3ede35d3822aed26390576c
+  languageName: node
+  linkType: hard
+
+"@solana/spl-token@npm:0.3.9":
+  version: 0.3.9
+  resolution: "@solana/spl-token@npm:0.3.9"
+  dependencies:
+    "@solana/buffer-layout": "npm:^4.0.0"
+    "@solana/buffer-layout-utils": "npm:^0.2.0"
+    buffer: "npm:^6.0.3"
+  peerDependencies:
+    "@solana/web3.js": ^1.47.4
+  checksum: 10c0/30300dfc34ac00c1610f1c801e40f5e336cff9003a3324cc2a5295d6358484d4fbf71ed83fbf624ea643a492c1119b52487e4d89a7b53b56cbe31126aac8fa0f
   languageName: node
   linkType: hard
 
@@ -6793,6 +6894,29 @@ __metadata:
     "@wallet-standard/base": "npm:^1.0.1"
     "@wallet-standard/features": "npm:^1.0.3"
   checksum: 10c0/09d6de09b3fabb5c0fda1557cf84852110be6aab8e7f47b33c549a4b6ff37d053a16cc9c549300e27db57f9ac97f133a98a238ddef7ff6056f7ebec61fd38f5a
+  languageName: node
+  linkType: hard
+
+"@solana/web3.js@npm:^1.32.0, @solana/web3.js@npm:^1.68.0, @solana/web3.js@npm:^1.95.8":
+  version: 1.98.2
+  resolution: "@solana/web3.js@npm:1.98.2"
+  dependencies:
+    "@babel/runtime": "npm:^7.25.0"
+    "@noble/curves": "npm:^1.4.2"
+    "@noble/hashes": "npm:^1.4.0"
+    "@solana/buffer-layout": "npm:^4.0.1"
+    "@solana/codecs-numbers": "npm:^2.1.0"
+    agentkeepalive: "npm:^4.5.0"
+    bn.js: "npm:^5.2.1"
+    borsh: "npm:^0.7.0"
+    bs58: "npm:^4.0.1"
+    buffer: "npm:6.0.3"
+    fast-stable-stringify: "npm:^1.0.0"
+    jayson: "npm:^4.1.1"
+    node-fetch: "npm:^2.7.0"
+    rpc-websockets: "npm:^9.0.2"
+    superstruct: "npm:^2.0.2"
+  checksum: 10c0/04230d8f9d3f1aa7665d8acf9f54342c022bd84070790909f5b6ff17d27b03e95373d3491f4a25f4ee2e10a9e82765ee541db33fd9f63be2efa49a4490bc1a0e
   languageName: node
   linkType: hard
 
@@ -8367,11 +8491,11 @@ __metadata:
     "@chainflip/sdk": "npm:1.3.0"
     "@emotion/react": "npm:^11.11.3"
     "@emotion/styled": "npm:^11.11.0"
-    "@galacticcouncil/api-augment": "npm:^0.3.0"
-    "@galacticcouncil/sdk": "npm:^5.0.1"
-    "@galacticcouncil/xcm-cfg": "npm:5.6.0"
-    "@galacticcouncil/xcm-core": "npm:^5.4.0"
-    "@galacticcouncil/xcm-sdk": "npm:^7.0.0"
+    "@galacticcouncil/api-augment": "npm:^0.3.1"
+    "@galacticcouncil/sdk": "npm:^7.1.1"
+    "@galacticcouncil/xcm-cfg": "npm:9.2.1"
+    "@galacticcouncil/xcm-core": "npm:^7.1.0"
+    "@galacticcouncil/xcm-sdk": "npm:^9.2.1"
     "@graphql-codegen/cli": "npm:5.0.0"
     "@graphql-codegen/client-preset": "npm:4.1.0"
     "@lifi/sdk": "npm:^3.3.1"
@@ -10291,34 +10415,76 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wormhole-foundation/sdk-base@npm:0.5.3, @wormhole-foundation/sdk-base@npm:^0.5.2":
-  version: 0.5.3
-  resolution: "@wormhole-foundation/sdk-base@npm:0.5.3"
+"@wormhole-foundation/sdk-base@npm:1.18.0, @wormhole-foundation/sdk-base@npm:^1.2.0":
+  version: 1.18.0
+  resolution: "@wormhole-foundation/sdk-base@npm:1.18.0"
   dependencies:
     "@scure/base": "npm:^1.1.3"
-  checksum: 10c0/253784597c11a6cd7c383f227a6ed0e36497e68721e7ae8bea3f0ede66704b9917a0c5199f01fc09ab94f4bf2a560f5f4503afbe85a2f1e55ad9a42d88caf5ed
+    binary-layout: "npm:^1.0.3"
+  checksum: 10c0/f5e01bc3b30faf2d01ce8e65bf499946192c2701720aa5cc45a104e244fe102c26200acf3551e34968312513e9ef7f626b5a0e9d71f39abeb86034eaa2d6289b
   languageName: node
   linkType: hard
 
-"@wormhole-foundation/sdk-connect@npm:^0.5.2":
-  version: 0.5.3
-  resolution: "@wormhole-foundation/sdk-connect@npm:0.5.3"
+"@wormhole-foundation/sdk-connect@npm:1.18.0, @wormhole-foundation/sdk-connect@npm:^1.2.0":
+  version: 1.18.0
+  resolution: "@wormhole-foundation/sdk-connect@npm:1.18.0"
   dependencies:
-    "@wormhole-foundation/sdk-base": "npm:0.5.3"
-    "@wormhole-foundation/sdk-definitions": "npm:0.5.3"
+    "@wormhole-foundation/sdk-base": "npm:1.18.0"
+    "@wormhole-foundation/sdk-definitions": "npm:1.18.0"
     axios: "npm:^1.4.0"
-  checksum: 10c0/4a085fc818161c33890d687ddcfc3acd251450fa1e5cbd4cfefb78225ea489783136ad81a1bc17370ce9495f5f79392418790a866acd7efc22c961900e0f3197
+  checksum: 10c0/d8a9b267f1fb73049a402979308c6283462efad206794d4432b53f77601ee87147a2d5af170801f4755c74ce9bbc077ce58fa7db0d76bf1758863935a6db472f
   languageName: node
   linkType: hard
 
-"@wormhole-foundation/sdk-definitions@npm:0.5.3, @wormhole-foundation/sdk-definitions@npm:^0.5.2":
-  version: 0.5.3
-  resolution: "@wormhole-foundation/sdk-definitions@npm:0.5.3"
+"@wormhole-foundation/sdk-definitions@npm:1.18.0, @wormhole-foundation/sdk-definitions@npm:^1.2.0":
+  version: 1.18.0
+  resolution: "@wormhole-foundation/sdk-definitions@npm:1.18.0"
   dependencies:
     "@noble/curves": "npm:^1.4.0"
     "@noble/hashes": "npm:^1.3.1"
-    "@wormhole-foundation/sdk-base": "npm:0.5.3"
-  checksum: 10c0/62b91903ab4048df59873ac747350038baaca163dd6dd952ea1a6ab60db934270ad676a6ed5ece8dafe67db7dd5ded74f565c529322f0d9b9e8a498e36d06e01
+    "@wormhole-foundation/sdk-base": "npm:1.18.0"
+  checksum: 10c0/464c15d161ab3a5f7da6b1c206f24fdb1256d21a96698f17940e1b86920acdd852a5487f888d16727453e31ba1c44d1749824316200cdbee678ed773f26e3b58
+  languageName: node
+  linkType: hard
+
+"@wormhole-foundation/sdk-solana-core@npm:1.18.0":
+  version: 1.18.0
+  resolution: "@wormhole-foundation/sdk-solana-core@npm:1.18.0"
+  dependencies:
+    "@coral-xyz/anchor": "npm:0.29.0"
+    "@coral-xyz/borsh": "npm:0.29.0"
+    "@solana/web3.js": "npm:^1.95.8"
+    "@wormhole-foundation/sdk-connect": "npm:1.18.0"
+    "@wormhole-foundation/sdk-solana": "npm:1.18.0"
+  checksum: 10c0/a3f936b5278ca140462154121a11ca66e3ce115da5f794d3ae8fd425ad16e7405f80419087783bafe310c9693a9b1d12154a5870c0c1530541d32dfd60032f1f
+  languageName: node
+  linkType: hard
+
+"@wormhole-foundation/sdk-solana-tokenbridge@npm:^1.2.0":
+  version: 1.18.0
+  resolution: "@wormhole-foundation/sdk-solana-tokenbridge@npm:1.18.0"
+  dependencies:
+    "@coral-xyz/anchor": "npm:0.29.0"
+    "@solana/spl-token": "npm:0.3.9"
+    "@solana/web3.js": "npm:^1.95.8"
+    "@wormhole-foundation/sdk-connect": "npm:1.18.0"
+    "@wormhole-foundation/sdk-solana": "npm:1.18.0"
+    "@wormhole-foundation/sdk-solana-core": "npm:1.18.0"
+  checksum: 10c0/351f77503d53c0e89e16d4fbb19baab83a087dc045a03427e0775e1d16913a03a75161d51ecfc18410ad6b8e93a6787b5d443188b9e8c2588d2813baae951b7b
+  languageName: node
+  linkType: hard
+
+"@wormhole-foundation/sdk-solana@npm:1.18.0, @wormhole-foundation/sdk-solana@npm:^1.2.0":
+  version: 1.18.0
+  resolution: "@wormhole-foundation/sdk-solana@npm:1.18.0"
+  dependencies:
+    "@coral-xyz/anchor": "npm:0.29.0"
+    "@coral-xyz/borsh": "npm:0.29.0"
+    "@solana/spl-token": "npm:0.3.9"
+    "@solana/web3.js": "npm:^1.95.8"
+    "@wormhole-foundation/sdk-connect": "npm:1.18.0"
+    rpc-websockets: "npm:^7.10.0"
+  checksum: 10c0/36f07bc6d01e68e1c4a2c6ad9f51b7888e15326db994b34a53d936f116cc20a13bfdcd1c3fbce86b4d299d63c21755d79268e53aff6e30d0c08c36cb56162c7a
   languageName: node
   linkType: hard
 
@@ -11116,6 +11282,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bignumber.js@npm:^9.0.1":
+  version: 9.3.0
+  resolution: "bignumber.js@npm:9.3.0"
+  checksum: 10c0/f54a79cd6fc98552ac0510c1cd9381650870ae443bdb20ba9b98e3548188d941506ac3c22a9f9c69b2cc60da9be5700e87d3f54d2825310a8b2ae999dfd6d99d
+  languageName: node
+  linkType: hard
+
 "bignumber.js@npm:^9.1.0, bignumber.js@npm:^9.1.2":
   version: 9.1.2
   resolution: "bignumber.js@npm:9.1.2"
@@ -11127,6 +11300,13 @@ __metadata:
   version: 2.3.0
   resolution: "binary-extensions@npm:2.3.0"
   checksum: 10c0/75a59cafc10fb12a11d510e77110c6c7ae3f4ca22463d52487709ca7f18f69d886aa387557cc9864fbdb10153d0bdb4caacabf11541f55e89ed6e18d12ece2b5
+  languageName: node
+  linkType: hard
+
+"binary-layout@npm:^1.0.3":
+  version: 1.2.2
+  resolution: "binary-layout@npm:1.2.2"
+  checksum: 10c0/a83001574488cbaa67b07010bcaa019abdd723823de2fb31389a9ad3b49f94ce18032b84cf2a29871e84d0451fe504b4a4cc62dbc21f8b07209860c8c7a45981
   languageName: node
   linkType: hard
 
@@ -11193,6 +11373,13 @@ __metadata:
   version: 5.2.1
   resolution: "bn.js@npm:5.2.1"
   checksum: 10c0/bed3d8bd34ec89dbcf9f20f88bd7d4a49c160fda3b561c7bb227501f974d3e435a48fb9b61bc3de304acab9215a3bda0803f7017ffb4d0016a0c3a740a283caa
+  languageName: node
+  linkType: hard
+
+"bn.js@npm:^5.1.2":
+  version: 5.2.2
+  resolution: "bn.js@npm:5.2.2"
+  checksum: 10c0/cb97827d476aab1a0194df33cd84624952480d92da46e6b4a19c32964aa01553a4a613502396712704da2ec8f831cf98d02e74ca03398404bd78a037ba93f2ab
   languageName: node
   linkType: hard
 
@@ -11449,6 +11636,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"buffer-layout@npm:^1.2.0, buffer-layout@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "buffer-layout@npm:1.2.2"
+  checksum: 10c0/d90d1f622f592553555dd290d0e6dd0bababb2566655d0728812b2667af5a23d795929c38c25f5065252024fa29d75ea54eeb6f469d69814f4ebf614c6672acf
+  languageName: node
+  linkType: hard
+
 "buffer-xor@npm:^1.0.3":
   version: 1.0.3
   resolution: "buffer-xor@npm:1.0.3"
@@ -11609,7 +11803,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"camelcase@npm:^6.2.0":
+"camelcase@npm:^6.2.0, camelcase@npm:^6.3.0":
   version: 6.3.0
   resolution: "camelcase@npm:6.3.0"
   checksum: 10c0/0d701658219bd3116d12da3eab31acddb3f9440790c0792e0d398f0a520a6a4058018e546862b6fba89d7ae990efaeb97da71e1913e9ebf5a8b5621a3d55c710
@@ -11665,6 +11859,13 @@ __metadata:
   version: 5.3.0
   resolution: "chalk@npm:5.3.0"
   checksum: 10c0/8297d436b2c0f95801103ff2ef67268d362021b8210daf8ddbe349695333eb3610a71122172ff3b0272f1ef2cf7cc2c41fdaa4715f52e49ffe04c56340feed09
+  languageName: node
+  linkType: hard
+
+"chalk@npm:^5.4.1":
+  version: 5.4.1
+  resolution: "chalk@npm:5.4.1"
+  checksum: 10c0/b23e88132c702f4855ca6d25cb5538b1114343e41472d5263ee8a37cccfccd9c4216d111e1097c6a27830407a1dc81fecdf2a56f2c63033d4dbbd88c10b0dcef
   languageName: node
   linkType: hard
 
@@ -11968,6 +12169,13 @@ __metadata:
   version: 12.1.0
   resolution: "commander@npm:12.1.0"
   checksum: 10c0/6e1996680c083b3b897bfc1cfe1c58dfbcd9842fd43e1aaf8a795fbc237f65efcc860a3ef457b318e73f29a4f4a28f6403c3d653d021d960e4632dd45bde54a9
+  languageName: node
+  linkType: hard
+
+"commander@npm:^13.1.0":
+  version: 13.1.0
+  resolution: "commander@npm:13.1.0"
+  checksum: 10c0/7b8c5544bba704fbe84b7cab2e043df8586d5c114a4c5b607f83ae5060708940ed0b5bd5838cf8ce27539cde265c1cbd59ce3c8c6b017ed3eec8943e3a415164
   languageName: node
   linkType: hard
 
@@ -12405,6 +12613,13 @@ __metadata:
     randombytes: "npm:^2.0.0"
     randomfill: "npm:^1.0.3"
   checksum: 10c0/0c20198886576050a6aa5ba6ae42f2b82778bfba1753d80c5e7a090836890dc372bdc780986b2568b4fb8ed2a91c958e61db1f0b6b1cc96af4bd03ffc298ba92
+  languageName: node
+  linkType: hard
+
+"crypto-hash@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "crypto-hash@npm:1.3.0"
+  checksum: 10c0/651003421dce76fd686eb3ed4981117f9cd3f309a4af41697a646aecbbfc49179547bdd7146f7a74e2c8c7ab703227c25ce03e85fea2da3189ab65e32971ecce
   languageName: node
   linkType: hard
 
@@ -18854,7 +19069,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pako@npm:^2.1.0":
+"pako@npm:^2.0.3, pako@npm:^2.1.0":
   version: 2.1.0
   resolution: "pako@npm:2.1.0"
   checksum: 10c0/8e8646581410654b50eb22a5dfd71159cae98145bd5086c9a7a816ec0370b5f72b4648d08674624b3870a521e6a3daffd6c2f7bc00fdefc7063c9d8232ff5116
@@ -20889,6 +21104,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rpc-websockets@npm:^7.10.0":
+  version: 7.11.2
+  resolution: "rpc-websockets@npm:7.11.2"
+  dependencies:
+    bufferutil: "npm:^4.0.1"
+    eventemitter3: "npm:^4.0.7"
+    utf-8-validate: "npm:^5.0.2"
+    uuid: "npm:^8.3.2"
+    ws: "npm:^8.5.0"
+  dependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 10c0/c0e14ca6bf57dd5f3e29dff5e3201b7f24b5d1c3fe838fc5b0db56260a865eae5007831004e391e0f64b0ca7386b5af0b23537cede55c2b122b838027a56ad72
+  languageName: node
+  linkType: hard
+
 "rpc-websockets@npm:^9.0.2":
   version: 9.0.4
   resolution: "rpc-websockets@npm:9.0.4"
@@ -21905,6 +22138,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"superstruct@npm:^0.15.4":
+  version: 0.15.5
+  resolution: "superstruct@npm:0.15.5"
+  checksum: 10c0/73ae2043443dcc7868da6e8b4e4895410c79a88e021b514c665161199675ee920d5eadd85bb9dee5a9f515817e62f4b65a67ccb82d29f73259d012afcbcd3ce4
+  languageName: node
+  linkType: hard
+
 "superstruct@npm:^1.0.3":
   version: 1.0.4
   resolution: "superstruct@npm:1.0.4"
@@ -22378,6 +22618,13 @@ __metadata:
   version: 1.0.1
   resolution: "toidentifier@npm:1.0.1"
   checksum: 10c0/93937279934bd66cc3270016dd8d0afec14fb7c94a05c72dc57321f8bd1fa97e5bea6d1f7c89e728d077ca31ea125b78320a616a6c6cd0e6b9cb94cb864381c1
+  languageName: node
+  linkType: hard
+
+"toml@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "toml@npm:3.0.0"
+  checksum: 10c0/8d7ed3e700ca602e5419fca343e1c595eb7aa177745141f0761a5b20874b58ee5c878cd045c408da9d130cb2b611c639912210ba96ce2f78e443569aa8060c18
   languageName: node
   linkType: hard
 
