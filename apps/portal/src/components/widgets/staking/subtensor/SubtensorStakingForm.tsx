@@ -11,6 +11,7 @@ import { ListItem } from '@talismn/ui/molecules/ListItem'
 import { Select } from '@talismn/ui/molecules/Select'
 import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
+import { classNames } from '@talismn/util'
 import { Zap } from '@talismn/web-icons'
 import clsx from 'clsx'
 import { Suspense } from 'react'
@@ -91,6 +92,10 @@ export type SubtensorStakingFormProps = {
 export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
   const [searchParams] = useSearchParams()
   const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
+  const netuidParam = searchParams.get('netuid')
+
+  const isValidatorSelectDisabled = hasDTaoStaking && !netuidParam
+
   return (
     <Surface
       css={{
@@ -124,13 +129,17 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
           </label>
         </div>
       )}
-      <div css={{ cursor: 'pointer' }} onClick={props.onRequestChange}>
+      <div
+        className={classNames(isValidatorSelectDisabled ? 'cursor-not-allowed' : 'cursor-pointer')}
+        onClick={isValidatorSelectDisabled ? () => null : props.onRequestChange}
+      >
         <label css={{ pointerEvents: 'none' }}>
           <Text.BodySmall as="div" css={{ marginBottom: '0.8rem' }}>
             Select Validator
           </Text.BodySmall>
           <Select
             loading={props.selectionInProgress}
+            isDisabled
             placeholder={<ListItem headlineContent="Select a validator" css={{ padding: '0.8rem', paddingLeft: 0 }} />}
             renderSelected={() =>
               props.selectedName === undefined ? undefined : (
