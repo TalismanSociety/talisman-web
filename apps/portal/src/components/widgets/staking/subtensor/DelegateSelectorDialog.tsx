@@ -1,12 +1,10 @@
 import { ReactElement, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from 'recoil'
 
 import { StakeTargetSelectorDialog } from '@/components/recipes/StakeTargetSelectorDialog'
 import { type StakeTargetSelectorItemProps } from '@/components/recipes/StakeTargetSelectorItem'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
-import { useGetInfiniteValidatorsYieldByNetuid } from '@/domains/staking/subtensor/hooks/useGetInfiniteValidatorsYield'
 import { type BondOption } from '@/domains/staking/subtensor/types'
 
 const TAOSTATS_INFO_URL = 'https://taostats.io/validators'
@@ -19,19 +17,12 @@ type DelegateSelectorDialogProps = {
 }
 
 export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
-  const [searchParams] = useSearchParams()
-  const { data: validatorsYieldData } = useGetInfiniteValidatorsYieldByNetuid({ netuid: 0 })
-
   const { combinedValidatorsData, isError } = useCombinedBittensorValidatorsData()
-
-  console.log({ validatorsYieldData, combinedValidatorsData })
-
-  const hasDTaoStaking = searchParams.get('hasDTaoStaking') === 'true'
 
   const [highlighted, setHighlighted] = useState<BondOption | undefined>()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
-  let sortMethods: {
+  const sortMethods: {
     [key: string]: (
       a: ReactElement<StakeTargetSelectorItemProps>,
       b: ReactElement<StakeTargetSelectorItemProps>
@@ -46,15 +37,9 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
     'Validator name': (a, b) => a.props.name.localeCompare(b.props.name),
     'Number of stakers': (a, b) =>
       parseInt(b.props.count?.toString?.() ?? '0') - parseInt(a.props.count?.toString?.() ?? '0'),
-  }
-
-  if (!hasDTaoStaking) {
-    sortMethods = {
-      ...sortMethods,
-      'Estimated APY': (a, b) =>
-        parseFloat(b.props.estimatedApr?.replace('%', '') ?? '0') -
-        parseFloat(a.props.estimatedApr?.replace('%', '') ?? '0'),
-    }
+    'Estimated APY': (a, b) =>
+      parseFloat(b.props.estimatedApr?.replace('%', '') ?? '0') -
+      parseFloat(a.props.estimatedApr?.replace('%', '') ?? '0'),
   }
 
   return (
@@ -71,12 +56,10 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
       isSortDisabled={isError}
     >
       {combinedValidatorsData.map(delegate => {
-        let formattedApr = !hasDTaoStaking
-          ? Number(delegate.validatorYield?.thirty_day_apy || '0').toLocaleString(undefined, {
-              style: 'percent',
-              maximumFractionDigits: 2,
-            })
-          : ''
+        let formattedApr = Number(delegate.validatorYield?.thirty_day_apy || '0').toLocaleString(undefined, {
+          style: 'percent',
+          maximumFractionDigits: 2,
+        })
 
         const balance = nativeTokenAmount.fromPlanckOrUndefined(delegate.totalStaked)
 
@@ -96,7 +79,7 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
             balanceDescription="Total staked with this delegate"
             countDescription="Number of delegate stakers"
             estimatedAprDescription="Estimated APY (30d)"
-            estimatedApr={!hasDTaoStaking ? formattedApr : undefined}
+            estimatedApr={formattedApr}
             talismanRecommendedDescription="Talisman top recommended delegate"
             selected={delegate.poolId === props.selected?.poolId}
             highlighted={delegate.poolId === highlighted?.poolId}

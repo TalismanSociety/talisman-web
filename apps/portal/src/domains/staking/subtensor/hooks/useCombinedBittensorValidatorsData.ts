@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 import { BondOption } from '../types'
 import { useGetBittensorInfiniteValidators } from './useGetBittensorInfiniteValidators'
@@ -7,7 +8,9 @@ import { useGetInfiniteValidatorsYieldByNetuid } from './useGetInfiniteValidator
 
 export const useCombinedBittensorValidatorsData = () => {
   const [validatorsData, setValidatorsData] = useState<BondOption[]>([])
-  const { data: validatorsYieldData } = useGetInfiniteValidatorsYieldByNetuid({ netuid: 0 })
+  const [searchParams] = useSearchParams()
+  const netuidParam = Number(searchParams.get('netuid'))
+  const { data: validatorsYieldData } = useGetInfiniteValidatorsYieldByNetuid({ netuid: netuidParam })
 
   const {
     data: supportedDelegates,
