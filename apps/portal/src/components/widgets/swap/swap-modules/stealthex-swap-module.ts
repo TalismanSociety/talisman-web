@@ -60,6 +60,9 @@ const DECENTRALISATION_SCORE = 1.5
 const TALISMAN_TOTAL_FEE = 0.01 // We take a fee of 1.0%
 const BUILT_IN_FEE = 0.004 // StealthEX always includes an affiliate fee of 0.4%
 const TALISMAN_ADDITIONAL_FEE = TALISMAN_TOTAL_FEE - BUILT_IN_FEE // We want a total fee of 1.5%, so subtract the built-in fee of 0.4%
+// Our UI represents a 1% fee as `0.01`, but the StealthEX api represents a 1% fee as `1.0`.
+// 1.0 = 0.01 * 100
+const additional_fee_percent = TALISMAN_ADDITIONAL_FEE * 100
 
 const LOGO = stealthexLogo
 
@@ -259,7 +262,7 @@ const stealthexSdk = {
     rate ||= 'floating'
 
     const { data: range, error } = await api.POST('/v4/rates/range', {
-      body: { route, estimation, rate, additional_fee_percent: TALISMAN_ADDITIONAL_FEE },
+      body: { route, estimation, rate, additional_fee_percent },
     })
     if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
     return { min: BigNumber(range?.min_amount ?? 0) }
@@ -280,7 +283,7 @@ const stealthexSdk = {
     rate ||= 'floating'
 
     const { data: estimate, error } = await api.POST('/v4/rates/estimated-amount', {
-      body: { route, amount, estimation, rate, additional_fee_percent: TALISMAN_ADDITIONAL_FEE },
+      body: { route, amount, estimation, rate, additional_fee_percent },
     })
     if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
     return estimate?.estimated_amount
@@ -317,7 +320,7 @@ const stealthexSdk = {
       extra_id,
       refund_address,
       refund_extra_id,
-      additional_fee_percent: TALISMAN_ADDITIONAL_FEE,
+      additional_fee_percent,
     }
     if (extra_id === undefined) delete params.extra_id
     if (refund_address === undefined) delete params.refund_address
