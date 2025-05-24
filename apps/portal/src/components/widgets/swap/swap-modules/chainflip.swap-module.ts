@@ -124,9 +124,9 @@ export const polkadotRpcAtom = atom(get =>
 const brokerUrlAtom = atom(get => {
   switch (get(chainflipNetworkAtom)) {
     case 'mainnet':
-      return 'https://broker.chainflip.talisman.xyz'
+      return `https://chainflip-broker.io/rpc/${import.meta.env.VITE_CHAINFLIP_API_KEY}`
     case 'perseverance':
-      return 'https://broker.perseverance.chainflip.talisman.xyz'
+      return 'https://perseverance.chainflip-broker.io/rpc/93c2bff017e243f29ffb14e42dccbec8'
     default:
       return undefined
   }
@@ -219,7 +219,6 @@ const quote: QuoteFunction = loadable(
         destAsset: chainflipToAsset.asset,
         srcChain: chainflipFromAsset.chain,
         destChain: chainflipToAsset.chain,
-        boostFeeBps: CHAINFLIP_COMMISSION_BPS,
       })
 
       const fees = quote.quote.includedFees
@@ -333,6 +332,7 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
       destAsset: chainflipToAsset.asset,
       srcAsset: chainflipFromAsset.asset,
       srcChain: chainflipFromAsset.chain,
+      // TODO: fillOrKillParams is now required
     })
 
     // begin swap
