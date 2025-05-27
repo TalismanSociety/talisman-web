@@ -1,6 +1,6 @@
 import { Select } from '@talismn/ui/molecules/Select'
 import { Suspense, useMemo, useState, useTransition } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 import { TalismanHandLoader } from '@/components/legacy/TalismanHandLoader'
@@ -32,7 +32,7 @@ type StakeSideSheetContentProps = Omit<StakeSideSheetProps, 'onRequestDismiss'> 
   subnet: SubnetData | undefined
   isSelectSubnetDisabled: boolean
   setDelegate: React.Dispatch<React.SetStateAction<BondOption | undefined>>
-  setSubnet: React.Dispatch<React.SetStateAction<SubnetData | undefined>>
+  onHandleSubnetSelectConfirm: (subnet: SubnetData | undefined) => void
 }
 
 const StakeSideSheetContent = ({
@@ -40,7 +40,7 @@ const StakeSideSheetContent = ({
   chains,
   subnet,
   isSelectSubnetDisabled,
-  setSubnet,
+  onHandleSubnetSelectConfirm,
   setDelegate,
   onChangeChain,
 }: StakeSideSheetContentProps) => {
@@ -130,7 +130,7 @@ const StakeSideSheetContent = ({
         <SubnetSelectorDialog
           selected={subnet}
           onRequestDismiss={() => setSubnetSelectorOpen(false)}
-          onConfirm={setSubnet}
+          onHandleSubnetSelectConfirm={onHandleSubnetSelectConfirm}
         />
       )}
     </>
@@ -138,10 +138,19 @@ const StakeSideSheetContent = ({
 }
 
 const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
+  const location = useLocation()
+  const navigate = useNavigate()
   const { subnetData } = useCombineSubnetData()
   const [delegate, setDelegate] = useState<BondOption | undefined>()
   const [subnet, setSubnet] = useState<SubnetData | undefined>()
   const { nativeToken } = useRecoilValue(useChainState())
+
+  const handleSubnetSelectConfirm = (subnet: SubnetData | undefined) => {
+    setSubnet(subnet)
+    const searchParams = new URLSearchParams(location.search)
+    searchParams.set('netuid', subnet?.netuid?.toString() || '0')
+    navigate({ pathname: location.pathname, search: searchParams.toString() })
+  }
 
   return (
     <SubtensorStakingSideSheet
@@ -178,7 +187,7 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
             delegate={delegate!}
             subnet={subnet}
             isSelectSubnetDisabled={!Object.values(subnetData).length}
-            setSubnet={setSubnet}
+            onHandleSubnetSelectConfirm={handleSubnetSelectConfirm}
             setDelegate={setDelegate}
           />
         </Suspense>
@@ -212,6 +221,7 @@ const StakeSideSheetOpen = () => {
             params.delete('chain')
             params.delete('account')
             params.delete('hasDTaoStaking')
+            params.delete('netuid')
             return params
           })
         }
