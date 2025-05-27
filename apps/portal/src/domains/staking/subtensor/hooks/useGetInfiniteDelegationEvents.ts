@@ -6,7 +6,11 @@ import { groupBy } from 'lodash'
 import { useEffect, useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
-import { DTAO_GENESIS_TIMESTAMP, ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
+import {
+  ROOT_NETUID,
+  SCALE_FACTOR,
+  TAO_STAKE_GENESIS_MONTH_TIMESTAMP,
+} from '@/components/widgets/staking/subtensor/constants'
 import { selectedCurrencyState } from '@/domains/balances/currency'
 
 import { DelegationEventsApiResponse } from '../types'
@@ -53,9 +57,9 @@ function useGetInfiniteDelegationEvents({ nominator }: { nominator: string }) {
   const timestamp_end = Math.floor(now.getTime() / 1000) // Convert ms to seconds
 
   return useInfiniteQuery({
-    queryKey: ['InfiniteDelegationEvents', nominator, DTAO_GENESIS_TIMESTAMP, timestamp_end],
+    queryKey: ['InfiniteDelegationEvents', nominator, TAO_STAKE_GENESIS_MONTH_TIMESTAMP, timestamp_end],
     queryFn: ({ pageParam = 1 }) =>
-      fetchValidatorsYield({ pageParam, nominator, timestamp_start: DTAO_GENESIS_TIMESTAMP, timestamp_end }),
+      fetchValidatorsYield({ pageParam, nominator, timestamp_start: TAO_STAKE_GENESIS_MONTH_TIMESTAMP, timestamp_end }),
     initialPageParam: 1,
     getNextPageParam: lastPage => lastPage.pagination.next_page ?? undefined,
     getPreviousPageParam: firstPage => firstPage.pagination.prev_page ?? undefined,
@@ -69,6 +73,7 @@ function useGetInfiniteDelegationEvents({ nominator }: { nominator: string }) {
 export type Reward = {
   amount: number
   alpha: number
+  alphaAmountInTao?: number
 }
 
 type Rewards = Map<string, Reward>
@@ -133,7 +138,7 @@ export function useGetInfiniteDelegationEventsByNominator({ nominator }: { nomin
       }, new Map() as Rewards)
 
       subtensor.forEach(({ meta }) => {
-        const { netuid, hotkey, amountStaked } = meta || {}
+        const { netuid, hotkey, amountStaked, alphaToTaoRate } = meta || {}
         const key = `${netuid || 0}_${hotkey}`
         const isRootnetStake = netuid === ROOT_NETUID
 
@@ -143,8 +148,9 @@ export function useGetInfiniteDelegationEventsByNominator({ nominator }: { nomin
             reward.amount += Number(amountStaked)
             reward.alpha += Number(amountStaked)
           } else {
-            reward.amount += Number(amountStaked) // TODO: Fix correct alpha price
+            reward.amount += Number(amountStaked) // This includes P&L of Alpha token price fluctuations against TAO + rewards
             reward.alpha += Number(amountStaked)
+            reward.alphaAmountInTao = Math.round((reward.alpha * alphaToTaoRate) / Number(SCALE_FACTOR.toString()))
           }
 
           rewards.set(key, reward)

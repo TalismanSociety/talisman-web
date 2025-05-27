@@ -9,10 +9,21 @@ import { type SubnetData } from '@/domains/staking/subtensor/types'
 import { Decimal } from '@/util/Decimal'
 
 import { useCombineSubnetData } from './useCombineSubnetData'
+import { useGetInfiniteDelegationEventsByNominator } from './useGetInfiniteDelegationEvents'
 import { useGetStakeInfoForColdKey } from './useGetStakeInfoForColdKey'
 
 export type StakeItem = SubnetData & {
   totalStaked: {
+    decimalAmount: Decimal | undefined
+    fiatAmount: number
+    localizedFiatAmount: string
+  }
+  rewards: {
+    decimalAmount: Decimal | undefined
+    fiatAmount: number
+    localizedFiatAmount: string
+  }
+  rewardsFormatted: {
     decimalAmount: Decimal | undefined
     fiatAmount: number
     localizedFiatAmount: string
@@ -35,17 +46,29 @@ export const useStake = (account: Account): Stake => {
   const { subnetData } = useCombineSubnetData()
   const { data: stakeInfoForColdKey } = useGetStakeInfoForColdKey(account.address)
 
+  const {
+    parsedDataByNetuid: { rewards },
+  } = useGetInfiniteDelegationEventsByNominator({ nominator: account.address })
+
   const minimumStakeAmount = useTokenAmount(String(MIN_SUBTENSOR_ALPHA_STAKE))
 
   const stakes = stakeInfoForColdKey
     ?.map(stake => {
-      const subnet = subnetData[Number(stake.netuid)]
-      const symbol = Number(stake.netuid) !== ROOT_NETUID ? subnet?.symbol : nativeToken
+      const { netuid, hotkey } = stake
+      const isRootnetStake = Number(netuid) === ROOT_NETUID
+      const stakeKey = `${netuid}_${hotkey}`
+      const stakeReward = rewards?.get(stakeKey)
+      const reward = isRootnetStake ? stakeReward?.amount : stakeReward?.alpha
+      const subnet = subnetData[Number(netuid)]
+      const symbol = isRootnetStake ? nativeToken : subnet?.symbol
+      const rewardsAmount = isRootnetStake ? stakeReward?.amount : stakeReward?.alphaAmountInTao
       return {
         ...stake,
         ...subnet,
-        netuid: Number(stake.netuid),
+        netuid: Number(netuid),
         totalStaked: nativeTokenAmount.fromPlanckOrUndefined(stake.stake, symbol || nativeToken),
+        rewards: nativeTokenAmount.fromPlanckOrUndefined(reward, symbol || nativeToken),
+        rewardsFormatted: nativeTokenAmount.fromPlanckOrUndefined(rewardsAmount, symbol), // Used for displaying rewards in fiat
         symbol,
       }
     })

@@ -5,8 +5,9 @@ export const MIN_SUBTENSOR_ALPHA_STAKE = 0.001
 export const MIN_SUBTENSOR_ROOTNET_STAKE = 0.1
 export const TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR = '5DzsVV2L4M9r4uWoyarzPyhfeCv6DDAEs5rM2bpHjmerPcGa'
 export const TALISMAN_FEE_BITTENSOR = 0.3
-// export const DTAO_GENESIS_TIMESTAMP = 1739404800 // Thursday, February 13, 2025 12:00:00 AM
-export const DTAO_GENESIS_TIMESTAMP = 1677628800 // Wednesday, March 1, 2023 7:00:00 AM GMT+07:00
+export const TAO_STAKE_GENESIS_MONTH_TIMESTAMP = 1677628800 // Wednesday, March 1, 2023 7:00:00 AM GMT+07:00
+export const TAO_DECIMALS = 9n
+export const SCALE_FACTOR = 10n ** TAO_DECIMALS // Equivalent to 10e9 for precision
 
 export const DTAO_SYMBOL = 'Dynamic TAO'
 export const DTAO_LOGO =
