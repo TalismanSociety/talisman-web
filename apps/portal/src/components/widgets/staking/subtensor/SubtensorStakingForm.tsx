@@ -195,6 +195,7 @@ export const SubtensorStakingSideSheet = ({ children, minimumStake, ...props }: 
       <div css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '42rem' } }}>
         {children}
         <div className={cn('mt-[2rem] flex flex-col gap-[1rem]', { 'mt-[6.4rem]': !hasDTaoStaking })}>
+          <Text.Body as="p">Bittensor automatically reinvests your staking rewards.</Text.Body>
           {hasDTaoStaking && (
             <Text.Body as="p">
               Note that Dynamic TAO Subnet staking has more variable rewards than the Legacy TAO Staking.{' '}

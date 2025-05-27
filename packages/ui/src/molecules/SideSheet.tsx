@@ -79,7 +79,7 @@ export const SideSheet = ({ title, children, ...props }: SideSheetProps) => {
       <header
         className={props.headerClassName}
         css={{
-          marginBottom: '5.2rem',
+          marginBottom: '2.2rem',
           padding: '2.4rem 2.4rem 0 2.4rem',
           [`${SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR}`]: {
             padding: '4.8rem 4.8rem 0 4.8rem',
