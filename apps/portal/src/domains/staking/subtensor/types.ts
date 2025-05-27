@@ -7,16 +7,15 @@ type Pagination = {
   prev_page: number | null
 }
 
-// Key Type
-type Key = {
+type Address = {
   ss58: string
   hex: string
 }
 
 // Validator Data Type
 type ValidatorData = {
-  hotkey: Key
-  coldkey: Key
+  hotkey: Address
+  coldkey: Address
   name: string
   block_number: number
   timestamp: string
@@ -132,10 +131,7 @@ export type BondOption = {
 }
 
 type ValidatorYield = {
-  hotkey: {
-    ss58: string
-    hex: string
-  }
+  hotkey: Address
   name: string
   netuid: number
   block_number: number
@@ -153,4 +149,28 @@ type ValidatorYield = {
 export type ValidatorsYieldApiResponse = {
   pagination: Pagination
   data: ValidatorYield[]
+}
+type DelegateAction = 'DELEGATE' | 'UNDELEGATE'
+
+type DelegateEvent = {
+  id: string
+  block_number: number
+  timestamp: string // ISO 8601 timestamp
+  action: DelegateAction
+  nominator: Address
+  delegate: Address
+  amount: string // TAO as rao (smallest unit)
+  alpha: string | null // alpha as rao
+  usd: string | null // USD string value
+  alpha_price_in_tao: string | null // stringified decimal
+  alpha_price_in_usd: string | null // stringified decimal
+  netuid: number | null
+  extrinsic_id: string | null
+  is_transfer: boolean | null
+  transfer_address: string | null
+}
+
+export type DelegationEventsApiResponse = {
+  pagination: Pagination
+  data: DelegateEvent[]
 }

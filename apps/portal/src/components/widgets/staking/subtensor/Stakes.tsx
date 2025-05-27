@@ -9,6 +9,7 @@ import { useChainState } from '@/domains/chains/hooks'
 import { ChainProvider } from '@/domains/chains/provider'
 import { subtensorStakingEnabledChainsState } from '@/domains/chains/recoils'
 import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
+import { useGetInfiniteDelegationEventsByNominator } from '@/domains/staking/subtensor/hooks/useGetInfiniteDelegationEvents'
 import { useMoveStake } from '@/domains/staking/subtensor/hooks/useMoveStake'
 import { useStake } from '@/domains/staking/subtensor/hooks/useStake'
 import { type BondOption } from '@/domains/staking/subtensor/types'
@@ -50,6 +51,13 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
   const [selectedStake, setSelectedStake] = useState<StakeItem | undefined>()
   const [selectedDelegate, setSelectedDelegate] = useState<BondOption | undefined>()
   const [highlightedDelegate, setHighlightedDelegate] = useState<BondOption | undefined>()
+
+  const {
+    data,
+    parsedDataByNetuid: { groupedData, rewards },
+  } = useGetInfiniteDelegationEventsByNominator({ nominator: account.address })
+
+  console.log({ data, groupedData, rewards })
 
   const queryClient = useQueryClient()
 
