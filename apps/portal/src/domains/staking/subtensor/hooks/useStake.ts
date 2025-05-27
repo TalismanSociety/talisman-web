@@ -9,7 +9,7 @@ import { type SubnetData } from '@/domains/staking/subtensor/types'
 import { Decimal } from '@/util/Decimal'
 
 import { useCombineSubnetData } from './useCombineSubnetData'
-import { useGetInfiniteDelegationEventsByNominator } from './useGetInfiniteDelegationEvents'
+import { useGetRewardsByNominator } from './useGetRewardsByNominator'
 import { useGetStakeInfoForColdKey } from './useGetStakeInfoForColdKey'
 
 export type StakeItem = SubnetData & {
@@ -47,8 +47,8 @@ export const useStake = (account: Account): Stake => {
   const { data: stakeInfoForColdKey } = useGetStakeInfoForColdKey(account.address)
 
   const {
-    parsedDataByNetuid: { rewards },
-  } = useGetInfiniteDelegationEventsByNominator({ nominator: account.address })
+    data: { rewards },
+  } = useGetRewardsByNominator({ nominator: account.address })
 
   const minimumStakeAmount = useTokenAmount(String(MIN_SUBTENSOR_ALPHA_STAKE))
 
