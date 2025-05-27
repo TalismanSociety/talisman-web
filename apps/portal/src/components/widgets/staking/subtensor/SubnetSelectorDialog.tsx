@@ -10,10 +10,14 @@ import { SubnetSelectorCard, SubnetSelectorCardProps } from './SubnetSelectorCar
 type SubnetSelectorDialogProps = {
   selected: SubnetData | undefined
   onRequestDismiss: () => void
-  onConfirm: (subnetPool: SubnetData) => void
+  onHandleSubnetSelectConfirm: (subnet: SubnetData | undefined) => void
 }
 
-export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: SubnetSelectorDialogProps) => {
+export const SubnetSelectorDialog = ({
+  selected,
+  onRequestDismiss,
+  onHandleSubnetSelectConfirm,
+}: SubnetSelectorDialogProps) => {
   const { subnetData, isError } = useCombineSubnetData()
 
   const [highlighted, setHighlighted] = useState(selected)
@@ -27,7 +31,7 @@ export const SubnetSelectorDialog = ({ selected, onRequestDismiss, onConfirm }: 
       selectionLabel="New subnet"
       confirmButtonContent={selected ? 'Swap subnet' : 'Select subnet'}
       onRequestDismiss={onRequestDismiss}
-      onConfirm={() => highlighted && onConfirm(highlighted)}
+      onConfirm={() => highlighted && onHandleSubnetSelectConfirm(highlighted)}
       isSortDisabled={isError}
       sortMethods={{
         'Total Alpha': (a, b) => {

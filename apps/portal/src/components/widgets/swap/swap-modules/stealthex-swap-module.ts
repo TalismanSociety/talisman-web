@@ -5,14 +5,33 @@ import { encodeAnyAddress } from '@talismn/util'
 import BigNumber from 'bignumber.js'
 import { atom, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
+import createClient from 'openapi-fetch'
 import { createPublicClient, encodeFunctionData, erc20Abi, fallback, http, isAddress } from 'viem'
-import { arbitrum, base, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon, sonic } from 'viem/chains'
+import {
+  arbitrum,
+  arbitrumNova,
+  base,
+  bsc,
+  mainnet,
+  manta,
+  moonbeam,
+  opBNB,
+  optimism,
+  polygon,
+  theta,
+  zksync,
+} from 'viem/chains'
 
 import { substrateApiGetterAtom } from '@/domains/common/recoils/api'
 import { Decimal } from '@/util/Decimal'
 
+import type {
+  paths as StealthexApi,
+  SchemaCurrency as StealthexCurrency,
+  SchemaExchange as StealthexExchange,
+} from './stealthex.api.d.ts'
 import { knownEvmNetworksAtom } from '../helpers'
-import simpleswapLogo from '../side-panel/details/logos/simpleswap-logo.svg'
+import stealthexLogo from '../side-panel/details/logos/stealthex-logo.svg'
 import {
   BaseQuote,
   fromAddressAtom,
@@ -24,6 +43,7 @@ import {
   saveAddressForQuest,
   substrateAssetsSwapTransfer,
   substrateNativeSwapTransfer,
+  SupportedSwapProtocol,
   SwapFunction,
   SwapModule,
   SwappableAssetBaseType,
@@ -33,71 +53,63 @@ import {
   validateAddress,
 } from './common.swap-module'
 
-const APIKEY = import.meta.env.VITE_SIMPLESWAP_API_KEY
-if (!APIKEY && import.meta.env.DEV) throw new Error('env var VITE_SIMPLESWAP_API_KEY not set')
-const PROTOCOL = 'simpleswap'
-const PROTOCOL_NAME = 'SimpleSwap'
-const DECENTRALISATION_SCORE = 1
-const TALISMAN_FEE = 0.015
+const apiUrl = import.meta.env.VITE_STEALTHEX_API || 'https://stealthex.talisman.xyz'
+const PROTOCOL: SupportedSwapProtocol = 'stealthex' as const
+const PROTOCOL_NAME = 'StealthEX'
+const DECENTRALISATION_SCORE = 1.5
+const TALISMAN_TOTAL_FEE = 0.01 // We take a fee of 1.0%
+const BUILT_IN_FEE = 0.004 // StealthEX always includes an affiliate fee of 0.4%
+const TALISMAN_ADDITIONAL_FEE = TALISMAN_TOTAL_FEE - BUILT_IN_FEE // We want a total fee of 1.5%, so subtract the built-in fee of 0.4%
+// Our UI represents a 1% fee as `0.01`, but the StealthEX api represents a 1% fee as `1.0`.
+// 1.0 = 0.01 * 100
+const additional_fee_percent = TALISMAN_ADDITIONAL_FEE * 100
 
-const LOGO = simpleswapLogo
+const LOGO = stealthexLogo
 
-type SimpleSwapCurrency = {
-  name: string
+type AssetContext = {
   network: string
-  symbol: string
-  contract_address: string | null
-  extra_id: string
-  has_extra_id: boolean
-  address_explorer: string
-  confirmations_from: string
-  image: string
-  isFiat: boolean
-}
-
-type SimpleSwapAssetContext = {
   symbol: string
 }
 
 const supportedEvmChains: Record<string, ViemChain | undefined> = {
-  eth: mainnet,
-  bsc,
-  base,
   arbitrum,
-  optimism,
-  blast,
-  polygon,
-  manta,
-  movr: moonriver,
+  arbnova: arbitrumNova,
+  base,
+  bsc,
+  eth: mainnet,
   glmr: moonbeam,
-  s: sonic,
+  manta,
+  matic: polygon,
+  opbnb: opBNB,
+  optimism,
+  theta,
+  zksync,
 }
 
 /**
- * specialAssets list defines a mappings of assets from simpleswap
- * to our internal asset representation. Many assets on simpleswap are not tradeable
- * in an onchain context because they dont come with contract addresses.
+ * specialAssets list defines a mappings of assets from stealthex to our internal asset representation.
+ * Many assets on stealthex are not tradeable in an onchain context because they dont come with contract addresses.
  * To avoid displaying a token which we dont have contract address for (which could result in a bunch of issues like, not being able to display the token balance, not being able to transfer the token for swapping and etc),
  * We support mainly 2 types of assets:
- * - ERC20 tokens: we only support ERC20 tokens from Simpleswap that comes with contract addresses
- * - Special assets: all substrate and evm native assets from simpleswap are whitelisted as special assets
+ * - ERC20 tokens: we only support ERC20 tokens from stealthex that comes with contract addresses
+ * - Special assets: all substrate and evm native assets from stealthex are whitelisted as special assets
  */
 const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
-  dot: {
+  'mainnet::dot': {
     id: 'polkadot-substrate-native',
     name: 'Polkadot',
     symbol: 'DOT',
     chainId: 'polkadot',
     networkType: 'substrate',
   },
-  ksm: {
+  'polkadot::ksm': {
     id: 'kusama-substrate-native',
     name: 'Kusama',
     symbol: 'KSM',
     chainId: 'kusama',
     networkType: 'substrate',
   },
-  usdtdot: {
+  'polkadot::usdt': {
     id: 'polkadot-asset-hub-substrate-assets-1984-usdt',
     name: 'USDT (Polkadot)',
     chainId: 'polkadot-asset-hub',
@@ -105,7 +117,7 @@ const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
     networkType: 'substrate',
     assetHubAssetId: '1984',
   },
-  usdcdot: {
+  'polkadot::usdc': {
     id: 'polkadot-asset-hub-substrate-assets-1337-usdc',
     name: 'USDC (Polkadot)',
     chainId: 'polkadot-asset-hub',
@@ -113,312 +125,286 @@ const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
     networkType: 'substrate',
     assetHubAssetId: '1337',
   },
-  eth: {
+  'mainnet::eth': {
     id: '1-evm-native',
     name: 'Ethereum',
     chainId: 1,
     symbol: 'ETH',
     networkType: 'evm',
   },
-  etharb: {
+  'arbitrum::eth': {
     id: '42161-evm-native',
     name: 'Ethereum',
     chainId: 42161,
     symbol: 'ETH',
     networkType: 'evm',
   },
-  ethop: {
+  'arbnova::eth': {
+    id: '42170-evm-native',
+    name: 'Ethereum',
+    chainId: 42170,
+    symbol: 'ETH',
+    networkType: 'evm',
+  },
+  'base::eth': {
+    id: '8453-evm-native',
+    name: 'Ethereum',
+    chainId: 8453,
+    symbol: 'ETH',
+    networkType: 'evm',
+  },
+  'bsc::eth': {
+    id: '56-evm-native',
+    name: 'Ethereum',
+    chainId: 56,
+    symbol: 'ETH',
+    networkType: 'evm',
+  },
+  'optimism::eth': {
     id: '10-evm-native',
     name: 'Ethereum',
     chainId: 10,
     symbol: 'ETH',
     networkType: 'evm',
   },
-  s: {
-    id: '146-evm-native',
-    name: 'Sonic',
-    chainId: 146,
-    symbol: 'S',
-    networkType: 'evm',
-  },
-  ethmanta: {
+  'manta::eth': {
     id: '169-evm-native',
     name: 'Ethereum (Manta Pacific)',
     chainId: 169,
     symbol: 'ETH',
     networkType: 'evm',
   },
-  manta: {
-    id: '169-evm-erc20-0x95cef13441be50d20ca4558cc0a27b601ac544e5',
-    name: 'Manta Network',
-    chainId: 169,
-    symbol: 'MANTA',
+  'zksync::eth': {
+    id: '324-evm-native',
+    name: 'Ethereum',
+    chainId: 324,
+    symbol: 'ETH',
     networkType: 'evm',
-    contractAddress: '0x95cef13441be50d20ca4558cc0a27b601ac544e5',
   },
-  tao: {
+  'mainnet::tao': {
     id: 'bittensor-substrate-native',
     name: 'Bittensor',
     chainId: 'bittensor',
     symbol: 'TAO',
     networkType: 'substrate',
   },
-  anlog: {
-    id: 'analog-timechain-substrate-native',
-    name: 'Analog',
-    chainId: 'analog-timechain',
-    symbol: 'ANLOG',
-    networkType: 'substrate',
-  },
-  btc: {
+  'mainnet::btc': {
     id: 'btc-native',
     name: 'Bitcoin',
     chainId: 'bitcoin',
     symbol: 'BTC',
     networkType: 'btc',
   },
-  /** SS expects substrate address when swapping ASTR */
-  astr: {
+  'mainnet::astr': {
     id: 'astar-substrate-native',
     name: 'Astar',
     symbol: 'ASTR',
     chainId: 'astar',
     networkType: 'substrate',
   },
-  azero: {
+  'mainnet::azero': {
     id: 'aleph-zero-substrate-native',
     name: 'Aleph Zero',
     symbol: 'AZERO',
     chainId: 'aleph-zero',
     networkType: 'substrate',
   },
-  /** SS expects substrate address when swapping ACA */
-  aca: {
+  'mainnet::aca': {
     id: 'acala-substrate-native',
     name: 'ACALA',
     symbol: 'ACA',
     chainId: 'acala',
     networkType: 'substrate',
   },
-  /** SS expects EVM address when swapping GLMR */
-  glmr: {
-    id: '1284-evm-native',
-    name: 'Moonbeam',
-    symbol: 'GLMR',
-    chainId: 'moonbeam',
-    networkType: 'evm',
-  },
-  /** SS expects EVM address when swapping MOVR */
-  movr: {
-    id: '1285-evm-native',
-    name: 'Moonriver',
-    symbol: 'MOVR',
-    chainId: 'moonriver',
-    networkType: 'evm',
-  },
-  avail: {
-    id: 'avail-substrate-native',
-    name: 'Avail',
-    symbol: 'AVAIL',
-    chainId: 'avail',
-    networkType: 'substrate',
-  },
 }
 
-type Exchange = {
-  id: string
-  type: string
-  timestamp: string
-  updated_at: string
-  valid_until: null
-  currency_from: string
-  currency_to: string
-  amount_from: string
-  expected_amount: string
-  amount_to: string
-  address_from: string
-  address_to: string
-  user_refund_address: string | null
-  tx_from: null
-  tx_to: null
-  status: 'waiting' | 'finished' | 'failed'
-  redirect_url: null
-  currencies: Record<
-    string,
-    {
-      name: string
-      symbol: string
-      network: string
-      image: string
-      warnings_from: string[]
-      warnings_to: string[]
-      validation_address: string
-      address_explorer: string
-      tx_explorer: string
-      confirmations_from: string
-      contract_address: string | null
-      isFiat: boolean
-    }
-  >
-  trace_id: string
-  code?: number
-  description?: string
-  error?: string
-}
+const api = createClient<StealthexApi>({ baseUrl: apiUrl })
+const stealthexSdk = {
+  getAllCurrencies: async (): Promise<StealthexCurrency[]> => {
+    const allCurrencies: StealthexCurrency[] = []
 
-type Range = { min: BigNumber }
+    // TODO: When worker cache isn't warm, this takes too long to fetch all requests.
+    const limit = 250
+    for (let offset = 0; ; offset += limit) {
+      const { data: currencies } = await api.GET('/v4/currencies', { params: { query: { limit, offset } } })
+      if (!Array.isArray(currencies)) break
 
-const simpleSwapSdk = {
-  getAllCurrencies: async (): Promise<SimpleSwapCurrency[]> => {
-    const allCurrenciesRes = await fetch(`https://api.simpleswap.io/get_all_currencies?api_key=${APIKEY}`)
-    return await allCurrenciesRes.json()
-  },
-  getEstimate: async (props: {
-    currencyFrom: string
-    currencyTo: string
-    amount: string
-    fixed: boolean
-  }): Promise<string | { code: number; error: string; description: string; trace_id: string } | null> => {
-    try {
-      const search = new URLSearchParams({
-        api_key: APIKEY,
-        fixed: `${props.fixed}`,
-        currency_from: props.currencyFrom,
-        currency_to: props.currencyTo,
-        amount: props.amount,
-      })
-      const allCurrenciesRes = await fetch(`https://api.simpleswap.io/get_estimated?${search.toString()}`)
-      return await allCurrenciesRes.json()
-    } catch (e) {
-      console.error(e)
-      return null
+      allCurrencies.push(...currencies)
+      if (currencies.length !== 250) break
     }
+
+    return allCurrencies
   },
-  getPairs: async (props: {
+  getPairs: async ({
+    symbol,
+    network,
+  }: {
     symbol: string
-    fixed: boolean
-  }): Promise<string[] | { code: number; error: string; description: string; trace_id: string } | null> => {
-    try {
-      const search = new URLSearchParams({
-        api_key: APIKEY,
-        fixed: `${props.fixed}`,
-        symbol: props.symbol,
-      })
-      const allPairs = await fetch(`https://api.simpleswap.io/get_pairs?${search.toString()}`)
-      return await allPairs.json()
-    } catch (e) {
-      console.error(e)
-      return null
-    }
+    network: string
+  }): Promise<StealthexCurrency['available_routes']> => {
+    const { data: currency, error } = await api.GET('/v4/currencies/{symbol}/{network}', {
+      params: { path: { symbol, network }, query: { include_available_routes: 'true' } },
+    })
+    if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
+    return currency?.available_routes
   },
-  createExchange: async (props: {
-    fixed: boolean
-    currency_from: string
-    currency_to: string
+  getRange: async ({
+    route,
+    estimation,
+    rate,
+  }: {
+    route: { from: { network: string; symbol: string }; to: { network: string; symbol: string } }
+    estimation?: 'direct' | 'reversed'
+    rate?: 'floating' | 'fixed'
+  }): Promise<{ min: BigNumber }> => {
+    // default values
+    estimation ||= 'direct'
+    rate ||= 'floating'
+
+    const { data: range, error } = await api.POST('/v4/rates/range', {
+      body: { route, estimation, rate, additional_fee_percent },
+    })
+    if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
+    return { min: BigNumber(range?.min_amount ?? 0) }
+  },
+  getEstimate: async ({
+    route,
+    amount,
+    estimation,
+    rate,
+  }: {
+    route: { from: { network: string; symbol: string }; to: { network: string; symbol: string } }
     amount: number
-    address_to: string
-    extra_id_to?: string
-    user_refund_address: string | null
-    user_refund_extra_id: string | null
-  }): Promise<Exchange> => {
-    const search = new URLSearchParams({
-      api_key: APIKEY,
-    })
-    const exchange = await fetch(`https://api.simpleswap.io/create_exchange?${search.toString()}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(props),
-    })
+    estimation?: 'direct' | 'reversed'
+    rate?: 'floating' | 'fixed'
+  }): Promise<number> => {
+    // default values
+    estimation ||= 'direct'
+    rate ||= 'floating'
 
-    return exchange.json()
+    const { data: estimate, error } = await api.POST('/v4/rates/estimated-amount', {
+      body: { route, amount, estimation, rate, additional_fee_percent },
+    })
+    if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
+    return estimate?.estimated_amount
   },
-  getExchange: async (id: string): Promise<Exchange> => {
-    const search = new URLSearchParams({
-      api_key: APIKEY,
-      id,
-    })
-    const exchange = await fetch(`https://api.simpleswap.io/get_exchange?${search.toString()}`)
-    return exchange.json()
+  createExchange: async ({
+    route,
+    amount,
+    estimation,
+    rate,
+    address,
+    extra_id,
+    refund_address,
+    refund_extra_id,
+  }: {
+    route: { from: { network: string; symbol: string }; to: { network: string; symbol: string } }
+    amount: number
+    estimation?: 'direct' | 'reversed'
+    rate?: 'floating' | 'fixed'
+    address: string
+    extra_id?: string
+    refund_address?: string
+    refund_extra_id?: string
+  }): Promise<StealthexExchange> => {
+    // default values
+    estimation ||= 'direct'
+    rate ||= 'floating'
+
+    const params = {
+      route,
+      amount,
+      estimation,
+      rate,
+      address,
+      extra_id,
+      refund_address,
+      refund_extra_id,
+      additional_fee_percent,
+    }
+    if (extra_id === undefined) delete params.extra_id
+    if (refund_address === undefined) delete params.refund_address
+    if (refund_extra_id === undefined) delete params.refund_extra_id
+
+    const { data: exchange, error } = await api.POST('/v4/exchanges', { body: params })
+    if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
+    return exchange
   },
-  getRange: async (props: { currency_from: string; currency_to: string }): Promise<Range | undefined> => {
-    const search = new URLSearchParams({
-      api_key: APIKEY,
-      fixed: 'false',
-      ...props,
-    })
-    const json:
-      | { min?: string; trace_id?: string }
-      | { code?: number; error?: string; description?: string; trace_id?: string } = await (
-      await fetch(`https://api.simpleswap.io/get_ranges?${search.toString()}`)
-    ).json()
-
-    if ('error' in json) throw new Error(json.error)
-    if (!('min' in json)) return
-
-    if (typeof json.min !== 'string') return
-
-    return { min: BigNumber(json.min) }
+  getExchange: async (id: string): Promise<StealthexExchange> => {
+    const { data: exchange, error } = await api.GET('/v4/exchanges/{id}', { params: { path: { id } } })
+    if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
+    return exchange
   },
 }
 
-const simpleswapAssetsAtom = atom(async () => {
-  const allCurrencies = await simpleSwapSdk.getAllCurrencies()
+const assetsAtom = atom(async () => {
+  const allCurrencies = await stealthexSdk.getAllCurrencies()
+
   const supportedTokens = allCurrencies.filter(currency => {
-    if (currency.isFiat) return false
-    const isEvmNetwork = supportedEvmChains[currency.network as keyof typeof supportedEvmChains]
-    const isSpecialAsset = specialAssets[currency.symbol]
-    if (isEvmNetwork) {
-      // evm assets must be whitelisted as a special asset or have a contract address
-      return isSpecialAsset || !!currency.contract_address
-    }
+    const isEvmNetwork = !!supportedEvmChains[currency.network]
+    const isSpecialAsset = !!specialAssets[`${currency.network}::${currency.symbol}`]
+
+    // evm assets must be whitelisted as a special asset or have a contract address
+    if (isEvmNetwork) return isSpecialAsset || !!currency.contract_address
+
     // substrate assets must be whitelisted as a special asset
     return isSpecialAsset
   })
 
   return Object.values(
-    supportedTokens.reduce((acc, cur) => {
-      const evmChain = supportedEvmChains[cur.network as keyof typeof supportedEvmChains]
-      const polkadotAsset = specialAssets[cur.symbol]
+    supportedTokens.reduce((acc, currency) => {
+      const evmChain = supportedEvmChains[currency.network]
+      const specialAsset = specialAssets[`${currency.network}::${currency.symbol}`]
+
       const id = evmChain
-        ? getTokenIdForSwappableAsset('evm', evmChain.id, cur.contract_address ? cur.contract_address : undefined)
-        : polkadotAsset?.id
-      const chainId = evmChain ? evmChain.id : polkadotAsset?.chainId
+        ? getTokenIdForSwappableAsset(
+            'evm',
+            evmChain.id,
+            currency.contract_address ? currency.contract_address : undefined
+          )
+        : specialAsset?.id
+      const chainId = evmChain ? evmChain.id : specialAsset?.chainId
       if (!id || !chainId) return acc
-      const asset: SwappableAssetBaseType<{ simpleswap: SimpleSwapAssetContext }> = {
+
+      const asset: SwappableAssetBaseType<{ stealthex: AssetContext }> = {
         id,
-        name: polkadotAsset?.name ?? cur.name,
-        symbol: polkadotAsset?.symbol ?? cur.symbol,
+        name: specialAsset?.name ?? currency.name,
+        symbol: specialAsset?.symbol ?? currency.symbol,
         chainId,
-        contractAddress: cur.contract_address ? cur.contract_address : undefined,
-        image: cur.image,
-        networkType: evmChain ? 'evm' : polkadotAsset?.networkType ?? 'substrate',
-        assetHubAssetId: polkadotAsset?.assetHubAssetId,
+        contractAddress: currency.contract_address ? currency.contract_address : undefined,
+        image: currency.icon_url,
+        networkType: evmChain ? 'evm' : specialAsset?.networkType ?? 'substrate',
+        assetHubAssetId: specialAsset?.assetHubAssetId,
         context: {
-          simpleswap: {
-            symbol: cur.symbol,
+          stealthex: {
+            network: currency.network,
+            symbol: currency.symbol,
           },
         },
       }
       return { ...acc, [id]: asset }
-    }, {} as Record<string, SwappableAssetBaseType>)
+    }, {} as Record<string, SwappableAssetBaseType<{ stealthex: AssetContext }>>)
   )
 })
 
-export const fromAssetsSelector = atom(async get => await get(simpleswapAssetsAtom))
+export const fromAssetsSelector = atom(async get => await get(assetsAtom))
 export const toAssetsSelector = atom(async get => {
-  const allAssets = await get(simpleswapAssetsAtom)
+  const allAssets = await get(assetsAtom)
   const fromAsset = get(fromAssetAtom)
   if (!fromAsset) return allAssets
-  const symbol = fromAsset.context.simpleswap?.symbol
-  if (!symbol) return [] // not supported
-  const pairs = await simpleSwapSdk.getPairs({ symbol, fixed: false })
+
+  const { symbol, network } = fromAsset.context.stealthex
+  if (!symbol || !network) return [] // not supported
+
+  const pairs = await stealthexSdk.getPairs({ symbol, network })
   if (!pairs || !Array.isArray(pairs)) return []
-  return [
-    fromAsset,
-    ...allAssets.filter(asset => pairs.find(p => p.toLowerCase() === asset.context.simpleswap?.symbol.toLowerCase())),
-  ]
+
+  const validDestinations = new Set(pairs.map(pair => `${pair.network}::${pair.symbol}`))
+  const validDestAssets = allAssets.filter(asset =>
+    validDestinations.has(`${asset.context?.stealthex?.network}::${asset.context?.stealthex?.symbol}`)
+  )
+
+  return [fromAsset, ...validDestAssets]
 })
 
 const quote: QuoteFunction = loadable(
@@ -432,68 +418,45 @@ const quote: QuoteFunction = loadable(
     const fromAmount = get(fromAmountAtom)
 
     if (!fromAsset || !toAsset || !fromAmount || fromAmount.planck === 0n) return null
-    const currencyFrom = fromAsset.context.simpleswap?.symbol
-    const currencyTo = toAsset.context.simpleswap?.symbol
-    if (!currencyFrom || !currencyTo) return null
+    const from: AssetContext = fromAsset.context.stealthex
+    const to: AssetContext = toAsset.context.stealthex
+    if (!from || !to) return null
 
     // force refresh
     get(swapQuoteRefresherAtom)
 
-    const range = await simpleSwapSdk.getRange({ currency_from: currencyFrom, currency_to: currencyTo })
+    const range = await stealthexSdk.getRange({ route: { from, to } })
     if (range && range.min.isGreaterThan(fromAmount.toString()))
-      throw new Error(`SimpleSwap minimum is ${range.min.toString()} ${fromAsset.symbol}`)
+      throw new Error(`StealthEX minimum is ${range.min.toString()} ${fromAsset.symbol}`)
 
-    const output = await simpleSwapSdk.getEstimate({
-      amount: fromAmount.toString(),
-      currencyFrom,
-      currencyTo,
-      fixed: false,
-    })
+    try {
+      // TODO: Return `null` or an error when getRange / getEstimate fails
+      // Error format: `return { decentralisationScore: DECENTRALISATION_SCORE, protocol: PROTOCOL, inputAmountBN: fromAmount.planck, outputAmountBN: 0n, error: '<error here>', timeInSec: 5 * 60, fees: [], providerLogo: LOGO, providerName: PROTOCOL_NAME, talismanFeeBps: TALISMAN_TOTAL_FEE, }`
+      const estimate = await stealthexSdk.getEstimate({
+        route: { from, to },
+        amount: fromAmount.toNumber(),
+      })
 
-    // check for error object
-    if (!output || typeof output !== 'string') {
-      if (output && typeof output !== 'string') {
-        return {
-          decentralisationScore: DECENTRALISATION_SCORE,
-          protocol: PROTOCOL,
-          inputAmountBN: fromAmount.planck,
-          outputAmountBN: 0n,
-          error: output.description,
-          timeInSec: 5 * 60,
-          fees: [],
-          providerLogo: LOGO,
-          providerName: PROTOCOL_NAME,
-          talismanFeeBps: TALISMAN_FEE,
-        }
+      const gasFee = await estimateGas(get, { getSubstrateApi })
+
+      return {
+        decentralisationScore: DECENTRALISATION_SCORE,
+        protocol: PROTOCOL,
+        inputAmountBN: fromAmount.planck,
+        outputAmountBN: Decimal.fromUserInput(String(estimate), toAsset.decimals).planck,
+        // simpleswap swaps take about 5mins, assuming here that stealthex takes a similar amount of time
+        timeInSec: 5 * 60,
+        fees: gasFee ? [gasFee] : [],
+        providerLogo: LOGO,
+        providerName: PROTOCOL_NAME,
+        talismanFeeBps: TALISMAN_TOTAL_FEE,
       }
+    } catch (cause) {
+      console.error(`Failed to get StealthEX quote`, cause)
       return null
-    }
-
-    const gasFee = await estimateGas(get, { getSubstrateApi })
-
-    return {
-      decentralisationScore: DECENTRALISATION_SCORE,
-      protocol: PROTOCOL,
-      inputAmountBN: fromAmount.planck,
-      outputAmountBN: Decimal.fromUserInput(output, toAsset.decimals).planck,
-      // swaps take about 5mins according to their faq: https://simpleswap.io/faq#crypto-to-crypto-exchanges--how-long-does-it-take-to-exchange-coins
-      timeInSec: 5 * 60,
-      fees: gasFee ? [gasFee] : [],
-      providerLogo: LOGO,
-      providerName: PROTOCOL_NAME,
-      talismanFeeBps: TALISMAN_FEE,
     }
   })
 )
-const saveIdForMonitoring = async (swapId: string, txHash: string) => {
-  await fetch(`https://swap-providers-monitor.fly.dev/simpleswap/exchange`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ id: swapId, deposit_tx_hash: txHash }),
-  })
-}
 
 const swap: SwapFunction<{ id: string }> = async (
   get: Getter,
@@ -528,10 +491,10 @@ const swap: SwapFunction<{ id: string }> = async (
   if (!fromAsset) throw new Error('Missing from asset')
   if (!toAsset) throw new Error('Missing to asset')
 
-  const currency_from = fromAsset.context?.simpleswap?.symbol as string
-  const currency_to = toAsset.context?.simpleswap?.symbol as string
-  if (!currency_from) throw new Error('Missing currency from')
-  if (!currency_to) throw new Error('Missing currency to')
+  const from: AssetContext = fromAsset.context.stealthex
+  const to: AssetContext = toAsset.context.stealthex
+  if (!from) throw new Error('Missing route from')
+  if (!to) throw new Error('Missing route to')
 
   // validate from address for the source chain
   if (!validateAddress(addressFrom, fromAsset.networkType))
@@ -544,37 +507,37 @@ const swap: SwapFunction<{ id: string }> = async (
   // cannot swap from BTC
   if (fromAsset.networkType === 'btc') throw new Error('Swapping from BTC is not supported.')
 
-  const exchange = await simpleSwapSdk.createExchange({
-    fixed: false,
-    address_to: addressTo,
+  const exchange = await stealthexSdk.createExchange({
+    route: { from, to },
     amount: amount.toNumber(),
-    currency_from,
-    currency_to,
-    extra_id_to: '',
-    user_refund_address: null,
-    user_refund_extra_id: null,
+    address: addressTo,
   })
 
   if (!exchange) throw new Error('Error creating exchange')
 
-  if (exchange.code === 422) {
-    const min = exchange.description?.match(/min: ([0-9.]+)/i)?.[1]
-    const max = exchange.description?.match(/max: ([0-9.]+)/i)?.[1]
-    const message = [
-      'Amount is out of range',
-      min && `(min: ${min} ${fromAsset.symbol})`,
-      max && `(max: ${max} ${fromAsset.symbol})`,
-    ].join(' ')
-    throw new Error(message)
-  }
+  // if (exchange.code === 422) {
+  //   const min = exchange.description?.match(/min: ([0-9.]+)/i)?.[1]
+  //   const max = exchange.description?.match(/max: ([0-9.]+)/i)?.[1]
+  //   const message = [
+  //     'Amount is out of range',
+  //     min && `(min: ${min} ${fromAsset.symbol})`,
+  //     max && `(max: ${max} ${fromAsset.symbol})`,
+  //   ].join(' ')
+  //   throw new Error(message)
+  // }
   // verify that the created exchange has the same assets we are trying to swap
-  if (exchange.currency_from !== currency_from || exchange.currency_to !== currency_to)
+  if (
+    exchange.deposit.network !== from.network ||
+    exchange.deposit.symbol !== from.symbol ||
+    exchange.withdrawal.network !== to.network ||
+    exchange.withdrawal.symbol !== to.symbol
+  )
     throw new Error('Incorrect currencies from provider. Please try again later')
-  if (+exchange.expected_amount > amount.toNumber()) throw new Error('Quote changed. Please try again.')
-  if (exchange.address_to !== addressTo)
+  if (exchange.deposit.amount > amount.toNumber()) throw new Error('Quote changed. Please try again.')
+  if (exchange.withdrawal.address !== addressTo)
     throw new Error('Incorrect destination address from provider. Please try again later')
 
-  const depositAmount = Decimal.fromUserInput(exchange.expected_amount, fromAsset.decimals)
+  const depositAmount = Decimal.fromUserInput(String(exchange.deposit.expected_amount), fromAsset.decimals)
   try {
     if (fromAsset.networkType === 'evm') {
       if (!evmWalletClient) throw new Error('Ethereum account not connected')
@@ -587,7 +550,7 @@ const swap: SwapFunction<{ id: string }> = async (
       if (!fromAsset.contractAddress) {
         hash = await evmWalletClient.sendTransaction({
           chain,
-          to: exchange.address_from as `0x${string}`,
+          to: exchange.deposit.address as `0x${string}`,
           value: depositAmount.planck,
           account: fromAddress as `0x${string}`,
         })
@@ -598,11 +561,10 @@ const swap: SwapFunction<{ id: string }> = async (
           address: fromAsset.contractAddress as `0x${string}`,
           functionName: 'transfer',
           account: fromAddress as `0x${string}`,
-          args: [exchange.address_from as `0x${string}`, depositAmount.planck],
+          args: [exchange.deposit.address as `0x${string}`, depositAmount.planck],
         })
       }
 
-      saveIdForMonitoring(exchange.id, hash)
       saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
       return {
         protocol: PROTOCOL,
@@ -626,7 +588,7 @@ const swap: SwapFunction<{ id: string }> = async (
           ? await substrateAssetsSwapTransfer(
               polkadotApi,
               allowReap,
-              exchange.address_from,
+              exchange.deposit.address,
               addressFrom,
               fromAsset.assetHubAssetId,
               depositAmount.planck,
@@ -635,16 +597,13 @@ const swap: SwapFunction<{ id: string }> = async (
           : await substrateNativeSwapTransfer(
               polkadotApi,
               allowReap,
-              exchange.address_from,
+              exchange.deposit.address,
               addressFrom,
               depositAmount.planck,
               signer
             )
 
-      if (transferRes.ok) {
-        saveIdForMonitoring(exchange.id, transferRes.id)
-        saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
-      }
+      if (transferRes.ok) saveAddressForQuest(exchange.id, addressFrom, PROTOCOL)
       return {
         protocol: PROTOCOL,
         depositRes: {
@@ -738,8 +697,8 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
   }
 }
 
-export const simpleswapSwapModule: SwapModule = {
-  protocol: 'simpleswap',
+export const stealthexSwapModule: SwapModule = {
+  protocol: PROTOCOL,
   fromAssetsSelector,
   toAssetsSelector,
   quote,
@@ -751,12 +710,12 @@ const retryStatus = async (
   get: Getter,
   id: string,
   attempts = 0
-): Promise<{ exchange: Exchange; expired?: boolean }> => {
+): Promise<{ exchange: StealthexExchange; expired?: boolean }> => {
   try {
-    const exchange = await simpleSwapSdk.getExchange(id)
+    const exchange = await stealthexSdk.getExchange(id)
     const expired = false
 
-    if (exchange.status !== 'finished' && exchange.code !== 401) {
+    if (exchange.status !== 'finished') {
       get(swapQuoteRefresherAtom)
     }
 
@@ -773,4 +732,4 @@ const retryStatus = async (
   }
 }
 
-export const simpleswapSwapStatusAtom = atomFamily((id: string) => atom(async get => await retryStatus(get, id)))
+export const stealthexSwapStatusAtom = atomFamily((id: string) => atom(async get => await retryStatus(get, id)))

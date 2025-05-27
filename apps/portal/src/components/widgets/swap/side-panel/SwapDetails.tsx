@@ -119,10 +119,16 @@ const Details: React.FC = () => {
       />
     )
   if (quotes.state === 'hasError' || cachedQuotes.every(q => q.quote?.state === 'hasError')) {
-    const cachedQuoteError =
-      cachedQuotes[0]?.quote?.state === 'hasError' && (cachedQuotes[0]?.quote?.error as any)?.message // eslint-disable-line @typescript-eslint/no-explicit-any
+    const cachedQuoteError = cachedQuotes
+      .flatMap(cachedQuote =>
+        cachedQuote.quote?.state === 'hasError'
+          ? (cachedQuote.quote?.error as any)?.message // eslint-disable-line @typescript-eslint/no-explicit-any
+          : []
+      )
+      .join('\n')
     return (
       <SwapDetailsError
+        messageClassName="whitespace-pre-wrap text-[12px] leading-6 mt-4"
         message={
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (quotes.state === 'hasError' ? (quotes.error as any) : {})?.message ??
