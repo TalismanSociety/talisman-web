@@ -1,4 +1,6 @@
-export const SwapDetailsError: React.FC<{ message?: string }> = ({ message }) => (
+import { cn } from '@/util/cn'
+
+export const SwapDetailsError = ({ message, messageClassName }: { message?: string; messageClassName?: string }) => (
   <div className="flex flex-col items-center justify-center gap-[8px] rounded-[8px] border border-gray-800 p-[16px]">
     <svg width="97" height="96" viewBox="0 0 97 96" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="48.5" cy="48" r="48" fill="url(#paint0_linear_3285_12864)" />
@@ -48,7 +50,7 @@ export const SwapDetailsError: React.FC<{ message?: string }> = ({ message }) =>
 
     <div>
       <h4 className="text-center text-[14px] font-bold">Failed to get quote</h4>
-      <p className="text-center text-[14px] text-gray-400">{message}</p>
+      <p className={cn('text-center text-[14px] text-gray-400', messageClassName)}>{message}</p>
     </div>
   </div>
 )
