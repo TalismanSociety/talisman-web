@@ -19,6 +19,7 @@ type StakePercentageProps = {
   symbol?: string
   nativeTokenAddress?: `0x${string}` | string
   chainId?: string | number
+  hasDTaoStaking?: boolean
 }
 type StakePercentageDisplayProps = Omit<StakePercentageProps, 'genesisHash'>
 
@@ -29,6 +30,7 @@ const StakePercentageDisplay = ({
   symbol,
   nativeTokenAddress,
   chainId,
+  hasDTaoStaking,
   setStakePercentage,
 }: StakePercentageDisplayProps) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -52,7 +54,7 @@ const StakePercentageDisplay = ({
       stakeValue = hookMap['liquidStakingSlpxSubstrate'](tokenPair)
       break
     case 'delegationSubtensor':
-      stakeValue = hookMap['delegationSubtensor']()
+      stakeValue = hookMap['delegationSubtensor'](hasDTaoStaking)
       break
     case 'dappStaking':
       stakeValue = hookMap['dappStaking']()
@@ -80,6 +82,7 @@ const AvailableBalance = ({
   symbol,
   nativeTokenAddress,
   chainId,
+  hasDTaoStaking,
 }: StakePercentageProps) => {
   return (
     <ChainProvider chain={{ genesisHash }}>
@@ -90,6 +93,7 @@ const AvailableBalance = ({
         symbol={symbol}
         nativeTokenAddress={nativeTokenAddress}
         chainId={chainId}
+        hasDTaoStaking={hasDTaoStaking}
       />
     </ChainProvider>
   )
