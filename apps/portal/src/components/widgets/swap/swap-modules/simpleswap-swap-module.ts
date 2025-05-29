@@ -1,5 +1,5 @@
 import type { Chain as ViemChain } from 'viem/chains'
-import { QuoteResponse } from '@chainflip/sdk/swap'
+import { QuoteResponseV2 } from '@chainflip/sdk/swap'
 import { chainsAtom, tokensByIdAtom } from '@talismn/balances-react'
 import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { encodeAnyAddress } from '@talismn/util'
@@ -447,7 +447,7 @@ export const toAssetsSelector = atom(async get => {
 })
 
 const quote: QuoteFunction = loadable(
-  atom(async (get): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {
+  atom(async (get): Promise<(BaseQuote & { data?: QuoteResponseV2['quotes'][number] }) | null> => {
     const substrateApiGetter = get(substrateApiGetterAtom)
     if (!substrateApiGetter) return null
 

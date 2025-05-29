@@ -3,13 +3,14 @@ import type {
   Chain,
   ChainData,
   ChainflipNetwork,
-  QuoteResponse,
-  SwapStatusResponse,
+  QuoteResponseV2,
+  SwapStatusResponseV2,
 } from '@chainflip/sdk/swap'
 import type { Getter, Setter } from 'jotai'
 import type { Chain as ViemChain } from 'viem/chains'
 import { Asset, SwapSDK } from '@chainflip/sdk/swap'
 import { chainsAtom } from '@talismn/balances-react'
+import { encodeAnyAddress } from '@talismn/util'
 import { atom } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
 import { createPublicClient, encodeFunctionData, erc20Abi, fallback, http, isAddress } from 'viem'
@@ -49,20 +50,22 @@ const CHAINFLIP_COMMISSION_BPS = 150
 
 const EVM_CHAINS: ViemChain[] = [mainnet, sepolia, arbitrum]
 
-const CHAINFLIP_CHAIN_TO_ID_MAP: Record<Chain, string> = {
+const CHAINFLIP_CHAIN_TO_ID_MAP: Record<Exclude<Chain, 'Solana'>, string> = {
   Arbitrum: '42161',
   Ethereum: '1',
   Polkadot: 'polkadot',
   Bitcoin: 'bitcoin',
+  Assethub: 'polkadot-asset-hub',
 }
 
-const CHAINFLIP_ID_TO_CHAIN_MAP: Record<string, Chain> = {
+const CHAINFLIP_ID_TO_CHAIN_MAP: Record<string, Exclude<Chain, 'Solana'>> = {
   '42161': 'Arbitrum',
   '421614': 'Arbitrum', // arbitrum testnet
   '1': 'Ethereum',
   '11155111': 'Ethereum', // sepolia testnet
   polkadot: 'Polkadot',
   bitcoin: 'Bitcoin',
+  'polkadot-asset-hub': 'Assethub',
 }
 
 type ChainflipAssetContext = {
@@ -77,8 +80,13 @@ export const chainflipAssetToSwappableAsset = (
   asset: AssetData,
   chain: ChainData
 ): SwappableAssetBaseType<{ chainflip: ChainflipAssetContext }> | null => {
-  const chainId = chain.evmChainId?.toString() ?? CHAINFLIP_CHAIN_TO_ID_MAP[chain.chain] ?? 'unsupported'
-  const networkType = chain.chain === 'Polkadot' ? 'substrate' : chain.chain === 'Bitcoin' ? 'btc' : 'evm'
+  const chainId =
+    chain.evmChainId?.toString() ?? CHAINFLIP_CHAIN_TO_ID_MAP[chain.chain as Exclude<Chain, 'Solana'>] ?? 'unsupported'
+  const networkType = ['Polkadot', 'Assethub'].includes(chain.chain)
+    ? 'substrate'
+    : chain.chain === 'Bitcoin'
+    ? 'btc'
+    : 'evm'
   if (chainId === 'unsupported') return null
   return {
     id: getTokenIdForSwappableAsset(networkType, chainId, asset.contractAddress),
@@ -103,7 +111,7 @@ const swappableAssetToChainflipAsset = (
   const chain = CHAINFLIP_ID_TO_CHAIN_MAP[swappableAsset.chainId.toString()]
   return assets.find(a => {
     if (a.chain !== chain) return false
-    if (chain === 'Polkadot') {
+    if (['Polkadot', 'Assethub'].includes(chain)) {
       return a.asset === 'DOT'
     } else if (chain === 'Bitcoin') {
       return a.chain === chain
@@ -170,7 +178,7 @@ const fromAssetsSelector = atom(async get => await get(tokensSelector))
 const toAssetsSelector = atom(async get => await get(tokensSelector))
 
 const quote: QuoteFunction = loadable(
-  atom(async (get): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {
+  atom(async (get): Promise<BaseQuote<QuoteResponseV2['quotes'][number]> | null> => {
     const substrateApiGetter = get(substrateApiGetterAtom)
     if (!substrateApiGetter) return null
 
@@ -213,15 +221,21 @@ const quote: QuoteFunction = loadable(
     try {
       // force refresh
       get(swapQuoteRefresherAtom)
-      const quote = await sdk.getQuote({
+      const quoteResp = await sdk.getQuoteV2({
         amount: fromAmount.planck.toString(),
         srcAsset: chainflipFromAsset.asset,
         destAsset: chainflipToAsset.asset,
         srcChain: chainflipFromAsset.chain,
         destChain: chainflipToAsset.chain,
+        brokerCommissionBps: CHAINFLIP_COMMISSION_BPS,
       })
 
-      const fees = quote.quote.includedFees
+      // In the time since we integrated chainflip, the sdk has made it possible to get multiple quotes for a request.
+      // Until we refactor this module to handle multiple quotes, we'll just take the first REGULAR quote.
+      const quote = quoteResp.quotes.filter(q => q.type === 'REGULAR')[0]
+      if (!quote) throw new Error('No quote found')
+
+      const fees = quote.includedFees
         .map(fee => {
           const asset = assets.find(a => a.chain === fee.chain && a.asset === fee.asset)
           const chain = chains.find(c => c.chain === fee.chain)
@@ -243,11 +257,11 @@ const quote: QuoteFunction = loadable(
         decentralisationScore: DECENTRALISATION_SCORE,
         protocol: PROTOCOL,
         inputAmountBN: fromAmount.planck,
-        outputAmountBN: BigInt(quote.quote.egressAmount),
+        outputAmountBN: BigInt(quote.egressAmount),
         talismanFeeBps: CHAINFLIP_COMMISSION_BPS / 10000,
         fees,
         data: quote,
-        timeInSec: quote.quote.estimatedDurationSeconds,
+        timeInSec: quote.estimatedDurationSeconds,
         providerLogo: chainflipLogo,
         providerName: PROTOCOL_NAME,
       }
@@ -323,16 +337,28 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
   // cannot swap from BTC
   if (fromAsset.networkType === 'btc') throw new Error('Swapping from BTC is not supported.')
 
+  const gotQuote = get(quote)
+  if (gotQuote.state !== 'hasData') throw new Error('Invalid chainflip quote')
+  if (Array.isArray(gotQuote.data)) throw new Error('Invalid chainflip quote')
+
+  const cfQuote = gotQuote.data?.data
+
+  const substrateChains = await get(chainsAtom)
+  const fromSubstrateChain = substrateChains.find(c => c.id === fromAsset.chainId)
+  const srcAddress = fromSubstrateChain ? encodeAnyAddress(fromAddress, fromSubstrateChain?.prefix ?? 42) : fromAddress
+
   try {
     // request a deposit address to send funds to
-    const depositAddress = await sdk.requestDepositAddress({
+    const depositAddress = await sdk.requestDepositAddressV2({
+      srcAddress,
       destAddress: toAddress,
-      amount: fromAmount.planck.toString(),
-      destChain: chainflipToAsset.chain,
-      destAsset: chainflipToAsset.asset,
-      srcAsset: chainflipFromAsset.asset,
-      srcChain: chainflipFromAsset.chain,
-      // TODO: fillOrKillParams is now required
+      quote: cfQuote,
+      brokerCommissionBps: CHAINFLIP_COMMISSION_BPS,
+      fillOrKillParams: {
+        refundAddress: srcAddress,
+        slippageTolerancePercent: 4, // 4% slippage
+        retryDurationBlocks: 100, // 100 blocks * 6 seconds = 10 minutes before deposits are refunded
+      },
     })
 
     // begin swap
@@ -506,15 +532,15 @@ const retryStatus = async (
   get: Getter,
   id: string,
   attempts = 0
-): Promise<SwapStatusResponse & { expired: boolean }> => {
+): Promise<SwapStatusResponseV2 & { expired: boolean }> => {
   try {
-    const status = await get(swapSdkAtom).getStatus({ id })
+    const status = await get(swapSdkAtom).getStatusV2({ id })
     let expired = false
 
     if (!['FAILED', 'COMPLETE', 'BROADCAST_ABORTED'].includes(status.state)) {
-      if (status.estimatedDepositChannelExpiryTime && status.state === 'AWAITING_DEPOSIT') {
+      if (status.depositChannel?.estimatedExpiryTime && status.state === 'WAITING') {
         const now = new Date().getTime()
-        expired = now > status.estimatedDepositChannelExpiryTime
+        expired = now > status.depositChannel.estimatedExpiryTime
       }
       if (!expired) get(swapQuoteRefresherAtom)
     }
