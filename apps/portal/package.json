@@ -19,7 +19,7 @@
     "codegen:stealthex-swaps": "openapi-typescript https://stealthex.talisman.xyz/docs/openapi.json --export-type --root-types -o src/components/widgets/swap/swap-modules/stealthex.api.d.ts"
   },
   "dependencies": {
-    "@chainflip/sdk": "1.3.0",
+    "@chainflip/sdk": "^1.9.5",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@galacticcouncil/api-augment": "^0.3.1",
@@ -52,6 +52,7 @@
     "@tanstack/react-query": "^5.32.0",
     "@tanstack/react-table": "^8.20.5",
     "@tanstack/react-virtual": "^3.8.4",
+    "@trpc/server": "^10.45.2",
     "avail-js-sdk": "^0.2.13",
     "bignumber.js": "^9.1.2",
     "bitcoinjs-lib": "^7.0.0-rc.0",

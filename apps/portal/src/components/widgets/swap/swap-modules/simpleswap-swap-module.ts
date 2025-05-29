@@ -1,5 +1,5 @@
 import type { Chain as ViemChain } from 'viem/chains'
-import { QuoteResponse } from '@chainflip/sdk/swap'
+import { QuoteResponseV2 } from '@chainflip/sdk/swap'
 import { chainsAtom } from '@talismn/balances-react'
 import { encodeAnyAddress } from '@talismn/util'
 import BigNumber from 'bignumber.js'
@@ -422,7 +422,7 @@ export const toAssetsSelector = atom(async get => {
 })
 
 const quote: QuoteFunction = loadable(
-  atom(async (get): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {
+  atom(async (get): Promise<(BaseQuote & { data?: QuoteResponseV2['quotes'][number] }) | null> => {
     const substrateApiGetter = get(substrateApiGetterAtom)
     if (!substrateApiGetter) return null
 
