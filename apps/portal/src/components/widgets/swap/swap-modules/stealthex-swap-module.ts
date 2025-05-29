@@ -69,6 +69,7 @@ const LOGO = stealthexLogo
 type AssetContext = {
   network: string
   symbol: string
+  routeHasCustomFee?: boolean
 }
 
 const supportedEvmChains: Record<string, ViemChain | undefined> = {
@@ -250,10 +251,12 @@ const stealthexSdk = {
   },
   getRange: async ({
     route,
+    routeHasCustomFee,
     estimation,
     rate,
   }: {
     route: { from: { network: string; symbol: string }; to: { network: string; symbol: string } }
+    routeHasCustomFee: boolean
     estimation?: 'direct' | 'reversed'
     rate?: 'floating' | 'fixed'
   }): Promise<{ min: BigNumber }> => {
@@ -261,19 +264,27 @@ const stealthexSdk = {
     estimation ||= 'direct'
     rate ||= 'floating'
 
-    const { data: range, error } = await api.POST('/v4/rates/range', {
-      body: { route, estimation, rate, additional_fee_percent },
-    })
+    const params = {
+      route,
+      estimation,
+      rate,
+      additional_fee_percent: routeHasCustomFee ? additional_fee_percent : undefined,
+    }
+    if (!routeHasCustomFee) delete params.additional_fee_percent
+
+    const { data: range, error } = await api.POST('/v4/rates/range', { body: params })
     if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
     return { min: BigNumber(range?.min_amount ?? 0) }
   },
   getEstimate: async ({
     route,
+    routeHasCustomFee,
     amount,
     estimation,
     rate,
   }: {
     route: { from: { network: string; symbol: string }; to: { network: string; symbol: string } }
+    routeHasCustomFee: boolean
     amount: number
     estimation?: 'direct' | 'reversed'
     rate?: 'floating' | 'fixed'
@@ -282,14 +293,22 @@ const stealthexSdk = {
     estimation ||= 'direct'
     rate ||= 'floating'
 
-    const { data: estimate, error } = await api.POST('/v4/rates/estimated-amount', {
-      body: { route, amount, estimation, rate, additional_fee_percent },
-    })
+    const params = {
+      route,
+      amount,
+      estimation,
+      rate,
+      additional_fee_percent: routeHasCustomFee ? additional_fee_percent : undefined,
+    }
+    if (!routeHasCustomFee) delete params.additional_fee_percent
+
+    const { data: estimate, error } = await api.POST('/v4/rates/estimated-amount', { body: params })
     if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
     return estimate?.estimated_amount
   },
   createExchange: async ({
     route,
+    routeHasCustomFee,
     amount,
     estimation,
     rate,
@@ -299,6 +318,7 @@ const stealthexSdk = {
     refund_extra_id,
   }: {
     route: { from: { network: string; symbol: string }; to: { network: string; symbol: string } }
+    routeHasCustomFee: boolean
     amount: number
     estimation?: 'direct' | 'reversed'
     rate?: 'floating' | 'fixed'
@@ -320,11 +340,12 @@ const stealthexSdk = {
       extra_id,
       refund_address,
       refund_extra_id,
-      additional_fee_percent,
+      additional_fee_percent: routeHasCustomFee ? additional_fee_percent : undefined,
     }
     if (extra_id === undefined) delete params.extra_id
     if (refund_address === undefined) delete params.refund_address
     if (refund_extra_id === undefined) delete params.refund_extra_id
+    if (!routeHasCustomFee) delete params.additional_fee_percent
 
     const { data: exchange, error } = await api.POST('/v4/exchanges', { body: params })
     if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
@@ -399,10 +420,25 @@ export const toAssetsSelector = atom(async get => {
   const pairs = await stealthexSdk.getPairs({ symbol, network })
   if (!pairs || !Array.isArray(pairs)) return []
 
-  const validDestinations = new Set(pairs.map(pair => `${pair.network}::${pair.symbol}`))
-  const validDestAssets = allAssets.filter(asset =>
-    validDestinations.has(`${asset.context?.stealthex?.network}::${asset.context?.stealthex?.symbol}`)
-  )
+  const keyFromPair = (pair: (typeof pairs)[number]) => `${pair.network}::${pair.symbol}`
+  const keyFromAsset = (asset: (typeof allAssets)[number]) =>
+    `${asset.context?.stealthex?.network}::${asset.context?.stealthex?.symbol}`
+
+  const validDestinations = new Set(pairs.map(keyFromPair))
+  const hasCustomFee = Object.fromEntries(pairs.map(pair => [keyFromPair(pair), pair.features.includes('custom_fee')]))
+
+  const validDestAssets = allAssets
+    .filter(asset => validDestinations.has(keyFromAsset(asset)))
+    .map(asset => ({
+      ...asset,
+      context: {
+        ...asset.context,
+        stealthex: {
+          ...asset.context.stealthex,
+          routeHasCustomFee: !!hasCustomFee[keyFromAsset(asset)],
+        },
+      },
+    }))
 
   return [fromAsset, ...validDestAssets]
 })
@@ -416,6 +452,8 @@ const quote: QuoteFunction = loadable(
     const fromAsset = get(fromAssetAtom)
     const toAsset = get(toAssetAtom)
     const fromAmount = get(fromAmountAtom)
+    const routeHasCustomFee = toAsset?.context.stealthex.hasCustomFee
+    if (typeof routeHasCustomFee !== 'boolean') throw new Error(`Missing required asset context 'routeHasCustomFee'`)
 
     if (!fromAsset || !toAsset || !fromAmount || fromAmount.planck === 0n) return null
     const from: AssetContext = fromAsset.context.stealthex
@@ -425,7 +463,7 @@ const quote: QuoteFunction = loadable(
     // force refresh
     get(swapQuoteRefresherAtom)
 
-    const range = await stealthexSdk.getRange({ route: { from, to } })
+    const range = await stealthexSdk.getRange({ route: { from, to }, routeHasCustomFee })
     if (range && range.min.isGreaterThan(fromAmount.toString()))
       throw new Error(`StealthEX minimum is ${range.min.toString()} ${fromAsset.symbol}`)
 
@@ -434,6 +472,7 @@ const quote: QuoteFunction = loadable(
       // Error format: `return { decentralisationScore: DECENTRALISATION_SCORE, protocol: PROTOCOL, inputAmountBN: fromAmount.planck, outputAmountBN: 0n, error: '<error here>', timeInSec: 5 * 60, fees: [], providerLogo: LOGO, providerName: PROTOCOL_NAME, talismanFeeBps: TALISMAN_TOTAL_FEE, }`
       const estimate = await stealthexSdk.getEstimate({
         route: { from, to },
+        routeHasCustomFee,
         amount: fromAmount.toNumber(),
       })
 
@@ -507,8 +546,12 @@ const swap: SwapFunction<{ id: string }> = async (
   // cannot swap from BTC
   if (fromAsset.networkType === 'btc') throw new Error('Swapping from BTC is not supported.')
 
+  const routeHasCustomFee = toAsset?.context.stealthex.hasCustomFee
+  if (typeof routeHasCustomFee !== 'boolean') throw new Error(`Missing required asset context 'routeHasCustomFee'`)
+
   const exchange = await stealthexSdk.createExchange({
     route: { from, to },
+    routeHasCustomFee,
     amount: amount.toNumber(),
     address: addressTo,
   })
