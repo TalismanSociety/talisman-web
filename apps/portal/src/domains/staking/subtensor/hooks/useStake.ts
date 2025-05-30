@@ -46,9 +46,7 @@ export const useStake = (account: Account): Stake => {
   const { subnetData } = useCombineSubnetData()
   const { data: stakeInfoForColdKey } = useGetStakeInfoForColdKey(account.address)
 
-  const {
-    data: { rewards },
-  } = useGetRewardsByNominator({ nominator: account.address })
+  const { rewards } = useGetRewardsByNominator({ nominator: account.address })
 
   const minimumStakeAmount = useTokenAmount(String(MIN_SUBTENSOR_ALPHA_STAKE))
 
