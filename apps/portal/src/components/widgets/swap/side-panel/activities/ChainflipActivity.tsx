@@ -23,19 +23,19 @@ export const ChainflipActivity: React.FC<{ data: ChainflipSwapActivityData; time
   const status = useAtomValue(chainflipSwapStatusAtom(data.id))
   const assets = useAtomValue(chainflipAssetsAtom)
   const chains = useAtomValue(chainflipChainsAtom)
-  const dateObj = new Date(status.depositChannelCreatedAt ?? timestamp)
+  const dateObj = new Date(status.depositChannel?.createdAt ?? timestamp)
 
   const fromAsset = useMemo(() => assets.find(asset => asset.asset === status.srcAsset), [assets, status])
   const fromAmount = useMemo(() => {
-    const amount = status.depositAmount ?? status.expectedDepositAmount
+    const amount = ('deposit' in status && status.deposit.amount) ?? status.depositChannel?.expectedDepositAmount
     if (!amount || !fromAsset) return null
     return Decimal.fromPlanck(amount, fromAsset.decimals, { currency: fromAsset.symbol })
   }, [status, fromAsset])
 
   const destAsset = useMemo(() => assets.find(asset => asset.asset === status.destAsset), [assets, status])
   const destAmount = useMemo(() => {
-    if ('egressAmount' in status && destAsset) {
-      return Decimal.fromPlanck(status.egressAmount, destAsset.decimals, { currency: destAsset.symbol })
+    if ('swapEgress' in status && status.swapEgress?.amount && destAsset) {
+      return Decimal.fromPlanck(status.swapEgress.amount, destAsset.decimals, { currency: destAsset.symbol })
     }
     return null
   }, [status, destAsset])
@@ -107,7 +107,7 @@ export const ChainflipActivity: React.FC<{ data: ChainflipSwapActivityData; time
                 )}
               </div>
               <div className="mt-[2px] flex items-center justify-start gap-[4px]">
-                {status.state === 'COMPLETE' ? (
+                {status.state === 'COMPLETED' ? (
                   <Check className="text-primary" size={12} />
                 ) : status.state === 'FAILED' || status.expired ? (
                   <X className="text-red-500" size={12} />
