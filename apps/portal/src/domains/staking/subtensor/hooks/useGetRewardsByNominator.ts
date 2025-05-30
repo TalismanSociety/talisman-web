@@ -1,4 +1,4 @@
-import { useBalances } from '@talismn/balances-react'
+import { useBalances, useBalancesStatus } from '@talismn/balances-react'
 import { groupBy } from 'lodash'
 import { useEffect, useMemo } from 'react'
 
@@ -20,6 +20,8 @@ export function useGetRewardsByNominator({ nominator }: { nominator: string }) {
 
   const accountBalances = useMemo(() => allBalances.find(b => b.address === nominator), [allBalances, nominator])
 
+  const balancesStatus = useBalancesStatus(allBalances)
+
   const subtensorStakedPositionsInfo = useMemo(
     () =>
       accountBalances.each.flatMap(b =>
@@ -40,30 +42,40 @@ export function useGetRewardsByNominator({ nominator }: { nominator: string }) {
     [accountBalances.each, nominator]
   )
 
-  const { data: stakedBalancesData } = useGetDTaoStakedBalances({
+  const { data: stakedBalancesData, isLoading: isStakedBalancesLoading } = useGetDTaoStakedBalances({
     positions: subtensorStakedPositionsInfo,
   })
 
-  const { data, hasNextPage, isFetchNextPageError, isError, fetchNextPage, isFetchingNextPage } =
-    useGetInfiniteDelegationEvents({
-      nominator,
-      isEnabled: subtensorStakedPositionsInfo.length > 0,
-    })
+  const {
+    data: delegationEventsData,
+    hasNextPage,
+    isFetchNextPageError,
+    isError: isFetchingDelegationEventsError,
+    isFetchingNextPage: isFetchingDelegationEventsNextPage,
+    isFetching: isFetchingDelegationEvents,
+    fetchNextPage,
+  } = useGetInfiniteDelegationEvents({
+    nominator,
+    isEnabled: subtensorStakedPositionsInfo.length > 0,
+  })
 
   useEffect(() => {
-    if (hasNextPage && !isFetchNextPageError && !isFetchingNextPage) {
+    if (hasNextPage && !isFetchNextPageError && !isFetchingDelegationEventsNextPage) {
       fetchNextPage()
     }
-  }, [hasNextPage, isFetchNextPageError, fetchNextPage, isFetchingNextPage])
+  }, [hasNextPage, isFetchNextPageError, fetchNextPage, isFetchingDelegationEventsNextPage])
 
-  const combinedPagesData = useMemo(() => data?.pages.flatMap(page => page.data) || [], [data])
+  const combinedPagesData = useMemo(
+    () => delegationEventsData?.pages.flatMap(page => page.data) || [],
+    [delegationEventsData]
+  )
 
   const groupedByNetuidAndDelegator = useMemo(() => {
-    if (combinedPagesData.length && !isFetchingNextPage) {
+    if (combinedPagesData.length && !isFetchingDelegationEventsNextPage) {
       return groupBy(combinedPagesData, event => `${event.netuid || 0}_${event.delegate.ss58}`)
     }
     return {}
-  }, [combinedPagesData, isFetchingNextPage])
+  }, [combinedPagesData, isFetchingDelegationEventsNextPage])
 
   const summedDelegationEvents = useMemo(() => {
     const rewards = Object.keys(groupedByNetuidAndDelegator).reduce<Rewards>((acc, currEventKey) => {
@@ -116,9 +128,25 @@ export function useGetRewardsByNominator({ nominator }: { nominator: string }) {
     return rewards
   }, [groupedByNetuidAndDelegator, stakedBalancesData, subtensorStakedPositionsInfo])
 
-  // TODO: add an isLoading state
+  const isLoading = useMemo(
+    () =>
+      isFetchingDelegationEvents ||
+      isFetchingDelegationEventsNextPage ||
+      isStakedBalancesLoading ||
+      balancesStatus.status === 'fetching' ||
+      subtensorStakedPositionsInfo.length === 0,
+    [
+      balancesStatus.status,
+      isFetchingDelegationEvents,
+      isFetchingDelegationEventsNextPage,
+      isStakedBalancesLoading,
+      subtensorStakedPositionsInfo.length,
+    ]
+  )
+
   return {
-    rewards: summedDelegationEvents,
-    isError,
+    rewards: isLoading ? new Map() : summedDelegationEvents,
+    isError: isFetchingDelegationEventsError,
+    isLoading,
   }
 }

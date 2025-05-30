@@ -62,7 +62,7 @@ export function useGetDTaoStakedBalances({ positions }: UseGetDTaoStakedBalances
           },
           {}
         ),
-        pending: results.some(result => result.isPending),
+        isLoading: results.some(result => result.isLoading),
       }
     },
   })

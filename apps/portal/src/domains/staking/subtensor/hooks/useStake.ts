@@ -37,6 +37,7 @@ export type StakeItem = SubnetData & {
 
 export type Stake = {
   stakes: StakeItem[] | undefined
+  isRewardsLoading: boolean
 }
 
 export const useStake = (account: Account): Stake => {
@@ -46,7 +47,7 @@ export const useStake = (account: Account): Stake => {
   const { subnetData } = useCombineSubnetData()
   const { data: stakeInfoForColdKey } = useGetStakeInfoForColdKey(account.address)
 
-  const { rewards } = useGetRewardsByNominator({ nominator: account.address })
+  const { rewards, isLoading: isRewardsLoading } = useGetRewardsByNominator({ nominator: account.address })
 
   const minimumStakeAmount = useTokenAmount(String(MIN_SUBTENSOR_ALPHA_STAKE))
 
@@ -74,5 +75,5 @@ export const useStake = (account: Account): Stake => {
       ({ totalStaked }) => (totalStaked.decimalAmount?.planck ?? 0n) > (minimumStakeAmount.decimalAmount?.planck ?? 0n)
     )
 
-  return { stakes }
+  return { stakes, isRewardsLoading }
 }
