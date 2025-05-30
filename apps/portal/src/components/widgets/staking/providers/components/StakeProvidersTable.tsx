@@ -159,6 +159,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
                 nativeTokenAddress={row.original.nativeToken?.address ?? '0x'}
                 symbol={row.original.nativeToken?.symbol}
                 chainId={row.original.chainId}
+                hasDTaoStaking={row.original.hasDTaoStaking}
               />
             </Suspense>
           )
