@@ -174,3 +174,21 @@ export type DelegationEventsApiResponse = {
   pagination: Pagination
   data: DelegateEvent[]
 }
+
+export type DTaoStakeBalance = {
+  block_number: number
+  timestamp: string // ISO 8601 string format
+  hotkey_name: string
+  hotkey: Address
+  coldkey: Address
+  netuid: number
+  subnet_rank: number
+  subnet_total_holders: number
+  balance: string // raw string, assuming it's in atomic units
+  balance_as_tao: string // same as above; parsed display value may need BigInt/Decimal
+}
+
+export type DTaoStakeBalanceApiResponse = {
+  pagination: Pagination
+  data: DTaoStakeBalance[]
+}
