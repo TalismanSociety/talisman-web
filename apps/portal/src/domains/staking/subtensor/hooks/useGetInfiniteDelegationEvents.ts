@@ -28,7 +28,7 @@ const fetchValidatorsYield = async ({
       nominator: nominator,
       timestamp_start,
       timestamp_end,
-      order: 'block_number_asc',
+      order: 'block_number_desc',
     },
     method: 'GET',
     headers: {
@@ -39,10 +39,16 @@ const fetchValidatorsYield = async ({
   return data
 }
 
-export function useGetInfiniteDelegationEvents({ nominator }: { nominator: string }) {
+type UseGetInfiniteDelegationEventsProps = {
+  nominator: string
+  isEnabled?: boolean
+}
+
+export function useGetInfiniteDelegationEvents({ nominator, isEnabled = true }: UseGetInfiniteDelegationEventsProps) {
   const now = new Date()
-  now.setMinutes(0, 0, 0) // Round down to the nearest hour
-  const timestamp_end = Math.floor(now.getTime() / 1000) // Convert ms to seconds
+  const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000)
+  tomorrow.setMinutes(0, 0, 0) // Round down to the nearest hour to avoid re-fetching on every second change.
+  const timestamp_end = Math.ceil(tomorrow.getTime() / 1000) // Convert ms to seconds
 
   return useInfiniteQuery({
     queryKey: ['InfiniteDelegationEvents', nominator, TAO_STAKE_GENESIS_MONTH_TIMESTAMP, timestamp_end],
@@ -54,6 +60,6 @@ export function useGetInfiniteDelegationEvents({ nominator }: { nominator: strin
     staleTime: 5 * 60 * 1000, // 5 mins
     gcTime: 10 * 60 * 1000, // 10 mins
     refetchOnReconnect: true,
-    enabled: !!nominator,
+    enabled: !!nominator && isEnabled,
   })
 }
