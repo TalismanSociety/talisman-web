@@ -13,6 +13,7 @@ import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 
 type StakeItemRowProps = {
   stake: StakeItem
+  isRewardsLoading: boolean
   account: Account
   chain: ChainInfo
   highlightedDelegate?: BondOption
@@ -26,6 +27,7 @@ export const StakeItemRow = ({
   account,
   chain,
   highlightedDelegate,
+  isRewardsLoading,
   handleToggleAddStakeDialog,
   handleToggleUnstakeDialog,
   handleToggleChangeValidator,
@@ -43,13 +45,15 @@ export const StakeItemRow = ({
     destinationHotkey: highlightedDelegate?.poolId,
   })
 
+  const { netuid } = stake
+  const isRootnetStake = netuid === ROOT_NETUID
+
   const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
-  const assetSymbol = stake.netuid === ROOT_NETUID ? symbol : `SN${stake.netuid} ${stake.descriptionName ?? ''}`
-  const assetLogo = stake.netuid === ROOT_NETUID ? logo : DTAO_LOGO
+  const assetSymbol = isRootnetStake ? symbol : `SN${stake.netuid} ${stake.descriptionName ?? ''}`
+  const assetLogo = isRootnetStake ? logo : DTAO_LOGO
   const provider = combinedValidatorsData.find(({ poolId }) => poolId === stake.hotkey)?.name ?? 'Managed delegation'
 
-  const fiatBalance =
-    stake.netuid === ROOT_NETUID ? stake.totalStaked.localizedFiatAmount : expectedTaoAmount.localizedFiatAmount
+  const fiatBalance = isRootnetStake ? stake.totalStaked.localizedFiatAmount : expectedTaoAmount.localizedFiatAmount
 
   return (
     <ErrorBoundary
@@ -69,6 +73,13 @@ export const StakeItemRow = ({
         stakeStatus={'earning_rewards'}
         isError={isError}
         errorMessage={errorMessage}
+        isRewardsLoading={isRewardsLoading}
+        rewards={
+          <ErrorBoundary renderFallback={() => <>--</>}>{stake.rewards.decimalAmount?.toLocaleString()}</ErrorBoundary>
+        }
+        fiatRewards={
+          <ErrorBoundary renderFallback={() => <>--</>}>{stake.rewardsFormatted?.localizedFiatAmount}</ErrorBoundary>
+        }
         balance={
           <ErrorBoundary renderFallback={() => <>--</>}>
             {stake.totalStaked.decimalAmount?.toLocaleString()}

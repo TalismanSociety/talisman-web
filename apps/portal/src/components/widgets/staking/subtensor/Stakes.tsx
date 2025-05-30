@@ -61,7 +61,7 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
   const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
 
   const chain = useRecoilValue(useChainState())
-  const { stakes = [] } = useStake(account)
+  const { stakes = [], isRewardsLoading } = useStake(account)
 
   useEffect(() => {
     if (!stakes || stakes.length === 0) return
@@ -106,6 +106,7 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
           <StakeItemRow
             key={`${account.address}-${stake.hotkey}-${stake.netuid}`}
             stake={stake}
+            isRewardsLoading={isRewardsLoading}
             account={account}
             chain={chain}
             highlightedDelegate={highlightedDelegate}

@@ -40,6 +40,7 @@ export type StakePositionProps = {
   fiatBalance: ReactNode
   rewards?: ReactNode
   fiatRewards?: ReactNode
+  isRewardsLoading?: boolean
   unstakingStatus?: ReactNode
   increaseStakeButton?: ReactNode
   changeValidatorButton?: ReactNode
@@ -320,9 +321,13 @@ export const StakePosition = Object.assign(
                   Total rewards (all time)
                 </Text.BodySmall>
                 <Text.Body as="div" alpha="high">
-                  <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                    {props.rewards ?? <Text alpha="medium">--</Text>}
-                  </Suspense>
+                  {props.isRewardsLoading ? (
+                    <CircularProgressIndicator size="1em" />
+                  ) : (
+                    <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                      {props.rewards ?? <Text alpha="medium">--</Text>}
+                    </Suspense>
+                  )}
                   <div className="@[100rem]:block hidden" />{' '}
                   <Suspense>
                     <Text.Body alpha="medium" className="!text-[#38D448]">
