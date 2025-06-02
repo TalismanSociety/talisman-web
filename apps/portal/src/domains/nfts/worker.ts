@@ -2,7 +2,6 @@ import type { Nft } from '@talismn/nft'
 import {
   createAcalaNftAsyncGenerator,
   createArtZeroNftAsyncGenerator,
-  createBitCountryNftAsyncGenerator,
   createEvmNftAsyncGenerator,
   createSubstrateNftKusamaAssetHubNftAsyncGenerator,
   createSubstrateNftPolkadotAssetHubNftAsyncGenerator,
@@ -11,14 +10,13 @@ import {
 import { Observable } from 'rxjs'
 import { expose } from 'threads/worker'
 
-const subscribeNfts = (address: string, options: { batchSize: number; acalaRpc: string; bitcountryRpc: string }) =>
+const subscribeNfts = (address: string, options: { batchSize: number; acalaRpc: string }) =>
   new Observable<Nft | { error: unknown }>(observer => {
     const promises = (
       address.startsWith('0x')
         ? [createEvmNftAsyncGenerator, createUniqueNetworkNftAsyncGenerator]
         : [
             createAcalaNftAsyncGenerator({ rpc: options.acalaRpc }),
-            createBitCountryNftAsyncGenerator({ rpc: options.bitcountryRpc }),
             createSubstrateNftKusamaAssetHubNftAsyncGenerator,
             createSubstrateNftPolkadotAssetHubNftAsyncGenerator,
             createUniqueNetworkNftAsyncGenerator,
