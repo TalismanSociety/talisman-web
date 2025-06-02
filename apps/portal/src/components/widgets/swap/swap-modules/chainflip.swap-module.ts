@@ -231,8 +231,16 @@ const quote: QuoteFunction = loadable(
       })
 
       // In the time since we integrated chainflip, the sdk has made it possible to get multiple quotes for a request.
-      // Until we refactor this module to handle multiple quotes, we'll just take the first REGULAR quote.
-      const quote = quoteResp.quotes.filter(q => q.type === 'REGULAR')[0]
+      // Until we refactor this module to handle multiple quotes, we'll take the first REGULAR quote with the most amount of output tokens.
+      const quote = quoteResp.quotes
+        .filter(q => q.type === 'REGULAR')
+        .sort((a, b) => {
+          // If a < b, b should come first
+          if (BigInt(a.egressAmount) < BigInt(b.egressAmount)) return 1
+          // If a > b, a should come first
+          if (BigInt(a.egressAmount) > BigInt(b.egressAmount)) return -1
+          return 0
+        })[0]
       if (!quote) throw new Error('No quote found')
 
       const fees = quote.includedFees
