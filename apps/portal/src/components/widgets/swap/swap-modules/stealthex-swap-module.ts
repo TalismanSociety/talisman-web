@@ -425,7 +425,9 @@ export const toAssetsSelector = atom(async get => {
     `${asset.context?.stealthex?.network}::${asset.context?.stealthex?.symbol}`
 
   const validDestinations = new Set(pairs.map(keyFromPair))
-  const hasCustomFee = Object.fromEntries(pairs.map(pair => [keyFromPair(pair), pair.features.includes('custom_fee')]))
+  const routeHasCustomFee = Object.fromEntries(
+    pairs.map(pair => [keyFromPair(pair), pair.features.includes('custom_fee')])
+  )
 
   const validDestAssets = allAssets
     .filter(asset => validDestinations.has(keyFromAsset(asset)))
@@ -435,7 +437,7 @@ export const toAssetsSelector = atom(async get => {
         ...asset.context,
         stealthex: {
           ...asset.context.stealthex,
-          routeHasCustomFee: !!hasCustomFee[keyFromAsset(asset)],
+          routeHasCustomFee: !!routeHasCustomFee[keyFromAsset(asset)],
         },
       },
     }))
@@ -452,7 +454,7 @@ const quote: QuoteFunction = loadable(
     const fromAsset = get(fromAssetAtom)
     const toAsset = get(toAssetAtom)
     const fromAmount = get(fromAmountAtom)
-    const routeHasCustomFee = toAsset?.context.stealthex.hasCustomFee
+    const routeHasCustomFee = toAsset?.context.stealthex.routeHasCustomFee
     if (typeof routeHasCustomFee !== 'boolean') throw new Error(`Missing required asset context 'routeHasCustomFee'`)
 
     if (!fromAsset || !toAsset || !fromAmount || fromAmount.planck === 0n) return null
@@ -546,7 +548,7 @@ const swap: SwapFunction<{ id: string }> = async (
   // cannot swap from BTC
   if (fromAsset.networkType === 'btc') throw new Error('Swapping from BTC is not supported.')
 
-  const routeHasCustomFee = toAsset?.context.stealthex.hasCustomFee
+  const routeHasCustomFee = toAsset?.context.stealthex.routeHasCustomFee
   if (typeof routeHasCustomFee !== 'boolean') throw new Error(`Missing required asset context 'routeHasCustomFee'`)
 
   const exchange = await stealthexSdk.createExchange({
