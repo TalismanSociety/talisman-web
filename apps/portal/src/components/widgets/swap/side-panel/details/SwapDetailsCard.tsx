@@ -113,9 +113,7 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
           </p>
           <div className="flex items-center justify-end gap-[8px]">
             <img src={quote.providerLogo} className="mb-[2px] h-[20px] rounded-full" />
-            {quote.providerName !== 'StealthEX' && (
-              <p className="max-w-60 truncate text-[12px] font-semibold">{quote.providerName}</p>
-            )}
+            <p className="max-w-60 truncate text-[12px] font-semibold">{quote.providerName}</p>
           </div>
         </div>
         <div className="text-muted-foreground mb-[16px] flex items-center gap-[8px]">
