@@ -3,7 +3,7 @@ import { QuoteResponse } from '@chainflip/sdk/swap'
 import { chainsAtom } from '@talismn/balances-react'
 import { encodeAnyAddress } from '@talismn/util'
 import BigNumber from 'bignumber.js'
-import { atom, Getter, Setter } from 'jotai'
+import { atom, ExtractAtomValue, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
 import { createPublicClient, encodeFunctionData, erc20Abi, fallback, http, isAddress } from 'viem'
 import { arbitrum, base, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon, sonic } from 'viem/chains'
@@ -406,19 +406,33 @@ const simpleswapAssetsAtom = atom(async () => {
   )
 })
 
+const pairKeyFromPair = (pair: Awaited<ExtractAtomValue<typeof pairsAtom>>[number]) => pair.toLowerCase()
+const pairKeyFromAsset = (asset: SwappableAssetBaseType) => asset.context.simpleswap?.symbol.toLowerCase()
+
+const pairsAtom = atom(async get => {
+  const fromAsset = get(fromAssetAtom)
+  const { symbol } = fromAsset?.context?.simpleswap ?? {}
+  if (!symbol) return [] // not supported
+
+  const pairs = await simpleSwapSdk.getPairs({ symbol, fixed: false })
+  if (!pairs || !Array.isArray(pairs)) return []
+
+  return pairs
+})
+
 export const fromAssetsSelector = atom(async get => await get(simpleswapAssetsAtom))
 export const toAssetsSelector = atom(async get => {
   const allAssets = await get(simpleswapAssetsAtom)
   const fromAsset = get(fromAssetAtom)
   if (!fromAsset) return allAssets
-  const symbol = fromAsset.context.simpleswap?.symbol
-  if (!symbol) return [] // not supported
-  const pairs = await simpleSwapSdk.getPairs({ symbol, fixed: false })
+
+  const pairs = await get(pairsAtom)
   if (!pairs || !Array.isArray(pairs)) return []
-  return [
-    fromAsset,
-    ...allAssets.filter(asset => pairs.find(p => p.toLowerCase() === asset.context.simpleswap?.symbol.toLowerCase())),
-  ]
+
+  const validDestinations = new Set(pairs.map(pairKeyFromPair))
+  const validDestAssets = allAssets.filter(asset => validDestinations.has(pairKeyFromAsset(asset)))
+
+  return [fromAsset, ...validDestAssets]
 })
 
 const quote: QuoteFunction = loadable(

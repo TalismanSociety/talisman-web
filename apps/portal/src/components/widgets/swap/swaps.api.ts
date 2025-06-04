@@ -648,10 +648,12 @@ export const useSwap = () => {
 // utility hooks
 
 export const useReverse = () => {
+  const setFromAmount = useSetAtom(fromAmountAtom)
+
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
   const [toAsset, setToAsset] = useAtom(toAssetAtom)
+
   const toAmount = useAtomValue(loadable(toAmountAtom))
-  const setFromAmount = useSetAtom(fromAmountAtom)
 
   return useCallback(() => {
     if (toAmount.state === 'hasData' && toAmount.data) {
