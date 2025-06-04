@@ -93,7 +93,7 @@ export const ChainFlipSwap: React.FC = () => {
 
   const handleChangeFromAsset = useCallback(
     (asset: SwappableAssetWithDecimals | null) => {
-      if (asset && toAsset && asset.id === toAsset.id) reverse()
+      if (asset && toAsset && asset.id === toAsset.id && reverse) reverse()
       else setFromAsset(asset)
     },
     [reverse, setFromAsset, toAsset]
@@ -101,7 +101,7 @@ export const ChainFlipSwap: React.FC = () => {
 
   const handleChangeToAsset = useCallback(
     (asset: SwappableAssetWithDecimals | null) => {
-      if (asset && fromAsset && asset.id === fromAsset.id) reverse()
+      if (asset && fromAsset && asset.id === fromAsset.id && reverse) reverse()
       else setToAsset(asset)
     },
     [fromAsset, reverse, setToAsset]
@@ -190,6 +190,7 @@ export const ChainFlipSwap: React.FC = () => {
             <TonalIconButton
               className="border-3 absolute -top-[8px] left-1/2 z-10 !h-[48px] !w-[48px] -translate-x-1/2 !rounded-full !border-solid !border-gray-900 !bg-[#2D3121]"
               onClick={reverse}
+              disabled={!reverse}
             >
               <Repeat />
             </TonalIconButton>
