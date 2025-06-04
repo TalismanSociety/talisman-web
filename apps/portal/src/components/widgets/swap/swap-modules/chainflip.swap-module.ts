@@ -46,7 +46,8 @@ import {
 const PROTOCOL: SupportedSwapProtocol = 'chainflip' as const
 const PROTOCOL_NAME = 'Chainflip'
 const DECENTRALISATION_SCORE = 2
-const CHAINFLIP_COMMISSION_BPS = 150
+const CHAINFLIP_COMMISSION = 0.015 // We take a fee of 1.5%
+const brokerCommissionBps = CHAINFLIP_COMMISSION * 10_000 // to bps
 
 const EVM_CHAINS: ViemChain[] = [mainnet, sepolia, arbitrum]
 
@@ -145,7 +146,7 @@ const swapSdkAtom = atom(get => {
   const brokerUrl = get(brokerUrlAtom)
   return new SwapSDK({
     network,
-    broker: brokerUrl ? { url: brokerUrl, commissionBps: CHAINFLIP_COMMISSION_BPS } : undefined,
+    broker: brokerUrl ? { url: brokerUrl, commissionBps: brokerCommissionBps } : undefined,
   })
 })
 
@@ -227,7 +228,7 @@ const quote: QuoteFunction = loadable(
         destAsset: chainflipToAsset.asset,
         srcChain: chainflipFromAsset.chain,
         destChain: chainflipToAsset.chain,
-        brokerCommissionBps: CHAINFLIP_COMMISSION_BPS,
+        brokerCommissionBps,
       })
 
       // In the time since we integrated chainflip, the sdk has made it possible to get multiple quotes for a request.
@@ -266,7 +267,7 @@ const quote: QuoteFunction = loadable(
         protocol: PROTOCOL,
         inputAmountBN: fromAmount.planck,
         outputAmountBN: BigInt(quote.egressAmount),
-        talismanFeeBps: CHAINFLIP_COMMISSION_BPS / 10000,
+        talismanFee: CHAINFLIP_COMMISSION,
         fees,
         data: quote,
         timeInSec: quote.estimatedDurationSeconds,
@@ -361,7 +362,7 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
       srcAddress,
       destAddress: toAddress,
       quote: cfQuote,
-      brokerCommissionBps: CHAINFLIP_COMMISSION_BPS,
+      brokerCommissionBps,
       fillOrKillParams: {
         refundAddress: srcAddress,
         slippageTolerancePercent: 4, // 4% slippage

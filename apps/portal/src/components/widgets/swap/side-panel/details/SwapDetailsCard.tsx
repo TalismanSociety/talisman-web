@@ -124,7 +124,7 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
             content={
               <p className="max-w-[240px] text-[14px]">
                 This is the estimated amount, including the provider costs for exchange liquidity, gas fees, provider
-                rates and a {((quote.talismanFeeBps ?? 0) * 100).toFixed(2)}% Talisman fee on this path.
+                rates and a {((quote.talismanFee ?? 0.0) * 100).toFixed(2)}% Talisman fee on this path.
               </p>
             }
             placement="top"

@@ -28,7 +28,7 @@ import {
 const PROTOCOL: SupportedSwapProtocol = 'lifi' as const
 const PROTOCOL_NAME = 'LI.FI'
 const DECENTRALISATION_SCORE = 2
-const TALISMAN_FEE = 0.002
+const TALISMAN_FEE = 0.002 // We take a fee of 0.2%
 
 sdk.createConfig({
   integrator: 'talisman',
@@ -137,7 +137,7 @@ const subProviderQuoteAtom = atomFamily((id: string) =>
       return {
         decentralisationScore: DECENTRALISATION_SCORE,
         fees,
-        talismanFeeBps: TALISMAN_FEE,
+        talismanFee: TALISMAN_FEE,
         inputAmountBN: BigInt(step.estimate.fromAmount),
         outputAmountBN: BigInt(route.toAmountMin),
         protocol: PROTOCOL,
