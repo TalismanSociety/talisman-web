@@ -434,7 +434,7 @@ const routeHasCustomFeeAtom = atom(async get => {
   const pair = pairs.find(pair => pairKeyFromPair(pair) === toAssetKey)
   if (!pair) return false
 
-  return !!pair.features.includes('custom_fee')
+  return pair.features.includes('custom_fee')
 })
 
 export const fromAssetsSelector = atom(async get => await get(assetsAtom))
@@ -496,7 +496,7 @@ const quote: QuoteFunction = loadable(
         fees: gasFee ? [gasFee] : [],
         providerLogo: LOGO,
         providerName: PROTOCOL_NAME,
-        talismanFeeBps: TALISMAN_TOTAL_FEE,
+        talismanFeeBps: routeHasCustomFee ? TALISMAN_TOTAL_FEE : BUILT_IN_FEE,
       }
     } catch (cause) {
       console.error(`Failed to get StealthEX quote`, cause)
