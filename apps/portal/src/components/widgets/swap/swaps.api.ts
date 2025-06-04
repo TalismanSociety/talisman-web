@@ -650,44 +650,18 @@ export const useSwap = () => {
 export const useReverse = () => {
   const setFromAmount = useSetAtom(fromAmountAtom)
 
-  const allFromAssetsLoadable = useAtomValue(loadable(fromAssetsAtom))
-  const allToAssetsLoadable = useAtomValue(loadable(toAssetsAtom))
-
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
   const [toAsset, setToAsset] = useAtom(toAssetAtom)
 
   const toAmount = useAtomValue(loadable(toAmountAtom))
 
-  const reversedFromAsset = useMemo(
-    () =>
-      toAsset?.id &&
-      allFromAssetsLoadable.state === 'hasData' &&
-      allFromAssetsLoadable.data.find(asset => asset.id === toAsset.id),
-    [allFromAssetsLoadable, toAsset?.id]
-  )
-  const reversedToAsset = useMemo(
-    () =>
-      fromAsset?.id &&
-      allToAssetsLoadable.state === 'hasData' &&
-      allToAssetsLoadable.data.find(asset => asset.id === fromAsset.id),
-    [allToAssetsLoadable, fromAsset?.id]
-  )
-
-  const reverse = useCallback(() => {
-    if (!reversedFromAsset) return
-    if (!reversedToAsset) return
-
-    if (toAmount.state === 'hasData' && toAmount.data) setFromAmount(toAmount.data)
-
-    setFromAsset(reversedFromAsset)
-    setToAsset(reversedToAsset)
-  }, [reversedFromAsset, reversedToAsset, setFromAmount, setFromAsset, setToAsset, toAmount])
-
-  // if we can't reverse, don't return the callback
-  if (!reversedFromAsset || !reversedToAsset) return
-
-  // if we can reverse, return the callback
-  return reverse
+  return useCallback(() => {
+    if (toAmount.state === 'hasData' && toAmount.data) {
+      setFromAmount(toAmount.data)
+    }
+    setFromAsset(toAsset)
+    setToAsset(fromAsset)
+  }, [fromAsset, setFromAmount, setFromAsset, setToAsset, toAmount, toAsset])
 }
 
 export const useAssetToken = (assetAtom: PrimitiveAtom<SwappableAssetBaseType | null>) => {
