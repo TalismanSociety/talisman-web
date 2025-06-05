@@ -533,7 +533,7 @@ const quote: QuoteFunction = loadable(
         fees: gasFee ? [gasFee] : [],
         providerLogo: LOGO,
         providerName: PROTOCOL_NAME,
-        talismanFeeBps: getTalismanTotalFee({ fromAsset, toAsset }),
+        talismanFeeBps: Math.max(getTalismanTotalFee({ fromAsset, toAsset }), BUILT_IN_FEE),
       }
     } catch (cause) {
       console.error(`Failed to get StealthEX quote`, cause)
