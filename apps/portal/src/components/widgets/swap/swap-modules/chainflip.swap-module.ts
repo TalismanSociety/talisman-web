@@ -354,13 +354,15 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
 
   const substrateChains = await get(chainsAtom)
   const fromSubstrateChain = substrateChains.find(c => c.id === fromAsset.chainId)
+  const toSubstrateChain = substrateChains.find(c => c.id === toAsset.chainId)
   const srcAddress = fromSubstrateChain ? encodeAnyAddress(fromAddress, fromSubstrateChain?.prefix ?? 42) : fromAddress
+  const destAddress = toSubstrateChain ? encodeAnyAddress(toAddress, toSubstrateChain?.prefix ?? 42) : toAddress
 
   try {
     // request a deposit address to send funds to
     const depositAddress = await sdk.requestDepositAddressV2({
       srcAddress,
-      destAddress: toAddress,
+      destAddress,
       quote: cfQuote,
       brokerCommissionBps,
       fillOrKillParams: {
