@@ -1,34 +1,45 @@
-import { usePolkadotApiId } from '@talismn/react-polkadot-api'
-import BigNumber from 'bignumber.js'
-import { useMemo } from 'react'
-import { useRecoilValue, waitForAll } from 'recoil'
+import { useBalances } from '@talismn/balances-react'
 
-import { selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
-import { useChainState } from '@/domains/chains/hooks'
-import { chainDeriveState, chainQueryState } from '@/domains/common/recoils/query'
+import { ROOT_NETUID } from '../../../subtensor/constants'
 
-const useStakePercentage = () => {
-  const apiId = usePolkadotApiId()
-  const accounts = useRecoilValue(selectedSubstrateAccountsState)
-  const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
-  const balances = useRecoilValue(
-    waitForAll(addresses.map(address => chainDeriveState(apiId, 'balances', 'all', [address])))
-  )
-  const free = useMemo(() => balances.reduce((prev, curr) => prev + curr.freeBalance.toBigInt(), 0n), [balances])
-  const chain = useRecoilValue(useChainState())
-  const ledgers = useRecoilValue(
-    // @ts-expect-error
-    waitForAll(addresses.map(address => chainQueryState(chain.rpc, 'subtensorModule', 'totalColdkeyStake', [address])))
-  )
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const staked = useMemo(() => ledgers.reduce((prev, curr: any) => prev + curr?.toBigInt?.(), 0n), [ledgers])
-  const total = useMemo(() => free + staked, [free, staked])
+const useStakePercentage = (hasDTaoStaking: boolean) => {
+  const allBalances = useBalances()
 
-  const stakePercentage = useMemo(
-    () => (staked === 0n ? 0 : new BigNumber(staked.toString()).div(total.toString()).toNumber()),
-    [staked, total]
+  const subtensorBalances = allBalances.find(q => q.chainId === 'bittensor')
+
+  type BittensorBalances = {
+    total: bigint
+    rootStakedBalance: bigint
+    subnetStakedBalanceInTao: bigint
+  }
+
+  type Meta = { amountStaked: string; netuid: number }
+
+  const bittensorBalances = subtensorBalances.each.reduce<BittensorBalances>(
+    (acc, curr) => {
+      acc.total += curr.total.planck
+      curr.subtensor.forEach(subtensor => {
+        const {
+          amount,
+          meta: { netuid = 0 },
+        } = subtensor as typeof subtensor & { meta: Meta }
+
+        if (netuid === ROOT_NETUID) {
+          acc.rootStakedBalance += amount.planck
+        } else {
+          acc.subnetStakedBalanceInTao += amount.planck
+        }
+      })
+      return acc
+    },
+    { rootStakedBalance: 0n, subnetStakedBalanceInTao: 0n, total: 0n }
   )
-  return stakePercentage
+
+  if (hasDTaoStaking) {
+    return Number(bittensorBalances.subnetStakedBalanceInTao) / Number(bittensorBalances.total)
+  }
+
+  return Number(bittensorBalances.rootStakedBalance) / Number(bittensorBalances.total)
 }
 
 export default useStakePercentage
