@@ -50,7 +50,7 @@ export type BaseQuote<TData = any> = {
   inputAmountBN: bigint
   error?: string
   fees: QuoteFee[]
-  talismanFeeBps?: number
+  talismanFee?: number
   data?: TData
   timeInSec: number
   providerLogo: string
