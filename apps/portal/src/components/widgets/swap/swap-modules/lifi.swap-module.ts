@@ -8,8 +8,6 @@ import { zeroAddress } from 'viem'
 import { type Chain as ViemChain } from 'viem/chains'
 import * as allEvmChains from 'viem/chains'
 
-import { Decimal } from '@/util/Decimal'
-
 import { knownEvmNetworksAtom } from '../helpers'
 import {
   fromAddressAtom,
@@ -117,7 +115,7 @@ const subProviderQuoteAtom = atomFamily((id: string) =>
 
       const fees =
         step.estimate.feeCosts?.map(fee => ({
-          amount: Decimal.fromPlanck(BigInt(fee.amount), fee.token.decimals),
+          amount: BigNumber(fee.amount).times(BigNumber(10).pow(-fee.token.decimals)),
           name: fee.name,
           tokenId:
             fee.token.address === zeroAddress
@@ -128,7 +126,7 @@ const subProviderQuoteAtom = atomFamily((id: string) =>
       if (step.estimate.gasCosts) {
         step.estimate.gasCosts.forEach(c => {
           fees.push({
-            amount: Decimal.fromPlanck(c.amount, c.token.decimals),
+            amount: BigNumber(c.amount).times(BigNumber(10).pow(-c.token.decimals)),
             name: 'Gas',
             tokenId:
               c.token.address === zeroAddress
@@ -139,10 +137,9 @@ const subProviderQuoteAtom = atomFamily((id: string) =>
       }
       // add talisman fee
       fees.push({
-        amount: Decimal.fromPlanck(
-          BigNumber(step.estimate.fromAmount.toString()).times(TALISMAN_FEE).toString(),
-          fromAsset.decimals
-        ),
+        amount: BigNumber(step.estimate.fromAmount.toString())
+          .times(BigNumber(10).pow(-fromAsset.decimals))
+          .times(TALISMAN_FEE),
         name: 'Talisman Fee',
         tokenId: fromAsset.id,
       })

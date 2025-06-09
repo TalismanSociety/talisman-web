@@ -2,6 +2,7 @@ import { useTokenRates, useTokens } from '@talismn/balances-react'
 import { Clickable } from '@talismn/ui/atoms/Clickable'
 import { Surface } from '@talismn/ui/atoms/Surface'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+import BigNumber from 'bignumber.js'
 import { intervalToDuration } from 'date-fns'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { Clock, Info } from 'lucide-react'
@@ -87,8 +88,9 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
       quote.fees
         .reduce((acc, fee) => {
           const rate = tokenRates[fee.tokenId]?.[currency]?.price ?? 0
-          return acc + fee.amount.toNumber() * rate
-        }, 0)
+          return acc.plus(fee.amount.times(rate))
+        }, BigNumber(0))
+        .toNumber()
         .toLocaleString(undefined, { style: 'currency', currency, maximumSignificantDigits: 3 }),
     [currency, quote.fees, tokenRates]
   )

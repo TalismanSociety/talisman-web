@@ -11,6 +11,7 @@ import type { Chain as ViemChain } from 'viem/chains'
 import { Asset, SwapSDK } from '@chainflip/sdk/swap'
 import { chainsAtom } from '@talismn/balances-react'
 import { encodeAnyAddress } from '@talismn/util'
+import BigNumber from 'bignumber.js'
 import { atom } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
 import { createPublicClient, encodeFunctionData, erc20Abi, fallback, http, isAddress } from 'viem'
@@ -254,7 +255,7 @@ const quote: QuoteFunction = loadable(
           if (!swappableAsset) return null
 
           // get rate and compute fee in fiat
-          const amount = Decimal.fromPlanck(fee.amount, asset.decimals, { currency: asset.symbol })
+          const amount = BigNumber(fee.amount).times(BigNumber(10).pow(-asset.decimals))
           return { name: fee.type.toLowerCase(), tokenId: swappableAsset.id, amount }
         })
         .filter(fee => fee !== null)
@@ -497,9 +498,9 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
       return {
         name: 'Est. Gas Fees',
         tokenId: network.nativeToken.id,
-        amount: Decimal.fromPlanck(gasPrice * gasLimit, network.nativeToken.decimals, {
-          currency: network.nativeToken.symbol,
-        }),
+        amount: BigNumber(gasPrice.toString())
+          .times(gasLimit.toString())
+          .times(BigNumber(10).pow(-network.nativeToken.decimals)),
       }
     }
 
@@ -519,12 +520,11 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
   const transfer = polkadotApi.tx.balances['transferAllowDeath'] ?? polkadotApi.tx.balances['transfer']
   const transferTx = transfer(fromAddress, fromAmount.planck)
   const decimals = transferTx.registry.chainDecimals[0] ?? 10 // default to polkadot decimals 10
-  const symbol = transferTx.registry.chainTokens[0] ?? 'DOT' // default to polkadot symbol 'DOT'
   const paymentInfo = await transferTx.paymentInfo(fromAddress)
   return {
     name: 'Est. Gas Fees',
     tokenId: substrateChain?.nativeToken?.id ?? 'polkadot-substrate-native',
-    amount: Decimal.fromPlanck(paymentInfo.partialFee.toBigInt(), decimals, { currency: symbol }),
+    amount: BigNumber(paymentInfo.partialFee.toString()).times(BigNumber(10).pow(-decimals)),
   }
 }
 

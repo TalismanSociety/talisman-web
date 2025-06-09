@@ -3,6 +3,7 @@ import * as sdk from '@lifi/sdk'
 import { evmErc20TokenId } from '@talismn/balances'
 import { tokenRatesAtom, tokensByIdAtom, useTokens } from '@talismn/balances-react'
 import { toast } from '@talismn/ui/molecules/Toaster'
+import BigNumber from 'bignumber.js'
 import { Atom, atom, Getter, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { atomFamily, loadable, useAtomCallback } from 'jotai/utils'
 import { Loadable } from 'jotai/vanilla/utils/loadable'
@@ -505,10 +506,12 @@ export const sortedQuotesAtom = atom(async get => {
   return quotes.data
     ?.map(q => {
       if (q.state !== 'hasData') return { quote: q, fees: 0 }
-      const fees = q.data?.fees.reduce((acc, fee) => {
-        const rate = tokenRates[fee.tokenId]?.usd?.price ?? 0
-        return acc + fee.amount.toNumber() * rate
-      }, 0)
+      const fees = q.data?.fees
+        .reduce((acc, fee) => {
+          const rate = tokenRates[fee.tokenId]?.usd?.price ?? 0
+          return acc.plus(fee.amount.times(rate))
+        }, BigNumber(0))
+        ?.toNumber()
       return {
         quote: q,
         fees,
