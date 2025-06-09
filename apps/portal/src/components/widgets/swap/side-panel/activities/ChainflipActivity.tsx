@@ -45,7 +45,7 @@ export const ChainflipActivity: React.FC<{ data: ChainflipSwapActivityData; time
     if (!fromAsset) return null
     const chain = chains.find(chain => chain.chain === fromAsset.chain)
     if (!chain) return null
-    const asset = chainflipAssetToSwappableAsset(fromAsset, chain)
+    const asset = chainflipAssetToSwappableAsset(fromAsset, chain, tokens)
     if (!asset) return null
     return tokens[asset.id]
   }, [chains, fromAsset, tokens])
@@ -54,7 +54,7 @@ export const ChainflipActivity: React.FC<{ data: ChainflipSwapActivityData; time
     if (!destAsset) return null
     const chain = chains.find(chain => chain.chain === destAsset.chain)
     if (!chain) return null
-    const asset = chainflipAssetToSwappableAsset(destAsset, chain)
+    const asset = chainflipAssetToSwappableAsset(destAsset, chain, tokens)
     if (!asset) return null
     return tokens[asset.id]
   }, [chains, destAsset, tokens])

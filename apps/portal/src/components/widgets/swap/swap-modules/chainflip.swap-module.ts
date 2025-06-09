@@ -9,7 +9,8 @@ import type {
 import type { Getter, Setter } from 'jotai'
 import type { Chain as ViemChain } from 'viem/chains'
 import { Asset, SwapSDK } from '@chainflip/sdk/swap'
-import { chainsAtom } from '@talismn/balances-react'
+import { chainsAtom, tokensByIdAtom } from '@talismn/balances-react'
+import { githubUnknownTokenLogoUrl, TokenList } from '@talismn/chaindata-provider'
 import { encodeAnyAddress } from '@talismn/util'
 import BigNumber from 'bignumber.js'
 import { atom } from 'jotai'
@@ -80,7 +81,8 @@ type ChainflipAssetContext = {
  */
 export const chainflipAssetToSwappableAsset = (
   asset: AssetData,
-  chain: ChainData
+  chain: ChainData,
+  tokensById: TokenList
 ): SwappableAssetBaseType<{ chainflip: ChainflipAssetContext }> | null => {
   const chainId =
     chain.evmChainId?.toString() ?? CHAINFLIP_CHAIN_TO_ID_MAP[chain.chain as Exclude<Chain, 'Solana'>] ?? 'unsupported'
@@ -89,13 +91,16 @@ export const chainflipAssetToSwappableAsset = (
     : chain.chain === 'Bitcoin'
     ? 'btc'
     : 'evm'
+  const id = getTokenIdForSwappableAsset(networkType, chainId, asset.contractAddress)
   if (chainId === 'unsupported') return null
+  const image = tokensById[id]?.logo !== githubUnknownTokenLogoUrl ? tokensById[id]?.logo : undefined
   return {
-    id: getTokenIdForSwappableAsset(networkType, chainId, asset.contractAddress),
+    id,
     name: asset.name,
     symbol: asset.symbol,
     chainId,
     contractAddress: asset.contractAddress,
+    image,
     networkType,
     context: {
       chainflip: {
@@ -159,13 +164,14 @@ export const chainflipChainsAtom = atom(async get => await get(swapSdkAtom).getC
 const tokensSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {
   const assets = await get(chainflipAssetsAtom)
   const chains = await get(chainflipChainsAtom)
+  const tokensById = await get(tokensByIdAtom)
   const tokens: SwappableAssetBaseType[] = []
 
   for (const asset of assets) {
     const chain = chains.find(chain => chain.chain === asset.chain)
     // for safety measure only, unless chainflip has bug
     if (!chain) continue
-    const swappableAsset = chainflipAssetToSwappableAsset(asset, chain)
+    const swappableAsset = chainflipAssetToSwappableAsset(asset, chain, tokensById)
     if (swappableAsset) tokens.push(swappableAsset)
   }
 
@@ -245,13 +251,14 @@ const quote: QuoteFunction = loadable(
         })[0]
       if (!quote) throw new Error('No quote found')
 
+      const tokensById = await get(tokensByIdAtom)
       const fees = quote.includedFees
         .map(fee => {
           const asset = assets.find(a => a.chain === fee.chain && a.asset === fee.asset)
           const chain = chains.find(c => c.chain === fee.chain)
           if (!asset || !chain) return null
 
-          const swappableAsset = chainflipAssetToSwappableAsset(asset, chain)
+          const swappableAsset = chainflipAssetToSwappableAsset(asset, chain, tokensById)
           if (!swappableAsset) return null
 
           // get rate and compute fee in fiat
