@@ -36,7 +36,7 @@ export type SwappableAssetWithDecimals<TContext = Partial<Record<SupportedSwapPr
   decimals: number
 } & SwappableAssetBaseType<TContext>
 
-type QuoteFee = {
+export type QuoteFee = {
   name: string
   amount: Decimal
   tokenId: string

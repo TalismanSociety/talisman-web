@@ -1,6 +1,7 @@
 import * as sdk from '@lifi/sdk'
 import { evmErc20TokenId, evmNativeTokenId } from '@talismn/balances'
 import { evmNetworksByIdAtom } from '@talismn/balances-react'
+import BigNumber from 'bignumber.js'
 import { atom, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
 import { zeroAddress } from 'viem'
@@ -111,6 +112,8 @@ const subProviderQuoteAtom = atomFamily((id: string) =>
       if (!step) return null
       const transaction = await sdk.getStepTransaction(step)
       if (!transaction?.transactionRequest) return null
+      const fromAsset = get(fromAssetAtom)
+      if (!fromAsset) return null
 
       const fees =
         step.estimate.feeCosts?.map(fee => ({
@@ -134,6 +137,15 @@ const subProviderQuoteAtom = atomFamily((id: string) =>
           })
         })
       }
+      // add talisman fee
+      fees.push({
+        amount: Decimal.fromPlanck(
+          BigNumber(step.estimate.fromAmount.toString()).times(TALISMAN_FEE).toString(),
+          fromAsset.decimals
+        ),
+        name: 'Talisman Fee',
+        tokenId: fromAsset.id,
+      })
       return {
         decentralisationScore: DECENTRALISATION_SCORE,
         fees,
