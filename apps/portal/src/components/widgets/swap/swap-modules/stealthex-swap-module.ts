@@ -1,5 +1,5 @@
 import type { Chain as ViemChain } from 'viem/chains'
-import { QuoteResponse } from '@chainflip/sdk/swap'
+import { QuoteResponseV2 } from '@chainflip/sdk/swap'
 import { chainsAtom, tokensByIdAtom } from '@talismn/balances-react'
 import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { encodeAnyAddress } from '@talismn/util'
@@ -40,6 +40,7 @@ import {
   fromAssetAtom,
   GetEstimateGasTxFunction,
   getTokenIdForSwappableAsset,
+  QuoteFee,
   QuoteFunction,
   saveAddressForQuest,
   substrateAssetsSwapTransfer,
@@ -489,7 +490,7 @@ export const toAssetsSelector = atom(async get => {
 })
 
 const quote: QuoteFunction = loadable(
-  atom(async (get): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {
+  atom(async (get): Promise<(BaseQuote & { data?: QuoteResponseV2['quotes'][number] }) | null> => {
     const substrateApiGetter = get(substrateApiGetterAtom)
     if (!substrateApiGetter) return null
 
@@ -514,7 +515,7 @@ const quote: QuoteFunction = loadable(
 
     try {
       // TODO: Return `null` or an error when getRange / getEstimate fails
-      // Error format: `return { decentralisationScore: DECENTRALISATION_SCORE, protocol: PROTOCOL, inputAmountBN: fromAmount.planck, outputAmountBN: 0n, error: '<error here>', timeInSec: 5 * 60, fees: [], providerLogo: LOGO, providerName: PROTOCOL_NAME, talismanFeeBps: TALISMAN_TOTAL_FEE, }`
+      // Error format: `return { decentralisationScore: DECENTRALISATION_SCORE, protocol: PROTOCOL, inputAmountBN: fromAmount.planck, outputAmountBN: 0n, error: '<error here>', timeInSec: 5 * 60, fees: [], providerLogo: LOGO, providerName: PROTOCOL_NAME, talismanFee: TALISMAN_TOTAL_FEE, }`
       const estimate = await stealthexSdk.getEstimate({
         route: { from, to },
         amount: fromAmount.toNumber(),
@@ -522,6 +523,16 @@ const quote: QuoteFunction = loadable(
       })
 
       const gasFee = await estimateGas(get, { getSubstrateApi })
+      // relative fee, multiply by fromAmount to get planck fee
+      const talismanFee = Math.max(getTalismanTotalFee({ fromAsset, toAsset }), BUILT_IN_FEE)
+      // add talisman fee
+      const fees: QuoteFee[] = (gasFee ? [gasFee] : []).concat({
+        amount: BigNumber(fromAmount.planck.toString())
+          .times(10 ** -fromAmount.decimals)
+          .times(talismanFee),
+        name: 'Talisman Fee',
+        tokenId: fromAsset.id,
+      })
 
       return {
         decentralisationScore: DECENTRALISATION_SCORE,
@@ -530,10 +541,10 @@ const quote: QuoteFunction = loadable(
         outputAmountBN: Decimal.fromUserInput(String(estimate), toAsset.decimals).planck,
         // simpleswap swaps take about 5mins, assuming here that stealthex takes a similar amount of time
         timeInSec: 5 * 60,
-        fees: gasFee ? [gasFee] : [],
+        fees,
         providerLogo: LOGO,
         providerName: PROTOCOL_NAME,
-        talismanFeeBps: Math.max(getTalismanTotalFee({ fromAsset, toAsset }), BUILT_IN_FEE),
+        talismanFee,
       }
     } catch (cause) {
       console.error(`Failed to get StealthEX quote`, cause)
@@ -746,9 +757,9 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
       return {
         name: 'Est. Gas Fees',
         tokenId: network.nativeToken.id,
-        amount: Decimal.fromPlanck(gasPrice * gasLimit, network.nativeToken.decimals, {
-          currency: network.nativeToken.symbol,
-        }),
+        amount: BigNumber(gasPrice.toString())
+          .times(gasLimit.toString())
+          .times(10 ** -network.nativeToken.decimals),
       }
     }
 
@@ -776,12 +787,11 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
           fromAmount.planck
         )
   const decimals = transferTx.registry.chainDecimals[0] ?? 10 // default to polkadot decimals 10
-  const symbol = transferTx.registry.chainTokens[0] ?? 'DOT' // default to polkadot symbol 'DOT'
   const paymentInfo = await transferTx.paymentInfo(fromAddress)
   return {
     name: 'Est. Gas Fees',
     tokenId: substrateChain?.nativeToken?.id ?? 'polkadot-substrate-native',
-    amount: Decimal.fromPlanck(paymentInfo.partialFee.toBigInt(), decimals, { currency: symbol }),
+    amount: BigNumber(paymentInfo.partialFee.toBigInt().toString()).times(10 ** -decimals),
   }
 }
 

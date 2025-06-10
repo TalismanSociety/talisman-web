@@ -3,6 +3,7 @@ import * as sdk from '@lifi/sdk'
 import { evmErc20TokenId } from '@talismn/balances'
 import { tokenRatesAtom, tokensByIdAtom, useTokens } from '@talismn/balances-react'
 import { toast } from '@talismn/ui/molecules/Toaster'
+import BigNumber from 'bignumber.js'
 import { Atom, atom, Getter, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { atomFamily, loadable, useAtomCallback } from 'jotai/utils'
 import { Loadable } from 'jotai/vanilla/utils/loadable'
@@ -28,6 +29,7 @@ import type {
 import { popularTokens, talismanTokens } from './curated-tokens'
 import { knownEvmNetworksAtom } from './helpers'
 import { swapInfoTabAtom } from './side-panel'
+import { chainflipSwapModule } from './swap-modules/chainflip.swap-module'
 import {
   fromAmountAtom,
   fromAssetAtom,
@@ -52,8 +54,7 @@ const coingeckoApiUrl = import.meta.env.VITE_COIN_GECKO_API
 const coingeckoApiKey = import.meta.env.VITE_COIN_GECKO_API_KEY
 const coingeckoTier = import.meta.env.VITE_COIN_GECKO_API_TIER
 
-// import { chainflipSwapModule } from './swap-modules/chainflip.swap-module'
-const swapModules = [/* chainflipSwapModule, */ simpleswapSwapModule, lifiSwapModule, stealthexSwapModule]
+const swapModules = [chainflipSwapModule, simpleswapSwapModule, lifiSwapModule, stealthexSwapModule]
 const ETH_LOGO = 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg'
 const BTC_LOGO = 'https://assets.coingecko.com/coins/images/1/standard/bitcoin.png?1696501400'
 const btcTokens = {
@@ -505,10 +506,12 @@ export const sortedQuotesAtom = atom(async get => {
   return quotes.data
     ?.map(q => {
       if (q.state !== 'hasData') return { quote: q, fees: 0 }
-      const fees = q.data?.fees.reduce((acc, fee) => {
-        const rate = tokenRates[fee.tokenId]?.usd?.price ?? 0
-        return acc + fee.amount.toNumber() * rate
-      }, 0)
+      const fees = q.data?.fees
+        .reduce((acc, fee) => {
+          const rate = tokenRates[fee.tokenId]?.usd?.price ?? 0
+          return acc.plus(fee.amount.times(rate))
+        }, BigNumber(0))
+        ?.toNumber()
       return {
         quote: q,
         fees,
