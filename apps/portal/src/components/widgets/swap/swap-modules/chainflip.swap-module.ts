@@ -262,7 +262,7 @@ const quote: QuoteFunction = loadable(
           if (!swappableAsset) return null
 
           // get rate and compute fee in fiat
-          const amount = BigNumber(fee.amount).times(BigNumber(10).pow(-asset.decimals))
+          const amount = BigNumber(fee.amount).times(10 ** -asset.decimals)
           return { name: fee.type.toLowerCase(), tokenId: swappableAsset.id, amount }
         })
         .filter(fee => fee !== null)
@@ -507,7 +507,7 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
         tokenId: network.nativeToken.id,
         amount: BigNumber(gasPrice.toString())
           .times(gasLimit.toString())
-          .times(BigNumber(10).pow(-network.nativeToken.decimals)),
+          .times(10 ** -network.nativeToken.decimals),
       }
     }
 
@@ -531,7 +531,7 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
   return {
     name: 'Est. Gas Fees',
     tokenId: substrateChain?.nativeToken?.id ?? 'polkadot-substrate-native',
-    amount: BigNumber(paymentInfo.partialFee.toString()).times(BigNumber(10).pow(-decimals)),
+    amount: BigNumber(paymentInfo.partialFee.toBigInt().toString()).times(10 ** -decimals),
   }
 }
 

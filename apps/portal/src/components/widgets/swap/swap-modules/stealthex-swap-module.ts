@@ -528,7 +528,7 @@ const quote: QuoteFunction = loadable(
       // add talisman fee
       const fees: QuoteFee[] = (gasFee ? [gasFee] : []).concat({
         amount: BigNumber(fromAmount.planck.toString())
-          .times(BigNumber(10).pow(-fromAmount.decimals))
+          .times(10 ** -fromAmount.decimals)
           .times(talismanFee),
         name: 'Talisman Fee',
         tokenId: fromAsset.id,
@@ -759,7 +759,7 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
         tokenId: network.nativeToken.id,
         amount: BigNumber(gasPrice.toString())
           .times(gasLimit.toString())
-          .times(BigNumber(10).pow(-network.nativeToken.decimals)),
+          .times(10 ** -network.nativeToken.decimals),
       }
     }
 
@@ -791,7 +791,7 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
   return {
     name: 'Est. Gas Fees',
     tokenId: substrateChain?.nativeToken?.id ?? 'polkadot-substrate-native',
-    amount: BigNumber(paymentInfo.partialFee.toString()).times(BigNumber(10).pow(-decimals)),
+    amount: BigNumber(paymentInfo.partialFee.toBigInt().toString()).times(10 ** -decimals),
   }
 }
 

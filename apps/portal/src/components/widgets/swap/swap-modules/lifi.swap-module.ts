@@ -115,7 +115,7 @@ const subProviderQuoteAtom = atomFamily((id: string) =>
 
       const fees =
         step.estimate.feeCosts?.map(fee => ({
-          amount: BigNumber(fee.amount).times(BigNumber(10).pow(-fee.token.decimals)),
+          amount: BigNumber(fee.amount).times(10 ** -fee.token.decimals),
           name: fee.name,
           tokenId:
             fee.token.address === zeroAddress
@@ -126,7 +126,7 @@ const subProviderQuoteAtom = atomFamily((id: string) =>
       if (step.estimate.gasCosts) {
         step.estimate.gasCosts.forEach(c => {
           fees.push({
-            amount: BigNumber(c.amount).times(BigNumber(10).pow(-c.token.decimals)),
+            amount: BigNumber(c.amount).times(10 ** -c.token.decimals),
             name: 'Gas',
             tokenId:
               c.token.address === zeroAddress
@@ -138,7 +138,7 @@ const subProviderQuoteAtom = atomFamily((id: string) =>
       // add talisman fee
       fees.push({
         amount: BigNumber(step.estimate.fromAmount.toString())
-          .times(BigNumber(10).pow(-fromAsset.decimals))
+          .times(10 ** -fromAsset.decimals)
           .times(TALISMAN_FEE),
         name: 'Talisman Fee',
         tokenId: fromAsset.id,
