@@ -41,7 +41,7 @@ import {
 } from './swaps.api'
 import { TokenAmountInput } from './TokenAmountInput'
 
-export const ChainFlipSwap: React.FC = () => {
+export const Swap: React.FC = () => {
   useSetJotaiSubstrateApiState()
   useSyncPreviousChainflipSwaps()
 

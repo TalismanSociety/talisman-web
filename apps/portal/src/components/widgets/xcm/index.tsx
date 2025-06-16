@@ -26,7 +26,7 @@ import { ProgressIndicator } from './ProgressIndicator'
 import { TokenSelectButton } from './TokenSelectButton'
 import { TokenSelectDialog } from './TokenSelectDialog'
 
-export function XcmForm() {
+export function Xcm() {
   useSetJotaiSubstrateApiState()
   const {
     sender,

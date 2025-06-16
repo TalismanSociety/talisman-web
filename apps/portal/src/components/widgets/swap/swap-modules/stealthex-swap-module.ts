@@ -251,13 +251,17 @@ const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
 
 const api = createClient<StealthexApi>({ baseUrl: apiUrl })
 const stealthexSdk = {
-  getAllCurrencies: async (): Promise<StealthexCurrency[]> => {
+  getAllCurrencies: async ({ withAvailableRoutes = false }: { withAvailableRoutes?: boolean } = {}): Promise<
+    StealthexCurrency[]
+  > => {
     const allCurrencies: StealthexCurrency[] = []
 
     // TODO: When worker cache isn't warm, this takes too long to fetch all requests.
     const limit = 250
     for (let offset = 0; ; offset += limit) {
-      const { data: currencies } = await api.GET('/v4/currencies', { params: { query: { limit, offset } } })
+      const { data: currencies } = await api.GET('/v4/currencies', {
+        params: { query: { limit, offset, include_available_routes: `${withAvailableRoutes}` } },
+      })
       if (!Array.isArray(currencies)) break
 
       allCurrencies.push(...currencies)
@@ -390,6 +394,61 @@ const stealthexSdk = {
     return exchange
   },
 }
+
+export const allPairsCsvAtom = atom(async get => {
+  const currencies = await stealthexSdk.getAllCurrencies({ withAvailableRoutes: true })
+
+  const assets = await get(assetsAtom)
+  const assetsById = new Map(assets.map(asset => [asset.id, asset]))
+
+  const currenciesMapKey = (currency: Pick<(typeof currencies)[number], 'network' | 'symbol'>) =>
+    `${currency.network}::${currency.symbol}`
+  const currenciesMap = new Map(currencies.map(currency => [currenciesMapKey(currency), currency]))
+
+  const assetId = (currency: Pick<(typeof currencies)[number], 'network' | 'symbol'>) => {
+    const evmChain = supportedEvmChains[currency.network]
+    if (evmChain) {
+      const contractAddress = currenciesMap.get(currenciesMapKey(currency))?.contract_address
+      return getTokenIdForSwappableAsset('evm', evmChain.id, contractAddress ?? undefined)
+    }
+    return specialAssets[`${currency.network}::${currency.symbol}`]?.id
+  }
+
+  const routes = currencies
+    // remove currencies with no available routes
+    .filter(currency => currency.available_routes?.length)
+    // map to asset ids
+    .map(currency => ({
+      assetId: assetId(currency),
+      currencyId: currenciesMapKey(currency),
+      routes: (currency.available_routes ?? [])
+        // map routes to asset ids
+        .map(route => ({
+          assetId: assetId(route),
+          currencyId: currenciesMapKey(route),
+          hasCurrency: !!currenciesMap.get(currenciesMapKey(route)),
+        }))
+        // filter out routes with no asset id / currency
+        .flatMap(({ hasCurrency, ...route }) => (route.assetId && hasCurrency ? route : [])),
+    }))
+    // filter out currencies with no asset id
+    .flatMap(route => (route.assetId ? route : []))
+
+  const assetRoutes = routes.flatMap(route => ({
+    asset: assetsById.get(route.assetId ?? ''),
+    routes: route.routes.map(route => ({ asset: assetsById.get(route.assetId ?? '') })),
+  }))
+
+  const rows = assetRoutes.flatMap(from => from.routes.map(to => ({ from: from.asset, to: to.asset })))
+
+  return [['fromsymbol', 'fromchain', 'tosymbol', 'tochain'].join(',')]
+    .concat(
+      rows
+        .filter(({ from, to }) => from?.symbol && from?.chainId && to?.symbol && to?.chainId)
+        .map(({ from, to }) => [from?.symbol, from?.chainId, to?.symbol, to?.chainId].join(','))
+    )
+    .join('\n')
+})
 
 const assetsAtom = atom(async get => {
   const allCurrencies = await stealthexSdk.getAllCurrencies()
