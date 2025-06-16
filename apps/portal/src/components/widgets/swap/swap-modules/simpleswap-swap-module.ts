@@ -6,6 +6,7 @@ import { encodeAnyAddress } from '@talismn/util'
 import BigNumber from 'bignumber.js'
 import { atom, ExtractAtomValue, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
+import { firstValueFrom, from, map, mergeMap, tap, toArray } from 'rxjs'
 import { createPublicClient, encodeFunctionData, erc20Abi, fallback, http, isAddress } from 'viem'
 import { arbitrum, base, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon, sonic } from 'viem/chains'
 
@@ -364,6 +365,50 @@ const simpleSwapSdk = {
     return { min: BigNumber(json.min) }
   },
 }
+
+export const allPairsCsvAtom = atom(async get => {
+  const allAssets = await get(simpleswapAssetsAtom)
+  const allAssetsMap = new Map(allAssets.map(asset => [pairKeyFromAsset(asset), asset]))
+
+  // mergeMap lets us run N concurrent queries, where N is the value of `concurrency`
+  const concurrency = 4
+  const rows = await firstValueFrom(
+    from(allAssets).pipe(
+      mergeMap(async asset => {
+        const { symbol } = asset?.context?.simpleswap ?? {}
+        if (!symbol) return // not supported
+
+        const pairs = await simpleSwapSdk.getPairs({ symbol, fixed: false })
+        if (!pairs || !Array.isArray(pairs)) return
+
+        return { asset, pairs }
+      }, concurrency),
+      // instead of emitting each route as it's fetched, toArray waits for them all to fetch and then it collects them into an array
+      toArray(),
+      // convert pairs into routes
+      map(allPairs =>
+        allPairs.flatMap(
+          assetPairs =>
+            assetPairs?.pairs.map(pair => ({
+              from: assetPairs?.asset,
+              to: allAssetsMap.get(pairKeyFromPair(pair)),
+            })) ?? []
+        )
+      ),
+      // remove invalid routes
+      map(routes => routes.flatMap(route => (route.from && route.to ? route : []))),
+      tap(val => console.log('end result', val))
+    )
+  )
+
+  return [['fromsymbol', 'fromchain', 'tosymbol', 'tochain'].join(',')]
+    .concat(
+      rows
+        .filter(({ from, to }) => from?.symbol && from?.chainId && to?.symbol && to?.chainId)
+        .map(({ from, to }) => [from?.symbol, from?.chainId, to?.symbol, to?.chainId].join(','))
+    )
+    .join('\n')
+})
 
 const simpleswapAssetsAtom = atom(async get => {
   const allCurrencies = await simpleSwapSdk.getAllCurrencies()
