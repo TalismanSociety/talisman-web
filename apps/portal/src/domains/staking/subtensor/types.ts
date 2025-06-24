@@ -13,7 +13,7 @@ type Address = {
 }
 
 // Validator Data Type
-type ValidatorData = {
+export type ValidatorData = {
   hotkey: Address
   coldkey: Address
   name: string
