@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from 'recoil'
 
 import { StakeTargetSelectorDialog } from '@/components/recipes/StakeTargetSelectorDialog'
@@ -17,9 +17,31 @@ type DelegateSelectorDialogProps = {
 }
 
 export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
-  const { combinedValidatorsData, isError } = useCombinedBittensorValidatorsData()
-
   const [highlighted, setHighlighted] = useState<BondOption | undefined>()
+  const [search, setSearch] = useState<string>('')
+  const { combinedValidatorsData, isError } = useCombinedBittensorValidatorsData()
+  const [fiteredData, setFilteredData] = useState<BondOption[]>(combinedValidatorsData)
+
+  useEffect(() => {
+    setFilteredData(combinedValidatorsData)
+  }, [combinedValidatorsData])
+
+  const handleSearch = (search: string) => {
+    if (!search) {
+      setFilteredData(combinedValidatorsData)
+      setSearch('')
+      return
+    }
+    const lowerSearch = search.toLowerCase()
+    const filtered = combinedValidatorsData.filter(
+      delegate =>
+        delegate.name.toLowerCase().includes(lowerSearch) || delegate.poolId.toLowerCase().includes(lowerSearch)
+    )
+
+    setFilteredData(filtered)
+    setSearch(search)
+  }
+
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
   const sortMethods: {
@@ -52,10 +74,13 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
       onConfirm={() => {
         if (highlighted !== undefined) props.onConfirm(highlighted)
       }}
+      onHandleSearch={handleSearch}
+      search={search}
+      searchLabel="Search name or hotkey"
       sortMethods={sortMethods}
       isSortDisabled={isError}
     >
-      {combinedValidatorsData.map(delegate => {
+      {fiteredData.map(delegate => {
         let formattedApr = Number(delegate.validatorYield?.thirty_day_apy || '0').toLocaleString(undefined, {
           style: 'percent',
           maximumFractionDigits: 2,
