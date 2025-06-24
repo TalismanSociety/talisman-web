@@ -68,7 +68,7 @@ export const StakeTargetSelectorDialog = Object.assign(
         title={props.title}
         targetWidth="83rem"
         content={
-          <div className="min-h-[42rem]">
+          <div className={selectedItems[0] ? 'min-h-[54.5rem]' : 'min-h-[42rem]'}>
             <Text.Body as="h3" css={{ marginBottom: '0.6rem' }}>
               {props.currentSelectionLabel}
             </Text.Body>
@@ -108,7 +108,7 @@ export const StakeTargetSelectorDialog = Object.assign(
                           placeholder={props.searchLabel}
                           value={props.search ?? ''}
                           onChange={event => handleSearch(event.target.value)}
-                          width={'15rem'}
+                          width={'16rem'}
                           className="h-[5rem]"
                           onBlur={() => setRevealed(false)}
                         />

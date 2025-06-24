@@ -38,7 +38,7 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
         delegate.name.toLowerCase().includes(lowerSearch) || delegate.poolId.toLowerCase().includes(lowerSearch)
     )
 
-    setFilteredData(filtered)
+    setFilteredData(props.selected ? [...filtered, props.selected] : filtered)
     setSearch(search)
   }
 
