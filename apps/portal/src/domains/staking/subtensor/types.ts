@@ -13,7 +13,7 @@ type Address = {
 }
 
 // Validator Data Type
-type ValidatorData = {
+export type ValidatorData = {
   hotkey: Address
   coldkey: Address
   name: string
@@ -106,17 +106,6 @@ export type RuntimePoolData = {
   alphaOut: string
   taoIn: string // TAO in the pool
   alphaIn: string // Alpha in the pool
-}
-
-export type Validator = {
-  name: string
-  url: string
-  description: string
-  signature: string
-}
-
-export type ValidatorsResponse = {
-  [key: string]: Validator // The key is the unique validator hotkey.
 }
 
 export type BondOption = {
