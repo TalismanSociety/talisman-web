@@ -110,7 +110,7 @@ export const StakeTargetSelectorDialog = Object.assign(
                           onChange={event => handleSearch(event.target.value)}
                           width={'16rem'}
                           className="h-[5rem]"
-                          onBlur={() => setRevealed(false)}
+                          onBlur={() => !props.search && setRevealed(false)}
                         />
                       </div>
                     ) : (
