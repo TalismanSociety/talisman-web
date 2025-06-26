@@ -20,7 +20,7 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
   const [highlighted, setHighlighted] = useState<BondOption | undefined>()
   const [search, setSearch] = useState<string>('')
   const { combinedValidatorsData, isError } = useCombinedBittensorValidatorsData()
-  const [fiteredData, setFilteredData] = useState<BondOption[]>(combinedValidatorsData)
+  const [filteredData, setFilteredData] = useState<BondOption[]>(combinedValidatorsData)
 
   useEffect(() => {
     setFilteredData(combinedValidatorsData)
@@ -80,7 +80,7 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
       sortMethods={sortMethods}
       isSortDisabled={isError}
     >
-      {fiteredData.map(delegate => {
+      {filteredData.map(delegate => {
         let formattedApr = Number(delegate.validatorYield?.thirty_day_apy || '0').toLocaleString(undefined, {
           style: 'percent',
           maximumFractionDigits: 2,

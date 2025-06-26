@@ -25,7 +25,7 @@ export const SubnetSelectorDialog = ({
     () => Object.values(subnetData).filter(subnet => subnet.netuid !== ROOT_NETUID),
     [subnetData]
   )
-  const [fiteredData, setFilteredData] = useState<SubnetData[]>(filteredSubnets)
+  const [filteredData, setFilteredData] = useState<SubnetData[]>(filteredSubnets)
 
   useEffect(() => {
     setFilteredData(filteredSubnets)
@@ -82,7 +82,7 @@ export const SubnetSelectorDialog = ({
         },
       }}
     >
-      {fiteredData.map(subnet => {
+      {filteredData.map(subnet => {
         return (
           <SubnetSelectorCard
             key={subnet.netuid}
