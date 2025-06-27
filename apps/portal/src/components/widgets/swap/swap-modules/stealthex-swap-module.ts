@@ -33,6 +33,7 @@ import type {
 } from './stealthex.api.d.ts'
 import { knownEvmNetworksAtom } from '../helpers'
 import stealthexLogo from '../side-panel/details/logos/stealthex-logo.svg'
+import { vanaMainnet } from '../vana'
 import {
   BaseQuote,
   fromAddressAtom,
@@ -115,6 +116,7 @@ const supportedEvmChains: Record<string, ViemChain | undefined> = {
   optimism,
   theta,
   zksync,
+  vana: vanaMainnet,
 }
 
 /**
@@ -196,6 +198,13 @@ const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
     name: 'Ethereum',
     chainId: 10,
     symbol: 'ETH',
+    networkType: 'evm',
+  },
+  'mainnet::vana': {
+    id: '1480-evm-native',
+    name: 'Vana',
+    chainId: 1480,
+    symbol: 'VANA',
     networkType: 'evm',
   },
   'manta::eth': {
