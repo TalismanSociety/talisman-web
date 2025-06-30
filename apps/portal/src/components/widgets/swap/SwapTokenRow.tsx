@@ -106,7 +106,7 @@ export const SwapTokenRow: React.FC<Props> = ({
               />
             ) : null}
             <img
-              key={asset.image ?? githubUnknownTokenLogoUrl}
+              key={asset.image}
               src={asset.image ?? githubUnknownTokenLogoUrl}
               className="h-[24px] w-[24px] min-w-[24px] rounded-full sm:h-[40px] sm:w-[40px] sm:min-w-[40px]"
             />

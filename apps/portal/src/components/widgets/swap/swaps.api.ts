@@ -1,4 +1,5 @@
 import type { PrimitiveAtom } from 'jotai'
+import type { Chain as ViemChain } from 'viem/chains'
 import * as sdk from '@lifi/sdk'
 import { evmErc20TokenId } from '@talismn/balances'
 import { tokenRatesAtom, tokensByIdAtom, useTokens } from '@talismn/balances-react'
@@ -10,10 +11,9 @@ import { Loadable } from 'jotai/vanilla/utils/loadable'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
 import { createPublicClient, erc20Abi, http, isAddress } from 'viem'
-import { type Chain as ViemChain } from 'viem/chains'
-import * as allEvmChains from 'viem/chains'
 import { useWalletClient } from 'wagmi'
 
+import { allEvmChains } from '@/components/widgets/swap/allEvmChains.ts'
 import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { substrateApiGetterAtom, substrateApiState } from '@/domains/common/recoils/api'
 import { connectedSubstrateWalletState } from '@/domains/extension/substrate'
@@ -288,7 +288,7 @@ const erc20Atom = atomFamily((addressChainId: string) =>
     const isValidAddress = isAddress(address)
     if (!isValidAddress || isNaN(chainId)) return null
 
-    const chain: ViemChain | undefined = Object.values(allEvmChains).find(c => c.id === chainId)
+    const chain: ViemChain | undefined = Object.values(allEvmChains).find(c => c?.id === chainId)
     if (!chain) return null
     const platforms = await get(coingeckoAssetPlatformsAtom)
     const platform = platforms.find(p => p.chain_identifier === chainId)
@@ -366,15 +366,17 @@ const filterAndSortTokens = async (
       // find token details from on chain
       const allOnChainTokens = await Promise.all(
         [
-          allEvmChains.mainnet,
-          allEvmChains.arbitrum,
-          allEvmChains.base,
-          allEvmChains.bsc,
-          allEvmChains.polygon,
-          allEvmChains.optimism,
-          allEvmChains.blast,
-          allEvmChains.zkSync,
-        ].map(chain => get(erc20Atom(`${search}:${chain.id}`)))
+          allEvmChains['mainnet'],
+          allEvmChains['arbitrum'],
+          allEvmChains['base'],
+          allEvmChains['bsc'],
+          allEvmChains['polygon'],
+          allEvmChains['optimism'],
+          allEvmChains['blast'],
+          allEvmChains['zkSync'],
+        ]
+          .flatMap(chain => (chain ? chain : []))
+          .map(chain => get(erc20Atom(`${search}:${chain.id}`)))
       )
       return allOnChainTokens.filter(t => t !== null)
     }
@@ -568,7 +570,7 @@ export const approvalAtom = atom(async get => {
   const approval = get(module.approvalAtom)
   if (!approval) return null
 
-  const chain = Object.values(allEvmChains).find(c => c.id === approval.chainId)
+  const chain = Object.values(allEvmChains).find(c => c?.id === approval.chainId)
   // chain unsupported
   if (!chain) return null
 
