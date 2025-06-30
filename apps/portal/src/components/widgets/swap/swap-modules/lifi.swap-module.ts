@@ -1,3 +1,4 @@
+import type { Chain as ViemChain } from 'viem/chains'
 import * as sdk from '@lifi/sdk'
 import { evmErc20TokenId, evmNativeTokenId } from '@talismn/balances'
 import { evmNetworksByIdAtom } from '@talismn/balances-react'
@@ -5,8 +6,8 @@ import BigNumber from 'bignumber.js'
 import { atom, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
 import { zeroAddress } from 'viem'
-import { type Chain as ViemChain } from 'viem/chains'
-import * as allEvmChains from 'viem/chains'
+
+import { allEvmChains } from '@/components/widgets/swap/allEvmChains.ts'
 
 import { knownEvmNetworksAtom } from '../helpers'
 import {
@@ -233,7 +234,7 @@ const swap: SwapFunction<{ id: string }> = async (get: Getter, _: Setter, { evmW
   if (txRequest.from.toLowerCase() !== evmWalletClient.account?.address.toLowerCase())
     throw new Error('Invalid sender address')
 
-  const chain: ViemChain | undefined = Object.values(allEvmChains).find(c => c.id === txRequest.chainId)
+  const chain: ViemChain | undefined = Object.values(allEvmChains).find(c => c?.id === txRequest.chainId)
   if (!chain) throw new Error('Unknown chain')
 
   await evmWalletClient.switchChain({ id: chain.id })
