@@ -264,15 +264,36 @@ const stealthexSdk = {
     StealthexCurrency[]
   > => {
     const allCurrencies: StealthexCurrency[] = []
+    const fetchCurrenciesPage = async (limit: number, offset: number) => {
+      try {
+        const { data: currencies } = await api.GET('/v4/currencies', {
+          params: { query: { limit, offset, include_available_routes: `${withAvailableRoutes}` } },
+        })
+        if (!Array.isArray(currencies)) return []
+        return currencies
+      } catch {
+        return []
+      }
+    }
 
-    // TODO: When worker cache isn't warm, this takes too long to fetch all requests.
+    // NOTE: To reduce latency, pre-fetch the first 8 pages, then continue fetching pages until the response is empty
+    let offset = 0
     const limit = 250
-    for (let offset = 0; ; offset += limit) {
-      const { data: currencies } = await api.GET('/v4/currencies', {
-        params: { query: { limit, offset, include_available_routes: `${withAvailableRoutes}` } },
-      })
-      if (!Array.isArray(currencies)) break
-
+    // pre-fetch
+    const currencies = await Promise.all([
+      fetchCurrenciesPage(limit, offset),
+      fetchCurrenciesPage(limit, (offset += limit)),
+      fetchCurrenciesPage(limit, (offset += limit)),
+      fetchCurrenciesPage(limit, (offset += limit)),
+      fetchCurrenciesPage(limit, (offset += limit)),
+      fetchCurrenciesPage(limit, (offset += limit)),
+      fetchCurrenciesPage(limit, (offset += limit)),
+      fetchCurrenciesPage(limit, (offset += limit)),
+    ])
+    allCurrencies.push(...currencies.flat())
+    // continue fetching
+    for (;;) {
+      const currencies = await fetchCurrenciesPage(limit, (offset += limit))
       allCurrencies.push(...currencies)
       if (currencies.length !== 250) break
     }
