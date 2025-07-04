@@ -4,6 +4,8 @@ import { chainState, nominationPoolsEnabledChainsState } from '@/domains/chains/
 
 import { Provider } from '../types'
 
+const CERE_GENESIS_HASH = '0x81443836a9a24caaa23f1241897d1235717535711d1d3fe24eae4fdc942c092c'
+
 const useNominationPoolsProviders = (): Provider[] => {
   const nominationPoolsLoadable = useRecoilValueLoadable(nominationPoolsEnabledChainsState)
   const nominationPools = nominationPoolsLoadable.valueMaybe()
@@ -12,8 +14,10 @@ const useNominationPoolsProviders = (): Provider[] => {
   )
   const chains = chainsLoadable.valueMaybe() ?? []
 
+  const allowedNomPools = nominationPools?.filter(({ genesisHash }) => genesisHash !== CERE_GENESIS_HASH)
+
   const nominationPoolProviders: Provider[] =
-    nominationPools?.map(({ id, nativeToken, rpc, genesisHash }, index) => {
+    allowedNomPools?.map(({ id, nativeToken, rpc, genesisHash }, index) => {
       const chain = chains[index]
       return {
         symbol: nativeToken?.symbol ?? '',
