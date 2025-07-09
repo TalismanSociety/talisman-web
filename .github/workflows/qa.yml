@@ -17,7 +17,7 @@ jobs:
       - run: yarn lint -- --max-warnings=0
       - run: yarn check-types
       - run: yarn test
-      - run: yan npm audit
+      - run: yarn npm audit
 
   e2e:
     runs-on: ubuntu-latest
