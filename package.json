@@ -34,23 +34,23 @@
     "turbo": "^1.13.3"
   },
   "resolutions": {
-    "@polkadot/api": "14.0.1",
-    "@polkadot/api-augment": "14.0.1",
-    "@polkadot/api-base": "14.0.1",
-    "@polkadot/api-contract": "14.0.1",
-    "@polkadot/api-derive": "14.0.1",
+    "@polkadot/api": "16.4.1",
+    "@polkadot/api-augment": "16.4.1",
+    "@polkadot/api-base": "16.4.1",
+    "@polkadot/api-contract": "16.4.1",
+    "@polkadot/api-derive": "16.4.1",
     "@polkadot/extension-inject": "0.53.1",
     "@polkadot/keyring": "13.1.1",
     "@polkadot/networks": "13.1.1",
-    "@polkadot/rpc-augment": "14.0.1",
-    "@polkadot/rpc-core": "14.0.1",
-    "@polkadot/rpc-provider": "14.0.1",
-    "@polkadot/types": "14.0.1",
-    "@polkadot/types-augment": "14.0.1",
-    "@polkadot/types-codec": "14.0.1",
-    "@polkadot/types-create": "14.0.1",
-    "@polkadot/types-known": "14.0.1",
-    "@polkadot/types-support": "14.0.1",
+    "@polkadot/rpc-augment": "16.4.1",
+    "@polkadot/rpc-core": "16.4.1",
+    "@polkadot/rpc-provider": "16.4.1",
+    "@polkadot/types": "16.4.1",
+    "@polkadot/types-augment": "16.4.1",
+    "@polkadot/types-codec": "16.4.1",
+    "@polkadot/types-create": "16.4.1",
+    "@polkadot/types-known": "16.4.1",
+    "@polkadot/types-support": "16.4.1",
     "@polkadot/util": "13.1.1",
     "@polkadot/util-crypto": "13.1.1",
     "@polkadot/wasm-bridge": "7.3.2",
@@ -68,5 +68,8 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,css,scss,html,md,json}": "prettier --write"
+  },
+  "dependencies": {
+    "@polkadot/api": "^16.4.1"
   }
 }
