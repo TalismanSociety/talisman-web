@@ -17,6 +17,11 @@ jobs:
       - run: yarn lint -- --max-warnings=0
       - run: yarn check-types
       - run: yarn test
+      - run: yarn npm audit
+
+      - name: Audit portal dependencies
+        working-directory: apps/portal
+        run: yarn npm audit
 
   e2e:
     runs-on: ubuntu-latest
