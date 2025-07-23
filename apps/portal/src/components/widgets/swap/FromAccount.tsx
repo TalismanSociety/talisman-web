@@ -1,12 +1,13 @@
 import type React from 'react'
 import { Surface } from '@talismn/ui/atoms/Surface'
 import { Wallet } from '@talismn/web-icons'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
-import { isAddress } from 'viem'
+import { isAddress as isEvmAddress } from 'viem'
 
 import { SeparatedAccountSelector } from '@/components/widgets/SeparatedAccountSelector'
+import { useSetToAddress } from '@/components/widgets/swap/swaps.api'
 import { selectedCurrencyState } from '@/domains/balances/currency'
 import { cn } from '@/util/cn'
 import { Decimal } from '@/util/Decimal'
@@ -37,30 +38,24 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
   const toAddress = useAtomValue(toAddressAtom)
   const toAsset = useAtomValue(toAssetAtom)
   const currency = useRecoilValue(selectedCurrencyState)
-  const [toEvmAddress, setToEvmAddress] = useAtom(toEvmAddressAtom)
-  const [toSubstrateAddress, setToSubstrateAddress] = useAtom(toSubstrateAddressAtom)
+  const setToEvmAddress = useSetAtom(toEvmAddressAtom)
+  const setToSubstrateAddress = useSetAtom(toSubstrateAddressAtom)
+
+  const setToAddress = useSetToAddress()
 
   const onChangeAddress = useCallback(
     (address: string | null) => {
       if (!address) return
-      if (isAddress(address)) {
-        if (fromEvmAddress === toEvmAddress) setToEvmAddress(address)
+
+      if (isEvmAddress(address)) {
         setFromEvmAddress(address)
-      } else {
-        if (fromSubstrateAddress === toSubstrateAddress) setToSubstrateAddress(address)
-        setFromSubstrateAddress(address)
+        setToAddress({ fromAddress: address })
       }
+
+      setFromSubstrateAddress(address)
+      setToAddress({ fromAddress: address })
     },
-    [
-      fromEvmAddress,
-      fromSubstrateAddress,
-      setFromEvmAddress,
-      setFromSubstrateAddress,
-      setToEvmAddress,
-      setToSubstrateAddress,
-      toEvmAddress,
-      toSubstrateAddress,
-    ]
+    [setFromEvmAddress, setFromSubstrateAddress, setToAddress]
   )
 
   const isSwappingFromBtc = useMemo(() => {
@@ -91,6 +86,7 @@ export const FromAccount: React.FC<Props> = ({ fastBalance }) => {
               toAddress?.toLowerCase() === fromAddress?.toLowerCase(),
           })}
           onClick={() => {
+            if (!fromAsset?.networkType) return
             if (fromAsset?.networkType !== toAsset?.networkType) return
 
             if (shouldShowToAccount) {

@@ -1,6 +1,6 @@
 import type React from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { isAddress } from 'viem'
+import { isAddress as isEvmAddress } from 'viem'
 
 import { SeparatedAccountSelector } from '@/components/widgets/SeparatedAccountSelector'
 import { isBtcAddress } from '@/util/btc'
@@ -40,19 +40,11 @@ export const ToAccount: React.FC = () => {
           substrateAccountPrefix={0}
           value={toAddress}
           onAccountChange={address => {
-            if (address) {
-              if (isBtcAddress(address)) {
-                setBtcAddress(address)
-              } else if (isAddress(address)) {
-                setEvmAddress(address)
-              } else {
-                setSubstrate(address)
-              }
-            } else {
-              setEvmAddress(null)
-              setSubstrate(null)
-              setBtcAddress(null)
-            }
+            if (!address) return setEvmAddress(null), setSubstrate(null), setBtcAddress(null)
+
+            if (isBtcAddress(address)) return setEvmAddress(null), setSubstrate(null), setBtcAddress(address)
+            if (isEvmAddress(address)) return setEvmAddress(address), setSubstrate(null), setBtcAddress(null)
+            return setEvmAddress(null), setSubstrate(address), setBtcAddress(null)
           }}
         />
       )}
