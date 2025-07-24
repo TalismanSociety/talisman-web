@@ -1,4 +1,4 @@
-import { useTokenRates, useTokens } from '@talismn/balances-react'
+import { useTokenRates, useTokensById } from '@talismn/balances-react'
 import { Clickable } from '@talismn/ui/atoms/Clickable'
 import { Surface } from '@talismn/ui/atoms/Surface'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
@@ -36,7 +36,7 @@ export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ sele
   const setSelectedProtocol = useSetAtom(selectedProtocolAtom)
   const setSelectedSubProtocol = useSetAtom(selectedSubProtocolAtom)
   const fromAmount = useAtomValue(fromAmountAtom)
-  const tokens = useTokens()
+  const tokens = useTokensById()
 
   const amount = useMemo(() => {
     if (!toAsset) return null

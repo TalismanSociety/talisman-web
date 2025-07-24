@@ -1,5 +1,5 @@
 import { Balances } from '@talismn/balances'
-import { allBalancesAtom } from '@talismn/balances-react'
+import { balancesAtom } from '@talismn/balances-react'
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { Clickable } from '@talismn/ui/atoms/Clickable'
 import { Surface } from '@talismn/ui/atoms/Surface'
@@ -17,7 +17,7 @@ import { useIntersection } from 'react-use'
 import { useRecoilValue } from 'recoil'
 
 import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
-import { ChainLogo } from '@/components/recipes/ChainLogo'
+import { NetworkLogo } from '@/components/recipes/NetworkLogo'
 import { selectedCurrencyState } from '@/domains/balances/currency'
 
 import type { TokenPickerAsset, TokenPickerAssetWithBalance, TokenPickerChain } from './api/utils/xcmTokenPickerTypes'
@@ -85,7 +85,7 @@ export function TokenSelectDialog({
             <Select.Option
               key={chain.key}
               value={chain.key}
-              leadingIcon={<ChainLogo className="text-[24px]" chainId={chain.chaindataId} />}
+              leadingIcon={<NetworkLogo className="text-[24px]" networkId={chain.chaindataId} />}
               headlineContent={chain.name}
             />
           ))}
@@ -131,7 +131,7 @@ function Asset({ asset, onClick }: AssetProps) {
               className="!w-full !p-0"
               css={{ flex: 1, padding: 0 }}
               leadingContent={
-                <AssetLogoWithChain chainId={asset.chaindataId} assetLogoUrl={asset.chaindataTokenLogo} />
+                <AssetLogoWithChain networkId={asset.chaindataId} assetLogoUrl={asset.chaindataTokenLogo} />
               }
               headlineContent={<span className="text-[14px]">{asset.token.originSymbol}</span>}
               supportingContent={
@@ -220,10 +220,10 @@ const useBalanceSortedAssets = (assets: TokenPickerAsset[]) => {
 
 /** allBalances is organised by asset here so that this work is done only once instead of once per asset */
 const balancesByAssetAtom = atom(async get => {
-  const allBalances = await get(allBalancesAtom)
+  const allBalances = await get(balancesAtom)
   const byAsset = new Map<string, Balances>()
   allBalances.each.map(b => {
-    const key = `${b.chainId}:${b.token?.symbol.toLowerCase()}`
+    const key = `${b.networkId}:${b.token?.symbol.toLowerCase()}`
     if (!byAsset.has(key)) byAsset.set(key, new Balances([]))
     byAsset.set(key, byAsset.get(key)!.add(b))
   })
@@ -232,10 +232,10 @@ const balancesByAssetAtom = atom(async get => {
 
 /** allBalances is organised by sender by asset here so that this work is done only once instead of once per asset */
 const balancesBySenderByAsset = atom(async get => {
-  const allBalances = await get(allBalancesAtom)
+  const allBalances = await get(balancesAtom)
   const bySenderByAsset = new Map<string, Balances>()
   allBalances.each.map(b => {
-    const key = `${encodeAnyAddress(b.address)}:${b.chainId}:${b.token?.symbol.toLowerCase()}`
+    const key = `${encodeAnyAddress(b.address)}:${b.networkId}:${b.token?.symbol.toLowerCase()}`
     if (!bySenderByAsset.has(key)) bySenderByAsset.set(key, new Balances([]))
     bySenderByAsset.set(key, bySenderByAsset.get(key)!.add(b))
   })

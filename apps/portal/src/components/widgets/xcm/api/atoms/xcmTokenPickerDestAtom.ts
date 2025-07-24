@@ -1,4 +1,4 @@
-import { chainsByGenesisHashAtom, tokensByIdAtom } from '@talismn/balances-react'
+import { dotNetworksByGenesisHashAtom, tokensAtom } from '@talismn/balances-react'
 import { atom } from 'jotai'
 import groupBy from 'lodash/groupBy'
 
@@ -11,8 +11,8 @@ import { assetAtom, sourceChainAtom } from './xcmFieldsAtoms'
 export const xcmTokenPickerDestAtom = atom(async get => {
   const xcmChains = get(xcmChainsAtom)
   const routes = get(configServiceAtom).routes
-  const chaindataChainsByGenesisHash = await get(chainsByGenesisHashAtom)
-  const chaindataTokensById = await get(tokensByIdAtom)
+  const chaindataChainsByGenesisHash = await get(dotNetworksByGenesisHashAtom)
+  const chaindataTokens = await get(tokensAtom)
 
   const sourceChain = get(sourceChainAtom)
   const asset = get(assetAtom)
@@ -33,9 +33,8 @@ export const xcmTokenPickerDestAtom = atom(async get => {
         ),
       ]
       const chaindataChain = chaindataChainsByGenesisHash?.[chain.genesisHash]
-      const chaindataTokensBySymbol = new Map(
-        chaindataChain?.tokens?.map(({ id }) => [chaindataTokensById[id]?.symbol, chaindataTokensById[id]] as const)
-      )
+      const chaindataChainTokens = chaindataChain ? chaindataTokens.filter(t => t.networkId === chaindataChain.id) : []
+      const chaindataTokensBySymbol = new Map(chaindataChainTokens.map(token => [token?.symbol, token] as const))
 
       return tokens.map(token => ({
         chain: { ...chain, name: chaindataChain?.name ?? chain.name },

@@ -21,7 +21,7 @@ const assetDataState = selector({
           .map(x => ({
             symbol: x.token?.symbol ?? x.id,
             total: x.total.fiat(currency) ?? 0,
-            color: x.chain?.themeColor ?? x.evmNetwork?.themeColor,
+            color: x.network?.themeColor,
           }))
           .filter(x => x.total > 0),
         x => x.symbol

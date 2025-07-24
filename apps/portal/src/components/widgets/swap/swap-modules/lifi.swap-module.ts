@@ -1,7 +1,7 @@
 import type { Chain as ViemChain } from 'viem/chains'
 import * as sdk from '@lifi/sdk'
-import { evmErc20TokenId, evmNativeTokenId } from '@talismn/balances'
-import { evmNetworksByIdAtom } from '@talismn/balances-react'
+import { networksByIdAtom } from '@talismn/balances-react'
+import { evmErc20TokenId, evmNativeTokenId } from '@talismn/chaindata-provider'
 import BigNumber from 'bignumber.js'
 import { atom, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
@@ -37,7 +37,7 @@ sdk.createConfig({
 
 const assetsSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {
   const res = await sdk.getTokens({ chainTypes: [sdk.ChainType.EVM, sdk.ChainType.SVM] })
-  const networks = await get(evmNetworksByIdAtom)
+  const networks = await get(networksByIdAtom)
   const tokens = Object.entries(res.tokens)
     .filter(([id]) => {
       return networks[id.toString()]
@@ -55,7 +55,7 @@ const assetsSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {
           symbol: t.symbol,
           contractAddress: t.address === zeroAddress ? undefined : t.address,
           image: t.logoURI,
-          id: t.address === zeroAddress ? evmNativeTokenId(id) : evmErc20TokenId(id, t.address),
+          id: t.address === zeroAddress ? evmNativeTokenId(id) : evmErc20TokenId(id, t.address as `0x${string}`),
         }
       })
     })
@@ -121,7 +121,7 @@ const subProviderQuoteAtom = atomFamily((id: string) =>
           tokenId:
             fee.token.address === zeroAddress
               ? evmNativeTokenId(fee.token.chainId.toString())
-              : evmErc20TokenId(fee.token.chainId.toString(), fee.token.address),
+              : evmErc20TokenId(fee.token.chainId.toString(), fee.token.address as `0x${string}`),
         })) ?? []
 
       if (step.estimate.gasCosts) {
@@ -132,7 +132,7 @@ const subProviderQuoteAtom = atomFamily((id: string) =>
             tokenId:
               c.token.address === zeroAddress
                 ? evmNativeTokenId(c.token.chainId.toString())
-                : evmErc20TokenId(c.token.chainId.toString(), c.token.address),
+                : evmErc20TokenId(c.token.chainId.toString(), c.token.address as `0x${string}`),
           })
         })
       }

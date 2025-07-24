@@ -1,4 +1,4 @@
-import { useChains } from '@talismn/balances-react'
+import { useNetworksById } from '@talismn/balances-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilValueLoadable } from 'recoil'
 
@@ -15,11 +15,11 @@ export const useSubstrateToken = (props?: UseSubstrateTokenProps) => {
     name: string
     decimals: number
   } | null>()
-  const chains = useChains()
+  const chains = useNetworksById()
   const chain = useMemo(() => (props ? chains[props.chainId] : undefined), [chains, props])
   const api = useRecoilValueLoadable(
     // default to polkadot
-    substrateApiState(chain?.rpcs?.[0]?.url ?? 'wss://polkadot.api.onfinality.io/public')
+    substrateApiState(chain?.rpcs?.[0] ?? 'wss://polkadot.api.onfinality.io/public')
   )
 
   const getTokenDetails = useCallback(async () => {

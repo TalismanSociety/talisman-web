@@ -1,7 +1,8 @@
-import { githubChainLogoUrl } from '@talismn/chaindata-provider'
+import { useNetwork } from '@talismn/balances-react'
 import { useRecoilValue } from 'recoil'
 
 import { lidoSuitesState } from '@/domains/staking/lido/recoils'
+import { UNKNOWN_NETWORK_URL } from '@/util/unknownLogoUrls'
 
 import { Provider } from '../types'
 
@@ -11,15 +12,16 @@ const SUBSTRATE_GENESIS_HASH = '0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931dd
 
 const useLidoProviders = () => {
   const lidoSuites = useRecoilValue(lidoSuitesState)
+  const ethereum = useNetwork('1')
 
   const lidoProviders: Provider[] = lidoSuites.map(lidoSuite => {
     const { symbol, decimals } = lidoSuite.chain.nativeCurrency
-    const logo = githubChainLogoUrl('1')
+    const logo = ethereum?.logo ?? UNKNOWN_NETWORK_URL
     return {
       symbol: symbol,
       logo,
       chainName: lidoSuite.chain.name,
-      chainId: lidoSuite.chain.id,
+      chainId: String(lidoSuite.chain.id),
       type: 'Liquid staking',
       typeId: 'liquidStakingLido',
       provider: 'Lido',

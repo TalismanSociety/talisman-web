@@ -76,7 +76,7 @@ const useAvailableBalance = ({ slpxPair, fee }: { slpxPair: SlpxSubstratePair; f
   const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))
   const recoilCurrency = useRecoilValue(selectedCurrencyState)
   const nativeBalance = balances.find(
-    x => x.token?.symbol.toLowerCase() === slpxPair.vToken.symbol.toLowerCase() && x.chainId === slpxPair.chainId
+    x => x.token?.symbol.toLowerCase() === slpxPair.vToken.symbol.toLowerCase() && x.networkId === slpxPair.chainId
   )
 
   return useMemo(

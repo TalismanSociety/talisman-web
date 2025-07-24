@@ -1,7 +1,6 @@
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
-import { useChain, useEvmNetwork } from '@talismn/balances-react'
-import { githubUnknownChainLogoUrl } from '@talismn/chaindata-provider'
+import { useNetwork } from '@talismn/balances-react'
 import { Text } from '@talismn/ui/atoms/Text'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { startCase } from 'lodash'
@@ -10,7 +9,8 @@ import type { PortfolioToken } from '@/components/legacy/widgets/useAssets'
 import { AccountIcon } from '@/components/molecules/AccountIcon'
 import { AssetBalance } from '@/components/recipes/Asset'
 import { type Account } from '@/domains/accounts/recoils'
-import { useNetworkInfo } from '@/hooks/useNetworkInfo'
+import { useNetworkType } from '@/hooks/useNetworkType'
+import { UNKNOWN_NETWORK_URL } from '@/util/unknownLogoUrls'
 
 const slideDown = keyframes`
     from {
@@ -24,10 +24,8 @@ const slideDown = keyframes`
 `
 
 export const AssetBreakdownRowHeader = ({ token }: { token: PortfolioToken }) => {
-  const chain = useChain(token.tokenDetails.chain?.id)
-  const relay = useChain(chain?.relay?.id)
-  const evmNetwork = useEvmNetwork(token.tokenDetails.evmNetwork?.id)
-  const networkInfo = useNetworkInfo({ evmNetwork, chain, relay })
+  const network = useNetwork(token.tokenDetails.networkId)
+  const networkInfo = useNetworkType(network)
 
   return (
     <AssetRow>
@@ -44,10 +42,10 @@ export const AssetBreakdownRowHeader = ({ token }: { token: PortfolioToken }) =>
             gap: '1.6rem',
           }}
         >
-          <Tooltip content={token.tokenDetails.chain?.name}>
+          <Tooltip content={token.tokenDetails.network?.name}>
             <img
-              src={token.tokenDetails.chain?.logo ?? githubUnknownChainLogoUrl}
-              alt={token.tokenDetails.chain?.name ?? undefined}
+              src={token.tokenDetails.network?.logo ?? UNKNOWN_NETWORK_URL}
+              alt={token.tokenDetails.network?.name ?? undefined}
               css={{
                 width: '2em',
                 height: '2em',
@@ -56,8 +54,8 @@ export const AssetBreakdownRowHeader = ({ token }: { token: PortfolioToken }) =>
             />
           </Tooltip>
           <div className="flex flex-col gap-1">
-            <div className="text-2xl font-bold text-white">{networkInfo.label}</div>
-            <div className="text-xl text-white/60">{networkInfo.type}</div>
+            <div className="text-2xl font-bold text-white">{network?.name ?? 'Unknown Network'}</div>
+            <div className="text-xl text-white/60">{networkInfo}</div>
           </div>
         </td>
         <td align="right">

@@ -1,5 +1,4 @@
 import { keyframes } from '@emotion/react'
-import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { Button } from '@talismn/ui/atoms/Button'
 import { Text } from '@talismn/ui/atoms/Text'
 import { HiddenDetails } from '@talismn/ui/molecules/HiddenDetails'
@@ -12,6 +11,7 @@ import { AssetBreakdownList } from '@/components/recipes/AssetBreakdownList'
 import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { RedactableBalance } from '@/components/widgets/RedactableBalance'
+import { UNKNOWN_TOKEN_URL } from '@/util/unknownLogoUrls'
 
 const slideDown = keyframes`
     from {
@@ -88,7 +88,7 @@ const AssetItem = () => {
                   >
                     <AssetLogoWithChain
                       className="text-[1em] sm:text-[1em]"
-                      assetLogoUrl={token.tokenDetails.logo ?? githubUnknownTokenLogoUrl}
+                      assetLogoUrl={token.tokenDetails.logo ?? UNKNOWN_TOKEN_URL}
                     />
                     <Text.Body>{`${token.tokenDetails.symbol ?? ''}`}</Text.Body>
                   </div>

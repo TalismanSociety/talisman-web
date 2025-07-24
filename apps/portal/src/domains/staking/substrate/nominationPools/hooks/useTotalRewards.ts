@@ -24,7 +24,7 @@ export const useTotalNominationPoolRewards = (account: Account) => {
 
 type TotalNompoolRewardsProps = {
   chain: {
-    id: string
+    id?: string
     novaIndexerUrl: string
     nativeToken:
       | {

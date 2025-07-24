@@ -47,7 +47,7 @@ const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStake
           </ErrorBoundary>
         }
         chain={props.slpxPair.chain.name}
-        chainId={props.slpxPair.chain.id}
+        chainId={String(props.slpxPair.chain.id)}
         assetSymbol={props.position.balance.options?.currency}
         assetLogoSrc={props.slpxPair.vToken.logo}
         increaseStakeButton={
