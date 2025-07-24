@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from 'react'
-import { useTokens } from '@talismn/balances-react'
+import { useTokensById } from '@talismn/balances-react'
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { useSurfaceColor } from '@talismn/ui/atoms/Surface'
 import { IconContext } from '@talismn/web-icons/utils'
@@ -12,7 +12,7 @@ export type CryptoticonProps = {
   loading?: boolean
 }
 
-const CryptoticonContext = createContext({ tokens: {} as ReturnType<typeof useTokens> })
+const CryptoticonContext = createContext({ tokens: {} as ReturnType<typeof useTokensById> })
 
 export const Cryptoticon = Object.assign(
   ({ src, alt, size: _size, loading }: CryptoticonProps) => {
@@ -43,7 +43,7 @@ export const Cryptoticon = Object.assign(
   },
   {
     Provider: (props: PropsWithChildren) => {
-      const tokens = useTokens()
+      const tokens = useTokensById()
 
       return <CryptoticonContext.Provider value={{ tokens }}>{props.children}</CryptoticonContext.Provider>
     },

@@ -1,5 +1,5 @@
 import { BalanceFormatter } from '@talismn/balances'
-import { useChains, useEvmNetworks, useTokenRates, useTokens } from '@talismn/balances-react'
+import { useNetworksById, useTokenRates, useTokens } from '@talismn/balances-react'
 import { formatDecimals } from '@talismn/util'
 import { compact, groupBy, isEmpty, isNil } from 'lodash'
 import { useMemo } from 'react'
@@ -8,7 +8,7 @@ import { useRecoilValue } from 'recoil'
 
 import { selectedCurrencyState } from '@/domains/balances/currency'
 import { balancesState, selectedBalancesState } from '@/domains/balances/recoils'
-import { getNetworkInfo } from '@/hooks/useNetworkInfo'
+import { getNetworkType } from '@/hooks/useNetworkType'
 
 const useFetchAssets = (address: string | undefined) => {
   const _balances = useRecoilValue(address === undefined ? selectedBalancesState : balancesState)
@@ -19,13 +19,12 @@ const useFetchAssets = (address: string | undefined) => {
 
   const currency = useRecoilValue(selectedCurrencyState)
 
-  const chains = useChains()
-  const evmNetworks = useEvmNetworks()
+  const networks = useNetworksById()
   const tokens = useTokens()
 
   const isLoading = useMemo(() => {
-    return isEmpty(chains) || isEmpty(evmNetworks) || isEmpty(tokens) || isNil(balances)
-  }, [chains, evmNetworks, tokens, balances])
+    return isEmpty(networks) || isEmpty(tokens) || isNil(balances)
+  }, [networks, tokens, balances])
 
   const fiatTotal = useMemo(() => balances.sum.fiat(currency).total, [balances.sum, currency])
   const lockedTotal = useMemo(() => balances.sum.fiat(currency).locked, [balances.sum, currency])
@@ -33,14 +32,14 @@ const useFetchAssets = (address: string | undefined) => {
 
   const assetBalances = useMemo(
     () =>
-      Object.values(tokens).sort((a, b) => {
+      tokens.sort((a, b) => {
         // TODO: Move token sorting into the chaindata subsquid indexer
-        if (a.chain?.id === 'polkadot' && b.chain?.id !== 'polkadot') return -1
-        if (b.chain?.id === 'polkadot' && a.chain?.id !== 'polkadot') return 1
-        if (a.chain?.id === 'kusama' && b.chain?.id !== 'kusama') return -1
-        if (b.chain?.id === 'kusama' && a.chain?.id !== 'kusama') return 1
+        if (a.networkId === 'polkadot' && b.networkId !== 'polkadot') return -1
+        if (b.networkId === 'polkadot' && a.networkId !== 'polkadot') return 1
+        if (a.networkId === 'kusama' && b.networkId !== 'kusama') return -1
+        if (b.networkId === 'kusama' && a.networkId !== 'kusama') return 1
 
-        if ((a.chain?.id || a.evmNetwork?.id) === (b.chain?.id || b.evmNetwork?.id)) {
+        if (a.networkId === b.networkId) {
           if (a.type === 'substrate-native') return -1
           if (b.type === 'substrate-native') return 1
           if (a.type === 'evm-native') return -1
@@ -52,11 +51,11 @@ const useFetchAssets = (address: string | undefined) => {
           return aCmp.localeCompare(bCmp)
         }
 
-        const aChain = a.chain?.id ? chains[a.chain.id] : a.evmNetwork?.id ? evmNetworks[a.evmNetwork.id] : null
-        const bChain = b.chain?.id ? chains[b.chain.id] : b.evmNetwork?.id ? evmNetworks[b.evmNetwork.id] : null
+        const aChain = a.networkId ? networks[a.networkId] : null
+        const bChain = b.networkId ? networks[b.networkId] : null
 
-        const aCmp = aChain?.name?.toLowerCase() ?? a.chain?.id ?? a.evmNetwork?.id
-        const bCmp = bChain?.name?.toLowerCase() ?? b.chain?.id ?? b.evmNetwork?.id
+        const aCmp = aChain?.name?.toLowerCase() ?? a.networkId
+        const bCmp = bChain?.name?.toLowerCase() ?? b.networkId
 
         if (aCmp === undefined && bCmp === undefined) return 0
         if (aCmp === undefined) return 1
@@ -64,10 +63,10 @@ const useFetchAssets = (address: string | undefined) => {
 
         return aCmp.localeCompare(bCmp)
       }),
-    [chains, evmNetworks, tokens]
+    [networks, tokens]
   )
 
-  return { assetBalances, fiatTotal, lockedTotal, value: transferable, balances, chains, evmNetworks, isLoading }
+  return { assetBalances, fiatTotal, lockedTotal, value: transferable, balances, networks, isLoading }
 }
 
 /** @deprecated */
@@ -84,8 +83,7 @@ const getFiatString = (value: any, currency: string) => {
 /** @deprecated */
 export const useAssets = (customAddress?: string) => {
   const { t } = useTranslation()
-  const { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading } =
-    useFetchAssets(customAddress)
+  const { assetBalances, fiatTotal, lockedTotal, value, balances, networks, isLoading } = useFetchAssets(customAddress)
   const currency = useRecoilValue(selectedCurrencyState)
   const rates = useTokenRates()
 
@@ -118,12 +116,8 @@ export const useAssets = (customAddress?: string) => {
 
         const locked = lockedAmount > 0n
 
-        const networkInfo = (() => {
-          const chain = token.chain?.id ? chains[token.chain?.id] : undefined
-          const evmNetwork = token.evmNetwork?.id ? evmNetworks[token.evmNetwork?.id] : undefined
-          const relay = chain?.relay?.id ? chains[chain.relay.id] : undefined
-          return getNetworkInfo(t, { chain, evmNetwork, relay })
-        })()
+        const network = token.networkId ? networks[token.networkId] : undefined
+        const networkInfo = network ? getNetworkType(network, networks, t) : ''
 
         return {
           stale: tokenBalances.each.some(x => x.status === 'stale'),
@@ -143,18 +137,14 @@ export const useAssets = (customAddress?: string) => {
           rate: rates[token.id]?.[currency] ?? undefined,
           tokenDetails: {
             ...token,
-            chain: token.chain
-              ? chains[token.chain.id]
-              : token.evmNetwork
-              ? evmNetworks[token.evmNetwork.id]
-              : undefined,
+            network: token.networkId ? networks[token.networkId] : undefined,
             networkInfo,
           },
           // if the token is substrate-native then make it an array else make it undefined
           nonNativeTokens: [],
         }
       }),
-    [assetBalances, balances, chains, currency, evmNetworks, rates, t]
+    [assetBalances, balances, currency, networks, rates, t]
   )
 
   const compressedTokens = useMemo(() => compact(tokens), [tokens])
@@ -175,15 +165,9 @@ export const useAssets = (customAddress?: string) => {
       groupedTokensArray
         .map(group => {
           const substrateNativeToken = group.find(token => {
-            const chain = token.tokenDetails.chain?.id ? chains[token.tokenDetails.chain?.id] : undefined
-            if (!chain) {
-              const evmNetwork = token.tokenDetails.evmNetwork?.id
-                ? evmNetworks[token.tokenDetails.evmNetwork?.id]
-                : undefined
-              if (!evmNetwork) return token
-              return evmNetwork.nativeToken?.id === token.tokenDetails.id
-            }
-            return chain.nativeToken?.id === token.tokenDetails.id
+            const network = token.tokenDetails.networkId ? networks[token.tokenDetails.networkId] : undefined
+            if (!network) return token
+            return network.nativeTokenId === token.tokenDetails.id
           })
 
           if (substrateNativeToken) {
@@ -211,7 +195,7 @@ export const useAssets = (customAddress?: string) => {
           return null
         })
         .filter((x): x is Exclude<typeof x, null> => x !== null),
-    [chains, evmNetworks, groupedTokensArray]
+    [groupedTokensArray, networks]
   )
 
   const balancesWithNonNativeTokens = useMemo(
@@ -339,7 +323,7 @@ export const useAssetsFiltered = ({ size, search, address }: Filter) => {
     return tokens.filter(token => {
       if (token === null) return false
       if (search !== undefined && token.tokenDetails.symbol.toLowerCase().includes(search.toLowerCase())) return true
-      if (search !== undefined && token.tokenDetails.chain?.id.toLowerCase().includes(search.toLowerCase())) return true
+      if (search !== undefined && token.tokenDetails.networkId.toLowerCase().includes(search.toLowerCase())) return true
       if (search !== undefined && token.tokenDetails.coingeckoId?.toLowerCase().includes(search.toLowerCase()))
         return true
 
@@ -350,7 +334,7 @@ export const useAssetsFiltered = ({ size, search, address }: Filter) => {
             return true
           if (
             search !== undefined &&
-            nonNativeToken.tokenDetails.chain?.id.toLowerCase().includes(search.toLowerCase())
+            nonNativeToken.tokenDetails.networkId.toLowerCase().includes(search.toLowerCase())
           )
             return true
           if (

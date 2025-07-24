@@ -1,4 +1,4 @@
-import { useTokenRates, useTokens } from '@talismn/balances-react'
+import { useTokenRates, useTokensById } from '@talismn/balances-react'
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
@@ -61,7 +61,7 @@ export const TokenAmountInput: React.FC<Props> = ({
   const [input, setInput] = useState((amount?.planck ?? 0n) > 0n ? amount?.toString() ?? '' : '')
 
   const currency = useRecoilValue(selectedCurrencyState)
-  const tokens = useTokens()
+  const tokens = useTokensById()
   const rates = useTokenRates()
 
   const shouldDisplayBalance = useMemo(() => {

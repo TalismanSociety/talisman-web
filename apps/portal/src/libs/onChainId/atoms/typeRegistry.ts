@@ -13,9 +13,9 @@ export const typeRegistryFamily = atomFamily((chainIdOrHash: string) =>
 
     let genesisHash = isHex(chainIdOrHash) ? chainIdOrHash : null
     const chain = await (isHex(chainIdOrHash)
-      ? chaindataProvider.chainByGenesisHash(chainIdOrHash)
-      : chaindataProvider.chainById(chainIdOrHash))
-    if (!genesisHash) genesisHash = chain?.genesisHash as `0x${string}`
+      ? chaindataProvider.getNetworkByGenesisHash(chainIdOrHash)
+      : chaindataProvider.getNetworkById(chainIdOrHash))
+    if (!genesisHash) genesisHash = chain?.platform === 'polkadot' ? chain?.genesisHash : null
 
     assert(chain, `Unknown chain: ${chainIdOrHash}`)
 

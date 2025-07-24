@@ -1,6 +1,6 @@
 import type { Chain as ViemChain } from 'viem/chains'
-import { useChains, useEvmNetworks, useTokenRates } from '@talismn/balances-react'
-import { Chain, EvmNetwork, githubUnknownChainLogoUrl, githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
+import { useNetworksById, useTokenRates } from '@talismn/balances-react'
+import { Network } from '@talismn/chaindata-provider'
 import { Button, SurfaceButton } from '@talismn/ui/atoms/Button'
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { Skeleton } from '@talismn/ui/atoms/Skeleton'
@@ -19,6 +19,7 @@ import { allEvmChains } from '@/components/widgets/swap/allEvmChains.ts'
 import { useDebounce } from '@/hooks/useDebounce'
 import { cn } from '@/util/cn'
 import { Decimal } from '@/util/Decimal'
+import { UNKNOWN_NETWORK_URL, UNKNOWN_TOKEN_URL } from '@/util/unknownLogoUrls'
 
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
 import { tokenTabAtom, tokenTabs } from './swaps.api'
@@ -52,12 +53,11 @@ export const SwapTokensModal: React.FC<Props> = ({
     setOpen(false)
     setAssetWithWarning(null)
   }, [])
-  const chains = useChains()
-  const networks = useEvmNetworks()
+  const networks = useNetworksById()
   const [filteredChain, setFilteredChain] = useState<string>()
   const selectedAssetChain = useMemo(
-    () => (selectedAsset ? chains[selectedAsset.chainId] ?? networks[selectedAsset.chainId] : null),
-    [chains, networks, selectedAsset]
+    () => (selectedAsset ? networks[selectedAsset.chainId] : null),
+    [networks, selectedAsset]
   )
   const debouncedSearch = useDebounce(searchText, 500)
 
@@ -72,13 +72,13 @@ export const SwapTokensModal: React.FC<Props> = ({
     return Object.values(
       assets?.reduce((acc, cur) => {
         if (acc[cur.chainId]) return acc
-        const chain = networks[cur.chainId] ?? chains[cur.chainId]
+        const chain = networks[cur.chainId]
         if (!chain) return acc
         acc[cur.chainId.toString()] = chain
         return acc
-      }, {} as Record<string, Chain | EvmNetwork>) ?? {}
+      }, {} as Record<string, Network>) ?? {}
     )
-  }, [assets, chains, networks])
+  }, [assets, networks])
 
   const selectedChain = useMemo(() => {
     return uniqueChains.find(c => c.id === filteredChain)
@@ -145,8 +145,8 @@ export const SwapTokensModal: React.FC<Props> = ({
         leadingIcon={
           selectedAsset ? (
             <img
-              key={selectedAsset?.image ?? githubUnknownTokenLogoUrl}
-              src={selectedAsset?.image ?? githubUnknownTokenLogoUrl}
+              key={selectedAsset?.image ?? UNKNOWN_TOKEN_URL}
+              src={selectedAsset?.image ?? UNKNOWN_TOKEN_URL}
               className="h-[24px] w-[24px] min-w-[24px] rounded-full"
             />
           ) : undefined
@@ -249,7 +249,7 @@ export const SwapTokensModal: React.FC<Props> = ({
                       key={chain.id}
                       value={chain.id}
                       leadingIcon={
-                        <img className="h-[24px] w-[24px] rounded-full" src={chain.logo ?? githubUnknownChainLogoUrl} />
+                        <img className="h-[24px] w-[24px] rounded-full" src={chain.logo ?? UNKNOWN_NETWORK_URL} />
                       }
                       headlineContent={chain.name}
                     />
@@ -321,9 +321,8 @@ export const SwapTokensModal: React.FC<Props> = ({
                         >
                           <SwapTokenRow
                             asset={asset}
-                            networkLogo={chains[asset.chainId]?.logo ?? networks[asset.chainId]?.logo ?? undefined}
+                            networkLogo={networks[asset.chainId]?.logo ?? undefined}
                             networkName={
-                              chains[asset.chainId]?.name ??
                               networks[asset.chainId]?.name ??
                               (asset.chainId === 'bitcoin' ? 'Bitcoin' : 'Unknown Chain')
                             }

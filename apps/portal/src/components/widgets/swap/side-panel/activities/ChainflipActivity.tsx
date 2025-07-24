@@ -1,4 +1,4 @@
-import { useTokens } from '@talismn/balances-react'
+import { useTokensById } from '@talismn/balances-react'
 import { SurfaceButton } from '@talismn/ui/atoms/Button'
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { ArrowRight, ArrowUpRight, Check, X } from '@talismn/web-icons'
@@ -40,7 +40,7 @@ export const ChainflipActivity: React.FC<{ data: ChainflipSwapActivityData; time
     return null
   }, [status, destAsset])
 
-  const tokens = useTokens()
+  const tokens = useTokensById()
   const fromToken = useMemo(() => {
     if (!fromAsset) return null
     const chain = chains.find(chain => chain.chain === fromAsset.chain)

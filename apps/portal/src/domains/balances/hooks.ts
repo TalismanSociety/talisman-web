@@ -35,13 +35,17 @@ export const useBalancesReportEffect = () => {
           .find(balance => balance.status !== 'stale')
           .each.filter(
             balance =>
-              (balance.chain === null || !('isCustom' in balance.chain && balance.chain.isCustom)) &&
+              (balance.network === null || !('isCustom' in balance.network && balance.network.isCustom)) &&
               (balance.token === null || !('isCustom' in balance.token && balance.token.isCustom))
           )
           .map(async balance => ({
             addressDigest: await digestMessage(balance.address),
-            chainId: balance.chainId,
-            evmNetworkId: balance.evmNetworkId,
+            networkId: balance.networkId,
+            networkPlatform: balance.network?.platform,
+            /** @deprecated legacy, replaced by networkId, keeping to maintain compat with old records */
+            chainId: balance.networkId,
+            /** @deprecated legacy, replaced by networkId, keeping to maintain compat with old records */
+            evmNetworkId: balance.networkId,
             tokenId: balance.tokenId,
             symbol: balance.token?.symbol,
             usdValue: balance.total.fiat('usd') ?? 0,

@@ -1,4 +1,4 @@
-import { evmErc20TokenId, evmNativeTokenId } from '@talismn/balances'
+import { evmErc20TokenId, evmNativeTokenId } from '@talismn/chaindata-provider'
 import { atom } from 'jotai'
 
 type KnownEvmToken = {

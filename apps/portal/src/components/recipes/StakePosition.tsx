@@ -21,6 +21,7 @@ import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
 import { StakeStatusIndicator } from '@/components/recipes/StakeStatusIndicator'
 import { Account } from '@/domains/accounts/recoils'
 import { truncateAddress } from '@/util/truncateAddress'
+import { UNKNOWN_TOKEN_URL } from '@/util/unknownLogoUrls'
 
 import { StakePositionSkeleton } from './StakePosition.skeleton'
 
@@ -33,9 +34,9 @@ export type StakePositionProps = {
   shortProvider?: ReactNode
   stakeStatus: StakeStatus
   assetSymbol: ReactNode
-  assetLogoSrc: string
+  assetLogoSrc: string | undefined
   chain: ReactNode
-  chainId: string | number
+  chainId: string | undefined
   balance: ReactNode
   fiatBalance: ReactNode
   rewards?: ReactNode
@@ -254,7 +255,7 @@ export const StakePosition = Object.assign(
                   Asset
                 </Text.BodySmall>
                 <div className="flex items-start gap-[1.2rem]">
-                  <AssetLogoWithChain assetLogoUrl={props.assetLogoSrc} chainId={props.chainId} />
+                  <AssetLogoWithChain assetLogoUrl={props.assetLogoSrc} networkId={props.chainId} />
                   <div className="truncate text-[1.4rem] text-[#fafafa]">
                     {props.assetSymbol}
                     <div className="truncate text-[1.2rem] opacity-70">{props.chain}</div>
@@ -279,7 +280,7 @@ export const StakePosition = Object.assign(
                 Asset
               </Text.BodySmall>
               <span className="flex items-center gap-[1.2rem]">
-                <AssetLogoWithChain assetLogoUrl={props.assetLogoSrc} chainId={props.chainId} />
+                <AssetLogoWithChain assetLogoUrl={props.assetLogoSrc} networkId={props.chainId} />
                 <span className="@[100rem]:hidden @[120rem]:contents contents">
                   <Text.Body className="truncate" as="div" alpha="high">
                     {props.assetSymbol}
@@ -365,7 +366,7 @@ export const StakePosition = Object.assign(
 export type StakePositionErrorBoundaryProps = {
   chain: ReactNode
   assetSymbol: ReactNode
-  assetLogoSrc: string
+  assetLogoSrc: string | undefined
   account: Account
   provider: ReactNode
   stakeStatus?: StakeStatus
@@ -383,7 +384,7 @@ export const StakePositionErrorBoundary = (props: StakePositionErrorBoundaryProp
           <span className="@[100rem]:flex @[100rem]:items-center @[100rem]:gap-[1.2rem]">
             <img
               className="@[100rem]:w-[4rem] @[100rem]:h-[4rem] h-[2rem] w-[2rem] align-[-0.25em]"
-              src={props.assetLogoSrc}
+              src={props.assetLogoSrc ?? UNKNOWN_TOKEN_URL}
             />
             <span className="@[100rem]:hidden @[120rem]:contents contents">
               {' '}

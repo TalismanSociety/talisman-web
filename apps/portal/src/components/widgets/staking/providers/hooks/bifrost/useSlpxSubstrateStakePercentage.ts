@@ -12,7 +12,8 @@ const useSlpxSubstrateStakePercentage = (slpxPair: SlpxSubstratePair) => {
     () =>
       balances.find(
         x =>
-          x.token?.symbol.toLowerCase() === slpxPair.nativeToken.symbol.toLowerCase() && x.chainId === slpxPair.chainId
+          x.token?.symbol.toLowerCase() === slpxPair.nativeToken.symbol.toLowerCase() &&
+          x.networkId === slpxPair.chainId
       ),
     [balances, slpxPair.chainId, slpxPair.nativeToken.symbol]
   )

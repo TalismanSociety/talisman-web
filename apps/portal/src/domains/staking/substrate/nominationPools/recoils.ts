@@ -157,7 +157,7 @@ const subscanPoolPayoutsState = selectorFamily<
     async ({ get }) => {
       const api = get(substrateApiState(chain.rpc))
 
-      const subscanUrl = chain.subscanUrl
+      const subscanUrl = chain.blockExplorerUrls?.find(url => url.endsWith('subscan.com'))
       if (subscanUrl === undefined) {
         return []
       }

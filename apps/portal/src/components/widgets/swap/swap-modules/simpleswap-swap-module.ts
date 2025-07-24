@@ -1,7 +1,6 @@
 import type { Chain as ViemChain } from 'viem/chains'
 import { QuoteResponseV2 } from '@chainflip/sdk/swap'
-import { chainsAtom, tokensByIdAtom } from '@talismn/balances-react'
-import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
+import { networksAtom, tokensByIdAtom } from '@talismn/balances-react'
 import { encodeAnyAddress } from '@talismn/util'
 import BigNumber from 'bignumber.js'
 import { atom, ExtractAtomValue, Getter, Setter } from 'jotai'
@@ -12,6 +11,7 @@ import { arbitrum, base, blast, bsc, mainnet, manta, moonbeam, moonriver, optimi
 
 import { substrateApiGetterAtom } from '@/domains/common/recoils/api'
 import { Decimal } from '@/util/Decimal'
+import { UNKNOWN_TOKEN_URL } from '@/util/unknownLogoUrls'
 
 import { knownEvmNetworksAtom } from '../helpers'
 import simpleswapLogo from '../side-panel/details/logos/simpleswap-logo.svg'
@@ -450,8 +450,7 @@ const simpleswapAssetsAtom = atom(async get => {
       const chainId = evmChain ? evmChain.id : polkadotAsset?.chainId
       if (!id || !chainId) return acc
 
-      const image =
-        (tokensById[id]?.logo !== githubUnknownTokenLogoUrl ? tokensById[id]?.logo : undefined) ?? currency.image
+      const image = (tokensById[id]?.logo !== UNKNOWN_TOKEN_URL ? tokensById[id]?.logo : undefined) ?? currency.image
       const asset: SwappableAssetBaseType<{ simpleswap: SimpleSwapAssetContext }> = {
         id,
         name: polkadotAsset?.name ?? currency.name,
@@ -593,7 +592,7 @@ const swap: SwapFunction<{ id: string }> = async (
   const amount = get(fromAmountAtom)
   const fromAsset = get(fromAssetAtom)
   const toAsset = get(toAssetAtom)
-  const substrateChains = await get(chainsAtom)
+  const substrateChains = (await get(networksAtom)).filter(n => n.platform === 'polkadot')
 
   let addressTo = toAddress
   if (toAsset?.networkType === 'substrate' && addressTo) {
@@ -703,9 +702,9 @@ const swap: SwapFunction<{ id: string }> = async (
     } else if (fromAsset.networkType === 'substrate') {
       const signer = substrateWallet?.signer
       if (!signer) throw new Error('Substrate wallet not connected.')
-      const chains = await get(chainsAtom)
+      const chains = (await get(networksAtom)).filter(n => n.platform === 'polkadot')
       const substrateChain = chains.find(c => c.id === fromAsset.chainId)
-      const rpc = substrateChain?.rpcs?.[0]?.url
+      const rpc = substrateChain?.rpcs?.[0]
       if (!rpc) throw new Error('RPC not found!')
       const polkadotApi = await getSubstrateApi(rpc)
 
@@ -801,9 +800,9 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
   if (swappingFromBtc) return null
 
   // swapping from Polkadot
-  const chains = await get(chainsAtom)
+  const chains = (await get(networksAtom)).filter(n => n.platform === 'polkadot')
   const substrateChain = chains.find(c => c.id === fromAsset.chainId)
-  const polkadotApi = await getSubstrateApi(substrateChain?.rpcs?.[0]?.url ?? '')
+  const polkadotApi = await getSubstrateApi(substrateChain?.rpcs?.[0] ?? '')
   const fromAmount = get(fromAmountAtom)
   const transferTx =
     fromAsset.assetHubAssetId !== undefined
@@ -820,7 +819,7 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
   const paymentInfo = await transferTx.paymentInfo(fromAddress)
   return {
     name: 'Est. Gas Fees',
-    tokenId: substrateChain?.nativeToken?.id ?? 'polkadot-substrate-native',
+    tokenId: substrateChain?.nativeTokenId ?? 'polkadot:substrate-native',
     amount: BigNumber(paymentInfo.partialFee.toBigInt().toString()).times(10 ** -decimals),
   }
 }

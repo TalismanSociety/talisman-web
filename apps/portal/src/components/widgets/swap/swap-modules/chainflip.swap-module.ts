@@ -9,8 +9,8 @@ import type {
 import type { Getter, Setter } from 'jotai'
 import type { Chain as ViemChain } from 'viem/chains'
 import { Asset, SwapSDK } from '@chainflip/sdk/swap'
-import { chainsAtom, tokensByIdAtom } from '@talismn/balances-react'
-import { githubUnknownTokenLogoUrl, TokenList } from '@talismn/chaindata-provider'
+import { networksAtom, tokensByIdAtom } from '@talismn/balances-react'
+import { TokenList } from '@talismn/chaindata-provider'
 import { encodeAnyAddress } from '@talismn/util'
 import BigNumber from 'bignumber.js'
 import { atom } from 'jotai'
@@ -20,6 +20,7 @@ import { arbitrum, mainnet, sepolia } from 'viem/chains'
 
 import { substrateApiGetterAtom } from '@/domains/common/recoils/api'
 import { Decimal } from '@/util/Decimal'
+import { UNKNOWN_TOKEN_URL } from '@/util/unknownLogoUrls'
 
 import type {
   BaseQuote,
@@ -93,7 +94,7 @@ export const chainflipAssetToSwappableAsset = (
     : 'evm'
   const id = getTokenIdForSwappableAsset(networkType, chainId, asset.contractAddress)
   if (chainId === 'unsupported') return null
-  const image = tokensById[id]?.logo !== githubUnknownTokenLogoUrl ? tokensById[id]?.logo : undefined
+  const image = tokensById[id]?.logo !== UNKNOWN_TOKEN_URL ? tokensById[id]?.logo : undefined
   return {
     id,
     name: asset.name,
@@ -360,7 +361,7 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
 
   const cfQuote = gotQuote.data?.data
 
-  const substrateChains = await get(chainsAtom)
+  const substrateChains = (await get(networksAtom)).filter(n => n.platform === 'polkadot')
   const fromSubstrateChain = substrateChains.find(c => c.id === fromAsset.chainId)
   const toSubstrateChain = substrateChains.find(c => c.id === toAsset.chainId)
   const srcAddress = fromSubstrateChain ? encodeAnyAddress(fromAddress, fromSubstrateChain?.prefix ?? 42) : fromAddress
@@ -426,9 +427,9 @@ const swap: SwapFunction<ChainflipSwapActivityData> = async (
     } else if (fromAsset.networkType === 'substrate') {
       const signer = substrateWallet?.signer
       if (!signer) throw new Error('Substrate wallet not connected.')
-      const chains = await get(chainsAtom)
+      const chains = await get(networksAtom)
       const substrateChain = chains.find(c => c.id === fromAsset.chainId)
-      const rpc = substrateChain?.rpcs?.[0]?.url
+      const rpc = substrateChain?.rpcs?.[0]
       if (!rpc) throw new Error('RPC not found!')
       const polkadotApi = await getSubstrateApi(rpc)
       const transferRes = await substrateNativeSwapTransfer(
@@ -519,9 +520,9 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
   if (swappingFromBtc) return null
 
   // swapping from Polkadot
-  const chains = await get(chainsAtom)
+  const chains = await get(networksAtom)
   const substrateChain = chains.find(c => c.id === fromAsset.chainId)
-  const polkadotApi = await getSubstrateApi(substrateChain?.rpcs?.[0]?.url ?? '')
+  const polkadotApi = await getSubstrateApi(substrateChain?.rpcs?.[0] ?? '')
   const fromAmount = get(fromAmountAtom)
 
   const transfer = polkadotApi.tx.balances['transferAllowDeath'] ?? polkadotApi.tx.balances['transfer']
@@ -530,7 +531,7 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
   const paymentInfo = await transferTx.paymentInfo(fromAddress)
   return {
     name: 'Est. Gas Fees',
-    tokenId: substrateChain?.nativeToken?.id ?? 'polkadot-substrate-native',
+    tokenId: substrateChain?.nativeTokenId ?? 'polkadot:substrate-native',
     amount: BigNumber(paymentInfo.partialFee.toBigInt().toString()).times(10 ** -decimals),
   }
 }

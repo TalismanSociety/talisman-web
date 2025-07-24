@@ -1,4 +1,4 @@
-import { chainsByGenesisHashAtom, tokensByIdAtom } from '@talismn/balances-react'
+import { dotNetworksByGenesisHashAtom, tokensAtom } from '@talismn/balances-react'
 import { atom } from 'jotai'
 import { isAddress as isEvmAddress } from 'viem'
 
@@ -15,8 +15,8 @@ import { senderAtom } from './xcmFieldsAtoms'
 export const xcmTokenPickerSourceAtom = atom(async get => {
   const xcmChains = get(xcmChainsAtom)
   const routes = get(configServiceAtom).routes
-  const chaindataChainsByGenesisHash = await get(chainsByGenesisHashAtom)
-  const chaindataTokensById = await get(tokensByIdAtom)
+  const chaindataChainsByGenesisHash = await get(dotNetworksByGenesisHashAtom)
+  const chaindataTokens = await get(tokensAtom)
 
   return xcmChains
     .flatMap(chain => {
@@ -27,9 +27,8 @@ export const xcmTokenPickerSourceAtom = atom(async get => {
         ?.filter(route => xcmChains.some(({ key }) => key === route.destination.chain.key))
       const tokens = [...new Set((chainRoutes ?? []).filter(validRoute).map(route => route.source.asset))]
       const chaindataChain = chaindataChainsByGenesisHash?.[chain.genesisHash]
-      const chaindataTokensBySymbol = new Map(
-        chaindataChain?.tokens?.map(({ id }) => [chaindataTokensById[id]?.symbol, chaindataTokensById[id]] as const)
-      )
+      const chaindataChainTokens = chaindataChain ? chaindataTokens.filter(t => t.networkId === chaindataChain.id) : []
+      const chaindataTokensBySymbol = new Map(chaindataChainTokens.map(token => [token?.symbol, token] as const))
 
       return tokens.map(token => ({
         chain: { ...chain, name: chaindataChain?.name ?? chain.name },

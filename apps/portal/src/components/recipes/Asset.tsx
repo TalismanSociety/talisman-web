@@ -2,7 +2,6 @@ import type { ReactElement, ReactNode } from 'react'
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
 import { type Balances } from '@talismn/balances'
-import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { useSurfaceColor } from '@talismn/ui/atoms/Surface'
 import { Text } from '@talismn/ui/atoms/Text'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
@@ -17,6 +16,7 @@ import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
 import { AssetNetworksLogoStack } from '@/components/recipes/AssetNetworksLogoStack'
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { RedactableBalance } from '@/components/widgets/RedactableBalance'
+import { UNKNOWN_TOKEN_URL } from '@/util/unknownLogoUrls'
 
 export type AssetProps = {
   className?: string
@@ -44,7 +44,7 @@ export const Asset = ({ token, lockedAsset }: AssetProps) => {
         <div css={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <AssetLogoWithChain
             className="m-[8px] text-[32px] sm:text-[32px]"
-            assetLogoUrl={token.tokenDetails.logo ?? githubUnknownTokenLogoUrl}
+            assetLogoUrl={token.tokenDetails.logo ?? UNKNOWN_TOKEN_URL}
           />
           <div>
             <div css={{ display: 'flex', alignItems: 'center', gap: '0.4em' }}>

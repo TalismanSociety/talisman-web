@@ -1,4 +1,4 @@
-import { useChains } from '@talismn/balances-react'
+import { useNetworksById } from '@talismn/balances-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRecoilValueLoadable } from 'recoil'
 
@@ -35,12 +35,12 @@ export const useSubstrateBalance = (props?: UseSubstrateBalanceProps) => {
     )
   )
   const unsubRef = useRef<() => void>()
-  const chains = useChains()
+  const chains = useNetworksById()
   const chain = useMemo(() => {
     if (!props) return chains['polkadot']
     return chains[props.chainId]
   }, [chains, props])
-  const api = useRecoilValueLoadable(substrateApiState(chain?.rpcs?.[0]?.url))
+  const api = useRecoilValueLoadable(substrateApiState(chain?.rpcs?.[0]))
 
   const fetchBalance = useCallback(() => {
     if (!props || unsubRef.current) return

@@ -86,7 +86,7 @@ const LidoStakes = (props: {
                 </ErrorBoundary>
               }
               chain={props.lidoSuite.chain.name}
-              chainId={props.lidoSuite.chain.id}
+              chainId={String(props.lidoSuite.chain.id)}
               assetSymbol={symbol}
               assetLogoSrc={logo}
               withdrawButton={

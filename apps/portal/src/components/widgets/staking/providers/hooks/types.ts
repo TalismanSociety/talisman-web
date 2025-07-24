@@ -20,7 +20,7 @@ export type Provider = {
   symbol: string
   logo: string
   chainName: string
-  chainId: string | number
+  chainId: string | undefined
   type: StakeProvider
   typeId: StakeProviderTypeId
   provider: string | undefined

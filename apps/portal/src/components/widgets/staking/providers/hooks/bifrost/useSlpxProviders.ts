@@ -13,7 +13,7 @@ const useSlpxProviders = () => {
       symbol: nativeToken?.symbol,
       logo: nativeToken?.logo,
       chainName: chain.name,
-      chainId: chain.id,
+      chainId: String(chain.id),
       type: 'Liquid staking',
       typeId: 'liquidStakingSlpx',
       provider: 'Bifrost SLPx',

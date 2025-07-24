@@ -5,10 +5,11 @@ import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { useTheme } from '@talismn/ui/theme'
 
 import { StakeStatusIndicator } from '@/components/recipes/StakeStatusIndicator'
+import { UNKNOWN_TOKEN_URL } from '@/util/unknownLogoUrls'
 
 type ErrorBoundaryFallbackProps = {
   symbol: string
-  logo: string
+  logo: string | undefined
   provider: string
   list?: 'stakes' | 'positions'
 }
@@ -34,7 +35,7 @@ export default function ErrorBoundaryFallback({ symbol, logo, provider }: ErrorB
           }}
         >
           <img
-            src={logo}
+            src={logo ?? UNKNOWN_TOKEN_URL}
             css={{
               width: '2em',
               height: '2em',

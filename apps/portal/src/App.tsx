@@ -44,7 +44,7 @@ const App = () => (
                   deriveState={chainDeriveState}
                   queryMultiState={chainQueryMultiState}
                 >
-                  <BalancesProvider onfinalityApiKey={import.meta.env.VITE_ONFINALITY_API_KEY ?? undefined}>
+                  <BalancesProvider>
                     <ExtensionWatcher />
                     <AccountWatcher />
                     <SignetWatcher />

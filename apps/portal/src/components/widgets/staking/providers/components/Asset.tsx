@@ -19,7 +19,7 @@ const Asset = ({ chainId, logo, symbol, chainName }: AssetProps) => {
         gap: '1.2rem',
       }}
     >
-      <AssetLogoWithChain chainId={chainId} assetLogoUrl={logo} />
+      <AssetLogoWithChain networkId={chainId} assetLogoUrl={logo} />
       <div className="truncate">
         <Text.Body as="div" alpha="high">
           {symbol}

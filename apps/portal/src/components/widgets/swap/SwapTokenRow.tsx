@@ -1,5 +1,4 @@
-import { useTokenRates, useTokens } from '@talismn/balances-react'
-import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
+import { useTokenRates, useTokensById } from '@talismn/balances-react'
 import { Skeleton } from '@talismn/ui/atoms/Skeleton'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { toast } from '@talismn/ui/molecules/Toaster'
@@ -16,6 +15,7 @@ import { useCopied } from '@/hooks/useCopied'
 import { useTokenRatesFromUsd } from '@/hooks/useTokenRatesFromUsd'
 import { Decimal } from '@/util/Decimal'
 import { truncateAddress } from '@/util/truncateAddress'
+import { UNKNOWN_TOKEN_URL } from '@/util/unknownLogoUrls'
 
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
 import { uniswapExtendedTokensList, uniswapSafeTokensList } from './swaps.api'
@@ -45,7 +45,7 @@ export const SwapTokenRow: React.FC<Props> = ({
 }) => {
   const currency = useRecoilValue(selectedCurrencyState)
   const rates = useTokenRates()
-  const tokens = useTokens()
+  const tokens = useTokensById()
   const { copied, copy } = useCopied()
   const uniswapSafeList = useAtomValue(loadable(uniswapSafeTokensList))
   const uniswapExtendedList = useAtomValue(loadable(uniswapExtendedTokensList))
@@ -107,7 +107,7 @@ export const SwapTokenRow: React.FC<Props> = ({
             ) : null}
             <img
               key={asset.image}
-              src={asset.image ?? githubUnknownTokenLogoUrl}
+              src={asset.image ?? UNKNOWN_TOKEN_URL}
               className="h-[24px] w-[24px] min-w-[24px] rounded-full sm:h-[40px] sm:w-[40px] sm:min-w-[40px]"
             />
           </div>
