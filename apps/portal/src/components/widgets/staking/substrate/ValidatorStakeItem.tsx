@@ -23,22 +23,31 @@ import { useTotalValidatorStakingRewards } from '@/domains/staking/substrate/val
 
 import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
 
-const TotalRewards = (props: { account: Account }) => {
-  const { totalRewards, isError } = useTotalValidatorStakingRewards(props.account)
+const TotalRewards = ({ account }: { account: Account }) => {
+  const { totalRewards, isError } = useTotalValidatorStakingRewards(account)
   if (isError) return '--'
 
   return totalRewards.toLocaleString()
 }
 
-const TotalFiatRewards = (props: { account: Account }) => {
-  const { totalRewards, isError } = useTotalValidatorStakingRewards(props.account)
+const TotalFiatRewards = ({ account }: { account: Account }) => {
+  const { totalRewards, isError } = useTotalValidatorStakingRewards(account)
   const totalFiatRewards = useNativeTokenLocalizedFiatAmount(totalRewards)
   if (isError) return null
 
   return totalFiatRewards
 }
 
-const ValidatorStakeItem = (props: {
+const ValidatorStakeItem = ({
+  account,
+  stake,
+  reward,
+  slashingSpan,
+  eligibleForFastUnstake,
+  inFastUnstakeHead,
+  inFastUnstakeQueue,
+  fastUnstakeDeposit,
+}: {
   account: Account
   stake: DeriveStakingAccount
   reward?: bigint
@@ -60,7 +69,7 @@ const ValidatorStakeItem = (props: {
     waitForAll([
       useChainState(),
       useSubstrateApiState(),
-      useDeriveState('balances', 'all', [props.account.address]),
+      useDeriveState('balances', 'all', [account.address]),
       useNativeTokenDecimalState(),
       useNativeTokenPriceState(),
     ])
@@ -69,27 +78,23 @@ const ValidatorStakeItem = (props: {
   const [chain, api, balances, decimal, nativeTokenPrice] = state === 'hasValue' ? contents : []
 
   const amount = useTokenAmountFromPlanck(
-    props.inFastUnstakeQueue || props.inFastUnstakeHead
-      ? props.stake.unlocking?.[0]?.value
-      : props.stake.stakingLedger.active.unwrap()
+    inFastUnstakeQueue || inFastUnstakeHead ? stake.unlocking?.[0]?.value : stake.stakingLedger.active.unwrap()
   )
 
-  const active = decimal?.fromPlanck(props.stake.stakingLedger.active.toBigInt())
+  const active = decimal?.fromPlanck(stake.stakingLedger.active.toBigInt())
 
   const totalUnlocking = useMemo(
-    () => props.stake.unlocking?.reduce((previous, current) => previous.add(current.value), new BN(0)),
-    [props.stake.unlocking]
+    () => stake.unlocking?.reduce((previous, current) => previous.add(current.value), new BN(0)),
+    [stake.unlocking]
   )
 
   const hasEnoughDepositForFastUnstake = useMemo(() => {
     if (!balances || !api) return false
-    return balances.availableBalance.gte(
-      api.consts.balances.existentialDeposit.add(props.fastUnstakeDeposit ?? new BN(0))
-    )
-  }, [api, balances, props.fastUnstakeDeposit])
+    return balances.availableBalance.gte(api.consts.balances.existentialDeposit.add(fastUnstakeDeposit ?? new BN(0)))
+  }, [api, balances, fastUnstakeDeposit])
 
   const eraEtaFormatter = useEraEtaFormatter()
-  const unlocks = props.stake.unlocking?.map(x => ({
+  const unlocks = stake.unlocking?.map(x => ({
     amount: decimal?.fromPlanck(x.value.toBigInt()).toLocaleString(),
     eta: eraEtaFormatter(x.remainingEras) ?? <CircularProgressIndicator size="1em" />,
   }))
@@ -97,7 +102,7 @@ const ValidatorStakeItem = (props: {
   const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
 
   const onRequestUnstake = () => {
-    if (props.eligibleForFastUnstake || props.eligibleForFastUnstake === undefined) {
+    if (eligibleForFastUnstake || eligibleForFastUnstake === undefined) {
       setIsFastUnstakeDialogOpen(true)
     } else {
       setIsUnstakeDialogOpen(true)
@@ -112,11 +117,9 @@ const ValidatorStakeItem = (props: {
         assetSymbol={symbol}
         assetLogoSrc={logo}
         provider="Validator staking"
-        stakeStatus={
-          props.reward === undefined ? undefined : props.reward === 0n ? 'not_earning_rewards' : 'earning_rewards'
-        }
-        readonly={props.account.readonly}
-        account={props.account}
+        stakeStatus={reward === undefined ? undefined : reward === 0n ? 'not_earning_rewards' : 'earning_rewards'}
+        readonly={account.readonly}
+        account={account}
         balance={
           <ErrorBoundary renderFallback={() => <>--</>}>
             <RedactableBalance>{active?.toLocaleString()}</RedactableBalance>
@@ -129,12 +132,12 @@ const ValidatorStakeItem = (props: {
         }
         rewards={
           <ErrorBoundary renderFallback={() => <>--</>}>
-            <TotalRewards account={props.account} />
+            <TotalRewards account={account} />
           </ErrorBoundary>
         }
         fiatRewards={
           <ErrorBoundary renderFallback={() => <>--</>}>
-            <TotalFiatRewards account={props.account} />
+            <TotalFiatRewards account={account} />
           </ErrorBoundary>
         }
         unstakeButton={
@@ -143,16 +146,16 @@ const ValidatorStakeItem = (props: {
           </ErrorBoundary>
         }
         withdrawButton={
-          props.stake.redeemable?.isZero() === false && (
+          stake.redeemable?.isZero() === false && (
             <ErrorBoundary renderFallback={() => <>--</>}>
               <StakePosition.WithdrawButton
                 amount={
                   <RedactableBalance>
-                    {decimal?.fromPlanck(props.stake.redeemable.toBigInt()).toLocaleString()}
+                    {decimal?.fromPlanck(stake.redeemable.toBigInt()).toLocaleString()}
                   </RedactableBalance>
                 }
                 onClick={() => {
-                  void withdrawExtrinsic.signAndSend(props.stake.controllerId ?? '', props.slashingSpan)
+                  void withdrawExtrinsic.signAndSend(stake.controllerId ?? '', slashingSpan)
                 }}
                 loading={withdrawExtrinsic.state === 'loading'}
               />
@@ -162,14 +165,14 @@ const ValidatorStakeItem = (props: {
         unstakingStatus={
           <ErrorBoundary renderFallback={() => <>--</>}>
             {totalUnlocking?.isZero() === false ? (
-              props.inFastUnstakeHead || props.inFastUnstakeQueue ? (
+              inFastUnstakeHead || inFastUnstakeQueue ? (
                 <StakePosition.FastUnstakingStatus
                   amount={
                     <RedactableBalance>
                       {decimal?.fromPlanck(totalUnlocking.toString()).toLocaleString()}
                     </RedactableBalance>
                   }
-                  status={props.inFastUnstakeHead ? 'in-head' : props.inFastUnstakeQueue ? 'in-queue' : undefined}
+                  status={inFastUnstakeHead ? 'in-head' : inFastUnstakeQueue ? 'in-queue' : undefined}
                 />
               ) : (
                 <StakePosition.UnstakingStatus
@@ -186,14 +189,14 @@ const ValidatorStakeItem = (props: {
         }
       />
       <ValidatorUnstakeDialog
-        accountAddress={props.stake.controllerId?.toString() ?? props.account.address}
+        accountAddress={stake.controllerId?.toString() ?? account.address}
         open={isUnstakeDialogOpen}
         onRequestDismiss={() => setIsUnstakeDialogOpen(false)}
       />
       <FastUnstakeDialog
         open={isFastUnstakeDialogOpen}
         fastUnstakeEligibility={useMemo(() => {
-          switch (props.eligibleForFastUnstake) {
+          switch (eligibleForFastUnstake) {
             case undefined:
               return 'pending'
             case true:
@@ -201,11 +204,11 @@ const ValidatorStakeItem = (props: {
             case false:
               return 'ineligible'
           }
-        }, [hasEnoughDepositForFastUnstake, props.eligibleForFastUnstake])}
+        }, [hasEnoughDepositForFastUnstake, eligibleForFastUnstake])}
         amount={amount.decimalAmount?.toLocaleString() ?? '...'}
         fiatAmount={amount.localizedFiatAmount ?? '...'}
         lockDuration={lockDuration}
-        depositAmount={decimal?.fromPlanckOrUndefined(props.fastUnstakeDeposit?.toString())?.toLocaleString()}
+        depositAmount={decimal?.fromPlanckOrUndefined(fastUnstakeDeposit?.toString())?.toLocaleString()}
         onDismiss={() => {
           setIsFastUnstakeDialogOpen(false)
         }}
@@ -214,8 +217,8 @@ const ValidatorStakeItem = (props: {
           setIsUnstakeDialogOpen(true)
         }}
         onConfirm={() => {
-          if (props.eligibleForFastUnstake && hasEnoughDepositForFastUnstake) {
-            void fastUnstake.signAndSend(props.account.address)
+          if (eligibleForFastUnstake && hasEnoughDepositForFastUnstake) {
+            void fastUnstake.signAndSend(account.address)
             setIsFastUnstakeDialogOpen(false)
           } else {
             setIsFastUnstakeDialogOpen(false)
