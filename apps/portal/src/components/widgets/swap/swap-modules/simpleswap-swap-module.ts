@@ -1,10 +1,12 @@
 import type { Chain as ViemChain } from 'viem/chains'
-import { QuoteResponse } from '@chainflip/sdk/swap'
-import { chainsAtom } from '@talismn/balances-react'
+import { QuoteResponseV2 } from '@chainflip/sdk/swap'
+import { chainsAtom, tokensByIdAtom } from '@talismn/balances-react'
+import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { encodeAnyAddress } from '@talismn/util'
 import BigNumber from 'bignumber.js'
-import { atom, Getter, Setter } from 'jotai'
+import { atom, ExtractAtomValue, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
+import { firstValueFrom, from, map, mergeMap, tap, toArray } from 'rxjs'
 import { createPublicClient, encodeFunctionData, erc20Abi, fallback, http, isAddress } from 'viem'
 import { arbitrum, base, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon, sonic } from 'viem/chains'
 
@@ -13,6 +15,7 @@ import { Decimal } from '@/util/Decimal'
 
 import { knownEvmNetworksAtom } from '../helpers'
 import simpleswapLogo from '../side-panel/details/logos/simpleswap-logo.svg'
+import { vanaMainnet } from '../vana'
 import {
   BaseQuote,
   fromAddressAtom,
@@ -20,6 +23,7 @@ import {
   fromAssetAtom,
   GetEstimateGasTxFunction,
   getTokenIdForSwappableAsset,
+  QuoteFee,
   QuoteFunction,
   saveAddressForQuest,
   substrateAssetsSwapTransfer,
@@ -71,6 +75,7 @@ const supportedEvmChains: Record<string, ViemChain | undefined> = {
   movr: moonriver,
   glmr: moonbeam,
   s: sonic,
+  vana: vanaMainnet,
 }
 
 /**
@@ -139,6 +144,13 @@ const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
     name: 'Sonic',
     chainId: 146,
     symbol: 'S',
+    networkType: 'evm',
+  },
+  vana: {
+    id: '1480-evm-native',
+    name: 'Vana',
+    chainId: 1480,
+    symbol: 'VANA',
     networkType: 'evm',
   },
   ethmanta: {
@@ -363,47 +375,115 @@ const simpleSwapSdk = {
   },
 }
 
-const simpleswapAssetsAtom = atom(async () => {
+export const allPairsCsvAtom = atom(async get => {
+  const allAssets = await get(simpleswapAssetsAtom)
+  const allAssetsMap = new Map(allAssets.map(asset => [pairKeyFromAsset(asset), asset]))
+
+  // mergeMap lets us run N concurrent queries, where N is the value of `concurrency`
+  const concurrency = 4
+  const rows = await firstValueFrom(
+    from(allAssets).pipe(
+      mergeMap(async asset => {
+        const { symbol } = asset?.context?.simpleswap ?? {}
+        if (!symbol) return // not supported
+
+        const pairs = await simpleSwapSdk.getPairs({ symbol, fixed: false })
+        if (!pairs || !Array.isArray(pairs)) return
+
+        return { asset, pairs }
+      }, concurrency),
+      // instead of emitting each route as it's fetched, toArray waits for them all to fetch and then it collects them into an array
+      toArray(),
+      // convert pairs into routes
+      map(allPairs =>
+        allPairs.flatMap(
+          assetPairs =>
+            assetPairs?.pairs.map(pair => ({
+              from: assetPairs?.asset,
+              to: allAssetsMap.get(pairKeyFromPair(pair)),
+            })) ?? []
+        )
+      ),
+      // remove invalid routes
+      map(routes => routes.flatMap(route => (route.from && route.to ? route : []))),
+      tap(val => console.log('end result', val))
+    )
+  )
+
+  return [['fromsymbol', 'fromchain', 'tosymbol', 'tochain'].join(',')]
+    .concat(
+      rows
+        .filter(({ from, to }) => from?.symbol && from?.chainId && to?.symbol && to?.chainId)
+        .map(({ from, to }) => [from?.symbol, from?.chainId, to?.symbol, to?.chainId].join(','))
+    )
+    .join('\n')
+})
+
+const simpleswapAssetsAtom = atom(async get => {
   const allCurrencies = await simpleSwapSdk.getAllCurrencies()
+
   const supportedTokens = allCurrencies.filter(currency => {
     if (currency.isFiat) return false
     const isEvmNetwork = supportedEvmChains[currency.network as keyof typeof supportedEvmChains]
     const isSpecialAsset = specialAssets[currency.symbol]
-    if (isEvmNetwork) {
-      // evm assets must be whitelisted as a special asset or have a contract address
-      return isSpecialAsset || !!currency.contract_address
-    }
+
+    // evm assets must be whitelisted as a special asset or have a contract address
+    if (isEvmNetwork) return isSpecialAsset || !!currency.contract_address
+
     // substrate assets must be whitelisted as a special asset
     return isSpecialAsset
   })
+  const tokensById = await get(tokensByIdAtom)
 
   return Object.values(
-    supportedTokens.reduce((acc, cur) => {
-      const evmChain = supportedEvmChains[cur.network as keyof typeof supportedEvmChains]
-      const polkadotAsset = specialAssets[cur.symbol]
+    supportedTokens.reduce((acc, currency) => {
+      const evmChain = supportedEvmChains[currency.network as keyof typeof supportedEvmChains]
+      const polkadotAsset = specialAssets[currency.symbol]
+
       const id = evmChain
-        ? getTokenIdForSwappableAsset('evm', evmChain.id, cur.contract_address ? cur.contract_address : undefined)
+        ? getTokenIdForSwappableAsset(
+            'evm',
+            evmChain.id,
+            currency.contract_address ? currency.contract_address : undefined
+          )
         : polkadotAsset?.id
       const chainId = evmChain ? evmChain.id : polkadotAsset?.chainId
       if (!id || !chainId) return acc
+
+      const image =
+        (tokensById[id]?.logo !== githubUnknownTokenLogoUrl ? tokensById[id]?.logo : undefined) ?? currency.image
       const asset: SwappableAssetBaseType<{ simpleswap: SimpleSwapAssetContext }> = {
         id,
-        name: polkadotAsset?.name ?? cur.name,
-        symbol: polkadotAsset?.symbol ?? cur.symbol,
+        name: polkadotAsset?.name ?? currency.name,
+        symbol: polkadotAsset?.symbol ?? currency.symbol,
         chainId,
-        contractAddress: cur.contract_address ? cur.contract_address : undefined,
-        image: cur.image,
+        contractAddress: currency.contract_address ? currency.contract_address : undefined,
+        image,
         networkType: evmChain ? 'evm' : polkadotAsset?.networkType ?? 'substrate',
         assetHubAssetId: polkadotAsset?.assetHubAssetId,
         context: {
           simpleswap: {
-            symbol: cur.symbol,
+            symbol: currency.symbol,
           },
         },
       }
       return { ...acc, [id]: asset }
-    }, {} as Record<string, SwappableAssetBaseType>)
+    }, {} as Record<string, SwappableAssetBaseType<{ simpleswap: SimpleSwapAssetContext }>>)
   )
+})
+
+const pairKeyFromPair = (pair: Awaited<ExtractAtomValue<typeof pairsAtom>>[number]) => pair.toLowerCase()
+const pairKeyFromAsset = (asset: SwappableAssetBaseType) => asset.context.simpleswap?.symbol.toLowerCase()
+
+const pairsAtom = atom(async get => {
+  const fromAsset = get(fromAssetAtom)
+  const { symbol } = fromAsset?.context?.simpleswap ?? {}
+  if (!symbol) return [] // not supported
+
+  const pairs = await simpleSwapSdk.getPairs({ symbol, fixed: false })
+  if (!pairs || !Array.isArray(pairs)) return []
+
+  return pairs
 })
 
 export const fromAssetsSelector = atom(async get => await get(simpleswapAssetsAtom))
@@ -411,18 +491,18 @@ export const toAssetsSelector = atom(async get => {
   const allAssets = await get(simpleswapAssetsAtom)
   const fromAsset = get(fromAssetAtom)
   if (!fromAsset) return allAssets
-  const symbol = fromAsset.context.simpleswap?.symbol
-  if (!symbol) return [] // not supported
-  const pairs = await simpleSwapSdk.getPairs({ symbol, fixed: false })
+
+  const pairs = await get(pairsAtom)
   if (!pairs || !Array.isArray(pairs)) return []
-  return [
-    fromAsset,
-    ...allAssets.filter(asset => pairs.find(p => p.toLowerCase() === asset.context.simpleswap?.symbol.toLowerCase())),
-  ]
+
+  const validDestinations = new Set(pairs.map(pairKeyFromPair))
+  const validDestAssets = allAssets.filter(asset => validDestinations.has(pairKeyFromAsset(asset)))
+
+  return [fromAsset, ...validDestAssets]
 })
 
 const quote: QuoteFunction = loadable(
-  atom(async (get): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {
+  atom(async (get): Promise<(BaseQuote & { data?: QuoteResponseV2['quotes'][number] }) | null> => {
     const substrateApiGetter = get(substrateApiGetterAtom)
     if (!substrateApiGetter) return null
 
@@ -463,13 +543,21 @@ const quote: QuoteFunction = loadable(
           fees: [],
           providerLogo: LOGO,
           providerName: PROTOCOL_NAME,
-          talismanFeeBps: TALISMAN_FEE,
+          talismanFee: TALISMAN_FEE,
         }
       }
       return null
     }
 
     const gasFee = await estimateGas(get, { getSubstrateApi })
+    // add talisman fee
+    const fees: QuoteFee[] = (gasFee ? [gasFee] : []).concat({
+      amount: BigNumber(fromAmount.planck.toString())
+        .times(10 ** -fromAmount.decimals)
+        .times(TALISMAN_FEE),
+      name: 'Talisman Fee',
+      tokenId: fromAsset.id,
+    })
 
     return {
       decentralisationScore: DECENTRALISATION_SCORE,
@@ -478,10 +566,10 @@ const quote: QuoteFunction = loadable(
       outputAmountBN: Decimal.fromUserInput(output, toAsset.decimals).planck,
       // swaps take about 5mins according to their faq: https://simpleswap.io/faq#crypto-to-crypto-exchanges--how-long-does-it-take-to-exchange-coins
       timeInSec: 5 * 60,
-      fees: gasFee ? [gasFee] : [],
+      fees,
       providerLogo: LOGO,
       providerName: PROTOCOL_NAME,
-      talismanFeeBps: TALISMAN_FEE,
+      talismanFee: TALISMAN_FEE,
     }
   })
 )
@@ -699,9 +787,9 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
       return {
         name: 'Est. Gas Fees',
         tokenId: network.nativeToken.id,
-        amount: Decimal.fromPlanck(gasPrice * gasLimit, network.nativeToken.decimals, {
-          currency: network.nativeToken.symbol,
-        }),
+        amount: BigNumber(gasPrice.toString())
+          .times(gasLimit.toString())
+          .times(10 ** -network.nativeToken.decimals),
       }
     }
 
@@ -729,12 +817,11 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
           fromAmount.planck
         )
   const decimals = transferTx.registry.chainDecimals[0] ?? 10 // default to polkadot decimals 10
-  const symbol = transferTx.registry.chainTokens[0] ?? 'DOT' // default to polkadot symbol 'DOT'
   const paymentInfo = await transferTx.paymentInfo(fromAddress)
   return {
     name: 'Est. Gas Fees',
     tokenId: substrateChain?.nativeToken?.id ?? 'polkadot-substrate-native',
-    amount: Decimal.fromPlanck(paymentInfo.partialFee.toBigInt(), decimals, { currency: symbol }),
+    amount: BigNumber(paymentInfo.partialFee.toBigInt().toString()).times(10 ** -decimals),
   }
 }
 

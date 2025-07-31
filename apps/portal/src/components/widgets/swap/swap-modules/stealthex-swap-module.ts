@@ -1,9 +1,10 @@
 import type { Chain as ViemChain } from 'viem/chains'
-import { QuoteResponse } from '@chainflip/sdk/swap'
-import { chainsAtom } from '@talismn/balances-react'
+import { QuoteResponseV2 } from '@chainflip/sdk/swap'
+import { chainsAtom, tokensByIdAtom } from '@talismn/balances-react'
+import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { encodeAnyAddress } from '@talismn/util'
 import BigNumber from 'bignumber.js'
-import { atom, Getter, Setter } from 'jotai'
+import { atom, ExtractAtomValue, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
 import createClient from 'openapi-fetch'
 import { createPublicClient, encodeFunctionData, erc20Abi, fallback, http, isAddress } from 'viem'
@@ -32,6 +33,7 @@ import type {
 } from './stealthex.api.d.ts'
 import { knownEvmNetworksAtom } from '../helpers'
 import stealthexLogo from '../side-panel/details/logos/stealthex-logo.svg'
+import { vanaMainnet } from '../vana'
 import {
   BaseQuote,
   fromAddressAtom,
@@ -39,6 +41,7 @@ import {
   fromAssetAtom,
   GetEstimateGasTxFunction,
   getTokenIdForSwappableAsset,
+  QuoteFee,
   QuoteFunction,
   saveAddressForQuest,
   substrateAssetsSwapTransfer,
@@ -57,12 +60,41 @@ const apiUrl = import.meta.env.VITE_STEALTHEX_API || 'https://stealthex.talisman
 const PROTOCOL: SupportedSwapProtocol = 'stealthex' as const
 const PROTOCOL_NAME = 'StealthEX'
 const DECENTRALISATION_SCORE = 1.5
-const TALISMAN_TOTAL_FEE = 0.01 // We take a fee of 1.0%
+type FeeProps = { fromAsset: SwappableAssetBaseType; toAsset: SwappableAssetBaseType }
+const getTalismanTotalFee = ({ fromAsset, toAsset }: FeeProps) => {
+  const isSubToOrFromEvm =
+    (fromAsset.networkType === 'substrate' && toAsset.networkType === 'evm') ||
+    (fromAsset.networkType === 'evm' && toAsset.networkType === 'substrate')
+
+  const isSubToOrFromSub =
+    (fromAsset.networkType === 'substrate' && toAsset.networkType === 'substrate') ||
+    (fromAsset.networkType === 'substrate' && toAsset.networkType === 'substrate')
+
+  const isEvmToOrFromEvm =
+    (fromAsset.networkType === 'evm' && toAsset.networkType === 'evm') ||
+    (fromAsset.networkType === 'evm' && toAsset.networkType === 'evm')
+
+  const isToOrFromBtc = fromAsset.networkType === 'btc' || toAsset.networkType === 'btc'
+
+  if (isSubToOrFromEvm) return 0.015 // 1.5% total fee for sub<>evm
+  if (isSubToOrFromSub) return 0.005 // 0.5% total fee for sub<>sub
+  if (isEvmToOrFromEvm) return 0.002 // 0.2% total fee for evm<>evm (NOTE: will actually be 0.4%, as that is the minimum we can set via stealthex for now)
+  if (isToOrFromBtc) return 0.015 // 1.5% total fee for any<>btc
+  return 0.01 // 1.0% total fee by default
+}
 const BUILT_IN_FEE = 0.004 // StealthEX always includes an affiliate fee of 0.4%
-const TALISMAN_ADDITIONAL_FEE = TALISMAN_TOTAL_FEE - BUILT_IN_FEE // We want a total fee of 1.5%, so subtract the built-in fee of 0.4%
+const getAdditionalFee = (feeProps: FeeProps) =>
+  Math.max(
+    // we want a total fee of x,
+    // so get the total talisman fee for this route,
+    // then subtract the built-in fee of 0.4%, which is applied to all exchanges made via stealthex
+    getTalismanTotalFee(feeProps) - BUILT_IN_FEE,
+    // if the talisman total fee is less than the built-in fee, default to an additional_fee of 0.0
+    0
+  )
 // Our UI represents a 1% fee as `0.01`, but the StealthEX api represents a 1% fee as `1.0`.
 // 1.0 = 0.01 * 100
-const additional_fee_percent = TALISMAN_ADDITIONAL_FEE * 100
+const getAdditionalFeePercent = (feeProps: FeeProps) => getAdditionalFee(feeProps) * 100 // to percent
 
 const LOGO = stealthexLogo
 
@@ -84,6 +116,7 @@ const supportedEvmChains: Record<string, ViemChain | undefined> = {
   optimism,
   theta,
   zksync,
+  vana: vanaMainnet,
 }
 
 /**
@@ -167,6 +200,13 @@ const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
     symbol: 'ETH',
     networkType: 'evm',
   },
+  'mainnet::vana': {
+    id: '1480-evm-native',
+    name: 'Vana',
+    chainId: 1480,
+    symbol: 'VANA',
+    networkType: 'evm',
+  },
   'manta::eth': {
     id: '169-evm-native',
     name: 'Ethereum (Manta Pacific)',
@@ -220,15 +260,40 @@ const specialAssets: Record<string, Omit<SwappableAssetBaseType, 'context'>> = {
 
 const api = createClient<StealthexApi>({ baseUrl: apiUrl })
 const stealthexSdk = {
-  getAllCurrencies: async (): Promise<StealthexCurrency[]> => {
+  getAllCurrencies: async ({ withAvailableRoutes = false }: { withAvailableRoutes?: boolean } = {}): Promise<
+    StealthexCurrency[]
+  > => {
     const allCurrencies: StealthexCurrency[] = []
+    const fetchCurrenciesPage = async (limit: number, offset: number) => {
+      try {
+        const { data: currencies } = await api.GET('/v4/currencies', {
+          params: { query: { limit, offset, include_available_routes: `${withAvailableRoutes}` } },
+        })
+        if (!Array.isArray(currencies)) return []
+        return currencies
+      } catch {
+        return []
+      }
+    }
 
-    // TODO: When worker cache isn't warm, this takes too long to fetch all requests.
+    // NOTE: To reduce latency, pre-fetch the first 8 pages, then continue fetching pages until the response is empty
+    let offset = 0
     const limit = 250
-    for (let offset = 0; ; offset += limit) {
-      const { data: currencies } = await api.GET('/v4/currencies', { params: { query: { limit, offset } } })
-      if (!Array.isArray(currencies)) break
-
+    // pre-fetch
+    const currencies = await Promise.all([
+      fetchCurrenciesPage(limit, offset),
+      fetchCurrenciesPage(limit, (offset += limit)),
+      fetchCurrenciesPage(limit, (offset += limit)),
+      fetchCurrenciesPage(limit, (offset += limit)),
+      fetchCurrenciesPage(limit, (offset += limit)),
+      fetchCurrenciesPage(limit, (offset += limit)),
+      fetchCurrenciesPage(limit, (offset += limit)),
+      fetchCurrenciesPage(limit, (offset += limit)),
+    ])
+    allCurrencies.push(...currencies.flat())
+    // continue fetching
+    for (;;) {
+      const currencies = await fetchCurrenciesPage(limit, (offset += limit))
       allCurrencies.push(...currencies)
       if (currencies.length !== 250) break
     }
@@ -252,18 +317,27 @@ const stealthexSdk = {
     route,
     estimation,
     rate,
+    additional_fee_percent,
   }: {
     route: { from: { network: string; symbol: string }; to: { network: string; symbol: string } }
     estimation?: 'direct' | 'reversed'
     rate?: 'floating' | 'fixed'
+    additional_fee_percent?: number
   }): Promise<{ min: BigNumber }> => {
     // default values
     estimation ||= 'direct'
     rate ||= 'floating'
 
-    const { data: range, error } = await api.POST('/v4/rates/range', {
-      body: { route, estimation, rate, additional_fee_percent },
-    })
+    const params = {
+      route,
+      estimation,
+      rate,
+      additional_fee_percent,
+    }
+    if (params.additional_fee_percent === undefined) delete params.additional_fee_percent
+    if (params.additional_fee_percent === 0.0) delete params.additional_fee_percent
+
+    const { data: range, error } = await api.POST('/v4/rates/range', { body: params })
     if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
     return { min: BigNumber(range?.min_amount ?? 0) }
   },
@@ -272,19 +346,29 @@ const stealthexSdk = {
     amount,
     estimation,
     rate,
+    additional_fee_percent,
   }: {
     route: { from: { network: string; symbol: string }; to: { network: string; symbol: string } }
     amount: number
     estimation?: 'direct' | 'reversed'
     rate?: 'floating' | 'fixed'
+    additional_fee_percent?: number
   }): Promise<number> => {
     // default values
     estimation ||= 'direct'
     rate ||= 'floating'
 
-    const { data: estimate, error } = await api.POST('/v4/rates/estimated-amount', {
-      body: { route, amount, estimation, rate, additional_fee_percent },
-    })
+    const params = {
+      route,
+      amount,
+      estimation,
+      rate,
+      additional_fee_percent,
+    }
+    if (params.additional_fee_percent === undefined) delete params.additional_fee_percent
+    if (params.additional_fee_percent === 0.0) delete params.additional_fee_percent
+
+    const { data: estimate, error } = await api.POST('/v4/rates/estimated-amount', { body: params })
     if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
     return estimate?.estimated_amount
   },
@@ -297,6 +381,7 @@ const stealthexSdk = {
     extra_id,
     refund_address,
     refund_extra_id,
+    additional_fee_percent,
   }: {
     route: { from: { network: string; symbol: string }; to: { network: string; symbol: string } }
     amount: number
@@ -306,6 +391,7 @@ const stealthexSdk = {
     extra_id?: string
     refund_address?: string
     refund_extra_id?: string
+    additional_fee_percent?: number
   }): Promise<StealthexExchange> => {
     // default values
     estimation ||= 'direct'
@@ -325,6 +411,8 @@ const stealthexSdk = {
     if (extra_id === undefined) delete params.extra_id
     if (refund_address === undefined) delete params.refund_address
     if (refund_extra_id === undefined) delete params.refund_extra_id
+    if (params.additional_fee_percent === undefined) delete params.additional_fee_percent
+    if (params.additional_fee_percent === 0.0) delete params.additional_fee_percent
 
     const { data: exchange, error } = await api.POST('/v4/exchanges', { body: params })
     if (error) throw new Error(`${error.err.kind}: ${error.err.details}`)
@@ -337,7 +425,62 @@ const stealthexSdk = {
   },
 }
 
-const assetsAtom = atom(async () => {
+export const allPairsCsvAtom = atom(async get => {
+  const currencies = await stealthexSdk.getAllCurrencies({ withAvailableRoutes: true })
+
+  const assets = await get(assetsAtom)
+  const assetsById = new Map(assets.map(asset => [asset.id, asset]))
+
+  const currenciesMapKey = (currency: Pick<(typeof currencies)[number], 'network' | 'symbol'>) =>
+    `${currency.network}::${currency.symbol}`
+  const currenciesMap = new Map(currencies.map(currency => [currenciesMapKey(currency), currency]))
+
+  const assetId = (currency: Pick<(typeof currencies)[number], 'network' | 'symbol'>) => {
+    const evmChain = supportedEvmChains[currency.network]
+    if (evmChain) {
+      const contractAddress = currenciesMap.get(currenciesMapKey(currency))?.contract_address
+      return getTokenIdForSwappableAsset('evm', evmChain.id, contractAddress ?? undefined)
+    }
+    return specialAssets[`${currency.network}::${currency.symbol}`]?.id
+  }
+
+  const routes = currencies
+    // remove currencies with no available routes
+    .filter(currency => currency.available_routes?.length)
+    // map to asset ids
+    .map(currency => ({
+      assetId: assetId(currency),
+      currencyId: currenciesMapKey(currency),
+      routes: (currency.available_routes ?? [])
+        // map routes to asset ids
+        .map(route => ({
+          assetId: assetId(route),
+          currencyId: currenciesMapKey(route),
+          hasCurrency: !!currenciesMap.get(currenciesMapKey(route)),
+        }))
+        // filter out routes with no asset id / currency
+        .flatMap(({ hasCurrency, ...route }) => (route.assetId && hasCurrency ? route : [])),
+    }))
+    // filter out currencies with no asset id
+    .flatMap(route => (route.assetId ? route : []))
+
+  const assetRoutes = routes.flatMap(route => ({
+    asset: assetsById.get(route.assetId ?? ''),
+    routes: route.routes.map(route => ({ asset: assetsById.get(route.assetId ?? '') })),
+  }))
+
+  const rows = assetRoutes.flatMap(from => from.routes.map(to => ({ from: from.asset, to: to.asset })))
+
+  return [['fromsymbol', 'fromchain', 'tosymbol', 'tochain'].join(',')]
+    .concat(
+      rows
+        .filter(({ from, to }) => from?.symbol && from?.chainId && to?.symbol && to?.chainId)
+        .map(({ from, to }) => [from?.symbol, from?.chainId, to?.symbol, to?.chainId].join(','))
+    )
+    .join('\n')
+})
+
+const assetsAtom = atom(async get => {
   const allCurrencies = await stealthexSdk.getAllCurrencies()
 
   const supportedTokens = allCurrencies.filter(currency => {
@@ -350,6 +493,7 @@ const assetsAtom = atom(async () => {
     // substrate assets must be whitelisted as a special asset
     return isSpecialAsset
   })
+  const tokensById = await get(tokensByIdAtom)
 
   return Object.values(
     supportedTokens.reduce((acc, currency) => {
@@ -366,13 +510,15 @@ const assetsAtom = atom(async () => {
       const chainId = evmChain ? evmChain.id : specialAsset?.chainId
       if (!id || !chainId) return acc
 
+      const image =
+        (tokensById[id]?.logo !== githubUnknownTokenLogoUrl ? tokensById[id]?.logo : undefined) ?? currency.icon_url
       const asset: SwappableAssetBaseType<{ stealthex: AssetContext }> = {
         id,
         name: specialAsset?.name ?? currency.name,
         symbol: specialAsset?.symbol ?? currency.symbol,
         chainId,
         contractAddress: currency.contract_address ? currency.contract_address : undefined,
-        image: currency.icon_url,
+        image,
         networkType: evmChain ? 'evm' : specialAsset?.networkType ?? 'substrate',
         assetHubAssetId: specialAsset?.assetHubAssetId,
         context: {
@@ -387,28 +533,53 @@ const assetsAtom = atom(async () => {
   )
 })
 
+const pairKeyFromPair = (pair: Awaited<ExtractAtomValue<typeof pairsAtom>>[number]) => `${pair.network}::${pair.symbol}`
+const pairKeyFromAsset = (asset: SwappableAssetBaseType) =>
+  asset && `${asset.context?.stealthex?.network}::${asset.context?.stealthex?.symbol}`
+
+const pairsAtom = atom(async get => {
+  const fromAsset = get(fromAssetAtom)
+  const { symbol, network } = fromAsset?.context?.stealthex ?? {}
+  if (!symbol || !network) return [] // not supported
+
+  const pairs = await stealthexSdk.getPairs({ symbol, network })
+  if (!pairs || !Array.isArray(pairs)) return []
+
+  return pairs
+})
+
+const routeHasCustomFeeAtom = atom(async get => {
+  const pairs = await get(pairsAtom)
+  if (!pairs || !Array.isArray(pairs)) return false
+
+  const toAsset = get(toAssetAtom)
+  if (!toAsset || !toAsset.context.stealthex) return false
+  if (!('stealthex' in toAsset.context)) return false
+
+  const toAssetKey = pairKeyFromAsset(toAsset)
+  const pair = pairs.find(pair => pairKeyFromPair(pair) === toAssetKey)
+  if (!pair) return false
+
+  return pair.features.includes('custom_fee')
+})
+
 export const fromAssetsSelector = atom(async get => await get(assetsAtom))
 export const toAssetsSelector = atom(async get => {
   const allAssets = await get(assetsAtom)
   const fromAsset = get(fromAssetAtom)
   if (!fromAsset) return allAssets
 
-  const { symbol, network } = fromAsset.context.stealthex
-  if (!symbol || !network) return [] // not supported
-
-  const pairs = await stealthexSdk.getPairs({ symbol, network })
+  const pairs = await get(pairsAtom)
   if (!pairs || !Array.isArray(pairs)) return []
 
-  const validDestinations = new Set(pairs.map(pair => `${pair.network}::${pair.symbol}`))
-  const validDestAssets = allAssets.filter(asset =>
-    validDestinations.has(`${asset.context?.stealthex?.network}::${asset.context?.stealthex?.symbol}`)
-  )
+  const validDestinations = new Set(pairs.map(pairKeyFromPair))
+  const validDestAssets = allAssets.filter(asset => validDestinations.has(pairKeyFromAsset(asset)))
 
   return [fromAsset, ...validDestAssets]
 })
 
 const quote: QuoteFunction = loadable(
-  atom(async (get): Promise<(BaseQuote & { data?: QuoteResponse }) | null> => {
+  atom(async (get): Promise<(BaseQuote & { data?: QuoteResponseV2['quotes'][number] }) | null> => {
     const substrateApiGetter = get(substrateApiGetterAtom)
     if (!substrateApiGetter) return null
 
@@ -416,6 +587,7 @@ const quote: QuoteFunction = loadable(
     const fromAsset = get(fromAssetAtom)
     const toAsset = get(toAssetAtom)
     const fromAmount = get(fromAmountAtom)
+    const routeHasCustomFee = await get(routeHasCustomFeeAtom)
 
     if (!fromAsset || !toAsset || !fromAmount || fromAmount.planck === 0n) return null
     const from: AssetContext = fromAsset.context.stealthex
@@ -425,19 +597,31 @@ const quote: QuoteFunction = loadable(
     // force refresh
     get(swapQuoteRefresherAtom)
 
-    const range = await stealthexSdk.getRange({ route: { from, to } })
+    const additional_fee_percent = routeHasCustomFee ? getAdditionalFeePercent({ fromAsset, toAsset }) : undefined
+    const range = await stealthexSdk.getRange({ route: { from, to }, additional_fee_percent })
     if (range && range.min.isGreaterThan(fromAmount.toString()))
       throw new Error(`StealthEX minimum is ${range.min.toString()} ${fromAsset.symbol}`)
 
     try {
       // TODO: Return `null` or an error when getRange / getEstimate fails
-      // Error format: `return { decentralisationScore: DECENTRALISATION_SCORE, protocol: PROTOCOL, inputAmountBN: fromAmount.planck, outputAmountBN: 0n, error: '<error here>', timeInSec: 5 * 60, fees: [], providerLogo: LOGO, providerName: PROTOCOL_NAME, talismanFeeBps: TALISMAN_TOTAL_FEE, }`
+      // Error format: `return { decentralisationScore: DECENTRALISATION_SCORE, protocol: PROTOCOL, inputAmountBN: fromAmount.planck, outputAmountBN: 0n, error: '<error here>', timeInSec: 5 * 60, fees: [], providerLogo: LOGO, providerName: PROTOCOL_NAME, talismanFee: TALISMAN_TOTAL_FEE, }`
       const estimate = await stealthexSdk.getEstimate({
         route: { from, to },
         amount: fromAmount.toNumber(),
+        additional_fee_percent,
       })
 
       const gasFee = await estimateGas(get, { getSubstrateApi })
+      // relative fee, multiply by fromAmount to get planck fee
+      const talismanFee = Math.max(getTalismanTotalFee({ fromAsset, toAsset }), BUILT_IN_FEE)
+      // add talisman fee
+      const fees: QuoteFee[] = (gasFee ? [gasFee] : []).concat({
+        amount: BigNumber(fromAmount.planck.toString())
+          .times(10 ** -fromAmount.decimals)
+          .times(talismanFee),
+        name: 'Talisman Fee',
+        tokenId: fromAsset.id,
+      })
 
       return {
         decentralisationScore: DECENTRALISATION_SCORE,
@@ -446,10 +630,10 @@ const quote: QuoteFunction = loadable(
         outputAmountBN: Decimal.fromUserInput(String(estimate), toAsset.decimals).planck,
         // simpleswap swaps take about 5mins, assuming here that stealthex takes a similar amount of time
         timeInSec: 5 * 60,
-        fees: gasFee ? [gasFee] : [],
+        fees,
         providerLogo: LOGO,
         providerName: PROTOCOL_NAME,
-        talismanFeeBps: TALISMAN_TOTAL_FEE,
+        talismanFee,
       }
     } catch (cause) {
       console.error(`Failed to get StealthEX quote`, cause)
@@ -507,10 +691,14 @@ const swap: SwapFunction<{ id: string }> = async (
   // cannot swap from BTC
   if (fromAsset.networkType === 'btc') throw new Error('Swapping from BTC is not supported.')
 
+  const routeHasCustomFee = await get(routeHasCustomFeeAtom)
+
+  const additional_fee_percent = routeHasCustomFee ? getAdditionalFeePercent({ fromAsset, toAsset }) : undefined
   const exchange = await stealthexSdk.createExchange({
     route: { from, to },
     amount: amount.toNumber(),
     address: addressTo,
+    additional_fee_percent,
   })
 
   if (!exchange) throw new Error('Error creating exchange')
@@ -658,9 +846,9 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
       return {
         name: 'Est. Gas Fees',
         tokenId: network.nativeToken.id,
-        amount: Decimal.fromPlanck(gasPrice * gasLimit, network.nativeToken.decimals, {
-          currency: network.nativeToken.symbol,
-        }),
+        amount: BigNumber(gasPrice.toString())
+          .times(gasLimit.toString())
+          .times(10 ** -network.nativeToken.decimals),
       }
     }
 
@@ -688,12 +876,11 @@ const estimateGas: GetEstimateGasTxFunction = async (get, { getSubstrateApi }) =
           fromAmount.planck
         )
   const decimals = transferTx.registry.chainDecimals[0] ?? 10 // default to polkadot decimals 10
-  const symbol = transferTx.registry.chainTokens[0] ?? 'DOT' // default to polkadot symbol 'DOT'
   const paymentInfo = await transferTx.paymentInfo(fromAddress)
   return {
     name: 'Est. Gas Fees',
     tokenId: substrateChain?.nativeToken?.id ?? 'polkadot-substrate-native',
-    amount: Decimal.fromPlanck(paymentInfo.partialFee.toBigInt(), decimals, { currency: symbol }),
+    amount: BigNumber(paymentInfo.partialFee.toBigInt().toString()).times(10 ** -decimals),
   }
 }
 

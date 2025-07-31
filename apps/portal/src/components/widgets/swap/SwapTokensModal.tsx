@@ -1,3 +1,4 @@
+import type { Chain as ViemChain } from 'viem/chains'
 import { useChains, useEvmNetworks, useTokenRates } from '@talismn/balances-react'
 import { Chain, EvmNetwork, githubUnknownChainLogoUrl, githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { Button, SurfaceButton } from '@talismn/ui/atoms/Button'
@@ -13,9 +14,8 @@ import { Globe, X } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { isAddress } from 'viem'
-import { type Chain as ViemChain } from 'viem/chains'
-import * as allEvmChains from 'viem/chains'
 
+import { allEvmChains } from '@/components/widgets/swap/allEvmChains.ts'
 import { useDebounce } from '@/hooks/useDebounce'
 import { cn } from '@/util/cn'
 import { Decimal } from '@/util/Decimal'
@@ -332,8 +332,9 @@ export const SwapTokensModal: React.FC<Props> = ({
                             substrateAddress={substrateAddress}
                             balance={balances?.[asset.id]}
                             explorerUrl={
-                              Object.values(allEvmChains).find((c: ViemChain) => c.id === +asset.chainId)
-                                ?.blockExplorers?.default.url
+                              Object.values(allEvmChains)
+                                .flatMap(chain => (chain ? chain : []))
+                                .find((c: ViemChain) => c.id === +asset.chainId)?.blockExplorers?.default.url
                             }
                             onClick={handleSelectAsset}
                           />

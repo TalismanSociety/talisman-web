@@ -37,8 +37,9 @@ type KnownEvmNetworkTokensById = Omit<KnownEvmNetwork, 'balancesConfig'> & {
 }
 
 export const knownEvmNetworksAtom = atom(async () => {
+  // TODO: After upgrading Portal to chaindata v4, replace this with `useTokens` from `@talismn/balances-react`
   const res = await fetch(
-    'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/data/generated/known-evm-networks.json'
+    'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/data/generated/known-evm-networks-deprecated.json'
   )
   const data = (await res.json()) as KnownEvmNetwork[]
   const organized = data.reduce((acc, curNetwork) => {

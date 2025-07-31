@@ -1,18 +1,20 @@
 import type { PrimitiveAtom } from 'jotai'
+import type { Chain as ViemChain } from 'viem/chains'
 import * as sdk from '@lifi/sdk'
 import { evmErc20TokenId } from '@talismn/balances'
-import { tokenRatesAtom, tokensByIdAtom, useTokens } from '@talismn/balances-react'
+import { tokenRatesAtom, tokensByIdAtom, useChains, useEvmNetworks, useTokens } from '@talismn/balances-react'
+import { isEthereumAddress } from '@talismn/crypto'
 import { toast } from '@talismn/ui/molecules/Toaster'
+import BigNumber from 'bignumber.js'
 import { Atom, atom, Getter, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { atomFamily, loadable, useAtomCallback } from 'jotai/utils'
 import { Loadable } from 'jotai/vanilla/utils/loadable'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
 import { createPublicClient, erc20Abi, http, isAddress } from 'viem'
-import { type Chain as ViemChain } from 'viem/chains'
-import * as allEvmChains from 'viem/chains'
 import { useWalletClient } from 'wagmi'
 
+import { allEvmChains } from '@/components/widgets/swap/allEvmChains.ts'
 import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { substrateApiGetterAtom, substrateApiState } from '@/domains/common/recoils/api'
 import { connectedSubstrateWalletState } from '@/domains/extension/substrate'
@@ -28,7 +30,9 @@ import type {
 import { popularTokens, talismanTokens } from './curated-tokens'
 import { knownEvmNetworksAtom } from './helpers'
 import { swapInfoTabAtom } from './side-panel'
+import { chainflipSwapModule } from './swap-modules/chainflip.swap-module'
 import {
+  fromAddressAtom,
   fromAmountAtom,
   fromAssetAtom,
   fromEvmAddressAtom,
@@ -41,6 +45,7 @@ import {
   swapQuoteRefresherAtom,
   swapsAtom,
   toAssetAtom,
+  toBtcAddressAtom,
   toEvmAddressAtom,
   toSubstrateAddressAtom,
 } from './swap-modules/common.swap-module'
@@ -52,8 +57,7 @@ const coingeckoApiUrl = import.meta.env.VITE_COIN_GECKO_API
 const coingeckoApiKey = import.meta.env.VITE_COIN_GECKO_API_KEY
 const coingeckoTier = import.meta.env.VITE_COIN_GECKO_API_TIER
 
-// import { chainflipSwapModule } from './swap-modules/chainflip.swap-module'
-const swapModules = [/* chainflipSwapModule, */ simpleswapSwapModule, lifiSwapModule, stealthexSwapModule]
+const swapModules = [chainflipSwapModule, simpleswapSwapModule, lifiSwapModule, stealthexSwapModule]
 const ETH_LOGO = 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg'
 const BTC_LOGO = 'https://assets.coingecko.com/coins/images/1/standard/bitcoin.png?1696501400'
 const btcTokens = {
@@ -287,7 +291,7 @@ const erc20Atom = atomFamily((addressChainId: string) =>
     const isValidAddress = isAddress(address)
     if (!isValidAddress || isNaN(chainId)) return null
 
-    const chain: ViemChain | undefined = Object.values(allEvmChains).find(c => c.id === chainId)
+    const chain: ViemChain | undefined = Object.values(allEvmChains).find(c => c?.id === chainId)
     if (!chain) return null
     const platforms = await get(coingeckoAssetPlatformsAtom)
     const platform = platforms.find(p => p.chain_identifier === chainId)
@@ -365,15 +369,17 @@ const filterAndSortTokens = async (
       // find token details from on chain
       const allOnChainTokens = await Promise.all(
         [
-          allEvmChains.mainnet,
-          allEvmChains.arbitrum,
-          allEvmChains.base,
-          allEvmChains.bsc,
-          allEvmChains.polygon,
-          allEvmChains.optimism,
-          allEvmChains.blast,
-          allEvmChains.zkSync,
-        ].map(chain => get(erc20Atom(`${search}:${chain.id}`)))
+          allEvmChains['mainnet'],
+          allEvmChains['arbitrum'],
+          allEvmChains['base'],
+          allEvmChains['bsc'],
+          allEvmChains['polygon'],
+          allEvmChains['optimism'],
+          allEvmChains['blast'],
+          allEvmChains['zkSync'],
+        ]
+          .flatMap(chain => (chain ? chain : []))
+          .map(chain => get(erc20Atom(`${search}:${chain.id}`)))
       )
       return allOnChainTokens.filter(t => t !== null)
     }
@@ -505,10 +511,12 @@ export const sortedQuotesAtom = atom(async get => {
   return quotes.data
     ?.map(q => {
       if (q.state !== 'hasData') return { quote: q, fees: 0 }
-      const fees = q.data?.fees.reduce((acc, fee) => {
-        const rate = tokenRates[fee.tokenId]?.usd?.price ?? 0
-        return acc + fee.amount.toNumber() * rate
-      }, 0)
+      const fees = q.data?.fees
+        .reduce((acc, fee) => {
+          const rate = tokenRates[fee.tokenId]?.usd?.price ?? 0
+          return acc.plus(fee.amount.times(rate))
+        }, BigNumber(0))
+        ?.toNumber()
       return {
         quote: q,
         fees,
@@ -565,7 +573,7 @@ export const approvalAtom = atom(async get => {
   const approval = get(module.approvalAtom)
   if (!approval) return null
 
-  const chain = Object.values(allEvmChains).find(c => c.id === approval.chainId)
+  const chain = Object.values(allEvmChains).find(c => c?.id === approval.chainId)
   // chain unsupported
   if (!chain) return null
 
@@ -648,10 +656,12 @@ export const useSwap = () => {
 // utility hooks
 
 export const useReverse = () => {
+  const setFromAmount = useSetAtom(fromAmountAtom)
+
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
   const [toAsset, setToAsset] = useAtom(toAssetAtom)
+
   const toAmount = useAtomValue(loadable(toAmountAtom))
-  const setFromAmount = useSetAtom(fromAmountAtom)
 
   return useCallback(() => {
     if (toAmount.state === 'hasData' && toAmount.data) {
@@ -726,42 +736,117 @@ export const useFromAccount = () => {
     [fromSubstrateAddress, substrateAccounts]
   )
 
+  const setToAddress = useSetToAddress()
+
+  // pick first account from wallet if no account is set
   useEffect(() => {
-    if (!fromEvmAccount && ethAccounts.length > 0) setFromEvmAddress((ethAccounts[0]?.address as `0x${string}`) ?? null)
-    if (!fromSubstrateAccount && substrateAccounts.length > 0)
-      setFromSubstrateAddress(substrateAccounts[0]?.address ?? null)
-  }, [ethAccounts, fromEvmAccount, fromSubstrateAccount, setFromEvmAddress, setFromSubstrateAddress, substrateAccounts])
+    if (!fromEvmAccount && ethAccounts.length > 0) {
+      const newFromAddress = (ethAccounts[0]?.address as `0x${string}` | null) ?? null
+      setFromEvmAddress(newFromAddress)
+      setToAddress({ fromAddress: newFromAddress })
+    }
+    if (!fromSubstrateAccount && substrateAccounts.length > 0) {
+      const newFromAddress = substrateAccounts[0]?.address ?? null
+      setFromSubstrateAddress(newFromAddress)
+      setToAddress({ fromAddress: newFromAddress })
+    }
+  }, [
+    ethAccounts,
+    fromEvmAccount,
+    fromSubstrateAccount,
+    setFromEvmAddress,
+    setFromSubstrateAddress,
+    setToAddress,
+    substrateAccounts,
+  ])
 
   return { ethAccounts, substrateAccounts, fromEvmAccount, fromSubstrateAccount, fromEvmAddress, fromSubstrateAddress }
 }
 
-export const useToAccount = () => {
-  const initiated = useRef(false)
-  const substrateAccounts = useRecoilValue(writeableSubstrateAccountsState)
-  const ethAccounts = useRecoilValue(wagmiAccountsState)
+export const useSetToAddress = () => {
+  const _fromAddress = useAtomValue(fromAddressAtom)
+  const _toAsset = useAtomValue(toAssetAtom)
 
   const [toEvmAddress, setToEvmAddress] = useAtom(toEvmAddressAtom)
   const [toSubstrateAddress, setToSubstrateAddress] = useAtom(toSubstrateAddressAtom)
+  const [toBtcAddress, setToBtcAddress] = useAtom(toBtcAddressAtom)
 
-  const toEvmAccount = useMemo(
-    () => ethAccounts.find(a => a.address.toLowerCase() === toEvmAddress?.toLowerCase()),
-    [ethAccounts, toEvmAddress]
+  const chains = useChains()
+  const networks = useEvmNetworks()
+
+  const setToAddress = useCallback(
+    (
+      /**
+       * Use overrides when calling `setToAddress` at the same time as `setFromAddress` or `setToAsset`.
+       * This will set toAddress based on the values being set, rather than the last values from `fromAddressAtom`/`toAssetAtom`.
+       */
+      overrides: { fromAddress?: string | null; toAsset?: SwappableAssetWithDecimals | null } = {}
+    ) => {
+      const fromAddress = overrides.fromAddress ?? _fromAddress
+      const toAsset = overrides.toAsset ?? _toAsset
+      const toNetwork = toAsset?.chainId ? chains[toAsset.chainId] ?? networks[toAsset.chainId] ?? null : null
+
+      // when fromAddress, fromAsset or toAsset changes, set toAddress to either fromAddress or null, depending on whether it's compatible with the new toAsset
+      switch (toAsset?.networkType) {
+        case 'evm': {
+          // toAddress is already evm, don't change anything
+          if (toEvmAddress && isEthereumAddress(toEvmAddress)) return
+
+          // fromAddress isn't evm, set toAddress to null
+          if (!fromAddress || !isEthereumAddress(fromAddress))
+            return setToEvmAddress(null), setToSubstrateAddress(null), setToBtcAddress(null)
+
+          // fromAddress is evm, set toAddress to fromAddress
+          return (
+            setToEvmAddress(fromAddress as `0x${string}` | null), setToSubstrateAddress(null), setToBtcAddress(null)
+          )
+        }
+        case 'substrate': {
+          const networkAccountType = toNetwork && 'account' in toNetwork ? toNetwork.account : null
+          const isCompatibleWithNetwork = (address: string) =>
+            isEthereumAddress(address) ? networkAccountType === 'secp256k1' : networkAccountType !== 'secp256k1'
+
+          // toAddress is already substrate, don't change anything (if it's still compatible with this network)
+          if (toSubstrateAddress && (!toNetwork || isCompatibleWithNetwork(toSubstrateAddress))) return
+
+          // fromAddress isn't substrate, set toAddress to null
+          if (!fromAddress || !isCompatibleWithNetwork(fromAddress))
+            return setToEvmAddress(null), setToSubstrateAddress(null), setToBtcAddress(null)
+
+          // fromAddress is substrate, set toAddress to fromAddress
+          return setToEvmAddress(null), setToSubstrateAddress(fromAddress), setToBtcAddress(null)
+        }
+        case 'btc': {
+          // toAddress is already btc, don't change anything
+          if (toBtcAddress) return
+
+          // fromAddress is never btc, always set toAddress to null
+          return setToEvmAddress(null), setToSubstrateAddress(null), setToBtcAddress(null)
+        }
+        case undefined: {
+          return
+        }
+        default: {
+          console.error(`networkType ${toAsset?.networkType} not handled in updateSelectedAccountsOnAssetChange`)
+          return setToEvmAddress(null), setToSubstrateAddress(null), setToBtcAddress(null)
+        }
+      }
+    },
+    [
+      _fromAddress,
+      _toAsset,
+      chains,
+      networks,
+      setToBtcAddress,
+      setToEvmAddress,
+      setToSubstrateAddress,
+      toBtcAddress,
+      toEvmAddress,
+      toSubstrateAddress,
+    ]
   )
-  const toSubstrateAccount = useMemo(
-    () => substrateAccounts.find(a => a.address.toLowerCase() === toSubstrateAddress?.toLowerCase()),
-    [substrateAccounts, toSubstrateAddress]
-  )
 
-  useEffect(() => {
-    if (initiated.current) return
-    if (!toEvmAccount && ethAccounts.length > 0) setToEvmAddress((ethAccounts[0]?.address as `0x${string}`) ?? null)
-    if (!toSubstrateAccount && substrateAccounts.length > 0)
-      setToSubstrateAddress(substrateAccounts[0]?.address ?? null)
-  }, [ethAccounts, setToEvmAddress, setToSubstrateAddress, substrateAccounts, toEvmAccount, toSubstrateAccount])
-
-  useEffect(() => {
-    if (toEvmAddress && toSubstrateAddress) initiated.current = true
-  }, [toEvmAddress, toSubstrateAddress])
+  return setToAddress
 }
 
 export const categoriesAtom = atom(async () => {

@@ -1,10 +1,12 @@
 import type { ReactElement, ReactNode } from 'react'
 import { Button } from '@talismn/ui/atoms/Button'
+import { SurfaceIconButton } from '@talismn/ui/atoms/IconButton'
 import { Text } from '@talismn/ui/atoms/Text'
 import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
+import { SearchBar } from '@talismn/ui/molecules/SearchBar'
 import { Select } from '@talismn/ui/molecules/Select'
-import { ChevronLeft, ChevronRight } from '@talismn/web-icons'
-import { motion } from 'framer-motion'
+import { ChevronLeft, ChevronRight, Search } from '@talismn/web-icons'
+import { LayoutGroup, motion } from 'framer-motion'
 import React, { useState } from 'react'
 
 import type { StakeTargetSelectorItemProps } from './StakeTargetSelectorItem'
@@ -17,10 +19,13 @@ export type StakeTargetSelectorDialogProps<T> = {
   selectionLabel: ReactNode
   confirmButtonContent: ReactNode
   children: ReactElement<T> | Array<ReactElement<T>>
+  searchLabel?: string
+  search?: string
   isSortDisabled?: boolean
   sortMethods?: {
     [key: string]: (a: ReactElement<T>, b: ReactElement<T>) => number
   }
+  onHandleSearch?: (value: string) => void
   onRequestDismiss: () => unknown
   onConfirm: () => unknown
 }
@@ -29,19 +34,33 @@ const ITEMS_PER_PAGE = 9
 
 export const StakeTargetSelectorDialog = Object.assign(
   <T extends { highlighted?: boolean; selected?: boolean }>(props: StakeTargetSelectorDialogProps<T>) => {
-    const items = React.Children.toArray(props.children) as Array<ReactElement<T>>
+    const [page, setPage] = useState<number>(0)
+    const [revealed, setRevealed] = useState<boolean>(false)
     const [sortMethod, setSortMethod] = useState(
       (props.sortMethods ? Object.keys(props.sortMethods)[0] : undefined) ?? 'Default'
     )
+
+    const items = React.Children.toArray(props.children) as Array<ReactElement<T>>
     const selectedItems = items.filter(item => item.props.selected)
     const nonSelectedItems = items
       .filter(item => !item.props.selected)
       .sort((sortMethod === 'Default' ? undefined : props.sortMethods?.[sortMethod]) ?? (() => 0))
     const highlightedItems = items.filter(item => item.props.highlighted)
 
-    const [page, setPage] = useState(0)
     const hasNextPage = page * ITEMS_PER_PAGE + ITEMS_PER_PAGE < nonSelectedItems.length
     const hasPreviousPage = page !== 0
+
+    const handleSortMethodChange = (value: string) => {
+      setSortMethod(value)
+      setPage(0)
+    }
+
+    const handleSearch = (value: string) => {
+      if (props.onHandleSearch) {
+        props.onHandleSearch(value)
+        setPage(0)
+      }
+    }
 
     return (
       <AlertDialog
@@ -49,7 +68,7 @@ export const StakeTargetSelectorDialog = Object.assign(
         title={props.title}
         targetWidth="83rem"
         content={
-          <div>
+          <div className={selectedItems[0] ? 'min-h-[54.5rem]' : 'min-h-[42rem]'}>
             <Text.Body as="h3" css={{ marginBottom: '0.6rem' }}>
               {props.currentSelectionLabel}
             </Text.Body>
@@ -73,29 +92,53 @@ export const StakeTargetSelectorDialog = Object.assign(
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 marginTop: '1.6rem',
-                marginBottom: '0.6rem',
+                marginBottom: '1rem',
               }}
             >
               <Text.Body as="h3" css={{ marginTop: '1.6rem', marginBottom: '0.6rem' }}>
                 {props.selectionLabel}
               </Text.Body>
-              {props.sortMethods ? (
-                <Select
-                  placeholder="Sort delegates"
-                  renderSelected={value => `Sort by: ${value}`}
-                  value={sortMethod}
-                  onChangeValue={setSortMethod}
-                  css={{ minWidth: '22rem' }}
-                  isDisabled={props.isSortDisabled}
-                >
-                  {Object.keys(props.sortMethods).length === 0 ? (
-                    <Select.Option headlineContent="Default" value="Default" />
-                  ) : null}
-                  {Object.keys(props.sortMethods).map(option => (
-                    <Select.Option key={option} headlineContent={option} value={option} />
-                  ))}
-                </Select>
-              ) : null}
+              <div className="flex items-center gap-4">
+                {props.onHandleSearch && (
+                  <LayoutGroup>
+                    {revealed ? (
+                      <div>
+                        <SearchBar
+                          autoFocus
+                          placeholder={props.searchLabel}
+                          value={props.search ?? ''}
+                          onChange={event => handleSearch(event.target.value)}
+                          width={'16rem'}
+                          className="h-[5rem]"
+                          onBlur={() => !props.search && setRevealed(false)}
+                        />
+                      </div>
+                    ) : (
+                      <SurfaceIconButton onClick={() => setRevealed(true)} className="h-[40px]">
+                        <Search />
+                      </SurfaceIconButton>
+                    )}
+                  </LayoutGroup>
+                )}
+                {props.sortMethods ? (
+                  <Select
+                    placeholder="Sort delegates"
+                    renderSelected={value => `Sort by: ${value}`}
+                    value={sortMethod}
+                    onChangeValue={handleSortMethodChange}
+                    css={{ minWidth: '22rem' }}
+                    className="text-[14px] text-gray-400"
+                    isDisabled={props.isSortDisabled}
+                  >
+                    {Object.keys(props.sortMethods).length === 0 ? (
+                      <Select.Option headlineContent="Default" value="Default" />
+                    ) : null}
+                    {Object.keys(props.sortMethods).map(option => (
+                      <Select.Option key={option} headlineContent={option} value={option} />
+                    ))}
+                  </Select>
+                ) : null}
+              </div>
             </div>
             <motion.div
               css={{

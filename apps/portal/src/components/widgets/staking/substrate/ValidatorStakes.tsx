@@ -7,7 +7,6 @@ import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { useChainState } from '@/domains/chains/hooks'
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
-import { useInjectedAccountFastUnstakeEligibility } from '@/domains/fastUnstake/hooks'
 import { useStakersRewardState } from '@/domains/staking/substrate/validator/recoils'
 
 import ValidatorStakeItem from './ValidatorStakeItem'
@@ -78,18 +77,15 @@ const useStakesWithFastUnstake = () => {
     useQueryMultiState(['fastUnstake.erasToCheckPerBlock', 'fastUnstake.head'])
   )
 
-  const [erasToCheckPerBlock, fastUnstakeHead] = multiQueryState === 'hasValue' ? multiQueryContent : []
+  const [_erasToCheckPerBlock, fastUnstakeHead] = multiQueryState === 'hasValue' ? multiQueryContent : []
 
   const [api, queues = []] = state === 'hasValue' ? contents : []
-  const accountEligibilityLoadable = useInjectedAccountFastUnstakeEligibility()
 
   const data = stakes.map((x, index) => ({
     ...x,
-    eligibleForFastUnstake:
-      !erasToCheckPerBlock?.isZero() &&
-      accountEligibilityLoadable[x.account.address] &&
-      (x.stake.redeemable?.isZero() ?? true) &&
-      (x.stake.unlocking?.length ?? 0) === 0,
+    // NOTE: Disabled because it was causing slashes for users,
+    // and fastUnstake isn't as important anymore now that users are able to dual-stake (solo & nompool).
+    eligibleForFastUnstake: false,
     inFastUnstakeHead: fastUnstakeHead?.unwrapOrDefault().stashes.some(y => y[0].eq(x.stake.accountId)),
     inFastUnstakeQueue: queues[index]?.unwrapOrDefault().isZero() === false,
     fastUnstakeDeposit: api?.consts.fastUnstake.deposit,

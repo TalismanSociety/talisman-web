@@ -8,6 +8,8 @@ export const popularTokens: string[] = [
   '1-evm-erc20-0xdac17f958d2ee523a2206206994597c13d831ec7', // USDT on Eth
   '1-evm-erc20-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC on Eth
   '1-evm-erc20-0x77e06c9eccf2e797fd462a92b6d7642ef85b0a44', // WTAO on Eth
+  '8453-evm-native', // ETH on Base
+  '8453-evm-erc20-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', // USDC on Base
   '10-evm-native', // ETH on OP
   '42161-evm-native', // ETH on Arb
   '42161-evm-erc20-0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f', // WBTC on Arb

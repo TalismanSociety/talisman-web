@@ -1,5 +1,5 @@
 import { Surface } from '@talismn/ui/atoms/Surface'
-import { Text } from '@talismn/ui/atoms/Text'
+// import { Text } from '@talismn/ui/atoms/Text'
 import { Outlet } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
@@ -10,11 +10,12 @@ import { AccountValueInfo } from '@/components/recipes/AccountValueInfo'
 import { PortfolioAddressSearch } from '@/components/recipes/PortfolioAddressSearch'
 import { AccountConnectionGuard } from '@/components/widgets/AccountConnectionGuard'
 import { AccountsManagementMenu } from '@/components/widgets/AccountsManagementMenu'
-import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
+// import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { selectedAccountsState } from '@/domains/accounts/recoils'
-import { useTotalStaked } from '@/domains/staking/hooks'
 
-const TotalStaked = () => <AnimatedFiatNumber end={useTotalStaked()} />
+// import { useTotalStaked } from '@/domains/staking/hooks'
+
+// const TotalStaked = () => <AnimatedFiatNumber end={useTotalStaked()} />
 
 const Layout = () => {
   const accounts = useRecoilValue(selectedAccountsState)
@@ -40,12 +41,13 @@ const Layout = () => {
 
           <PageHeaderItem>
             <PortfolioAddressSearch />
-            <div>
+            {/* TODO: Fix total stake calculation and display correct amount. */}
+            {/* <div>
               <Text.BodyLarge as="div">Staking balance</Text.BodyLarge>
               <Text.H3 as="div" css={{ marginTop: '0.125em' }}>
                 <TotalStaked />
               </Text.H3>
-            </div>
+            </div> */}
           </PageHeaderItem>
         </PageHeader>
         <Surface css={{ borderRadius: '1.6rem', padding: '1.6rem' }}>

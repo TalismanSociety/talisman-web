@@ -7,16 +7,15 @@ type Pagination = {
   prev_page: number | null
 }
 
-// Key Type
-type Key = {
+type Address = {
   ss58: string
   hex: string
 }
 
 // Validator Data Type
-type ValidatorData = {
-  hotkey: Key
-  coldkey: Key
+export type ValidatorData = {
+  hotkey: Address
+  coldkey: Address
   name: string
   block_number: number
   timestamp: string
@@ -109,17 +108,6 @@ export type RuntimePoolData = {
   alphaIn: string // Alpha in the pool
 }
 
-export type Validator = {
-  name: string
-  url: string
-  description: string
-  signature: string
-}
-
-export type ValidatorsResponse = {
-  [key: string]: Validator // The key is the unique validator hotkey.
-}
-
 export type BondOption = {
   poolId: string
   name: string
@@ -132,10 +120,7 @@ export type BondOption = {
 }
 
 type ValidatorYield = {
-  hotkey: {
-    ss58: string
-    hex: string
-  }
+  hotkey: Address
   name: string
   netuid: number
   block_number: number
@@ -153,4 +138,46 @@ type ValidatorYield = {
 export type ValidatorsYieldApiResponse = {
   pagination: Pagination
   data: ValidatorYield[]
+}
+type DelegateAction = 'DELEGATE' | 'UNDELEGATE'
+
+type DelegateEvent = {
+  id: string
+  block_number: number
+  timestamp: string // ISO 8601 timestamp
+  action: DelegateAction
+  nominator: Address
+  delegate: Address
+  amount: string // TAO as rao (smallest unit)
+  alpha: string | null // alpha as rao
+  usd: string | null // USD string value
+  alpha_price_in_tao: string | null // stringified decimal
+  alpha_price_in_usd: string | null // stringified decimal
+  netuid: number | null
+  extrinsic_id: string | null
+  is_transfer: boolean | null
+  transfer_address: string | null
+}
+
+export type DelegationEventsApiResponse = {
+  pagination: Pagination
+  data: DelegateEvent[]
+}
+
+export type DTaoStakeBalance = {
+  block_number: number
+  timestamp: string // ISO 8601 string format
+  hotkey_name: string
+  hotkey: Address
+  coldkey: Address
+  netuid: number
+  subnet_rank: number
+  subnet_total_holders: number
+  balance: string // raw string, assuming it's in atomic units
+  balance_as_tao: string // same as above; parsed display value may need BigInt/Decimal
+}
+
+export type DTaoStakeBalanceApiResponse = {
+  pagination: Pagination
+  data: DTaoStakeBalance[]
 }

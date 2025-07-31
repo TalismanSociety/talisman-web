@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import { BondOption } from '../types'
-import { useGetBittensorInfiniteValidators } from './useGetBittensorInfiniteValidators'
-import { useGetBittensorSupportedDelegates } from './useGetBittensorSupportedDelegates'
+import { useGetBittensorValidators } from './useGetBittensorInfiniteValidators'
 import { useGetInfiniteValidatorsYieldByNetuid } from './useGetInfiniteValidatorsYield'
 
 export const useCombinedBittensorValidatorsData = () => {
@@ -13,54 +12,34 @@ export const useCombinedBittensorValidatorsData = () => {
   const { data: validatorsYieldData } = useGetInfiniteValidatorsYieldByNetuid({ netuid: netuidParam })
 
   const {
-    data: supportedDelegates,
-    isLoading: isSupportedDelegatesLoading,
-    isError: isBittensorSupportedDelegatesError,
-  } = useGetBittensorSupportedDelegates()
-  const {
     data: infiniteValidators,
     isLoading: isValidatorsLoading,
     isError: isInfiniteValidatorsError,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-  } = useGetBittensorInfiniteValidators({ isEnabled: true })
+  } = useGetBittensorValidators()
 
   useEffect(() => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
-    }
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage])
+    const combined: BondOption[] =
+      infiniteValidators?.map(validator => {
+        const validatorYield = validatorsYieldData?.find(
+          yieldData => yieldData?.hotkey?.ss58 === validator.hotkey?.ss58
+        )
 
-  useEffect(() => {
-    // supportedDelegates data is mission critical for staking, and it's query is initialized with placeholder data.
-    // If it's not available, do not proceed with combining bad response data.
-    if (!supportedDelegates) return
-
-    const flatInitialValidators = infiniteValidators?.pages.flatMap(page => page.data)
-
-    const combined: BondOption[] = Object.keys(supportedDelegates).map(key => {
-      const supportedDelegate = supportedDelegates?.[key]
-      const validator = flatInitialValidators?.find(validator => validator?.hotkey?.ss58 === key)
-      const validatorYield = validatorsYieldData?.find(validator => validator?.hotkey?.ss58 === key)
-
-      return {
-        poolId: key,
-        name: supportedDelegate?.name ?? '',
-        totalStaked: parseFloat(validator?.global_weighted_stake ?? '0'),
-        totalStakers: validator?.global_nominators ?? 0,
-        validatorYield,
-        hasData: !!validator,
-        isError: isInfiniteValidatorsError,
-      }
-    })
-
+        return {
+          poolId: validator.hotkey?.ss58 ?? '',
+          name: validator?.name ?? '',
+          totalStaked: parseFloat(validator?.global_weighted_stake ?? '0'),
+          totalStakers: validator?.global_nominators ?? 0,
+          hasData: !!validator,
+          isError: isInfiniteValidatorsError,
+          validatorYield,
+        }
+      }) ?? []
     setValidatorsData(combined)
-  }, [infiniteValidators?.pages, isInfiniteValidatorsError, supportedDelegates, validatorsYieldData])
+  }, [infiniteValidators, isInfiniteValidatorsError, validatorsYieldData])
 
   return {
     combinedValidatorsData: validatorsData,
-    isLoading: isSupportedDelegatesLoading || isValidatorsLoading || isFetchingNextPage,
-    isError: isBittensorSupportedDelegatesError || isInfiniteValidatorsError,
+    isLoading: isValidatorsLoading,
+    isError: isInfiniteValidatorsError,
   }
 }

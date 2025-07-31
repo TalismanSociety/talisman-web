@@ -24,6 +24,7 @@ export default defineConfig({
     wasm(),
     topLevelAwait(),
   ],
+  server: { allowedHosts: ['.orb.local'] },
   build: {
     outDir: 'build',
     rollupOptions: {

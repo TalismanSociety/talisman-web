@@ -1,13 +1,13 @@
+import type { Chain as ViemChain } from 'viem/chains'
 import * as sdk from '@lifi/sdk'
 import { evmErc20TokenId, evmNativeTokenId } from '@talismn/balances'
 import { evmNetworksByIdAtom } from '@talismn/balances-react'
+import BigNumber from 'bignumber.js'
 import { atom, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
 import { zeroAddress } from 'viem'
-import { type Chain as ViemChain } from 'viem/chains'
-import * as allEvmChains from 'viem/chains'
 
-import { Decimal } from '@/util/Decimal'
+import { allEvmChains } from '@/components/widgets/swap/allEvmChains.ts'
 
 import { knownEvmNetworksAtom } from '../helpers'
 import {
@@ -28,7 +28,7 @@ import {
 const PROTOCOL: SupportedSwapProtocol = 'lifi' as const
 const PROTOCOL_NAME = 'LI.FI'
 const DECENTRALISATION_SCORE = 2
-const TALISMAN_FEE = 0.002
+const TALISMAN_FEE = 0.002 // We take a fee of 0.2%
 
 sdk.createConfig({
   integrator: 'talisman',
@@ -111,10 +111,12 @@ const subProviderQuoteAtom = atomFamily((id: string) =>
       if (!step) return null
       const transaction = await sdk.getStepTransaction(step)
       if (!transaction?.transactionRequest) return null
+      const fromAsset = get(fromAssetAtom)
+      if (!fromAsset) return null
 
       const fees =
         step.estimate.feeCosts?.map(fee => ({
-          amount: Decimal.fromPlanck(BigInt(fee.amount), fee.token.decimals),
+          amount: BigNumber(fee.amount).times(10 ** -fee.token.decimals),
           name: fee.name,
           tokenId:
             fee.token.address === zeroAddress
@@ -125,7 +127,7 @@ const subProviderQuoteAtom = atomFamily((id: string) =>
       if (step.estimate.gasCosts) {
         step.estimate.gasCosts.forEach(c => {
           fees.push({
-            amount: Decimal.fromPlanck(c.amount, c.token.decimals),
+            amount: BigNumber(c.amount).times(10 ** -c.token.decimals),
             name: 'Gas',
             tokenId:
               c.token.address === zeroAddress
@@ -134,10 +136,18 @@ const subProviderQuoteAtom = atomFamily((id: string) =>
           })
         })
       }
+      // add talisman fee
+      fees.push({
+        amount: BigNumber(step.estimate.fromAmount.toString())
+          .times(10 ** -fromAsset.decimals)
+          .times(TALISMAN_FEE),
+        name: 'Talisman Fee',
+        tokenId: fromAsset.id,
+      })
       return {
         decentralisationScore: DECENTRALISATION_SCORE,
         fees,
-        talismanFeeBps: TALISMAN_FEE,
+        talismanFee: TALISMAN_FEE,
         inputAmountBN: BigInt(step.estimate.fromAmount),
         outputAmountBN: BigInt(route.toAmountMin),
         protocol: PROTOCOL,
@@ -224,7 +234,7 @@ const swap: SwapFunction<{ id: string }> = async (get: Getter, _: Setter, { evmW
   if (txRequest.from.toLowerCase() !== evmWalletClient.account?.address.toLowerCase())
     throw new Error('Invalid sender address')
 
-  const chain: ViemChain | undefined = Object.values(allEvmChains).find(c => c.id === txRequest.chainId)
+  const chain: ViemChain | undefined = Object.values(allEvmChains).find(c => c?.id === txRequest.chainId)
   if (!chain) throw new Error('Unknown chain')
 
   await evmWalletClient.switchChain({ id: chain.id })

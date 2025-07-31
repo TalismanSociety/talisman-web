@@ -7,6 +7,7 @@ import type { TransactionRequest, WalletClient } from 'viem'
 import { ApiPromise } from '@polkadot/api'
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
 import { evmErc20TokenId, evmNativeTokenId, subNativeTokenId } from '@talismn/balances'
+import BigNumber from 'bignumber.js'
 import { atom } from 'jotai'
 import { atomWithStorage, createJSONStorage, unstable_withStorageValidator } from 'jotai/utils'
 import { Loadable } from 'jotai/vanilla/utils/loadable'
@@ -36,9 +37,9 @@ export type SwappableAssetWithDecimals<TContext = Partial<Record<SupportedSwapPr
   decimals: number
 } & SwappableAssetBaseType<TContext>
 
-type QuoteFee = {
+export type QuoteFee = {
   name: string
-  amount: Decimal
+  amount: BigNumber
   tokenId: string
 }
 
@@ -50,7 +51,7 @@ export type BaseQuote<TData = any> = {
   inputAmountBN: bigint
   error?: string
   fees: QuoteFee[]
-  talismanFeeBps?: number
+  talismanFee?: number
   data?: TData
   timeInSec: number
   providerLogo: string

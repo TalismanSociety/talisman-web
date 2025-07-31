@@ -34,14 +34,14 @@ import {
   toAssetsAtom,
   useFromAccount,
   useReverse,
+  useSetToAddress,
   useSwap,
   useSwapErc20Approval,
   useSyncPreviousChainflipSwaps,
-  useToAccount,
 } from './swaps.api'
 import { TokenAmountInput } from './TokenAmountInput'
 
-export const ChainFlipSwap: React.FC = () => {
+export const Swap: React.FC = () => {
   useSetJotaiSubstrateApiState()
   useSyncPreviousChainflipSwaps()
 
@@ -54,10 +54,10 @@ export const ChainFlipSwap: React.FC = () => {
   const fromAddress = useAtomValue(fromAddressAtom)
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
   const [fromAmount, setFromAmount] = useAtom(fromAmountAtom)
-  useToAccount()
   const { ethAccounts, substrateAccounts, fromEvmAccount, fromEvmAddress, fromSubstrateAccount, fromSubstrateAddress } =
     useFromAccount()
   const toAddress = useAtomValue(toAddressAtom)
+  useSetToAddress()
   const [toAsset, setToAsset] = useAtom(toAssetAtom)
 
   const toAmount = useAtomValue(loadable(toAmountAtom))
@@ -91,20 +91,26 @@ export const ChainFlipSwap: React.FC = () => {
   const { swap, swapping } = useSwap()
   const reverse = useReverse()
 
+  const setToAddress = useSetToAddress()
+
   const handleChangeFromAsset = useCallback(
     (asset: SwappableAssetWithDecimals | null) => {
-      if (asset && toAsset && asset.id === toAsset.id) reverse()
-      else setFromAsset(asset)
+      if (asset && toAsset && asset.id === toAsset.id) return reverse()
+
+      setFromAsset(asset)
+      setToAddress()
     },
-    [reverse, setFromAsset, toAsset]
+    [reverse, setFromAsset, setToAddress, toAsset]
   )
 
   const handleChangeToAsset = useCallback(
     (asset: SwappableAssetWithDecimals | null) => {
-      if (asset && fromAsset && asset.id === fromAsset.id) reverse()
-      else setToAsset(asset)
+      if (asset && fromAsset && asset.id === fromAsset.id) return reverse()
+
+      setToAsset(asset)
+      setToAddress({ toAsset: asset })
     },
-    [fromAsset, reverse, setToAsset]
+    [fromAsset, reverse, setToAddress, setToAsset]
   )
 
   const balanceProps: UseFastBalanceProps | undefined = useMemo(
@@ -255,15 +261,11 @@ export const ChainFlipSwap: React.FC = () => {
             loading={swapping || approvalLoading}
             onClick={() => {
               setInfoTab('details')
-              if (
-                quote.state === 'hasData' &&
-                quote.data &&
-                fastBalance?.balance &&
-                quote.data.quote.state === 'hasData' &&
-                quote.data.quote.data
-              ) {
-                swap(quote.data.quote.data.protocol, fromAmount.planck > fastBalance.balance.stayAlive.planck)
-              }
+
+              if (quote.state !== 'hasData' || !quote.data) return
+              if (!fastBalance?.balance) return
+              if (quote.data.quote.state !== 'hasData' || !quote.data.quote.data) return
+              swap(quote.data.quote.data.protocol, fromAmount.planck > fastBalance.balance.stayAlive.planck)
             }}
           >
             Swap
