@@ -42,7 +42,7 @@ export const portfolioBalancesState = selector({
   key: 'PortfolioBalances',
   get: ({ get }) => {
     const accounts = get(portfolioAccountsState).map(x => x.address)
-    return new Balances(get(balancesState).sorted.filter(x => accounts.includes(x.address)))
+    return new Balances(get(balancesState).each.filter(x => accounts.includes(x.address)))
   },
   dangerouslyAllowMutability: true,
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },

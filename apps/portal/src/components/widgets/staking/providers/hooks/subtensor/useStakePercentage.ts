@@ -1,19 +1,21 @@
-import { useBalances } from '@talismn/balances-react'
+import { useRecoilValue } from 'recoil'
+
+import { portfolioBalancesState } from '@/domains/balances/recoils'
 
 import { ROOT_NETUID } from '../../../subtensor/constants'
 
+type BittensorBalances = {
+  total: bigint
+  rootStakedBalance: bigint
+  subnetStakedBalanceInTao: bigint
+}
+
+type Meta = { amountStaked: string; netuid: number }
+
 const useStakePercentage = (hasDTaoStaking: boolean) => {
-  const allBalances = useBalances()
+  const portfolioBalances = useRecoilValue(portfolioBalancesState)
 
-  const subtensorBalances = allBalances.find(q => q.chainId === 'bittensor')
-
-  type BittensorBalances = {
-    total: bigint
-    rootStakedBalance: bigint
-    subnetStakedBalanceInTao: bigint
-  }
-
-  type Meta = { amountStaked: string; netuid: number }
+  const subtensorBalances = portfolioBalances.find(q => q.chainId === 'bittensor')
 
   const bittensorBalances = subtensorBalances.each.reduce<BittensorBalances>(
     (acc, curr) => {
@@ -35,11 +37,16 @@ const useStakePercentage = (hasDTaoStaking: boolean) => {
     { rootStakedBalance: 0n, subnetStakedBalanceInTao: 0n, total: 0n }
   )
 
+  const { total, rootStakedBalance, subnetStakedBalanceInTao } = bittensorBalances
+
+  if (total === 0n) return 0
+
   if (hasDTaoStaking) {
-    return Number(bittensorBalances.subnetStakedBalanceInTao) / Number(bittensorBalances.total)
+    const subnetStakePercentage = Number(subnetStakedBalanceInTao) / Number(total)
+    return subnetStakePercentage
   }
 
-  return Number(bittensorBalances.rootStakedBalance) / Number(bittensorBalances.total)
+  return Number(rootStakedBalance) / Number(total)
 }
 
 export default useStakePercentage
