@@ -1,5 +1,5 @@
 import { AnyChain, ChainRoutes, Parachain } from '@galacticcouncil/xcm-core'
-import { chainsByGenesisHashAtom } from '@talismn/balances-react'
+import { dotNetworksByGenesisHashAtom } from '@talismn/balances-react'
 
 import { apiPromiseAtom } from '@/domains/common/atoms/apiPromiseAtom'
 import { jotaiStore } from '@/util/jotaiStore'
@@ -53,7 +53,7 @@ function wrapChainApi(chain: AnyChain): AnyChain {
       if (prop !== 'api') return target[prop]
 
       const getApi = async () => {
-        const chaindataChainsByGenesisHash = await jotaiStore.get(chainsByGenesisHashAtom)
+        const chaindataChainsByGenesisHash = await jotaiStore.get(dotNetworksByGenesisHashAtom)
         const chaindataChain = chaindataChainsByGenesisHash?.[chain.genesisHash]
         if (!chaindataChain) {
           console.warn(

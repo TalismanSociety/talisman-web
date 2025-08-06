@@ -181,7 +181,12 @@ const PoolSelector = (props: {
             talismanRecommended={index === 0}
             name={pool.name ?? ''}
             detailUrl={
-              chain?.subscanUrl ? new URL(`nomination_pool/${pool.poolId}`, chain.subscanUrl).toString() : undefined
+              chain?.blockExplorerUrls?.find(url => url.endsWith('subscan.com'))
+                ? new URL(
+                    `nomination_pool/${pool.poolId}`,
+                    chain.blockExplorerUrls.find(url => url.endsWith('subscan.com'))
+                  ).toString()
+                : undefined
             }
             balance={`${nativeTokenDecimal.fromPlanck(pool.bondedPool.points.toBigInt()).toLocaleString()} staked`}
             rating={3}
@@ -310,7 +315,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
     waitForAll([useChainRecoilState(), useSubstrateApiState(), useRecommendedPoolsState()])
   )
 
-  const showClaimPermission = !claimPermissionUnsupportedChainIds.includes(chain.id)
+  const showClaimPermission = !(chain.id && claimPermissionUnsupportedChainIds.includes(chain.id))
 
   assertChain(chain, { hasNominationPools: true })
 
@@ -491,7 +496,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
             totalStaked={poolTotalStaked?.toLocaleString() ?? ''}
             memberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}
             onRequestPoolChange={() => setShowPoolSelector(true)}
-            chain={chain.id.toString() ?? ''}
+            chain={chain.id?.toString() ?? ''}
           />
         }
         estimatedYield={

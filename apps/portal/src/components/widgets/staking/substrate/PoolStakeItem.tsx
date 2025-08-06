@@ -58,8 +58,8 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
 
   const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
 
-  const showStatistics = !statisticsUnsupportedChainIds.includes(chain.id)
-  const showClaimPermission = !claimPermissionUnsupportedChainIds.includes(chain.id)
+  const showStatistics = !(chain.id && statisticsUnsupportedChainIds.includes(chain.id))
+  const showClaimPermission = !(chain.id && claimPermissionUnsupportedChainIds.includes(chain.id))
 
   return (
     <>

@@ -6,7 +6,7 @@ import type { Atom, Getter, SetStateAction, Setter } from 'jotai'
 import type { TransactionRequest, WalletClient } from 'viem'
 import { ApiPromise } from '@polkadot/api'
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
-import { evmErc20TokenId, evmNativeTokenId, subNativeTokenId } from '@talismn/balances'
+import { evmErc20TokenId, evmNativeTokenId, subNativeTokenId } from '@talismn/chaindata-provider'
 import BigNumber from 'bignumber.js'
 import { atom } from 'jotai'
 import { atomWithStorage, createJSONStorage, unstable_withStorageValidator } from 'jotai/utils'
@@ -225,7 +225,7 @@ export const getTokenIdForSwappableAsset = (
   switch (chainType) {
     case 'evm':
       return contractAddress
-        ? evmErc20TokenId(chainId.toString(), contractAddress)
+        ? evmErc20TokenId(chainId.toString(), contractAddress as `0x${string}`)
         : evmNativeTokenId(chainId.toString())
     case 'substrate':
       return subNativeTokenId(chainId.toString())

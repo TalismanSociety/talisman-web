@@ -340,9 +340,9 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
         () =>
           new URL(
             `account/${encodeAddress(props.account.address, api.registry.chainSS58)}?tab=paidout`,
-            chain.subscanUrl
+            chain.blockExplorerUrls?.find(url => url.endsWith('subscan.com'))
           ).toString(),
-        [api.registry.chainSS58, chain.subscanUrl, props.account.address]
+        [api.registry.chainSS58, chain.blockExplorerUrls, props.account.address]
       )}
       onRequestDismiss={props.onRequestDismiss}
     />

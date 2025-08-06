@@ -1,18 +1,17 @@
-import { useChains, useEvmNetworks } from '@talismn/balances-react'
-import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
+import { useNetworksById } from '@talismn/balances-react'
 
 import { cn } from '@/util/cn'
+import { UNKNOWN_TOKEN_URL } from '@/util/unknownLogoUrls'
 
 type Props = {
   className?: string
-  chainId?: string | number
+  networkId?: string | number
   assetLogoUrl: string | undefined
 }
 
-export const AssetLogoWithChain = ({ className, assetLogoUrl, chainId }: Props) => {
-  const chains = useChains()
-  const networks = useEvmNetworks()
-  const networkLogo = chainId ? chains[chainId]?.logo ?? networks[chainId]?.logo : undefined
+export const AssetLogoWithChain = ({ className, assetLogoUrl, networkId }: Props) => {
+  const networks = useNetworksById()
+  const networkLogo = networkId ? networks[networkId]?.logo : undefined
   const roundAssetLogo = !isTalismanLogo(assetLogoUrl)
 
   return (
@@ -28,7 +27,7 @@ export const AssetLogoWithChain = ({ className, assetLogoUrl, chainId }: Props) 
         />
       ) : null}
       <img
-        src={assetLogoUrl ?? githubUnknownTokenLogoUrl}
+        src={assetLogoUrl ?? UNKNOWN_TOKEN_URL}
         className={cn('h-[1em] min-h-[1em] w-[1em] min-w-[1em]', roundAssetLogo && 'rounded-full', className)}
       />
     </div>

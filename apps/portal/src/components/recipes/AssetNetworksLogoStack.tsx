@@ -2,9 +2,8 @@ import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { useMemo } from 'react'
 
 import type { PortfolioToken } from '@/components/legacy/widgets/useAssets'
+import { NetworkLogo } from '@/components/recipes/NetworkLogo'
 import { cn } from '@/util/cn'
-
-import { ChainLogo } from './ChainLogo'
 
 export const AssetNetworksLogoStack = ({
   className,
@@ -34,17 +33,14 @@ export const AssetNetworksLogoStack = ({
 
 const LogoItem = ({ token }: { token: PortfolioToken }) => {
   const tooltip = useMemo(
-    () => `${token.tokenDetails.networkInfo?.label} (${token.tokenDetails.networkInfo?.type})`,
+    () => `${token.tokenDetails.network?.name ?? 'Unknown Network'} (${token.tokenDetails.networkInfo})`,
     [token]
   )
 
   return (
     <div className="ml-[-0.25rem] h-[1em] w-[1em] overflow-hidden">
       <Tooltip content={tooltip}>
-        <ChainLogo
-          className="relative text-[1em] sm:text-[1em]"
-          chainId={token.tokenDetails.chain?.id ?? token.tokenDetails.evmNetwork?.id}
-        />
+        <NetworkLogo className="relative text-[1em] sm:text-[1em]" networkId={token.tokenDetails.networkId} />
       </Tooltip>
     </div>
   )
@@ -67,7 +63,7 @@ const MoreLogoItemsTooltip = ({ tokens }: { tokens: PortfolioToken[] }) => (
   <div className="flex flex-col gap-1 text-left">
     {tokens.map((token, index) => (
       <div key={index}>
-        {token.tokenDetails.networkInfo.label} ({token.tokenDetails.networkInfo.type})
+        {token.tokenDetails.network?.name ?? 'Unknown Network'} ({token.tokenDetails.networkInfo})
       </div>
     ))}
   </div>

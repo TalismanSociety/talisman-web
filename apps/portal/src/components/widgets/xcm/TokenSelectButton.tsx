@@ -17,7 +17,11 @@ export function TokenSelectButton({ title = 'Select asset', empty, asset, onClic
   const leadingIcon = empty ? (
     <AssetLogoWithChainSkeleton className="animate-none text-[2.4rem]" />
   ) : asset ? (
-    <AssetLogoWithChain className="text-[2.4rem]" chainId={asset.chaindataId} assetLogoUrl={asset.chaindataTokenLogo} />
+    <AssetLogoWithChain
+      className="text-[2.4rem]"
+      networkId={asset.chaindataId}
+      assetLogoUrl={asset.chaindataTokenLogo}
+    />
   ) : (
     <AssetLogoWithChainSkeleton className="text-[2.4rem]" />
   )

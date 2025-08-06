@@ -1,5 +1,5 @@
 import type { Chain as ViemChain } from 'viem/chains'
-import { chainsAtom, evmNetworksAtom } from '@talismn/balances-react'
+import { networksAtom } from '@talismn/balances-react'
 import { atom } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
 import { createPublicClient, fallback, http } from 'viem'
@@ -50,7 +50,7 @@ const evmBalancesAtom = atomFamily((chainId: string) =>
       const fromEvmAddress = get(fromEvmAddressAtom)
       if (!assets || !fromEvmAddress) return { balances: {} }
 
-      const evmNetworks = await get(evmNetworksAtom)
+      const evmNetworks = (await get(networksAtom)).filter(n => n.platform === 'ethereum')
       const network = evmNetworks.find(network => network.id.toString() === chainId.toString())
       const rpcs = network?.rpcs
       const chain: ViemChain | undefined = Object.values(allEvmChains).find(chain => chain?.id.toString() === chainId)
@@ -59,7 +59,7 @@ const evmBalancesAtom = atomFamily((chainId: string) =>
       // make multicall request here
       const client = createPublicClient({
         transport: fallback(
-          rpcs.map(rpc => http(rpc.url, { retryCount: 0 })),
+          rpcs.map(rpc => http(rpc, { retryCount: 0 })),
           { retryCount: 0 }
         ),
         chain,
@@ -108,16 +108,16 @@ export const substrateBalancesAtom = atomFamily((chainId: string) =>
 
       if (!assets || !fromSubstrateAddress) return { balances: {} }
 
-      const chains = await get(chainsAtom)
-      const chain = chains.find(chain => chain.id.toString() === chainId.toString())
+      const substrateNetworks = (await get(networksAtom)).filter(n => n.platform === 'polkadot')
+      const chain = substrateNetworks.find(network => network.id.toString() === chainId.toString())
       const chainRpc = chain?.rpcs?.[0]
       if (!chain || !chainRpc) return { balances: {} }
 
-      const api = await substrateApiGetter?.getApi(chainRpc.url)
+      const api = await substrateApiGetter?.getApi(chainRpc)
       if (!api) return { balances: {} }
 
       const balances: Record<string, Decimal> = {}
-      const nativeToken = assets.find(a => a.id === chain.nativeToken?.id)
+      const nativeToken = assets.find(a => a.id === chain.nativeTokenId)
       if (nativeToken) {
         const account = await api?.query.system.account(fromSubstrateAddress)
         const balance = computeSubstrateBalance(api, account)

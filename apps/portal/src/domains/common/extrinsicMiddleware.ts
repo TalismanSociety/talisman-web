@@ -11,7 +11,7 @@ import { chainReadIdState } from '@/domains/common/recoils'
 type Tag = 'analytics'
 
 export type ExtrinsicMiddleware = (
-  chainId: string,
+  chainId: string | undefined,
   extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult> | SubmittableExtrinsic<'rxjs', ISubmittableResult>,
   result: ISubmittableResult,
   callbackInterface: CallbackInterface,

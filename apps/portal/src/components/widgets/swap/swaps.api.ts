@@ -1,8 +1,13 @@
 import type { PrimitiveAtom } from 'jotai'
 import type { Chain as ViemChain } from 'viem/chains'
 import * as sdk from '@lifi/sdk'
-import { evmErc20TokenId } from '@talismn/balances'
-import { tokenRatesAtom, tokensByIdAtom, useChains, useEvmNetworks, useTokens } from '@talismn/balances-react'
+import {
+  evmErc20TokenId,
+  tokenRatesAtom,
+  tokensByIdAtom,
+  useNetworksById,
+  useTokensById,
+} from '@talismn/balances-react'
 import { isEthereumAddress } from '@talismn/crypto'
 import { toast } from '@talismn/ui/molecules/Toaster'
 import BigNumber from 'bignumber.js'
@@ -325,7 +330,7 @@ const erc20Atom = atomFamily((addressChainId: string) =>
     if (!symbol || !decimals || !name) return null
 
     const coingeckoData = await get(coingeckoCoinByAddressAtom(`${address}:${platform.id}`))
-    const id = evmErc20TokenId(address, chainIdString)
+    const id = evmErc20TokenId(chainIdString, address)
 
     return {
       id,
@@ -674,7 +679,7 @@ export const useReverse = () => {
 
 export const useAssetToken = (assetAtom: PrimitiveAtom<SwappableAssetBaseType | null>) => {
   const asset = useAtomValue(assetAtom)
-  const tokens = useTokens()
+  const tokens = useTokensById()
 
   return useMemo(() => {
     if (!asset) return null
@@ -771,8 +776,7 @@ export const useSetToAddress = () => {
   const [toSubstrateAddress, setToSubstrateAddress] = useAtom(toSubstrateAddressAtom)
   const [toBtcAddress, setToBtcAddress] = useAtom(toBtcAddressAtom)
 
-  const chains = useChains()
-  const networks = useEvmNetworks()
+  const networks = useNetworksById()
 
   const setToAddress = useCallback(
     (
@@ -784,7 +788,7 @@ export const useSetToAddress = () => {
     ) => {
       const fromAddress = overrides.fromAddress ?? _fromAddress
       const toAsset = overrides.toAsset ?? _toAsset
-      const toNetwork = toAsset?.chainId ? chains[toAsset.chainId] ?? networks[toAsset.chainId] ?? null : null
+      const toNetwork = toAsset?.chainId ? networks[toAsset.chainId] ?? null : null
 
       // when fromAddress, fromAsset or toAsset changes, set toAddress to either fromAddress or null, depending on whether it's compatible with the new toAsset
       switch (toAsset?.networkType) {
@@ -835,7 +839,6 @@ export const useSetToAddress = () => {
     [
       _fromAddress,
       _toAsset,
-      chains,
       networks,
       setToBtcAddress,
       setToEvmAddress,

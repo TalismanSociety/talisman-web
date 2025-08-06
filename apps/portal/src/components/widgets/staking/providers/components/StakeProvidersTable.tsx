@@ -66,7 +66,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
         header: 'Asset',
         cell: ({ row }) => (
           <Asset
-            chainId={row.original.chainId}
+            chainId={String(row.original.chainId)}
             logo={row.original.logo}
             symbol={row.original.symbol}
             chainName={row.original.chainName}

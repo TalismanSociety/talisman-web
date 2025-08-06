@@ -1,6 +1,5 @@
 import type { RecoilValueReadOnly } from 'recoil'
-import { chainsByGenesisHashAtom, tokensByIdAtom } from '@talismn/balances-react'
-import { Chain } from '@talismn/chaindata-provider'
+import { dotNetworksByGenesisHashAtom, tokensByIdAtom } from '@talismn/balances-react'
 import { useContext } from 'react'
 import { atom, selector, selectorFamily, waitForAll } from 'recoil'
 
@@ -20,15 +19,15 @@ export const chainState = selectorFamily({
   get:
     ({ genesisHash }: { genesisHash: string }) =>
     async () => {
-      const chaindataChainsByGenesisHash = await jotaiStore.get(chainsByGenesisHashAtom)
-      const chain = chaindataChainsByGenesisHash?.[genesisHash] as Chain
-      const nativeToken = chain?.nativeToken ? (await jotaiStore.get(tokensByIdAtom))[chain.nativeToken.id] : undefined
+      const chaindataChainsByGenesisHash = await jotaiStore.get(dotNetworksByGenesisHashAtom)
+      const chain = chaindataChainsByGenesisHash?.[genesisHash]
+      const nativeToken = chain?.nativeTokenId ? (await jotaiStore.get(tokensByIdAtom))[chain.nativeTokenId] : undefined
 
       return nullToUndefined({
         ...chain,
         genesisHash: genesisHash as `0x${string}`,
         nativeToken,
-        rpc: chain?.rpcs?.at(0)?.url,
+        rpc: chain?.rpcs?.at(0),
         ...chainConfigs.find(config => config.genesisHash === chain?.genesisHash),
       })
     },
