@@ -1,3 +1,5 @@
+import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+
 import type { Account } from '@/domains/accounts/recoils'
 import type { StakeItem } from '@/domains/staking/subtensor/hooks/useStake'
 import { StakePosition } from '@/components/recipes/StakePosition'
@@ -51,7 +53,9 @@ export const StakeItemRow = ({
   const { name = '', nativeToken: { symbol, logo } = { symbol: '', logo: '' } } = chain || {}
   const assetSymbol = isRootnetStake ? symbol : `SN${stake.netuid} ${stake.descriptionName ?? ''}`
   const assetLogo = isRootnetStake ? logo : DTAO_LOGO
-  const provider = combinedValidatorsData.find(({ poolId }) => poolId === stake.hotkey)?.name ?? 'Managed delegation'
+  const provider = combinedValidatorsData.find(({ poolId }) => poolId === stake.hotkey)?.name ?? null
+
+  const providerTooltip = <Tooltip content={stake.hotkey}>{stake.hotkey}</Tooltip>
 
   const fiatBalance = isRootnetStake ? stake.totalStaked.localizedFiatAmount : expectedTaoAmount.localizedFiatAmount
 
@@ -69,7 +73,7 @@ export const StakeItemRow = ({
         assetSymbol={assetSymbol}
         assetLogoSrc={assetLogo}
         account={account}
-        provider={provider}
+        provider={provider || providerTooltip}
         stakeStatus={'earning_rewards'}
         isError={isError}
         errorMessage={errorMessage}
