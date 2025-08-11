@@ -10,6 +10,22 @@ export type CustomTokenConfig = {
 
 export const customTokensConfig: CustomTokensConfig = [
   {
+    coingeckoId: 'usd1-wlfi',
+    contractAddress: '0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d',
+    decimals: 18,
+    evmChainId: '1',
+    logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/coingecko/usd1-wlfi.webp',
+    symbol: 'USD1',
+  },
+  {
+    coingeckoId: 'usd1-wlfi',
+    contractAddress: '0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d',
+    decimals: 18,
+    evmChainId: '56',
+    logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/coingecko/usd1-wlfi.webp',
+    symbol: 'USD1',
+  },
+  {
     coingeckoId: 'manta-network',
     contractAddress: '0x95CeF13441Be50d20cA4558CC0a27B601aC544E5',
     decimals: 18,
