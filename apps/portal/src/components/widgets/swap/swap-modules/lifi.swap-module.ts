@@ -1,7 +1,7 @@
 import type { Chain as ViemChain } from 'viem/chains'
 import * as sdk from '@lifi/sdk'
 import { evmErc20TokenId, evmNativeTokenId } from '@talismn/balances'
-import { evmNetworksByIdAtom } from '@talismn/balances-react'
+import { evmNetworksByIdAtom, tokensByIdAtom } from '@talismn/balances-react'
 import BigNumber from 'bignumber.js'
 import { atom, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
@@ -14,6 +14,7 @@ import {
   fromAddressAtom,
   fromAmountAtom,
   fromAssetAtom,
+  getTokenIdForSwappableAsset,
   QuoteFunction,
   selectedSubProtocolAtom,
   SupportedSwapProtocol,
@@ -38,12 +39,15 @@ sdk.createConfig({
 const assetsSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {
   const res = await sdk.getTokens({ chainTypes: [sdk.ChainType.EVM, sdk.ChainType.SVM] })
   const networks = await get(evmNetworksByIdAtom)
+  const chaindataTokensById = await get(tokensByIdAtom)
   const tokens = Object.entries(res.tokens)
     .filter(([id]) => {
       return networks[id.toString()]
     })
     .map(([id, tokens]): SwappableAssetBaseType[] => {
       return tokens.map(t => {
+        const chaindataId = getTokenIdForSwappableAsset('evm', id, t.address)
+        const chaindataLogo = chaindataTokensById[chaindataId]?.logo
         return {
           chainId: id,
           context: {
@@ -54,7 +58,7 @@ const assetsSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {
           networkType: 'evm',
           symbol: t.symbol,
           contractAddress: t.address === zeroAddress ? undefined : t.address,
-          image: t.logoURI,
+          image: chaindataLogo ?? t.logoURI,
           id: t.address === zeroAddress ? evmNativeTokenId(id) : evmErc20TokenId(id, t.address),
         }
       })
