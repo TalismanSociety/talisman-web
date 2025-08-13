@@ -6,7 +6,7 @@ import { encodeAnyAddress } from '@talismn/util'
 import BigNumber from 'bignumber.js'
 import { atom, ExtractAtomValue, Getter, Setter } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
-import { firstValueFrom, from, map, mergeMap, tap, toArray } from 'rxjs'
+import { firstValueFrom, from, map, mergeMap, toArray } from 'rxjs'
 import { createPublicClient, encodeFunctionData, erc20Abi, fallback, http, isAddress } from 'viem'
 import { arbitrum, base, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon, sonic } from 'viem/chains'
 
@@ -405,8 +405,7 @@ export const allPairsCsvAtom = atom(async get => {
         )
       ),
       // remove invalid routes
-      map(routes => routes.flatMap(route => (route.from && route.to ? route : []))),
-      tap(val => console.log('end result', val))
+      map(routes => routes.flatMap(route => (route.from && route.to ? route : [])))
     )
   )
 
@@ -414,7 +413,7 @@ export const allPairsCsvAtom = atom(async get => {
     .concat(
       rows
         .filter(({ from, to }) => from?.symbol && from?.chainId && to?.symbol && to?.chainId)
-        .map(({ from, to }) => [from?.symbol, from?.chainId, to?.symbol, to?.chainId].join(','))
+        .map(({ from, to }) => `${from?.symbol},${from?.chainId},${to?.symbol},${to?.chainId}`)
     )
     .join('\n')
 })

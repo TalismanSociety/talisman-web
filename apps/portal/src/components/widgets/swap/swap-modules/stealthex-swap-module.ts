@@ -475,7 +475,7 @@ export const allPairsCsvAtom = atom(async get => {
     .concat(
       rows
         .filter(({ from, to }) => from?.symbol && from?.chainId && to?.symbol && to?.chainId)
-        .map(({ from, to }) => [from?.symbol, from?.chainId, to?.symbol, to?.chainId].join(','))
+        .map(({ from, to }) => `${from?.symbol},${from?.chainId},${to?.symbol},${to?.chainId}`)
     )
     .join('\n')
 })
