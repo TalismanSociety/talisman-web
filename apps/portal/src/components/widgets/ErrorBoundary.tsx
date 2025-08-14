@@ -1,6 +1,6 @@
 import type { PropsWithChildren, ReactElement, ReactNode } from 'react'
 import * as Sentry from '@sentry/react'
-import { Button, OutlinedButton } from '@talismn/ui/atoms/Button'
+import { Button, SurfaceButton } from '@talismn/ui/atoms/Button'
 import { createContext, useContext, useState } from 'react'
 import { useRouteError } from 'react-router-dom'
 import { atom, useRecoilCallback, useRecoilValue } from 'recoil'
@@ -29,22 +29,23 @@ const ErrorElement = (props: ErrorElementProps) => {
       orientation={useContext(OrientationContext)}
       title="Oops!"
       message={
-        <span>
-          Sorry, an error occurred in Talisman.
-          {props.eventId ? (
-            <>
-              <br />
-              {props.eventId}
-            </>
-          ) : (
-            ''
-          )}
-        </span>
+        <div className="flex flex-col items-center">
+          <span className="text-secondary">Sorry, an error occurred in Talisman.</span>
+          {props.eventId ? <span className="opacity-60">{props.eventId}</span> : ''}
+        </div>
       }
       actions={
         <ErrorMessage.Actions>
-          {props.error !== undefined && <OutlinedButton onClick={() => alert(message)}>Show error</OutlinedButton>}
-          {props.resetError !== undefined && <Button onClick={props.resetError}>Refresh</Button>}
+          {props.error !== undefined && (
+            <SurfaceButton className="!rounded-3xl" onClick={() => alert(message)}>
+              Show error
+            </SurfaceButton>
+          )}
+          {props.resetError !== undefined && (
+            <Button className="!rounded-3xl" onClick={props.resetError}>
+              Refresh
+            </Button>
+          )}
         </ErrorMessage.Actions>
       }
     />

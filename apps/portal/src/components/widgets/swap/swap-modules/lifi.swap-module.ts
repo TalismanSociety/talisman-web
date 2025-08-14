@@ -36,6 +36,16 @@ sdk.createConfig({
   apiKey: import.meta.env.VITE_LIFI_SECRET,
 })
 
+export const allPairsCsvAtom = atom(async get => {
+  const allTokens = await get(assetsSelector)
+
+  const rows = allTokens
+
+  return [['symbol', 'chain'].join(',')]
+    .concat(rows.filter(token => token?.symbol && token?.chainId).map(token => `${token?.symbol},${token?.chainId}`))
+    .join('\n')
+})
+
 const assetsSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {
   const res = await sdk.getTokens({ chainTypes: [sdk.ChainType.EVM, sdk.ChainType.SVM] })
   const networks = await get(evmNetworksByIdAtom)
@@ -63,6 +73,7 @@ const assetsSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {
         }
       })
     })
+
   return tokens.flat()
 })
 
