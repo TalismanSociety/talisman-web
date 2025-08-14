@@ -39,10 +39,20 @@ import {
 
 const APIKEY = import.meta.env.VITE_SIMPLESWAP_API_KEY
 if (!APIKEY && import.meta.env.DEV) throw new Error('env var VITE_SIMPLESWAP_API_KEY not set')
+const APIKEY_DISCOUNTED = import.meta.env.VITE_SIMPLESWAP_API_KEY_DISCOUNTED
+if (!APIKEY_DISCOUNTED && import.meta.env.DEV) throw new Error('env var VITE_SIMPLESWAP_API_KEY_DISCOUNTED not set')
 const PROTOCOL = 'simpleswap'
 const PROTOCOL_NAME = 'SimpleSwap'
 const DECENTRALISATION_SCORE = 1
 const TALISMAN_FEE = 0.015
+const TALISMAN_FEE_DISCOUNTED = 0.004
+const DISCOUNTED_CURRENCIES = ['usd1']
+
+type RouteProps = { currencyFrom: string; currencyTo: string }
+const discountedRoute = ({ currencyFrom, currencyTo }: RouteProps) =>
+  DISCOUNTED_CURRENCIES.includes(currencyFrom) || DISCOUNTED_CURRENCIES.includes(currencyTo)
+const getTalismanFee = (route: RouteProps) => (discountedRoute(route) ? TALISMAN_FEE_DISCOUNTED : TALISMAN_FEE)
+const getApiKey = (route: RouteProps) => (discountedRoute(route) ? APIKEY_DISCOUNTED : APIKEY)
 
 const LOGO = simpleswapLogo
 
@@ -292,8 +302,9 @@ const simpleSwapSdk = {
     fixed: boolean
   }): Promise<string | { code: number; error: string; description: string; trace_id: string } | null> => {
     try {
+      const api_key = getApiKey(props)
       const search = new URLSearchParams({
-        api_key: APIKEY,
+        api_key,
         fixed: `${props.fixed}`,
         currency_from: props.currencyFrom,
         currency_to: props.currencyTo,
@@ -333,9 +344,8 @@ const simpleSwapSdk = {
     user_refund_address: string | null
     user_refund_extra_id: string | null
   }): Promise<Exchange> => {
-    const search = new URLSearchParams({
-      api_key: APIKEY,
-    })
+    const api_key = getApiKey({ currencyFrom: props.currency_from, currencyTo: props.currency_to })
+    const search = new URLSearchParams({ api_key })
     const exchange = await fetch(`https://api.simpleswap.io/create_exchange?${search.toString()}`, {
       method: 'POST',
       headers: {
@@ -347,16 +357,14 @@ const simpleSwapSdk = {
     return exchange.json()
   },
   getExchange: async (id: string): Promise<Exchange> => {
-    const search = new URLSearchParams({
-      api_key: APIKEY,
-      id,
-    })
+    const search = new URLSearchParams({ api_key: APIKEY, id })
     const exchange = await fetch(`https://api.simpleswap.io/get_exchange?${search.toString()}`)
     return exchange.json()
   },
   getRange: async (props: { currency_from: string; currency_to: string }): Promise<Range | undefined> => {
+    const api_key = getApiKey({ currencyFrom: props.currency_from, currencyTo: props.currency_to })
     const search = new URLSearchParams({
-      api_key: APIKEY,
+      api_key,
       fixed: 'false',
       ...props,
     })
@@ -528,6 +536,7 @@ const quote: QuoteFunction = loadable(
       currencyTo,
       fixed: false,
     })
+    const talismanFee = getTalismanFee({ currencyFrom, currencyTo })
 
     // check for error object
     if (!output || typeof output !== 'string') {
@@ -542,7 +551,7 @@ const quote: QuoteFunction = loadable(
           fees: [],
           providerLogo: LOGO,
           providerName: PROTOCOL_NAME,
-          talismanFee: TALISMAN_FEE,
+          talismanFee,
         }
       }
       return null
@@ -553,7 +562,7 @@ const quote: QuoteFunction = loadable(
     const fees: QuoteFee[] = (gasFee ? [gasFee] : []).concat({
       amount: BigNumber(fromAmount.planck.toString())
         .times(10 ** -fromAmount.decimals)
-        .times(TALISMAN_FEE),
+        .times(talismanFee),
       name: 'Talisman Fee',
       tokenId: fromAsset.id,
     })
@@ -568,7 +577,7 @@ const quote: QuoteFunction = loadable(
       fees,
       providerLogo: LOGO,
       providerName: PROTOCOL_NAME,
-      talismanFee: TALISMAN_FEE,
+      talismanFee: talismanFee,
     }
   })
 )
