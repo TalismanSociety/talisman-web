@@ -100,8 +100,9 @@ export const SwapTokensModal: React.FC<Props> = ({
 
   const rowVirtualizer = useVirtualizer({
     count: filteredAssets?.length ?? 0,
+    overscan: 6,
+    estimateSize: () => 64,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 72,
   })
 
   const sortedTokensByBalances = useMemo(() => {
@@ -309,7 +310,7 @@ export const SwapTokensModal: React.FC<Props> = ({
                       if (!asset) return null
                       return (
                         <div
-                          key={item.key}
+                          key={asset.id || item.key}
                           style={{
                             position: 'absolute',
                             top: 0,

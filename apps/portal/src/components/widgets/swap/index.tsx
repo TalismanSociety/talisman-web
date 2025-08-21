@@ -14,7 +14,7 @@ import { useFastBalance, UseFastBalanceProps } from '@/hooks/useFastBalance'
 import { walletConnectionSideSheetOpenState } from '../WalletConnectionSideSheet'
 import { FromAccount } from './FromAccount'
 import { shouldFocusDetailsAtom, SidePanel, swapInfoTabAtom } from './side-panel'
-import { fromAssetsBalancesAtom } from './swap-balances.api'
+import { fromAssetsBalancesAtom, useSetOwnedAddresses } from './swap-balances.api'
 import {
   fromAddressAtom,
   fromAmountAtom,
@@ -64,6 +64,12 @@ export const Swap: React.FC = () => {
   const fromAssets = useAtomValue(loadable(fromAssetsAtom))
   const toAssets = useAtomValue(loadable(toAssetsAtom))
   const [cachedToAmount, setCachedToAmount] = useState(toAmount.state === 'hasData' ? toAmount.data : undefined)
+  useSetOwnedAddresses(
+    useMemo(
+      () => [...substrateAccounts, ...ethAccounts].map(account => account.address),
+      [substrateAccounts, ethAccounts]
+    )
+  )
   const balances = useAtomValue(loadable(fromAssetsBalancesAtom))
   const quotes = useAtomValue(swapQuotesAtom)
 

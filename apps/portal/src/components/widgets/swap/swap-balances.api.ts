@@ -1,7 +1,9 @@
 import type { Chain as ViemChain } from 'viem/chains'
 import { chainsAtom, evmNetworksAtom } from '@talismn/balances-react'
-import { atom } from 'jotai'
+import { isEthereumAddress } from '@talismn/crypto'
+import { atom, useSetAtom } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
+import { useEffect } from 'react'
 import { createPublicClient, fallback, http } from 'viem'
 
 import { allEvmChains } from '@/components/widgets/swap/allEvmChains.ts'
@@ -98,15 +100,25 @@ const evmBalancesAtom = atomFamily((chainId: string) =>
   })
 )
 
+const ownedAddressesAtom = atom<string[] | null>(null)
+export const useSetOwnedAddresses = (addresses: string[]) => {
+  const setAddresses = useSetAtom(ownedAddressesAtom)
+  useEffect(() => void setAddresses(addresses), [addresses, setAddresses])
+}
+
 export const substrateBalancesAtom = atomFamily((chainId: string) =>
   atom(async get => {
     try {
       const assetsByChainId = await get(fromAssetsByChainIdAtom)
       const assets = assetsByChainId.substrateAssetsByChainId[chainId]
-      const fromSubstrateAddress = get(fromSubstrateAddressAtom)
+      const ownedSubstrateAddresses = get(ownedAddressesAtom)?.filter(addresses => !isEthereumAddress(addresses))
       const substrateApiGetter = get(substrateApiGetterAtom)
 
-      if (!assets || !fromSubstrateAddress) return { balances: {} }
+      if (!assets) return { balances: {} }
+      if (!ownedSubstrateAddresses) return { balances: {} }
+      if (!ownedSubstrateAddresses.length) return { balances: {} }
+
+      const queryAddresses = ownedSubstrateAddresses
 
       const chains = await get(chainsAtom)
       const chain = chains.find(chain => chain.id.toString() === chainId.toString())
@@ -119,15 +131,19 @@ export const substrateBalancesAtom = atomFamily((chainId: string) =>
       const balances: Record<string, Decimal> = {}
       const nativeToken = assets.find(a => a.id === chain.nativeToken?.id)
       if (nativeToken) {
-        const account = await api?.query.system.account(fromSubstrateAddress)
-        const balance = computeSubstrateBalance(api, account)
-        balances[nativeToken.id] = balance.transferrable
+        const accounts = await api?.query.system.account.multi(queryAddresses)
+        const accountBalances = accounts.map(account => computeSubstrateBalance(api, account))
+        balances[nativeToken.id] = Decimal.fromPlanck(
+          accountBalances.reduce((acc, b) => acc + b.transferrable.planck, 0n),
+          nativeToken.decimals,
+          { currency: nativeToken.symbol }
+        )
       }
 
       const assetHubAssets = assets.filter(a => a.assetHubAssetId !== undefined)
       if (assetHubAssets.length > 0 && api.query.assets) {
         const accounts = await api.query.assets.account.multi(
-          assetHubAssets.map(asset => [asset.assetHubAssetId!, fromSubstrateAddress])
+          queryAddresses.flatMap(address => assetHubAssets.map(asset => [asset.assetHubAssetId!, address]))
         )
         accounts.forEach((acc, index) => {
           const balanceBN = acc.value?.balance?.toBigInt() ?? 0n
