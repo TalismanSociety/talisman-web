@@ -62,6 +62,10 @@ export const SwapTokensModal: React.FC<Props> = ({
   const debouncedSearch = useDebounce(searchText, 500)
 
   useEffect(() => {
+    // clear search on modal close
+    if (!open) setSearchText(''), setSearch('')
+  }, [open, setSearch])
+  useEffect(() => {
     setSearch(debouncedSearch)
   }, [debouncedSearch, setSearch])
 
@@ -106,8 +110,8 @@ export const SwapTokensModal: React.FC<Props> = ({
   })
 
   const sortedTokensByBalances = useMemo(() => {
-    if (!balances) return filteredAssets
-    return filteredAssets.sort((a, b) => {
+    if (!balances) return [...filteredAssets]
+    return [...filteredAssets].sort((a, b) => {
       const aBalance = balances[a.id]?.toNumber()
       const bBalance = balances[b.id]?.toNumber()
 
