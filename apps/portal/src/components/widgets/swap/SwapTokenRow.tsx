@@ -1,4 +1,4 @@
-import { useTokenRates, useTokens } from '@talismn/balances-react'
+import { useTokens } from '@talismn/balances-react'
 import { githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { Skeleton } from '@talismn/ui/atoms/Skeleton'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
@@ -17,6 +17,7 @@ import { useTokenRatesFromUsd } from '@/hooks/useTokenRatesFromUsd'
 import { Decimal } from '@/util/Decimal'
 import { truncateAddress } from '@/util/truncateAddress'
 
+import { swapTokenRatesAtom } from './swap-balances.api'
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
 import { safeTokensSetAtom } from './swaps.api'
 
@@ -44,7 +45,7 @@ export const SwapTokenRow: React.FC<Props> = ({
   onClick,
 }) => {
   const currency = useRecoilValue(selectedCurrencyState)
-  const rates = useTokenRates()
+  const rates = useAtomValue(swapTokenRatesAtom)
   const tokens = useTokens()
   const { copied, copy } = useCopied()
   const safeList = useAtomValue(loadable(safeTokensSetAtom))

@@ -2,7 +2,7 @@ import type { PrimitiveAtom } from 'jotai'
 import type { Chain as ViemChain } from 'viem/chains'
 import * as sdk from '@lifi/sdk'
 import { evmErc20TokenId } from '@talismn/balances'
-import { tokenRatesAtom, tokensByIdAtom, useChains, useEvmNetworks, useTokens } from '@talismn/balances-react'
+import { tokensByIdAtom, useChains, useEvmNetworks, useTokens } from '@talismn/balances-react'
 import { isEthereumAddress } from '@talismn/crypto'
 import { toast } from '@talismn/ui/molecules/Toaster'
 import BigNumber from 'bignumber.js'
@@ -15,6 +15,7 @@ import { createPublicClient, erc20Abi, http, isAddress } from 'viem'
 import { useWalletClient } from 'wagmi'
 
 import { allEvmChains } from '@/components/widgets/swap/allEvmChains.ts'
+import { swapTokenRatesAtom } from '@/components/widgets/swap/swap-balances.api'
 import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { substrateApiGetterAtom, substrateApiState } from '@/domains/common/recoils/api'
 import { connectedSubstrateWalletState } from '@/domains/extension/substrate'
@@ -502,7 +503,7 @@ export const swapQuotesAtom = loadable(
 export const sortedQuotesAtom = atom(async get => {
   const quotes = get(swapQuotesAtom)
   const sort = get(quoteSortingAtom)
-  const tokenRates = await get(tokenRatesAtom)
+  const tokenRates = await get(swapTokenRatesAtom)
 
   if (quotes.state === 'hasError') throw quotes.error
   if (quotes.state !== 'hasData') return undefined

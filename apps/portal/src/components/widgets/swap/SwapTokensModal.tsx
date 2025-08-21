@@ -1,5 +1,5 @@
 import type { Chain as ViemChain } from 'viem/chains'
-import { useChains, useEvmNetworks, useTokenRates } from '@talismn/balances-react'
+import { useChains, useEvmNetworks } from '@talismn/balances-react'
 import { Chain, EvmNetwork, githubUnknownChainLogoUrl, githubUnknownTokenLogoUrl } from '@talismn/chaindata-provider'
 import { Button, SurfaceButton } from '@talismn/ui/atoms/Button'
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
@@ -9,7 +9,7 @@ import { SearchBar } from '@talismn/ui/molecules/SearchBar'
 import { Select } from '@talismn/ui/molecules/Select'
 import { AlertTriangle } from '@talismn/web-icons'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { PrimitiveAtom, useAtom } from 'jotai'
+import { PrimitiveAtom, useAtom, useAtomValue } from 'jotai'
 import { Globe, X } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -20,6 +20,7 @@ import { useDebounce } from '@/hooks/useDebounce'
 import { cn } from '@/util/cn'
 import { Decimal } from '@/util/Decimal'
 
+import { swapTokenRatesAtom } from './swap-balances.api'
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
 import { tokenTabAtom, tokenTabs } from './swaps.api'
 import { SwapTokenRow } from './SwapTokenRow'
@@ -70,7 +71,7 @@ export const SwapTokensModal: React.FC<Props> = ({
   }, [debouncedSearch, setSearch])
 
   const parentRef = useRef<HTMLDivElement>(null)
-  const rates = useTokenRates()
+  const rates = useAtomValue(swapTokenRatesAtom)
 
   const uniqueChains = useMemo(() => {
     return Object.values(

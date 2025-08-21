@@ -1,4 +1,4 @@
-import { useTokenRates, useTokens } from '@talismn/balances-react'
+import { useTokens } from '@talismn/balances-react'
 import { Clickable } from '@talismn/ui/atoms/Clickable'
 import { Surface } from '@talismn/ui/atoms/Surface'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
@@ -9,6 +9,7 @@ import { Clock, Info } from 'lucide-react'
 import React, { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
+import { swapTokenRatesAtom } from '@/components/widgets/swap/swap-balances.api'
 import { selectedCurrencyState } from '@/domains/balances/currency'
 import { useTokenRatesFromUsd } from '@/hooks/useTokenRatesFromUsd'
 import { cn } from '@/util/cn'
@@ -31,7 +32,7 @@ type Props = {
 export const SwapDetailsCard: React.FC<Props & { selected?: boolean }> = ({ selected, amountOverride, quote }) => {
   const toAsset = useAtomValue(toAssetAtom)
   const fromAsset = useAtomValue(fromAssetAtom)
-  const tokenRates = useTokenRates()
+  const tokenRates = useAtomValue(swapTokenRatesAtom)
   const currency = useRecoilValue(selectedCurrencyState)
   const setSelectedProtocol = useSetAtom(selectedProtocolAtom)
   const setSelectedSubProtocol = useSetAtom(selectedSubProtocolAtom)
