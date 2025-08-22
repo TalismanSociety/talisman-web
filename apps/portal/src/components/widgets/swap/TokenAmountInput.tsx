@@ -1,8 +1,8 @@
-import { useTokenRates, useTokens } from '@talismn/balances-react'
+import { useTokens } from '@talismn/balances-react'
 import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressIndicator'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
-import { PrimitiveAtom } from 'jotai'
+import { PrimitiveAtom, useAtomValue } from 'jotai'
 import { HelpCircle } from 'lucide-react'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -13,6 +13,7 @@ import { useTokenRatesFromUsd } from '@/hooks/useTokenRatesFromUsd'
 import { cn } from '@/util/cn'
 import { Decimal } from '@/util/Decimal'
 
+import { swapTokenRatesAtom } from './swap-balances.api'
 import { SwappableAssetWithDecimals } from './swap-modules/common.swap-module'
 import { SwapTokensModal } from './SwapTokensModal'
 
@@ -62,7 +63,7 @@ export const TokenAmountInput: React.FC<Props> = ({
 
   const currency = useRecoilValue(selectedCurrencyState)
   const tokens = useTokens()
-  const rates = useTokenRates()
+  const rates = useAtomValue(swapTokenRatesAtom)
 
   const shouldDisplayBalance = useMemo(() => {
     if (hideBalance || !selectedAsset) return false

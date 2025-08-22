@@ -146,7 +146,9 @@ const Details: React.FC = () => {
       <div className="flex w-full items-center justify-between">
         {cachedQuotes.length > 0 && cachedQuotes.every(c => c.quote.state !== 'loading') ? (
           <p className="text-muted-foreground text-[14px]">
-            {cachedQuotes.length} Option{cachedQuotes.length > 1 ? 's' : ''}
+            {(numQuotes => (numQuotes > 1 ? `${numQuotes} Options` : `${numQuotes} Option`))(
+              cachedQuotes.filter(({ quote }) => quote.state === 'hasData').length
+            )}
           </p>
         ) : (
           <Skeleton.Surface className="h-[22.4px] w-[66px]" />

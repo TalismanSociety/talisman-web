@@ -1,7 +1,13 @@
 import type { Chain as ViemChain } from 'viem/chains'
-import { chainsAtom, evmNetworksAtom } from '@talismn/balances-react'
-import { atom } from 'jotai'
-import { atomFamily, loadable } from 'jotai/utils'
+import { chaindataProviderAtom, chainsAtom, coinsApiConfigAtom, evmNetworksAtom } from '@talismn/balances-react'
+import { TokenList } from '@talismn/chaindata-provider'
+import { isEthereumAddress } from '@talismn/crypto'
+import { ALL_CURRENCY_IDS, fetchTokenRates, TokenRatesList } from '@talismn/token-rates'
+import { isTruthy } from '@talismn/util'
+import { atom, useSetAtom } from 'jotai'
+import { atomEffect } from 'jotai-effect'
+import { atomFamily, atomWithObservable, loadable } from 'jotai/utils'
+import { useEffect } from 'react'
 import { createPublicClient, fallback, http } from 'viem'
 
 import { allEvmChains } from '@/components/widgets/swap/allEvmChains.ts'
@@ -98,15 +104,25 @@ const evmBalancesAtom = atomFamily((chainId: string) =>
   })
 )
 
+const ownedAddressesAtom = atom<string[] | null>(null)
+export const useSetOwnedAddresses = (addresses: string[]) => {
+  const setAddresses = useSetAtom(ownedAddressesAtom)
+  useEffect(() => void setAddresses(addresses), [addresses, setAddresses])
+}
+
 export const substrateBalancesAtom = atomFamily((chainId: string) =>
   atom(async get => {
     try {
       const assetsByChainId = await get(fromAssetsByChainIdAtom)
       const assets = assetsByChainId.substrateAssetsByChainId[chainId]
-      const fromSubstrateAddress = get(fromSubstrateAddressAtom)
+      const ownedSubstrateAddresses = get(ownedAddressesAtom)?.filter(addresses => !isEthereumAddress(addresses))
       const substrateApiGetter = get(substrateApiGetterAtom)
 
-      if (!assets || !fromSubstrateAddress) return { balances: {} }
+      if (!assets) return { balances: {} }
+      if (!ownedSubstrateAddresses) return { balances: {} }
+      if (!ownedSubstrateAddresses.length) return { balances: {} }
+
+      const queryAddresses = ownedSubstrateAddresses
 
       const chains = await get(chainsAtom)
       const chain = chains.find(chain => chain.id.toString() === chainId.toString())
@@ -119,15 +135,19 @@ export const substrateBalancesAtom = atomFamily((chainId: string) =>
       const balances: Record<string, Decimal> = {}
       const nativeToken = assets.find(a => a.id === chain.nativeToken?.id)
       if (nativeToken) {
-        const account = await api?.query.system.account(fromSubstrateAddress)
-        const balance = computeSubstrateBalance(api, account)
-        balances[nativeToken.id] = balance.transferrable
+        const accounts = await api?.query.system.account.multi(queryAddresses)
+        const accountBalances = accounts.map(account => computeSubstrateBalance(api, account))
+        balances[nativeToken.id] = Decimal.fromPlanck(
+          accountBalances.reduce((acc, b) => acc + b.transferrable.planck, 0n),
+          nativeToken.decimals,
+          { currency: nativeToken.symbol }
+        )
       }
 
       const assetHubAssets = assets.filter(a => a.assetHubAssetId !== undefined)
       if (assetHubAssets.length > 0 && api.query.assets) {
         const accounts = await api.query.assets.account.multi(
-          assetHubAssets.map(asset => [asset.assetHubAssetId!, fromSubstrateAddress])
+          queryAddresses.flatMap(address => assetHubAssets.map(asset => [asset.assetHubAssetId!, address]))
         )
         accounts.forEach((acc, index) => {
           const balanceBN = acc.value?.balance?.toBigInt() ?? 0n
@@ -155,4 +175,66 @@ export const fromAssetsBalancesAtom = atom(async get => {
   const balances = balanceLoadables.filter(b => b.state === 'hasData').map(b => b.data.balances)
 
   return balances.reduce((acc, balances) => ({ ...acc, ...balances }), {} as Record<string, Decimal>)
+})
+
+const allTokensByIdAtom = atomWithObservable(get => get(chaindataProviderAtom).tokensByIdObservable)
+
+const _swapTokenRatesAtom = atom<TokenRatesList>({})
+export const swapTokenRatesAtom = atom(async get => {
+  // keep token rates up to date
+  get(fetchSwapTokenRatesEffect)
+  return get(_swapTokenRatesAtom)
+})
+
+const fetchSwapTokenRatesEffect = atomEffect((get, set) => {
+  // lets us tear down the existing timer when the effect is restarted
+  const abort = new AbortController()
+
+  // we have to get these synchronously so that jotai knows to restart our timer when they change
+  const coinsApiConfig = get(coinsApiConfigAtom)
+  const assetsPromise = get(fromAssetsAtom)
+  const allTokensByIdPromise = get(allTokensByIdAtom)
+
+  ;(async () => {
+    const assets = await assetsPromise
+    const allTokensById = await allTokensByIdPromise
+    const swapTokensById: TokenList = {}
+    for (const asset of assets) {
+      const assetToken = allTokensById[asset.id]
+      if (assetToken) swapTokensById[asset.id] = assetToken
+    }
+
+    const loopMs = 300_000 // 300_000ms = 300s = 5 minutes
+    const retryTimeout = 5_000 // 5_000ms = 5 seconds
+
+    const hydrate = async () => {
+      try {
+        if (abort.signal.aborted) return // don't fetch if aborted
+        const swapRates = await fetchTokenRates(swapTokensById, ALL_CURRENCY_IDS, coinsApiConfig)
+
+        if (abort.signal.aborted) return // don't update atom if aborted
+        set(_swapTokenRatesAtom, swapRates)
+
+        if (abort.signal.aborted) return // don't schedule next loop if aborted
+        setTimeout(hydrate, loopMs)
+      } catch (error) {
+        const retrying = !abort.signal.aborted
+        const messageParts = [
+          'Failed to fetch tokenRates',
+          retrying && `retrying in ${Math.round(retryTimeout / 1000)} seconds`,
+          !retrying && `giving up (timer no longer needed)`,
+        ].filter(isTruthy)
+        console.error(messageParts.join(', '), error)
+
+        const isAbortError = (error: unknown): boolean => error instanceof Error && error.name === 'AbortError'
+        if (isAbortError(error)) return // don't schedule retry if aborted
+        setTimeout(hydrate, retryTimeout)
+      }
+    }
+
+    // launch the loop
+    hydrate()
+  })()
+
+  return () => abort.abort('Unsubscribed')
 })

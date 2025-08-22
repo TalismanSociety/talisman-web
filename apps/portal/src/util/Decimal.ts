@@ -75,6 +75,10 @@ export class Decimal {
     public readonly options?: DecimalOptions
   ) {}
 
+  get currency() {
+    return this.options?.currency
+  }
+
   toNumber() {
     return Number(this.toString())
   }

@@ -2,7 +2,7 @@ import type { PrimitiveAtom } from 'jotai'
 import type { Chain as ViemChain } from 'viem/chains'
 import * as sdk from '@lifi/sdk'
 import { evmErc20TokenId } from '@talismn/balances'
-import { tokenRatesAtom, tokensByIdAtom, useChains, useEvmNetworks, useTokens } from '@talismn/balances-react'
+import { tokensByIdAtom, useChains, useEvmNetworks, useTokens } from '@talismn/balances-react'
 import { isEthereumAddress } from '@talismn/crypto'
 import { toast } from '@talismn/ui/molecules/Toaster'
 import BigNumber from 'bignumber.js'
@@ -15,6 +15,7 @@ import { createPublicClient, erc20Abi, http, isAddress } from 'viem'
 import { useWalletClient } from 'wagmi'
 
 import { allEvmChains } from '@/components/widgets/swap/allEvmChains.ts'
+import { swapTokenRatesAtom } from '@/components/widgets/swap/swap-balances.api'
 import { wagmiAccountsState, writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { substrateApiGetterAtom, substrateApiState } from '@/domains/common/recoils/api'
 import { connectedSubstrateWalletState } from '@/domains/extension/substrate'
@@ -27,7 +28,7 @@ import type {
   SwapActivity,
   SwappableAssetBaseType,
 } from './swap-modules/common.swap-module'
-import { popularTokens, talismanTokens } from './curated-tokens'
+import { curatedTokens } from './curated-tokens'
 import { knownEvmNetworksAtom } from './helpers'
 import { swapInfoTabAtom } from './side-panel'
 import { chainflipSwapModule } from './swap-modules/chainflip.swap-module'
@@ -146,20 +147,23 @@ export const tokenTabs: {
   sort?: (a: SwappableAssetWithDecimals, b: SwappableAssetWithDecimals) => number
 }[] = [
   {
-    value: 'popular',
-    label: '🔥 Popular',
-    filter: token => popularTokens.includes(token.id) ?? false,
-    sort: (a, b) => popularTokens.indexOf(a.id) - popularTokens.indexOf(b.id),
+    value: 'all',
+    label: 'All tokens',
+    sort: (a, b) =>
+      (curatedTokens.indexOf(a.id) ?? Number.MAX_SAFE_INTEGER) -
+      (curatedTokens.indexOf(b.id) ?? Number.MAX_SAFE_INTEGER),
   },
   {
-    value: 'talisman',
-    label: 'Talisman',
-    filter: token => talismanTokens.includes(token.id) ?? false,
-    sort: (a, b) => talismanTokens.indexOf(a.id) - talismanTokens.indexOf(b.id),
+    value: 'popular',
+    label: '🔥 Popular',
+    filter: token => curatedTokens.includes(token.id) ?? false,
+    sort: (a, b) =>
+      (curatedTokens.indexOf(a.id) ?? Number.MAX_SAFE_INTEGER) -
+      (curatedTokens.indexOf(b.id) ?? Number.MAX_SAFE_INTEGER),
   },
   {
     value: 'meme-token',
-    label: 'Meme',
+    label: 'Memes',
     coingecko: true,
   },
   {
@@ -189,7 +193,7 @@ export const tokenTabs: {
   },
 ]
 
-export const tokenTabAtom = atom<string>('popular')
+export const tokenTabAtom = atom<string>('all')
 export const coingeckoAssetPlatformsAtom = atom(async () => {
   const response = await fetch(`${coingeckoApiUrl}/api/v3/asset_platforms`, {
     headers: {
@@ -216,16 +220,6 @@ export const coingeckoListAtom = atom(async () => {
   return (await response.json()) as { id: string; platforms: Record<string, string> }[]
 })
 
-export const coingeckoCategoriesAtom = atom(async () => {
-  const response = await fetch(`${coingeckoApiUrl}/api/v3/coins/categories`, {
-    headers: {
-      [`x-cg-${coingeckoTier}-api-key`]: coingeckoApiKey!,
-    },
-  })
-
-  return await response.json()
-})
-
 export const coingeckoCoinsByCategoryAtom = atomFamily((category: string) =>
   atom(async () => {
     const apiUrl = import.meta.env.VITE_COIN_GECKO_API
@@ -244,20 +238,22 @@ export const coingeckoCoinsByCategoryAtom = atomFamily((category: string) =>
   })
 )
 
-export const uniswapSafeTokensList = atom(async () => {
+export const uniswapSafeTokensSet = atom(async () => {
   const response = await fetch('https://tokens.uniswap.org/')
-  return (await response.json()).tokens as { chainId: number; address: string }[]
+  const tokens: Array<{ chainId: number; address: string }> = (await response.json()).tokens
+  return new Set(tokens.map(token => `${token.chainId}:${token.address.toLowerCase()}`))
 })
 
-export const uniswapExtendedTokensList = atom(async () => {
+export const uniswapExtendedTokensSet = atom(async () => {
   const response = await fetch('https://extendedtokens.uniswap.org/')
-  return (await response.json()).tokens as { chainId: number; address: string }[]
+  const tokens: Array<{ chainId: number; address: string }> = (await response.json()).tokens
+  return new Set(tokens.map(token => `${token.chainId}:${token.address.toLowerCase()}`))
 })
 
-export const safeTokensListAtom = atom(async get => {
-  const uniswapSafeTokens = await get(uniswapSafeTokensList)
-  const uniswapExtendedTokens = await get(uniswapExtendedTokensList)
-  return [...uniswapSafeTokens, ...uniswapExtendedTokens]
+export const safeTokensSetAtom = atom(async get => {
+  const uniswapSafeTokens = await get(uniswapSafeTokensSet)
+  const uniswapExtendedTokens = await get(uniswapExtendedTokensSet)
+  return new Set([...uniswapSafeTokens, ...uniswapExtendedTokens])
 })
 
 const coingeckoCoinByAddressAtom = atomFamily((addressPlatform: string) =>
@@ -383,15 +379,15 @@ const filterAndSortTokens = async (
       )
       return allOnChainTokens.filter(t => t !== null)
     }
-    const safeTokens = await get(safeTokensListAtom)
+    const safeTokens = await get(safeTokensSetAtom)
     return knownFilteredTokens.sort((a, b) => {
       // prioritize native tokens
       if (a.id.includes('native') && !b.id.includes('native')) return -1
       if (b.id.includes('native') && !a.id.includes('native')) return 1
 
       // prioritize tokens in safe tokens list
-      const aSafe = safeTokens.some(t => t.address.toLowerCase() === a.contractAddress?.toLowerCase())
-      const bSafe = safeTokens.some(t => t.address.toLowerCase() === b.contractAddress?.toLowerCase())
+      const aSafe = safeTokens.has(`${a.chainId}:${a.contractAddress?.toLowerCase()}`)
+      const bSafe = safeTokens.has(`${a.chainId}:${a.contractAddress?.toLowerCase()}`)
       if (aSafe && !bSafe) return -1
       if (bSafe && !aSafe) return 1
 
@@ -416,11 +412,14 @@ const filterAndSortTokens = async (
   const filter = tokenTabs.find(t => t.value === tab)?.filter
   const sort = tokenTabs.find(t => t.value === tab)?.sort
   const coingeckoCategoryId = tokenTabs.find(t => t.value === tab && t.coingecko)?.value
-  if (filter) tokens = tokens.filter(filter)
-  if (sort) tokens = tokens.sort(sort)
-  if (coingeckoCategoryId) tokens = await getCoingeckoCategoryTokens(get, coingeckoCategoryId, tokens)
 
-  return tokens
+  let filteredSortedTokens = [...tokens]
+  if (filter) filteredSortedTokens = filteredSortedTokens.filter(filter)
+  if (sort) filteredSortedTokens = filteredSortedTokens.sort(sort)
+  if (coingeckoCategoryId)
+    filteredSortedTokens = await getCoingeckoCategoryTokens(get, coingeckoCategoryId, filteredSortedTokens)
+
+  return filteredSortedTokens
 }
 
 /**
@@ -504,7 +503,7 @@ export const swapQuotesAtom = loadable(
 export const sortedQuotesAtom = atom(async get => {
   const quotes = get(swapQuotesAtom)
   const sort = get(quoteSortingAtom)
-  const tokenRates = await get(tokenRatesAtom)
+  const tokenRates = await get(swapTokenRatesAtom)
 
   if (quotes.state === 'hasError') throw quotes.error
   if (quotes.state !== 'hasData') return undefined
