@@ -1,10 +1,12 @@
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+import { classNames } from '@talismn/util'
 import { Info } from '@talismn/web-icons'
 import { useAtom } from 'jotai'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
+import { useGetSeekDiscount } from '@/domains/staking/seek/hooks/useGetSeekDiscount'
 import { dTaoConversionRateAtom } from '@/domains/staking/subtensor/atoms/dTaoConversionRate'
 import { expectedAlphaAmountAtom } from '@/domains/staking/subtensor/atoms/expectedAlphaAmount'
 import { feeEstimateAtom } from '@/domains/staking/subtensor/atoms/feeEstimate'
@@ -26,8 +28,11 @@ export const StakeTxBreakdown = ({ shouldHideExpectedAmount }: StakeTxBreakdownP
   const [feeEstimate] = useAtom(feeEstimateAtom)
   const [netuid] = useAtom(netuidAtom)
   const { subnetData } = useCombineSubnetData()
+  const { tier } = useGetSeekDiscount()
 
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
+
+  const discountPercent = `${tier.discount * 100}%`
 
   const stakeData = subnetData[netuid ?? 0]
   const { symbol, descriptionName } = stakeData || {}
@@ -77,18 +82,29 @@ export const StakeTxBreakdown = ({ shouldHideExpectedAmount }: StakeTxBreakdownP
         <div className="text-end">{feeEstimate?.decimalAmount?.toLocaleString()}</div>
       </div>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 leading-none">
-          <div className="text-gray-400">Talisman fee</div>
-          <Tooltip
-            content={
-              <div className="max-w-[35rem]">Talisman applies a {TALISMAN_FEE_BITTENSOR}% fee to each transaction.</div>
-            }
-            placement="top"
-          >
-            <Info size={16} className="text-gray-400" />
-          </Tooltip>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 leading-none">
+            <div className="text-gray-400">Talisman fee</div>
+            <Tooltip
+              content={
+                <div className="max-w-[35rem]">
+                  Talisman applies a {TALISMAN_FEE_BITTENSOR}% fee to each transaction.
+                </div>
+              }
+              placement="top"
+            >
+              <Info size={16} className="text-gray-400" />
+            </Tooltip>
+          </div>
+          {tier.tier > 0 && (
+            <div className="rounded-[43px] bg-[#D5FF5C] bg-opacity-[0.1] px-4 py-1">
+              <div className="text-[10px] text-[#D5FF5C]">{discountPercent} Off Fees</div>
+            </div>
+          )}
         </div>
-        <div>{talismanFeeTokenAmount?.decimalAmount?.toLocaleStringPrecision()}</div>
+        <div className={classNames(tier.tier > 0 && 'text-[#D5FF5C]')}>
+          {talismanFeeTokenAmount?.decimalAmount?.toLocaleStringPrecision()}
+        </div>
       </div>
       <SlippageDropdown />
     </div>

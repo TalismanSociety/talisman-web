@@ -1,3 +1,5 @@
+import { CHAIN_ID, DEEK_TICKER, DEEK_TOKEN_ADDRESS } from '../staking/seek/constants'
+
 export type CustomTokensConfig = CustomTokenConfig[]
 export type CustomTokenConfig = {
   evmChainId: string
@@ -40,5 +42,13 @@ export const customTokensConfig: CustomTokensConfig = [
     evmChainId: '169',
     logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/coingecko/bifrost-voucher-manta.webp',
     symbol: 'vMANTA',
+  },
+  {
+    coingeckoId: '',
+    contractAddress: DEEK_TOKEN_ADDRESS,
+    decimals: 18,
+    evmChainId: CHAIN_ID.toString(),
+    logo: '',
+    symbol: DEEK_TICKER,
   },
 ]
