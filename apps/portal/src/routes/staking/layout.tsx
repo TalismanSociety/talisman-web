@@ -12,6 +12,7 @@ import { AccountConnectionGuard } from '@/components/widgets/AccountConnectionGu
 import { AccountsManagementMenu } from '@/components/widgets/AccountsManagementMenu'
 // import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { selectedAccountsState } from '@/domains/accounts/recoils'
+import { GetDiscountCard } from '@/domains/staking/seek/GetDiscountCard'
 
 // import { useTotalStaked } from '@/domains/staking/hooks'
 
@@ -40,7 +41,8 @@ const Layout = () => {
           </PageHeaderItem>
 
           <PageHeaderItem>
-            <PortfolioAddressSearch />
+            <GetDiscountCard storageKey="staking-position" />
+            <PortfolioAddressSearch className="min-w-[22rem]" />
             {/* TODO: Fix total stake calculation and display correct amount. */}
             {/* <div>
               <Text.BodyLarge as="div">Staking balance</Text.BodyLarge>
