@@ -8,7 +8,7 @@ import useSlpxSubstrateStakePercentage from '../hooks/bifrost/useSlpxSubstrateSt
 import useDappStakePercentage from '../hooks/dapp/useStakePercentage'
 import useLidoStakePercentage from '../hooks/lido/useStakePercentage'
 import useNominationPoolStakePercentage from '../hooks/nominationPools/useStakePercentage'
-import useGetSeekStakePercentage from '../hooks/seek/useGetSeekStakePercentage'
+import useGetSeekStakePercentage from '../hooks/seek/hooks/useGetSeekStakePercentage'
 import useSubtensorStakePercentage from '../hooks/subtensor/useStakePercentage'
 import { StakeProviderTypeId } from '../hooks/types'
 

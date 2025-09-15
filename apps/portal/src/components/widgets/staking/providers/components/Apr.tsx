@@ -11,7 +11,7 @@ import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nomi
 import { useHighestApr } from '@/domains/staking/subtensor/hooks/useApr'
 
 import useLidoApr from '../hooks/lido/useApr'
-import useGetSeekStakeApr from '../hooks/seek/useGetSeekStakeApr'
+import useGetSeekStakeApr from '../hooks/seek/hooks/useGetSeekStakeApr'
 import { StakeProviderTypeId } from '../hooks/types'
 
 const aprFormatter = (apr: number, hasDTaoStaking?: boolean) => {

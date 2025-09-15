@@ -4,8 +4,12 @@ import { useReadContracts } from 'wagmi'
 
 import { writeableEvmAccountsState } from '@/domains/accounts/recoils'
 
-import { CHAIN_ID, DECIMALS, DEEK_SINGLE_POOL_STAKING_ADDRESS } from '../../../../../../domains/staking/seek/constants'
-import seekSinglePoolStakingAbi from '../../../../../../domains/staking/seek/seekSinglePoolStakingAbi'
+import {
+  CHAIN_ID,
+  DECIMALS,
+  DEEK_SINGLE_POOL_STAKING_ADDRESS,
+} from '../../../../../../../domains/staking/seek/constants'
+import seekSinglePoolStakingAbi from '../../../../../../../domains/staking/seek/seekSinglePoolStakingAbi'
 
 export const useGetSeekStaked = () => {
   const ethAccounts = useRecoilValue(writeableEvmAccountsState)

@@ -1,7 +1,7 @@
 import SeekLogo from '@/assets/seek.svg'
 import { CHAIN_ID, CHAIN_NAME, DECIMALS, DEEK_TICKER, DEEK_TOKEN_ADDRESS } from '@/domains/staking/seek/constants'
 
-import { Provider } from '../types'
+import { Provider } from '../../types'
 
 // A dummy value for the genesis hash to play nice with ChainProvider context
 // This is not used for Talisman Seek

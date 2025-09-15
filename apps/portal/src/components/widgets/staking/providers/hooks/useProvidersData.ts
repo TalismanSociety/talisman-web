@@ -3,7 +3,7 @@ import useSlpxSubstrateProviders from './bifrost/useSlpxSubstrateProviders'
 import useDappProviders from './dapp/useDappProviders'
 import useLidoProviders from './lido/useLidoProviders'
 import useNominationPoolsProviders from './nominationPools/useNominationPoolsProviders'
-import useSeekProviders from './seek/useSeekProviders'
+import useSeekProviders from './seek/hooks/useSeekProviders'
 import useSubtensorProviders from './subtensor/useSubtensorProviders'
 import { Provider } from './types'
 
