@@ -19,6 +19,12 @@ export const useGetSeekStakingInfo = () => {
         functionName: 'rewardRate',
         chainId: CHAIN_ID,
       },
+      {
+        address: DEEK_SINGLE_POOL_STAKING_ADDRESS,
+        abi: seekSinglePoolStakingAbi,
+        functionName: 'withdrawDelay',
+        chainId: CHAIN_ID,
+      },
     ],
     query: { refetchInterval: 60_000 },
   })
