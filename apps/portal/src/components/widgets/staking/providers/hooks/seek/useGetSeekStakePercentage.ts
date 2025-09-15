@@ -1,4 +1,4 @@
-import { useGetSeekStaked } from '@/domains/staking/seek/hooks/useGetSeekStaked'
+import { useGetSeekStaked } from '@/components/widgets/staking/providers/hooks/seek/useGetSeekStaked'
 
 import useGetSeekAvailableBalance from './useGetSeekAvailableBalance'
 

@@ -7,9 +7,9 @@ import SeekLogo from '@/assets/seek.svg?react'
 import useGetSeekAvailableBalance from '@/components/widgets/staking/providers/hooks/seek/useGetSeekAvailableBalance'
 import { cn } from '@/util/cn'
 
+import { useGetSeekStaked } from '../../../components/widgets/staking/providers/hooks/seek/useGetSeekStaked'
 import { DEEK_TICKER } from './constants'
 import { useGetSeekDiscount } from './hooks/useGetSeekDiscount'
-import { useGetSeekStaked } from './hooks/useGetSeekStaked'
 
 type GetDiscountDialogProps = {
   isOpen: boolean
