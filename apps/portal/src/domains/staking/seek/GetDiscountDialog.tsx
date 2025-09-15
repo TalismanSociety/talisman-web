@@ -1,18 +1,13 @@
-import { useBalances } from '@talismn/balances-react'
 import { Button, OutlinedButton } from '@talismn/ui/atoms/Button'
 import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
-import { formatDecimals } from '@talismn/util'
 import { ArrowRight } from '@talismn/web-icons'
-import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
-import { formatUnits } from 'viem'
 
 import SeekLogo from '@/assets/seek.svg?react'
-import { writeableEvmAccountsState } from '@/domains/accounts/recoils'
+import useGetSeekAvailableBalance from '@/components/widgets/staking/providers/hooks/seek/useGetSeekAvailableBalance'
 import { cn } from '@/util/cn'
 
-import { DECIMALS, DEEK_TICKER, DEEK_TOKEN_ADDRESS } from './constants'
+import { DEEK_TICKER } from './constants'
 import { useGetSeekDiscount } from './hooks/useGetSeekDiscount'
 import { useGetSeekStaked } from './hooks/useGetSeekStaked'
 
@@ -22,21 +17,7 @@ type GetDiscountDialogProps = {
 }
 export const GetDiscountDialog = ({ isOpen, onToggleIsOpen }: GetDiscountDialogProps) => {
   const navigate = useNavigate()
-  const allBalances = useBalances()
-  const ethAccounts = useRecoilValue(writeableEvmAccountsState)
-
-  const seekBalances = allBalances.find(b => b.tokenId === `137-evm-erc20-${DEEK_TOKEN_ADDRESS}`)
-
-  const totalAvailable = useMemo(
-    () =>
-      seekBalances?.each.reduce((acc, t) => {
-        if (!ethAccounts.find(a => a.address === t.address)) return acc
-        return acc + t.total.planck
-      }, 0n) ?? 0n,
-    [seekBalances, ethAccounts]
-  )
-
-  const totalAvailableFormatted = formatDecimals(formatUnits(totalAvailable, DECIMALS))
+  const { totalAvailableFormatted } = useGetSeekAvailableBalance()
 
   const {
     data: { totalStaked },
