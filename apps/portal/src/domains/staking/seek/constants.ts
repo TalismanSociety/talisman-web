@@ -3,6 +3,7 @@ export const DEEK_SINGLE_POOL_STAKING_ADDRESS = '0xaddc8f61a5509655c31ed9c1dcb66
 export const DEEK_TOKEN_ADDRESS = '0x2a69b0383759572081c09f0a68d3a8a955751dde' as const
 export const DEEK_TICKER = 'DEEK'
 export const CHAIN_ID = 137 // Polygon
+export const CHAIN_NAME = 'Polygon'
 
 export const DISCOUNT_TIERS = [
   { tier: 0, min: 0n, discount: 0 },

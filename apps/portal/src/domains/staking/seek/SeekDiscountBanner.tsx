@@ -8,7 +8,7 @@ export const SeekDiscountBanner = () => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
   return (
     <>
-      <div className="rounded-[10px]  bg-gradient-to-r from-[#767A25] to-[#1B1B1B] to-[120%] p-[1px] text-[14px]">
+      <div className="rounded-[10px] bg-gradient-to-r from-[#767A25] to-[#1B1B1B] to-[120%] p-[1px] text-[14px]">
         <div className="from-33.33% flex  w-full rounded-[10px] bg-gradient-to-b from-[#1B1B1B] to-[#767A25] to-[287%] p-5">
           <div className="flex items-center justify-center">
             <div className="flex flex-col gap-1">
