@@ -16,6 +16,7 @@ import { useTotalStaked } from '@/domains/staking/hooks'
 
 import DappStakes from './dappStaking/Stakes'
 import LidoStakes from './lido/Stakes'
+import SeekStakes from './providers/seek/SeekStakes'
 import SlpxStakes from './slpx/Stakes'
 import SlpxSubstrateStakes from './slpxSubstrate/SlpxSubstrateStakes'
 import PoolStakes from './substrate/PoolStakes'
@@ -107,6 +108,10 @@ const Stakes = (props: { hideHeader?: boolean }) => {
           )
         })}
         <ErrorBoundary orientation="horizontal">
+          <SuspenseSkeleton>
+            {/* <SlpxStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} /> */}
+            <SeekStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
+          </SuspenseSkeleton>
           <SuspenseSkeleton>
             <SlpxStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
           </SuspenseSkeleton>

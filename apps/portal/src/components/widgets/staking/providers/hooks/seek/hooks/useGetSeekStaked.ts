@@ -3,11 +3,13 @@ import { formatUnits } from 'viem'
 import { useReadContracts } from 'wagmi'
 
 import { writeableEvmAccountsState } from '@/domains/accounts/recoils'
+import { Decimal } from '@/util/Decimal'
 
 import {
   CHAIN_ID,
   DECIMALS,
   DEEK_SINGLE_POOL_STAKING_ADDRESS,
+  DEEK_TICKER,
 } from '../../../../../../../domains/staking/seek/constants'
 import seekSinglePoolStakingAbi from '../../../../../../../domains/staking/seek/seekSinglePoolStakingAbi'
 
@@ -32,6 +34,7 @@ export const useGetSeekStaked = () => {
         address: account.address,
         amount: (data[i] as bigint) || 0n,
         amountFormatted: formatUnits((data[i] as bigint) || 0n, DECIMALS),
+        amountDecimal: Decimal.fromPlanck(data[i] as bigint, DECIMALS ?? 0, { currency: DEEK_TICKER }),
       }))
     : []
 
