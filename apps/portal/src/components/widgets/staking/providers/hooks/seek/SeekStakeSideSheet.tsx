@@ -13,21 +13,20 @@ import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { AddStakeForm } from '@/components/recipes/AddStakeDialog'
 import { useAccountSelector } from '@/components/widgets/AccountSelector'
 import { walletConnectionSideSheetOpenState } from '@/components/widgets/WalletConnectionSideSheet'
-import { evmSignableAccountsState, writeableEvmAccountsState } from '@/domains/accounts/recoils'
-import { CHAIN_NAME, DEEK_TICKER } from '@/domains/staking/seek/constants'
+import { evmSignableAccountsState } from '@/domains/accounts/recoils'
+import { DEEK_TICKER } from '@/domains/staking/seek/constants'
 
 import useGetSeekStakeApr from './hooks/useGetSeekStakeApr'
 import useGetSeekStakeUnlockDuration from './hooks/useGetSeekStakeUnlockDuration'
 import useStakeSeek from './hooks/useStakeSeek'
 
-type AddStakeSideSheetProps = {
-  onRequestDismiss: () => unknown
-}
+const AddStakeSideSheet = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const open = searchParams.get('action') === 'stake' && searchParams.get('type') === 'seek'
 
-const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
-  const [[account], accountSelector] = useAccountSelector(useRecoilValue(evmSignableAccountsState), 0)
+  const evmSignableAccounts = useRecoilValue(evmSignableAccountsState).filter(x => x.canSignEvm)
+  const [[account], accountSelector] = useAccountSelector(evmSignableAccounts, 0)
   const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
-  const writeableEvmAccounts = useRecoilValue(writeableEvmAccountsState)
   const unlockDuration = useGetSeekStakeUnlockDuration()
   const monthlyAPR = useGetSeekStakeApr()
 
@@ -35,8 +34,27 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
     available,
     newStakedTotal,
     setAmountInput,
+    approvalNeeded,
+    approve,
+    approveTransaction,
+    stake,
+    stakeTransaction,
+    error,
+    isReady,
     input: { amountInput },
   } = useStakeSeek({ account })
+
+  if (!open) {
+    return null
+  }
+
+  const handleRequestDismiss = () =>
+    setSearchParams(sp => {
+      sp.delete('action')
+      sp.delete('type')
+      sp.delete('contract-address')
+      return sp
+    })
 
   return (
     <SideSheet
@@ -47,7 +65,7 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
         </div>
       }
       subtitle="Talisman Staking"
-      onRequestDismiss={props.onRequestDismiss}
+      onRequestDismiss={handleRequestDismiss}
       css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { width: '48rem' } }}
     >
       <div css={{ display: 'flex', gap: '1.6rem', marginBottom: '1.6rem', flexWrap: 'wrap', '> *': { flex: 1 } }}>
@@ -62,17 +80,15 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
       <Surface css={{ padding: '1.6rem', borderRadius: '1.6rem' }}>
         <AddStakeForm
           confirmState={
-            // !ready || +amount === 0
-            //   ? 'disabled'
-            //   : mint.isPending || approve.isPending || approveTransaction.isLoading
-            //   ? 'pending'
-            //   : undefined
-            'disabled'
+            !isReady || Number(amountInput) === 0
+              ? 'disabled'
+              : stake.isPending || stakeTransaction.isLoading || approve.isPending || approveTransaction.isLoading
+              ? 'pending'
+              : undefined
           }
-          // approvalNeeded={approvalNeeded}
-          approvalNeeded={true}
+          approvalNeeded={approvalNeeded}
           accountSelector={
-            writeableEvmAccounts.length > 0 ? (
+            evmSignableAccounts.length > 0 ? (
               accountSelector
             ) : (
               <Button className="!w-full !rounded-[12px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
@@ -87,88 +103,45 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
           newFiatAmount={null}
           onChangeAmount={setAmountInput}
           onRequestMaxAmount={() => setAmountInput(available?.toString() ?? '')}
-          onConfirm={() => console.log('confirm')}
-
-          // )}
-          // onConfirm={async () => {
-          //   if (approvalNeeded) {
-          //     try {
-          //       await approve.writeContractAsync()
-          //     } catch (error) {
-          //       console.error(
-          //         `An error occurred while approving allowance for asset: ${props.slpxPair.nativeToken.symbol}`,
-          //         error
-          //       )
-          //     }
-          //   } else {
-          //     try {
-          //       await mint.writeContractAsync()
-          //       props.onRequestDismiss()
-          //     } catch (error) {
-          //       console.error(`An error occurred while staking asset: ${props.slpxPair.nativeToken.symbol}`, error)
-          //     }
-          //   }
-          // }}
-          // isError={error !== undefined}
-          // inputSupportingText={error?.message}
+          onConfirm={async () => {
+            if (approvalNeeded) {
+              try {
+                await approve.writeContractAsync()
+              } catch (error) {
+                console.error(`An error occurred while approving allowance for asset: ${DEEK_TICKER}`, error)
+              }
+            } else {
+              try {
+                await stake.writeContractAsync()
+                handleRequestDismiss()
+              } catch (error) {
+                console.error(`An error occurred while staking asset: ${DEEK_TICKER}`, error)
+              }
+            }
+          }}
+          isError={error !== undefined}
+          inputSupportingText={error?.message}
         />
       </Surface>
       <Text.Body as="p" css={{ marginTop: '4.8rem' }}>
-        {`To get started with SEEK Staking, you'll need ${DEEK_TICKER} on ${CHAIN_NAME}.`}{' '}
+        {`Stake your ${DEEK_TICKER} tokens to access exclusive fee discounts when staking TAO on our platform. This is more than just a staking token, ${DEEK_TICKER} is at the core of a new generation of crypto wallets powered by AI agents, designed to make web3 smarter, safer, and more intuitive. Additional benefits for $NEW stakers will be introduced in the future, bringing even more value to early supporters. Learn more`}{' '}
         <Text.Noop.A target="blank" href="https://talisman.xyz/">
           Learn more
         </Text.Noop.A>
       </Text.Body>
       <Text.Body as="p" css={{ marginTop: '1.6rem' }}>
-        Make sure you have ETH on Ethereum Mainnet.
+        You’ll need ETH on Ethereum Mainnet to cover transaction fees.
       </Text.Body>
       <div className="mt-2 flex justify-end">
         <Tooltip content="Transaction may take several minutes to complete">
           <SurfaceChip className="cursor-default">
             <Clock />
-            5-10 minutes
+            1-2 minutes
           </SurfaceChip>
         </Tooltip>
       </div>
     </SideSheet>
   )
 }
-// HERE
-export default () => {
-  // const slpxPairs = useRecoilValue(slpxPairsState)
-  const [searchParams, setSearchParams] = useSearchParams()
-  const open = searchParams.get('action') === 'stake' && searchParams.get('type') === 'seek'
 
-  // const slpxPair = useMemo(
-  //   () => slpxPairs.find(x => x.splx === searchParams.get('contract-address')),
-  //   [searchParams, slpxPairs]
-  // )
-
-  if (!open) {
-    return null
-  }
-
-  // if (slpxPair === undefined) {
-  //   throw new Error(`No SLPx contract with address: ${searchParams.get('contract-address') ?? ''}`)
-  // }
-
-  return (
-    // <ChainProvider
-    //   chain={{
-    //     genesisHash: slpxPair.substrateChainGenesisHash,
-    //   }}
-    // >
-    <AddStakeSideSheet
-      // slpxPair={slpxPair}
-      onRequestDismiss={() =>
-        setSearchParams(sp => {
-          sp.delete('action')
-          sp.delete('type')
-          sp.delete('contract-address')
-          return sp
-        })
-      }
-    />
-    // </ChainProvider>
-  )
-}
+export default AddStakeSideSheet
