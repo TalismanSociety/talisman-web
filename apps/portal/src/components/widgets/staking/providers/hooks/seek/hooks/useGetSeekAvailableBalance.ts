@@ -27,7 +27,7 @@ const useGetSeekAvailableBalance = () => {
   const availableBalance = Decimal.fromPlanck(totalAvailable, 18, { currency: 'DEEK' })
 
   // TODO: fetch DEEK fiat price
-  return { availableBalance: availableBalance, fiatAmount: 0, totalAvailable, totalAvailableFormatted }
+  return { availableBalance: availableBalance, fiatAmount: 0, totalAvailable, totalAvailableFormatted, seekBalances }
 }
 
 export default useGetSeekAvailableBalance
