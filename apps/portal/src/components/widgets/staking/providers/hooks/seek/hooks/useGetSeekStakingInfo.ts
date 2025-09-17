@@ -25,6 +25,12 @@ export const useGetSeekStakingInfo = () => {
         functionName: 'withdrawDelay',
         chainId: CHAIN_ID,
       },
+      {
+        address: DEEK_SINGLE_POOL_STAKING_ADDRESS,
+        abi: seekSinglePoolStakingAbi,
+        functionName: 'minStakeAmount',
+        chainId: CHAIN_ID,
+      },
     ],
     query: { refetchInterval: 60_000 },
   })
