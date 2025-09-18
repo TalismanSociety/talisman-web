@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { useRecoilValue } from 'recoil'
 
 import SeekLogo from '@/assets/seek.svg'
 import { StakePosition, StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
@@ -10,8 +10,8 @@ import { Account, evmSignableAccountsState } from '@/domains/accounts/recoils'
 import { CHAIN_ID, CHAIN_NAME, DEEK_TICKER } from '@/domains/staking/seek/constants'
 import { Decimal } from '@/util/Decimal'
 
-import useClaimSeek from '../hooks/seek/hooks/useClaimSeek'
-import { useGetSeekStaked } from '../hooks/seek/hooks/useGetSeekStaked'
+import useClaimEarnedSeek from '../hooks/seek/hooks/useClaimEarnedSeek'
+import useGetSeekStaked from '../hooks/seek/hooks/useGetSeekStaked'
 import SeekAddStakeDialog from './SeekAddStakeDialog'
 import SeekUnstakeDialog from './SeekUnstakeDialog'
 
@@ -39,7 +39,7 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
     data: { balances },
   } = useGetSeekStaked()
 
-  const { earnedBalance, isReady, getReward, getRewardTransaction } = useClaimSeek({ account })
+  const { earnedBalance, isReady, getReward, getRewardTransaction } = useClaimEarnedSeek({ account })
 
   const stakedBalance = balances.find(balance => balance.address === account.address)
 

@@ -13,7 +13,7 @@ import {
 } from '../../../../../../../domains/staking/seek/constants'
 import seekSinglePoolStakingAbi from '../../../../../../../domains/staking/seek/seekSinglePoolStakingAbi'
 
-export const useGetSeekStaked = () => {
+const useGetSeekStaked = () => {
   const ethAccounts = useRecoilValue(writeableEvmAccountsState)
 
   const { data, isLoading, isError, refetch } = useReadContracts({
@@ -47,3 +47,5 @@ export const useGetSeekStaked = () => {
 
   return { data: { balances, totalStaked }, isLoading, isError, refetch }
 }
+
+export default useGetSeekStaked

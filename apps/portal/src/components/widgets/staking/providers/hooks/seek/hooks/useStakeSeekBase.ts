@@ -5,7 +5,7 @@ import { DECIMALS, DEEK_TICKER } from '@/domains/staking/seek/constants'
 import { Decimal } from '@/util/Decimal'
 
 import useGetSeekAvailableBalance from './useGetSeekAvailableBalance'
-import { useGetSeekStaked } from './useGetSeekStaked'
+import useGetSeekStaked from './useGetSeekStaked'
 
 const useStakeSeekBase = ({ account, direction }: { account: Account | undefined; direction: 'stake' | 'unstake' }) => {
   const [amountInput, setAmountInput] = useState<string>('')
