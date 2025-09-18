@@ -8,6 +8,7 @@ import { CHAIN_ID, DECIMALS, DEEK_SINGLE_POOL_STAKING_ADDRESS, DEEK_TICKER } fro
 import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStakingAbi'
 import { Decimal } from '@/util/Decimal'
 
+import useGetSeekStaked from './useGetSeekStaked'
 import { useGetSeekStakerInfo } from './useGetSeekStakerInfo'
 import useStakeSeekBase from './useStakeSeekBase'
 
@@ -19,6 +20,7 @@ const useRequestWithdrawalSeek = ({ account }: { account: Account | undefined })
   } = useStakeSeekBase({ account, direction: 'unstake' })
 
   const { data, isFetched, refetch } = useGetSeekStakerInfo({ account })
+  const { refetch: refetchStaked } = useGetSeekStaked()
   const [staked] = data || [0n, 0n, 0n, 0n]
 
   const stakedBalance = useMemo(() => {
@@ -46,9 +48,10 @@ const useRequestWithdrawalSeek = ({ account }: { account: Account | undefined })
 
   useEffect(() => {
     if (requestWithdrawalTransaction.data?.status === 'success') {
-      void refetch()
+      refetch()
+      refetchStaked()
     }
-  }, [refetch, requestWithdrawalTransaction.data?.status])
+  }, [refetch, requestWithdrawalTransaction.data?.status, refetchStaked])
 
   const error = useMemo(() => {
     if (decimalAmountInput !== undefined && decimalAmountInput.planck > stakedBalance.planck) {

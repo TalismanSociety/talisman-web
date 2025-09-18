@@ -44,6 +44,7 @@ export type StakePositionProps = {
   unstakingStatus?: ReactNode
   increaseStakeButton?: ReactNode
   changeValidatorButton?: ReactNode
+  cancelUnstakeButton?: ReactNode
   unstakeButton?: ReactNode
   lockedButton?: ReactNode
   menuButton?: ReactNode
@@ -67,11 +68,23 @@ const IncreaseStakeButton = (props: Omit<IconButtonProps, 'children'>) => (
 
 const UnstakeButton = (props: Omit<MenuItemProps, 'children'>) => (
   <StakePositionContext.Consumer>
-    {({ readonly }) => (
-      <Tooltip content="Account is readonly" disabled={!readonly}>
-        <Menu.Item.Button headlineContent="Unstake" disabled={readonly} {...props} />
+    {({ readonly, isError, errorMessage }) => (
+      <Tooltip content={readonly ? 'Account is readonly' : errorMessage} disabled={!readonly && !isError}>
+        <Menu.Item.Button headlineContent="Unstake" disabled={readonly || isError} {...props} />
       </Tooltip>
     )}
+  </StakePositionContext.Consumer>
+)
+
+const CancelUnstakeButton = (props: Omit<MenuItemProps, 'children'>) => (
+  <StakePositionContext.Consumer>
+    {({ readonly }) => {
+      return (
+        <Tooltip content="Account is readonly" disabled={!readonly}>
+          <Menu.Item.Button headlineContent="Cancel Unstake" disabled={readonly} {...props} />
+        </Tooltip>
+      )
+    }}
   </StakePositionContext.Consumer>
 )
 
@@ -235,6 +248,7 @@ export const StakePosition = Object.assign(
                           {props.unstakeButton}
                           {props.lockedButton}
                           {props.changeValidatorButton}
+                          {props.cancelUnstakeButton}
                         </>
                       ),
                     }}
@@ -352,6 +366,7 @@ export const StakePosition = Object.assign(
     IncreaseStakeButton,
     UnstakeButton,
     ChangeValidatorButton,
+    CancelUnstakeButton,
     MenuButton,
     ClaimButton,
     WithdrawButton,

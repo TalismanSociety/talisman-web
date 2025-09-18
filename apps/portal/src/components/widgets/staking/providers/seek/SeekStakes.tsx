@@ -10,6 +10,7 @@ import { Account, evmSignableAccountsState } from '@/domains/accounts/recoils'
 import { CHAIN_ID, CHAIN_NAME, DEEK_TICKER } from '@/domains/staking/seek/constants'
 import { Decimal } from '@/util/Decimal'
 
+import useCancelWithdrawalSeek from '../hooks/seek/hooks/useCancelWithdrawalSeek'
 import useClaimEarnedSeek from '../hooks/seek/hooks/useClaimEarnedSeek'
 import useCompleteWithdrawalSeek from '../hooks/seek/hooks/useCompleteWithdrawalSeek'
 import useGetSeekStaked from '../hooks/seek/hooks/useGetSeekStaked'
@@ -48,6 +49,7 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
     completeWithdrawalTransaction,
     isReady: isCompleteWithdrawalReady,
   } = useCompleteWithdrawalSeek({ account })
+  const { cancelWithdrawal } = useCancelWithdrawalSeek({ account })
 
   const stakedBalance = balances.find(balance => balance.address === account.address)
 
@@ -79,6 +81,8 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
     >
       <StakePosition
         readonly={!account.canSignEvm}
+        errorMessage={pendingWithdrawalsBalance.planck > 0n ? 'Unstake in progress' : undefined}
+        isError={pendingWithdrawalsBalance.planck > 0n}
         account={account}
         provider="Talisman"
         // TODO: Handle locked token status
@@ -106,6 +110,13 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
           <ErrorBoundary renderFallback={() => <>--</>}>
             <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} />
           </ErrorBoundary>
+        }
+        cancelUnstakeButton={
+          pendingWithdrawalsBalance.planck > 0n && (
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.CancelUnstakeButton onClick={() => cancelWithdrawal.writeContractAsync()} />
+            </ErrorBoundary>
+          )
         }
         claimButton={
           <StakePosition.ClaimButton
