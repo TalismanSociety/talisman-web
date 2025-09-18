@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { erc20Abi } from 'viem'
 import { useReadContract, useWaitForTransactionReceipt } from 'wagmi'
 import { mainnet, polygon } from 'wagmi/chains'
@@ -15,10 +16,12 @@ import {
 import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStakingAbi'
 import { Decimal } from '@/util/Decimal'
 
+import { useGetSeekStakerInfo } from './useGetSeekStakerInfo'
 import { useGetSeekStakingInfo } from './useGetSeekStakingInfo'
 import useStakeSeekBase from './useStakeSeekBase'
 
 const useStakeSeek = ({ account }: { account: Account | undefined }) => {
+  const navigate = useNavigate()
   const {
     available,
     newStakedTotal,
@@ -27,6 +30,7 @@ const useStakeSeek = ({ account }: { account: Account | undefined }) => {
   } = useStakeSeekBase({ account, direction: 'stake' })
 
   const { data } = useGetSeekStakingInfo()
+  const { refetch: refetchStakerInfo } = useGetSeekStakerInfo({ account })
   const [, , , minStakeAmount] = data || [0n, 0n, 0n, 0n]
 
   const {
@@ -89,6 +93,13 @@ const useStakeSeek = ({ account }: { account: Account | undefined }) => {
     chainId: CHAIN_ID,
     hash: stake.data,
   })
+
+  useEffect(() => {
+    if (stakeTransaction.data?.status === 'success') {
+      refetchStakerInfo()
+      navigate('/staking/positions')
+    }
+  }, [stakeTransaction.data?.status, navigate, refetchStakerInfo])
 
   const approvalNeeded = useMemo(() => {
     return allowance !== undefined && decimalAmountInput !== undefined && decimalAmountInput.planck > allowance

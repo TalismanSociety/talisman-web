@@ -113,7 +113,6 @@ const AddStakeSideSheet = () => {
             } else {
               try {
                 await stake.writeContractAsync()
-                handleRequestDismiss()
               } catch (error) {
                 console.error(`An error occurred while staking asset: ${DEEK_TICKER}`, error)
               }
