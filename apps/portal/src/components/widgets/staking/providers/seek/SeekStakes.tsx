@@ -1,50 +1,58 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
-import type { SlpxPair } from '@/domains/staking/slpx/types'
 import SeekLogo from '@/assets/seek.svg'
 import { StakePosition, StakePositionErrorBoundary } from '@/components/recipes/StakePosition'
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { RedactableBalance } from '@/components/widgets/RedactableBalance'
-import { Account, evmSignableAccountsState, selectedEvmAccountsState } from '@/domains/accounts/recoils'
-import { ChainProvider } from '@/domains/chains/provider'
+import { Account, evmSignableAccountsState } from '@/domains/accounts/recoils'
 import { CHAIN_ID, CHAIN_NAME, DEEK_TICKER } from '@/domains/staking/seek/constants'
-import { useStakes } from '@/domains/staking/slpx/core'
-import { slpxPairsState } from '@/domains/staking/slpx/recoils'
+import { Decimal } from '@/util/Decimal'
 
+import useClaimSeek from '../hooks/seek/hooks/useClaimSeek'
 import { useGetSeekStaked } from '../hooks/seek/hooks/useGetSeekStaked'
 import SeekAddStakeDialog from './SeekAddStakeDialog'
 import SeekUnstakeDialog from './SeekUnstakeDialog'
-
-// import AddStakeDialog from './AddStakeDialog'
-// import UnstakeDialog from './UnstakeDialog'
 
 type StakesProps = {
   setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+type SeekStakePositionProps = StakesProps & {
+  account: Account
+}
+
 const SeekStakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
   const evmSignableAccounts = useRecoilValue(evmSignableAccountsState)
 
-  return evmSignableAccounts.map((account, index) => <SeekStakePosition key={index} account={account} />)
+  return evmSignableAccounts.map((account, index) => (
+    <SeekStakePosition key={index} account={account} setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
+  ))
 }
 
-// const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStakes>['data'][number] }) => {
-const SeekStakePosition = ({ account }: { account: Account }) => {
-  const [increaseStakeDialogOpen, setIncreaseStakeDialogOpen] = useState(false)
-  const [unstakeDialogOpen, setUnstakeDialogOpen] = useState(false)
+const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStakePositionProps) => {
+  const [increaseStakeDialogOpen, setIncreaseStakeDialogOpen] = useState<boolean>(false)
+  const [unstakeDialogOpen, setUnstakeDialogOpen] = useState<boolean>(false)
 
   const {
     data: { balances },
   } = useGetSeekStaked()
 
+  const { earnedBalance, isReady, getReward, getRewardTransaction } = useClaimSeek({ account })
+
   const stakedBalance = balances.find(balance => balance.address === account.address)
 
-  // TODO: Handle locked token status
-  if (!stakedBalance?.amount) return null
+  const shouldDisplayAssetRow = useMemo(() => {
+    return stakedBalance?.amount || earnedBalance.planck > 0n
+  }, [earnedBalance.planck, stakedBalance?.amount])
 
-  const { amountDecimal } = stakedBalance
+  // TODO: Handle pending withdrawals
+  if (!shouldDisplayAssetRow) return null
+
+  setShouldRenderLoadingSkeleton(false)
+
+  const { amountDecimal } = stakedBalance ?? { amountDecimal: Decimal.fromPlanck(0n, 0) }
   // TODO: fetch DEEK fiat price
   const fiatBalance = 0
 
@@ -67,7 +75,6 @@ const SeekStakePosition = ({ account }: { account: Account }) => {
         provider="Talisman"
         // TODO: Handle locked token status
         stakeStatus={amountDecimal.planck > 0n ? 'earning_rewards' : 'not_earning_rewards'}
-        // stakeStatus={'earning_rewards'}
         balance={
           <ErrorBoundary renderFallback={() => <>--</>}>
             <RedactableBalance>{amountDecimal.toLocaleString()}</RedactableBalance>
@@ -88,20 +95,21 @@ const SeekStakePosition = ({ account }: { account: Account }) => {
           </ErrorBoundary>
         }
         unstakeButton={
-          amountDecimal.planck > 0n && (
-            <ErrorBoundary renderFallback={() => <>--</>}>
-              <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} />
-            </ErrorBoundary>
-          )
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} />
+          </ErrorBoundary>
         }
         unstakingStatus={
-          // props.position.unlocking !== undefined &&
-          // props.position.unlocking.planck > 0n && (
-          //   <ErrorBoundary renderFallback={() => <>--</>}>
-          //     <StakePosition.UnstakingStatus amount={props.position.unlocking?.toLocaleString()} unlocks={[]} />
-          //   </ErrorBoundary>
-          // )
-          <div>Status</div>
+          <ErrorBoundary renderFallback={() => <>--</>}>
+            <StakePosition.UnstakingStatus amount={'123'} unlocks={[{ amount: '1 DOT', eta: '11 hours 24 minutes' }]} />
+          </ErrorBoundary>
+        }
+        claimButton={
+          <StakePosition.ClaimButton
+            amount={earnedBalance.toLocaleString()}
+            onClick={() => getReward.writeContractAsync()}
+            loading={getRewardTransaction.isLoading || getReward.isPending || !isReady}
+          />
         }
       />
       {increaseStakeDialogOpen && (

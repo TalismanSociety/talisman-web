@@ -15,7 +15,6 @@ const SeekUnstakeDialog = ({ account, onRequestDismiss }: SeekUnstakeDialogProps
   const {
     newStakedTotal,
     setAmountInput,
-    // approve,
     requestWithdrawalTransaction,
     requestWithdrawal,
     error,
