@@ -10,6 +10,7 @@ import { useUnlockDuration as useNominationPoolUnlockDuration } from '@/domains/
 
 import useSlpxSubstrateUnlockDuration from '../hooks/bifrost/useSlpxSubstrateUnlockDuration'
 import useDappUnlockDuration from '../hooks/dapp/useUnlockDuration'
+import useGetSeekStakeUnlockDuration from '../hooks/seek/useGetSeekStakeUnlockDuration'
 import { StakeProviderTypeId } from '../hooks/types'
 
 const unbondingFormatter = (unlockValue: number) => formatDistance(0, unlockValue)
@@ -35,11 +36,15 @@ const UnbondingDisplay = ({ typeId, tokenPair, setUnbondingValues }: UnbondingDi
     delegationSubtensor: () => 0,
     dappStaking: useDappUnlockDuration,
     liquidStakingLido: () => 5,
+    seekStaking: useGetSeekStakeUnlockDuration,
   }
 
   let unlockValue: number = 0
   let label: string = ''
   switch (typeId) {
+    case 'seekStaking':
+      unlockValue = hookMap['seekStaking']()
+      break
     case 'nominationPool':
       unlockValue = hookMap['nominationPool']()
       break
