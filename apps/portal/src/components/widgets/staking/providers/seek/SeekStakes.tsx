@@ -14,6 +14,8 @@ import { useStakes } from '@/domains/staking/slpx/core'
 import { slpxPairsState } from '@/domains/staking/slpx/recoils'
 
 import { useGetSeekStaked } from '../hooks/seek/hooks/useGetSeekStaked'
+import SeekAddStakeDialog from './SeekAddStakeDialog'
+import SeekUnstakeDialog from './SeekUnstakeDialog'
 
 // import AddStakeDialog from './AddStakeDialog'
 // import UnstakeDialog from './UnstakeDialog'
@@ -86,12 +88,11 @@ const SeekStakePosition = ({ account }: { account: Account }) => {
           </ErrorBoundary>
         }
         unstakeButton={
-          // props.position.balance.planck > 0n && (
-          //   <ErrorBoundary renderFallback={() => <>--</>}>
-          //     <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} />
-          //   </ErrorBoundary>
-          // )
-          <button>Unstake</button>
+          amountDecimal.planck > 0n && (
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} />
+            </ErrorBoundary>
+          )
         }
         unstakingStatus={
           // props.position.unlocking !== undefined &&
@@ -103,20 +104,12 @@ const SeekStakePosition = ({ account }: { account: Account }) => {
           <div>Status</div>
         }
       />
-      {/* {increaseStakeDialogOpen && (
-        <AddStakeDialog
-          slpxPair={props.slpxPair}
-          account={props.position.account}
-          onRequestDismiss={() => setIncreaseStakeDialogOpen(false)}
-        />
+      {increaseStakeDialogOpen && (
+        <SeekAddStakeDialog account={account} onRequestDismiss={() => setIncreaseStakeDialogOpen(false)} />
       )}
       {unstakeDialogOpen && (
-        <UnstakeDialog
-          slpxPair={props.slpxPair}
-          account={props.position.account}
-          onRequestDismiss={() => setUnstakeDialogOpen(false)}
-        />
-      )} */}
+        <SeekUnstakeDialog account={account} onRequestDismiss={() => setUnstakeDialogOpen(false)} />
+      )}
     </ErrorBoundary>
   )
 }

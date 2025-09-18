@@ -45,9 +45,13 @@ const useStakeSeekBase = ({ account, direction }: { account: Account | undefined
         currency: DEEK_TICKER,
       })
     }
-    return Decimal.fromPlanck((stakedBalance?.planck || 0n) - (decimalAmountInput?.planck || 0n), DECIMALS ?? 0, {
-      currency: DEEK_TICKER,
-    })
+    return Decimal.fromPlanck(
+      Math.max(0, Number((stakedBalance?.planck || 0n) - (decimalAmountInput?.planck || 0n))),
+      DECIMALS ?? 0,
+      {
+        currency: DEEK_TICKER,
+      }
+    )
   }, [decimalAmountInput?.planck, direction, stakedBalance?.planck])
 
   return {
