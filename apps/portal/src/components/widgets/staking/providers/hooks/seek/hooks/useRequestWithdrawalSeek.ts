@@ -11,7 +11,7 @@ import { Decimal } from '@/util/Decimal'
 import { useGetSeekStakerInfo } from './useGetSeekStakerInfo'
 import useStakeSeekBase from './useStakeSeekBase'
 
-const useUnstakeSeek = ({ account }: { account: Account | undefined }) => {
+const useRequestWithdrawalSeek = ({ account }: { account: Account | undefined }) => {
   const {
     newStakedTotal,
     setAmountInput,
@@ -74,4 +74,4 @@ const useUnstakeSeek = ({ account }: { account: Account | undefined }) => {
   }
 }
 
-export default useUnstakeSeek
+export default useRequestWithdrawalSeek

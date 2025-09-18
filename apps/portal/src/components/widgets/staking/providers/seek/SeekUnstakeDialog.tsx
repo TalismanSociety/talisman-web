@@ -4,7 +4,7 @@ import { UnstakeDialog } from '@/components/recipes/UnstakeDialog'
 import { Account } from '@/domains/accounts/recoils'
 
 import useGetSeekStakeUnlockDuration from '../hooks/seek/hooks/useGetSeekStakeUnlockDuration'
-import useUnstakeSeek from '../hooks/seek/hooks/useUnstakeSeek'
+import useRequestWithdrawalSeek from '../hooks/seek/hooks/useRequestWithdrawalSeek'
 
 type SeekUnstakeDialogProps = {
   account: Account
@@ -21,7 +21,7 @@ const SeekUnstakeDialog = ({ account, onRequestDismiss }: SeekUnstakeDialogProps
     isReady,
     input: { amountInput },
     stakedBalance,
-  } = useUnstakeSeek({ account })
+  } = useRequestWithdrawalSeek({ account })
 
   const unlockDuration = useGetSeekStakeUnlockDuration()
 

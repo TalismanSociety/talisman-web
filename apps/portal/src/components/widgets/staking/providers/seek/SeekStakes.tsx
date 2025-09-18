@@ -11,6 +11,7 @@ import { CHAIN_ID, CHAIN_NAME, DEEK_TICKER } from '@/domains/staking/seek/consta
 import { Decimal } from '@/util/Decimal'
 
 import useClaimEarnedSeek from '../hooks/seek/hooks/useClaimEarnedSeek'
+import useCompleteWithdrawalSeek from '../hooks/seek/hooks/useCompleteWithdrawalSeek'
 import useGetSeekStaked from '../hooks/seek/hooks/useGetSeekStaked'
 import SeekAddStakeDialog from './SeekAddStakeDialog'
 import SeekUnstakeDialog from './SeekUnstakeDialog'
@@ -40,6 +41,13 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
   } = useGetSeekStaked()
 
   const { earnedBalance, isReady, getReward, getRewardTransaction } = useClaimEarnedSeek({ account })
+  const {
+    pendingWithdrawalsBalance,
+    etaString,
+    completeWithdrawal,
+    completeWithdrawalTransaction,
+    isReady: isCompleteWithdrawalReady,
+  } = useCompleteWithdrawalSeek({ account })
 
   const stakedBalance = balances.find(balance => balance.address === account.address)
 
@@ -99,17 +107,34 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
             <StakePosition.UnstakeButton onClick={() => setUnstakeDialogOpen(true)} />
           </ErrorBoundary>
         }
-        unstakingStatus={
-          <ErrorBoundary renderFallback={() => <>--</>}>
-            <StakePosition.UnstakingStatus amount={'123'} unlocks={[{ amount: '1 DOT', eta: '11 hours 24 minutes' }]} />
-          </ErrorBoundary>
-        }
         claimButton={
           <StakePosition.ClaimButton
             amount={earnedBalance.toLocaleString()}
             onClick={() => getReward.writeContractAsync()}
             loading={getRewardTransaction.isLoading || getReward.isPending || !isReady}
           />
+        }
+        unstakingStatus={
+          pendingWithdrawalsBalance.planck > 0n && (
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.UnstakingStatus
+                amount={pendingWithdrawalsBalance.toLocaleString()}
+                unlocks={[{ amount: pendingWithdrawalsBalance.toLocaleString(), eta: etaString }]}
+              />
+            </ErrorBoundary>
+          )
+        }
+        withdrawButton={
+          pendingWithdrawalsBalance.planck > 0n &&
+          isCompleteWithdrawalReady && (
+            <ErrorBoundary renderFallback={() => <>--</>}>
+              <StakePosition.WithdrawButton
+                amount={pendingWithdrawalsBalance.toLocaleString()}
+                onClick={() => completeWithdrawal.writeContractAsync()}
+                loading={completeWithdrawalTransaction.isLoading || completeWithdrawal.isPending}
+              />
+            </ErrorBoundary>
+          )
         }
       />
       {increaseStakeDialogOpen && (
