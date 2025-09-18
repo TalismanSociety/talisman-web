@@ -3,8 +3,8 @@ import { formatDistance } from 'date-fns'
 import { UnstakeDialog } from '@/components/recipes/UnstakeDialog'
 import { Account } from '@/domains/accounts/recoils'
 
-import useGetSeekStakeUnlockDuration from '../hooks/seek/hooks/useGetSeekStakeUnlockDuration'
-import useRequestWithdrawalSeek from '../hooks/seek/hooks/useRequestWithdrawalSeek'
+import useGetSeekStakeUnlockDuration from '../hooks/seek/useGetSeekStakeUnlockDuration'
+import useRequestWithdrawalSeek from '../hooks/seek/useRequestWithdrawalSeek'
 
 type SeekUnstakeDialogProps = {
   account: Account

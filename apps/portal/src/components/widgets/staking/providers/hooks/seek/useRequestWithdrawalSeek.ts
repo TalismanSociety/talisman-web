@@ -8,7 +8,7 @@ import { CHAIN_ID, DECIMALS, DEEK_SINGLE_POOL_STAKING_ADDRESS, DEEK_TICKER } fro
 import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStakingAbi'
 import { Decimal } from '@/util/Decimal'
 
-import useGetSeekPoolAccountInfo from '../useGetSeekPoolAccountInfo'
+import useGetSeekPoolAccountInfo from './useGetSeekPoolAccountInfo'
 import useStakeSeekBase from './useStakeSeekBase'
 
 const useRequestWithdrawalSeek = ({

@@ -16,9 +16,9 @@ import { walletConnectionSideSheetOpenState } from '@/components/widgets/WalletC
 import { evmSignableAccountsState } from '@/domains/accounts/recoils'
 import { DEEK_TICKER } from '@/domains/staking/seek/constants'
 
-import useGetSeekStakeApr from '../hooks/seek/hooks/useGetSeekStakeApr'
-import useGetSeekStakeUnlockDuration from '../hooks/seek/hooks/useGetSeekStakeUnlockDuration'
-import useStakeSeek from '../hooks/seek/hooks/useStakeSeek'
+import useGetSeekStakeApr from '../hooks/seek/useGetSeekStakeApr'
+import useGetSeekStakeUnlockDuration from '../hooks/seek/useGetSeekStakeUnlockDuration'
+import useStakeSeek from '../hooks/seek/useStakeSeek'
 
 const AddStakeSideSheet = () => {
   const [searchParams, setSearchParams] = useSearchParams()

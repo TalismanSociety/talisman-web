@@ -33,7 +33,7 @@ export type Provider = {
   provider: string | undefined
   actionLink: string
   nativeToken?: NativeToken
-  genesisHash: `0x${string}`
+  genesisHash?: `0x${string}`
   apiEndpoint?: string
   tokenPair?: SlpxPair | SlpxSubstratePair
   position?: string

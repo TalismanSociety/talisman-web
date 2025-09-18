@@ -4,10 +4,10 @@ import { ArrowRight } from '@talismn/web-icons'
 import { useNavigate } from 'react-router-dom'
 
 import SeekLogo from '@/assets/seek.svg?react'
-import useGetSeekAvailableBalance from '@/components/widgets/staking/providers/hooks/seek/hooks/useGetSeekAvailableBalance'
+import useGetSeekAvailableBalance from '@/components/widgets/staking/providers/hooks/seek/useGetSeekAvailableBalance'
 import { cn } from '@/util/cn'
 
-import useGetSeekStaked from '../../../components/widgets/staking/providers/hooks/seek/hooks/useGetSeekStaked'
+import useGetSeekStaked from '../../../components/widgets/staking/providers/hooks/seek/useGetSeekStaked'
 import { DEEK_TICKER } from './constants'
 import { useGetSeekDiscount } from './hooks/useGetSeekDiscount'
 

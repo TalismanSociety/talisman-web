@@ -2,8 +2,8 @@ import { useReadContracts } from 'wagmi'
 
 import { Account } from '@/domains/accounts/recoils'
 
-import { CHAIN_ID, DEEK_SINGLE_POOL_STAKING_ADDRESS } from '../../../../../../../domains/staking/seek/constants'
-import seekSinglePoolStakingAbi from '../../../../../../../domains/staking/seek/seekSinglePoolStakingAbi'
+import { CHAIN_ID, DEEK_SINGLE_POOL_STAKING_ADDRESS } from '../../../../../../domains/staking/seek/constants'
+import seekSinglePoolStakingAbi from '../../../../../../domains/staking/seek/seekSinglePoolStakingAbi'
 
 const useGetSeekPoolAccountInfo = ({ account }: { account: Account | undefined }) => {
   const { data, isLoading, isError, refetch, isFetched } = useReadContracts({

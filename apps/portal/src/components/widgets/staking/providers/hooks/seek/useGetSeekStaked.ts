@@ -10,8 +10,8 @@ import {
   DECIMALS,
   DEEK_SINGLE_POOL_STAKING_ADDRESS,
   DEEK_TICKER,
-} from '../../../../../../../domains/staking/seek/constants'
-import seekSinglePoolStakingAbi from '../../../../../../../domains/staking/seek/seekSinglePoolStakingAbi'
+} from '../../../../../../domains/staking/seek/constants'
+import seekSinglePoolStakingAbi from '../../../../../../domains/staking/seek/seekSinglePoolStakingAbi'
 
 const useGetSeekStaked = () => {
   const ethAccounts = useRecoilValue(writeableEvmAccountsState)

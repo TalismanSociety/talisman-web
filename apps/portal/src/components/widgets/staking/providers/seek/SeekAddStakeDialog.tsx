@@ -2,7 +2,7 @@ import { AddStakeDialog } from '@/components/recipes/AddStakeDialog'
 import { Account } from '@/domains/accounts/recoils'
 import { DEEK_TICKER } from '@/domains/staking/seek/constants'
 
-import useStakeSeek from '../hooks/seek/hooks/useStakeSeek'
+import useStakeSeek from '../hooks/seek/useStakeSeek'
 
 type SeekAddStakeDialogProps = {
   account: Account
