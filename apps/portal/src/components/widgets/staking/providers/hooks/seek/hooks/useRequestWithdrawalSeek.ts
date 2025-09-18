@@ -8,7 +8,7 @@ import { CHAIN_ID, DECIMALS, DEEK_SINGLE_POOL_STAKING_ADDRESS, DEEK_TICKER } fro
 import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStakingAbi'
 import { Decimal } from '@/util/Decimal'
 
-import { useGetSeekStakerInfo } from './useGetSeekStakerInfo'
+import useGetSeekPoolAccountInfo from './useGetSeekPoolAccountInfo'
 import useStakeSeekBase from './useStakeSeekBase'
 
 const useRequestWithdrawalSeek = ({
@@ -24,7 +24,7 @@ const useRequestWithdrawalSeek = ({
     input: { amountInput, decimalAmountInput },
   } = useStakeSeekBase({ account, direction: 'unstake' })
 
-  const { data, isFetched, refetch } = useGetSeekStakerInfo({ account })
+  const { data, isFetched, refetch } = useGetSeekPoolAccountInfo({ account })
   const [staked] = data || [0n, 0n, 0n, 0n]
 
   const stakedBalance = useMemo(() => {

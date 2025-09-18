@@ -16,8 +16,8 @@ import {
 import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStakingAbi'
 import { Decimal } from '@/util/Decimal'
 
-import { useGetSeekStakerInfo } from './useGetSeekStakerInfo'
-import { useGetSeekStakingInfo } from './useGetSeekStakingInfo'
+import useGetSeekPoolAccountInfo from './useGetSeekPoolAccountInfo'
+import useGetSeekPoolInfo from './useGetSeekPoolInfo'
 import useStakeSeekBase from './useStakeSeekBase'
 
 const useStakeSeek = ({ account }: { account: Account | undefined }) => {
@@ -29,8 +29,8 @@ const useStakeSeek = ({ account }: { account: Account | undefined }) => {
     input: { amountInput, decimalAmountInput },
   } = useStakeSeekBase({ account, direction: 'stake' })
 
-  const { data } = useGetSeekStakingInfo()
-  const { refetch: refetchStakerInfo } = useGetSeekStakerInfo({ account })
+  const { data } = useGetSeekPoolInfo()
+  const { refetch: refetchStakerInfo } = useGetSeekPoolAccountInfo({ account })
   const [, , , minStakeAmount] = data || [0n, 0n, 0n, 0n]
 
   const {

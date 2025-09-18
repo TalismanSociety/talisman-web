@@ -8,11 +8,11 @@ import { CHAIN_ID, DECIMALS, DEEK_SINGLE_POOL_STAKING_ADDRESS, DEEK_TICKER } fro
 import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStakingAbi'
 import { Decimal } from '@/util/Decimal'
 
+import useGetSeekPoolAccountInfo from './useGetSeekPoolAccountInfo'
 import useGetSeekStaked from './useGetSeekStaked'
-import { useGetSeekStakerInfo } from './useGetSeekStakerInfo'
 
 const useClaimEarnedSeek = ({ account }: { account: Account | undefined }) => {
-  const { data, isFetched, refetch } = useGetSeekStakerInfo({ account })
+  const { data, isFetched, refetch } = useGetSeekPoolAccountInfo({ account })
   const { refetch: refetchStaked } = useGetSeekStaked()
   const [, , , earned] = data || [0n, 0n, 0n, 0n]
 

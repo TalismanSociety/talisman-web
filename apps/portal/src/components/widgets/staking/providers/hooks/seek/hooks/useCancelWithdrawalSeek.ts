@@ -7,10 +7,10 @@ import { useWagmiWriteContract } from '@/domains/common/hooks/useWagmiWriteContr
 import { CHAIN_ID, DEEK_SINGLE_POOL_STAKING_ADDRESS } from '@/domains/staking/seek/constants'
 import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStakingAbi'
 
-import { useGetSeekStakerInfo } from './useGetSeekStakerInfo'
+import useGetSeekPoolAccountInfo from './useGetSeekPoolAccountInfo'
 
 const useCancelWithdrawalSeek = ({ account }: { account: Account | undefined }) => {
-  const { refetch } = useGetSeekStakerInfo({ account })
+  const { refetch } = useGetSeekPoolAccountInfo({ account })
 
   const _cancelWithdrawal = useWagmiWriteContract()
   const cancelWithdrawal = {

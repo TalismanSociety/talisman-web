@@ -9,11 +9,11 @@ import { CHAIN_ID, DECIMALS, DEEK_SINGLE_POOL_STAKING_ADDRESS, DEEK_TICKER } fro
 import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStakingAbi'
 import { Decimal } from '@/util/Decimal'
 
+import useGetSeekPoolAccountInfo from './useGetSeekPoolAccountInfo'
 import useGetSeekStaked from './useGetSeekStaked'
-import { useGetSeekStakerInfo } from './useGetSeekStakerInfo'
 
 const useCompleteWithdrawalSeek = ({ account }: { account: Account | undefined }) => {
-  const { data, refetch } = useGetSeekStakerInfo({ account })
+  const { data, refetch } = useGetSeekPoolAccountInfo({ account })
   const { refetch: refetchStaked } = useGetSeekStaked()
   const [, pendingWithdrawals] = data || [0n, [0n, 0n], 0n, 0n]
   const [amount, unlockTimestamp] = pendingWithdrawals || [0n, 0n]

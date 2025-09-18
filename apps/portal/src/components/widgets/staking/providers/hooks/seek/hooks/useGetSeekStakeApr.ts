@@ -1,7 +1,7 @@
-import { useGetSeekStakingInfo } from './useGetSeekStakingInfo'
+import useGetSeekPoolInfo from './useGetSeekPoolInfo'
 
 const useGetSeekStakeApr = () => {
-  const { data } = useGetSeekStakingInfo()
+  const { data } = useGetSeekPoolInfo()
   const [totalStaked, rewardRate] = data || [0n, 0n]
 
   const SECONDS_IN_MONTH = 30 * 24 * 60 * 60 // 2,592,000 seconds

@@ -3,7 +3,7 @@ import { useReadContracts } from 'wagmi'
 import { CHAIN_ID, DEEK_SINGLE_POOL_STAKING_ADDRESS } from '../../../../../../../domains/staking/seek/constants'
 import seekSinglePoolStakingAbi from '../../../../../../../domains/staking/seek/seekSinglePoolStakingAbi'
 
-export const useGetSeekStakingInfo = () => {
+const useGetSeekPoolInfo = () => {
   const { data, isLoading, isError, refetch, isFetched } = useReadContracts({
     allowFailure: false,
     contracts: [
@@ -37,3 +37,5 @@ export const useGetSeekStakingInfo = () => {
 
   return { data, isLoading, isError, refetch, isFetched }
 }
+
+export default useGetSeekPoolInfo
