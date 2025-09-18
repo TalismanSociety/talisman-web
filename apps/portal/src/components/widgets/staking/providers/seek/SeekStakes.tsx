@@ -54,10 +54,9 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
   const stakedBalance = balances.find(balance => balance.address === account.address)
 
   const shouldDisplayAssetRow = useMemo(() => {
-    return stakedBalance?.amount || earnedBalance.planck > 0n
-  }, [earnedBalance.planck, stakedBalance?.amount])
+    return stakedBalance?.amount || earnedBalance.planck > 0n || pendingWithdrawalsBalance.planck > 0n
+  }, [earnedBalance.planck, pendingWithdrawalsBalance.planck, stakedBalance?.amount])
 
-  // TODO: Handle pending withdrawals
   if (!shouldDisplayAssetRow) return null
 
   setShouldRenderLoadingSkeleton(false)
@@ -85,7 +84,6 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
         isError={pendingWithdrawalsBalance.planck > 0n}
         account={account}
         provider="Talisman"
-        // TODO: Handle locked token status
         stakeStatus={amountDecimal.planck > 0n ? 'earning_rewards' : 'not_earning_rewards'}
         balance={
           <ErrorBoundary renderFallback={() => <>--</>}>
@@ -119,11 +117,13 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
           )
         }
         claimButton={
-          <StakePosition.ClaimButton
-            amount={earnedBalance.toLocaleString()}
-            onClick={() => getReward.writeContractAsync()}
-            loading={getRewardTransaction.isLoading || getReward.isPending || !isReady}
-          />
+          earnedBalance.planck > 0n && (
+            <StakePosition.ClaimButton
+              amount={earnedBalance.toLocaleString()}
+              onClick={() => getReward.writeContractAsync()}
+              loading={getRewardTransaction.isLoading || getReward.isPending || !isReady}
+            />
+          )
         }
         unstakingStatus={
           pendingWithdrawalsBalance.planck > 0n && (

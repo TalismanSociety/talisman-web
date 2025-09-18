@@ -8,9 +8,11 @@ import { CHAIN_ID, DEEK_SINGLE_POOL_STAKING_ADDRESS } from '@/domains/staking/se
 import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStakingAbi'
 
 import useGetSeekPoolAccountInfo from './useGetSeekPoolAccountInfo'
+import useGetSeekStaked from './useGetSeekStaked'
 
 const useCancelWithdrawalSeek = ({ account }: { account: Account | undefined }) => {
   const { refetch } = useGetSeekPoolAccountInfo({ account })
+  const { refetch: refetchSeekStaked } = useGetSeekStaked()
 
   const _cancelWithdrawal = useWagmiWriteContract()
   const cancelWithdrawal = {
@@ -34,8 +36,9 @@ const useCancelWithdrawalSeek = ({ account }: { account: Account | undefined }) 
   useEffect(() => {
     if (cancelWithdrawalTransaction.data?.status === 'success') {
       refetch()
+      refetchSeekStaked()
     }
-  }, [refetch, cancelWithdrawalTransaction.data?.status])
+  }, [refetch, cancelWithdrawalTransaction.data?.status, refetchSeekStaked])
 
   return {
     cancelWithdrawal,

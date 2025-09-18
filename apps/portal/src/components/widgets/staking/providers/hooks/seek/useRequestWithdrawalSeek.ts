@@ -9,6 +9,7 @@ import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStaki
 import { Decimal } from '@/util/Decimal'
 
 import useGetSeekPoolAccountInfo from './useGetSeekPoolAccountInfo'
+import useGetSeekStaked from './useGetSeekStaked'
 import useStakeSeekBase from './useStakeSeekBase'
 
 const useRequestWithdrawalSeek = ({
@@ -24,6 +25,7 @@ const useRequestWithdrawalSeek = ({
     input: { amountInput, decimalAmountInput },
   } = useStakeSeekBase({ account, direction: 'unstake' })
 
+  const { refetch: refetchSeekStaked } = useGetSeekStaked()
   const { data, isFetched, refetch } = useGetSeekPoolAccountInfo({ account })
   const [staked] = data || [0n, 0n, 0n, 0n]
 
@@ -55,8 +57,9 @@ const useRequestWithdrawalSeek = ({
       void refetch()
       // Call the success callback to close dialog after refetch
       onTransactionSuccess()
+      refetchSeekStaked()
     }
-  }, [refetch, requestWithdrawalTransaction.data?.status, onTransactionSuccess])
+  }, [refetch, requestWithdrawalTransaction.data?.status, onTransactionSuccess, refetchSeekStaked])
 
   const error = useMemo(() => {
     if (decimalAmountInput !== undefined && decimalAmountInput.planck > stakedBalance.planck) {
