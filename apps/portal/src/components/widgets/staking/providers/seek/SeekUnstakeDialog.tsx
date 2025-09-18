@@ -21,7 +21,10 @@ const SeekUnstakeDialog = ({ account, onRequestDismiss }: SeekUnstakeDialogProps
     isReady,
     input: { amountInput },
     stakedBalance,
-  } = useRequestWithdrawalSeek({ account })
+  } = useRequestWithdrawalSeek({
+    account,
+    onTransactionSuccess: onRequestDismiss,
+  })
 
   const unlockDuration = useGetSeekStakeUnlockDuration()
 
@@ -50,8 +53,11 @@ const SeekUnstakeDialog = ({ account, onRequestDismiss }: SeekUnstakeDialogProps
       availableAmount={stakedBalance?.toLocaleString() ?? '...'}
       lockDuration={<div>{formatDistance(0, unlockDuration)}</div>}
       onConfirm={async () => {
-        await requestWithdrawal.writeContractAsync()
-        onRequestDismiss()
+        try {
+          await requestWithdrawal.writeContractAsync()
+        } catch (error) {
+          console.error('Transaction failed:', error)
+        }
       }}
       onRequestMaxAmount={() => {
         if (stakedBalance !== undefined) {

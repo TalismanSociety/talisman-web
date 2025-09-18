@@ -8,11 +8,16 @@ import { CHAIN_ID, DECIMALS, DEEK_SINGLE_POOL_STAKING_ADDRESS, DEEK_TICKER } fro
 import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStakingAbi'
 import { Decimal } from '@/util/Decimal'
 
-import useGetSeekStaked from './useGetSeekStaked'
 import { useGetSeekStakerInfo } from './useGetSeekStakerInfo'
 import useStakeSeekBase from './useStakeSeekBase'
 
-const useRequestWithdrawalSeek = ({ account }: { account: Account | undefined }) => {
+const useRequestWithdrawalSeek = ({
+  account,
+  onTransactionSuccess,
+}: {
+  account: Account | undefined
+  onTransactionSuccess: () => void
+}) => {
   const {
     newStakedTotal,
     setAmountInput,
@@ -20,7 +25,6 @@ const useRequestWithdrawalSeek = ({ account }: { account: Account | undefined })
   } = useStakeSeekBase({ account, direction: 'unstake' })
 
   const { data, isFetched, refetch } = useGetSeekStakerInfo({ account })
-  const { refetch: refetchStaked } = useGetSeekStaked()
   const [staked] = data || [0n, 0n, 0n, 0n]
 
   const stakedBalance = useMemo(() => {
@@ -48,10 +52,11 @@ const useRequestWithdrawalSeek = ({ account }: { account: Account | undefined })
 
   useEffect(() => {
     if (requestWithdrawalTransaction.data?.status === 'success') {
-      refetch()
-      refetchStaked()
+      void refetch()
+      // Call the success callback to close dialog after refetch
+      onTransactionSuccess()
     }
-  }, [refetch, requestWithdrawalTransaction.data?.status, refetchStaked])
+  }, [refetch, requestWithdrawalTransaction.data?.status, onTransactionSuccess])
 
   const error = useMemo(() => {
     if (decimalAmountInput !== undefined && decimalAmountInput.planck > stakedBalance.planck) {
@@ -68,12 +73,12 @@ const useRequestWithdrawalSeek = ({ account }: { account: Account | undefined })
   return {
     stakedBalance,
     newStakedTotal,
-    setAmountInput,
     input: { amountInput, decimalAmountInput },
     isReady,
     requestWithdrawal,
     requestWithdrawalTransaction,
     error,
+    setAmountInput,
   }
 }
 
