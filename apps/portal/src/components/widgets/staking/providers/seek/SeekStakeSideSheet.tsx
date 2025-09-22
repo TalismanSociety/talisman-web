@@ -7,7 +7,7 @@ import { InfoCard } from '@talismn/ui/molecules/InfoCard'
 import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
 import { Clock, Zap } from '@talismn/web-icons'
 import { formatDistance } from 'date-fns'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
 import { AddStakeForm } from '@/components/recipes/AddStakeDialog'
@@ -30,6 +30,12 @@ const AddStakeSideSheet = () => {
   const unlockDuration = useGetSeekStakeUnlockDuration()
   const monthlyAPR = useGetSeekStakeApr()
 
+  const navigate = useNavigate()
+
+  const handleTransactionSuccess = () => {
+    navigate('/staking/positions')
+  }
+
   const {
     available,
     newStakedTotal,
@@ -42,7 +48,7 @@ const AddStakeSideSheet = () => {
     error,
     isReady,
     input: { amountInput },
-  } = useStakeSeek({ account })
+  } = useStakeSeek({ account, onTransactionSuccess: handleTransactionSuccess })
 
   if (!open) {
     return null

@@ -22,7 +22,7 @@ const SeekAddStakeDialog = ({ account, onRequestDismiss }: SeekAddStakeDialogPro
     error,
     isReady,
     input: { amountInput },
-  } = useStakeSeek({ account })
+  } = useStakeSeek({ account, onTransactionSuccess: onRequestDismiss })
 
   // TODO: fetch DEEK fiat price
   const fiatAmountAvailable = ''
@@ -59,7 +59,6 @@ const SeekAddStakeDialog = ({ account, onRequestDismiss }: SeekAddStakeDialogPro
         } else {
           try {
             await stake.writeContractAsync()
-            onRequestDismiss()
           } catch (error) {
             console.error(`An error occurred while staking asset: ${DEEK_TICKER}`, error)
           }

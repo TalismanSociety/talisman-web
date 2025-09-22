@@ -1,5 +1,4 @@
 import { useEffect, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { erc20Abi } from 'viem'
 import { useReadContract, useWaitForTransactionReceipt } from 'wagmi'
 import { mainnet, polygon } from 'wagmi/chains'
@@ -20,8 +19,13 @@ import useGetSeekPoolAccountInfo from './useGetSeekPoolAccountInfo'
 import useGetSeekPoolInfo from './useGetSeekPoolInfo'
 import useStakeSeekBase from './useStakeSeekBase'
 
-const useStakeSeek = ({ account }: { account: Account | undefined }) => {
-  const navigate = useNavigate()
+const useStakeSeek = ({
+  account,
+  onTransactionSuccess,
+}: {
+  account: Account | undefined
+  onTransactionSuccess: () => void
+}) => {
   const {
     available,
     newStakedTotal,
@@ -97,9 +101,9 @@ const useStakeSeek = ({ account }: { account: Account | undefined }) => {
   useEffect(() => {
     if (stakeTransaction.data?.status === 'success') {
       refetchStakerInfo()
-      navigate('/staking/positions')
+      onTransactionSuccess()
     }
-  }, [stakeTransaction.data?.status, navigate, refetchStakerInfo])
+  }, [stakeTransaction.data?.status, refetchStakerInfo, onTransactionSuccess])
 
   const approvalNeeded = useMemo(() => {
     return allowance !== undefined && decimalAmountInput !== undefined && decimalAmountInput.planck > allowance
