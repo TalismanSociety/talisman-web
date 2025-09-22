@@ -22,10 +22,11 @@ const useCompleteWithdrawalSeek = ({ account }: { account: Account | undefined }
     return Decimal.fromPlanck(amount, DECIMALS ?? 0, { currency: DEEK_TICKER })
   }, [amount])
 
+  const now = Math.floor(Date.now() / 1000) // Current timestamp in seconds
+
   const isReady = useMemo(() => {
-    const now = Math.floor(Date.now() / 1000) // Current timestamp in seconds
     return amount > 0n && unlockTimestamp <= now
-  }, [amount, unlockTimestamp])
+  }, [amount, now, unlockTimestamp])
 
   const etaString = useMemo(() => {
     if (unlockTimestamp === 0n) return ''
@@ -58,6 +59,19 @@ const useCompleteWithdrawalSeek = ({ account }: { account: Account | undefined }
       refetchStaked()
     }
   }, [refetch, completeWithdrawalTransaction.data?.status, refetchStaked])
+
+  // Refetch every minute when amount > 0 and unlockTimestamp <= now
+  useEffect(() => {
+    if (amount > 0n && unlockTimestamp <= now && !isReady) {
+      const interval = setInterval(() => {
+        refetch()
+        refetchStaked()
+      }, 60000) // 60 seconds = 1 minute
+
+      return () => clearInterval(interval)
+    }
+    return
+  }, [amount, isReady, now, refetch, refetchStaked, unlockTimestamp])
 
   return {
     pendingWithdrawalsBalance,
