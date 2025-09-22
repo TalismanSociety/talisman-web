@@ -9,7 +9,7 @@ import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStaki
 import { Decimal } from '@/util/Decimal'
 
 import useGetSeekPoolAccountInfo from '../useGetSeekPoolAccountInfo'
-import useStakeSeekBase from './useStakeSeekBase'
+import useStakeSeekBase from '../useStakeSeekBase'
 
 const useRequestWithdrawalSeek = ({
   account,
