@@ -17,7 +17,7 @@ const unbondingFormatter = (unlockValue: number) => formatDistance(0, unlockValu
 
 type UnbondingPeriodProps = {
   typeId: StakeProviderTypeId
-  genesisHash: `0x${string}`
+  genesisHash?: `0x${string}`
   setUnbondingValues: (unbonding: number) => void
   apiEndpoint?: string
   tokenPair: SlpxPair | SlpxSubstratePair | undefined
@@ -78,7 +78,13 @@ const UnbondingDisplay = ({ typeId, tokenPair, setUnbondingValues }: UnbondingDi
   )
 }
 
-const UnbondingPeriod = ({ typeId, genesisHash, apiEndpoint, setUnbondingValues, tokenPair }: UnbondingPeriodProps) => {
+const UnbondingPeriod = ({
+  typeId,
+  genesisHash = '0x123',
+  apiEndpoint,
+  setUnbondingValues,
+  tokenPair,
+}: UnbondingPeriodProps) => {
   return (
     <ChainProvider chain={{ genesisHash }}>
       <UnbondingDisplay

@@ -15,7 +15,7 @@ import useAvailableBalance from '../hooks/useAvailableBalance'
 
 type AvailableBalanceProps = {
   typeId: StakeProviderTypeId
-  genesisHash: `0x${string}`
+  genesisHash?: `0x${string}`
   setAvailableBalanceValue: (fiatAmount: number) => void
   apiEndpoint?: string
   tokenPair: SlpxPair | SlpxSubstratePair | undefined
@@ -82,7 +82,7 @@ const AvailableBalanceDisplay = ({
 
 const AvailableBalance = ({
   typeId,
-  genesisHash,
+  genesisHash = '0x123',
   apiEndpoint,
   setAvailableBalanceValue,
   tokenPair,
