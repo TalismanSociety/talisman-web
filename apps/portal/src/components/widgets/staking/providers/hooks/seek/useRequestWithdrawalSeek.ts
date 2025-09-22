@@ -56,8 +56,8 @@ const useRequestWithdrawalSeek = ({
     if (requestWithdrawalTransaction.data?.status === 'success') {
       void refetch()
       // Call the success callback to close dialog after refetch
-      onTransactionSuccess()
       refetchSeekStaked()
+      onTransactionSuccess()
     }
   }, [refetch, requestWithdrawalTransaction.data?.status, onTransactionSuccess, refetchSeekStaked])
 

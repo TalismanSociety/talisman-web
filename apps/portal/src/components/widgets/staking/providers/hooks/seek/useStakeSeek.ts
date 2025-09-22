@@ -17,6 +17,7 @@ import { Decimal } from '@/util/Decimal'
 
 import useGetSeekPoolAccountInfo from './useGetSeekPoolAccountInfo'
 import useGetSeekPoolInfo from './useGetSeekPoolInfo'
+import useGetSeekStaked from './useGetSeekStaked'
 import useStakeSeekBase from './useStakeSeekBase'
 
 const useStakeSeek = ({
@@ -34,15 +35,18 @@ const useStakeSeek = ({
   } = useStakeSeekBase({ account, direction: 'stake' })
 
   const { data } = useGetSeekPoolInfo()
-  const { refetch: refetchStakerInfo } = useGetSeekPoolAccountInfo({ account })
   const [, , , minStakeAmount] = data || [0n, 0n, 0n, 0n]
+
+  const { refetch: refetchStakerInfo } = useGetSeekPoolAccountInfo({ account })
+
+  const { refetch: refetchSeekStaked } = useGetSeekStaked()
 
   const {
     data: allowance,
     isLoading: _isLoading,
     isFetched,
     error: _error,
-    refetch,
+    refetch: refetchAllowance,
   } = useReadContract({
     chainId: CHAIN_ID,
     address: DEEK_TOKEN_ADDRESS,
@@ -75,9 +79,9 @@ const useStakeSeek = ({
 
   useEffect(() => {
     if (approveTransaction.data?.status === 'success') {
-      void refetch()
+      void refetchAllowance()
     }
-  }, [refetch, approveTransaction.data?.status])
+  }, [refetchAllowance, approveTransaction.data?.status])
 
   const _stake = useWagmiWriteContract()
   const stake = {
@@ -101,9 +105,11 @@ const useStakeSeek = ({
   useEffect(() => {
     if (stakeTransaction.data?.status === 'success') {
       refetchStakerInfo()
+      refetchAllowance()
+      refetchSeekStaked()
       onTransactionSuccess()
     }
-  }, [stakeTransaction.data?.status, refetchStakerInfo, onTransactionSuccess])
+  }, [stakeTransaction.data?.status, refetchStakerInfo, onTransactionSuccess, refetchAllowance, refetchSeekStaked])
 
   const approvalNeeded = useMemo(() => {
     return allowance !== undefined && decimalAmountInput !== undefined && decimalAmountInput.planck > allowance
