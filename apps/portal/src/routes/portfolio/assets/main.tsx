@@ -9,7 +9,7 @@ import { useAssets, useAssetsFiltered } from '@/components/legacy/widgets/useAss
 import { WalletTotal } from '@/components/legacy/widgets/WalletTotal'
 import { Asset, AssetsList, AssetsListLocked } from '@/components/recipes/Asset'
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
-import { DEEK_TICKER } from '@/domains/staking/seek/constants'
+import { SEEK_TICKER } from '@/domains/staking/seek/constants'
 
 const Assets = () => {
   const [search, setSearch] = useState('')
@@ -80,7 +80,7 @@ const Assets = () => {
         <AssetsList isLoading={isLoading}>
           {tokens?.map(token => {
             // TODO: Remove this once SEEK is added to balances
-            if (token?.tokenDetails?.symbol === DEEK_TICKER) {
+            if (token?.tokenDetails?.symbol === SEEK_TICKER) {
               token.tokenDetails.logo = SeekLogo
             }
             return <Asset key={token?.tokenDetails?.id} token={token} balances={balances} />

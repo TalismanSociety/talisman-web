@@ -1,6 +1,6 @@
 import { AddStakeDialog } from '@/components/recipes/AddStakeDialog'
 import { Account } from '@/domains/accounts/recoils'
-import { DEEK_TICKER } from '@/domains/staking/seek/constants'
+import { SEEK_TICKER } from '@/domains/staking/seek/constants'
 
 import useStakeSeek from '../hooks/seek/useStakeSeek'
 
@@ -24,7 +24,7 @@ const SeekAddStakeDialog = ({ account, onRequestDismiss }: SeekAddStakeDialogPro
     input: { amountInput },
   } = useStakeSeek({ account, onTransactionSuccess: onRequestDismiss })
 
-  // TODO: fetch DEEK fiat price
+  // TODO: fetch SEEK fiat price
   const fiatAmountAvailable = ''
 
   return (
@@ -54,13 +54,13 @@ const SeekAddStakeDialog = ({ account, onRequestDismiss }: SeekAddStakeDialogPro
           try {
             await approve.writeContractAsync()
           } catch (error) {
-            console.error(`An error occurred while approving allowance for asset: ${DEEK_TICKER}`, error)
+            console.error(`An error occurred while approving allowance for asset: ${SEEK_TICKER}`, error)
           }
         } else {
           try {
             await stake.writeContractAsync()
           } catch (error) {
-            console.error(`An error occurred while staking asset: ${DEEK_TICKER}`, error)
+            console.error(`An error occurred while staking asset: ${SEEK_TICKER}`, error)
           }
         }
       }}

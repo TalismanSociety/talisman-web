@@ -14,7 +14,7 @@ import { AddStakeForm } from '@/components/recipes/AddStakeDialog'
 import { useAccountSelector } from '@/components/widgets/AccountSelector'
 import { walletConnectionSideSheetOpenState } from '@/components/widgets/WalletConnectionSideSheet'
 import { evmSignableAccountsState } from '@/domains/accounts/recoils'
-import { DEEK_TICKER } from '@/domains/staking/seek/constants'
+import { SEEK_TICKER } from '@/domains/staking/seek/constants'
 
 import useGetSeekStakeApr from '../hooks/seek/useGetSeekStakeApr'
 import useGetSeekStakeUnlockDuration from '../hooks/seek/useGetSeekStakeUnlockDuration'
@@ -114,13 +114,13 @@ const AddStakeSideSheet = () => {
               try {
                 await approve.writeContractAsync()
               } catch (error) {
-                console.error(`An error occurred while approving allowance for asset: ${DEEK_TICKER}`, error)
+                console.error(`An error occurred while approving allowance for asset: ${SEEK_TICKER}`, error)
               }
             } else {
               try {
                 await stake.writeContractAsync()
               } catch (error) {
-                console.error(`An error occurred while staking asset: ${DEEK_TICKER}`, error)
+                console.error(`An error occurred while staking asset: ${SEEK_TICKER}`, error)
               }
             }
           }}
@@ -129,7 +129,7 @@ const AddStakeSideSheet = () => {
         />
       </Surface>
       <Text.Body as="p" css={{ marginTop: '4.8rem' }}>
-        {`Stake your ${DEEK_TICKER} tokens to access exclusive fee discounts when staking TAO on our platform. This is more than just a staking token, ${DEEK_TICKER} is at the core of a new generation of crypto wallets powered by AI agents, designed to make web3 smarter, safer, and more intuitive. Additional benefits for $NEW stakers will be introduced in the future, bringing even more value to early supporters. Learn more`}{' '}
+        {`Stake your ${SEEK_TICKER} tokens to access exclusive fee discounts when staking TAO on our platform. This is more than just a staking token, ${SEEK_TICKER} is at the core of a new generation of crypto wallets powered by AI agents, designed to make web3 smarter, safer, and more intuitive. Additional benefits for $NEW stakers will be introduced in the future, bringing even more value to early supporters. Learn more`}{' '}
         <Text.Noop.A target="blank" href="https://talisman.xyz/">
           Learn more
         </Text.Noop.A>

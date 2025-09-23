@@ -8,7 +8,7 @@ import useGetSeekAvailableBalance from '@/components/widgets/staking/providers/h
 import { cn } from '@/util/cn'
 
 import useGetSeekStaked from '../../../components/widgets/staking/providers/hooks/seek/useGetSeekStaked'
-import { DEEK_TICKER } from './constants'
+import { SEEK_TICKER } from './constants'
 import { useGetSeekDiscount } from './hooks/useGetSeekDiscount'
 
 type GetDiscountDialogProps = {
@@ -35,21 +35,21 @@ export const GetDiscountDialog = ({ isOpen, onToggleIsOpen }: GetDiscountDialogP
       open={isOpen}
       title="Get dTao Fee Discounts "
       targetWidth="50rem"
-      dismissButton={<OutlinedButton onClick={() => navigate('staking/providers')}>Stake {DEEK_TICKER}</OutlinedButton>}
+      dismissButton={<OutlinedButton onClick={() => navigate('staking/providers')}>Stake {SEEK_TICKER}</OutlinedButton>}
       confirmButton={
         <Button
           onClick={() => {
             open('https://talisman.xyz/', '_blank', 'noopener,noreferrer')
           }}
         >
-          Buy {DEEK_TICKER}
+          Buy {SEEK_TICKER}
         </Button>
       }
       onRequestDismiss={onToggleIsOpen}
     >
       <div className="flex flex-col gap-10 text-gray-400">
         <div>
-          Stake {DEEK_TICKER} to enjoy fee discounts on your subnet staking transactions.{' '}
+          Stake {SEEK_TICKER} to enjoy fee discounts on your subnet staking transactions.{' '}
           <a
             className="inline-flex items-center justify-center gap-1 text-white"
             href="https://talisman.xyz/"
@@ -64,16 +64,16 @@ export const GetDiscountDialog = ({ isOpen, onToggleIsOpen }: GetDiscountDialogP
           <div className="flex gap-4">
             <SeekLogo className="h-[42px] w-[42px] rounded-full" />
             <div>
-              <div className="text-white">{DEEK_TICKER}</div>
+              <div className="text-white">{SEEK_TICKER}</div>
               <div className="text-[14px]">
-                Available: {totalAvailableFormatted} {DEEK_TICKER}
+                Available: {totalAvailableFormatted} {SEEK_TICKER}
               </div>
             </div>
           </div>
           {hasSeekStaked && (
             <div>
               <div className="text-white">
-                {totalStaked.amountFormatted} {DEEK_TICKER}
+                {totalStaked.amountFormatted} {SEEK_TICKER}
               </div>
               <div className="text-end text-[14px]">Staked</div>
             </div>

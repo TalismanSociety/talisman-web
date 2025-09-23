@@ -4,7 +4,7 @@ import { mainnet, polygon } from 'wagmi/chains'
 
 import { Account } from '@/domains/accounts/recoils'
 import { useWagmiWriteContract } from '@/domains/common/hooks/useWagmiWriteContract'
-import { CHAIN_ID, DEEK_SINGLE_POOL_STAKING_ADDRESS } from '@/domains/staking/seek/constants'
+import { CHAIN_ID, SEEK_SINGLE_POOL_STAKING_ADDRESS } from '@/domains/staking/seek/constants'
 import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStakingAbi'
 
 import useGetSeekPoolAccountInfo from './useGetSeekPoolAccountInfo'
@@ -20,7 +20,7 @@ const useCancelWithdrawalSeek = ({ account }: { account: Account | undefined }) 
     writeContractAsync: async () =>
       await _cancelWithdrawal.writeContractAsync({
         chainId: CHAIN_ID,
-        address: DEEK_SINGLE_POOL_STAKING_ADDRESS,
+        address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
         abi: seekSinglePoolStakingAbi,
         functionName: 'cancelWithdrawal',
         args: [],

@@ -5,7 +5,7 @@ import { mainnet, polygon } from 'wagmi/chains'
 
 import { Account } from '@/domains/accounts/recoils'
 import { useWagmiWriteContract } from '@/domains/common/hooks/useWagmiWriteContract'
-import { CHAIN_ID, DECIMALS, DEEK_SINGLE_POOL_STAKING_ADDRESS, DEEK_TICKER } from '@/domains/staking/seek/constants'
+import { CHAIN_ID, DECIMALS, SEEK_SINGLE_POOL_STAKING_ADDRESS, SEEK_TICKER } from '@/domains/staking/seek/constants'
 import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStakingAbi'
 import { Decimal } from '@/util/Decimal'
 
@@ -19,7 +19,7 @@ const useCompleteWithdrawalSeek = ({ account }: { account: Account | undefined }
   const [amount, unlockTimestamp] = pendingWithdrawals || [0n, 0n]
 
   const pendingWithdrawalsBalance = useMemo(() => {
-    return Decimal.fromPlanck(amount, DECIMALS ?? 0, { currency: DEEK_TICKER })
+    return Decimal.fromPlanck(amount, DECIMALS ?? 0, { currency: SEEK_TICKER })
   }, [amount])
 
   const now = Math.floor(Date.now() / 1000) // Current timestamp in seconds
@@ -40,7 +40,7 @@ const useCompleteWithdrawalSeek = ({ account }: { account: Account | undefined }
     writeContractAsync: async () =>
       await _completeWithdrawal.writeContractAsync({
         chainId: CHAIN_ID,
-        address: DEEK_SINGLE_POOL_STAKING_ADDRESS,
+        address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
         abi: seekSinglePoolStakingAbi,
         functionName: 'completeWithdrawal',
         args: [],

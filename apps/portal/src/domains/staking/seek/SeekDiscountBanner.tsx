@@ -1,7 +1,7 @@
 import { OutlinedButton } from '@talismn/ui/atoms/Button'
 import { useState } from 'react'
 
-import { DEEK_TICKER } from './constants'
+import { SEEK_TICKER } from './constants'
 import { GetDiscountDialog } from './GetDiscountDialog'
 
 export const SeekDiscountBanner = () => {
@@ -18,7 +18,7 @@ export const SeekDiscountBanner = () => {
                   <div className="text-[#D5FF5C]">Up to 25% off</div>
                 </div>
               </div>
-              <div className="text-gray-400">Stake {DEEK_TICKER} now to get discounts on dTao staking fees</div>
+              <div className="text-gray-400">Stake {SEEK_TICKER} now to get discounts on dTao staking fees</div>
             </div>
             <OutlinedButton className="h-[35px]" style={{ padding: '0 12px' }} onClick={() => setIsDialogOpen(true)}>
               <div className="truncate">Get Discount</div>

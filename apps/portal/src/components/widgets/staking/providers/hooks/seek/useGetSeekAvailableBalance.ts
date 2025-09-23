@@ -5,14 +5,14 @@ import { useRecoilValue } from 'recoil'
 import { formatUnits } from 'viem'
 
 import { writeableEvmAccountsState } from '@/domains/accounts/recoils'
-import { DECIMALS, DEEK_TOKEN_ADDRESS } from '@/domains/staking/seek/constants'
+import { DECIMALS, SEEK_TICKER, SEEK_TOKEN_ADDRESS } from '@/domains/staking/seek/constants'
 import { Decimal } from '@/util/Decimal'
 
 const useGetSeekAvailableBalance = () => {
   const allBalances = useBalances()
   const ethAccounts = useRecoilValue(writeableEvmAccountsState)
 
-  const seekBalances = allBalances.find(b => b.tokenId === `137-evm-erc20-${DEEK_TOKEN_ADDRESS}`)
+  const seekBalances = allBalances.find(b => b.tokenId === `137-evm-erc20-${SEEK_TOKEN_ADDRESS}`)
 
   const totalAvailable = useMemo(
     () =>
@@ -24,9 +24,9 @@ const useGetSeekAvailableBalance = () => {
   )
   const totalAvailableFormatted = formatDecimals(formatUnits(totalAvailable, DECIMALS))
 
-  const availableBalance = Decimal.fromPlanck(totalAvailable, 18, { currency: 'DEEK' })
+  const availableBalance = Decimal.fromPlanck(totalAvailable, 18, { currency: SEEK_TICKER })
 
-  // TODO: fetch DEEK fiat price
+  // TODO: fetch SEEK fiat price
   return { availableBalance: availableBalance, fiatAmount: 0, totalAvailable, totalAvailableFormatted, seekBalances }
 }
 

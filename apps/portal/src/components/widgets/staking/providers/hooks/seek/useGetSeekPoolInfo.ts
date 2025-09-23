@@ -1,6 +1,6 @@
 import { useReadContracts } from 'wagmi'
 
-import { CHAIN_ID, DEEK_SINGLE_POOL_STAKING_ADDRESS } from '../../../../../../domains/staking/seek/constants'
+import { CHAIN_ID, SEEK_SINGLE_POOL_STAKING_ADDRESS } from '../../../../../../domains/staking/seek/constants'
 import seekSinglePoolStakingAbi from '../../../../../../domains/staking/seek/seekSinglePoolStakingAbi'
 
 const useGetSeekPoolInfo = () => {
@@ -8,25 +8,25 @@ const useGetSeekPoolInfo = () => {
     allowFailure: false,
     contracts: [
       {
-        address: DEEK_SINGLE_POOL_STAKING_ADDRESS,
+        address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
         abi: seekSinglePoolStakingAbi,
         functionName: 'totalStaked',
         chainId: CHAIN_ID,
       },
       {
-        address: DEEK_SINGLE_POOL_STAKING_ADDRESS,
+        address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
         abi: seekSinglePoolStakingAbi,
         functionName: 'rewardRate',
         chainId: CHAIN_ID,
       },
       {
-        address: DEEK_SINGLE_POOL_STAKING_ADDRESS,
+        address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
         abi: seekSinglePoolStakingAbi,
         functionName: 'withdrawDelay',
         chainId: CHAIN_ID,
       },
       {
-        address: DEEK_SINGLE_POOL_STAKING_ADDRESS,
+        address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
         abi: seekSinglePoolStakingAbi,
         functionName: 'minStakeAmount',
         chainId: CHAIN_ID,

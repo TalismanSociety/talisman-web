@@ -8,8 +8,8 @@ import { Decimal } from '@/util/Decimal'
 import {
   CHAIN_ID,
   DECIMALS,
-  DEEK_SINGLE_POOL_STAKING_ADDRESS,
-  DEEK_TICKER,
+  SEEK_SINGLE_POOL_STAKING_ADDRESS,
+  SEEK_TICKER,
 } from '../../../../../../domains/staking/seek/constants'
 import seekSinglePoolStakingAbi from '../../../../../../domains/staking/seek/seekSinglePoolStakingAbi'
 
@@ -19,7 +19,7 @@ const useGetSeekStaked = () => {
   const { data, isLoading, isError, refetch } = useReadContracts({
     allowFailure: false,
     contracts: ethAccounts.map(a => ({
-      address: DEEK_SINGLE_POOL_STAKING_ADDRESS,
+      address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
       abi: seekSinglePoolStakingAbi,
       functionName: 'balanceOf',
       args: [a.address],
@@ -34,7 +34,7 @@ const useGetSeekStaked = () => {
         address: account.address,
         amount: (data[i] as bigint) || 0n,
         amountFormatted: formatUnits((data[i] as bigint) || 0n, DECIMALS),
-        amountDecimal: Decimal.fromPlanck(data[i] as bigint, DECIMALS ?? 0, { currency: DEEK_TICKER }),
+        amountDecimal: Decimal.fromPlanck(data[i] as bigint, DECIMALS ?? 0, { currency: SEEK_TICKER }),
       }))
     : []
 

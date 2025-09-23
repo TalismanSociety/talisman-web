@@ -8,9 +8,9 @@ import { useWagmiWriteContract } from '@/domains/common/hooks/useWagmiWriteContr
 import {
   CHAIN_ID,
   DECIMALS,
-  DEEK_SINGLE_POOL_STAKING_ADDRESS,
-  DEEK_TICKER,
-  DEEK_TOKEN_ADDRESS,
+  SEEK_SINGLE_POOL_STAKING_ADDRESS,
+  SEEK_TICKER,
+  SEEK_TOKEN_ADDRESS,
 } from '@/domains/staking/seek/constants'
 import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStakingAbi'
 import { Decimal } from '@/util/Decimal'
@@ -49,10 +49,10 @@ const useStakeSeek = ({
     refetch: refetchAllowance,
   } = useReadContract({
     chainId: CHAIN_ID,
-    address: DEEK_TOKEN_ADDRESS,
+    address: SEEK_TOKEN_ADDRESS,
     abi: erc20Abi,
     functionName: 'allowance',
-    args: [(account?.address ?? '0x') as `0x${string}`, DEEK_SINGLE_POOL_STAKING_ADDRESS as `0x${string}`],
+    args: [(account?.address ?? '0x') as `0x${string}`, SEEK_SINGLE_POOL_STAKING_ADDRESS as `0x${string}`],
     query: {
       enabled: account?.address !== undefined,
     },
@@ -64,10 +64,10 @@ const useStakeSeek = ({
     writeContractAsync: async () =>
       await _approve.writeContractAsync({
         chainId: CHAIN_ID,
-        address: DEEK_TOKEN_ADDRESS,
+        address: SEEK_TOKEN_ADDRESS,
         abi: erc20Abi,
         functionName: 'approve',
-        args: [DEEK_SINGLE_POOL_STAKING_ADDRESS as `0x${string}`, decimalAmountInput?.planck ?? 0n],
+        args: [SEEK_SINGLE_POOL_STAKING_ADDRESS as `0x${string}`, decimalAmountInput?.planck ?? 0n],
         etherscanUrl: CHAIN_ID === polygon.id ? polygon.blockExplorers.default.url : mainnet.blockExplorers.default.url,
       }),
   }
@@ -89,7 +89,7 @@ const useStakeSeek = ({
     writeContractAsync: async () =>
       await _stake.writeContractAsync({
         chainId: CHAIN_ID,
-        address: DEEK_SINGLE_POOL_STAKING_ADDRESS,
+        address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
         abi: seekSinglePoolStakingAbi,
         functionName: 'stake',
         args: [decimalAmountInput?.planck ?? 0n],
@@ -116,7 +116,7 @@ const useStakeSeek = ({
   }, [allowance, decimalAmountInput])
 
   const minAmount = useMemo(() => {
-    return Decimal.fromPlanck(minStakeAmount, DECIMALS ?? 0, { currency: DEEK_TICKER })
+    return Decimal.fromPlanck(minStakeAmount, DECIMALS ?? 0, { currency: SEEK_TICKER })
   }, [minStakeAmount])
 
   const error = useMemo(() => {

@@ -1,4 +1,4 @@
-import { CHAIN_ID, DEEK_TICKER, DEEK_TOKEN_ADDRESS } from '../staking/seek/constants'
+import { CHAIN_ID, SEEK_TICKER, SEEK_TOKEN_ADDRESS } from '../staking/seek/constants'
 
 export type CustomTokensConfig = CustomTokenConfig[]
 export type CustomTokenConfig = {
@@ -45,10 +45,10 @@ export const customTokensConfig: CustomTokensConfig = [
   },
   {
     coingeckoId: '',
-    contractAddress: DEEK_TOKEN_ADDRESS,
+    contractAddress: SEEK_TOKEN_ADDRESS,
     decimals: 18,
     evmChainId: CHAIN_ID.toString(),
     logo: '',
-    symbol: DEEK_TICKER,
+    symbol: SEEK_TICKER,
   },
 ]

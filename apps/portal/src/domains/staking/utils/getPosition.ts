@@ -1,11 +1,11 @@
-import { DEEK_TICKER } from '../seek/constants'
+import { SEEK_TICKER } from '../seek/constants'
 
 /**
  * To add a provider,insert it into the ordered array as provider_tokensymbol.
  * The index of the array determines its position automatically.
  */
 const orderedProviders: string[] = [
-  `talisman_${DEEK_TICKER.toLowerCase()}`, // Talisman Seek
+  `talisman_${SEEK_TICKER.toLowerCase()}`, // Talisman Seek
   'polkadot_dot',
   'bittensor_tao',
   'bittensor_testnet_testtao',

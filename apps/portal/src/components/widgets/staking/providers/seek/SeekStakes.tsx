@@ -7,7 +7,7 @@ import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { RedactableBalance } from '@/components/widgets/RedactableBalance'
 import { Account, evmSignableAccountsState } from '@/domains/accounts/recoils'
-import { CHAIN_ID, CHAIN_NAME, DEEK_TICKER } from '@/domains/staking/seek/constants'
+import { CHAIN_ID, CHAIN_NAME, SEEK_TICKER } from '@/domains/staking/seek/constants'
 import { Decimal } from '@/util/Decimal'
 
 import useCancelWithdrawalSeek from '../hooks/seek/useCancelWithdrawalSeek'
@@ -62,7 +62,7 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
   setShouldRenderLoadingSkeleton(false)
 
   const { amountDecimal } = stakedBalance ?? { amountDecimal: Decimal.fromPlanck(0n, 0) }
-  // TODO: fetch DEEK fiat price
+  // TODO: fetch SEEK fiat price
   const fiatBalance = 0
 
   return (
@@ -71,7 +71,7 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
       renderFallback={() => (
         <StakePositionErrorBoundary
           chain={CHAIN_NAME}
-          assetSymbol={DEEK_TICKER}
+          assetSymbol={SEEK_TICKER}
           assetLogoSrc={SeekLogo}
           account={account}
           provider="Talisman"
@@ -97,7 +97,7 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
         }
         chain={CHAIN_NAME}
         chainId={CHAIN_ID}
-        assetSymbol={DEEK_TICKER}
+        assetSymbol={SEEK_TICKER}
         assetLogoSrc={SeekLogo}
         increaseStakeButton={
           <ErrorBoundary renderFallback={() => <>--</>}>

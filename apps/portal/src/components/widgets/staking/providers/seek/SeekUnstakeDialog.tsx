@@ -28,7 +28,7 @@ const SeekUnstakeDialog = ({ account, onRequestDismiss }: SeekUnstakeDialogProps
 
   const unlockDuration = useGetSeekStakeUnlockDuration()
 
-  // TODO: fetch DEEK fiat price
+  // TODO: fetch SEEK fiat price
   const fiatAmountAvailable = ''
 
   return (
