@@ -7,6 +7,7 @@ import { InfoCard } from '@talismn/ui/molecules/InfoCard'
 import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
 import { Clock, Zap } from '@talismn/web-icons'
 import { formatDistance } from 'date-fns'
+import { useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
@@ -32,9 +33,9 @@ const AddStakeSideSheet = () => {
 
   const navigate = useNavigate()
 
-  const handleTransactionSuccess = () => {
+  const handleTransactionSuccess = useCallback(() => {
     navigate('/staking/positions')
-  }
+  }, [navigate])
 
   const {
     available,

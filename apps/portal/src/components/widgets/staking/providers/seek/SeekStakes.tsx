@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
 import SeekLogo from '@/assets/seek.svg'
@@ -56,6 +56,14 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
   const shouldDisplayAssetRow = useMemo(() => {
     return stakedBalance?.amount || earnedBalance.planck > 0n || pendingWithdrawalsBalance.planck > 0n
   }, [earnedBalance.planck, pendingWithdrawalsBalance.planck, stakedBalance?.amount])
+
+  const handleCloseIncreaseStakeDialog = useCallback(() => {
+    setIncreaseStakeDialogOpen(false)
+  }, [setIncreaseStakeDialogOpen])
+
+  const handleCloseUnstakeDialog = useCallback(() => {
+    setUnstakeDialogOpen(false)
+  }, [setUnstakeDialogOpen])
 
   if (!shouldDisplayAssetRow) return null
 
@@ -149,11 +157,9 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
         }
       />
       {increaseStakeDialogOpen && (
-        <SeekAddStakeDialog account={account} onRequestDismiss={() => setIncreaseStakeDialogOpen(false)} />
+        <SeekAddStakeDialog account={account} onRequestDismiss={handleCloseIncreaseStakeDialog} />
       )}
-      {unstakeDialogOpen && (
-        <SeekUnstakeDialog account={account} onRequestDismiss={() => setUnstakeDialogOpen(false)} />
-      )}
+      {unstakeDialogOpen && <SeekUnstakeDialog account={account} onRequestDismiss={handleCloseUnstakeDialog} />}
     </ErrorBoundary>
   )
 }
