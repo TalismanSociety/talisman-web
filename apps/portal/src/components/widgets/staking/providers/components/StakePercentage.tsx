@@ -8,6 +8,7 @@ import useSlpxSubstrateStakePercentage from '../hooks/bifrost/useSlpxSubstrateSt
 import useDappStakePercentage from '../hooks/dapp/useStakePercentage'
 import useLidoStakePercentage from '../hooks/lido/useStakePercentage'
 import useNominationPoolStakePercentage from '../hooks/nominationPools/useStakePercentage'
+import useGetSeekStakePercentage from '../hooks/seek/useGetSeekStakePercentage'
 import useSubtensorStakePercentage from '../hooks/subtensor/useStakePercentage'
 import { StakeProviderTypeId } from '../hooks/types'
 
@@ -41,9 +42,13 @@ const StakePercentageDisplay = ({
     delegationSubtensor: useSubtensorStakePercentage,
     dappStaking: useDappStakePercentage,
     liquidStakingLido: useLidoStakePercentage,
+    seekStaking: useGetSeekStakePercentage,
   }
   let stakeValue: number = 0
   switch (typeId) {
+    case 'seekStaking':
+      stakeValue = hookMap['seekStaking']()
+      break
     case 'nominationPool':
       stakeValue = hookMap['nominationPool']()
       break
