@@ -8,12 +8,14 @@ import { CHAIN_ID, DECIMALS, SEEK_SINGLE_POOL_STAKING_ADDRESS, SEEK_TICKER } fro
 import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStakingAbi'
 import { Decimal } from '@/util/Decimal'
 
+import useGetSeekAvailableBalance from './useGetSeekAvailableBalance'
 import useGetSeekPoolAccountInfo from './useGetSeekPoolAccountInfo'
 import useGetSeekStaked from './useGetSeekStaked'
 
 const useClaimEarnedSeek = ({ account }: { account: Account | undefined }) => {
   const { data, isFetched, refetch } = useGetSeekPoolAccountInfo({ account })
   const { refetch: refetchStaked } = useGetSeekStaked()
+  const { refetch: refetchSeekBalances } = useGetSeekAvailableBalance()
   const [, , , earned] = data || [0n, 0n, 0n, 0n]
 
   const earnedBalance = useMemo(() => {
@@ -43,8 +45,9 @@ const useClaimEarnedSeek = ({ account }: { account: Account | undefined }) => {
     if (getRewardTransaction.data?.status === 'success') {
       refetch()
       refetchStaked()
+      refetchSeekBalances()
     }
-  }, [refetch, getRewardTransaction.data?.status, refetchStaked])
+  }, [refetch, getRewardTransaction.data?.status, refetchStaked, refetchSeekBalances])
 
   const isReady = useMemo(() => {
     return isFetched && earnedBalance.planck > 0n

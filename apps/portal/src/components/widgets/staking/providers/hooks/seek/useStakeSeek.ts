@@ -31,6 +31,7 @@ const useStakeSeek = ({
     available,
     newStakedTotal,
     setAmountInput,
+    refetchSeekBalances,
     input: { amountInput, decimalAmountInput },
   } = useStakeSeekBase({ account, direction: 'stake' })
 
@@ -107,9 +108,17 @@ const useStakeSeek = ({
       refetchStakerInfo()
       refetchAllowance()
       refetchSeekStaked()
+      refetchSeekBalances()
       onTransactionSuccess()
     }
-  }, [stakeTransaction.data?.status, refetchStakerInfo, onTransactionSuccess, refetchAllowance, refetchSeekStaked])
+  }, [
+    stakeTransaction.data?.status,
+    refetchStakerInfo,
+    onTransactionSuccess,
+    refetchAllowance,
+    refetchSeekStaked,
+    refetchSeekBalances,
+  ])
 
   const approvalNeeded = useMemo(() => {
     return allowance !== undefined && decimalAmountInput !== undefined && decimalAmountInput.planck > allowance

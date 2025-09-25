@@ -13,7 +13,7 @@ const useStakeSeekBase = ({ account, direction }: { account: Account | undefined
   // TODO: Add token rate once we have a price source for SEEK
   // const originTokenRate = useRecoilValueLoadable(tokenPriceState({ coingeckoId: originTokenConfig.coingeckoId }))
 
-  const { seekBalances } = useGetSeekAvailableBalance()
+  const { seekBalances, refetch: refetchSeekBalances } = useGetSeekAvailableBalance()
 
   const {
     data: { balances },
@@ -59,6 +59,7 @@ const useStakeSeekBase = ({ account, direction }: { account: Account | undefined
     setAmountInput,
     newStakedTotal,
     available,
+    refetchSeekBalances,
   }
 }
 
