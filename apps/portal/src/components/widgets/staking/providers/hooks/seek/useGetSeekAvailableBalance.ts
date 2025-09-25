@@ -32,8 +32,6 @@ const useGetSeekAvailableBalance = () => {
   const totalAvailableFormatted = formatDecimals(formatUnits(totalAvailable, DECIMALS))
   const availableBalance = Decimal.fromPlanck(totalAvailable, 18, { currency: SEEK_TICKER })
 
-  console.log({ data })
-
   const seekBalances = useMemo(() => {
     return {
       tokenId: `137-evm-erc20-${SEEK_TOKEN_ADDRESS}`,
