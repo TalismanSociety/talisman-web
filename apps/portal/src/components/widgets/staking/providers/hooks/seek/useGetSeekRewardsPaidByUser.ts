@@ -31,7 +31,9 @@ const GET_SEEK_USER_QUERY = `
 
 const fetchSeekUserData = async (userId: string): Promise<SeekUser | null> => {
   try {
-    const response = await request<SeekUserResponse>(import.meta.env.VITE_RAMP_API_KEY, GET_SEEK_USER_QUERY, { userId })
+    const response = await request<SeekUserResponse>(import.meta.env.VITE_SEEK_STAKE_INDEXER, GET_SEEK_USER_QUERY, {
+      userId,
+    })
 
     return response.users?.[0] || null
   } catch (error) {
