@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { useWaitForTransactionReceipt } from 'wagmi'
 import { mainnet, polygon } from 'wagmi/chains'
@@ -10,6 +11,7 @@ import { Decimal } from '@/util/Decimal'
 
 import useGetSeekAvailableBalance from './useGetSeekAvailableBalance'
 import useGetSeekPoolAccountInfo from './useGetSeekPoolAccountInfo'
+import { SEEK_REWARDS_PAID_BY_USER_QUERY_KEY } from './useGetSeekRewardsPaidByUser'
 import useGetSeekStaked from './useGetSeekStaked'
 
 const useClaimEarnedSeek = ({ account }: { account: Account | undefined }) => {
@@ -17,6 +19,7 @@ const useClaimEarnedSeek = ({ account }: { account: Account | undefined }) => {
   const { refetch: refetchStaked } = useGetSeekStaked()
   const { refetch: refetchSeekBalances } = useGetSeekAvailableBalance()
   const [, , , earned] = data || [0n, 0n, 0n, 0n]
+  const queryClient = useQueryClient()
 
   const earnedBalance = useMemo(() => {
     return Decimal.fromPlanck(earned, DECIMALS ?? 0, { currency: SEEK_TICKER })
@@ -46,8 +49,14 @@ const useClaimEarnedSeek = ({ account }: { account: Account | undefined }) => {
       refetch()
       refetchStaked()
       refetchSeekBalances()
+      const indexerCooldown = 12_000
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          queryKey: [SEEK_REWARDS_PAID_BY_USER_QUERY_KEY, account?.address.toLowerCase()],
+        })
+      }, indexerCooldown)
     }
-  }, [refetch, getRewardTransaction.data?.status, refetchStaked, refetchSeekBalances])
+  }, [refetch, getRewardTransaction.data?.status, refetchStaked, refetchSeekBalances, queryClient, account?.address])
 
   const isReady = useMemo(() => {
     return isFetched && earnedBalance.planck > 0n

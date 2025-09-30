@@ -7,12 +7,14 @@ import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { RedactableBalance } from '@/components/widgets/RedactableBalance'
 import { Account, evmSignableAccountsState } from '@/domains/accounts/recoils'
-import { CHAIN_ID, CHAIN_NAME, SEEK_TICKER } from '@/domains/staking/seek/constants'
+import { selectedCurrencyState } from '@/domains/balances/currency'
+import { CHAIN_ID, CHAIN_NAME, DECIMALS, SEEK_TICKER } from '@/domains/staking/seek/constants'
 import { Decimal } from '@/util/Decimal'
 
 import useCancelWithdrawalSeek from '../hooks/seek/useCancelWithdrawalSeek'
 import useClaimEarnedSeek from '../hooks/seek/useClaimEarnedSeek'
 import useCompleteWithdrawalSeek from '../hooks/seek/useCompleteWithdrawalSeek'
+import useGetSeekRewardsPaidByUser from '../hooks/seek/useGetSeekRewardsPaidByUser'
 import useGetSeekStaked from '../hooks/seek/useGetSeekStaked'
 import SeekAddStakeDialog from './SeekAddStakeDialog'
 import SeekUnstakeDialog from './SeekUnstakeDialog'
@@ -50,6 +52,12 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
     isReady: isCompleteWithdrawalReady,
   } = useCompleteWithdrawalSeek({ account })
   const { cancelWithdrawal } = useCancelWithdrawalSeek({ account })
+  const currency = useRecoilValue(selectedCurrencyState)
+  const { data: rewardsPaidData } = useGetSeekRewardsPaidByUser(account.address)
+
+  const { totalRewardsClaimed } = rewardsPaidData || { totalRewardsClaimed: 0 }
+
+  const rewardsClaimedDecimal = Decimal.fromPlanck(totalRewardsClaimed, DECIMALS ?? 0, { currency: SEEK_TICKER })
 
   const stakedBalance = balances.find(balance => balance.address === account.address)
 
@@ -72,6 +80,11 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
   const { amountDecimal } = stakedBalance ?? { amountDecimal: Decimal.fromPlanck(0n, 0) }
   // TODO: fetch SEEK fiat price
   const fiatBalance = 0
+  const fiatRewards = 0
+  const fiatRewardsFormatted = fiatRewards.toLocaleString(undefined, {
+    style: 'currency',
+    currency,
+  })
 
   return (
     <ErrorBoundary
@@ -93,6 +106,8 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
         account={account}
         provider="Talisman"
         stakeStatus={amountDecimal.planck > 0n ? 'earning_rewards' : 'not_earning_rewards'}
+        rewards={rewardsClaimedDecimal.toLocaleString()}
+        fiatRewards={fiatRewardsFormatted}
         balance={
           <ErrorBoundary renderFallback={() => <>--</>}>
             <RedactableBalance>{amountDecimal.toLocaleString()}</RedactableBalance>
