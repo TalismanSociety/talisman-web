@@ -1,8 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import request from 'graphql-request'
 
-const SEEK_GRAPHQL_ENDPOINT = 'https://talisman.squids.live/seek-staking-sqd-indexer@v1/api/graphql'
-
 export const SEEK_REWARDS_PAID_BY_USER_QUERY_KEY = 'seekRewardsPaidByUser'
 
 export type SeekUser = {
@@ -33,7 +31,7 @@ const GET_SEEK_USER_QUERY = `
 
 const fetchSeekUserData = async (userId: string): Promise<SeekUser | null> => {
   try {
-    const response = await request<SeekUserResponse>(SEEK_GRAPHQL_ENDPOINT, GET_SEEK_USER_QUERY, { userId })
+    const response = await request<SeekUserResponse>(import.meta.env.VITE_RAMP_API_KEY, GET_SEEK_USER_QUERY, { userId })
 
     return response.users?.[0] || null
   } catch (error) {
