@@ -13,10 +13,11 @@ export const SeekBenefitsInfoBanner = () => {
     setIsVisible(!hidden)
   }, [storageKey])
 
-  const handleClose = () => {
-    localStorage.setItem(storageKey, 'true')
-    setIsVisible(false)
-  }
+  // TODO: Enable banner dismissal later
+  // const handleClose = () => {
+  //   localStorage.setItem(storageKey, 'true')
+  //   setIsVisible(false)
+  // }
 
   if (!isVisible) return null
   return (
@@ -33,7 +34,7 @@ export const SeekBenefitsInfoBanner = () => {
             <SeekInfoBenefitsBg />
           </div>
         </div>
-        <X className="ml-auto w-6 cursor-pointer font-semibold text-white" onClick={() => handleClose()} />
+        {/* <X className="ml-auto w-6 cursor-pointer font-semibold text-white" onClick={() => handleClose()} /> */}
       </div>
     </div>
   )
