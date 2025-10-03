@@ -2,6 +2,7 @@ import useGetSeekPoolInfo from './useGetSeekPoolInfo'
 
 const useGetSeekStakeApr = () => {
   const { data } = useGetSeekPoolInfo()
+  if (!data) return '0'
   const [totalStaked, rewardRate] = data || [0n, 0n]
 
   const SECONDS_IN_YEAR = BigInt(365.25 * 24 * 60 * 60) // 31,536,000 seconds

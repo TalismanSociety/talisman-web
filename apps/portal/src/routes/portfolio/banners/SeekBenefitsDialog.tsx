@@ -8,6 +8,7 @@ import ClockIcon from '@/assets/clock-icon.svg?react'
 import CoinsIcon from '@/assets/coins-hand-icon.svg?react'
 import SeekInfoBenefitsDialogBg from '@/assets/seek-benefits-dialog-bg.svg?react'
 import ZapFastIcon from '@/assets/zap-fast-icon.svg?react'
+import useGetSeekAvailableBalance from '@/components/widgets/staking/providers/hooks/seek/useGetSeekAvailableBalance'
 import useGetSeekStakeApr from '@/components/widgets/staking/providers/hooks/seek/useGetSeekStakeApr'
 import useSeekProviders from '@/components/widgets/staking/providers/hooks/seek/useSeekProviders'
 
@@ -22,6 +23,7 @@ const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps)
   const navigate = useNavigate()
   const seekBalance = 100
   const apy = useGetSeekStakeApr()
+  const { totalAvailableFormatted } = useGetSeekAvailableBalance()
 
   const seekStakingLink = `/staking/providers/${actionLink}`
 
@@ -58,7 +60,7 @@ const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps)
             </div>
           </div>
           <div className="w-fit rounded-[8px] bg-[#D5FF5C] bg-opacity-[0.1] px-5 py-2 text-[12px]">
-            You have: <span className="text-primary">{seekBalance}</span> SEEK
+            You have: <span className="text-primary">{totalAvailableFormatted}</span> SEEK
           </div>
         </div>
         <div className="mt-[2rem] rounded-[10px] border-2 border-[#393939] text-[14px]">
