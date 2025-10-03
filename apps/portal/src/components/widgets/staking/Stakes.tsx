@@ -16,6 +16,7 @@ import { useTotalStaked } from '@/domains/staking/hooks'
 
 import DappStakes from './dappStaking/Stakes'
 import LidoStakes from './lido/Stakes'
+import SeekStakes from './providers/seek/SeekStakes'
 import SlpxStakes from './slpx/Stakes'
 import SlpxSubstrateStakes from './slpxSubstrate/SlpxSubstrateStakes'
 import PoolStakes from './substrate/PoolStakes'
@@ -87,6 +88,13 @@ const Stakes = (props: { hideHeader?: boolean }) => {
         }}
       >
         {shouldRenderLoadingSkeleton && <StakePosition.Skeleton className={skellyClassName} css={{ order: 1 }} />}
+
+        <ErrorBoundary orientation="horizontal">
+          {' '}
+          <SuspenseSkeleton>
+            <SeekStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
+          </SuspenseSkeleton>
+        </ErrorBoundary>
 
         {chains.map((chain, index) => {
           return (

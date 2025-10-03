@@ -13,10 +13,12 @@ import { Children } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import type { PortfolioToken } from '@/components/legacy/widgets/useAssets'
+import SeekLogo from '@/assets/seek.svg'
 import { AssetLogoWithChain } from '@/components/recipes/AssetLogoWithChain'
 import { AssetNetworksLogoStack } from '@/components/recipes/AssetNetworksLogoStack'
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { RedactableBalance } from '@/components/widgets/RedactableBalance'
+import { SEEK_TICKER } from '@/domains/staking/seek/constants'
 
 export type AssetProps = {
   className?: string
@@ -27,6 +29,11 @@ export type AssetProps = {
 
 export const Asset = ({ token, lockedAsset }: AssetProps) => {
   const navigate = useNavigate()
+
+  // TODO: Remove this once SEEK is added to balances
+  if (token.tokenDetails.symbol === SEEK_TICKER) {
+    token.tokenDetails.logo = SeekLogo
+  }
 
   return (
     <tr
