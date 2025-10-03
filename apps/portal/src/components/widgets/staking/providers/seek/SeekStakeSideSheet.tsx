@@ -17,7 +17,7 @@ import { walletConnectionSideSheetOpenState } from '@/components/widgets/WalletC
 import { evmSignableAccountsState } from '@/domains/accounts/recoils'
 import { SEEK_TICKER } from '@/domains/staking/seek/constants'
 
-import useGetSeekStakeApr from '../hooks/seek/useGetSeekStakeApr'
+import useGetSeekStakeMpr from '../hooks/seek/useGetSeekStakeMpr'
 import useGetSeekStakeUnlockDuration from '../hooks/seek/useGetSeekStakeUnlockDuration'
 import useStakeSeek from '../hooks/seek/useStakeSeek'
 
@@ -29,7 +29,7 @@ const AddStakeSideSheet = () => {
   const [[account], accountSelector] = useAccountSelector(evmSignableAccounts, 0)
   const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
   const unlockDuration = useGetSeekStakeUnlockDuration()
-  const monthlyAPR = useGetSeekStakeApr()
+  const monthlyAPR = useGetSeekStakeMpr()
 
   const navigate = useNavigate()
 

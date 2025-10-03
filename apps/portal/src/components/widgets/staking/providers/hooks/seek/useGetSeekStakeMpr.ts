@@ -1,6 +1,6 @@
 import useGetSeekPoolInfo from './useGetSeekPoolInfo'
 
-const useGetSeekStakeApr = () => {
+const useGetSeekStakeMpr = () => {
   const { data } = useGetSeekPoolInfo()
   const [totalStaked, rewardRate] = data || [0n, 0n]
 
@@ -11,4 +11,4 @@ const useGetSeekStakeApr = () => {
   return monthlyReturn
 }
 
-export default useGetSeekStakeApr
+export default useGetSeekStakeMpr
