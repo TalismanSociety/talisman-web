@@ -21,7 +21,6 @@ const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps)
   const [seekProvider] = useSeekProviders()
   const { actionLink } = seekProvider ?? { actionLink: '' }
   const navigate = useNavigate()
-  const seekBalance = 100
   const apy = useGetSeekStakeApr()
   const { totalAvailableFormatted } = useGetSeekAvailableBalance()
 
