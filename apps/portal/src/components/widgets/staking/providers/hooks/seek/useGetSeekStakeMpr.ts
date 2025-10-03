@@ -1,6 +1,6 @@
 import useGetSeekPoolInfo from './useGetSeekPoolInfo'
 
-const useGetSeekStakeMpr = () => {
+const useGetSeekStakeMpr = (): number => {
   const { data } = useGetSeekPoolInfo()
   if (!data) return 0
   const [totalStaked, rewardRate] = data || [0n, 0n]
