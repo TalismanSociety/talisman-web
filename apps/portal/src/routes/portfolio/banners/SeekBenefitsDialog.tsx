@@ -8,6 +8,7 @@ import ClockIcon from '@/assets/clock-icon.svg?react'
 import CoinsIcon from '@/assets/coins-hand-icon.svg?react'
 import SeekInfoBenefitsDialogBg from '@/assets/seek-benefits-dialog-bg.svg?react'
 import ZapFastIcon from '@/assets/zap-fast-icon.svg?react'
+import useGetSeekStakeApr from '@/components/widgets/staking/providers/hooks/seek/useGetSeekStakeApr'
 import useSeekProviders from '@/components/widgets/staking/providers/hooks/seek/useSeekProviders'
 
 type SeekBenefitsDialogProps = {
@@ -20,7 +21,7 @@ const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps)
   const { actionLink } = seekProvider ?? { actionLink: '' }
   const navigate = useNavigate()
   const seekBalance = 100
-  const APY = '15%'
+  const apy = useGetSeekStakeApr()
 
   const seekStakingLink = `/staking/providers/${actionLink}`
 
@@ -66,7 +67,7 @@ const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps)
 
             <div className="size-2 shrink-0 rounded-full bg-[#5A5A5A]" />
 
-            <div className="text-primary">{APY} APY</div>
+            <div className="text-primary">{apy}% APY</div>
 
             <button
               className="ml-auto flex items-center gap-2 rounded-[43px] bg-[#D5FF5C] bg-opacity-[0.1] px-5 py-2
