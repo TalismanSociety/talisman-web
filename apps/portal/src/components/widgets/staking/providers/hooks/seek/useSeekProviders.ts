@@ -12,7 +12,7 @@ const useSeekProviders = (): Provider[] => {
     type: 'Seek Staking',
     typeId: 'seekStaking',
     provider: 'Talisman',
-    actionLink: `?action=stake&type=seek&chain=${CHAIN_ID}`,
+    actionLink: `?action=stake&type=seek`,
     nativeToken: { symbol: SEEK_TICKER, address: SEEK_TOKEN_ADDRESS, decimals: DECIMALS },
   }
 

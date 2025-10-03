@@ -2,11 +2,13 @@ import { Button } from '@talismn/ui/atoms/Button'
 import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
 import { ArrowRight, ZapIcon } from 'lucide-react'
 import { FC, SVGProps } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import ClockIcon from '@/assets/clock-icon.svg?react'
 import CoinsIcon from '@/assets/coins-hand-icon.svg?react'
 import SeekInfoBenefitsDialogBg from '@/assets/seek-benefits-dialog-bg.svg?react'
 import ZapFastIcon from '@/assets/zap-fast-icon.svg?react'
+import useSeekProviders from '@/components/widgets/staking/providers/hooks/seek/useSeekProviders'
 
 type SeekBenefitsDialogProps = {
   isOpen: boolean
@@ -14,8 +16,13 @@ type SeekBenefitsDialogProps = {
 }
 
 const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps) => {
+  const [seekProvider] = useSeekProviders()
+  const { actionLink } = seekProvider ?? { actionLink: '' }
+  const navigate = useNavigate()
   const seekBalance = 100
   const APY = '15%'
+
+  const seekStakingLink = `/staking/providers/${actionLink}`
 
   return (
     <AlertDialog
@@ -61,10 +68,14 @@ const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps)
 
             <div className="text-primary">{APY} APY</div>
 
-            <div className="ml-auto flex items-center gap-2 rounded-[43px] bg-[#D5FF5C] bg-opacity-[0.1] px-5 py-2">
+            <button
+              className="ml-auto flex items-center gap-2 rounded-[43px] bg-[#D5FF5C] bg-opacity-[0.1] px-5 py-2
+              transition-all duration-300 hover:hover:bg-opacity-[0.2]"
+              onClick={() => navigate(seekStakingLink, { replace: true })}
+            >
               <ZapIcon className="text-primary m-[0px] size-6 p-[0px]" />
               <div className="text-primary text-[14px]">Stake</div>
-            </div>
+            </button>
           </div>
           <div className="flex flex-col gap-[3rem] p-6">
             <ListItem

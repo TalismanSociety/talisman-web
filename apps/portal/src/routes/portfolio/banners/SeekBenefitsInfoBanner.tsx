@@ -26,7 +26,7 @@ export const SeekBenefitsInfoBanner = () => {
   return (
     <>
       <div
-        className=" pinter rounded-[10px] bg-gradient-to-r from-[#2E3128] to-[#1B1B1B] to-[274%] p-[1px] text-[14px]"
+        className="cursor-pointer rounded-[10px] bg-gradient-to-r from-[#2E3128] to-[#1B1B1B] to-[274%] p-[1px] text-[14px]"
         onClick={() => setIsOpen(true)}
       >
         <div className="relative flex h-[64px] rounded-[10px] bg-gradient-to-b from-[rgb(27,27,27)] to-[#3F3F0C] to-[287%] p-2">
