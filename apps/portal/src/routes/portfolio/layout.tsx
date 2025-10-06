@@ -36,7 +36,6 @@ const Layout = () => {
         </PageHeaderItem>
 
         <PageHeaderItem>
-          <GetDiscountCard storageKey="portfolio-overview" />
           <PortfolioAddressSearch className="min-w-[22rem]" />
         </PageHeaderItem>
       </PageHeader>

@@ -35,10 +35,10 @@ const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps)
       onRequestDismiss={onToggleIsOpen}
       className="h-[60rem]"
     >
-      <div className="absolute right-0 top-0">
+      <div className="absolute right-0 top-0 z-[-1]">
         <SeekInfoBenefitsDialogBg />
       </div>
-      <div className="absolute left-0 right-0 top-0 z-[-1] h-[20rem] bg-gradient-to-t from-[#1b1b1b] to-[#505F2E] to-[98%]" />
+      <div className="absolute left-0 right-0 top-0 z-[-2] h-[20rem] bg-gradient-to-t from-[#1b1b1b] to-[#505F2E] to-[98%]" />
       <div className="h-[40rem]">
         <div className="flex flex-col gap-4">
           <div>
