@@ -24,13 +24,14 @@ export const chainState = selectorFamily({
       const chain = chaindataChainsByGenesisHash?.[genesisHash] as Chain
       const nativeToken = chain?.nativeToken ? (await jotaiStore.get(tokensByIdAtom))[chain.nativeToken.id] : undefined
 
-      return nullToUndefined({
+      const result = nullToUndefined({
         ...chain,
         genesisHash: genesisHash as `0x${string}`,
         nativeToken,
         rpc: chain?.rpcs?.at(0)?.url,
         ...chainConfigs.find(config => config.genesisHash === chain?.genesisHash),
       })
+      return result as typeof result & { isDisabled?: boolean }
     },
 })
 
