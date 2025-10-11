@@ -1,11 +1,18 @@
 import { formatDecimals } from '@talismn/util'
 import { useMemo } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import { erc20Abi, formatUnits } from 'viem'
 import { useReadContracts } from 'wagmi'
 
 import { writeableEvmAccountsState } from '@/domains/accounts/recoils'
-import { CHAIN_ID, DECIMALS, SEEK_TICKER, SEEK_TOKEN_ADDRESS } from '@/domains/staking/seek/constants'
+import { tokenPriceState } from '@/domains/chains/recoils'
+import {
+  CHAIN_ID,
+  DECIMALS,
+  SEEK_COIN_GECKO_ID,
+  SEEK_TICKER,
+  SEEK_TOKEN_ADDRESS,
+} from '@/domains/staking/seek/constants'
 import { Decimal } from '@/util/Decimal'
 
 const useGetSeekAvailableBalance = () => {
@@ -44,10 +51,13 @@ const useGetSeekAvailableBalance = () => {
     }
   }, [data, ethAccounts])
 
-  // TODO: fetch SEEK fiat price
+  const tokenPriceLoadable = useRecoilValueLoadable(tokenPriceState({ coingeckoId: SEEK_COIN_GECKO_ID }))
+  const tokenPrice = tokenPriceLoadable.valueMaybe()
+  const fiatAmount = useMemo(() => availableBalance.toNumber() * (tokenPrice ?? 0), [availableBalance, tokenPrice])
+
   return {
     availableBalance,
-    fiatAmount: 0,
+    fiatAmount,
     totalAvailable,
     totalAvailableFormatted,
     seekBalances,

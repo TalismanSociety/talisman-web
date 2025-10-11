@@ -4,6 +4,8 @@ export const SEEK_TOKEN_ADDRESS = '0x2a69b0383759572081c09f0a68d3a8a955751dde' a
 export const SEEK_TICKER = 'SEEK'
 export const CHAIN_ID = 137 // Polygon
 export const CHAIN_NAME = 'Polygon'
+export const SEEK_COIN_GECKO_ID = 'usd-coin'
+export const SEEK_TOKEN_ID = '137:evm-erc20:0x2a69b0383759572081c09f0a68d3a8a955751dde' // USDT on Mainnet
 
 export const DISCOUNT_TIERS = [
   { tier: 0, min: 0n, discount: 0 },
