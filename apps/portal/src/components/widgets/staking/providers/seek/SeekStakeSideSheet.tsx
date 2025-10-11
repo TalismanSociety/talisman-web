@@ -38,7 +38,7 @@ const AddStakeSideSheet = () => {
   }, [navigate])
 
   const {
-    available,
+    balanceByWalletAddress: { availableBalance, fiatAmountFormatted },
     newStakedTotal,
     setAmountInput,
     approvalNeeded,
@@ -103,13 +103,13 @@ const AddStakeSideSheet = () => {
               </Button>
             )
           }
-          availableToStake={available?.toLocaleString()}
+          availableToStake={availableBalance?.toLocaleString()}
           amount={amountInput}
-          fiatAmount=""
+          fiatAmount={fiatAmountFormatted}
           newAmount={newStakedTotal.toLocaleString()}
           newFiatAmount={null}
           onChangeAmount={setAmountInput}
-          onRequestMaxAmount={() => setAmountInput(available?.toString() ?? '')}
+          onRequestMaxAmount={() => setAmountInput(availableBalance?.toString() ?? '')}
           onConfirm={async () => {
             if (approvalNeeded) {
               try {
