@@ -94,7 +94,8 @@ const getAdditionalFee = (feeProps: FeeProps) =>
   )
 // Our UI represents a 1% fee as `0.01`, but the StealthEX api represents a 1% fee as `1.0`.
 // 1.0 = 0.01 * 100
-const getAdditionalFeePercent = (feeProps: FeeProps) => getAdditionalFee(feeProps) * 100 // to percent
+const decimalToPercent = (decimal: number) => Math.round(decimal * 100 * 100) / 100
+const getAdditionalFeePercent = (feeProps: FeeProps) => decimalToPercent(getAdditionalFee(feeProps)) // to percent
 
 const LOGO = stealthexLogo
 
