@@ -23,6 +23,7 @@ type ChainWithSubtensorStaking = {
 export type ChainConfig =
   | BaseChain
   | (BaseChain & (ChainWithNominationPools | ChainWithDappStaking | ChainWithSubtensorStaking))
+  | (BaseChain & { isDisabled?: true })
 
 export const chainConfigs: ChainConfig[] = [
   // Analog Timechain
@@ -50,6 +51,7 @@ export const chainConfigs: ChainConfig[] = [
     talismanPools: [15],
     // From https://github.com/novasamatech/nova-utils/blob/3f3568fd9c2e068b45b5b378c4d58287d2cda68e/chains/v21/chains_dev.json#L236C29-L236C83
     novaIndexerUrl: 'https://subquery-history-kusama-prod.novasama-tech.org',
+    isDisabled: true,
   },
   // Astar
   {
