@@ -169,7 +169,10 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
       {
         accessorKey: 'action',
         header: '',
-        cell: ({ row }) => <StakeButton as={Link} to={row.original.actionLink} disabled={row.original.isDisabled} />,
+        cell: ({ row }) => {
+          const { isDisabled } = row.original
+          return isDisabled ? <StakeButton disabled /> : <StakeButton as={Link} to={row.original.actionLink} />
+        },
         enableSorting: false,
       },
     ],
