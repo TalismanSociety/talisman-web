@@ -129,15 +129,21 @@ const AddStakeSideSheet = () => {
           inputSupportingText={error?.message}
         />
       </Surface>
-      <Text.Body as="p" css={{ marginTop: '4.8rem' }}>
-        {`Stake your ${SEEK_TICKER} tokens to access exclusive fee discounts when staking TAO on our platform. This is more than just a staking token, ${SEEK_TICKER} is at the core of a new generation of crypto wallets powered by AI agents, designed to make web3 smarter, safer, and more intuitive. Additional benefits for $NEW stakers will be introduced in the future, bringing even more value to early supporters. Learn more`}{' '}
-        <Text.Noop.A target="blank" href="https://talisman.xyz/">
-          Learn more
-        </Text.Noop.A>
-      </Text.Body>
-      <Text.Body as="p" css={{ marginTop: '1.6rem' }}>
-        You’ll need ETH on Ethereum Mainnet to cover transaction fees.
-      </Text.Body>
+      <div className="mt-[4.8rem] flex flex-col gap-[1.6rem]">
+        <Text.Body as="p">
+          Stake your SEEK tokens to earn rewards and unlock exclusive access across the Talisman ecosystem.
+        </Text.Body>
+        <Text.Body as="p">
+          More than just a staking token, SEEK is the alignment layer powering Talisman’s AI-driven future.
+        </Text.Body>
+        <Text.Body as="p">
+          Stake early to maximize your rewards.{' '}
+          <Text.Noop.A target="blank" href="https://talisman.xyz/">
+            Learn more
+          </Text.Noop.A>
+        </Text.Body>
+        <Text.Body as="p">You’ll need ETH on Ethereum Mainnet to cover transaction fees.</Text.Body>
+      </div>
       <div className="mt-2 flex justify-end">
         <Tooltip content="Transaction may take several minutes to complete">
           <SurfaceChip className="cursor-default">
