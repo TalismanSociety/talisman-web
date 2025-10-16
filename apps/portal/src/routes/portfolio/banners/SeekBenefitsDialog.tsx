@@ -42,11 +42,11 @@ const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps)
       <div className="h-[40rem]">
         <div className="flex flex-col gap-4">
           <div>
-            <div className="text-3xl font-bold text-white">Talisman SEEK is live</div>
+            <div className="text-3xl font-bold text-white">It’s Time to SEEK</div>
           </div>
           <div className="flex flex-col gap-10 text-gray-400">
             <div className="w-[22rem] text-[14px]">
-              Become part of the Seeker community.{' '}
+              Hold SEEK to unlock exclusive benefits.{' '}
               <a
                 className="inline-flex items-center justify-center gap-1 text-white"
                 href="https://talisman.xyz/seek"
@@ -84,22 +84,22 @@ const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps)
               Icon={ZapFastIcon}
               color="#D5FF5C"
               backgroundColor="rgba(213, 255, 92, 0.12)"
-              title="Up to 50% rewards"
-              description="Maximize your staking power with SEEK."
-            />
-            <ListItem
-              Icon={CoinsIcon}
-              color="rgba(253, 143, 255, 1)"
-              backgroundColor="rgba(255, 92, 225, 0.12)"
-              title="Earn fee discounts on Bittensor"
-              description="Stake SEEK and trade with lower fees."
+              title="Earn up to 50% rewards"
+              description="Stake SEEK and watch your yield grow."
             />
             <ListItem
               Icon={ClockIcon}
+              color="rgba(253, 143, 255, 1)"
+              backgroundColor="rgba(255, 92, 225, 0.12)"
+              title="Stake early for XX% rewards boost"
+              description="Get boosted staking rewards while they last."
+            />
+            <ListItem
+              Icon={CoinsIcon}
               color="rgba(186, 143, 255, 1)"
               backgroundColor="rgba(121, 112, 255, 0.19)"
-              title="More benefits coming soon"
-              description="Unlock future perks by staking SEEK."
+              title="Fee discounts on Bittensor"
+              description="Stake SEEK for lower dTAO staking fees."
             />
           </div>
         </div>
