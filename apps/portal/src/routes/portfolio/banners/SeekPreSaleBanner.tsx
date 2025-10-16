@@ -35,7 +35,6 @@ export const SeekPreSaleBanner = () => {
           </div>
           <div className="absolute right-8 top-0">
             <SeekPreSaleBg />
-            {/* <SeekInfoBenefitsBg /> */}
           </div>
         </div>
         <X className="ml-auto w-6 cursor-pointer font-semibold text-white" onClick={() => handleClose()} />
