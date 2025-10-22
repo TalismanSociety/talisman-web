@@ -1,3 +1,4 @@
+import { evmErc20TokenId } from '@talismn/balances-react'
 import { formatDecimals } from '@talismn/util'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
@@ -32,9 +33,11 @@ const useGetSeekAvailableBalance = () => {
   const totalAvailableFormatted = formatDecimals(formatUnits(totalAvailable, DECIMALS))
   const availableBalance = Decimal.fromPlanck(totalAvailable, 18, { currency: SEEK_TICKER })
 
+  const tokenId = evmErc20TokenId(CHAIN_ID.toString(), SEEK_TOKEN_ADDRESS)
+
   const seekBalances = useMemo(() => {
     return {
-      tokenId: `137-evm-erc20-${SEEK_TOKEN_ADDRESS}`,
+      tokenId: tokenId,
       each: ethAccounts.map((account, index) => ({
         address: account.address,
         total: {
@@ -42,7 +45,7 @@ const useGetSeekAvailableBalance = () => {
         },
       })),
     }
-  }, [data, ethAccounts])
+  }, [data, ethAccounts, tokenId])
 
   // TODO: fetch SEEK fiat price
   return {

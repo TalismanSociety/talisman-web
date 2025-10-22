@@ -157,7 +157,6 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
     </SideSheet>
   )
 }
-// HERE
 export default () => {
   const slpxPairs = useRecoilValue(slpxPairsState)
   const [searchParams, setSearchParams] = useSearchParams()
