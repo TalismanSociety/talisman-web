@@ -138,7 +138,7 @@ const AddStakeSideSheet = () => {
         </Text.Body>
         <Text.Body as="p">
           Stake early to maximize your rewards.{' '}
-          <Text.Noop.A target="blank" href="https://talisman.xyz/">
+          <Text.Noop.A target="blank" href="https://talisman.xyz/seek">
             Learn more
           </Text.Noop.A>
         </Text.Body>
