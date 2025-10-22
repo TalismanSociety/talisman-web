@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 
 import SeekTilted from '@/assets/seek-tilted.svg?react'
 
-import { DEEK_TICKER } from './constants'
+import { SEEK_TICKER } from './constants'
 
 type GetDiscountCardProps = {
   storageKey: string
@@ -31,7 +31,7 @@ export const GetDiscountCard = ({ storageKey }: GetDiscountCardProps) => {
             <div className="flex items-center">
               <div className="font-semibold">Get Fee Discounts</div>
             </div>
-            <div className="text-[12px] text-gray-400">Stake {DEEK_TICKER} now to get discounts</div>
+            <div className="text-[12px] text-gray-400">Stake {SEEK_TICKER} now to get discounts</div>
           </div>
           <SeekTilted />
         </div>

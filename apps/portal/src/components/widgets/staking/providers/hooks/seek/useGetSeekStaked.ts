@@ -3,17 +3,23 @@ import { formatUnits } from 'viem'
 import { useReadContracts } from 'wagmi'
 
 import { writeableEvmAccountsState } from '@/domains/accounts/recoils'
+import { Decimal } from '@/util/Decimal'
 
-import { CHAIN_ID, DECIMALS, DEEK_SINGLE_POOL_STAKING_ADDRESS } from '../constants'
-import seekSinglePoolStakingAbi from '../seekSinglePoolStakingAbi'
+import {
+  CHAIN_ID,
+  DECIMALS,
+  SEEK_SINGLE_POOL_STAKING_ADDRESS,
+  SEEK_TICKER,
+} from '../../../../../../domains/staking/seek/constants'
+import seekSinglePoolStakingAbi from '../../../../../../domains/staking/seek/seekSinglePoolStakingAbi'
 
-export const useGetSeekStaked = () => {
+const useGetSeekStaked = () => {
   const ethAccounts = useRecoilValue(writeableEvmAccountsState)
 
   const { data, isLoading, isError, refetch } = useReadContracts({
     allowFailure: false,
     contracts: ethAccounts.map(a => ({
-      address: DEEK_SINGLE_POOL_STAKING_ADDRESS,
+      address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
       abi: seekSinglePoolStakingAbi,
       functionName: 'balanceOf',
       args: [a.address],
@@ -28,6 +34,7 @@ export const useGetSeekStaked = () => {
         address: account.address,
         amount: (data[i] as bigint) || 0n,
         amountFormatted: formatUnits((data[i] as bigint) || 0n, DECIMALS),
+        amountDecimal: Decimal.fromPlanck(data[i] as bigint, DECIMALS ?? 0, { currency: SEEK_TICKER }),
       }))
     : []
 
@@ -40,3 +47,5 @@ export const useGetSeekStaked = () => {
 
   return { data: { balances, totalStaked }, isLoading, isError, refetch }
 }
+
+export default useGetSeekStaked

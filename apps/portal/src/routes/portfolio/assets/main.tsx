@@ -4,10 +4,12 @@ import { InfoCard } from '@talismn/ui/molecules/InfoCard'
 import { SearchBar } from '@talismn/ui/molecules/SearchBar'
 import { useState } from 'react'
 
+import SeekLogo from '@/assets/seek.svg'
 import { useAssets, useAssetsFiltered } from '@/components/legacy/widgets/useAssets'
 import { WalletTotal } from '@/components/legacy/widgets/WalletTotal'
 import { Asset, AssetsList, AssetsListLocked } from '@/components/recipes/Asset'
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
+import { SEEK_TICKER } from '@/domains/staking/seek/constants'
 
 const Assets = () => {
   const [search, setSearch] = useState('')
@@ -76,9 +78,13 @@ const Assets = () => {
         }}
       >
         <AssetsList isLoading={isLoading}>
-          {tokens?.map(token => (
-            <Asset key={token?.tokenDetails?.id} token={token} balances={balances} />
-          ))}
+          {tokens?.map(token => {
+            // TODO: Remove this once SEEK is added to balances
+            if (token?.tokenDetails?.symbol === SEEK_TICKER) {
+              token.tokenDetails.logo = SeekLogo
+            }
+            return <Asset key={token?.tokenDetails?.id} token={token} balances={balances} />
+          })}
         </AssetsList>
         <AssetsListLocked isLoading={isLoading}>
           {/* tokens but filtered by locked */}

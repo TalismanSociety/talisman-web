@@ -1,5 +1,6 @@
+import useGetSeekStaked from '@/components/widgets/staking/providers/hooks/seek/useGetSeekStaked'
+
 import { DISCOUNT_TIERS } from '../constants'
-import { useGetSeekStaked } from './useGetSeekStaked'
 
 export const useGetSeekDiscount = () => {
   const { data, isLoading, isError, refetch } = useGetSeekStaked()
