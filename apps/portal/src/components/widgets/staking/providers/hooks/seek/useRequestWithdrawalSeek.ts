@@ -1,10 +1,19 @@
 import { useEffect, useMemo } from 'react'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import { useWaitForTransactionReceipt } from 'wagmi'
 import { mainnet, polygon } from 'wagmi/chains'
 
 import { Account } from '@/domains/accounts/recoils'
+import { selectedCurrencyState } from '@/domains/balances/currency'
+import { tokenPriceState } from '@/domains/chains/recoils'
 import { useWagmiWriteContract } from '@/domains/common/hooks/useWagmiWriteContract'
-import { CHAIN_ID, DECIMALS, SEEK_SINGLE_POOL_STAKING_ADDRESS, SEEK_TICKER } from '@/domains/staking/seek/constants'
+import {
+  CHAIN_ID,
+  DECIMALS,
+  SEEK_COIN_GECKO_ID,
+  SEEK_SINGLE_POOL_STAKING_ADDRESS,
+  SEEK_TICKER,
+} from '@/domains/staking/seek/constants'
 import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStakingAbi'
 import { Decimal } from '@/util/Decimal'
 
@@ -28,10 +37,20 @@ const useRequestWithdrawalSeek = ({
   const { refetch: refetchSeekStaked } = useGetSeekStaked()
   const { data, isFetched, refetch } = useGetSeekPoolAccountInfo({ account })
   const [staked] = data || [0n, 0n, 0n, 0n]
+  const currency = useRecoilValue(selectedCurrencyState)
+  const tokenPriceLoadable = useRecoilValueLoadable(tokenPriceState({ coingeckoId: SEEK_COIN_GECKO_ID }))
+  const tokenPrice = tokenPriceLoadable.valueMaybe()
 
   const stakedBalance = useMemo(() => {
-    return Decimal.fromPlanck(staked, DECIMALS ?? 0, { currency: SEEK_TICKER })
-  }, [staked])
+    const availableBalance = Decimal.fromPlanck(staked, DECIMALS ?? 0, { currency: SEEK_TICKER })
+    const fiatAmount = availableBalance.toNumber() * (tokenPrice ?? 0)
+    const fiatAmountFormatted = fiatAmount.toLocaleString(undefined, { style: 'currency', currency })
+    return {
+      availableBalance,
+      fiatAmount,
+      fiatAmountFormatted,
+    }
+  }, [currency, staked, tokenPrice])
 
   const _requestWithdrawal = useWagmiWriteContract()
   const requestWithdrawal = {
@@ -62,7 +81,7 @@ const useRequestWithdrawalSeek = ({
   }, [refetch, requestWithdrawalTransaction.data?.status, onTransactionSuccess, refetchSeekStaked])
 
   const error = useMemo(() => {
-    if (decimalAmountInput !== undefined && decimalAmountInput.planck > stakedBalance.planck) {
+    if (decimalAmountInput !== undefined && decimalAmountInput.planck > stakedBalance.availableBalance.planck) {
       return new Error('Insufficient balance')
     }
 

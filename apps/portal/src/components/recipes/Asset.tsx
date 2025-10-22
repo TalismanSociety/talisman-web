@@ -30,7 +30,7 @@ export type AssetProps = {
 export const Asset = ({ token, lockedAsset }: AssetProps) => {
   const navigate = useNavigate()
 
-  // TODO: Remove this once SEEK is added to balances
+  // TODO: Remove this once we are done playing with our DEEK
   if (token.tokenDetails.symbol === SEEK_TICKER) {
     token.tokenDetails.logo = SeekLogo
   }

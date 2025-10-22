@@ -11,7 +11,7 @@ type SeekAddStakeDialogProps = {
 
 const SeekAddStakeDialog = ({ account, onRequestDismiss }: SeekAddStakeDialogProps) => {
   const {
-    available,
+    balanceByWalletAddress,
     newStakedTotal,
     setAmountInput,
     approvalNeeded,
@@ -24,8 +24,7 @@ const SeekAddStakeDialog = ({ account, onRequestDismiss }: SeekAddStakeDialogPro
     input: { amountInput },
   } = useStakeSeek({ account, onTransactionSuccess: onRequestDismiss })
 
-  // TODO: fetch SEEK fiat price
-  const fiatAmountAvailable = ''
+  const { availableBalance, fiatAmountFormatted } = balanceByWalletAddress
 
   return (
     <AddStakeDialog
@@ -44,11 +43,11 @@ const SeekAddStakeDialog = ({ account, onRequestDismiss }: SeekAddStakeDialogPro
       open
       onDismiss={onRequestDismiss}
       amount={amountInput}
-      fiatAmount={fiatAmountAvailable}
+      fiatAmount={fiatAmountFormatted}
       newAmount={newStakedTotal?.toLocaleString() ?? '...'}
       newFiatAmount={null}
       onChangeAmount={setAmountInput}
-      availableToStake={available.toLocaleString()}
+      availableToStake={availableBalance.toLocaleString()}
       onConfirm={async () => {
         if (approvalNeeded) {
           try {
@@ -65,8 +64,8 @@ const SeekAddStakeDialog = ({ account, onRequestDismiss }: SeekAddStakeDialogPro
         }
       }}
       onRequestMaxAmount={() => {
-        if (available !== undefined) {
-          setAmountInput(available.toString())
+        if (availableBalance !== undefined) {
+          setAmountInput(availableBalance.toString())
         }
       }}
       isError={!!error}

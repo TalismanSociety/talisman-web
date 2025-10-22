@@ -9,7 +9,6 @@ import { PortfolioAddressSearch } from '@/components/recipes/PortfolioAddressSea
 import { AccountsManagementMenu } from '@/components/widgets/AccountsManagementMenu'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { selectedAccountsState } from '@/domains/accounts/recoils'
-import { GetDiscountCard } from '@/domains/staking/seek/GetDiscountCard'
 
 const Layout = () => {
   const accounts = useRecoilValue(selectedAccountsState)
@@ -36,7 +35,6 @@ const Layout = () => {
         </PageHeaderItem>
 
         <PageHeaderItem>
-          <GetDiscountCard storageKey="portfolio-overview" />
           <PortfolioAddressSearch className="min-w-[22rem]" />
         </PageHeaderItem>
       </PageHeader>

@@ -20,16 +20,13 @@ const SeekUnstakeDialog = ({ account, onRequestDismiss }: SeekUnstakeDialogProps
     error,
     isReady,
     input: { amountInput },
-    stakedBalance,
+    stakedBalance: { availableBalance, fiatAmountFormatted },
   } = useRequestWithdrawalSeek({
     account,
     onTransactionSuccess: onRequestDismiss,
   })
 
   const unlockDuration = useGetSeekStakeUnlockDuration()
-
-  // TODO: fetch SEEK fiat price
-  const fiatAmountAvailable = ''
 
   return (
     <UnstakeDialog
@@ -46,11 +43,11 @@ const SeekUnstakeDialog = ({ account, onRequestDismiss }: SeekUnstakeDialogProps
       open
       onDismiss={onRequestDismiss}
       amount={amountInput}
-      fiatAmount={fiatAmountAvailable}
+      fiatAmount={fiatAmountFormatted}
       newAmount={newStakedTotal?.toLocaleString() ?? '...'}
       newFiatAmount={null}
       onChangeAmount={setAmountInput}
-      availableAmount={stakedBalance?.toLocaleString() ?? '...'}
+      availableAmount={availableBalance?.toLocaleString() ?? '...'}
       lockDuration={<div>{formatDistance(0, unlockDuration)}</div>}
       onConfirm={async () => {
         try {
@@ -60,8 +57,8 @@ const SeekUnstakeDialog = ({ account, onRequestDismiss }: SeekUnstakeDialogProps
         }
       }}
       onRequestMaxAmount={() => {
-        if (stakedBalance !== undefined) {
-          setAmountInput(stakedBalance.toString())
+        if (availableBalance !== undefined) {
+          setAmountInput(availableBalance.toString())
         }
       }}
       isError={!!error}

@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
+import { selectedCurrencyState } from '@/domains/balances/currency'
 import { DECIMALS, SEEK_TICKER } from '@/domains/staking/seek/constants'
 import { Decimal } from '@/util/Decimal'
 
@@ -9,9 +11,7 @@ import useGetSeekStaked from './useGetSeekStaked'
 
 const useStakeSeekBase = ({ account, direction }: { account: Account | undefined; direction: 'stake' | 'unstake' }) => {
   const [amountInput, setAmountInput] = useState<string>('')
-
-  // TODO: Add token rate once we have a price source for SEEK
-  // const originTokenRate = useRecoilValueLoadable(tokenPriceState({ coingeckoId: originTokenConfig.coingeckoId }))
+  const currency = useRecoilValue(selectedCurrencyState)
 
   const { seekBalances, refetch: refetchSeekBalances } = useGetSeekAvailableBalance()
 
@@ -25,11 +25,15 @@ const useStakeSeekBase = ({ account, direction }: { account: Account | undefined
     return Decimal.fromPlanck(balance?.amount || 0n, DECIMALS ?? 0, { currency: SEEK_TICKER })
   }, [account, balances])
 
-  const available = useMemo(() => {
-    const balance = seekBalances.each.find(b => b.address === account?.address)
-
-    return Decimal.fromPlanck(balance?.total.planck || 0n, DECIMALS ?? 0, { currency: SEEK_TICKER })
-  }, [account, seekBalances])
+  const balanceByWalletAddress = useMemo(() => {
+    const defaultFiatAmount = 0
+    const balance = seekBalances.each.find(b => b.address === account?.address) || {
+      availableBalance: Decimal.fromPlanck(0n, 0, { currency: SEEK_TICKER }),
+      fiatAmount: 0,
+      fiatAmountFormatted: defaultFiatAmount.toLocaleString(undefined, { style: 'currency', currency }),
+    }
+    return balance
+  }, [account?.address, currency, seekBalances.each])
 
   const decimalAmountInput = useMemo(
     () =>
@@ -58,7 +62,7 @@ const useStakeSeekBase = ({ account, direction }: { account: Account | undefined
     input: { amountInput, decimalAmountInput },
     setAmountInput,
     newStakedTotal,
-    available,
+    balanceByWalletAddress,
     refetchSeekBalances,
   }
 }
