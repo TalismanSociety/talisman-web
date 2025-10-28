@@ -122,7 +122,7 @@
     "storybook": "^7.6.5",
     "tailwindcss": "^3.4.16",
     "typescript": "^5.6.3",
-    "vite": "^7.1.7",
+    "vite": "^7.1.12",
     "vite-plugin-node-polyfills": "^0.22.0",
     "vite-plugin-svgr": "^4.2.0",
     "vite-plugin-top-level-await": "^1.4.4",

@@ -2,6 +2,7 @@ import { X } from '@talismn/web-icons'
 import { useEffect, useState } from 'react'
 
 import SeekPreSaleBg from '@/assets/seek-pre-sale-bg.svg?react'
+import { IS_PRE_SALE_BANNER_ACTIVE } from '@/util/featureFlags'
 
 const storageKey = 'hide-seek-pre-sale-info-banner'
 const preSaleLink = 'https://docs.talisman.xyz/talisman/seek/launchpad-pre-sale'
@@ -19,7 +20,7 @@ export const SeekPreSaleBanner = () => {
     setIsVisible(false)
   }
 
-  if (!isVisible) return null
+  if (!isVisible || !IS_PRE_SALE_BANNER_ACTIVE) return null
   return (
     <div
       className="cursor-pointer rounded-[10px] bg-gradient-to-r from-[#2E3128] to-[#1B1B1B] to-[274%] p-[1px] text-[14px]"
