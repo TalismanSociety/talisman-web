@@ -45,13 +45,13 @@ export const chainConfigs: ChainConfig[] = [
   },
   // Kusama
   {
-    genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
+    genesisHash: '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a',
     hasNominationPools: true,
     priorityPool: 15,
     talismanPools: [15],
     // From https://github.com/novasamatech/nova-utils/blob/3f3568fd9c2e068b45b5b378c4d58287d2cda68e/chains/v21/chains_dev.json#L236C29-L236C83
     novaIndexerUrl: 'https://subquery-history-kusama-prod.novasama-tech.org',
-    isDisabled: true,
+    // isDisabled: true,
   },
   // Astar
   {
