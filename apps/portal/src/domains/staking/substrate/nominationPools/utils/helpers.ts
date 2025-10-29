@@ -63,6 +63,10 @@ export const calculateStakingApr = (eraRewards: bigint[], eraTotalStakes: bigint
   const totalRewards = eraRewards.reduce((acc, reward) => acc + reward, 0n)
   const totalStakes = eraTotalStakes.reduce((acc, stake) => acc + stake, 0n)
 
+  if (totalStakes === 0n || totalRewards === 0n) {
+    return 0
+  }
+
   const erasPerYear = getStakingErasPerYear(babeApi)
   const RATIO_DIGITS = 10000n
 
