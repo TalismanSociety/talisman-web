@@ -6,9 +6,9 @@ import { ApiPromise } from '@polkadot/api'
  * @returns Era duration in milliseconds
  */
 export const getStakingEraDurationMs = (babeApi: ApiPromise): bigint => {
-  const blockTime = babeApi.consts.babe.expectedBlockTime.toBigInt()
-  const epochDuration = babeApi.consts.babe.epochDuration.toBigInt()
-  const sessionsPerEra = babeApi.consts.staking.sessionsPerEra.toNumber()
+  const blockTime = babeApi.consts.babe?.expectedBlockTime?.toBigInt() ?? 0n
+  const epochDuration = babeApi.consts.babe?.epochDuration?.toBigInt() ?? 0n
+  const sessionsPerEra = babeApi.consts.staking?.sessionsPerEra?.toNumber() ?? 0
 
   return blockTime * BigInt(sessionsPerEra) * epochDuration
 }
@@ -21,6 +21,10 @@ export const getStakingEraDurationMs = (babeApi: ApiPromise): bigint => {
 export const getStakingErasPerYear = (babeApi: ApiPromise): bigint => {
   const MS_PER_YEAR = 1000n * 60n * 60n * 24n * 365n
   const eraDuration = getStakingEraDurationMs(babeApi)
+
+  if (eraDuration === 0n) {
+    return 0n
+  }
 
   return MS_PER_YEAR / eraDuration
 }
