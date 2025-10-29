@@ -26,6 +26,29 @@ export const getStakingErasPerYear = (babeApi: ApiPromise): bigint => {
 }
 
 /**
+ * Calculates the staking bonding duration in milliseconds
+ * @param api - ApiPromise instance with babe and staking constants
+ * @returns Bonding duration in milliseconds
+ */
+export const getStakingBondingDurationMs = ({
+  stakingApi,
+  babeApi,
+}: {
+  stakingApi: ApiPromise
+  babeApi: ApiPromise | null
+}): bigint => {
+  if (!babeApi) {
+    console.error('Babe API is null')
+    return 0n
+  }
+
+  const bondingDuration = stakingApi.consts.staking.bondingDuration.toNumber()
+  const eraDuration = getStakingEraDurationMs(babeApi)
+
+  return BigInt(bondingDuration) * eraDuration
+}
+
+/**
  * Calculates the staking APR based on historical era rewards and stakes
  * @param eraRewards - Array of era validator rewards
  * @param eraTotalStakes - Array of total stakes per era
