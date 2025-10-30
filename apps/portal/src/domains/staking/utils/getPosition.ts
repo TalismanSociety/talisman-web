@@ -6,7 +6,7 @@ const orderedProviders: string[] = [
   'polkadot_dot',
   'bittensor_tao',
   'bittensor_testnet_testtao',
-  'kusama_ksm',
+  'kusama_asset_hub_ksm',
   'astar_astr',
   'analog_timechain_anlog',
   'aleph_zero_azero',
