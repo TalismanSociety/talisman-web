@@ -1,19 +1,28 @@
-import { useDeriveState, useQueryState } from '@talismn/react-polkadot-api'
 import { useMemo } from 'react'
-import { useRecoilValueLoadable, waitForAll } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import { type StakeStatus } from '@/components/recipes/StakeStatusIndicator'
 import { type Account } from '@/domains/accounts/recoils'
+import { useChainState } from '@/domains/chains/hooks'
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
+import { chainDeriveState, chainQueryState } from '@/domains/common/recoils/query'
 
-import { useAllPendingRewardsState, useEraStakersState } from '../recoils'
+import { eraStakersState, useAllPendingRewardsState } from '../recoils'
 import { createAccounts, getPoolUnbonding } from '../utils'
+import { useNominationPoolsEndpoint } from './useNominationPoolsEndpoint'
 
 export const usePoolStakeLoadable = <T extends Account | Account[]>(account: T) => {
   const accounts = useMemo(() => (Array.isArray(account) ? (account as Account[]) : [account as Account]), [account])
 
+  const chain = useRecoilValue(useChainState())
   const apiLoadable = useRecoilValueLoadable(useSubstrateApiState())
   const api = useMemo(() => apiLoadable.valueMaybe(), [apiLoadable])
+
+  // Mixed query strategy for Kusama Asset Hub:
+  // - Pool data (members, metadata, nominators, claimPermissions) from Asset Hub
+  // - Era/session data and slashingSpans from relay chain
+  const nominationPoolsEndpoint = useNominationPoolsEndpoint(chain.id) || chain.rpc
+  const currentChainEndpoint = chain.rpc
 
   // TODO: recoil freeze if we use `useRecoilValue_TRANSITION_SUPPORT_UNSTABLE` here
   // and perform a stake operation inside the staking dialog & wait for the transition to finish
@@ -21,8 +30,10 @@ export const usePoolStakeLoadable = <T extends Account | Account[]>(account: T) 
   const pendingRewardsLoadable = useRecoilValueLoadable(useAllPendingRewardsState())
   const pendingRewards = useMemo(() => pendingRewardsLoadable.valueMaybe() ?? [], [pendingRewardsLoadable])
 
+  // Query pool members from Asset Hub
   const poolMembersLoadable = useRecoilValueLoadable(
-    useQueryState(
+    chainQueryState(
+      currentChainEndpoint,
       'nominationPools',
       'poolMembers.multi',
       accounts.map(({ address }) => address)
@@ -50,21 +61,25 @@ export const usePoolStakeLoadable = <T extends Account | Account[]>(account: T) 
   const poolIds = useMemo(() => accountPools.map(x => x.poolMember.poolId), [accountPools])
   const poolAccountAddresses = useMemo(() => accountPools.map(x => x.account.address), [accountPools])
 
+  // Mixed queries - pool data from Asset Hub, era/session from relay chain
   const { state: loadableState, contents: loadableContents } = useRecoilValueLoadable(
     waitForAll([
-      useQueryState('staking', 'nominators.multi', stashIds),
-      useQueryState('staking', 'slashingSpans.multi', stashIds),
-      useQueryState('nominationPools', 'metadata.multi', poolIds),
-      useQueryState('nominationPools', 'claimPermissions.multi', poolAccountAddresses),
-      useQueryState('staking', 'activeEra', []),
-      useDeriveState('session', 'progress', []),
+      chainQueryState(currentChainEndpoint, 'nominationPools', 'metadata.multi', poolIds),
+      chainQueryState(currentChainEndpoint, 'nominationPools', 'claimPermissions.multi', poolAccountAddresses),
+      chainQueryState(currentChainEndpoint, 'staking', 'nominators.multi', stashIds),
+      chainQueryState(nominationPoolsEndpoint, 'staking', 'slashingSpans.multi', stashIds),
+      chainQueryState(nominationPoolsEndpoint, 'staking', 'activeEra', []),
+      chainDeriveState(nominationPoolsEndpoint, 'session', 'progress', []),
     ])
   )
 
-  const [poolNominators, slashingSpans, poolMetadatum, claimPermissions, activeEra, sessionProgress] =
+  const [poolMetadatum, claimPermissions, poolNominators, slashingSpans, activeEra, sessionProgress] =
     loadableState === 'hasValue' ? loadableContents : []
 
-  const eraStakersLoadable = useRecoilValueLoadable(useEraStakersState(activeEra?.unwrapOrDefault()?.index || 0))
+  // Use relay chain endpoint for era stakers query
+  const eraStakersLoadable = useRecoilValueLoadable(
+    eraStakersState({ endpoint: nominationPoolsEndpoint!, era: activeEra?.unwrapOrDefault()?.index || 0 })
+  )
   const _eraStakers = eraStakersLoadable.valueMaybe()
   const eraStakers = useMemo(() => {
     if (!_eraStakers) return new Set()
