@@ -9,6 +9,7 @@ import {
 import { useTokenAmount, useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
 import { Decimal } from '@/util/Decimal'
 
+import { useGetSeekDiscount } from '../../seek/hooks/useGetSeekDiscount'
 import { bittensorSlippageAtom, maxSlippageAtom } from '../atoms/bittensorSlippage'
 import { dTaoConversionRateAtom } from '../atoms/dTaoConversionRate'
 import { expectedAlphaAmountAtom } from '../atoms/expectedAlphaAmount'
@@ -42,6 +43,8 @@ export const useGetDynamicTaoStakeInfo = ({
   const setDTaoConversionRate = useSetAtom(dTaoConversionRateAtom)
   const setNetuid = useSetAtom(netuidAtom)
   const setTalismanTokenFee = useSetAtom(talismanTokenFeeAtom)
+
+  const { tier } = useGetSeekDiscount()
 
   const maxSlippage = useAtomValue(maxSlippageAtom)
   const raoInputAmount = amount?.decimalAmount?.planck ?? 0n * 10n
@@ -103,10 +106,18 @@ export const useGetDynamicTaoStakeInfo = ({
   const taoPriceWithSlippage = alphaPrice * (1 - maxSlippage / 100)
   const taoPriceWithSlippageFormatted = useTokenAmount(taoPriceWithSlippage.toString())
 
-  const taoToAlphaTalismanFee = calculateFee(amount.decimalAmount?.planck ?? 0n, TALISMAN_FEE_BITTENSOR)
+  const taoToAlphaTalismanFee = calculateFee({
+    amount: amount.decimalAmount?.planck ?? 0n,
+    fee: TALISMAN_FEE_BITTENSOR,
+    seekDiscount: tier.discount,
+  })
   const taoToAlphaTalismanFeeFormatted = useTokenAmountFromPlanck(taoToAlphaTalismanFee)
 
-  const alphaToTaoTalismanFee = calculateFee(expectedTaoAmount.decimalAmount?.planck ?? 0n, TALISMAN_FEE_BITTENSOR)
+  const alphaToTaoTalismanFee = calculateFee({
+    amount: expectedTaoAmount.decimalAmount?.planck ?? 0n,
+    fee: TALISMAN_FEE_BITTENSOR,
+    seekDiscount: tier.discount,
+  })
   const alphaToTaoTalismanFeeFormatted = useTokenAmountFromPlanck(alphaToTaoTalismanFee)
 
   useEffect(() => {
@@ -249,10 +260,15 @@ function calculateSlippage({
   return Number(slippage) / 100 // Convert to a number with 0.01 precision
 }
 
-function calculateFee(amount: bigint, fee: number): bigint {
+function calculateFee({ amount, fee, seekDiscount }: { amount: bigint; fee: number; seekDiscount: number }): bigint {
   if (fee < 0) {
     throw new Error('Fee percentage cannot be negative')
   }
+  if (seekDiscount === 0 || !seekDiscount) {
+    return (amount * BigInt(Math.round(fee * 100))) / BigInt(10000)
+  }
 
-  return (amount * BigInt(Math.round(fee * 100))) / BigInt(10000)
+  const discountedFee = fee * (1 - seekDiscount)
+
+  return (amount * BigInt(Math.round(discountedFee * 100))) / BigInt(10000)
 }

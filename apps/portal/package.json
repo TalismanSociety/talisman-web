@@ -87,7 +87,7 @@
     "threads": "^1.7.0",
     "victory": "^36.6.8",
     "viem": "^2.22.22",
-    "wagmi": "^2.5.20"
+    "wagmi": "^2.16.6"
   },
   "devDependencies": {
     "@bifrost-finance/types": "^1.8.4",
