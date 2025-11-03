@@ -3,13 +3,9 @@ import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
 import { AlertTriangle, Info, Settings } from '@talismn/web-icons'
 import { useAtom, useAtomValue } from 'jotai'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
-import {
-  bittensorSlippageAtom,
-  DEFAULT_MAX_SLIPPAGE,
-  maxSlippageAtom,
-} from '@/domains/staking/subtensor/atoms/bittensorSlippage'
+import { bittensorSlippageAtom, maxSlippageAtom } from '@/domains/staking/subtensor/atoms/bittensorSlippage'
 import { cn } from '@/util/cn'
 
 export const SlippageDropdown = () => {
