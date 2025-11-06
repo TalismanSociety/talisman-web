@@ -3,7 +3,7 @@
  * The index of the array determines its position automatically.
  */
 const orderedProviders: string[] = [
-  'polkadot_dot',
+  'polkadot_asset_hub_dot',
   'bittensor_tao',
   'bittensor_testnet_testtao',
   'kusama_asset_hub_ksm',
