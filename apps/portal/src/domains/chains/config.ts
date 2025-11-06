@@ -42,7 +42,6 @@ export const chainConfigs: ChainConfig[] = [
     talismanPools: [12, 16, 282],
     // From https://github.com/novasamatech/nova-utils/blob/3f3568fd9c2e068b45b5b378c4d58287d2cda68e/chains/v21/chains_dev.json#L94C29-L94C85
     novaIndexerUrl: 'https://subquery-history-polkadot-prod.novasama-tech.org',
-    isDisabled: true,
   },
   // Kusama Asset Hub (staking on relay chain)
   {
