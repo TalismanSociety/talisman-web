@@ -17,17 +17,18 @@ export const useLocalizedUnlockDuration = () => {
 }
 
 const KUSAMA_ASSET_HUB_CHAIN_ID = 'kusama-asset-hub'
+const POLKADOT_ASSET_HUB_CHAIN_ID = 'polkadot-asset-hub'
 
 export const useUnlockDuration = () => {
   const [api, sessionProgress] = useRecoilValue(
     waitForAll([useSubstrateApiState(), useDeriveState('session', 'progress', [])])
   )
   const chain = useRecoilValue(useChainState())
-  const isKusamaAssetHub = chain.id === KUSAMA_ASSET_HUB_CHAIN_ID
+  const isAssetHub = chain.id === KUSAMA_ASSET_HUB_CHAIN_ID || chain.id === POLKADOT_ASSET_HUB_CHAIN_ID
 
   const babeApi = useBabeApi(chain.id)
 
-  if (isKusamaAssetHub) {
+  if (isAssetHub) {
     const bondingDuration = getStakingBondingDurationMs({ stakingApi: api, babeApi: babeApi })
 
     return Number(bondingDuration.toString())

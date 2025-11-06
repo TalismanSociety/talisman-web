@@ -34,15 +34,14 @@ export const chainConfigs: ChainConfig[] = [
     // TODO: Add novaIndexerUrl for totalRewards calculation
     // novaIndexerUrl: '',
   },
-  // Polkadot
+  // Polkadot Asset Hub (staking on relay chain)
   {
-    genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
+    genesisHash: '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f',
     hasNominationPools: true,
     priorityPool: 282,
     talismanPools: [12, 16, 282],
     // From https://github.com/novasamatech/nova-utils/blob/3f3568fd9c2e068b45b5b378c4d58287d2cda68e/chains/v21/chains_dev.json#L94C29-L94C85
     novaIndexerUrl: 'https://subquery-history-polkadot-prod.novasama-tech.org',
-    isDisabled: true,
   },
   // Kusama Asset Hub (staking on relay chain)
   {
