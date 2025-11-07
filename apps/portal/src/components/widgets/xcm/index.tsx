@@ -26,6 +26,29 @@ import { ProgressIndicator } from './ProgressIndicator'
 import { TokenSelectButton } from './TokenSelectButton'
 import { TokenSelectDialog } from './TokenSelectDialog'
 
+export const XcmUnavailable = () => (
+  <div className="mt-48 min-h-[45vh] text-center text-2xl">
+    <a
+      className="text-white"
+      href="https://wiki.polkadot.com/learn/learn-xcm/"
+      target="_blank"
+      rel="noreferrer noopener"
+    >
+      Polkadot XCM
+    </a>{' '}
+    <span className="text-white/60">is temporarily unavailable due to the</span>{' '}
+    <a
+      className="text-white"
+      href="https://support.polkadot.network/support/solutions/articles/65000190561"
+      target="_blank"
+      rel="noreferrer noopener"
+    >
+      Asset Hub migration
+    </a>
+    <span className="text-white/60">.</span>
+  </div>
+)
+
 export function Xcm() {
   useSetJotaiSubstrateApiState()
   const {
