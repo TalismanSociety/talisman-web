@@ -6,6 +6,8 @@ import { SubnetApiResponse } from '../types'
 const TAOSTATS_API_KEY = import.meta.env.VITE_TAOSTATS_API_KEY
 const TAOSTATS_API_URL = import.meta.env.VITE_TAOSTATS_API_URL
 
+console.log({ TAOSTATS_API_URL })
+
 const fetchSubnetPools = async ({ pageParam = 1 }) => {
   const { data } = await axios.get<SubnetApiResponse>(`${TAOSTATS_API_URL}/api/dtao/pool/v1`, {
     params: { page: pageParam },
