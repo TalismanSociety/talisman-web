@@ -22,6 +22,9 @@ import { Maybe } from '@/util/monads'
 
 import { StakeTxBreakdown } from './StakeTxBreakdown'
 
+const TALISMAN_WALLET_URL_CHROME_STORE =
+  'https://chromewebstore.google.com/detail/talisman-wallet/fijngjgcjhjmmpcmkeiomlglpeiijkld'
+
 type AmountInputProps =
   | {
       disabled?: false
@@ -204,13 +207,23 @@ export const SubtensorStakingSideSheet = ({ children, minimumStake, ...props }: 
       <div css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '42rem' } }}>
         {children}
         <div className={cn('mt-[2rem] flex flex-col gap-[1rem]', { 'mt-[6.4rem]': !hasDTaoStaking })}>
-          <Text.Body as="p">Bittensor automatically reinvests your staking rewards.</Text.Body>
-          {hasDTaoStaking && (
+          {hasDTaoStaking ? (
+            <>
+              <Text.Body as="p">Bittensor automatically reinvests your staking rewards.</Text.Body>
+              <Text.Body as="p">
+                Note that Dynamic TAO Subnet staking has more variable rewards than the Legacy TAO Staking.{' '}
+                <Text.Body.A href="https://taostats.io/subnets" target="_blank">
+                  Learn more
+                </Text.Body.A>
+              </Text.Body>
+            </>
+          ) : (
             <Text.Body as="p">
-              Note that Dynamic TAO Subnet staking has more variable rewards than the Legacy TAO Staking.{' '}
-              <Text.Body.A href="https://taostats.io/subnets" target="_blank">
-                Learn more
+              Manage your Root stake claim settings in{' '}
+              <Text.Body.A href={TALISMAN_WALLET_URL_CHROME_STORE} target="_blank">
+                Talisman wallet
               </Text.Body.A>
+              .
             </Text.Body>
           )}
 
