@@ -59,15 +59,6 @@ export const chainConfigs: ChainConfig[] = [
     dappStakingApi: 'https://api.astar.network/api/v3/astar/dapps-staking/',
     priorityDapp: 'ZdpeaiK28o6DzkdVJardFTZEJTAHKG3HgJn5ZPgsPh345Hg',
   },
-  // Aleph Zero
-  {
-    genesisHash: '0x70255b4d28de0fc4e1a193d7e175ad1ccef431598211c55538f1018651a0344e',
-    hasNominationPools: true,
-    priorityPool: 47,
-    talismanPools: [47],
-    // From https://github.com/novasamatech/nova-utils/blob/3f3568fd9c2e068b45b5b378c4d58287d2cda68e/chains/v21/chains_dev.json#L6678C29-L6678C72
-    novaIndexerUrl: 'https://gateway.subquery.network/query/0x1c',
-  },
   // Vara
   {
     genesisHash: '0xfe1b4c55fd4d668101126434206571a7838a8b6b93a6d1b95d607e78e6c53763',
