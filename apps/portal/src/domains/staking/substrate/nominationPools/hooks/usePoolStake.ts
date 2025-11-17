@@ -82,14 +82,14 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
       chainQueryState(currentChainEndpoint, 'staking', 'nominators.multi', stashIds),
       chainQueryState(nominationPoolsEndpoint, 'staking', 'slashingSpans.multi', stashIds),
       // Relay chain queries - for era and session information
-      chainQueryState(nominationPoolsEndpoint, 'staking', 'activeEra', []),
+      chainQueryState(currentChainEndpoint, 'staking', 'activeEra', []),
       chainDeriveState(nominationPoolsEndpoint, 'session', 'progress', []),
     ])
   )
 
   // Use the relay chain endpoint for era stakers query
   const _eraStakers = useRecoilValue(
-    eraStakersState({ endpoint: nominationPoolsEndpoint!, era: activeEra.unwrapOrDefault().index })
+    eraStakersState({ endpoint: currentChainEndpoint!, era: activeEra.unwrapOrDefault().index })
   )
   const eraStakers = useMemo(() => new Set(_eraStakers.map(x => x.toString())), [_eraStakers])
 

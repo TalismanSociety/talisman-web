@@ -68,8 +68,8 @@ export const usePoolStakeLoadable = <T extends Account | Account[]>(account: T) 
       chainQueryState(currentChainEndpoint, 'nominationPools', 'claimPermissions.multi', poolAccountAddresses),
       chainQueryState(currentChainEndpoint, 'staking', 'nominators.multi', stashIds),
       chainQueryState(nominationPoolsEndpoint, 'staking', 'slashingSpans.multi', stashIds),
-      chainQueryState(nominationPoolsEndpoint, 'staking', 'activeEra', []),
-      chainDeriveState(nominationPoolsEndpoint, 'session', 'progress', []),
+      chainQueryState(currentChainEndpoint, 'staking', 'activeEra', []),
+      chainDeriveState(currentChainEndpoint, 'session', 'progress', []),
     ])
   )
 
@@ -78,7 +78,7 @@ export const usePoolStakeLoadable = <T extends Account | Account[]>(account: T) 
 
   // Use relay chain endpoint for era stakers query
   const eraStakersLoadable = useRecoilValueLoadable(
-    eraStakersState({ endpoint: nominationPoolsEndpoint!, era: activeEra?.unwrapOrDefault()?.index || 0 })
+    eraStakersState({ endpoint: currentChainEndpoint!, era: activeEra?.unwrapOrDefault()?.index || 0 })
   )
   const _eraStakers = eraStakersLoadable.valueMaybe()
   const eraStakers = useMemo(() => {
