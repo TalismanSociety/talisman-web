@@ -83,7 +83,7 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
       chainQueryState(nominationPoolsEndpoint, 'staking', 'slashingSpans.multi', stashIds),
       // Relay chain queries - for era and session information
       chainQueryState(currentChainEndpoint, 'staking', 'activeEra', []),
-      chainDeriveState(nominationPoolsEndpoint, 'session', 'progress', []),
+      chainDeriveState(currentChainEndpoint, 'session', 'progress', []),
     ])
   )
 
