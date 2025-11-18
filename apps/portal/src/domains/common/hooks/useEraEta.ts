@@ -1,23 +1,38 @@
-import { useDeriveState } from '@talismn/react-polkadot-api'
 import BN from 'bn.js'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
-import { useCallback } from 'react'
-import { useRecoilValue, waitForAll } from 'recoil'
+import { useCallback, useMemo } from 'react'
+import { useRecoilValue } from 'recoil'
 
-import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
+import { useChainState } from '@/domains/chains/hooks'
 import { expectedBlockTime, expectedSessionTime } from '@/domains/common/utils/substratePolyfills'
+import { useBabeApi } from '@/domains/staking/substrate/nominationPools/hooks/useBabeApi'
 import { Maybe } from '@/util/monads'
+
+import { chainDeriveState } from '../recoils/query'
 
 const erasOrSessionsRemaining = (current: BN, length: BN, progress: BN) =>
   current.subn(1).mul(length).add(length).sub(progress)
 
 export const useEraEtaFormatter = () => {
-  const [api, sessionProgress] = useRecoilValue(
-    waitForAll([useSubstrateApiState(), useDeriveState('session', 'progress', [])])
-  )
+  const chain = useRecoilValue(useChainState())
+  const chainId = useMemo(() => chain?.id, [chain])
+  const currentChainEndpoint = chain.rpc
+
+  const sessionProgressState = useMemo(() => {
+    if (!currentChainEndpoint) return null
+    return chainDeriveState(currentChainEndpoint, 'session', 'progress', [])
+  }, [currentChainEndpoint])!
+
+  const sessionProgress = useRecoilValue(sessionProgressState)
+  const babeApi = useBabeApi(chainId)
 
   return useCallback(
     (erasOrSessions: BN | number) => {
+      if (!babeApi) {
+        console.error('❌ API is not ready for chain:', chainId)
+        return 'Unknown'
+      }
+
       const remaining = erasOrSessionsRemaining(
         new BN(erasOrSessions),
         sessionProgress.eraLength,
@@ -25,14 +40,16 @@ export const useEraEtaFormatter = () => {
       )
 
       if (!sessionProgress.isEpoch) {
-        return Maybe.of(expectedSessionTime(api)).mapOr(`${remaining.toString()} sessions`, sessionLength =>
-          formatDistanceToNow(addMilliseconds(new Date(), remaining.mul(sessionLength).toNumber()))
-        )
+        return Maybe.of(babeApi)
+          .map(expectedSessionTime)
+          .mapOr(`${remaining.toString()} sessions`, sessionLength =>
+            formatDistanceToNow(addMilliseconds(new Date(), remaining.mul(sessionLength).toNumber()))
+          )
       }
 
-      return formatDistanceToNow(addMilliseconds(new Date(), remaining.mul(expectedBlockTime(api)).toNumber()))
+      return formatDistanceToNow(addMilliseconds(new Date(), remaining.mul(expectedBlockTime(babeApi)).toNumber()))
     },
-    [api, sessionProgress.eraLength, sessionProgress.eraProgress, sessionProgress.isEpoch]
+    [chainId, sessionProgress.eraLength, sessionProgress.eraProgress, sessionProgress.isEpoch, babeApi]
   )
 }
 
