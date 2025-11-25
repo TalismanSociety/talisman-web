@@ -12,6 +12,7 @@ import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/
 import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
 import { type StakeItem } from '@/domains/staking/subtensor/hooks/useStake'
 
+import { BannerWarningBittensorStaking } from './BannerWarningBittensorStaking'
 import { ROOT_NETUID } from './constants'
 
 type SubtensorAddStakeDialogProps = {
@@ -68,6 +69,7 @@ const SubtensorAddStakeDialog = ({ account, stake, delegate, onRequestDismiss }:
 
   return (
     <_AddStakeDialog
+      banner={<BannerWarningBittensorStaking classNames="my-2" />}
       message={
         name
           ? `Increase your stake below. Talisman will automatically stake this towards the ${name} delegate.`

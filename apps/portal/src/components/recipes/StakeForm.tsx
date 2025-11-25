@@ -240,12 +240,12 @@ const ExistingPool = Object.assign(
           <DescriptionList.Details>{useContext(AssetSelectorContext)}</DescriptionList.Details>
         </DescriptionList.Description>
         <DescriptionList.Description>
-          <DescriptionList.Term>Pool</DescriptionList.Term>
+          <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem' }}>
+            <DescriptionList.Term>Pool</DescriptionList.Term>
+            <StakeStatusIndicator status={props.status} />
+          </div>
           <DescriptionList.Details>
-            <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-              <StakeStatusIndicator status={props.status} />
-              <Text.Body css={{ fontSize: '1.4rem' }}>{props.name}</Text.Body>
-            </div>
+            <Text.Body css={{ fontSize: '1.4rem' }}>{props.name}</Text.Body>
           </DescriptionList.Details>
         </DescriptionList.Description>
         <DescriptionList.Description>

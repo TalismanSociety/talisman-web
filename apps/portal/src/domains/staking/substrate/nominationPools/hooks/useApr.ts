@@ -11,8 +11,14 @@ import { useChainState } from '@/domains/chains/hooks'
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 import { expectedEraTime } from '@/domains/common/utils/substratePolyfills'
 
+import { useKusamaApr } from './useKusamaApr'
+
+const KUSAMA_ASSET_HUB_CHAIN_ID = 'kusama-asset-hub'
+const POLKADOT_ASSET_HUB_CHAIN_ID = 'polkadot-asset-hub'
+
 export const useApr = () => {
   const chain = useRecoilValue(useChainState())
+  const isAssetHub = chain.id === KUSAMA_ASSET_HUB_CHAIN_ID || chain.id === POLKADOT_ASSET_HUB_CHAIN_ID
 
   const [api, activeEra] = useRecoilValue(
     waitForAll([useSubstrateApiState(), useQueryState('staking', 'activeEra', [])])
@@ -37,6 +43,8 @@ export const useApr = () => {
       ),
     [activeEra, api.consts.staking.historyDepth, numberOfErasToCheck]
   )
+
+  const kusamaApr = useKusamaApr({ activeEra, stakingApi: api, chainId: chain.id })
 
   const lastEra = useMemo(() => {
     if (activeEra.isNone) return new BN(0)
@@ -81,6 +89,7 @@ export const useApr = () => {
 
   return useMemo(() => {
     if (chain.id === 'analog-timechain') return analogApr
+    if (isAssetHub) return kusamaApr
 
     const averageValidatorReward = rewards
       .reduce((prev, curr) => prev.plus(curr.unwrapOrDefault().toString()), new BigNumber(0))
@@ -98,5 +107,5 @@ export const useApr = () => {
     const inflationToStakers = dayRewardRate.multipliedBy(365)
 
     return inflationToStakers.dividedBy(supplyStaked).toNumber() || 0
-  }, [analogApr, chain.id, erasPerDay, lastEraTotalStaked, rewards, totalIssuance])
+  }, [analogApr, chain.id, erasPerDay, isAssetHub, kusamaApr, lastEraTotalStaked, rewards, totalIssuance])
 }

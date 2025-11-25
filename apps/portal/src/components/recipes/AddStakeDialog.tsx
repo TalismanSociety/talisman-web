@@ -22,6 +22,7 @@ export type AddStakeFormProps = {
   onConfirm: () => unknown
   approvalNeeded?: boolean
   slippage?: number
+  banner?: ReactNode
 }
 
 export type AddStakeDialogProps = AddStakeFormProps & {
@@ -90,6 +91,7 @@ export const AddStakeDialog = (props: AddStakeDialogProps) => (
     targetWidth="44rem"
     content={
       <>
+        {props.banner}
         <Text.Body as="p" css={{ marginBottom: '2.6rem' }}>
           {props.message}
         </Text.Body>

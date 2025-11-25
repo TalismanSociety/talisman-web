@@ -1,15 +1,18 @@
-import { useDeriveState, useQueryState } from '@talismn/react-polkadot-api'
 import { useMemo } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import { type StakeStatus } from '@/components/recipes/StakeStatusIndicator'
 import { type Account } from '@/domains/accounts/recoils'
-import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
+import { useChainState } from '@/domains/chains/hooks'
+import { chainDeriveState, chainQueryState } from '@/domains/common/recoils/query'
 
-import { useAllPendingRewardsState, useEraStakersState } from '../recoils'
+import { eraStakersState, useAllPendingRewardsState } from '../recoils'
 import { createAccounts, getPoolUnbonding } from '../utils'
+import { useBabeApi } from './useBabeApi'
+import { useNominationPoolsEndpoint } from './useNominationPoolsEndpoint'
 
 export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
+  const chain = useRecoilValue(useChainState())
   const accounts = useMemo(() => (Array.isArray(account) ? (account as Account[]) : [account as Account]), [account])
 
   // TODO: recoil freeze if we use `useRecoilValue_TRANSITION_SUPPORT_UNSTABLE` here
@@ -18,16 +21,35 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
   const pendingRewardsLoadable = useRecoilValueLoadable(useAllPendingRewardsState())
   const pendingRewards = useMemo(() => pendingRewardsLoadable.valueMaybe() ?? [], [pendingRewardsLoadable])
 
-  const [api, _poolMembers] = useRecoilValue(
+  const api = useBabeApi(chain.id)
+
+  // Get the appropriate RPC endpoint for nomination pool queries
+  // For parachains (like Kusama Asset Hub), this will return the relay chain RPC endpoint
+  const nominationPoolsEndpoint = useNominationPoolsEndpoint(chain.id) || chain.rpc
+
+  // Current chain endpoint for Asset Hub queries
+  const currentChainEndpoint = chain.rpc
+
+  if (!api) {
+    console.error('❌ API is not ready for chain:', chain.id)
+  }
+
+  if (!nominationPoolsEndpoint) {
+    console.error('❌ No nomination pools endpoint found for chain:', chain.id)
+  }
+
+  // Query pool members from the current chain (Asset Hub has pool membership data)
+  const [_poolMembers] = useRecoilValue(
     waitForAll([
-      useSubstrateApiState(),
-      useQueryState(
+      chainQueryState(
+        currentChainEndpoint,
         'nominationPools',
         'poolMembers.multi',
         accounts.map(({ address }) => address)
       ),
     ])
   )
+
   const accountPools = useMemo(
     () =>
       _poolMembers
@@ -42,30 +64,33 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
   )
 
   const stashIds = useMemo(
-    () => accountPools.map(x => createAccounts(api, x.poolMember.poolId).stashId),
+    () => accountPools.map(x => createAccounts(api!, x.poolMember.poolId).stashId),
     [api, accountPools]
   )
 
-  const [poolNominators, slashingSpans, poolMetadatum, claimPermissions, activeEra, sessionProgress] = useRecoilValue(
+  const poolIds = useMemo(() => accountPools.map(x => x.poolMember.poolId), [accountPools])
+  const accountAddresses = useMemo(() => accountPools.map(x => x.account.address), [accountPools])
+
+  // Mixed query strategy for Kusama Asset Hub:
+  // - Pool data (members, metadata, nominators, claimPermissions) from Asset Hub
+  // - Era/session data and slashingSpans from relay chain
+  const [poolMetadatum, claimPermissions, poolNominators, slashingSpans, activeEra, sessionProgress] = useRecoilValue(
     waitForAll([
-      useQueryState('staking', 'nominators.multi', stashIds),
-      useQueryState('staking', 'slashingSpans.multi', stashIds),
-      useQueryState(
-        'nominationPools',
-        'metadata.multi',
-        useMemo(() => accountPools.map(x => x.poolMember.poolId), [accountPools])
-      ),
-      useQueryState(
-        'nominationPools',
-        'claimPermissions.multi',
-        useMemo(() => accountPools.map(x => x.account.address), [accountPools])
-      ),
-      useQueryState('staking', 'activeEra', []),
-      useDeriveState('session', 'progress', []),
+      // Asset Hub queries - nominationPools pallet data
+      chainQueryState(currentChainEndpoint, 'nominationPools', 'metadata.multi', poolIds),
+      chainQueryState(currentChainEndpoint, 'nominationPools', 'claimPermissions.multi', accountAddresses),
+      chainQueryState(currentChainEndpoint, 'staking', 'nominators.multi', stashIds),
+      chainQueryState(nominationPoolsEndpoint, 'staking', 'slashingSpans.multi', stashIds),
+      // Relay chain queries - for era and session information
+      chainQueryState(currentChainEndpoint, 'staking', 'activeEra', []),
+      chainDeriveState(currentChainEndpoint, 'session', 'progress', []),
     ])
   )
 
-  const _eraStakers = useRecoilValue(useEraStakersState(activeEra.unwrapOrDefault().index))
+  // Use the relay chain endpoint for era stakers query
+  const _eraStakers = useRecoilValue(
+    eraStakersState({ endpoint: currentChainEndpoint!, era: activeEra.unwrapOrDefault().index })
+  )
   const eraStakers = useMemo(() => new Set(_eraStakers.map(x => x.toString())), [_eraStakers])
 
   const pools = useMemo(

@@ -3,35 +3,39 @@ import { Tooltip } from '@talismn/ui/atoms/Tooltip'
 import { TextInput } from '@talismn/ui/molecules/TextInput'
 import { AlertTriangle, Info, Settings } from '@talismn/web-icons'
 import { useAtom, useAtomValue } from 'jotai'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
-import {
-  bittensorSlippageAtom,
-  DEFAULT_MAX_SLIPPAGE,
-  maxSlippageAtom,
-} from '@/domains/staking/subtensor/atoms/bittensorSlippage'
+import { bittensorSlippageAtom, maxSlippageAtom } from '@/domains/staking/subtensor/atoms/bittensorSlippage'
 import { cn } from '@/util/cn'
 
 export const SlippageDropdown = () => {
   const [slippage, setSlippage] = useAtom(maxSlippageAtom)
   const bittensorSlippage = useAtomValue(bittensorSlippageAtom)
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [isAuto, setIsAuto] = useState<boolean>(true)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   const highestSlippage = Math.max(slippage, bittensorSlippage)
+
+  const handleClose = useCallback(() => {
+    if (!slippage) {
+      setSlippage(bittensorSlippage)
+      setIsAuto(true)
+    }
+    setIsOpen(false)
+  }, [bittensorSlippage, setSlippage, slippage])
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        if (!slippage) setSlippage(DEFAULT_MAX_SLIPPAGE)
-        setIsOpen(false)
+        handleClose()
       }
     }
 
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [setSlippage, slippage])
+  }, [bittensorSlippage, handleClose, setSlippage, slippage])
 
   const leadingSupportingText = () => {
     if (slippage >= 20) {
@@ -77,14 +81,22 @@ export const SlippageDropdown = () => {
         <div className="flex items-center gap-2">
           <Tooltip content={<div className="max-w-[35rem]">Set max slippage</div>} placement="top">
             <button
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={() => {
+                if (isOpen) {
+                  handleClose()
+                } else {
+                  setIsOpen(true)
+                }
+              }}
               className="flex cursor-pointer items-center rounded-md shadow-md"
             >
               <Settings size={16} />
             </button>
           </Tooltip>
-          <div>{slippage === DEFAULT_MAX_SLIPPAGE ? 'Auto' : 'Custom'}</div>
-          <div className="text-[14px]">{`${bittensorSlippage.toFixed(2)}%`}</div>
+          <div>{isAuto ? 'Auto' : 'Custom'}</div>
+          <div className="text-[14px]">
+            {isAuto ? `${bittensorSlippage.toFixed(2)}%` : `${(slippage || 0).toFixed(2)}%`}
+          </div>
         </div>
       </div>
 
@@ -107,7 +119,10 @@ export const SlippageDropdown = () => {
                   <div>%</div>
                   <div
                     className="bg-gray-750 cursor-pointer rounded-[16px] border border-gray-500 px-[1rem] py-[0.5rem] text-gray-300"
-                    onClick={() => setSlippage(DEFAULT_MAX_SLIPPAGE)}
+                    onClick={() => {
+                      setSlippage(bittensorSlippage)
+                      setIsAuto(true)
+                    }}
                   >
                     Auto
                   </div>
@@ -116,6 +131,7 @@ export const SlippageDropdown = () => {
               css={{ fontSize: '2rem' }}
               onChange={e => {
                 const val = parseFloat(e.target.value)
+                setIsAuto(false)
                 if (val < 0 || val > 100) return
                 setSlippage(val)
               }}

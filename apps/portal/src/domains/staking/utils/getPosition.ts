@@ -7,9 +7,10 @@ import { SEEK_TICKER } from '../seek/constants'
 const orderedProviders: string[] = [
   `talisman_${SEEK_TICKER.toLowerCase()}`, // Talisman Seek
   'polkadot_dot',
+  'polkadot_asset_hub_dot',
   'bittensor_tao',
   'bittensor_testnet_testtao',
-  'kusama_ksm',
+  'kusama_asset_hub_ksm',
   'astar_astr',
   'analog_timechain_anlog',
   'aleph_zero_azero',

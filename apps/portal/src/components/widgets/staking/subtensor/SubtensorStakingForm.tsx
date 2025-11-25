@@ -21,6 +21,7 @@ import { SeekDiscountBanner } from '@/domains/staking/seek/SeekDiscountBanner'
 import { cn } from '@/util/cn'
 import { Maybe } from '@/util/monads'
 
+import { BannerWarningBittensorStaking } from './BannerWarningBittensorStaking'
 import { StakeTxBreakdown } from './StakeTxBreakdown'
 
 type AmountInputProps =
@@ -208,6 +209,7 @@ export const SubtensorStakingSideSheet = ({ children, minimumStake, ...props }: 
       subtitle="Bittensor delegated staking"
     >
       <div css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '42rem' } }}>
+        <BannerWarningBittensorStaking classNames="my-4" />
         {children}
         <div className={cn('mt-[2rem] flex flex-col gap-[1rem]', { 'mt-[6.4rem]': !hasDTaoStaking })}>
           <Text.Body as="p">Bittensor automatically reinvests your staking rewards.</Text.Body>

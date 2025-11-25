@@ -34,24 +34,23 @@ export const chainConfigs: ChainConfig[] = [
     // TODO: Add novaIndexerUrl for totalRewards calculation
     // novaIndexerUrl: '',
   },
-  // Polkadot
+  // Polkadot Asset Hub (staking on relay chain)
   {
-    genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
+    genesisHash: '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f',
     hasNominationPools: true,
     priorityPool: 282,
     talismanPools: [12, 16, 282],
     // From https://github.com/novasamatech/nova-utils/blob/3f3568fd9c2e068b45b5b378c4d58287d2cda68e/chains/v21/chains_dev.json#L94C29-L94C85
     novaIndexerUrl: 'https://subquery-history-polkadot-prod.novasama-tech.org',
   },
-  // Kusama
+  // Kusama Asset Hub (staking on relay chain)
   {
-    genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
+    genesisHash: '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a',
     hasNominationPools: true,
     priorityPool: 15,
     talismanPools: [15],
     // From https://github.com/novasamatech/nova-utils/blob/3f3568fd9c2e068b45b5b378c4d58287d2cda68e/chains/v21/chains_dev.json#L236C29-L236C83
     novaIndexerUrl: 'https://subquery-history-kusama-prod.novasama-tech.org',
-    isDisabled: true,
   },
   // Astar
   {
@@ -59,15 +58,6 @@ export const chainConfigs: ChainConfig[] = [
     hasDappStaking: true,
     dappStakingApi: 'https://api.astar.network/api/v3/astar/dapps-staking/',
     priorityDapp: 'ZdpeaiK28o6DzkdVJardFTZEJTAHKG3HgJn5ZPgsPh345Hg',
-  },
-  // Aleph Zero
-  {
-    genesisHash: '0x70255b4d28de0fc4e1a193d7e175ad1ccef431598211c55538f1018651a0344e',
-    hasNominationPools: true,
-    priorityPool: 47,
-    talismanPools: [47],
-    // From https://github.com/novasamatech/nova-utils/blob/3f3568fd9c2e068b45b5b378c4d58287d2cda68e/chains/v21/chains_dev.json#L6678C29-L6678C72
-    novaIndexerUrl: 'https://gateway.subquery.network/query/0x1c',
   },
   // Vara
   {
