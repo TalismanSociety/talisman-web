@@ -79,7 +79,7 @@ const Assets = () => {
       >
         <AssetsList isLoading={isLoading}>
           {tokens?.map(token => {
-            // TODO: Remove this once SEEK is added to balances
+            // TODO: Remove this once we are done testing with DEEK
             if (token?.tokenDetails?.symbol === SEEK_TICKER) {
               token.tokenDetails.logo = SeekLogo
             }

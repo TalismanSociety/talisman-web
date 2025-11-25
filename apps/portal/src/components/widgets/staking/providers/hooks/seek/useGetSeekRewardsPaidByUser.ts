@@ -1,5 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import request from 'graphql-request'
+import { useMemo } from 'react'
+import { useRecoilValueLoadable } from 'recoil'
+
+import { tokenPriceState } from '@/domains/chains/recoils'
+import { DECIMALS, SEEK_COIN_GECKO_ID, SEEK_TICKER } from '@/domains/staking/seek/constants'
+import { Decimal } from '@/util/Decimal'
 
 export const SEEK_REWARDS_PAID_BY_USER_QUERY_KEY = 'seekRewardsPaidByUser'
 
@@ -44,7 +50,7 @@ const fetchSeekUserData = async (userId: string): Promise<SeekUser | null> => {
 
 export const useGetSeekRewardsPaidByUser = (address: string) => {
   const userAddress = address.toLowerCase()
-  return useQuery({
+  const result = useQuery({
     queryKey: [SEEK_REWARDS_PAID_BY_USER_QUERY_KEY, userAddress],
     queryFn: () => fetchSeekUserData(userAddress),
     enabled: !!userAddress,
@@ -53,6 +59,20 @@ export const useGetSeekRewardsPaidByUser = (address: string) => {
     retry: 3,
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
   })
+
+  const totalRewardsClaimed = result.data?.totalRewardsClaimed
+  const totalRewardsClaimedDecimal = Decimal.fromPlanck(totalRewardsClaimed ?? 0, DECIMALS ?? 0, {
+    currency: SEEK_TICKER,
+  })
+
+  const tokenPriceLoadable = useRecoilValueLoadable(tokenPriceState({ coingeckoId: SEEK_COIN_GECKO_ID }))
+  const tokenPrice = tokenPriceLoadable.valueMaybe()
+  const totalRewardsClaimedFiat = useMemo(
+    () => totalRewardsClaimedDecimal.toNumber() * (tokenPrice ?? 0),
+    [totalRewardsClaimedDecimal, tokenPrice]
+  )
+
+  return { ...result, totalRewardsClaimedDecimal, totalRewardsClaimedFiat }
 }
 
 export default useGetSeekRewardsPaidByUser

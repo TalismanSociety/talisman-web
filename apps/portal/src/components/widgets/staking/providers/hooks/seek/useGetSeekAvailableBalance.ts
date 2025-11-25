@@ -1,12 +1,20 @@
 import { evmErc20TokenId } from '@talismn/balances-react'
 import { formatDecimals } from '@talismn/util'
 import { useMemo } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import { erc20Abi, formatUnits } from 'viem'
 import { useReadContracts } from 'wagmi'
 
 import { writeableEvmAccountsState } from '@/domains/accounts/recoils'
-import { CHAIN_ID, DECIMALS, SEEK_TICKER, SEEK_TOKEN_ADDRESS } from '@/domains/staking/seek/constants'
+import { selectedCurrencyState } from '@/domains/balances/currency'
+import { tokenPriceState } from '@/domains/chains/recoils'
+import {
+  CHAIN_ID,
+  DECIMALS,
+  SEEK_COIN_GECKO_ID,
+  SEEK_TICKER,
+  SEEK_TOKEN_ADDRESS,
+} from '@/domains/staking/seek/constants'
 import { Decimal } from '@/util/Decimal'
 
 const useGetSeekAvailableBalance = () => {
@@ -33,24 +41,35 @@ const useGetSeekAvailableBalance = () => {
   const totalAvailableFormatted = formatDecimals(formatUnits(totalAvailable, DECIMALS))
   const availableBalance = Decimal.fromPlanck(totalAvailable, 18, { currency: SEEK_TICKER })
 
+  const tokenPriceLoadable = useRecoilValueLoadable(tokenPriceState({ coingeckoId: SEEK_COIN_GECKO_ID }))
+  const tokenPrice = tokenPriceLoadable.valueMaybe()
+  const fiatAmount = useMemo(() => availableBalance.toNumber() * (tokenPrice ?? 0), [availableBalance, tokenPrice])
+  const currency = useRecoilValue(selectedCurrencyState)
   const tokenId = evmErc20TokenId(CHAIN_ID.toString(), SEEK_TOKEN_ADDRESS)
 
   const seekBalances = useMemo(() => {
     return {
-      tokenId: tokenId,
-      each: ethAccounts.map((account, index) => ({
-        address: account.address,
-        total: {
-          planck: (data as bigint[])?.[index] || 0n,
-        },
-      })),
+      tokenId,
+      each: ethAccounts.map((account, index) => {
+        const planckBalance = (data as bigint[])?.[index] || 0n
+        const accountAvailableBalance = Decimal.fromPlanck(planckBalance, 18, { currency: SEEK_TICKER })
+        const accountFiatAmount = accountAvailableBalance.toNumber() * (tokenPrice ?? 0)
+        return {
+          address: account.address,
+          total: {
+            planck: planckBalance,
+          },
+          availableBalance: accountAvailableBalance,
+          fiatAmount: accountFiatAmount,
+          fiatAmountFormatted: accountFiatAmount.toLocaleString(undefined, { style: 'currency', currency }),
+        }
+      }),
     }
-  }, [data, ethAccounts, tokenId])
+  }, [currency, data, ethAccounts, tokenId, tokenPrice])
 
-  // TODO: fetch SEEK fiat price
   return {
     availableBalance,
-    fiatAmount: 0,
+    fiatAmount,
     totalAvailable,
     totalAvailableFormatted,
     seekBalances,

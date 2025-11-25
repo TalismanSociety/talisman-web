@@ -28,7 +28,7 @@ const useStakeSeek = ({
   onTransactionSuccess: () => void
 }) => {
   const {
-    available,
+    balanceByWalletAddress,
     newStakedTotal,
     setAmountInput,
     refetchSeekBalances,
@@ -133,12 +133,15 @@ const useStakeSeek = ({
       return new Error(`Minimum ${minAmount.toLocaleString()} needed`)
     }
 
-    if (decimalAmountInput !== undefined && decimalAmountInput.planck > available.planck) {
+    if (
+      decimalAmountInput !== undefined &&
+      decimalAmountInput.planck > balanceByWalletAddress.availableBalance.planck
+    ) {
       return new Error('Insufficient balance')
     }
 
     return undefined
-  }, [decimalAmountInput, minAmount, available])
+  }, [decimalAmountInput, minAmount, balanceByWalletAddress])
 
   const isReady = useMemo(() => {
     return (
@@ -151,7 +154,7 @@ const useStakeSeek = ({
   }, [isFetched, allowance, decimalAmountInput, error])
 
   return {
-    available,
+    balanceByWalletAddress,
     newStakedTotal,
     setAmountInput,
     input: { amountInput, decimalAmountInput },
