@@ -31,6 +31,7 @@ const useNominationPoolsProviders = (): Provider[] => {
         nativeToken,
         rpc,
         genesisHash,
+        isDisabled: chain?.isDisabled,
       }
     }) ?? []
 

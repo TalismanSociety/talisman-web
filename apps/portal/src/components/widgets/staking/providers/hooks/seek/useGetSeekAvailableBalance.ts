@@ -1,3 +1,4 @@
+import { evmErc20TokenId } from '@talismn/balances-react'
 import { formatDecimals } from '@talismn/util'
 import { useMemo } from 'react'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
@@ -44,23 +45,27 @@ const useGetSeekAvailableBalance = () => {
   const tokenPrice = tokenPriceLoadable.valueMaybe()
   const fiatAmount = useMemo(() => availableBalance.toNumber() * (tokenPrice ?? 0), [availableBalance, tokenPrice])
   const currency = useRecoilValue(selectedCurrencyState)
+  const tokenId = evmErc20TokenId(CHAIN_ID.toString(), SEEK_TOKEN_ADDRESS)
 
   const seekBalances = useMemo(() => {
     return {
-      tokenId: `137-evm-erc20-${SEEK_TOKEN_ADDRESS}`,
+      tokenId,
       each: ethAccounts.map((account, index) => {
-        const availableBalance = Decimal.fromPlanck((data as bigint[])?.[index] || 0n, 18, { currency: SEEK_TICKER })
-        const fiatAmount = availableBalance.toNumber() * (tokenPrice ?? 0)
-        const fiatAmountFormatted = fiatAmount.toLocaleString(undefined, { style: 'currency', currency })
+        const planckBalance = (data as bigint[])?.[index] || 0n
+        const accountAvailableBalance = Decimal.fromPlanck(planckBalance, 18, { currency: SEEK_TICKER })
+        const accountFiatAmount = accountAvailableBalance.toNumber() * (tokenPrice ?? 0)
         return {
           address: account.address,
-          availableBalance,
-          fiatAmount,
-          fiatAmountFormatted,
+          total: {
+            planck: planckBalance,
+          },
+          availableBalance: accountAvailableBalance,
+          fiatAmount: accountFiatAmount,
+          fiatAmountFormatted: accountFiatAmount.toLocaleString(undefined, { style: 'currency', currency }),
         }
       }),
     }
-  }, [currency, data, ethAccounts, tokenPrice])
+  }, [currency, data, ethAccounts, tokenId, tokenPrice])
 
   return {
     availableBalance,

@@ -38,4 +38,5 @@ export type Provider = {
   tokenPair?: SlpxPair | SlpxSubstratePair
   position?: string
   hasDTaoStaking?: boolean
+  isDisabled?: boolean
 }
