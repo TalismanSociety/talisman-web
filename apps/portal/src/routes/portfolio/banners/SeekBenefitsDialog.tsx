@@ -1,7 +1,8 @@
-import { Button } from '@talismn/ui/atoms/Button'
+import { Button, OutlinedButton } from '@talismn/ui/atoms/Button'
 import { AlertDialog } from '@talismn/ui/molecules/AlertDialog'
+import { ExternalLink } from '@talismn/web-icons'
 import { ArrowRight, ZapIcon } from 'lucide-react'
-import { FC, SVGProps } from 'react'
+import { FC, ReactNode, SVGProps } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import ClockIcon from '@/assets/clock-icon.svg?react'
@@ -11,6 +12,8 @@ import ZapFastIcon from '@/assets/zap-fast-icon.svg?react'
 import useGetSeekAvailableBalance from '@/components/widgets/staking/providers/hooks/seek/useGetSeekAvailableBalance'
 import useGetSeekStakeApr from '@/components/widgets/staking/providers/hooks/seek/useGetSeekStakeApr'
 import useSeekProviders from '@/components/widgets/staking/providers/hooks/seek/useSeekProviders'
+
+const GET_SEEK_LINK = 'https://docs.talisman.xyz/talisman/seek/get-seek'
 
 type SeekBenefitsDialogProps = {
   isOpen: boolean
@@ -25,13 +28,22 @@ const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps)
   const { totalAvailableFormatted } = useGetSeekAvailableBalance()
 
   const seekStakingLink = `/staking/providers/${actionLink}`
+  const swapSeekLink = '/transport/swap'
 
   return (
     <AlertDialog
       open={isOpen}
       title="SEEK Benefits"
       targetWidth="40rem"
-      dismissButton={<Button onClick={onToggleIsOpen}>Coming Soon</Button>}
+      dismissButton={
+        <OutlinedButton onClick={() => open(GET_SEEK_LINK, '_blank')}>
+          <div className="flex items-center gap-2">
+            <div>Get SEEK</div>
+            <ExternalLink size={15} className="mb-[0.3rem]" />
+          </div>
+        </OutlinedButton>
+      }
+      confirmButton={<Button onClick={() => navigate(swapSeekLink, { replace: true })}>Swap SEEK</Button>}
       onRequestDismiss={onToggleIsOpen}
       className="h-[60rem]"
     >
@@ -66,10 +78,6 @@ const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps)
           <div className="gap 1 flex h-[46px] items-center gap-3 bg-[#393939] px-5">
             <div>Earn SEEK rewards</div>
 
-            <div className="size-2 shrink-0 rounded-full bg-[#5A5A5A]" />
-
-            <div className="text-primary">{apy}% APY</div>
-
             <button
               className="ml-auto flex items-center gap-2 rounded-[43px] bg-[#D5FF5C] bg-opacity-[0.1] px-5 py-2
               transition-all duration-300 hover:hover:bg-opacity-[0.2]"
@@ -84,14 +92,19 @@ const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps)
               Icon={ZapFastIcon}
               color="#D5FF5C"
               backgroundColor="rgba(213, 255, 92, 0.12)"
-              title="Earn up to 50% rewards"
+              title={
+                <div className="flex gap-1">
+                  <div>Staking rewards</div>
+                  <div className="text-primary">{apy}% APY</div>
+                </div>
+              }
               description="Stake SEEK and watch your yield grow."
             />
             <ListItem
               Icon={ClockIcon}
               color="rgba(253, 143, 255, 1)"
               backgroundColor="rgba(255, 92, 225, 0.12)"
-              title="Stake early for XX% rewards boost"
+              title="Stake early for rewards boost"
               description="Get boosted staking rewards while they last."
             />
             <ListItem
@@ -114,7 +127,7 @@ type ListItemProps = {
   Icon: FC<SVGProps<SVGSVGElement>>
   color: string
   backgroundColor: string
-  title: string
+  title: string | ReactNode
   description: string
 }
 
