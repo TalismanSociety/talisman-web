@@ -11,6 +11,8 @@ import useGetSeekStaked from '../../../components/widgets/staking/providers/hook
 import { SEEK_TICKER } from './constants'
 import { useGetSeekDiscount } from './hooks/useGetSeekDiscount'
 
+const GET_SEEK_LINK = 'https://docs.talisman.xyz/talisman/seek/get-seek'
+
 type GetDiscountDialogProps = {
   isOpen: boolean
   onToggleIsOpen: () => void
@@ -39,7 +41,7 @@ export const GetDiscountDialog = ({ isOpen, onToggleIsOpen }: GetDiscountDialogP
       confirmButton={
         <Button
           onClick={() => {
-            open('https://talisman.xyz/', '_blank', 'noopener,noreferrer')
+            open(GET_SEEK_LINK, '_blank', 'noopener,noreferrer')
           }}
         >
           Buy {SEEK_TICKER}

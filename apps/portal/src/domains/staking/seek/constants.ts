@@ -9,7 +9,6 @@ export const SEEK_TOKEN_ID = '137:evm-erc20:0x2a69b0383759572081c09f0a68d3a8a955
 
 export const DISCOUNT_TIERS = [
   { tier: 0, min: 0n, discount: 0 },
-  { tier: 1, min: 100n * 10n ** 18n, discount: 0.25 },
-  { tier: 2, min: 1_000n * 10n ** 18n, discount: 0.5 },
-  { tier: 3, min: 10_000n * 10n ** 18n, discount: 0.75 },
+  { tier: 1, min: 200n * 10n ** 18n, discount: 0.05 },
+  { tier: 2, min: 1_000n * 10n ** 18n, discount: 0.15 },
 ] as const
