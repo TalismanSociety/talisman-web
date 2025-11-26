@@ -15,7 +15,7 @@ export const SeekDiscountBanner = () => {
               <div className="flex items-center gap-4">
                 <div className="font-bold">Get Discounts</div>
                 <div className="rounded-[43px] bg-[#D5FF5C] bg-opacity-[0.1] px-4 py-1">
-                  <div className="text-[#D5FF5C]">Up to 25% off</div>
+                  <div className="text-[#D5FF5C]">Up to 15% off</div>
                 </div>
               </div>
               <div className="text-gray-400">Stake {SEEK_TICKER} now to get discounts on dTao staking fees</div>

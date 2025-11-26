@@ -85,7 +85,7 @@ export const GetDiscountDialog = ({ isOpen, onToggleIsOpen }: GetDiscountDialogP
           <div className="text-white">{hasSeekStaked ? 'Applied Discount' : 'Get Discounts'}</div>
 
           <div className={cn('rounded-[43px] px-4 py-1', !discount && 'bg-[#D5FF5C] bg-opacity-[0.1]')}>
-            <div className="text-[14px] text-[#D5FF5C]">{hasSeekStaked ? discountPercent : 'Up to 25%'} off fees</div>
+            <div className="text-[14px] text-[#D5FF5C]">{hasSeekStaked ? discountPercent : 'Up to 15%'} off fees</div>
           </div>
         </div>
       </div>
