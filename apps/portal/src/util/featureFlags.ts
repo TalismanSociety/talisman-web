@@ -1,1 +1,1 @@
-export const IS_PRE_SALE_BANNER_ACTIVE = false
+export const IS_PRE_SALE_BANNER_ACTIVE = true

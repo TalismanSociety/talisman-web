@@ -32,7 +32,7 @@ export const SeekPreSaleBanner = () => {
             <div className="flex items-center">
               <div className="font-semibold">SEEK Pre-Sale Ends Soon</div>
             </div>
-            <div className="text-[12px] text-gray-400">Closes Oct 20. Don’t miss out! Click to Learn More. </div>
+            <div className="text-[12px] text-gray-400">Closes Dec 2nd. Don’t miss out! Click here to Learn More. </div>
           </div>
           <div className="absolute right-8 top-0">
             <SeekPreSaleBg />
