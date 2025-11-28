@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom'
 import { isAddress } from 'viem'
 
 import { allEvmChains } from '@/components/widgets/swap/allEvmChains.ts'
+import { promotedBuyTokens, promotedSellTokens } from '@/components/widgets/swap/curated-tokens'
 import { useDebounce } from '@/hooks/useDebounce'
 import { cn } from '@/util/cn'
 import { Decimal } from '@/util/Decimal'
@@ -33,6 +34,8 @@ type Props = {
   substrateAddress?: string
   balances?: Record<string, Decimal>
   searchAtom: PrimitiveAtom<string>
+  /** Used to determine which tokens should be prioritized to the top of the list */
+  priorityMode?: 'buy' | 'sell'
 }
 
 export const SwapTokensModal: React.FC<Props> = ({
@@ -43,6 +46,7 @@ export const SwapTokensModal: React.FC<Props> = ({
   evmAddress,
   substrateAddress,
   searchAtom,
+  priorityMode,
 }) => {
   const [tab, setTab] = useAtom(tokenTabAtom)
   const [open, setOpen] = useState(false)
@@ -110,9 +114,24 @@ export const SwapTokensModal: React.FC<Props> = ({
     getScrollElement: () => parentRef.current,
   })
 
+  const priorityTokens = useCallback(
+    (tokenId: string) => {
+      const promotedTokens =
+        priorityMode === 'buy' ? promotedBuyTokens : priorityMode === 'sell' ? promotedSellTokens : undefined
+      return promotedTokens?.includes(tokenId) || false
+    },
+    [priorityMode]
+  )
+
   const sortedTokensByBalances = useMemo(() => {
     if (!balances) return [...filteredAssets]
     return [...filteredAssets].sort((a, b) => {
+      // priority tokens first
+      const isPriorityA = priorityTokens?.(a.id) ?? false
+      const isPriorityB = priorityTokens?.(b.id) ?? false
+      if (isPriorityA && !isPriorityB) return -1
+      if (!isPriorityA && isPriorityB) return 1
+
       const aBalance = balances[a.id]?.toNumber()
       const bBalance = balances[b.id]?.toNumber()
 
