@@ -61,7 +61,6 @@ const assetsSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {
       const token = await sdk.getToken(parseInt(chainId, 10), contractAddress)
       allTokens[token?.chainId]?.push?.(token)
     } catch (cause) {
-      // eslint-disable-next-line no-console
       console.warn(`Failed to add lifi token ${talismanTokenId}`, cause)
     }
   }

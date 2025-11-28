@@ -148,7 +148,7 @@ export const SwapTokensModal: React.FC<Props> = ({
       // if both have rates, sort by largest fiat value
       return bBalance * bRate - aBalance * aRate
     })
-  }, [balances, filteredAssets, rates])
+  }, [balances, filteredAssets, priorityTokens, rates])
 
   const handleSelectAsset = useCallback(
     (asset: SwappableAssetWithDecimals, showWarning: boolean) => {
