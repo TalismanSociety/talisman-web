@@ -33,12 +33,12 @@ const InnerStakeDialog = () => {
 
   const [inTransition, startTransition] = useTransition()
 
-  if (chain === undefined) {
-    throw new Error(`Missing chain configs`)
-  }
-
   if (!open) {
     return null
+  }
+
+  if (chain === undefined) {
+    throw new Error(`Missing chain configs`)
   }
 
   return (
