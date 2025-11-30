@@ -17,7 +17,7 @@ import { walletConnectionSideSheetOpenState } from '@/components/widgets/WalletC
 import { evmSignableAccountsState } from '@/domains/accounts/recoils'
 import { SEEK_TICKER } from '@/domains/staking/seek/constants'
 
-import useGetSeekStakeMpr from '../hooks/seek/useGetSeekStakeMpr'
+import useGetSeekStakeApr from '../hooks/seek/useGetSeekStakeApr'
 import useGetSeekStakeUnlockDuration from '../hooks/seek/useGetSeekStakeUnlockDuration'
 import useStakeSeek from '../hooks/seek/useStakeSeek'
 
@@ -29,7 +29,7 @@ const AddStakeSideSheet = () => {
   const [[account], accountSelector] = useAccountSelector(evmSignableAccounts, 0)
   const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
   const unlockDuration = useGetSeekStakeUnlockDuration()
-  const monthlyAPR = useGetSeekStakeMpr()
+  const apr = useGetSeekStakeApr()
 
   const navigate = useNavigate()
 
@@ -77,10 +77,8 @@ const AddStakeSideSheet = () => {
     >
       <div css={{ display: 'flex', gap: '1.6rem', marginBottom: '1.6rem', flexWrap: 'wrap', '> *': { flex: 1 } }}>
         <InfoCard
-          overlineContent="Rewards"
-          headlineContent={
-            <div>{monthlyAPR.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</div>
-          }
+          overlineContent="Rewards APR"
+          headlineContent={<div>{apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</div>}
         />
         <InfoCard overlineContent="Unbonding period" headlineContent={<div>{formatDistance(0, unlockDuration)}</div>} />
       </div>

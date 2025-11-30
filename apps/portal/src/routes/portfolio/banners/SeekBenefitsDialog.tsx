@@ -95,7 +95,7 @@ const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps)
               title={
                 <div className="flex gap-1">
                   <div>Staking rewards</div>
-                  <div className="text-primary">{apy}% APY</div>
+                  <div className="text-primary">{apy / 10}% APY</div>
                 </div>
               }
               description="Stake SEEK and watch your yield grow."
