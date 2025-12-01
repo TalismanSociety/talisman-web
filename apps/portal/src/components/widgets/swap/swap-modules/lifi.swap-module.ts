@@ -8,6 +8,7 @@ import { atomFamily, loadable } from 'jotai/utils'
 import { zeroAddress } from 'viem'
 
 import { allEvmChains } from '@/components/widgets/swap/allEvmChains.ts'
+import { lifiTalismanTokens } from '@/components/widgets/swap/curated-tokens'
 
 import { knownEvmNetworksAtom } from '../helpers'
 import {
@@ -47,10 +48,26 @@ export const allPairsCsvAtom = atom(async get => {
 })
 
 const assetsSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {
-  const res = await sdk.getTokens({ chainTypes: [sdk.ChainType.EVM, sdk.ChainType.SVM] })
+  const allTokens = (await sdk.getTokens({ chainTypes: [sdk.ChainType.EVM, sdk.ChainType.SVM] }))?.tokens
+
+  for (const talismanTokenId of lifiTalismanTokens ?? []) {
+    const [chainId] = talismanTokenId.split('-')
+    const [contractAddress] = talismanTokenId.split('-').slice(-1)
+    if (!chainId || !contractAddress) continue
+    const type = talismanTokenId.slice(chainId.length + 1).slice(0, -contractAddress.length - 1)
+    if (type !== 'evm-erc20') continue
+
+    try {
+      const token = await sdk.getToken(parseInt(chainId, 10), contractAddress)
+      allTokens[token?.chainId]?.push?.(token)
+    } catch (cause) {
+      console.warn(`Failed to add lifi token ${talismanTokenId}`, cause)
+    }
+  }
+
   const networks = await get(evmNetworksByIdAtom)
   const chaindataTokensById = await get(tokensByIdAtom)
-  const tokens = Object.entries(res.tokens)
+  const tokens = Object.entries(allTokens)
     .filter(([id]) => {
       return networks[id.toString()]
     })

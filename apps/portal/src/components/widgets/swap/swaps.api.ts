@@ -28,7 +28,7 @@ import type {
   SwapActivity,
   SwappableAssetBaseType,
 } from './swap-modules/common.swap-module'
-import { curatedTokens } from './curated-tokens'
+import { curatedTokens, lifiTalismanTokens } from './curated-tokens'
 import { knownEvmNetworksAtom } from './helpers'
 import { swapInfoTabAtom } from './side-panel'
 import { chainflipSwapModule } from './swap-modules/chainflip.swap-module'
@@ -250,10 +250,22 @@ export const uniswapExtendedTokensSet = atom(async () => {
   return new Set(tokens.map(token => `${token.chainId}:${token.address.toLowerCase()}`))
 })
 
+const talismanSafeTokensSet = atom(async () => {
+  const safeTokens = lifiTalismanTokens.flatMap(tokenId => {
+    const [chainId] = tokenId.split('-')
+    const [contractAddress] = tokenId.split('-').slice(-1)
+    if (!chainId || !contractAddress) return []
+    return `${chainId}:${contractAddress}`
+  })
+
+  return new Set(safeTokens)
+})
+
 export const safeTokensSetAtom = atom(async get => {
   const uniswapSafeTokens = await get(uniswapSafeTokensSet)
   const uniswapExtendedTokens = await get(uniswapExtendedTokensSet)
-  return new Set([...uniswapSafeTokens, ...uniswapExtendedTokens])
+  const talismanSafeTokens = await get(talismanSafeTokensSet)
+  return new Set([...uniswapSafeTokens, ...uniswapExtendedTokens, ...talismanSafeTokens])
 })
 
 const coingeckoCoinByAddressAtom = atomFamily((addressPlatform: string) =>

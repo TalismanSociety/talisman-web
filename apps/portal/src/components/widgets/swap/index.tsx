@@ -197,6 +197,7 @@ export const Swap: React.FC = () => {
             onChangeAsset={handleChangeFromAsset}
             disableBtc
             searchAtom={swapFromSearchAtom}
+            priorityMode="buy"
           />
           <div className="relative h-[12px] w-full">
             <TonalIconButton
@@ -219,6 +220,7 @@ export const Swap: React.FC = () => {
             hideBalance
             searchAtom={swapToSearchAtom}
             usdOverride={toAmountUsdOverride}
+            priorityMode="sell"
           />
         </Surface>
         <FromAccount
