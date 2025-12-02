@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { erc20Abi } from 'viem'
 import { useReadContract, useWaitForTransactionReceipt } from 'wagmi'
-import { mainnet, polygon } from 'wagmi/chains'
+import { mainnet } from 'wagmi/chains'
 
 import { Account } from '@/domains/accounts/recoils'
 import { useWagmiWriteContract } from '@/domains/common/hooks/useWagmiWriteContract'
@@ -69,7 +69,7 @@ const useStakeSeek = ({
         abi: erc20Abi,
         functionName: 'approve',
         args: [SEEK_SINGLE_POOL_STAKING_ADDRESS as `0x${string}`, decimalAmountInput?.planck ?? 0n],
-        etherscanUrl: CHAIN_ID === polygon.id ? polygon.blockExplorers.default.url : mainnet.blockExplorers.default.url,
+        etherscanUrl: mainnet.blockExplorers.default.url,
       }),
   }
 
@@ -94,7 +94,7 @@ const useStakeSeek = ({
         abi: seekSinglePoolStakingAbi,
         functionName: 'stake',
         args: [decimalAmountInput?.planck ?? 0n],
-        etherscanUrl: polygon.blockExplorers.default.url,
+        etherscanUrl: mainnet.blockExplorers.default.url,
       }),
   }
 

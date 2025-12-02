@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useWaitForTransactionReceipt } from 'wagmi'
-import { mainnet, polygon } from 'wagmi/chains'
+import { mainnet } from 'wagmi/chains'
 
 import { Account } from '@/domains/accounts/recoils'
 import { useWagmiWriteContract } from '@/domains/common/hooks/useWagmiWriteContract'
@@ -24,7 +24,7 @@ const useCancelWithdrawalSeek = ({ account }: { account: Account | undefined }) 
         abi: seekSinglePoolStakingAbi,
         functionName: 'cancelWithdrawal',
         args: [],
-        etherscanUrl: CHAIN_ID === polygon.id ? polygon.blockExplorers.default.url : mainnet.blockExplorers.default.url,
+        etherscanUrl: mainnet.blockExplorers.default.url,
       }),
   }
 

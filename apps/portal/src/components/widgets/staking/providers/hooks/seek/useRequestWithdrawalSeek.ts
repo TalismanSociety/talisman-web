@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import { useWaitForTransactionReceipt } from 'wagmi'
-import { mainnet, polygon } from 'wagmi/chains'
+import { mainnet } from 'wagmi/chains'
 
 import { Account } from '@/domains/accounts/recoils'
 import { selectedCurrencyState } from '@/domains/balances/currency'
@@ -62,7 +62,7 @@ const useRequestWithdrawalSeek = ({
         abi: seekSinglePoolStakingAbi,
         functionName: 'requestWithdrawal',
         args: [decimalAmountInput?.planck ?? 0n],
-        etherscanUrl: CHAIN_ID === polygon.id ? polygon.blockExplorers.default.url : mainnet.blockExplorers.default.url,
+        etherscanUrl: mainnet.blockExplorers.default.url,
       }),
   }
 

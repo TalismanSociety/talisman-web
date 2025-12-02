@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { useWaitForTransactionReceipt } from 'wagmi'
-import { mainnet, polygon } from 'wagmi/chains'
+import { mainnet } from 'wagmi/chains'
 
 import { Account } from '@/domains/accounts/recoils'
 import { useWagmiWriteContract } from '@/domains/common/hooks/useWagmiWriteContract'
@@ -35,7 +35,7 @@ const useClaimEarnedSeek = ({ account }: { account: Account | undefined }) => {
         abi: seekSinglePoolStakingAbi,
         functionName: 'getReward',
         args: [],
-        etherscanUrl: CHAIN_ID === polygon.id ? polygon.blockExplorers.default.url : mainnet.blockExplorers.default.url,
+        etherscanUrl: mainnet.blockExplorers.default.url,
       }),
   }
 
