@@ -20,13 +20,17 @@ export const SiteNav = ({ className, contentClassName }: { className?: string; c
   const openOnRamp: MouseEventHandler<HTMLAnchorElement> = useCallback(async event => {
     event.preventDefault()
 
-    const response = await fetch(`${RAMP_API_URL}/talisman/getSignedBuySellUrl`)
-    if (!response.ok) return toast.error(`Failed to generate Ramp URL`)
+    try {
+      const response = await fetch(`${RAMP_API_URL}/talisman/getSignedBuySellUrl`)
+      if (!response.ok) throw new Error()
 
-    const url = (await response.json())?.url
-    if (!url?.length) return toast.error(`Failed to generate Ramp URL`)
+      const url = (await response.json())?.url
+      if (!url?.length) throw new Error()
 
-    return window.open(url, '_blank', 'noopener noreferrer')
+      return window.open(url, '_blank', 'noopener noreferrer')
+    } catch (cause) {
+      return toast.error(`Failed to generate Ramp URL`)
+    }
   }, [])
 
   return (
