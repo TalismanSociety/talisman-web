@@ -24,6 +24,8 @@ export const SiteNav = ({ className, contentClassName }: { className?: string; c
     if (!response.ok) return toast.error(`Failed to generate Ramp URL`)
 
     const url = (await response.json())?.url
+    if (!url?.length) return toast.error(`Failed to generate Ramp URL`)
+
     return window.open(url, '_blank', 'noopener noreferrer')
   }, [])
 
