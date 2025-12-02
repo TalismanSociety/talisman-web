@@ -1,11 +1,11 @@
 export const DECIMALS = 18
-export const SEEK_SINGLE_POOL_STAKING_ADDRESS = '0xbc7e311abdf3b219be72011d772136e5c712f7fc' as const
-export const SEEK_TOKEN_ADDRESS = '0x2a69b0383759572081c09f0a68d3a8a955751dde' as const
+export const SEEK_SINGLE_POOL_STAKING_ADDRESS = '0x52b8969F9C1d1EFFd4f0ABeA2104dF02B65c165C' as const
+export const SEEK_TOKEN_ADDRESS = '0x07C3E739C65f81Ea79d19A88d27de4C9f15f8Df0 ' as const
 export const SEEK_TICKER = 'SEEK'
-export const CHAIN_ID = 137 // Polygon
-export const CHAIN_NAME = 'Polygon'
+export const CHAIN_ID = 1 // Eth mainnet
+export const CHAIN_NAME = 'Ethereum'
 export const SEEK_COIN_GECKO_ID = 'usd-coin' // USDT on Mainnet
-export const SEEK_TOKEN_ID = '137:evm-erc20:0x2a69b0383759572081c09f0a68d3a8a955751dde'
+export const SEEK_TOKEN_ID = '1:evm-erc20:0x07C3E739C65f81Ea79d19A88d27de4C9f15f8Df0'
 
 export const DISCOUNT_TIERS = [
   { tier: 0, min: 0n, discount: 0 },
