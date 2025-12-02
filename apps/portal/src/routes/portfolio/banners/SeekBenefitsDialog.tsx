@@ -24,7 +24,7 @@ const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps)
   const [seekProvider] = useSeekProviders()
   const { actionLink } = seekProvider ?? { actionLink: '' }
   const navigate = useNavigate()
-  const apy = useGetSeekStakeApr()
+  const apr = useGetSeekStakeApr()
   const { totalAvailableFormatted } = useGetSeekAvailableBalance()
 
   const seekStakingLink = `/staking/providers/${actionLink}`
@@ -95,7 +95,9 @@ const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps)
               title={
                 <div className="flex gap-1">
                   <div>Staking rewards</div>
-                  <div className="text-primary">{apy / 10}% APY</div>
+                  <div className="text-primary">
+                    {apr.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })} APR
+                  </div>
                 </div>
               }
               description="Stake SEEK and watch your yield grow."

@@ -10,10 +10,10 @@ const useGetSeekStakeApr = () => {
     return 0
   }
 
-  const SECONDS_IN_YEAR = BigInt(365.25 * 24 * 60 * 60) // 31,536,000 seconds
+  const SECONDS_IN_YEAR = BigInt(365.25 * 24 * 60 * 60) // 31,557,600 seconds
   const MULTIPLIER = 10_000n // use to preserve decimal precision when working with bigints
   const multipliedApr = (rewardRate * SECONDS_IN_YEAR * MULTIPLIER) / totalStaked
-  const apr = (Number(multipliedApr) / Number(MULTIPLIER)) * 1000
+  const apr = Number(multipliedApr) / Number(MULTIPLIER)
 
   return apr
 }
