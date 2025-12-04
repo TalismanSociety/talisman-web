@@ -15,8 +15,6 @@ import { PortfolioAllocationGraph } from '@/components/widgets/PortfolioAllocati
 import { redactBalanceState } from '@/components/widgets/RedactableBalance'
 import Stakes from '@/components/widgets/staking/Stakes'
 
-import { SeekPreSaleBanner } from './banners/SeekPreSaleBanner'
-
 const SuspendableAssetsOverview = () => {
   const [search, setSearch] = useState('')
   const { tokens, balances, fiatTotal, isLoading } = useAssetsFiltered({ size: 8, search })
@@ -171,7 +169,6 @@ const Overview = () => (
     >
       <div css={{ order: 0 }}>
         <div className="flex flex-col gap-[2.8rem]">
-          <SeekPreSaleBanner />
           <ErrorBoundary>
             <PortfolioAllocationGraph />
           </ErrorBoundary>
