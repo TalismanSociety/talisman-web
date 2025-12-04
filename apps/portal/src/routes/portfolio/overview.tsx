@@ -16,7 +16,6 @@ import { redactBalanceState } from '@/components/widgets/RedactableBalance'
 import Stakes from '@/components/widgets/staking/Stakes'
 
 import { SeekBenefitsInfoBanner } from './banners/SeekBenefitsInfoBanner'
-import { SeekPreSaleBanner } from './banners/SeekPreSaleBanner'
 
 const SuspendableAssetsOverview = () => {
   const [search, setSearch] = useState('')
@@ -173,7 +172,6 @@ const Overview = () => (
       <div css={{ order: 0 }}>
         <div className="flex flex-col gap-[2.8rem]">
           <SeekBenefitsInfoBanner />
-          <SeekPreSaleBanner />
           <ErrorBoundary>
             <PortfolioAllocationGraph />
           </ErrorBoundary>

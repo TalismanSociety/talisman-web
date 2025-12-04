@@ -1,5 +1,6 @@
+import { toast } from '@talismn/ui/molecules/Toaster'
 import { CreditCard, Menu, PieChart, Repeat, Zap } from '@talismn/web-icons'
-import { useState } from 'react'
+import { MouseEventHandler, useCallback, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { CurrencySelect } from '@/components/molecules/CurrencySelect'
@@ -11,15 +12,26 @@ import { SiteLogo } from './SiteLogo'
 import { SiteMobileNav } from './SiteMobileNav'
 import { SiteNavItem } from './SiteNavItem'
 
-const TALISMAN_LOGO_URL =
-  'https://raw.githubusercontent.com/TalismanSociety/talisman-web/0fa6f5a99b4729f740c1a68bbe3d2ca9c85c9daa/apps/portal/public/talisman.svg'
+const RAMP_API_URL = 'https://ramp-api.talisman.xyz'
 
 export const SiteNav = ({ className, contentClassName }: { className?: string; contentClassName?: string }) => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
-  const rampUrl = `https://app.ramp.network/?hostApiKey=${
-    import.meta.env.VITE_RAMP_API_KEY
-  }&hostAppName=Talisman&hostLogoUrl=${TALISMAN_LOGO_URL}&enabledFlows=ONRAMP,OFFRAMP`
+  const openOnRamp: MouseEventHandler<HTMLAnchorElement> = useCallback(async event => {
+    event.preventDefault()
+
+    try {
+      const response = await fetch(`${RAMP_API_URL}/talisman/getSignedBuySellUrl`)
+      if (!response.ok) throw new Error()
+
+      const url = (await response.json())?.url
+      if (!url?.length) throw new Error()
+
+      return window.open(url, '_blank', 'noopener noreferrer')
+    } catch (cause) {
+      return toast.error(`Failed to generate Ramp URL`)
+    }
+  }, [])
 
   return (
     // z-50 keeps this above the fullscreen suspense loader,
@@ -40,14 +52,14 @@ export const SiteNav = ({ className, contentClassName }: { className?: string; c
         }}
       />
       <div className={cn('flex h-32 items-center justify-between gap-8', contentClassName)}>
-        <Link className="flex-1 md:flex-initial" to="/portfolio">
+        <Link className="flex-1 md:flex-initial" to="/staking">
           <SiteLogo responsive />
         </Link>
         <div className="hidden items-center gap-8 md:flex lg:gap-14">
-          <SiteNavItem label="Portfolio" icon={<PieChart />} to="/portfolio" />
           <SiteNavItem label="Staking" icon={<Zap />} to="/staking" />
           <SiteNavItem label="Swap" icon={<Repeat />} to="/transport" />
-          <SiteNavItem label="Buy/Sell" icon={<CreditCard />} to={rampUrl} target="_blank" />
+          <SiteNavItem label="Portfolio" icon={<PieChart />} to="/portfolio" />
+          <SiteNavItem label="Buy/Sell" icon={<CreditCard />} to="/rampbuysell" target="_blank" onClick={openOnRamp} />
         </div>
         <div className="space-between flex items-center gap-3">
           <CurrencySelect className="hidden md:block" />
@@ -68,16 +80,16 @@ export const SiteNav = ({ className, contentClassName }: { className?: string; c
         headerIcon={<SiteLogo />}
         footer={<SiteFooter />}
       >
-        <Link to="/portfolio">
-          <SiteMobileNav.Item label="Portfolio" icon={<PieChart />} />
-        </Link>
         <Link to="/staking">
           <SiteMobileNav.Item label="Staking" icon={<Zap />} />
         </Link>
         <Link to="/transport">
           <SiteMobileNav.Item label="Swap" icon={<Repeat />} />
         </Link>
-        <Link to={rampUrl} target="_blank">
+        <Link to="/portfolio">
+          <SiteMobileNav.Item label="Portfolio" icon={<PieChart />} />
+        </Link>
+        <Link to="/rampbuysell" target="_blank" onClick={openOnRamp}>
           <SiteMobileNav.Item label="Buy/Sell" icon={<CreditCard />} />
         </Link>
       </SiteMobileNav>

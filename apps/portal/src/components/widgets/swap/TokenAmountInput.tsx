@@ -34,6 +34,8 @@ type Props = {
   disableBtc?: boolean
   searchAtom: PrimitiveAtom<string>
   usdOverride?: number
+  /** Used to determine which tokens should be prioritized to the top of the list */
+  priorityMode?: 'buy' | 'sell'
 }
 
 const hardcodedGasBufferByTokenSymbol: Record<string, number> = {
@@ -58,6 +60,7 @@ export const TokenAmountInput: React.FC<Props> = ({
   disabled = false,
   searchAtom,
   usdOverride,
+  priorityMode,
 }) => {
   const [input, setInput] = useState((amount?.planck ?? 0n) > 0n ? amount?.toString() ?? '' : '')
 
@@ -240,6 +243,7 @@ export const TokenAmountInput: React.FC<Props> = ({
             evmAddress={evmAddress}
             substrateAddress={substrateAddress}
             balances={balances}
+            priorityMode={priorityMode}
           />
         </div>
       }
