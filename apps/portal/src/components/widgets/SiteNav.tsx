@@ -52,13 +52,13 @@ export const SiteNav = ({ className, contentClassName }: { className?: string; c
         }}
       />
       <div className={cn('flex h-32 items-center justify-between gap-8', contentClassName)}>
-        <Link className="flex-1 md:flex-initial" to="/portfolio">
+        <Link className="flex-1 md:flex-initial" to="/staking">
           <SiteLogo responsive />
         </Link>
         <div className="hidden items-center gap-8 md:flex lg:gap-14">
-          <SiteNavItem label="Portfolio" icon={<PieChart />} to="/portfolio" />
           <SiteNavItem label="Staking" icon={<Zap />} to="/staking" />
           <SiteNavItem label="Swap" icon={<Repeat />} to="/transport" />
+          <SiteNavItem label="Portfolio" icon={<PieChart />} to="/portfolio" />
           <SiteNavItem label="Buy/Sell" icon={<CreditCard />} to="/rampbuysell" target="_blank" onClick={openOnRamp} />
         </div>
         <div className="space-between flex items-center gap-3">
@@ -80,14 +80,14 @@ export const SiteNav = ({ className, contentClassName }: { className?: string; c
         headerIcon={<SiteLogo />}
         footer={<SiteFooter />}
       >
-        <Link to="/portfolio">
-          <SiteMobileNav.Item label="Portfolio" icon={<PieChart />} />
-        </Link>
         <Link to="/staking">
           <SiteMobileNav.Item label="Staking" icon={<Zap />} />
         </Link>
         <Link to="/transport">
           <SiteMobileNav.Item label="Swap" icon={<Repeat />} />
+        </Link>
+        <Link to="/portfolio">
+          <SiteMobileNav.Item label="Portfolio" icon={<PieChart />} />
         </Link>
         <Link to="/rampbuysell" target="_blank" onClick={openOnRamp}>
           <SiteMobileNav.Item label="Buy/Sell" icon={<CreditCard />} />

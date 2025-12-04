@@ -15,7 +15,7 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
     element: <Layout />,
     errorElement: <RouteErrorElement />,
     children: [
-      { path: '/', element: <Navigate to="portfolio" /> },
+      { path: '/', element: <Navigate to="staking" /> },
       { path: 'portfolio', ...portfolioRoutes },
       { path: 'transport', ...dexRoutes },
       { path: 'nfts', element: <Navigate to="/portfolio/collectibles" /> },
