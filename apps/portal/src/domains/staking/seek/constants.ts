@@ -4,7 +4,7 @@ export const SEEK_TOKEN_ADDRESS = '0x07C3E739C65f81Ea79d19A88d27de4C9f15f8Df0' a
 export const SEEK_TICKER = 'SEEK'
 export const CHAIN_ID = 1 // Eth mainnet
 export const CHAIN_NAME = 'Ethereum'
-export const SEEK_COIN_GECKO_ID = 'usd-coin' // USDT on Mainnet
+export const SEEK_COIN_GECKO_ID = 'talisman'
 export const SEEK_TOKEN_ID = '1:evm-erc20:0x07C3E739C65f81Ea79d19A88d27de4C9f15f8Df0'
 
 export const DISCOUNT_TIERS = [
