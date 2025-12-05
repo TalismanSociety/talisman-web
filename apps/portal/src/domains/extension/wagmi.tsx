@@ -11,6 +11,12 @@ import type {} from 'wagmi/'
 import { arbitrum, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon } from 'wagmi/chains'
 import { injected } from 'wagmi/connectors'
 
+const onFinalityRpc = import.meta.env.VITE_ON_FINALITY_RPC
+
+if (!onFinalityRpc) {
+  console.warn('VITE_ON_FINALITY_RPC is not set')
+}
+
 declare global {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
@@ -31,11 +37,12 @@ const createWagmiConfigWithChaindata = (evmNetworks: EvmNetwork[]) => {
     const network = evmNetworks.find(n => n.id.toString() === chainId.toString())
     const chaindataRpcs = network?.rpcs?.map(rpc => rpc.url).filter(Boolean) || []
 
-    // Always use fallback for consistent typing
-    return fallback([
+    const rpcTransports = [
+      ...(chainId === mainnet.id && onFinalityRpc ? [http(onFinalityRpc)] : []),
       ...chaindataRpcs.map((url: string) => http(url)),
       http(), // Default public RPC as last resort
-    ])
+    ]
+    return fallback(rpcTransports)
   }
 
   return createConfig({
@@ -61,7 +68,7 @@ const defaultConfig = createConfig({
   chains: [bsc, mainnet, moonbeam, moonriver, arbitrum, polygon, optimism, blast, manta],
   connectors: [injected()],
   transports: {
-    [mainnet.id]: fallback([http()]),
+    [mainnet.id]: fallback([http(onFinalityRpc), http()]),
     [arbitrum.id]: fallback([http()]),
     [moonbeam.id]: fallback([http()]),
     [moonriver.id]: fallback([http()]),
