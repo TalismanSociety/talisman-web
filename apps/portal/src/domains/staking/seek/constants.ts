@@ -12,3 +12,5 @@ export const DISCOUNT_TIERS = [
   { tier: 1, min: 200n * 10n ** 18n, discount: 0.05 },
   { tier: 2, min: 1_000n * 10n ** 18n, discount: 0.15 },
 ] as const
+
+export const LEARN_MORE_SEEK_URL = 'https://docs.talisman.xyz/talisman/seek/seek-benefits'

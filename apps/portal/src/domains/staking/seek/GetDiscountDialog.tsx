@@ -8,7 +8,7 @@ import useGetSeekAvailableBalance from '@/components/widgets/staking/providers/h
 import { cn } from '@/util/cn'
 
 import useGetSeekStaked from '../../../components/widgets/staking/providers/hooks/seek/useGetSeekStaked'
-import { SEEK_TICKER } from './constants'
+import { LEARN_MORE_SEEK_URL, SEEK_TICKER } from './constants'
 import { useGetSeekDiscount } from './hooks/useGetSeekDiscount'
 
 const GET_SEEK_LINK = 'https://docs.talisman.xyz/talisman/seek/get-seek'
@@ -54,7 +54,7 @@ export const GetDiscountDialog = ({ isOpen, onToggleIsOpen }: GetDiscountDialogP
           Stake {SEEK_TICKER} to enjoy fee discounts on your subnet staking transactions.{' '}
           <a
             className="inline-flex items-center justify-center gap-1 text-white"
-            href="https://talisman.xyz/"
+            href={LEARN_MORE_SEEK_URL}
             target="_blank"
             rel="noreferrer"
           >

@@ -12,6 +12,7 @@ import ZapFastIcon from '@/assets/zap-fast-icon.svg?react'
 import useGetSeekAvailableBalance from '@/components/widgets/staking/providers/hooks/seek/useGetSeekAvailableBalance'
 import useGetSeekStakeApr from '@/components/widgets/staking/providers/hooks/seek/useGetSeekStakeApr'
 import useSeekProviders from '@/components/widgets/staking/providers/hooks/seek/useSeekProviders'
+import { LEARN_MORE_SEEK_URL } from '@/domains/staking/seek/constants'
 
 const GET_SEEK_LINK = 'https://docs.talisman.xyz/talisman/seek/get-seek'
 
@@ -61,7 +62,7 @@ const SeekBenefitsDialog = ({ isOpen, onToggleIsOpen }: SeekBenefitsDialogProps)
               Hold SEEK to unlock exclusive benefits.{' '}
               <a
                 className="inline-flex items-center justify-center gap-1 text-white"
-                href="https://talisman.xyz/seek"
+                href={LEARN_MORE_SEEK_URL}
                 target="_blank"
                 rel="noreferrer"
               >
