@@ -35,7 +35,7 @@ const Layout = () => {
         </PageHeaderItem>
 
         <PageHeaderItem>
-          <PortfolioAddressSearch />
+          <PortfolioAddressSearch className="min-w-[22rem]" />
         </PageHeaderItem>
       </PageHeader>
       <ErrorBoundary>

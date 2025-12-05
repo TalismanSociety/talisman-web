@@ -39,7 +39,7 @@ export const PortfolioAddressSearch = ({ className }: { className?: string }) =>
           />
         </div>
       ) : (
-        <div className={className}>
+        <div>
           <SurfaceIconButton onClick={() => setRevealed(true)}>
             <Search />
           </SurfaceIconButton>

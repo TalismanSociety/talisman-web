@@ -11,6 +11,7 @@ import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nomi
 import { useHighestApr } from '@/domains/staking/subtensor/hooks/useApr'
 
 import useLidoApr from '../hooks/lido/useApr'
+import useGetSeekStakeApr from '../hooks/seek/useGetSeekStakeApr'
 import { StakeProviderTypeId } from '../hooks/types'
 
 const aprFormatter = (apr: number, hasDTaoStaking?: boolean) => {
@@ -41,10 +42,14 @@ const AprDisplay = ({ typeId, symbol, apiEndpoint, hasDTaoStaking, setAprValues 
     liquidStakingLido: useLidoApr,
     // @ts-expect-error
     dappStaking: useDappApr,
+    seekStaking: useGetSeekStakeApr,
   }
 
   let aprValue: number = 0
   switch (typeId) {
+    case 'seekStaking':
+      aprValue = hookMap['seekStaking']()
+      break
     case 'nominationPool':
       aprValue = hookMap['nominationPool']()
       break

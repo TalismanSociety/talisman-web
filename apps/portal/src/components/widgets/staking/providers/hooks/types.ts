@@ -7,7 +7,13 @@ export type NativeToken = {
   address?: `0x${string}` | string
 }
 
-export type StakeProvider = 'Nomination pool' | 'Liquid staking' | 'Delegation' | 'DApp staking' | 'Subnet Staking'
+export type StakeProvider =
+  | 'Nomination pool'
+  | 'Liquid staking'
+  | 'Delegation'
+  | 'DApp staking'
+  | 'Subnet Staking'
+  | 'Seek Staking'
 export type StakeProviderTypeId =
   | 'liquidStakingSlpx'
   | 'liquidStakingSlpxSubstrate'
@@ -15,6 +21,7 @@ export type StakeProviderTypeId =
   | 'dappStaking'
   | 'nominationPool'
   | 'liquidStakingLido'
+  | 'seekStaking'
 
 export type Provider = {
   symbol: string
@@ -26,7 +33,7 @@ export type Provider = {
   provider: string | undefined
   actionLink: string
   nativeToken?: NativeToken
-  genesisHash: `0x${string}`
+  genesisHash?: `0x${string}`
   apiEndpoint?: string
   tokenPair?: SlpxPair | SlpxSubstratePair
   position?: string

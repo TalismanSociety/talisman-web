@@ -7,6 +7,7 @@ import { SiteFooter } from '@/components/widgets/SiteFooter'
 import { SiteNav } from '@/components/widgets/SiteNav'
 import DappStakingStakeSideSheet from '@/components/widgets/staking/dappStaking/StakeSideSheet'
 import LidoStakeSideSheet from '@/components/widgets/staking/lido/StakeSideSheet'
+import SeekStakeSideSheet from '@/components/widgets/staking/providers/seek/SeekStakeSideSheet'
 import SlpxStakeSideSheet from '@/components/widgets/staking/slpx/StakeSideSheet'
 import SlpxSubstrateStakeSideSheet from '@/components/widgets/staking/slpxSubstrate/StakeSideSheet'
 import NominationPoolsStakeSideSheet from '@/components/widgets/staking/substrate/NominationPoolsStakeSideSheet'
@@ -47,6 +48,7 @@ export const Layout = () => {
       <Suspense fallback={<FullscreenLoader />}>
         <main className="mx-auto w-full max-w-screen-xl flex-grow px-8">
           <Outlet />
+          <SeekStakeSideSheet />
           <NominationPoolsStakeSideSheet />
           <DappStakingStakeSideSheet />
           <SubtensorStakeSideSheet />

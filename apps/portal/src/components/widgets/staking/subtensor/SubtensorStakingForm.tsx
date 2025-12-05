@@ -17,6 +17,7 @@ import clsx from 'clsx'
 import { Suspense } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
+import { SeekDiscountBanner } from '@/domains/staking/seek/SeekDiscountBanner'
 import { cn } from '@/util/cn'
 import { Maybe } from '@/util/monads'
 
@@ -151,7 +152,6 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
           />
         </label>
       </div>
-      {hasDTaoStaking && <StakeTxBreakdown />}
       <div className={clsx({ 'mb-[1.6rem] mt-[1.6rem]': props.currentStakedBalance !== undefined || !hasDTaoStaking })}>
         <DescriptionList>
           {props.currentStakedBalance !== undefined && (
@@ -173,6 +173,12 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
         </DescriptionList>
       </div>
       {props.stakeButton}
+      {hasDTaoStaking && (
+        <>
+          <SeekDiscountBanner />
+          <StakeTxBreakdown />
+        </>
+      )}
     </Surface>
   )
 }

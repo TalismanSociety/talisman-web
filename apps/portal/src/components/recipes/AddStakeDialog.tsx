@@ -31,7 +31,7 @@ export type AddStakeDialogProps = AddStakeFormProps & {
   onDismiss: () => unknown
 }
 
-const AddStakeForm = (props: AddStakeFormProps) => (
+export const AddStakeForm = (props: AddStakeFormProps) => (
   <div>
     {props.accountSelector && <div css={{ marginBottom: '2.6rem' }}>{props.accountSelector}</div>}
     <TextInput

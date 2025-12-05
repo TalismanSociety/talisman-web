@@ -10,11 +10,12 @@ import { Decimal } from '@/util/Decimal'
 import { useAvailableBalance as useSlpxAvailableBalance } from '../hooks/bifrost/useAvailableBalance'
 import useLidoAvailableBalance from '../hooks/lido/useAvailableBalance'
 import useAvailableBalance from '../hooks/nominationPools/useAvailableBalance'
+import useGetSeekAvailableBalance from '../hooks/seek/useGetSeekAvailableBalance'
 import { StakeProviderTypeId } from '../hooks/types'
 
 type AvailableBalanceProps = {
   typeId: StakeProviderTypeId
-  genesisHash: `0x${string}`
+  genesisHash?: `0x${string}`
   setAvailableBalanceValue: (fiatAmount: number) => void
   apiEndpoint?: string
   tokenPair: SlpxPair | SlpxSubstratePair | undefined
@@ -26,7 +27,7 @@ type AvailableBalance = {
   availableBalance: Decimal
   fiatAmount: number
 }
-type hookMapKey = 'substrate' | 'slpx' | 'liquidStakingLido'
+type hookMapKey = 'substrate' | 'slpx' | 'liquidStakingLido' | 'talisman'
 
 // This component is used to get around the react rules of conditional hooks
 const AvailableBalanceDisplay = ({
@@ -40,6 +41,7 @@ const AvailableBalanceDisplay = ({
     substrate: useAvailableBalance,
     slpx: useSlpxAvailableBalance,
     liquidStakingLido: useLidoAvailableBalance,
+    talisman: useGetSeekAvailableBalance,
   }
   let balanceValue: AvailableBalance
   switch (typeId) {
@@ -54,6 +56,9 @@ const AvailableBalanceDisplay = ({
       break
     case 'liquidStakingLido':
       balanceValue = hookMap['liquidStakingLido'](symbol)
+      break
+    case 'seekStaking':
+      balanceValue = hookMap['talisman']()
       break
     default:
       balanceValue = {
@@ -77,7 +82,7 @@ const AvailableBalanceDisplay = ({
 
 const AvailableBalance = ({
   typeId,
-  genesisHash,
+  genesisHash = '0x123',
   apiEndpoint,
   setAvailableBalanceValue,
   tokenPair,
