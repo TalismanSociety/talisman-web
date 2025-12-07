@@ -1,6 +1,6 @@
+import type { Balances, BalanceSearchQuery } from '@talismn/balances'
 import type React from 'react'
 import { decodeAddress, encodeAddress, isAddress as isSubstrateAddress } from '@polkadot/util-crypto'
-import { type Balances, type BalanceSearchQuery } from '@talismn/balances'
 import { useBalances } from '@talismn/balances-react'
 import { Surface } from '@talismn/ui/atoms/Surface'
 import { Select } from '@talismn/ui/molecules/Select'

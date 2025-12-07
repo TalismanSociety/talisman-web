@@ -1,6 +1,8 @@
 import type { Chain } from 'wagmi/chains'
 
 export type SlpxToken = {
+  /** required so that @talismn/balances-react loads the user's balances for this token in the account picker / portfolio totals */
+  id: string
   type: 'token' | 'vToken'
   address: `0x${string}`
   symbol: string

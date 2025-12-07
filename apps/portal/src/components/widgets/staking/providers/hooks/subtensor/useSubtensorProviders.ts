@@ -20,6 +20,11 @@ const useSubtensorProviders = () => {
     .map(chain => {
       const actionLink = `?action=stake&type=subtensor&chain=${chain.id ?? ''}`
       return {
+        balancesTokenIds: [
+          // TODO: Upgrade balances library to the version which includes dtao tokens,
+          // and add dtao token id here in addition to native token
+          chain.nativeToken?.id ?? '',
+        ],
         symbol: chain.hasDTaoStaking ? DTAO_SYMBOL : chain.nativeToken?.symbol ?? '',
         logo: chain.hasDTaoStaking ? DTAO_LOGO : chain.nativeToken?.logo ?? '',
         chainName: chain.name ?? '',

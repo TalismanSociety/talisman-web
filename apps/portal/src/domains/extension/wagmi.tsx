@@ -5,9 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
 import { useEffect, useState } from 'react'
 import { createConfig, fallback, http, WagmiProvider } from 'wagmi'
-
-import type {} from 'wagmi/'
-
 import { arbitrum, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon } from 'wagmi/chains'
 import { injected } from 'wagmi/connectors'
 

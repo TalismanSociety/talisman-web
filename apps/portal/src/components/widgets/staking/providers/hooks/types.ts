@@ -24,6 +24,8 @@ export type StakeProviderTypeId =
   | 'seekStaking'
 
 export type Provider = {
+  /** required for balances to be loaded for this provider's token in the account picker and portfolio totals sections */
+  balancesTokenIds: string[]
   symbol: string
   logo: string
   chainName: string

@@ -8,8 +8,10 @@ const useSlpxProviders = () => {
   const slpxPairs = useRecoilValue(slpxPairsState)
 
   const slpxProviders: Provider[] = slpxPairs.map(slpxPair => {
-    const { chain, nativeToken, substrateChainGenesisHash, apiEndpoint, splx } = slpxPair
+    const { chain, nativeToken, substrateChainGenesisHash, apiEndpoint, splx, vToken } = slpxPair
+
     return {
+      balancesTokenIds: [nativeToken.id, vToken.id],
       symbol: nativeToken?.symbol,
       logo: nativeToken?.logo,
       chainName: chain.name,

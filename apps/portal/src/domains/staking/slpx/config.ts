@@ -8,6 +8,7 @@ export const glmrSlpxPair = {
   splx: '0xF1d4797E51a4640a76769A50b57abE7479ADd3d8',
   etherscanUrl: moonbeam.blockExplorers.default.url,
   nativeToken: {
+    id: 'bifrost-polkadot-substrate-tokens-N4IgLgngDgpiBcIAqB7A1jAdgJhAGhADcBDAGwFc54BGAXyA',
     type: 'token',
     address: '0x0000000000000000000000000000000000000802',
     symbol: 'GLMR',
@@ -18,6 +19,7 @@ export const glmrSlpxPair = {
     },
   },
   vToken: {
+    id: 'bifrost-polkadot-substrate-tokens-N4IgLgngDgpiBcIBqAVA9gaxgOwEwgBoQA3AQwBsBXOeARgF8g',
     type: 'vToken',
     address: '0xFfFfFFff99dABE1a8De0EA22bAa6FD48fdE96F6c',
     symbol: 'xcvGMLR',
@@ -37,6 +39,7 @@ export const mantaSlpxPair = {
   splx: '0x95A4D4b345c551A9182289F9dD7A018b7Fd0f940',
   etherscanUrl: manta.blockExplorers.default.url,
   nativeToken: {
+    id: 'bifrost-polkadot-substrate-tokens-N4IgLgngDgpiBcIAqB7A1jAdgJhAGhADcBDAGwFc54AOAXyA',
     type: 'token',
     address: '0x95CeF13441Be50d20cA4558CC0a27B601aC544E5',
     symbol: 'MANTA',
@@ -47,6 +50,7 @@ export const mantaSlpxPair = {
     },
   },
   vToken: {
+    id: 'bifrost-polkadot-substrate-tokens-N4IgLgngDgpiBcIBqAVA9gaxgOwEwgBoQA3AQwBsBXOeADgF8g',
     type: 'vToken',
     address: '0x7746ef546d562b443AE4B4145541a3b1a3D75717',
     symbol: 'vMANTA',

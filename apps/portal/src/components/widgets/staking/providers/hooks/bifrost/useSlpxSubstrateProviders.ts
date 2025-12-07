@@ -7,8 +7,9 @@ import { Provider } from '../types'
 const useSlpxSubstrateProviders = () => {
   const slpxSubstratePairs = useAtomValue(slpxSubstratePairsState)
   const slpxSubstrateProviders: Provider[] = slpxSubstratePairs.map(slpxPair => {
-    const { chainId, nativeToken, substrateChainGenesisHash, apiEndpoint } = slpxPair
+    const { chainId, nativeToken, substrateChainGenesisHash, apiEndpoint, vToken } = slpxPair
     return {
+      balancesTokenIds: [nativeToken.id, vToken.id],
       symbol: nativeToken?.symbol,
       logo: nativeToken?.logo,
       chainName: 'Bifrost',

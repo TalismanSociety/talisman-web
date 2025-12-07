@@ -8,6 +8,7 @@ export const dotSlpxPair = {
   minStake: 5000000000n,
   minRedeem: 4000000000n,
   nativeToken: {
+    id: 'bifrost-polkadot-substrate-tokens-N4IgLgngDgpiBcIAqB7A1jAdgJhAGhADcBDAGwFc54AGAXyA',
     type: 'token',
     address: '2F551a80e79e02213dd918190892af5034002909c5',
     symbol: 'DOT',
@@ -18,6 +19,7 @@ export const dotSlpxPair = {
     },
   },
   vToken: {
+    id: 'bifrost-polkadot-substrate-tokens-N4IgLgngDgpiBcIBqAVA9gaxgOwEwgBoQA3AQwBsBXOeABgF8g',
     type: 'vToken',
     address: '2F9658598ef1eace56a0662d4a067a260e42b36f2a',
     symbol: 'vDOT',

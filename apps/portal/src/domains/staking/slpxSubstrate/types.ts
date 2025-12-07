@@ -1,4 +1,6 @@
 export type SlpxSubstrateToken = {
+  /** required for balances to be loaded for this provider's token in the account picker and portfolio totals sections */
+  id: string
   type: 'token' | 'vToken'
   address: string
   symbol: string
