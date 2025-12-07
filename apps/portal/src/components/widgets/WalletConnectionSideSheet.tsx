@@ -9,9 +9,10 @@ import { ListItem } from '@talismn/ui/molecules/ListItem'
 import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from '@talismn/ui/molecules/SideSheet'
 import { toast } from '@talismn/ui/molecules/Toaster'
 import { Ethereum, Eye, Polkadot, Wallet } from '@talismn/web-icons'
+import { disconnect as disconnectCore } from '@wagmi/core'
 import { Suspense, useState } from 'react'
 import { atom, useRecoilState, useRecoilValue } from 'recoil'
-import { useDisconnect as useDisconnectEvm, useAccount as useEvmAccount } from 'wagmi'
+import { useConfig, useDisconnect as useDisconnectEvm, useAccount as useEvmAccount } from 'wagmi'
 
 import talismanWalletLogo from '@/assets/talisman-wallet.svg'
 import { AddReadOnlyAccountDialog } from '@/components/widgets/AddReadOnlyAccountDialog'
@@ -176,6 +177,7 @@ const EvmWalletConnections = () => {
   const { connector } = useEvmAccount()
   const { connectAsync } = useConnectEvm()
   const { disconnectAsync } = useDisconnectEvm()
+  const config = useConfig()
   const writeableEvmAccounts = useRecoilValue(writeableEvmAccountsState)
 
   return (
@@ -198,7 +200,19 @@ const EvmWalletConnections = () => {
                 toast.error('Please enable an ethereum account in your wallet.')
               }
             }}
-            onDisconnectRequest={async () => await disconnectAsync()}
+            onDisconnectRequest={async () => {
+              try {
+                await disconnectAsync()
+              } catch (error) {
+                // Some connectors (like injected) don't support programmatic disconnect
+                // Fall back to using disconnect from @wagmi/core which handles this gracefully
+                if (error instanceof Error && error.message.includes('disconnect is not a function')) {
+                  await disconnectCore(config)
+                } else {
+                  throw error
+                }
+              }
+            }}
           />
         ))}
       </div>
