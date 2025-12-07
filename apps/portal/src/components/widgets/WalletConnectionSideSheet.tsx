@@ -193,7 +193,6 @@ const EvmWalletConnections = () => {
             iconUrl={x.icon}
             connected={x.id === connector?.id && writeableEvmAccounts.length > 0}
             onConnectRequest={async () => {
-              await disconnectAsync()
               const res = await connectAsync({ connector: x })
               if (res.accounts.length === 0) {
                 toast.error('Please enable an ethereum account in your wallet.')
