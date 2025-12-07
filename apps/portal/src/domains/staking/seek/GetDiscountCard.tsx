@@ -1,9 +1,8 @@
 import { X } from '@talismn/web-icons'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import SeekTilted from '@/assets/seek-tilted.svg?react'
-
-import { SEEK_TICKER } from './constants'
 
 type GetDiscountCardProps = {
   storageKey: string
@@ -11,6 +10,8 @@ type GetDiscountCardProps = {
 
 export const GetDiscountCard = ({ storageKey }: GetDiscountCardProps) => {
   const [isVisible, setIsVisible] = useState<boolean>(true)
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     const hidden = localStorage.getItem(`hide-discount-card-${storageKey}`) === 'true'
@@ -24,14 +25,17 @@ export const GetDiscountCard = ({ storageKey }: GetDiscountCardProps) => {
 
   if (!isVisible) return null
   return (
-    <div className=" rounded-[10px] bg-gradient-to-r from-[#767A25] to-[#1B1B1B] to-[120%] p-[1px] text-[14px]">
+    <div
+      className="cursor-pointer rounded-[10px] bg-gradient-to-r from-[#767A25] to-[#1B1B1B] to-[120%] p-[1px] text-[14px]"
+      onClick={() => navigate('/transport/swap', { replace: true })}
+    >
       <div className="relative flex h-[64px] min-w-[250px] max-w-[292px] rounded-[10px] bg-gradient-to-b from-[rgb(27,27,27)] to-[#767A25] to-[287%] p-2">
         <div className="align-center flex items-center gap-2 pl-6">
           <div className="flex flex-col gap-1">
             <div className="flex items-center">
               <div className="font-semibold">Get Fee Discounts</div>
             </div>
-            <div className="text-[12px] text-gray-400">Stake {SEEK_TICKER} now to get discounts</div>
+            <div className="text-[12px] text-gray-400">Buy SEEK and stake now</div>
           </div>
           <SeekTilted />
         </div>

@@ -35,7 +35,7 @@ export const SeekBenefitsInfoBanner = () => {
               <div className="flex items-center">
                 <div className="font-semibold">Talisman SEEK is live</div>
               </div>
-              <div className="text-[12px] text-gray-400">Stake SEEK now to get discounts</div>
+              <div className="text-[12px] text-gray-400">Buy SEEK and stake now</div>
             </div>
             <div className="absolute right-8 top-0">
               <SeekInfoBenefitsBg />
