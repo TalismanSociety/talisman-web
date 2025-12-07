@@ -1,6 +1,6 @@
 import { X } from '@talismn/web-icons'
 import { useEffect, useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import SeekTilted from '@/assets/seek-tilted.svg?react'
 
