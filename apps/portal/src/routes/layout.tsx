@@ -8,8 +8,6 @@ import { SiteNav } from '@/components/widgets/SiteNav'
 import DappStakingStakeSideSheet from '@/components/widgets/staking/dappStaking/StakeSideSheet'
 import LidoStakeSideSheet from '@/components/widgets/staking/lido/StakeSideSheet'
 import SeekStakeSideSheet from '@/components/widgets/staking/providers/seek/SeekStakeSideSheet'
-import SlpxStakeSideSheet from '@/components/widgets/staking/slpx/StakeSideSheet'
-import SlpxSubstrateStakeSideSheet from '@/components/widgets/staking/slpxSubstrate/StakeSideSheet'
 import NominationPoolsStakeSideSheet from '@/components/widgets/staking/substrate/NominationPoolsStakeSideSheet'
 import { StakeSideSheet as SubtensorStakeSideSheet } from '@/components/widgets/staking/subtensor/StakeSideSheet'
 import { WalletConnectionSideSheet } from '@/components/widgets/WalletConnectionSideSheet'
@@ -52,9 +50,7 @@ export const Layout = () => {
           <NominationPoolsStakeSideSheet />
           <DappStakingStakeSideSheet />
           <SubtensorStakeSideSheet />
-          <SlpxStakeSideSheet />
           <LidoStakeSideSheet />
-          <SlpxSubstrateStakeSideSheet />
           <WalletConnectionSideSheet />
         </main>
 

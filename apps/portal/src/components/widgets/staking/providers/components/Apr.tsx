@@ -6,7 +6,6 @@ import { useRecoilValue } from 'recoil'
 import { useChainState } from '@/domains/chains/hooks'
 import { ChainProvider } from '@/domains/chains/provider'
 import { useApr as useDappApr } from '@/domains/staking/dappStaking/hooks/useApr'
-import { useSlpxAprState } from '@/domains/staking/slpx/recoils'
 import { useApr as useNominationPoolApr } from '@/domains/staking/substrate/nominationPools/hooks/useApr'
 import { useHighestApr } from '@/domains/staking/subtensor/hooks/useApr'
 
@@ -33,11 +32,10 @@ type AprProps = {
 type AprDisplayProps = Omit<AprProps, 'genesisHash'>
 
 // This component is used to get around the react rules of conditional hooks
-const AprDisplay = ({ typeId, symbol, apiEndpoint, hasDTaoStaking, setAprValues }: AprDisplayProps) => {
+const AprDisplay = ({ typeId, apiEndpoint, hasDTaoStaking, setAprValues }: AprDisplayProps) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
     nominationPool: useNominationPoolApr,
-    liquidStakingSlpx: useSlpxAprState,
     delegationSubtensor: useHighestApr,
     liquidStakingLido: useLidoApr,
     // @ts-expect-error
@@ -52,10 +50,6 @@ const AprDisplay = ({ typeId, symbol, apiEndpoint, hasDTaoStaking, setAprValues 
       break
     case 'nominationPool':
       aprValue = hookMap['nominationPool']()
-      break
-    case 'liquidStakingSlpx':
-    case 'liquidStakingSlpxSubstrate':
-      aprValue = hookMap['liquidStakingSlpx']({ apiEndpoint: apiEndpoint ?? '', nativeTokenSymbol: symbol ?? '' })
       break
     case 'delegationSubtensor':
       aprValue = hookMap['delegationSubtensor']()

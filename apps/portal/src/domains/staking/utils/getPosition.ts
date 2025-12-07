@@ -17,9 +17,6 @@ const orderedProviders: string[] = [
   'vara_vara',
   'avail_avail',
   'cere_cere',
-  'bifrost_slpx_manta',
-  'bifrost_slpx_glmr',
-  'bifrost_slpx_dot',
   'lido_eth',
 ]
 

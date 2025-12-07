@@ -120,7 +120,6 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
               genesisHash={row.original.genesisHash}
               setUnbondingValues={value => setValues('unbondingPeriod', row.id, value)}
               apiEndpoint={row.original.apiEndpoint}
-              tokenPair={row.original.tokenPair}
             />
           </Suspense>
         ),
@@ -137,7 +136,6 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
                 genesisHash={row.original.genesisHash}
                 setAvailableBalanceValue={value => setValues('availableBalance', row.id, value)}
                 apiEndpoint={row.original.apiEndpoint}
-                tokenPair={row.original.tokenPair}
                 symbol={row.original.nativeToken?.symbol}
               />
             </Suspense>
@@ -155,7 +153,6 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
                 typeId={row.original.typeId}
                 genesisHash={row.original.genesisHash ?? '0x'}
                 setStakePercentage={value => setValues('stakePercentage', row.id, value)}
-                tokenPair={row.original.tokenPair}
                 nativeTokenAddress={row.original.nativeToken?.address ?? '0x'}
                 symbol={row.original.nativeToken?.symbol}
                 chainId={row.original.chainId}

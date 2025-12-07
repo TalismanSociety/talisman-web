@@ -1,5 +1,5 @@
 import type { RouteObject } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 
 import { cn } from '@/util/cn'
@@ -13,12 +13,40 @@ const routes = {
 export default routes
 
 function InstallTalismanWalletPrompt() {
-  const talismanIsInstalled = useTalismanIsInstalled()
-  if (talismanIsInstalled) return <TalismanIsInstalled />
-  return <TalismanNotInstalled />
+  const talismanInstalledStatus = useTalismanInstalledStatus()
+
+  if (talismanInstalledStatus === 'unavailable') return <TalismanUnavailable />
+  if (talismanInstalledStatus === 'readonly') return <TalismanReadonly />
+  return <TalismanOpenable />
 }
 
-const TalismanIsInstalled = () => (
+const TalismanOpenable = () => (
+  <div className="mx-auto mt-8 w-full max-w-screen-sm rounded-[10px] bg-gradient-to-r from-[#2E3128] to-[#1B1B1B] to-[274%] p-[1px] text-[14px]">
+    <div className="flex w-full items-center justify-between gap-4 rounded-[10px] bg-gradient-to-b from-[rgb(27,27,27)] to-[#3F3F0C] to-[287%] px-8 py-4">
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center">
+          <div className="font-semibold">View Portfolio in Talisman Wallet</div>
+        </div>
+        <div className="text-[12px] text-gray-400">
+          Use Talisman extension to see <b>your full portfolio</b> across Ethereum, Solana and Polkadot.
+        </div>
+      </div>
+
+      <button
+        className={cn(
+          'border-primary text-md rounded-full border px-7 py-3',
+          'active:scale-101 transition-transform hover:scale-105 hover:no-underline'
+        )}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onClick={useCallback(() => (window as any)?.talismanSub?.openFullscreenPortfolio?.(), [])}
+      >
+        Open
+      </button>
+    </div>
+  </div>
+)
+
+const TalismanReadonly = () => (
   <div className="mx-auto mt-8 w-full max-w-screen-sm rounded-[10px] bg-gradient-to-r from-[#2E3128] to-[#1B1B1B] to-[274%] p-[1px] text-[14px]">
     <div className="flex w-full items-center justify-between gap-4 rounded-[10px] bg-gradient-to-b from-[rgb(27,27,27)] to-[#3F3F0C] to-[287%] px-8 py-4">
       <div className="flex flex-col gap-1">
@@ -35,7 +63,7 @@ const TalismanIsInstalled = () => (
   </div>
 )
 
-const TalismanNotInstalled = () => (
+const TalismanUnavailable = () => (
   <div className="mx-auto mt-8 w-full max-w-screen-sm rounded-[10px] bg-gradient-to-r from-[#2E3128] to-[#1B1B1B] to-[274%] p-[1px] text-[14px]">
     <div className="flex w-full items-center justify-between gap-4 rounded-[10px] bg-gradient-to-b from-[rgb(27,27,27)] to-[#3F3F0C] to-[287%] px-8 py-4">
       <div className="flex flex-col gap-1">
@@ -62,24 +90,35 @@ const TalismanNotInstalled = () => (
   </div>
 )
 
-const useTalismanIsInstalled = () => {
-  const [isInstalled, setIsInstalled] = useState(false)
+const useTalismanInstalledStatus = () => {
+  const [status, setStatus] = useState<
+    /** talisman is not installed */
+    | 'unavailable'
+    /** talisman is installed, but it's an old version we can't open the user's portfolio from this dapp */
+    | 'readonly'
+    /** talisman is installed, and is a recent version with which we can open the user's portfolio */
+    | 'openable'
+  >('unavailable')
 
   useEffect(() => {
     let id: ReturnType<typeof setTimeout>
 
-    const checkTalismanInstalled = () => {
-      const installed = Boolean((window as any).talismanEth) // eslint-disable-line @typescript-eslint/no-explicit-any
-      setIsInstalled(installed)
+    const checkTalismanStatus = () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const installed = Boolean((window as any).talismanEth)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const canBeOpened = typeof (window as any)?.talismanSub?.openFullscreenPortfolio === 'function'
 
-      if (!installed) id = setTimeout(checkTalismanInstalled, 250)
+      setStatus(canBeOpened ? 'openable' : installed ? 'readonly' : 'unavailable')
+
+      if (!installed) id = setTimeout(checkTalismanStatus, 250)
     }
 
-    checkTalismanInstalled()
+    checkTalismanStatus()
     return () => clearInterval(id)
   }, [])
 
-  return isInstalled
+  return status
 }
 
 const ExtensionIcon = ({ className }: { className?: string }) => (

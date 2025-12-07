@@ -111,9 +111,3 @@ type NominationPoolsUnstakeDialogProps = Omit<UnstakeDialogProps, 'rate'> & {
 export const NominationPoolsUnstakeDialog = (props: NominationPoolsUnstakeDialogProps) => (
   <UnstakeDialog {...props} buttonText={props.isLeaving ? 'Leave pool' : undefined} />
 )
-
-type SlpxUnstakeDialogProps = UnstakeDialogProps & { approvalNeeded?: boolean }
-
-export const SlpxUnstakeDialog = (props: SlpxUnstakeDialogProps) => (
-  <UnstakeDialog {...props} buttonText={props.approvalNeeded ? 'Approve Spend' : undefined} />
-)

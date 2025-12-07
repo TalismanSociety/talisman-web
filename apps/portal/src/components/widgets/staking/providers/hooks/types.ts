@@ -1,6 +1,3 @@
-import type { SlpxPair } from '@/domains/staking/slpx/types'
-import type { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
-
 export type NativeToken = {
   decimals?: number
   symbol: string
@@ -15,8 +12,6 @@ export type StakeProvider =
   | 'Subnet Staking'
   | 'Seek Staking'
 export type StakeProviderTypeId =
-  | 'liquidStakingSlpx'
-  | 'liquidStakingSlpxSubstrate'
   | 'delegationSubtensor'
   | 'dappStaking'
   | 'nominationPool'
@@ -37,7 +32,6 @@ export type Provider = {
   nativeToken?: NativeToken
   genesisHash?: `0x${string}`
   apiEndpoint?: string
-  tokenPair?: SlpxPair | SlpxSubstratePair
   position?: string
   hasDTaoStaking?: boolean
   isDisabled?: boolean

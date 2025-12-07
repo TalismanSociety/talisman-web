@@ -3,11 +3,8 @@ import { useMemo } from 'react'
 
 import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
 import { ChainProvider } from '@/domains/chains/provider'
-import { SlpxPair } from '@/domains/staking/slpx/types'
-import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import { Decimal } from '@/util/Decimal'
 
-import { useAvailableBalance as useSlpxAvailableBalance } from '../hooks/bifrost/useAvailableBalance'
 import useLidoAvailableBalance from '../hooks/lido/useAvailableBalance'
 import useAvailableBalance from '../hooks/nominationPools/useAvailableBalance'
 import useGetSeekAvailableBalance from '../hooks/seek/useGetSeekAvailableBalance'
@@ -18,7 +15,6 @@ type AvailableBalanceProps = {
   genesisHash?: `0x${string}`
   setAvailableBalanceValue: (fiatAmount: number) => void
   apiEndpoint?: string
-  tokenPair: SlpxPair | SlpxSubstratePair | undefined
   symbol?: string
 }
 type AvailableBalanceDisplayProps = Omit<AvailableBalanceProps, 'genesisHash'>
@@ -27,19 +23,13 @@ type AvailableBalance = {
   availableBalance: Decimal
   fiatAmount: number
 }
-type hookMapKey = 'substrate' | 'slpx' | 'liquidStakingLido' | 'talisman'
+type hookMapKey = 'substrate' | 'liquidStakingLido' | 'talisman'
 
 // This component is used to get around the react rules of conditional hooks
-const AvailableBalanceDisplay = ({
-  typeId,
-  tokenPair,
-  symbol,
-  setAvailableBalanceValue,
-}: AvailableBalanceDisplayProps) => {
+const AvailableBalanceDisplay = ({ typeId, symbol, setAvailableBalanceValue }: AvailableBalanceDisplayProps) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hookMap: Record<hookMapKey, (arg0?: any, arg1?: boolean) => AvailableBalance> = {
     substrate: useAvailableBalance,
-    slpx: useSlpxAvailableBalance,
     liquidStakingLido: useLidoAvailableBalance,
     talisman: useGetSeekAvailableBalance,
   }
@@ -49,10 +39,6 @@ const AvailableBalanceDisplay = ({
     case 'delegationSubtensor':
     case 'dappStaking':
       balanceValue = hookMap['substrate']()
-      break
-    case 'liquidStakingSlpx':
-    case 'liquidStakingSlpxSubstrate':
-      balanceValue = hookMap['slpx'](tokenPair, tokenPair?.nativeToken.symbol === 'DOT')
       break
     case 'liquidStakingLido':
       balanceValue = hookMap['liquidStakingLido'](symbol)
@@ -85,7 +71,6 @@ const AvailableBalance = ({
   genesisHash = '0x123',
   apiEndpoint,
   setAvailableBalanceValue,
-  tokenPair,
   symbol,
 }: AvailableBalanceProps) => {
   return (
@@ -94,7 +79,6 @@ const AvailableBalance = ({
         typeId={typeId}
         setAvailableBalanceValue={setAvailableBalanceValue}
         apiEndpoint={apiEndpoint}
-        tokenPair={tokenPair}
         symbol={symbol}
       />
     </ChainProvider>
