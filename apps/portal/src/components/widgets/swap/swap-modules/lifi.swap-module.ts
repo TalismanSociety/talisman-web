@@ -85,7 +85,7 @@ const assetsSelector = atom(async (get): Promise<SwappableAssetBaseType[]> => {
           networkType: 'evm',
           symbol: t.symbol,
           contractAddress: t.address === zeroAddress ? undefined : t.address,
-          image: chaindataLogo ?? t.logoURI,
+          image: chaindataLogo || t.logoURI,
           id: t.address === zeroAddress ? evmNativeTokenId(id) : evmErc20TokenId(id, t.address),
         }
       })
