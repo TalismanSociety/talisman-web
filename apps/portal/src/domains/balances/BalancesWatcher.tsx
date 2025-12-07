@@ -1,4 +1,4 @@
-import { useBalances as _useBalances, useSetBalancesAddresses } from '@talismn/balances-react'
+import { useBalances, useSetBalancesAddresses } from '@talismn/balances-react'
 import { useEffect, useMemo } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
 
@@ -12,7 +12,7 @@ export const BalancesWatcher = () => {
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
   useSetBalancesAddresses(addresses)
 
-  const unfilteredBalances = _useBalances()
+  const unfilteredBalances = useBalances()
   const balances = useMemo(() => unfilteredBalances, [unfilteredBalances])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

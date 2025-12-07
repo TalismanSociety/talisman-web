@@ -8,6 +8,7 @@ const useDappProviders = (): Provider[] => {
   const chains = useRecoilValue(dappStakingEnabledChainsState)
   const dappProviders: Provider[] = chains.map(chain => {
     return {
+      balancesTokenIds: [chain.nativeToken?.id ?? ''],
       symbol: chain.nativeToken?.symbol ?? '',
       logo: chain.nativeToken?.logo ?? '',
       chainName: chain.name ?? '',

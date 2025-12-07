@@ -3,7 +3,6 @@ import '@polkadot/api-augment/substrate'
 import '@talismn/astar-types/augment-api'
 import '@talismn/astar-types/types-lookup'
 
-import { BalancesProvider } from '@talismn/balances-react'
 import { PolkadotApiProvider } from '@talismn/react-polkadot-api'
 import { Toaster } from '@talismn/ui/molecules/Toaster'
 import { PostHogProvider } from 'posthog-js/react'
@@ -18,6 +17,7 @@ import { Development } from '@/components/widgets/development/Development'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
 import { AccountWatcher, SignetWatcher } from '@/domains/accounts/recoils'
 import { BalancesWatcher } from '@/domains/balances/BalancesWatcher'
+import { PortalBalancesProvider } from '@/domains/balances/PortalBalancesProvider'
 import { chainDeriveState, chainQueryMultiState, chainQueryState } from '@/domains/common/recoils/query'
 import { ExtensionWatcher } from '@/domains/extension/main'
 import { TalismanExtensionSynchronizer } from '@/domains/extension/TalismanExtensionSynchronizer'
@@ -44,7 +44,7 @@ const App = () => (
                   deriveState={chainDeriveState}
                   queryMultiState={chainQueryMultiState}
                 >
-                  <BalancesProvider onfinalityApiKey={import.meta.env.VITE_ONFINALITY_API_KEY ?? undefined}>
+                  <PortalBalancesProvider>
                     <ExtensionWatcher />
                     <AccountWatcher />
                     <SignetWatcher />
@@ -56,7 +56,7 @@ const App = () => (
                     </Suspense>
                     <FairyBreadBanner />
                     <Development />
-                  </BalancesProvider>
+                  </PortalBalancesProvider>
                 </PolkadotApiProvider>
               </EvmProvider>
             </PostHogProvider>

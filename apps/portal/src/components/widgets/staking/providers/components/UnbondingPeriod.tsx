@@ -3,12 +3,8 @@ import { formatDistance } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 
 import { ChainProvider } from '@/domains/chains/provider'
-import { useVTokenUnlockDuration } from '@/domains/staking/slpx/core'
-import { SlpxPair } from '@/domains/staking/slpx/types'
-import { SlpxSubstratePair } from '@/domains/staking/slpxSubstrate/types'
 import { useUnlockDuration as useNominationPoolUnlockDuration } from '@/domains/staking/substrate/nominationPools/hooks/useUnlockDuration'
 
-import useSlpxSubstrateUnlockDuration from '../hooks/bifrost/useSlpxSubstrateUnlockDuration'
 import useDappUnlockDuration from '../hooks/dapp/useUnlockDuration'
 import useGetSeekStakeUnlockDuration from '../hooks/seek/useGetSeekStakeUnlockDuration'
 import { StakeProviderTypeId } from '../hooks/types'
@@ -20,19 +16,16 @@ type UnbondingPeriodProps = {
   genesisHash?: `0x${string}`
   setUnbondingValues: (unbonding: number) => void
   apiEndpoint?: string
-  tokenPair: SlpxPair | SlpxSubstratePair | undefined
 }
 type UnbondingDisplayProps = Omit<UnbondingPeriodProps, 'genesisHash'>
 
 // This component is used to get around the react rules of conditional hooks
-const UnbondingDisplay = ({ typeId, tokenPair, setUnbondingValues }: UnbondingDisplayProps) => {
+const UnbondingDisplay = ({ typeId, setUnbondingValues }: UnbondingDisplayProps) => {
   const { t } = useTranslation()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
     nominationPool: useNominationPoolUnlockDuration,
-    liquidStakingSlpx: useVTokenUnlockDuration,
-    liquidStakingSlpxSubstrate: useSlpxSubstrateUnlockDuration,
     delegationSubtensor: () => 0,
     dappStaking: useDappUnlockDuration,
     liquidStakingLido: () => 5,
@@ -47,12 +40,6 @@ const UnbondingDisplay = ({ typeId, tokenPair, setUnbondingValues }: UnbondingDi
       break
     case 'nominationPool':
       unlockValue = hookMap['nominationPool']()
-      break
-    case 'liquidStakingSlpx':
-      unlockValue = hookMap['liquidStakingSlpx'](tokenPair)
-      break
-    case 'liquidStakingSlpxSubstrate':
-      unlockValue = hookMap['liquidStakingSlpxSubstrate']({ slpxPair: tokenPair })
       break
     case 'delegationSubtensor':
       unlockValue = hookMap['delegationSubtensor']()
@@ -78,21 +65,10 @@ const UnbondingDisplay = ({ typeId, tokenPair, setUnbondingValues }: UnbondingDi
   )
 }
 
-const UnbondingPeriod = ({
-  typeId,
-  genesisHash = '0x123',
-  apiEndpoint,
-  setUnbondingValues,
-  tokenPair,
-}: UnbondingPeriodProps) => {
+const UnbondingPeriod = ({ typeId, genesisHash = '0x123', apiEndpoint, setUnbondingValues }: UnbondingPeriodProps) => {
   return (
     <ChainProvider chain={{ genesisHash }}>
-      <UnbondingDisplay
-        typeId={typeId}
-        setUnbondingValues={setUnbondingValues}
-        apiEndpoint={apiEndpoint}
-        tokenPair={tokenPair}
-      />
+      <UnbondingDisplay typeId={typeId} setUnbondingValues={setUnbondingValues} apiEndpoint={apiEndpoint} />
     </ChainProvider>
   )
 }

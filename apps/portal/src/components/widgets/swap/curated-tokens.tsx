@@ -1,6 +1,6 @@
 // a list of additional tokens to enable swaps for, which might not be available from lifi by default
 export const lifiTalismanTokens: string[] = [
-  '1-evm-erc20-0x07C3E739C65f81Ea79d19A88d27de4C9f15f8Df0', // SEEK on Eth
+  '1-evm-erc20-0x07c3e739c65f81ea79d19a88d27de4c9f15f8df0', // SEEK on Eth
   // '137-evm-erc20-0x2a69b0383759572081c09f0a68d3a8a955751dde', // DEEK on Polygon
 
   '1-evm-erc20-0x92f419fb7a750aed295b0ddf536276bf5a40124f', // TATSU on Eth
@@ -31,16 +31,16 @@ export const curatedTokens: string[] = [
   'polkadot-asset-hub-substrate-assets-1984-usdt', // USDT on AssetHub
   'polkadot-asset-hub-substrate-assets-1337-usdc', // USDC on AssetHub
 
-  '1-evm-erc20-0x07C3E739C65f81Ea79d19A88d27de4C9f15f8Df0', // SEEK on Eth
+  '1-evm-erc20-0x07c3e739c65f81ea79d19a88d27de4c9f15f8df0', // SEEK on Eth
   // '137-evm-erc20-0x2a69b0383759572081c09f0a68d3a8a955751dde', // DEEK on Polygon
 ]
 
 // these tokens are always shown at the top of the `All tokens` and `🔥 Popular` sections
 export const promotedBuyTokens: string[] = [
-  '1-evm-erc20-0x07C3E739C65f81Ea79d19A88d27de4C9f15f8Df0', // SEEK on Eth
+  '1-evm-erc20-0x07c3e739c65f81ea79d19a88d27de4c9f15f8df0', // SEEK on Eth
   // '137-evm-erc20-0x2a69b0383759572081c09f0a68d3a8a955751dde', // DEEK on Polygon
 ]
 export const promotedSellTokens: string[] = [
-  '1-evm-erc20-0x07C3E739C65f81Ea79d19A88d27de4C9f15f8Df0', // SEEK on Eth
+  '1-evm-erc20-0x07c3e739c65f81ea79d19a88d27de4c9f15f8df0', // SEEK on Eth
   // '137-evm-erc20-0x2a69b0383759572081c09f0a68d3a8a955751dde', // DEEK on Polygon
 ]

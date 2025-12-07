@@ -1,3 +1,4 @@
+import { evmErc20TokenId, evmNativeTokenId } from '@talismn/balances-react'
 import { githubChainLogoUrl } from '@talismn/chaindata-provider'
 import { useRecoilValue } from 'recoil'
 
@@ -16,6 +17,10 @@ const useLidoProviders = () => {
     const { symbol, decimals } = lidoSuite.chain.nativeCurrency
     const logo = githubChainLogoUrl('1')
     return {
+      balancesTokenIds: [
+        evmNativeTokenId(String(lidoSuite.chain.id)),
+        evmErc20TokenId(String(lidoSuite.chain.id), lidoSuite.token.address),
+      ],
       symbol: symbol,
       logo,
       chainName: lidoSuite.chain.name,

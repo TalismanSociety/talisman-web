@@ -1,3 +1,5 @@
+import { evmErc20TokenId } from '@talismn/balances-react'
+
 import SeekLogo from '@/assets/seek.svg'
 import { CHAIN_ID, CHAIN_NAME, DECIMALS, SEEK_TICKER, SEEK_TOKEN_ADDRESS } from '@/domains/staking/seek/constants'
 
@@ -5,6 +7,7 @@ import { Provider } from '../types'
 
 const useSeekProviders = (): Provider[] => {
   const seekProviders: Provider = {
+    balancesTokenIds: [evmErc20TokenId(String(CHAIN_ID), SEEK_TOKEN_ADDRESS)],
     symbol: SEEK_TICKER,
     logo: SeekLogo,
     chainName: CHAIN_NAME,

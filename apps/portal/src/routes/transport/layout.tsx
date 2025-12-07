@@ -13,7 +13,6 @@ const Layout = () => {
           <PageHeaderItem className="justify-center">
             <PageTabs>
               <PageTab to="/transport/swap">Cross Chain Swap</PageTab>
-              <PageTab to="/transport/xcm">Polkadot XCM</PageTab>
             </PageTabs>
           </PageHeaderItem>
         </PageHeader>

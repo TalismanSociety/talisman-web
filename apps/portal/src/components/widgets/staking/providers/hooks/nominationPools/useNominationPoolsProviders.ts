@@ -20,6 +20,7 @@ const useNominationPoolsProviders = (): Provider[] => {
     allowedNomPools?.map(({ id, nativeToken, rpc, genesisHash }, index) => {
       const chain = chains[index]
       return {
+        balancesTokenIds: [nativeToken?.id ?? ''],
         symbol: nativeToken?.symbol ?? '',
         logo: nativeToken?.logo ?? '',
         chainName: chain?.name ?? '',

@@ -111,23 +111,6 @@ export const NominationPoolsAddStakeDialog = (props: NominationPoolsAddStakeDial
   />
 )
 
-export type SlpxAddStakeFormProps = Omit<AddStakeFormProps, 'buttonText'> & {
-  rate: string
-}
-
-export type SlpxAddStakeDialogProps = Omit<AddStakeDialogProps, 'message'> & {
-  rate: string
-}
-
-export const SlpxAddStakeForm = (props: SlpxAddStakeFormProps) => <AddStakeForm {...props} />
-
-export const SlpxAddStakeDialog = (props: SlpxAddStakeDialogProps) => (
-  <AddStakeDialog
-    {...props}
-    message="Increase your stake below. Talisman will automatically stake this using Bifrost liquid staking."
-  />
-)
-
 export type DappStakingAddStakeDialogProps = Omit<AddStakeDialogProps, 'message'>
 
 export const DappStakingAddStakeDialog = (props: DappStakingAddStakeDialogProps) => (
