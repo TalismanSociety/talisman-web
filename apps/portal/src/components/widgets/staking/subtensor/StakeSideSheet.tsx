@@ -14,7 +14,7 @@ import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombi
 import { type BondOption, type SubnetData } from '@/domains/staking/subtensor/types'
 import { Maybe } from '@/util/monads'
 
-import { MIN_SUBTENSOR_ALPHA_STAKE, MIN_SUBTENSOR_ROOTNET_STAKE, ROOT_NETUID } from './constants'
+import { DEFAULT_VALIDATOR, MIN_SUBTENSOR_ALPHA_STAKE, MIN_SUBTENSOR_ROOTNET_STAKE, ROOT_NETUID } from './constants'
 import { DelegateSelectorDialog } from './DelegateSelectorDialog'
 import { IncompleteSelectionStakeForm, StakeForm } from './StakeForm'
 import { SubnetSelectorDialog } from './SubnetSelectorDialog'
@@ -131,6 +131,7 @@ const StakeSideSheetContent = ({
           selected={subnet}
           onRequestDismiss={() => setSubnetSelectorOpen(false)}
           onHandleSubnetSelectConfirm={onHandleSubnetSelectConfirm}
+          onSetDelegate={setDelegate}
         />
       )}
     </>
@@ -141,7 +142,7 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
   const location = useLocation()
   const navigate = useNavigate()
   const { subnetData } = useCombineSubnetData()
-  const [delegate, setDelegate] = useState<BondOption | undefined>()
+  const [delegate, setDelegate] = useState<BondOption | undefined>(DEFAULT_VALIDATOR)
   const [subnet, setSubnet] = useState<SubnetData | undefined>()
   const { nativeToken } = useRecoilValue(useChainState())
 
