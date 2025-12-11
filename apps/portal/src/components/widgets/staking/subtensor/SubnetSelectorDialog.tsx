@@ -1,26 +1,30 @@
 import { useEffect, useMemo, useState } from 'react'
 
 import { StakeTargetSelectorDialog } from '@/components/recipes/StakeTargetSelectorDialog'
+import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
 import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
-import { type SubnetData } from '@/domains/staking/subtensor/types'
+import { type BondOption, type SubnetData } from '@/domains/staking/subtensor/types'
 
-import { ROOT_NETUID } from './constants'
+import { DEFAULT_VALIDATOR, ROOT_NETUID } from './constants'
 import { SubnetSelectorCard, SubnetSelectorCardProps } from './SubnetSelectorCard'
 
 type SubnetSelectorDialogProps = {
   selected: SubnetData | undefined
   onRequestDismiss: () => void
   onHandleSubnetSelectConfirm: (subnet: SubnetData | undefined) => void
+  onSetDelegate: React.Dispatch<React.SetStateAction<BondOption | undefined>>
 }
 
 export const SubnetSelectorDialog = ({
   selected,
   onRequestDismiss,
   onHandleSubnetSelectConfirm,
+  onSetDelegate,
 }: SubnetSelectorDialogProps) => {
   const [highlighted, setHighlighted] = useState<SubnetData | undefined>(selected)
   const [search, setSearch] = useState<string>('')
   const { subnetData, isError } = useCombineSubnetData()
+  const { combinedValidatorsData, isValidatorsYieldLoading } = useCombinedBittensorValidatorsData(highlighted?.netuid)
   const filteredSubnets = useMemo(
     () => Object.values(subnetData).filter(subnet => subnet.netuid !== ROOT_NETUID),
     [subnetData]
@@ -46,6 +50,16 @@ export const SubnetSelectorDialog = ({
     setSearch(search)
   }
 
+  const handleSubnetSelectConfirm = (subnet: SubnetData) => {
+    onHandleSubnetSelectConfirm(subnet)
+
+    const defaultValidator = combinedValidatorsData
+      .filter(validator => !!validator.validatorYield)
+      .find(validator => validator.name === DEFAULT_VALIDATOR.name)
+
+    onSetDelegate(defaultValidator)
+  }
+
   return (
     <StakeTargetSelectorDialog<SubnetSelectorCardProps>
       title={selected ? 'Select a subnet' : ''}
@@ -53,11 +67,12 @@ export const SubnetSelectorDialog = ({
       selectionLabel="New subnet"
       confirmButtonContent={selected ? 'Swap subnet' : 'Select subnet'}
       onRequestDismiss={onRequestDismiss}
-      onConfirm={() => highlighted && onHandleSubnetSelectConfirm(highlighted)}
+      onConfirm={() => highlighted && handleSubnetSelectConfirm(highlighted)}
       isSortDisabled={isError}
       onHandleSearch={handleSearch}
       searchLabel={'Search name or number'}
       search={search}
+      isDisabled={isValidatorsYieldLoading}
       sortMethods={{
         'Total Alpha': (a, b) => {
           return (b.props.subnetPool.total_alpha ?? 0) === (a.props.subnetPool.total_alpha ?? 0)

@@ -22,6 +22,7 @@ export type StakeTargetSelectorDialogProps<T> = {
   searchLabel?: string
   search?: string
   isSortDisabled?: boolean
+  isDisabled?: boolean
   sortMethods?: {
     [key: string]: (a: ReactElement<T>, b: ReactElement<T>) => number
   }
@@ -202,7 +203,7 @@ export const StakeTargetSelectorDialog = Object.assign(
               props.onConfirm()
               props.onRequestDismiss()
             }}
-            disabled={highlightedItems.length === 0}
+            disabled={highlightedItems.length === 0 || props.isDisabled}
           >
             {props.confirmButtonContent}
           </Button>

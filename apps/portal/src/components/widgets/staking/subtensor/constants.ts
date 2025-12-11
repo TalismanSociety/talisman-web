@@ -1,4 +1,4 @@
-import { SubnetPool } from '@/domains/staking/subtensor/types'
+import { BondOption } from '@/domains/staking/subtensor/types'
 
 export const ROOT_NETUID = 0
 export const MIN_SUBTENSOR_ALPHA_STAKE = 0.001
@@ -13,28 +13,8 @@ export const DTAO_SYMBOL = 'Dynamic TAO'
 export const DTAO_LOGO =
   'https://raw.githubusercontent.com/TalismanSociety/talisman-web/8c5d78676702214c6983b04c9f15c15f34d34109/packages/icons/src/svgs/dtaoLogo.svg'
 
-export const DEFAULT_SUBNET: SubnetPool = {
-  alpha_in_pool: '',
-  alpha_staked: '',
-  block_number: 0,
-  liquidity: '',
-  market_cap: '',
-  name: '𝜏',
-  netuid: 0,
-  price: '',
-  price_change_1_day: '',
-  price_change_1_hour: '',
-  price_change_1_week: '',
-  seven_day_prices: [],
-  symbol: 'Τ',
-  tao_volume_24_hr: '',
-  timestamp: '',
-  total_alpha: '',
-  total_tao: '',
-  tao_buy_volume_24_hr: '',
-  tao_sell_volume_24_hr: '',
-  buys_24_hr: 0,
-  sells_24_hr: 0,
-  buyers_24_hr: 0,
-  sellers_24_hr: 0,
-}
+// Placeholder for a default validator for dTAO. The correct default validator for a given Subnet is picked when the user picks a subnet.
+export const DEFAULT_VALIDATOR = {
+  name: 'RoundTable21',
+  poolId: '5CdE1uVRxJrRrY6PtQcNYN4JdB5Dsz8PevV8PviYLdHBYsn8',
+} as BondOption

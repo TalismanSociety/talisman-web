@@ -5,11 +5,14 @@ import { BondOption } from '../types'
 import { useGetBittensorValidators } from './useGetBittensorInfiniteValidators'
 import { useGetInfiniteValidatorsYieldByNetuid } from './useGetInfiniteValidatorsYield'
 
-export const useCombinedBittensorValidatorsData = () => {
+export const useCombinedBittensorValidatorsData = (netuid?: number) => {
   const [validatorsData, setValidatorsData] = useState<BondOption[]>([])
   const [searchParams] = useSearchParams()
-  const netuidParam = Number(searchParams.get('netuid'))
-  const { data: validatorsYieldData } = useGetInfiniteValidatorsYieldByNetuid({ netuid: netuidParam })
+  const netuidParam = netuid ?? Number(searchParams.get('netuid'))
+
+  const { data: validatorsYieldData, isLoading: isValidatorsYieldLoading } = useGetInfiniteValidatorsYieldByNetuid({
+    netuid: netuidParam,
+  })
 
   const {
     data: infiniteValidators,
@@ -41,5 +44,6 @@ export const useCombinedBittensorValidatorsData = () => {
     combinedValidatorsData: validatorsData,
     isLoading: isValidatorsLoading,
     isError: isInfiniteValidatorsError,
+    isValidatorsYieldLoading,
   }
 }

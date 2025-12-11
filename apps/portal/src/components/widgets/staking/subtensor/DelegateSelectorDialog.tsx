@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useEffect, useMemo, useState } from 'react'
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from 'recoil'
 
 import { StakeTargetSelectorDialog } from '@/components/recipes/StakeTargetSelectorDialog'
@@ -22,18 +22,23 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
   const { combinedValidatorsData, isError } = useCombinedBittensorValidatorsData()
   const [filteredData, setFilteredData] = useState<BondOption[]>(combinedValidatorsData)
 
+  const validatorsWithYield = useMemo(
+    () => combinedValidatorsData.filter(validator => !!validator.validatorYield),
+    [combinedValidatorsData]
+  )
+
   useEffect(() => {
-    setFilteredData(combinedValidatorsData)
-  }, [combinedValidatorsData])
+    setFilteredData(validatorsWithYield)
+  }, [validatorsWithYield])
 
   const handleSearch = (search: string) => {
     if (!search) {
-      setFilteredData(combinedValidatorsData)
+      setFilteredData(validatorsWithYield)
       setSearch('')
       return
     }
     const lowerSearch = search.toLowerCase()
-    const filtered = combinedValidatorsData.filter(
+    const filtered = validatorsWithYield.filter(
       delegate =>
         delegate.name.toLowerCase().includes(lowerSearch) || delegate.poolId.toLowerCase().includes(lowerSearch)
     )

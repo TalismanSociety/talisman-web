@@ -36,7 +36,8 @@ export function useGetInfiniteValidatorsYield({ netuid }: { netuid: number }) {
 }
 
 export function useGetInfiniteValidatorsYieldByNetuid({ netuid }: { netuid: number }) {
-  const { data, hasNextPage, isFetchNextPageError, isError, fetchNextPage } = useGetInfiniteValidatorsYield({ netuid })
+  const { data, hasNextPage, isFetchNextPageError, isError, fetchNextPage, isFetching, isLoading } =
+    useGetInfiniteValidatorsYield({ netuid })
 
   const combinedData = useMemo(() => data?.pages.flatMap(page => page.data) || [], [data])
 
@@ -49,5 +50,7 @@ export function useGetInfiniteValidatorsYieldByNetuid({ netuid }: { netuid: numb
   return {
     data: combinedData,
     isError,
+    isFetching,
+    isLoading,
   }
 }
