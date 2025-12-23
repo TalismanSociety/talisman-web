@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 
 import { StakeTargetSelectorDialog } from '@/components/recipes/StakeTargetSelectorDialog'
-import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
 import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
 import { type BondOption, type SubnetData } from '@/domains/staking/subtensor/types'
 
@@ -24,7 +23,6 @@ export const SubnetSelectorDialog = ({
   const [highlighted, setHighlighted] = useState<SubnetData | undefined>(selected)
   const [search, setSearch] = useState<string>('')
   const { subnetData, isError } = useCombineSubnetData()
-  const { combinedValidatorsData, isValidatorsYieldLoading } = useCombinedBittensorValidatorsData(highlighted?.netuid)
   const filteredSubnets = useMemo(
     () => Object.values(subnetData).filter(subnet => subnet.netuid !== ROOT_NETUID),
     [subnetData]
@@ -52,12 +50,7 @@ export const SubnetSelectorDialog = ({
 
   const handleSubnetSelectConfirm = (subnet: SubnetData) => {
     onHandleSubnetSelectConfirm(subnet)
-
-    const defaultValidator = combinedValidatorsData
-      .filter(validator => !!validator.validatorYield)
-      .find(validator => validator.name === DEFAULT_VALIDATOR.name)
-
-    onSetDelegate(defaultValidator)
+    onSetDelegate(DEFAULT_VALIDATOR)
   }
 
   return (
@@ -72,7 +65,6 @@ export const SubnetSelectorDialog = ({
       onHandleSearch={handleSearch}
       searchLabel={'Search name or number'}
       search={search}
-      isDisabled={isValidatorsYieldLoading}
       sortMethods={{
         'Total Alpha': (a, b) => {
           return (b.props.subnetPool.total_alpha ?? 0) === (a.props.subnetPool.total_alpha ?? 0)
