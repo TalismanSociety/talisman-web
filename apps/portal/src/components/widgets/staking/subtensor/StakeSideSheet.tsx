@@ -157,8 +157,6 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
     }
   }, [combinedValidatorsData, subnet?.netuid])
 
-  console.log({ delegate, selectedSubnet: subnet?.netuid })
-
   const handleSubnetSelectConfirm = (subnet: SubnetData | undefined) => {
     setSubnet(subnet)
     const searchParams = new URLSearchParams(location.search)
