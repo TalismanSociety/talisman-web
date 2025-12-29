@@ -206,7 +206,7 @@ export const SubtensorStakingSideSheet = ({ children, minimumStake, ...props }: 
           Stake
         </div>
       }
-      subtitle="Bittensor delegated staking"
+      subtitle="Bittensor staking"
     >
       <div css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '42rem' } }}>
         <BannerWarningBittensorStaking classNames="my-4" />

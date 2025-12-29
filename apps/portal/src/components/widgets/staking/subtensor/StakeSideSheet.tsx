@@ -1,5 +1,5 @@
 import { Select } from '@talismn/ui/molecules/Select'
-import { Suspense, useMemo, useState, useTransition } from 'react'
+import { Suspense, useEffect, useMemo, useState, useTransition } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
@@ -10,6 +10,7 @@ import { writeableSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { useChainState } from '@/domains/chains/hooks'
 import { ChainProvider } from '@/domains/chains/provider'
 import { ChainInfo, subtensorStakingEnabledChainsState } from '@/domains/chains/recoils'
+import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
 import { useCombineSubnetData } from '@/domains/staking/subtensor/hooks/useCombineSubnetData'
 import { type BondOption, type SubnetData } from '@/domains/staking/subtensor/types'
 import { Maybe } from '@/util/monads'
@@ -131,7 +132,6 @@ const StakeSideSheetContent = ({
           selected={subnet}
           onRequestDismiss={() => setSubnetSelectorOpen(false)}
           onHandleSubnetSelectConfirm={onHandleSubnetSelectConfirm}
-          onSetDelegate={setDelegate}
         />
       )}
     </>
@@ -145,6 +145,17 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
   const [delegate, setDelegate] = useState<BondOption | undefined>(DEFAULT_VALIDATOR)
   const [subnet, setSubnet] = useState<SubnetData | undefined>()
   const { nativeToken } = useRecoilValue(useChainState())
+  const { combinedValidatorsData } = useCombinedBittensorValidatorsData(subnet?.netuid)
+
+  useEffect(() => {
+    const defaultValidator = combinedValidatorsData
+      .filter(validator => !!validator.validatorYield)
+      .find(validator => validator.name === DEFAULT_VALIDATOR.name)
+
+    if (subnet?.netuid) {
+      setDelegate(defaultValidator)
+    }
+  }, [combinedValidatorsData, subnet?.netuid])
 
   const handleSubnetSelectConfirm = (subnet: SubnetData | undefined) => {
     setSubnet(subnet)
