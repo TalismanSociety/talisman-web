@@ -8,12 +8,6 @@ import { createConfig, fallback, http, WagmiProvider } from 'wagmi'
 import { arbitrum, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon } from 'wagmi/chains'
 import { injected } from 'wagmi/connectors'
 
-const onFinalityRpc = import.meta.env.VITE_ON_FINALITY_RPC
-
-if (!onFinalityRpc) {
-  console.warn('VITE_ON_FINALITY_RPC is not set')
-}
-
 declare global {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
@@ -27,54 +21,30 @@ type EvmNetwork = {
   rpcs?: Array<{ url: string }> | null
 }
 
+const chains = [bsc, mainnet, moonbeam, moonriver, arbitrum, polygon, optimism, blast, manta] as const
+
 // Create wagmi config with chaindata RPCs
-const createWagmiConfigWithChaindata = (evmNetworks: EvmNetwork[]) => {
-  // Helper to get RPCs from chaindata for a specific chain
-  const getRpcTransports = (chainId: number) => {
-    const network = evmNetworks.find(n => n.id.toString() === chainId.toString())
-    const chaindataRpcs = network?.rpcs?.map(rpc => rpc.url).filter(Boolean) || []
-
-    const rpcTransports = [
-      ...(chainId === mainnet.id && onFinalityRpc ? [http(onFinalityRpc)] : []),
-      ...chaindataRpcs.map((url: string) => http(url)),
-      http(), // Default public RPC as last resort
-    ]
-    return fallback(rpcTransports)
-  }
-
-  return createConfig({
-    chains: [bsc, mainnet, moonbeam, moonriver, arbitrum, polygon, optimism, blast, manta],
+const createWagmiConfigWithChaindata = (evmNetworks: EvmNetwork[]) =>
+  createConfig({
+    chains,
     connectors: [injected()],
-    transports: {
-      [mainnet.id]: getRpcTransports(mainnet.id),
-      [arbitrum.id]: getRpcTransports(arbitrum.id),
-      [moonbeam.id]: getRpcTransports(moonbeam.id),
-      [moonriver.id]: getRpcTransports(moonriver.id),
-      [manta.id]: getRpcTransports(manta.id),
-      [bsc.id]: getRpcTransports(bsc.id),
-      [polygon.id]: getRpcTransports(polygon.id),
-      [optimism.id]: getRpcTransports(optimism.id),
-      [blast.id]: getRpcTransports(blast.id),
-    },
+    transports: Object.fromEntries(
+      chains.map(chain => {
+        const network = evmNetworks.find(n => n.id.toString() === chain.id.toString())
+        const rpcs = network?.rpcs?.map(rpc => rpc.url).filter(Boolean) || []
+        return [chain.id, fallback([...rpcs.map((url: string) => http(url)), http()])]
+      })
+    ) as Record<(typeof chains)[number]['id'], ReturnType<typeof fallback>>,
   })
-}
 
 // Default config without chaindata (used during initial load)
-// Use fallback for all transports for consistent typing
 const defaultConfig = createConfig({
-  chains: [bsc, mainnet, moonbeam, moonriver, arbitrum, polygon, optimism, blast, manta],
+  chains,
   connectors: [injected()],
-  transports: {
-    [mainnet.id]: fallback([http(onFinalityRpc), http()]),
-    [arbitrum.id]: fallback([http()]),
-    [moonbeam.id]: fallback([http()]),
-    [moonriver.id]: fallback([http()]),
-    [manta.id]: fallback([http()]),
-    [bsc.id]: fallback([http()]),
-    [polygon.id]: fallback([http()]),
-    [optimism.id]: fallback([http()]),
-    [blast.id]: fallback([http()]),
-  },
+  transports: Object.fromEntries(chains.map(chain => [chain.id, fallback([http()])])) as Record<
+    (typeof chains)[number]['id'],
+    ReturnType<typeof fallback>
+  >,
 })
 
 export const wagmiConfig = defaultConfig
