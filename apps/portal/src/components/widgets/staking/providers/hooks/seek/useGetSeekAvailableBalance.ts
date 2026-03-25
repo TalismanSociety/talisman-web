@@ -1,13 +1,14 @@
 import { evmErc20TokenId } from '@talismn/balances-react'
 import { formatDecimals } from '@talismn/util'
+import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import { erc20Abi, formatUnits } from 'viem'
-import { useReadContracts } from 'wagmi'
 
 import { writeableEvmAccountsState } from '@/domains/accounts/recoils'
 import { selectedCurrencyState } from '@/domains/balances/currency'
 import { tokenPriceState } from '@/domains/chains/recoils'
+import { seekPublicClient } from '@/domains/staking/seek/client'
 import {
   CHAIN_ID,
   DECIMALS,
@@ -20,17 +21,23 @@ import { Decimal } from '@/util/Decimal'
 const useGetSeekAvailableBalance = () => {
   const ethAccounts = useRecoilValue(writeableEvmAccountsState)
 
-  const { data, isLoading, isError, refetch } = useReadContracts({
-    allowFailure: false,
-    contracts: ethAccounts.map(a => ({
-      address: SEEK_TOKEN_ADDRESS,
-      abi: erc20Abi,
-      functionName: 'balanceOf',
-      args: [a.address],
-      chainId: CHAIN_ID,
-      enable: ethAccounts.length > 0,
-    })),
-    query: { refetchInterval: 60_000 },
+  const addresses = ethAccounts.map(a => a.address as `0x${string}`)
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ['seek-available-balance', addresses],
+    queryFn: async () => {
+      if (addresses.length === 0) return [] as bigint[]
+      return await seekPublicClient.multicall({
+        contracts: addresses.map(address => ({
+          address: SEEK_TOKEN_ADDRESS,
+          abi: erc20Abi,
+          functionName: 'balanceOf' as const,
+          args: [address],
+        })),
+        allowFailure: false,
+      })
+    },
+    enabled: ethAccounts.length > 0,
+    refetchInterval: 60_000,
   })
 
   const totalAvailable = useMemo(() => {

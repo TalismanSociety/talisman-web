@@ -1,10 +1,12 @@
+import { useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { erc20Abi } from 'viem'
-import { useReadContract, useWaitForTransactionReceipt } from 'wagmi'
+import { useWaitForTransactionReceipt } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
 
 import { Account } from '@/domains/accounts/recoils'
 import { useWagmiWriteContract } from '@/domains/common/hooks/useWagmiWriteContract'
+import { seekPublicClient } from '@/domains/staking/seek/client'
 import {
   CHAIN_ID,
   DECIMALS,
@@ -48,15 +50,16 @@ const useStakeSeek = ({
     isFetched,
     error: _error,
     refetch: refetchAllowance,
-  } = useReadContract({
-    chainId: CHAIN_ID,
-    address: SEEK_TOKEN_ADDRESS,
-    abi: erc20Abi,
-    functionName: 'allowance',
-    args: [(account?.address ?? '0x') as `0x${string}`, SEEK_SINGLE_POOL_STAKING_ADDRESS as `0x${string}`],
-    query: {
-      enabled: account?.address !== undefined,
-    },
+  } = useQuery({
+    queryKey: ['seek-allowance', account?.address],
+    queryFn: async () =>
+      await seekPublicClient.readContract({
+        address: SEEK_TOKEN_ADDRESS,
+        abi: erc20Abi,
+        functionName: 'allowance',
+        args: [account!.address as `0x${string}`, SEEK_SINGLE_POOL_STAKING_ADDRESS as `0x${string}`],
+      }),
+    enabled: account?.address !== undefined,
   })
 
   const _approve = useWagmiWriteContract()

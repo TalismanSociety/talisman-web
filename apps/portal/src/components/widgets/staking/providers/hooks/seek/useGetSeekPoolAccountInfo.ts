@@ -1,47 +1,46 @@
-import { useReadContracts } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
 
 import { Account } from '@/domains/accounts/recoils'
-
-import { CHAIN_ID, SEEK_SINGLE_POOL_STAKING_ADDRESS } from '../../../../../../domains/staking/seek/constants'
-import seekSinglePoolStakingAbi from '../../../../../../domains/staking/seek/seekSinglePoolStakingAbi'
+import { seekPublicClient } from '@/domains/staking/seek/client'
+import { SEEK_SINGLE_POOL_STAKING_ADDRESS } from '@/domains/staking/seek/constants'
+import seekSinglePoolStakingAbi from '@/domains/staking/seek/seekSinglePoolStakingAbi'
 
 const useGetSeekPoolAccountInfo = ({ account }: { account: Account | undefined }) => {
-  const { data, isLoading, isError, refetch, isFetched } = useReadContracts({
-    allowFailure: false,
-    contracts: [
-      {
-        address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
-        abi: seekSinglePoolStakingAbi,
-        functionName: 'balanceOf',
-        chainId: CHAIN_ID,
-        args: [account?.address as `0x${string}`],
-      },
-      {
-        address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
-        abi: seekSinglePoolStakingAbi,
-        functionName: 'pendingWithdrawals',
-        chainId: CHAIN_ID,
-        args: [account?.address as `0x${string}`],
-      },
-      {
-        address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
-        abi: seekSinglePoolStakingAbi,
-        functionName: 'users',
-        chainId: CHAIN_ID,
-        args: [account?.address as `0x${string}`],
-      },
-      {
-        address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
-        abi: seekSinglePoolStakingAbi,
-        functionName: 'earned',
-        chainId: CHAIN_ID,
-        args: [account?.address as `0x${string}`],
-      },
-    ],
-    query: {
-      refetchInterval: 60_000,
-      enabled: account?.address !== undefined,
-    },
+  const address = account?.address as `0x${string}` | undefined
+  const { data, isLoading, isError, refetch, isFetched } = useQuery({
+    queryKey: ['seek-pool-account-info', address],
+    queryFn: async () =>
+      await seekPublicClient.multicall({
+        contracts: [
+          {
+            address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
+            abi: seekSinglePoolStakingAbi,
+            functionName: 'balanceOf',
+            args: [address!],
+          },
+          {
+            address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
+            abi: seekSinglePoolStakingAbi,
+            functionName: 'pendingWithdrawals',
+            args: [address!],
+          },
+          {
+            address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
+            abi: seekSinglePoolStakingAbi,
+            functionName: 'users',
+            args: [address!],
+          },
+          {
+            address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
+            abi: seekSinglePoolStakingAbi,
+            functionName: 'earned',
+            args: [address!],
+          },
+        ],
+        allowFailure: false,
+      }),
+    enabled: address !== undefined,
+    refetchInterval: 60_000,
   })
 
   return { data, isLoading, isError, refetch, isFetched }

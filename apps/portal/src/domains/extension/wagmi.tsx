@@ -8,12 +8,6 @@ import { createConfig, fallback, http, WagmiProvider } from 'wagmi'
 import { arbitrum, blast, bsc, mainnet, manta, moonbeam, moonriver, optimism, polygon } from 'wagmi/chains'
 import { injected } from 'wagmi/connectors'
 
-const onFinalityRpc = import.meta.env.VITE_ON_FINALITY_RPC
-
-if (!onFinalityRpc) {
-  console.warn('VITE_ON_FINALITY_RPC is not set')
-}
-
 declare global {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
@@ -35,7 +29,6 @@ const createWagmiConfigWithChaindata = (evmNetworks: EvmNetwork[]) => {
     const chaindataRpcs = network?.rpcs?.map(rpc => rpc.url).filter(Boolean) || []
 
     const rpcTransports = [
-      ...(chainId === mainnet.id && onFinalityRpc ? [http(onFinalityRpc)] : []),
       ...chaindataRpcs.map((url: string) => http(url)),
       http(), // Default public RPC as last resort
     ]
@@ -65,7 +58,7 @@ const defaultConfig = createConfig({
   chains: [bsc, mainnet, moonbeam, moonriver, arbitrum, polygon, optimism, blast, manta],
   connectors: [injected()],
   transports: {
-    [mainnet.id]: fallback([http(onFinalityRpc), http()]),
+    [mainnet.id]: fallback([http()]),
     [arbitrum.id]: fallback([http()]),
     [moonbeam.id]: fallback([http()]),
     [moonriver.id]: fallback([http()]),

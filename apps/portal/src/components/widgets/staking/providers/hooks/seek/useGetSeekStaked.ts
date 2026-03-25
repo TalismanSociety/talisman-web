@@ -1,11 +1,11 @@
+import { useQuery } from '@tanstack/react-query'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import { formatUnits } from 'viem'
-import { useReadContracts } from 'wagmi'
 
 import { writeableEvmAccountsState } from '@/domains/accounts/recoils'
 import { tokenPriceState } from '@/domains/chains/recoils'
+import { seekPublicClient } from '@/domains/staking/seek/client'
 import {
-  CHAIN_ID,
   DECIMALS,
   SEEK_COIN_GECKO_ID,
   SEEK_SINGLE_POOL_STAKING_ADDRESS,
@@ -19,17 +19,23 @@ const useGetSeekStaked = () => {
   const tokenPriceLoadable = useRecoilValueLoadable(tokenPriceState({ coingeckoId: SEEK_COIN_GECKO_ID }))
   const tokenPrice = tokenPriceLoadable.valueMaybe()
 
-  const { data, isLoading, isError, refetch } = useReadContracts({
-    allowFailure: false,
-    contracts: ethAccounts.map(a => ({
-      address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
-      abi: seekSinglePoolStakingAbi,
-      functionName: 'balanceOf',
-      args: [a.address],
-      chainId: CHAIN_ID,
-      enable: ethAccounts.length > 0,
-    })),
-    query: { refetchInterval: 60_000 },
+  const addresses = ethAccounts.map(a => a.address as `0x${string}`)
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ['seek-staked', addresses],
+    queryFn: async () => {
+      if (addresses.length === 0) return [] as bigint[]
+      return await seekPublicClient.multicall({
+        contracts: addresses.map(address => ({
+          address: SEEK_SINGLE_POOL_STAKING_ADDRESS,
+          abi: seekSinglePoolStakingAbi,
+          functionName: 'balanceOf' as const,
+          args: [address],
+        })),
+        allowFailure: false,
+      })
+    },
+    enabled: ethAccounts.length > 0,
+    refetchInterval: 60_000,
   })
 
   const balances = data
