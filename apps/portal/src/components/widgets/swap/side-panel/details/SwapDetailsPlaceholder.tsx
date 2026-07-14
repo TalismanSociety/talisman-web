@@ -1,3 +1,5 @@
+import { Text } from '@talismn/ui/atoms/Text'
+
 export const SwapDetailsPlaceholder: React.FC = () => (
   <div className="flex flex-col items-center justify-center gap-[8px] rounded-[8px] border border-gray-800 p-[16px] py-[12px]">
     <div className="bg-primary/5 flex h-[124px] w-[124px] items-center justify-center rounded-full">
@@ -45,10 +47,21 @@ export const SwapDetailsPlaceholder: React.FC = () => (
       </div>
     </div>
     <div>
-      <h4 className="text-center text-[14px] font-bold">Seamless cross-chain swaps</h4>
-      <p className="text-center text-[14px] text-gray-400">
-        Swap assets effortlessly across different chains and enjoy the convenience of comparing providers.
-      </p>
+      <h4 className="text-center text-[14px] font-bold">Swap is no longer available on Portal</h4>
+      <div className="flex w-full justify-center pt-[16px] text-center">
+        {' '}
+        <Text.Body as="p" className="w-[205px]">
+          Please use the Swap feature in{' '}
+          <Text.Body.A
+            target="blank"
+            href="https://talisman.xyz/download/"
+            css={theme => ({ color: theme.color.primary })}
+          >
+            Talisman Wallet
+          </Text.Body.A>{' '}
+          instead.
+        </Text.Body>
+      </div>
     </div>
   </div>
 )

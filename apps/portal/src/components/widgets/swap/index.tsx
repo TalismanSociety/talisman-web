@@ -179,7 +179,8 @@ export const Swap: React.FC = () => {
 
   return (
     <div className="mb-[40px] flex w-full flex-col md:flex-row">
-      <div className="relative grid w-full gap-[8px]">
+      <div className="relative grid w-full cursor-not-allowed gap-[8px]">
+        <div className="absolute inset-0 z-20 cursor-not-allowed rounded-[8px] bg-black/50" />
         <Surface className="bg-card w-full rounded-[8px] p-[16px]">
           <h4 className="mb-[8px] text-[18px] font-semibold">Select asset</h4>
           <TokenAmountInput
@@ -233,52 +234,9 @@ export const Swap: React.FC = () => {
               : undefined
           }
         />
-        {substrateAccounts.length === 0 && ethAccounts.length === 0 ? (
-          <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
-            Connect Wallet
-          </Button>
-        ) : fromAsset?.networkType === 'btc' ? (
-          <Button className="!w-full !rounded-[8px]" disabled>
-            Swapping from BTC is not supported
-          </Button>
-        ) : fromAsset?.networkType === 'evm' && ethAccounts.length === 0 ? (
-          <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
-            Connect Ethereum Wallet
-          </Button>
-        ) : fromAsset?.networkType === 'substrate' && substrateAccounts.length === 0 ? (
-          <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
-            Connect Polkadot Wallet
-          </Button>
-        ) : approvalData ? (
-          <Button loading={approving} disabled={approving} onClick={approve} className="!w-full !rounded-[8px]">
-            Allow {approvalData.protocolName} to spend {fromAsset?.symbol}
-          </Button>
-        ) : (
-          <Button
-            className="!w-full !rounded-[8px]"
-            disabled={
-              toAmount.state !== 'hasData' ||
-              !toAmount.data ||
-              toAmount.data.planck === 0n ||
-              !fromAddress ||
-              !toAddress ||
-              insufficientBalance !== false ||
-              swapping ||
-              approvalLoading
-            }
-            loading={swapping || approvalLoading}
-            onClick={() => {
-              setInfoTab('details')
-
-              if (quote.state !== 'hasData' || !quote.data) return
-              if (!fastBalance?.balance) return
-              if (quote.data.quote.state !== 'hasData' || !quote.data.quote.data) return
-              swap(quote.data.quote.data.protocol, fromAmount.planck > fastBalance.balance.stayAlive.planck)
-            }}
-          >
-            Swap
-          </Button>
-        )}
+        <Button className="!w-full !rounded-[8px]" disabled={true} loading={false}>
+          Swap
+        </Button>
       </div>
       <SidePanel />
     </div>
