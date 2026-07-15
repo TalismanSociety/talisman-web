@@ -30,23 +30,51 @@ export const getStakingErasPerYear = (babeApi: ApiPromise): bigint => {
 }
 
 /**
+ * Number of eras a nominator (including nomination-pool bonded accounts, which are pure nominators)
+ * must wait to unbond.
+ *
+ * Since Polkadot referendum 1910, when nominators are not slashable they unbond in
+ * `NominatorFastUnbondDuration` eras (e.g. 2 on Polkadot Asset Hub) instead of the full
+ * `BondingDuration` (28). When the fast-unbond constant is absent, or nominators are still
+ * slashable, the normal bonding duration applies.
+ *
+ * @param areNominatorsSlashable - on-chain `staking.areNominatorsSlashable` value
+ */
+export const getNominatorBondingDurationEras = (stakingApi: ApiPromise, areNominatorsSlashable: boolean): number => {
+  const fastUnbondDuration = (
+    stakingApi.consts.staking as unknown as Record<string, { toNumber: () => number } | undefined>
+  )['nominatorFastUnbondDuration']
+
+  if (fastUnbondDuration !== undefined && !areNominatorsSlashable) {
+    return fastUnbondDuration.toNumber()
+  }
+
+  return stakingApi.consts.staking.bondingDuration.toNumber()
+}
+
+/**
  * Calculates the staking bonding duration in milliseconds
- * @param api - ApiPromise instance with babe and staking constants
+ * @param stakingApi - ApiPromise for the chain holding the staking pallet
+ * @param babeApi - ApiPromise exposing the babe constants (relay chain for parachains)
+ * @param areNominatorsSlashable - on-chain `staking.areNominatorsSlashable` value (see
+ *   {@link getNominatorBondingDurationEras})
  * @returns Bonding duration in milliseconds
  */
 export const getStakingBondingDurationMs = ({
   stakingApi,
   babeApi,
+  areNominatorsSlashable,
 }: {
   stakingApi: ApiPromise
   babeApi: ApiPromise | null
+  areNominatorsSlashable: boolean
 }): bigint => {
   if (!babeApi) {
     console.error('Babe API is null')
     return 0n
   }
 
-  const bondingDuration = stakingApi.consts.staking.bondingDuration.toNumber()
+  const bondingDuration = getNominatorBondingDurationEras(stakingApi, areNominatorsSlashable)
   const eraDuration = getStakingEraDurationMs(babeApi)
 
   return BigInt(bondingDuration) * eraDuration

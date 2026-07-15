@@ -60,6 +60,25 @@ export const eraStakersState = selectorFamily({
 export const useEraStakersState = (era: Extract<AnyNumber, SerializableParam>) =>
   eraStakersState({ endpoint: useSubstrateApiEndpoint(), era })
 
+/**
+ * On-chain `staking.areNominatorsSlashable` value, used to determine whether the fast unbonding
+ * duration applies (see getNominatorBondingDurationEras). Resolves to `true` (slashable, i.e. no
+ * fast unbond) when the storage item doesn't exist on the chain.
+ */
+export const areNominatorsSlashableState = selectorFamily<boolean, string | undefined>({
+  key: 'Staking/AreNominatorsSlashable',
+  get:
+    endpoint =>
+    async ({ get }) => {
+      const api = get(substrateApiState(endpoint))
+      const query = (api.query.staking as unknown as Record<string, (() => Promise<{ isTrue: boolean }>) | undefined>)[
+        'areNominatorsSlashable'
+      ]
+      if (query === undefined) return true
+      return (await query()).isTrue
+    },
+})
+
 export const recommendedPoolsState = selectorFamily({
   key: 'Staking/BondedPools',
   get:
