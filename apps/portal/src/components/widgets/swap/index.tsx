@@ -6,22 +6,18 @@ import { Repeat } from '@talismn/web-icons'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { loadable } from 'jotai/utils'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSetRecoilState } from 'recoil'
 
 import { useSetJotaiSubstrateApiState } from '@/domains/common/recoils/api'
 import { useFastBalance, UseFastBalanceProps } from '@/hooks/useFastBalance'
 
-import { walletConnectionSideSheetOpenState } from '../WalletConnectionSideSheet'
 import { FromAccount } from './FromAccount'
 import { shouldFocusDetailsAtom, SidePanel, swapInfoTabAtom } from './side-panel'
 import { fromAssetsBalancesAtom, useSetOwnedAddresses } from './swap-balances.api'
 import {
-  fromAddressAtom,
   fromAmountAtom,
   fromAssetAtom,
   SwappableAssetWithDecimals,
   swapQuoteRefresherAtom,
-  toAddressAtom,
   toAssetAtom,
 } from './swap-modules/common.swap-module'
 import {
@@ -36,7 +32,6 @@ import {
   useReverse,
   useSetToAddress,
   useSwap,
-  useSwapErc20Approval,
   useSyncPreviousChainflipSwaps,
 } from './swaps.api'
 import { TokenAmountInput } from './TokenAmountInput'
@@ -48,15 +43,12 @@ export const Swap: React.FC = () => {
   const setInfoTab = useSetAtom(swapInfoTabAtom)
   const [shouldFocusDetails, setShouldFocusDetails] = useAtom(shouldFocusDetailsAtom)
   const setQuoteRefresher = useSetAtom(swapQuoteRefresherAtom)
-  const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
   const quote = useAtomValue(loadable(selectedQuoteAtom))
 
-  const fromAddress = useAtomValue(fromAddressAtom)
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
   const [fromAmount, setFromAmount] = useAtom(fromAmountAtom)
   const { ethAccounts, substrateAccounts, fromEvmAccount, fromEvmAddress, fromSubstrateAccount, fromSubstrateAddress } =
     useFromAccount()
-  const toAddress = useAtomValue(toAddressAtom)
   useSetToAddress()
   const [toAsset, setToAsset] = useAtom(toAssetAtom)
 
@@ -94,7 +86,7 @@ export const Swap: React.FC = () => {
     if (toAmount.state === 'hasData' && toAmount.data) setCachedToAmount(toAmount.data)
   }, [toAmount])
 
-  const { swap, swapping } = useSwap()
+  const { swapping } = useSwap()
   const reverse = useReverse()
 
   const setToAddress = useSetToAddress()
@@ -143,13 +135,6 @@ export const Swap: React.FC = () => {
     [fromAsset, fromEvmAddress, fromSubstrateAddress]
   )
   const fastBalance = useFastBalance(balanceProps)
-
-  const insufficientBalance = useMemo(() => {
-    if (!fastBalance?.balance) return undefined
-    return fromAmount.planck > fastBalance.balance.transferrable.planck
-  }, [fastBalance, fromAmount.planck])
-
-  const { data: approvalData, loading: approvalLoading, approve, approving } = useSwapErc20Approval()
 
   useEffect(() => {
     if (fromAmount.planck > 0n && fromAsset && toAsset) setShouldFocusDetails(true)
