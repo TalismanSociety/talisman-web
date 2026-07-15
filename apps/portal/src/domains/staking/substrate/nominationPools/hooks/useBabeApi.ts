@@ -5,7 +5,9 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
+import { rpcOverrides } from '@/domains/chains/config'
 import { apiPromiseAtom } from '@/domains/common/atoms/apiPromiseAtom'
+import { getApiPromiseByEndpoint } from '@/domains/common/utils/getApiPromiseByEndpoint'
 import { jotaiStore } from '@/util/jotaiStore'
 
 /**
@@ -40,7 +42,10 @@ export const useBabeApi = (chainId: ChainId | null | undefined): ApiPromise | nu
     queryFn: async () => {
       if (!babeChainId) return null
 
-      const api = await jotaiStore.get(apiPromiseAtom(babeChainId))
+      // Prefer an explicit RPC override (chaindata's RPCs for these chains are stale/unreachable),
+      // otherwise fall back to the shared chaindata-connected ApiPromise.
+      const override = rpcOverrides[babeChainId]
+      const api = override ? await getApiPromiseByEndpoint(override) : await jotaiStore.get(apiPromiseAtom(babeChainId))
       if (!api) throw new Error(`Babe API not found for chain: ${babeChainId}`)
 
       // Wait for API to be ready before accessing constants

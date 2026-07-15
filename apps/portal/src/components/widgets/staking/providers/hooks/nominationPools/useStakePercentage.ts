@@ -4,16 +4,18 @@ import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import { selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
-import { chainDeriveState } from '@/domains/common/recoils/query'
+import { chainQueryState } from '@/domains/common/recoils/query'
 
 const useStakePercentage = () => {
   const apiId = usePolkadotApiId()
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
-  const balances = useRecoilValue(
-    waitForAll(addresses.map(address => chainDeriveState(apiId, 'balances', 'all', [address])))
+  // NOTE: query `system.account` directly instead of `api.derive.balances.all` — the derive throws
+  // "Balance: Negative number passed to unsigned type" on Asset Hub chains (new frozen/holds model).
+  const accountInfos = useRecoilValue(
+    waitForAll(addresses.map(address => chainQueryState(apiId, 'system', 'account', [address])))
   )
-  const total = useMemo(() => balances.reduce((prev, curr) => prev + curr.freeBalance.toBigInt(), 0n), [balances])
+  const total = useMemo(() => accountInfos.reduce((prev, curr) => prev + curr.data.free.toBigInt(), 0n), [accountInfos])
   const poolMembers = useRecoilValue(useQueryState('nominationPools', 'poolMembers.multi', addresses))
   const staked = useMemo(
     () => poolMembers.reduce((prev, curr) => prev + curr.unwrapOrDefault().points.toBigInt(), 0n),

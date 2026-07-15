@@ -12,7 +12,7 @@ import { Decimal } from '@/util/Decimal'
 import { jotaiStore } from '@/util/jotaiStore'
 import { nullToUndefined } from '@/util/nullToUndefined'
 
-import { chainConfigs } from './config'
+import { chainConfigs, rpcOverrides } from './config'
 import { ChainContext } from './contexts'
 
 export const chainState = selectorFamily({
@@ -24,12 +24,15 @@ export const chainState = selectorFamily({
       const chain = chaindataChainsByGenesisHash?.[genesisHash] as Chain
       const nativeToken = chain?.nativeToken ? (await jotaiStore.get(tokensByIdAtom))[chain.nativeToken.id] : undefined
 
+      const chainConfig = chainConfigs.find(config => config.genesisHash === chain?.genesisHash)
+
       const result = nullToUndefined({
         ...chain,
         genesisHash: genesisHash as `0x${string}`,
         nativeToken,
-        rpc: chain?.rpcs?.at(0)?.url,
-        ...chainConfigs.find(config => config.genesisHash === chain?.genesisHash),
+        ...chainConfig,
+        // Prefer an explicit RPC override over the (possibly stale) chaindata RPC.
+        rpc: (chain?.id && rpcOverrides[chain.id]) || chain?.rpcs?.at(0)?.url,
       })
       return result as typeof result & { isDisabled?: boolean }
     },
