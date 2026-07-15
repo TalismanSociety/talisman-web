@@ -5,27 +5,44 @@ import { useRecoilValue, waitForAll } from 'recoil'
 import { selectedSubstrateAccountsState } from '@/domains/accounts/recoils'
 import { useTokenAmountFromPlanck } from '@/domains/common/hooks/useTokenAmount'
 import { substrateApiState } from '@/domains/common/recoils/api'
-import { chainDeriveState } from '@/domains/common/recoils/query'
+import { chainQueryState } from '@/domains/common/recoils/query'
 import { Decimal } from '@/util/Decimal'
+
+/**
+ * The relevant fields of `system.account`'s `data`, covering both the current (`frozen`) and the
+ * legacy (`miscFrozen`) substrate balance models.
+ */
+type AccountBalanceData = {
+  free: { toBigInt: () => bigint }
+  frozen?: { toBigInt: () => bigint }
+  miscFrozen?: { toBigInt: () => bigint }
+}
 
 const useAvailableBalance = () => {
   const apiId = usePolkadotApiId()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const api = useRecoilValue(substrateApiState(apiId as any))
+  const api = useRecoilValue(substrateApiState(apiId as string | undefined))
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
 
-  const balances = useRecoilValue(
-    waitForAll(addresses.map(address => chainDeriveState(apiId, 'balances', 'all', [address])))
+  // Query `system.account` directly instead of `api.derive.balances.all`: the derive throws
+  // "Balance: Negative number passed to unsigned type" on Asset Hub chains, whose post-migration
+  // frozen/holds balance model it doesn't understand.
+  const accountInfos = useRecoilValue(
+    waitForAll(addresses.map(address => chainQueryState(apiId, 'system', 'account', [address])))
   )
   const availableBalance = useMemo(
     () =>
       Decimal.fromPlanck(
-        balances.reduce((prev, curr) => prev + curr.availableBalance.toBigInt(), 0n),
+        accountInfos.reduce((prev, curr) => {
+          const data: AccountBalanceData = curr.data
+          const free = data.free.toBigInt()
+          const frozen = (data.frozen ?? data.miscFrozen)?.toBigInt() ?? 0n
+          return prev + (free > frozen ? free - frozen : 0n)
+        }, 0n),
         api.registry.chainDecimals.at(0) ?? 0,
         { currency: api.registry.chainTokens.at(0) }
       ),
-    [api.registry.chainDecimals, api.registry.chainTokens, balances]
+    [accountInfos, api.registry.chainDecimals, api.registry.chainTokens]
   )
 
   const fiatAmount = useTokenAmountFromPlanck(availableBalance.planck).fiatAmount

@@ -55,16 +55,7 @@ jobs:
 
       - run: ${{ inputs.buildCommand }}
 
-      - uses: cloudflare/pages-action@v1
-        with:
-          # Explicit branch name needed because of: https://github.com/cloudflare/pages-action/issues/97
-          branch: ${{ github.head_ref || github.ref_name }}
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: ${{ inputs.projectName }}
-          directory: ${{ inputs.outputDirectory }}
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-
+      # Upload sourcemaps to Sentry before they're stripped from the deploy artifact below.
       - if: vars.SENTRY_PROJECT != null
         uses: getsentry/action-release@v1
         env:
@@ -75,3 +66,18 @@ jobs:
           environment: ${{ fromJSON('["preview", "production"]')[github.ref_name == github.event.repository.default_branch] }}
           version: ${{ inputs.sentryReleaseVersion }}
           sourcemaps: ${{ inputs.outputDirectory }}
+
+      # Cloudflare Pages rejects files >26.2 MB and the JS sourcemap exceeds this. Sourcemaps are
+      # only needed by Sentry (uploaded above), not served to users, so strip them before deploy.
+      - name: Strip sourcemaps before deploy
+        run: find ${{ inputs.outputDirectory }} -name '*.map' -type f -delete
+
+      - uses: cloudflare/pages-action@v1
+        with:
+          # Explicit branch name needed because of: https://github.com/cloudflare/pages-action/issues/97
+          branch: ${{ github.head_ref || github.ref_name }}
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ inputs.projectName }}
+          directory: ${{ inputs.outputDirectory }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

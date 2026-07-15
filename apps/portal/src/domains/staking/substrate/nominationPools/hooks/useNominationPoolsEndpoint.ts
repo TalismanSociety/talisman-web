@@ -3,6 +3,8 @@ import { chainsAtom } from '@talismn/balances-react'
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
+import { rpcOverrides } from '@/domains/chains/config'
+
 /**
  * Custom hook to get the RPC endpoint for querying nomination pools.
  * For parachains, it returns the relay chain's RPC endpoint since nomination pools
@@ -23,11 +25,12 @@ export const useNominationPoolsEndpoint = (chainId: ChainId | null | undefined):
     // For parachains, use the relay chain RPC endpoint for staking queries
     // (Parachains don't have the staking pallet - relay chains do)
     if (chain.paraId !== null && chain.relay?.id) {
-      const relayChain = chains.find(c => c.id === chain.relay?.id)
-      return relayChain?.rpcs?.[0]?.url ?? null
+      const relayId = chain.relay.id
+      const relayChain = chains.find(c => c.id === relayId)
+      return rpcOverrides[relayId] ?? relayChain?.rpcs?.[0]?.url ?? null
     }
 
     // For relay chains and standalone chains, use the chain's own RPC endpoint
-    return chain.rpcs?.[0]?.url ?? null
+    return rpcOverrides[chain.id] ?? chain.rpcs?.[0]?.url ?? null
   }, [chainId, chains])
 }

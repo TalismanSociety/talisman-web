@@ -6,22 +6,18 @@ import { Repeat } from '@talismn/web-icons'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { loadable } from 'jotai/utils'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSetRecoilState } from 'recoil'
 
 import { useSetJotaiSubstrateApiState } from '@/domains/common/recoils/api'
 import { useFastBalance, UseFastBalanceProps } from '@/hooks/useFastBalance'
 
-import { walletConnectionSideSheetOpenState } from '../WalletConnectionSideSheet'
 import { FromAccount } from './FromAccount'
 import { shouldFocusDetailsAtom, SidePanel, swapInfoTabAtom } from './side-panel'
 import { fromAssetsBalancesAtom, useSetOwnedAddresses } from './swap-balances.api'
 import {
-  fromAddressAtom,
   fromAmountAtom,
   fromAssetAtom,
   SwappableAssetWithDecimals,
   swapQuoteRefresherAtom,
-  toAddressAtom,
   toAssetAtom,
 } from './swap-modules/common.swap-module'
 import {
@@ -36,7 +32,6 @@ import {
   useReverse,
   useSetToAddress,
   useSwap,
-  useSwapErc20Approval,
   useSyncPreviousChainflipSwaps,
 } from './swaps.api'
 import { TokenAmountInput } from './TokenAmountInput'
@@ -48,15 +43,12 @@ export const Swap: React.FC = () => {
   const setInfoTab = useSetAtom(swapInfoTabAtom)
   const [shouldFocusDetails, setShouldFocusDetails] = useAtom(shouldFocusDetailsAtom)
   const setQuoteRefresher = useSetAtom(swapQuoteRefresherAtom)
-  const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
   const quote = useAtomValue(loadable(selectedQuoteAtom))
 
-  const fromAddress = useAtomValue(fromAddressAtom)
   const [fromAsset, setFromAsset] = useAtom(fromAssetAtom)
   const [fromAmount, setFromAmount] = useAtom(fromAmountAtom)
   const { ethAccounts, substrateAccounts, fromEvmAccount, fromEvmAddress, fromSubstrateAccount, fromSubstrateAddress } =
     useFromAccount()
-  const toAddress = useAtomValue(toAddressAtom)
   useSetToAddress()
   const [toAsset, setToAsset] = useAtom(toAssetAtom)
 
@@ -94,7 +86,7 @@ export const Swap: React.FC = () => {
     if (toAmount.state === 'hasData' && toAmount.data) setCachedToAmount(toAmount.data)
   }, [toAmount])
 
-  const { swap, swapping } = useSwap()
+  const { swapping } = useSwap()
   const reverse = useReverse()
 
   const setToAddress = useSetToAddress()
@@ -144,13 +136,6 @@ export const Swap: React.FC = () => {
   )
   const fastBalance = useFastBalance(balanceProps)
 
-  const insufficientBalance = useMemo(() => {
-    if (!fastBalance?.balance) return undefined
-    return fromAmount.planck > fastBalance.balance.transferrable.planck
-  }, [fastBalance, fromAmount.planck])
-
-  const { data: approvalData, loading: approvalLoading, approve, approving } = useSwapErc20Approval()
-
   useEffect(() => {
     if (fromAmount.planck > 0n && fromAsset && toAsset) setShouldFocusDetails(true)
   }, [fromAsset, toAsset, setShouldFocusDetails, fromAmount.planck])
@@ -179,7 +164,8 @@ export const Swap: React.FC = () => {
 
   return (
     <div className="mb-[40px] flex w-full flex-col md:flex-row">
-      <div className="relative grid w-full gap-[8px]">
+      <div className="relative grid w-full cursor-not-allowed gap-[8px]">
+        <div className="absolute inset-0 z-20 cursor-not-allowed rounded-[8px] bg-black/50" />
         <Surface className="bg-card w-full rounded-[8px] p-[16px]">
           <h4 className="mb-[8px] text-[18px] font-semibold">Select asset</h4>
           <TokenAmountInput
@@ -233,52 +219,9 @@ export const Swap: React.FC = () => {
               : undefined
           }
         />
-        {substrateAccounts.length === 0 && ethAccounts.length === 0 ? (
-          <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
-            Connect Wallet
-          </Button>
-        ) : fromAsset?.networkType === 'btc' ? (
-          <Button className="!w-full !rounded-[8px]" disabled>
-            Swapping from BTC is not supported
-          </Button>
-        ) : fromAsset?.networkType === 'evm' && ethAccounts.length === 0 ? (
-          <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
-            Connect Ethereum Wallet
-          </Button>
-        ) : fromAsset?.networkType === 'substrate' && substrateAccounts.length === 0 ? (
-          <Button className="!w-full !rounded-[8px]" onClick={() => setWalletConnectionSideSheetOpen(true)}>
-            Connect Polkadot Wallet
-          </Button>
-        ) : approvalData ? (
-          <Button loading={approving} disabled={approving} onClick={approve} className="!w-full !rounded-[8px]">
-            Allow {approvalData.protocolName} to spend {fromAsset?.symbol}
-          </Button>
-        ) : (
-          <Button
-            className="!w-full !rounded-[8px]"
-            disabled={
-              toAmount.state !== 'hasData' ||
-              !toAmount.data ||
-              toAmount.data.planck === 0n ||
-              !fromAddress ||
-              !toAddress ||
-              insufficientBalance !== false ||
-              swapping ||
-              approvalLoading
-            }
-            loading={swapping || approvalLoading}
-            onClick={() => {
-              setInfoTab('details')
-
-              if (quote.state !== 'hasData' || !quote.data) return
-              if (!fastBalance?.balance) return
-              if (quote.data.quote.state !== 'hasData' || !quote.data.quote.data) return
-              swap(quote.data.quote.data.protocol, fromAmount.planck > fastBalance.balance.stayAlive.planck)
-            }}
-          >
-            Swap
-          </Button>
-        )}
+        <Button className="!w-full !rounded-[8px]" disabled={true} loading={false}>
+          Swap
+        </Button>
       </div>
       <SidePanel />
     </div>

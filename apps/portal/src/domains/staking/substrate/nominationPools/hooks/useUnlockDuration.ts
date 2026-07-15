@@ -1,13 +1,14 @@
 import { useDeriveState } from '@talismn/react-polkadot-api'
 import { formatDistance } from 'date-fns'
-import { useRecoilValue, waitForAll } from 'recoil'
+import { constSelector, useRecoilValue, waitForAll } from 'recoil'
 
 import { useChainState } from '@/domains/chains/hooks'
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
 import { expectedBlockTime, expectedSessionTime } from '@/domains/common/utils/substratePolyfills'
 import { Maybe } from '@/util/monads'
 
-import { getStakingBondingDurationMs } from '../utils/helpers'
+import { areNominatorsSlashableState } from '../recoils'
+import { getNominatorBondingDurationEras, getStakingBondingDurationMs } from '../utils/helpers'
 import { useBabeApi } from './useBabeApi'
 
 export const useLocalizedUnlockDuration = () => {
@@ -28,12 +29,19 @@ export const useUnlockDuration = () => {
 
   const babeApi = useBabeApi(chain.id)
 
+  // Only relevant when the fast-unbond constant exists; otherwise skip the storage read entirely.
+  const hasFastUnbondDuration =
+    (api.consts.staking as unknown as Record<string, unknown>)['nominatorFastUnbondDuration'] !== undefined
+  const areNominatorsSlashable = useRecoilValue(
+    hasFastUnbondDuration ? areNominatorsSlashableState(chain.rpc) : constSelector(true)
+  )
+
   if (isAssetHub) {
-    const bondingDuration = getStakingBondingDurationMs({ stakingApi: api, babeApi: babeApi })
+    const bondingDuration = getStakingBondingDurationMs({ stakingApi: api, babeApi, areNominatorsSlashable })
 
     return Number(bondingDuration.toString())
   }
-  const erasOrSessions = sessionProgress.eraLength.mul(api.consts.staking.bondingDuration)
+  const erasOrSessions = sessionProgress.eraLength.muln(getNominatorBondingDurationEras(api, areNominatorsSlashable))
 
   if (!sessionProgress.isEpoch) {
     return Number(

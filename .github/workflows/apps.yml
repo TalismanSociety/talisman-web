@@ -23,7 +23,7 @@ jobs:
       buildCommand: >-
         NODE_OPTIONS=--max_old_space_size=10240
         VITE_SENTRY_RELEASE=${{ github.sha }}
-        yarn turbo run build --filter=portal -- --sourcemap
+        yarn turbo run build --filter=@talismn/portal -- --sourcemap
       outputDirectory: apps/portal/build
       sentryReleaseVersion: ${{ github.sha }}
     secrets: inherit

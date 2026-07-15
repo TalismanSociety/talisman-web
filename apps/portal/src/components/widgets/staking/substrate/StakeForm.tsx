@@ -111,8 +111,9 @@ const ExistingPool = (props: { account: Account; showClaimPermission: boolean })
           )
         }
         addButton={
-          // Fully unbonding pool can't be interacted with
-          !pool?.poolMember.points.isZero() && (
+          // Allow adding (bondExtra) to any pool the account is still a member of, even after a full
+          // unstake (points === 0) — you remain a member until withdrawal, so re-bonding is valid.
+          pool !== undefined && (
             <StakeFormComponent.ExistingPool.AddButton onClick={() => setAddStakeAddress(props.account.address)} />
           )
         }

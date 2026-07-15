@@ -1,5 +1,4 @@
 import { Surface } from '@talismn/ui/atoms/Surface'
-// import { Text } from '@talismn/ui/atoms/Text'
 import { Outlet } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
@@ -10,13 +9,8 @@ import { AccountValueInfo } from '@/components/recipes/AccountValueInfo'
 import { PortfolioAddressSearch } from '@/components/recipes/PortfolioAddressSearch'
 import { AccountConnectionGuard } from '@/components/widgets/AccountConnectionGuard'
 import { AccountsManagementMenu } from '@/components/widgets/AccountsManagementMenu'
-// import { AnimatedFiatNumber } from '@/components/widgets/AnimatedFiatNumber'
+import { BannerStakingMovingToWallet } from '@/components/widgets/staking/BannerStakingMovingToWallet'
 import { selectedAccountsState } from '@/domains/accounts/recoils'
-import { GetDiscountCard } from '@/domains/staking/seek/GetDiscountCard'
-
-// import { useTotalStaked } from '@/domains/staking/hooks'
-
-// const TotalStaked = () => <AnimatedFiatNumber end={useTotalStaked()} />
 
 const Layout = () => {
   const accounts = useRecoilValue(selectedAccountsState)
@@ -24,6 +18,7 @@ const Layout = () => {
   return (
     <AccountConnectionGuard>
       <div className="flex w-full flex-col gap-8">
+        <BannerStakingMovingToWallet />
         <PageHeader>
           <PageHeaderItem>
             <AccountsManagementMenu
@@ -41,8 +36,7 @@ const Layout = () => {
           </PageHeaderItem>
 
           <PageHeaderItem>
-            <GetDiscountCard storageKey="staking-position" />
-            <PortfolioAddressSearch className="min-w-[22rem]" />
+            <PortfolioAddressSearch />
             {/* TODO: Fix total stake calculation and display correct amount. */}
             {/* <div>
               <Text.BodyLarge as="div">Staking balance</Text.BodyLarge>
