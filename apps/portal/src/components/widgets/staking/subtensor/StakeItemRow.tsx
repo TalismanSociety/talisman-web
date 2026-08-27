@@ -1,10 +1,12 @@
+import { TonalButton } from '@talismn/ui/atoms/Button'
 import { Tooltip } from '@talismn/ui/atoms/Tooltip'
+import { Info } from '@talismn/web-icons'
 
 import type { Account } from '@/domains/accounts/recoils'
 import type { StakeItem } from '@/domains/staking/subtensor/hooks/useStake'
 import { StakePosition } from '@/components/recipes/StakePosition'
 import { ErrorBoundary } from '@/components/widgets/ErrorBoundary'
-import { DTAO_LOGO, ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
+import { DTAO_LOGO, ROOT_NETUID, TALISMAN_WALLET_DOWNLOAD_URL } from '@/components/widgets/staking/subtensor/constants'
 import { ChainInfo } from '@/domains/chains/recoils'
 import { useCombinedBittensorValidatorsData } from '@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData'
 import { useGetDynamicTaoStakeInfo } from '@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo'
@@ -104,6 +106,19 @@ export const StakeItemRow = ({
           <ErrorBoundary renderFallback={() => <>--</>}>
             <StakePosition.ChangeValidatorButton onClick={() => handleToggleChangeValidator(stake)} withTransition />
           </ErrorBoundary>
+        }
+        claimButton={
+          isRootnetStake ? (
+            <Tooltip content="Root subnet rewards are claimed in the Talisman wallet. Click to download.">
+              <TonalButton
+                leadingIcon={<Info size={16} />}
+                onClick={() => window.open(TALISMAN_WALLET_DOWNLOAD_URL, '_blank', 'noopener,noreferrer')}
+                className="!w-full"
+              >
+                Claim
+              </TonalButton>
+            </Tooltip>
+          ) : undefined
         }
       />
     </ErrorBoundary>
