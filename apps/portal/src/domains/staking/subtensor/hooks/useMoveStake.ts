@@ -2,7 +2,11 @@ import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
-import { MIN_SUBTENSOR_ROOTNET_STAKE, ROOT_NETUID } from '@/components/widgets/staking/subtensor/constants'
+import {
+  MIN_SUBTENSOR_ROOTNET_STAKE,
+  ROOT_NETUID,
+  TALISMAN_STAKE_REMARK,
+} from '@/components/widgets/staking/subtensor/constants'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
 import { useSubstrateApiState } from '@/domains/common/hooks/useSubstrateApiState'
@@ -55,7 +59,7 @@ export const useMoveStake = ({ stake, destinationHotkey }: MoveItem) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tx: SubmittableExtrinsic<any> = useMemo(() => {
     // Return null if stake or destinationHotkey is not defined
-    if (!stake || !destinationHotkey) return api.tx.system.remarkWithEvent('talisman-bittensor')
+    if (!stake || !destinationHotkey) return api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK)
 
     return api.tx.utility.batchAll([
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -66,7 +70,7 @@ export const useMoveStake = ({ stake, destinationHotkey }: MoveItem) => {
         originNetuid, // destinationNetuid, in this case, is the same as originNetuid
         alphaAmount
       ),
-      api.tx.system.remarkWithEvent('talisman-bittensor'),
+      api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK),
     ])
   }, [stake, destinationHotkey, api.tx, originHotkey, originNetuid, alphaAmount])
 
