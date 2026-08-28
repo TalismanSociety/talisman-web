@@ -17,7 +17,6 @@ import ErrorBoundaryFallback from '../ErrorBoundaryFallback'
 
 type StakeItemRowProps = {
   stake: StakeItem
-  isRewardsLoading: boolean
   account: Account
   chain: ChainInfo
   highlightedDelegate?: BondOption
@@ -31,7 +30,6 @@ export const StakeItemRow = ({
   account,
   chain,
   highlightedDelegate,
-  isRewardsLoading,
   handleToggleAddStakeDialog,
   handleToggleUnstakeDialog,
   handleToggleChangeValidator,
@@ -79,13 +77,6 @@ export const StakeItemRow = ({
         stakeStatus={'earning_rewards'}
         isError={isError}
         errorMessage={errorMessage}
-        isRewardsLoading={isRewardsLoading}
-        rewards={
-          <ErrorBoundary renderFallback={() => <>--</>}>{stake.rewards.decimalAmount?.toLocaleString()}</ErrorBoundary>
-        }
-        fiatRewards={
-          <ErrorBoundary renderFallback={() => <>--</>}>{stake.rewardsFormatted?.localizedFiatAmount}</ErrorBoundary>
-        }
         balance={
           <ErrorBoundary renderFallback={() => <>--</>}>
             {stake.totalStaked.decimalAmount?.toLocaleString()}
