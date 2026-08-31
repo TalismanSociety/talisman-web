@@ -11,6 +11,7 @@ import {
   MIN_SUBTENSOR_ROOTNET_STAKE,
   ROOT_NETUID,
   TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR,
+  TALISMAN_STAKE_REMARK,
 } from '@/components/widgets/staking/subtensor/constants'
 import { useNativeTokenAmountState } from '@/domains/chains/recoils'
 import { useExtrinsic } from '@/domains/common/hooks/useExtrinsic'
@@ -59,7 +60,7 @@ export const useAddStakeForm = (
   const tx: SubmittableExtrinsic<any> = useMemo(() => {
     if (!delegate || netuid === undefined) {
       // Return a dummy transaction if delegate or netuid is missing
-      return api.tx.system.remarkWithEvent('talisman-bittensor')
+      return api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK)
     }
 
     const limitPrice = alphaPriceWithSlippageFormatted.decimalAmount?.planck || 0n
@@ -70,14 +71,14 @@ export const useAddStakeForm = (
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (api.tx as any)?.subtensorModule?.addStake?.(delegate, amount.decimalAmount?.planck ?? 0n),
         api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, taoToAlphaTalismanFee),
-        api.tx.system.remarkWithEvent(`talisman-bittensor`),
+        api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK),
       ])
     } catch {
       if (isRootnetStake) {
         return api.tx.utility.batchAll([
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (api.tx as any)?.subtensorModule?.addStake?.(delegate, netuid, amount.decimalAmount?.planck ?? 0n),
-          api.tx.system.remarkWithEvent(`talisman-bittensor`),
+          api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK),
         ])
       }
       return api.tx.utility.batchAll([
@@ -90,7 +91,7 @@ export const useAddStakeForm = (
           allowPartial
         ),
         api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, taoToAlphaTalismanFee),
-        api.tx.system.remarkWithEvent(`talisman-bittensor`),
+        api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK),
       ])
     }
   }, [
@@ -270,7 +271,7 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
         return api.tx.utility.batchAll([
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (api.tx as any)?.subtensorModule?.removeStake?.(delegate, stake.netuid, amount.decimalAmount?.planck ?? 0n),
-          api.tx.system.remarkWithEvent(`talisman-bittensor`),
+          api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK),
         ])
       }
       return api.tx.utility.batchAll([
@@ -283,7 +284,7 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
           allowPartial
         ),
         api.tx.balances.transferKeepAlive(TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR, talismanFeeTxTokenAmount),
-        api.tx.system.remarkWithEvent(`talisman-bittensor`),
+        api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK),
       ])
     }
   }, [
