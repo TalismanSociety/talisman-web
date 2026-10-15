@@ -76,15 +76,16 @@ mapfile -t flows < <(jq -r '.[].name' "$flows_file")
 same=()
 for flow in "${flows[@]}"; do
   selected "$flow" || continue
-  tries=0
+  tries=0 earlier=''
   while :; do
     ((++tries))
     IFS=$'\t' read -r result detail < <(compare_flow "$flow")
     [[ $result == differ && $tries -lt $attempts ]] || break
+    earlier+="attempt $tries differ: $detail; "
   done
   [[ $result == differ ]] && status=1
   [[ $result == same ]] && same+=("$flow")
-  printf '%s\t%s\t%s\t%s\n' "$flow" "$result" "$tries" "$(one_line <<<"$detail")" | tee -a "$out/summary.tsv"
+  printf '%s\t%s\t%s\t%s\n' "$flow" "$result" "$tries" "$(one_line <<<"$earlier$detail")" | tee -a "$out/summary.tsv"
 done
 
 if [[ -n $submit ]]; then
