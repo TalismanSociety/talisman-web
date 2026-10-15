@@ -8,7 +8,6 @@ import {
 } from "@tanstack/react-router"
 import { lazy, type ReactNode, Suspense } from "react"
 import indexCss from "@/index.css?url"
-import talismnCss from "@/ui/assets/css/talismn.css?url"
 import { validateSearch } from "@/util/search"
 
 const title = "Talisman Portal"
@@ -45,7 +44,6 @@ export const Route = createRootRoute({
 			{ rel: "icon", href: "/favicon.ico?v=2024-10-14", sizes: "32x32" },
 			{ rel: "icon", href: "/talisman.svg?v=2024-10-14", type: "image/svg+xml" },
 			{ rel: "apple-touch-icon", href: "/apple-touch-icon.png?v=2024-10-14" },
-			{ rel: "stylesheet", href: talismnCss },
 			{ rel: "stylesheet", href: indexCss },
 		],
 	}),
