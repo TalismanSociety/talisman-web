@@ -68,10 +68,6 @@ style_js() {
 JS
 }
 
-ready_js() {
-  printf '(() => { const text = []; const originals = window.__parityOriginals ?? new Map(); const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, { acceptNode: (node) => ["SCRIPT", "STYLE", "TEMPLATE"].includes(node.parentElement?.tagName) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT }); while (walker.nextNode()) text.push(originals.get(walker.currentNode) ?? walker.currentNode.data); const counted = (spec) => { const [, n, ...regex] = spec.split(":"); const re = new RegExp(regex.join(":")); return text.filter((data) => re.test(data.trim())).length >= Number(n); }; return %s.some((wanted) => wanted.startsWith("css:") ? document.querySelector(wanted.slice(4)) !== null : wanted.startsWith("path:") ? location.pathname + location.search === wanted.slice(5) : wanted.startsWith("count:") ? counted(wanted) : text.some((data) => data.includes(wanted))); })()' "$1"
-}
-
 unmatched_js() {
   printf '%s.filter((mask, index) => { const bare = mask.replace(/^[?]/, ""); try { const selector = bare.startsWith("text:") ? `[data-parity-mask~="${index}"]` : bare; return document.querySelectorAll(selector).length === 0 && !mask.startsWith("?"); } catch { return true; } })' "${1:-[]}"
 }
@@ -91,16 +87,6 @@ settle() {
       step screenshot "$png" --full || return
     fi
   done
-}
-
-wait_ready() {
-  local items item
-  mapfile -t items < <(jq -cR 'select(length > 0) | gsub("[|][|]"; "\u001e") | split("|")[] | split("\u001e")' <<<"$1")
-  for item in "${items[@]}"; do
-    step wait --fn "$(ready_js "$item")" --timeout 120000 || { echo "while waiting for $item"; return 1; }
-  done
-  step wait --fn 'Array.from(document.images).every((image) => image.complete || image.loading === "lazy")' --timeout 60000 ||
-    { echo "while waiting for the images to load"; return 1; }
 }
 
 capture() {
