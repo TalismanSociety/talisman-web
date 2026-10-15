@@ -10792,17 +10792,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@talismn/dot-pool-selector@npm:0.0.0-snapshot.940501":
-  version: 0.0.0-snapshot.940501
-  resolution: "@talismn/dot-pool-selector@npm:0.0.0-snapshot.940501"
-  dependencies:
-    dot-validator-selector: "https://github.com/James-Sangalli/dot-validator-selector/archive/refs/tags/v1.0.4.tar.gz"
-  peerDependencies:
-    "@polkadot/api": 9.x || 10.x
-  checksum: 10c0/50d80dee5514b061b2f66acd8e3c6c08bba818ab36bea841b18fc88880a3a7fcd265af63ad78473c0585771d1bc87b148857f720ce944e7c458f6235ef5538db
-  languageName: node
-  linkType: hard
-
 "@talismn/eslint-config@workspace:^, @talismn/eslint-config@workspace:packages/eslint-config":
   version: 0.0.0-use.local
   resolution: "@talismn/eslint-config@workspace:packages/eslint-config"
@@ -10897,7 +10886,6 @@ __metadata:
     "@talismn/chaindata-provider": "npm:0.11.0"
     "@talismn/crypto": "npm:^0.2.0"
     "@talismn/development": "workspace:^"
-    "@talismn/dot-pool-selector": "npm:0.0.0-snapshot.940501"
     "@talismn/eslint-config": "workspace:^"
     "@talismn/nft": "workspace:^"
     "@talismn/on-chain-id": "npm:0.1.17"
@@ -16153,15 +16141,6 @@ __metadata:
   dependencies:
     is-obj: "npm:^2.0.0"
   checksum: 10c0/93f0d343ef87fe8869320e62f2459f7e70f49c6098d948cc47e060f4a3f827d0ad61e83cb82f2bd90cd5b9571b8d334289978a43c0f98fea4f0e99ee8faa0599
-  languageName: node
-  linkType: hard
-
-"dot-validator-selector@https://github.com/James-Sangalli/dot-validator-selector/archive/refs/tags/v1.0.4.tar.gz":
-  version: 1.0.3
-  resolution: "dot-validator-selector@https://github.com/James-Sangalli/dot-validator-selector/archive/refs/tags/v1.0.4.tar.gz"
-  dependencies:
-    "@polkadot/api": "npm:^6.0.5"
-  checksum: 10c0/adf5c7d7a04f53800b478d1937186386ad72d7e8c92efbf9d22f16b45528adcfb4fb3ba9974e10c9bdd41dfd484343d23d0ec1ea299be8d978fac046ec934b3d
   languageName: node
   linkType: hard
 

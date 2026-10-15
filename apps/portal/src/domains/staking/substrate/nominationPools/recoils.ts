@@ -1,7 +1,6 @@
 import type { AnyNumber } from '@polkadot/types-codec/types'
 import type { SerializableParam } from 'recoil'
 import { encodeAddress } from '@polkadot/util-crypto'
-import DotPoolSelector, { defaultOptions, ValidatorSelector } from '@talismn/dot-pool-selector'
 import { fromUnixTime, isAfter, isBefore, max as maxDate, startOfDay } from 'date-fns'
 import sample from 'lodash/sample'
 import { selectorFamily, waitForAll } from 'recoil'
@@ -13,6 +12,8 @@ import { useSubstrateApiEndpoint } from '@/domains/common/hooks/useSubstrateApiE
 import { chainReadIdState } from '@/domains/common/recoils'
 import { substrateApiState } from '@/domains/common/recoils/api'
 import { Decimal } from '@/util/Decimal'
+
+import { getRecommendedPoolIds } from './recommendedPoolIds'
 
 export const allPendingPoolRewardsState = selectorFamily({
   key: 'AllPendingRewards',
@@ -89,12 +90,7 @@ export const recommendedPoolsState = selectorFamily({
 
       const chain = chains.find(x => x.genesisHash === api.genesisHash.toHex())
 
-      const recommendedPoolIds = await new DotPoolSelector(new ValidatorSelector(api), api, {
-        ...defaultOptions,
-        numberOfPools: Infinity,
-      })
-        .getPoolsMeetingCriteria()
-        .then(x => x.map(({ poolId }) => poolId))
+      const recommendedPoolIds = await getRecommendedPoolIds(api)
 
       const pools = await api.query.nominationPools.bondedPools
         .entries()
