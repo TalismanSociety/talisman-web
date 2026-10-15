@@ -1,16 +1,15 @@
 import { useBalances } from "@talismn/balances-react"
-import { Button } from "@talismn/ui/atoms/Button"
-import { CircularProgressIndicator } from "@talismn/ui/atoms/CircularProgressIndicator"
-import { Select } from "@talismn/ui/molecules/Select"
 import { encodeAnyAddress } from "@talismn/util"
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react"
 import { usePrevious } from "react-use"
 import { useSetRecoilState } from "recoil"
-
 import { AccountIcon } from "@/components/molecules/AccountIcon"
 import { walletConnectionSideSheetOpenState } from "@/components/widgets/WalletConnectionSideSheet"
 import type { Account } from "@/domains/accounts/recoils"
 import { useHasActiveWalletConnection } from "@/domains/extension/main"
+import { Button } from "@/ui/atoms/Button"
+import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
+import { Select } from "@/ui/molecules/Select"
 import { truncateAddress } from "@/util/truncateAddress"
 
 export type AccountSelectorProps = {

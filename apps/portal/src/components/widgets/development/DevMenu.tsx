@@ -2,7 +2,6 @@ import "winbox/dist/css/themes/modern.min.css"
 import "winbox/dist/css/winbox.min.css"
 
 import RpcError from "@polkadot/rpc-provider/coder/error"
-import { useSurfaceColor } from "@talismn/ui/atoms/Surface"
 import { usePostHog } from "posthog-js/react"
 import { useCallback, useEffect, useState } from "react"
 import { useSessionStorage } from "react-use"
@@ -10,11 +9,11 @@ import type { WinBoxPropType } from "react-winbox"
 import WinBox from "react-winbox"
 import { useRecoilState } from "recoil"
 import { sepolia } from "wagmi/chains"
-
 import { debugErrorBoundaryState } from "@/components/widgets/ErrorBoundary"
 import { enableTestnetsState } from "@/domains/chains/recoils"
 import { useWagmiWriteContract } from "@/domains/common/hooks/useWagmiWriteContract"
 import { toastExtrinsic } from "@/domains/common/utils/toast"
+import { useSurfaceColor } from "@/ui/atoms/Surface"
 
 import { counterAbi } from "./counterAbi"
 

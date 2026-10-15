@@ -1,9 +1,9 @@
-import { Text } from "@talismn/ui/atoms/Text"
-import type { InfoCardProps } from "@talismn/ui/molecules/InfoCard"
-import { InfoCard } from "@talismn/ui/molecules/InfoCard"
-import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from "@talismn/ui/molecules/SideSheet"
-import { Zap } from "@talismn/web-icons"
 import type { AnchorHTMLAttributes, DetailedHTMLProps, PropsWithChildren, ReactNode } from "react"
+import { Zap } from "@/icons"
+import { Text } from "@/ui/atoms/Text"
+import type { InfoCardProps } from "@/ui/molecules/InfoCard"
+import { InfoCard } from "@/ui/molecules/InfoCard"
+import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from "@/ui/molecules/SideSheet"
 
 export type StakeDialogProps = {
 	open?: boolean

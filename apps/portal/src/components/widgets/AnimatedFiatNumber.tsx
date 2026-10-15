@@ -1,9 +1,8 @@
-import { AnimatedNumber } from "@talismn/ui/atoms/AnimatedNumber"
 import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
-
 import { RedactableBalance } from "@/components/widgets/RedactableBalance"
 import { currencyConfig, selectedCurrencyState } from "@/domains/balances/currency"
+import { AnimatedNumber } from "@/ui/atoms/AnimatedNumber"
 
 export type AnimatedFiatNumberProps = {
 	animate?: boolean

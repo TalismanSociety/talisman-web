@@ -8,10 +8,6 @@
     "apps/portal": {
       "project": ["src/**/*.{ts,tsx,css}"],
       "ignoreDependencies": ["dotenv", "wrangler"]
-    },
-    "packages/icons": {
-      "svgo": true,
-      "ignoreDependencies": ["@emotion/react"]
     }
   },
   "ignoreWorkspaces": ["packages/react-polkadot-api"],

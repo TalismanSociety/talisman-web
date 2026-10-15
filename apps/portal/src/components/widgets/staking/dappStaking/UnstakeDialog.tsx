@@ -1,5 +1,4 @@
 import type { AstarPrimitivesDappStakingSmartContract } from "@polkadot/types/lookup"
-import { CircularProgressIndicator } from "@talismn/ui/atoms/CircularProgressIndicator"
 import { formatDistance } from "date-fns"
 import { useState } from "react"
 import { UnstakeDialog as UnstakeDialogComponent } from "@/components/recipes/UnstakeDialog"
@@ -7,6 +6,7 @@ import type { Account } from "@/domains/accounts/recoils"
 import { useExtrinsicInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
 import { useUnstakeForm } from "@/domains/staking/dappStaking/hooks/forms"
 import type { StakeLoadable } from "@/domains/staking/dappStaking/hooks/useStakeLoadable"
+import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 
 import useUnlockDuration from "../providers/hooks/dapp/useUnlockDuration"
 import DappPickerDialog from "./DappPickerDialog"

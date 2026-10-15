@@ -1,6 +1,5 @@
-import { Text } from "@talismn/ui/atoms/Text"
-
 import { AssetLogoWithChain } from "@/components/recipes/AssetLogoWithChain"
+import { Text } from "@/ui/atoms/Text"
 
 type AssetProps = {
 	chainId: string | number

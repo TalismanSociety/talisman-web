@@ -1,8 +1,6 @@
-import { Select } from "@talismn/ui/molecules/Select"
 import { Suspense, useEffect, useMemo, useState, useTransition } from "react"
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import { useRecoilValue } from "recoil"
-
 import { TalismanHandLoader } from "@/components/legacy/TalismanHandLoader"
 import { useAccountSelector } from "@/components/widgets/AccountSelector"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
@@ -13,6 +11,7 @@ import { type ChainInfo, subtensorStakingEnabledChainsState } from "@/domains/ch
 import { useCombinedBittensorValidatorsData } from "@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData"
 import { useCombineSubnetData } from "@/domains/staking/subtensor/hooks/useCombineSubnetData"
 import type { BondOption, SubnetData } from "@/domains/staking/subtensor/types"
+import { Select } from "@/ui/molecules/Select"
 import { Maybe } from "@/util/monads"
 
 import {

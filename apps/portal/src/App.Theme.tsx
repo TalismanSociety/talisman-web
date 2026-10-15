@@ -1,16 +1,15 @@
-import "@talismn/ui/assets/css/talismn.css"
+import "@/ui/assets/css/talismn.css"
 import "@/index.css"
 
 import { css, Global } from "@emotion/react"
-import type { Theme } from "@talismn/ui/theme"
-import { ThemeProvider, theme } from "@talismn/ui/theme"
 import type { PropsWithChildren } from "react"
-
 import ATApocRevelations from "@/assets/fonts/AT-Apoc-Revelations.woff"
 import SurtRegular from "@/assets/fonts/Surt-Regular.woff"
 import SurtSemiBold from "@/assets/fonts/Surt-SemiBold.woff2"
 import SurtSemiBoldExpanded from "@/assets/fonts/Surt-SemiBoldExp.woff2"
 import SurtSemiBoldExtended from "@/assets/fonts/Surt-SemiBoldExtended.woff2"
+import type { Theme } from "@/ui/theme"
+import { ThemeProvider, theme } from "@/ui/theme"
 
 /*
   base style definitions
@@ -44,7 +43,7 @@ const fontWeights = {
 }
 
 // base style
-export const globalStyle = (theme: Theme) => css`
+const globalStyle = (theme: Theme) => css`
   /*
       define all options as css variables
   */

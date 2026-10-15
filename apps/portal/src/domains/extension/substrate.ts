@@ -3,15 +3,14 @@ import type { BaseWallet } from "@polkadot-onboard/core"
 import { WalletAggregator } from "@polkadot-onboard/core"
 import { InjectedWalletProvider } from "@polkadot-onboard/injected-wallets"
 import { jsonParser, string } from "@recoiljs/refine"
-import { toast } from "@talismn/ui/molecules/Toaster"
 import { usePostHog } from "posthog-js/react"
 import { useEffect } from "react"
 import { atom, selector, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
-
 import polkadotJsWalletLogo from "@/assets/polkadot-js-wallet.svg"
 import talismanWalletLogo from "@/assets/talisman-wallet.svg"
 import { substrateInjectedAccountsState } from "@/domains/accounts/recoils"
 import { storageEffect } from "@/domains/common/effects"
+import { toast } from "@/ui/molecules/Toaster"
 
 const walletAggregator = new WalletAggregator([
 	new InjectedWalletProvider(

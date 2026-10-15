@@ -1,10 +1,9 @@
-import { Button, OutlinedButton } from "@talismn/ui/atoms/Button"
-import { AlertDialog } from "@talismn/ui/molecules/AlertDialog"
-import { ArrowRight } from "@talismn/web-icons"
 import { useNavigate } from "react-router-dom"
-
 import SeekLogo from "@/assets/seek.svg?react"
 import useGetSeekAvailableBalance from "@/components/widgets/staking/providers/hooks/seek/useGetSeekAvailableBalance"
+import { ArrowRight } from "@/icons"
+import { Button, OutlinedButton } from "@/ui/atoms/Button"
+import { AlertDialog } from "@/ui/molecules/AlertDialog"
 import { cn } from "@/util/cn"
 
 import useGetSeekStaked from "../../../components/widgets/staking/providers/hooks/seek/useGetSeekStaked"

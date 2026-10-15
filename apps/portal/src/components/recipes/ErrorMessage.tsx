@@ -1,5 +1,5 @@
-import { Text } from "@talismn/ui/atoms/Text"
 import type { DetailedHTMLProps, HTMLAttributes, ReactNode } from "react"
+import { Text } from "@/ui/atoms/Text"
 
 import { cn } from "@/util/cn"
 

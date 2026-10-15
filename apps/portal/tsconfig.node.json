@@ -6,5 +6,5 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true
   },
-  "include": [".storybook", "playwright.config.ts", "vite.config.ts", "vitest.config.ts"]
+  "include": ["playwright.config.ts", "vite.config.ts", "vitest.config.ts"]
 }

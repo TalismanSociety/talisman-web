@@ -1,11 +1,11 @@
 import type { AstarPrimitivesDappStakingSmartContract } from "@polkadot/types/lookup"
-import { CircularProgressIndicator } from "@talismn/ui/atoms/CircularProgressIndicator"
 import { useState } from "react"
 import { DappStakingAddStakeDialog } from "@/components/recipes/AddStakeDialog"
 import type { Account } from "@/domains/accounts/recoils"
 import { useExtrinsicInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
 import { useAddStakeForm } from "@/domains/staking/dappStaking/hooks/forms"
 import type { StakeLoadable } from "@/domains/staking/dappStaking/hooks/useStakeLoadable"
+import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 
 import DappPickerDialog from "./DappPickerDialog"
 

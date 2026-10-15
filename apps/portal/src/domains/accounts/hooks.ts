@@ -1,8 +1,7 @@
-import { toast } from "@talismn/ui/molecules/Toaster"
 import { useCallback, useMemo, useState } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
-
 import { useResolveNsName } from "@/libs/onChainId"
+import { toast } from "@/ui/molecules/Toaster"
 import { tryParseSubstrateOrEthereumAddress } from "@/util/addressValidation"
 import { isNilOrWhitespace } from "@/util/nil"
 

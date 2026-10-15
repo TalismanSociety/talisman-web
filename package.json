@@ -15,9 +15,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "verify": "pnpm check && pnpm typecheck && pnpm knip && pnpm test && pnpm build:portal",
-    "e2e": "pnpm --filter @talismn/portal e2e",
-    "storybook": "pnpm -r --parallel storybook",
-    "build-storybook": "pnpm -r build-storybook"
+    "e2e": "pnpm --filter @talismn/portal e2e"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",

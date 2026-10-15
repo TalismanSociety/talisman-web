@@ -1,8 +1,4 @@
 import type { ApiPromise } from "@polkadot/api"
-import { CircularProgressIndicator } from "@talismn/ui/atoms/CircularProgressIndicator"
-import { Tooltip } from "@talismn/ui/atoms/Tooltip"
-import { Select } from "@talismn/ui/molecules/Select"
-import { Info } from "@talismn/web-icons"
 import BN from "bn.js"
 import type { ReactNode } from "react"
 import { memo, Suspense, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react"
@@ -38,6 +34,10 @@ import {
 	useRecommendedPoolsState,
 } from "@/domains/staking/substrate/nominationPools/recoils"
 import { createAccounts } from "@/domains/staking/substrate/nominationPools/utils"
+import { Info } from "@/icons"
+import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
+import { Tooltip } from "@/ui/atoms/Tooltip"
+import { Select } from "@/ui/molecules/Select"
 import type { Decimal } from "@/util/Decimal"
 import { Maybe } from "@/util/monads"
 

@@ -1,12 +1,11 @@
 import { useTheme } from "@emotion/react"
-import { Badge, BadgedBox } from "@talismn/ui/atoms/Badge"
-import type { IdenticonProps } from "@talismn/ui/atoms/Identicon"
-import { Identicon } from "@talismn/ui/atoms/Identicon"
-import { useSurfaceColorAtElevation } from "@talismn/ui/atoms/Surface"
-import { Tooltip } from "@talismn/ui/atoms/Tooltip"
-import { Eye } from "@talismn/web-icons"
-
 import type { Account } from "@/domains/accounts/recoils"
+import { Eye } from "@/icons"
+import { Badge, BadgedBox } from "@/ui/atoms/Badge"
+import type { IdenticonProps } from "@/ui/atoms/Identicon"
+import { Identicon } from "@/ui/atoms/Identicon"
+import { useSurfaceColorAtElevation } from "@/ui/atoms/Surface"
+import { Tooltip } from "@/ui/atoms/Tooltip"
 
 export type AccountIconProps = Omit<IdenticonProps, "value"> & {
 	account: Pick<Account, "readonly" | "address">

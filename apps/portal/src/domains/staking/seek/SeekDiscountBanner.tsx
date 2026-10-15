@@ -1,5 +1,5 @@
-import { OutlinedButton } from "@talismn/ui/atoms/Button"
 import { useState } from "react"
+import { OutlinedButton } from "@/ui/atoms/Button"
 
 import { SEEK_TICKER } from "./constants"
 import { GetDiscountDialog } from "./GetDiscountDialog"

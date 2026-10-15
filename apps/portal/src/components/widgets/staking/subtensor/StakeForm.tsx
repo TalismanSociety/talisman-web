@@ -1,16 +1,15 @@
-import { CircularProgressIndicator } from "@talismn/ui/atoms/CircularProgressIndicator"
 import { useQueryClient } from "@tanstack/react-query"
 import BN from "bn.js"
 import type { ReactNode } from "react"
 import { Suspense, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import { useRecoilValue } from "recoil"
-
 import type { Account } from "@/domains/accounts/recoils"
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
 import { useAddStakeForm } from "@/domains/staking/subtensor/hooks/forms"
 import { useDelegateApr } from "@/domains/staking/subtensor/hooks/useApr"
 import { useStake } from "@/domains/staking/subtensor/hooks/useStake"
+import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 
 import { SubtensorStakingForm } from "./SubtensorStakingForm"
 

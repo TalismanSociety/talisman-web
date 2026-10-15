@@ -1,12 +1,11 @@
 import { BalanceFormatter } from "@talismn/balances"
-import { useSurfaceColor, useSurfaceColorAtElevation } from "@talismn/ui/atoms/Surface"
-import { Text } from "@talismn/ui/atoms/Text"
-import { Tooltip } from "@talismn/ui/atoms/Tooltip"
 import { classNames, formatDecimals } from "@talismn/util"
 import { useRecoilValue } from "recoil"
-
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
 import type { SubnetData } from "@/domains/staking/subtensor/types"
+import { useSurfaceColor, useSurfaceColorAtElevation } from "@/ui/atoms/Surface"
+import { Text } from "@/ui/atoms/Text"
+import { Tooltip } from "@/ui/atoms/Tooltip"
 
 export type SubnetSelectorCardProps = {
 	selected?: boolean

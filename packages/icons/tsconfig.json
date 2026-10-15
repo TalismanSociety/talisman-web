@@ -1,7 +1,0 @@
-{
-  "extends": "@talismn/tsconfig/react-library.json",
-  "compilerOptions": {
-    "verbatimModuleSyntax": false
-  },
-  "include": ["src"]
-}

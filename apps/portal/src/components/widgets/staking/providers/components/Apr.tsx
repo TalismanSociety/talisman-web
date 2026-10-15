@@ -1,13 +1,12 @@
-import { Tooltip } from "@talismn/ui/atoms/Tooltip"
 import { InfoIcon } from "lucide-react"
 import type { ReactNode } from "react"
 import { useRecoilValue } from "recoil"
-
 import { useChainState } from "@/domains/chains/hooks"
 import { ChainProvider } from "@/domains/chains/provider"
 import { useApr as useDappApr } from "@/domains/staking/dappStaking/hooks/useApr"
 import { useApr as useNominationPoolApr } from "@/domains/staking/substrate/nominationPools/hooks/useApr"
 import { useHighestApr } from "@/domains/staking/subtensor/hooks/useApr"
+import { Tooltip } from "@/ui/atoms/Tooltip"
 
 import useLidoApr from "../hooks/lido/useApr"
 import useGetSeekStakeApr from "../hooks/seek/useGetSeekStakeApr"

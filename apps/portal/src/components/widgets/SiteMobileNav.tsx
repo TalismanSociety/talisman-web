@@ -1,11 +1,11 @@
 import { keyframes, useTheme } from "@emotion/react"
-import { Dialog } from "@talismn/ui/atoms/Dialog"
-import { useSurfaceColorAtElevation } from "@talismn/ui/atoms/Surface"
-import { Text } from "@talismn/ui/atoms/Text"
-import { X } from "@talismn/web-icons"
-import { IconContext } from "@talismn/web-icons/utils"
 import type { ReactNode } from "react"
 import { createContext, useCallback, useContext } from "react"
+import { X } from "@/icons"
+import { IconContext } from "@/icons/utils"
+import { Dialog } from "@/ui/atoms/Dialog"
+import { useSurfaceColorAtElevation } from "@/ui/atoms/Surface"
+import { Text } from "@/ui/atoms/Text"
 
 export type SiteMobileNavProps = {
 	open?: boolean

@@ -1,7 +1,3 @@
-import { CircularProgressIndicator } from "@talismn/ui/atoms/CircularProgressIndicator"
-import { Surface } from "@talismn/ui/atoms/Surface"
-import { Text } from "@talismn/ui/atoms/Text"
-import { ChevronDown, ChevronUp } from "@talismn/web-icons"
 import {
 	type CellContext,
 	type ColumnDef,
@@ -14,10 +10,13 @@ import {
 } from "@tanstack/react-table"
 import { Suspense, useCallback, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
-
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import ErrorBoundaryFallback from "@/components/widgets/staking/ErrorBoundaryFallback"
 import { getPosition } from "@/domains/staking/utils/getPosition"
+import { ChevronDown, ChevronUp } from "@/icons"
+import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
+import { Surface } from "@/ui/atoms/Surface"
+import { Text } from "@/ui/atoms/Text"
 import { cn } from "@/util/cn"
 
 import type { Provider } from "../hooks/types"

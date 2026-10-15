@@ -4,12 +4,10 @@ import "@talismn/astar-types/augment-api"
 import "@talismn/astar-types/types-lookup"
 
 import { PolkadotApiProvider } from "@talismn/react-polkadot-api"
-import { Toaster } from "@talismn/ui/molecules/Toaster"
 import { PostHogProvider } from "posthog-js/react"
 import { Suspense } from "react"
 import { RouterProvider } from "react-router-dom"
 import { RecoilRoot } from "recoil"
-
 import ThemeProvider from "@/App.Theme"
 import { FairyBreadBanner } from "@/components/legacy/widgets/FairyBreadBanner"
 import { FullscreenLoader } from "@/components/molecules/FullscreenLoader"
@@ -27,6 +25,7 @@ import { ExtensionWatcher } from "@/domains/extension/main"
 import { TalismanExtensionSynchronizer } from "@/domains/extension/TalismanExtensionSynchronizer"
 import { EvmProvider } from "@/domains/extension/wagmi"
 import router from "@/routes"
+import { Toaster } from "@/ui/molecules/Toaster"
 import { JotaiProvider } from "@/util/jotaiStore"
 
 const App = () => (

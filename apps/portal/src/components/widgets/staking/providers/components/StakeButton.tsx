@@ -1,7 +1,7 @@
-import type { ButtonProps } from "@talismn/ui/atoms/Button"
-import { Button } from "@talismn/ui/atoms/Button"
-import { Zap } from "@talismn/web-icons"
 import type { ElementType } from "react"
+import { Zap } from "@/icons"
+import type { ButtonProps } from "@/ui/atoms/Button"
+import { Button } from "@/ui/atoms/Button"
 
 const StakeButton = <T extends ElementType>(props: Omit<ButtonProps<T>, "children">) => (
 	// @ts-expect-error

@@ -1,19 +1,10 @@
 import { ClassNames, useTheme } from "@emotion/react"
 import { useSignetSdk } from "@talismn/signet-apps-sdk"
-import { Chip } from "@talismn/ui/atoms/Chip"
-import { Hr } from "@talismn/ui/atoms/Hr"
-import { Surface } from "@talismn/ui/atoms/Surface"
-import { Text } from "@talismn/ui/atoms/Text"
-import { ListItem } from "@talismn/ui/molecules/ListItem"
-import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from "@talismn/ui/molecules/SideSheet"
-import { toast } from "@talismn/ui/molecules/Toaster"
-import { Ethereum, Eye, Polkadot, Wallet } from "@talismn/web-icons"
 import { disconnect as disconnectCore } from "@wagmi/core"
 import type { ButtonHTMLAttributes, DetailedHTMLProps } from "react"
 import { Suspense, useState } from "react"
 import { atom, useRecoilState, useRecoilValue } from "recoil"
 import { useConfig, useDisconnect as useDisconnectEvm, useAccount as useEvmAccount } from "wagmi"
-
 import talismanWalletLogo from "@/assets/talisman-wallet.svg"
 import { AddReadOnlyAccountDialog } from "@/components/widgets/AddReadOnlyAccountDialog"
 import {
@@ -27,6 +18,14 @@ import {
 	useInstalledSubstrateWallets,
 	useSubstrateWalletConnect,
 } from "@/domains/extension/substrate"
+import { Ethereum, Eye, Polkadot, Wallet } from "@/icons"
+import { Chip } from "@/ui/atoms/Chip"
+import { Hr } from "@/ui/atoms/Hr"
+import { Surface } from "@/ui/atoms/Surface"
+import { Text } from "@/ui/atoms/Text"
+import { ListItem } from "@/ui/molecules/ListItem"
+import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from "@/ui/molecules/SideSheet"
+import { toast } from "@/ui/molecules/Toaster"
 
 const talismanInstalled = "talismanEth" in globalThis
 

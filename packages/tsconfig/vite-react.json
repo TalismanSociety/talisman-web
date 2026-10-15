@@ -1,9 +1,0 @@
-{
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/vite-react/tsconfig.json"],
-  "compilerOptions": {
-    "lib": ["ESNext"],
-    "checkJs": false,
-    "exactOptionalPropertyTypes": false
-  }
-}

@@ -1,5 +1,5 @@
-import { X } from "@talismn/web-icons"
 import { useEffect, useState } from "react"
+import { X } from "@/icons"
 
 const storageKey = "hide-bittensor-info-banner"
 const preSaleLink =

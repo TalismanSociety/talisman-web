@@ -1,11 +1,11 @@
 import { useTheme } from "@emotion/react"
-import { IconButton } from "@talismn/ui/atoms/IconButton"
-import { Surface, useSurfaceColor } from "@talismn/ui/atoms/Surface"
-import { Text } from "@talismn/ui/atoms/Text"
-import { ChevronDown, Users } from "@talismn/web-icons"
 import type { ReactNode } from "react"
 import { AccountIcon } from "@/components/molecules/AccountIcon"
 import type { Account } from "@/domains/accounts/recoils"
+import { ChevronDown, Users } from "@/icons"
+import { IconButton } from "@/ui/atoms/IconButton"
+import { Surface, useSurfaceColor } from "@/ui/atoms/Surface"
+import { Text } from "@/ui/atoms/Text"
 import { truncateAddress } from "@/util/truncateAddress"
 
 export type AccountValueInfoProps = {

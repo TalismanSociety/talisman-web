@@ -1,8 +1,7 @@
-import { Text } from "@talismn/ui/atoms/Text"
 import { useMemo } from "react"
-
 import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
 import { ChainProvider } from "@/domains/chains/provider"
+import { Text } from "@/ui/atoms/Text"
 import { Decimal } from "@/util/Decimal"
 
 import useLidoAvailableBalance from "../hooks/lido/useAvailableBalance"

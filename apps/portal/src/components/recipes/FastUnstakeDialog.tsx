@@ -1,12 +1,12 @@
-import { Button } from "@talismn/ui/atoms/Button"
-import { EyeOfSauronProgressIndicator } from "@talismn/ui/atoms/EyeOfSauronProgressIndicator"
-import { Hr } from "@talismn/ui/atoms/Hr"
-import { Text } from "@talismn/ui/atoms/Text"
-import { AlertDialog } from "@talismn/ui/molecules/AlertDialog"
-import { DescriptionList } from "@talismn/ui/molecules/DescriptionList"
 import { AnimatePresence, motion } from "framer-motion"
 import type { ReactNode } from "react"
 import { useMemo } from "react"
+import { Button } from "@/ui/atoms/Button"
+import { EyeOfSauronProgressIndicator } from "@/ui/atoms/EyeOfSauronProgressIndicator"
+import { Hr } from "@/ui/atoms/Hr"
+import { Text } from "@/ui/atoms/Text"
+import { AlertDialog } from "@/ui/molecules/AlertDialog"
+import { DescriptionList } from "@/ui/molecules/DescriptionList"
 
 export type FastUnstakeDialogProps = {
 	open?: boolean

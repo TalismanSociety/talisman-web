@@ -1,10 +1,8 @@
 import type { DeriveStakingAccount } from "@polkadot/api-derive/types"
 import { useDeriveState } from "@talismn/react-polkadot-api"
-import { CircularProgressIndicator } from "@talismn/ui/atoms/CircularProgressIndicator"
 import BN from "bn.js"
 import { useMemo, useState } from "react"
 import { useRecoilValueLoadable, waitForAll } from "recoil"
-
 import { FastUnstakeDialog } from "@/components/recipes/FastUnstakeDialog"
 import { StakePosition } from "@/components/recipes/StakePosition"
 import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
@@ -20,6 +18,7 @@ import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiStat
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import { useLocalizedUnlockDuration } from "@/domains/staking/substrate/nominationPools/hooks"
 import { useTotalValidatorStakingRewards } from "@/domains/staking/substrate/validator/hooks"
+import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 
 import ValidatorUnstakeDialog from "./ValidatorUnstakeDialog"
 

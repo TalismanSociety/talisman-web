@@ -1,4 +1,3 @@
-import { CircularProgressIndicator } from "@talismn/ui/atoms/CircularProgressIndicator"
 import BN from "bn.js"
 import { Suspense, useState, useTransition } from "react"
 import { useSearchParams } from "react-router-dom"
@@ -11,6 +10,7 @@ import type { ChainInfo } from "@/domains/chains/recoils"
 import { nominationPoolsEnabledChainsState } from "@/domains/chains/recoils"
 import { useEraEtaFormatter } from "@/domains/common/hooks/useEraEta"
 import { useApr } from "@/domains/staking/substrate/nominationPools/hooks"
+import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 
 import { AssetSelect, ControlledStakeForm } from "./StakeForm"
 

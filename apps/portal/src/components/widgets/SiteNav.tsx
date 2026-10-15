@@ -1,10 +1,9 @@
-import { toast } from "@talismn/ui/molecules/Toaster"
-import { CreditCard, Menu, PieChart, Zap } from "@talismn/web-icons"
 import { type MouseEventHandler, useCallback, useState } from "react"
 import { Link } from "react-router-dom"
-
 import { CurrencySelect } from "@/components/molecules/CurrencySelect"
 import { WalletConnectionButton } from "@/components/molecules/WalletConnectionButton"
+import { CreditCard, Menu, PieChart, Zap } from "@/icons"
+import { toast } from "@/ui/molecules/Toaster"
 import { cn } from "@/util/cn"
 
 import { SiteFooter } from "./SiteFooter"
