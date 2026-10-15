@@ -135,8 +135,12 @@ const InstallTalisman = () => {
 	}
 
 	return (
-		// eslint-disable-next-line react/jsx-no-target-blank
-		<a href="https://talisman.xyz/download" target="_blank" css={{ display: "contents" }}>
+		<a
+			href="https://talisman.xyz/download"
+			target="_blank"
+			css={{ display: "contents" }}
+			rel="noopener"
+		>
 			<Surface
 				as={ListItem}
 				headlineContent={<Text.BodyLarge alpha="high">Talisman</Text.BodyLarge>}

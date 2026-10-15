@@ -8,7 +8,7 @@ export const useThrottle = <T>(value: T, milliseconds: number) => {
 
 	useEffect(() => {
 		const handler = setTimeout(
-			function () {
+			() => {
 				if (Date.now() - lastRan.current >= milliseconds) {
 					setThrottledValue(value)
 					lastRan.current = Date.now()

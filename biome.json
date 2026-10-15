@@ -62,8 +62,6 @@
         "noThisInStatic": "off",
         "noUselessFragments": "off",
         "noUselessSwitchCase": "off",
-        "useArrowFunction": "off",
-        "useFlatMap": "off",
         "useLiteralKeys": "off",
         "useOptionalChain": "off"
       },
@@ -76,12 +74,8 @@
         "useJsxKeyInIterable": "off",
         "useParseIntRadix": "off"
       },
-      "security": {
-        "noBlankTarget": "off"
-      },
       "style": {
         "noNonNullAssertion": "off",
-        "useExponentiationOperator": "off",
         "useNodejsImportProtocol": "off",
         "useTemplate": "off"
       },

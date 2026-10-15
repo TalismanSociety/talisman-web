@@ -94,7 +94,7 @@ SelectItem.displayName = "SelectItem"
 const findOption = (children: ReactElement): ReactElement<SelectItemProps>[] => {
 	if (!children) return []
 	if (typeof children === "string") return []
-	if (Array.isArray(children)) return children.map(findOption).flat()
+	if (Array.isArray(children)) return children.flatMap(findOption)
 
 	if (
 		typeof children.type === "object" &&
