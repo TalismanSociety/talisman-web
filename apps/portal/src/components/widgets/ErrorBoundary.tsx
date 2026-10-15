@@ -1,7 +1,6 @@
 import * as Sentry from "@sentry/react"
 import type { PropsWithChildren, ReactElement, ReactNode } from "react"
 import { createContext, useContext, useState } from "react"
-import { useRouteError } from "react-router-dom"
 import { atom, useRecoilCallback, useRecoilValue } from "recoil"
 import type { ErrorMessageProps } from "@/components/recipes/ErrorMessage"
 import { ErrorMessage } from "@/components/recipes/ErrorMessage"
@@ -49,18 +48,6 @@ const ErrorElement = (props: ErrorElementProps) => {
 			}
 		/>
 	)
-}
-
-export const RouteErrorElement = () => {
-	const error = useRouteError()
-
-	// let the root error boundary handle it instead
-	// https://github.com/remix-run/react-router/discussions/10494
-	if (error) {
-		throw error
-	}
-
-	return null
 }
 
 export const debugErrorBoundaryState = atom({
