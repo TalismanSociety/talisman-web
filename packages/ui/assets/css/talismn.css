@@ -1,34 +1,34 @@
 @font-face {
-  font-family: 'Surt';
-  font-style: light;
-  font-weight: 300;
-  font-display: auto;
-  src: url('../fonts/Surt-Regular.woff') format('woff');
+	font-family: "Surt";
+	font-style: light;
+	font-weight: 300;
+	font-display: auto;
+	src: url("../fonts/Surt-Regular.woff") format("woff");
 }
 
 @font-face {
-  font-family: 'Surt';
-  font-style: bold;
-  font-weight: 800;
-  font-display: auto;
-  src: url('../fonts/Surt-SemiBold.woff2') format('woff2');
+	font-family: "Surt";
+	font-style: bold;
+	font-weight: 800;
+	font-display: auto;
+	src: url("../fonts/Surt-SemiBold.woff2") format("woff2");
 }
 
 @font-face {
-  font-family: 'SurtExpanded';
-  font-style: bold;
-  font-weight: 800;
-  font-display: auto;
-  src: url('../fonts/Surt-SemiBoldExp.woff2') format('woff2');
+	font-family: "SurtExpanded";
+	font-style: bold;
+	font-weight: 800;
+	font-display: auto;
+	src: url("../fonts/Surt-SemiBoldExp.woff2") format("woff2");
 }
 
 /* TODO: get rid of all this manual stuffs that is carried over to support legacy styles & components */
 
 * {
-  box-sizing: border-box;
-  color: inherit;
+	box-sizing: border-box;
+	color: inherit;
 }
 
 *:focus {
-  outline: none;
+	outline: none;
 }

@@ -1,4 +1,4 @@
-import { ApiPromise, WsProvider } from '@polkadot/api'
+import { ApiPromise, WsProvider } from "@polkadot/api"
 
 const cache = new Map<string, Promise<ApiPromise>>()
 
@@ -11,10 +11,10 @@ const cache = new Map<string, Promise<ApiPromise>>()
  * endpoint for the lifetime of the app.
  */
 export const getApiPromiseByEndpoint = (endpoint: string): Promise<ApiPromise> => {
-  const existing = cache.get(endpoint)
-  if (existing) return existing
+	const existing = cache.get(endpoint)
+	if (existing) return existing
 
-  const promise = ApiPromise.create({ provider: new WsProvider(endpoint), noInitWarn: true })
-  cache.set(endpoint, promise)
-  return promise
+	const promise = ApiPromise.create({ provider: new WsProvider(endpoint), noInitWarn: true })
+	cache.set(endpoint, promise)
+	return promise
 }

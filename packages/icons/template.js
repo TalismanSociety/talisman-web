@@ -1,5 +1,5 @@
 const template = (variables, { tpl }) => {
-  return tpl`
+	return tpl`
 ${variables.imports};
 import {IconContext} from "../context";
 

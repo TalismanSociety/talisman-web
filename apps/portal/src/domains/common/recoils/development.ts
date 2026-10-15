@@ -1,3 +1,3 @@
-import { atom } from 'recoil'
+import { atom } from "recoil"
 
-export const developmentState = atom({ key: 'Development', default: false })
+export const developmentState = atom({ key: "Development", default: false })

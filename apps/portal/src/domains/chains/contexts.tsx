@@ -1,6 +1,6 @@
-import { createContext } from 'react'
+import { createContext } from "react"
 
-import type { ChainConfig } from './config'
-import { chainConfigs } from './config'
+import type { ChainConfig } from "./config"
+import { chainConfigs } from "./config"
 
 export const ChainContext = createContext<ChainConfig>(chainConfigs[0]!)

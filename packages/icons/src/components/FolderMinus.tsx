@@ -1,35 +1,41 @@
-import type { Ref, SVGProps } from 'react'
-import { forwardRef, useContext } from 'react'
+import type { Ref, SVGProps } from "react"
+import { forwardRef, useContext } from "react"
 
-import { IconContext } from '../context'
+import { IconContext } from "../context"
 
 const SvgFolderMinus = (
-  props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
-    size?: number | string
-  },
-  ref: Ref<SVGSVGElement>
+	props: Omit<SVGProps<SVGSVGElement>, "width" | "height"> & {
+		size?: number | string
+	},
+	ref: Ref<SVGSVGElement>
 ) => {
-  const iconContext = useContext(IconContext)
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={props.size ?? iconContext.size ?? 24}
-      height={props.size ?? iconContext.size ?? 24}
-      fill="none"
-      viewBox="0 0 24 24"
-      ref={ref}
-      {...props}
-    >
-      <path
-        stroke="currentcolor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2v11Z"
-      />
-      <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 14h6" />
-    </svg>
-  )
+	const iconContext = useContext(IconContext)
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width={props.size ?? iconContext.size ?? 24}
+			height={props.size ?? iconContext.size ?? 24}
+			fill="none"
+			viewBox="0 0 24 24"
+			ref={ref}
+			{...props}
+		>
+			<path
+				stroke="currentcolor"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				strokeWidth={2}
+				d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2v11Z"
+			/>
+			<path
+				stroke="currentcolor"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				strokeWidth={2}
+				d="M9 14h6"
+			/>
+		</svg>
+	)
 }
 const ForwardRef = forwardRef(SvgFolderMinus)
 export default ForwardRef

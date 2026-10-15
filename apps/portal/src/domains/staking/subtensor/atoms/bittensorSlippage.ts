@@ -1,4 +1,4 @@
-import { atom } from 'jotai'
+import { atom } from "jotai"
 
 export const DEFAULT_MAX_SLIPPAGE = 5.5
 

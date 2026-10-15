@@ -1,4 +1,4 @@
-import { ApiPromise } from '@polkadot/api'
+import { ApiPromise } from "@polkadot/api"
 
 /**
  * Calculates the duration of a staking era in milliseconds
@@ -6,11 +6,11 @@ import { ApiPromise } from '@polkadot/api'
  * @returns Era duration in milliseconds
  */
 export const getStakingEraDurationMs = (babeApi: ApiPromise): bigint => {
-  const blockTime = babeApi.consts.babe?.expectedBlockTime?.toBigInt() ?? 0n
-  const epochDuration = babeApi.consts.babe?.epochDuration?.toBigInt() ?? 0n
-  const sessionsPerEra = babeApi.consts.staking?.sessionsPerEra?.toNumber() ?? 0
+	const blockTime = babeApi.consts.babe?.expectedBlockTime?.toBigInt() ?? 0n
+	const epochDuration = babeApi.consts.babe?.epochDuration?.toBigInt() ?? 0n
+	const sessionsPerEra = babeApi.consts.staking?.sessionsPerEra?.toNumber() ?? 0
 
-  return blockTime * BigInt(sessionsPerEra) * epochDuration
+	return blockTime * BigInt(sessionsPerEra) * epochDuration
 }
 
 /**
@@ -19,14 +19,14 @@ export const getStakingEraDurationMs = (babeApi: ApiPromise): bigint => {
  * @returns Number of eras per year
  */
 export const getStakingErasPerYear = (babeApi: ApiPromise): bigint => {
-  const MS_PER_YEAR = 1000n * 60n * 60n * 24n * 365n
-  const eraDuration = getStakingEraDurationMs(babeApi)
+	const MS_PER_YEAR = 1000n * 60n * 60n * 24n * 365n
+	const eraDuration = getStakingEraDurationMs(babeApi)
 
-  if (eraDuration === 0n) {
-    return 0n
-  }
+	if (eraDuration === 0n) {
+		return 0n
+	}
 
-  return MS_PER_YEAR / eraDuration
+	return MS_PER_YEAR / eraDuration
 }
 
 /**
@@ -40,16 +40,19 @@ export const getStakingErasPerYear = (babeApi: ApiPromise): bigint => {
  *
  * @param areNominatorsSlashable - on-chain `staking.areNominatorsSlashable` value
  */
-export const getNominatorBondingDurationEras = (stakingApi: ApiPromise, areNominatorsSlashable: boolean): number => {
-  const fastUnbondDuration = (
-    stakingApi.consts.staking as unknown as Record<string, { toNumber: () => number } | undefined>
-  )['nominatorFastUnbondDuration']
+export const getNominatorBondingDurationEras = (
+	stakingApi: ApiPromise,
+	areNominatorsSlashable: boolean
+): number => {
+	const fastUnbondDuration = (
+		stakingApi.consts.staking as unknown as Record<string, { toNumber: () => number } | undefined>
+	)["nominatorFastUnbondDuration"]
 
-  if (fastUnbondDuration !== undefined && !areNominatorsSlashable) {
-    return fastUnbondDuration.toNumber()
-  }
+	if (fastUnbondDuration !== undefined && !areNominatorsSlashable) {
+		return fastUnbondDuration.toNumber()
+	}
 
-  return stakingApi.consts.staking.bondingDuration.toNumber()
+	return stakingApi.consts.staking.bondingDuration.toNumber()
 }
 
 /**
@@ -61,23 +64,23 @@ export const getNominatorBondingDurationEras = (stakingApi: ApiPromise, areNomin
  * @returns Bonding duration in milliseconds
  */
 export const getStakingBondingDurationMs = ({
-  stakingApi,
-  babeApi,
-  areNominatorsSlashable,
+	stakingApi,
+	babeApi,
+	areNominatorsSlashable,
 }: {
-  stakingApi: ApiPromise
-  babeApi: ApiPromise | null
-  areNominatorsSlashable: boolean
+	stakingApi: ApiPromise
+	babeApi: ApiPromise | null
+	areNominatorsSlashable: boolean
 }): bigint => {
-  if (!babeApi) {
-    console.error('Babe API is null')
-    return 0n
-  }
+	if (!babeApi) {
+		console.error("Babe API is null")
+		return 0n
+	}
 
-  const bondingDuration = getNominatorBondingDurationEras(stakingApi, areNominatorsSlashable)
-  const eraDuration = getStakingEraDurationMs(babeApi)
+	const bondingDuration = getNominatorBondingDurationEras(stakingApi, areNominatorsSlashable)
+	const eraDuration = getStakingEraDurationMs(babeApi)
 
-  return BigInt(bondingDuration) * eraDuration
+	return BigInt(bondingDuration) * eraDuration
 }
 
 /**
@@ -87,19 +90,23 @@ export const getStakingBondingDurationMs = ({
  * @param babeApi - ApiPromise instance with babe and staking constants
  * @returns APR as a decimal number (e.g., 0.15 for 15%)
  */
-export const calculateStakingApr = (eraRewards: bigint[], eraTotalStakes: bigint[], babeApi: ApiPromise): number => {
-  const totalRewards = eraRewards.reduce((acc, reward) => acc + reward, 0n)
-  const totalStakes = eraTotalStakes.reduce((acc, stake) => acc + stake, 0n)
+export const calculateStakingApr = (
+	eraRewards: bigint[],
+	eraTotalStakes: bigint[],
+	babeApi: ApiPromise
+): number => {
+	const totalRewards = eraRewards.reduce((acc, reward) => acc + reward, 0n)
+	const totalStakes = eraTotalStakes.reduce((acc, stake) => acc + stake, 0n)
 
-  if (totalStakes === 0n || totalRewards === 0n) {
-    return 0
-  }
+	if (totalStakes === 0n || totalRewards === 0n) {
+		return 0
+	}
 
-  const erasPerYear = getStakingErasPerYear(babeApi)
-  const RATIO_DIGITS = 10000n
+	const erasPerYear = getStakingErasPerYear(babeApi)
+	const RATIO_DIGITS = 10000n
 
-  const bigapr = (RATIO_DIGITS * erasPerYear * totalRewards) / totalStakes
-  const apr = Number(bigapr) / Number(RATIO_DIGITS)
+	const bigapr = (RATIO_DIGITS * erasPerYear * totalRewards) / totalStakes
+	const apr = Number(bigapr) / Number(RATIO_DIGITS)
 
-  return apr
+	return apr
 }

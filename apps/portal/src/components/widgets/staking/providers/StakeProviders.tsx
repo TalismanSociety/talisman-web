@@ -1,8 +1,8 @@
-import StakeProvidersTable from './components/StakeProvidersTable'
-import useProvidersData from './hooks/useProvidersData'
+import StakeProvidersTable from "./components/StakeProvidersTable"
+import useProvidersData from "./hooks/useProvidersData"
 
 export const StakeProviders = () => {
-  const dataQuery = useProvidersData()
+	const dataQuery = useProvidersData()
 
-  return <StakeProvidersTable dataQuery={dataQuery} />
+	return <StakeProvidersTable dataQuery={dataQuery} />
 }

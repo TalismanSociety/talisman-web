@@ -7,11 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": [
-      "**",
-      "!.claude",
-      "!apps/portal/src/generated"
-    ]
+    "includes": ["**", "!.claude", "!apps/portal/src/generated"]
   },
   "formatter": {
     "enabled": true,

@@ -1,9 +1,9 @@
-import { ApiPromise } from '@polkadot/api'
-import { chainConnectorsAtom } from '@talismn/balances-react'
-import * as AvailJsSdk from 'avail-js-sdk'
-import { atom } from 'jotai'
-import { atomEffect } from 'jotai-effect'
-import { atomFamily } from 'jotai/utils'
+import { ApiPromise } from "@polkadot/api"
+import { chainConnectorsAtom } from "@talismn/balances-react"
+import * as AvailJsSdk from "avail-js-sdk"
+import { atom } from "jotai"
+import { atomFamily } from "jotai/utils"
+import { atomEffect } from "jotai-effect"
 
 /**
  * This atom can be used to get access to an `ApiPromise` for talking to a Polkadot blockchain.
@@ -15,35 +15,39 @@ import { atomFamily } from 'jotai/utils'
  * through their wallet, thus further reducing the total number of active websocket connections.
  */
 export const apiPromiseAtom = atomFamily((chainId?: string) =>
-  atom(async get => {
-    if (!chainId) return
+	atom(async (get) => {
+		if (!chainId) return
 
-    const subChainConnector = get(chainConnectorsAtom).substrate
-    if (!subChainConnector) return
+		const subChainConnector = get(chainConnectorsAtom).substrate
+		if (!subChainConnector) return
 
-    const isAvail = ['avail', 'avail-turing-testnet'].includes(chainId)
-    const extraProps = isAvail
-      ? { types: AvailJsSdk.spec.types, rpc: AvailJsSdk.spec.rpc, signedExtensions: AvailJsSdk.spec.signedExtensions }
-      : {}
+		const isAvail = ["avail", "avail-turing-testnet"].includes(chainId)
+		const extraProps = isAvail
+			? {
+					types: AvailJsSdk.spec.types,
+					rpc: AvailJsSdk.spec.rpc,
+					signedExtensions: AvailJsSdk.spec.signedExtensions,
+				}
+			: {}
 
-    const provider = subChainConnector.asProvider(chainId)
-    const apiPromise = new ApiPromise({ provider, noInitWarn: true, ...extraProps })
+		const provider = subChainConnector.asProvider(chainId)
+		const apiPromise = new ApiPromise({ provider, noInitWarn: true, ...extraProps })
 
-    // register effect to clean up ApiPromise when it's no longer in use
-    get(cleanupApiPromiseEffect(chainId, apiPromise))
+		// register effect to clean up ApiPromise when it's no longer in use
+		get(cleanupApiPromiseEffect(chainId, apiPromise))
 
-    return apiPromise
-  })
+		return apiPromise
+	})
 )
 
 const cleanupApiPromiseEffect = (chainId: string | undefined, apiPromise: ApiPromise) =>
-  atomEffect(() => {
-    return () => {
-      apiPromiseAtom.remove(chainId)
-      try {
-        apiPromise.disconnect()
-      } catch (cause) {
-        console.warn(`Failed to close ${chainId} apiPromise: ${cause}`)
-      }
-    }
-  })
+	atomEffect(() => {
+		return () => {
+			apiPromiseAtom.remove(chainId)
+			try {
+				apiPromise.disconnect()
+			} catch (cause) {
+				console.warn(`Failed to close ${chainId} apiPromise: ${cause}`)
+			}
+		}
+	})
