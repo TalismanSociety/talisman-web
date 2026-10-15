@@ -74,7 +74,6 @@
     "wagmi": "^2.19.5"
   },
   "devDependencies": {
-    "@bifrost-finance/types": "^1.8.4",
     "@graphql-codegen/cli": "5.0.0",
     "@graphql-codegen/client-preset": "4.1.0",
     "@playwright/test": "^1.31.2",
