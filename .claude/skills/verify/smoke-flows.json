@@ -41,7 +41,7 @@
     "name": "pools-restake",
     "account": "Guardians SUB",
     "path": "/staking/positions",
-    "steps": [["row", "Kusama Asset Hub", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Re-stake"]]
+    "steps": [["row", "Cere", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Re-stake"]]
   },
   {
     "name": "pools-unbond",
