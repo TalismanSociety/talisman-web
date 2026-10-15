@@ -8,7 +8,8 @@ baseline_rev=${SMOKE_BASELINE:-$(tr -d '[:space:]' < "$skill/parity-baseline.sha
 # shellcheck source=sides.sh
 . "$bin/sides.sh"
 
-flows_file=$skill/smoke-flows.json
+flows_file=${SMOKE_FLOWS:-$skill/smoke-flows.json}
+export SMOKE_FLOWS=$flows_file
 out=${OUT:-$root/.tmp/verify/runs/$(date +%Y%m%d-%H%M%S)-smoke}
 mkdir -p "$out" && out=$(cd "$out" && pwd)
 attempts=${ATTEMPTS:-3}

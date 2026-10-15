@@ -8,7 +8,8 @@ const bin = new URL(".", import.meta.url).pathname
 const skill = new URL("..", import.meta.url).pathname
 const run = promisify(execFile)
 
-export const flows = () => JSON.parse(readFileSync(`${skill}/smoke-flows.json`, "utf8"))
+const flowsFile = process.env.SMOKE_FLOWS ?? `${skill}/smoke-flows.json`
+const flows = () => JSON.parse(readFileSync(flowsFile, "utf8"))
 
 const STEP_TIMEOUT = Number(process.env.SMOKE_STEP_TIMEOUT ?? 90) * 1000
 const REQUEST_TIMEOUT = 60_000
@@ -194,7 +195,7 @@ async function drive(flow, result) {
 
 const [flowName, outFile, ...flags] = process.argv.slice(2)
 if (!flowName || !outFile) fail("usage: smoke.mjs <flow> <out.json> [--submit]", 2)
-const flow = flows().find((candidate) => candidate.name === flowName) ?? fail(`no flow ${flowName} in smoke-flows.json`, 2)
+const flow = flows().find((candidate) => candidate.name === flowName) ?? fail(`no flow ${flowName} in ${flowsFile}`, 2)
 const screenshotFile = outFile.replace(/\.json$/, ".png")
 const result = { flow: flow.name, instance: process.env.VERIFY_INSTANCE, submit: flags.includes("--submit"), status: "error" }
 try {

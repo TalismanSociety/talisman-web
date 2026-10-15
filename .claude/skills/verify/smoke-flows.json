@@ -12,6 +12,20 @@
     "steps": [["dialog"], ["fill", "0.00", "1"], ["press", "Stake"]]
   },
   {
+    "name": "pools-claim",
+    "account": "Guardians SUB",
+    "path": "/staking/positions",
+    "steps": [["row", "Kusama Asset Hub", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Claim"]],
+    "submit": "network fee; moves the pending pool rewards to the free balance"
+  },
+  {
+    "name": "pools-claim-cere",
+    "account": "Guardians SUB",
+    "path": "/staking/positions",
+    "steps": [["row", "Cere", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Claim"]],
+    "submit": "network fee; moves the pending pool rewards to the free balance"
+  },
+  {
     "name": "pools-bond-extra",
     "account": "Guardians SUB",
     "path": "/staking/positions",
@@ -23,13 +37,6 @@
       ["press", "Stake"]
     ],
     "submit": "network fee; bonds 0.001 KSM more into the pool, which stays the account's stake"
-  },
-  {
-    "name": "pools-claim",
-    "account": "Guardians SUB",
-    "path": "/staking/positions",
-    "steps": [["row", "Kusama Asset Hub", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Claim"]],
-    "submit": "network fee; moves the pending pool rewards to the free balance"
   },
   {
     "name": "pools-restake",
@@ -84,19 +91,6 @@
     ]
   },
   {
-    "name": "subtensor-stake",
-    "account": "Guardians SUB",
-    "path": "/staking/positions",
-    "steps": [
-      ["row", "TAO", "Bittensor", "Yuma"],
-      ["press", "#icon"],
-      ["dialog"],
-      ["fill", "0.00", "0.1"],
-      ["press", "Stake"]
-    ],
-    "submit": "network fee; stakes 0.1 TAO on root, which subtensor-unstake takes back"
-  },
-  {
     "name": "subtensor-unstake",
     "account": "Guardians SUB",
     "path": "/staking/positions",
@@ -106,10 +100,17 @@
       ["page"],
       ["press", "Unstake"],
       ["dialog"],
-      ["fill", "0.00", "0.1"],
+      ["press", "Max"],
       ["press", "Unstake"]
     ],
-    "submit": "network fee; unstakes 0.1 TAO from root, no unbonding period"
+    "submit": "network fee; unstakes the whole root stake (0.1 TAO), no unbonding period"
+  },
+  {
+    "name": "subtensor-stake",
+    "account": "Guardians SUB",
+    "path": "/staking/providers?action=stake&type=subtensor&chain=bittensor",
+    "steps": [["dialog"], ["fill", "0.00", "0.1"], ["press", "Stake"]],
+    "submit": "network fee; stakes 0.1 TAO on root again after subtensor-unstake"
   },
   {
     "name": "subtensor-dtao-stake",
