@@ -3,10 +3,10 @@ import "@polkadot/api-augment/substrate"
 import "@talismn/astar-types/augment-api"
 import "@talismn/astar-types/types-lookup"
 
+import * as Sentry from "@sentry/react"
 import { PolkadotApiProvider } from "@talismn/react-polkadot-api"
 import { PostHogProvider } from "posthog-js/react"
-import { Suspense } from "react"
-import { RouterProvider } from "react-router-dom"
+import { type ReactNode, Suspense } from "react"
 import { RecoilRoot } from "recoil"
 import ThemeProvider from "@/App.Theme"
 import { FairyBreadBanner } from "@/components/legacy/widgets/FairyBreadBanner"
@@ -21,14 +21,16 @@ import {
 	chainQueryMultiState,
 	chainQueryState,
 } from "@/domains/common/recoils/query"
+import { initSentry } from "@/domains/common/sentry"
 import { ExtensionWatcher } from "@/domains/extension/main"
 import { TalismanExtensionSynchronizer } from "@/domains/extension/TalismanExtensionSynchronizer"
 import { EvmProvider } from "@/domains/extension/wagmi"
-import router from "@/routes"
 import { Toaster } from "@/ui/molecules/Toaster"
 import { JotaiProvider } from "@/util/jotaiStore"
 
-const App = () => (
+initSentry()
+
+const AppProviders = ({ children }: { children: ReactNode }) => (
 	<ThemeProvider>
 		<RecoilRoot>
 			<ErrorBoundary
@@ -54,7 +56,7 @@ const App = () => (
 										<TalismanExtensionSynchronizer />
 										<BalancesWatcher />
 										<Suspense fallback={<FullscreenLoader />}>
-											<RouterProvider router={router} />
+											{children}
 											<Toaster position="bottom-right" />
 										</Suspense>
 										<FairyBreadBanner />
@@ -70,4 +72,4 @@ const App = () => (
 	</ThemeProvider>
 )
 
-export default App
+export default Sentry.withProfiler(AppProviders)
