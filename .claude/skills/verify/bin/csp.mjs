@@ -17,6 +17,8 @@ const listener = `addEventListener("securitypolicyviolation", (event) => globalT
 	sample: event.sample,
 })), true)`
 
+const startedAt = Date.now()
+
 const record = (entry) => appendFileSync(out, `${JSON.stringify({ at: new Date().toISOString(), ...entry })}\n`)
 
 const mentionsCsp = (text) => /Content[ -]Security[ -]Policy/i.test(text ?? "")
@@ -30,7 +32,7 @@ async function watch(target) {
 		if (violation.document?.startsWith(PORTAL)) record({ channel: "event", ...violation })
 	})
 	page.on("Log.entryAdded", ({ entry }, sessionId) => {
-		if (!mentionsCsp(entry.text)) return
+		if (!mentionsCsp(entry.text) || entry.timestamp < startedAt) return
 		if (sessionId !== undefined && !workers.has(sessionId)) return
 		const context = sessionId === undefined ? "page" : `worker ${workers.get(sessionId)}`
 		record({ channel: "console", context, level: entry.level, text: entry.text, url: entry.url })

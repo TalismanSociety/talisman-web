@@ -47,7 +47,13 @@ watch() {
   watcher=$!
   local tries=0
   until grep -q '^ready' "$scratch/watch.out"; do
-    kill -0 "$watcher" 2>/dev/null && ((++tries < 100)) || { echo "the CSP watcher did not start: $(one_line < "$scratch/watch.out")"; return 1; }
+    kill -0 "$watcher" 2>/dev/null && ((++tries < 100)) || {
+      echo "the CSP watcher did not start: $(one_line < "$scratch/watch.out")"
+      kill "$watcher" 2>/dev/null || true
+      wait "$watcher" 2>/dev/null || true
+      watcher=''
+      return 1
+    }
     sleep 0.1
   done
 }
@@ -77,16 +83,20 @@ run_flow() {
   VERIFY_INSTANCE=$sides-candidate "$bin/smoke.mjs" "$1" "$out/$1.flow.json" > "$scratch/flow.log" 2>&1 || true
   [[ -f $out/$1.flow.json ]] || { echo "smoke.mjs wrote no result: $(tail -3 "$scratch/flow.log" | one_line)"; return 1; }
   echo "flow $(jq -r '.status + (if .detail then ": " + .detail else "" end)' "$out/$1.flow.json")"
+  jq -e '.status == "captured" or .status == "unavailable"' "$out/$1.flow.json" >/dev/null
 }
 
 violations_of() {
-  jq -rs 'map(if .channel == "event" then "\(.directive) \(.blocked) (\(.disposition))" else "\(.context): \(.text[0:160])" end) | unique | join("; ")' "$1"
+  jq -rs '(map(select(.channel == "event")) | length) as $events
+    | map(select(.channel == "event" or .context != "page" or $events == 0))
+    | map(if .channel == "event" then "\(.directive) \(.blocked) (\(.disposition))" else "\(.context): \(.text[0:160])" end)
+    | unique' "$1"
 }
 
 record_step() {
   local name=$1 kind=$2 loaded=$3 detail=$4 count found result=pass
-  count=$(jq -s length "$out/$name.jsonl")
-  found=$(violations_of "$out/$name.jsonl")
+  count=$(violations_of "$out/$name.jsonl" | jq length)
+  found=$(violations_of "$out/$name.jsonl" | jq -r 'join("; ")')
   if ((count > 0)); then result=fail detail="$found${detail:+; $detail}"; fi
   [[ $loaded == yes ]] || result=fail
   [[ $result == pass ]] || status=1
@@ -149,5 +159,6 @@ for flow in "${flows[@]}"; do
   [[ $current_state == connected ]] || { start_candidate connected; current_state=connected; }
   step_run "$flow" "flow" run_flow "$flow"
 done
+[[ $(wc -l < "$out/summary.tsv") -gt 1 ]] || { echo "no route or flow matched: ${only[*]}" >&2; exit 1; }
 echo "summary: $out/summary.tsv"
 exit "$status"
