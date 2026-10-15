@@ -1,11 +1,11 @@
-import type { AnyJson } from '@w3ux/types'
+import type { AnyJson } from '@polkadot/types/types'
 import { useRecoilValue } from 'recoil'
 
 import { useRecommendedPoolsState } from '../recoils'
 
 export type BondedPool = {
   commission?: {
-    current?: AnyJson | null
+    current?: [commission: string, payee: string] | null
     max?: AnyJson | null
     changeRate: {
       maxIncrease: AnyJson
