@@ -1,4 +1,4 @@
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 import { Union } from "@talismn/web-icons"
 
 import type { FloatingActionButtonProps } from "./FloatingActionButton"

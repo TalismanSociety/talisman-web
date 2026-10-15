@@ -3,7 +3,7 @@ import { useRecoilValue } from "recoil"
 
 import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
 
-import { type RuntimePoolData } from "../types"
+import type { RuntimePoolData } from "../types"
 
 export const useGetSubnetMetagraphByNetuid = ({ netuid }: { netuid: number }) => {
 	const api = useRecoilValue(useSubstrateApiState())

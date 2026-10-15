@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react"
 
 import { DappStakingForm, DappStakingSideSheet } from "./DappStakingForm"
 import { Default as DappStakingFormDefault } from "./DappStakingForm.stories"

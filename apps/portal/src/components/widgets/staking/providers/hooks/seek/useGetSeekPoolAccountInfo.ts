@@ -1,6 +1,6 @@
 import { useReadContracts } from "wagmi"
 
-import { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/recoils"
 
 import {
 	CHAIN_ID,

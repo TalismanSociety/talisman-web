@@ -1,4 +1,4 @@
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 import { useState } from "react"
 import { Identicon } from "../atoms/Identicon"
 import type { SelectProps } from "./Select"

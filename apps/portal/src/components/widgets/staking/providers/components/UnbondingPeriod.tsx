@@ -6,7 +6,7 @@ import { useUnlockDuration as useNominationPoolUnlockDuration } from "@/domains/
 
 import useDappUnlockDuration from "../hooks/dapp/useUnlockDuration"
 import useGetSeekStakeUnlockDuration from "../hooks/seek/useGetSeekStakeUnlockDuration"
-import { StakeProviderTypeId } from "../hooks/types"
+import type { StakeProviderTypeId } from "../hooks/types"
 
 const unbondingFormatter = (unlockValue: number) => formatDistance(0, unlockValue)
 

@@ -1,4 +1,4 @@
-import { BondOption } from "@/domains/staking/subtensor/types"
+import type { BondOption } from "@/domains/staking/subtensor/types"
 
 export const ROOT_NETUID = 0
 export const MIN_SUBTENSOR_ALPHA_STAKE = 0.001

@@ -82,7 +82,6 @@
       "style": {
         "noNonNullAssertion": "off",
         "useExponentiationOperator": "off",
-        "useImportType": "off",
         "useNodejsImportProtocol": "off",
         "useTemplate": "off"
       },

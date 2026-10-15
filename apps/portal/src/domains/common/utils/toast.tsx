@@ -1,5 +1,5 @@
 import type RpcError from "@polkadot/rpc-provider/coder/error"
-import { type ISubmittableResult } from "@polkadot/types/types"
+import type { ISubmittableResult } from "@polkadot/types/types"
 import { Text } from "@talismn/ui/atoms/Text"
 import { ToastMessage } from "@talismn/ui/molecules/ToastBar"
 import { toast } from "@talismn/ui/molecules/Toaster"

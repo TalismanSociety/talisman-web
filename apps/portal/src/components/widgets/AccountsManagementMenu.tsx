@@ -8,8 +8,9 @@ import { Text } from "@talismn/ui/atoms/Text"
 import { Tooltip } from "@talismn/ui/atoms/Tooltip"
 import { Menu } from "@talismn/ui/molecules/Menu"
 import { Copy, Ethereum, Eye, EyePlus, Trash2, Users, Wallet, X } from "@talismn/web-icons"
+import type React from "react"
 import type { ReactNode } from "react"
-import React, { useMemo } from "react"
+import { useMemo } from "react"
 import {
 	useRecoilValue,
 	useRecoilValueLoadable,

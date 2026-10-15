@@ -21,7 +21,7 @@ import { paymentInfoState } from "@/domains/common/recoils"
 import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo"
 
 import { feeEstimateAtom } from "../atoms/feeEstimate"
-import { type StakeItem } from "./useStake"
+import type { StakeItem } from "./useStake"
 
 export const useAddStakeForm = (
 	account: Account,

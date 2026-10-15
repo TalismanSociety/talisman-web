@@ -1,5 +1,5 @@
 import { createStore, Provider } from "jotai"
-import { ReactNode } from "react"
+import type { ReactNode } from "react"
 
 /**
  * Use this for access to the jotai store from outside of the react component lifecycle.

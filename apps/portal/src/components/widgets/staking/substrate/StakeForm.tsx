@@ -18,7 +18,7 @@ import {
 import { useLocation } from "react-use"
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from "recoil"
 import { StakeForm as StakeFormComponent } from "@/components/recipes/StakeForm"
-import { type StakeStatus } from "@/components/recipes/StakeStatusIndicator"
+import type { StakeStatus } from "@/components/recipes/StakeStatusIndicator"
 import { PoolSelectorDialog } from "@/components/recipes/StakeTargetSelectorDialog"
 import { useAccountSelector } from "@/components/widgets/AccountSelector"
 import type { Account } from "@/domains/accounts/recoils"
@@ -27,7 +27,7 @@ import { claimPermissionUnsupportedChainIds } from "@/domains/chains/config"
 import { useChainState as useChainRecoilState } from "@/domains/chains/hooks"
 import { ChainProvider } from "@/domains/chains/provider"
 import {
-	ChainInfo,
+	type ChainInfo,
 	nominationPoolsEnabledChainsState,
 	useNativeTokenDecimalState,
 } from "@/domains/chains/recoils"

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 
 import type { StakeTargetSelectorDialogProps } from "./StakeTargetSelectorDialog"
 import { StakeTargetSelectorDialog } from "./StakeTargetSelectorDialog"

@@ -1,4 +1,4 @@
-import { type ApiPromise } from "@polkadot/api"
+import type { ApiPromise } from "@polkadot/api"
 import { atom, selectorFamily } from "recoil"
 
 import { substrateApiState } from "@/domains/common/recoils/api"

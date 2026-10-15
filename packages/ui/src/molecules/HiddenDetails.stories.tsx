@@ -1,4 +1,4 @@
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 import { Button } from "../atoms/Button"
 import { Text } from "../atoms/Text"
 import type { HiddenDetailsProps } from "./HiddenDetails"

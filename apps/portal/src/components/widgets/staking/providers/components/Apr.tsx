@@ -1,6 +1,6 @@
 import { Tooltip } from "@talismn/ui/atoms/Tooltip"
 import { InfoIcon } from "lucide-react"
-import { ReactNode } from "react"
+import type { ReactNode } from "react"
 import { useRecoilValue } from "recoil"
 
 import { useChainState } from "@/domains/chains/hooks"
@@ -11,7 +11,7 @@ import { useHighestApr } from "@/domains/staking/subtensor/hooks/useApr"
 
 import useLidoApr from "../hooks/lido/useApr"
 import useGetSeekStakeApr from "../hooks/seek/useGetSeekStakeApr"
-import { StakeProviderTypeId } from "../hooks/types"
+import type { StakeProviderTypeId } from "../hooks/types"
 
 const aprFormatter = (apr: number, hasDTaoStaking?: boolean) => {
 	if (hasDTaoStaking) {

@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react"
 import { Zap } from "@talismn/web-icons"
 
 import { Button } from "./Button"

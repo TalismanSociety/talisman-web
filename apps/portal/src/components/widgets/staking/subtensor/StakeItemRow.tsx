@@ -9,12 +9,12 @@ import {
 	TALISMAN_WALLET_DOWNLOAD_URL,
 } from "@/components/widgets/staking/subtensor/constants"
 import type { Account } from "@/domains/accounts/recoils"
-import { ChainInfo } from "@/domains/chains/recoils"
+import type { ChainInfo } from "@/domains/chains/recoils"
 import { useCombinedBittensorValidatorsData } from "@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData"
 import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo"
 import { useMoveStake } from "@/domains/staking/subtensor/hooks/useMoveStake"
 import type { StakeItem } from "@/domains/staking/subtensor/hooks/useStake"
-import { type BondOption } from "@/domains/staking/subtensor/types"
+import type { BondOption } from "@/domains/staking/subtensor/types"
 
 import ErrorBoundaryFallback from "../ErrorBoundaryFallback"
 

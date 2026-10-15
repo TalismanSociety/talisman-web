@@ -15,7 +15,7 @@ import { BigIntMath } from "@/util/BigIntMath"
 import { Maybe } from "@/util/monads"
 
 import { getAllRewardsClaimExtrinsics } from "./useClaimAllRewardsExtrinsic"
-import { StakeLoadable } from "./useStakeLoadable"
+import type { StakeLoadable } from "./useStakeLoadable"
 
 const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.5
 

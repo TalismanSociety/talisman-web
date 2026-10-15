@@ -3,7 +3,7 @@ import { useRecoilValue } from "recoil"
 import { subtensorStakingEnabledChainsState } from "@/domains/chains/recoils"
 
 import { DTAO_LOGO, DTAO_SYMBOL } from "../../../subtensor/constants"
-import { Provider } from "../types"
+import type { Provider } from "../types"
 
 const useSubtensorProviders = () => {
 	const [rootStaking] = useRecoilValue(subtensorStakingEnabledChainsState) ?? {}

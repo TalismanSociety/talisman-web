@@ -1,4 +1,4 @@
-import { type SubmittableExtrinsic } from "@polkadot/api/types"
+import type { SubmittableExtrinsic } from "@polkadot/api/types"
 import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
 
@@ -13,7 +13,7 @@ import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiStat
 import { useTokenAmount } from "@/domains/common/hooks/useTokenAmount"
 import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo"
 
-import { type StakeItem } from "./useStake"
+import type { StakeItem } from "./useStake"
 
 type MoveItem = {
 	stake: StakeItem | undefined

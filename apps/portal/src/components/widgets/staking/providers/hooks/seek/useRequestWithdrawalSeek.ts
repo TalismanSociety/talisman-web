@@ -3,7 +3,7 @@ import { useRecoilValue, useRecoilValueLoadable } from "recoil"
 import { useWaitForTransactionReceipt } from "wagmi"
 import { mainnet } from "wagmi/chains"
 
-import { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/recoils"
 import { selectedCurrencyState } from "@/domains/balances/currency"
 import { tokenPriceState } from "@/domains/chains/recoils"
 import { useWagmiWriteContract } from "@/domains/common/hooks/useWagmiWriteContract"

@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query"
 import axios from "axios"
 
-import { SubnetApiResponse } from "../types"
+import type { SubnetApiResponse } from "../types"
 
 const TAOSTATS_API_KEY = import.meta.env.VITE_TAOSTATS_API_KEY
 const TAOSTATS_API_URL = import.meta.env.VITE_TAOSTATS_API_URL

@@ -1,4 +1,4 @@
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 import { Button } from "../atoms/Button"
 import { Toaster, toast } from "../molecules/Toaster"
 import type { ToastBarProps } from "./ToastBar"

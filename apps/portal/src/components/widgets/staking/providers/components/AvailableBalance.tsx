@@ -8,7 +8,7 @@ import { Decimal } from "@/util/Decimal"
 import useLidoAvailableBalance from "../hooks/lido/useAvailableBalance"
 import useAvailableBalance from "../hooks/nominationPools/useAvailableBalance"
 import useGetSeekAvailableBalance from "../hooks/seek/useGetSeekAvailableBalance"
-import { StakeProviderTypeId } from "../hooks/types"
+import type { StakeProviderTypeId } from "../hooks/types"
 
 type AvailableBalanceProps = {
 	typeId: StakeProviderTypeId

@@ -9,7 +9,7 @@ import {
 	SEEK_TOKEN_ADDRESS,
 } from "@/domains/staking/seek/constants"
 
-import { Provider } from "../types"
+import type { Provider } from "../types"
 
 const useSeekProviders = (): Provider[] => {
 	const seekProviders: Provider = {

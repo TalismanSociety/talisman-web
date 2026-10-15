@@ -1,5 +1,5 @@
 import { useTheme } from "@emotion/react"
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 import * as Icon from "@talismn/web-icons"
 
 export default {

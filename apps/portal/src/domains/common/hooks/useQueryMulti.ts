@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { type ApiPromise } from "@polkadot/api"
+import type { ApiPromise } from "@polkadot/api"
 import type {
 	GenericStorageEntryFunction,
 	PromiseResult,
@@ -10,7 +10,7 @@ import type {
 import { useEffect, useRef, useState } from "react"
 import type { Loadable } from "recoil"
 import { RecoilLoadable, useRecoilValue } from "recoil"
-import { type Observable } from "rxjs"
+import type { Observable } from "rxjs"
 
 import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
 import useDeferred from "@/util/useDeferred"

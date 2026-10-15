@@ -1,4 +1,4 @@
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 
 import type { DateInputProps } from "./DateInput"
 import { DateInput } from "./DateInput"

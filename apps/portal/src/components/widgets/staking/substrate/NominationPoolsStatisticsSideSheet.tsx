@@ -22,7 +22,7 @@ import { useEraEtaFormatter } from "@/domains/common/hooks/useEraEta"
 import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import {
-	DerivedPool,
+	type DerivedPool,
 	useApr,
 	usePoolStakes,
 } from "@/domains/staking/substrate/nominationPools/hooks"

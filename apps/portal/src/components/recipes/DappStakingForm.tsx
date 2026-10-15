@@ -1,5 +1,5 @@
 import { useTheme } from "@emotion/react"
-import { Button, ButtonProps } from "@talismn/ui/atoms/Button"
+import { Button, type ButtonProps } from "@talismn/ui/atoms/Button"
 import { CircularProgressIndicator } from "@talismn/ui/atoms/CircularProgressIndicator"
 import { Surface } from "@talismn/ui/atoms/Surface"
 import { Text } from "@talismn/ui/atoms/Text"

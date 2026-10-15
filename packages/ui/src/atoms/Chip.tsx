@@ -3,7 +3,7 @@ import { IconContext } from "@talismn/web-icons/utils"
 import type { ButtonHTMLAttributes, DetailedHTMLProps, ReactNode } from "react"
 import { useMemo } from "react"
 
-import { type ContentAlpha } from "../theme"
+import type { ContentAlpha } from "../theme"
 import { CircularProgressIndicator } from "./CircularProgressIndicator"
 import { useSurfaceColor } from "./Surface"
 import { Text } from "./Text"

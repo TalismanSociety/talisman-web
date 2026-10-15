@@ -1,4 +1,4 @@
-import { ApiPromise } from "@polkadot/api"
+import type { ApiPromise } from "@polkadot/api"
 
 /**
  * Calculates the duration of a staking era in milliseconds

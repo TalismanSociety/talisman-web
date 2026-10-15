@@ -1,4 +1,4 @@
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 import { Trash } from "@talismn/web-icons"
 import { Identicon } from "../atoms/Identicon"
 import type { ListItemProps } from "./ListItem"

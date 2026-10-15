@@ -8,7 +8,7 @@ import { Text } from "@talismn/ui/atoms/Text"
 import { ListItem } from "@talismn/ui/molecules/ListItem"
 import type { TextInputProps } from "@talismn/ui/molecules/TextInput"
 import { TextInput } from "@talismn/ui/molecules/TextInput"
-import { type ReactNode } from "react"
+import type { ReactNode } from "react"
 
 import { truncateAddress } from "@/util/truncateAddress"
 

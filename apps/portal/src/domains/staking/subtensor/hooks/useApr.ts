@@ -1,4 +1,4 @@
-import { BondOption } from "../types"
+import type { BondOption } from "../types"
 import { useCombinedBittensorValidatorsData } from "./useCombinedBittensorValidatorsData"
 
 export const useHighestAprFormatted = () => {

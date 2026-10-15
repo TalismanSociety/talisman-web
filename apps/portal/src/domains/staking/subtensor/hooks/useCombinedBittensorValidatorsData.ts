@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 
-import { BondOption } from "../types"
+import type { BondOption } from "../types"
 import { useGetBittensorValidators } from "./useGetBittensorInfiniteValidators"
 import { useGetInfiniteValidatorsYieldByNetuid } from "./useGetInfiniteValidatorsYield"
 

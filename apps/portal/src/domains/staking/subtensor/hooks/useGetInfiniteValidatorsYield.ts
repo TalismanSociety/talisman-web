@@ -2,7 +2,7 @@ import { useInfiniteQuery } from "@tanstack/react-query"
 import axios from "axios"
 import { useEffect, useMemo } from "react"
 
-import { ValidatorsYieldApiResponse } from "../types"
+import type { ValidatorsYieldApiResponse } from "../types"
 
 const TAOSTATS_API_KEY = import.meta.env.VITE_TAOSTATS_API_KEY
 const TAOSTATS_API_URL = import.meta.env.VITE_TAOSTATS_API_URL

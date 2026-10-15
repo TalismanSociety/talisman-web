@@ -1,5 +1,5 @@
 import { Text } from "@talismn/ui/atoms/Text"
-import { type ReactNode } from "react"
+import type { ReactNode } from "react"
 
 export type SectionHeaderProps = {
 	className?: string

@@ -2,7 +2,7 @@ import { useRecoilValue } from "recoil"
 
 import { dappStakingEnabledChainsState } from "@/domains/chains/recoils"
 
-import { Provider } from "../types"
+import type { Provider } from "../types"
 
 const useDappProviders = (): Provider[] => {
 	const chains = useRecoilValue(dappStakingEnabledChainsState)

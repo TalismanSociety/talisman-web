@@ -1,6 +1,6 @@
 import { toast } from "@talismn/ui/molecules/Toaster"
 import { CreditCard, Menu, PieChart, Zap } from "@talismn/web-icons"
-import { MouseEventHandler, useCallback, useState } from "react"
+import { type MouseEventHandler, useCallback, useState } from "react"
 import { Link } from "react-router-dom"
 
 import { CurrencySelect } from "@/components/molecules/CurrencySelect"

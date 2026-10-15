@@ -1,4 +1,4 @@
-import { type ApiPromise } from "@polkadot/api"
+import type { ApiPromise } from "@polkadot/api"
 import BN from "bn.js"
 import { minutesToMilliseconds } from "date-fns"
 

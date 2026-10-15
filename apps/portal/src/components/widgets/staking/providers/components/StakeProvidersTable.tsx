@@ -3,13 +3,13 @@ import { Surface } from "@talismn/ui/atoms/Surface"
 import { Text } from "@talismn/ui/atoms/Text"
 import { ChevronDown, ChevronUp } from "@talismn/web-icons"
 import {
-	CellContext,
-	ColumnDef,
+	type CellContext,
+	type ColumnDef,
 	flexRender,
 	getCoreRowModel,
 	getSortedRowModel,
-	Row,
-	SortingState,
+	type Row,
+	type SortingState,
 	useReactTable,
 } from "@tanstack/react-table"
 import { Suspense, useCallback, useMemo, useState } from "react"
@@ -20,8 +20,8 @@ import ErrorBoundaryFallback from "@/components/widgets/staking/ErrorBoundaryFal
 import { getPosition } from "@/domains/staking/utils/getPosition"
 import { cn } from "@/util/cn"
 
-import { Provider } from "../hooks/types"
-import useStakeValues, { StakeType } from "../hooks/useSetValues"
+import type { Provider } from "../hooks/types"
+import useStakeValues, { type StakeType } from "../hooks/useSetValues"
 import Apr from "./Apr"
 import Asset from "./Asset"
 import AvailableBalance from "./AvailableBalance"

@@ -1,11 +1,11 @@
-import { ReactElement, useEffect, useMemo, useState } from "react"
+import { type ReactElement, useEffect, useMemo, useState } from "react"
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from "recoil"
 
 import { StakeTargetSelectorDialog } from "@/components/recipes/StakeTargetSelectorDialog"
-import { type StakeTargetSelectorItemProps } from "@/components/recipes/StakeTargetSelectorItem"
+import type { StakeTargetSelectorItemProps } from "@/components/recipes/StakeTargetSelectorItem"
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
 import { useCombinedBittensorValidatorsData } from "@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData"
-import { type BondOption } from "@/domains/staking/subtensor/types"
+import type { BondOption } from "@/domains/staking/subtensor/types"
 
 const TAOSTATS_INFO_URL = "https://taostats.io/validators"
 

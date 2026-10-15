@@ -6,7 +6,7 @@ import useLidoStakePercentage from "../hooks/lido/useStakePercentage"
 import useNominationPoolStakePercentage from "../hooks/nominationPools/useStakePercentage"
 import useGetSeekStakePercentage from "../hooks/seek/useGetSeekStakePercentage"
 import useSubtensorStakePercentage from "../hooks/subtensor/useStakePercentage"
-import { StakeProviderTypeId } from "../hooks/types"
+import type { StakeProviderTypeId } from "../hooks/types"
 
 type StakePercentageProps = {
 	typeId: StakeProviderTypeId

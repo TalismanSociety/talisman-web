@@ -4,7 +4,7 @@ import { useRecoilValue } from "recoil"
 
 import { lidoSuitesState } from "@/domains/staking/lido/recoils"
 
-import { Provider } from "../types"
+import type { Provider } from "../types"
 
 // A dummy value for the genesis hash to play nice with ChainProvider context
 // This is not used for Lido
