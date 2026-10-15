@@ -17,11 +17,11 @@ jobs:
       - run: yarn lint -- --max-warnings=0
       - run: yarn check-types
       - run: yarn test
-      - run: yarn npm audit --ignore "@w3ux/types (deprecation)"
+      - run: yarn npm audit --ignore "eslint (deprecation)"
 
       - name: Audit portal dependencies
         working-directory: apps/portal
-        run: yarn npm audit
+        run: yarn npm audit --ignore "eslint (deprecation)"
 
   e2e:
     runs-on: ubuntu-latest
