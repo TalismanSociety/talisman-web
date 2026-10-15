@@ -9,7 +9,7 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "dev": "vite --host",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/csp-headers.ts",
     "typecheck": "NODE_OPTIONS='--max-old-space-size=8192' tsc --noEmit && tsc --noEmit -p tsconfig.node.json",
     "e2e": "playwright test",
     "codegen:nova": "graphql-codegen --require dotenv/config --config codegen.nova.ts"
