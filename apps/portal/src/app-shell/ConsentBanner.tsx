@@ -16,11 +16,10 @@ export const ConsentBanner = () => {
 	const settingsOpen = usePrivacySettingsOpen()
 	const messageId = useId()
 
-	if (consent !== null) return null
+	if (consent !== null || settingsOpen) return null
 
 	return (
 		<section
-			hidden={settingsOpen}
 			aria-labelledby={messageId}
 			css={{
 				position: "fixed",

@@ -12,9 +12,6 @@ import {
 const banner = () =>
 	screen.queryByRole("region", { name: "We use cookies to help improve your experience." })
 
-const bannerSection = (container: HTMLElement) =>
-	container.querySelector<HTMLElement>("section[aria-labelledby]")
-
 const renderShell = async () => {
 	const { ConsentBanner } = await import("./ConsentBanner")
 	const { PrivacySettingsDialog } = await import(
@@ -70,19 +67,18 @@ describe("ConsentBanner", () => {
 	})
 
 	it("Settings opens the dialog in place of the banner, and closing it undecided brings the banner back", async () => {
-		const { container } = await renderShell()
+		await renderShell()
 
 		await click("Settings")
 
 		expect(screen.getByRole("dialog")).toBeTruthy()
 		expect(screen.getByRole("heading", { name: "Privacy settings" })).toBeTruthy()
-		expect(bannerSection(container)?.hasAttribute("hidden")).toBe(true)
+		expect(banner()).toBeNull()
 
 		fireEvent.click(screen.getByRole("button", { name: "Close" }))
 		await settle()
 
 		expect(screen.queryByRole("dialog")).toBeNull()
-		expect(bannerSection(container)?.hasAttribute("hidden")).toBe(false)
 		expect(banner()).not.toBeNull()
 		expect(storedConsent()).toBeNull()
 	})
