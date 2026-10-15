@@ -1,35 +1,37 @@
-import { SEEK_TICKER } from '../seek/constants'
+import { SEEK_TICKER } from "../seek/constants"
 
 /**
  * To add a provider,insert it into the ordered array as provider_tokensymbol.
  * The index of the array determines its position automatically.
  */
 const orderedProviders: string[] = [
-  `talisman_${SEEK_TICKER.toLowerCase()}`, // Talisman Seek
-  'polkadot_dot',
-  'polkadot_asset_hub_dot',
-  'bittensor_tao',
-  'bittensor_testnet_testtao',
-  'kusama_asset_hub_ksm',
-  'astar_astr',
-  'analog_timechain_anlog',
-  'aleph_zero_azero',
-  'vara_vara',
-  'avail_avail',
-  'cere_cere',
-  'lido_eth',
+	`talisman_${SEEK_TICKER.toLowerCase()}`, // Talisman Seek
+	"polkadot_dot",
+	"polkadot_asset_hub_dot",
+	"bittensor_tao",
+	"bittensor_testnet_testtao",
+	"kusama_asset_hub_ksm",
+	"astar_astr",
+	"analog_timechain_anlog",
+	"aleph_zero_azero",
+	"vara_vara",
+	"avail_avail",
+	"cere_cere",
+	"lido_eth",
 ]
 
 /** Convert the array into a map for quick lookup */
-const positionMap: Record<string, number> = Object.fromEntries(orderedProviders.map((key, index) => [key, index]))
+const positionMap: Record<string, number> = Object.fromEntries(
+	orderedProviders.map((key, index) => [key, index])
+)
 
 export const getPosition = ({
-  providerName,
-  tokenSymbol,
+	providerName,
+	tokenSymbol,
 }: {
-  providerName: string | undefined
-  tokenSymbol: string | undefined
+	providerName: string | undefined
+	tokenSymbol: string | undefined
 }) => {
-  const provider = providerName?.trim().replace(/\s+/g, '_').toLowerCase()
-  return positionMap[`${provider}_${tokenSymbol?.toLowerCase()}`] ?? 99
+	const provider = providerName?.trim().replace(/\s+/g, "_").toLowerCase()
+	return positionMap[`${provider}_${tokenSymbol?.toLowerCase()}`] ?? 99
 }

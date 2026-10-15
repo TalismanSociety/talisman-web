@@ -1,6 +1,6 @@
-import mime from 'mime'
-import type mimeDb from 'mime-db/db.json'
-import { useEffect, useState } from 'react'
+import mime from "mime"
+import type mimeDb from "mime-db/db.json"
+import { useEffect, useState } from "react"
 
 type MimeType = keyof typeof mimeDb
 
@@ -15,54 +15,56 @@ export type MimeTypeSubType = TypeDetail[1]
 const storageKey = (url: string) => `@talismn/ui/mime/${url}`
 
 export const useMimeType = (src: string | readonly string[] | undefined, fetchMime = false) => {
-  const referenceSrc = typeof src === 'string' ? src : src?.at(0)
-  const contentTypeFromSrc = mime.getType(referenceSrc ?? '') as MimeType | null
+	const referenceSrc = typeof src === "string" ? src : src?.at(0)
+	const contentTypeFromSrc = mime.getType(referenceSrc ?? "") as MimeType | null
 
-  const [mimeType, setMimeType] = useState<MimeType | undefined>(
-    contentTypeFromSrc === null
-      ? (sessionStorage.getItem(storageKey(referenceSrc ?? '')) as MimeType) ?? undefined
-      : contentTypeFromSrc
-  )
+	const [mimeType, setMimeType] = useState<MimeType | undefined>(
+		contentTypeFromSrc === null
+			? ((sessionStorage.getItem(storageKey(referenceSrc ?? "")) as MimeType) ?? undefined)
+			: contentTypeFromSrc
+	)
 
-  useEffect(() => {
-    if (!fetchMime || mimeType !== undefined) {
-      return
-    }
+	useEffect(() => {
+		if (!fetchMime || mimeType !== undefined) {
+			return
+		}
 
-    const srcs = typeof src === 'string' ? [src] : src
+		const srcs = typeof src === "string" ? [src] : src
 
-    if (srcs === undefined) {
-      return
-    }
+		if (srcs === undefined) {
+			return
+		}
 
-    void (async () => {
-      for (const url of srcs) {
-        try {
-          const response = await fetch(url, { method: 'HEAD' })
+		void (async () => {
+			for (const url of srcs) {
+				try {
+					const response = await fetch(url, { method: "HEAD" })
 
-          if (!response.ok) {
-            continue
-          }
+					if (!response.ok) {
+						continue
+					}
 
-          const contentType = response.headers.get('Content-Type') as MimeType | null
+					const contentType = response.headers.get("Content-Type") as MimeType | null
 
-          setMimeType(contentType ?? undefined)
+					setMimeType(contentType ?? undefined)
 
-          if (referenceSrc !== undefined && contentType !== null) {
-            sessionStorage.setItem(storageKey(referenceSrc), contentType)
-          }
-          break
-        } catch {
-          /* empty */
-        }
-      }
-    })()
-  }, [fetchMime, mimeType, referenceSrc, src])
+					if (referenceSrc !== undefined && contentType !== null) {
+						sessionStorage.setItem(storageKey(referenceSrc), contentType)
+					}
+					break
+				} catch {
+					/* empty */
+				}
+			}
+		})()
+	}, [fetchMime, mimeType, referenceSrc, src])
 
-  type TypeDetail = MimeType extends `${infer Type}/${infer SubType}` ? [Type, SubType] : never
-  const [type, subType] = (mimeType?.split('/') ?? [undefined, undefined]) as TypeDetail | [undefined, undefined]
+	type TypeDetail = MimeType extends `${infer Type}/${infer SubType}` ? [Type, SubType] : never
+	const [type, subType] = (mimeType?.split("/") ?? [undefined, undefined]) as
+		| TypeDetail
+		| [undefined, undefined]
 
-  return [type, subType] as const
+	return [type, subType] as const
 }
 
 export default useMimeType

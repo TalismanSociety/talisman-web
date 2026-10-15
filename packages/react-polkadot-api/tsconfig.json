@@ -1,6 +1,4 @@
 {
   "extends": "@talismn/tsconfig/react-library.json",
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

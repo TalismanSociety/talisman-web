@@ -1,52 +1,58 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from "@storybook/react"
 
-import type { StakeTargetSelectorItemProps } from './StakeTargetSelectorItem'
-import { StakeTargetSelectorItem } from './StakeTargetSelectorItem'
+import type { StakeTargetSelectorItemProps } from "./StakeTargetSelectorItem"
+import { StakeTargetSelectorItem } from "./StakeTargetSelectorItem"
 
 export default {
-  title: 'Recipes/StakeTargetSelectorDialog/Item',
-  component: StakeTargetSelectorItem,
-  parameters: {
-    layout: 'centered',
-  },
-  decorators: [
-    Story => (
-      <div css={{ maxWidth: '20rem' }}>
-        <Story />
-      </div>
-    ),
-  ],
+	title: "Recipes/StakeTargetSelectorDialog/Item",
+	component: StakeTargetSelectorItem,
+	parameters: {
+		layout: "centered",
+	},
+	decorators: [
+		(Story) => (
+			<div css={{ maxWidth: "20rem" }}>
+				<Story />
+			</div>
+		),
+	],
 } as ComponentMeta<typeof StakeTargetSelectorItem>
 
-export const Selected: Story<StakeTargetSelectorItemProps> = args => <StakeTargetSelectorItem {...args} />
+export const Selected: Story<StakeTargetSelectorItemProps> = (args) => (
+	<StakeTargetSelectorItem {...args} />
+)
 
 Selected.args = {
-  selected: true,
-  name: 'Talisman Paraverse Pool',
-  balance: '33.107 DOT Staked',
-  talismanRecommended: true,
-  rating: 1,
-  count: 69,
+	selected: true,
+	name: "Talisman Paraverse Pool",
+	balance: "33.107 DOT Staked",
+	talismanRecommended: true,
+	rating: 1,
+	count: 69,
 }
 
-export const UnSelected: Story<StakeTargetSelectorItemProps> = args => <StakeTargetSelectorItem {...args} />
+export const UnSelected: Story<StakeTargetSelectorItemProps> = (args) => (
+	<StakeTargetSelectorItem {...args} />
+)
 
 UnSelected.args = {
-  selected: false,
-  name: 'Talisman Paraverse Pool',
-  balance: '33.107 DOT Staked',
-  talismanRecommended: true,
-  rating: 1,
-  count: 69,
+	selected: false,
+	name: "Talisman Paraverse Pool",
+	balance: "33.107 DOT Staked",
+	talismanRecommended: true,
+	rating: 1,
+	count: 69,
 }
 
-export const Highlighted: Story<StakeTargetSelectorItemProps> = args => <StakeTargetSelectorItem {...args} />
+export const Highlighted: Story<StakeTargetSelectorItemProps> = (args) => (
+	<StakeTargetSelectorItem {...args} />
+)
 
 Highlighted.args = {
-  highlighted: true,
-  name: 'Talisman Paraverse Pool',
-  balance: '33.107 DOT Staked',
-  talismanRecommended: true,
-  rating: 1,
-  count: 69,
+	highlighted: true,
+	name: "Talisman Paraverse Pool",
+	balance: "33.107 DOT Staked",
+	talismanRecommended: true,
+	rating: 1,
+	count: 69,
 }

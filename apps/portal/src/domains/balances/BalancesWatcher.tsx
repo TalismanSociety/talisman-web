@@ -1,29 +1,29 @@
-import { useBalances, useSetBalancesAddresses } from '@talismn/balances-react'
-import { useEffect, useMemo } from 'react'
-import { useRecoilCallback, useRecoilValue } from 'recoil'
+import { useBalances, useSetBalancesAddresses } from "@talismn/balances-react"
+import { useEffect, useMemo } from "react"
+import { useRecoilCallback, useRecoilValue } from "recoil"
 
-import { accountsState } from '@/domains/accounts/recoils'
+import { accountsState } from "@/domains/accounts/recoils"
 
-import { useBalancesReportEffect } from './hooks'
-import { balancesState } from './recoils'
+import { useBalancesReportEffect } from "./hooks"
+import { balancesState } from "./recoils"
 
 export const BalancesWatcher = () => {
-  const accounts = useRecoilValue(accountsState)
-  const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
-  useSetBalancesAddresses(addresses)
+	const accounts = useRecoilValue(accountsState)
+	const addresses = useMemo(() => accounts.map((x) => x.address), [accounts])
+	useSetBalancesAddresses(addresses)
 
-  const unfilteredBalances = useBalances()
-  const balances = useMemo(() => unfilteredBalances, [unfilteredBalances])
+	const unfilteredBalances = useBalances()
+	const balances = useMemo(() => unfilteredBalances, [unfilteredBalances])
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(
-    useRecoilCallback(({ set }) => () => {
-      set(balancesState, balances)
-    }),
-    [balances]
-  )
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	useEffect(
+		useRecoilCallback(({ set }) => () => {
+			set(balancesState, balances)
+		}),
+		[balances]
+	)
 
-  useBalancesReportEffect()
+	useBalancesReportEffect()
 
-  return null
+	return null
 }

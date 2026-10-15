@@ -1,7 +1,8 @@
 {
-  "eslint.experimental.useFlatConfig": true,
-  "eslint.useFlatConfig": true,
-  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": "explicit"
+  },
   "javascript.preferences.importModuleSpecifier": "non-relative",
 
   // defaults to 1rem=16px, but we use 1rem=10px in the portal
