@@ -188,7 +188,7 @@ const LockedButton = (
 	)
 }
 
-export const UnstakingStatus = (props: {
+const UnstakingStatus = (props: {
 	amount: ReactNode
 	unlocks: Array<{ amount: ReactNode; eta: ReactNode }>
 }) => (
@@ -216,7 +216,7 @@ export const UnstakingStatus = (props: {
 	</Tooltip>
 )
 
-export const FastUnstakingStatus = (props: {
+const FastUnstakingStatus = (props: {
 	amount: ReactNode
 	status: "in-head" | "in-queue" | undefined
 }) => (

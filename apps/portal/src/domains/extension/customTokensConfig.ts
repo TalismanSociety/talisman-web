@@ -1,7 +1,7 @@
 import { CHAIN_ID, SEEK_TICKER, SEEK_TOKEN_ADDRESS } from "../staking/seek/constants"
 
 export type CustomTokensConfig = CustomTokenConfig[]
-export type CustomTokenConfig = {
+type CustomTokenConfig = {
 	evmChainId: string
 	contractAddress: string
 	symbol: string

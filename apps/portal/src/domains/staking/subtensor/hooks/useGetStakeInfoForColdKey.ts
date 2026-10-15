@@ -7,8 +7,8 @@ import { bool, compact, Struct, Vector } from "scale-ts"
 
 import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
 
-export const BittensorAccountPrefix = 42
-export const BittensorAccountId = AccountId(BittensorAccountPrefix)
+const BittensorAccountPrefix = 42
+const BittensorAccountId = AccountId(BittensorAccountPrefix)
 
 /** Struct definition for decoding stake info */
 const StakeInfo = Struct({

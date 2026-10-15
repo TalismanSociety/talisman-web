@@ -40,7 +40,7 @@ const backdropKeyframes = keyframes`
   }
 `
 
-export const SIDE_SHEET_WIDE_BREAK_POINT = "768px"
+const SIDE_SHEET_WIDE_BREAK_POINT = "768px"
 
 export const SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR = `@media(min-width: ${SIDE_SHEET_WIDE_BREAK_POINT})`
 

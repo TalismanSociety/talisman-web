@@ -35,7 +35,7 @@ export function useGetInfiniteSubnetPools() {
 	})
 }
 
-export const initialData: SubnetApiResponse = {
+const initialData: SubnetApiResponse = {
 	pagination: {
 		current_page: 1,
 		per_page: 1024,

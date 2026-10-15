@@ -8,7 +8,6 @@
     "./atoms/*": "./src/atoms/*.tsx",
     "./molecules/*": "./src/molecules/*.tsx",
     "./theme": "./src/theme.tsx",
-    "./utils-react/*": "./src/utils-react/*.tsx",
     "./utils/*": "./src/utils/*.ts"
   },
   "scripts": {

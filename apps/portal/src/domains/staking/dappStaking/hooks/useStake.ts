@@ -311,5 +311,3 @@ export const useStake = (account: Account) => {
 		dapps,
 	}
 }
-
-export type Stake = ReturnType<typeof useStake>

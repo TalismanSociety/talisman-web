@@ -38,7 +38,7 @@ export function useGetInfiniteSubnetIdentities() {
 	})
 }
 
-export const initialData: SubnetIdentityResponse = {
+const initialData: SubnetIdentityResponse = {
 	pagination: {
 		current_page: 1,
 		per_page: 50,

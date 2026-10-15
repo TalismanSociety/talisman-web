@@ -50,7 +50,7 @@ type SevenDayPrice = {
 	price: string // Keeping it as string since it's returned as string
 }
 
-export type SubnetPool = {
+type SubnetPool = {
 	netuid: number | string
 	block_number: number
 	timestamp: string
@@ -138,46 +138,4 @@ type ValidatorYield = {
 export type ValidatorsYieldApiResponse = {
 	pagination: Pagination
 	data: ValidatorYield[]
-}
-type DelegateAction = "DELEGATE" | "UNDELEGATE"
-
-type DelegateEvent = {
-	id: string
-	block_number: number
-	timestamp: string // ISO 8601 timestamp
-	action: DelegateAction
-	nominator: Address
-	delegate: Address
-	amount: string // TAO as rao (smallest unit)
-	alpha: string | null // alpha as rao
-	usd: string | null // USD string value
-	alpha_price_in_tao: string | null // stringified decimal
-	alpha_price_in_usd: string | null // stringified decimal
-	netuid: number | null
-	extrinsic_id: string | null
-	is_transfer: boolean | null
-	transfer_address: string | null
-}
-
-export type DelegationEventsApiResponse = {
-	pagination: Pagination
-	data: DelegateEvent[]
-}
-
-export type DTaoStakeBalance = {
-	block_number: number
-	timestamp: string // ISO 8601 string format
-	hotkey_name: string
-	hotkey: Address
-	coldkey: Address
-	netuid: number
-	subnet_rank: number
-	subnet_total_holders: number
-	balance: string // raw string, assuming it's in atomic units
-	balance_as_tao: string // same as above; parsed display value may need BigInt/Decimal
-}
-
-export type DTaoStakeBalanceApiResponse = {
-	pagination: Pagination
-	data: DTaoStakeBalance[]
 }

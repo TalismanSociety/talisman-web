@@ -1,10 +1,10 @@
-export type NativeToken = {
+type NativeToken = {
 	decimals?: number
 	symbol: string
 	address?: `0x${string}` | string
 }
 
-export type StakeProvider =
+type StakeProvider =
 	| "Nomination pool"
 	| "Liquid staking"
 	| "Delegation"

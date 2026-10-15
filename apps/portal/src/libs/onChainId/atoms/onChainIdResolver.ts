@@ -20,7 +20,7 @@ export const lookupAddressFamily = atomFamily((address?: string) =>
 	)
 )
 
-export const onChainIdResolverAtom = atom(async (get) => {
+const onChainIdResolverAtom = atom(async (get) => {
 	const registryAlephZero = await get(typeRegistryFamily(chainIdAlephZero))
 	const chainConnectors = get(chainConnectorsAtom)
 

@@ -43,7 +43,7 @@ export const chainState = selectorFamily({
 export type ChainInfo =
 	ReturnType<typeof chainState> extends RecoilValueReadOnly<infer R> ? R : never
 
-export const _chainsState = selector({
+const _chainsState = selector({
 	key: "_Chains",
 	get: ({ get }) =>
 		get(waitForAll(chainConfigs.map(({ genesisHash }) => chainState({ genesisHash })))),
@@ -55,7 +55,7 @@ export const enableTestnetsState = atom({
 	effects: [storageEffect(sessionStorage)],
 })
 
-export const chainsState = selector({
+const chainsState = selector({
 	key: "Chains",
 	get: ({ get }) =>
 		get(enableTestnetsState) ? get(_chainsState) : get(_chainsState).filter((x) => !x.isTestnet),
@@ -141,7 +141,7 @@ export const nativeTokenPriceState = selectorFamily({
 export const useNativeTokenPriceState = (currency?: string) =>
 	nativeTokenPriceState({ genesisHash: useContext(ChainContext).genesisHash, currency })
 
-export const nativeTokenDecimalState = selectorFamily({
+const nativeTokenDecimalState = selectorFamily({
 	key: "NativeTokenDecimal",
 	get:
 		(apiEndpoint: string) =>

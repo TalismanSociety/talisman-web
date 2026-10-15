@@ -28,7 +28,7 @@ const fetchBittensorInfiniteValidators = async (page: number = 1): Promise<Valid
 	}
 }
 
-export const useGetBittensorInfiniteValidators = () => {
+const useGetBittensorInfiniteValidators = () => {
 	return useInfiniteQuery({
 		queryKey: ["useGetBittensorInfiniteValidators"],
 		queryFn: ({ pageParam = 1 }) => fetchBittensorInfiniteValidators(pageParam),

@@ -2,7 +2,7 @@ import { Text } from "@talismn/ui/atoms/Text"
 import type { PropsWithChildren } from "react"
 import { atom, useRecoilValue } from "recoil"
 
-export const redactBalanceState = atom({ key: " Widget/RedactBalance", default: false })
+const redactBalanceState = atom({ key: " Widget/RedactBalance", default: false })
 
 export type RedactableBalanceProps = PropsWithChildren<{ redacted?: boolean }>
 

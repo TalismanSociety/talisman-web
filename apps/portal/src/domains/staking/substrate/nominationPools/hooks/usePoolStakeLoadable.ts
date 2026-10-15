@@ -193,5 +193,3 @@ const mergeState = (...states: ("hasValue" | "loading" | "hasError")[]) => {
 	if (states.includes("loading")) return "loading" as const
 	return "hasValue" as const
 }
-
-export type DerivedPoolLoadable = NonNullable<ReturnType<typeof usePoolStakeLoadable<Account>>>

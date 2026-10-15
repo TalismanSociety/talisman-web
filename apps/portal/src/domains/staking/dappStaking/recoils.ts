@@ -11,7 +11,7 @@ import { useSubstrateApiEndpoint } from "@/domains/common/hooks/useSubstrateApiE
 import { chainReadIdState } from "@/domains/common/recoils"
 import { substrateApiState } from "@/domains/common/recoils/api"
 
-export const eraLengthState = selectorFamily({
+const eraLengthState = selectorFamily({
 	key: "DappStaking/EraLength",
 	get:
 		(endpoint: string) =>
@@ -55,7 +55,7 @@ export const stakedDappsState = selectorFamily({
 	dangerouslyAllowMutability: true,
 })
 
-export const registeredDappsState = selectorFamily({
+const registeredDappsState = selectorFamily({
 	key: "DappStaking/RegisteredDApps",
 	get:
 		(params: { genesisHash: string; dappStakingApiEndpoint: string }) =>
