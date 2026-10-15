@@ -15,14 +15,24 @@
     "name": "pools-claim",
     "account": "Guardians SUB",
     "path": "/staking/positions",
-    "steps": [["row", "Kusama Asset Hub", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Claim"]],
+    "steps": [
+      ["row", "Kusama Asset Hub", "Talisman Pool"],
+      ["press", "Claim"],
+      ["dialog"],
+      ["press", "Claim"]
+    ],
     "submit": "network fee; moves the pending pool rewards to the free balance"
   },
   {
     "name": "pools-claim-cere",
     "account": "Guardians SUB",
     "path": "/staking/positions",
-    "steps": [["row", "Cere", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Claim"]],
+    "steps": [
+      ["row", "Cere", "Talisman Pool"],
+      ["press", "Claim"],
+      ["dialog"],
+      ["press", "Claim"]
+    ],
     "submit": "network fee; moves the pending pool rewards to the free balance"
   },
   {
@@ -42,7 +52,12 @@
     "name": "pools-restake",
     "account": "Guardians SUB",
     "path": "/staking/positions",
-    "steps": [["row", "Kusama Asset Hub", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Re-stake"]]
+    "steps": [
+      ["row", "Kusama Asset Hub", "Talisman Pool"],
+      ["press", "Claim"],
+      ["dialog"],
+      ["press", "Re-stake"]
+    ]
   },
   {
     "name": "pools-unbond",
@@ -100,45 +115,43 @@
       ["page"],
       ["press", "Unstake"],
       ["dialog"],
-      ["press", "Max"],
+      ["fill", "0.00", "0.1"],
       ["press", "Unstake"]
     ],
-    "submit": "network fee; unstakes the whole root stake (0.1 TAO), no unbonding period"
+    "submit": "network fee; unstakes 0.1 TAO from root, no unbonding period; needs 0.2 TAO staked so 0.1 stays above the minimum"
   },
   {
     "name": "subtensor-stake",
     "account": "Guardians SUB",
     "path": "/staking/providers?action=stake&type=subtensor&chain=bittensor",
     "steps": [["dialog"], ["fill", "0.00", "0.1"], ["press", "Stake"]],
-    "submit": "network fee; stakes 0.1 TAO on root again after subtensor-unstake"
+    "submit": "network fee; stakes the 0.1 TAO back on root"
   },
   {
     "name": "subtensor-dtao-stake",
     "account": "Guardians SUB",
     "path": "/staking/positions",
     "steps": [
-      ["row", "SN2 DSperse", "Yuma"],
+      ["row", "SN46 Instant", "Yuma"],
       ["press", "#icon"],
       ["dialog"],
       ["fill", "0.00", "0.01"],
       ["press", "Stake"]
-    ],
-    "submit": "network fee, Talisman fee and slippage; swaps 0.01 TAO into SN2 alpha, which stays liquid"
+    ]
   },
   {
     "name": "subtensor-dtao-unstake",
     "account": "Guardians SUB",
     "path": "/staking/positions",
     "steps": [
-      ["row", "SN2 DSperse", "Yuma"],
+      ["row", "SN46 Instant", "Yuma"],
       ["press", "#menu"],
       ["page"],
       ["press", "Unstake"],
       ["dialog"],
       ["fill", "0.00", "1"],
       ["press", "Unstake"]
-    ],
-    "submit": "network fee, Talisman fee and slippage; swaps 1 SN2 alpha back to TAO"
+    ]
   },
   {
     "name": "dapp-stake",
@@ -199,7 +212,12 @@
     "name": "seek-cancel-unstake",
     "account": "Guardians EVM",
     "path": "/staking/positions",
-    "steps": [["row", "SEEK", "Ethereum"], ["press", "#menu"], ["page"], ["press", "Cancel Unstake"]]
+    "steps": [
+      ["row", "SEEK", "Ethereum"],
+      ["press", "#menu"],
+      ["page"],
+      ["press", "Cancel Unstake"]
+    ]
   },
   {
     "name": "seek-withdraw",
