@@ -282,16 +282,21 @@ serve() {
   (($# >= 2)) || { usage >&2; exit 2; }
   [[ $1 =~ ^[a-z0-9-]+$ && $1 != dev ]] || { echo "instance id must match [a-z0-9-]+ and not be dev: $1" >&2; exit 2; }
   select_instance "$1"
-  local dir wallet=on
-  dir=$(cd "$2" && pwd)
-  [[ -f $dir/index.html ]] || { echo "$dir has no index.html: not a static build" >&2; exit 1; }
+  local dir wallet=on server
+  if [[ $2 =~ ^https://[^/]+/?$ ]]; then
+    dir=${2%/}
+    server=(node "$bin/proxy.mjs" "$dir")
+  else
+    dir=$(cd "$2" && pwd)
+    [[ -f $dir/index.html ]] || { echo "$dir has no index.html: not a static build, nor an https://host origin" >&2; exit 1; }
+    server=(node "$bin/serve.mjs" "$dir")
+  fi
   [[ ${3:-} == --no-wallet ]] && wallet=off
   prepare
-  local app_port app_pgid server serves=$dir cdp_port started
+  local app_port app_pgid serves=$dir cdp_port started
   app_pgid=$(state_get APP_PGID)
   [[ -n $app_pgid ]] && stop_app_server "$app_pgid"
   docker rm -f "$name" >/dev/null 2>&1 || true
-  server=(node "$bin/serve.mjs" "$dir")
   start_app_server
   ensure_container
   [[ $wallet == on ]] && VERIFY_INSTANCE=$instance_id "$bin/talisman.mjs" unlock
