@@ -44,7 +44,7 @@ const fontWeights = {
 }
 
 // base style
-export const globalStyle = (theme: Theme) => css`
+const globalStyle = (theme: Theme) => css`
   /*
       define all options as css variables
   */

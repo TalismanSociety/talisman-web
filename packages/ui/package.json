@@ -11,43 +11,28 @@
     "./utils/*": "./src/utils/*.ts"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@floating-ui/react": "^0.26.9",
-    "@google/model-viewer": "^3.4.0",
     "@lottiefiles/react-lottie-player": "^3.5.3",
     "@polkadot/util-crypto": "^12.6.2",
     "@talismn/web-icons": "workspace:^",
     "colorjs.io": "^0.4.5",
     "date-fns": "^3.6.0",
     "md5": "^2.3.0",
-    "mime": "^4.0.4",
     "react-countup": "6.5.1",
     "react-hot-toast": "^2.4.1"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "^7.6.5",
-    "@storybook/addon-interactions": "^7.6.5",
-    "@storybook/addon-links": "^7.6.5",
-    "@storybook/manager-api": "^7.6.5",
-    "@storybook/react": "^7.6.5",
-    "@storybook/react-vite": "^7.6.5",
-    "@talismn/development": "workspace:^",
     "@talismn/tsconfig": "workspace:^",
     "@types/md5": "^2.3.5",
-    "@types/mime": "^3.0.4",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.2",
     "framer-motion": "^11.1.9",
-    "mime-db": "^1.53.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "storybook": "^7.6.5",
-    "typescript": "^5.6.3",
-    "vite": "^6.0.1"
+    "typescript": "^5.6.3"
   },
   "peerDependencies": {
     "@emotion/react": "11.x",

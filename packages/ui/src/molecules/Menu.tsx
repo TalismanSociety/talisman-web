@@ -23,7 +23,7 @@ import { Surface, useSurfaceColor } from "../atoms/Surface"
 import { ListItem } from "../molecules/ListItem"
 import { usePrevious } from "../utils/usePrevious"
 
-export const MENU_OFFSET = 12
+const MENU_OFFSET = 12
 
 export type MenuProps = {
 	children: [ReactElement<MenuButtonProps>, ReactElement<MenuItemsProps>]
