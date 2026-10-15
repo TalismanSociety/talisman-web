@@ -77,7 +77,7 @@ async function substrate({ url, extrinsic }) {
 		})()
 		const [decimals] = api.registry.chainDecimals
 		const [symbol] = api.registry.chainTokens
-		const amount = (planck) => `${Number(planck.toBigInt()) / 10 ** decimals} ${symbol}`
+		const amount = (planck) => `${Number(BigInt(planck.toString())) / 10 ** decimals} ${symbol}`
 		const fee = named("transactionPayment", "TransactionFeePaid").map(({ event }) => amount(event.data[1].add(event.data[2])))
 		const transfers = named("balances", "Transfer")
 			.filter(({ event }) => event.data[0].toString() === api.createType("AccountId", signer).toString())
