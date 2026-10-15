@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-      - run: pnpm lint --max-warnings=0
+      - run: pnpm check
       - run: pnpm check-types
       - run: pnpm test
       - run: pnpm audit --prod --audit-level critical
