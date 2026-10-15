@@ -2,13 +2,6 @@
   "private": true,
   "name": "talisman-web",
   "license": "GPL-3.0-or-later",
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "11.24.0",
-      "onFail": "download"
-    }
-  },
   "packageManager": "pnpm@11.24.0",
   "scripts": {
     "prepare": "test ! -d .git || simple-git-hooks",
