@@ -15,7 +15,7 @@ import { networksByGenesisHash$, tokensById$ } from "./chaindata-provider"
 import { chainConfigs } from "./config"
 import { ChainContext } from "./contexts"
 
-const isSubscanUrl = (url: string) => new URL(url).hostname.endsWith("subscan.io")
+const isSubscanUrl = (url: string) => new URL(url).hostname.endsWith(".subscan.io")
 
 export const chainState = selectorFamily({
 	key: "Chain",
