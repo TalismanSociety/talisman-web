@@ -1,12 +1,13 @@
+import { useNavigate } from "@tanstack/react-router"
 import { formatDistance } from "date-fns"
 import { useCallback } from "react"
-import { useNavigate, useSearchParams } from "react-router-dom"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import { AddStakeForm } from "@/components/recipes/AddStakeDialog"
 import { useAccountSelector } from "@/components/widgets/AccountSelector"
 import { walletConnectionSideSheetOpenState } from "@/components/widgets/WalletConnectionSideSheet"
 import { evmSignableAccountsState } from "@/domains/accounts/recoils"
 import { SEEK_TICKER } from "@/domains/staking/seek/constants"
+import { useSearchParams } from "@/hooks/useSearchParams"
 import { Clock, Zap } from "@/icons"
 import { Button } from "@/ui/atoms/Button"
 import { SurfaceChip } from "@/ui/atoms/Chip"
@@ -33,7 +34,7 @@ const AddStakeSideSheet = () => {
 	const navigate = useNavigate()
 
 	const handleTransactionSuccess = useCallback(() => {
-		navigate("/staking/positions")
+		navigate({ to: "/staking/positions" })
 	}, [navigate])
 
 	const {

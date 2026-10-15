@@ -1,5 +1,5 @@
+import { useLocation, useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
 import { useUpdateEffect } from "react-use"
 import { useRecoilCallback, useRecoilValue } from "recoil"
 
@@ -18,7 +18,7 @@ export const LookupAddressSync = () => {
 	)
 
 	useUpdateEffect(() => {
-		const search = new URLSearchParams(location.search)
+		const search = new URLSearchParams(location.searchStr)
 
 		if (isNilOrWhitespace(lookupAddress)) {
 			search.delete(lookupAddressSearchKey)
@@ -26,16 +26,16 @@ export const LookupAddressSync = () => {
 			search.set(lookupAddressSearchKey, lookupAddress)
 		}
 
-		navigate(`?${search.toString()}`, { replace: true })
+		void navigate({ to: ".", search: Object.fromEntries(search), replace: true })
 	}, [lookupAddress])
 
 	useEffect(() => {
-		const search = new URLSearchParams(location.search)
+		const search = new URLSearchParams(location.searchStr)
 		const currentLookupAddress = readLookupAddress()
 
 		if (!search.has(lookupAddressSearchKey) && !isNilOrWhitespace(currentLookupAddress)) {
 			search.set(lookupAddressSearchKey, currentLookupAddress)
-			navigate(`?${search.toString()}`, { replace: true })
+			void navigate({ to: ".", search: Object.fromEntries(search), replace: true })
 		}
 	}, [location, navigate, readLookupAddress])
 

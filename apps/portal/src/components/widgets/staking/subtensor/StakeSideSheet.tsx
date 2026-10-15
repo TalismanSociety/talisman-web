@@ -1,5 +1,5 @@
+import { useLocation, useNavigate } from "@tanstack/react-router"
 import { Suspense, useEffect, useMemo, useState, useTransition } from "react"
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import { useRecoilValue } from "recoil"
 import { TalismanHandLoader } from "@/components/legacy/TalismanHandLoader"
 import { useAccountSelector } from "@/components/widgets/AccountSelector"
@@ -11,6 +11,7 @@ import { type ChainInfo, subtensorStakingEnabledChainsState } from "@/domains/ch
 import { useCombinedBittensorValidatorsData } from "@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData"
 import { useCombineSubnetData } from "@/domains/staking/subtensor/hooks/useCombineSubnetData"
 import type { BondOption, SubnetData } from "@/domains/staking/subtensor/types"
+import { useSearchParams } from "@/hooks/useSearchParams"
 import { Select } from "@/ui/molecules/Select"
 import { Maybe } from "@/util/monads"
 
@@ -172,9 +173,9 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
 
 	const handleSubnetSelectConfirm = (subnet: SubnetData | undefined) => {
 		setSubnet(subnet)
-		const searchParams = new URLSearchParams(location.search)
+		const searchParams = new URLSearchParams(location.searchStr)
 		searchParams.set("netuid", subnet?.netuid?.toString() || "0")
-		navigate({ pathname: location.pathname, search: searchParams.toString() })
+		navigate({ to: ".", search: Object.fromEntries(searchParams) })
 	}
 
 	return (

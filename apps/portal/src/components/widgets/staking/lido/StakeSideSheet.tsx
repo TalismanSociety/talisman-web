@@ -1,6 +1,6 @@
 import { useMemo } from "react"
-import { useSearchParams } from "react-router-dom"
 import { useRecoilValue } from "recoil"
+import { useSearchParams } from "@/hooks/useSearchParams"
 
 import { lidoSuitesState } from "../../../../domains/staking/lido/recoils"
 import LidoWidgetSideSheet from "./LidoWidgetSideSheet"

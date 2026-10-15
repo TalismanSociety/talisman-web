@@ -1,6 +1,6 @@
+import { Outlet, useLocation } from "@tanstack/react-router"
 import { usePostHog } from "posthog-js/react"
 import { Suspense, useEffect } from "react"
-import { Outlet, useLocation } from "react-router-dom"
 
 import { LookupAddressSync } from "@/app-shell/LookupAddressSync"
 import { FullscreenLoader } from "@/components/molecules/FullscreenLoader"
@@ -24,7 +24,7 @@ export const Layout = () => {
 	useEffect(() => {
 		if (location.hash !== "") {
 			const observer = new MutationObserver(() => {
-				const element = document.getElementById(location.hash.slice(1))
+				const element = document.getElementById(location.hash)
 
 				if (element !== null) {
 					element.scrollIntoView({ behavior: "smooth" })

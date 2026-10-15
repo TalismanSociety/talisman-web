@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom"
+import { createFileRoute, Outlet } from "@tanstack/react-router"
 import { useRecoilValue } from "recoil"
 import { WalletTotal } from "@/components/legacy/widgets/WalletTotal"
 import { PageHeader, PageHeaderItem } from "@/components/molecules/PageHeader"
@@ -11,7 +11,9 @@ import { BannerStakingMovingToWallet } from "@/components/widgets/staking/Banner
 import { selectedAccountsState } from "@/domains/accounts/recoils"
 import { Surface } from "@/ui/atoms/Surface"
 
-const Layout = () => {
+export const Route = createFileRoute("/_app/staking")({ component: Layout })
+
+function Layout() {
 	const accounts = useRecoilValue(selectedAccountsState)
 
 	return (
@@ -55,5 +57,3 @@ const Layout = () => {
 		</AccountConnectionGuard>
 	)
 }
-
-export default Layout
