@@ -19,9 +19,9 @@ const browserNodePolyfills = (): Plugin[] => {
 		{
 			name: "browser-node-polyfills",
 			config: (userConfig, env) => {
-				const { resolve, build, optimizeDeps, ...config } = polyfillConfig(userConfig, env)
+				const { resolve, ...config } = polyfillConfig(userConfig, env)
 				aliases = Object.entries(resolve?.alias ?? {})
-				return { ...config, environments: { client: { build, optimizeDeps } } }
+				return config
 			},
 		},
 		inBrowser({
