@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/knip/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": [".claude/skills/*/bin/*.{js,mjs}", ".claude/skills/*/docker/*.mjs"],
+      "ignoreDependencies": ["wrangler"]
+    },
+    "apps/portal": {
+      "project": ["src/**/*.{ts,tsx,css}"],
+      "ignoreDependencies": ["dotenv", "wrangler"]
+    },
+    "packages/icons": {
+      "entry": ["svgo.config.js"],
+      "ignoreDependencies": ["@emotion/react"]
+    }
+  },
+  "ignoreWorkspaces": ["packages/react-polkadot-api"],
+  "includeEntryExports": true
+}

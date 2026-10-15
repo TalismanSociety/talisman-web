@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest"
+
 import { Decimal } from "./Decimal"
 
 describe("Decimal", () => {
