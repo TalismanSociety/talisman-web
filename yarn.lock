@@ -16156,14 +16156,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dot-validator-selector@https://github.com/James-Sangalli/dot-validator-selector/archive/refs/tags/v1.0.4.tar.gz":
-  version: 1.0.3
-  resolution: "dot-validator-selector@https://github.com/James-Sangalli/dot-validator-selector/archive/refs/tags/v1.0.4.tar.gz"
-  dependencies:
-    "@polkadot/api": "npm:^6.0.5"
-  checksum: 10c0/adf5c7d7a04f53800b478d1937186386ad72d7e8c92efbf9d22f16b45528adcfb4fb3ba9974e10c9bdd41dfd484343d23d0ec1ea299be8d978fac046ec934b3d
-  languageName: node
-  linkType: hard
+"dot-validator-selector@workspace:*, dot-validator-selector@workspace:packages/dot-validator-selector":
+  version: 0.0.0-use.local
+  resolution: "dot-validator-selector@workspace:packages/dot-validator-selector"
+  languageName: unknown
+  linkType: soft
 
 "dotenv-expand@npm:^10.0.0":
   version: 10.0.0

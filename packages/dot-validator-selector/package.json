@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "name": "dot-validator-selector",
+  "version": "1.0.3",
+  "type": "module",
+  "exports": {
+    "./util/ValidatorSelector": "./util/ValidatorSelector.js"
+  }
+}

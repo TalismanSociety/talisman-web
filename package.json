@@ -60,6 +60,7 @@
     "@polkadot/wasm-crypto-wasm": "7.3.2",
     "@polkadot/wasm-util": "7.3.2",
     "@types/react": "^18.2.57",
+    "dot-validator-selector": "workspace:*",
     "jotai": "2.8.4",
     "jotai-effect": "1.0.0",
     "json-stream-stringify": "2.0.4",
