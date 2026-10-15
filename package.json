@@ -11,6 +11,7 @@
     "postinstall": "husky install",
     "dev": "yarn turbo run dev --concurrency 13",
     "build": "yarn turbo run build",
+    "build:portal": "VITE_SENTRY_RELEASE=${WORKERS_CI_COMMIT_SHA:-} NODE_OPTIONS=--max_old_space_size=4096 yarn turbo run build --filter=@talismn/portal",
     "test": "yarn turbo run test",
     "lint": "yarn turbo run lint",
     "check-types": "yarn turbo run check-types",
@@ -23,14 +24,14 @@
     "@commitlint/config-conventional": "^18.4.3",
     "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
     "@tailwindcss/container-queries": "^0.1.1",
-    "@w3ux/types": "^0.2.0",
     "eslint": "^9.2.0",
     "husky": "^8.0.3",
     "lint-staged": "^12.5.0",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.4.1",
     "tailwindcss-animate": "^1.0.7",
-    "turbo": "^2.9.14"
+    "turbo": "^2.9.14",
+    "wrangler": "^4.147.0"
   },
   "resolutions": {
     "@polkadot/api": "16.4.1",
