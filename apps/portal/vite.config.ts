@@ -26,9 +26,6 @@ export default defineConfig({
 	server: { allowedHosts: [".orb.local"] },
 	build: {
 		outDir: "build",
-		rollupOptions: {
-			shimMissingExports: true,
-		},
 	},
 	worker: {
 		// https://github.com/vitejs/vite/pull/12629
