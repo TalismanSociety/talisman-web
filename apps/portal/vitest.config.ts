@@ -15,7 +15,7 @@ export default mergeConfig(
 		test: {
 			name: "portal",
 			environment: "jsdom",
-			include: ["src/**/*.test.{ts,tsx}"],
+			include: ["src/**/*.test.{ts,tsx}", "scripts/**/*.test.ts"],
 			setupFiles: ["src/vitest.setup.ts"],
 		},
 	})

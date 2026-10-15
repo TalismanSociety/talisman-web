@@ -1,5 +1,7 @@
 // @vitest-environment node
+import { readFileSync } from "node:fs"
 import { beforeEach, describe, expect, it, vi } from "vitest"
+import { headerRules } from "../scripts/headers-file"
 
 const { assetsFetch, startFetch } = vi.hoisted(() => ({
 	assetsFetch: vi.fn<(request: Request) => Promise<Response>>(),
@@ -12,7 +14,14 @@ vi.mock("@tanstack/react-start/server-entry", () => ({
 	createServerEntry: <T>(entry: T) => entry,
 }))
 
-const { default: entry } = await import("./server")
+const { default: entry, rootHeaders } = await import("./server")
+
+const rootRule = Object.fromEntries(
+	headerRules(readFileSync(new URL("../public/_headers", import.meta.url), "utf8")).get("/*") ?? []
+)
+
+const rootHeadersOf = (response: Response) =>
+	Object.fromEntries(Object.keys(rootRule).map((name) => [name, response.headers.get(name)]))
 
 const assetHeaders = {
 	"Access-Control-Allow-Origin": "*",
@@ -137,5 +146,38 @@ describe("server entry", () => {
 		const response = await serve("/")
 
 		expect(await response.text()).toBe("prerendered")
+	})
+
+	it("builds its responses with the headers _headers sets on every path", () => {
+		expect(rootHeaders).toEqual(rootRule)
+		expect(rootRule).toEqual({
+			"Access-Control-Allow-Origin": "*",
+			"Referrer-Policy": "strict-origin-when-cross-origin",
+			"X-Content-Type-Options": "nosniff",
+		})
+	})
+
+	it("adds the _headers root headers to a missing asset's 404 when the assets omit them", async () => {
+		assetsFetch.mockResolvedValue(
+			new Response("<!DOCTYPE html>", { headers: { "Content-Type": "text/html" } })
+		)
+
+		const response = await serve("/assets/index-gone00.js")
+
+		expect(response.status).toBe(404)
+		expect(rootHeadersOf(response)).toEqual(rootRule)
+	})
+
+	it("adds the _headers root headers to what TanStack Start renders", async () => {
+		assetsFetch.mockResolvedValue(new Response(null, { status: 404 }))
+		startFetch.mockResolvedValue(
+			new Response("prerendered", { status: 200, headers: { "Content-Type": "text/html" } })
+		)
+
+		const response = await serve("/staking")
+
+		expect(await response.text()).toBe("prerendered")
+		expect(response.headers.get("Content-Type")).toBe("text/html")
+		expect(rootHeadersOf(response)).toEqual(rootRule)
 	})
 })
