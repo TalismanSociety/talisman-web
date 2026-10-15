@@ -73,7 +73,7 @@ RUN=.tmp/verify/runs/$(date +%Y%m%d-%H%M%S)-<feature>; mkdir -p "$RUN"
 ```
 
 - **The page**: `.claude/skills/verify/bin/ab <agent-browser command>` drives this checkout's browser. Open pages with `ab tab new http://localhost:3002/<route>`, then `ab wait --text "<heading>"`. `ab snapshot -i` lists the clickable elements with refs.
-- **Talisman popups**: agent-browser cannot see them. `bin/talisman.mjs text` prints `popup <id>`, then the pending request. `connect --account <name>` approves a connection request for exactly the named accounts (repeat `--account`), `site` prints the accounts the wallet connected to `localhost:3002`, `approve --signer <name> --popup <id>` signs that popup only when it is a signing request and that test account is its signer, `reject` cancels. Read the request (`text`) before approving.
+- **Talisman popups**: agent-browser cannot see them. `bin/talisman.mjs text` prints `popup <id>`, then the pending request. `connect --account <name>` approves a connection request for exactly the named accounts (repeat `--account`), `site` prints the accounts the wallet connected to `localhost:3002`, `approve --signer <name> --popup <id>` signs that popup only when it is a signing request and that test account is its signer, `reject [--popup <id>]` cancels. Read the request (`text`) before approving.
 - **Connecting like a user**: the portal opens a Substrate connect popup on load; answer it with `talisman.mjs connect --account "Guardians SUB"`. For Ethereum, click the header's `Connected` button, then the Ethereum wallets' `Connect`, then `talisman.mjs connect --account "Guardians EVM"`.
 
 ## 4. Evidence
@@ -162,6 +162,62 @@ Not covered: the signed-out nomination-pools sheet (`/staking/providers?action=s
 | `iframe[src^="https://stake.lido.fi"]`                                | `stake-lido`, `stake-lido-signed-out`                                                        | Lido's cross-origin staking widget: third-party content with live rates, not portal code                                                                                                                                                                  |
 | `div.truncate > span:last-child > span:first-child > div > div:empty` | `positions`                                                                                  | the 8 px reward-status dots of the desktop position rows. The era-reward query of validator staking rows never resolves on some loads, so a dot stays grey on one side at random, and nothing in the DOM sets a validator row's dot apart from the others |
 
+## Staking smoke lane
+
+`bin/smoke.sh` proves that a change builds the same transactions. Pixels cannot show a wrong extrinsic. It builds and serves the baseline and this checkout as parity does, connects `Guardians SUB` and `Guardians EVM` in both browsers, then runs every flow of `smoke-flows.json` on both sides at the same moment. A flow drives the UI up to the wallet's signing request, records the payload the portal hands to Talisman, and cancels the request in the wallet. Nothing is signed by default.
+
+```sh
+.claude/skills/verify/bin/smoke.sh                        # every flow, every request cancelled
+.claude/skills/verify/bin/smoke.sh pools-claim seek-claim # only these flows
+.claude/skills/verify/bin/smoke.sh --submit               # then sign and submit the flows marked "submit" on the candidate
+```
+
+`SMOKE_BASELINE` names the baseline revision (default: `parity-baseline.sha`). `OUT`, `ATTEMPTS` (default 3) and `SMOKE_STEP_TIMEOUT` (seconds per step, default 90) work as in parity.
+
+**What is compared.** `bin/smoke-page.js` loads in the page before the app. It records each `pub(extrinsic.sign)` and `eth_sendTransaction` message that the page sends to Talisman through `window.postMessage`, so it sees what any signing library hands the wallet. For Substrate the lane compares the signer's public key, the genesis hash, the call data (`method`), the tip, and `appId` or `assetId` when set. For Ethereum it compares `from`, `to`, `data`, `value` and `chainId`. Nonce, era, block hash, spec and transaction versions, signed extension list and gas are left out.
+
+**Results.** The out dir (default `.tmp/verify/runs/<stamp>-smoke`) gets `summary.tsv` with `flow`, `result`, `attempts` and `detail`, a `<flow>.<side>.json` per side with the payload, the raw request and the wallet popup's text, and a `<flow>.<side>.png` for a side that did not reach the wallet.
+
+- `same`: both sides reached the wallet with equal payloads.
+- `differ`: the payloads differ, or only one side reached the wallet. The detail names each differing field. A flow that differs runs again, up to `ATTEMPTS` in all, because a dTAO limit price follows the live pool price. The script exits 1.
+- `unavailable`: neither side reached the wallet, usually because the account has no such position right now (no pending rewards, nothing to withdraw). It does not fail the run, but nothing was compared: read the detail and the screenshots.
+- A detail `the wallet refused without a popup` means the payload was captured but its signer is not connected to the portal. The validator flows sign with the legacy controller `Guardians SUB 2`.
+
+**`--submit`.** After the compare pass, each flow with a `submit` note whose result is `same` runs once more on the candidate only. `talisman.mjs approve` signs it only when the popup's signer is the flow's account, and the lane refuses any account whose name lacks `Guardians`. `bin/smoke-chain.mjs` then finds the extrinsic in a block and reads its events with `@polkadot/api` 16.4.1, which the lane installs once under `.tmp/verify/parity/smoke-tools`, or waits for the Ethereum receipt. `submitted.tsv` lists each hash, block, fee, transfers and explorer link, and the script exits 1 when a submission fails. Submitting changes the account's state: a claim leaves nothing to claim until rewards accrue again.
+
+**The flow file.** Each flow names `account`, `path` and `steps`, plus `submit`, the cost note of a flow that is cheap and reversible enough to sign. Steps run in order, each retried until it succeeds or times out:
+
+| Step                           | Does                                                                                                                                                                                                |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `["row", text…]`               | scopes the next steps to the position row holding every text: the smallest element around them that holds exactly one actions menu                                                                  |
+| `["dialog"]`, `["page"]`       | scopes to the topmost open modal dialog, or to the whole page                                                                                                                                       |
+| `["press", name]`              | clicks, with the mouse, the first enabled button whose text is `name` or starts with `name `; `=name` exact, `~name` contains, `#icon` an icon-only button, `#menu` the actions menu, `a\|b` either |
+| `["see", name]`                | waits for such a button without clicking                                                                                                                                                            |
+| `["fill", placeholder, value]` | types the value into the input with that placeholder                                                                                                                                                |
+| `["wait", text]`               | waits for visible text                                                                                                                                                                              |
+
+An Ethereum flow first waits for the header's `2 Connected`, and connects the Ethereum account through the wallet sheet when the portal did not restore it after the page load.
+
+| Flow                                                   | Builds                                                                                              | `--submit` cost                                                  |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `pools-join`                                           | `utility.batchAll[nominationPools.join, setClaimPermission]` on Polkadot Asset Hub                  | calldata only: locks 1 DOT for 28 days                           |
+| `pools-bond-extra`                                     | `nominationPools.bondExtra(FreeBalance 0.001 KSM)` on Kusama Asset Hub                              | network fee; the 0.001 KSM stays bonded in the pool              |
+| `pools-claim`                                          | `nominationPools.claimPayout`                                                                       | network fee                                                      |
+| `pools-restake`                                        | `nominationPools.bondExtra(Rewards)`                                                                | calldata only: spends the same rewards as `pools-claim`          |
+| `pools-unbond`, `pools-withdraw`                       | `nominationPools.unbond`, `withdrawUnbonded`                                                        | calldata only: unbonding takes 7 days, a withdrawal happens once |
+| `validator-unbond`, `validator-withdraw`               | `staking.unbond` on Kusama Asset Hub, `staking.withdrawUnbonded` on Vara                            | calldata only: the controller is `Guardians SUB 2`               |
+| `subtensor-stake`, `subtensor-unstake`                 | root `addStake` / `removeStake` of 0.1 TAO, batched with the Talisman remark                        | network fees; the pair returns the 0.1 TAO                       |
+| `subtensor-dtao-stake`, `subtensor-dtao-unstake`       | SN2 `addStakeLimit` 0.01 TAO / `removeStakeLimit` 1 alpha, batched with the Talisman fee and remark | network fees, Talisman fee and slippage                          |
+| `dapp-stake`, `dapp-unlock`                            | `dappStaking.stake` 500 ASTR, `dappStaking.unlock`                                                  | calldata only: unlocking takes days                              |
+| `seek-stake`                                           | SEEK `approve` (or `stake` once approved)                                                           | calldata only                                                    |
+| `seek-claim`                                           | `getReward`                                                                                         | Ethereum gas, about 0.00002 ETH at 0.25 gwei                     |
+| `seek-unstake`, `seek-cancel-unstake`, `seek-withdraw` | `requestWithdrawal`, `cancelWithdrawal`, `completeWithdrawal`                                       | calldata only                                                    |
+| `pools-join-avail`                                     | the Avail join with its `CheckAppId` extension                                                      | calldata only: the account holds no AVAIL                        |
+
+Not covered: Lido, whose every write happens inside the `stake.lido.fi` iframe, so the portal builds no Lido transaction; and dApp staking claim, unstake and withdraw, which need a staked position the account does not hold. `pools-join-avail` and `seek-unstake` report `unavailable` today: Avail's chaindata RPC is dead, so its form never renders, and Seek disables Unstake while a withdrawal is pending.
+
+**Adding a flow.** Add it next to its product, run `smoke.sh <flow>` twice on an unmodified checkout, and see `same` both times. Then change one argument of its transaction builder in a scratch edit, see `differ` naming the flow, and revert.
+
 ## Helpers
 
 All in `.claude/skills/verify/bin/`. Each finds this checkout's instance from `.tmp/verify/instance.env`, or `.tmp/verify/<id>.env` with `VERIFY_INSTANCE=<id>`.
@@ -171,7 +227,7 @@ All in `.claude/skills/verify/bin/`. Each finds this checkout's instance from `.
 | `instance.sh`    | `build`, `up`, `serve <id> <dir or https://host> [--no-wallet]`, `down`, `ls`                                                                        | image, this checkout's instances, every checkout's containers                         |
 | `doctor.mjs`     | `doctor.mjs`                                                                                                                                         | `PASS`/`FAIL` per check, exit 1 on any `FAIL`                                         |
 | `ab`             | `ab <agent-browser command>`                                                                                                                         | agent-browser on this checkout's browser                                              |
-| `talisman.mjs`   | `unlock`, `accounts`, `list`, `text`, `connect [--account <name>]…`, `site [host]`, `approve --signer <name> --popup <id>`, `reject`                 | Talisman popups; exit 2 when it refused, 3 when the wallet is locked                  |
+| `talisman.mjs`   | `unlock`, `accounts`, `list`, `text`, `connect [--account <name>]…`, `site [host]`, `approve --signer <name> --popup <id>`, `reject [--popup <id>]`  | Talisman popups; exit 2 when it refused, 3 when the wallet is locked                  |
 | `parity.sh`      | `parity.sh [route …]`, with `OUT`, `VIEWPORTS`, `ATTEMPTS`, `STABLE`, `PARITY_SUB_ACCOUNT`, `PARITY_EVM_ACCOUNT`, `BASELINE_URL` and `CANDIDATE_URL` | the parity gate; see [Visual parity](#visual-parity)                                  |
 | `serve.mjs`      | `serve.mjs <dir> <port>`, started by `instance.sh serve`                                                                                             | a production build as the SPA host serves it, `no-store`                              |
 | `proxy.mjs`      | `proxy.mjs <https://host> <port>`, started by `instance.sh serve` with an origin                                                                     | a deployed site, request by request                                                   |
