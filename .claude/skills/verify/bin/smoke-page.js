@@ -26,8 +26,18 @@
   WebSocket.prototype.send = function (data) {
     try {
       const message = JSON.parse(data)
-      if (/submit|broadcast/i.test(message.method ?? ''))
-        smoke.submissions.push({ url: this.url, method: message.method, extrinsic: message.params?.[0] })
+      if (/submit|broadcast/i.test(message.method ?? '')) {
+        const submission = { url: this.url, method: message.method, extrinsic: message.params?.[0] }
+        smoke.submissions.push(submission)
+        this.addEventListener('message', event => {
+          try {
+            const reply = JSON.parse(event.data)
+            if (reply.id !== message.id) return
+            submission.answered = true
+            if (reply.error) submission.error = [reply.error.message, reply.error.data].filter(Boolean).join(': ')
+          } catch {}
+        })
+      }
     } catch {}
     return send.call(this, data)
   }

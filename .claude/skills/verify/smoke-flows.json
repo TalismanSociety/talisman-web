@@ -15,25 +15,14 @@
     "name": "pools-claim",
     "account": "Guardians SUB",
     "path": "/staking/positions",
-    "steps": [
-      ["row", "Kusama Asset Hub", "Talisman Pool"],
-      ["press", "Claim"],
-      ["dialog"],
-      ["press", "Claim"]
-    ],
+    "steps": [["row", "Kusama Asset Hub", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Claim"]],
     "submit": "network fee; moves the pending pool rewards to the free balance"
   },
   {
     "name": "pools-claim-cere",
     "account": "Guardians SUB",
     "path": "/staking/positions",
-    "steps": [
-      ["row", "Cere", "Talisman Pool"],
-      ["press", "Claim"],
-      ["dialog"],
-      ["press", "Claim"]
-    ],
-    "submit": "network fee; moves the pending pool rewards to the free balance"
+    "steps": [["row", "Cere", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Claim"]]
   },
   {
     "name": "pools-bond-extra",
@@ -52,12 +41,7 @@
     "name": "pools-restake",
     "account": "Guardians SUB",
     "path": "/staking/positions",
-    "steps": [
-      ["row", "Kusama Asset Hub", "Talisman Pool"],
-      ["press", "Claim"],
-      ["dialog"],
-      ["press", "Re-stake"]
-    ]
+    "steps": [["row", "Kusama Asset Hub", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Re-stake"]]
   },
   {
     "name": "pools-unbond",
@@ -212,12 +196,7 @@
     "name": "seek-cancel-unstake",
     "account": "Guardians EVM",
     "path": "/staking/positions",
-    "steps": [
-      ["row", "SEEK", "Ethereum"],
-      ["press", "#menu"],
-      ["page"],
-      ["press", "Cancel Unstake"]
-    ]
+    "steps": [["row", "SEEK", "Ethereum"], ["press", "#menu"], ["page"], ["press", "Cancel Unstake"]]
   },
   {
     "name": "seek-withdraw",

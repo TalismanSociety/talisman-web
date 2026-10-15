@@ -178,11 +178,14 @@ async function drive(flow, result) {
 			}
 			const submission = state.submissions.at(-1)
 			if (!submission?.extrinsic) return "waiting for the extrinsic"
+			if (!submission.answered) return "waiting for the node to accept the extrinsic"
 			result.submission = submission
 			return true
 		})
 		const signer = result.payload.from ?? result.raw.address
-		result.onchain = JSON.parse((await run(`${bin}smoke-chain.mjs`, [JSON.stringify(result.submission), signer], { timeout: 300_000 })).stdout)
+		result.onchain = result.submission.error
+			? { success: false, error: `the node refused it: ${result.submission.error}` }
+			: JSON.parse((await run(`${bin}smoke-chain.mjs`, [JSON.stringify(result.submission), signer], { timeout: 300_000 })).stdout)
 		result.status = result.onchain.success ? "submitted" : "failed"
 	} finally {
 		if (!["captured", "submitted"].includes(result.status)) {
