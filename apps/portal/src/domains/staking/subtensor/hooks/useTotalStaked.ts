@@ -27,8 +27,8 @@ export const useTotalStaked = () => {
 		waitForAny(
 			chains.map((chain) =>
 				waitForAll(
-					// @ts-expect-error
 					addresses.map((address) =>
+						// @ts-expect-error
 						chainQueryState(chain.rpc, "subtensorModule", "totalColdkeyStake", [address])
 					)
 				)

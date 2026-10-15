@@ -57,10 +57,11 @@ export const queryAtomFamily = (options: Options) => {
 					const [section, multi] = sectionName.split(".")
 
 					const func =
-						// @ts-expect-error complex dynamic type
 						multi === undefined
-							? api[typeName][moduleName][section]
-							: api[typeName][moduleName][section][multi]
+							? // @ts-expect-error complex dynamic type
+								api[typeName][moduleName][section]
+							: // @ts-expect-error complex dynamic type
+								api[typeName][moduleName][section][multi]
 
 					const parsedParams = multi === undefined ? params : [params]
 
