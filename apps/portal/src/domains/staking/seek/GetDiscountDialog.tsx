@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "@tanstack/react-router"
 import SeekLogo from "@/assets/seek.svg?react"
 import useGetSeekAvailableBalance from "@/components/widgets/staking/providers/hooks/seek/useGetSeekAvailableBalance"
 import { ArrowRight } from "@/icons"
@@ -37,7 +37,7 @@ export const GetDiscountDialog = ({ isOpen, onToggleIsOpen }: GetDiscountDialogP
 			title="Get dTao Fee Discounts "
 			targetWidth="50rem"
 			dismissButton={
-				<OutlinedButton onClick={() => navigate("staking/providers")}>
+				<OutlinedButton onClick={() => navigate({ to: "/staking/providers" })}>
 					Stake {SEEK_TICKER}
 				</OutlinedButton>
 			}

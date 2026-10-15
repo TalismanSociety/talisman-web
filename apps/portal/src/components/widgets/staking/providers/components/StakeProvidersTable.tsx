@@ -9,7 +9,6 @@ import {
 	useReactTable,
 } from "@tanstack/react-table"
 import { Suspense, useCallback, useMemo, useState } from "react"
-import { Link } from "react-router-dom"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import ErrorBoundaryFallback from "@/components/widgets/staking/ErrorBoundaryFallback"
 import { getPosition } from "@/domains/staking/utils/getPosition"
@@ -18,6 +17,7 @@ import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 import { Surface } from "@/ui/atoms/Surface"
 import { Text } from "@/ui/atoms/Text"
 import { cn } from "@/util/cn"
+import { parseSearch } from "@/util/search"
 
 import type { Provider } from "../hooks/types"
 import useStakeValues, { type StakeType } from "../hooks/useSetValues"
@@ -25,7 +25,7 @@ import Apr from "./Apr"
 import Asset from "./Asset"
 import AvailableBalance from "./AvailableBalance"
 import PercentageBar from "./PercentageBar"
-import StakeButton from "./StakeButton"
+import StakeButton, { StakeLinkButton } from "./StakeButton"
 import StakePercentage from "./StakePercentage"
 import UnbondingPeriod from "./UnbondingPeriod"
 
@@ -176,7 +176,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
 					return isDisabled ? (
 						<StakeButton disabled />
 					) : (
-						<StakeButton as={Link} to={row.original.actionLink} />
+						<StakeLinkButton to="." search={parseSearch(row.original.actionLink)} />
 					)
 				},
 				enableSorting: false,

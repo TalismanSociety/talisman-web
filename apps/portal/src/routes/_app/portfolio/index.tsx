@@ -1,16 +1,9 @@
+import { createFileRoute } from "@tanstack/react-router"
 import { useCallback, useEffect, useState } from "react"
-import type { RouteObject } from "react-router-dom"
-import { Navigate } from "react-router-dom"
 
 import { cn } from "@/util/cn"
 
-const routes = {
-	children: [
-		{ path: "", element: <InstallTalismanWalletPrompt /> },
-		{ path: "*", element: <Navigate to="/portfolio" /> },
-	],
-} satisfies RouteObject
-export default routes
+export const Route = createFileRoute("/_app/portfolio/")({ component: InstallTalismanWalletPrompt })
 
 function InstallTalismanWalletPrompt() {
 	const talismanInstalledStatus = useTalismanInstalledStatus()

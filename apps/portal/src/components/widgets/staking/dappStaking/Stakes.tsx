@@ -1,6 +1,6 @@
+import { useNavigate } from "@tanstack/react-router"
 import { formatDistance } from "date-fns"
 import { useState, useTransition } from "react"
-import { useNavigate } from "react-router-dom"
 import { useRecoilValue, useRecoilValueLoadable } from "recoil"
 import { DappStakingLockedAmountDialog } from "@/components/recipes/DappStakingLockedAmountDialog"
 import { StakePosition, StakePositionErrorBoundary } from "@/components/recipes/StakePosition"
@@ -190,9 +190,15 @@ const Stake = ({
 							if (stake.dapps.length > 0) {
 								setAddStakeDialogOpen(true)
 							} else {
-								navigate(
-									`?action=stake&type=dapp-staking&chain=${chain.id}&account=${account.address}`
-								)
+								navigate({
+									to: ".",
+									search: {
+										action: "stake",
+										type: "dapp-staking",
+										chain: chain.id,
+										account: account.address,
+									},
+								})
 							}
 							setLockedDialogOpen(false)
 						})

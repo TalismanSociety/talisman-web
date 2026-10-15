@@ -1,9 +1,7 @@
 import { BN } from "@polkadot/util"
 import { useQueryMultiState } from "@talismn/react-polkadot-api"
 import { useEffect, useMemo } from "react"
-import { useSearchParams } from "react-router-dom"
 import { constSelector, useRecoilValue, useRecoilValueLoadable } from "recoil"
-
 import { useSubstrateApiEndpoint } from "@/domains/common/hooks/useSubstrateApiEndpoint"
 import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
 import {
@@ -11,6 +9,7 @@ import {
 	useTokenAmountState,
 } from "@/domains/common/hooks/useTokenAmount"
 import { paymentInfoState } from "@/domains/common/recoils"
+import { useSearchParams } from "@/hooks/useSearchParams"
 import { Maybe } from "@/util/monads"
 import usePrevious from "@/util/usePrevious"
 

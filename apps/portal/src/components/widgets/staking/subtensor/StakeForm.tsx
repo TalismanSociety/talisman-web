@@ -1,8 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query"
+import { useNavigate } from "@tanstack/react-router"
 import BN from "bn.js"
 import type { ReactNode } from "react"
 import { Suspense, useMemo } from "react"
-import { useNavigate } from "react-router-dom"
 import { useRecoilValue } from "recoil"
 import type { Account } from "@/domains/accounts/recoils"
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
@@ -65,7 +65,7 @@ export const StakeForm = (props: StakeFormProps) => {
 						extrinsic.signAndSend(props.account.address).then(() => {
 							handleStakeInfoRefetch()
 
-							navigate("/staking/positions")
+							navigate({ to: "/staking/positions" })
 						})
 					}}
 				/>

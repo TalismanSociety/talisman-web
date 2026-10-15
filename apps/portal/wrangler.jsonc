@@ -2,8 +2,10 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "talisman-portal",
   "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "src/server.ts",
   "assets": {
-    "directory": "./apps/portal/build",
+    "binding": "ASSETS",
     "not_found_handling": "single-page-application"
   },
   "workers_dev": true,

@@ -14,3 +14,5 @@ apps/*/playwright.config.js
 apps/*/playwright.config.d.ts
 
 .tmp/
+
+.wrangler/

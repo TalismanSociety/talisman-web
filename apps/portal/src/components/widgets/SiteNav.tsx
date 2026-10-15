@@ -1,5 +1,5 @@
+import { Link } from "@tanstack/react-router"
 import { type MouseEventHandler, useCallback, useState } from "react"
-import { Link } from "react-router-dom"
 import { CurrencySelect } from "@/components/molecules/CurrencySelect"
 import { WalletConnectionButton } from "@/components/molecules/WalletConnectionButton"
 import { CreditCard, Menu, PieChart, Zap } from "@/icons"
@@ -66,7 +66,7 @@ export const SiteNav = ({
 					<SiteNavItem
 						label="Buy/Sell"
 						icon={<CreditCard />}
-						to="/rampbuysell"
+						href="/rampbuysell"
 						target="_blank"
 						onClick={openOnRamp}
 					/>
@@ -96,9 +96,9 @@ export const SiteNav = ({
 				<Link to="/portfolio">
 					<SiteMobileNav.Item label="Portfolio" icon={<PieChart />} />
 				</Link>
-				<Link to="/rampbuysell" target="_blank" onClick={openOnRamp}>
+				<a href="/rampbuysell" target="_blank" onClick={openOnRamp} rel="noopener">
 					<SiteMobileNav.Item label="Buy/Sell" icon={<CreditCard />} />
-				</Link>
+				</a>
 			</SiteMobileNav>
 		</header>
 	)

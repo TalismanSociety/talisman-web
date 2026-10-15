@@ -1,6 +1,3 @@
-import "@/ui/assets/css/talismn.css"
-import "@/index.css"
-
 import { css, Global } from "@emotion/react"
 import type { PropsWithChildren } from "react"
 import ATApocRevelations from "@/assets/fonts/AT-Apoc-Revelations.woff"

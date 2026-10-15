@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useSearchParams } from "react-router-dom"
+import { useSearchParams } from "@/hooks/useSearchParams"
 
 import type { BondOption } from "../types"
 import { useGetBittensorValidators } from "./useGetBittensorInfiniteValidators"
