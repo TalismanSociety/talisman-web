@@ -1,43 +1,39 @@
-import path from 'path'
-
-import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
-import svgr from 'vite-plugin-svgr'
-import topLevelAwait from 'vite-plugin-top-level-await'
-import wasm from 'vite-plugin-wasm'
+import path from "node:path"
+import react from "@vitejs/plugin-react"
+import { defineConfig } from "vite"
+import { nodePolyfills } from "vite-plugin-node-polyfills"
+import svgr from "vite-plugin-svgr"
+import topLevelAwait from "vite-plugin-top-level-await"
+import wasm from "vite-plugin-wasm"
 
 export default defineConfig({
-  optimizeDeps: {
-    // getting dev error without this setting
-    exclude: ['node_modules/.vite/deps'],
-  },
-  plugins: [
-    react({
-      jsxImportSource: '@emotion/react',
-      babel: {
-        plugins: ['@emotion/babel-plugin'],
-      },
-    }),
-    svgr(),
-    nodePolyfills(),
-    wasm(),
-    topLevelAwait(),
-  ],
-  server: { allowedHosts: ['.orb.local'] },
-  build: {
-    outDir: 'build',
-    rollupOptions: {
-      shimMissingExports: true,
-    },
-  },
-  worker: {
-    // https://github.com/vitejs/vite/pull/12629
-    format: 'es',
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
+	optimizeDeps: {
+		// getting dev error without this setting
+		exclude: ["node_modules/.vite/deps"],
+	},
+	plugins: [
+		react({
+			jsxImportSource: "@emotion/react",
+			babel: {
+				plugins: ["@emotion/babel-plugin"],
+			},
+		}),
+		svgr(),
+		nodePolyfills(),
+		wasm(),
+		topLevelAwait(),
+	],
+	server: { allowedHosts: [".orb.local"] },
+	build: {
+		outDir: "build",
+	},
+	worker: {
+		// https://github.com/vitejs/vite/pull/12629
+		format: "es",
+	},
+	resolve: {
+		alias: {
+			"@": path.resolve(__dirname, "./src"),
+		},
+	},
 })

@@ -1,16 +1,16 @@
-import '@talismn/ui/assets/css/talismn.css'
-import '@/index.css'
+import "@talismn/ui/assets/css/talismn.css"
+import "@/index.css"
 
-import type { Theme } from '@talismn/ui/theme'
-import { css, Global } from '@emotion/react'
-import { theme, ThemeProvider } from '@talismn/ui/theme'
-import { type PropsWithChildren } from 'react'
+import { css, Global } from "@emotion/react"
+import type { Theme } from "@talismn/ui/theme"
+import { ThemeProvider, theme } from "@talismn/ui/theme"
+import type { PropsWithChildren } from "react"
 
-import ATApocRevelations from '@/assets/fonts/AT-Apoc-Revelations.woff'
-import SurtRegular from '@/assets/fonts/Surt-Regular.woff'
-import SurtSemiBold from '@/assets/fonts/Surt-SemiBold.woff2'
-import SurtSemiBoldExpanded from '@/assets/fonts/Surt-SemiBoldExp.woff2'
-import SurtSemiBoldExtended from '@/assets/fonts/Surt-SemiBoldExtended.woff2'
+import ATApocRevelations from "@/assets/fonts/AT-Apoc-Revelations.woff"
+import SurtRegular from "@/assets/fonts/Surt-Regular.woff"
+import SurtSemiBold from "@/assets/fonts/Surt-SemiBold.woff2"
+import SurtSemiBoldExpanded from "@/assets/fonts/Surt-SemiBoldExp.woff2"
+import SurtSemiBoldExtended from "@/assets/fonts/Surt-SemiBoldExtended.woff2"
 
 /*
   base style definitions
@@ -20,27 +20,27 @@ import SurtSemiBoldExtended from '@/assets/fonts/Surt-SemiBoldExtended.woff2'
 
 // status color defs
 const statusColors = {
-  '21C91D': ['ok', 'success', 'online', 'positive'],
-  FFCF96: ['concern', 'warning'],
-  F34A4A: ['failure', 'error', 'negative'],
-  B9D9FF: ['neutral', 'default'],
+	"21C91D": ["ok", "success", "online", "positive"],
+	FFCF96: ["concern", "warning"],
+	F34A4A: ["failure", "error", "negative"],
+	B9D9FF: ["neutral", "default"],
 }
 
 // font size defs
 const fontSizes = {
-  xxxlarge: 5.6,
-  xxlarge: 4,
-  xlarge: 2.4,
-  large: 1.8,
-  normal: 1.6,
-  small: 1.4,
-  xsmall: 1.3,
+	xxxlarge: 5.6,
+	xxlarge: 4,
+	xlarge: 2.4,
+	large: 1.8,
+	normal: 1.6,
+	small: 1.4,
+	xsmall: 1.3,
 }
 
 // font weight defs
 const fontWeights = {
-  regular: 400,
-  bold: 700,
+	regular: 400,
+	bold: 700,
 }
 
 // base style
@@ -50,20 +50,22 @@ export const globalStyle = (theme: Theme) => css`
   */
   :root {
     /* theme colors as css variables */
-    ${!!theme && Object.keys(theme).map(name => css`--color-${name}: rgb(${theme[name as keyof typeof theme]});`)}
+    ${!!theme && Object.keys(theme).map((name) => css`--color-${name}: rgb(${theme[name as keyof typeof theme]});`)}
 
     /* status color mappings */
-    ${Object.keys(statusColors).map(hex =>
-      statusColors[hex as keyof typeof statusColors].map(status => css`--color-status-${status}: #${hex};`)
-    )}
+    ${Object.keys(statusColors).map((hex) =>
+			statusColors[hex as keyof typeof statusColors].map(
+				(status) => css`--color-status-${status}: #${hex};`
+			)
+		)}
 
     /* fonts size mappings */
-    ${Object.keys(fontSizes).map(name => css`--font-size-${name}: ${fontSizes[name as keyof typeof fontSizes]}rem;`)}
+    ${Object.keys(fontSizes).map((name) => css`--font-size-${name}: ${fontSizes[name as keyof typeof fontSizes]}rem;`)}
 
     /* font weights */
     ${Object.keys(fontWeights).map(
-      name => css`--font-weight-${name}: ${fontWeights[name as keyof typeof fontWeights]};`
-    )}
+			(name) => css`--font-weight-${name}: ${fontWeights[name as keyof typeof fontWeights]};`
+		)}
 
     /* misc */
     --border: 0.2rem solid var(--color-dark);
@@ -209,25 +211,25 @@ export const globalStyle = (theme: Theme) => css`
 `
 
 const appTheme = {
-  ...theme.greenDark,
-  primary: '213,255,92',
-  secondary: '0,0,255',
-  background: '18,18,18',
-  foreground: '165,165,165', // #a5a5a5
-  mid: '150,150,150',
-  dim: '90,90,90', // #5a5a5a
-  light: '250,250,250', // #fafafa
-  dark: '0,0,0',
-  text: '250,250,250', // #fafafa
-  activeBackground: '56,56,56', // #383838
-  controlBackground: '38,38,38',
+	...theme.greenDark,
+	primary: "213,255,92",
+	secondary: "0,0,255",
+	background: "18,18,18",
+	foreground: "165,165,165", // #a5a5a5
+	mid: "150,150,150",
+	dim: "90,90,90", // #5a5a5a
+	light: "250,250,250", // #fafafa
+	dark: "0,0,0",
+	text: "250,250,250", // #fafafa
+	activeBackground: "56,56,56", // #383838
+	controlBackground: "38,38,38",
 }
 
 const Provider = ({ children }: PropsWithChildren) => (
-  <ThemeProvider theme={appTheme}>
-    <Global styles={globalStyle} />
-    {children}
-  </ThemeProvider>
+	<ThemeProvider theme={appTheme}>
+		<Global styles={globalStyle} />
+		{children}
+	</ThemeProvider>
 )
 
 export default Provider

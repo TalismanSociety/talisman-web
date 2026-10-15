@@ -5,7 +5,6 @@
   "type": "module",
   "exports": "./src/index.ts",
   "scripts": {
-    "lint": "eslint src",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
@@ -14,13 +13,10 @@
   "devDependencies": {
     "@emotion/react": "^11.11.4",
     "@polkadot/api": "^14.0.1",
-    "@talismn/eslint-config": "workspace:^",
     "@talismn/tsconfig": "workspace:^",
     "@types/react": "^18.3.1",
-    "eslint": "^9.2.0",
     "recoil": "^0.7.7",
-    "typescript": "^5.6.3",
-    "typescript-eslint": "^7.15.0"
+    "typescript": "^5.6.3"
   },
   "peerDependencies": {
     "@polkadot/api": ">= 9.x",

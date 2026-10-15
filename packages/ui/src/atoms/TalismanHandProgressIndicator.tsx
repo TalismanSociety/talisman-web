@@ -1,19 +1,19 @@
-import type { CSSProperties } from 'react'
+import type { CSSProperties } from "react"
 
-import illustrationSrc from '../../assets/images/talisman-hand-progress-indicator.gif'
+import illustrationSrc from "../../assets/images/talisman-hand-progress-indicator.gif"
 
 export type TalismanHandProgressIndicatorProps = {
-  className?: string
-  style?: CSSProperties
+	className?: string
+	style?: CSSProperties
 }
 
 export const TalismanHandProgressIndicator = (props: TalismanHandProgressIndicatorProps) => {
-  return (
-    <img
-      className={props.className}
-      src={illustrationSrc}
-      css={{ width: '12.8rem', height: '12.8rem' }}
-      style={props.style}
-    />
-  )
+	return (
+		<img
+			className={props.className}
+			src={illustrationSrc}
+			css={{ width: "12.8rem", height: "12.8rem" }}
+			style={props.style}
+		/>
+	)
 }

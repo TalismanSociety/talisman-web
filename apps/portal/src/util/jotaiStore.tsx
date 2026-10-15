@@ -1,5 +1,5 @@
-import { createStore, Provider } from 'jotai'
-import { ReactNode } from 'react'
+import { createStore, Provider } from "jotai"
+import type { ReactNode } from "react"
 
 /**
  * Use this for access to the jotai store from outside of the react component lifecycle.
@@ -9,5 +9,5 @@ import { ReactNode } from 'react'
 export const jotaiStore = createStore()
 
 export const JotaiProvider = ({ children }: { children?: ReactNode }) => (
-  <Provider store={jotaiStore}>{children}</Provider>
+	<Provider store={jotaiStore}>{children}</Provider>
 )

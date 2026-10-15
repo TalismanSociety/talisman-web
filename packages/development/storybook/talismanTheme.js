@@ -1,9 +1,9 @@
-import brandImage from './brandImage.png'
-import { create } from '@storybook/theming/create'
+import { create } from "@storybook/theming/create"
+import brandImage from "./brandImage.png"
 
 export const theme = create({
-  base: 'dark',
-  brandTitle: 'Talisman',
-  brandUrl: 'https://talisman.xyz/',
-  brandImage: brandImage,
+	base: "dark",
+	brandTitle: "Talisman",
+	brandUrl: "https://talisman.xyz/",
+	brandImage: brandImage,
 })

@@ -1,16 +1,15 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from "react"
 
 const usePrevious = <T>(value: T): T => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ref = useRef<T>() as any
+	const ref = useRef<T>() as any
 
-  useEffect(() => {
-    if (value !== ref.current) {
-      ref.current = value
-    }
-  }, [value])
+	useEffect(() => {
+		if (value !== ref.current) {
+			ref.current = value
+		}
+	}, [value])
 
-  return ref.current
+	return ref.current
 }
 
 export default usePrevious

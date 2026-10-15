@@ -1,149 +1,154 @@
-import type { PropsWithChildren, ReactElement, ReactNode } from 'react'
-import * as Sentry from '@sentry/react'
-import { Button, SurfaceButton } from '@talismn/ui/atoms/Button'
-import { createContext, useContext, useState } from 'react'
-import { useRouteError } from 'react-router-dom'
-import { atom, useRecoilCallback, useRecoilValue } from 'recoil'
+import * as Sentry from "@sentry/react"
+import { Button, SurfaceButton } from "@talismn/ui/atoms/Button"
+import type { PropsWithChildren, ReactElement, ReactNode } from "react"
+import { createContext, useContext, useState } from "react"
+import { useRouteError } from "react-router-dom"
+import { atom, useRecoilCallback, useRecoilValue } from "recoil"
 
-import type { ErrorMessageProps } from '@/components/recipes/ErrorMessage'
-import { ErrorMessage } from '@/components/recipes/ErrorMessage'
+import type { ErrorMessageProps } from "@/components/recipes/ErrorMessage"
+import { ErrorMessage } from "@/components/recipes/ErrorMessage"
 
-const OrientationContext = createContext<ErrorMessageProps['orientation']>(undefined)
+const OrientationContext = createContext<ErrorMessageProps["orientation"]>(undefined)
 
 type ErrorElementProps = {
-  error: Error
-  componentStack: string | null
-  eventId: string | null
-  resetError: () => void
+	error: Error
+	componentStack: string | null
+	eventId: string | null
+	resetError: () => void
 }
 
 const ErrorElement = (props: ErrorElementProps) => {
-  const message =
-    `${props.error.name}\n\n${props.error.message}` +
-    (props.error.cause ? `\n\n${props.error.cause}` : '') +
-    (props.error.stack ? `\n\n${props.error.stack}` : '') +
-    (props.componentStack ? `\n\n${props.componentStack}` : '')
+	const message =
+		`${props.error.name}\n\n${props.error.message}` +
+		(props.error.cause ? `\n\n${props.error.cause}` : "") +
+		(props.error.stack ? `\n\n${props.error.stack}` : "") +
+		(props.componentStack ? `\n\n${props.componentStack}` : "")
 
-  return (
-    <ErrorMessage
-      orientation={useContext(OrientationContext)}
-      title="Oops!"
-      message={
-        <div className="flex flex-col items-center">
-          <span className="text-secondary">Sorry, an error occurred in Talisman.</span>
-          {props.eventId ? <span className="opacity-60">{props.eventId}</span> : ''}
-        </div>
-      }
-      actions={
-        <ErrorMessage.Actions>
-          {props.error !== undefined && (
-            <SurfaceButton className="!rounded-3xl" onClick={() => alert(message)}>
-              Show error
-            </SurfaceButton>
-          )}
-          {props.resetError !== undefined && (
-            <Button className="!rounded-3xl" onClick={props.resetError}>
-              Refresh
-            </Button>
-          )}
-        </ErrorMessage.Actions>
-      }
-    />
-  )
+	return (
+		<ErrorMessage
+			orientation={useContext(OrientationContext)}
+			title="Oops!"
+			message={
+				<div className="flex flex-col items-center">
+					<span className="text-secondary">Sorry, an error occurred in Talisman.</span>
+					{props.eventId ? <span className="opacity-60">{props.eventId}</span> : ""}
+				</div>
+			}
+			actions={
+				<ErrorMessage.Actions>
+					{props.error !== undefined && (
+						<SurfaceButton className="!rounded-3xl" onClick={() => alert(message)}>
+							Show error
+						</SurfaceButton>
+					)}
+					{props.resetError !== undefined && (
+						<Button className="!rounded-3xl" onClick={props.resetError}>
+							Refresh
+						</Button>
+					)}
+				</ErrorMessage.Actions>
+			}
+		/>
+	)
 }
 
 export const RouteErrorElement = () => {
-  const error = useRouteError()
+	const error = useRouteError()
 
-  // let the root error boundary handle it instead
-  // https://github.com/remix-run/react-router/discussions/10494
-  if (error) {
-    throw error
-  }
+	// let the root error boundary handle it instead
+	// https://github.com/remix-run/react-router/discussions/10494
+	if (error) {
+		throw error
+	}
 
-  return null
+	return null
 }
 
 export const debugErrorBoundaryState = atom({
-  key: 'DebugErrorBoundary',
-  default: false,
+	key: "DebugErrorBoundary",
+	default: false,
 })
 
-const ErrorBoundaryDebuggerChildren = (props: PropsWithChildren<{ error?: Error; onTriggerError: () => void }>) => {
-  if (props.error !== undefined) {
-    throw props.error
-  }
+const ErrorBoundaryDebuggerChildren = (
+	props: PropsWithChildren<{ error?: Error; onTriggerError: () => void }>
+) => {
+	if (props.error !== undefined) {
+		throw props.error
+	}
 
-  return (
-    <div
-      css={{ display: 'contents', '> *': { outline: '1px dotted red' } }}
-      onContextMenu={event => {
-        event.preventDefault()
-        event.stopPropagation()
-        props.onTriggerError()
-      }}
-    >
-      {props.children}
-    </div>
-  )
+	return (
+		<div
+			css={{ display: "contents", "> *": { outline: "1px dotted red" } }}
+			onContextMenu={(event) => {
+				event.preventDefault()
+				event.stopPropagation()
+				props.onTriggerError()
+			}}
+		>
+			{props.children}
+		</div>
+	)
 }
 
 const ErrorBoundaryDebugger = ({ children, ...props }: Sentry.ErrorBoundaryProps) => {
-  const [error, setError] = useState<Error>()
+	const [error, setError] = useState<Error>()
 
-  return (
-    <Sentry.ErrorBoundary
-      {...props}
-      onReset={(...args) => {
-        props.onReset?.(...args)
-        setError(undefined)
-      }}
-    >
-      <ErrorBoundaryDebuggerChildren error={error} onTriggerError={() => setError(new Error('This is a mock error'))}>
-        {typeof children === 'function' ? children() : children}
-      </ErrorBoundaryDebuggerChildren>
-    </Sentry.ErrorBoundary>
-  )
+	return (
+		<Sentry.ErrorBoundary
+			{...props}
+			onReset={(...args) => {
+				props.onReset?.(...args)
+				setError(undefined)
+			}}
+		>
+			<ErrorBoundaryDebuggerChildren
+				error={error}
+				onTriggerError={() => setError(new Error("This is a mock error"))}
+			>
+				{typeof children === "function" ? children() : children}
+			</ErrorBoundaryDebuggerChildren>
+		</Sentry.ErrorBoundary>
+	)
 }
 
 type ErrorBoundaryProps = Sentry.ErrorBoundaryProps &
-  Pick<ErrorMessageProps, 'orientation'> & {
-    renderFallback?: (fallback: ReactNode) => ReactElement
-  }
+	Pick<ErrorMessageProps, "orientation"> & {
+		renderFallback?: (fallback: ReactNode) => ReactElement
+	}
 
 export const ErrorBoundary = ({ orientation, renderFallback, ...props }: ErrorBoundaryProps) => {
-  const fallback = (errorProps: ErrorElementProps) =>
-    renderFallback?.(<ErrorElement {...errorProps} />) ?? <ErrorElement {...errorProps} />
+	const fallback = (errorProps: ErrorElementProps) =>
+		renderFallback?.(<ErrorElement {...errorProps} />) ?? <ErrorElement {...errorProps} />
 
-  const resetError = useRecoilCallback(
-    ({ snapshot, refresh }) =>
-      (error: Error | null) => {
-        for (const node of snapshot.getNodes_UNSTABLE({ isInitialized: true })) {
-          const { loadable, type } = snapshot.getInfo_UNSTABLE(node)
-          if (loadable?.state === 'hasError' && loadable.contents === error) {
-            switch (type) {
-              case 'atom':
-                // As of now Recoil doesn't have the ability to refresh & rerun atom effect
-                // https://github.com/facebookexperimental/Recoil/issues/1685
-                // https://github.com/facebookexperimental/Recoil/issues/2183
-                window.location.reload()
-                break
-              case 'selector':
-                return refresh(node)
-            }
-          }
-        }
-      },
-    []
-  )
+	const resetError = useRecoilCallback(
+		({ snapshot, refresh }) =>
+			(error: Error | null) => {
+				for (const node of snapshot.getNodes_UNSTABLE({ isInitialized: true })) {
+					const { loadable, type } = snapshot.getInfo_UNSTABLE(node)
+					if (loadable?.state === "hasError" && loadable.contents === error) {
+						switch (type) {
+							case "atom":
+								// As of now Recoil doesn't have the ability to refresh & rerun atom effect
+								// https://github.com/facebookexperimental/Recoil/issues/1685
+								// https://github.com/facebookexperimental/Recoil/issues/2183
+								window.location.reload()
+								break
+							case "selector":
+								return refresh(node)
+						}
+					}
+				}
+			},
+		[]
+	)
 
-  return (
-    <OrientationContext.Provider value={orientation}>
-      {useRecoilValue(debugErrorBoundaryState) ? (
-        <ErrorBoundaryDebugger {...props} fallback={fallback} onReset={resetError} />
-      ) : (
-        <Sentry.ErrorBoundary {...props} fallback={fallback} onReset={resetError} />
-      )}
-    </OrientationContext.Provider>
-  )
+	return (
+		<OrientationContext.Provider value={orientation}>
+			{useRecoilValue(debugErrorBoundaryState) ? (
+				<ErrorBoundaryDebugger {...props} fallback={fallback} onReset={resetError} />
+			) : (
+				<Sentry.ErrorBoundary {...props} fallback={fallback} onReset={resetError} />
+			)}
+		</OrientationContext.Provider>
+	)
 }

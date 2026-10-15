@@ -1,13 +1,13 @@
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue } from "recoil"
 
-import { lidoAprState } from '@/domains/staking/lido/recoils'
+import { lidoAprState } from "@/domains/staking/lido/recoils"
 
 type UseAprProps = {
-  apiEndpoint: string
+	apiEndpoint: string
 }
 
 const useApr = ({ apiEndpoint }: UseAprProps) => {
-  return useRecoilValue(lidoAprState(apiEndpoint ?? ''))
+	return useRecoilValue(lidoAprState(apiEndpoint ?? ""))
 }
 
 export default useApr

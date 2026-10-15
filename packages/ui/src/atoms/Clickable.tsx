@@ -1,6 +1,9 @@
-import { type ButtonHTMLAttributes, type DetailedHTMLProps } from 'react'
+import type { ButtonHTMLAttributes, DetailedHTMLProps } from "react"
 
-export type ClickableProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
+export type ClickableProps = DetailedHTMLProps<
+	ButtonHTMLAttributes<HTMLButtonElement>,
+	HTMLButtonElement
+>
 
 /**
  * Simple button component with 0 styling,
@@ -8,32 +11,32 @@ export type ClickableProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonEl
  * with full accessibility support
  */
 export const Clickable = Object.assign(
-  (props: ClickableProps) => (
-    <button
-      {...props}
-      css={{
-        textAlign: 'unset',
-        outline: 'none',
-        margin: 0,
-        border: 'none',
-        padding: 0,
-        background: 'none',
-        cursor: 'pointer',
-      }}
-    />
-  ),
-  {
-    /**
-     * Clickable that brighten on hover & reduce opacity on pressed
-     */
-    WithFeedback: (props: ClickableProps) => (
-      <Clickable
-        {...props}
-        css={{
-          ':hover': { filter: 'brightness(1.2)' },
-          ':active': { opacity: 0.8 },
-        }}
-      />
-    ),
-  }
+	(props: ClickableProps) => (
+		<button
+			{...props}
+			css={{
+				textAlign: "unset",
+				outline: "none",
+				margin: 0,
+				border: "none",
+				padding: 0,
+				background: "none",
+				cursor: "pointer",
+			}}
+		/>
+	),
+	{
+		/**
+		 * Clickable that brighten on hover & reduce opacity on pressed
+		 */
+		WithFeedback: (props: ClickableProps) => (
+			<Clickable
+				{...props}
+				css={{
+					":hover": { filter: "brightness(1.2)" },
+					":active": { opacity: 0.8 },
+				}}
+			/>
+		),
+	}
 )

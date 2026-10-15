@@ -1,23 +1,23 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-import { Zap } from '@talismn/web-icons'
+import type { ComponentMeta, Story } from "@storybook/react"
+import { Zap } from "@talismn/web-icons"
 
-import type { IconProps } from './Icon'
-import { Icon, TonalIcon } from './Icon'
+import type { IconProps } from "./Icon"
+import { Icon, TonalIcon } from "./Icon"
 
 export default {
-  title: 'Atoms/Icon',
-  component: Icon,
-  parameters: {
-    layout: 'centered',
-  },
+	title: "Atoms/Icon",
+	component: Icon,
+	parameters: {
+		layout: "centered",
+	},
 } as ComponentMeta<typeof Icon>
 
-export const Default: Story<IconProps<'button'>> = args => <Icon {...args} />
+export const Default: Story<IconProps<"button">> = (args) => <Icon {...args} />
 
 Default.args = {
-  children: <Zap />,
+	children: <Zap />,
 }
 
-export const Tonal: Story<IconProps<'button'>> = args => <TonalIcon {...args} />
+export const Tonal: Story<IconProps<"button">> = (args) => <TonalIcon {...args} />
 
 Tonal.args = Default.args

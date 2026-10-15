@@ -1,23 +1,23 @@
-import { useRecoilValue } from 'recoil'
-import { useAccount as useWagmiAccount } from 'wagmi'
+import { useRecoilValue } from "recoil"
+import { useAccount as useWagmiAccount } from "wagmi"
 
-import { useEvmExtensionEffect } from './evm'
+import { useEvmExtensionEffect } from "./evm"
 import {
-  connectedSubstrateWalletState,
-  initialisedSubstrateWalletsState,
-  useSubstrateExtensionEffect,
-} from './substrate'
+	connectedSubstrateWalletState,
+	initialisedSubstrateWalletsState,
+	useSubstrateExtensionEffect,
+} from "./substrate"
 
 export const ExtensionWatcher = () => {
-  useSubstrateExtensionEffect()
-  useEvmExtensionEffect()
+	useSubstrateExtensionEffect()
+	useEvmExtensionEffect()
 
-  return null
+	return null
 }
 
 export const useHasActiveWalletConnection = () => {
-  const evmConnected = useWagmiAccount().isConnected
-  return useRecoilValue(connectedSubstrateWalletState) !== undefined || evmConnected
+	const evmConnected = useWagmiAccount().isConnected
+	return useRecoilValue(connectedSubstrateWalletState) !== undefined || evmConnected
 }
 
 export const useWalletConnectionInitialised = () => useRecoilValue(initialisedSubstrateWalletsState)
