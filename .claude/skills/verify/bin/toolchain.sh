@@ -21,6 +21,7 @@ pm() {
 
 install_deps() {
   local root=$1
+  local -x HUSKY=0 SKIP_INSTALL_SIMPLE_GIT_HOOKS=1
   echo "installing $root with $(pm_command "$root" | tail -1 | xargs basename)"
   if [[ -f $root/pnpm-lock.yaml ]]; then
     pm "$root" install --frozen-lockfile

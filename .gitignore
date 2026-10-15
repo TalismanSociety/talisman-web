@@ -1,14 +1,5 @@
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
 node_modules
 
-.turbo
 .dir-locals.el
 .DS_Store
 ._.DS_Store

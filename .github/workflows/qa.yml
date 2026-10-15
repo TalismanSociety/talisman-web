@@ -13,15 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-      - run: yarn install --immutable
-      - run: yarn lint -- --max-warnings=0
-      - run: yarn check-types
-      - run: yarn test
-      - run: yarn npm audit --ignore "eslint (deprecation)"
-
-      - name: Audit portal dependencies
-        working-directory: apps/portal
-        run: yarn npm audit --ignore "eslint (deprecation)"
+      - run: pnpm lint --max-warnings=0
+      - run: pnpm check-types
+      - run: pnpm test
+      - run: pnpm audit --prod --audit-level critical
 
   e2e:
     runs-on: ubuntu-latest
@@ -52,8 +47,8 @@ jobs:
           done
 
       - uses: ./.github/actions/setup
-      - run: npx playwright install --with-deps
-      - run: yarn e2e
+      - run: pnpm --filter @talismn/portal exec playwright install --with-deps
+      - run: pnpm e2e
 
       - name: Upload test results
         if: failure()
