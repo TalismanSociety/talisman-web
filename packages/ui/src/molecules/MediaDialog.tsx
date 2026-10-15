@@ -62,8 +62,6 @@ const MediaPlayer = (props: MediaPlayerProps) => {
 				return <embed src={props.src} css={{ width: "100%", height: "100%" }} />
 			}
 			return null
-		case null:
-		case undefined:
 		default:
 			return null
 	}

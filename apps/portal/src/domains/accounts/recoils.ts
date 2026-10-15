@@ -39,7 +39,7 @@ export const lookupAccountAddressState = atom<string | undefined>({
 					searchParams.set(lookupAddressSearchKey, newValue)
 				}
 
-				void router.navigate("?" + searchParams.toString(), { replace: true })
+				void router.navigate(`?${searchParams.toString()}`, { replace: true })
 			})
 
 			// Persist lookup address between navigation
@@ -50,7 +50,7 @@ export const lookupAccountAddressState = atom<string | undefined>({
 
 				if (!search.has(lookupAddressSearchKey) && !isNilOrWhitespace(currentValue)) {
 					search.set(lookupAddressSearchKey, currentValue)
-					void router.navigate("?" + search.toString(), { replace: true })
+					void router.navigate(`?${search.toString()}`, { replace: true })
 				}
 			})
 		},

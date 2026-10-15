@@ -90,7 +90,7 @@ export const useWagmiWriteContract = <
 				),
 				error: "Your transaction was unsuccessful",
 				success: (hash) => {
-					const url = new URL("/tx/" + hash, etherscanUrl)
+					const url = new URL(`/tx/${hash}`, etherscanUrl)
 					return (
 						<ToastMessage
 							headlineContent="Your transaction was successful"

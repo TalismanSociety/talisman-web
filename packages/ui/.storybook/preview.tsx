@@ -1,7 +1,6 @@
 import "../assets/css/talismn.css"
 import type { Preview } from "@storybook/react"
 import { theme as storybookTheme } from "@talismn/development/storybook"
-import React from "react"
 import { type Theme, ThemeProvider, theme } from "../src/theme"
 
 const preview: Preview = {

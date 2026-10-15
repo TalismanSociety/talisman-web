@@ -176,7 +176,7 @@ export const StakeTargetSelectorDialog = Object.assign(
 									index === array.length - 1
 										? Array.from({ length: ITEMS_PER_PAGE - array.length }, (_, index) => (
 												<div
-													key={"dummy" + String(index)}
+													key={`dummy${String(index)}`}
 													css={{ opacity: 0, pointerEvents: "none" }}
 												>
 													{item}

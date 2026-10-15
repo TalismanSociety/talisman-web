@@ -34,7 +34,7 @@ export const toastExtrinsic = (
 									<Text.Body
 										as="a"
 										alpha="high"
-										href={subscanUrl + "extrinsic/" + data?.txHash?.toString()}
+										href={`${subscanUrl}extrinsic/${data?.txHash?.toString()}`}
 										target="_blank"
 									>
 										Subscan

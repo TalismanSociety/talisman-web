@@ -34,7 +34,7 @@ export const SiteNav = ({
 			if (!url?.length) throw new Error()
 
 			return window.open(url, "_blank", "noopener noreferrer")
-		} catch (cause) {
+		} catch (_cause) {
 			return toast.error(`Failed to generate Ramp URL`)
 		}
 	}, [])

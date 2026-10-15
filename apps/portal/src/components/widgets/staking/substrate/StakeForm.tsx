@@ -224,7 +224,7 @@ const PoolSelector = (props: {
 						count={pool.bondedPool.memberCounter.toString()}
 						onClick={() => setNewPoolId(pool.poolId)}
 						commissionFeeDescription="Commission shown is only for the nomination pool, but actual earnings will reflect fees charged by both validators and nomination pools. The total amount of fees can change regularly and can't be determined by Talisman."
-						commissionFee={getCurrentCommission(pool.poolId).toString() + "%"}
+						commissionFee={`${getCurrentCommission(pool.poolId).toString()}%`}
 					/>
 				)
 			})}
@@ -280,7 +280,8 @@ const EstimatedYield = memo(
 	(props: { amount: Decimal }) => {
 		const stakedReturn = useApr()
 		const annualReturn = useMemo(
-			() => new BN(props.amount.planck.toString()).muln(isNaN(stakedReturn) ? 0 : stakedReturn),
+			() =>
+				new BN(props.amount.planck.toString()).muln(Number.isNaN(stakedReturn) ? 0 : stakedReturn),
 			[props.amount.planck, stakedReturn]
 		)
 		const parsedAnnualReturn = useTokenAmountFromPlanck(annualReturn)
