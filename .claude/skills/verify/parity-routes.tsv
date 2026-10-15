@@ -1,6 +1,5 @@
 #route	state	path	wait	masks	click
 providers-signed-out	signed-out	/staking/providers	Welcome to the|Popular accounts	[]	
-swap-signed-out	signed-out	/transport/swap	Welcome to the|Popular accounts	[]	
 portfolio-signed-out	signed-out	/portfolio	path:/portfolio|Download Talisman Wallet	[]	
 nfts-signed-out	signed-out	/nfts	path:/portfolio|Download Talisman Wallet	[]	
 unknown-signed-out	signed-out	/no-such-route	path:/staking|Welcome to the|Popular accounts	[]	
@@ -18,7 +17,4 @@ stake-lido	connected	/staking/providers?action=stake&type=lido&token-address=0xa
 stake-seek	connected	/staking/providers?action=stake&type=seek	count:1:^Connected$|count:25:^[0-9][0-9,.]*%$|count:9:^(?=.)(None)?(1-5 day\(s\))?([0-9]+ days)?$|Talisman Staking|Rewards APR|Available to stake	["text:^\\$\\s?[0-9][0-9,.]*[kKmMbB]?$","text:^[0-9][0-9,.]*%$","text:^[0-9][0-9,.]*\\s(DOT|KSM|TAO|ASTR|ANLOG|VARA|AVAIL|CERE|SEEK|ETH|\\S)$"]	
 portfolio	connected	/portfolio	count:1:^Connected$|path:/portfolio|View Portfolio in Talisman Wallet	[]	
 nfts	connected	/nfts	count:1:^Connected$|path:/portfolio|View Portfolio in Talisman Wallet	[]	
-swap	connected	/transport/swap	count:1:^Connected$|Cross Chain Swap	[]	
-swap-all-routes	connected	/transport/swap/all-routes	count:1:^Connected$|stealthex-pairs.csv|lifi-tokens.csv|simpleswap-pairs.csv||Oops!	["?text:^[0-9a-f]{32}$"]	
-xcm	connected	/transport/xcm	count:1:^Connected$|temporarily unavailable	[]	
 unknown	connected	/no-such-route	path:/staking/providers|count:1:^Connected$|count:25:^[0-9][0-9,.]*%$|count:9:^(?=.)(None)?(1-5 day\(s\))?([0-9]+ days)?$	["text:^\\$\\s?[0-9][0-9,.]*[kKmMbB]?$","text:^[0-9][0-9,.]*%$","text:^[0-9][0-9,.]*\\s(DOT|KSM|TAO|ASTR|ANLOG|VARA|AVAIL|CERE|SEEK|ETH|\\S)$"]	
