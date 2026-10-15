@@ -1,5 +1,5 @@
 import { toast } from '@talismn/ui/molecules/Toaster'
-import { CreditCard, Menu, PieChart, Repeat, Zap } from '@talismn/web-icons'
+import { CreditCard, Menu, PieChart, Zap } from '@talismn/web-icons'
 import { MouseEventHandler, useCallback, useState } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -57,7 +57,6 @@ export const SiteNav = ({ className, contentClassName }: { className?: string; c
         </Link>
         <div className="hidden items-center gap-8 md:flex lg:gap-14">
           <SiteNavItem label="Staking" icon={<Zap />} to="/staking" />
-          <SiteNavItem label="Swap" icon={<Repeat />} to="/transport" />
           <SiteNavItem label="Portfolio" icon={<PieChart />} to="/portfolio" />
           <SiteNavItem label="Buy/Sell" icon={<CreditCard />} to="/rampbuysell" target="_blank" onClick={openOnRamp} />
         </div>
@@ -82,9 +81,6 @@ export const SiteNav = ({ className, contentClassName }: { className?: string; c
       >
         <Link to="/staking">
           <SiteMobileNav.Item label="Staking" icon={<Zap />} />
-        </Link>
-        <Link to="/transport">
-          <SiteMobileNav.Item label="Swap" icon={<Repeat />} />
         </Link>
         <Link to="/portfolio">
           <SiteMobileNav.Item label="Portfolio" icon={<PieChart />} />

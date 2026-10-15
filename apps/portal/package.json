@@ -15,11 +15,9 @@
     "e2e": "playwright test",
     "storybook": "storybook dev -p 6008",
     "build-storybook": "storybook build",
-    "codegen:nova": "graphql-codegen --require dotenv/config --config codegen.nova.ts",
-    "codegen:stealthex-swaps": "openapi-typescript https://stealthex.talisman.xyz/docs/openapi.json --export-type --root-types -o src/components/widgets/swap/swap-modules/stealthex.api.d.ts"
+    "codegen:nova": "graphql-codegen --require dotenv/config --config codegen.nova.ts"
   },
   "dependencies": {
-    "@chainflip/sdk": "^1.9.5",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@galacticcouncil/api-augment": "^0.3.1",
@@ -27,7 +25,6 @@
     "@galacticcouncil/xcm-cfg": "9.2.1",
     "@galacticcouncil/xcm-core": "^7.1.0",
     "@galacticcouncil/xcm-sdk": "^9.2.1",
-    "@lifi/sdk": "^3.3.1",
     "@polkadot-api/descriptors": "^0.0.1",
     "@polkadot-api/utils": "^0.1.0",
     "@polkadot-onboard/core": "^1.1.0",
@@ -68,7 +65,6 @@
     "jotai-effect": "^1.0.0",
     "lodash": "^4.18.1",
     "lucide-react": "^0.394.0",
-    "openapi-fetch": "^0.14.0",
     "polkadot-api": "^0.8.0",
     "posthog-js": "^1.93.6",
     "react": "^18.3.1",
@@ -115,7 +111,6 @@
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-storybook": "^0.6.15",
-    "openapi-typescript": "^7.8.0",
     "postcss": "^8.5.26",
     "storybook": "^7.6.21",
     "tailwindcss": "^3.4.16",
