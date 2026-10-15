@@ -5,7 +5,6 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,14 +15,3 @@ jobs:
     uses: ./.github/workflows/qa.yml
     secrets: inherit
 
-  deploy-portal:
-    uses: ./.github/workflows/deploy.yml
-    with:
-      projectName: ${{ vars.PORTAL_PROJECT_NAME }}
-      buildCommand: >-
-        NODE_OPTIONS=--max_old_space_size=10240
-        VITE_SENTRY_RELEASE=${{ github.sha }}
-        yarn turbo run build --filter=@talismn/portal -- --sourcemap
-      outputDirectory: apps/portal/build
-      sentryReleaseVersion: ${{ github.sha }}
-    secrets: inherit
