@@ -33,6 +33,14 @@ export function getRouter() {
 	if (!router.isServer) {
 		keepNativeScrollRestoration()
 		writeEachNavigationToTheBrowserAtOnce(router.history)
+		void import("./domains/analytics/client").then(({ startAnalytics, trackPageview }) => {
+			const trackCurrentPage = () => trackPageview(router.state.location.pathname)
+			startAnalytics()
+			if (router.state.resolvedLocation) trackCurrentPage()
+			router.subscribe("onResolved", ({ pathChanged }) => {
+				if (pathChanged) trackCurrentPage()
+			})
+		})
 	}
 
 	return router

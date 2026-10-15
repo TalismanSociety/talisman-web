@@ -5,18 +5,8 @@ import type { PropsWithChildren } from "react"
 import { useEffect, useState } from "react"
 import type { EIP1193Provider } from "viem"
 import { createConfig, fallback, http, WagmiProvider } from "wagmi"
-import {
-	arbitrum,
-	blast,
-	bsc,
-	mainnet,
-	manta,
-	moonbeam,
-	moonriver,
-	optimism,
-	polygon,
-} from "wagmi/chains"
 import { injected } from "wagmi/connectors"
+import { evmChains as chains } from "./evmChains"
 
 declare global {
 	interface Window {
@@ -29,18 +19,6 @@ type EvmNetwork = {
 	id: string | number
 	rpcs?: Array<{ url: string }> | null
 }
-
-const chains = [
-	bsc,
-	mainnet,
-	moonbeam,
-	moonriver,
-	arbitrum,
-	polygon,
-	optimism,
-	blast,
-	manta,
-] as const
 
 // Create wagmi config with chaindata RPCs
 const createWagmiConfigWithChaindata = (evmNetworks: EvmNetwork[]) =>

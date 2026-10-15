@@ -2,10 +2,11 @@ import type { SubmittableExtrinsic } from "@polkadot/api/types"
 import type { GenericCall } from "@polkadot/types"
 import type { ISubmittableResult } from "@polkadot/types/types"
 import type { Vec } from "@polkadot/types-codec"
-import posthog from "posthog-js"
 import { startTransition } from "react"
 import type { CallbackInterface } from "recoil"
 
+import { track } from "@/domains/analytics/client"
+import { callOf, palletOf, substrateChainOf } from "@/domains/analytics/events/transactions"
 import { chainReadIdState } from "@/domains/common/recoils"
 
 type Tag = "analytics"
@@ -29,42 +30,29 @@ const combineMiddleware =
 			middleware(...parameters)
 		})
 
-const posthogMiddleware: ExtrinsicMiddleware = (chain, extrinsic, result, _, options) => {
+const analyticsMiddleware: ExtrinsicMiddleware = (chainId, extrinsic, result, _, options) => {
 	if (options?.blacklist?.includes("analytics")) {
 		return
 	}
 
 	if (result.status.isInBlock && result.dispatchError === undefined) {
+		const chain = substrateChainOf(chainId)
 		const rootCall = {
-			chain,
-			chainProperties: extrinsic.registry.getChainProperties()?.toHuman(),
-			module: extrinsic.method.section,
-			section: extrinsic.method.method,
-			args: Object.fromEntries(
-				extrinsic.meta.args.map((x, index) => [
-					x.name.toPrimitive(),
-					extrinsic.args[index]?.toHuman(),
-				])
-			),
+			module: palletOf(extrinsic.method.section),
+			section: callOf(extrinsic.method.method),
 		}
 
-		posthog.capture("Extrinsic in block", rootCall)
+		track("Extrinsic in block", { chain, ...rootCall })
 
 		if (extrinsic.method.section === "utility" && extrinsic.method.method.includes("batch")) {
 			;(extrinsic.args as Array<Vec<GenericCall>>).forEach((calls) => {
 				calls.forEach((call) => {
-					posthog.capture("Extrinsic in block", {
+					track("Extrinsic in block", {
 						chain,
-						chainProperties: extrinsic.registry.getChainProperties()?.toHuman(),
-						module: call.section,
-						section: call.method,
-						args: Object.fromEntries(
-							call.meta.args.map((x, index) => [x.name.toPrimitive(), call.args[index]?.toHuman()])
-						),
-						parentCall: {
-							module: rootCall.module,
-							section: rootCall.section,
-						},
+						module: palletOf(call.section),
+						section: callOf(call.method),
+						parent_module: rootCall.module,
+						parent_section: rootCall.section,
 					})
 				})
 			})
@@ -78,4 +66,4 @@ const chainIdReadMiddleware: ExtrinsicMiddleware = (_, __, result, { set }) => {
 	}
 }
 
-export const extrinsicMiddleware = combineMiddleware(chainIdReadMiddleware, posthogMiddleware)
+export const extrinsicMiddleware = combineMiddleware(chainIdReadMiddleware, analyticsMiddleware)

@@ -1,8 +1,9 @@
-import { usePostHog } from "posthog-js/react"
 import { useEffect } from "react"
 import { useSetRecoilState } from "recoil"
 import { useAccount, useConnect, useConnections, useConnectors } from "wagmi"
 import { wagmiAccountsState } from "@/domains/accounts/recoils"
+import { track } from "@/domains/analytics/client"
+import { evmWalletOf } from "@/domains/analytics/events/extensions"
 import { toast } from "@/ui/molecules/Toaster"
 
 export const useEvmConnectors = () =>
@@ -21,16 +22,17 @@ export const useConnectEvm = () => {
 }
 
 export const useEvmExtensionEffect = () => {
-	const posthog = usePostHog()
 	const connections = useConnections()
 
 	useEffect(() => {
-		if (connections.length > 0) {
-			posthog.capture("EVM extensions connected", {
-				$set: { evmExtensions: connections.map((connection) => connection.connector.id) },
+		const newest = connections.at(-1)
+		if (newest) {
+			track("EVM extensions connected", {
+				wallet: evmWalletOf(newest.connector.id),
+				connections: connections.length,
 			})
 		}
-	}, [connections, connections.length, posthog])
+	}, [connections])
 
 	const { addresses } = useAccount()
 	const setWagmiAccounts = useSetRecoilState(wagmiAccountsState)

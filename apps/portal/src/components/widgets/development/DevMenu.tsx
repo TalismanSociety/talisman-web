@@ -2,8 +2,7 @@ import "winbox/dist/css/themes/modern.min.css"
 import "winbox/dist/css/winbox.min.css"
 
 import RpcError from "@polkadot/rpc-provider/coder/error"
-import { usePostHog } from "posthog-js/react"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback } from "react"
 import { useSessionStorage } from "react-use"
 import type { WinBoxPropType } from "react-winbox"
 import WinBox from "react-winbox"
@@ -51,22 +50,6 @@ const SignEvmTransaction = () => {
 		>
 			Sign EVM transaction
 		</button>
-	)
-}
-
-const Analytics = () => {
-	const [debug, setDebug] = useState(true)
-
-	const postHog = usePostHog()
-
-	useEffect(() => {
-		postHog.debug(debug)
-	}, [debug, postHog])
-
-	return (
-		<label>
-			<input type="checkbox" checked={debug} onChange={() => setDebug((x) => !x)} /> Debug PostHog
-		</label>
 	)
 }
 
@@ -122,7 +105,6 @@ const DevMenu = () => {
 					/>{" "}
 					Debug error boundary (right click to trigger error)
 				</label>
-				<Analytics />
 				<hr />
 				<legend>
 					Toasts

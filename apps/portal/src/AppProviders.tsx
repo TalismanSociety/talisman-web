@@ -3,16 +3,17 @@ import "@polkadot/api-augment/substrate"
 import "@talismn/astar-types/augment-api"
 import "@talismn/astar-types/types-lookup"
 
+import { Subscribe } from "@react-rxjs/core"
 import * as Sentry from "@sentry/react"
 import { PolkadotApiProvider } from "@talismn/react-polkadot-api"
-import { PostHogProvider } from "posthog-js/react"
 import { type ReactNode, Suspense } from "react"
 import { RecoilRoot } from "recoil"
 import ThemeProvider from "@/App.Theme"
-import { FairyBreadBanner } from "@/components/legacy/widgets/FairyBreadBanner"
+import { ConsentBanner } from "@/app-shell/ConsentBanner"
 import { FullscreenLoader } from "@/components/molecules/FullscreenLoader"
 import { Development } from "@/components/widgets/development/Development"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
+import { PrivacySettingsDialog } from "@/components/widgets/PrivacySettings/PrivacySettingsDialog"
 import { AccountWatcher, SignetWatcher } from "@/domains/accounts/recoils"
 import { BalancesWatcher } from "@/domains/balances/BalancesWatcher"
 import { PortalBalancesProvider } from "@/domains/balances/PortalBalancesProvider"
@@ -42,29 +43,30 @@ const AppProviders = ({ children }: { children: ReactNode }) => (
 			>
 				<Suspense fallback={<FullscreenLoader />}>
 					<JotaiProvider>
-						<PostHogProvider apiKey={import.meta.env.VITE_POSTHOG_AUTH_TOKEN}>
-							<EvmProvider>
-								<PolkadotApiProvider
-									queryState={chainQueryState}
-									deriveState={chainDeriveState}
-									queryMultiState={chainQueryMultiState}
-								>
-									<PortalBalancesProvider>
-										<ExtensionWatcher />
-										<AccountWatcher />
-										<SignetWatcher />
-										<TalismanExtensionSynchronizer />
-										<BalancesWatcher />
-										<Suspense fallback={<FullscreenLoader />}>
-											{children}
-											<Toaster position="bottom-right" />
-										</Suspense>
-										<FairyBreadBanner />
-										<Development />
-									</PortalBalancesProvider>
-								</PolkadotApiProvider>
-							</EvmProvider>
-						</PostHogProvider>
+						<EvmProvider>
+							<PolkadotApiProvider
+								queryState={chainQueryState}
+								deriveState={chainDeriveState}
+								queryMultiState={chainQueryMultiState}
+							>
+								<PortalBalancesProvider>
+									<ExtensionWatcher />
+									<AccountWatcher />
+									<SignetWatcher />
+									<TalismanExtensionSynchronizer />
+									<BalancesWatcher />
+									<Suspense fallback={<FullscreenLoader />}>
+										{children}
+										<Toaster position="bottom-right" />
+									</Suspense>
+									<Subscribe>
+										<ConsentBanner />
+										<PrivacySettingsDialog />
+									</Subscribe>
+									<Development />
+								</PortalBalancesProvider>
+							</PolkadotApiProvider>
+						</EvmProvider>
 					</JotaiProvider>
 				</Suspense>
 			</ErrorBoundary>

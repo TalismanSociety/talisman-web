@@ -24,10 +24,18 @@ export const Switch = (props: SwitchProps) => {
 							transform: "translateX(100%)",
 						},
 					},
+					":has(input:focus-visible)": {
+						outline: `2px solid ${theme.color.primary}`,
+						outlineOffset: "2px",
+					},
 				},
 			]}
 		>
-			<input {...props} type="checkbox" css={{ display: "none" }} />
+			<input
+				{...props}
+				type="checkbox"
+				css={{ position: "absolute", width: 0, height: 0, margin: 0, opacity: 0 }}
+			/>
 			<div
 				css={{
 					width: "1.5rem",
