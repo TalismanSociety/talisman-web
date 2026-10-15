@@ -10,7 +10,7 @@
       "ignoreDependencies": ["dotenv", "wrangler"]
     },
     "packages/icons": {
-      "entry": ["svgo.config.js"],
+      "svgo": true,
       "ignoreDependencies": ["@emotion/react"]
     }
   },
