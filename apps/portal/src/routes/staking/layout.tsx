@@ -1,7 +1,5 @@
-import { Surface } from "@talismn/ui/atoms/Surface"
 import { Outlet } from "react-router-dom"
 import { useRecoilValue } from "recoil"
-
 import { WalletTotal } from "@/components/legacy/widgets/WalletTotal"
 import { PageHeader, PageHeaderItem } from "@/components/molecules/PageHeader"
 import { PageTab, PageTabs } from "@/components/molecules/PageTabs"
@@ -11,6 +9,7 @@ import { AccountConnectionGuard } from "@/components/widgets/AccountConnectionGu
 import { AccountsManagementMenu } from "@/components/widgets/AccountsManagementMenu"
 import { BannerStakingMovingToWallet } from "@/components/widgets/staking/BannerStakingMovingToWallet"
 import { selectedAccountsState } from "@/domains/accounts/recoils"
+import { Surface } from "@/ui/atoms/Surface"
 
 const Layout = () => {
 	const accounts = useRecoilValue(selectedAccountsState)

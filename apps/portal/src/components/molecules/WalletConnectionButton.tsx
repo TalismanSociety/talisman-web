@@ -1,11 +1,10 @@
-import { Clickable } from "@talismn/ui/atoms/Clickable"
-import { ChevronDown, Ethereum, Polkadot } from "@talismn/web-icons"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import { useAccount as useWagmiAccount } from "wagmi"
-
 import { walletConnectionSideSheetOpenState } from "@/components/widgets/WalletConnectionSideSheet"
 import { substrateInjectedAccountsState, writeableAccountsState } from "@/domains/accounts/recoils"
 import { connectedSubstrateWalletState } from "@/domains/extension/substrate"
+import { ChevronDown, Ethereum, Polkadot } from "@/icons"
+import { Clickable } from "@/ui/atoms/Clickable"
 import { cn } from "@/util/cn"
 
 export const WalletConnectionButton = () => {

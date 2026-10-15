@@ -1,8 +1,7 @@
-import { Text } from "@talismn/ui/atoms/Text"
 import { formatDistance } from "date-fns"
-
 import { ChainProvider } from "@/domains/chains/provider"
 import { useUnlockDuration as useNominationPoolUnlockDuration } from "@/domains/staking/substrate/nominationPools/hooks/useUnlockDuration"
+import { Text } from "@/ui/atoms/Text"
 
 import useDappUnlockDuration from "../hooks/dapp/useUnlockDuration"
 import useGetSeekStakeUnlockDuration from "../hooks/seek/useGetSeekStakeUnlockDuration"

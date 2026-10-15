@@ -1,11 +1,10 @@
-import { SurfaceIconButton } from "@talismn/ui/atoms/IconButton"
-import { SearchBar } from "@talismn/ui/molecules/SearchBar"
-import { Search } from "@talismn/web-icons"
 import { LayoutGroup } from "framer-motion"
 import { useEffect, useRef, useState } from "react"
 import { useRecoilState } from "recoil"
-
 import { lookupAccountAddressState } from "@/domains/accounts/recoils"
+import { Search } from "@/icons"
+import { SurfaceIconButton } from "@/ui/atoms/IconButton"
+import { SearchBar } from "@/ui/molecules/SearchBar"
 import { isNilOrWhitespace } from "@/util/nil"
 
 export const PortfolioAddressSearch = ({ className }: { className?: string }) => {

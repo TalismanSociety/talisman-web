@@ -1,8 +1,8 @@
-import type { SkeletonProps } from "@talismn/ui/atoms/Skeleton"
-import { Skeleton } from "@talismn/ui/atoms/Skeleton"
-import { useSurfaceColor } from "@talismn/ui/atoms/Surface"
-import { Text } from "@talismn/ui/atoms/Text"
-import { ListItem } from "@talismn/ui/molecules/ListItem"
+import type { SkeletonProps } from "@/ui/atoms/Skeleton"
+import { Skeleton } from "@/ui/atoms/Skeleton"
+import { useSurfaceColor } from "@/ui/atoms/Surface"
+import { Text } from "@/ui/atoms/Text"
+import { ListItem } from "@/ui/molecules/ListItem"
 
 export const StakePositionSkeleton = (props: SkeletonProps) => (
 	<Skeleton.Surface

@@ -1,6 +1,6 @@
-import { Text } from "@talismn/ui/atoms/Text"
 import type { PropsWithChildren } from "react"
 import { atom, useRecoilValue } from "recoil"
+import { Text } from "@/ui/atoms/Text"
 
 const redactBalanceState = atom({ key: " Widget/RedactBalance", default: false })
 

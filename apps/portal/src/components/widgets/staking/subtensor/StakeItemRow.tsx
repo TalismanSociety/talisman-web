@@ -1,6 +1,3 @@
-import { TonalButton } from "@talismn/ui/atoms/Button"
-import { Tooltip } from "@talismn/ui/atoms/Tooltip"
-import { Info } from "@talismn/web-icons"
 import { StakePosition } from "@/components/recipes/StakePosition"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import {
@@ -15,6 +12,9 @@ import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/use
 import { useMoveStake } from "@/domains/staking/subtensor/hooks/useMoveStake"
 import type { StakeItem } from "@/domains/staking/subtensor/hooks/useStake"
 import type { BondOption } from "@/domains/staking/subtensor/types"
+import { Info } from "@/icons"
+import { TonalButton } from "@/ui/atoms/Button"
+import { Tooltip } from "@/ui/atoms/Tooltip"
 
 import ErrorBoundaryFallback from "../ErrorBoundaryFallback"
 

@@ -1,14 +1,13 @@
-import { Text } from "@talismn/ui/atoms/Text"
-import { Tooltip } from "@talismn/ui/atoms/Tooltip"
-import { TextInput } from "@talismn/ui/molecules/TextInput"
-import { AlertTriangle, Info, Settings } from "@talismn/web-icons"
 import { useAtom, useAtomValue } from "jotai"
 import { useCallback, useEffect, useRef, useState } from "react"
-
 import {
 	bittensorSlippageAtom,
 	maxSlippageAtom,
 } from "@/domains/staking/subtensor/atoms/bittensorSlippage"
+import { AlertTriangle, Info, Settings } from "@/icons"
+import { Text } from "@/ui/atoms/Text"
+import { Tooltip } from "@/ui/atoms/Tooltip"
+import { TextInput } from "@/ui/molecules/TextInput"
 import { cn } from "@/util/cn"
 
 export const SlippageDropdown = () => {

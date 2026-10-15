@@ -1,17 +1,16 @@
 import { useTheme } from "@emotion/react"
-import { Button } from "@talismn/ui/atoms/Button"
-import { RadioButton } from "@talismn/ui/atoms/RadioButton"
-import { Surface } from "@talismn/ui/atoms/Surface"
-import { Switch } from "@talismn/ui/atoms/Switch"
-import { Text } from "@talismn/ui/atoms/Text"
-import { Tooltip } from "@talismn/ui/atoms/Tooltip"
-import { AlertDialog } from "@talismn/ui/molecules/AlertDialog"
-import { HiddenDetails } from "@talismn/ui/molecules/HiddenDetails"
-import { Calculate, Info } from "@talismn/web-icons"
 import type { PropsWithChildren } from "react"
 import { createContext, Suspense, useContext } from "react"
-
 import { TalismanHandLoader } from "@/components/legacy/TalismanHandLoader"
+import { Calculate, Info } from "@/icons"
+import { Button } from "@/ui/atoms/Button"
+import { RadioButton } from "@/ui/atoms/RadioButton"
+import { Surface } from "@/ui/atoms/Surface"
+import { Switch } from "@/ui/atoms/Switch"
+import { Text } from "@/ui/atoms/Text"
+import { Tooltip } from "@/ui/atoms/Tooltip"
+import { AlertDialog } from "@/ui/molecules/AlertDialog"
+import { HiddenDetails } from "@/ui/molecules/HiddenDetails"
 
 const Context = createContext({
 	isSkeleton: false,

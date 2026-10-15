@@ -1,6 +1,6 @@
-import type { StatusIndicatorProps } from "@talismn/ui/atoms/StatusIndicator"
-import { StatusIndicator } from "@talismn/ui/atoms/StatusIndicator"
 import { useMemo } from "react"
+import type { StatusIndicatorProps } from "@/ui/atoms/StatusIndicator"
+import { StatusIndicator } from "@/ui/atoms/StatusIndicator"
 
 export type StakeStatus =
 	| "earning_rewards"

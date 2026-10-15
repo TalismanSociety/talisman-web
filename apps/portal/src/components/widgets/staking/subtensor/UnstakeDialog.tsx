@@ -1,5 +1,3 @@
-import { CircularProgressIndicator } from "@talismn/ui/atoms/CircularProgressIndicator"
-import { Text } from "@talismn/ui/atoms/Text"
 import { useQueryClient } from "@tanstack/react-query"
 import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
@@ -10,6 +8,8 @@ import { useExtrinsicInBlockOrErrorEffect } from "@/domains/common/hooks/useExtr
 import { useUnstakeForm } from "@/domains/staking/subtensor/hooks/forms"
 import { useCombineSubnetData } from "@/domains/staking/subtensor/hooks/useCombineSubnetData"
 import type { StakeItem } from "@/domains/staking/subtensor/hooks/useStake"
+import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
+import { Text } from "@/ui/atoms/Text"
 
 import { ROOT_NETUID } from "./constants"
 

@@ -1,4 +1,4 @@
-import { ExternalLink, ZapPlus } from "@talismn/web-icons"
+import { ExternalLink, ZapPlus } from "@/icons"
 
 const talismanWalletLink = "https://talisman.xyz/download"
 

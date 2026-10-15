@@ -1,8 +1,0 @@
-{
-  "extends": "@talismn/tsconfig/react-library.json",
-  "compilerOptions": {
-    "jsxImportSource": "@emotion/react",
-    "declaration": false
-  },
-  "exclude": ["storybook-static"]
-}

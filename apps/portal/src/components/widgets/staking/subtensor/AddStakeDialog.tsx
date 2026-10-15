@@ -1,4 +1,3 @@
-import { CircularProgressIndicator } from "@talismn/ui/atoms/CircularProgressIndicator"
 import { useQueryClient } from "@tanstack/react-query"
 import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
@@ -10,6 +9,7 @@ import { useAddStakeForm } from "@/domains/staking/subtensor/hooks/forms"
 import { useCombinedBittensorValidatorsData } from "@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData"
 import { useCombineSubnetData } from "@/domains/staking/subtensor/hooks/useCombineSubnetData"
 import type { StakeItem } from "@/domains/staking/subtensor/hooks/useStake"
+import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 
 import { BannerWarningBittensorStaking } from "./BannerWarningBittensorStaking"
 import { ROOT_NETUID } from "./constants"

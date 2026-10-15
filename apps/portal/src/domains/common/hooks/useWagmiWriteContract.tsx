@@ -1,12 +1,12 @@
-import { Text } from "@talismn/ui/atoms/Text"
-import { ToastMessage } from "@talismn/ui/molecules/ToastBar"
-import { toast } from "@talismn/ui/molecules/Toaster"
 import type { MutateOptions } from "@tanstack/react-query"
 import { usePostHog } from "posthog-js/react"
 import type { Abi, ContractFunctionArgs, ContractFunctionName, WriteContractErrorType } from "viem"
 import type { Config, ResolvedRegister, UseWriteContractParameters } from "wagmi"
 import { useAccount, useSwitchChain, useWriteContract } from "wagmi"
 import type { WriteContractData, WriteContractVariables } from "wagmi/query"
+import { Text } from "@/ui/atoms/Text"
+import { ToastMessage } from "@/ui/molecules/ToastBar"
+import { toast } from "@/ui/molecules/Toaster"
 
 /**
  * PostHog can't handle BigInt

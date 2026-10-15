@@ -1,10 +1,9 @@
-import { toast } from "@talismn/ui/molecules/Toaster"
 import { usePostHog } from "posthog-js/react"
 import { useEffect } from "react"
 import { useSetRecoilState } from "recoil"
 import { useAccount, useConnect, useConnections, useConnectors } from "wagmi"
-
 import { wagmiAccountsState } from "@/domains/accounts/recoils"
+import { toast } from "@/ui/molecules/Toaster"
 
 export const useEvmConnectors = () =>
 	useConnectors().filter((connector) => connector.id !== "injected")

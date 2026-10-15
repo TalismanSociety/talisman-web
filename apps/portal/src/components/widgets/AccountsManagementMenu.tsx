@@ -1,13 +1,4 @@
 import { useTheme } from "@emotion/react"
-import { Chip } from "@talismn/ui/atoms/Chip"
-import { CircularProgressIndicator } from "@talismn/ui/atoms/CircularProgressIndicator"
-import { Hr } from "@talismn/ui/atoms/Hr"
-import { SurfaceIcon } from "@talismn/ui/atoms/Icon"
-import { IconButton } from "@talismn/ui/atoms/IconButton"
-import { Text } from "@talismn/ui/atoms/Text"
-import { Tooltip } from "@talismn/ui/atoms/Tooltip"
-import { Menu } from "@talismn/ui/molecules/Menu"
-import { Copy, Ethereum, Eye, EyePlus, Trash2, Users, Wallet, X } from "@talismn/web-icons"
 import type React from "react"
 import type { ReactNode } from "react"
 import { useMemo } from "react"
@@ -17,7 +8,6 @@ import {
 	useResetRecoilState,
 	useSetRecoilState,
 } from "recoil"
-
 import Logo from "@/assets/logo.svg?react"
 import { AccountIcon } from "@/components/molecules/AccountIcon"
 import { AddReadOnlyAccountDialog } from "@/components/widgets/AddReadOnlyAccountDialog"
@@ -33,7 +23,16 @@ import {
 } from "@/domains/accounts/recoils"
 import { fiatBalanceGetterState, portfolioBalancesFiatSumState } from "@/domains/balances/recoils"
 import { copyAddressToClipboard } from "@/domains/common/utils/clipboard"
+import { Copy, Ethereum, Eye, EyePlus, Trash2, Users, Wallet, X } from "@/icons"
 import { useOnChainId } from "@/libs/onChainId/hooks/useOnChainId"
+import { Chip } from "@/ui/atoms/Chip"
+import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
+import { Hr } from "@/ui/atoms/Hr"
+import { SurfaceIcon } from "@/ui/atoms/Icon"
+import { IconButton } from "@/ui/atoms/IconButton"
+import { Text } from "@/ui/atoms/Text"
+import { Tooltip } from "@/ui/atoms/Tooltip"
+import { Menu } from "@/ui/molecules/Menu"
 import { Maybe } from "@/util/monads"
 import { truncateAddress } from "@/util/truncateAddress"
 

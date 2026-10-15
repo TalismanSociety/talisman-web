@@ -1,10 +1,9 @@
-import { TonalButton } from "@talismn/ui/atoms/Button"
-import { Surface } from "@talismn/ui/atoms/Surface"
-import { Text } from "@talismn/ui/atoms/Text"
-import { Tooltip } from "@talismn/ui/atoms/Tooltip"
-import { useTheme } from "@talismn/ui/theme"
-
 import { StakeStatusIndicator } from "@/components/recipes/StakeStatusIndicator"
+import { TonalButton } from "@/ui/atoms/Button"
+import { Surface } from "@/ui/atoms/Surface"
+import { Text } from "@/ui/atoms/Text"
+import { Tooltip } from "@/ui/atoms/Tooltip"
+import { useTheme } from "@/ui/theme"
 
 type ErrorBoundaryFallbackProps = {
 	symbol: string

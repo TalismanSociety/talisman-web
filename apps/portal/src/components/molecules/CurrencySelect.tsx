@@ -1,6 +1,4 @@
-import { Clickable } from "@talismn/ui/atoms/Clickable"
 import { useRecoilState } from "recoil"
-
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -8,6 +6,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/molecules/DropdownMenu"
 import { currencyConfig, selectedCurrencyState } from "@/domains/balances/currency"
+import { Clickable } from "@/ui/atoms/Clickable"
 import { cn } from "@/util/cn"
 
 export const CurrencySelect = ({ className }: { className?: string }) => {

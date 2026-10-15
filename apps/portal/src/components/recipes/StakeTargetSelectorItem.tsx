@@ -1,11 +1,10 @@
-import { Button } from "@talismn/ui/atoms/Button"
-import { useSurfaceColor, useSurfaceColorAtElevation } from "@talismn/ui/atoms/Surface"
-import { Text } from "@talismn/ui/atoms/Text"
-import { Tooltip } from "@talismn/ui/atoms/Tooltip"
-import { ExternalLink, User } from "@talismn/web-icons"
 import type { ReactNode } from "react"
-
 import Logo from "@/assets/logo.svg?react"
+import { ExternalLink, User } from "@/icons"
+import { Button } from "@/ui/atoms/Button"
+import { useSurfaceColor, useSurfaceColorAtElevation } from "@/ui/atoms/Surface"
+import { Text } from "@/ui/atoms/Text"
+import { Tooltip } from "@/ui/atoms/Tooltip"
 
 export type StakeTargetSelectorItemProps = {
 	selected?: boolean

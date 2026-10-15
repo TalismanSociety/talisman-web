@@ -1,8 +1,8 @@
-import { Button } from "@talismn/ui/atoms/Button"
-import { Text } from "@talismn/ui/atoms/Text"
-import { AlertDialog } from "@talismn/ui/molecules/AlertDialog"
-import { TextInput } from "@talismn/ui/molecules/TextInput"
 import type { ReactNode } from "react"
+import { Button } from "@/ui/atoms/Button"
+import { Text } from "@/ui/atoms/Text"
+import { AlertDialog } from "@/ui/molecules/AlertDialog"
+import { TextInput } from "@/ui/molecules/TextInput"
 
 import { StakeTxBreakdown } from "../widgets/staking/subtensor/StakeTxBreakdown"
 

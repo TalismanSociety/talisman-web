@@ -1,16 +1,15 @@
 import type { AstarPrimitivesDappStakingSmartContract } from "@polkadot/types/lookup"
-import { CircularProgressIndicator } from "@talismn/ui/atoms/CircularProgressIndicator"
-import { Clickable } from "@talismn/ui/atoms/Clickable"
-import { Surface } from "@talismn/ui/atoms/Surface"
-import { Text } from "@talismn/ui/atoms/Text"
-import { AlertDialog } from "@talismn/ui/molecules/AlertDialog"
 import type { ReactNode } from "react"
 import { useState, useTransition } from "react"
 import { useRecoilValue, waitForAll } from "recoil"
-
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
 import type { StakeLoadable } from "@/domains/staking/dappStaking/hooks/useStakeLoadable"
 import { useRegisteredDappsState } from "@/domains/staking/dappStaking/recoils"
+import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
+import { Clickable } from "@/ui/atoms/Clickable"
+import { Surface } from "@/ui/atoms/Surface"
+import { Text } from "@/ui/atoms/Text"
+import { AlertDialog } from "@/ui/molecules/AlertDialog"
 import { truncateAddress } from "@/util/truncateAddress"
 
 type DappPickerDialogProps = {
