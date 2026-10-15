@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url"
 const CLOUDFLARE_HEADERS_LINE_LIMIT = 2000
 
 const scriptHashes = (html: string) =>
-	[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)]
+	[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script[^>]*>/gi)]
 		.filter(([, attributes = ""]) => !/\bsrc\s*=/i.test(attributes))
 		.map(([, , body = ""]) => {
 			const parsedBody = body.replaceAll(/\r\n?/g, "\n").replaceAll("\0", "\uFFFD")
