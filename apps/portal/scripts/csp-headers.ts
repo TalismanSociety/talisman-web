@@ -5,10 +5,10 @@ import { fileURLToPath } from "node:url"
 const CLOUDFLARE_HEADERS_LINE_LIMIT = 2000
 
 const scriptHashes = (html: string) =>
-	[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)]
-		.filter(([, attributes = ""]) => !/\bsrc=/.test(attributes))
+	[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)]
+		.filter(([, attributes = ""]) => !/\bsrc\s*=/i.test(attributes))
 		.map(([, , body = ""]) => {
-			const parsedBody = body.replaceAll(/\r\n?/g, "\n").replaceAll("\0", "�")
+			const parsedBody = body.replaceAll(/\r\n?/g, "\n").replaceAll("\0", "\uFFFD")
 			return `'sha256-${createHash("sha256").update(parsedBody, "utf8").digest("base64")}'`
 		})
 

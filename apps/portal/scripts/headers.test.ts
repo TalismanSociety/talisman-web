@@ -78,6 +78,12 @@ describe("cspHeader", () => {
 		)
 	})
 
+	it("hashes inline scripts whatever the tag case", () => {
+		expect(cspHeader('<SCRIPT>a\nb</SCRIPT ><Script SRC="/assets/index.js"></Script>')).toContain(
+			"script-src 'self' 'wasm-unsafe-eval' 'sha256-fhj3NzEbLcOy8mndeDlrA1HxT7Zu+oefdoyyMYGIPHg=' https://us-assets.i.posthog.com;"
+		)
+	})
+
 	it("refuses a shell without inline scripts", () => {
 		expect(() => cspHeader('<script src="/assets/index.js"></script>')).toThrow(
 			"No inline script in the shell to hash"
