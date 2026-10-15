@@ -33,7 +33,7 @@ import {
 } from "@/domains/staking/substrate/nominationPools/recoils"
 import { truncateAddress } from "@/util/truncateAddress"
 
-export type NominationPoolsStatisticsSideSheetProps = {
+type NominationPoolsStatisticsSideSheetProps = {
 	account: Account
 	onRequestDismiss: () => unknown
 }

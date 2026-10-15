@@ -9,7 +9,7 @@ import { Decimal } from "@/util/Decimal"
 
 export const SEEK_REWARDS_PAID_BY_USER_QUERY_KEY = "seekRewardsPaidByUser"
 
-export type SeekUser = {
+type SeekUser = {
 	createdAt: string
 	createdBlock: number
 	id: string
@@ -18,7 +18,7 @@ export type SeekUser = {
 	updatedAtBlock: number
 }
 
-export type SeekUserResponse = {
+type SeekUserResponse = {
 	users: SeekUser[]
 }
 
@@ -52,7 +52,7 @@ const fetchSeekUserData = async (userId: string): Promise<SeekUser | null> => {
 	}
 }
 
-export const useGetSeekRewardsPaidByUser = (address: string) => {
+const useGetSeekRewardsPaidByUser = (address: string) => {
 	const userAddress = address.toLowerCase()
 	const result = useQuery({
 		queryKey: [SEEK_REWARDS_PAID_BY_USER_QUERY_KEY, userAddress],

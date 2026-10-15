@@ -13,8 +13,6 @@ export type ListItemProps = HTMLMotionProps<"article"> & {
 	revealTrailingContentOnHover?: boolean
 }
 
-export type MotionVariant = "hover"
-
 export const ListItem = ({
 	headlineContent,
 	overlineContent,

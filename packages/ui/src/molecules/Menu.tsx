@@ -29,9 +29,9 @@ export type MenuProps = {
 	children: [ReactElement<MenuButtonProps>, ReactElement<MenuItemsProps>]
 }
 
-export type MenuButtonProps = { children: ReactNode | ((props: { open: boolean }) => ReactNode) }
+type MenuButtonProps = { children: ReactNode | ((props: { open: boolean }) => ReactNode) }
 
-export type MenuItemsProps = Omit<
+type MenuItemsProps = Omit<
 	DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>,
 	"children"
 > & {

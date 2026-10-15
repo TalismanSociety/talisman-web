@@ -19,7 +19,7 @@ export type AlertDialogProps = Omit<DialogProps, "title" | "content"> & {
 	targetWidth?: string | number
 }
 
-export const ALERT_DIALOG_PADDING = "2.4rem"
+const ALERT_DIALOG_PADDING = "2.4rem"
 
 const show = keyframes`
   from {

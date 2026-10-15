@@ -72,7 +72,7 @@ const getPositionStyle = (
 	]
 }
 
-export const TOASTER_DEFAULT_OFFSET = 16
+const TOASTER_DEFAULT_OFFSET = 16
 
 export const Toaster = ({
 	className,

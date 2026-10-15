@@ -57,7 +57,7 @@ export const lookupAccountAddressState = atom<string | undefined>({
 	],
 })
 
-export const lookupAccountsState = selector<Account[]>({
+const lookupAccountsState = selector<Account[]>({
 	key: "LookupAccount",
 	get: ({ get }) =>
 		Maybe.of(get(lookupAccountAddressState)).mapOr([] as Account[], (address) =>
@@ -182,14 +182,6 @@ export const substrateAccountsState = selector({
 	get: ({ get }) => {
 		const accounts = get(accountsState)
 		return accounts.filter((x) => x.type !== "ethereum")
-	},
-})
-
-export const evmAccountsState = selector({
-	key: "EvmAccountsState",
-	get: ({ get }) => {
-		const accounts = get(accountsState)
-		return accounts.filter((x) => x.type === "ethereum")
 	},
 })
 

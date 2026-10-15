@@ -14,7 +14,7 @@ type PolymorphicTabProps<T extends TabElementType = "li"> = PropsWithChildren<{
 	selected?: boolean
 }>
 
-export type TabProps<T extends TabElementType = "button"> = PolymorphicTabProps<T> &
+type TabProps<T extends TabElementType = "button"> = PolymorphicTabProps<T> &
 	Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicTabProps<T>>
 
 const Tab = <T extends TabElementType = "li">({ as = "li" as T, ...props }: TabProps<T>) => {

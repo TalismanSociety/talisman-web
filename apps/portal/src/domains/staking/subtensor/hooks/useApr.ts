@@ -1,12 +1,6 @@
 import type { BondOption } from "../types"
 import { useCombinedBittensorValidatorsData } from "./useCombinedBittensorValidatorsData"
 
-export const useHighestAprFormatted = () => {
-	const apr = useHighestApr()
-
-	return Number(apr).toLocaleString(undefined, { style: "percent", maximumFractionDigits: 2 })
-}
-
 export const useHighestApr = () => {
 	const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
 

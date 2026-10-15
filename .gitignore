@@ -8,6 +8,8 @@ node_modules
 *.tsbuildinfo
 apps/*/vite.config.js
 apps/*/vite.config.d.ts
+apps/*/vitest.config.js
+apps/*/vitest.config.d.ts
 apps/*/playwright.config.js
 apps/*/playwright.config.d.ts
 

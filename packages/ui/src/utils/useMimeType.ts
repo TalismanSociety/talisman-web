@@ -66,5 +66,3 @@ export const useMimeType = (src: string | readonly string[] | undefined, fetchMi
 
 	return [type, subType] as const
 }
-
-export default useMimeType

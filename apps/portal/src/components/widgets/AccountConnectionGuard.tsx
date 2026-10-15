@@ -15,7 +15,7 @@ import { walletConnectionSideSheetOpenState } from "./WalletConnectionSideSheet"
 
 export type AccountConnectionGuardProps = { children?: ReactNode; noSuspense?: boolean }
 
-export const useShouldShowAccountConnectionGuard = () => {
+const useShouldShowAccountConnectionGuard = () => {
 	const hasActiveWalletConnection = useHasActiveWalletConnection()
 	const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
 	const lookupAccount = useRecoilValue(lookupAccountAddressState)

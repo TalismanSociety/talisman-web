@@ -1,6 +1,6 @@
 import { atom } from "jotai"
 
-export const DEFAULT_MAX_SLIPPAGE = 5.5
+const DEFAULT_MAX_SLIPPAGE = 5.5
 
 export const bittensorSlippageAtom = atom<number>(0)
 

@@ -67,16 +67,3 @@ export const writeableBalancesState = selector({
 	dangerouslyAllowMutability: true,
 	cachePolicy_UNSTABLE: { eviction: "most-recent" },
 })
-
-export type CoinGeckoErc20Coin = {
-	id: string
-	symbol: string
-	name: string
-	asset_platform_id: string
-	contract_address: string
-	image: {
-		thumb: string
-		small: string
-		large: string
-	}
-}

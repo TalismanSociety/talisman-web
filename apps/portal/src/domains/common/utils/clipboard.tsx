@@ -9,13 +9,3 @@ export const copyAddressToClipboard = async (address: string) => {
 		{ icon: <Copy /> }
 	)
 }
-
-export const copyExtrinsicHashToClipboard = async (hash: string) => {
-	await navigator.clipboard.writeText(hash)
-	toast(
-		<ToastMessage headlineContent="Extrinsic hash copied to clipboard" supportingContent={hash} />,
-		{
-			icon: <Copy />,
-		}
-	)
-}
