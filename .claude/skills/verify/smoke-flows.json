@@ -1,0 +1,210 @@
+[
+  {
+    "name": "pools-join",
+    "account": "Guardians SUB",
+    "path": "/staking/providers?action=stake&type=nomination-pools&chain=polkadot-asset-hub",
+    "steps": [["dialog"], ["fill", "0.00", "1"], ["press", "Stake"]]
+  },
+  {
+    "name": "pools-join-avail",
+    "account": "Guardians SUB",
+    "path": "/staking/providers?action=stake&type=nomination-pools&chain=avail",
+    "steps": [["dialog"], ["fill", "0.00", "1"], ["press", "Stake"]]
+  },
+  {
+    "name": "pools-claim",
+    "account": "Guardians SUB",
+    "path": "/staking/positions",
+    "steps": [["row", "Kusama Asset Hub", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Claim"]],
+    "submit": "network fee; moves the pending pool rewards to the free balance"
+  },
+  {
+    "name": "pools-claim-cere",
+    "account": "Guardians SUB",
+    "path": "/staking/positions",
+    "steps": [["row", "Cere", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Claim"]]
+  },
+  {
+    "name": "pools-bond-extra",
+    "account": "Guardians SUB",
+    "path": "/staking/positions",
+    "steps": [
+      ["row", "Kusama Asset Hub", "Talisman Pool"],
+      ["press", "#icon"],
+      ["dialog"],
+      ["fill", "0.00", "0.001"],
+      ["press", "Stake"]
+    ],
+    "submit": "network fee; bonds 0.001 KSM more into the pool, which stays the account's stake"
+  },
+  {
+    "name": "pools-restake",
+    "account": "Guardians SUB",
+    "path": "/staking/positions",
+    "steps": [["row", "Cere", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Re-stake"]]
+  },
+  {
+    "name": "pools-unbond",
+    "account": "Guardians SUB",
+    "path": "/staking/positions",
+    "steps": [
+      ["row", "Kusama Asset Hub", "Talisman Pool"],
+      ["press", "#menu"],
+      ["page"],
+      ["press", "Unstake"],
+      ["dialog"],
+      ["fill", "0.00", "0.001"],
+      ["press", "Unstake"]
+    ]
+  },
+  {
+    "name": "pools-withdraw",
+    "account": "Guardians SUB",
+    "path": "/staking/positions",
+    "steps": [
+      ["row", "Kusama Asset Hub", "Talisman Pool"],
+      ["press", "Withdraw"]
+    ]
+  },
+  {
+    "name": "validator-unbond",
+    "account": "Guardians SUB",
+    "path": "/staking/positions",
+    "steps": [
+      ["row", "Kusama Asset Hub", "Validator staking"],
+      ["press", "#menu"],
+      ["page"],
+      ["press", "Unstake"],
+      ["dialog"],
+      ["fill", "0.00", "0.001"],
+      ["press", "Unstake"]
+    ]
+  },
+  {
+    "name": "validator-withdraw",
+    "account": "Guardians SUB",
+    "path": "/staking/positions",
+    "steps": [
+      ["row", "Vara", "Validator staking"],
+      ["press", "Withdraw"]
+    ]
+  },
+  {
+    "name": "subtensor-unstake",
+    "account": "Guardians SUB",
+    "path": "/staking/positions",
+    "steps": [
+      ["row", "TAO", "Bittensor", "Yuma"],
+      ["press", "#menu"],
+      ["page"],
+      ["press", "Unstake"],
+      ["dialog"],
+      ["fill", "0.00", "0.1"],
+      ["press", "Unstake"]
+    ],
+    "submit": "network fee; unstakes 0.1 TAO from root, no unbonding period; needs 0.2 TAO staked so 0.1 stays above the minimum"
+  },
+  {
+    "name": "subtensor-stake",
+    "account": "Guardians SUB",
+    "path": "/staking/providers?action=stake&type=subtensor&chain=bittensor",
+    "steps": [["dialog"], ["fill", "0.00", "0.1"], ["press", "Stake"]],
+    "submit": "network fee; stakes the 0.1 TAO back on root"
+  },
+  {
+    "name": "subtensor-dtao-stake",
+    "account": "Guardians SUB",
+    "path": "/staking/positions",
+    "steps": [
+      ["row", "SN46 Instant", "Yuma"],
+      ["press", "#icon"],
+      ["dialog"],
+      ["fill", "0.00", "0.01"],
+      ["press", "Stake"]
+    ]
+  },
+  {
+    "name": "subtensor-dtao-unstake",
+    "account": "Guardians SUB",
+    "path": "/staking/positions",
+    "steps": [
+      ["row", "SN46 Instant", "Yuma"],
+      ["press", "#menu"],
+      ["page"],
+      ["press", "Unstake"],
+      ["dialog"],
+      ["fill", "0.00", "1"],
+      ["press", "Unstake"]
+    ]
+  },
+  {
+    "name": "dapp-stake",
+    "account": "Guardians SUB",
+    "path": "/staking/providers?action=stake&type=dapp-staking&chain=astar",
+    "steps": [["dialog"], ["fill", "0.00", "500"], ["press", "Stake"]]
+  },
+  {
+    "name": "dapp-unlock",
+    "account": "Guardians SUB",
+    "path": "/staking/positions",
+    "steps": [
+      ["row", "Astar", "DApp staking"],
+      ["press", "#menu"],
+      ["page"],
+      ["press", "~locked"],
+      ["dialog"],
+      ["press", "Unlock"]
+    ]
+  },
+  {
+    "name": "seek-stake",
+    "account": "Guardians EVM",
+    "path": "/staking/positions",
+    "steps": [
+      ["row", "SEEK", "Ethereum"],
+      ["press", "#icon"],
+      ["dialog"],
+      ["fill", "0.00", "1"],
+      ["press", "Approve Spend|Stake"]
+    ]
+  },
+  {
+    "name": "seek-claim",
+    "account": "Guardians EVM",
+    "path": "/staking/positions",
+    "steps": [
+      ["row", "SEEK", "Ethereum"],
+      ["press", "Claim"]
+    ],
+    "submit": "Ethereum gas; moves the earned SEEK rewards to the wallet"
+  },
+  {
+    "name": "seek-unstake",
+    "account": "Guardians EVM",
+    "path": "/staking/positions",
+    "steps": [
+      ["row", "SEEK", "Ethereum"],
+      ["press", "#menu"],
+      ["page"],
+      ["press", "Unstake"],
+      ["dialog"],
+      ["fill", "0.00", "1"],
+      ["press", "Unstake"]
+    ]
+  },
+  {
+    "name": "seek-cancel-unstake",
+    "account": "Guardians EVM",
+    "path": "/staking/positions",
+    "steps": [["row", "SEEK", "Ethereum"], ["press", "#menu"], ["page"], ["press", "Cancel Unstake"]]
+  },
+  {
+    "name": "seek-withdraw",
+    "account": "Guardians EVM",
+    "path": "/staking/positions",
+    "steps": [
+      ["row", "SEEK", "Ethereum"],
+      ["press", "Withdraw"]
+    ]
+  }
+]
