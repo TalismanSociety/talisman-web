@@ -1,11 +1,13 @@
 import { Suspense } from "react"
 import { useRecoilValue } from "recoil"
 import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
-import { selectedBalancesFiatSumState } from "@/domains/balances/recoils"
+import { selectedCurrencyState } from "@/domains/balances/currency"
+import { useSelectedBalances } from "@/domains/balances/hooks"
 import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 
 const TotalSuspense = () => {
-	return <AnimatedFiatNumber end={useRecoilValue(selectedBalancesFiatSumState).total} />
+	const currency = useRecoilValue(selectedCurrencyState)
+	return <AnimatedFiatNumber end={useSelectedBalances().sum.fiat(currency).total} />
 }
 
 /** @deprecated */

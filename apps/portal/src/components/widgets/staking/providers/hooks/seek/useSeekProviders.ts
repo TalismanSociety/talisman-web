@@ -1,4 +1,4 @@
-import { evmErc20TokenId } from "@talismn/balances-react"
+import { evmErc20TokenId } from "@talismn/chaindata-provider"
 
 import SeekLogo from "@/assets/seek.svg"
 import {

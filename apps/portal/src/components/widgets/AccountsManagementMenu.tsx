@@ -2,12 +2,7 @@ import { useTheme } from "@emotion/react"
 import type React from "react"
 import type { ReactNode } from "react"
 import { useMemo } from "react"
-import {
-	useRecoilValue,
-	useRecoilValueLoadable,
-	useResetRecoilState,
-	useSetRecoilState,
-} from "recoil"
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil"
 import Logo from "@/assets/logo.svg?react"
 import { AccountIcon } from "@/components/molecules/AccountIcon"
 import { AddReadOnlyAccountDialog } from "@/components/widgets/AddReadOnlyAccountDialog"
@@ -21,19 +16,19 @@ import {
 	selectedAccountAddressesState,
 	selectedAccountsState,
 } from "@/domains/accounts/recoils"
-import { fiatBalanceGetterState, portfolioBalancesFiatSumState } from "@/domains/balances/recoils"
+import { useBalances } from "@/domains/balances/balances"
+import { selectedCurrencyState } from "@/domains/balances/currency"
+import { filterBalancesByAddresses, usePortfolioBalances } from "@/domains/balances/hooks"
 import { copyAddressToClipboard } from "@/domains/common/utils/clipboard"
 import { Copy, Ethereum, Eye, EyePlus, Trash2, Users, Wallet, X } from "@/icons"
 import { useOnChainId } from "@/libs/onChainId/hooks/useOnChainId"
 import { Chip } from "@/ui/atoms/Chip"
-import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 import { Hr } from "@/ui/atoms/Hr"
 import { SurfaceIcon } from "@/ui/atoms/Icon"
 import { IconButton } from "@/ui/atoms/IconButton"
 import { Text } from "@/ui/atoms/Text"
 import { Tooltip } from "@/ui/atoms/Tooltip"
 import { Menu } from "@/ui/molecules/Menu"
-import { Maybe } from "@/util/monads"
 import { truncateAddress } from "@/util/truncateAddress"
 
 const EvmChip = () => {
@@ -103,7 +98,8 @@ export const AccountsManagementMenu = Object.assign(
 	(props: { className?: string; button: ReactNode }) => {
 		const theme = useTheme()
 
-		const portfolioBalanceLoadable = useRecoilValueLoadable(portfolioBalancesFiatSumState)
+		const currency = useRecoilValue(selectedCurrencyState)
+		const portfolioFiatTotal = usePortfolioBalances().sum.fiat(currency).total
 
 		const setSelectedAccountAddresses = useSetRecoilState(selectedAccountAddressesState)
 		const resetSelectedAccountAddresses = useResetRecoilState(selectedAccountAddressesState)
@@ -115,7 +111,9 @@ export const AccountsManagementMenu = Object.assign(
 		const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
 		const selectedAddresses = useRecoilValue(selectedAccountAddressesState)
 
-		const getFiatBalanceLoadable = useRecoilValueLoadable(fiatBalanceGetterState)
+		const balances = useBalances()
+		const fiatBalance = (address: string) =>
+			filterBalancesByAddresses(balances, [address]).sum.fiat(currency).total
 
 		const leadingMenuItem = useMemo(() => {
 			if (portfolioAccounts.length <= 0) {
@@ -135,10 +133,7 @@ export const AccountsManagementMenu = Object.assign(
 
 			return (
 				<Menu.Item.Button
-					headlineContent={Maybe.of(portfolioBalanceLoadable.valueMaybe()).mapOr(
-						<CircularProgressIndicator size="1em" />,
-						(amount) => <AnimatedFiatNumber end={amount.total} />
-					)}
+					headlineContent={<AnimatedFiatNumber end={portfolioFiatTotal} />}
 					overlineContent="My accounts"
 					leadingContent={
 						<SurfaceIcon contentColor={theme.color.primary}>
@@ -153,7 +148,7 @@ export const AccountsManagementMenu = Object.assign(
 			)
 		}, [
 			portfolioAccounts.length,
-			portfolioBalanceLoadable,
+			portfolioFiatTotal,
 			props.className,
 			resetLookupAccountAddress,
 			resetSelectedAccountAddresses,
@@ -193,11 +188,7 @@ export const AccountsManagementMenu = Object.assign(
 									<Menu.Item.Button
 										key={index}
 										className={selectedAddresses?.includes(x.address) ? "bg-primary/5" : ""}
-										headlineContent={Maybe.of(
-											getFiatBalanceLoadable.valueMaybe()?.(x.address)
-										).mapOr(<CircularProgressIndicator size="1em" />, (balance) => (
-											<AnimatedFiatNumber end={balance.total} />
-										))}
+										headlineContent={<AnimatedFiatNumber end={fiatBalance(x.address)} />}
 										overlineContent={({ hover }) => (
 											<div
 												css={
@@ -254,11 +245,7 @@ export const AccountsManagementMenu = Object.assign(
 									<RemoveWatchedAccountConfirmationDialog key={index} account={account}>
 										{({ onToggleOpen: toggleRemoveDialog }) => (
 											<Menu.Item.Button
-												headlineContent={Maybe.of(
-													getFiatBalanceLoadable.valueMaybe()?.(account.address)
-												).mapOr(<CircularProgressIndicator size="1em" />, (balance) => (
-													<AnimatedFiatNumber end={balance.total} />
-												))}
+												headlineContent={<AnimatedFiatNumber end={fiatBalance(account.address)} />}
 												overlineContent={({ hover }) => (
 													<AccountsManagementAddress
 														name={account.name}

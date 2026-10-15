@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import { useRecoilValue, waitForAll } from "recoil"
 
 import { selectedCurrencyState } from "@/domains/balances/currency"
-import { selectedBalancesState } from "@/domains/balances/recoils"
+import { useSelectedBalances } from "@/domains/balances/hooks"
 
 import { useTotalStaked as useDappStakingTotalStaked } from "./dappStaking/hooks/useTotalStaked"
 import { lidoSuitesState } from "./lido/recoils"
@@ -10,9 +10,10 @@ import { useTotalStaked as useSubstrateTotalStaked } from "./substrate/useTotalS
 import { useTotalStaked as useSubtensorTotalStaked } from "./subtensor/hooks/useTotalStaked"
 
 export const useTotalStaked = () => {
-	const [lidoSuites, balances, currency] = useRecoilValue(
-		waitForAll([lidoSuitesState, selectedBalancesState, selectedCurrencyState])
+	const [lidoSuites, currency] = useRecoilValue(
+		waitForAll([lidoSuitesState, selectedCurrencyState])
 	)
+	const balances = useSelectedBalances()
 	const { fiatTotal: substrateFiatTotal } = useSubstrateTotalStaked()
 	const dappStakingTotal = useDappStakingTotalStaked()
 	const subtensorTotal = useSubtensorTotalStaked()

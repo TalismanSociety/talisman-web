@@ -1,8 +1,7 @@
-import { evmNetworksAtom } from "@talismn/balances-react"
+import { type EthNetwork, isNetworkEth } from "@talismn/chaindata-provider"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { useAtomValue } from "jotai"
 import type { PropsWithChildren } from "react"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import type { EIP1193Provider } from "viem"
 import { createConfig, fallback, http, WagmiProvider } from "wagmi"
 import {
@@ -18,16 +17,12 @@ import {
 } from "wagmi/chains"
 import { injected } from "wagmi/connectors"
 
+import { useNetworksById } from "@/domains/chains/chaindata-provider"
+
 declare global {
 	interface Window {
 		talismanEth?: EIP1193Provider
 	}
-}
-
-// Type for EVM network from chaindata
-type EvmNetwork = {
-	id: string | number
-	rpcs?: Array<{ url: string }> | null
 }
 
 const chains = [
@@ -43,15 +38,15 @@ const chains = [
 ] as const
 
 // Create wagmi config with chaindata RPCs
-const createWagmiConfigWithChaindata = (evmNetworks: EvmNetwork[]) =>
+const createWagmiConfigWithChaindata = (evmNetworks: EthNetwork[]) =>
 	createConfig({
 		chains,
 		connectors: [injected()],
 		transports: Object.fromEntries(
 			chains.map((chain) => {
-				const network = evmNetworks.find((n) => n.id.toString() === chain.id.toString())
-				const rpcs = network?.rpcs?.map((rpc) => rpc.url).filter(Boolean) || []
-				return [chain.id, fallback([...rpcs.map((url: string) => http(url)), http()])]
+				const network = evmNetworks.find((n) => n.id === chain.id.toString())
+				const rpcs = network?.rpcs ?? []
+				return [chain.id, fallback([...rpcs.map((url) => http(url)), http()])]
 			})
 		) as Record<(typeof chains)[number]["id"], ReturnType<typeof fallback>>,
 	})
@@ -83,11 +78,12 @@ migrate()
 const queryClient = new QueryClient()
 
 export const EvmProvider = (props: PropsWithChildren) => {
-	const evmNetworks = useAtomValue(evmNetworksAtom)
+	const networks = useNetworksById()
+	const evmNetworks = useMemo(() => Object.values(networks).filter(isNetworkEth), [networks])
 	const [config, setConfig] = useState(defaultConfig)
 
 	useEffect(() => {
-		if (evmNetworks && evmNetworks.length > 0) {
+		if (evmNetworks.length > 0) {
 			const newConfig = createWagmiConfigWithChaindata(evmNetworks)
 			setConfig(newConfig)
 		}
