@@ -3,7 +3,6 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 
 import { RouteErrorElement } from '@/components/widgets/ErrorBoundary'
 
-import Admin from './admin'
 import { Layout } from './layout'
 import portfolioRoutes from './portfolio'
 import stakingRoutes from './staking'
@@ -20,7 +19,7 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
       { path: 'transport', ...dexRoutes },
       { path: 'nfts', element: <Navigate to="/portfolio/collectibles" /> },
       { path: 'staking', ...stakingRoutes },
-      { path: '/admin', element: <Admin /> },
+      { path: 'admin', element: <Navigate to="/staking" /> },
     ],
   },
   { path: '*', element: <Navigate to="/" /> },
