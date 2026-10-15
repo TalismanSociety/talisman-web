@@ -3,7 +3,7 @@
   "workspaces": {
     ".": {
       "entry": [".claude/skills/*/bin/*.{js,mjs}", ".claude/skills/*/docker/*.mjs"],
-      "ignoreDependencies": ["wrangler"]
+      "ignoreDependencies": ["wrangler", "@polkadot/api", "@polkadot/util-crypto"]
     },
     "apps/portal": {
       "project": ["src/**/*.{ts,tsx,css}"],

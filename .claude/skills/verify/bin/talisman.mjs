@@ -216,10 +216,10 @@ switch (command) {
 		await withPopup(async (page, _text, target) => {
 			console.log(`clicked ${await clickButton(page, `(t) => t === "Cancel" || t === "Reject"`)}`)
 			await waitForClose(target)
-		})
+		}, option("popup"))
 		break
 	default:
 		fail(
-			"usage: talisman.mjs unlock | accounts | list | text | connect [--account <name>]... | site [host] | approve --signer <name> --popup <id> | reject"
+			"usage: talisman.mjs unlock | accounts | list | text | connect [--account <name>]... | site [host] | approve --signer <name> --popup <id> | reject [--popup <id>]"
 		)
 }
