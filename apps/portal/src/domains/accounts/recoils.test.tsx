@@ -1,10 +1,8 @@
 import { act, renderHook } from "@testing-library/react"
 import { RecoilRoot, useRecoilState } from "recoil"
-import { describe, expect, it, vi } from "vitest"
+import { describe, expect, it } from "vitest"
 
 import { readOnlyAccountsState } from "./recoils"
-
-vi.mock("@/routes", () => ({ default: { navigate: vi.fn(), subscribe: vi.fn() } }))
 
 const substrateAddress = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
 const evmAddress = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"

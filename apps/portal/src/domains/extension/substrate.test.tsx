@@ -1,10 +1,8 @@
 import { act, renderHook } from "@testing-library/react"
 import { RecoilRoot, useRecoilState } from "recoil"
-import { describe, expect, it, vi } from "vitest"
+import { describe, expect, it } from "vitest"
 
 import { connectedSubstrateWalletIdState } from "./substrate"
-
-vi.mock("@/routes", () => ({ default: { navigate: vi.fn(), subscribe: vi.fn() } }))
 
 const renderConnectedWalletId = () =>
 	renderHook(() => useRecoilState(connectedSubstrateWalletIdState), { wrapper: RecoilRoot })

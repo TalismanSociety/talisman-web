@@ -8,10 +8,8 @@ import { atom, selector, useRecoilValue, useSetRecoilState, waitForAll } from "r
 import { isAddress as isEvmAddress } from "viem"
 
 import { storageEffect } from "@/domains/common/effects"
-import router from "@/routes"
 import { tryParseSubstrateOrEthereumAddress } from "@/util/addressValidation"
 import { Maybe } from "@/util/monads"
-import { isNilOrWhitespace } from "@/util/nil"
 
 type AccountWithOrigin = InjectedAccount & { origin?: "injected" | "local" }
 
@@ -22,39 +20,11 @@ export type Account = AccountWithOrigin & AccountWithReadonlyInfo & { canSignEvm
 
 export type ReadonlyAccount = Pick<Account, "address" | "name">
 
-const lookupAddressSearchKey = "lookup-address"
+export const lookupAddressSearchKey = "lookup-address"
 
 export const lookupAccountAddressState = atom<string | undefined>({
 	key: "LookupAccountAddress",
 	default: new URLSearchParams(globalThis.location.search).get(lookupAddressSearchKey) ?? undefined,
-	effects: [
-		// Add lookup address to search params on change
-		({ onSet, getPromise }) => {
-			onSet((newValue) => {
-				const searchParams = new URLSearchParams(globalThis.location.search)
-
-				if (newValue === undefined || newValue.trim() === "") {
-					searchParams.delete(lookupAddressSearchKey)
-				} else {
-					searchParams.set(lookupAddressSearchKey, newValue)
-				}
-
-				void router.navigate(`?${searchParams.toString()}`, { replace: true })
-			})
-
-			// Persist lookup address between navigation
-
-			router.subscribe(async (state) => {
-				const search = new URLSearchParams(state.location.search)
-				const currentValue = await getPromise(lookupAccountAddressState)
-
-				if (!search.has(lookupAddressSearchKey) && !isNilOrWhitespace(currentValue)) {
-					search.set(lookupAddressSearchKey, currentValue)
-					void router.navigate(`?${search.toString()}`, { replace: true })
-				}
-			})
-		},
-	],
 })
 
 const lookupAccountsState = selector<Account[]>({

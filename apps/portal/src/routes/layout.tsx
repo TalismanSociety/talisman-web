@@ -2,6 +2,7 @@ import { usePostHog } from "posthog-js/react"
 import { Suspense, useEffect } from "react"
 import { Outlet, useLocation } from "react-router-dom"
 
+import { LookupAddressSync } from "@/app-shell/LookupAddressSync"
 import { FullscreenLoader } from "@/components/molecules/FullscreenLoader"
 import { SiteFooter } from "@/components/widgets/SiteFooter"
 import { SiteNav } from "@/components/widgets/SiteNav"
@@ -41,6 +42,7 @@ export const Layout = () => {
 
 	return (
 		<div className="flex min-h-screen flex-col gap-8">
+			<LookupAddressSync />
 			<SiteNav contentClassName="mx-auto w-full max-w-screen-xl px-8" />
 
 			<Suspense fallback={<FullscreenLoader />}>
