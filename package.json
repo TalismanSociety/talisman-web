@@ -10,7 +10,6 @@
   "scripts": {
     "postinstall": "husky install",
     "dev": "yarn turbo run dev --concurrency 13",
-    "dev:swap": "yarn turbo run dev --filter=swap --concurrency 13",
     "build": "yarn turbo run build",
     "test": "yarn turbo run test",
     "lint": "yarn turbo run lint",
