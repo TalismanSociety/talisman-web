@@ -97,10 +97,15 @@ async function drive(flow, result) {
 			} else if (outcome?.type !== undefined) await page.send("Input.insertText", { text: outcome.type })
 			return typeof outcome === "object" || outcome
 		}
-		const step = (args, timeout = STEP_TIMEOUT) =>
-			until(`step ${JSON.stringify(args)}`, timeout, async () =>
-				act(await page.evaluate(`window.__smokeStep(${JSON.stringify(args)})`))
-			)
+		const step = (args, timeout = STEP_TIMEOUT) => {
+			let previous
+			return until(`step ${JSON.stringify(args)}`, timeout, async () => {
+				const outcome = await page.evaluate(`window.__smokeStep(${JSON.stringify(args)})`)
+				const settled = !outcome?.click || JSON.stringify(outcome) === JSON.stringify(previous)
+				previous = outcome
+				return settled ? act(outcome) : "waiting for the button to hold still"
+			})
+		}
 		const escape = async () => {
 			const key = { key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 }
 			await page.send("Input.dispatchKeyEvent", { type: "keyDown", ...key })
