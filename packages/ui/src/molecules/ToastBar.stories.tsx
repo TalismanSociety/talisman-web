@@ -12,7 +12,6 @@ export default {
 	},
 } as ComponentMeta<typeof ToastBar>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<ToastBarProps> = (args: any) => <ToastBar {...args} />
 
 Default.args = {

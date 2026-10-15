@@ -12,7 +12,6 @@ type Story = StoryObj<typeof DappStakingSideSheet>
 
 export const Default: Story = {
 	args: {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		children: <DappStakingForm {...(DappStakingFormDefault.args as any)} />,
 		chainName: "Astar",
 		rewards: "10%",

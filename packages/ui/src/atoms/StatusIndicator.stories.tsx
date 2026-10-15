@@ -11,7 +11,6 @@ export default {
 	},
 } as ComponentMeta<typeof StatusIndicator>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Template: Story<StatusIndicatorProps> = (args: any) => <StatusIndicator {...args} />
 
 export const Success = Template.bind({})

@@ -12,7 +12,6 @@ export default {
 	},
 } as ComponentMeta<typeof ErrorMessage>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<ErrorMessageProps> = (args: any) => <ErrorMessage {...args} />
 
 Default.args = {

@@ -1,7 +1,6 @@
 /// <reference types="vite/client" />
 /// <reference types="vite-plugin-svgr/client" />
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface ImportMetaEnv {
 	VITE_APPLICATION_NAME: string
 	VITE_COIN_GECKO_API: string
@@ -24,9 +23,7 @@ interface ImportMetaEnv {
 }
 
 declare namespace JSX {
-	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface IntrinsicElements {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		"model-viewer": any
 	}
 }

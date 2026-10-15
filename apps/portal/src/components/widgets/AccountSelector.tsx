@@ -171,7 +171,6 @@ export const useAccountSelector = (
 
 	return [
 		[selectedAccount, setAccount] as const,
-		// eslint-disable-next-line react/jsx-key
 		<AccountSelector
 			{...accountSelectorProps}
 			accounts={accounts}

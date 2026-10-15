@@ -23,14 +23,12 @@ export type SubmittableResultLoadable =
 	| { state: "idle"; contents: undefined }
 	| { state: "loading"; contents: ISubmittableResult | undefined }
 	| { state: "hasValue"; contents: ISubmittableResult }
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	| { state: "hasError"; contents: any }
 
 export type ExtrinsicLoadable = (
 	| { state: "idle"; contents: undefined }
 	| { state: "loading"; contents: ISubmittableResult | undefined }
 	| { state: "hasValue"; contents: ISubmittableResult }
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	| { state: "hasError"; contents: any }
 ) & {
 	signAndSend: (account: AddressOrPair) => Promise<ISubmittableResult>
@@ -221,12 +219,10 @@ export function useExtrinsic(
 					}
 				}
 			},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[
 			contextChain,
 			endpoint,
 			moduleOrSubmittable,
-			// eslint-disable-next-line react-hooks/exhaustive-deps
 			JSON.stringify(params),
 			signetAccount,
 			sdk,

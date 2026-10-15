@@ -6,7 +6,6 @@ import { useCallback, useMemo, useTransition } from "react"
 import { CircularProgressIndicator } from "./CircularProgressIndicator"
 import { useSurfaceColor } from "./Surface"
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ButtonElementType = Extract<React.ElementType, "button" | "a"> | ElementType<any>
 
 type PolymorphicButtonProps<T extends ButtonElementType = "button"> = PropsWithChildren<{
@@ -141,15 +140,12 @@ export const Button = <T extends ButtonElementType = "button">({
 	const hasLeadingIcon = Boolean(loading) || leadingIcon !== undefined
 
 	const onClick = useCallback(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		(...args: any[]) => {
 			if (withTransition) {
 				return startTransition(() => {
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					;(props as any).onClick?.(...args)
 				})
 			} else {
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				return (props as any).onClick?.(...args)
 			}
 		},
@@ -160,7 +156,6 @@ export const Button = <T extends ButtonElementType = "button">({
 
 	return (
 		<Component
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			{...(props as any)}
 			onClick={onClick}
 			disabled={disabled}

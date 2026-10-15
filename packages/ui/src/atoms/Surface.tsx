@@ -42,7 +42,6 @@ export const Surface = forwardRef(
 		const backgroundColor = useSurfaceColorAtElevation(elevation)
 
 		return (
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			<Element ref={ref} {...(props as any)} css={{ backgroundColor }}>
 				{props["children"] && (
 					<SurfaceElevationContext.Provider value={elevation + 1}>

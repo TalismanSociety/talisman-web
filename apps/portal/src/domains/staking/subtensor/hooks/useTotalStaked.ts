@@ -45,7 +45,6 @@ export const useTotalStaked = () => {
 			return (
 				loadable.contents
 					.map(
-						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						(staked: any) =>
 							nativeTokenAmounts.contents
 								.at(chainIndex)

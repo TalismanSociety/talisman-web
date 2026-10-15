@@ -13,7 +13,6 @@ export default {
 	},
 } as ComponentMeta<typeof SideSheet>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<SideSheetProps> = (args: any) => (
 	<>
 		<Global

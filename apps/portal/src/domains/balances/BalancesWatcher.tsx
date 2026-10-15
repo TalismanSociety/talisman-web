@@ -15,7 +15,6 @@ export const BalancesWatcher = () => {
 	const unfilteredBalances = useBalances()
 	const balances = useMemo(() => unfilteredBalances, [unfilteredBalances])
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(
 		useRecoilCallback(({ set }) => () => {
 			set(balancesState, balances)

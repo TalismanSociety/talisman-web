@@ -31,7 +31,6 @@ const AvailableBalanceDisplay = ({
 	symbol,
 	setAvailableBalanceValue,
 }: AvailableBalanceDisplayProps) => {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const hookMap: Record<hookMapKey, (arg0?: any, arg1?: boolean) => AvailableBalance> = {
 		substrate: useAvailableBalance,
 		liquidStakingLido: useLidoAvailableBalance,

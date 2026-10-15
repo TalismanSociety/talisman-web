@@ -11,7 +11,6 @@ export default {
 	},
 } as ComponentMeta<typeof CircularProgressIndicator>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Template: Story<CircularProgressIndicatorProps> = (args: any) => (
 	<CircularProgressIndicator {...args} />
 )

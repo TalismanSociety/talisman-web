@@ -466,17 +466,13 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 		"Permissioned" | "PermissionlessCompound" | "PermissionlessWithdraw" | "PermissionlessAll"
 	>("Permissioned")
 
-	useEffect(
-		() => {
-			if (selectedPoolId !== undefined && chain.talismanPools?.includes(selectedPoolId)) {
-				setClaimPermission("PermissionlessCompound")
-			} else {
-				setClaimPermission("Permissioned")
-			}
-		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[selectedPoolId]
-	)
+	useEffect(() => {
+		if (selectedPoolId !== undefined && chain.talismanPools?.includes(selectedPoolId)) {
+			setClaimPermission("PermissionlessCompound")
+		} else {
+			setClaimPermission("Permissioned")
+		}
+	}, [selectedPoolId])
 
 	const joinPoolExtrinsic = useExtrinsic(
 		useCallback(

@@ -49,7 +49,6 @@ const MediaPlayer = (props: MediaPlayerProps) => {
 			)
 		case "model":
 			import("@google/model-viewer/dist/model-viewer")
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			return (
 				<model-viewer
 					src={props.src}

@@ -28,7 +28,6 @@ const StakePercentageDisplay = ({
 	hasDTaoStaking,
 	setStakePercentage,
 }: StakePercentageDisplayProps) => {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
 		nominationPool: useNominationPoolStakePercentage,
 		delegationSubtensor: useSubtensorStakePercentage,

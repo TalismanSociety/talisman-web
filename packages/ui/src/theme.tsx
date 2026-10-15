@@ -14,7 +14,6 @@ type Typography = {
 	margin?: string | number
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export interface Theme {
 	/** @deprecated */
 	primary: string
@@ -84,7 +83,6 @@ export interface Theme {
 type TalismanTheme = Theme
 
 declare module "@emotion/react" {
-	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	export interface Theme extends TalismanTheme {}
 }
 

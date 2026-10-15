@@ -134,16 +134,12 @@ export const useSubstrateExtensionEffect = () => {
 
 	// Auto connect on launch if Talisman extension is installed
 	// and user has not explicitly disable wallet connection
-	useEffect(
-		() => {
-			if (
-				(globalThis as InjectedWindow).injectedWeb3?.["talisman"] !== undefined &&
-				connectedWalletId === undefined
-			) {
-				setConnectedWalletId("talisman")
-			}
-		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[]
-	)
+	useEffect(() => {
+		if (
+			(globalThis as InjectedWindow).injectedWeb3?.["talisman"] !== undefined &&
+			connectedWalletId === undefined
+		) {
+			setConnectedWalletId("talisman")
+		}
+	}, [])
 }

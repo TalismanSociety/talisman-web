@@ -11,7 +11,6 @@ export default {
 	},
 } as ComponentMeta<typeof SectionHeader>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<SectionHeaderProps> = (args: any) => <SectionHeader {...args} />
 
 Default.args = {

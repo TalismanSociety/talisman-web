@@ -71,7 +71,6 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
 
 	const sortedWithdrawalIds =
 		withdrawalIds
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			?.flatMap((x) => x as any as bigint[])
 			.map(serializableBigInt)
 			.sort((a, b) => (a > b ? 1 : -1)) ?? []
@@ -115,17 +114,12 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
 
 	const blockNumber = useBlockNumber({ watch: true })
 
-	useEffect(
-		() => {
-			;[...firstQueryBatch, ...secondQueryBatch].forEach((query) => {
-				void query.refetch()
-			})
-			void refetchClaimables()
-		},
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[blockNumber]
-	)
+	useEffect(() => {
+		;[...firstQueryBatch, ...secondQueryBatch].forEach((query) => {
+			void query.refetch()
+		})
+		void refetchClaimables()
+	}, [blockNumber])
 
 	const withdrawals = withdrawalIds?.map((id, index) => ({
 		id: id as bigint,

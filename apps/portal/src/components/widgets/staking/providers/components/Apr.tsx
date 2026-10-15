@@ -35,7 +35,6 @@ type AprDisplayProps = Omit<AprProps, "genesisHash">
 
 // This component is used to get around the react rules of conditional hooks
 const AprDisplay = ({ typeId, apiEndpoint, hasDTaoStaking, setAprValues }: AprDisplayProps) => {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
 		nominationPool: useNominationPoolApr,
 		delegationSubtensor: useHighestApr,

@@ -11,7 +11,6 @@ export default {
 	},
 } as ComponentMeta<typeof AccountValueInfo>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<AccountValueInfoProps> = (args: any) => <AccountValueInfo {...args} />
 
 Default.args = {

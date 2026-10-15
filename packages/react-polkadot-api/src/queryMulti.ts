@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import type { ApiPromise } from "@polkadot/api"
 import type {
 	GenericStorageEntryFunction,

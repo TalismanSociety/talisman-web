@@ -69,13 +69,11 @@ export const useMoveStake = ({ stake, destinationHotkey }: MoveItem) => {
 
 	const isReady = stake && destinationHotkey && originHotkey !== destinationHotkey
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const tx: SubmittableExtrinsic<any> = useMemo(() => {
 		// Return null if stake or destinationHotkey is not defined
 		if (!stake || !destinationHotkey) return api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK)
 
 		return api.tx.utility.batchAll([
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			(api.tx as any)?.subtensorModule?.moveStake?.(
 				originHotkey,
 				destinationHotkey,
