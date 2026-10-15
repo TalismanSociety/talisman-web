@@ -12,7 +12,7 @@
     "dev": "yarn turbo run dev --concurrency 13",
     "dev:swap": "yarn turbo run dev --filter=swap --concurrency 13",
     "build": "yarn turbo run build",
-    "build:portal": "VITE_SENTRY_RELEASE=${WORKERS_CI_COMMIT_SHA:-} NODE_OPTIONS=--max_old_space_size=6144 yarn turbo run build --filter=@talismn/portal",
+    "build:portal": "VITE_SENTRY_RELEASE=${WORKERS_CI_COMMIT_SHA:-} NODE_OPTIONS=--max_old_space_size=4096 yarn turbo run build --filter=@talismn/portal",
     "test": "yarn turbo run test",
     "lint": "yarn turbo run lint",
     "check-types": "yarn turbo run check-types",
