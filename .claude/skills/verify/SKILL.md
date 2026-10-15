@@ -1,6 +1,6 @@
 ---
 name: verify
-description: Drive the Talisman Portal (apps/portal, staking dashboard) the way a user does, in a Docker browser of this checkout's own with the Chrome Web Store Talisman wallet and the developer's test accounts, and prove that a change renders every portal route pixel-identical to the parity baseline and builds the same staking transactions. Use to verify a UI or flow change, reproduce a bug, connect a wallet, run the visual parity gate or the staking smoke lane before a PR, or sign a test transaction with a Guardians account, from the main checkout or any git worktree.
+description: Drive the Talisman Portal (apps/portal, staking dashboard) the way a user does, in a Docker browser of this checkout's own with the Chrome Web Store Talisman wallet and the developer's test accounts, and prove that a change renders every portal route pixel-identical to the parity baseline and builds the same staking transactions. Use to verify a UI or flow change, reproduce a bug, connect a wallet, run the visual parity gate, the staking smoke lane or the CSP violation check before a PR, or sign a test transaction with a Guardians account, from the main checkout or any git worktree.
 ---
 
 # Verify the Talisman Portal
@@ -219,6 +219,22 @@ Not covered: Lido, whose every write happens inside the `stake.lido.fi` iframe, 
 
 **Adding a flow.** Add it next to its product, run `smoke.sh <flow>` twice on an unmodified checkout, and see `same` both times. Then change one argument of its transaction builder in a scratch edit, see `differ` naming the flow, and revert.
 
+## CSP violation check
+
+`bin/csp.sh` proves that the portal stays inside its Content Security Policy. The build appends a `Content-Security-Policy-Report-Only` line to `dist/client/_headers` (`apps/portal/scripts/csp-headers.ts`). A report-only policy blocks nothing, so this check is what shows it is safe to enforce.
+
+```sh
+.claude/skills/verify/bin/csp.sh                          # every parity route, both viewports, then every smoke flow
+.claude/skills/verify/bin/csp.sh providers pools-claim    # only these routes and flows
+CANDIDATE_URL=https://<preview host> .claude/skills/verify/bin/csp.sh   # a deployed Worker, with its own headers and env
+```
+
+It serves only the candidate: this checkout's production build through `serve.mjs`, which sends the build's `_headers` path rules, or `CANDIDATE_URL` through `proxy.mjs`. It stops when the candidate sends no CSP header. It loads every row of `parity-routes.tsv` in its wallet state (`VIEWPORTS` as in parity) and waits for the row's wait items, then runs every flow of `smoke-flows.json` through `smoke.mjs`, which cancels each signing request. For each step, `bin/csp.mjs` watches the tab through CDP: a `securitypolicyviolation` listener in every new document, and the console of the page and of its workers. Violations inside a cross-origin frame, such as Lido's, belong to that frame's own policy and are not read.
+
+The out dir (default `.tmp/verify/runs/<stamp>-csp`, or `OUT`) gets `summary.tsv` with `step`, `kind`, `violations`, `result` and `detail`, and a `<step>.jsonl` per step with each violation. A step fails on any violation, and when its route did not load or its watcher died. A step that did not load and recorded no violation runs again, up to `ATTEMPTS` (default 3) times in all; a violation in any attempt fails it. A flow that reads `unavailable` still loaded the portal, so it passes on 0 violations. The script exits 1 when any step fails.
+
+**Changing the policy.** Edit `apps/portal/scripts/csp-headers.ts` and its test, rebuild, then run `csp.sh`. To prove the check can fail, remove a source from the built `.tmp/verify/parity/candidate/_headers` (for example `'wasm-unsafe-eval'`), run `csp.sh providers-signed-out`, see it fail, then delete `.tmp/verify/parity/candidate.fingerprint` so the next run rebuilds.
+
 ## Helpers
 
 All in `.claude/skills/verify/bin/`. Each finds this checkout's instance from `.tmp/verify/instance.env`, or `.tmp/verify/<id>.env` with `VERIFY_INSTANCE=<id>`.
@@ -234,8 +250,10 @@ All in `.claude/skills/verify/bin/`. Each finds this checkout's instance from `.
 | `smoke.mjs`       | `smoke.mjs <flow> <out.json> [--submit]`, with `VERIFY_INSTANCE`                                                                                     | one flow on one browser: drive, capture, cancel or sign                               |
 | `smoke-page.js`   | loaded in the page by `smoke.mjs`                                                                                                                    | records the signing requests and submissions, runs the flow steps                     |
 | `smoke-chain.mjs` | `smoke-chain.mjs <submission json> <signer>`                                                                                                         | finds a submitted transaction on chain, with its result and fee                       |
-| `sides.sh`        | sourced by `parity.sh` and `smoke.sh`                                                                                                                | builds, serves and connects the baseline and candidate browsers                       |
-| `serve.mjs`       | `serve.mjs <dir> <port>`, started by `instance.sh serve`                                                                                             | a production build as the SPA host serves it, `no-store`                              |
+| `csp.sh`          | `csp.sh [route or flow …]`, with `OUT`, `VIEWPORTS`, `ATTEMPTS`, `CANDIDATE_URL` and `SMOKE_FLOWS`                                                               | the CSP violation check; see [CSP violation check](#csp-violation-check)              |
+| `csp.mjs`         | `csp.mjs <out.jsonl>`, with `VERIFY_INSTANCE`                                                                                                        | records every CSP violation of the open tabs until it is stopped                      |
+| `sides.sh`        | sourced by `parity.sh`, `smoke.sh` and `csp.sh`                                                                                                      | builds, serves and connects the baseline and candidate browsers                       |
+| `serve.mjs`       | `serve.mjs <dir> <port>`, started by `instance.sh serve`                                                                                             | a production build as the SPA host serves it, with its `_headers` path rules, `no-store` |
 | `proxy.mjs`       | `proxy.mjs <https://host> <port>`, started by `instance.sh serve` with an origin                                                                     | a deployed site, request by request                                                   |
 | `toolchain.sh`    | sourced                                                                                                                                              | install, env and production build of a checkout with its own toolchain                |
 | `app-socket.mjs`  | `app-socket.mjs <socket> <port>`, started by `instance.sh`                                                                                           | on a native Linux engine, the app server through the unix socket the container mounts |

@@ -69,7 +69,7 @@ export async function attach(target) {
 		socket.onerror = () => reject(new Error(`CDP socket to ${target.url} failed`))
 	})
 	let lastId = 0
-	const send = (method, params = {}) =>
+	const send = (method, params = {}, sessionId = undefined) =>
 		new Promise((resolve, reject) => {
 			const id = ++lastId
 			const onMessage = ({ data }) => {
@@ -84,7 +84,7 @@ export async function attach(target) {
 			socket.addEventListener("message", onMessage)
 			socket.addEventListener("close", onClose, { once: true })
 			if (socket.readyState !== WebSocket.OPEN) return onClose()
-			socket.send(JSON.stringify({ id, method, params }))
+			socket.send(JSON.stringify({ id, method, params, sessionId }))
 		})
 	const evaluate = async (expression) => {
 		const { result, exceptionDetails } = await send("Runtime.evaluate", {
@@ -99,7 +99,7 @@ export async function attach(target) {
 	const on = (method, listener) =>
 		socket.addEventListener("message", ({ data }) => {
 			const message = JSON.parse(data)
-			if (message.method === method) listener(message.params)
+			if (message.method === method) listener(message.params, message.sessionId)
 		})
 	const closed = new Promise((resolve) => socket.addEventListener("close", resolve))
 	return { send, evaluate, on, closed, close: () => socket.close() }
