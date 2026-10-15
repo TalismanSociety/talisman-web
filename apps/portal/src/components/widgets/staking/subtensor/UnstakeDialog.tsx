@@ -2,7 +2,6 @@ import { CircularProgressIndicator } from '@talismn/ui/atoms/CircularProgressInd
 import { Text } from '@talismn/ui/atoms/Text'
 import { useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useRecoilValue } from 'recoil'
 
 import type { Account } from '@/domains/accounts/recoils'
@@ -36,7 +35,6 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
     isLoading,
     resultingAlphaInTaoAmount,
   } = useUnstakeForm(props.account, props.stake, props.delegate)
-  const { t } = useTranslation()
   const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
   useExtrinsicInBlockOrErrorEffect(() => props.onRequestDismiss(), extrinsic)
@@ -88,7 +86,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
       }}
       inputSupportingText={error?.message}
       onDismiss={props.onRequestDismiss}
-      lockDuration={<>{t('None')}</>}
+      lockDuration={<>None</>}
       slippage={props.stake.netuid === ROOT_NETUID ? undefined : alphaToTaoSlippage}
       expectedTokenAmount={stakeData?.netuid !== ROOT_NETUID && expectedAmount}
     />

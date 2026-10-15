@@ -1527,7 +1527,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.14.5, @babel/runtime@npm:^7.17.2, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.19.0, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.25.0, @babel/runtime@npm:^7.8.4":
+"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.25.0, @babel/runtime@npm:^7.8.4":
   version: 7.25.7
   resolution: "@babel/runtime@npm:7.25.7"
   dependencies:
@@ -10301,9 +10301,6 @@ __metadata:
     framer-motion: "npm:^11.1.9"
     graphql: "npm:^16.8.1"
     graphql-request: "npm:^6.1.0"
-    i18next: "npm:^21.10.0"
-    i18next-browser-languagedetector: "npm:^6.1.8"
-    i18next-http-backend: "npm:^3.0.6"
     jotai: "npm:^2.8.0"
     jotai-effect: "npm:^1.0.0"
     lodash: "npm:^4.18.1"
@@ -10313,7 +10310,6 @@ __metadata:
     posthog-js: "npm:^1.93.6"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-i18next: "npm:^11.18.6"
     react-object-view: "npm:^0.3.4"
     react-router-dom: "npm:^6.12.0"
     react-use: "npm:^17.4.0"
@@ -14275,15 +14271,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-fetch@npm:4.1.0":
-  version: 4.1.0
-  resolution: "cross-fetch@npm:4.1.0"
-  dependencies:
-    node-fetch: "npm:^2.7.0"
-  checksum: 10c0/628b134ea27cfcada67025afe6ef1419813fffc5d63d175553efa75a2334522d450300a0f3f0719029700da80e96327930709d5551cf6deb39bb62f1d536642e
-  languageName: node
-  linkType: hard
-
 "cross-fetch@npm:^3.1.4, cross-fetch@npm:^3.1.5":
   version: 3.1.8
   resolution: "cross-fetch@npm:3.1.8"
@@ -17906,15 +17893,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-parse-stringify@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "html-parse-stringify@npm:3.0.1"
-  dependencies:
-    void-elements: "npm:3.1.0"
-  checksum: 10c0/159292753d48b84d216d61121054ae5a33466b3db5b446e2ffc093ac077a411a99ce6cbe0d18e55b87cf25fa3c5a86c4d8b130b9719ec9b66623259000c72c15
-  languageName: node
-  linkType: hard
-
 "html-tags@npm:^3.1.0":
   version: 3.3.1
   resolution: "html-tags@npm:3.3.1"
@@ -18029,33 +18007,6 @@ __metadata:
   version: 1.1.0
   resolution: "hyphenate-style-name@npm:1.1.0"
   checksum: 10c0/bfe88deac2414a41a0d08811e277c8c098f23993d6a1eb17f14a0f11b54c4d42865a63d3cfe1914668eefb9a188e2de58f38b55a179a238fd1fef606893e194f
-  languageName: node
-  linkType: hard
-
-"i18next-browser-languagedetector@npm:^6.1.8":
-  version: 6.1.8
-  resolution: "i18next-browser-languagedetector@npm:6.1.8"
-  dependencies:
-    "@babel/runtime": "npm:^7.19.0"
-  checksum: 10c0/ab679a136de2b9df5984e810ea6ae8f848ac85d64562930f7d9be38d5cff139ed14262fd4abfde8a9a66b01cb521306e87493df766625194b90f0eb240be6f6a
-  languageName: node
-  linkType: hard
-
-"i18next-http-backend@npm:^3.0.6":
-  version: 3.0.6
-  resolution: "i18next-http-backend@npm:3.0.6"
-  dependencies:
-    cross-fetch: "npm:4.1.0"
-  checksum: 10c0/b799c4c49943cca5f215d8a7b563785e194e9061724213d5942c049855ed00a340a2478a305dd66cac59cf5fc32c90cbfe3d62c7063a59ad4401948196d430a5
-  languageName: node
-  linkType: hard
-
-"i18next@npm:^21.10.0":
-  version: 21.10.0
-  resolution: "i18next@npm:21.10.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.17.2"
-  checksum: 10c0/2a674739aab219704d5a0bf62d03bed20ad2bceff9579efb4da61c4946c883fc172062ba7405a26bf795995860f2ab15826b05271f4c457bf7eb19e852f6006d
   languageName: node
   linkType: hard
 
@@ -22666,24 +22617,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-i18next@npm:^11.18.6":
-  version: 11.18.6
-  resolution: "react-i18next@npm:11.18.6"
-  dependencies:
-    "@babel/runtime": "npm:^7.14.5"
-    html-parse-stringify: "npm:^3.0.1"
-  peerDependencies:
-    i18next: ">= 19.0.0"
-    react: ">= 16.8.0"
-  peerDependenciesMeta:
-    react-dom:
-      optional: true
-    react-native:
-      optional: true
-  checksum: 10c0/ffc40b157e274bc26fc82fc82761290804fffba33ceed552eb5a8c8c80899ea93a3fa7af4b0d719a9f101f3e08aab6f4754df953f1b720a61aa0317f5459abca
-  languageName: node
-  linkType: hard
-
 "react-is@npm:18.1.0":
   version: 18.1.0
   resolution: "react-is@npm:18.1.0"
@@ -26820,13 +26753,6 @@ __metadata:
   version: 1.1.2
   resolution: "vm-browserify@npm:1.1.2"
   checksum: 10c0/0cc1af6e0d880deb58bc974921320c187f9e0a94f25570fca6b1bd64e798ce454ab87dfd797551b1b0cc1849307421aae0193cedf5f06bdb5680476780ee344b
-  languageName: node
-  linkType: hard
-
-"void-elements@npm:3.1.0":
-  version: 3.1.0
-  resolution: "void-elements@npm:3.1.0"
-  checksum: 10c0/0b8686f9f9aa44012e9bd5eabf287ae0cde409b9a2854c5a2335cb83920c957668ac5876e3f0d158dd424744ac411a7270e64128556b451ed3bec875ef18534d
   languageName: node
   linkType: hard
 
