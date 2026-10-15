@@ -1,8 +1,6 @@
 import { ApiPromise, WsProvider } from "@polkadot/api"
 import * as AvailJsSdk from "avail-js-sdk"
-import { atom, useAtom } from "jotai"
-import { useEffect, useRef } from "react"
-import { selectorFamily, useRecoilCallback } from "recoil"
+import { selectorFamily } from "recoil"
 
 // TODO: Convert this into a facade for the `@/domains/common/atoms/apiPromiseAtom.ts` atom.
 //
@@ -31,27 +29,3 @@ export const substrateApiState = selectorFamily<ApiPromise, string | undefined>(
 	dangerouslyAllowMutability: true,
 	cachePolicy_UNSTABLE: { eviction: "most-recent" },
 })
-
-export const substrateApiGetterAtom = atom<{
-	getApi: (endpoint: string) => Promise<ApiPromise>
-} | null>(null)
-
-export const useSetJotaiSubstrateApiState = () => {
-	const initRef = useRef(false)
-	const [substrateApiGetter, setSubstrateApiGetter] = useAtom(substrateApiGetterAtom)
-
-	const getSubstrateApi = useRecoilCallback(
-		({ snapshot }) =>
-			(rpc: string) =>
-				snapshot.getPromise(substrateApiState(rpc))
-	)
-
-	useEffect(() => {
-		if (substrateApiGetter === null && !initRef.current) {
-			// somehow this causes infinite rerender and substrateApiGetter is always null
-			setSubstrateApiGetter({ getApi: getSubstrateApi })
-			// this is a hack to prevent infinite rerender
-			initRef.current = true
-		}
-	}, [getSubstrateApi, setSubstrateApiGetter, substrateApiGetter])
-}

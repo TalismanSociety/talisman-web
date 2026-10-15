@@ -14,7 +14,7 @@ import { Decimal } from "@/util/Decimal"
 
 import { getRecommendedPoolIds } from "./recommendedPoolIds"
 
-export const allPendingPoolRewardsState = selectorFamily({
+const allPendingPoolRewardsState = selectorFamily({
 	key: "AllPendingRewards",
 	get:
 		(endpoint: string) =>
@@ -61,9 +61,6 @@ export const eraStakersState = selectorFamily({
 	dangerouslyAllowMutability: true,
 })
 
-export const useEraStakersState = (era: Extract<AnyNumber, SerializableParam>) =>
-	eraStakersState({ endpoint: useSubstrateApiEndpoint(), era })
-
 /**
  * On-chain `staking.areNominatorsSlashable` value, used to determine whether the fast unbonding
  * duration applies (see getNominatorBondingDurationEras). Resolves to `true` (slashable, i.e. no
@@ -86,7 +83,7 @@ export const areNominatorsSlashableState = selectorFamily<boolean, string | unde
 		},
 })
 
-export const recommendedPoolsState = selectorFamily({
+const recommendedPoolsState = selectorFamily({
 	key: "Staking/BondedPools",
 	get:
 		(endpoint: string) =>

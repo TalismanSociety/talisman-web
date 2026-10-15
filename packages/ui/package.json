@@ -8,11 +8,10 @@
     "./atoms/*": "./src/atoms/*.tsx",
     "./molecules/*": "./src/molecules/*.tsx",
     "./theme": "./src/theme.tsx",
-    "./utils-react/*": "./src/utils-react/*.tsx",
     "./utils/*": "./src/utils/*.ts"
   },
   "scripts": {
-    "check-types": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -33,11 +32,9 @@
     "@storybook/addon-essentials": "^7.6.5",
     "@storybook/addon-interactions": "^7.6.5",
     "@storybook/addon-links": "^7.6.5",
-    "@storybook/blocks": "^7.6.5",
     "@storybook/manager-api": "^7.6.5",
     "@storybook/react": "^7.6.5",
     "@storybook/react-vite": "^7.6.5",
-    "@storybook/testing-library": "^0.2.2",
     "@talismn/development": "workspace:^",
     "@talismn/tsconfig": "workspace:^",
     "@types/md5": "^2.3.5",

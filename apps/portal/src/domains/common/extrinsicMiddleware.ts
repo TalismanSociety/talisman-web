@@ -29,7 +29,7 @@ const combineMiddleware =
 			middleware(...parameters)
 		})
 
-export const posthogMiddleware: ExtrinsicMiddleware = (chain, extrinsic, result, _, options) => {
+const posthogMiddleware: ExtrinsicMiddleware = (chain, extrinsic, result, _, options) => {
 	if (options?.blacklist?.includes("analytics")) {
 		return
 	}
@@ -72,7 +72,7 @@ export const posthogMiddleware: ExtrinsicMiddleware = (chain, extrinsic, result,
 	}
 }
 
-export const chainIdReadMiddleware: ExtrinsicMiddleware = (_, __, result, { set }) => {
+const chainIdReadMiddleware: ExtrinsicMiddleware = (_, __, result, { set }) => {
 	if (result.isFinalized) {
 		startTransition(() => set(chainReadIdState, (id) => id + 1))
 	}

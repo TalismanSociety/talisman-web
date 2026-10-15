@@ -22,7 +22,7 @@ const fetchValidatorsYield = async ({ pageParam = 1, netuid = 0 }) => {
 	return data
 }
 
-export function useGetInfiniteValidatorsYield({ netuid }: { netuid: number }) {
+function useGetInfiniteValidatorsYield({ netuid }: { netuid: number }) {
 	return useInfiniteQuery({
 		queryKey: ["infiniteValidatorsYield", netuid],
 		queryFn: ({ pageParam = 1 }) => fetchValidatorsYield({ pageParam, netuid }),

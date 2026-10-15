@@ -3,19 +3,19 @@ name: QA
 on:
   workflow_call:
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/setup
-      - run: pnpm check
-      - run: pnpm check-types
-      - run: pnpm test
+      - run: pnpm verify
       - run: pnpm audit --prod --audit-level critical
 
   e2e:
@@ -28,7 +28,9 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
 
       # this will inject all github secrets and variables as environment variables
       - name: Set environment variables
@@ -52,7 +54,7 @@ jobs:
 
       - name: Upload test results
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: portal-playwright-report
           path: apps/portal/test-results

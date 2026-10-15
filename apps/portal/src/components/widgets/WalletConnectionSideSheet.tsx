@@ -260,7 +260,7 @@ type WalletConnectionSideSheetProps = {
 	onRequestDismiss: () => unknown
 }
 
-export const WalletConnectionSideSheetComponent = (props: WalletConnectionSideSheetProps) => {
+const WalletConnectionSideSheetComponent = (props: WalletConnectionSideSheetProps) => {
 	const { inSignet } = useSignetSdk()
 	return (
 		<ClassNames>

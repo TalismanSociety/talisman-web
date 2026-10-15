@@ -5,7 +5,7 @@ import type { ApiPromise } from "@polkadot/api"
  * @param api - ApiPromise instance with babe and staking constants
  * @returns Era duration in milliseconds
  */
-export const getStakingEraDurationMs = (babeApi: ApiPromise): bigint => {
+const getStakingEraDurationMs = (babeApi: ApiPromise): bigint => {
 	const blockTime = babeApi.consts.babe?.expectedBlockTime?.toBigInt() ?? 0n
 	const epochDuration = babeApi.consts.babe?.epochDuration?.toBigInt() ?? 0n
 	const sessionsPerEra = babeApi.consts.staking?.sessionsPerEra?.toNumber() ?? 0
@@ -18,7 +18,7 @@ export const getStakingEraDurationMs = (babeApi: ApiPromise): bigint => {
  * @param babeApi - ApiPromise instance with babe and staking constants
  * @returns Number of eras per year
  */
-export const getStakingErasPerYear = (babeApi: ApiPromise): bigint => {
+const getStakingErasPerYear = (babeApi: ApiPromise): bigint => {
 	const MS_PER_YEAR = 1000n * 60n * 60n * 24n * 365n
 	const eraDuration = getStakingEraDurationMs(babeApi)
 

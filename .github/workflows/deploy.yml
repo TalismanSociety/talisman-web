@@ -3,6 +3,9 @@ name: Deploy portal to Cloudflare Pages
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
@@ -10,6 +13,9 @@ jobs:
   qa:
     uses: ./.github/workflows/qa.yml
     secrets: inherit
+    permissions:
+      actions: read
+      contents: read
 
   deploy:
     needs: qa
@@ -23,7 +29,7 @@ jobs:
       deployments: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: ./.github/actions/setup
 
       - name: Expose secrets and variables as environment variables
@@ -47,7 +53,7 @@ jobs:
 
       - name: Upload sourcemaps to Sentry
         if: vars.SENTRY_PROJECT != null
-        uses: getsentry/action-release@v1
+        uses: getsentry/action-release@a74facf8a080ecbdf1cb355f16743530d712abb7 # v1.11.0
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}

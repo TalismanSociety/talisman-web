@@ -6,7 +6,7 @@ import { useSubstrateApiEndpoint } from "@/domains/common/hooks/useSubstrateApiE
 
 import type { WorkerFunction } from "./worker"
 
-export const stakersRewardState = selectorFamily({
+const stakersRewardState = selectorFamily({
 	key: "StakersRewardState",
 	get:
 		({ endpoint, activeEra }: { endpoint: string; activeEra: number }) =>

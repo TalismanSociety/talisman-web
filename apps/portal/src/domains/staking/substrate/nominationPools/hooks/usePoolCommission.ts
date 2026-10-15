@@ -3,7 +3,7 @@ import { useRecoilValue } from "recoil"
 
 import { useRecommendedPoolsState } from "../recoils"
 
-export type BondedPool = {
+type BondedPool = {
 	commission?: {
 		current?: [commission: string, payee: string] | null
 		max?: AnyJson | null

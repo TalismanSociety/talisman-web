@@ -46,3 +46,10 @@ cp apps/portal/.env.example apps/portal/.env
 ```sh
 pnpm dev
 ```
+
+## Test and verify
+
+- `pnpm test` runs the unit tests. Tests sit next to their code as `*.test.ts` or `*.test.tsx` and run in jsdom. To run the tests of one file or folder, pass its path, as in `pnpm test apps/portal/src/domains`.
+- `pnpm verify` runs what CI's `qa / validate` job runs: Biome, typecheck, knip, the tests and the portal build. Run it before you push. It needs no env file.
+- For a change that a user can see, drive the portal in a real browser with the verify skill, [`.claude/skills/verify/SKILL.md`](.claude/skills/verify/SKILL.md), and run its visual parity check.
+- knip ignores these on purpose: `wrangler` (Cloudflare Workers Builds and the Pages deploy run it), `dotenv` (loaded by `codegen:nova` through `--require`), `@emotion/react` in `packages/icons` (the JSX of the icons resolves its runtime from there), and `packages/react-polkadot-api` (to be removed with `@polkadot/api`).

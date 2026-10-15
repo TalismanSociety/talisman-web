@@ -8,23 +8,25 @@
     "dev": "pnpm --filter @talismn/portal dev",
     "build": "pnpm -r build",
     "build:portal": "VITE_SENTRY_RELEASE=${WORKERS_CI_COMMIT_SHA:-} NODE_OPTIONS=--max_old_space_size=4096 pnpm --filter @talismn/portal build",
-    "test": "pnpm -r test",
     "check": "biome check --error-on-warnings",
     "check:fix": "biome check --write --error-on-warnings",
-    "check-types": "pnpm -r check-types",
+    "typecheck": "pnpm -r typecheck",
+    "knip": "knip",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "verify": "pnpm check && pnpm typecheck && pnpm knip && pnpm test && pnpm build:portal",
     "e2e": "pnpm --filter @talismn/portal e2e",
     "storybook": "pnpm -r --parallel storybook",
     "build-storybook": "pnpm -r build-storybook"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",
+    "knip": "^6.41.0",
     "simple-git-hooks": "^2.14.0",
+    "vitest": "^5.0.4",
     "wrangler": "^4.147.0"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm exec biome check --error-on-warnings --no-errors-on-unmatched --staged"
-  },
-  "dependencies": {
-    "@polkadot/api": "^16.4.1"
   }
 }

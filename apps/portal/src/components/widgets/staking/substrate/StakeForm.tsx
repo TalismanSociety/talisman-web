@@ -5,16 +5,7 @@ import { Select } from "@talismn/ui/molecules/Select"
 import { Info } from "@talismn/web-icons"
 import BN from "bn.js"
 import type { ReactNode } from "react"
-import {
-	memo,
-	Suspense,
-	useCallback,
-	useDeferredValue,
-	useEffect,
-	useMemo,
-	useState,
-	useTransition,
-} from "react"
+import { memo, Suspense, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react"
 import { useLocation } from "react-use"
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from "recoil"
 import { StakeForm as StakeFormComponent } from "@/components/recipes/StakeForm"
@@ -25,12 +16,7 @@ import type { Account } from "@/domains/accounts/recoils"
 import { writeableSubstrateAccountsState } from "@/domains/accounts/recoils"
 import { claimPermissionUnsupportedChainIds } from "@/domains/chains/config"
 import { useChainState as useChainRecoilState } from "@/domains/chains/hooks"
-import { ChainProvider } from "@/domains/chains/provider"
-import {
-	type ChainInfo,
-	nominationPoolsEnabledChainsState,
-	useNativeTokenDecimalState,
-} from "@/domains/chains/recoils"
+import { type ChainInfo, useNativeTokenDecimalState } from "@/domains/chains/recoils"
 import { assertChain } from "@/domains/chains/utils"
 import { useChainState } from "@/domains/common/hooks/useChainState"
 import { useEraEtaFormatter } from "@/domains/common/hooks/useEraEta"
@@ -579,28 +565,5 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 				}
 			/>
 		</>
-	)
-}
-
-export const StakeForm = () => {
-	const chains = useRecoilValue(nominationPoolsEnabledChainsState)
-
-	const [inTransition, startTransition] = useTransition()
-
-	const [selectedChain, setSelectedChain] = useState(chains[0]!)
-
-	return (
-		<ChainProvider chain={selectedChain}>
-			<ControlledStakeForm
-				assetSelector={
-					<AssetSelect
-						chains={chains}
-						selectedChain={selectedChain}
-						onSelectChain={(chain) => startTransition(() => setSelectedChain(chain))}
-						inTransition={inTransition}
-					/>
-				}
-			/>
-		</ChainProvider>
 	)
 }

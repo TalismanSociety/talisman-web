@@ -22,7 +22,7 @@ export type AccountSelectorProps = {
 	withBalance?: boolean
 }
 
-export const AccountSelector = ({
+const AccountSelector = ({
 	accounts,
 	prefix = 42,
 	selectedAccount,

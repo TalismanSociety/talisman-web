@@ -6,7 +6,7 @@ import { useAccount, useSwitchChain } from "wagmi"
 
 import type { LidoSuite } from "@/domains/staking/lido/types"
 
-export type LidoWidgetSideSheetProps = {
+type LidoWidgetSideSheetProps = {
 	url: string
 	lidoSuite: LidoSuite
 	onRequestDismiss: () => unknown
