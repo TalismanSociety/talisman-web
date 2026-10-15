@@ -1,6 +1,5 @@
 import { Text } from '@talismn/ui/atoms/Text'
 import { formatDistance } from 'date-fns'
-import { useTranslation } from 'react-i18next'
 
 import { ChainProvider } from '@/domains/chains/provider'
 import { useUnlockDuration as useNominationPoolUnlockDuration } from '@/domains/staking/substrate/nominationPools/hooks/useUnlockDuration'
@@ -21,8 +20,6 @@ type UnbondingDisplayProps = Omit<UnbondingPeriodProps, 'genesisHash'>
 
 // This component is used to get around the react rules of conditional hooks
 const UnbondingDisplay = ({ typeId, setUnbondingValues }: UnbondingDisplayProps) => {
-  const { t } = useTranslation()
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
     nominationPool: useNominationPoolUnlockDuration,
@@ -43,7 +40,7 @@ const UnbondingDisplay = ({ typeId, setUnbondingValues }: UnbondingDisplayProps)
       break
     case 'delegationSubtensor':
       unlockValue = hookMap['delegationSubtensor']()
-      label = t('None')
+      label = 'None'
       break
     case 'dappStaking':
       unlockValue = hookMap['dappStaking']()
