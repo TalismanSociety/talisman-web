@@ -1,4 +1,4 @@
-import { createRouter, type ErrorComponentProps } from "@tanstack/react-router"
+import { createRouter, type ErrorComponentProps, type RouterHistory } from "@tanstack/react-router"
 
 import { parseSearch, stringifySearch } from "@/util/search"
 
@@ -17,6 +17,9 @@ const keepNativeScrollRestoration = () => {
 	})
 }
 
+const writeEachNavigationToTheBrowserAtOnce = (routerHistory: RouterHistory) =>
+	routerHistory.subscribe(routerHistory.flush)
+
 export function getRouter() {
 	const router = createRouter({
 		routeTree,
@@ -27,7 +30,10 @@ export function getRouter() {
 		scrollRestoration: leaveScrollingToTheBrowser,
 	})
 
-	if (!router.isServer) keepNativeScrollRestoration()
+	if (!router.isServer) {
+		keepNativeScrollRestoration()
+		writeEachNavigationToTheBrowserAtOnce(router.history)
+	}
 
 	return router
 }
