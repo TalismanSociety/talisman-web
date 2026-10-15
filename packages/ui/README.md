@@ -3,13 +3,13 @@
 ## Installation
 
 ```sh
-yarn add @talismn/ui
+pnpm add @talismn/ui
 ```
 
 `@talismn/ui` has a number of required peer dependencies. If your project doesn't have them already, you can install them by running:
 
 ```sh
-yarn add @emotion/react @talismn/web-icons framer-motion
+pnpm add @emotion/react @talismn/web-icons framer-motion
 ```
 
 ## Configuring the theme

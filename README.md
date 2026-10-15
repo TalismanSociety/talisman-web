@@ -21,22 +21,18 @@ With Talisman Portal you can buy DOT and KSM, contribute to crowdloans, view NFT
 git clone https://github.com/TalismanSociety/talisman-web.git
 ```
 
-2. Use the project targeted Node version using [nvm](https://github.com/nvm-sh/nvm) (Optional but will ensure no funny business with Yarn)
+2. Use the project targeted Node version using [nvm](https://github.com/nvm-sh/nvm) (Optional but will ensure no funny business with pnpm)
 
 ```sh
 nvm use
 ```
 
-3. Enable corepack (ensures you're using the correct version of `yarn`)
-
-```sh
-corepack enable
-```
+3. Install [pnpm](https://pnpm.io/installation). It downloads the version pinned in `package.json` on first use.
 
 4. Install the project dependencies:
 
 ```sh
-yarn
+pnpm install
 ```
 
 5. Copy `.env.example` to `.env` and update the values inside:
@@ -48,5 +44,5 @@ cp apps/portal/.env.example apps/portal/.env
 6. Start the dev server:
 
 ```sh
-yarn dev
+pnpm dev
 ```

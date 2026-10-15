@@ -43,7 +43,7 @@ jobs:
         run: >-
           NODE_OPTIONS=--max_old_space_size=10240
           VITE_SENTRY_RELEASE=${{ github.sha }}
-          yarn turbo run build --filter=@talismn/portal -- --sourcemap
+          pnpm --filter @talismn/portal build --sourcemap
 
       - name: Upload sourcemaps to Sentry
         if: vars.SENTRY_PROJECT != null
@@ -65,6 +65,6 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          packageManager: yarn
+          packageManager: pnpm
           workingDirectory: apps/portal
           command: pages deploy build --project-name ${{ vars.PORTAL_PROJECT_NAME }} --branch ${{ github.ref_name }}

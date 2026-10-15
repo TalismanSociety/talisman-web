@@ -1,0 +1,48 @@
+packages:
+  - apps/*
+  - packages/*
+allowBuilds:
+  "@swc/core": false
+  bufferutil: false
+  es5-ext: false
+  esbuild: false
+  keccak: false
+  simple-git-hooks: false
+  utf-8-validate: false
+  workerd: false
+overrides:
+  "@polkadot/api": 16.4.1
+  "@polkadot/api-augment": 16.4.1
+  "@polkadot/api-base": 16.4.1
+  "@polkadot/api-contract": 16.4.1
+  "@polkadot/api-derive": 16.4.1
+  "@polkadot/extension-inject": 0.53.1
+  "@polkadot/keyring": 13.1.1
+  "@polkadot/networks": 13.1.1
+  "@polkadot/rpc-augment": 16.4.1
+  "@polkadot/rpc-core": 16.4.1
+  "@polkadot/rpc-provider": 16.4.1
+  "@polkadot/types": 16.4.1
+  "@polkadot/types-augment": 16.4.1
+  "@polkadot/types-codec": 16.4.1
+  "@polkadot/types-create": 16.4.1
+  "@polkadot/types-known": 16.4.1
+  "@polkadot/types-support": 16.4.1
+  "@polkadot/util": 13.1.1
+  "@polkadot/util-crypto": 13.1.1
+  "@polkadot/wasm-bridge": 7.3.2
+  "@polkadot/wasm-crypto": 7.3.2
+  "@polkadot/wasm-crypto-asmjs": 7.3.2
+  "@polkadot/wasm-crypto-init": 7.3.2
+  "@polkadot/wasm-crypto-wasm": 7.3.2
+  "@polkadot/wasm-util": 7.3.2
+  "@types/react": 18.3.3
+  "jotai": 2.8.4
+  "jotai-effect": 1.0.0
+  "json-stream-stringify": 2.0.4
+patchedDependencies:
+  recoil@0.7.7: patches/recoil@0.7.7.patch
+  threads@1.7.0: patches/threads@1.7.0.patch
+auditConfig:
+  ignoreGhsas:
+    - GHSA-95m3-7q98-8xr5

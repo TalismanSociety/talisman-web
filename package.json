@@ -2,70 +2,39 @@
   "private": true,
   "name": "talisman-web",
   "license": "GPL-3.0-or-later",
-  "packageManager": "yarn@4.2.2",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.24.0",
+      "onFail": "download"
+    }
+  },
+  "packageManager": "pnpm@11.24.0",
   "scripts": {
-    "postinstall": "test ! -d .git || simple-git-hooks",
-    "dev": "yarn turbo run dev --concurrency 13",
-    "build": "yarn turbo run build",
-    "build:portal": "VITE_SENTRY_RELEASE=${WORKERS_CI_COMMIT_SHA:-} NODE_OPTIONS=--max_old_space_size=4096 yarn turbo run build --filter=@talismn/portal",
-    "test": "yarn turbo run test",
-    "lint": "yarn turbo run lint",
-    "check-types": "yarn turbo run check-types",
-    "e2e": "yarn turbo run e2e",
-    "storybook": "yarn turbo run storybook --concurrency 13",
-    "build-storybook": "yarn turbo run storybook"
+    "prepare": "test ! -d .git || simple-git-hooks",
+    "dev": "pnpm --filter @talismn/portal dev",
+    "build": "pnpm -r build",
+    "build:portal": "VITE_SENTRY_RELEASE=${WORKERS_CI_COMMIT_SHA:-} NODE_OPTIONS=--max_old_space_size=4096 pnpm --filter @talismn/portal build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "check-types": "pnpm -r check-types",
+    "e2e": "pnpm --filter @talismn/portal e2e",
+    "storybook": "pnpm -r --parallel storybook",
+    "build-storybook": "pnpm -r build-storybook"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
-    "@tailwindcss/container-queries": "^0.1.1",
+    "@talismn/eslint-config": "workspace:^",
     "eslint": "^9.2.0",
     "lint-staged": "^12.5.0",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.4.1",
     "simple-git-hooks": "^2.14.0",
-    "tailwindcss-animate": "^1.0.7",
-    "turbo": "^2.9.14",
+    "typescript-eslint": "^7.15.0",
     "wrangler": "^4.147.0"
   },
-  "resolutions": {
-    "@polkadot/api": "16.4.1",
-    "@polkadot/api-augment": "16.4.1",
-    "@polkadot/api-base": "16.4.1",
-    "@polkadot/api-contract": "16.4.1",
-    "@polkadot/api-derive": "16.4.1",
-    "@polkadot/extension-inject": "0.53.1",
-    "@polkadot/keyring": "13.1.1",
-    "@polkadot/networks": "13.1.1",
-    "@polkadot/rpc-augment": "16.4.1",
-    "@polkadot/rpc-core": "16.4.1",
-    "@polkadot/rpc-provider": "16.4.1",
-    "@polkadot/types": "16.4.1",
-    "@polkadot/types-augment": "16.4.1",
-    "@polkadot/types-codec": "16.4.1",
-    "@polkadot/types-create": "16.4.1",
-    "@polkadot/types-known": "16.4.1",
-    "@polkadot/types-support": "16.4.1",
-    "@polkadot/util": "13.1.1",
-    "@polkadot/util-crypto": "13.1.1",
-    "@polkadot/wasm-bridge": "7.3.2",
-    "@polkadot/wasm-crypto": "7.3.2",
-    "@polkadot/wasm-crypto-asmjs": "7.3.2",
-    "@polkadot/wasm-crypto-init": "7.3.2",
-    "@polkadot/wasm-crypto-wasm": "7.3.2",
-    "@polkadot/wasm-util": "7.3.2",
-    "@types/react": "^18.2.57",
-    "jotai": "2.8.4",
-    "jotai-effect": "1.0.0",
-    "json-stream-stringify": "2.0.4",
-    "recoil@^0.7.7": "patch:recoil@npm%3A0.7.7#./.yarn/patches/recoil-npm-0.7.7-4452f58b67.patch",
-    "threads@^1.7.0": "patch:threads@npm%3A1.7.0#./.yarn/patches/threads-npm-1.7.0-c432dbb3e9.patch"
-  },
   "simple-git-hooks": {
-    "pre-commit": "yarn lint-staged"
+    "pre-commit": "pnpm exec lint-staged"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,css,scss,html,md,json}": "prettier --write"
