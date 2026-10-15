@@ -7,7 +7,7 @@
     },
     "apps/portal": {
       "project": ["src/**/*.{ts,tsx,css}"],
-      "ignoreDependencies": ["dotenv", "wrangler"]
+      "ignoreDependencies": ["dotenv", "cloudflare"]
     }
   },
   "ignoreWorkspaces": ["packages/react-polkadot-api"],

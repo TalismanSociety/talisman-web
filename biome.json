@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!.claude", "!apps/portal/src/generated"]
+    "includes": ["**", "!.claude", "!apps/portal/src/generated", "!**/routeTree.gen.ts"]
   },
   "formatter": {
     "enabled": true,

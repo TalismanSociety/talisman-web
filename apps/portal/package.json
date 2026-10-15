@@ -47,6 +47,8 @@
     "@talismn/token-rates": "2.0.11",
     "@talismn/util": "0.4.2",
     "@tanstack/react-query": "^5.32.0",
+    "@tanstack/react-router": "1.170.42",
+    "@tanstack/react-start": "~1.168.61",
     "@tanstack/react-table": "^8.20.5",
     "@wagmi/core": "^2.22.1",
     "avail-js-sdk": "^0.2.13",
@@ -84,6 +86,7 @@
     "winbox": "^0.2.6"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.64.0",
     "@emotion/babel-plugin": "^11.11.0",
     "@graphql-codegen/cli": "5.0.0",
     "@graphql-codegen/client-preset": "4.1.0",
@@ -109,8 +112,7 @@
     "vite": "^7.3.6",
     "vite-plugin-node-polyfills": "^0.22.0",
     "vite-plugin-svgr": "^4.2.0",
-    "vite-plugin-top-level-await": "^1.4.4",
     "vite-plugin-wasm": "^3.3.0",
-    "wrangler": "^4.147.0"
+    "wrangler": "^4.151.0"
   }
 }

@@ -7,7 +7,8 @@
     "prepare": "test ! -d .git || simple-git-hooks",
     "dev": "pnpm --filter @talismn/portal dev",
     "build": "pnpm -r build",
-    "build:portal": "VITE_SENTRY_RELEASE=${WORKERS_CI_COMMIT_SHA:-} NODE_OPTIONS=--max_old_space_size=4096 pnpm --filter @talismn/portal build",
+    "build:portal": "VITE_SENTRY_RELEASE=${WORKERS_CI_COMMIT_SHA:-} NODE_OPTIONS=--max_old_space_size=4096 pnpm --filter @talismn/portal build && pnpm run wrangler:redirect",
+    "wrangler:redirect": "mkdir -p .wrangler/deploy && printf '{\"configPath\":\"../../apps/portal/dist/server/wrangler.json\"}' > .wrangler/deploy/config.json",
     "check": "biome check --error-on-warnings",
     "check:fix": "biome check --write --error-on-warnings",
     "typecheck": "pnpm -r typecheck",
@@ -22,7 +23,7 @@
     "knip": "^6.41.0",
     "simple-git-hooks": "^2.14.0",
     "vitest": "^5.0.4",
-    "wrangler": "^4.147.0"
+    "wrangler": "^4.151.0"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm exec biome check --error-on-warnings --no-errors-on-unmatched --staged"

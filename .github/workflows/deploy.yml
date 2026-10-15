@@ -61,10 +61,10 @@ jobs:
         with:
           environment: ${{ github.ref_name == github.event.repository.default_branch && 'production' || 'preview' }}
           version: ${{ github.sha }}
-          sourcemaps: apps/portal/build
+          sourcemaps: apps/portal/dist/client
 
       - name: Strip sourcemaps before deploy
-        run: find apps/portal/build -name '*.map' -type f -delete
+        run: find apps/portal/dist -name '*.map' -type f -delete
 
       - uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
         with:
@@ -73,4 +73,4 @@ jobs:
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           packageManager: pnpm
           workingDirectory: apps/portal
-          command: pages deploy build --project-name ${{ vars.PORTAL_PROJECT_NAME }} --branch ${{ github.ref_name }}
+          command: pages deploy dist/client --project-name ${{ vars.PORTAL_PROJECT_NAME }} --branch ${{ github.ref_name }}

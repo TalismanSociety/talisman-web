@@ -1,12 +1,16 @@
+import path from "node:path"
+import react from "@vitejs/plugin-react"
+import svgr from "vite-plugin-svgr"
 import { defineConfig, mergeConfig } from "vitest/config"
 
-import viteConfig from "./vite.config"
-
-const nodeHasTheseGlobals = (plugin: unknown) =>
-	!(plugin instanceof Object && "name" in plugin && plugin.name === "vite-plugin-node-polyfills")
-
 export default mergeConfig(
-	{ ...viteConfig, plugins: viteConfig.plugins?.filter(nodeHasTheseGlobals) },
+	{
+		plugins: [
+			react({ jsxImportSource: "@emotion/react", babel: { plugins: ["@emotion/babel-plugin"] } }),
+			svgr(),
+		],
+		resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
+	},
 	defineConfig({
 		test: {
 			name: "portal",
