@@ -79,8 +79,12 @@
         "noExplicitAny": "off",
         "noNonNullAssertedOptionalChain": "off",
         "noShadowRestrictedNames": "off",
-        "noUnknownAtRules": "off",
-        "useIterableCallbackReturn": "off"
+        "noUnknownAtRules": {
+          "level": "error",
+          "options": {
+            "ignore": ["tailwind"]
+          }
+        }
       }
     }
   }

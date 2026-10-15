@@ -25,7 +25,9 @@ export type ExtrinsicMiddleware = (
 const combineMiddleware =
 	(...middleware: ExtrinsicMiddleware[]): ExtrinsicMiddleware =>
 	(...parameters) =>
-		middleware.forEach((middleware) => middleware(...parameters))
+		middleware.forEach((middleware) => {
+			middleware(...parameters)
+		})
 
 export const posthogMiddleware: ExtrinsicMiddleware = (chain, extrinsic, result, _, options) => {
 	if (options?.blacklist?.includes("analytics")) {
@@ -49,8 +51,8 @@ export const posthogMiddleware: ExtrinsicMiddleware = (chain, extrinsic, result,
 		posthog.capture("Extrinsic in block", rootCall)
 
 		if (extrinsic.method.section === "utility" && extrinsic.method.method.includes("batch")) {
-			;(extrinsic.args as Array<Vec<GenericCall>>).forEach((calls) =>
-				calls.forEach((call) =>
+			;(extrinsic.args as Array<Vec<GenericCall>>).forEach((calls) => {
+				calls.forEach((call) => {
 					posthog.capture("Extrinsic in block", {
 						chain,
 						chainProperties: extrinsic.registry.getChainProperties()?.toHuman(),
@@ -64,8 +66,8 @@ export const posthogMiddleware: ExtrinsicMiddleware = (chain, extrinsic, result,
 							section: rootCall.section,
 						},
 					})
-				)
-			)
+				})
+			})
 		}
 	}
 }

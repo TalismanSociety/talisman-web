@@ -34,7 +34,10 @@ export const TalismanExtensionSynchronizer = () => {
 			sub?.subscribeCustomTokens?.((custom) => setWalletTokens(custom)),
 		]
 
-		return () => unsubs.forEach((unsub) => unsub?.())
+		return () =>
+			unsubs.forEach((unsub) => {
+				unsub?.()
+			})
 	}, [chaindataProvider])
 
 	useEffect(() => {
