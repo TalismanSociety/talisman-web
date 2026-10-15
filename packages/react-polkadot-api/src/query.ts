@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // TODO: lots of duplicate type definitions
 // but already super burned out, need to de-duplication
 import type {

@@ -9,7 +9,7 @@ import { useExtrinsicInBlockOrErrorEffect } from "@/domains/common/hooks/useExtr
 import { useAddStakeForm } from "@/domains/staking/subtensor/hooks/forms"
 import { useCombinedBittensorValidatorsData } from "@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData"
 import { useCombineSubnetData } from "@/domains/staking/subtensor/hooks/useCombineSubnetData"
-import { type StakeItem } from "@/domains/staking/subtensor/hooks/useStake"
+import type { StakeItem } from "@/domains/staking/subtensor/hooks/useStake"
 
 import { BannerWarningBittensorStaking } from "./BannerWarningBittensorStaking"
 import { ROOT_NETUID } from "./constants"

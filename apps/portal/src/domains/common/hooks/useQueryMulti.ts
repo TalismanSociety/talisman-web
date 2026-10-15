@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { type ApiPromise } from "@polkadot/api"
+import type { ApiPromise } from "@polkadot/api"
 import type {
 	GenericStorageEntryFunction,
 	PromiseResult,
@@ -10,7 +8,7 @@ import type {
 import { useEffect, useRef, useState } from "react"
 import type { Loadable } from "recoil"
 import { RecoilLoadable, useRecoilValue } from "recoil"
-import { type Observable } from "rxjs"
+import type { Observable } from "rxjs"
 
 import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
 import useDeferred from "@/util/useDeferred"
@@ -80,55 +78,51 @@ export const useQueryMulti = <
 		setLoadable(RecoilLoadable.of(promise))
 	}, [promise])
 
-	useEffect(
-		() => {
-			if (options?.enabled === false) {
-				setLoadable(RecoilLoadable.of(promise))
-				return
+	useEffect(() => {
+		if (options?.enabled === false) {
+			setLoadable(RecoilLoadable.of(promise))
+			return
+		}
+
+		const params = queries.map((x) => {
+			if (typeof x === "string") {
+				const [module, section] = x.split(".")
+
+				return api.query[module!]?.[section!]
 			}
 
-			const params = queries.map((x) => {
-				if (typeof x === "string") {
-					const [module, section] = x.split(".")
+			const [query, ...params] = x
+			const [module, section] = query.split(".")
 
-					return api.query[module!]?.[section!]
+			return [api.query[module!]?.[section!], ...params]
+		})
+
+		const unsubscribePromise = api
+			.queryMulti(params as any, (result) => {
+				if (promise !== promiseRef.current) {
+					return
 				}
 
-				const [query, ...params] = x
-				const [module, section] = query.split(".")
+				setLoadable(RecoilLoadable.of(result as TResult))
+				resolve(result as TResult)
+			})
+			.catch((error: any) => {
+				if (promise !== promiseRef.current) {
+					return
+				}
 
-				return [api.query[module!]?.[section!], ...params]
+				setLoadable(RecoilLoadable.error(error))
+				reject(error)
 			})
 
-			const unsubscribePromise = api
-				.queryMulti(params as any, (result) => {
-					if (promise !== promiseRef.current) {
-						return
-					}
-
-					setLoadable(RecoilLoadable.of(result as TResult))
-					resolve(result as TResult)
-				})
-				.catch((error: any) => {
-					if (promise !== promiseRef.current) {
-						return
-					}
-
-					setLoadable(RecoilLoadable.error(error))
-					reject(error)
-				})
-
-			return () => {
-				void unsubscribePromise.then((unsubscribe) => {
-					if (typeof unsubscribe === "function") {
-						unsubscribe()
-					}
-				})
-			}
-		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[api, options?.enabled, JSON.stringify(queries)]
-	)
+		return () => {
+			void unsubscribePromise.then((unsubscribe) => {
+				if (typeof unsubscribe === "function") {
+					unsubscribe()
+				}
+			})
+		}
+	}, [api, options?.enabled, JSON.stringify(queries)])
 
 	return loadable
 }

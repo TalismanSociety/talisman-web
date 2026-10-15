@@ -4,7 +4,7 @@ import "@/index.css"
 import { css, Global } from "@emotion/react"
 import type { Theme } from "@talismn/ui/theme"
 import { ThemeProvider, theme } from "@talismn/ui/theme"
-import { type PropsWithChildren } from "react"
+import type { PropsWithChildren } from "react"
 
 import ATApocRevelations from "@/assets/fonts/AT-Apoc-Revelations.woff"
 import SurtRegular from "@/assets/fonts/Surt-Regular.woff"

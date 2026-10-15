@@ -7,7 +7,7 @@ import {
 	TALISMAN_FEE_BITTENSOR,
 } from "@/components/widgets/staking/subtensor/constants"
 import { useTokenAmount, useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
-import { Decimal } from "@/util/Decimal"
+import type { Decimal } from "@/util/Decimal"
 
 import { useGetSeekDiscount } from "../../seek/hooks/useGetSeekDiscount"
 import { bittensorSlippageAtom, maxSlippageAtom } from "../atoms/bittensorSlippage"
@@ -15,7 +15,7 @@ import { dTaoConversionRateAtom } from "../atoms/dTaoConversionRate"
 import { expectedAlphaAmountAtom } from "../atoms/expectedAlphaAmount"
 import { netuidAtom } from "../atoms/netuid"
 import { talismanTokenFeeAtom } from "../atoms/talismanTokenFee"
-import { type RuntimePoolData } from "../types"
+import type { RuntimePoolData } from "../types"
 import { useGetSubnetMetagraphByNetuid } from "./useGetSubnetMetagraphByNetuid"
 
 type Amount = {

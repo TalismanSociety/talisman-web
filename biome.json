@@ -59,42 +59,32 @@
         "useSemanticElements": "off"
       },
       "complexity": {
-        "noThisInStatic": "off",
         "noUselessFragments": "off",
-        "noUselessSwitchCase": "off",
-        "useArrowFunction": "off",
-        "useFlatMap": "off",
         "useLiteralKeys": "off",
         "useOptionalChain": "off"
       },
       "correctness": {
         "noUnknownProperty": "off",
-        "noUnusedImports": "off",
-        "noUnusedVariables": "off",
         "useExhaustiveDependencies": "off",
         "useHookAtTopLevel": "off",
         "useJsxKeyInIterable": "off",
         "useParseIntRadix": "off"
       },
-      "security": {
-        "noBlankTarget": "off"
-      },
       "style": {
-        "noNonNullAssertion": "off",
-        "useExponentiationOperator": "off",
-        "useImportType": "off",
-        "useNodejsImportProtocol": "off",
-        "useTemplate": "off"
+        "noNonNullAssertion": "off"
       },
       "suspicious": {
         "noArrayIndexKey": "off",
         "noConfusingVoidType": "off",
         "noExplicitAny": "off",
-        "noGlobalIsNan": "off",
         "noNonNullAssertedOptionalChain": "off",
         "noShadowRestrictedNames": "off",
-        "noUnknownAtRules": "off",
-        "useIterableCallbackReturn": "off"
+        "noUnknownAtRules": {
+          "level": "error",
+          "options": {
+            "ignore": ["tailwind"]
+          }
+        }
       }
     }
   }

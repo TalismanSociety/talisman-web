@@ -1,4 +1,4 @@
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 import { Button } from "../atoms/Button"
 import { Text } from "../atoms/Text"
 import type { AlertDialogProps } from "./AlertDialog"
@@ -22,7 +22,6 @@ export default {
 	},
 } as ComponentMeta<typeof AlertDialog>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<AlertDialogProps> = (args: any) => <AlertDialog {...args} />
 
 Default.args = {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-import { type SubnetData } from "../types"
+import type { SubnetData } from "../types"
 import { useGetInfiniteSubnetIdentities } from "./useGetInfiniteSubnetIdentities"
 import { useGetInfiniteSubnetPools } from "./useGetInfiniteSubnetPools"
 

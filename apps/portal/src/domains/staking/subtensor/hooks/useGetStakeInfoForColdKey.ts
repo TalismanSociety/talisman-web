@@ -1,4 +1,4 @@
-import { ApiPromise } from "@polkadot/api"
+import type { ApiPromise } from "@polkadot/api"
 import { toHex } from "@polkadot-api/utils"
 import { useQuery } from "@tanstack/react-query"
 import { AccountId } from "polkadot-api"

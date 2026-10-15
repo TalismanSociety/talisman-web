@@ -1,4 +1,4 @@
-import { type ButtonHTMLAttributes, type DetailedHTMLProps } from "react"
+import type { ButtonHTMLAttributes, DetailedHTMLProps } from "react"
 
 export type ClickableProps = DetailedHTMLProps<
 	ButtonHTMLAttributes<HTMLButtonElement>,

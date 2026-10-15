@@ -9,7 +9,7 @@ import { useNativeTokenAmountState } from "@/domains/chains/recoils"
 import { useExtrinsicInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
 import { useUnstakeForm } from "@/domains/staking/subtensor/hooks/forms"
 import { useCombineSubnetData } from "@/domains/staking/subtensor/hooks/useCombineSubnetData"
-import { type StakeItem } from "@/domains/staking/subtensor/hooks/useStake"
+import type { StakeItem } from "@/domains/staking/subtensor/hooks/useStake"
 
 import { ROOT_NETUID } from "./constants"
 

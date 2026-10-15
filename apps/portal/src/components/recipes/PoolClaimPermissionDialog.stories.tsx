@@ -16,7 +16,6 @@ type Story = StoryObj<typeof PoolClaimPermissionDialog>
 export const Default: Story = {
 	render: () => (
 		<PoolClaimPermissionDialog onRequestDismiss={() => {}}>
-			{/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
 			{DefaultFormStory.render?.(DefaultFormStory.args as any, {} as any)}
 		</PoolClaimPermissionDialog>
 	),

@@ -1,4 +1,4 @@
-import { type Meta, type Story } from "@storybook/react"
+import type { Meta, Story } from "@storybook/react"
 import { Search } from "@talismn/web-icons"
 import { IconButton } from "../atoms/IconButton"
 import type { ContainedTextInputProps } from "./ContainedTextInput"

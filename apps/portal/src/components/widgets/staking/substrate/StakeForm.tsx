@@ -18,7 +18,7 @@ import {
 import { useLocation } from "react-use"
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from "recoil"
 import { StakeForm as StakeFormComponent } from "@/components/recipes/StakeForm"
-import { type StakeStatus } from "@/components/recipes/StakeStatusIndicator"
+import type { StakeStatus } from "@/components/recipes/StakeStatusIndicator"
 import { PoolSelectorDialog } from "@/components/recipes/StakeTargetSelectorDialog"
 import { useAccountSelector } from "@/components/widgets/AccountSelector"
 import type { Account } from "@/domains/accounts/recoils"
@@ -27,7 +27,7 @@ import { claimPermissionUnsupportedChainIds } from "@/domains/chains/config"
 import { useChainState as useChainRecoilState } from "@/domains/chains/hooks"
 import { ChainProvider } from "@/domains/chains/provider"
 import {
-	ChainInfo,
+	type ChainInfo,
 	nominationPoolsEnabledChainsState,
 	useNativeTokenDecimalState,
 } from "@/domains/chains/recoils"
@@ -224,7 +224,7 @@ const PoolSelector = (props: {
 						count={pool.bondedPool.memberCounter.toString()}
 						onClick={() => setNewPoolId(pool.poolId)}
 						commissionFeeDescription="Commission shown is only for the nomination pool, but actual earnings will reflect fees charged by both validators and nomination pools. The total amount of fees can change regularly and can't be determined by Talisman."
-						commissionFee={getCurrentCommission(pool.poolId).toString() + "%"}
+						commissionFee={`${getCurrentCommission(pool.poolId).toString()}%`}
 					/>
 				)
 			})}
@@ -280,7 +280,8 @@ const EstimatedYield = memo(
 	(props: { amount: Decimal }) => {
 		const stakedReturn = useApr()
 		const annualReturn = useMemo(
-			() => new BN(props.amount.planck.toString()).muln(isNaN(stakedReturn) ? 0 : stakedReturn),
+			() =>
+				new BN(props.amount.planck.toString()).muln(Number.isNaN(stakedReturn) ? 0 : stakedReturn),
 			[props.amount.planck, stakedReturn]
 		)
 		const parsedAnnualReturn = useTokenAmountFromPlanck(annualReturn)
@@ -465,17 +466,13 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 		"Permissioned" | "PermissionlessCompound" | "PermissionlessWithdraw" | "PermissionlessAll"
 	>("Permissioned")
 
-	useEffect(
-		() => {
-			if (selectedPoolId !== undefined && chain.talismanPools?.includes(selectedPoolId)) {
-				setClaimPermission("PermissionlessCompound")
-			} else {
-				setClaimPermission("Permissioned")
-			}
-		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[selectedPoolId]
-	)
+	useEffect(() => {
+		if (selectedPoolId !== undefined && chain.talismanPools?.includes(selectedPoolId)) {
+			setClaimPermission("PermissionlessCompound")
+		} else {
+			setClaimPermission("Permissioned")
+		}
+	}, [selectedPoolId])
 
 	const joinPoolExtrinsic = useExtrinsic(
 		useCallback(

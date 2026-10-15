@@ -38,7 +38,6 @@ const TalismanOpenable = () => (
 					"border-primary text-md rounded-full border px-7 py-3",
 					"active:scale-101 transition-transform hover:scale-105 hover:no-underline"
 				)}
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				onClick={useCallback(() => (window as any)?.talismanSub?.openFullscreenPortfolio?.(), [])}
 			>
 				Open
@@ -106,9 +105,7 @@ const useTalismanInstalledStatus = () => {
 		let id: ReturnType<typeof setTimeout>
 
 		const checkTalismanStatus = () => {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const installed = Boolean((window as any).talismanEth)
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const canBeOpened =
 				typeof (window as any)?.talismanSub?.openFullscreenPortfolio === "function"
 

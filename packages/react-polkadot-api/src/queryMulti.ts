@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { type ApiPromise } from "@polkadot/api"
+import type { ApiPromise } from "@polkadot/api"
 import type {
 	GenericStorageEntryFunction,
 	PromiseResult,
@@ -10,7 +8,7 @@ import type {
 import { useContext } from "react"
 import type { RecoilValueReadOnly } from "recoil"
 import { atomFamily, constSelector, isRecoilValue } from "recoil"
-import { type Observable } from "rxjs"
+import type { Observable } from "rxjs"
 import { ApiIdContext, RecoilStateContext } from "./Context"
 import { garbageCollectionKey } from "./GarbageCollector"
 import type { ApiId, Diverge, Options, PickKnownKeys } from "./types"

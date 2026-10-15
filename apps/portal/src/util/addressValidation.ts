@@ -15,7 +15,7 @@ export const tryParseSubstrateOrEthereumAddress = (
 
 	try {
 		return encodeAddress(decodeAddress(address))
-	} catch (error) {
+	} catch (_error) {
 		return undefined
 	}
 }

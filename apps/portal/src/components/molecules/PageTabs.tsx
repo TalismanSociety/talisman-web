@@ -1,5 +1,5 @@
-import { HTMLAttributeAnchorTarget, ReactNode } from "react"
-import { NavLink, To } from "react-router-dom"
+import type { HTMLAttributeAnchorTarget, ReactNode } from "react"
+import { NavLink, type To } from "react-router-dom"
 
 import { cn } from "@/util/cn"
 

@@ -1,5 +1,5 @@
 import { useTheme } from "@emotion/react"
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 import * as Icon from "@talismn/web-icons"
 
 export default {
@@ -11,7 +11,6 @@ export default {
 	},
 } as ComponentMeta<typeof Icon.Activity>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<React.SVGProps<SVGSVGElement> & { title?: string }> = (args: any) => {
 	const theme = useTheme()
 	return (

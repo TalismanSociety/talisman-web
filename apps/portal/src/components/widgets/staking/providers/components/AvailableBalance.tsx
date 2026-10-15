@@ -8,7 +8,7 @@ import { Decimal } from "@/util/Decimal"
 import useLidoAvailableBalance from "../hooks/lido/useAvailableBalance"
 import useAvailableBalance from "../hooks/nominationPools/useAvailableBalance"
 import useGetSeekAvailableBalance from "../hooks/seek/useGetSeekAvailableBalance"
-import { StakeProviderTypeId } from "../hooks/types"
+import type { StakeProviderTypeId } from "../hooks/types"
 
 type AvailableBalanceProps = {
 	typeId: StakeProviderTypeId
@@ -31,7 +31,6 @@ const AvailableBalanceDisplay = ({
 	symbol,
 	setAvailableBalanceValue,
 }: AvailableBalanceDisplayProps) => {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const hookMap: Record<hookMapKey, (arg0?: any, arg1?: boolean) => AvailableBalance> = {
 		substrate: useAvailableBalance,
 		liquidStakingLido: useLidoAvailableBalance,

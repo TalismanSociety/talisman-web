@@ -1,6 +1,6 @@
 import { Global, keyframes, useTheme } from "@emotion/react"
 import { Volume2, X } from "@talismn/web-icons"
-import { type ReactNode } from "react"
+import type { ReactNode } from "react"
 import { Button } from "../atoms/Button"
 import type { DialogProps } from "../atoms/Dialog"
 import { Dialog } from "../atoms/Dialog"
@@ -49,7 +49,6 @@ const MediaPlayer = (props: MediaPlayerProps) => {
 			)
 		case "model":
 			import("@google/model-viewer/dist/model-viewer")
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			return (
 				<model-viewer
 					src={props.src}
@@ -62,8 +61,6 @@ const MediaPlayer = (props: MediaPlayerProps) => {
 				return <embed src={props.src} css={{ width: "100%", height: "100%" }} />
 			}
 			return null
-		case null:
-		case undefined:
 		default:
 			return null
 	}

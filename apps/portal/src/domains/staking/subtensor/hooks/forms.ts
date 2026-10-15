@@ -21,7 +21,7 @@ import { paymentInfoState } from "@/domains/common/recoils"
 import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo"
 
 import { feeEstimateAtom } from "../atoms/feeEstimate"
-import { type StakeItem } from "./useStake"
+import type { StakeItem } from "./useStake"
 
 export const useAddStakeForm = (
 	account: Account,
@@ -55,7 +55,6 @@ export const useAddStakeForm = (
 		shouldUpdateFeeAndSlippage: !isRootnetStake,
 	})
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const tx: SubmittableExtrinsic<any> = useMemo(() => {
 		if (!delegate || netuid === undefined) {
 			// Return a dummy transaction if delegate or netuid is missing
@@ -67,7 +66,6 @@ export const useAddStakeForm = (
 
 		try {
 			return api.tx.utility.batchAll([
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				(api.tx as any)?.subtensorModule?.addStake?.(delegate, amount.decimalAmount?.planck ?? 0n),
 				api.tx.balances.transferKeepAlive(
 					TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR,
@@ -78,7 +76,6 @@ export const useAddStakeForm = (
 		} catch {
 			if (isRootnetStake) {
 				return api.tx.utility.batchAll([
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					(api.tx as any)?.subtensorModule?.addStake?.(
 						delegate,
 						netuid,
@@ -88,7 +85,6 @@ export const useAddStakeForm = (
 				])
 			}
 			return api.tx.utility.batchAll([
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				(api.tx as any)?.subtensorModule?.addStakeLimit?.(
 					delegate,
 					netuid,
@@ -276,10 +272,8 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 	const limitPrice = taoPriceWithSlippageFormatted.decimalAmount?.planck || 0n
 	const allowPartial = false
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const tx: SubmittableExtrinsic<any> = useMemo(() => {
 		try {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			return (api.tx as any)?.subtensorModule?.removeStake?.(
 				delegate,
 				amount.decimalAmount?.planck ?? 0n
@@ -287,7 +281,6 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 		} catch {
 			if (isRootnetStake) {
 				return api.tx.utility.batchAll([
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					(api.tx as any)?.subtensorModule?.removeStake?.(
 						delegate,
 						stake.netuid,
@@ -297,7 +290,6 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 				])
 			}
 			return api.tx.utility.batchAll([
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				(api.tx as any)?.subtensorModule?.removeStakeLimit?.(
 					delegate,
 					stake.netuid,
@@ -418,7 +410,6 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 	}
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const useStakeFormFeeEstimate = (origin: string, tx: SubmittableExtrinsic<any>) => {
 	const paymentInfoLoadable = useRecoilValueLoadable(
 		paymentInfoState([

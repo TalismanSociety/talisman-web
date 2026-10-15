@@ -6,7 +6,7 @@ import { useUnlockDuration as useNominationPoolUnlockDuration } from "@/domains/
 
 import useDappUnlockDuration from "../hooks/dapp/useUnlockDuration"
 import useGetSeekStakeUnlockDuration from "../hooks/seek/useGetSeekStakeUnlockDuration"
-import { StakeProviderTypeId } from "../hooks/types"
+import type { StakeProviderTypeId } from "../hooks/types"
 
 const unbondingFormatter = (unlockValue: number) => formatDistance(0, unlockValue)
 
@@ -20,7 +20,6 @@ type UnbondingDisplayProps = Omit<UnbondingPeriodProps, "genesisHash">
 
 // This component is used to get around the react rules of conditional hooks
 const UnbondingDisplay = ({ typeId, setUnbondingValues }: UnbondingDisplayProps) => {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const hookMap: Record<StakeProviderTypeId, (arg0?: any) => number> = {
 		nominationPool: useNominationPoolUnlockDuration,
 		delegationSubtensor: () => 0,

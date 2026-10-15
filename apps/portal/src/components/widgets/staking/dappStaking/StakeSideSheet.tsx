@@ -18,7 +18,7 @@ import { writeableSubstrateAccountsState } from "@/domains/accounts/recoils"
 import { useChainState } from "@/domains/chains/hooks"
 import { ChainProvider } from "@/domains/chains/provider"
 import {
-	ChainInfo,
+	type ChainInfo,
 	dappStakingEnabledChainsState,
 	useNativeTokenAmountState,
 	useNativeTokenDecimalState,
@@ -29,7 +29,7 @@ import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import { useAddStakeForm } from "@/domains/staking/dappStaking/hooks/forms"
 import { useApr } from "@/domains/staking/dappStaking/hooks/useApr"
 import { useStake } from "@/domains/staking/dappStaking/hooks/useStake"
-import { DappInfo, useRegisteredDappsState } from "@/domains/staking/dappStaking/recoils"
+import { type DappInfo, useRegisteredDappsState } from "@/domains/staking/dappStaking/recoils"
 import { Maybe } from "@/util/monads"
 
 import useUnlockDuration from "../providers/hooks/dapp/useUnlockDuration"
@@ -153,7 +153,6 @@ const EstimatedRewards = (props: { amount: bigint }) => {
 
 type StakeFormProps = IncompleteStakeFormProps & {
 	account: Account
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
 }
 

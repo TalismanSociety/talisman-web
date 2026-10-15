@@ -15,14 +15,13 @@ import { BigIntMath } from "@/util/BigIntMath"
 import { Maybe } from "@/util/monads"
 
 import { getAllRewardsClaimExtrinsics } from "./useClaimAllRewardsExtrinsic"
-import { StakeLoadable } from "./useStakeLoadable"
+import type { StakeLoadable } from "./useStakeLoadable"
 
 const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.5
 
 export const useAddStakeForm = (
 	account: Account,
 	stake: StakeLoadable["data"],
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
 ) => {
 	const [amount, setAmount] = useState("")
@@ -236,7 +235,6 @@ export const useAddStakeForm = (
 export const useUnstakeForm = (
 	account: Account,
 	stake: StakeLoadable["data"],
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
 ) => {
 	const [amount, setAmount] = useState("")

@@ -1,4 +1,4 @@
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 
 import type { FairyBreadBannerProps } from "./FairyBreadBanner"
 import { FairyBreadBanner } from "./FairyBreadBanner"

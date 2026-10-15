@@ -44,7 +44,6 @@ export type SelectProps<TValue, TClear extends boolean = false> = {
 }
 
 type SelectItemProps = {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	value?: any
 	leadingIcon?: ReactNode
 	headlineContent: ReactNode
@@ -94,12 +93,11 @@ SelectItem.displayName = "SelectItem"
 const findOption = (children: ReactElement): ReactElement<SelectItemProps>[] => {
 	if (!children) return []
 	if (typeof children === "string") return []
-	if (Array.isArray(children)) return children.map(findOption).flat()
+	if (Array.isArray(children)) return children.flatMap(findOption)
 
 	if (
 		typeof children.type === "object" &&
 		"displayName" in children.type &&
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		(children.type as any).displayName === "SelectItem"
 	) {
 		return [children as React.ReactElement<SelectItemProps>]
@@ -129,7 +127,6 @@ export const Select = Object.assign(
 		const inputRef = useRef<HTMLInputElement | null>(null)
 
 		const optionsArray = useMemo(
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			(): React.ReactElement<SelectItemProps>[] =>
 				React.Children.map(children as any, findOption)?.flat() ?? [],
 			[children]
@@ -239,7 +236,6 @@ export const Select = Object.assign(
 				if (
 					typeof children.type === "object" &&
 					"displayName" in children.type &&
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					(children.type as any).displayName === "SelectItem"
 				) {
 					const child = children as ReactElement<SelectItemProps>
@@ -417,7 +413,6 @@ export const Select = Object.assign(
 							},
 						})}
 					>
-						{/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
 						{React.Children.map(children as any, injectChildren)}
 					</motion.ul>
 				</FloatingPortal>

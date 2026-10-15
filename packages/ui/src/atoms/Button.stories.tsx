@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react"
 import { Zap } from "@talismn/web-icons"
 
 import { Button } from "./Button"
@@ -11,7 +11,6 @@ export default {
 		layout: "centered",
 	},
 	decorators: [
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		(Story: any) => (
 			<div css={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
 				<div css={{ width: 300, marginBottom: "1.6rem" }}>

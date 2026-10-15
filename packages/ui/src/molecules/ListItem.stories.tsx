@@ -1,4 +1,4 @@
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 import { Trash } from "@talismn/web-icons"
 import { Identicon } from "../atoms/Identicon"
 import type { ListItemProps } from "./ListItem"
@@ -12,7 +12,6 @@ export default {
 	},
 } as ComponentMeta<typeof ListItem>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<ListItemProps> = (args: any) => <ListItem {...args} />
 
 Default.args = {

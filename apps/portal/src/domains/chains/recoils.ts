@@ -1,5 +1,5 @@
 import { chainsByGenesisHashAtom, tokensByIdAtom } from "@talismn/balances-react"
-import { Chain } from "@talismn/chaindata-provider"
+import type { Chain } from "@talismn/chaindata-provider"
 import { useContext } from "react"
 import type { RecoilValueReadOnly } from "recoil"
 import { atom, selector, selectorFamily, waitForAll } from "recoil"

@@ -1,6 +1,6 @@
 import { toast } from "@talismn/ui/molecules/Toaster"
 import { CreditCard, Menu, PieChart, Zap } from "@talismn/web-icons"
-import { MouseEventHandler, useCallback, useState } from "react"
+import { type MouseEventHandler, useCallback, useState } from "react"
 import { Link } from "react-router-dom"
 
 import { CurrencySelect } from "@/components/molecules/CurrencySelect"
@@ -34,7 +34,7 @@ export const SiteNav = ({
 			if (!url?.length) throw new Error()
 
 			return window.open(url, "_blank", "noopener noreferrer")
-		} catch (cause) {
+		} catch (_cause) {
 			return toast.error(`Failed to generate Ramp URL`)
 		}
 	}, [])

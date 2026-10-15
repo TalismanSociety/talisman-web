@@ -11,7 +11,7 @@ import { useCombinedBittensorValidatorsData } from "@/domains/staking/subtensor/
 import { useMoveStake } from "@/domains/staking/subtensor/hooks/useMoveStake"
 import type { StakeItem } from "@/domains/staking/subtensor/hooks/useStake"
 import { useStake } from "@/domains/staking/subtensor/hooks/useStake"
-import { type BondOption } from "@/domains/staking/subtensor/types"
+import type { BondOption } from "@/domains/staking/subtensor/types"
 
 import AddStakeDialog from "./AddStakeDialog"
 import { DelegateSelectorDialog } from "./DelegateSelectorDialog"

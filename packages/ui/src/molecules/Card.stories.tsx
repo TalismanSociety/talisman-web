@@ -1,4 +1,4 @@
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 import { EyeOff, Heart } from "@talismn/web-icons"
 import { FloatingActionButton } from "../atoms/FloatingActionButton"
 import { theme } from "../theme"

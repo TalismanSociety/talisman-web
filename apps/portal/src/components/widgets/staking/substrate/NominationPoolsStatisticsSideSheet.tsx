@@ -22,7 +22,7 @@ import { useEraEtaFormatter } from "@/domains/common/hooks/useEraEta"
 import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import {
-	DerivedPool,
+	type DerivedPool,
 	useApr,
 	usePoolStakes,
 } from "@/domains/staking/substrate/nominationPools/hooks"
@@ -58,11 +58,7 @@ const Stats = (props: {
 }) => {
 	const theme = useTheme()
 
-	const now = useMemo(
-		() => props.currentDate ?? new Date(),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[props.currentDate?.getTime()]
-	)
+	const now = useMemo(() => props.currentDate ?? new Date(), [props.currentDate?.getTime()])
 
 	const groupedPayouts = useMemo(() => {
 		const days = eachDayOfInterval({ start: subDays(now, 15), end: now })
@@ -172,7 +168,6 @@ const Stats = (props: {
 							padding={{ top: 5, right: 0, bottom: 40, left: 50 }}
 						>
 							<VictoryAxis
-								// eslint-disable-next-line @typescript-eslint/no-explicit-any
 								tickFormat={(x: any) =>
 									new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short" }).format(
 										new Date(x)

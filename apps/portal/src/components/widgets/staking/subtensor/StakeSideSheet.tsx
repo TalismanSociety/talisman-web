@@ -9,10 +9,10 @@ import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { writeableSubstrateAccountsState } from "@/domains/accounts/recoils"
 import { useChainState } from "@/domains/chains/hooks"
 import { ChainProvider } from "@/domains/chains/provider"
-import { ChainInfo, subtensorStakingEnabledChainsState } from "@/domains/chains/recoils"
+import { type ChainInfo, subtensorStakingEnabledChainsState } from "@/domains/chains/recoils"
 import { useCombinedBittensorValidatorsData } from "@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData"
 import { useCombineSubnetData } from "@/domains/staking/subtensor/hooks/useCombineSubnetData"
-import { type BondOption, type SubnetData } from "@/domains/staking/subtensor/types"
+import type { BondOption, SubnetData } from "@/domains/staking/subtensor/types"
 import { Maybe } from "@/util/monads"
 
 import {

@@ -6,7 +6,7 @@ import { StakePosition, StakePositionErrorBoundary } from "@/components/recipes/
 import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { RedactableBalance } from "@/components/widgets/RedactableBalance"
-import { Account, evmSignableAccountsState } from "@/domains/accounts/recoils"
+import { type Account, evmSignableAccountsState } from "@/domains/accounts/recoils"
 import { selectedCurrencyState } from "@/domains/balances/currency"
 import { CHAIN_ID, CHAIN_NAME, SEEK_TICKER } from "@/domains/staking/seek/constants"
 import { Decimal } from "@/util/Decimal"

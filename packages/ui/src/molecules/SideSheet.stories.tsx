@@ -1,5 +1,5 @@
 import { css, Global } from "@emotion/react"
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 import { Text } from "../atoms/Text"
 import type { SideSheetProps } from "./SideSheet"
 import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from "./SideSheet"
@@ -13,7 +13,6 @@ export default {
 	},
 } as ComponentMeta<typeof SideSheet>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<SideSheetProps> = (args: any) => (
 	<>
 		<Global

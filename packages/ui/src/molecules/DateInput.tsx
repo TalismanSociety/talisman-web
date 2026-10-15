@@ -46,23 +46,18 @@ export const DateInput = (props: DateInputProps) => {
 			}
 		},
 		// Can enter infinite loop if unstable deps is passed
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[date]
 	)
 
-	useEffect(
-		() => {
-			if (props.min !== undefined && date < new Date(props.min)) {
-				setDateString(parseDate(props.min) ?? "")
-			}
+	useEffect(() => {
+		if (props.min !== undefined && date < new Date(props.min)) {
+			setDateString(parseDate(props.min) ?? "")
+		}
 
-			if (props.max !== undefined && date > new Date(props.max)) {
-				setDateString(parseDate(props.max) ?? "")
-			}
-		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[date, props.max?.toString(), props.min?.toString()]
-	)
+		if (props.max !== undefined && date > new Date(props.max)) {
+			setDateString(parseDate(props.max) ?? "")
+		}
+	}, [date, props.max?.toString(), props.min?.toString()])
 
 	return (
 		<Text.Body

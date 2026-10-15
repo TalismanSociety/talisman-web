@@ -1,4 +1,4 @@
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 
 import type { StatusIndicatorProps } from "./StatusIndicator"
 import { StatusIndicator } from "./StatusIndicator"
@@ -11,7 +11,6 @@ export default {
 	},
 } as ComponentMeta<typeof StatusIndicator>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Template: Story<StatusIndicatorProps> = (args: any) => <StatusIndicator {...args} />
 
 export const Success = Template.bind({})

@@ -94,8 +94,7 @@ export const useValidatorUnstakeForm = (account?: string) => {
 			// maybe create a hook or function to combine status of multiple distinct extrinsic
 			state: (unbondExtrinsic.state === "loading" || unbondAllExtrinsic.state === "loading"
 				? ("loading" as const)
-				: // eslint-disable-next-line @typescript-eslint/no-explicit-any
-					("idle" as const)) as any,
+				: ("idle" as const)) as any,
 			unbondAll: async (account: string) => {
 				if (stake === undefined) {
 					throw new Error("Extrinsic not ready yet")

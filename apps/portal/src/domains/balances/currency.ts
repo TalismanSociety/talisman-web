@@ -1,5 +1,5 @@
 import { jsonParser, stringLiterals } from "@recoiljs/refine"
-import { type TokenRateCurrency } from "@talismn/token-rates"
+import type { TokenRateCurrency } from "@talismn/token-rates"
 import { atom } from "recoil"
 
 import { storageEffect } from "@/domains/common/effects"

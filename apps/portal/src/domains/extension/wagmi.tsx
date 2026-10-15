@@ -19,7 +19,6 @@ import {
 import { injected } from "wagmi/connectors"
 
 declare global {
-	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Window {
 		talismanEth?: EIP1193Provider
 	}

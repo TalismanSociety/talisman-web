@@ -1,7 +1,7 @@
-import { type ApiPromise } from "@polkadot/api"
-import { type AddressOrPair, type SubmittableExtrinsic } from "@polkadot/api/types"
+import type { ApiPromise } from "@polkadot/api"
+import type { AddressOrPair, SubmittableExtrinsic } from "@polkadot/api/types"
 import RpcError from "@polkadot/rpc-provider/coder/error"
-import { type ISubmittableResult } from "@polkadot/types/types"
+import type { ISubmittableResult } from "@polkadot/types/types"
 import { useSignetSdk } from "@talismn/signet-apps-sdk"
 import { useContext, useMemo, useState } from "react"
 import { useRecoilCallback, useRecoilValue } from "recoil"
@@ -23,14 +23,12 @@ export type SubmittableResultLoadable =
 	| { state: "idle"; contents: undefined }
 	| { state: "loading"; contents: ISubmittableResult | undefined }
 	| { state: "hasValue"; contents: ISubmittableResult }
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	| { state: "hasError"; contents: any }
 
 export type ExtrinsicLoadable = (
 	| { state: "idle"; contents: undefined }
 	| { state: "loading"; contents: ISubmittableResult | undefined }
 	| { state: "hasValue"; contents: ISubmittableResult }
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	| { state: "hasError"; contents: any }
 ) & {
 	signAndSend: (account: AddressOrPair) => Promise<ISubmittableResult>
@@ -221,12 +219,10 @@ export function useExtrinsic(
 					}
 				}
 			},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[
 			contextChain,
 			endpoint,
 			moduleOrSubmittable,
-			// eslint-disable-next-line react-hooks/exhaustive-deps
 			JSON.stringify(params),
 			signetAccount,
 			sdk,

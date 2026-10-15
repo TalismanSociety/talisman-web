@@ -18,7 +18,6 @@ export const Default: Story = {
 		isTalismanPool: false,
 	},
 	render: (args) => {
-		// eslint-disable-next-line react-hooks/rules-of-hooks
 		const [permission, setPermission] = useState<"compound" | "withdraw" | "all" | undefined>()
 		return (
 			<PoolClaimPermissionForm

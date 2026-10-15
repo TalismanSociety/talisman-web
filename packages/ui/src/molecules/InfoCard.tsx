@@ -1,5 +1,5 @@
 import { useTheme } from "@emotion/react"
-import { type ReactNode } from "react"
+import type { ReactNode } from "react"
 
 import { useSurfaceColor } from "../atoms/Surface"
 import { Text } from "../atoms/Text"

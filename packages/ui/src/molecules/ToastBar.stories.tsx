@@ -1,4 +1,4 @@
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 import { Button } from "../atoms/Button"
 import { Toaster, toast } from "../molecules/Toaster"
 import type { ToastBarProps } from "./ToastBar"
@@ -12,7 +12,6 @@ export default {
 	},
 } as ComponentMeta<typeof ToastBar>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<ToastBarProps> = (args: any) => <ToastBar {...args} />
 
 Default.args = {

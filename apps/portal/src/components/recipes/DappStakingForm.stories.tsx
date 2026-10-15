@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react"
 import { Select } from "@talismn/ui/molecules/Select"
 
 import { DappStakingForm } from "./DappStakingForm"

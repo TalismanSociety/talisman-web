@@ -1,4 +1,4 @@
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 
 import type { ClaimStakeDialogProps } from "./ClaimStakeDialog"
 import { ClaimStakeDialog } from "./ClaimStakeDialog"

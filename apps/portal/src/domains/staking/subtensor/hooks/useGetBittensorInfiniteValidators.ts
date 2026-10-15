@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { useEffect, useMemo } from "react"
 
-import { ValidatorData, ValidatorsData } from "../types"
+import type { ValidatorData, ValidatorsData } from "../types"
 
 const TAOSTATS_API_KEY = import.meta.env.VITE_TAOSTATS_API_KEY
 const TAOSTATS_API_URL = import.meta.env.VITE_TAOSTATS_API_URL

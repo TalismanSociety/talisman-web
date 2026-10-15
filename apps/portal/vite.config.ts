@@ -1,5 +1,5 @@
+import path from "node:path"
 import react from "@vitejs/plugin-react"
-import path from "path"
 import { defineConfig } from "vite"
 import { nodePolyfills } from "vite-plugin-node-polyfills"
 import svgr from "vite-plugin-svgr"
@@ -26,9 +26,6 @@ export default defineConfig({
 	server: { allowedHosts: [".orb.local"] },
 	build: {
 		outDir: "build",
-		rollupOptions: {
-			shimMissingExports: true,
-		},
 	},
 	worker: {
 		// https://github.com/vitejs/vite/pull/12629

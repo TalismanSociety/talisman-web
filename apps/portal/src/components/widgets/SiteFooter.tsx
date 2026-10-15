@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import type { ReactNode } from "react"
 
 import Discord from "@/assets/icons/discord.svg?react"
 import GitHub from "@/assets/icons/github.svg?react"

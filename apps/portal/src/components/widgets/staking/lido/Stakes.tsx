@@ -8,7 +8,7 @@ import { RedactableBalance } from "@/components/widgets/RedactableBalance"
 import { selectedEvmAccountsState } from "@/domains/accounts/recoils"
 import { useStakes } from "@/domains/staking/lido/core"
 import { lidoSuitesState } from "@/domains/staking/lido/recoils"
-import { LidoSuite } from "@/domains/staking/lido/types"
+import type { LidoSuite } from "@/domains/staking/lido/types"
 
 import LidoWidgetSideSheet from "./LidoWidgetSideSheet"
 

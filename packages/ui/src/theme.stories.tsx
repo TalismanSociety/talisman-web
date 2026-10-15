@@ -1,6 +1,6 @@
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 import { Zap } from "@talismn/web-icons"
-import { type JSXElementConstructor } from "react"
+import type { JSXElementConstructor } from "react"
 import { Text } from "./atoms/Text"
 import type { Theme } from "./theme"
 import { theme } from "./theme"

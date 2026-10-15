@@ -21,7 +21,6 @@ const sanitizePostHogProperties = (object: unknown) => {
 	}
 
 	return Object.fromEntries(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		Object.entries(object).map(([key, value]): [any, any] => [
 			key,
 			sanitizePostHogProperties(value),
@@ -90,7 +89,7 @@ export const useWagmiWriteContract = <
 				),
 				error: "Your transaction was unsuccessful",
 				success: (hash) => {
-					const url = new URL("/tx/" + hash, etherscanUrl)
+					const url = new URL(`/tx/${hash}`, etherscanUrl)
 					return (
 						<ToastMessage
 							headlineContent="Your transaction was successful"

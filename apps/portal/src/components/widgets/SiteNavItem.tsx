@@ -1,11 +1,11 @@
 import {
 	cloneElement,
-	HTMLAttributeAnchorTarget,
-	MouseEventHandler,
-	ReactElement,
-	ReactNode,
+	type HTMLAttributeAnchorTarget,
+	type MouseEventHandler,
+	type ReactElement,
+	type ReactNode,
 } from "react"
-import { NavLink, To } from "react-router-dom"
+import { NavLink, type To } from "react-router-dom"
 
 import { cn } from "@/util/cn"
 

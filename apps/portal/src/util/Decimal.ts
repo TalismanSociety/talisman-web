@@ -18,7 +18,7 @@ export class Decimal {
 		options?: DecimalOptions
 	) {
 		try {
-			return this.fromPlanck(planck ?? 0, decimals, options)
+			return Decimal.fromPlanck(planck ?? 0, decimals, options)
 		} catch {
 			return undefined
 		}
@@ -67,7 +67,7 @@ export class Decimal {
 
 	static fromUserInputOrUndefined(input: string, decimals: number, options?: DecimalOptions) {
 		try {
-			return this.fromUserInput(input, decimals, options)
+			return Decimal.fromUserInput(input, decimals, options)
 		} catch {
 			return undefined
 		}

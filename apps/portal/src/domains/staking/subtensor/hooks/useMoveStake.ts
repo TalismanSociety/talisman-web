@@ -1,4 +1,4 @@
-import { type SubmittableExtrinsic } from "@polkadot/api/types"
+import type { SubmittableExtrinsic } from "@polkadot/api/types"
 import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
 
@@ -13,7 +13,7 @@ import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiStat
 import { useTokenAmount } from "@/domains/common/hooks/useTokenAmount"
 import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo"
 
-import { type StakeItem } from "./useStake"
+import type { StakeItem } from "./useStake"
 
 type MoveItem = {
 	stake: StakeItem | undefined
@@ -69,13 +69,11 @@ export const useMoveStake = ({ stake, destinationHotkey }: MoveItem) => {
 
 	const isReady = stake && destinationHotkey && originHotkey !== destinationHotkey
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const tx: SubmittableExtrinsic<any> = useMemo(() => {
 		// Return null if stake or destinationHotkey is not defined
 		if (!stake || !destinationHotkey) return api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK)
 
 		return api.tx.utility.batchAll([
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			(api.tx as any)?.subtensorModule?.moveStake?.(
 				originHotkey,
 				destinationHotkey,

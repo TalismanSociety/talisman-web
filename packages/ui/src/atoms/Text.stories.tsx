@@ -1,4 +1,4 @@
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 
 import type { TextProps } from "./Text"
 import { Text } from "./Text"
@@ -8,7 +8,6 @@ export default {
 	component: Text,
 } as ComponentMeta<typeof Text>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<TextProps<"span">> = (args: any) => (
 	<table
 		css={{

@@ -2,7 +2,7 @@ import { useRecoilValueLoadable, waitForAll } from "recoil"
 
 import { chainState, nominationPoolsEnabledChainsState } from "@/domains/chains/recoils"
 
-import { Provider } from "../types"
+import type { Provider } from "../types"
 
 const CERE_GENESIS_HASH = "0x81443836a9a24caaa23f1241897d1235717535711d1d3fe24eae4fdc942c092c"
 

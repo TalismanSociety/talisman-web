@@ -3,7 +3,7 @@ import { useCallback, useState } from "react"
 
 import { RemoveWatchedAccountConfirmationDialog as RemoveWatchedAccountConfirmationDialogComponent } from "@/components/recipes/RemoveWatchedAccountConfirmationDialog"
 import { useSetReadonlyAccounts } from "@/domains/accounts/hooks"
-import { type ReadonlyAccount } from "@/domains/accounts/recoils"
+import type { ReadonlyAccount } from "@/domains/accounts/recoils"
 import { isNilOrWhitespace } from "@/util/nil"
 import { truncateAddress } from "@/util/truncateAddress"
 

@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { type ApiPromise } from "@polkadot/api"
+import type { ApiPromise } from "@polkadot/api"
 import type {
 	GenericStorageEntryFunction,
 	PromiseResult,
@@ -9,7 +7,7 @@ import type {
 } from "@polkadot/api/types"
 import type { Loadable } from "recoil"
 import { constSelector, RecoilLoadable, useRecoilValueLoadable } from "recoil"
-import { type Observable } from "rxjs"
+import type { Observable } from "rxjs"
 
 import { useSubstrateApiEndpoint } from "@/domains/common/hooks/useSubstrateApiEndpoint"
 import { chainQueryState } from "@/domains/common/recoils/query"

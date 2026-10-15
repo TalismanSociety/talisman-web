@@ -2,10 +2,10 @@ import { useEffect, useMemo, useState } from "react"
 
 import { StakeTargetSelectorDialog } from "@/components/recipes/StakeTargetSelectorDialog"
 import { useCombineSubnetData } from "@/domains/staking/subtensor/hooks/useCombineSubnetData"
-import { type SubnetData } from "@/domains/staking/subtensor/types"
+import type { SubnetData } from "@/domains/staking/subtensor/types"
 
 import { ROOT_NETUID } from "./constants"
-import { SubnetSelectorCard, SubnetSelectorCardProps } from "./SubnetSelectorCard"
+import { SubnetSelectorCard, type SubnetSelectorCardProps } from "./SubnetSelectorCard"
 
 type SubnetSelectorDialogProps = {
 	selected: SubnetData | undefined

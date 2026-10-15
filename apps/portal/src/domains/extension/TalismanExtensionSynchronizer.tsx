@@ -1,11 +1,11 @@
-import { type CustomEvmErc20Token } from "@talismn/balances"
+import type { CustomEvmErc20Token } from "@talismn/balances"
 import { useChaindataProvider, useEvmNetworks } from "@talismn/balances-react"
 import type { CustomChain, CustomEvmNetwork, Token } from "@talismn/chaindata-provider"
 import { githubUnknownTokenLogoUrl } from "@talismn/chaindata-provider"
 import { unionBy } from "lodash"
 import { useEffect, useState } from "react"
 
-import { CustomTokensConfig, customTokensConfig } from "./customTokensConfig"
+import { type CustomTokensConfig, customTokensConfig } from "./customTokensConfig"
 
 const windowInject = globalThis as typeof globalThis & {
 	talismanSub?: {
@@ -34,7 +34,10 @@ export const TalismanExtensionSynchronizer = () => {
 			sub?.subscribeCustomTokens?.((custom) => setWalletTokens(custom)),
 		]
 
-		return () => unsubs.forEach((unsub) => unsub?.())
+		return () =>
+			unsubs.forEach((unsub) => {
+				unsub?.()
+			})
 	}, [chaindataProvider])
 
 	useEffect(() => {

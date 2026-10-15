@@ -58,11 +58,8 @@ const MenuContext = createContext<{
 	strategy: Strategy
 	placement: Placement
 	refs: ExtendedRefs<ReferenceType>
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	getReferenceProps: (props?: HTMLProps<HTMLElement>) => any
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	getFloatingProps: (props?: HTMLProps<HTMLElement>) => any
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	getItemProps: (props?: HTMLProps<HTMLElement>) => any
 	open: boolean
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -72,7 +69,6 @@ const MenuContext = createContext<{
 	y: 0,
 	strategy: "absolute",
 	placement: "bottom-start",
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	refs: {} as any,
 	getReferenceProps: (props) => props,
 	getFloatingProps: (props) => props,

@@ -9,7 +9,7 @@ import { useState, useTransition } from "react"
 import { useRecoilValue, waitForAll } from "recoil"
 
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
-import { StakeLoadable } from "@/domains/staking/dappStaking/hooks/useStakeLoadable"
+import type { StakeLoadable } from "@/domains/staking/dappStaking/hooks/useStakeLoadable"
 import { useRegisteredDappsState } from "@/domains/staking/dappStaking/recoils"
 import { truncateAddress } from "@/util/truncateAddress"
 

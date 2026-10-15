@@ -6,7 +6,7 @@ import useLidoProviders from "./lido/useLidoProviders"
 import useNominationPoolsProviders from "./nominationPools/useNominationPoolsProviders"
 import useSeekProviders from "./seek/useSeekProviders"
 import useSubtensorProviders from "./subtensor/useSubtensorProviders"
-import { Provider } from "./types"
+import type { Provider } from "./types"
 
 const useProvidersData = () => {
 	const nominationPoolProviders = useNominationPoolsProviders()

@@ -9,7 +9,7 @@ import { useSetRecoilState } from "recoil"
 
 import { AccountIcon } from "@/components/molecules/AccountIcon"
 import { walletConnectionSideSheetOpenState } from "@/components/widgets/WalletConnectionSideSheet"
-import { type Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/recoils"
 import { useHasActiveWalletConnection } from "@/domains/extension/main"
 import { truncateAddress } from "@/util/truncateAddress"
 
@@ -171,7 +171,6 @@ export const useAccountSelector = (
 
 	return [
 		[selectedAccount, setAccount] as const,
-		// eslint-disable-next-line react/jsx-key
 		<AccountSelector
 			{...accountSelectorProps}
 			accounts={accounts}

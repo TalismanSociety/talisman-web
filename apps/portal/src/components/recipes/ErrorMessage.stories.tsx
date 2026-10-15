@@ -1,4 +1,4 @@
-import { type ComponentMeta, type Story } from "@storybook/react"
+import type { ComponentMeta, Story } from "@storybook/react"
 import { Button } from "@talismn/ui/atoms/Button"
 
 import type { ErrorMessageProps } from "./ErrorMessage"
@@ -12,7 +12,6 @@ export default {
 	},
 } as ComponentMeta<typeof ErrorMessage>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Default: Story<ErrorMessageProps> = (args: any) => <ErrorMessage {...args} />
 
 Default.args = {

@@ -1,8 +1,8 @@
 import { useMemo } from "react"
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from "recoil"
 
-import { type StakeStatus } from "@/components/recipes/StakeStatusIndicator"
-import { type Account } from "@/domains/accounts/recoils"
+import type { StakeStatus } from "@/components/recipes/StakeStatusIndicator"
+import type { Account } from "@/domains/accounts/recoils"
 import { useChainState } from "@/domains/chains/hooks"
 import { chainDeriveState, chainQueryState } from "@/domains/common/recoils/query"
 

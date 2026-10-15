@@ -18,7 +18,7 @@ import { AccountIcon } from "@/components/molecules/AccountIcon"
 import { AssetLogoWithChain } from "@/components/recipes/AssetLogoWithChain"
 import type { StakeStatus } from "@/components/recipes/StakeStatusIndicator"
 import { StakeStatusIndicator } from "@/components/recipes/StakeStatusIndicator"
-import { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/recoils"
 import { truncateAddress } from "@/util/truncateAddress"
 
 import { StakePositionSkeleton } from "./StakePosition.skeleton"
