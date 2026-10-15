@@ -20,7 +20,6 @@ interface ImportMetaEnv {
   VITE_LIDO_REWARDS_ADDRESS: string
   VITE_TAOSTATS_API_KEY: string
   VITE_TAOSTATS_API_URL: string
-  VITE_TALISMAN_BIFROST_CHANNEL_ID: string
   VITE_RAMP_API_KEY: string
 }
 

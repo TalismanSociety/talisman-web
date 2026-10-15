@@ -1603,17 +1603,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bifrost-finance/types@npm:^1.8.4":
-  version: 1.11.9
-  resolution: "@bifrost-finance/types@npm:1.11.9"
-  dependencies:
-    "@open-web3/orml-types": "npm:^2.0.1"
-  peerDependencies:
-    "@polkadot/api": ^10.7.3
-  checksum: 10c0/fb7eab4da31c87cf5a4a88e446a498531975351a9b4a13db6bc38c0bc376c8ebb9939b4d446bec4283b26b50d1d2d263b55d0110d1bab8d675da99e5173ab768
-  languageName: node
-  linkType: hard
-
 "@coinbase/cdp-sdk@npm:^1.0.0":
   version: 1.39.0
   resolution: "@coinbase/cdp-sdk@npm:1.39.0"
@@ -4391,26 +4380,6 @@ __metadata:
   dependencies:
     semver: "npm:^7.3.5"
   checksum: 10c0/c37a5b4842bfdece3d14dfdb054f73fe15ed2d3da61b34ff76629fb5b1731647c49166fd2a8bf8b56fcfa51200382385ea8909a3cbecdad612310c114d3f6c99
-  languageName: node
-  linkType: hard
-
-"@open-web3/orml-type-definitions@npm:2.0.1":
-  version: 2.0.1
-  resolution: "@open-web3/orml-type-definitions@npm:2.0.1"
-  dependencies:
-    lodash.merge: "npm:^4.6.2"
-  checksum: 10c0/9b84e3d53a4aca16ce47df2332e7bb48f53899782b597dba26c916ce68baca1986caf3f63588a314e89f4f60c56c5e0aecaeafebb97b6e8c43743f20007f8419
-  languageName: node
-  linkType: hard
-
-"@open-web3/orml-types@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "@open-web3/orml-types@npm:2.0.1"
-  dependencies:
-    "@open-web3/orml-type-definitions": "npm:2.0.1"
-  peerDependencies:
-    "@polkadot/api": ^8.12.2
-  checksum: 10c0/7c82066563ae53c93322660e5a1025951e985c92f152cf60e6dd8b7e05e405c2664873e00a2139d6fbc2174db5782443d184ef57a34937812b2cb1e8819f2b7b
   languageName: node
   linkType: hard
 
@@ -10239,7 +10208,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@talismn/portal@workspace:apps/portal"
   dependencies:
-    "@bifrost-finance/types": "npm:^1.8.4"
     "@emotion/react": "npm:^11.11.3"
     "@emotion/styled": "npm:^11.11.0"
     "@graphql-codegen/cli": "npm:5.0.0"
