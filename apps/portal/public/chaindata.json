@@ -400,10 +400,10 @@
       "rpcs": [
         "wss://rpc.polkadot.io",
         "wss://polkadot-rpc.publicnode.com",
+        "wss://rpc-polkadot.helixstreet.io",
         "wss://rpc-polkadot.luckyfriday.io",
         "wss://rockx-dot.w3node.com/polka-public-dot/ws",
-        "wss://dot-rpc.stakeworld.io",
-        "wss://polkadot.api.onfinality.io/public-ws"
+        "wss://dot-rpc.stakeworld.io"
       ],
       "hasCheckMetadataHash": true,
       "topology": {
