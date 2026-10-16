@@ -1,15 +1,13 @@
 import { bind } from "@react-rxjs/core"
 import BN from "bn.js"
-import { getFakeTxCreator } from "polkadot-api/tx-creator"
 import { useContext, useDeferredValue, useMemo, useState } from "react"
 import { combineLatest, defer } from "rxjs"
 
 import type { Account } from "@/domains/accounts/recoils"
 import { ChainContext } from "@/domains/chains/contexts"
 import type { SmartContract } from "@/domains/chains/portal-runtime"
-import { customSignedExtensionsFor } from "@/domains/chains/signed-extensions"
 import { useTokenAmount, useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
-import { useTx } from "@/domains/common/hooks/useTx"
+import { estimateTxFee, useTx } from "@/domains/common/hooks/useTx"
 import { BigIntMath } from "@/util/BigIntMath"
 import { LOADING, toLoadable } from "@/util/loadable"
 
@@ -60,15 +58,17 @@ const [useMaxStakeFee] = bind(
 	) =>
 		toLoadable(
 			defer(() =>
-				maxStakeTx(dappStakingApi(genesisHash).tx, {
-					contract: contractOf(type, value),
-					amount,
-					lockedAvailableForStake,
-					stakerRewards,
-					claimableSpanCount,
-				}).getEstimatedFees(getFakeTxCreator(address), {
-					customSignedExtensions: customSignedExtensionsFor(genesisHash),
-				})
+				estimateTxFee(
+					genesisHash,
+					address,
+					maxStakeTx(dappStakingApi(genesisHash).tx, {
+						contract: contractOf(type, value),
+						amount,
+						lockedAvailableForStake,
+						stakerRewards,
+						claimableSpanCount,
+					})
+				)
 			)
 		),
 	LOADING
