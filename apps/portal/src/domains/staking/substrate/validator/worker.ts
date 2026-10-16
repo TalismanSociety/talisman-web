@@ -1,3 +1,5 @@
+import "@/zod-jitless"
+
 import {
 	type StakerRewardsRequest,
 	type StakerRewardsResponse,
