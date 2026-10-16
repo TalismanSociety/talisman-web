@@ -123,7 +123,7 @@ const watchSessionIndexes = (runtime: ChainRuntime): Observable<SessionIndexes> 
 	const { api, lookup } = runtime
 	return combineLatest([
 		valueOf(api.query.Session.CurrentIndex.watchValue(BEST)),
-		watchActiveEra(runtime),
+		hasStorage(lookup, "Staking", "ActiveEra") ? watchActiveEra(runtime) : of(undefined),
 	]).pipe(
 		switchMap(([currentIndex, activeEra]) => {
 			const era = activeEra?.index ?? 0

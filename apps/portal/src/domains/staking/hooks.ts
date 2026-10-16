@@ -13,7 +13,7 @@ export const useTotalStaked = () => {
 		waitForAll([lidoSuitesState, selectedCurrencyState])
 	)
 	const balances = useSelectedBalances()
-	const { fiatTotal: substrateFiatTotal } = useSubstrateTotalStaked()
+	const substrateFiatTotal = useSubstrateTotalStaked()
 	const dappStakingTotal = useDappStakingTotalStaked()
 
 	return useMemo(

@@ -76,6 +76,21 @@ type PagedExposureMetadata = {
 
 type Exposure = { total: bigint; own: bigint; others: { who: SS58String; value: bigint }[] }
 
+type ExposurePageValue = { page_total: bigint; others: { who: SS58String; value: bigint }[] }
+
+export type StakingLedgerValue = {
+	stash: SS58String
+	total: bigint
+	active: bigint
+	unlocking: { value: bigint; era: number }[]
+	legacy_claimed_rewards?: number[]
+	claimed_rewards?: number[]
+}
+
+type EraRewardPoints = { total: number; individual: [SS58String, number][] }
+
+type ValidatorPrefs = { commission: number; blocked: boolean }
+
 export type SmartContract = Enum<{ Evm: SizedHex<20>; Wasm: SS58String }>
 
 export type StakeAmount = { voting: bigint; build_and_earn: bigint; era: number; period: number }
@@ -171,6 +186,18 @@ type Storage = {
 		ErasTotalStake: StorageDescriptor<[number], bigint, false, never>
 		ErasStakersOverview: StorageDescriptor<[number, SS58String], PagedExposureMetadata, true, never>
 		ErasStakers: StorageDescriptor<[number, SS58String], Exposure, false, never>
+		ErasStakersPaged: StorageDescriptor<
+			[number, SS58String, number],
+			ExposurePageValue,
+			true,
+			never
+		>
+		ErasRewardPoints: StorageDescriptor<[number], EraRewardPoints, false, never>
+		ErasValidatorPrefs: StorageDescriptor<[number, SS58String], ValidatorPrefs, false, never>
+		ClaimedRewards: StorageDescriptor<[number, SS58String], number[], false, never>
+		Bonded: StorageDescriptor<[SS58String], SS58String, true, never>
+		Ledger: StorageDescriptor<[SS58String], StakingLedgerValue, true, never>
+		MinNominatorBond: StorageDescriptor<[], bigint, false, never>
 		AreNominatorsSlashable: StorageDescriptor<[], boolean, false, never>
 	}
 	Session: { CurrentIndex: StorageDescriptor<[], number, false, never> }

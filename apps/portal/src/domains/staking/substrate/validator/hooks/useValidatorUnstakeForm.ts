@@ -1,37 +1,55 @@
-import type { ApiPromise } from "@polkadot/api"
-import { useCallback, useMemo } from "react"
+import { bind } from "@react-rxjs/core"
+import { useMemo } from "react"
+import { combineLatest, map, of, switchMap } from "rxjs"
 
-import { useExtrinsic } from "@/domains/common/hooks/useExtrinsic"
-import { useQueryMulti } from "@/domains/common/hooks/useQueryMulti"
+import { txFromCall } from "@/domains/chains/chain-runtime"
 import {
 	useTokenAmountFromPlanck,
 	useTokenAmountState,
 } from "@/domains/common/hooks/useTokenAmount"
+import { useTx } from "@/domains/common/hooks/useTx"
+import { LOADING, toLoadable } from "@/util/loadable"
 
-export const useValidatorUnstakeForm = (account?: string) => {
-	const queriesLoadable = useQueryMulti(["staking.minNominatorBond", ["staking.ledger", account]], {
-		enabled: account !== undefined,
-	})
-	const stake = useMemo(() => queriesLoadable.valueMaybe()?.[1], [queriesLoadable])
-	const unbondExtrinsic = useExtrinsic("staking", "unbond")
-	const unbondAllExtrinsic = useExtrinsic(
-		useCallback(
-			(api: ApiPromise) =>
-				api.tx.utility.batchAll([
-					api.tx.staking.chill(),
-					api.tx.staking.unbond(stake?.unwrapOrDefault().active ?? 0),
-				]),
-			[stake]
-		)
+import { chainRuntimes$, useGenesisHash } from "../../nominationPools/hooks/useRuntimes"
+import { type UnbondAction, unbondActionCall } from "../calls"
+import { watchLedger, watchMinNominatorBond } from "../chain"
+
+const [useUnstakeFormInputs] = bind(
+	(genesisHash: string, controller: string) =>
+		controller === ""
+			? of(LOADING)
+			: toLoadable(
+					chainRuntimes$(genesisHash).pipe(
+						switchMap(({ runtime }) =>
+							combineLatest([
+								watchMinNominatorBond(runtime),
+								watchLedger(runtime, controller),
+							]).pipe(
+								map(([minNominatorBond, ledger]) => ({
+									minNominatorBond,
+									active: ledger?.active ?? 0n,
+								}))
+							)
+						)
+					)
+				),
+	LOADING
+)
+
+export const useValidatorUnstakeForm = (controller?: string) => {
+	const genesisHash = useGenesisHash()
+	const inputs = useUnstakeFormInputs(genesisHash, controller ?? "")
+	const ready = controller !== undefined && inputs.status === "success"
+	const data = inputs.status === "success" ? inputs.data : undefined
+
+	const unbondExtrinsic = useTx(genesisHash, (runtime, action: UnbondAction) =>
+		txFromCall(runtime, unbondActionCall(action))
 	)
 
 	const [input, setAmount] = useTokenAmountState("")
 
-	const minNeededForMembership = useTokenAmountFromPlanck(queriesLoadable.valueMaybe()?.[0])
-
-	const available = useTokenAmountFromPlanck(
-		queriesLoadable.valueMaybe()?.[1]?.unwrapOrDefault().active.unwrap()
-	)
+	const minNeededForMembership = useTokenAmountFromPlanck(data?.minNominatorBond)
+	const available = useTokenAmountFromPlanck(data?.active)
 
 	const resulting = useTokenAmountFromPlanck(
 		useMemo(
@@ -53,8 +71,7 @@ export const useValidatorUnstakeForm = (account?: string) => {
 	)
 
 	const error = useMemo(() => {
-		if (queriesLoadable.state !== "hasValue") return
-
+		if (!ready) return
 		if (!isLeaving) {
 			if (
 				available.decimalAmount !== undefined &&
@@ -63,7 +80,6 @@ export const useValidatorUnstakeForm = (account?: string) => {
 			) {
 				return new Error("Insufficient balance")
 			}
-
 			if (
 				available.decimalAmount !== undefined &&
 				input.decimalAmount !== undefined &&
@@ -77,30 +93,26 @@ export const useValidatorUnstakeForm = (account?: string) => {
 				)
 			}
 		}
-
 		return undefined
 	}, [
-		queriesLoadable.state,
-		isLeaving,
 		available.decimalAmount,
 		input.decimalAmount,
+		isLeaving,
 		minNeededForMembership.decimalAmount,
+		ready,
 	])
 
 	return {
 		extrinsic: {
 			...unbondExtrinsic,
-			// TODO: clean up this dirty hack
-			// maybe create a hook or function to combine status of multiple distinct extrinsic
-			state: (unbondExtrinsic.state === "loading" || unbondAllExtrinsic.state === "loading"
-				? ("loading" as const)
-				: ("idle" as const)) as any,
-			unbondAll: async (account: string) => {
-				if (stake === undefined) {
-					throw new Error("Extrinsic not ready yet")
-				}
-
-				return await unbondAllExtrinsic.signAndSend(account)
+			unbond: (controller: string, value: bigint) =>
+				unbondExtrinsic.signAndSend(controller, { type: "unbond", value }),
+			unbondAll: async (controller: string) => {
+				if (data === undefined) throw new Error("Extrinsic not ready yet")
+				return await unbondExtrinsic.signAndSend(controller, {
+					type: "unbondAll",
+					active: data.active,
+				})
 			},
 		},
 		input,
@@ -109,6 +121,6 @@ export const useValidatorUnstakeForm = (account?: string) => {
 		setAmount,
 		error,
 		isLeaving,
-		isReady: queriesLoadable.state === "hasValue",
+		isReady: ready,
 	}
 }

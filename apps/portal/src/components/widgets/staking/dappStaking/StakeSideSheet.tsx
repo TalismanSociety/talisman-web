@@ -19,7 +19,6 @@ import {
 	useNativeTokenAmountState,
 	useNativeTokenDecimalState,
 } from "@/domains/chains/recoils"
-import { useEraEta } from "@/domains/common/hooks/useEraEta"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import { type DappInfo, useRegisteredDapps } from "@/domains/staking/dappStaking/dapps"
 import { useAddStakeForm } from "@/domains/staking/dappStaking/hooks/forms"
@@ -30,6 +29,7 @@ import {
 } from "@/domains/staking/dappStaking/hooks/useDappsWithStake"
 import { useStake } from "@/domains/staking/dappStaking/hooks/useStake"
 import { smartContractOf } from "@/domains/staking/dappStaking/stake"
+import { useEraEta } from "@/domains/staking/substrate/nominationPools/hooks/useEraEta"
 import { useSearchParams } from "@/hooks/useSearchParams"
 import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 import { Select } from "@/ui/molecules/Select"
