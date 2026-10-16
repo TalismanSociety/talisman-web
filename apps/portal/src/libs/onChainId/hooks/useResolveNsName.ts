@@ -1,9 +1,9 @@
 import { isPotentialEns } from "@talismn/on-chain-id"
-import { isEthereumAddress } from "@talismn/util"
 import { useAtomValue } from "jotai"
 import { loadable } from "jotai/utils"
 import { useState } from "react"
 import { useDebounce } from "react-use"
+import { isEthereumAddress } from "@/util/addresses"
 import { resolveNsNameFamily } from "../atoms/onChainIdResolver"
 
 /**

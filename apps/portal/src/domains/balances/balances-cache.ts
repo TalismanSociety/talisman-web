@@ -1,7 +1,7 @@
 import type { IBalance } from "@talismn/balances"
 import { ALL_CURRENCY_IDS, newTokenRates, type TokenRatesList } from "@talismn/token-rates"
-import { encodeAnyAddress } from "@talismn/util"
 import { z } from "zod"
+import { encodeAnyAddress } from "@/util/addresses"
 
 import type { SubtensorStakesByAddress } from "./subtensor-stakes"
 

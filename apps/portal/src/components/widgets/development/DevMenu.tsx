@@ -1,7 +1,6 @@
 import "winbox/dist/css/themes/modern.min.css"
 import "winbox/dist/css/winbox.min.css"
 
-import RpcError from "@polkadot/rpc-provider/coder/error"
 import { useCallback } from "react"
 import { useSessionStorage } from "react-use"
 import type { WinBoxPropType } from "react-winbox"
@@ -22,9 +21,7 @@ const InsufficientFeeToast = () => {
 			onClick={() =>
 				toastExtrinsic(
 					[],
-					Promise.reject(
-						new RpcError("Inability to pay some fees (e.g. account balance too low)", 1010)
-					)
+					Promise.reject(new Error("Inability to pay some fees (e.g. account balance too low)"))
 				)
 			}
 		>

@@ -6,8 +6,6 @@ import { firstValueFrom } from "rxjs"
 
 import { selectedCurrencyState } from "@/domains/balances/currency"
 import { storageEffect } from "@/domains/common/effects"
-import { useSubstrateApiEndpoint } from "@/domains/common/hooks/useSubstrateApiEndpoint"
-import { substrateApiState } from "@/domains/common/recoils/api"
 import { Decimal } from "@/util/Decimal"
 import { nullToUndefined } from "@/util/nullToUndefined"
 
@@ -34,7 +32,6 @@ export const chainState = selectorFamily({
 				nativeToken: network ? tokens[network.nativeTokenId] : undefined,
 				subscanUrl: network?.blockExplorerUrls.find(isSubscanUrl),
 				...chainConfig,
-				rpc: network?.rpcs.at(0),
 			})
 			return result as typeof result & { isDisabled?: boolean }
 		},
@@ -144,41 +141,35 @@ export const useNativeTokenPriceState = (currency?: string) =>
 const nativeTokenDecimalState = selectorFamily({
 	key: "NativeTokenDecimal",
 	get:
-		(apiEndpoint: string) =>
+		(genesisHash: string) =>
 		({ get }) => {
-			const api = get(substrateApiState(apiEndpoint))
+			const { nativeToken } = get(chainState({ genesisHash }))
+			const decimals = nativeToken?.decimals ?? 0
+			const currency = nativeToken?.symbol
 			return {
 				fromPlanck: (value: string | number | bigint) =>
-					Decimal.fromPlanck(value, api.registry.chainDecimals[0] ?? 0, {
-						currency: api.registry.chainTokens[0],
-					}),
+					Decimal.fromPlanck(value, decimals, { currency }),
 				fromPlanckOrUndefined: (value: string | number | bigint | undefined, symbol?: string) =>
-					Decimal.fromPlanckOrUndefined(value, api.registry.chainDecimals[0] ?? 0, {
-						currency: symbol ?? api.registry.chainTokens[0],
-					}),
-				fromUserInput: (input: string) =>
-					Decimal.fromUserInput(input, api.registry.chainDecimals[0] ?? 0, {
-						currency: api.registry.chainTokens[0],
-					}),
+					Decimal.fromPlanckOrUndefined(value, decimals, { currency: symbol ?? currency }),
+				fromUserInput: (input: string) => Decimal.fromUserInput(input, decimals, { currency }),
 				fromUserInputOrUndefined: (input: string) =>
-					Decimal.fromUserInputOrUndefined(input, api.registry.chainDecimals[0] ?? 0, {
-						currency: api.registry.chainTokens[0],
-					}),
+					Decimal.fromUserInputOrUndefined(input, decimals, { currency }),
 			}
 		},
 })
 
-export const useNativeTokenDecimalState = () => nativeTokenDecimalState(useSubstrateApiEndpoint())
+export const useNativeTokenDecimalState = () =>
+	nativeTokenDecimalState(useContext(ChainContext).genesisHash)
 
 export const nativeTokenAmountState = selectorFamily({
 	key: "NativeTokenAmount",
 	get:
-		(params: { apiEndpoint: string; genesisHash: string }) =>
+		(genesisHash: string) =>
 		({ get }) => {
 			const [decimal, price, currency] = get(
 				waitForAll([
-					nativeTokenDecimalState(params.apiEndpoint),
-					nativeTokenPriceState({ genesisHash: params.genesisHash }),
+					nativeTokenDecimalState(genesisHash),
+					nativeTokenPriceState({ genesisHash }),
 					selectedCurrencyState,
 				])
 			)
@@ -210,7 +201,4 @@ export const nativeTokenAmountState = selectorFamily({
 })
 
 export const useNativeTokenAmountState = () =>
-	nativeTokenAmountState({
-		apiEndpoint: useSubstrateApiEndpoint(),
-		genesisHash: useContext(ChainContext).genesisHash,
-	})
+	nativeTokenAmountState(useContext(ChainContext).genesisHash)

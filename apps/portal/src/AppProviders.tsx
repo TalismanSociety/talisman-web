@@ -1,8 +1,4 @@
-import "@polkadot/api-augment/polkadot"
-import "@polkadot/api-augment/substrate"
-
 import { Subscribe } from "@react-rxjs/core"
-import { PolkadotApiProvider } from "@talismn/react-polkadot-api"
 import { type ReactNode, Suspense } from "react"
 import { RecoilRoot } from "recoil"
 import ThemeProvider from "@/App.Theme"
@@ -13,11 +9,6 @@ import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { PrivacySettingsDialog } from "@/components/widgets/PrivacySettings/PrivacySettingsDialog"
 import { AccountWatcher } from "@/domains/accounts/AccountWatcher"
 import { BalancesReporter, BalancesWatcher } from "@/domains/balances/BalancesWatcher"
-import {
-	chainDeriveState,
-	chainQueryMultiState,
-	chainQueryState,
-} from "@/domains/common/recoils/query"
 import { ExtensionWatcher } from "@/domains/extension/main"
 import { EvmProvider } from "@/domains/extension/wagmi"
 import { Toaster } from "@/ui/molecules/Toaster"
@@ -37,23 +28,17 @@ const AppProviders = ({ children }: { children: ReactNode }) => (
 					<Subscribe>
 						<JotaiProvider>
 							<EvmProvider>
-								<PolkadotApiProvider
-									queryState={chainQueryState}
-									deriveState={chainDeriveState}
-									queryMultiState={chainQueryMultiState}
-								>
-									<ExtensionWatcher />
-									<AccountWatcher />
-									<BalancesWatcher />
-									<BalancesReporter />
-									<Suspense fallback={<FullscreenLoader />}>
-										{children}
-										<Toaster position="bottom-right" />
-									</Suspense>
-									<ConsentBanner />
-									<PrivacySettingsDialog />
-									<Development />
-								</PolkadotApiProvider>
+								<ExtensionWatcher />
+								<AccountWatcher />
+								<BalancesWatcher />
+								<BalancesReporter />
+								<Suspense fallback={<FullscreenLoader />}>
+									{children}
+									<Toaster position="bottom-right" />
+								</Suspense>
+								<ConsentBanner />
+								<PrivacySettingsDialog />
+								<Development />
 							</EvmProvider>
 						</JotaiProvider>
 					</Subscribe>

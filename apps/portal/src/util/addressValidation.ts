@@ -1,5 +1,6 @@
-import { decodeAddress, encodeAddress } from "@polkadot/keyring"
 import { isAddress as isEvmAddress, isHex } from "viem"
+
+import { decodeAddress, encodeAddress } from "@/util/addresses"
 
 export const tryParseSubstrateOrEthereumAddress = (
 	address: string,

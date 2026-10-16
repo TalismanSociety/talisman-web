@@ -1,4 +1,3 @@
-import { encodeAnyAddress } from "@talismn/util"
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react"
 import { usePrevious } from "react-use"
 import { useSetRecoilState } from "recoil"
@@ -10,6 +9,7 @@ import { useHasActiveWalletConnection } from "@/domains/extension/main"
 import { Button } from "@/ui/atoms/Button"
 import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 import { Select } from "@/ui/molecules/Select"
+import { encodeAnyAddress } from "@/util/addresses"
 import { truncateAddress } from "@/util/truncateAddress"
 
 export type AccountSelectorProps = {

@@ -273,6 +273,9 @@ importers:
       '@kheopskit/core':
         specifier: 5.3.0
         version: 5.3.0(@reown/appkit@1.7.8(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.6.3)(utf-8-validate@5.0.10)(zod@4.6.7))(@solana/kit@3.0.3(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.6.3)(ws@8.22.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(mipd@0.0.7(typescript@5.6.3))(polkadot-api@3.2.1(bufferutil@4.0.8)(esbuild@0.28.2)(rxjs@7.8.2)(supports-color@10.0.0)(utf-8-validate@5.0.10))(rxjs@7.8.2)(viem@2.41.2(bufferutil@4.0.8)(typescript@5.6.3)(utf-8-validate@5.0.10)(zod@4.6.7))
+      '@noble/hashes':
+        specifier: 2.4.0
+        version: 2.4.0
       '@polkadot-api/metadata-builders':
         specifier: 0.15.2
         version: 0.15.2
@@ -321,6 +324,9 @@ importers:
       '@recoiljs/refine':
         specifier: ^0.1.1
         version: 0.1.1
+      '@scure/base':
+        specifier: 2.4.0
+        version: 2.4.0
       '@talismn/balances':
         specifier: 3.0.6
         version: 3.0.6(@solana/sysvars@8.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.6.3))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.6.3)(utf-8-validate@5.0.10)
@@ -343,8 +349,8 @@ importers:
         specifier: 4.0.6
         version: 4.0.6(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(rxjs@7.8.2)(typescript@5.6.3)(utf-8-validate@5.0.10)(zod@4.6.7)
       '@talismn/util':
-        specifier: 0.4.2
-        version: 0.4.2(@polkadot/keyring@13.1.1(@polkadot/util-crypto@13.1.1(@polkadot/util@13.1.1))(@polkadot/util@13.1.1))(@polkadot/util-crypto@13.1.1(@polkadot/util@13.1.1))(@polkadot/util@13.1.1)(rxjs@7.8.2)
+        specifier: 2.1.0
+        version: 2.1.0
       '@tanstack/react-query':
         specifier: ^5.32.0
         version: 5.49.2(react@18.3.1)
@@ -3173,9 +3179,6 @@ packages:
   '@scure/base@1.1.9':
     resolution: {integrity: sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg==}
 
-  '@scure/base@1.2.5':
-    resolution: {integrity: sha512-9rE6EOVeIQzt5TSu4v+K523F8u6DhBsoZWPGKlnCshhlDhy0kJzUX4V+tr2dWmzF1GdekvThABoEQBGBQI7xZw==}
-
   '@scure/base@1.2.6':
     resolution: {integrity: sha512-g/nm5FgUa//MCj1gV09zTJTaM6KBAHqLN907YVQqf7zC49+DcO4B1so4ZX07Ef10Twr6nuqYEH9GEggFXA4Fmg==}
 
@@ -4037,15 +4040,6 @@ packages:
   '@talismn/token-rates@4.0.6':
     resolution: {integrity: sha512-1pRtOS2wTOavGavz+FNDCs9ZddcjIEyBjfUy+zQ1Pmnfn3rWUM3nrNttyIiLeXVoEGfZoEZ06MjkHpFNOHfS5g==}
     engines: {node: '>=20'}
-
-  '@talismn/util@0.4.2':
-    resolution: {integrity: sha512-N9+DqJ29wBfEafJp59Orvp55+nzc3RTSZbNf3Q8VwT41SLJkBExeX7syxe9nX07sktdi3mvInwqNJhUlu1aB4w==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      '@polkadot/keyring': 13.1.1
-      '@polkadot/util': 13.1.1
-      '@polkadot/util-crypto': 13.1.1
-      rxjs: '>= 7.8.1'
 
   '@talismn/util@2.1.0':
     resolution: {integrity: sha512-zg5gKq73ADu4Mfx/C5vPTQhjYaJ6392uyr9DJquGKLLMR/8DY+cjtzN+kpAfiE/P/+nNzi1tE3FlWPnR/mxPqQ==}
@@ -11299,7 +11293,7 @@ snapshots:
       '@polkadot/wasm-util': 7.3.2(@polkadot/util@13.1.1)
       '@polkadot/x-bigint': 13.1.1
       '@polkadot/x-randomvalues': 13.1.1(@polkadot/util@13.1.1)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.1.1))
-      '@scure/base': 1.2.5
+      '@scure/base': 1.2.6
       tslib: 2.8.0
 
   '@polkadot/util@13.1.1':
@@ -12029,8 +12023,6 @@ snapshots:
   '@safe-global/safe-gateway-typescript-sdk@3.21.8': {}
 
   '@scure/base@1.1.9': {}
-
-  '@scure/base@1.2.5': {}
 
   '@scure/base@1.2.6': {}
 
@@ -13267,15 +13259,6 @@ snapshots:
       - typescript
       - utf-8-validate
       - zod
-
-  '@talismn/util@0.4.2(@polkadot/keyring@13.1.1(@polkadot/util-crypto@13.1.1(@polkadot/util@13.1.1))(@polkadot/util@13.1.1))(@polkadot/util-crypto@13.1.1(@polkadot/util@13.1.1))(@polkadot/util@13.1.1)(rxjs@7.8.2)':
-    dependencies:
-      '@polkadot/keyring': 13.1.1(@polkadot/util-crypto@13.1.1(@polkadot/util@13.1.1))(@polkadot/util@13.1.1)
-      '@polkadot/util': 13.1.1
-      '@polkadot/util-crypto': 13.1.1(@polkadot/util@13.1.1)
-      bignumber.js: 9.1.2
-      rxjs: 7.8.2
-      tailwind-merge: 2.5.4
 
   '@talismn/util@2.1.0':
     dependencies:

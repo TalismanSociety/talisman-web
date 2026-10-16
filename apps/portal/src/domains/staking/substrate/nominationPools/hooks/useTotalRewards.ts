@@ -1,4 +1,3 @@
-import { encodeAnyAddress } from "@talismn/util"
 import request from "graphql-request"
 import { useRecoilValue } from "recoil"
 import { defer } from "rxjs"
@@ -6,6 +5,7 @@ import type { Account } from "@/domains/accounts/accounts"
 import { useChainState } from "@/domains/chains/hooks"
 import { assertChain } from "@/domains/chains/utils"
 import { graphql } from "@/generated/gql/nova/gql"
+import { encodeAnyAddress } from "@/util/addresses"
 import { Decimal } from "@/util/Decimal"
 import { bindSuspended } from "@/util/loadable"
 

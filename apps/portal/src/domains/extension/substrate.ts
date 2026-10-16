@@ -1,8 +1,7 @@
 import { getKheopskit$, isInjectedWallet, KheopskitError } from "@kheopskit/core"
 import { type PolkadotAccount, type PolkadotWallet, polkadot } from "@kheopskit/core/polkadot"
-import type { Signer } from "@polkadot/types/types"
 import { bind } from "@react-rxjs/core"
-import type { InjectedPolkadotAccount } from "polkadot-api/pjs-signer"
+import type { InjectedPolkadotAccount, SignPayload, SignRaw } from "polkadot-api/pjs-signer"
 import {
 	auditTime,
 	BehaviorSubject,
@@ -44,7 +43,9 @@ export type InjectedSubstrateAccount = {
 
 type TalismanInjectedAccount = PolkadotAccount & { readonly?: boolean; partOfPortfolio?: boolean }
 
-export type SubstrateWalletConnection = { id: string; signer: Signer }
+export type PjsSigner = { signPayload: SignPayload; signRaw: SignRaw }
+
+export type SubstrateWalletConnection = { id: string; signer: PjsSigner }
 
 export type TxCreator = InjectedPolkadotAccount["txCreator"]
 
@@ -183,7 +184,7 @@ const connectedWallet$ = combineLatest([injectedWallets$, connectedSubstrateWall
 	shareReplay({ bufferSize: 1, refCount: true })
 )
 
-const pjsSigners = new Map<string, Promise<Signer>>()
+const pjsSigners = new Map<string, Promise<PjsSigner>>()
 
 const pjsSignerOf = (source: string) => {
 	const cached = pjsSigners.get(source)
@@ -191,7 +192,7 @@ const pjsSignerOf = (source: string) => {
 	const signer = (async () => {
 		const extension = await window.injectedWeb3?.[source]?.enable(appName)
 		if (!extension) throw new Error(`${source} is not available`)
-		return extension.signer as Signer
+		return extension.signer
 	})()
 	signer.catch(() => pjsSigners.delete(source))
 	pjsSigners.set(source, signer)

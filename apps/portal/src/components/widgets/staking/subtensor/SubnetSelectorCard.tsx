@@ -1,11 +1,12 @@
 import { BalanceFormatter } from "@talismn/balances"
-import { classNames, formatDecimals } from "@talismn/util"
+import { formatDecimals } from "@talismn/util"
 import { useRecoilValue } from "recoil"
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
 import type { SubnetData } from "@/domains/staking/subtensor/types"
 import { useSurfaceColor, useSurfaceColorAtElevation } from "@/ui/atoms/Surface"
 import { Text } from "@/ui/atoms/Text"
 import { Tooltip } from "@/ui/atoms/Tooltip"
+import { cn } from "@/util/cn"
 
 export type SubnetSelectorCardProps = {
 	selected?: boolean
@@ -40,7 +41,7 @@ export const SubnetSelectorCard = ({
 		<article
 			onClick={() => onClick(subnetPool)}
 			css={[{ backgroundColor: surfaceColor }, isHighlighted && { borderColor: surfaceVariant }]}
-			className={classNames(
+			className={cn(
 				"flex min-h-[9.6rem] cursor-pointer flex-col justify-between rounded-[0.8rem] border border-transparent px-[1.6rem] py-[0.8rem] filter hover:brightness-[1.8]",
 				isHighlighted && "border-[#000] brightness-[1.6]"
 			)}

@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs"
 import { gunzipSync } from "node:zlib"
 
-export const oracleKey = (parts: unknown[]) =>
+const oracleKey = (parts: unknown[]) =>
 	JSON.stringify(parts, (_, value) => (typeof value === "bigint" ? `${value}n` : value))
 
 export const loadPjsOracle = (fixture: URL) => {

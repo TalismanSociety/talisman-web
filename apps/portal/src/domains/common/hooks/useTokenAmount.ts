@@ -1,4 +1,4 @@
-import type { BN } from "@polkadot/util"
+import type BN from "bn.js"
 import { useMemo, useState } from "react"
 import { useRecoilValue, waitForAll } from "recoil"
 import { selectedCurrencyState } from "@/domains/balances/currency"

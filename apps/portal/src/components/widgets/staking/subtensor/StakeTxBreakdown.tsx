@@ -1,4 +1,3 @@
-import { classNames } from "@talismn/util"
 import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
@@ -13,6 +12,7 @@ import {
 import { useCombineSubnetData } from "@/domains/staking/subtensor/hooks/useCombineSubnetData"
 import { Info } from "@/icons"
 import { Tooltip } from "@/ui/atoms/Tooltip"
+import { cn } from "@/util/cn"
 
 import { ROOT_NETUID, TALISMAN_FEE_BITTENSOR } from "./constants"
 import { SlippageDropdown } from "./SlippageDropdown"
@@ -108,7 +108,7 @@ export const StakeTxBreakdown = ({ shouldHideExpectedAmount }: StakeTxBreakdownP
 						</div>
 					)}
 				</div>
-				<div className={classNames(tier.tier > 0 && "text-[#D5FF5C]")}>
+				<div className={cn(tier.tier > 0 && "text-[#D5FF5C]")}>
 					{talismanFeeTokenAmount?.decimalAmount?.toLocaleStringPrecision()}
 				</div>
 			</div>
