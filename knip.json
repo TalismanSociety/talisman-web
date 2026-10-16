@@ -11,6 +11,5 @@
       "ignoreDependencies": ["cloudflare"]
     }
   },
-  "ignoreWorkspaces": ["packages/react-polkadot-api"],
   "includeEntryExports": true
 }
