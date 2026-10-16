@@ -5,6 +5,8 @@ export const rootHeaders = {
 	"Access-Control-Allow-Origin": "*",
 	"Referrer-Policy": "strict-origin-when-cross-origin",
 	"X-Content-Type-Options": "nosniff",
+	"Content-Security-Policy":
+		"frame-ancestors 'self' https://signet.talisman.xyz https://*.talismn.workers.dev",
 }
 
 const withRootHeaders = (source: HeadersInit) => {
