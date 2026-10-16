@@ -1,9 +1,7 @@
 import type { DeriveStakingAccount } from "@polkadot/api-derive/types"
-import { useDeriveState } from "@talismn/react-polkadot-api"
 import BN from "bn.js"
 import { useMemo, useState } from "react"
 import { useRecoilValueLoadable, waitForAll } from "recoil"
-import { FastUnstakeDialog } from "@/components/recipes/FastUnstakeDialog"
 import { StakePosition } from "@/components/recipes/StakePosition"
 import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
@@ -14,11 +12,7 @@ import { useNativeTokenDecimalState, useNativeTokenPriceState } from "@/domains/
 import { useEraEtaFormatter } from "@/domains/common/hooks/useEraEta"
 import { useExtrinsic } from "@/domains/common/hooks/useExtrinsic"
 import { useNativeTokenLocalizedFiatAmount } from "@/domains/common/hooks/useLocalizedFiatAmount"
-import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
-import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
-import { useLocalizedUnlockDuration } from "@/domains/staking/substrate/nominationPools/hooks"
 import { useTotalValidatorStakingRewards } from "@/domains/staking/substrate/validator/hooks"
-import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 
 import ValidatorUnstakeDialog from "./ValidatorUnstakeDialog"
 
@@ -42,45 +36,21 @@ const ValidatorStakeItem = ({
 	stake,
 	reward,
 	slashingSpan,
-	eligibleForFastUnstake,
-	inFastUnstakeHead,
-	inFastUnstakeQueue,
-	fastUnstakeDeposit,
 }: {
 	account: Account
 	stake: DeriveStakingAccount
 	reward?: bigint
 	slashingSpan: number
-	eligibleForFastUnstake?: boolean
-	inFastUnstakeHead?: boolean
-	inFastUnstakeQueue?: boolean
-	fastUnstakeDeposit?: BN
 }) => {
 	const withdrawExtrinsic = useExtrinsic("staking", "withdrawUnbonded")
-	const fastUnstake = useExtrinsic("fastUnstake", "registerFastUnstake")
 
 	const [isUnstakeDialogOpen, setIsUnstakeDialogOpen] = useState(false)
-	const [isFastUnstakeDialogOpen, setIsFastUnstakeDialogOpen] = useState(false)
-
-	const lockDuration = useLocalizedUnlockDuration()
 
 	const { state, contents } = useRecoilValueLoadable(
-		waitForAll([
-			useChainState(),
-			useSubstrateApiState(),
-			useDeriveState("balances", "all", [account.address]),
-			useNativeTokenDecimalState(),
-			useNativeTokenPriceState(),
-		])
+		waitForAll([useChainState(), useNativeTokenDecimalState(), useNativeTokenPriceState()])
 	)
 
-	const [chain, api, balances, decimal, nativeTokenPrice] = state === "hasValue" ? contents : []
-
-	const amount = useTokenAmountFromPlanck(
-		inFastUnstakeQueue || inFastUnstakeHead
-			? stake.unlocking?.[0]?.value
-			: stake.stakingLedger.active.unwrap()
-	)
+	const [chain, decimal, nativeTokenPrice] = state === "hasValue" ? contents : []
 
 	const active = decimal?.fromPlanck(stake.stakingLedger.active.toBigInt())
 
@@ -89,28 +59,13 @@ const ValidatorStakeItem = ({
 		[stake.unlocking]
 	)
 
-	const hasEnoughDepositForFastUnstake = useMemo(() => {
-		if (!balances || !api) return false
-		return balances.availableBalance.gte(
-			api.consts.balances.existentialDeposit.add(fastUnstakeDeposit ?? new BN(0))
-		)
-	}, [api, balances, fastUnstakeDeposit])
-
 	const eraEtaFormatter = useEraEtaFormatter()
 	const unlocks = stake.unlocking?.map((x) => ({
 		amount: decimal?.fromPlanck(x.value.toBigInt()).toLocaleString(),
-		eta: eraEtaFormatter(x.remainingEras) ?? <CircularProgressIndicator size="1em" />,
+		eta: eraEtaFormatter(x.remainingEras),
 	}))
 
 	const { name = "", nativeToken: { symbol, logo } = { symbol: "", logo: "" } } = chain || {}
-
-	const onRequestUnstake = () => {
-		if (eligibleForFastUnstake || eligibleForFastUnstake === undefined) {
-			setIsFastUnstakeDialogOpen(true)
-		} else {
-			setIsUnstakeDialogOpen(true)
-		}
-	}
 
 	return (
 		<>
@@ -153,7 +108,7 @@ const ValidatorStakeItem = ({
 				}
 				unstakeButton={
 					<ErrorBoundary renderFallback={() => <>--</>}>
-						<StakePosition.UnstakeButton onClick={onRequestUnstake} />
+						<StakePosition.UnstakeButton onClick={() => setIsUnstakeDialogOpen(true)} />
 					</ErrorBoundary>
 				}
 				withdrawButton={
@@ -176,27 +131,14 @@ const ValidatorStakeItem = ({
 				unstakingStatus={
 					<ErrorBoundary renderFallback={() => <>--</>}>
 						{totalUnlocking?.isZero() === false ? (
-							inFastUnstakeHead || inFastUnstakeQueue ? (
-								<StakePosition.FastUnstakingStatus
-									amount={
-										<RedactableBalance>
-											{decimal?.fromPlanck(totalUnlocking.toString()).toLocaleString()}
-										</RedactableBalance>
-									}
-									status={
-										inFastUnstakeHead ? "in-head" : inFastUnstakeQueue ? "in-queue" : undefined
-									}
-								/>
-							) : (
-								<StakePosition.UnstakingStatus
-									amount={
-										<RedactableBalance>
-											{decimal?.fromPlanck(totalUnlocking.toString()).toLocaleString()}
-										</RedactableBalance>
-									}
-									unlocks={unlocks ?? []}
-								/>
-							)
+							<StakePosition.UnstakingStatus
+								amount={
+									<RedactableBalance>
+										{decimal?.fromPlanck(totalUnlocking.toString()).toLocaleString()}
+									</RedactableBalance>
+								}
+								unlocks={unlocks ?? []}
+							/>
 						) : undefined}
 					</ErrorBoundary>
 				}
@@ -205,44 +147,6 @@ const ValidatorStakeItem = ({
 				accountAddress={stake.controllerId?.toString() ?? account.address}
 				open={isUnstakeDialogOpen}
 				onRequestDismiss={() => setIsUnstakeDialogOpen(false)}
-			/>
-			<FastUnstakeDialog
-				open={isFastUnstakeDialogOpen}
-				fastUnstakeEligibility={useMemo(() => {
-					switch (eligibleForFastUnstake) {
-						case undefined:
-							return "pending"
-						case true:
-							return hasEnoughDepositForFastUnstake
-								? "eligible"
-								: "insufficient-balance-for-deposit"
-						case false:
-							return "ineligible"
-					}
-				}, [hasEnoughDepositForFastUnstake, eligibleForFastUnstake])}
-				amount={amount.decimalAmount?.toLocaleString() ?? "..."}
-				fiatAmount={amount.localizedFiatAmount ?? "..."}
-				lockDuration={lockDuration}
-				depositAmount={decimal
-					?.fromPlanckOrUndefined(fastUnstakeDeposit?.toString())
-					?.toLocaleString()}
-				onDismiss={() => {
-					setIsFastUnstakeDialogOpen(false)
-				}}
-				onSkip={() => {
-					setIsFastUnstakeDialogOpen(false)
-					setIsUnstakeDialogOpen(true)
-				}}
-				onConfirm={() => {
-					if (eligibleForFastUnstake && hasEnoughDepositForFastUnstake) {
-						void fastUnstake.signAndSend(account.address)
-						setIsFastUnstakeDialogOpen(false)
-					} else {
-						setIsFastUnstakeDialogOpen(false)
-						setIsUnstakeDialogOpen(true)
-					}
-				}}
-				learnMoreHref="https://wiki.polkadot.network/docs/learn-staking#fast-unstake"
 			/>
 		</>
 	)

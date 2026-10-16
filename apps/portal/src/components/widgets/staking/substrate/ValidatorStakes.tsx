@@ -1,4 +1,4 @@
-import { useDeriveState, useQueryMultiState, useQueryState } from "@talismn/react-polkadot-api"
+import { useDeriveState, useQueryState } from "@talismn/react-polkadot-api"
 import { useMemo } from "react"
 import { useRecoilValueLoadable, waitForAll } from "recoil"
 
@@ -6,7 +6,6 @@ import { StakePositionErrorBoundary } from "@/components/recipes/StakePosition"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { selectedSubstrateAccountsState } from "@/domains/accounts/recoils"
 import { useChainState } from "@/domains/chains/hooks"
-import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
 import { useStakersRewardState } from "@/domains/staking/substrate/validator/recoils"
 
 import ValidatorStakeItem from "./ValidatorStakeItem"
@@ -50,7 +49,6 @@ const useStakes = () => {
 						reward,
 						slashingSpan:
 							(slashingSpansLoadable.contents[index]?.unwrapOrDefault().prior.length ?? -1) + 1,
-						inFastUnstakeQueue: false,
 					}
 				})
 				.filter(
@@ -63,44 +61,11 @@ const useStakes = () => {
 	return { data, state: slashingSpansLoadable.state }
 }
 
-const useStakesWithFastUnstake = () => {
-	const { data: stakes } = useStakes()
-
-	const { state, contents } = useRecoilValueLoadable(
-		waitForAll([
-			useSubstrateApiState(),
-			useQueryState(
-				"fastUnstake",
-				"queue.multi",
-				useMemo(() => stakes.map((x) => x.account.address), [stakes])
-			),
-		])
-	)
-
-	const { state: multiQueryState, contents: multiQueryContent } = useRecoilValueLoadable(
-		useQueryMultiState(["fastUnstake.erasToCheckPerBlock", "fastUnstake.head"])
-	)
-
-	const [_erasToCheckPerBlock, fastUnstakeHead] =
-		multiQueryState === "hasValue" ? multiQueryContent : []
-
-	const [api, queues = []] = state === "hasValue" ? contents : []
-
-	const data = stakes.map((x, index) => ({
-		...x,
-		// NOTE: Disabled because it was causing slashes for users,
-		// and fastUnstake isn't as important anymore now that users are able to dual-stake (solo & nompool).
-		eligibleForFastUnstake: false,
-		inFastUnstakeHead: fastUnstakeHead
-			?.unwrapOrDefault()
-			.stashes.some((y) => y[0].eq(x.stake.accountId)),
-		inFastUnstakeQueue: queues[index]?.unwrapOrDefault().isZero() === false,
-		fastUnstakeDeposit: api?.consts.fastUnstake.deposit,
-	}))
-	return { data, state }
+type ValidatorStakesProps = {
+	setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const BaseValidatorStakes = ({ setShouldRenderLoadingSkeleton }: ValidatorStakesProps) => {
+const ValidatorStakes = ({ setShouldRenderLoadingSkeleton }: ValidatorStakesProps) => {
 	const { data: stakes, state } = useStakes()
 	const chainLoadable = useRecoilValueLoadable(useChainState())
 	const chain = chainLoadable.valueMaybe()
@@ -136,74 +101,11 @@ const BaseValidatorStakes = ({ setShouldRenderLoadingSkeleton }: ValidatorStakes
 							/>
 						)}
 					>
-						<ValidatorStakeItem key={index} {...props} eligibleForFastUnstake={false} />
+						<ValidatorStakeItem key={index} {...props} />
 					</ErrorBoundary>
 				)
 			})}
 		</>
-	)
-}
-
-const ValidatorStakesWithFastUnstake = ({
-	setShouldRenderLoadingSkeleton,
-}: ValidatorStakesProps) => {
-	const { data: stakes, state } = useStakesWithFastUnstake()
-	const chainLoadable = useRecoilValueLoadable(useChainState())
-	const chain = chainLoadable.valueMaybe()
-
-	if (stakes.length || state === "hasValue") {
-		setShouldRenderLoadingSkeleton(false)
-	}
-
-	const { name = "", nativeToken: { symbol, logo } = { symbol: "", logo: "" } } = chain || {}
-
-	return (
-		<>
-			{stakes.map((props, index) => {
-				const { account, reward } = props
-				const stakeStatus =
-					reward === undefined
-						? undefined
-						: reward === 0n
-							? "not_earning_rewards"
-							: "earning_rewards"
-				return (
-					<ErrorBoundary
-						key={index}
-						renderFallback={() => (
-							<StakePositionErrorBoundary
-								chain={name}
-								assetSymbol={symbol}
-								assetLogoSrc={logo}
-								account={account}
-								provider="Validator staking"
-								stakeStatus={stakeStatus}
-							/>
-						)}
-					>
-						<ValidatorStakeItem {...props} />
-					</ErrorBoundary>
-				)
-			})}
-		</>
-	)
-}
-
-type ValidatorStakesProps = {
-	setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-const ValidatorStakes = ({ setShouldRenderLoadingSkeleton }: ValidatorStakesProps) => {
-	const apiLoadable = useRecoilValueLoadable(useSubstrateApiState())
-
-	const api = apiLoadable.valueMaybe()
-
-	return api?.query.fastUnstake !== undefined ? (
-		<ValidatorStakesWithFastUnstake
-			setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton}
-		/>
-	) : (
-		<BaseValidatorStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
 	)
 }
 
