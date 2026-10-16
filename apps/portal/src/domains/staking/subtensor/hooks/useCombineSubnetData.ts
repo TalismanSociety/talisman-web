@@ -1,71 +1,18 @@
-import { useEffect, useState } from "react"
+import { useMemo } from "react"
 
+import subnets from "../subnets.json"
 import type { SubnetData } from "../types"
-import { useGetInfiniteSubnetIdentities } from "./useGetInfiniteSubnetIdentities"
-import { useGetInfiniteSubnetPools } from "./useGetInfiniteSubnetPools"
+import { useSubnetPools } from "./useTaoData"
 
 export const useCombineSubnetData = () => {
-	const [subnetData, setSubnetData] = useState<Record<number, SubnetData>>({})
-	const {
-		data: subnetDescriptionsData,
-		hasNextPage: hasSubnetDescriptionsNextPage,
-		isFetchingNextPage: isSubnetDescriptionsFetchingNextPage,
-		isError: isSubnetDescriptionsError,
-		fetchNextPage: fetchSubnetDescriptionsNextPage,
-	} = useGetInfiniteSubnetIdentities()
+	const { data: pools, isError } = useSubnetPools()
 
-	const {
-		data: subnetPoolsData,
-		hasNextPage: hasSubnetPoolsNextPage,
-		isFetchingNextPage: isSubnetPoolsFetchingNextPage,
-		isError: isSubnetPoolsError,
-		fetchNextPage: fetchSubnetPoolsNextPage,
-	} = useGetInfiniteSubnetPools()
-
-	useEffect(() => {
-		if (hasSubnetDescriptionsNextPage && !isSubnetDescriptionsFetchingNextPage) {
-			fetchSubnetDescriptionsNextPage()
-		}
-	}, [
-		hasSubnetDescriptionsNextPage,
-		isSubnetDescriptionsFetchingNextPage,
-		fetchSubnetDescriptionsNextPage,
-	])
-
-	useEffect(() => {
-		if (hasSubnetPoolsNextPage && !isSubnetPoolsFetchingNextPage) {
-			fetchSubnetPoolsNextPage()
-		}
-	}, [hasSubnetPoolsNextPage, isSubnetPoolsFetchingNextPage, fetchSubnetPoolsNextPage])
-
-	useEffect(() => {
-		// subnetDescriptionsData and subnetPoolsData data are mission critical for alpha staking, and their query are initialized with placeholder data.
-		// If they are not available, do not proceed with combining bad response data.
-		if (!subnetDescriptionsData?.pages.length || !subnetPoolsData?.pages.length) return
-
-		const descriptions = subnetDescriptionsData.pages
-			.flatMap((page) => page.data)
-			.map((desc) => ({ ...desc, descriptionName: desc.subnet_name }))
-		const pools = subnetPoolsData.pages.flatMap((page) => page.data)
-
-		const combinedSubnetData = descriptions.reduce(
-			(acc, desc) => {
-				const netuid = Number(desc.netuid)
-				const pool = pools.find((pool) => Number(pool.netuid) === netuid) || {}
-
-				acc[netuid] = { ...desc, ...pool }
-				return acc
-			},
-			{} as Record<number, SubnetData>
+	const subnetData = useMemo((): Record<number, SubnetData> => {
+		const poolByNetuid = new Map(pools?.map((pool) => [pool.netuid, pool]))
+		return Object.fromEntries(
+			subnets.map((subnet) => [subnet.netuid, { ...subnet, ...poolByNetuid.get(subnet.netuid) }])
 		)
+	}, [pools])
 
-		setSubnetData(combinedSubnetData)
-	}, [
-		subnetDescriptionsData,
-		subnetDescriptionsData?.pages,
-		subnetPoolsData,
-		subnetPoolsData?.pages,
-	])
-
-	return { subnetData: subnetData, isError: isSubnetDescriptionsError || isSubnetPoolsError }
+	return { subnetData, isError }
 }

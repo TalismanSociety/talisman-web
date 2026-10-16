@@ -1,0 +1,647 @@
+[
+  {
+    "netuid": 0,
+    "descriptionName": "Root",
+    "symbol": "TAO"
+  },
+  {
+    "netuid": 1,
+    "descriptionName": "Apex",
+    "symbol": "α"
+  },
+  {
+    "netuid": 2,
+    "descriptionName": "DSperse",
+    "symbol": "β"
+  },
+  {
+    "netuid": 3,
+    "descriptionName": "Teutonic",
+    "symbol": "γ"
+  },
+  {
+    "netuid": 4,
+    "descriptionName": "Targon",
+    "symbol": "δ"
+  },
+  {
+    "netuid": 5,
+    "descriptionName": "Hone",
+    "symbol": "ε"
+  },
+  {
+    "netuid": 6,
+    "descriptionName": "Numinous",
+    "symbol": "ζ"
+  },
+  {
+    "netuid": 7,
+    "descriptionName": "Allways",
+    "symbol": "η"
+  },
+  {
+    "netuid": 8,
+    "descriptionName": "Vanta",
+    "symbol": "θ"
+  },
+  {
+    "netuid": 9,
+    "descriptionName": "iota",
+    "symbol": "ι"
+  },
+  {
+    "netuid": 10,
+    "descriptionName": "Pareton",
+    "symbol": "Ⱂ"
+  },
+  {
+    "netuid": 11,
+    "descriptionName": "TrajectoryRL",
+    "symbol": "λ"
+  },
+  {
+    "netuid": 12,
+    "descriptionName": "Compute Horde",
+    "symbol": "μ"
+  },
+  {
+    "netuid": 13,
+    "descriptionName": "Data Universe",
+    "symbol": "ν"
+  },
+  {
+    "netuid": 14,
+    "descriptionName": "Cacheon",
+    "symbol": "ㄷ"
+  },
+  {
+    "netuid": 15,
+    "descriptionName": "ORO",
+    "symbol": "ο"
+  },
+  {
+    "netuid": 16,
+    "descriptionName": "kenju run next week",
+    "symbol": "π"
+  },
+  {
+    "netuid": 17,
+    "descriptionName": "404—GEN",
+    "symbol": "ρ"
+  },
+  {
+    "netuid": 18,
+    "descriptionName": "Zeus",
+    "symbol": "σ"
+  },
+  {
+    "netuid": 19,
+    "descriptionName": "blockmachine",
+    "symbol": "t"
+  },
+  {
+    "netuid": 20,
+    "descriptionName": "Witness",
+    "symbol": "υ"
+  },
+  {
+    "netuid": 21,
+    "descriptionName": "AdTAO",
+    "symbol": "φ"
+  },
+  {
+    "netuid": 22,
+    "descriptionName": "Desearch",
+    "symbol": "χ"
+  },
+  {
+    "netuid": 23,
+    "descriptionName": "Trishool",
+    "symbol": "ψ"
+  },
+  {
+    "netuid": 24,
+    "descriptionName": "Quasar",
+    "symbol": "ω"
+  },
+  {
+    "netuid": 25,
+    "descriptionName": "UR",
+    "symbol": "א"
+  },
+  {
+    "netuid": 26,
+    "descriptionName": "Perturb",
+    "symbol": "ב"
+  },
+  {
+    "netuid": 27,
+    "descriptionName": "Orion",
+    "symbol": "ג"
+  },
+  {
+    "netuid": 28,
+    "descriptionName": "SayGM",
+    "symbol": "ד"
+  },
+  {
+    "netuid": 29,
+    "descriptionName": "hoτfloaτ",
+    "symbol": "ה"
+  },
+  {
+    "netuid": 30,
+    "descriptionName": "Endure Network",
+    "symbol": "ו"
+  },
+  {
+    "netuid": 31,
+    "descriptionName": "rec4ll",
+    "symbol": "ז"
+  },
+  {
+    "netuid": 32,
+    "descriptionName": "ItsAI",
+    "symbol": "ח"
+  },
+  {
+    "netuid": 33,
+    "descriptionName": "ReadyAI",
+    "symbol": "ט"
+  },
+  {
+    "netuid": 34,
+    "descriptionName": "BitMind",
+    "symbol": "י"
+  },
+  {
+    "netuid": 35,
+    "descriptionName": "Subnet 35",
+    "symbol": "ך"
+  },
+  {
+    "netuid": 36,
+    "descriptionName": "Epago",
+    "symbol": "כ"
+  },
+  {
+    "netuid": 37,
+    "descriptionName": "Aurelius",
+    "symbol": "ל"
+  },
+  {
+    "netuid": 38,
+    "descriptionName": "ChronoLLM",
+    "symbol": "ם"
+  },
+  {
+    "netuid": 39,
+    "descriptionName": "deprecated",
+    "symbol": "מ"
+  },
+  {
+    "netuid": 40,
+    "descriptionName": "Ralph",
+    "symbol": "ן"
+  },
+  {
+    "netuid": 41,
+    "descriptionName": "Almanac",
+    "symbol": "נ"
+  },
+  {
+    "netuid": 42,
+    "descriptionName": "Unknown",
+    "symbol": "ס"
+  },
+  {
+    "netuid": 43,
+    "descriptionName": "Graphite",
+    "symbol": "ע"
+  },
+  {
+    "netuid": 44,
+    "descriptionName": "Score",
+    "symbol": "ף"
+  },
+  {
+    "netuid": 45,
+    "descriptionName": "AlphaRidge.ai",
+    "symbol": "פ"
+  },
+  {
+    "netuid": 46,
+    "descriptionName": "Instant",
+    "symbol": "ץ"
+  },
+  {
+    "netuid": 47,
+    "descriptionName": "GPUForge",
+    "symbol": "צ"
+  },
+  {
+    "netuid": 48,
+    "descriptionName": "Quantum Compute",
+    "symbol": "ק"
+  },
+  {
+    "netuid": 49,
+    "descriptionName": "Nepher Robotics",
+    "symbol": "ר"
+  },
+  {
+    "netuid": 50,
+    "descriptionName": "Synth",
+    "symbol": "ש"
+  },
+  {
+    "netuid": 51,
+    "descriptionName": "lium.io",
+    "symbol": "ת"
+  },
+  {
+    "netuid": 52,
+    "descriptionName": "Dojo",
+    "symbol": "ا"
+  },
+  {
+    "netuid": 53,
+    "descriptionName": "engy",
+    "symbol": "ب"
+  },
+  {
+    "netuid": 54,
+    "descriptionName": "Yanez",
+    "symbol": "ت"
+  },
+  {
+    "netuid": 55,
+    "descriptionName": "NIOME",
+    "symbol": "ث"
+  },
+  {
+    "netuid": 56,
+    "descriptionName": "Gradients",
+    "symbol": "ج"
+  },
+  {
+    "netuid": 57,
+    "descriptionName": "Subnet 57",
+    "symbol": "ح"
+  },
+  {
+    "netuid": 58,
+    "descriptionName": "Attune",
+    "symbol": "خ"
+  },
+  {
+    "netuid": 59,
+    "descriptionName": "Subnet 59",
+    "symbol": "د"
+  },
+  {
+    "netuid": 60,
+    "descriptionName": "Bitsec.ai",
+    "symbol": "ذ"
+  },
+  {
+    "netuid": 61,
+    "descriptionName": "RedTeam",
+    "symbol": "ر"
+  },
+  {
+    "netuid": 62,
+    "descriptionName": "Ridges",
+    "symbol": "ز"
+  },
+  {
+    "netuid": 63,
+    "descriptionName": "Enigma",
+    "symbol": "س"
+  },
+  {
+    "netuid": 64,
+    "descriptionName": "Chutes",
+    "symbol": "ش"
+  },
+  {
+    "netuid": 65,
+    "descriptionName": "True Performance Network",
+    "symbol": "ص"
+  },
+  {
+    "netuid": 66,
+    "descriptionName": "conjectures",
+    "symbol": "ض"
+  },
+  {
+    "netuid": 67,
+    "descriptionName": "Harnyx",
+    "symbol": "ط"
+  },
+  {
+    "netuid": 68,
+    "descriptionName": "NOVA",
+    "symbol": "ظ"
+  },
+  {
+    "netuid": 69,
+    "descriptionName": "Herald",
+    "symbol": "ع"
+  },
+  {
+    "netuid": 70,
+    "descriptionName": "Pending",
+    "symbol": "غ"
+  },
+  {
+    "netuid": 71,
+    "descriptionName": "Leadpoet",
+    "symbol": "ㄴ"
+  },
+  {
+    "netuid": 72,
+    "descriptionName": "StreetVision by NATIX",
+    "symbol": "ق"
+  },
+  {
+    "netuid": 73,
+    "descriptionName": "Parked",
+    "symbol": "ك"
+  },
+  {
+    "netuid": 74,
+    "descriptionName": "Gittensor",
+    "symbol": "ل"
+  },
+  {
+    "netuid": 75,
+    "descriptionName": "Hippius",
+    "symbol": "م"
+  },
+  {
+    "netuid": 76,
+    "descriptionName": "Ormas",
+    "symbol": "ن"
+  },
+  {
+    "netuid": 77,
+    "descriptionName": "Liquidity",
+    "symbol": "ه"
+  },
+  {
+    "netuid": 78,
+    "descriptionName": "Umi",
+    "symbol": "و"
+  },
+  {
+    "netuid": 79,
+    "descriptionName": "MVTRX",
+    "symbol": "ي"
+  },
+  {
+    "netuid": 80,
+    "descriptionName": "OpenRoboto",
+    "symbol": "ى"
+  },
+  {
+    "netuid": 81,
+    "descriptionName": "Reliquary",
+    "symbol": "ᚠ"
+  },
+  {
+    "netuid": 82,
+    "descriptionName": "Subnet 82",
+    "symbol": "ᚢ"
+  },
+  {
+    "netuid": 83,
+    "descriptionName": "CliqueAI",
+    "symbol": "ᚦ"
+  },
+  {
+    "netuid": 84,
+    "descriptionName": "Subnet 84",
+    "symbol": "ᚨ"
+  },
+  {
+    "netuid": 85,
+    "descriptionName": "Vidaio",
+    "symbol": "ᚱ"
+  },
+  {
+    "netuid": 86,
+    "descriptionName": "OnSale",
+    "symbol": "ᚳ"
+  },
+  {
+    "netuid": 87,
+    "descriptionName": "Provenonce",
+    "symbol": "Ы"
+  },
+  {
+    "netuid": 88,
+    "descriptionName": "Investing",
+    "symbol": "ᛉ"
+  },
+  {
+    "netuid": 89,
+    "descriptionName": "InfiniteQuant",
+    "symbol": "ᛒ"
+  },
+  {
+    "netuid": 90,
+    "descriptionName": "KubeTEE",
+    "symbol": "テ"
+  },
+  {
+    "netuid": 91,
+    "descriptionName": "cascade",
+    "symbol": "ᚁ"
+  },
+  {
+    "netuid": 92,
+    "descriptionName": "REAX",
+    "symbol": "र"
+  },
+  {
+    "netuid": 93,
+    "descriptionName": "Bitcast",
+    "symbol": "ᚃ"
+  },
+  {
+    "netuid": 94,
+    "descriptionName": "Cathedral",
+    "symbol": "ᚄ"
+  },
+  {
+    "netuid": 95,
+    "descriptionName": "Actual",
+    "symbol": "ᚅ"
+  },
+  {
+    "netuid": 96,
+    "descriptionName": "Verathos",
+    "symbol": "᚛"
+  },
+  {
+    "netuid": 97,
+    "descriptionName": "Albedo",
+    "symbol": "ა"
+  },
+  {
+    "netuid": 98,
+    "descriptionName": "NeverPlayAlone",
+    "symbol": "ბ"
+  },
+  {
+    "netuid": 99,
+    "descriptionName": "Thirty Spokes",
+    "symbol": "გ"
+  },
+  {
+    "netuid": 100,
+    "descriptionName": "Cortex",
+    "symbol": "დ"
+  },
+  {
+    "netuid": 101,
+    "descriptionName": "Tag101",
+    "symbol": "ე"
+  },
+  {
+    "netuid": 102,
+    "descriptionName": "ConnitoAI",
+    "symbol": "ვ"
+  },
+  {
+    "netuid": 103,
+    "descriptionName": "Consted",
+    "symbol": "Ա"
+  },
+  {
+    "netuid": 104,
+    "descriptionName": "TAOstatus",
+    "symbol": "Բ"
+  },
+  {
+    "netuid": 105,
+    "descriptionName": "Beam",
+    "symbol": "Գ"
+  },
+  {
+    "netuid": 106,
+    "descriptionName": "Nodexo",
+    "symbol": "Դ"
+  },
+  {
+    "netuid": 107,
+    "descriptionName": "Minos",
+    "symbol": "ミ"
+  },
+  {
+    "netuid": 108,
+    "descriptionName": "ChipForge",
+    "symbol": "モ"
+  },
+  {
+    "netuid": 109,
+    "descriptionName": "Finsight",
+    "symbol": "՞"
+  },
+  {
+    "netuid": 110,
+    "descriptionName": "Green Compute",
+    "symbol": "Ѐ"
+  },
+  {
+    "netuid": 111,
+    "descriptionName": "Claims",
+    "symbol": "Ё"
+  },
+  {
+    "netuid": 112,
+    "descriptionName": "THOR",
+    "symbol": "Ђ"
+  },
+  {
+    "netuid": 113,
+    "descriptionName": "",
+    "symbol": "Ѓ"
+  },
+  {
+    "netuid": 114,
+    "descriptionName": "SOMA",
+    "symbol": "Є"
+  },
+  {
+    "netuid": 115,
+    "descriptionName": "MoirAI",
+    "symbol": "Ѕ"
+  },
+  {
+    "netuid": 116,
+    "descriptionName": "Carbon",
+    "symbol": "ъ"
+  },
+  {
+    "netuid": 117,
+    "descriptionName": "everyframe.studio",
+    "symbol": "Ⲁ"
+  },
+  {
+    "netuid": 118,
+    "descriptionName": "Ditto",
+    "symbol": "ⲁ"
+  },
+  {
+    "netuid": 119,
+    "descriptionName": "CapabilityForge Next",
+    "symbol": "Ⲃ"
+  },
+  {
+    "netuid": 120,
+    "descriptionName": "Affine",
+    "symbol": "ⴷ"
+  },
+  {
+    "netuid": 121,
+    "descriptionName": "sundae_bar",
+    "symbol": "Ⲅ"
+  },
+  {
+    "netuid": 122,
+    "descriptionName": "CookingTAO",
+    "symbol": "ⲅ"
+  },
+  {
+    "netuid": 123,
+    "descriptionName": "MANTIS",
+    "symbol": "𑀀"
+  },
+  {
+    "netuid": 124,
+    "descriptionName": "Swarm",
+    "symbol": "𑀁"
+  },
+  {
+    "netuid": 125,
+    "descriptionName": "Refinery",
+    "symbol": "𑀂"
+  },
+  {
+    "netuid": 126,
+    "descriptionName": "Attelier",
+    "symbol": "𑀃"
+  },
+  {
+    "netuid": 127,
+    "descriptionName": "Astrid",
+    "symbol": "𑀅"
+  },
+  {
+    "netuid": 128,
+    "descriptionName": "ByteLeap",
+    "symbol": "න"
+  }
+]
