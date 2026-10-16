@@ -46,10 +46,8 @@ export const useTotalValidatorStakingRewards = (account: Account) => {
 		})
 	)
 
-	const amount = data?.accumulatedReward?.amount as string | undefined
-
 	return {
-		totalRewards: Decimal.fromPlanck(amount ?? 0, chain.nativeToken?.decimals ?? 0, {
+		totalRewards: Decimal.fromPlanck(data ?? 0, chain.nativeToken?.decimals ?? 0, {
 			currency: chain.nativeToken?.symbol,
 		}),
 		isError,
