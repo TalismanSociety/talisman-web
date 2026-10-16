@@ -1,11 +1,11 @@
-import type { AstarPrimitivesDappStakingSmartContract } from "@polkadot/types/lookup"
 import { formatDistance } from "date-fns"
 import { useState } from "react"
 import { UnstakeDialog as UnstakeDialogComponent } from "@/components/recipes/UnstakeDialog"
 import type { Account } from "@/domains/accounts/recoils"
-import { useExtrinsicInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
+import type { SmartContract } from "@/domains/chains/portal-runtime"
+import { useTxInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
 import { useUnstakeForm } from "@/domains/staking/dappStaking/hooks/forms"
-import type { StakeLoadable } from "@/domains/staking/dappStaking/hooks/useStakeLoadable"
+import type { Stake } from "@/domains/staking/dappStaking/hooks/useStake"
 import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 
 import useUnlockDuration from "../providers/hooks/dapp/useUnlockDuration"
@@ -13,8 +13,8 @@ import DappPickerDialog from "./DappPickerDialog"
 
 type DappUnstakeDialogProps = {
 	account: Account
-	stake: StakeLoadable["data"]
-	dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
+	stake: Stake
+	dapp: SmartContract
 	onRequestDismiss: () => void
 }
 
@@ -25,7 +25,7 @@ const DappUnstakeDialog = (props: DappUnstakeDialogProps) => {
 		props.dapp
 	)
 
-	useExtrinsicInBlockOrErrorEffect(() => props.onRequestDismiss(), extrinsic)
+	useTxInBlockOrErrorEffect(() => props.onRequestDismiss(), extrinsic)
 
 	return (
 		<UnstakeDialogComponent
@@ -52,12 +52,12 @@ const DappUnstakeDialog = (props: DappUnstakeDialogProps) => {
 
 type MultiDappsUnstakeDialogProps = {
 	account: Account
-	stake: StakeLoadable["data"]
+	stake: Stake
 	onRequestDismiss: () => void
 }
 
 const MultiDappUnstakeDialog = (props: MultiDappsUnstakeDialogProps) => {
-	const [dapp, setDapp] = useState<AstarPrimitivesDappStakingSmartContract>()
+	const [dapp, setDapp] = useState<SmartContract>()
 
 	return dapp === undefined ? (
 		<DappPickerDialog
@@ -78,7 +78,7 @@ const MultiDappUnstakeDialog = (props: MultiDappsUnstakeDialogProps) => {
 
 type UnstakeDialogProps = {
 	account: Account
-	stake: StakeLoadable["data"]
+	stake: Stake
 	onRequestDismiss: () => void
 }
 

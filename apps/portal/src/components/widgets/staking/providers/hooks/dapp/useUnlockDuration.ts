@@ -1,22 +1,11 @@
-import { useMemo } from "react"
-import { useRecoilValue, waitForAll } from "recoil"
+import { bind } from "@react-rxjs/core"
+import { useContext } from "react"
 
-import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
-import { expectedBlockTime } from "@/domains/common/utils/substratePolyfills"
-import { useEraLengthState } from "@/domains/staking/dappStaking/recoils"
+import { ChainContext } from "@/domains/chains/contexts"
+import { unlockDuration$ } from "@/domains/staking/dappStaking/chain"
 
-const useUnlockDuration = () => {
-	const [api, { standardEraLength }] = useRecoilValue(
-		waitForAll([useSubstrateApiState(), useEraLengthState()])
-	)
+const [useUnlockDurationOf] = bind(unlockDuration$)
 
-	const unlockDuration = useMemo(
-		() =>
-			api.consts.dappStaking.unlockingPeriod.muln(standardEraLength).mul(expectedBlockTime(api)),
-		[api, standardEraLength]
-	).toNumber()
-
-	return unlockDuration
-}
+const useUnlockDuration = () => useUnlockDurationOf(useContext(ChainContext).genesisHash)
 
 export default useUnlockDuration

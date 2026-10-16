@@ -476,9 +476,6 @@ importers:
       '@tailwindcss/container-queries':
         specifier: ^0.1.1
         version: 0.1.1(tailwindcss@3.4.16)
-      '@talismn/astar-types':
-        specifier: TalismanSociety/astar-types
-        version: https://codeload.github.com/TalismanSociety/astar-types/tar.gz/60052c3146ca90e72db6cfd2dcce4f22356789e2
       '@testing-library/dom':
         specifier: ^10.4.2
         version: 10.4.2
@@ -4020,10 +4017,6 @@ packages:
     resolution: {integrity: sha512-p18dswChx6WnTSaJCSGx6lTmrGzNNvm2FtXmiO6AuA1V4U5REyoqwmT6kgAsIMdjo07QdAfYXHJ4hnMtfHzWgA==}
     peerDependencies:
       tailwindcss: '>=3.2.0'
-
-  '@talismn/astar-types@https://codeload.github.com/TalismanSociety/astar-types/tar.gz/60052c3146ca90e72db6cfd2dcce4f22356789e2':
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/TalismanSociety/astar-types/tar.gz/60052c3146ca90e72db6cfd2dcce4f22356789e2}
-    version: 0.0.0
 
   '@talismn/balances@3.0.6':
     resolution: {integrity: sha512-Fo0tvl3MymVCn5oEamckmoBZX6PoKMrsAXagcYQff/pu47ssv4maP2H3zznqZN4GqsOtnYHn8UaV3jBxWApMQw==}
@@ -13186,8 +13179,6 @@ snapshots:
   '@tailwindcss/container-queries@0.1.1(tailwindcss@3.4.16)':
     dependencies:
       tailwindcss: 3.4.16
-
-  '@talismn/astar-types@https://codeload.github.com/TalismanSociety/astar-types/tar.gz/60052c3146ca90e72db6cfd2dcce4f22356789e2': {}
 
   '@talismn/balances@3.0.6(@solana/sysvars@8.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.6.3))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.6.3)(utf-8-validate@5.0.10)':
     dependencies:

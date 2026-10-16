@@ -10,12 +10,15 @@ import { selectedSubstrateAccountsState } from "@/domains/accounts/recoils"
 import { useChainState } from "@/domains/chains/hooks"
 import { ChainProvider } from "@/domains/chains/provider"
 import { dappStakingEnabledChainsState } from "@/domains/chains/recoils"
-import { useExtrinsic } from "@/domains/common/hooks/useExtrinsic"
 import { useNativeTokenLocalizedFiatAmount } from "@/domains/common/hooks/useLocalizedFiatAmount"
-import { useClaimAllRewardsExtrinsic } from "@/domains/staking/dappStaking/hooks/useClaimAllRewardsExtrinsic"
-import { useStakeLoadable } from "@/domains/staking/dappStaking/hooks/useStakeLoadable"
+import { usePreloadRegisteredDapps } from "@/domains/staking/dappStaking/dapps"
+import { useStakeLoadable } from "@/domains/staking/dappStaking/hooks/useStake"
+import {
+	useClaimAllRewardsTx,
+	useUnlockTx,
+	useWithdrawUnbondedTx,
+} from "@/domains/staking/dappStaking/hooks/useStakeTxs"
 import { useTotalDappStakingRewards } from "@/domains/staking/dappStaking/hooks/useTotalRewards"
-import { useRegisteredDappsState } from "@/domains/staking/dappStaking/recoils"
 
 import useUnlockDuration from "../providers/hooks/dapp/useUnlockDuration"
 import AddStakeDialog from "./AddStakeDialog"
@@ -38,30 +41,31 @@ const Stake = ({
 	const [unstakeDialogOpen, setUnstakeDialogOpen] = useState(false)
 	const [lockedDialogOpen, setLockedDialogOpen] = useState(false)
 
-	// Pre-load potentially heavy query
-	useRecoilValueLoadable(useRegisteredDappsState())
+	usePreloadRegisteredDapps()
 
 	const navigate = useNavigate()
 
 	const chain = useRecoilValue(useChainState())
 	const { data: stake, isLoading } = useStakeLoadable(account)
 
-	const claimAllRewardsExtrinsic = useClaimAllRewardsExtrinsic(stake)
-	const withdrawExtrinsic = useExtrinsic("dappStaking", "withdrawUnbonded")
-	const unlockExtrinsic = useExtrinsic("dappStaking", "unlock")
+	const claimAllRewardsExtrinsic = useClaimAllRewardsTx()
+	const withdrawExtrinsic = useWithdrawUnbondedTx()
+	const unlockExtrinsic = useUnlockTx()
 
 	const [requestReStakeInTransition, startRequestRestakeTransition] = useTransition()
 	const unlockDuration = formatDistance(0, useUnlockDuration())
 
 	const { name = "", nativeToken: { symbol, logo } = { symbol: "", logo: "" } } = chain || {}
 
-	if (stake.active || !isLoading) {
+	if (stake?.active || !isLoading) {
 		setShouldRenderLoadingSkeleton(false)
 	}
 
-	if (!stake.active) {
+	if (!stake?.active) {
 		return null
 	}
+
+	const { amounts } = stake
 
 	return (
 		<>
@@ -76,12 +80,12 @@ const Stake = ({
 				stakeStatus={stake.earningRewards ? "earning_rewards" : "not_earning_rewards"}
 				balance={
 					<ErrorBoundary renderFallback={() => <>--</>}>
-						{stake.totalStaked?.decimalAmount?.toLocaleString()}
+						{amounts.totalStaked.decimalAmount?.toLocaleString()}
 					</ErrorBoundary>
 				}
 				fiatBalance={
 					<ErrorBoundary renderFallback={() => <>--</>}>
-						{stake.totalStaked?.localizedFiatAmount}
+						{amounts.totalStaked.localizedFiatAmount}
 					</ErrorBoundary>
 				}
 				rewards={
@@ -115,35 +119,35 @@ const Stake = ({
 					)
 				}
 				lockedButton={
-					(stake.locked?.decimalAmount?.planck ?? 0n) > 0n && (
+					(amounts.locked.decimalAmount?.planck ?? 0n) > 0n && (
 						<ErrorBoundary renderFallback={() => <>--</>}>
 							<StakePosition.LockedButton
 								loading={unlockExtrinsic.state === "loading"}
-								amount={stake.locked?.decimalAmount?.toLocaleString()}
+								amount={amounts.locked.decimalAmount?.toLocaleString()}
 								onClick={() => setLockedDialogOpen(true)}
 							/>
 						</ErrorBoundary>
 					)
 				}
 				claimButton={
-					(stake.totalRewards?.decimalAmount?.planck ?? 0n) > 0n && (
+					(amounts.totalRewards.decimalAmount?.planck ?? 0n) > 0n && (
 						<ErrorBoundary renderFallback={() => <>--</>}>
 							<StakePosition.ClaimButton
 								loading={claimAllRewardsExtrinsic.state === "loading"}
-								amount={stake.totalRewards?.decimalAmount?.toLocaleString()}
+								amount={amounts.totalRewards.decimalAmount?.toLocaleString()}
 								onClick={() => {
-									void claimAllRewardsExtrinsic.signAndSend(account.address)
+									void claimAllRewardsExtrinsic.signAndSend(account.address, stake)
 								}}
 							/>
 						</ErrorBoundary>
 					)
 				}
 				withdrawButton={
-					(stake.withdrawable?.decimalAmount?.planck ?? 0n) > 0n && (
+					(amounts.withdrawable.decimalAmount?.planck ?? 0n) > 0n && (
 						<ErrorBoundary renderFallback={() => <>--</>}>
 							<StakePosition.WithdrawButton
 								loading={withdrawExtrinsic.state === "loading"}
-								amount={stake.withdrawable?.decimalAmount?.toLocaleString()}
+								amount={amounts.withdrawable.decimalAmount?.toLocaleString()}
 								onClick={() => {
 									void withdrawExtrinsic.signAndSend(account.address)
 								}}
@@ -155,7 +159,7 @@ const Stake = ({
 					stake.unlocking.length > 0 && (
 						<ErrorBoundary renderFallback={() => <>--</>}>
 							<StakePosition.UnstakingStatus
-								amount={stake.totalUnlocking?.decimalAmount?.toLocaleString()}
+								amount={amounts.totalUnlocking.decimalAmount?.toLocaleString()}
 								unlocks={stake.unlocking.map((x) => ({
 									amount: x.amount.decimalAmount?.toLocaleString(),
 									eta: x.eta,
@@ -181,8 +185,8 @@ const Stake = ({
 			)}
 			{lockedDialogOpen && (
 				<DappStakingLockedAmountDialog
-					amount={stake.locked?.decimalAmount?.toLocaleString()}
-					fiatAmount={stake.locked?.localizedFiatAmount}
+					amount={amounts.locked.decimalAmount?.toLocaleString()}
+					fiatAmount={amounts.locked.localizedFiatAmount}
 					unlockDuration={unlockDuration}
 					onRequestDismiss={() => setLockedDialogOpen(false)}
 					onRequestReStake={() => {
@@ -205,10 +209,7 @@ const Stake = ({
 					}}
 					requestReStakeInTransition={requestReStakeInTransition}
 					onRequestUnlock={() => {
-						void unlockExtrinsic.signAndSend(
-							account.address,
-							stake.locked?.decimalAmount?.planck ?? 0n
-						)
+						void unlockExtrinsic.signAndSend(account.address, stake.locked)
 						setLockedDialogOpen(false)
 					}}
 				/>
