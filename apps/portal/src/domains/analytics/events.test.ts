@@ -66,7 +66,11 @@ describe("event catalog", () => {
 		// @ts-expect-error
 		track("Substrate extensions connected", { wallet: address })
 		// @ts-expect-error
-		track("Report portfolio balances", { tokens: 3, chains: 1, address })
+		track("Report portfolio balances", { symbols: ["DOT"], chains: [], total_usd: "<10", address })
+		// @ts-expect-error
+		track("Report portfolio balances", { symbols: [address], chains: [], total_usd: "<10" })
+		// @ts-expect-error
+		track("Report portfolio balances", { symbols: [], chains: [], total_usd: 1234 })
 		// @ts-expect-error
 		track("Write to EVM contract", { chain: "Ethereum", functionName: "stake", hash: address })
 	})

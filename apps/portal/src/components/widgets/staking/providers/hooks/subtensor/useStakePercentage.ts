@@ -1,6 +1,5 @@
-import { useRecoilValue } from "recoil"
-
-import { portfolioBalancesState } from "@/domains/balances/recoils"
+import { usePortfolioBalances } from "@/domains/balances/hooks"
+import { BITTENSOR_NETWORK_ID, getSubtensorStakes } from "@/domains/balances/subtensor-stakes"
 
 import { ROOT_NETUID } from "../../../subtensor/constants"
 
@@ -10,41 +9,32 @@ type BittensorBalances = {
 	subnetStakedBalanceInTao: bigint
 }
 
-type Meta = { amountStaked: string; netuid: number }
-
 const useStakePercentage = (hasDTaoStaking: boolean) => {
-	const portfolioBalances = useRecoilValue(portfolioBalancesState)
+	const portfolioBalances = usePortfolioBalances()
 
-	const subtensorBalances = portfolioBalances.find((q) => q.chainId === "bittensor")
-
-	const bittensorBalances = subtensorBalances.each.reduce<BittensorBalances>(
-		(acc, curr) => {
-			acc.total += curr.total.planck
-			curr.subtensor.forEach((subtensor) => {
-				const {
-					amount,
-					meta: { netuid = 0 },
-				} = subtensor as typeof subtensor & { meta: Meta }
-
-				if (netuid === ROOT_NETUID) {
-					acc.rootStakedBalance += amount.planck
-				} else {
-					acc.subnetStakedBalanceInTao += amount.planck
-				}
-			})
-			return acc
-		},
-		{ rootStakedBalance: 0n, subnetStakedBalanceInTao: 0n, total: 0n }
+	const subtensorBalances = portfolioBalances.find(
+		(balance) => balance.networkId === BITTENSOR_NETWORK_ID
 	)
 
-	const { total, rootStakedBalance, subnetStakedBalanceInTao } = bittensorBalances
+	const { total, rootStakedBalance, subnetStakedBalanceInTao } =
+		subtensorBalances.each.reduce<BittensorBalances>(
+			(acc, curr) => {
+				acc.total += curr.total.planck
+				for (const { netuid, taoPlanck } of getSubtensorStakes(curr)) {
+					if (netuid === ROOT_NETUID) {
+						acc.rootStakedBalance += taoPlanck
+					} else {
+						acc.subnetStakedBalanceInTao += taoPlanck
+					}
+				}
+				return acc
+			},
+			{ rootStakedBalance: 0n, subnetStakedBalanceInTao: 0n, total: 0n }
+		)
 
 	if (total === 0n) return 0
 
-	if (hasDTaoStaking) {
-		const subnetStakePercentage = Number(subnetStakedBalanceInTao) / Number(total)
-		return subnetStakePercentage
-	}
+	if (hasDTaoStaking) return Number(subnetStakedBalanceInTao) / Number(total)
 
 	return Number(rootStakedBalance) / Number(total)
 }

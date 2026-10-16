@@ -15,8 +15,7 @@ import { Development } from "@/components/widgets/development/Development"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { PrivacySettingsDialog } from "@/components/widgets/PrivacySettings/PrivacySettingsDialog"
 import { AccountWatcher, SignetWatcher } from "@/domains/accounts/recoils"
-import { BalancesWatcher } from "@/domains/balances/BalancesWatcher"
-import { PortalBalancesProvider } from "@/domains/balances/PortalBalancesProvider"
+import { BalancesReporter, BalancesWatcher } from "@/domains/balances/BalancesWatcher"
 import {
 	chainDeriveState,
 	chainQueryMultiState,
@@ -24,7 +23,6 @@ import {
 } from "@/domains/common/recoils/query"
 import { initSentry } from "@/domains/common/sentry"
 import { ExtensionWatcher } from "@/domains/extension/main"
-import { TalismanExtensionSynchronizer } from "@/domains/extension/TalismanExtensionSynchronizer"
 import { EvmProvider } from "@/domains/extension/wagmi"
 import { Toaster } from "@/ui/molecules/Toaster"
 import { JotaiProvider } from "@/util/jotaiStore"
@@ -42,32 +40,30 @@ const AppProviders = ({ children }: { children: ReactNode }) => (
 				)}
 			>
 				<Suspense fallback={<FullscreenLoader />}>
-					<JotaiProvider>
-						<EvmProvider>
-							<PolkadotApiProvider
-								queryState={chainQueryState}
-								deriveState={chainDeriveState}
-								queryMultiState={chainQueryMultiState}
-							>
-								<PortalBalancesProvider>
+					<Subscribe>
+						<JotaiProvider>
+							<EvmProvider>
+								<PolkadotApiProvider
+									queryState={chainQueryState}
+									deriveState={chainDeriveState}
+									queryMultiState={chainQueryMultiState}
+								>
 									<ExtensionWatcher />
 									<AccountWatcher />
 									<SignetWatcher />
-									<TalismanExtensionSynchronizer />
 									<BalancesWatcher />
+									<BalancesReporter />
 									<Suspense fallback={<FullscreenLoader />}>
 										{children}
 										<Toaster position="bottom-right" />
 									</Suspense>
-									<Subscribe>
-										<ConsentBanner />
-										<PrivacySettingsDialog />
-									</Subscribe>
+									<ConsentBanner />
+									<PrivacySettingsDialog />
 									<Development />
-								</PortalBalancesProvider>
-							</PolkadotApiProvider>
-						</EvmProvider>
-					</JotaiProvider>
+								</PolkadotApiProvider>
+							</EvmProvider>
+						</JotaiProvider>
+					</Subscribe>
 				</Suspense>
 			</ErrorBoundary>
 		</RecoilRoot>

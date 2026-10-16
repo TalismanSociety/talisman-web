@@ -11,6 +11,10 @@ allowBuilds:
   simple-git-hooks: false
   utf-8-validate: false
   workerd: false
+packageExtensions:
+  "@polkadot-api/json-rpc-provider-proxy@0.4.1":
+    dependencies:
+      "@polkadot-api/json-rpc-provider": 0.2.0
 overrides:
   "@polkadot/api": 16.4.1
   "@polkadot/api-augment": 16.4.1

@@ -259,9 +259,10 @@ const unshapedStrings =
 	({ event, properties, $set, $set_once, ...fields }: SentEvent) => [
 		...stringsOf(fields, "").filter(([path, value]) => EVENT_SHAPES[path]?.(value) !== true),
 		...[properties, $set, $set_once].flatMap((props) =>
-			stringsOf(props ?? {}, "").filter(
-				([path, value]) => !isCatalogValue(event, path, value) && SDK_SHAPES[path]?.(value) !== true
-			)
+			Object.entries(props ?? {})
+				.filter(([key, value]) => !isCatalogValue(event, key, value))
+				.flatMap(([key, value]) => stringsOf(value, key))
+				.filter(([path, value]) => SDK_SHAPES[path]?.(value) !== true)
 		),
 		...(EVENT_SHAPES["event"]?.(event) ? [] : [["event", event]]),
 	]
@@ -524,7 +525,13 @@ describe("portal events", () => {
 		startAnalytics()
 		track("EVM extensions connected", { wallet: "xyz.talisman", connections: 1 })
 		track("Substrate extensions connected", { wallet: "talisman" })
-		track("Report portfolio balances", { tokens: 12, chains: 3 })
+		track("Report portfolio balances", {
+			symbols: ["DOT", "TAO"],
+			chains: ["polkadot", "bittensor"],
+			total_usd: "100-1k",
+			usd_dot: "10-100",
+			usd_tao: "100-1k",
+		})
 		track("Extrinsic in block", {
 			chain: "polkadot-asset-hub",
 			module: "utility",
@@ -553,7 +560,16 @@ describe("portal events", () => {
 		).toEqual([
 			["EVM extensions connected", { wallet: "xyz.talisman", connections: 1 }],
 			["Substrate extensions connected", { wallet: "talisman" }],
-			["Report portfolio balances", { tokens: 12, chains: 3 }],
+			[
+				"Report portfolio balances",
+				{
+					symbols: ["DOT", "TAO"],
+					chains: ["polkadot", "bittensor"],
+					total_usd: "100-1k",
+					usd_dot: "10-100",
+					usd_tao: "100-1k",
+				},
+			],
 			[
 				"Extrinsic in block",
 				{ chain: "polkadot-asset-hub", module: "utility", section: "batchAll" },
@@ -588,8 +604,10 @@ describe("portal events", () => {
 			$set: { portfolioBalances: [{ addressDigest: "ab".repeat(64), usdValue: 12 }] },
 		})
 		untyped("Report portfolio balances", {
-			tokens: 2,
-			chains: 2,
+			symbols: ["DOT", "SHADYCOIN"],
+			chains: ["polkadot"],
+			total_usd: "<10",
+			usd_dot: 12,
 			tokenId: "polkadot:substrate-native",
 			tokenIds: ["1:evm-erc20:0x6B175474E89094C44Da98b954EedeAC495271d0F"],
 		})
@@ -611,6 +629,9 @@ describe("portal events", () => {
 			"tokenId",
 			"substrate-native",
 			"6B175474",
+			"SHADYCOIN",
+			"symbols",
+			"usd_dot",
 		])
 			expect(body).not.toContain(leak)
 	})
@@ -722,7 +743,11 @@ const captureQueuedEvents = async (domain: Domain) => {
 	const captured: string[] = []
 	sdk.instance?.on("eventCaptured", ({ event }: { event: string }) => captured.push(event))
 	domain.trackPageview("/staking/providers")
-	domain.track("Report portfolio balances", { tokens: 2, chains: 1 })
+	domain.track("Report portfolio balances", {
+		symbols: ["DOT"],
+		chains: ["polkadot"],
+		total_usd: "<10",
+	})
 	await flush(0)
 	expect(captured).toEqual(["$pageview", "Report portfolio balances"])
 }

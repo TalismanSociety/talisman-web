@@ -100,8 +100,8 @@ export const wagmiAccountsState = atom<Account[]>({
 	default: [],
 })
 
-export const accountsState = selector({
-	key: "Accounts",
+export const ownAccountsState = selector({
+	key: "OwnAccounts",
 	get: ({ get }) => {
 		const signetAccount = get(signetAccountState)
 		if (signetAccount !== undefined)
@@ -113,13 +113,25 @@ export const accountsState = selector({
 			...x,
 			name: substrateInjecteds.find((y) => y.address === x.address)?.name,
 		}))
-		const lookupAccounts = get(lookupAccountsState)
 
 		return uniqBy(
-			[...wagmiInjected, ...substrateInjecteds, ...get(readOnlyAccountsState), ...lookupAccounts],
+			[...wagmiInjected, ...substrateInjecteds, ...get(readOnlyAccountsState)],
 			(x) => x.address
 		)
 	},
+})
+
+export const ownPortfolioAccountsState = selector({
+	key: "OwnPortfolioAccounts",
+	get: ({ get }) => get(ownAccountsState).filter((x) => !x.readonly || x.partOfPortfolio),
+})
+
+export const accountsState = selector({
+	key: "Accounts",
+	get: ({ get }) =>
+		get(signetAccountState) !== undefined
+			? get(ownAccountsState)
+			: uniqBy([...get(ownAccountsState), ...get(lookupAccountsState)], (x) => x.address),
 })
 
 export const portfolioAccountsState = selector({

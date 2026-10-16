@@ -1,15 +1,49 @@
-import { useState } from "react"
+import type { Balances } from "@talismn/balances"
+import { encodeAnyAddress } from "@talismn/util"
+import { useMemo, useState } from "react"
 import { useUpdateEffect } from "react-use"
+import type { RecoilValueReadOnly } from "recoil"
 import { useRecoilValue } from "recoil"
 
+import {
+	type Account,
+	ownPortfolioAccountsState,
+	portfolioAccountsState,
+	selectedAccountsState,
+} from "@/domains/accounts/recoils"
 import { track } from "@/domains/analytics/client"
+import { portfolioReportOf } from "@/domains/analytics/events/portfolio"
 import { useDebounce } from "@/hooks/useDebounce"
 import { useThrottle } from "@/hooks/useThrottle"
 
-import { writeableBalancesState } from "./recoils"
+import { useBalances } from "./balances"
+
+export const filterBalancesByAddresses = (balances: Balances, addresses: string[]) => {
+	const encoded = new Set(addresses.map((address) => encodeAnyAddress(address)))
+	return balances.find((balance) => encoded.has(encodeAnyAddress(balance.address)))
+}
+
+const useAccountsBalances = (accountsState: RecoilValueReadOnly<Account[]>) => {
+	const balances = useBalances()
+	const accounts = useRecoilValue(accountsState)
+	return useMemo(
+		() =>
+			filterBalancesByAddresses(
+				balances,
+				accounts.map(({ address }) => address)
+			),
+		[balances, accounts]
+	)
+}
+
+export const useSelectedBalances = () => useAccountsBalances(selectedAccountsState)
+
+export const usePortfolioBalances = () => useAccountsBalances(portfolioAccountsState)
+
+const useOwnPortfolioBalances = () => useAccountsBalances(ownPortfolioAccountsState)
 
 export const useBalancesReportEffect = () => {
-	const balances = useThrottle(useDebounce(useRecoilValue(writeableBalancesState), 5_000), 15_000)
+	const balances = useThrottle(useDebounce(useOwnPortfolioBalances(), 5_000), 15_000)
 	const [updateCount, setUpdateCount] = useState(0)
 
 	// TODO: use normal effect after we redo balances section with proper suspense support
@@ -21,18 +55,18 @@ export const useBalancesReportEffect = () => {
 
 		setUpdateCount((x) => x + 1)
 
-		const reported = balances
-			.find((balance) => balance.status !== "stale")
-			.each.filter(
-				(balance) =>
-					(balance.chain === null || !("isCustom" in balance.chain && balance.chain.isCustom)) &&
-					(balance.token === null || !("isCustom" in balance.token && balance.token.isCustom)) &&
-					(balance.total.fiat("usd") ?? 0) > 0
+		track(
+			"Report portfolio balances",
+			portfolioReportOf(
+				balances
+					.find((balance) => balance.status !== "stale")
+					.each.filter((balance) => balance.total.planck > 0n)
+					.map((balance) => ({
+						symbol: balance.token?.symbol,
+						networkId: balance.networkId,
+						usd: balance.total.fiat("usd") ?? 0,
+					}))
 			)
-
-		track("Report portfolio balances", {
-			tokens: reported.length,
-			chains: new Set(reported.map((balance) => balance.chainId ?? balance.evmNetworkId)).size,
-		})
+		)
 	}, [balances])
 }

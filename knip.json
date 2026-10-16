@@ -6,6 +6,7 @@
       "ignoreDependencies": ["wrangler", "@polkadot/api", "@polkadot/util-crypto"]
     },
     "apps/portal": {
+      "entry": ["scripts/*.ts", "scripts/**/*.test.ts"],
       "project": ["src/**/*.{ts,tsx,css}", "scripts/**/*.ts"],
       "ignoreDependencies": ["dotenv", "cloudflare"]
     }
