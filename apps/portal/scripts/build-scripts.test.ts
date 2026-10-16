@@ -32,8 +32,13 @@ describe("build scripts", () => {
 		expect(pagesWorkflow).toMatch(/^ +VITE_APP_COMMIT=\$\{\{ github\.sha \}\}$/m)
 	})
 
-	it("keeps maps out of the served client, so only the upload reads them", () => {
-		expect(viteConfig).toContain('client: { build: { sourcemap: "hidden" } }')
+	it("hides the client's maps at the top level, the option vite:css-post reads", () => {
+		expect(viteConfig).toContain('\tbuild: { sourcemap: "hidden" },\n')
+		expect(viteConfig).not.toMatch(/client: \{ build: \{ sourcemap/)
 		expect(pagesWorkflow).not.toContain("--sourcemap")
+	})
+
+	it("keeps the Worker's own maps linked for wrangler", () => {
+		expect(viteConfig).toContain("environments: { ssr: { build: { sourcemap: true } } }")
 	})
 })

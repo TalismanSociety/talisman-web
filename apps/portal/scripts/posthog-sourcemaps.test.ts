@@ -98,11 +98,13 @@ describe("the built client", () => {
 		writeFileSync(join(clientDir, path), content)
 	}
 
+	const MAP = JSON.stringify({ version: 3, sources: ["../src/main.tsx"], mappings: "AAAA" })
+
 	const builtClient = () => {
 		clientDir = mkdtempSync(join(tmpdir(), "portal-client-"))
 		write("assets/main-Ab12Cd34.js")
-		write("assets/main-Ab12Cd34.js.map")
-		write("assets/nested/lazy-Zz99Yy88.js.map")
+		write("assets/main-Ab12Cd34.js.map", MAP)
+		write("assets/nested/lazy-Zz99Yy88.js.map", MAP)
 		write("index.html")
 	}
 	const sourcemaps = () =>
@@ -137,6 +139,33 @@ describe("the built client", () => {
 		expect(sourcemaps()).toEqual([])
 	})
 
+	it("names each script whose map is missing or maps nothing, and still uploads", () => {
+		builtClient()
+		write("assets/index-Ef56Gh78.js")
+		write("assets/index-Ef56Gh78.js.map", JSON.stringify({ version: 3, sources: [], mappings: "" }))
+		write("assets/worker-Cc33Dd44.js")
+		write("assets/broken-Ij90Kl12.js")
+		write("assets/broken-Ij90Kl12.js.map", "{")
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined)
+		const run = vi.fn()
+
+		runBuildStep(clientDir, planSourcemapUpload(KEY, RELEASE), run)
+
+		expect(warn).toHaveBeenCalledExactlyOnceWith(
+			"These scripts have no source to map their frames to: broken-Ij90Kl12.js, index-Ef56Gh78.js, worker-Cc33Dd44.js"
+		)
+		expect(run).toHaveBeenCalledTimes(2)
+	})
+
+	it("warns about no script when every map holds its sources", () => {
+		builtClient()
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined)
+
+		runBuildStep(clientDir, planSourcemapUpload(KEY, RELEASE), vi.fn())
+
+		expect(warn).not.toHaveBeenCalled()
+	})
+
 	it("goes on with the build and removes every source map when the CLI fails", () => {
 		builtClient()
 		const log = vi.spyOn(console, "error").mockImplementation(() => undefined)
@@ -157,12 +186,28 @@ describe("the built client", () => {
 
 	it("never runs the CLI without a key and still removes every source map", () => {
 		builtClient()
-		vi.spyOn(console, "warn").mockImplementation(() => undefined)
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined)
 		const run = vi.fn()
 
 		runBuildStep(clientDir, planSourcemapUpload(undefined, RELEASE), run)
 
 		expect(run).not.toHaveBeenCalled()
 		expect(sourcemaps()).toEqual([])
+		expect(warn).toHaveBeenCalledExactlyOnceWith(
+			"Source maps are not uploaded to PostHog: POSTHOG_API_KEY is not set"
+		)
+	})
+
+	it("names a script that maps nothing on a build without a key too", () => {
+		builtClient()
+		write("assets/worker-Cc33Dd44.js")
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined)
+
+		runBuildStep(clientDir, planSourcemapUpload(undefined, RELEASE), vi.fn())
+
+		expect(warn.mock.calls).toEqual([
+			["These scripts have no source to map their frames to: worker-Cc33Dd44.js"],
+			["Source maps are not uploaded to PostHog: POSTHOG_API_KEY is not set"],
+		])
 	})
 })

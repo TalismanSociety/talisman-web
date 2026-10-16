@@ -1,7 +1,7 @@
 import { type SpawnSyncReturns, spawnSync } from "node:child_process"
-import { readdirSync, rmSync } from "node:fs"
+import { existsSync, readdirSync, readFileSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
-import { join } from "node:path"
+import { join, relative } from "node:path"
 import { fileURLToPath } from "node:url"
 import { POSTHOG_PROJECT_ID, POSTHOG_UI_HOST } from "../src/domains/analytics/posthogProject.ts"
 
@@ -57,6 +57,21 @@ const filesIn = (dir: string, extension: string) =>
 	readdirSync(dir, { recursive: true, withFileTypes: true })
 		.filter((entry) => entry.isFile() && entry.name.endsWith(extension))
 		.map((entry) => join(entry.parentPath, entry.name))
+
+const holdsSources = (mapFile: string) => {
+	try {
+		const { sources } = JSON.parse(readFileSync(mapFile, "utf8")) as { sources?: unknown[] }
+		return Array.isArray(sources) && sources.length > 0
+	} catch {
+		return false
+	}
+}
+
+const unmappedScripts = (assetsDir: string) =>
+	filesIn(assetsDir, ".js")
+		.filter((script) => !existsSync(`${script}.map`) || !holdsSources(`${script}.map`))
+		.map((script) => relative(assetsDir, script))
+		.sort()
 
 export const removeSourcemaps = (clientDir: string) => {
 	for (const file of filesIn(clientDir, ".map")) rmSync(file)
@@ -117,8 +132,12 @@ const uploadSourcemaps = (plan: SourcemapPlan, assetsDir: string, run: RunCli) =
 }
 
 export const runBuildStep = (clientDir: string, plan: SourcemapPlan, run: RunCli = runCli) => {
+	const assetsDir = join(clientDir, "assets")
 	try {
-		uploadSourcemaps(plan, join(clientDir, "assets"), run)
+		const unmapped = unmappedScripts(assetsDir)
+		if (unmapped.length > 0)
+			console.warn(`These scripts have no source to map their frames to: ${unmapped.join(", ")}`)
+		uploadSourcemaps(plan, assetsDir, run)
 	} catch (error) {
 		console.error(
 			"Source maps are not uploaded to PostHog, the build goes on without them:",
