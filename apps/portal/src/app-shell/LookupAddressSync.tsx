@@ -1,22 +1,18 @@
 import { useLocation, useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"
 import { useUpdateEffect } from "react-use"
-import { useRecoilCallback, useRecoilValue } from "recoil"
 
-import { lookupAccountAddressState, lookupAddressSearchKey } from "@/domains/accounts/recoils"
+import {
+	lookupAccountAddress$,
+	lookupAddressSearchKey,
+	useLookupAccountAddress,
+} from "@/domains/accounts/accounts"
 import { isNilOrWhitespace } from "@/util/nil"
 
 export const LookupAddressSync = () => {
-	const lookupAddress = useRecoilValue(lookupAccountAddressState)
+	const lookupAddress = useLookupAccountAddress()
 	const location = useLocation()
 	const navigate = useNavigate()
-	const readLookupAddress = useRecoilCallback(
-		({ snapshot }) =>
-			() =>
-				snapshot.getLoadable(lookupAccountAddressState).getValue(),
-		[]
-	)
-
 	useUpdateEffect(() => {
 		const search = new URLSearchParams(location.searchStr)
 
@@ -31,13 +27,13 @@ export const LookupAddressSync = () => {
 
 	useEffect(() => {
 		const search = new URLSearchParams(location.searchStr)
-		const currentLookupAddress = readLookupAddress()
+		const currentLookupAddress = lookupAccountAddress$.value
 
 		if (!search.has(lookupAddressSearchKey) && !isNilOrWhitespace(currentLookupAddress)) {
 			search.set(lookupAddressSearchKey, currentLookupAddress)
 			void navigate({ to: ".", search: Object.fromEntries(search), replace: true })
 		}
-	}, [location, navigate, readLookupAddress])
+	}, [location, navigate])
 
 	return null
 }

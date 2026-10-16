@@ -1,5 +1,5 @@
 import { useTheme } from "@emotion/react"
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import { Eye } from "@/icons"
 import { Badge, BadgedBox } from "@/ui/atoms/Badge"
 import type { IdenticonProps } from "@/ui/atoms/Identicon"

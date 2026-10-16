@@ -1,5 +1,14 @@
+import { bind } from "@react-rxjs/core"
 import { uniqBy } from "lodash"
-import { BehaviorSubject, combineLatest, map, type Observable, shareReplay } from "rxjs"
+import {
+	BehaviorSubject,
+	combineLatest,
+	ignoreElements,
+	map,
+	merge,
+	type Observable,
+	shareReplay,
+} from "rxjs"
 import { isAddress as isEvmAddress } from "viem"
 import { z } from "zod"
 import { signetAccount$ } from "@/domains/extension/signet"
@@ -27,6 +36,11 @@ export const lookupAccountAddress$ = new BehaviorSubject<string | undefined>(
 
 export const setLookupAccountAddress = (address: string | undefined) =>
 	lookupAccountAddress$.next(address)
+
+const pageLoadLookupAccountAddress = lookupAccountAddress$.value
+
+export const resetLookupAccountAddress = () =>
+	lookupAccountAddress$.next(pageLoadLookupAccountAddress)
 
 const isDefined = <T>(value: T | undefined): value is T => value !== undefined
 
@@ -147,6 +161,11 @@ export const writeableEvmAccounts$ = shared(
 
 export const selectedAccountAddresses$ = new BehaviorSubject<string[] | undefined>(undefined)
 
+export const setSelectedAccountAddresses = (addresses: string[]) =>
+	selectedAccountAddresses$.next(addresses)
+
+export const resetSelectedAccountAddresses = () => selectedAccountAddresses$.next(undefined)
+
 export const selectedAccounts$: Observable<Account[]> = shared(
 	combineLatest([
 		signetAccount$,
@@ -174,4 +193,33 @@ export const selectedSubstrateAccounts$ = shared(
 
 export const selectedEvmAccounts$ = shared(
 	selectedAccounts$.pipe(map((accounts) => accounts.filter(isEvm)))
+)
+
+const NO_ACCOUNTS: Account[] = []
+
+const retainedAccountLists: Observable<Account[]>[] = []
+
+const bindRetained = (list$: Observable<Account[]>) => {
+	const [useList, listState$] = bind(list$, NO_ACCOUNTS)
+	retainedAccountLists.push(listState$)
+	return useList
+}
+
+export const useInjectedAccounts = bindRetained(injectedAccounts$)
+export const useReadonlyAccounts = bindRetained(readonlyAccounts$)
+export const useOwnAccounts = bindRetained(ownAccounts$)
+export const useOwnPortfolioAccounts = bindRetained(ownPortfolioAccounts$)
+export const useAccounts = bindRetained(accounts$)
+export const usePortfolioAccounts = bindRetained(portfolioAccounts$)
+export const useWriteableAccounts = bindRetained(writeableAccounts$)
+export const useWriteableSubstrateAccounts = bindRetained(writeableSubstrateAccounts$)
+export const useWriteableEvmAccounts = bindRetained(writeableEvmAccounts$)
+export const useSelectedAccounts = bindRetained(selectedAccounts$)
+export const useSelectedSubstrateAccounts = bindRetained(selectedSubstrateAccounts$)
+export const useSelectedEvmAccounts = bindRetained(selectedEvmAccounts$)
+export const [useLookupAccountAddress] = bind(lookupAccountAddress$)
+export const [useSelectedAccountAddresses] = bind(selectedAccountAddresses$)
+
+export const accountListsRetained$: Observable<never> = merge(...retainedAccountLists).pipe(
+	ignoreElements()
 )

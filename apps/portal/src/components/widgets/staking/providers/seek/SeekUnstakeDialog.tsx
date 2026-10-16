@@ -1,7 +1,7 @@
 import { formatDistance } from "date-fns"
 
 import { UnstakeDialog } from "@/components/recipes/UnstakeDialog"
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 
 import useGetSeekStakeUnlockDuration from "../hooks/seek/useGetSeekStakeUnlockDuration"
 import useRequestWithdrawalSeek from "../hooks/seek/useRequestWithdrawalSeek"

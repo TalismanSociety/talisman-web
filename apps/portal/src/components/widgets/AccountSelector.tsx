@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react"
 import { usePrevious } from "react-use"
-import { useSetRecoilState } from "recoil"
 import { AccountIcon } from "@/components/molecules/AccountIcon"
-import { walletConnectionSideSheetOpenState } from "@/components/widgets/WalletConnectionSideSheet"
-import type { Account } from "@/domains/accounts/recoils"
+import { openWalletConnectionSideSheet } from "@/components/widgets/WalletConnectionSideSheet"
+import type { Account } from "@/domains/accounts/accounts"
 import { useBalances } from "@/domains/balances/balances"
 import { useHasActiveWalletConnection } from "@/domains/extension/main"
 import { Button } from "@/ui/atoms/Button"
@@ -29,7 +28,6 @@ const AccountSelector = ({
 	inTransition,
 	withBalance,
 }: AccountSelectorProps) => {
-	const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
 	const hasActiveWalletConnection = useHasActiveWalletConnection()
 	const balances = useBalances()
 	const onChangeAccount = useCallback(
@@ -44,7 +42,7 @@ const AccountSelector = ({
 
 	if (!hasActiveWalletConnection) {
 		return (
-			<Button onClick={() => setWalletConnectionSideSheetOpen(true)} css={{ width: "100%" }}>
+			<Button onClick={openWalletConnectionSideSheet} css={{ width: "100%" }}>
 				Connect wallet
 			</Button>
 		)

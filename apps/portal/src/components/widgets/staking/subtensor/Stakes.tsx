@@ -2,8 +2,8 @@ import { useQueryClient } from "@tanstack/react-query"
 import { useCallback, useEffect, useState } from "react"
 import { useRecoilValue } from "recoil"
 
-import type { Account } from "@/domains/accounts/recoils"
-import { selectedSubstrateAccountsState } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
+import { useSelectedSubstrateAccounts } from "@/domains/accounts/accounts"
 import { useChainState } from "@/domains/chains/hooks"
 import { ChainProvider } from "@/domains/chains/provider"
 import { subtensorStakingEnabledChainsState } from "@/domains/chains/recoils"
@@ -23,7 +23,7 @@ type StakesProps = {
 }
 const Stakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
 	const chains = useRecoilValue(subtensorStakingEnabledChainsState)
-	const accounts = useRecoilValue(selectedSubstrateAccountsState)
+	const accounts = useSelectedSubstrateAccounts()
 
 	return (
 		<>

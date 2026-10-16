@@ -2,8 +2,8 @@ import type { ReactNode } from "react"
 import { useCallback, useState } from "react"
 
 import { RemoveWatchedAccountConfirmationDialog as RemoveWatchedAccountConfirmationDialogComponent } from "@/components/recipes/RemoveWatchedAccountConfirmationDialog"
+import type { ReadonlyAccount } from "@/domains/accounts/accounts"
 import { useSetReadonlyAccounts } from "@/domains/accounts/hooks"
-import type { ReadonlyAccount } from "@/domains/accounts/recoils"
 import { isNilOrWhitespace } from "@/util/nil"
 import { truncateAddress } from "@/util/truncateAddress"
 

@@ -1,5 +1,4 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router"
-import { useRecoilValue } from "recoil"
 import { WalletTotal } from "@/components/legacy/widgets/WalletTotal"
 import { PageHeader, PageHeaderItem } from "@/components/molecules/PageHeader"
 import { PageTab, PageTabs } from "@/components/molecules/PageTabs"
@@ -8,13 +7,13 @@ import { PortfolioAddressSearch } from "@/components/recipes/PortfolioAddressSea
 import { AccountConnectionGuard } from "@/components/widgets/AccountConnectionGuard"
 import { AccountsManagementMenu } from "@/components/widgets/AccountsManagementMenu"
 import { BannerStakingMovingToWallet } from "@/components/widgets/staking/BannerStakingMovingToWallet"
-import { selectedAccountsState } from "@/domains/accounts/recoils"
+import { useSelectedAccounts } from "@/domains/accounts/accounts"
 import { Surface } from "@/ui/atoms/Surface"
 
 export const Route = createFileRoute("/_app/staking")({ component: Layout })
 
 function Layout() {
-	const accounts = useRecoilValue(selectedAccountsState)
+	const accounts = useSelectedAccounts()
 
 	return (
 		<AccountConnectionGuard>

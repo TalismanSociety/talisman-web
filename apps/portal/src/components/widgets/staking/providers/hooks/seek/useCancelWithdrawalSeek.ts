@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { useWaitForTransactionReceipt } from "wagmi"
 import { mainnet } from "wagmi/chains"
 
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import { useWagmiWriteContract } from "@/domains/common/hooks/useWagmiWriteContract"
 import { CHAIN_ID, SEEK_SINGLE_POOL_STAKING_ADDRESS } from "@/domains/staking/seek/constants"
 import seekSinglePoolStakingAbi from "@/domains/staking/seek/seekSinglePoolStakingAbi"

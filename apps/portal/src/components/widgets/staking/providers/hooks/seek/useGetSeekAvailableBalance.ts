@@ -5,7 +5,7 @@ import { useRecoilValue, useRecoilValueLoadable } from "recoil"
 import { erc20Abi, formatUnits } from "viem"
 import { useReadContracts } from "wagmi"
 
-import { writeableEvmAccountsState } from "@/domains/accounts/recoils"
+import { useWriteableEvmAccounts } from "@/domains/accounts/accounts"
 import { selectedCurrencyState } from "@/domains/balances/currency"
 import { tokenPriceState } from "@/domains/chains/recoils"
 import {
@@ -18,7 +18,7 @@ import {
 import { Decimal } from "@/util/Decimal"
 
 const useGetSeekAvailableBalance = () => {
-	const ethAccounts = useRecoilValue(writeableEvmAccountsState)
+	const ethAccounts = useWriteableEvmAccounts()
 
 	const { data, isLoading, isError, refetch } = useReadContracts({
 		allowFailure: false,

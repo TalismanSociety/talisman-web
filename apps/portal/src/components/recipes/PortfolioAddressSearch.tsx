@@ -1,7 +1,6 @@
 import { LayoutGroup } from "framer-motion"
 import { useEffect, useRef, useState } from "react"
-import { useRecoilState } from "recoil"
-import { lookupAccountAddressState } from "@/domains/accounts/recoils"
+import { setLookupAccountAddress, useLookupAccountAddress } from "@/domains/accounts/accounts"
 import { Search } from "@/icons"
 import { SurfaceIconButton } from "@/ui/atoms/IconButton"
 import { SearchBar } from "@/ui/molecules/SearchBar"
@@ -9,7 +8,7 @@ import { isNilOrWhitespace } from "@/util/nil"
 
 export const PortfolioAddressSearch = ({ className }: { className?: string }) => {
 	const searchBarRef = useRef<HTMLInputElement>(null)
-	const [address, setAddress] = useRecoilState(lookupAccountAddressState)
+	const address = useLookupAccountAddress()
 	const [revealed, setRevealed] = useState(false)
 
 	useEffect(() => {
@@ -33,7 +32,7 @@ export const PortfolioAddressSearch = ({ className }: { className?: string }) =>
 						ref={searchBarRef}
 						placeholder="Look up any address"
 						value={address ?? ""}
-						onChange={(event) => setAddress(event.target.value)}
+						onChange={(event) => setLookupAccountAddress(event.target.value)}
 						onBlur={() => isNilOrWhitespace(address) && setRevealed(false)}
 					/>
 				</div>

@@ -7,7 +7,7 @@ import type { WinBoxPropType } from "react-winbox"
 import WinBox from "react-winbox"
 import { useRecoilState } from "recoil"
 import { sepolia } from "wagmi/chains"
-import { debugErrorBoundaryState } from "@/components/widgets/ErrorBoundary"
+import { setDebugErrorBoundary, useDebugErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { enableTestnetsState } from "@/domains/chains/recoils"
 import { useWagmiWriteContract } from "@/domains/common/hooks/useWagmiWriteContract"
 import { toastExtrinsic } from "@/domains/common/utils/toast"
@@ -57,7 +57,7 @@ const DevMenu = () => {
 	const [hidden, setHidden] = useSessionStorage("dev-menu-hidden", false)
 
 	const [enableTestnets, setEnableTestnets] = useRecoilState(enableTestnetsState)
-	const [debugErrorBoundary, setDebugErrorBoundary] = useRecoilState(debugErrorBoundaryState)
+	const debugErrorBoundary = useDebugErrorBoundary()
 
 	return (
 		<WinBox
@@ -98,7 +98,7 @@ const DevMenu = () => {
 					<input
 						type="checkbox"
 						checked={debugErrorBoundary}
-						onChange={() => setDebugErrorBoundary((x) => !x)}
+						onChange={() => setDebugErrorBoundary(!debugErrorBoundary)}
 					/>{" "}
 					Debug error boundary (right click to trigger error)
 				</label>

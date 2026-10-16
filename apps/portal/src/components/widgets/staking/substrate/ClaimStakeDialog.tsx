@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { ClaimStakeDialog as ClaimStakeDialogComponent } from "@/components/recipes/ClaimStakeDialog"
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import { txFromCall } from "@/domains/chains/chain-runtime"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import { type TxLoadable, useTx } from "@/domains/common/hooks/useTx"

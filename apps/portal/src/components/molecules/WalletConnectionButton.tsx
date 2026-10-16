@@ -1,22 +1,19 @@
-import { useRecoilValue, useSetRecoilState } from "recoil"
 import { useAccount as useWagmiAccount } from "wagmi"
-import { walletConnectionSideSheetOpenState } from "@/components/widgets/WalletConnectionSideSheet"
-import { substrateInjectedAccountsState, writeableAccountsState } from "@/domains/accounts/recoils"
-import { connectedSubstrateWalletState } from "@/domains/extension/substrate"
+import { openWalletConnectionSideSheet } from "@/components/widgets/WalletConnectionSideSheet"
+import { useInjectedAccounts, useWriteableAccounts } from "@/domains/accounts/accounts"
+import { useConnectedSubstrateWallet } from "@/domains/extension/substrate"
 import { ChevronDown, Ethereum, Polkadot } from "@/icons"
 import { Clickable } from "@/ui/atoms/Clickable"
 import { cn } from "@/util/cn"
 
 export const WalletConnectionButton = () => {
-	const setOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
-
-	const hasSubWallet = useRecoilValue(connectedSubstrateWalletState) !== undefined
-	const hasSubAccounts = useRecoilValue(substrateInjectedAccountsState).length !== 0
+	const hasSubWallet = useConnectedSubstrateWallet() !== undefined
+	const hasSubAccounts = useInjectedAccounts().length !== 0
 	const subConnected = hasSubWallet && hasSubAccounts
 	const evmConnected = useWagmiAccount().isConnected
 
 	const hasActiveConnection = subConnected || evmConnected
-	const accounts = useRecoilValue(writeableAccountsState)
+	const accounts = useWriteableAccounts()
 
 	return (
 		<Clickable.WithFeedback>
@@ -24,7 +21,7 @@ export const WalletConnectionButton = () => {
 				className={cn(
 					"flex h-12 select-none items-center justify-center gap-2 rounded-full border border-gray-600 bg-gray-950 p-4 text-white"
 				)}
-				onClick={() => setOpen(true)}
+				onClick={openWalletConnectionSideSheet}
 			>
 				<div
 					className={cn("flex w-0  items-center justify-center", hasActiveConnection && "w-[2rem]")}

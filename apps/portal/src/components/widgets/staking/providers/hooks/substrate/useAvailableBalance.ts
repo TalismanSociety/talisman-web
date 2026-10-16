@@ -3,7 +3,7 @@ import { useContext, useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { combineLatest, defer, map, of } from "rxjs"
 
-import { selectedSubstrateAccountsState } from "@/domains/accounts/recoils"
+import { useSelectedSubstrateAccounts } from "@/domains/accounts/accounts"
 import { ChainContext } from "@/domains/chains/contexts"
 import { getPapiClient } from "@/domains/chains/papi-client"
 import type { PortalRuntime } from "@/domains/chains/portal-runtime"
@@ -31,7 +31,7 @@ const [useTransferable] = bindSuspended((genesisHash: string, addresses: string)
 
 const useAvailableBalance = () => {
 	const { genesisHash } = useContext(ChainContext)
-	const accounts = useRecoilValue(selectedSubstrateAccountsState)
+	const accounts = useSelectedSubstrateAccounts()
 	const addresses = useMemo(
 		() => accounts.map((x) => x.address).join(ADDRESS_SEPARATOR),
 		[accounts]

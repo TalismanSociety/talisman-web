@@ -5,8 +5,8 @@ import { useRecoilValue, useRecoilValueLoadable } from "recoil"
 import { DappStakingLockedAmountDialog } from "@/components/recipes/DappStakingLockedAmountDialog"
 import { StakePosition, StakePositionErrorBoundary } from "@/components/recipes/StakePosition"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
-import type { Account } from "@/domains/accounts/recoils"
-import { selectedSubstrateAccountsState } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
+import { useSelectedSubstrateAccounts } from "@/domains/accounts/accounts"
 import { useChainState } from "@/domains/chains/hooks"
 import { ChainProvider } from "@/domains/chains/provider"
 import { dappStakingEnabledChainsState } from "@/domains/chains/recoils"
@@ -225,16 +225,14 @@ type StakesProps = {
 const Stakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
 	const chainsLoadable = useRecoilValueLoadable(dappStakingEnabledChainsState)
 
-	const accountsLoadable = useRecoilValueLoadable(selectedSubstrateAccountsState)
-
-	const accounts = accountsLoadable.valueMaybe()
+	const accounts = useSelectedSubstrateAccounts()
 	const chains = chainsLoadable.valueMaybe()
 
 	return (
 		<>
 			{chains?.map((chain, index) => (
 				<ChainProvider key={index} chain={chain}>
-					{accounts?.map((account, index) => {
+					{accounts.map((account, index) => {
 						const { name = "", nativeToken: { symbol, logo } = { symbol: "", logo: "" } } =
 							chain || {}
 						return (

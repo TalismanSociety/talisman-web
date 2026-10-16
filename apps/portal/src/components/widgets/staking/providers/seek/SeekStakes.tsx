@@ -6,7 +6,7 @@ import { StakePosition, StakePositionErrorBoundary } from "@/components/recipes/
 import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { RedactableBalance } from "@/components/widgets/RedactableBalance"
-import { type Account, evmSignableAccountsState } from "@/domains/accounts/recoils"
+import { type Account, useWriteableEvmAccounts } from "@/domains/accounts/accounts"
 import { selectedCurrencyState } from "@/domains/balances/currency"
 import { CHAIN_ID, CHAIN_NAME, SEEK_TICKER } from "@/domains/staking/seek/constants"
 import { Decimal } from "@/util/Decimal"
@@ -28,7 +28,7 @@ type SeekStakePositionProps = StakesProps & {
 }
 
 const SeekStakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
-	const evmSignableAccounts = useRecoilValue(evmSignableAccountsState)
+	const evmSignableAccounts = useWriteableEvmAccounts()
 
 	return evmSignableAccounts.map((account, index) => (
 		<SeekStakePosition

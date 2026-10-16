@@ -5,7 +5,7 @@ import {
 	ROOT_NETUID,
 	TALISMAN_WALLET_DOWNLOAD_URL,
 } from "@/components/widgets/staking/subtensor/constants"
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import type { ChainInfo } from "@/domains/chains/recoils"
 import { useCombinedBittensorValidatorsData } from "@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData"
 import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo"

@@ -9,8 +9,8 @@ import { StakeForm as StakeFormComponent } from "@/components/recipes/StakeForm"
 import type { StakeStatus } from "@/components/recipes/StakeStatusIndicator"
 import { PoolSelectorDialog } from "@/components/recipes/StakeTargetSelectorDialog"
 import { useAccountSelector } from "@/components/widgets/AccountSelector"
-import type { Account } from "@/domains/accounts/recoils"
-import { writeableSubstrateAccountsState } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
+import { useWriteableSubstrateAccounts } from "@/domains/accounts/accounts"
 import { txFromCall } from "@/domains/chains/chain-runtime"
 import { claimPermissionUnsupportedChainIds } from "@/domains/chains/config"
 import { useChainState as useChainRecoilState } from "@/domains/chains/hooks"
@@ -398,7 +398,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 	const [showPoolSelector, setShowPoolSelector] = useState(false)
 
 	const [[selectedAccount], accountSelector] = useAccountSelector(
-		useRecoilValue(writeableSubstrateAccountsState),
+		useWriteableSubstrateAccounts(),
 		(accounts) =>
 			props.account !== undefined
 				? accounts?.find((account) => account.address === props.account)

@@ -3,7 +3,7 @@ import BN from "bn.js"
 import { useContext, useDeferredValue, useMemo, useState } from "react"
 import { combineLatest, defer } from "rxjs"
 
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import { ChainContext } from "@/domains/chains/contexts"
 import type { SmartContract } from "@/domains/chains/portal-runtime"
 import { useTokenAmount, useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"

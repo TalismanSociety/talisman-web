@@ -1,6 +1,6 @@
 import { useRecoilValue } from "recoil"
 
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import { useChainState } from "@/domains/chains/hooks"
 import { assertChain } from "@/domains/chains/utils"
 import { Decimal } from "@/util/Decimal"

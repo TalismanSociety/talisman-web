@@ -4,7 +4,7 @@ import { useRecoilValue } from "recoil"
 import { TalismanHandLoader } from "@/components/legacy/TalismanHandLoader"
 import { useAccountSelector } from "@/components/widgets/AccountSelector"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
-import { writeableSubstrateAccountsState } from "@/domains/accounts/recoils"
+import { useWriteableSubstrateAccounts } from "@/domains/accounts/accounts"
 import { useChainState } from "@/domains/chains/hooks"
 import { ChainProvider } from "@/domains/chains/provider"
 import { type ChainInfo, subtensorStakingEnabledChainsState } from "@/domains/chains/recoils"
@@ -54,7 +54,7 @@ const StakeSideSheetContent = ({
 
 	const chain = useRecoilValue(useChainState())
 	const [[account], accountSelector] = useAccountSelector(
-		useRecoilValue(writeableSubstrateAccountsState),
+		useWriteableSubstrateAccounts(),
 		searchParams.get("account") === null
 			? 0
 			: (accounts) => accounts?.find((x) => x.address === searchParams.get("account"))

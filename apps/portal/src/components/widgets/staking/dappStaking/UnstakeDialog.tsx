@@ -1,7 +1,7 @@
 import { formatDistance } from "date-fns"
 import { useState } from "react"
 import { UnstakeDialog as UnstakeDialogComponent } from "@/components/recipes/UnstakeDialog"
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import type { SmartContract } from "@/domains/chains/portal-runtime"
 import { useTxInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
 import { useUnstakeForm } from "@/domains/staking/dappStaking/hooks/forms"

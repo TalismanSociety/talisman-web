@@ -1,10 +1,12 @@
+import { bind } from "@react-rxjs/core"
 import type { ErrorInfo, PropsWithChildren, ReactElement, ReactNode } from "react"
 import { Component, createContext, useContext, useState } from "react"
-import { atom, useRecoilCallback, useRecoilValue } from "recoil"
+import { BehaviorSubject } from "rxjs"
 import type { ErrorMessageProps } from "@/components/recipes/ErrorMessage"
 import { ErrorMessage } from "@/components/recipes/ErrorMessage"
 import { captureError } from "@/domains/analytics/client"
 import { Button, SurfaceButton } from "@/ui/atoms/Button"
+import { retryStreamError } from "@/util/loadable"
 
 const OrientationContext = createContext<ErrorMessageProps["orientation"]>(undefined)
 
@@ -84,10 +86,11 @@ class CapturingErrorBoundary extends Component<
 	}
 }
 
-export const debugErrorBoundaryState = atom({
-	key: "DebugErrorBoundary",
-	default: false,
-})
+const debugErrorBoundary$ = new BehaviorSubject(false)
+
+export const [useDebugErrorBoundary] = bind(debugErrorBoundary$, false)
+
+export const setDebugErrorBoundary = (debug: boolean) => debugErrorBoundary$.next(debug)
 
 const ErrorBoundaryDebuggerChildren = (
 	props: PropsWithChildren<{ error?: Error; onTriggerError: () => void }>
@@ -141,36 +144,14 @@ export const ErrorBoundary = ({ orientation, renderFallback, children }: ErrorBo
 	const fallback = (errorProps: ErrorElementProps) =>
 		renderFallback?.(<ErrorElement {...errorProps} />) ?? <ErrorElement {...errorProps} />
 
-	const resetError = useRecoilCallback(
-		({ snapshot, refresh }) =>
-			(error: Error) => {
-				for (const node of snapshot.getNodes_UNSTABLE({ isInitialized: true })) {
-					const { loadable, type } = snapshot.getInfo_UNSTABLE(node)
-					if (loadable?.state === "hasError" && loadable.contents === error) {
-						switch (type) {
-							case "atom":
-								// As of now Recoil doesn't have the ability to refresh & rerun atom effect
-								// https://github.com/facebookexperimental/Recoil/issues/1685
-								// https://github.com/facebookexperimental/Recoil/issues/2183
-								window.location.reload()
-								break
-							case "selector":
-								return refresh(node)
-						}
-					}
-				}
-			},
-		[]
-	)
-
 	return (
 		<OrientationContext.Provider value={orientation}>
-			{useRecoilValue(debugErrorBoundaryState) ? (
-				<ErrorBoundaryDebugger fallback={fallback} onReset={resetError}>
+			{useDebugErrorBoundary() ? (
+				<ErrorBoundaryDebugger fallback={fallback} onReset={retryStreamError}>
 					{children}
 				</ErrorBoundaryDebugger>
 			) : (
-				<CapturingErrorBoundary fallback={fallback} onReset={resetError}>
+				<CapturingErrorBoundary fallback={fallback} onReset={retryStreamError}>
 					{children}
 				</CapturingErrorBoundary>
 			)}

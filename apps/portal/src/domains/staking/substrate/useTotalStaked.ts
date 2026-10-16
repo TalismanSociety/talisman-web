@@ -3,7 +3,7 @@ import { useMemo } from "react"
 import { useRecoilValue, waitForAll } from "recoil"
 import { combineLatest, map, of } from "rxjs"
 
-import { selectedSubstrateAccountsState } from "@/domains/accounts/recoils"
+import { useSelectedSubstrateAccounts } from "@/domains/accounts/accounts"
 import { nativeTokenPriceState, nominationPoolsEnabledChainsState } from "@/domains/chains/recoils"
 import { Decimal } from "@/util/Decimal"
 import { toLoadable } from "@/util/loadable"
@@ -39,9 +39,8 @@ const [useValidatorStakedAmounts] = bind(
 )
 
 export const useTotalStaked = () => {
-	const [chains, accounts] = useRecoilValue(
-		waitForAll([nominationPoolsEnabledChainsState, selectedSubstrateAccountsState])
-	)
+	const chains = useRecoilValue(nominationPoolsEnabledChainsState)
+	const accounts = useSelectedSubstrateAccounts()
 	const prices = useRecoilValue(
 		waitForAll(chains.map((chain) => nativeTokenPriceState({ genesisHash: chain.genesisHash })))
 	)

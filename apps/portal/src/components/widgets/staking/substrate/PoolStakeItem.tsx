@@ -4,7 +4,7 @@ import { StakePosition } from "@/components/recipes/StakePosition"
 import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { RedactableBalance } from "@/components/widgets/RedactableBalance"
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import { txFromCall } from "@/domains/chains/chain-runtime"
 import {
 	claimPermissionUnsupportedChainIds,

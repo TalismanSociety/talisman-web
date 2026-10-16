@@ -1,3 +1,4 @@
+import { Subscribe } from "@react-rxjs/core"
 import {
 	createMemoryHistory,
 	createRootRoute,
@@ -7,11 +8,13 @@ import {
 	RouterProvider,
 } from "@tanstack/react-router"
 import { act, render, screen, waitFor } from "@testing-library/react"
-import { RecoilRoot, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import { setLookupAccountAddress } from "@/domains/accounts/accounts"
-import { lookupAccountAddressState } from "@/domains/accounts/recoils"
+import {
+	resetLookupAccountAddress,
+	setLookupAccountAddress,
+	useLookupAccountAddress,
+} from "@/domains/accounts/accounts"
 import { parseSearch, stringifySearch, validateSearch } from "@/util/search"
 
 import { LookupAddressSync } from "./LookupAddressSync"
@@ -28,24 +31,22 @@ const bob = "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
 const renderedLookupAddresses: Array<string | undefined> = []
 
 const LookupAddressControls = () => {
-	const lookupAddress = useRecoilValue(lookupAccountAddressState)
-	const setLookupAddress = useSetRecoilState(lookupAccountAddressState)
-	const resetLookupAddress = useResetRecoilState(lookupAccountAddressState)
+	const lookupAddress = useLookupAccountAddress()
 	renderedLookupAddresses.push(lookupAddress)
 
 	return (
 		<>
 			<p>lookup: {lookupAddress ?? "none"}</p>
-			<button type="button" onClick={() => setLookupAddress(bob)}>
+			<button type="button" onClick={() => setLookupAccountAddress(bob)}>
 				set bob
 			</button>
-			<button type="button" onClick={() => setLookupAddress(undefined)}>
+			<button type="button" onClick={() => setLookupAccountAddress(undefined)}>
 				clear
 			</button>
-			<button type="button" onClick={() => setLookupAddress("  ")}>
+			<button type="button" onClick={() => setLookupAccountAddress("  ")}>
 				blank
 			</button>
-			<button type="button" onClick={resetLookupAddress}>
+			<button type="button" onClick={resetLookupAccountAddress}>
 				reset
 			</button>
 		</>
@@ -74,9 +75,9 @@ const renderPortal = async (entry = initialEntry) => {
 		stringifySearch,
 	})
 	render(
-		<RecoilRoot>
+		<Subscribe>
 			<RouterProvider router={router} />
-		</RecoilRoot>
+		</Subscribe>
 	)
 	await screen.findByText(/^lookup: /)
 	return { router, actions }

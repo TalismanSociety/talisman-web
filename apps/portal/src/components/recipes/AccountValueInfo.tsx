@@ -1,7 +1,7 @@
 import { useTheme } from "@emotion/react"
 import type { ReactNode } from "react"
 import { AccountIcon } from "@/components/molecules/AccountIcon"
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import { ChevronDown, Users } from "@/icons"
 import { IconButton } from "@/ui/atoms/IconButton"
 import { Surface, useSurfaceColor } from "@/ui/atoms/Surface"

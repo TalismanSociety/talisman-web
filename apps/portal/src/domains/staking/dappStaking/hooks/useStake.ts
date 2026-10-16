@@ -3,7 +3,7 @@ import { addMilliseconds, formatDistanceToNow } from "date-fns"
 import { useContext, useMemo } from "react"
 import { type RecoilValueReadOnly, useRecoilValueLoadable } from "recoil"
 
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import { ChainContext } from "@/domains/chains/contexts"
 import { type nativeTokenAmountState, useNativeTokenAmountState } from "@/domains/chains/recoils"
 import { LOADING, toLoadable } from "@/util/loadable"
