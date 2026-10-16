@@ -9,6 +9,8 @@ baseline_static=$cache/baseline-$baseline_sha
 candidate_static=$cache/candidate
 sub_name=${PARITY_SUB_ACCOUNT:-Guardians SUB}
 evm_name=${PARITY_EVM_ACCOUNT:-Guardians EVM}
+consent=${CONSENT:-reject}
+[[ $consent =~ ^(reject|accept|unset)$ ]] || { echo "CONSENT must be reject, accept or unset, not \"$consent\"" >&2; exit 2; }
 
 ensure_baseline() {
   [[ -f $baseline_static/index.html ]] && { echo "baseline $baseline_sha: cached build $baseline_static"; return; }
@@ -87,7 +89,8 @@ bring_to_front() {
 }
 
 start_side() {
-  "$bin/instance.sh" serve "$sides-$1" "$2" ${3:+"$3"} >/dev/null
+  "$bin/instance.sh" serve "$sides-$1" "$2" ${3:+"$3"} >/dev/null &&
+    VERIFY_INSTANCE=$sides-$1 "$bin/consent.mjs" "$consent" >/dev/null
 }
 
 start_state() {
@@ -105,7 +108,7 @@ start_state() {
       connect_side "$side" || { echo "could not connect the $side browser: $reply" >&2; exit 1; }
     done
   fi
-  echo "state $1: both browsers ready"
+  echo "state $1: both browsers ready, consent $consent"
 }
 
 connect_side() {
