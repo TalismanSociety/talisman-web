@@ -83,7 +83,8 @@
     "victory": "^36.6.8",
     "viem": "^2.23.0",
     "wagmi": "^2.19.5",
-    "winbox": "^0.2.6"
+    "winbox": "^0.2.6",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.64.0",
