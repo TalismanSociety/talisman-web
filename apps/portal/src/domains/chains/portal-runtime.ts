@@ -83,8 +83,6 @@ export type StakingLedgerValue = {
 	total: bigint
 	active: bigint
 	unlocking: { value: bigint; era: number }[]
-	legacy_claimed_rewards?: number[]
-	claimed_rewards?: number[]
 }
 
 type EraRewardPoints = { total: number; individual: [SS58String, number][] }
@@ -194,7 +192,6 @@ type Storage = {
 		>
 		ErasRewardPoints: StorageDescriptor<[number], EraRewardPoints, false, never>
 		ErasValidatorPrefs: StorageDescriptor<[number, SS58String], ValidatorPrefs, false, never>
-		ClaimedRewards: StorageDescriptor<[number, SS58String], number[], false, never>
 		Bonded: StorageDescriptor<[SS58String], SS58String, true, never>
 		Ledger: StorageDescriptor<[SS58String], StakingLedgerValue, true, never>
 		MinNominatorBond: StorageDescriptor<[], bigint, false, never>

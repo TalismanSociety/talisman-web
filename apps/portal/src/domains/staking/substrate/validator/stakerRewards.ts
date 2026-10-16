@@ -2,8 +2,8 @@ import { firstValueFrom, Observable, of, share, tap } from "rxjs"
 
 import { getChainRuntime$ } from "@/domains/chains/chain-runtime"
 
-import { chainAddressFor, eraInputs, stakerInputs, validatorLegacyClaimedRewards } from "./chain"
-import { exposedValidators, stakerRewardsOf } from "./rewards"
+import { chainAddressFor, eraInputs } from "./chain"
+import { stakerRewardsOf } from "./rewards"
 
 export type StakerRewardsRequest = { genesisHash: string; stashes: string[]; activeEra: number }
 
@@ -19,17 +19,9 @@ export const stakerRewards = async ({
 	activeEra,
 }: StakerRewardsRequest): Promise<StakerRewards> => {
 	const runtime = await firstValueFrom(getChainRuntime$(genesisHash))
-	const chainStashes = stashes.map((stash) => chainAddressFor(runtime, stash))
-	const [eras, stakers] = await Promise.all([
-		Promise.all(rewardEras(activeEra).map((era) => eraInputs(runtime, era))),
-		stakerInputs(runtime, chainStashes, activeEra - 1),
-	])
-	const validators = new Set(
-		chainStashes.flatMap((stash) => eras.flatMap((inputs) => exposedValidators(inputs, stash)))
-	)
-	const legacyClaimed = await validatorLegacyClaimedRewards(runtime, [...validators])
+	const eras = await Promise.all(rewardEras(activeEra).map((era) => eraInputs(runtime, era)))
 	return Object.fromEntries(
-		stakers.map((staker, index) => [stashes[index], stakerRewardsOf(eras, staker, legacyClaimed)])
+		stashes.map((stash) => [stash, stakerRewardsOf(eras, chainAddressFor(runtime, stash))])
 	)
 }
 

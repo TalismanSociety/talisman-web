@@ -16,14 +16,6 @@ export type EraInputs = {
 	eraReward: bigint
 }
 
-export type StakerInputs = {
-	stash: string
-	claimedRewardsEras: number[]
-	legacyClaimedRewards: number[]
-}
-
-export type ValidatorLegacyClaimedRewards = Map<string, number[]>
-
 const PERBILL = 1_000_000_000n
 
 export const eraExposureOf = (
@@ -41,7 +33,7 @@ export const eraExposureOf = (
 	return { validators: new Map(validators), stakes }
 }
 
-export const exposedValidators = ({ exposure }: EraInputs, stash: string) =>
+const exposedValidators = ({ exposure }: EraInputs, stash: string) =>
 	exposure.validators.has(stash) ? [stash] : [...(exposure.stakes.get(stash)?.keys() ?? [])]
 
 const rewardShare = (
@@ -62,19 +54,10 @@ const rewardShare = (
 	return ((available - commission) * staked) / total + own
 }
 
-export const stakerRewardsOf = (
-	eras: EraInputs[],
-	staker: StakerInputs,
-	validatorLegacyClaimedRewards: ValidatorLegacyClaimedRewards
-) => {
-	const { stash, claimedRewardsEras, legacyClaimedRewards } = staker
+export const stakerRewardsOf = (eras: EraInputs[], stash: string) => {
 	let total = 0n
 	for (const inputs of eras) {
-		if (claimedRewardsEras.includes(inputs.era) || legacyClaimedRewards.includes(inputs.era))
-			continue
 		for (const validator of exposedValidators(inputs, stash)) {
-			const validatorClaimed = validatorLegacyClaimedRewards.get(validator) ?? []
-			if (validatorClaimed.includes(inputs.era)) continue
 			total += rewardShare(inputs, validator, stash)
 		}
 	}

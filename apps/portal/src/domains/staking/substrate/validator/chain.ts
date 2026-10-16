@@ -3,16 +3,10 @@ import type { SS58String } from "polkadot-api"
 import { from, map, type Observable, of } from "rxjs"
 
 import { type ChainRuntime, hasStorage } from "@/domains/chains/chain-runtime"
-import type { SlashingSpansValue, StakingLedgerValue } from "@/domains/chains/portal-runtime"
+import type { SlashingSpansValue } from "@/domains/chains/portal-runtime"
 import { ss58PrefixOf } from "../nominationPools/chain"
 
-import {
-	type EraInputs,
-	type ExposurePage,
-	eraExposureOf,
-	type StakerInputs,
-	type ValidatorExposure,
-} from "./rewards"
+import { type EraInputs, type ExposurePage, eraExposureOf, type ValidatorExposure } from "./rewards"
 
 const BEST = { at: "best" } as const
 
@@ -49,24 +43,6 @@ export const watchCurrentEra = ({ api }: ChainRuntime) =>
 
 export const watchMinNominatorBond = ({ api }: ChainRuntime) =>
 	valueOf(api.query.Staking.MinNominatorBond.watchValue(BEST))
-
-const claimedErasOf = (ledger: StakingLedgerValue | undefined) =>
-	ledger?.legacy_claimed_rewards ?? ledger?.claimed_rewards ?? []
-
-const ledgersOf = async ({ api }: ChainRuntime, stashes: SS58String[]) => {
-	const controllers = await api.query.Staking.Bonded.getValues(
-		stashes.map((stash) => [stash] as [SS58String]),
-		BEST
-	)
-	const bonded = controllers.flatMap((controller, index) =>
-		controller === undefined ? [] : [{ stash: stashes[index]!, controller }]
-	)
-	const ledgers = await api.query.Staking.Ledger.getValues(
-		bonded.map(({ controller }) => [controller] as [SS58String]),
-		BEST
-	)
-	return new Map(bonded.map(({ stash }, index) => [stash, ledgers[index]]))
-}
 
 const UNPAID_ERA: Omit<EraInputs, "era"> = {
 	exposure: eraExposureOf([], []),
@@ -106,36 +82,4 @@ export const eraInputs = async ({ api }: ChainRuntime, era: number): Promise<Era
 		),
 		eraReward: reward,
 	}
-}
-
-const claimedRewardsEras = async ({ api }: ChainRuntime, stash: SS58String, era: number) => {
-	if (era < 0) return []
-	const [pages, overview] = await Promise.all([
-		api.query.Staking.ClaimedRewards.getValue(era, stash, BEST),
-		api.query.Staking.ErasStakersOverview.getValue(era, stash, BEST),
-	])
-	return pages.length > 0 && pages.length === overview?.page_count ? [era] : []
-}
-
-export const stakerInputs = async (
-	runtime: ChainRuntime,
-	stashes: SS58String[],
-	lastCompleteEra: number
-): Promise<StakerInputs[]> => {
-	const ledgers = await ledgersOf(runtime, stashes)
-	return Promise.all(
-		stashes.map(async (stash) => ({
-			stash,
-			claimedRewardsEras: await claimedRewardsEras(runtime, stash, lastCompleteEra),
-			legacyClaimedRewards: claimedErasOf(ledgers.get(stash)),
-		}))
-	)
-}
-
-export const validatorLegacyClaimedRewards = async (
-	runtime: ChainRuntime,
-	validators: SS58String[]
-) => {
-	const ledgers = await ledgersOf(runtime, validators)
-	return new Map(validators.map((validator) => [validator, claimedErasOf(ledgers.get(validator))]))
 }
