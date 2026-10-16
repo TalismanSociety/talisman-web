@@ -110,9 +110,18 @@ const SDK_KEY_PREFIXES = [
 
 const isSdkKey = (key: string) => SDK_KEY_PREFIXES.some((prefix) => key.startsWith(prefix))
 
+const LEGACY_COOKIE = `ph_${POSTHOG_PROJECT_TOKEN}_posthog`
+
+const removeLegacyCookie = () => {
+	const parentDomain = location.hostname.split(".").slice(-2).join(".")
+	for (const options of [{ name: LEGACY_COOKIE }, { name: LEGACY_COOKIE, domain: parentDomain }])
+		window.cookieStore?.delete(options).catch(() => undefined)
+}
+
 const removeSdkStorage = () => {
 	for (const storage of [localStorage, sessionStorage])
 		for (const key of Object.keys(storage)) if (isSdkKey(key)) storage.removeItem(key)
+	removeLegacyCookie()
 }
 
 const syncPersistence = (posthog: PostHog | undefined) => {

@@ -23,6 +23,10 @@ interface ImportMetaEnv {
 	VITE_RAMP_API_KEY: string
 }
 
+interface Window {
+	cookieStore?: { delete(options: { name: string; domain?: string }): Promise<void> }
+}
+
 declare namespace JSX {
 	interface IntrinsicElements {
 		"model-viewer": any

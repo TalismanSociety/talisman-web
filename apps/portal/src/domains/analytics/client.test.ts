@@ -842,6 +842,30 @@ describe("SDK storage left by an earlier SDK, another tab or a crash", () => {
 		expect(sdk.imports).toBe(0)
 	})
 
+	it("expires the cookie the earlier SDK set for this host and its parent domain", async () => {
+		const deleted: unknown[] = []
+		Object.defineProperty(window, "cookieStore", {
+			configurable: true,
+			value: {
+				delete: async (options: unknown) => {
+					deleted.push(options)
+				},
+			},
+		})
+		onTestFinished(() => {
+			Reflect.deleteProperty(window, "cookieStore")
+		})
+		const { startAnalytics } = await loadDomain()
+		startAnalytics()
+		await flush()
+
+		const domain = location.hostname.split(".").slice(-2).join(".")
+		expect(deleted).toEqual([
+			{ name: `ph_${TOKEN}_posthog` },
+			{ name: `ph_${TOKEN}_posthog`, domain },
+		])
+	})
+
 	it("leaves other keys of the portal alone", async () => {
 		localStorage.setItem("selected-currency", '"usd"')
 		localStorage.setItem("readonly_accounts", "[]")
