@@ -7,22 +7,27 @@ import { isEqual } from "lodash"
 import {
 	BehaviorSubject,
 	combineLatest,
+	debounceTime,
 	defer,
 	distinctUntilChanged,
 	exhaustMap,
+	filter,
 	map,
 	type Observable,
 	of,
 	retry,
 	scan,
+	shareReplay,
 	startWith,
 	switchMap,
+	tap,
 	timer,
 } from "rxjs"
 
 import { chainConnectors } from "@/domains/chains/chain-connectors"
 import { chaindataProvider, networksById$, tokensById$ } from "@/domains/chains/chaindata-provider"
 
+import { keepAddresses, readBalancesCache, writeBalancesCache } from "./balances-cache"
 import { currencyConfig } from "./currency"
 import {
 	BITTENSOR_NETWORK_ID,
@@ -33,16 +38,24 @@ import {
 const RATE_CURRENCIES = Object.keys(currencyConfig) as TokenRateCurrency[]
 const RATES_POLL_INTERVAL = 300_000
 const RATES_RETRY_DELAY = 5_000
-const NO_RATES: TokenRatesList = {}
 const NO_BALANCES: BalancesResult = { status: "live", balances: [], failedBalanceIds: [] }
 const BITTENSOR_NATIVE_TOKEN_ID = subNativeTokenId(BITTENSOR_NETWORK_ID)
+const CACHE_WRITE_DEBOUNCE = 1_000
 
-const balancesProvider = new BalancesProvider(chaindataProvider, chainConnectors)
+const cache = readBalancesCache()
+
+const balancesProvider = new BalancesProvider(chaindataProvider, chainConnectors, {
+	balances: cache.balances,
+	miniMetadatas: [],
+})
 
 const addresses$ = new BehaviorSubject<string[]>([])
+const cacheableAddresses$ = new BehaviorSubject<string[]>([])
 const tokenIds$ = new BehaviorSubject<TokenId[]>([])
 
 export const setBalancesAddresses = (addresses: string[]) => addresses$.next(addresses)
+export const setCacheableBalancesAddresses = (addresses: string[]) =>
+	cacheableAddresses$.next(addresses)
 export const setBalancesTokenIds = (tokenIds: TokenId[]) => tokenIds$.next(tokenIds)
 
 const pollTokenRates$ = (tokens: TokenList): Observable<TokenRatesList> =>
@@ -52,13 +65,14 @@ const pollTokenRates$ = (tokens: TokenList): Observable<TokenRatesList> =>
 				retry({ delay: RATES_RETRY_DELAY })
 			)
 		),
-		scan((previous, next) => ({ ...previous, ...next }), NO_RATES),
-		startWith(NO_RATES)
+		scan((previous, next) => ({ ...previous, ...next }), cache.tokenRates),
+		startWith(cache.tokenRates)
 	)
 
 const tokenRates$ = tokensById$.pipe(
 	distinctUntilChanged(isEqual),
-	switchMap((tokens) => pollTokenRates$(tokens))
+	switchMap((tokens) => pollTokenRates$(tokens)),
+	shareReplay({ bufferSize: 1, refCount: true })
 )
 
 const addressesByTokenId$ = combineLatest([addresses$, tokenIds$, tokensById$, networksById$]).pipe(
@@ -88,7 +102,9 @@ const balancesResult$ = addressesByTokenId$.pipe(
 const stakes$ = addressesByTokenId$.pipe(
 	map((addressesByTokenId) => addressesByTokenId[BITTENSOR_NATIVE_TOKEN_ID] ?? []),
 	distinctUntilChanged(isEqual),
-	switchMap(subtensorStakes$)
+	switchMap(subtensorStakes$),
+	startWith(cache.subtensorStakes),
+	shareReplay({ bufferSize: 1, refCount: true })
 )
 
 const withSubtensorStakes = (
@@ -118,4 +134,18 @@ export const [useBalances] = bind(
 			toBalances(result, stakesByAddress, { networks, tokens, tokenRates })
 		)
 	)
+)
+
+export const balancesCacheWrites$ = combineLatest([
+	cacheableAddresses$,
+	balancesProvider.storage$,
+	stakes$,
+	tokenRates$,
+]).pipe(
+	filter(([addresses]) => addresses.length > 0),
+	debounceTime(CACHE_WRITE_DEBOUNCE),
+	map(([addresses, { balances }, subtensorStakes, tokenRates]) =>
+		keepAddresses({ balances, subtensorStakes, tokenRates }, addresses)
+	),
+	tap(writeBalancesCache)
 )

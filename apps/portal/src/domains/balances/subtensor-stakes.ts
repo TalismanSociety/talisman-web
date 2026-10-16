@@ -2,7 +2,7 @@ import { toHex } from "@polkadot-api/utils"
 import type { Balance, ExtraAmount } from "@talismn/balances"
 import { encodeAnyAddress, isEthereumAddress } from "@talismn/util"
 import { AccountId } from "polkadot-api"
-import { catchError, defer, EMPTY, exhaustMap, type Observable, of, startWith, timer } from "rxjs"
+import { catchError, defer, EMPTY, exhaustMap, type Observable, timer } from "rxjs"
 import { bool, compact, Option, Struct, u16, Vector } from "scale-ts"
 
 import { chainConnectors } from "@/domains/chains/chain-connectors"
@@ -139,12 +139,11 @@ export const getSubtensorStakes = (balance: Balance) =>
 
 export const subtensorStakes$ = (addresses: string[]): Observable<SubtensorStakesByAddress> => {
 	const substrateAddresses = addresses.filter((address) => !isEthereumAddress(address))
-	if (substrateAddresses.length === 0) return of(new Map())
+	if (substrateAddresses.length === 0) return EMPTY
 
 	return timer(0, POLL_INTERVAL).pipe(
 		exhaustMap(() =>
 			defer(() => fetchStakesByAddress(substrateAddresses)).pipe(catchError(() => EMPTY))
-		),
-		startWith(new Map())
+		)
 	)
 }
