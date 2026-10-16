@@ -1,50 +1,42 @@
-import { usePolkadotApiId, useQueryState } from "@talismn/react-polkadot-api"
-import { BigNumber } from "bignumber.js"
-import { useMemo } from "react"
-import { useRecoilValue, waitForAll } from "recoil"
+import { bind } from "@react-rxjs/core"
+import { useContext } from "react"
+import { useRecoilValue } from "recoil"
+import { combineLatest, map, of } from "rxjs"
 
 import { selectedSubstrateAccountsState } from "@/domains/accounts/recoils"
-import { chainDeriveState } from "@/domains/common/recoils/query"
-import { Maybe } from "@/util/monads"
+import { ChainContext } from "@/domains/chains/contexts"
+import { account$, ledgers$, protocolState$ } from "@/domains/staking/dappStaking/chain"
+import { stakeInPeriod, stakePercentageOf } from "@/domains/staking/dappStaking/stake"
 
-const useStakePercentage = () => {
-	const apiId = usePolkadotApiId()
-	const accounts = useRecoilValue(selectedSubstrateAccountsState)
-	const addresses = useMemo(() => accounts.map((x) => x.address), [accounts])
-	const balances = useRecoilValue(
-		waitForAll(addresses.map((address) => chainDeriveState(apiId, "balances", "all", [address])))
-	)
-	const total = useMemo(
-		() => balances.reduce((prev, curr) => prev + curr.freeBalance.toBigInt(), 0n),
-		[balances]
-	)
-	const [activeProtocol, ledgers] = useRecoilValue(
-		waitForAll([
-			useQueryState("dappStaking", "activeProtocolState", []),
-			useQueryState("dappStaking", "ledger.multi", addresses),
-		])
-	)
-	const staked = useMemo(
-		() =>
-			ledgers.reduce(
-				(prev, curr) =>
-					prev +
-					Maybe.of(
-						[curr.stakedFuture.unwrapOrDefault(), curr.staked].find((x) =>
-							x.period.unwrap().eq(activeProtocol.periodInfo.number.unwrap())
-						)
-					).mapOr(0n, (x) => x.voting.toBigInt() + x.buildAndEarn.toBigInt()),
-				0n
-			),
-		[activeProtocol.periodInfo.number, ledgers]
-	)
+const ADDRESS_SEPARATOR = ","
 
-	const stakePercentage = useMemo(
-		() => (staked === 0n ? 0 : new BigNumber(staked.toString()).div(total.toString()).toNumber()),
-		[staked, total]
+const [useStakePercentageOf] = bind((genesisHash: string, addressList: string) => {
+	const addresses = addressList === "" ? [] : addressList.split(ADDRESS_SEPARATOR)
+	return combineLatest([
+		addresses.length === 0
+			? of([])
+			: combineLatest(addresses.map((address) => account$(genesisHash, address))),
+		protocolState$(genesisHash),
+		ledgers$(genesisHash, addresses),
+	]).pipe(
+		map(([accounts, protocol, ledgers]) =>
+			stakePercentageOf(
+				ledgers.reduce(
+					(prev, curr) => prev + (stakeInPeriod(curr, protocol.period_info.number) ?? 0n),
+					0n
+				),
+				accounts.reduce((prev, curr) => prev + curr.data.free, 0n)
+			)
+		)
 	)
+})
 
-	return stakePercentage
-}
+const useStakePercentage = () =>
+	useStakePercentageOf(
+		useContext(ChainContext).genesisHash,
+		useRecoilValue(selectedSubstrateAccountsState)
+			.map((account) => account.address)
+			.join(ADDRESS_SEPARATOR)
+	)
 
 export default useStakePercentage

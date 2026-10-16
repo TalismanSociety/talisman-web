@@ -8,7 +8,7 @@ import { chainMetadataCache } from "./metadata-cache"
 
 type ShippedNetwork = { id: string; genesisHash?: string; rpcs?: string[] }
 
-const LOAD_BALANCED_RPC_NETWORKS = new Set(["bittensor"])
+const LOAD_BALANCED_RPC_NETWORKS = new Set(["astar", "bittensor"])
 
 const networkOf = (genesisHash: string) =>
 	(networks as ShippedNetwork[]).find((network) => network.genesisHash === genesisHash)

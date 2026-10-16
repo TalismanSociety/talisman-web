@@ -1,10 +1,10 @@
-import type { AstarPrimitivesDappStakingSmartContract } from "@polkadot/types/lookup"
 import type { ReactNode } from "react"
 import { useState, useTransition } from "react"
-import { useRecoilValue, waitForAll } from "recoil"
+import { useRecoilValue } from "recoil"
+import type { SmartContract } from "@/domains/chains/portal-runtime"
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
-import type { StakeLoadable } from "@/domains/staking/dappStaking/hooks/useStakeLoadable"
-import { useRegisteredDappsState } from "@/domains/staking/dappStaking/recoils"
+import { useRegisteredDapps } from "@/domains/staking/dappStaking/dapps"
+import type { Stake } from "@/domains/staking/dappStaking/hooks/useStake"
 import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 import { Clickable } from "@/ui/atoms/Clickable"
 import { Surface } from "@/ui/atoms/Surface"
@@ -14,21 +14,19 @@ import { truncateAddress } from "@/util/truncateAddress"
 
 type DappPickerDialogProps = {
 	title: ReactNode
-	stake: StakeLoadable["data"]
-	onSelect: (dapp: AstarPrimitivesDappStakingSmartContract) => void
+	stake: Stake
+	onSelect: (dapp: SmartContract) => void
 	onRequestDismiss: () => void
 }
 
 const DappPickerDialog = (props: DappPickerDialogProps) => {
-	const [registeredDapps, tokenAmount] = useRecoilValue(
-		waitForAll([useRegisteredDappsState(), useNativeTokenAmountState()])
-	)
+	const tokenAmount = useRecoilValue(useNativeTokenAmountState())
+	const registeredDapps = useRegisteredDapps()
 
-	const [dappInTransition, setDappInTransition] =
-		useState<AstarPrimitivesDappStakingSmartContract>()
+	const [dappInTransition, setDappInTransition] = useState<SmartContract>()
 	const [inTransition, startTransition] = useTransition()
 
-	const selectDapp = (dapp: AstarPrimitivesDappStakingSmartContract) => {
+	const selectDapp = (dapp: SmartContract) => {
 		setDappInTransition(dapp)
 		startTransition(() => props.onSelect(dapp))
 	}
@@ -37,25 +35,19 @@ const DappPickerDialog = (props: DappPickerDialogProps) => {
 		<AlertDialog title={props.title} onRequestDismiss={props.onRequestDismiss} targetWidth="45rem">
 			<div css={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
 				{props.stake.dapps.map(([dapp, info]) => {
-					const total = tokenAmount.fromPlanck(
-						info.staked.voting.unwrap().toBigInt() + info.staked.buildAndEarn.unwrap().toBigInt()
-					)
+					const total = tokenAmount.fromPlanck(info.staked.voting + info.staked.build_and_earn)
 
-					const address = (() => {
-						switch (dapp.type) {
-							case "Evm":
-								return dapp.asEvm.toHex()
-							case "Wasm":
-								return dapp.asWasm.toString()
-						}
-					})()
+					const address = dapp.value
 
 					const registeredDapp = registeredDapps.find(
 						(x) => x.address.toLowerCase() === address.toLowerCase()
 					)
 
 					return (
-						<Clickable.WithFeedback key={dapp.toString()} onClick={() => selectDapp(dapp)}>
+						<Clickable.WithFeedback
+							key={`${dapp.type}:${dapp.value}`}
+							onClick={() => selectDapp(dapp)}
+						>
 							<Surface
 								css={{
 									display: "flex",

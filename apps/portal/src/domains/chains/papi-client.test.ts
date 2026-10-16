@@ -13,13 +13,19 @@ vi.mock("polkadot-api", () => ({ createClient }))
 vi.mock("@polkadot-api/ws-provider", () => ({ getWsProvider }))
 vi.mock("@polkadot-api/ws-middleware", () => ({ withLegacy }))
 
+const LEGACY = ["astar", "bittensor"]
 const substrate = networks.flatMap((network) =>
-	"genesisHash" in network && typeof network.genesisHash === "string" && network.id !== "bittensor"
+	"genesisHash" in network &&
+	typeof network.genesisHash === "string" &&
+	!LEGACY.includes(network.id)
 		? [{ genesisHash: network.genesisHash, rpcs: network.rpcs }]
 		: []
 )
-const bittensor = networks.find((network) => network.id === "bittensor")
-if (!bittensor || !("genesisHash" in bittensor)) throw new Error("bittensor must be shipped")
+const legacy = LEGACY.map((id) => {
+	const network = networks.find((candidate) => candidate.id === id)
+	if (!network || !("genesisHash" in network)) throw new Error(`${id} must be shipped`)
+	return { id, genesisHash: network.genesisHash as string, rpcs: network.rpcs }
+})
 const [chain, otherChain] = substrate
 if (!chain || !otherChain) throw new Error("two shipped substrate networks are required")
 
@@ -54,21 +60,24 @@ describe("getPapiClient", () => {
 		expect(createWsClient.mock.calls[0]?.[1]).toBe(createWsClient.mock.calls[1]?.[1])
 	})
 
-	it("opens Bittensor through the legacy JSON-RPC translation, behind its load balancers", () => {
-		const client = papi.getPapiClient(bittensor.genesisHash as string)
+	it.each(legacy)(
+		"opens $id through the legacy JSON-RPC translation, behind its load balancers",
+		({ genesisHash, rpcs }) => {
+			const client = papi.getPapiClient(genesisHash)
 
-		expect(getWsProvider).toHaveBeenCalledWith(bittensor.rpcs, { middleware: withLegacy })
-		expect(client).toEqual({
-			provider: { rpcs: bittensor.rpcs, options: { middleware: withLegacy } },
-		})
-		expect(createClient.mock.calls[0]?.[1]).toEqual(
-			expect.objectContaining({
-				getMetadata: expect.any(Function),
-				setMetadata: expect.any(Function),
+			expect(getWsProvider).toHaveBeenCalledWith(rpcs, { middleware: withLegacy })
+			expect(client).toEqual({
+				provider: { rpcs, options: { middleware: withLegacy } },
 			})
-		)
-		expect(createWsClient).not.toHaveBeenCalled()
-	})
+			expect(createClient.mock.calls[0]?.[1]).toEqual(
+				expect.objectContaining({
+					getMetadata: expect.any(Function),
+					setMetadata: expect.any(Function),
+				})
+			)
+			expect(createWsClient).not.toHaveBeenCalled()
+		}
+	)
 
 	it("opens nothing until a chain is asked for", () => {
 		expect(createWsClient).not.toHaveBeenCalled()

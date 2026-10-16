@@ -1,145 +1,148 @@
-import type { ApiPromise } from "@polkadot/api"
-import type { AstarPrimitivesDappStakingSmartContract } from "@polkadot/types/lookup"
-import { useQueryMultiState, useQueryState } from "@talismn/react-polkadot-api"
+import { bind } from "@react-rxjs/core"
 import BN from "bn.js"
-import { useCallback, useDeferredValue, useMemo, useState } from "react"
-import { useRecoilValue, useRecoilValueLoadable, waitForAll } from "recoil"
+import { useContext, useDeferredValue, useMemo, useState } from "react"
+import { combineLatest, defer } from "rxjs"
 
 import type { Account } from "@/domains/accounts/recoils"
-import { useExtrinsic } from "@/domains/common/hooks/useExtrinsic"
-import { useSubstrateApiEndpoint } from "@/domains/common/hooks/useSubstrateApiEndpoint"
-import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
+import { ChainContext } from "@/domains/chains/contexts"
+import type { SmartContract } from "@/domains/chains/portal-runtime"
 import { useTokenAmount, useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
-import { paymentInfoState } from "@/domains/common/recoils"
+import { estimateTxFee, useTx } from "@/domains/common/hooks/useTx"
 import { BigIntMath } from "@/util/BigIntMath"
-import { Maybe } from "@/util/monads"
+import { LOADING, toLoadable } from "@/util/loadable"
 
-import { getAllRewardsClaimExtrinsics } from "./useClaimAllRewardsExtrinsic"
-import type { StakeLoadable } from "./useStakeLoadable"
+import { type AddStake, addStakeTx, maxStakeTx, type RewardClaims, unstakeTx } from "../calls"
+import { account$, dappStakingApi, protocolState$, stakerInfo$ } from "../chain"
+import type { Stake } from "./useStake"
 
 const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.5
 
-export const useAddStakeForm = (
-	account: Account,
-	stake: StakeLoadable["data"],
-	dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
-) => {
+const contractOf = (type: SmartContract["type"], value: string) =>
+	({ type, value }) as SmartContract
+
+const [useAddStakeChainState] = bind(
+	(genesisHash: string, address: string, type: SmartContract["type"], value: string) =>
+		defer(() => {
+			const { constants } = dappStakingApi(genesisHash)
+			return combineLatest({
+				accountInfo: account$(genesisHash, address),
+				activeProtocol: protocolState$(genesisHash),
+				stakerInfo: stakerInfo$(genesisHash, address, contractOf(type, value)),
+				existentialDeposit: constants.Balances.ExistentialDeposit(),
+				minimumStakeAmount: constants.DappStaking.MinimumStakeAmount(),
+				maxNumberOfStakedContracts: constants.DappStaking.MaxNumberOfStakedContracts(),
+			})
+		})
+)
+
+const [useUnstakeChainState] = bind(
+	(genesisHash: string, address: string, type: SmartContract["type"], value: string) =>
+		defer(() =>
+			combineLatest({
+				stakerInfo: stakerInfo$(genesisHash, address, contractOf(type, value)),
+				minimumStakeAmount: dappStakingApi(genesisHash).constants.DappStaking.MinimumStakeAmount(),
+			})
+		)
+)
+
+const [useMaxStakeFee] = bind(
+	(
+		genesisHash: string,
+		address: string,
+		type: SmartContract["type"],
+		value: string,
+		amount: bigint,
+		lockedAvailableForStake: bigint,
+		stakerRewards: bigint,
+		claimableSpanCount: number
+	) =>
+		toLoadable(
+			defer(() =>
+				estimateTxFee(
+					genesisHash,
+					address,
+					maxStakeTx(dappStakingApi(genesisHash).tx, {
+						contract: contractOf(type, value),
+						amount,
+						lockedAvailableForStake,
+						stakerRewards,
+						claimableSpanCount,
+					})
+				)
+			)
+		),
+	LOADING
+)
+
+const rewardClaimsOf = (stake: Stake): RewardClaims => ({
+	stakerRewards: stake.stakerRewards,
+	claimableSpanCount: stake.claimableSpanCount,
+})
+
+const stakedOf = (stakerInfo: { staked: { voting: bigint; build_and_earn: bigint } } | undefined) =>
+	(stakerInfo?.staked.voting ?? 0n) + (stakerInfo?.staked.build_and_earn ?? 0n)
+
+export const useAddStakeForm = (account: Account, stake: Stake, dapp: SmartContract) => {
+	const { genesisHash } = useContext(ChainContext)
 	const [amount, setAmount] = useState("")
 	const deferredAmount = useDeferredValue(amount)
 	const input = useTokenAmount(deferredAmount)
 	const inTransition = amount !== deferredAmount
 
-	const [api, [accountInfo, activeProtocol, stakerInfo]] = useRecoilValue(
-		waitForAll([
-			useSubstrateApiState(),
-			useQueryMultiState([
-				["system.account", account.address],
-				["dappStaking.activeProtocolState"],
-				["dappStaking.stakerInfo", [account.address, dapp]],
-			]),
-		])
-	)
+	const {
+		accountInfo,
+		activeProtocol,
+		stakerInfo,
+		existentialDeposit,
+		minimumStakeAmount,
+		maxNumberOfStakedContracts,
+	} = useAddStakeChainState(genesisHash, account.address, dapp.type, dapp.value)
 
-	const transferable = useMemo(
-		() => BigIntMath.max(0n, accountInfo.data.free.toBigInt() - accountInfo.data.frozen.toBigInt()),
-		[accountInfo.data.free, accountInfo.data.frozen]
-	)
-	const lockedAvailableForStake = useMemo(
-		() =>
-			BigIntMath.max(
-				0n,
-				(stake.ledger?.locked.unwrap().toBigInt() ?? 0n) -
-					(stake.totalStaked?.decimalAmount?.planck ?? 0n)
-			),
-		[stake.ledger?.locked, stake.totalStaked]
+	const transferable = BigIntMath.max(0n, accountInfo.data.free - accountInfo.data.frozen)
+	const lockedAvailableForStake = BigIntMath.max(
+		0n,
+		stake.ledger.locked - (stake.totalStaked ?? 0n)
 	)
 
 	const availableBeforeFee = useTokenAmountFromPlanck(
-		useMemo(
-			() =>
-				BigIntMath.max(
-					0n,
-					transferable - api.consts.balances.existentialDeposit.toBigInt() + lockedAvailableForStake
-				),
-			[api.consts.balances.existentialDeposit, lockedAvailableForStake, transferable]
-		)
+		BigIntMath.max(0n, transferable - existentialDeposit + lockedAvailableForStake)
 	)
 
-	const maxSubmittable = useMemo(() => {
-		const amountToLock = BigIntMath.max(
-			availableBeforeFee.decimalAmount.planck - lockedAvailableForStake,
-			0n
-		)
-
-		if (amountToLock === 0n) {
-			return api.tx.dappStaking.stake(dapp, availableBeforeFee.decimalAmount.planck)
-		}
-
-		return api.tx.utility.batchAll([
-			...getAllRewardsClaimExtrinsics(api, stake),
-			api.tx.dappStaking.lock(amountToLock ?? 0n),
-			api.tx.dappStaking.stake(dapp, availableBeforeFee.decimalAmount.planck),
-		])
-	}, [api, availableBeforeFee.decimalAmount.planck, dapp, lockedAvailableForStake, stake])
-
-	// This will change after staking n will retrigger suspense
-	// if we use `useRecoilValue`
-	const paymentInfoLoadable = useRecoilValueLoadable(
-		paymentInfoState([
-			useSubstrateApiEndpoint(),
-			// @ts-expect-error
-			maxSubmittable.method.section,
-			// @ts-expect-error
-			maxSubmittable.method.method,
-			account.address,
-			...maxSubmittable.args,
-		])
+	const maxStakeFee = useMaxStakeFee(
+		genesisHash,
+		account.address,
+		dapp.type,
+		dapp.value,
+		availableBeforeFee.decimalAmount.planck,
+		lockedAvailableForStake,
+		stake.stakerRewards,
+		stake.claimableSpanCount
 	)
 
 	const available = useTokenAmountFromPlanck(
-		useMemo(
-			() =>
-				BigIntMath.max(
-					0n,
-					availableBeforeFee.decimalAmount.planck -
-						BigInt(
-							new BN(
-								paymentInfoLoadable.valueMaybe()?.partialFee.muln(ESTIMATED_FEE_MARGIN_OF_ERROR) ??
-									0
-							).toString()
-						)
-				),
-			[availableBeforeFee.decimalAmount.planck, paymentInfoLoadable]
+		BigIntMath.max(
+			0n,
+			availableBeforeFee.decimalAmount.planck -
+				BigInt(
+					new BN(maxStakeFee.status === "success" ? maxStakeFee.data.toString() : 0)
+						.muln(ESTIMATED_FEE_MARGIN_OF_ERROR)
+						.toString()
+				)
 		)
 	)
 
-	const minimum = useTokenAmountFromPlanck(api.consts.dappStaking.minimumStakeAmount)
+	const minimum = useTokenAmountFromPlanck(minimumStakeAmount)
 
-	const maxStakeEntriesReached = useMemo(
-		() =>
-			stake.ledger?.contractStakeCount
-				.unwrap()
-				.gte(api.consts.dappStaking.maxNumberOfStakedContracts),
-		[api.consts.dappStaking.maxNumberOfStakedContracts, stake.ledger?.contractStakeCount]
-	)
-
-	const maxStakedDappsReached = useMemo(
-		() => stake.dapps.length >= api.consts.dappStaking.maxNumberOfStakedContracts.toBigInt(),
-		[api.consts.dappStaking.maxNumberOfStakedContracts, stake.dapps.length]
-	)
-
-	const canCleanUpEntriesToMakeSpace = useMemo(
-		() => !maxStakedDappsReached || stakerInfo.isSome,
-		[maxStakedDappsReached, stakerInfo.isSome]
-	)
+	const maxStakeEntriesReached = stake.ledger.contract_stake_count >= maxNumberOfStakedContracts
+	const maxStakedDappsReached = stake.dapps.length >= maxNumberOfStakedContracts
+	const canCleanUpEntriesToMakeSpace = !maxStakedDappsReached || stakerInfo !== undefined
 
 	const error = useMemo(() => {
 		if (deferredAmount.trim() === "" || inTransition) return
 
 		if (
-			activeProtocol.periodInfo.subperiod.type === "BuildAndEarn" &&
-			activeProtocol.periodInfo.nextSubperiodStartEra.toBigInt() <=
-				activeProtocol.era.toBigInt() + 1n
+			activeProtocol.period_info.subperiod.type === "BuildAndEarn" &&
+			activeProtocol.period_info.next_subperiod_start_era <= activeProtocol.era + 1
 		) {
 			return new Error("Not possible to stake in the last era of a period")
 		}
@@ -164,9 +167,7 @@ export const useAddStakeForm = (
 
 		return undefined
 	}, [
-		activeProtocol.era,
-		activeProtocol.periodInfo.nextSubperiodStartEra,
-		activeProtocol.periodInfo.subperiod.type,
+		activeProtocol,
 		available.decimalAmount.planck,
 		canCleanUpEntriesToMakeSpace,
 		deferredAmount,
@@ -176,9 +177,18 @@ export const useAddStakeForm = (
 		minimum.decimalAmount,
 	])
 
+	const tx = useTx(genesisHash, ({ api }, addStake: AddStake) => addStakeTx(api.tx, addStake))
+	const addStake: AddStake = {
+		...rewardClaimsOf(stake),
+		contract: dapp,
+		amount: input.decimalAmount?.planck ?? 0n,
+		lockedAvailableForStake,
+		cleanup: maxStakeEntriesReached && canCleanUpEntriesToMakeSpace,
+	}
+
 	return {
 		ready:
-			paymentInfoLoadable.state === "hasValue" &&
+			maxStakeFee.status === "success" &&
 			deferredAmount.trim() !== "" &&
 			input.decimalAmount !== undefined &&
 			input.decimalAmount.planck !== 0n &&
@@ -188,91 +198,39 @@ export const useAddStakeForm = (
 		setAmount,
 		available,
 		resulting: useTokenAmountFromPlanck(
-			useMemo(
-				() =>
-					inTransition
-						? undefined
-						: stakerInfo.unwrapOrDefault().staked.voting.unwrap().toBigInt() +
-							stakerInfo.unwrapOrDefault().staked.buildAndEarn.unwrap().toBigInt() +
-							(input.decimalAmount?.planck ?? 0n),
-				[inTransition, input.decimalAmount?.planck, stakerInfo]
-			)
+			inTransition ? undefined : stakedOf(stakerInfo) + (input.decimalAmount?.planck ?? 0n)
 		),
 		error,
-		extrinsic: useExtrinsic(
-			useCallback(
-				(api: ApiPromise) => {
-					const amountToLock = Maybe.of(input.decimalAmount?.planck).mapOrUndefined((x) =>
-						BigIntMath.max(x - lockedAvailableForStake, 0n)
-					)
-
-					const exs = [
-						...getAllRewardsClaimExtrinsics(api, stake),
-						...(amountToLock === undefined || amountToLock === 0n
-							? []
-							: [api.tx.dappStaking.lock(amountToLock ?? 0)]),
-						...(maxStakeEntriesReached && canCleanUpEntriesToMakeSpace
-							? [api.tx.dappStaking.cleanupExpiredEntries()]
-							: []),
-						api.tx.dappStaking.stake(dapp, input.decimalAmount?.planck ?? 0),
-					]
-
-					return exs.length <= 1 ? exs.at(0) : api.tx.utility.batchAll(exs)
-				},
-				[
-					canCleanUpEntriesToMakeSpace,
-					dapp,
-					input.decimalAmount?.planck,
-					lockedAvailableForStake,
-					maxStakeEntriesReached,
-					stake,
-				]
-			)
-		),
+		extrinsic: { ...tx, signAndSend: (address: string) => tx.signAndSend(address, addStake) },
 	}
 }
 
-export const useUnstakeForm = (
-	account: Account,
-	stake: StakeLoadable["data"],
-	dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
-) => {
+export const useUnstakeForm = (account: Account, stake: Stake, dapp: SmartContract) => {
+	const { genesisHash } = useContext(ChainContext)
 	const [amount, setAmount] = useState("")
 	const deferredAmount = useDeferredValue(amount)
 	const input = useTokenAmount(deferredAmount)
 	const inTransition = amount !== deferredAmount
 
-	const [api, stakerInfo] = useRecoilValue(
-		waitForAll([
-			useSubstrateApiState(),
-			useQueryState("dappStaking", "stakerInfo", [account.address, dapp]),
-		])
+	const { stakerInfo, minimumStakeAmount } = useUnstakeChainState(
+		genesisHash,
+		account.address,
+		dapp.type,
+		dapp.value
 	)
 
-	const extrinsic = useExtrinsic(
-		useCallback(
-			(api: ApiPromise) =>
-				api.tx.utility.batchAll([
-					...getAllRewardsClaimExtrinsics(api, stake),
-					api.tx.dappStaking.unstake(dapp, input.decimalAmount?.planck ?? 0),
-					api.tx.dappStaking.unlock(input.decimalAmount?.planck ?? 0),
-				]),
-			[dapp, input.decimalAmount?.planck, stake]
-		)
+	const tx = useTx(genesisHash, ({ api }, unstake: Parameters<typeof unstakeTx>[1]) =>
+		unstakeTx(api.tx, unstake)
 	)
+	const unstake = {
+		...rewardClaimsOf(stake),
+		contract: dapp,
+		amount: input.decimalAmount?.planck ?? 0n,
+	}
 
-	const available = useTokenAmountFromPlanck(
-		useMemo(
-			() =>
-				stakerInfo
-					.unwrapOrDefault()
-					.staked.voting.unwrap()
-					.add(stakerInfo.unwrapOrDefault().staked.buildAndEarn.unwrap()),
-			[stakerInfo]
-		)
-	)
+	const available = useTokenAmountFromPlanck(stakedOf(stakerInfo))
 
-	const minimum = useTokenAmountFromPlanck(api.consts.dappStaking.minimumStakeAmount)
+	const minimum = useTokenAmountFromPlanck(minimumStakeAmount)
 
 	const error = useMemo(() => {
 		if (amount.trim() === "" || inTransition) return
@@ -312,18 +270,9 @@ export const useUnstakeForm = (
 		setAmount,
 		available,
 		resulting: useTokenAmountFromPlanck(
-			useMemo(
-				() =>
-					BigIntMath.max(
-						0n,
-						stakerInfo.unwrapOrDefault().staked.voting.unwrap().toBigInt() +
-							stakerInfo.unwrapOrDefault().staked.buildAndEarn.unwrap().toBigInt() -
-							(input.decimalAmount?.planck ?? 0n)
-					),
-				[input.decimalAmount?.planck, stakerInfo]
-			)
+			BigIntMath.max(0n, stakedOf(stakerInfo) - (input.decimalAmount?.planck ?? 0n))
 		),
 		error,
-		extrinsic,
+		extrinsic: { ...tx, signAndSend: (address: string) => tx.signAndSend(address, unstake) },
 	}
 }
