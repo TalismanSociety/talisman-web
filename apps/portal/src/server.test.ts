@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { readFileSync } from "node:fs"
 import { beforeEach, describe, expect, it, vi } from "vitest"
+import { withFrameAncestors } from "../scripts/frame-ancestors"
 import { headerRules } from "../scripts/headers-file"
 
 const { assetsFetch, startFetch } = vi.hoisted(() => ({
@@ -17,7 +18,9 @@ vi.mock("@tanstack/react-start/server-entry", () => ({
 const { default: entry, rootHeaders } = await import("./server")
 
 const rootRule = Object.fromEntries(
-	headerRules(readFileSync(new URL("../public/_headers", import.meta.url), "utf8")).get("/*") ?? []
+	headerRules(
+		withFrameAncestors(readFileSync(new URL("../public/_headers", import.meta.url), "utf8"))
+	).get("/*") ?? []
 )
 
 const rootHeadersOf = (response: Response) =>
@@ -148,12 +151,14 @@ describe("server entry", () => {
 		expect(await response.text()).toBe("prerendered")
 	})
 
-	it("builds its responses with the headers _headers sets on every path", () => {
+	it("builds its responses with the headers the Worker's _headers sets on every path", () => {
 		expect(rootHeaders).toEqual(rootRule)
 		expect(rootRule).toEqual({
 			"Access-Control-Allow-Origin": "*",
 			"Referrer-Policy": "strict-origin-when-cross-origin",
 			"X-Content-Type-Options": "nosniff",
+			"Content-Security-Policy":
+				"frame-ancestors 'self' https://signet.talisman.xyz https://*.talismn.workers.dev",
 		})
 	})
 

@@ -1,8 +1,7 @@
 import { createHash } from "node:crypto"
 import { readFileSync, writeFileSync } from "node:fs"
 import { fileURLToPath } from "node:url"
-
-const CLOUDFLARE_HEADERS_LINE_LIMIT = 2000
+import { withRootHeader } from "./headers-file.ts"
 
 const scriptHashes = (html: string) =>
 	[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script[^>]*>/gi)]
@@ -32,17 +31,8 @@ export const cspHeader = (html: string) => {
 	return directives.map(([directive, sources]) => [directive, ...sources].join(" ")).join("; ")
 }
 
-export const withCspHeader = (headers: string, policy: string) => {
-	const line = `  Content-Security-Policy-Report-Only: ${policy}`
-	if (line.length >= CLOUDFLARE_HEADERS_LINE_LIMIT)
-		throw new Error(
-			`CSP line is ${line.length} characters, Cloudflare caps _headers lines at ${CLOUDFLARE_HEADERS_LINE_LIMIT}`
-		)
-
-	const [rootBlock = "", ...otherBlocks] = headers.split("\n\n")
-	if (!rootBlock.startsWith("/*\n")) throw new Error("_headers does not start with the /* block")
-	return [`${rootBlock}\n${line}`, ...otherBlocks].join("\n\n")
-}
+export const withCspHeader = (headers: string, policy: string) =>
+	withRootHeader(headers, "Content-Security-Policy-Report-Only", policy)
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
 	const html = readFileSync(new URL("../dist/client/index.html", import.meta.url), "utf8")
