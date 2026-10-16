@@ -116,8 +116,8 @@ const ErrorBoundaryDebugger = ({ children, onReset, fallback }: CapturingErrorBo
 	return (
 		<CapturingErrorBoundary
 			fallback={fallback}
-			onReset={(resetError) => {
-				onReset(resetError)
+			onReset={(caughtError) => {
+				onReset(caughtError)
 				setError(undefined)
 			}}
 		>

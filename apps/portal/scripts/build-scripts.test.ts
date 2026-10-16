@@ -38,7 +38,7 @@ describe("build scripts", () => {
 		expect(pagesWorkflow).not.toContain("--sourcemap")
 	})
 
-	it("keeps the Worker's own maps linked for wrangler", () => {
+	it("keeps the Worker's maps linked as the Cloudflare plugin emits them without a root sourcemap", () => {
 		expect(viteConfig).toContain("environments: { ssr: { build: { sourcemap: true } } }")
 	})
 })
