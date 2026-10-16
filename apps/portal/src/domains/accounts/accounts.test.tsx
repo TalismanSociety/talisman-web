@@ -125,4 +125,16 @@ describe("accounts", () => {
 
 		expect(harness.lookupAccountAddress$.value).toBeUndefined()
 	})
+
+	it("keeps the lookup address when the selection is reset to what it already was", async () => {
+		harness = await load(undefined)
+		harness.setLookupAccountAddress(evmAddress)
+		const { AccountWatcher } = await import("./AccountWatcher")
+		const { render } = await import("@testing-library/react")
+		render(<AccountWatcher />)
+
+		harness.selectedAccountAddresses$.next(undefined)
+
+		expect(harness.lookupAccountAddress$.value).toBe(evmAddress)
+	})
 })
