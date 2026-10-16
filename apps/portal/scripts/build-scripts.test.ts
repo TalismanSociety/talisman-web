@@ -6,6 +6,7 @@ const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf
 const rootScripts = JSON.parse(read("../../../package.json")).scripts
 const portalScripts = JSON.parse(read("../package.json")).scripts
 const pagesWorkflow = read("../../../.github/workflows/deploy.yml")
+const viteConfig = read("../vite.config.ts")
 
 describe("build scripts", () => {
 	it("builds the Worker, which Workers Builds deploys with build:portal, with frame-ancestors", () => {
@@ -15,8 +16,24 @@ describe("build scripts", () => {
 
 	it("builds the manual Pages deploy without frame-ancestors", () => {
 		expect(portalScripts.build).toBe("tsc -b && vite build")
-		expect(portalScripts.postbuild).toBe("node scripts/csp-headers.ts")
-		expect(pagesWorkflow).toContain("pnpm --filter @talismn/portal build --sourcemap")
+		expect(pagesWorkflow).toContain("pnpm --filter @talismn/portal build\n")
 		expect(pagesWorkflow).not.toMatch(/build:worker|build:portal|frame-ancestors/)
+	})
+
+	it("uploads the source maps of every build, then strips them, before the CSP header", () => {
+		expect(portalScripts.postbuild).toBe(
+			"node scripts/posthog-sourcemaps.ts && node scripts/csp-headers.ts"
+		)
+		expect(pagesWorkflow).toContain("find apps/portal/dist -name '*.map' -type f -delete")
+	})
+
+	it("names the release after the commit that Workers Builds and the Pages deploy build", () => {
+		expect(rootScripts["build:portal"]).toMatch(/^VITE_APP_COMMIT=\$\{WORKERS_CI_COMMIT_SHA:-\} /)
+		expect(pagesWorkflow).toMatch(/^ +VITE_APP_COMMIT=\$\{\{ github\.sha \}\}$/m)
+	})
+
+	it("keeps maps out of the served client, so only the upload reads them", () => {
+		expect(viteConfig).toContain('client: { build: { sourcemap: "hidden" } }')
+		expect(pagesWorkflow).not.toContain("--sourcemap")
 	})
 })
