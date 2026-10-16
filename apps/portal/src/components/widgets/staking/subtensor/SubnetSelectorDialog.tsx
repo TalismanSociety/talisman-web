@@ -38,8 +38,8 @@ export const SubnetSelectorDialog = ({
 			return
 		}
 		const filtered = filteredSubnets.filter((subnet) => {
-			const { netuid, subnet_name, symbol } = subnet
-			const subnetName = `${netuid} ${subnet_name} ${symbol}`.toLowerCase()
+			const { netuid, descriptionName, symbol } = subnet
+			const subnetName = `${netuid} ${descriptionName} ${symbol}`.toLowerCase()
 			return subnetName.includes(search.toLowerCase())
 		})
 		setFilteredData(selected ? [...filtered, selected] : filtered)

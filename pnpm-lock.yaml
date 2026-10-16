@@ -370,9 +370,6 @@ importers:
       avail-js-sdk:
         specifier: ^0.2.13
         version: 0.2.13(bufferutil@4.0.8)(supports-color@10.0.0)(utf-8-validate@5.0.10)
-      axios:
-        specifier: ^1.13.2
-        version: 1.13.2(debug@4.4.3(supports-color@10.0.0))
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2

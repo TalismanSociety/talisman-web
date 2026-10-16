@@ -151,6 +151,22 @@ describe("server entry", () => {
 		expect(await response.text()).toBe("prerendered")
 	})
 
+	it("answers a server function call through TanStack Start, never with the shell", async () => {
+		assetsFetch.mockResolvedValue(new Response("<!DOCTYPE html>", { headers: shellHeaders }))
+		startFetch.mockResolvedValue(
+			new Response('{"result":[]}', {
+				headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=300" },
+			})
+		)
+
+		const response = await serve("/_serverFn/abc123?payload=%7B%7D")
+
+		expect(await response.text()).toBe('{"result":[]}')
+		expect(response.headers.get("Cache-Control")).toBe("public, max-age=300")
+		expect(rootHeadersOf(response)).toEqual(rootRule)
+		expect(assetsFetch).not.toHaveBeenCalled()
+	})
+
 	it("builds its responses with the headers the Worker's _headers sets on every path", () => {
 		expect(rootHeaders).toEqual(rootRule)
 		expect(rootRule).toEqual({

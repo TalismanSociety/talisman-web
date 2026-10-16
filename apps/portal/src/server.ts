@@ -52,6 +52,7 @@ export default createServerEntry({
 	fetch: (request, opts) => {
 		const { pathname } = new URL(request.url)
 		if (pathname.startsWith("/assets/")) return serveAsset(request)
+		if (pathname.startsWith("/_serverFn/")) return renderWithStart(request, opts)
 		return serveShell(request, opts)
 	},
 })

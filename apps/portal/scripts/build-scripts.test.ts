@@ -20,9 +20,9 @@ describe("build scripts", () => {
 		expect(pagesWorkflow).not.toMatch(/build:worker|build:portal|frame-ancestors/)
 	})
 
-	it("uploads the source maps of every build, then strips them, before the CSP header", () => {
+	it("uploads the source maps of every build, then strips them, checks the client for server secrets, before the CSP header", () => {
 		expect(portalScripts.postbuild).toBe(
-			"node scripts/posthog-sourcemaps.ts && node scripts/csp-headers.ts"
+			"node scripts/posthog-sourcemaps.ts && node scripts/client-secrets.ts && node scripts/csp-headers.ts"
 		)
 		expect(pagesWorkflow).toContain("find apps/portal/dist -name '*.map' -type f -delete")
 	})
