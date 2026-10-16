@@ -47,7 +47,6 @@ overrides:
   "json-stream-stringify": 2.0.4
 patchedDependencies:
   recoil@0.7.7: patches/recoil@0.7.7.patch
-  threads@1.7.0: patches/threads@1.7.0.patch
 auditConfig:
   ignoreGhsas:
     - GHSA-95m3-7q98-8xr5

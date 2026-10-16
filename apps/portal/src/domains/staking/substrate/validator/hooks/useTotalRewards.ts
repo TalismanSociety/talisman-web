@@ -1,57 +1,57 @@
-import { encodeAddress } from "@polkadot/util-crypto"
+import { bind } from "@react-rxjs/core"
+import { encodeAnyAddress } from "@talismn/util"
 import request from "graphql-request"
-import { atom, useAtomValue } from "jotai"
-import { atomFamily } from "jotai/utils"
 import { useRecoilValue } from "recoil"
+import { catchError, defer, map, of } from "rxjs"
 
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import { useChainState } from "@/domains/chains/hooks"
 import { assertChain } from "@/domains/chains/utils"
 import { graphql } from "@/generated/gql/nova/gql"
 import { Decimal } from "@/util/Decimal"
 
-const totalValidatorStakingRewardsAtomFamily = atomFamily(
-	({ apiUrl, address }: { apiUrl: string; address: string }) =>
-		atom(async () => {
-			try {
-				const response = await request(
-					apiUrl,
-					graphql(`
+const fetchTotalValidatorRewards = async (indexerUrl: string | undefined, address: string) => {
+	if (!indexerUrl) throw new Error("No indexer for validator staking rewards")
+	const response = await request(
+		indexerUrl,
+		graphql(`
             query ValidatorStakingReward($address: String!) {
               accumulatedReward(id: $address) {
                 amount
               }
             }
           `),
-					{ address }
-				)
-				return { data: response.accumulatedReward?.amount || null, isError: false }
-			} catch (error) {
+		{ address }
+	)
+	return response.accumulatedReward?.amount ?? 0
+}
+
+const [useTotalRewards] = bind(
+	(
+		indexerUrl: string | undefined,
+		decimals: number,
+		currency: string | undefined,
+		address: string
+	) =>
+		defer(() => fetchTotalValidatorRewards(indexerUrl, address)).pipe(
+			map((amount) => ({
+				totalRewards: Decimal.fromPlanck(amount, decimals, { currency }),
+				isError: false,
+			})),
+			catchError((error: unknown) => {
 				console.error("Error fetching staking rewards:", error)
-				return { isError: true }
-			}
-		}),
-	(a, b) => a.apiUrl === b.apiUrl && a.address === b.address
+				return of({ totalRewards: Decimal.fromPlanck(0, decimals, { currency }), isError: true })
+			})
+		)
 )
 
 export const useTotalValidatorStakingRewards = (account: Account) => {
 	const chain = useRecoilValue(useChainState())
-
 	assertChain(chain, { hasNominationPools: true })
-
-	const { data, isError } = useAtomValue(
-		totalValidatorStakingRewardsAtomFamily({
-			apiUrl: chain.novaIndexerUrl,
-			address: encodeAddress(account.address, chain.prefix),
-		})
+	return useTotalRewards(
+		chain.novaIndexerUrl,
+		chain.nativeToken?.decimals ?? 0,
+		chain.nativeToken?.symbol,
+		encodeAnyAddress(account.address, chain.prefix)
 	)
-
-	const amount = data?.accumulatedReward?.amount as string | undefined
-
-	return {
-		totalRewards: Decimal.fromPlanck(amount ?? 0, chain.nativeToken?.decimals ?? 0, {
-			currency: chain.nativeToken?.symbol,
-		}),
-		isError,
-	}
 }

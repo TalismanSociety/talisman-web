@@ -1,63 +1,57 @@
+import { bind } from "@react-rxjs/core"
 import { useMemo } from "react"
-import { useRecoilValue, useRecoilValueLoadable, waitForAll, waitForAny } from "recoil"
+import { useRecoilValue, waitForAll } from "recoil"
+import { combineLatest, map, of } from "rxjs"
 
 import { selectedSubstrateAccountsState } from "@/domains/accounts/recoils"
 import { nativeTokenPriceState, nominationPoolsEnabledChainsState } from "@/domains/chains/recoils"
-import { substrateApiState } from "@/domains/common/recoils/api"
-import { chainDeriveState } from "@/domains/common/recoils/query"
-import { usePoolStakeFiatTotal } from "@/domains/staking/substrate/nominationPools/hooks/useTotalPoolStaked"
 import { Decimal } from "@/util/Decimal"
+import { toLoadable } from "@/util/loadable"
+
+import { addressesKey, chainToken$ } from "./nominationPools/hooks/useBalances"
+import { usePoolStakeFiatTotal } from "./nominationPools/hooks/useTotalPoolStaked"
+import { validatorPositionsFor$ } from "./validator/hooks/useValidatorStakes"
+
+const GENESIS_SEPARATOR = ","
+
+const validatorStaked$ = (genesisHash: string, addresses: string) =>
+	toLoadable(
+		combineLatest([validatorPositionsFor$(genesisHash, addresses), chainToken$(genesisHash)]).pipe(
+			map(([positions, token]) =>
+				Decimal.fromPlanck(
+					positions.reduce((total, { active }) => total + active, 0n),
+					token.decimals
+				).toNumber()
+			)
+		)
+	).pipe(map((loadable) => (loadable.status === "success" ? loadable.data : 0)))
+
+const [useValidatorStakedAmounts] = bind(
+	(genesisHashes: string, addresses: string) =>
+		genesisHashes === ""
+			? of([] as number[])
+			: combineLatest(
+					genesisHashes
+						.split(GENESIS_SEPARATOR)
+						.map((genesisHash) => validatorStaked$(genesisHash, addresses))
+				),
+	[] as number[]
+)
 
 export const useTotalStaked = () => {
 	const [chains, accounts] = useRecoilValue(
 		waitForAll([nominationPoolsEnabledChainsState, selectedSubstrateAccountsState])
 	)
-	const addresses = useMemo(() => accounts.map((x) => x.address), [accounts])
-	const nativeTokenPrices = useRecoilValue(
+	const prices = useRecoilValue(
 		waitForAll(chains.map((chain) => nativeTokenPriceState({ genesisHash: chain.genesisHash })))
 	)
-
-	const apis = useRecoilValueLoadable(waitForAll(chains.map((x) => substrateApiState(x.rpc))))
-	const decimals = useMemo(() => {
-		if (apis.state !== "hasValue") return []
-		return apis.contents.map((x) => x.registry.chainDecimals.at(0) ?? 0)
-	}, [apis])
-
-	const validatorStakes = useRecoilValueLoadable(
-		waitForAny(
-			chains.map((x) => chainDeriveState(x.rpc, "staking", "accounts", [addresses, undefined]))
-		)
+	const amounts = useValidatorStakedAmounts(
+		chains.map((chain) => chain.genesisHash).join(GENESIS_SEPARATOR),
+		addressesKey(accounts.map(({ address }) => address))
 	)
-
-	const validatorStakeFiatTotal =
-		validatorStakes.state !== "hasValue"
-			? 0
-			: validatorStakes.contents
-					.map((x, index) => ({
-						decimals: decimals[index]!,
-						price: nativeTokenPrices[index]!,
-						loadable: x,
-					}))
-					.filter((x) => x.loadable.state === "hasValue")
-					.map((x) => ({
-						price: x.price,
-						decimals: x.decimals,
-						amount:
-							x.loadable.state === "hasValue"
-								? x.loadable.contents.reduce(
-										(prev, curr) => prev + curr.stakingLedger.active.toBigInt(),
-										0n
-									)
-								: 0n,
-					}))
-					.map((x) => Decimal.fromPlanck(x.amount, x.decimals).toNumber() * x.price)
-					.reduce((prev, curr) => prev + curr, 0)
-
-	const poolStakeFiatTotal = usePoolStakeFiatTotal()
-
-	return {
-		validatorStakeFiatTotal,
-		poolStakeFiatTotal,
-		fiatTotal: validatorStakeFiatTotal + poolStakeFiatTotal,
-	}
+	const validatorStakeFiatTotal = useMemo(
+		() => amounts.reduce((total, amount, index) => total + amount * (prices[index] ?? 0), 0),
+		[amounts, prices]
+	)
+	return validatorStakeFiatTotal + usePoolStakeFiatTotal()
 }

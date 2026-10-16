@@ -1,6 +1,5 @@
 import { selector } from "recoil"
 import { atomFromObservable, atomFromSubject } from "@/domains/common/recoil-bridge"
-import { signetAccount$ } from "@/domains/extension/signet"
 
 import {
 	type Account,
@@ -112,5 +111,3 @@ export const selectedEvmAccountsState = atomFromObservable(
 	selectedEvmAccounts$,
 	NO_ACCOUNTS
 )
-
-export const signetAccountState = atomFromObservable("SignetAccount", signetAccount$, undefined)

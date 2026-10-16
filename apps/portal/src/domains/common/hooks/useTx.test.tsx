@@ -39,6 +39,8 @@ vi.mock("@/domains/chains/chaindata-provider", () => ({
 }))
 vi.mock("@/domains/extension/substrate", () => ({
 	txCreatorOf: async (address: string) => (address === alice ? txCreator : undefined),
+	connectedSubstrateWallet$: of(undefined),
+	injectedSubstrateAccounts$: of([]),
 }))
 vi.mock("@/domains/extension/signet", () => ({ signetAccount$, signetSdk: () => ({ send }) }))
 vi.mock("@/domains/common/utils/toast", () => ({ toastExtrinsic }))

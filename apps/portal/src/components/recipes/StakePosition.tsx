@@ -216,16 +216,6 @@ const UnstakingStatus = (props: {
 	</Tooltip>
 )
 
-const FastUnstakingStatus = (props: {
-	amount: ReactNode
-	status: "in-head" | "in-queue" | undefined
-}) => (
-	<SurfaceButton leadingIcon={<CircularProgressIndicator />} disabled className="!w-full">
-		<span className="@[100rem]:hidden">Fast unstaking </span>
-		{props.amount}
-	</SurfaceButton>
-)
-
 export const StakePosition = Object.assign(
 	(props: StakePositionProps) => {
 		const shouldRenderMenuBtn = props.unstakeButton || props.lockedButton || props.menuButton
@@ -397,7 +387,6 @@ export const StakePosition = Object.assign(
 		WithdrawButton,
 		LockedButton,
 		UnstakingStatus,
-		FastUnstakingStatus,
 		Skeleton: StakePositionSkeleton,
 	}
 )

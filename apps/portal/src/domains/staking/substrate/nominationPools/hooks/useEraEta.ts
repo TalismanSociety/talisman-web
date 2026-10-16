@@ -17,3 +17,5 @@ export const useEraEtaFormatter = () => {
 		[babeRuntime.lookup, sessionProgress]
 	)
 }
+
+export const useEraEta = (erasOrSessions: number) => useEraEtaFormatter()(erasOrSessions)
