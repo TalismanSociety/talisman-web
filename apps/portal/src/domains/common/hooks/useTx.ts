@@ -1,6 +1,7 @@
 import { toHex } from "@polkadot-api/utils"
 import { camelCase } from "lodash"
 import type { Transaction, TxCallData, TxEvent } from "polkadot-api"
+import { getFakeTxCreator } from "polkadot-api/tx-creator"
 import { useCallback, useContext, useMemo, useRef, useState } from "react"
 import { firstValueFrom, map } from "rxjs"
 
@@ -31,7 +32,7 @@ export const useTxLoadableState = () => useState<TxLoadable>(IDLE_TX)
 export type TxBuilder<Args extends unknown[]> = (
 	runtime: ChainRuntime,
 	...args: Args
-) => Transaction
+) => Transaction | Promise<Transaction>
 
 type CallName = { module: string; section: string }
 
@@ -96,13 +97,10 @@ const submitTx = async (
 	)
 }
 
-export const estimateTxFee = async (genesisHash: string, address: string, tx: Transaction) => {
-	const txCreator = await txCreatorOf(address)
-	if (!txCreator) throw new Error(`No connected wallet can sign for ${address}`)
-	return tx.getEstimatedFees(txCreator, {
+export const estimateTxFee = (genesisHash: string, address: string, tx: Transaction) =>
+	tx.getEstimatedFees(getFakeTxCreator(address), {
 		customSignedExtensions: customSignedExtensionsFor(genesisHash),
 	})
-}
 
 const networkOf = (genesisHash: `0x${string}`) =>
 	firstValueFrom(networksByGenesisHash$.pipe(map((networks) => networks[genesisHash])))
@@ -128,7 +126,7 @@ export const useTx = <Args extends unknown[]>(
 					networkOf(genesisHash),
 					firstValueFrom(signetAccount$),
 				])
-				const tx = builder.current(runtime, ...args)
+				const tx = await builder.current(runtime, ...args)
 				const signingWithSignet = signetAccount?.address === address
 				const promise = signingWithSignet
 					? sendThroughSignet(tx)

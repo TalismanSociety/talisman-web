@@ -2,10 +2,12 @@ import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import BN from "bn.js"
 import type { ReactNode } from "react"
-import { Suspense, useMemo } from "react"
+import { Suspense, useContext, useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import type { Account } from "@/domains/accounts/recoils"
+import { ChainContext } from "@/domains/chains/contexts"
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
+import { useSubtensorBalance } from "@/domains/staking/subtensor/chain"
 import { useAddStakeForm } from "@/domains/staking/subtensor/hooks/forms"
 import { useDelegateApr } from "@/domains/staking/subtensor/hooks/useApr"
 import { useStake } from "@/domains/staking/subtensor/hooks/useStake"
@@ -21,12 +23,14 @@ type StakeFormProps = IncompleteSelectionStakeFormProps & {
 }
 
 export const StakeForm = (props: StakeFormProps) => {
+	const { genesisHash } = useContext(ChainContext)
+	const balance = useSubtensorBalance(genesisHash, props.account.address)
 	const { stakes } = useStake(props.account)
 	const stake = stakes?.find(
 		(stake) => stake.hotkey === props.delegate && Number(stake.netuid) === Number(props.netuid)
 	)
 	const { input, amount, transferable, extrinsic, ready, error, isLoading, setInput } =
-		useAddStakeForm(props.account, stake, props.delegate, props.netuid)
+		useAddStakeForm(props.account, balance, stake, props.delegate, props.netuid)
 	const navigate = useNavigate()
 
 	const queryClient = useQueryClient()

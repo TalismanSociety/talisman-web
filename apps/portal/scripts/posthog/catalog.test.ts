@@ -39,20 +39,30 @@ describe("catalogOf", () => {
 		])
 	})
 
-	it("declares $exception with no properties yet, never seeded", () => {
+	it("declares $exception with its class, category and mechanism, never seeded", () => {
 		expect(catalog.events.find((e) => e.name === "$exception")).toEqual({
 			name: "$exception",
-			description: "An error report: its kind and where it was caught, never its message",
-			properties: [],
+			description: "An error report: its class, category and how it was caught, never its message",
+			properties: ["exception_type", "error_category", "mechanism", "handled"],
 			seedable: false,
+		})
+		expect(catalog.properties.find((property) => property.name === "handled")).toMatchObject({
+			posthogType: "Boolean",
+			isSuper: false,
 		})
 	})
 
-	it("declares environment as the one super property", () => {
+	it("declares environment and app_version as the super properties", () => {
 		expect(catalog.properties.filter((property) => property.isSuper)).toEqual([
 			{
 				name: "environment",
 				description: "Where the portal ran: production, a preview Worker or localhost",
+				posthogType: "String",
+				isSuper: true,
+			},
+			{
+				name: "app_version",
+				description: "Git commit the portal was built from, or unknown",
 				posthogType: "String",
 				isSuper: true,
 			},
@@ -78,6 +88,7 @@ describe("seedBatch", () => {
 		for (const { properties } of batch)
 			expect(properties).toMatchObject({
 				environment: "development",
+				app_version: "unknown",
 				$process_person_profile: false,
 				$geoip_disable: true,
 			})
@@ -86,7 +97,7 @@ describe("seedBatch", () => {
 	it("sends only values the client's own catalog accepts", () => {
 		for (const { event, properties } of batch)
 			for (const [key, value] of Object.entries(properties))
-				if (!key.startsWith("$") && key !== "environment")
+				if (!key.startsWith("$") && key !== "environment" && key !== "app_version")
 					expect(isCatalogValue(event, key, value), `${event}.${key}`).toBe(true)
 	})
 

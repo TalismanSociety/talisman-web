@@ -41,6 +41,8 @@ const browserNodePolyfills = (): Plugin[] => {
 }
 
 export default defineConfig({
+	build: { sourcemap: "hidden" },
+	environments: { ssr: { build: { sourcemap: true } } },
 	optimizeDeps: {
 		// getting dev error without this setting
 		exclude: ["node_modules/.vite/deps"],

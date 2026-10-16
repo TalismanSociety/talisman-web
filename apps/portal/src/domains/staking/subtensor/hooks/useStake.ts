@@ -4,8 +4,8 @@ import {
 	ROOT_NETUID,
 } from "@/components/widgets/staking/subtensor/constants"
 import type { Account } from "@/domains/accounts/recoils"
+import { useChainState } from "@/domains/chains/hooks"
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
-import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
 import { useTokenAmount } from "@/domains/common/hooks/useTokenAmount"
 import type { SubnetData } from "@/domains/staking/subtensor/types"
 import type { Decimal } from "@/util/Decimal"
@@ -31,9 +31,8 @@ export type Stake = {
 }
 
 export const useStake = (account: Account): Stake => {
-	const api = useRecoilValue(useSubstrateApiState())
 	const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
-	const nativeToken = api.registry.chainTokens[0] || "TAO"
+	const nativeToken = useRecoilValue(useChainState()).nativeToken?.symbol || "TAO"
 	const { subnetData } = useCombineSubnetData()
 	const { data: stakeInfoForColdKey } = useGetStakeInfoForColdKey(account.address)
 

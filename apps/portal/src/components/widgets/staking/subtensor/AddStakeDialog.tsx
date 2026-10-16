@@ -1,10 +1,12 @@
 import { useQueryClient } from "@tanstack/react-query"
-import { useMemo } from "react"
+import { useContext, useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { AddStakeDialog as _AddStakeDialog } from "@/components/recipes/AddStakeDialog"
 import type { Account } from "@/domains/accounts/recoils"
+import { ChainContext } from "@/domains/chains/contexts"
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
-import { useExtrinsicInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
+import { useTxInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
+import { useSubtensorBalance } from "@/domains/staking/subtensor/chain"
 import { useAddStakeForm } from "@/domains/staking/subtensor/hooks/forms"
 import { useCombinedBittensorValidatorsData } from "@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData"
 import { useCombineSubnetData } from "@/domains/staking/subtensor/hooks/useCombineSubnetData"
@@ -27,6 +29,8 @@ const SubtensorAddStakeDialog = ({
 	delegate,
 	onRequestDismiss,
 }: SubtensorAddStakeDialogProps) => {
+	const { genesisHash } = useContext(ChainContext)
+	const balance = useSubtensorBalance(genesisHash, account.address)
 	const {
 		input,
 		setInput,
@@ -39,7 +43,7 @@ const SubtensorAddStakeDialog = ({
 		slippage,
 		resultingTao,
 		resultingAlphaInTaoAmount,
-	} = useAddStakeForm(account, stake, delegate, stake.netuid)
+	} = useAddStakeForm(account, balance, stake, delegate, stake.netuid)
 
 	const { subnetData } = useCombineSubnetData()
 	const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
@@ -66,7 +70,7 @@ const SubtensorAddStakeDialog = ({
 
 	const newFiatAmount = stake.netuid === ROOT_NETUID ? resultingTao : resultingAlphaInTaoAmount
 
-	useExtrinsicInBlockOrErrorEffect(() => onRequestDismiss(), extrinsic)
+	useTxInBlockOrErrorEffect(() => onRequestDismiss(), extrinsic)
 
 	const selectedDelegate = combinedValidatorsData.find((validator) => validator.poolId === delegate)
 	const { name } = selectedDelegate || { name: "" }

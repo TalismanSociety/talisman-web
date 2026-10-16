@@ -56,7 +56,7 @@ const StakeHeader = () => {
 		<SectionHeader
 			headlineContent="Staking"
 			supportingContent={
-				<ErrorBoundary fallback={<></>}>
+				<ErrorBoundary>
 					<Suspense>
 						<StakeTotal />
 					</Suspense>
