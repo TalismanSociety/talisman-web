@@ -1,32 +1,13 @@
 import type { MutateOptions } from "@tanstack/react-query"
-import { usePostHog } from "posthog-js/react"
 import type { Abi, ContractFunctionArgs, ContractFunctionName, WriteContractErrorType } from "viem"
 import type { Config, ResolvedRegister, UseWriteContractParameters } from "wagmi"
 import { useAccount, useSwitchChain, useWriteContract } from "wagmi"
 import type { WriteContractData, WriteContractVariables } from "wagmi/query"
+import { track } from "@/domains/analytics/client"
+import { contractFunctionOf, evmChainOf } from "@/domains/analytics/events/transactions"
 import { Text } from "@/ui/atoms/Text"
 import { ToastMessage } from "@/ui/molecules/ToastBar"
 import { toast } from "@/ui/molecules/Toaster"
-
-/**
- * PostHog can't handle BigInt
- */
-const sanitizePostHogProperties = (object: unknown) => {
-	if (typeof object === "bigint") {
-		return object.toString()
-	}
-
-	if (typeof object !== "object" || object === null) {
-		return object
-	}
-
-	return Object.fromEntries(
-		Object.entries(object).map(([key, value]): [any, any] => [
-			key,
-			sanitizePostHogProperties(value),
-		])
-	)
-}
 
 export const useWagmiWriteContract = <
 	TConfig extends Config = ResolvedRegister["config"],
@@ -34,7 +15,6 @@ export const useWagmiWriteContract = <
 >(
 	config?: UseWriteContractParameters<TConfig, TContext>
 ) => {
-	const posthog = usePostHog()
 	const { switchChainAsync } = useSwitchChain()
 	const { chain } = useAccount()
 
@@ -106,18 +86,10 @@ export const useWagmiWriteContract = <
 				},
 			})
 
-			void promise.then((result) =>
-				posthog.capture("Write to EVM contract", {
-					chainId: variables.chainId,
-					hash: result,
-					contractAddress: variables.address,
-					functionName: variables.functionName,
-					...("args" in variables
-						? { args: sanitizePostHogProperties(variables.args) }
-						: undefined),
-					...("value" in variables
-						? { value: sanitizePostHogProperties(variables.value) }
-						: undefined),
+			void promise.then(() =>
+				track("Write to EVM contract", {
+					chain: evmChainOf(variables.chainId ?? chain?.id),
+					functionName: contractFunctionOf(variables.functionName),
 				})
 			)
 

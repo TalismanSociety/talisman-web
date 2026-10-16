@@ -3,12 +3,13 @@ import type { BaseWallet } from "@polkadot-onboard/core"
 import { WalletAggregator } from "@polkadot-onboard/core"
 import { InjectedWalletProvider } from "@polkadot-onboard/injected-wallets"
 import { jsonParser, string } from "@recoiljs/refine"
-import { usePostHog } from "posthog-js/react"
 import { useEffect } from "react"
 import { atom, selector, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import polkadotJsWalletLogo from "@/assets/polkadot-js-wallet.svg"
 import talismanWalletLogo from "@/assets/talisman-wallet.svg"
 import { substrateInjectedAccountsState } from "@/domains/accounts/recoils"
+import { track } from "@/domains/analytics/client"
+import { substrateWalletOf } from "@/domains/analytics/events/extensions"
 import { storageEffect } from "@/domains/common/effects"
 import { toast } from "@/ui/molecules/Toaster"
 
@@ -96,8 +97,6 @@ export const useSubstrateExtensionEffect = () => {
 		}
 	}, [connectedWalletId, setConnectedWallet, setInjectedAccounts])
 
-	const posthog = usePostHog()
-
 	useEffect(() => {
 		void (async () => {
 			const wallets = await walletAggregator.getWallets()
@@ -110,8 +109,8 @@ export const useSubstrateExtensionEffect = () => {
 					try {
 						await walletToConnect.connect()
 						setConnectedWallet(walletToConnect)
-						posthog.capture("Substrate extensions connected", {
-							$set: { substrateExtensions: [walletToConnect.metadata.id] },
+						track("Substrate extensions connected", {
+							wallet: substrateWalletOf(walletToConnect.metadata.id),
 						})
 					} catch (error) {
 						setConnectedWalletId(undefined)
@@ -123,13 +122,7 @@ export const useSubstrateExtensionEffect = () => {
 
 			setWalletConnectionInitialised(true)
 		})()
-	}, [
-		connectedWalletId,
-		posthog,
-		setConnectedWallet,
-		setConnectedWalletId,
-		setWalletConnectionInitialised,
-	])
+	}, [connectedWalletId, setConnectedWallet, setConnectedWalletId, setWalletConnectionInitialised])
 
 	// Auto connect on launch if Talisman extension is installed
 	// and user has not explicitly disable wallet connection

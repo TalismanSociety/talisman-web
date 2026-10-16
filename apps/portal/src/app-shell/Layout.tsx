@@ -1,5 +1,4 @@
 import { Outlet, useLocation } from "@tanstack/react-router"
-import { usePostHog } from "posthog-js/react"
 import { Suspense, useEffect } from "react"
 
 import { LookupAddressSync } from "@/app-shell/LookupAddressSync"
@@ -15,12 +14,6 @@ import { WalletConnectionSideSheet } from "@/components/widgets/WalletConnection
 
 export const Layout = () => {
 	const location = useLocation()
-	const posthog = usePostHog()
-
-	useEffect(() => {
-		posthog?.capture("$pageview")
-	}, [location.pathname, posthog])
-
 	useEffect(() => {
 		if (location.hash !== "") {
 			const observer = new MutationObserver(() => {

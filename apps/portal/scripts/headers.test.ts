@@ -82,7 +82,7 @@ describe("cspHeader", () => {
 	it("allows the shell's inline scripts by hash, wasm, and the sources the portal loads", () => {
 		expect(cspHeader(shell).split("; ")).toEqual([
 			"default-src 'self'",
-			"script-src 'self' 'wasm-unsafe-eval' 'sha256-s78eJFAKThpAHttUBoue+mb8FAxQlEk1xMSKUFlhBXs=' 'sha256-FaFkoXjhIeCM3lyKXkAbhu1z9AUQTBId0sahMexEGEs=' https://us-assets.i.posthog.com",
+			"script-src 'self' 'wasm-unsafe-eval' 'sha256-s78eJFAKThpAHttUBoue+mb8FAxQlEk1xMSKUFlhBXs=' 'sha256-FaFkoXjhIeCM3lyKXkAbhu1z9AUQTBId0sahMexEGEs='",
 			"style-src 'self' 'unsafe-inline'",
 			"img-src 'self' data: blob: https:",
 			"font-src 'self'",
@@ -106,7 +106,7 @@ describe("cspHeader", () => {
 
 	it("hashes inline scripts whatever the tag case", () => {
 		expect(cspHeader('<SCRIPT>a\nb</SCRIPT ><Script SRC="/assets/index.js"></Script>')).toContain(
-			"script-src 'self' 'wasm-unsafe-eval' 'sha256-fhj3NzEbLcOy8mndeDlrA1HxT7Zu+oefdoyyMYGIPHg=' https://us-assets.i.posthog.com;"
+			"script-src 'self' 'wasm-unsafe-eval' 'sha256-fhj3NzEbLcOy8mndeDlrA1HxT7Zu+oefdoyyMYGIPHg=';"
 		)
 	})
 

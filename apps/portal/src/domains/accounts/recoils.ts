@@ -121,6 +121,11 @@ export const ownAccountsState = selector({
 	},
 })
 
+export const ownPortfolioAccountsState = selector({
+	key: "OwnPortfolioAccounts",
+	get: ({ get }) => get(ownAccountsState).filter((x) => !x.readonly || x.partOfPortfolio),
+})
+
 export const accountsState = selector({
 	key: "Accounts",
 	get: ({ get }) =>
