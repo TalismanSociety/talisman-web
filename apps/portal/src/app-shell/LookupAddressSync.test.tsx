@@ -8,8 +8,9 @@ import {
 } from "@tanstack/react-router"
 import { act, render, screen, waitFor } from "@testing-library/react"
 import { RecoilRoot, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil"
-import { describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 
+import { setLookupAccountAddress } from "@/domains/accounts/accounts"
 import { lookupAccountAddressState } from "@/domains/accounts/recoils"
 import { parseSearch, stringifySearch, validateSearch } from "@/util/search"
 
@@ -86,6 +87,8 @@ const url = ({ router }: Awaited<ReturnType<typeof renderPortal>>) => router.his
 const click = (name: string) => act(() => screen.getByRole("button", { name }).click())
 
 describe("lookup-address search param", () => {
+	beforeEach(() => setLookupAccountAddress(alice))
+
 	it("reads the lookup address from the URL on load, without rendering a non-lookup portfolio first", async () => {
 		renderedLookupAddresses.length = 0
 		const portal = await renderPortal()

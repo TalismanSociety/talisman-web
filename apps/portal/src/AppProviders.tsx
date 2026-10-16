@@ -13,7 +13,7 @@ import { FullscreenLoader } from "@/components/molecules/FullscreenLoader"
 import { Development } from "@/components/widgets/development/Development"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { PrivacySettingsDialog } from "@/components/widgets/PrivacySettings/PrivacySettingsDialog"
-import { AccountWatcher, SignetWatcher } from "@/domains/accounts/recoils"
+import { AccountWatcher } from "@/domains/accounts/AccountWatcher"
 import { BalancesReporter, BalancesWatcher } from "@/domains/balances/BalancesWatcher"
 import {
 	chainDeriveState,
@@ -46,7 +46,6 @@ const AppProviders = ({ children }: { children: ReactNode }) => (
 								>
 									<ExtensionWatcher />
 									<AccountWatcher />
-									<SignetWatcher />
 									<BalancesWatcher />
 									<BalancesReporter />
 									<Suspense fallback={<FullscreenLoader />}>

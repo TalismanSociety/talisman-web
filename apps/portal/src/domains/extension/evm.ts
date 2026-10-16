@@ -1,7 +1,6 @@
 import { useEffect } from "react"
-import { useSetRecoilState } from "recoil"
 import { useAccount, useConnect, useConnections, useConnectors } from "wagmi"
-import { wagmiAccountsState } from "@/domains/accounts/recoils"
+import { setWagmiAccounts } from "@/domains/accounts/accounts"
 import { track } from "@/domains/analytics/client"
 import { evmWalletOf } from "@/domains/analytics/events/extensions"
 import { toast } from "@/ui/molecules/Toaster"
@@ -35,11 +34,8 @@ export const useEvmExtensionEffect = () => {
 	}, [connections])
 
 	const { addresses } = useAccount()
-	const setWagmiAccounts = useSetRecoilState(wagmiAccountsState)
 
 	useEffect(() => {
-		setWagmiAccounts(
-			addresses?.map((address) => ({ address, type: "ethereum", canSignEvm: true })) ?? []
-		)
-	}, [addresses, setWagmiAccounts])
+		setWagmiAccounts(addresses ?? [])
+	}, [addresses])
 }

@@ -1,6 +1,8 @@
 import type { ApiPromise } from "@polkadot/api"
-import { atom, selectorFamily } from "recoil"
+import { selectorFamily } from "recoil"
 
+import { chainReadId$ } from "@/domains/common/chainReadId"
+import { atomFromSubject } from "@/domains/common/recoil-bridge"
 import { substrateApiState } from "@/domains/common/recoils/api"
 import { connectedSubstrateWalletState } from "@/domains/extension/substrate"
 
@@ -31,12 +33,4 @@ export const paymentInfoState = selectorFamily({
 	dangerouslyAllowMutability: true,
 })
 
-/**
- * Used to refresh all chain state reads where a subscription cannot be establish
- * TODO: right now this is a dumb counter that refresh all read on every extrinsic
- * we should make this into a atom family keyed by extrinsic type
- */
-export const chainReadIdState = atom({
-	key: "ChainReadId",
-	default: 0,
-})
+export const chainReadIdState = atomFromSubject("ChainReadId", chainReadId$)

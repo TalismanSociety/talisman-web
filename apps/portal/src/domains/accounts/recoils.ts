@@ -1,265 +1,123 @@
-import type { InjectedAccount } from "@polkadot/extension-inject/types"
-import { array, jsonParser, object, optional, string } from "@recoiljs/refine"
-import { useSignetSdk } from "@talismn/signet-apps-sdk"
-import { uniqBy } from "lodash"
-import { useEffect } from "react"
-import { useUpdateEffect } from "react-use"
-import { atom, selector, useRecoilValue, useSetRecoilState, waitForAll } from "recoil"
-import { isAddress as isEvmAddress } from "viem"
+import { selector } from "recoil"
+import { atomFromObservable, atomFromSubject } from "@/domains/common/recoil-bridge"
+import { signetAccount$ } from "@/domains/extension/signet"
 
-import { storageEffect } from "@/domains/common/effects"
-import { tryParseSubstrateOrEthereumAddress } from "@/util/addressValidation"
-import { Maybe } from "@/util/monads"
+import {
+	type Account,
+	accounts$,
+	injectedAccounts$,
+	lookupAccountAddress$,
+	ownAccounts$,
+	ownPortfolioAccounts$,
+	portfolioAccounts$,
+	type ReadonlyAccount,
+	readonlyAccounts$,
+	selectedAccountAddresses$,
+	selectedAccounts$,
+	selectedEvmAccounts$,
+	selectedSubstrateAccounts$,
+	setStoredReadonlyAccounts,
+	substrateAccounts$,
+	writeableAccounts$,
+	writeableEvmAccounts$,
+	writeableSubstrateAccounts$,
+} from "./accounts"
 
-type AccountWithOrigin = InjectedAccount & { origin?: "injected" | "local" }
+export type { Account, ReadonlyAccount } from "./accounts"
+export { lookupAddressSearchKey } from "./accounts"
 
-type AccountWithReadonlyInfo = InjectedAccount &
-	({ readonly?: false } | { readonly: true; partOfPortfolio: boolean })
+const NO_ACCOUNTS: Account[] = []
 
-export type Account = AccountWithOrigin & AccountWithReadonlyInfo & { canSignEvm?: boolean }
+export const lookupAccountAddressState = atomFromSubject(
+	"LookupAccountAddress",
+	lookupAccountAddress$
+)
 
-export type ReadonlyAccount = Pick<Account, "address" | "name">
+export const substrateInjectedAccountsState = atomFromObservable(
+	"SubstrateInjectedAccounts",
+	injectedAccounts$,
+	NO_ACCOUNTS
+)
 
-export const lookupAddressSearchKey = "lookup-address"
-
-export const lookupAccountAddressState = atom<string | undefined>({
-	key: "LookupAccountAddress",
-	default: new URLSearchParams(globalThis.location.search).get(lookupAddressSearchKey) ?? undefined,
-})
-
-const lookupAccountsState = selector<Account[]>({
-	key: "LookupAccount",
-	get: ({ get }) =>
-		Maybe.of(get(lookupAccountAddressState)).mapOr([] as Account[], (address) =>
-			address
-				.split(",")
-				.map((x) => x.trim())
-				.filter((x) => x !== "")
-				.map((address) => tryParseSubstrateOrEthereumAddress(address))
-				.filter((result): result is NonNullable<typeof result> => result !== undefined)
-				.map((address) => ({
-					address,
-					readonly: true,
-					partOfPortfolio: false,
-					type: isEvmAddress(address) ? ("ethereum" as const) : undefined,
-				}))
-		),
-})
-
-const _substrateInjectedAccountsState = atom<AccountWithReadonlyInfo[]>({
-	key: "_SubstrateInjectedAccounts",
-	default: [],
-})
-
-export const substrateInjectedAccountsState = selector<Account[]>({
-	key: "SubstrateInjectedAccounts",
-	get: ({ get }) => get(_substrateInjectedAccountsState).map((x) => ({ ...x, origin: "injected" })),
-	set: ({ set }, newValue) => set(_substrateInjectedAccountsState, newValue),
-})
-
-const _readonlyAccountsState = atom<ReadonlyAccount[]>({
-	key: "readonly_accounts",
-	default: [],
-	effects: [
-		storageEffect(localStorage, {
-			parser: jsonParser(
-				array(
-					object({
-						address: string(),
-						name: optional(string()),
-					})
-				)
-			),
-		}),
-	],
-})
+const readonlyAccountsAtom = atomFromObservable(
+	"ReadonlyAccountsBridge",
+	readonlyAccounts$,
+	NO_ACCOUNTS
+)
 
 export const readOnlyAccountsState = selector<Account[]>({
 	key: "ReadonlyAccounts",
-	get: ({ get }) => {
-		const injectedAccounts = get(substrateInjectedAccountsState)
-		const injectedAddresses = injectedAccounts.map((x) => x.address)
-		return [
-			...injectedAccounts.filter((x) => x.readonly && !x.partOfPortfolio),
-			...get(_readonlyAccountsState)
-				.filter((x) => !injectedAddresses.includes(x.address))
-				.map((x) => ({
-					...x,
-					origin: "local" as const,
-					readonly: true,
-					partOfPortfolio: false,
-					type: isEvmAddress(x.address) ? ("ethereum" as const) : undefined,
-				})),
-		]
-	},
-	set: ({ set }, newValue) => set(_readonlyAccountsState, newValue),
+	get: ({ get }) => get(readonlyAccountsAtom),
+	set: (_, accounts) => setStoredReadonlyAccounts(accounts as ReadonlyAccount[]),
 })
 
-export const wagmiAccountsState = atom<Account[]>({
-	key: "WagmiAccounts",
-	default: [],
-})
+export const ownAccountsState = atomFromObservable("OwnAccounts", ownAccounts$, NO_ACCOUNTS)
 
-export const ownAccountsState = selector({
-	key: "OwnAccounts",
-	get: ({ get }) => {
-		const signetAccount = get(signetAccountState)
-		if (signetAccount !== undefined)
-			return [{ ...signetAccount, readonly: false, partOfPortfolio: true }]
+export const ownPortfolioAccountsState = atomFromObservable(
+	"OwnPortfolioAccounts",
+	ownPortfolioAccounts$,
+	NO_ACCOUNTS
+)
 
-		const substrateInjecteds = get(substrateInjectedAccountsState)
-		// Hack to retrieve name from that is only available from substrate injected accounts
-		const wagmiInjected = get(wagmiAccountsState).map((x) => ({
-			...x,
-			name: substrateInjecteds.find((y) => y.address === x.address)?.name,
-		}))
+export const accountsState = atomFromObservable("Accounts", accounts$, NO_ACCOUNTS)
 
-		return uniqBy(
-			[...wagmiInjected, ...substrateInjecteds, ...get(readOnlyAccountsState)],
-			(x) => x.address
-		)
-	},
-})
+export const portfolioAccountsState = atomFromObservable(
+	"PortfolioAccounts",
+	portfolioAccounts$,
+	NO_ACCOUNTS
+)
 
-export const ownPortfolioAccountsState = selector({
-	key: "OwnPortfolioAccounts",
-	get: ({ get }) => get(ownAccountsState).filter((x) => !x.readonly || x.partOfPortfolio),
-})
+export const writeableAccountsState = atomFromObservable(
+	"WriteableAccounts",
+	writeableAccounts$,
+	NO_ACCOUNTS
+)
 
-export const accountsState = selector({
-	key: "Accounts",
-	get: ({ get }) =>
-		get(signetAccountState) !== undefined
-			? get(ownAccountsState)
-			: uniqBy([...get(ownAccountsState), ...get(lookupAccountsState)], (x) => x.address),
-})
+export const writeableSubstrateAccountsState = atomFromObservable(
+	"WriteableSubstrateAccounts",
+	writeableSubstrateAccounts$,
+	NO_ACCOUNTS
+)
 
-export const portfolioAccountsState = selector({
-	key: "PortfolioAccounts",
-	get: ({ get }) => get(accountsState).filter((x) => !x.readonly || x.partOfPortfolio),
-})
+export const writeableEvmAccountsState = atomFromObservable(
+	"WriteableEvmAccounts",
+	writeableEvmAccounts$,
+	NO_ACCOUNTS
+)
 
-export const writeableAccountsState = selector({
-	key: "WriteableAccounts",
-	get: ({ get }) => get(accountsState).filter((x) => !x.readonly),
-})
+export const evmSignableAccountsState = atomFromObservable(
+	"EvmSignableAccounts",
+	writeableEvmAccounts$,
+	NO_ACCOUNTS
+)
 
-export const writeableSubstrateAccountsState = selector({
-	key: "WriteableSubstrateAccounts",
-	get: ({ get }) => get(writeableAccountsState).filter((x) => x.type !== "ethereum"),
-})
+export const substrateAccountsState = atomFromObservable(
+	"SubstrateAccounts",
+	substrateAccounts$,
+	NO_ACCOUNTS
+)
 
-export const writeableEvmAccountsState = selector({
-	key: "WriteableEvmAccounts",
-	get: ({ get }) => get(writeableAccountsState).filter((x) => x.type === "ethereum"),
-})
+export const selectedAccountAddressesState = atomFromSubject(
+	"SelectedAccountAddresses",
+	selectedAccountAddresses$
+)
 
-export const evmSignableAccountsState = selector({
-	key: "EvmSignableAccounts",
-	get: ({ get }) => get(writeableAccountsState).filter((x) => x.type === "ethereum"),
-})
+export const selectedAccountsState = atomFromObservable(
+	"SelectedAccounts",
+	selectedAccounts$,
+	NO_ACCOUNTS
+)
 
-export const substrateAccountsState = selector({
-	key: "SubstrateAccounts",
-	get: ({ get }) => {
-		const accounts = get(accountsState)
-		return accounts.filter((x) => x.type !== "ethereum")
-	},
-})
+export const selectedSubstrateAccountsState = atomFromObservable(
+	"SelectedSubstrateAccounts",
+	selectedSubstrateAccounts$,
+	NO_ACCOUNTS
+)
 
-export const selectedAccountAddressesState = atom<string[] | undefined>({
-	key: "SelectedAccountAddresses",
-	default: undefined,
-})
+export const selectedEvmAccountsState = atomFromObservable(
+	"SelectedEvmAccountsState",
+	selectedEvmAccounts$,
+	NO_ACCOUNTS
+)
 
-// TODO: either clean this up or add some tests
-export const selectedAccountsState = selector({
-	key: "SelectedAccounts",
-	get: ({ get }) => {
-		const signetAccount = get(signetAccountState)
-		if (signetAccount !== undefined) return [signetAccount]
-
-		const [accounts, portfolioAccounts, readOnlyAccounts, selectedAddresses, lookupAccounts] = get(
-			waitForAll([
-				accountsState,
-				portfolioAccountsState,
-				readOnlyAccountsState,
-				selectedAccountAddressesState,
-				lookupAccountsState,
-			])
-		)
-
-		if (lookupAccounts.length > 0) {
-			return lookupAccounts
-		}
-
-		const onlyHasReadonlyAccounts = portfolioAccounts.length === 0 && readOnlyAccounts.length > 0
-		const defaultDisplayedAccounts = onlyHasReadonlyAccounts
-			? Maybe.of(readOnlyAccounts[0]).mapOr([], (x) => [x])
-			: portfolioAccounts
-
-		if (selectedAddresses === undefined) {
-			return defaultDisplayedAccounts
-		}
-
-		const selectedAccounts = accounts.filter(({ address }) => selectedAddresses.includes(address))
-
-		// TODO: clean this up
-		return selectedAccounts.length === 0 ? defaultDisplayedAccounts : selectedAccounts
-	},
-})
-
-export const selectedSubstrateAccountsState = selector({
-	key: "SelectedSubstrateAccounts",
-	get: ({ get }) => {
-		return get(selectedAccountsState).filter((x) => x.type !== "ethereum")
-	},
-})
-
-export const selectedEvmAccountsState = selector({
-	key: "SelectedEvmAccountsState",
-	get: ({ get }) => {
-		const accounts = get(selectedAccountsState)
-		return accounts.filter((x) => x.type === "ethereum")
-	},
-})
-
-export const AccountWatcher = () => {
-	const selectedAddresses = useRecoilValue(selectedAccountAddressesState)
-	const setLookupAccountAddress = useSetRecoilState(lookupAccountAddressState)
-
-	useUpdateEffect(() => {
-		setLookupAccountAddress(undefined)
-	}, [selectedAddresses])
-
-	return null
-}
-
-export const signetAccountState = atom<InjectedAccount | undefined>({
-	key: "SignetAccount",
-	default: undefined,
-})
-
-export const SignetWatcher = () => {
-	const { inSignet, sdk } = useSignetSdk()
-	const setSignetVaultAccount = useSetRecoilState(signetAccountState)
-
-	useEffect(() => {
-		if (inSignet) {
-			sdk
-				.getAccount()
-				.then((vault) => {
-					setSignetVaultAccount({
-						address: vault.vaultAddress,
-						genesisHash: vault.chain.genesisHash,
-						name: vault.name,
-					})
-				})
-				.catch((e) => {
-					console.error("Failed to inject Signet account", e)
-				})
-		}
-	}, [inSignet, sdk, setSignetVaultAccount])
-
-	return null
-}
+export const signetAccountState = atomFromObservable("SignetAccount", signetAccount$, undefined)
