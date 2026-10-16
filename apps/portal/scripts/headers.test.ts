@@ -2,6 +2,7 @@
 import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
 import { cspHeader, withCspHeader } from "./csp-headers"
+import { withFrameAncestors } from "./frame-ancestors"
 import { headerRules } from "./headers-file"
 
 const sourceHeaders = readFileSync(new URL("../public/_headers", import.meta.url), "utf8")
@@ -12,8 +13,9 @@ const shell = [
 	"<script>document.currentScript.remove()</script></body></html>",
 ].join("")
 
-const shippedHeaders = withCspHeader(sourceHeaders, cspHeader(shell))
-const rules = headerRules(shippedHeaders)
+const pagesHeaders = withCspHeader(sourceHeaders, cspHeader(shell))
+const workerHeaders = withFrameAncestors(pagesHeaders)
+const rules = headerRules(workerHeaders)
 
 describe("_headers", () => {
 	it("caches hashed assets for a year", () => {
@@ -36,19 +38,40 @@ describe("_headers", () => {
 		])
 	})
 
-	it("ships the CSP in report-only mode on every path", () => {
+	it("ships the CSP in report-only mode and enforces only frame-ancestors, on every path", () => {
 		const rootHeaders = [...(rules.get("/*")?.keys() ?? [])]
 		expect(rootHeaders).toEqual([
 			"Access-Control-Allow-Origin",
 			"Referrer-Policy",
 			"X-Content-Type-Options",
 			"Content-Security-Policy-Report-Only",
+			"Content-Security-Policy",
 		])
 	})
 
-	it("never restricts who may frame the portal", () => {
-		expect(shippedHeaders).not.toMatch(/x-frame-options|frame-ancestors/i)
-		expect(withCspHeader(sourceHeaders, "frame-ancestors 'none'")).toMatch(/frame-ancestors/)
+	it("lets only the portal itself, Signet and our workers.dev hosts frame the Worker", () => {
+		expect(rules.get("/*")?.get("Content-Security-Policy")).toBe(
+			"frame-ancestors 'self' https://signet.talisman.xyz https://*.talismn.workers.dev"
+		)
+		expect(workerHeaders.match(/frame-ancestors[^;\n]*/gi)).toEqual([
+			"frame-ancestors 'self' https://signet.talisman.xyz https://*.talismn.workers.dev",
+		])
+	})
+
+	it("never sends X-Frame-Options", () => {
+		expect(workerHeaders).not.toMatch(/x-frame-options/i)
+	})
+
+	it("keeps framing open on the Pages build", () => {
+		expect(pagesHeaders).not.toMatch(/frame-ancestors|x-frame-options/i)
+	})
+})
+
+describe("withFrameAncestors", () => {
+	it("refuses a _headers file whose /* block already sets a Content-Security-Policy", () => {
+		expect(() => withFrameAncestors(workerHeaders)).toThrow(
+			"The /* block of _headers already sets Content-Security-Policy"
+		)
 	})
 })
 
@@ -102,7 +125,7 @@ describe("withCspHeader", () => {
 		const fits = "x".repeat(1999 - "  Content-Security-Policy-Report-Only: ".length)
 		expect(withCspHeader(sourceHeaders, fits)).toContain(fits)
 		expect(() => withCspHeader(sourceHeaders, `${fits}x`)).toThrow(
-			"CSP line is 2000 characters, Cloudflare caps _headers lines at 2000"
+			"Content-Security-Policy-Report-Only line is 2000 characters, Cloudflare caps _headers lines at 2000"
 		)
 	})
 
