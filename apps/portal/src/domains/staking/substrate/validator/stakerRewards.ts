@@ -1,4 +1,4 @@
-import { firstValueFrom, Observable } from "rxjs"
+import { catchError, firstValueFrom, Observable, shareReplay } from "rxjs"
 
 import { getChainRuntime$ } from "@/domains/chains/chain-runtime"
 
@@ -20,26 +20,22 @@ export const stakerRewards = async ({
 	activeEra,
 }: StakerRewardsRequest): Promise<StakerRewards> => {
 	const runtime = await firstValueFrom(getChainRuntime$(genesisHash))
-	try {
-		const prefix = ss58PrefixOf(runtime) ?? 42
-		const chainStashes = stashes.map((stash) => chainAddressOf(prefix, stash))
-		const [eras, stakers] = await Promise.all([
-			Promise.all(rewardEras(activeEra).map((era) => eraInputs(runtime, era))),
-			stakerInputs(runtime, chainStashes, activeEra - 1),
-		])
-		const validators = new Set(
-			chainStashes.flatMap((stash) => eras.flatMap((inputs) => exposedValidators(inputs, stash)))
-		)
-		const legacyClaimed = await validatorLegacyClaimedRewards(runtime, [...validators])
-		return Object.fromEntries(
-			stakers.map((staker, index) => [stashes[index], stakerRewardsOf(eras, staker, legacyClaimed)])
-		)
-	} finally {
-		runtime.client.destroy()
-	}
+	const prefix = ss58PrefixOf(runtime) ?? 42
+	const chainStashes = stashes.map((stash) => chainAddressOf(prefix, stash))
+	const [eras, stakers] = await Promise.all([
+		Promise.all(rewardEras(activeEra).map((era) => eraInputs(runtime, era))),
+		stakerInputs(runtime, chainStashes, activeEra - 1),
+	])
+	const validators = new Set(
+		chainStashes.flatMap((stash) => eras.flatMap((inputs) => exposedValidators(inputs, stash)))
+	)
+	const legacyClaimed = await validatorLegacyClaimedRewards(runtime, [...validators])
+	return Object.fromEntries(
+		stakers.map((staker, index) => [stashes[index], stakerRewardsOf(eras, staker, legacyClaimed)])
+	)
 }
 
-export const stakerRewardsInWorker$ = (request: StakerRewardsRequest) =>
+const spawnStakerRewards$ = (request: StakerRewardsRequest) =>
 	new Observable<StakerRewards>((subscriber) => {
 		const worker = new Worker(new URL("./worker", import.meta.url), { type: "module" })
 		worker.onmessage = ({ data }: MessageEvent<StakerRewardsResponse>) => {
@@ -53,3 +49,20 @@ export const stakerRewardsInWorker$ = (request: StakerRewardsRequest) =>
 		worker.postMessage(request)
 		return () => worker.terminate()
 	})
+
+const rewardsByRequest = new Map<string, Observable<StakerRewards>>()
+
+export const stakerRewardsInWorker$ = (request: StakerRewardsRequest) => {
+	const key = `${request.genesisHash}:${request.activeEra}:${request.stashes.join(",")}`
+	const cached = rewardsByRequest.get(key)
+	if (cached) return cached
+	const rewards$ = spawnStakerRewards$(request).pipe(
+		catchError((error: unknown) => {
+			rewardsByRequest.delete(key)
+			throw error
+		}),
+		shareReplay(1)
+	)
+	rewardsByRequest.set(key, rewards$)
+	return rewards$
+}
