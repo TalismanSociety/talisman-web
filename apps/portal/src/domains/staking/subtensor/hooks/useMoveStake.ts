@@ -1,18 +1,17 @@
-import type { SubmittableExtrinsic } from "@polkadot/api/types"
-import { useMemo } from "react"
+import { useContext, useMemo } from "react"
 import { useRecoilValue } from "recoil"
 
 import {
 	MIN_SUBTENSOR_ROOTNET_STAKE,
 	ROOT_NETUID,
-	TALISMAN_STAKE_REMARK,
 } from "@/components/widgets/staking/subtensor/constants"
+import { ChainContext } from "@/domains/chains/contexts"
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
-import { useExtrinsic } from "@/domains/common/hooks/useExtrinsic"
-import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
 import { useTokenAmount } from "@/domains/common/hooks/useTokenAmount"
+import { useTx } from "@/domains/common/hooks/useTx"
 import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo"
 
+import { moveStakeCall, placeholderCall, txOf } from "../calls"
 import type { StakeItem } from "./useStake"
 
 type MoveItem = {
@@ -21,16 +20,10 @@ type MoveItem = {
 }
 
 export const useMoveStake = ({ stake, destinationHotkey }: MoveItem) => {
-	const api = useRecoilValue(useSubstrateApiState())
+	const { genesisHash } = useContext(ChainContext)
 	const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
-	const {
-		hotkey: originHotkey,
-		netuid: originNetuid,
-		stake: alphaAmount,
-		netuid,
-		symbol,
-	} = stake || {}
+	const { hotkey: originHotkey, stake: alphaAmount, netuid, symbol } = stake || {}
 	const formattedAlphaAmount = nativeTokenAmount.fromPlanckOrUndefined(alphaAmount, symbol)
 
 	const { minAlphaUnstake } = useGetDynamicTaoStakeInfo({
@@ -69,23 +62,20 @@ export const useMoveStake = ({ stake, destinationHotkey }: MoveItem) => {
 
 	const isReady = stake && destinationHotkey && originHotkey !== destinationHotkey
 
-	const tx: SubmittableExtrinsic<any> = useMemo(() => {
-		// Return null if stake or destinationHotkey is not defined
-		if (!stake || !destinationHotkey) return api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK)
+	const call = useMemo(
+		() =>
+			stake && destinationHotkey
+				? moveStakeCall({
+						originHotkey: stake.hotkey,
+						destinationHotkey,
+						netuid: stake.netuid,
+						alphaAmount: stake.stake,
+					})
+				: placeholderCall(),
+		[stake, destinationHotkey]
+	)
 
-		return api.tx.utility.batchAll([
-			(api.tx as any)?.subtensorModule?.moveStake?.(
-				originHotkey,
-				destinationHotkey,
-				originNetuid,
-				originNetuid, // destinationNetuid, in this case, is the same as originNetuid
-				alphaAmount
-			),
-			api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK),
-		])
-	}, [stake, destinationHotkey, api.tx, originHotkey, originNetuid, alphaAmount])
-
-	const extrinsic = useExtrinsic(tx)
+	const extrinsic = useTx(genesisHash, (runtime) => txOf(runtime, call))
 
 	return { extrinsic, isReady, isError, errorMessage }
 }

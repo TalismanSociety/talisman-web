@@ -1,26 +1,25 @@
-import type { SubmittableExtrinsic } from "@polkadot/api/types"
-import { useQueryMultiState } from "@talismn/react-polkadot-api"
 import { BigMath } from "@talismn/util"
-import { useSetAtom } from "jotai"
-import { useEffect, useMemo, useState } from "react"
-import { useRecoilValue, useRecoilValueLoadable, waitForAll } from "recoil"
+import { useQuery } from "@tanstack/react-query"
+import type { TxCallData } from "polkadot-api"
+import { useContext, useEffect, useMemo, useState } from "react"
+import { useRecoilValue } from "recoil"
+import { firstValueFrom } from "rxjs"
 import {
 	MIN_SUBTENSOR_ALPHA_STAKE,
 	MIN_SUBTENSOR_ROOTNET_STAKE,
 	ROOT_NETUID,
-	TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR,
-	TALISMAN_STAKE_REMARK,
 } from "@/components/widgets/staking/subtensor/constants"
 import type { Account } from "@/domains/accounts/recoils"
+import { getChainRuntime$ } from "@/domains/chains/chain-runtime"
+import { ChainContext } from "@/domains/chains/contexts"
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
-import { useExtrinsic } from "@/domains/common/hooks/useExtrinsic"
-import { useSubstrateApiEndpoint } from "@/domains/common/hooks/useSubstrateApiEndpoint"
-import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
 import { useTokenAmount, useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
-import { paymentInfoState } from "@/domains/common/recoils"
+import { estimateTxFee, useTx } from "@/domains/common/hooks/useTx"
 import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo"
 
-import { feeEstimateAtom } from "../atoms/feeEstimate"
+import { setFeeEstimate } from "../breakdown"
+import { placeholderCall, stakeCall, txOf, unstakeCall } from "../calls"
+import { useSubtensorBalance } from "../chain"
 import type { StakeItem } from "./useStake"
 
 export const useAddStakeForm = (
@@ -30,11 +29,8 @@ export const useAddStakeForm = (
 	netuid: number | undefined
 ) => {
 	const [input, setInput] = useState("")
-	const setFeeEstimate = useSetAtom(feeEstimateAtom)
-
-	const [api, [accountInfo]] = useRecoilValue(
-		waitForAll([useSubstrateApiState(), useQueryMultiState([["system.account", account.address]])])
-	)
+	const { genesisHash } = useContext(ChainContext)
+	const { balance, existentialDeposit } = useSubtensorBalance(genesisHash, account.address)
 	const amount = useTokenAmount(input)
 
 	const isRootnetStake = netuid === ROOT_NETUID
@@ -55,72 +51,34 @@ export const useAddStakeForm = (
 		shouldUpdateFeeAndSlippage: !isRootnetStake,
 	})
 
-	const tx: SubmittableExtrinsic<any> = useMemo(() => {
-		if (!delegate || netuid === undefined) {
-			// Return a dummy transaction if delegate or netuid is missing
-			return api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK)
-		}
+	const limitPrice = alphaPriceWithSlippageFormatted.decimalAmount?.planck || 0n
+	const amountPlanck = amount.decimalAmount?.planck ?? 0n
 
-		const limitPrice = alphaPriceWithSlippageFormatted.decimalAmount?.planck || 0n
-		const allowPartial = false
-
-		try {
-			return api.tx.utility.batchAll([
-				(api.tx as any)?.subtensorModule?.addStake?.(delegate, amount.decimalAmount?.planck ?? 0n),
-				api.tx.balances.transferKeepAlive(
-					TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR,
-					taoToAlphaTalismanFee
-				),
-				api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK),
-			])
-		} catch {
-			if (isRootnetStake) {
-				return api.tx.utility.batchAll([
-					(api.tx as any)?.subtensorModule?.addStake?.(
-						delegate,
+	const call = useMemo(
+		() =>
+			!delegate || netuid === undefined
+				? placeholderCall()
+				: stakeCall({
+						hotkey: delegate,
 						netuid,
-						amount.decimalAmount?.planck ?? 0n
-					),
-					api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK),
-				])
-			}
-			return api.tx.utility.batchAll([
-				(api.tx as any)?.subtensorModule?.addStakeLimit?.(
-					delegate,
-					netuid,
-					amount.decimalAmount?.planck ?? 0n,
-					limitPrice,
-					allowPartial
-				),
-				api.tx.balances.transferKeepAlive(
-					TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR,
-					taoToAlphaTalismanFee
-				),
-				api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK),
-			])
-		}
-	}, [
-		delegate,
-		netuid,
-		alphaPriceWithSlippageFormatted.decimalAmount?.planck,
-		api.tx,
-		amount.decimalAmount?.planck,
-		taoToAlphaTalismanFee,
-		isRootnetStake,
-	])
+						amount: amountPlanck,
+						limitPrice,
+						talismanFee: taoToAlphaTalismanFee,
+					}),
+		[delegate, netuid, amountPlanck, limitPrice, taoToAlphaTalismanFee]
+	)
 
-	const [feeEstimate, isFeeEstimateReady] = useStakeFormFeeEstimate(account.address, tx)
+	const [feeEstimate, isFeeEstimateReady] = useStakeFormFeeEstimate(
+		genesisHash,
+		account.address,
+		call
+	)
 
 	const formattedFeeEstimate = useTokenAmountFromPlanck(feeEstimate)
 
 	useEffect(() => {
 		setFeeEstimate(formattedFeeEstimate)
-	}, [formattedFeeEstimate, setFeeEstimate])
-
-	const existentialDeposit = useMemo(
-		() => api.consts.balances.existentialDeposit.toBigInt(),
-		[api.consts.balances.existentialDeposit]
-	)
+	}, [formattedFeeEstimate])
 
 	const transferablePlanck = useMemo(() => {
 		//
@@ -137,25 +95,16 @@ export const useAddStakeForm = (
 		// 2. then we need to ensure that `untouchable` is never smaller than `ed`
 		// 3. finally we need to subtract `untouchable` from `free`.
 		//
-		const reserved = accountInfo.data.reserved.toBigInt()
-		const frozen = accountInfo.data.frozen.toBigInt()
+		const { reserved, frozen, free } = balance
 		const untouchable = BigMath.max(frozen - reserved, 0n)
 
 		// make sure untouchable is never less than the existentialDeposit
 		const untouchableOrEd = BigMath.max(untouchable, existentialDeposit)
 
-		const free = accountInfo.data.free.toBigInt()
 		const transferable = BigMath.max(free - (untouchableOrEd + taoToAlphaTalismanFee), 0n)
 
 		return transferable - feeEstimate
-	}, [
-		accountInfo.data.free,
-		accountInfo.data.frozen,
-		accountInfo.data.reserved,
-		existentialDeposit,
-		feeEstimate,
-		taoToAlphaTalismanFee,
-	])
+	}, [balance, existentialDeposit, feeEstimate, taoToAlphaTalismanFee])
 
 	const transferable = useTokenAmountFromPlanck(transferablePlanck)
 
@@ -207,7 +156,7 @@ export const useAddStakeForm = (
 		transferable.decimalAmount.planck,
 	])
 
-	const extrinsic = useExtrinsic(tx)
+	const extrinsic = useTx(genesisHash, (runtime) => txOf(runtime, call))
 
 	const ready =
 		isFeeEstimateReady &&
@@ -237,8 +186,7 @@ export const useAddStakeForm = (
 }
 
 export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: string) => {
-	const setFeeEstimate = useSetAtom(feeEstimateAtom)
-	const api = useRecoilValue(useSubstrateApiState())
+	const { genesisHash } = useContext(ChainContext)
 	const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
 	const [input, setInput] = useState("")
@@ -270,59 +218,29 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 		: alphaToTaoTalismanFeeFormatted
 
 	const limitPrice = taoPriceWithSlippageFormatted.decimalAmount?.planck || 0n
-	const allowPartial = false
 
-	const tx: SubmittableExtrinsic<any> = useMemo(() => {
-		try {
-			return (api.tx as any)?.subtensorModule?.removeStake?.(
-				delegate,
-				amount.decimalAmount?.planck ?? 0n
-			)
-		} catch {
-			if (isRootnetStake) {
-				return api.tx.utility.batchAll([
-					(api.tx as any)?.subtensorModule?.removeStake?.(
-						delegate,
-						stake.netuid,
-						amount.decimalAmount?.planck ?? 0n
-					),
-					api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK),
-				])
-			}
-			return api.tx.utility.batchAll([
-				(api.tx as any)?.subtensorModule?.removeStakeLimit?.(
-					delegate,
-					stake.netuid,
-					amount.decimalAmount?.planck ?? 0n,
-					limitPrice,
-					allowPartial
-				),
-				api.tx.balances.transferKeepAlive(
-					TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR,
-					talismanFeeTxTokenAmount
-				),
-				api.tx.system.remarkWithEvent(TALISMAN_STAKE_REMARK),
-			])
-		}
-	}, [
-		api.tx,
-		delegate,
-		amount.decimalAmount?.planck,
-		isRootnetStake,
-		stake.netuid,
-		limitPrice,
-		allowPartial,
-		talismanFeeTxTokenAmount,
-	])
-	const extrinsic = useExtrinsic(tx)
+	const amountPlanck = amount.decimalAmount?.planck ?? 0n
 
-	const [feeEstimate] = useStakeFormFeeEstimate(account.address, tx)
+	const call = useMemo(
+		() =>
+			unstakeCall({
+				hotkey: delegate,
+				netuid: stake.netuid,
+				amount: amountPlanck,
+				limitPrice,
+				talismanFee: talismanFeeTxTokenAmount,
+			}),
+		[delegate, stake.netuid, amountPlanck, limitPrice, talismanFeeTxTokenAmount]
+	)
+	const extrinsic = useTx(genesisHash, (runtime) => txOf(runtime, call))
+
+	const [feeEstimate] = useStakeFormFeeEstimate(genesisHash, account.address, call)
 
 	const formattedFeeEstimate = useTokenAmountFromPlanck(feeEstimate)
 
 	useEffect(() => {
 		setFeeEstimate(formattedFeeEstimate)
-	}, [formattedFeeEstimate, setFeeEstimate])
+	}, [formattedFeeEstimate])
 
 	const available = nativeTokenAmount.fromPlanckOrUndefined(stake.stake, stake?.symbol)
 
@@ -410,24 +328,18 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 	}
 }
 
-const useStakeFormFeeEstimate = (origin: string, tx: SubmittableExtrinsic<any>) => {
-	const paymentInfoLoadable = useRecoilValueLoadable(
-		paymentInfoState([
-			useSubstrateApiEndpoint(),
-			// @ts-expect-error
-			tx.method.section,
-			// @ts-expect-error
-			tx.method.method,
-			origin,
-			...tx.args,
-		])
-	)
-	return useMemo(
-		() =>
-			[
-				BigInt(paymentInfoLoadable.valueMaybe()?.partialFee?.toString?.(10) ?? "0"),
-				paymentInfoLoadable.state === "hasValue",
-			] as const,
-		[paymentInfoLoadable]
-	)
+const callKey = (call: TxCallData) =>
+	JSON.stringify(call, (_, value) => (typeof value === "bigint" ? value.toString() : value))
+
+const useStakeFormFeeEstimate = (genesisHash: string, origin: string, call: TxCallData) => {
+	const { data, isSuccess } = useQuery({
+		queryKey: ["subtensorFeeEstimate", genesisHash, origin, callKey(call)],
+		queryFn: async () => {
+			const runtime = await firstValueFrom(getChainRuntime$(genesisHash))
+			return estimateTxFee(genesisHash, origin, await txOf(runtime, call))
+		},
+		staleTime: Number.POSITIVE_INFINITY,
+		retry: false,
+	})
+	return [data ?? 0n, isSuccess] as const
 }

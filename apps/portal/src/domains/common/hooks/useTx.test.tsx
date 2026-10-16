@@ -43,6 +43,9 @@ vi.mock("@/domains/extension/substrate", () => ({
 vi.mock("@/domains/extension/signet", () => ({ signetAccount$, signetSdk: () => ({ send }) }))
 vi.mock("@/domains/common/utils/toast", () => ({ toastExtrinsic }))
 vi.mock("@/domains/analytics/client", () => ({ track }))
+vi.mock("polkadot-api/tx-creator", () => ({
+	getFakeTxCreator: (address: string) => ({ fakeSignerFor: address }),
+}))
 
 const fakeTx = (call = { type: "NominationPools", value: { type: "claim_payout" } }) => {
 	const events$ = new Subject<TxEvent>()
@@ -116,6 +119,20 @@ describe("useTx", () => {
 		})
 		expect(chainReadId$.value).toBe(readsBefore + 1)
 		await waitFor(() => expect(result.current.state).toBe("hasValue"))
+	})
+
+	it("waits for a builder that resolves the transaction from call data", async () => {
+		const { events$, tx, calls } = fakeTx()
+		const { result } = renderHook(() => useTx(GENESIS, async () => tx))
+
+		let submission: Promise<unknown> | undefined
+		act(() => {
+			submission = result.current.signAndSend(alice)
+		})
+		await waitFor(() => expect(calls.createSubmitAndWatch).toHaveBeenCalled())
+		act(() => finalize(events$, included({ ok: true })))
+
+		await expect(submission).resolves.toEqual({ txHash, blockNumber: 42, txIndex: 3, events: [] })
 	})
 
 	it("reports each call of a batch with its parent", async () => {
@@ -234,20 +251,24 @@ describe("useTx", () => {
 })
 
 describe("estimateTxFee", () => {
-	it("estimates with the account's wallet and the chain's signed extensions", async () => {
+	it("estimates with a mock signature for the account and the chain's signed extensions", async () => {
 		const { tx, calls } = fakeTx()
 
 		expect(await estimateTxFee(GENESIS, alice, tx)).toBe(123n)
-		expect(calls.getEstimatedFees).toHaveBeenCalledWith(txCreator, {
-			customSignedExtensions: {},
-		})
+		expect(calls.getEstimatedFees).toHaveBeenCalledWith(
+			{ fakeSignerFor: alice },
+			{ customSignedExtensions: {} }
+		)
 	})
 
-	it("refuses an account no connected wallet can sign for", async () => {
-		const { tx } = fakeTx()
+	it("estimates for an account no connected wallet holds, such as a Signet vault", async () => {
+		const vault = "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
+		const { tx, calls } = fakeTx()
 
-		await expect(
-			estimateTxFee(GENESIS, "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty", tx)
-		).rejects.toThrow("No connected wallet can sign for")
+		expect(await estimateTxFee(GENESIS, vault, tx)).toBe(123n)
+		expect(calls.getEstimatedFees).toHaveBeenCalledWith(
+			{ fakeSignerFor: vault },
+			{ customSignedExtensions: {} }
+		)
 	})
 })

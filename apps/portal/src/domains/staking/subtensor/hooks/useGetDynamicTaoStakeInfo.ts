@@ -1,4 +1,3 @@
-import { useAtomValue, useSetAtom } from "jotai"
 import { useEffect } from "react"
 
 import {
@@ -10,11 +9,14 @@ import { useTokenAmount, useTokenAmountFromPlanck } from "@/domains/common/hooks
 import type { Decimal } from "@/util/Decimal"
 
 import { useGetSeekDiscount } from "../../seek/hooks/useGetSeekDiscount"
-import { bittensorSlippageAtom, maxSlippageAtom } from "../atoms/bittensorSlippage"
-import { dTaoConversionRateAtom } from "../atoms/dTaoConversionRate"
-import { expectedAlphaAmountAtom } from "../atoms/expectedAlphaAmount"
-import { netuidAtom } from "../atoms/netuid"
-import { talismanTokenFeeAtom } from "../atoms/talismanTokenFee"
+import {
+	setBittensorSlippage,
+	setDTaoConversionRate,
+	setExpectedAlphaAmount,
+	setNetuid,
+	setTalismanTokenFee,
+	useMaxSlippage,
+} from "../breakdown"
 import type { RuntimePoolData } from "../types"
 import { useGetSubnetMetagraphByNetuid } from "./useGetSubnetMetagraphByNetuid"
 
@@ -38,15 +40,10 @@ export const useGetDynamicTaoStakeInfo = ({
 	shouldUpdateFeeAndSlippage: boolean
 }) => {
 	const { data, isLoading, error } = useGetSubnetMetagraphByNetuid({ netuid })
-	const setBittensorSlippage = useSetAtom(bittensorSlippageAtom)
-	const setExpectedAlphaAmount = useSetAtom(expectedAlphaAmountAtom)
-	const setDTaoConversionRate = useSetAtom(dTaoConversionRateAtom)
-	const setNetuid = useSetAtom(netuidAtom)
-	const setTalismanTokenFee = useSetAtom(talismanTokenFeeAtom)
 
 	const { tier } = useGetSeekDiscount()
 
-	const maxSlippage = useAtomValue(maxSlippageAtom)
+	const maxSlippage = useMaxSlippage()
 	const raoInputAmount = amount?.decimalAmount?.planck ?? 0n * 10n
 
 	const slippage = calculateSlippage({ pool: data, taoStaked: raoInputAmount })
@@ -125,7 +122,7 @@ export const useGetDynamicTaoStakeInfo = ({
 
 	useEffect(() => {
 		setNetuid(netuid)
-	}, [netuid, setNetuid])
+	}, [netuid])
 
 	useEffect(() => {
 		if (!shouldUpdateFeeAndSlippage) return
@@ -150,10 +147,6 @@ export const useGetDynamicTaoStakeInfo = ({
 		expectedAlphaAmount,
 		formattedAlphaToTaoConversionRate,
 		netuid,
-		setBittensorSlippage,
-		setDTaoConversionRate,
-		setExpectedAlphaAmount,
-		setTalismanTokenFee,
 		shouldUpdateFeeAndSlippage,
 		slippage,
 		taoToAlphaTalismanFeeFormatted,

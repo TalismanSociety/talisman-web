@@ -4,7 +4,7 @@ import { useRecoilValue } from "recoil"
 import { AddStakeDialog as _AddStakeDialog } from "@/components/recipes/AddStakeDialog"
 import type { Account } from "@/domains/accounts/recoils"
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
-import { useExtrinsicInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
+import { useTxInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
 import { useAddStakeForm } from "@/domains/staking/subtensor/hooks/forms"
 import { useCombinedBittensorValidatorsData } from "@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData"
 import { useCombineSubnetData } from "@/domains/staking/subtensor/hooks/useCombineSubnetData"
@@ -66,7 +66,7 @@ const SubtensorAddStakeDialog = ({
 
 	const newFiatAmount = stake.netuid === ROOT_NETUID ? resultingTao : resultingAlphaInTaoAmount
 
-	useExtrinsicInBlockOrErrorEffect(() => onRequestDismiss(), extrinsic)
+	useTxInBlockOrErrorEffect(() => onRequestDismiss(), extrinsic)
 
 	const selectedDelegate = combinedValidatorsData.find((validator) => validator.poolId === delegate)
 	const { name } = selectedDelegate || { name: "" }
