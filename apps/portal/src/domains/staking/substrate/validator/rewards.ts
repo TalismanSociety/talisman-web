@@ -19,7 +19,7 @@ export type ValidatorLegacyClaimedRewards = Map<string, number[]>
 
 const PERBILL = 1_000_000_000n
 
-type EraExposure = { validators: Map<string, ExposurePage>; nominating: string[] }
+type EraExposure = { validators: Map<string, ExposurePage>; exposed: string[] }
 
 const exposureOf = ({ pages }: EraInputs, stash: string): EraExposure => {
 	const validators = new Map<string, ExposurePage>()
@@ -28,13 +28,11 @@ const exposureOf = ({ pages }: EraInputs, stash: string): EraExposure => {
 		validators.set(validator, page)
 		if (page.others.some(({ who }) => who === stash)) nominating.push(validator)
 	}
-	return { validators, nominating }
+	return { validators, exposed: validators.has(stash) ? [stash] : nominating }
 }
 
-export const exposedValidators = (inputs: EraInputs, stash: string) => {
-	const { validators, nominating } = exposureOf(inputs, stash)
-	return validators.has(stash) ? [stash] : nominating
-}
+export const exposedValidators = (inputs: EraInputs, stash: string) =>
+	exposureOf(inputs, stash).exposed
 
 const rewardShare = (
 	{ eraPoints, validatorPoints, commissions, eraReward }: EraInputs,
@@ -61,8 +59,8 @@ export const stakerRewardsOf = (
 	for (const inputs of eras) {
 		if (claimedRewardsEras.includes(inputs.era) || legacyClaimedRewards.includes(inputs.era))
 			continue
-		const { validators } = exposureOf(inputs, stash)
-		for (const validator of exposedValidators(inputs, stash)) {
+		const { validators, exposed } = exposureOf(inputs, stash)
+		for (const validator of exposed) {
 			const validatorClaimed = validatorLegacyClaimedRewards.get(validator) ?? []
 			if (validatorClaimed.includes(inputs.era)) continue
 			total += rewardShare(inputs, validators.get(validator)!, validator, stash)
