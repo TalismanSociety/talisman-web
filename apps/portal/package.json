@@ -15,7 +15,8 @@
     "typecheck": "NODE_OPTIONS='--max-old-space-size=8192' tsc --noEmit && tsc --noEmit -p tsconfig.node.json",
     "e2e": "playwright test",
     "codegen:nova": "graphql-codegen --require dotenv/config --config codegen.nova.ts",
-    "chaindata": "node scripts/chaindata.ts && biome format --write public/chaindata.json"
+    "chaindata": "node scripts/chaindata.ts && biome format --write public/chaindata.json",
+    "posthog:provision": "tsx scripts/posthog/provision.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -110,6 +111,7 @@
     "postcss": "^8.5.26",
     "tailwindcss": "^3.4.16",
     "tailwindcss-animate": "^1.0.7",
+    "tsx": "4.23.15",
     "typescript": "^5.6.3",
     "vite": "^7.3.6",
     "vite-plugin-node-polyfills": "^0.22.0",

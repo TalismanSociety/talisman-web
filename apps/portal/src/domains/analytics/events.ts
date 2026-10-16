@@ -5,7 +5,7 @@ import { portfolioEvents } from "./events/portfolio"
 import { transactionEvents } from "./events/transactions"
 import { isPropertyValue, type PropertyDefs, type PropertyValues } from "./properties"
 
-type EventDef = {
+export type EventDef = {
 	readonly description: string
 	readonly properties: PropertyDefs
 }

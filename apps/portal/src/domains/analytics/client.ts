@@ -3,9 +3,11 @@ import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map } fro
 import { type Consent, consent$, currentConsent, decisionHolds, isGranted } from "./consent"
 import { type AnalyticsEnvironment, environmentOf, isAnalyticsEnabled } from "./environment"
 import { consentKindOf, type EventName, type TrackArgs } from "./events"
-import { POSTHOG_API_HOST, POSTHOG_PROJECT_TOKEN, POSTHOG_UI_HOST } from "./posthogProject"
+import { POSTHOG_API_HOST, POSTHOG_UI_HOST } from "./posthogProject"
 import { type RoutePattern, routePatternOfPathname } from "./routePatterns"
 import { scrubEvent } from "./scrub"
+
+const POSTHOG_PROJECT_TOKEN = import.meta.env.VITE_POSTHOG_AUTH_TOKEN ?? ""
 
 export const CLIENT_CONFIG = {
 	api_host: POSTHOG_API_HOST,
