@@ -20,6 +20,11 @@ describe("build scripts", () => {
 		expect(pagesWorkflow).not.toMatch(/build:worker|build:portal|frame-ancestors/)
 	})
 
+	it("refuses every Pages deploy until the DNS switch", () => {
+		expect(pagesWorkflow).toMatch(/^ {2}frozen:\n(?: {4}.*\n)*? {10}exit 1$/m)
+		expect(pagesWorkflow).toMatch(/^ {2}deploy:\n {4}needs: \[frozen, qa\]$/m)
+	})
+
 	it("uploads the source maps of every build, then strips them, checks the client for server secrets, before the CSP header", () => {
 		expect(portalScripts.postbuild).toBe(
 			"node scripts/posthog-sourcemaps.ts && node scripts/client-secrets.ts && node scripts/csp-headers.ts"

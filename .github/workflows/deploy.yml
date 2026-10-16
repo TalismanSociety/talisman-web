@@ -10,6 +10,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
+  frozen:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - run: |
+          echo "::error::Pages deploys are frozen until the DNS switch: a Pages build has no server functions, so Bittensor staking breaks. Workers Builds deploys the portal."
+          exit 1
+
   qa:
     uses: ./.github/workflows/qa.yml
     secrets: inherit
@@ -18,7 +26,7 @@ jobs:
       contents: read
 
   deploy:
-    needs: qa
+    needs: [frozen, qa]
     runs-on: ubuntu-latest
 
     environment: ${{ vars.PORTAL_PROJECT_NAME }} (${{ github.ref_name == github.event.repository.default_branch && 'Production' || 'Preview' }})
