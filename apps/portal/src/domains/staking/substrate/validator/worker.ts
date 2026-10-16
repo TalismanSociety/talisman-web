@@ -1,41 +1,14 @@
-import { ApiPromise, WsProvider } from "@polkadot/api"
-import { expose } from "threads/worker"
+import {
+	type StakerRewardsRequest,
+	type StakerRewardsResponse,
+	stakerRewards,
+} from "./stakerRewards"
 
-export type WorkerFunction = typeof getStakersReward
+const respond = (response: StakerRewardsResponse) => self.postMessage(response)
 
-// Needed to extract to a worker since this calculation is very CPU heavy
-// and will slow down the UI thread
-const getStakersReward = async (
-	endpoints: string | string[],
-	addresses: string[],
-	eras: number[]
-) => {
-	const api = await ApiPromise.create({
-		provider: new WsProvider(endpoints),
-		initWasm: false,
-		noInitWarn: true,
-	})
-
-	const stakerRewards = await api.derive.staking.stakerRewardsMultiEras(
-		addresses,
-		eras.map((x) => api.createType("EraIndex", x))
-	)
-
-	await api.disconnect()
-
-	return Object.fromEntries(
-		stakerRewards.map((x, index) => [
-			addresses[index]!,
-			x
-				.map((y) =>
-					Object.values(y.validators).reduce(
-						(previous, current) => previous + current.value.toBigInt(),
-						0n
-					)
-				)
-				.reduce((previous, current) => previous + current, 0n),
-		])
+self.onmessage = ({ data }: MessageEvent<StakerRewardsRequest>) => {
+	stakerRewards(data).then(
+		(rewards) => respond({ rewards }),
+		(error: unknown) => respond({ error: error instanceof Error ? error.message : String(error) })
 	)
 }
-
-expose(getStakersReward)

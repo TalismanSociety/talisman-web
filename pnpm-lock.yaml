@@ -238,7 +238,6 @@ packageExtensionsChecksum: sha256-5OCEJOO4ef//iIXyPpIzn7hwIXQZh5KbDivwBxK6uNk=
 
 patchedDependencies:
   recoil@0.7.7: 1d31579c44b1c99592ff5d440f1658c4417916ab0f4bb225f1fcce5f8e4b8d6e
-  threads@1.7.0: 962348b6a391cc19d603d8ddd8abbe3cd7d940342aacd1357e9152174b9d4115
 
 importers:
 
@@ -274,9 +273,6 @@ importers:
       '@kheopskit/core':
         specifier: 5.3.0
         version: 5.3.0(@reown/appkit@1.7.8(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.6.3)(utf-8-validate@5.0.10)(zod@4.6.7))(@solana/kit@3.0.3(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.6.3)(ws@8.22.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(mipd@0.0.7(typescript@5.6.3))(polkadot-api@3.2.1(bufferutil@4.0.8)(esbuild@0.28.2)(rxjs@7.8.2)(supports-color@10.0.0)(utf-8-validate@5.0.10))(rxjs@7.8.2)(viem@2.41.2(bufferutil@4.0.8)(typescript@5.6.3)(utf-8-validate@5.0.10)(zod@4.6.7))
-      '@lottiefiles/react-lottie-player':
-        specifier: ^3.5.3
-        version: 3.5.4(react@18.3.1)
       '@polkadot-api/metadata-builders':
         specifier: 0.15.2
         version: 0.15.2
@@ -301,9 +297,6 @@ importers:
       '@polkadot/api-augment':
         specifier: 16.4.1
         version: 16.4.1(bufferutil@4.0.8)(supports-color@10.0.0)(utf-8-validate@5.0.10)
-      '@polkadot/api-derive':
-        specifier: 16.4.1
-        version: 16.4.1(bufferutil@4.0.8)(supports-color@10.0.0)(utf-8-validate@5.0.10)
       '@polkadot/keyring':
         specifier: 13.1.1
         version: 13.1.1(@polkadot/util-crypto@13.1.1(@polkadot/util@13.1.1))(@polkadot/util@13.1.1)
@@ -311,9 +304,6 @@ importers:
         specifier: 16.4.1
         version: 16.4.1(bufferutil@4.0.8)(supports-color@10.0.0)(utf-8-validate@5.0.10)
       '@polkadot/types':
-        specifier: 16.4.1
-        version: 16.4.1
-      '@polkadot/types-codec':
         specifier: 16.4.1
         version: 16.4.1
       '@polkadot/util':
@@ -442,9 +432,6 @@ importers:
       tailwind-merge:
         specifier: ^2.5.4
         version: 2.5.4
-      threads:
-        specifier: ^1.7.0
-        version: 1.7.0(patch_hash=962348b6a391cc19d603d8ddd8abbe3cd7d940342aacd1357e9152174b9d4115)(supports-color@10.0.0)
       victory:
         specifier: ^36.6.8
         version: 36.9.2(react@18.3.1)
@@ -1836,11 +1823,6 @@ packages:
 
   '@lit/reactive-element@2.1.1':
     resolution: {integrity: sha512-N+dm5PAYdQ8e6UlywyyrgI2t++wFGXfHx+dSJ1oBrg6FAxUj40jId++EaRm80MKX5JnlH1sBsyZ5h0bcZKemCg==}
-
-  '@lottiefiles/react-lottie-player@3.5.4':
-    resolution: {integrity: sha512-2FptWtHQ+o7MzdsMKSvNZ1Mz7xtKSYI0WL9HjZ1r+CvsXR3lbLQUDp7Pwx6qhg0Akm4VluQ+8/D1S1fcr1Ao4w==}
-    peerDependencies:
-      react: 16 - 18
 
   '@metamask/eth-json-rpc-provider@1.0.1':
     resolution: {integrity: sha512-whiUMPlAOrVGmX8aKYVPvlKyG4CpQXiNNyt74vE1xb5sPvmx5oA7B/kOi/JdBvhGQq97U1/AVdXEdk2zkP8qyA==}
@@ -5487,10 +5469,6 @@ packages:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
 
-  esm@3.2.25:
-    resolution: {integrity: sha512-U1suiZ2oDVWv4zPO56S0NcR5QriEahGtdN2OR6FiOG4WJvcjBVFB0qI4+eKoWFH483PKGuLuu6V8Z4T5g63UVA==}
-    engines: {node: '>=6'}
-
   estree-walker@2.0.2:
     resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
 
@@ -6090,10 +6068,6 @@ packages:
     resolution: {integrity: sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==}
     engines: {node: '>=0.12.0'}
 
-  is-observable@2.1.0:
-    resolution: {integrity: sha512-DailKdLb0WU+xX8K5w7VsJhapwHLZ9jjmazqCJq4X12CTgqq73TKnbRcnSLuXYPOoLQgV5IrD7ePiX/h1vnkBw==}
-    engines: {node: '>=8'}
-
   is-plain-obj@4.1.0:
     resolution: {integrity: sha512-+Pgi+vMuUNkJyExiMBt5IlFoMyKnr5zhJ4Uspz58WOhBF5QoIZkFyNHIbBAtHwzVAgk5RtndVNsDRN61/mmDqg==}
     engines: {node: '>=12'}
@@ -6437,9 +6411,6 @@ packages:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
     hasBin: true
 
-  lottie-web@5.12.2:
-    resolution: {integrity: sha512-uvhvYPC8kGPjXT3MyKMrL3JitEAmDMp30lVkuq/590Mw9ok6pWcFCwXJveo0t5uqYw1UREQHofD+jVpdjBv8wg==}
-
   lower-case-first@2.0.2:
     resolution: {integrity: sha512-EVm/rR94FJTZi3zefZ82fLWab+GX14LJN4HrWBcuo6Evmsl9hEfnqxgcHCKb9q+mNf6EVdsjx/qucYFIIB84pg==}
 
@@ -6736,9 +6707,6 @@ packages:
   object.assign@4.1.5:
     resolution: {integrity: sha512-byy+U7gp+FVwmyzKPYhW2h5l3crpmGsxl7X2s8y43IgxvG4g3QZ6CffDtsNQy1WsmZpQbO+ybo0AlW7TY6DcBQ==}
     engines: {node: '>= 0.4'}
-
-  observable-fns@0.6.1:
-    resolution: {integrity: sha512-9gRK4+sRWzeN6AOewNBTLXir7Zl/i3GB6Yl26gK4flxz8BXVpD3kt8amREmWNb0mxYOGDotvE5a4N+PtGGKdkg==}
 
   obug@3.0.0:
     resolution: {integrity: sha512-5vvB5+W7ePv+p3uqxi+RcW1XAzLW0/hxt3/4X4Lc4qHudzOhmBiBwOY6DRob4WnanAEGvNcLjF+KNOufrUoEQw==}
@@ -7805,9 +7773,6 @@ packages:
   thread-stream@0.15.2:
     resolution: {integrity: sha512-UkEhKIg2pD+fjkHQKyJO3yoIvAP3N6RlNFt2dUhcS1FGvCD1cQa1M/PGknCLFIyZdtJOWQjejp7bdNqmN7zwdA==}
 
-  threads@1.7.0:
-    resolution: {integrity: sha512-Mx5NBSHX3sQYR6iI9VYbgHKBLisyB+xROCBGjjWm1O9wb9vfLxdaGtmT/KCjUqMsSNW6nERzCW3T6H43LqjDZQ==}
-
   throttle-debounce@3.0.1:
     resolution: {integrity: sha512-dTEWWNu6JmeVXY0ZYoPuH5cRIwc0MeGbJwah9KUNYSJwommQpCzTySTpEe8Gs1J23aeWEuAobe4Ag7EHVt/LOg==}
     engines: {node: '>=10'}
@@ -7818,9 +7783,6 @@ packages:
   timers-browserify@2.0.12:
     resolution: {integrity: sha512-9phl76Cqm6FhSX9Xe1ZUAMLtm1BLkKj2Qd5ApyWkXzsMRaA7dgr81kf4wJmQf/hAvg8EEyJxDo3du/0KlhPiKQ==}
     engines: {node: '>=0.6.0'}
-
-  tiny-worker@2.3.0:
-    resolution: {integrity: sha512-pJ70wq5EAqTAEl9IkGzA+fN0836rycEuz2Cn6yeZ6FRzlVS5IDOkFHpIoEsksPRQV34GDqXm65+OlnZqUSyK2g==}
 
   tinybench@6.2.2:
     resolution: {integrity: sha512-nIZ2N2dFpjBsg2hgitKu7mA+FvsIJuGJOwysRngmVRRmWgR/UyPjwJj8c/fT/dhm8EkHnF5EOogRf+0Z2qrimA==}
@@ -10313,11 +10275,6 @@ snapshots:
   '@lit/reactive-element@2.1.1':
     dependencies:
       '@lit-labs/ssr-dom-shim': 1.4.0
-
-  '@lottiefiles/react-lottie-player@3.5.4(react@18.3.1)':
-    dependencies:
-      lottie-web: 5.12.2
-      react: 18.3.1
 
   '@metamask/eth-json-rpc-provider@1.0.1(supports-color@10.0.0)':
     dependencies:
@@ -15322,9 +15279,6 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  esm@3.2.25:
-    optional: true
-
   estree-walker@2.0.2: {}
 
   estree-walker@3.0.3:
@@ -15954,8 +15908,6 @@ snapshots:
 
   is-number@7.0.0: {}
 
-  is-observable@2.1.0: {}
-
   is-plain-obj@4.1.0: {}
 
   is-potential-custom-element-name@1.0.1: {}
@@ -16291,8 +16243,6 @@ snapshots:
     dependencies:
       js-tokens: 4.0.0
 
-  lottie-web@5.12.2: {}
-
   lower-case-first@2.0.2:
     dependencies:
       tslib: 2.8.1
@@ -16598,8 +16548,6 @@ snapshots:
       define-properties: 1.2.1
       has-symbols: 1.0.3
       object-keys: 1.1.1
-
-  observable-fns@0.6.1: {}
 
   obug@3.0.0: {}
 
@@ -17895,17 +17843,6 @@ snapshots:
     dependencies:
       real-require: 0.1.0
 
-  threads@1.7.0(patch_hash=962348b6a391cc19d603d8ddd8abbe3cd7d940342aacd1357e9152174b9d4115)(supports-color@10.0.0):
-    dependencies:
-      callsites: 3.1.0
-      debug: 4.3.7(supports-color@10.0.0)
-      is-observable: 2.1.0
-      observable-fns: 0.6.1
-    optionalDependencies:
-      tiny-worker: 2.3.0
-    transitivePeerDependencies:
-      - supports-color
-
   throttle-debounce@3.0.1: {}
 
   through@2.3.8: {}
@@ -17913,11 +17850,6 @@ snapshots:
   timers-browserify@2.0.12:
     dependencies:
       setimmediate: 1.0.5
-
-  tiny-worker@2.3.0:
-    dependencies:
-      esm: 3.2.25
-    optional: true
 
   tinybench@6.2.2: {}
 

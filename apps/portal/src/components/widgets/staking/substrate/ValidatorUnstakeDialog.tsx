@@ -1,12 +1,12 @@
 import { useCallback } from "react"
 
 import { UnstakeDialog as BaseUnstakeDialog } from "@/components/recipes/UnstakeDialog"
-import { useExtrinsicInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
+import { useTxInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
 import { useLocalizedUnlockDuration } from "@/domains/staking/substrate/nominationPools/hooks/useUnlockDuration"
-import { useValidatorUnstakeForm } from "@/domains/staking/substrate/validator/hooks"
+import { useValidatorUnstakeForm } from "@/domains/staking/substrate/validator/hooks/useValidatorUnstakeForm"
 
 const ValidatorUnstakeDialog = (props: {
-	accountAddress: string
+	controller: string
 	open: boolean
 	onRequestDismiss: () => unknown
 }) => {
@@ -21,9 +21,9 @@ const ValidatorUnstakeDialog = (props: {
 		setAmount,
 		isLeaving,
 		error: inputError,
-	} = useValidatorUnstakeForm(props.open ? props.accountAddress : undefined)
+	} = useValidatorUnstakeForm(props.open ? props.controller : undefined)
 
-	useExtrinsicInBlockOrErrorEffect(() => {
+	useTxInBlockOrErrorEffect(() => {
 		props.onRequestDismiss()
 	}, unbondExtrinsic)
 
@@ -43,10 +43,10 @@ const ValidatorUnstakeDialog = (props: {
 			onConfirm={useCallback(() => {
 				if (decimalAmount !== undefined) {
 					if (isLeaving) {
-						unbondExtrinsic.unbondAll(props.accountAddress).finally(() => props.onRequestDismiss())
+						unbondExtrinsic.unbondAll(props.controller).finally(() => props.onRequestDismiss())
 					} else {
 						unbondExtrinsic
-							.signAndSend(props.accountAddress, decimalAmount?.planck)
+							.unbond(props.controller, decimalAmount.planck)
 							.finally(() => props.onRequestDismiss())
 					}
 				}

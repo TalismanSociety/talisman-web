@@ -1,24 +1,20 @@
-import type { DeriveStakingAccount } from "@polkadot/api-derive/types"
-import { useDeriveState } from "@talismn/react-polkadot-api"
-import BN from "bn.js"
-import { useMemo, useState } from "react"
-import { useRecoilValueLoadable, waitForAll } from "recoil"
-import { FastUnstakeDialog } from "@/components/recipes/FastUnstakeDialog"
+import { useState } from "react"
+import { useRecoilValue, waitForAll } from "recoil"
 import { StakePosition } from "@/components/recipes/StakePosition"
 import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { RedactableBalance } from "@/components/widgets/RedactableBalance"
 import type { Account } from "@/domains/accounts/recoils"
+import { txFromCall } from "@/domains/chains/chain-runtime"
 import { useChainState } from "@/domains/chains/hooks"
 import { useNativeTokenDecimalState, useNativeTokenPriceState } from "@/domains/chains/recoils"
-import { useEraEtaFormatter } from "@/domains/common/hooks/useEraEta"
-import { useExtrinsic } from "@/domains/common/hooks/useExtrinsic"
 import { useNativeTokenLocalizedFiatAmount } from "@/domains/common/hooks/useLocalizedFiatAmount"
-import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
-import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
-import { useLocalizedUnlockDuration } from "@/domains/staking/substrate/nominationPools/hooks"
-import { useTotalValidatorStakingRewards } from "@/domains/staking/substrate/validator/hooks"
-import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
+import { useTx } from "@/domains/common/hooks/useTx"
+import { useEraEtaFormatter } from "@/domains/staking/substrate/nominationPools/hooks/useEraEta"
+import { useGenesisHash } from "@/domains/staking/substrate/nominationPools/hooks/useRuntimes"
+import { withdrawUnbondedCall } from "@/domains/staking/substrate/validator/calls"
+import { useTotalValidatorStakingRewards } from "@/domains/staking/substrate/validator/hooks/useTotalRewards"
+import type { ValidatorStake } from "@/domains/staking/substrate/validator/hooks/useValidatorStakes"
 
 import ValidatorUnstakeDialog from "./ValidatorUnstakeDialog"
 
@@ -37,136 +33,74 @@ const TotalFiatRewards = ({ account }: { account: Account }) => {
 	return totalFiatRewards
 }
 
-const ValidatorStakeItem = ({
-	account,
-	stake,
-	reward,
-	slashingSpan,
-	eligibleForFastUnstake,
-	inFastUnstakeHead,
-	inFastUnstakeQueue,
-	fastUnstakeDeposit,
-}: {
-	account: Account
-	stake: DeriveStakingAccount
-	reward?: bigint
-	slashingSpan: number
-	eligibleForFastUnstake?: boolean
-	inFastUnstakeHead?: boolean
-	inFastUnstakeQueue?: boolean
-	fastUnstakeDeposit?: BN
-}) => {
-	const withdrawExtrinsic = useExtrinsic("staking", "withdrawUnbonded")
-	const fastUnstake = useExtrinsic("fastUnstake", "registerFastUnstake")
+const ValidatorStakeItem = ({ stake }: { stake: ValidatorStake }) => {
+	const [chain, decimal, nativeTokenPrice] = useRecoilValue(
+		waitForAll([useChainState(), useNativeTokenDecimalState(), useNativeTokenPriceState()])
+	)
+	const genesisHash = useGenesisHash()
+	const withdrawExtrinsic = useTx(genesisHash, (runtime) =>
+		txFromCall(runtime, withdrawUnbondedCall(stake.slashingSpan))
+	)
 
 	const [isUnstakeDialogOpen, setIsUnstakeDialogOpen] = useState(false)
-	const [isFastUnstakeDialogOpen, setIsFastUnstakeDialogOpen] = useState(false)
 
-	const lockDuration = useLocalizedUnlockDuration()
-
-	const { state, contents } = useRecoilValueLoadable(
-		waitForAll([
-			useChainState(),
-			useSubstrateApiState(),
-			useDeriveState("balances", "all", [account.address]),
-			useNativeTokenDecimalState(),
-			useNativeTokenPriceState(),
-		])
-	)
-
-	const [chain, api, balances, decimal, nativeTokenPrice] = state === "hasValue" ? contents : []
-
-	const amount = useTokenAmountFromPlanck(
-		inFastUnstakeQueue || inFastUnstakeHead
-			? stake.unlocking?.[0]?.value
-			: stake.stakingLedger.active.unwrap()
-	)
-
-	const active = decimal?.fromPlanck(stake.stakingLedger.active.toBigInt())
-
-	const totalUnlocking = useMemo(
-		() => stake.unlocking?.reduce((previous, current) => previous.add(current.value), new BN(0)),
-		[stake.unlocking]
-	)
-
-	const hasEnoughDepositForFastUnstake = useMemo(() => {
-		if (!balances || !api) return false
-		return balances.availableBalance.gte(
-			api.consts.balances.existentialDeposit.add(fastUnstakeDeposit ?? new BN(0))
-		)
-	}, [api, balances, fastUnstakeDeposit])
+	const active = decimal.fromPlanck(stake.active)
 
 	const eraEtaFormatter = useEraEtaFormatter()
-	const unlocks = stake.unlocking?.map((x) => ({
-		amount: decimal?.fromPlanck(x.value.toBigInt()).toLocaleString(),
-		eta: eraEtaFormatter(x.remainingEras) ?? <CircularProgressIndicator size="1em" />,
+	const unlocks = stake.unlocking.map((x) => ({
+		amount: decimal.fromPlanck(x.value).toLocaleString(),
+		eta: eraEtaFormatter(x.remainingEras),
 	}))
 
-	const { name = "", nativeToken: { symbol, logo } = { symbol: "", logo: "" } } = chain || {}
-
-	const onRequestUnstake = () => {
-		if (eligibleForFastUnstake || eligibleForFastUnstake === undefined) {
-			setIsFastUnstakeDialogOpen(true)
-		} else {
-			setIsUnstakeDialogOpen(true)
-		}
-	}
+	const { name = "", nativeToken: { symbol, logo } = { symbol: "", logo: "" } } = chain
 
 	return (
 		<>
 			<StakePosition
 				chain={name}
-				chainId={chain?.id ?? ""}
+				chainId={chain.id ?? ""}
 				assetSymbol={symbol}
 				assetLogoSrc={logo}
 				provider="Validator staking"
-				stakeStatus={
-					reward === undefined
-						? undefined
-						: reward === 0n
-							? "not_earning_rewards"
-							: "earning_rewards"
-				}
-				readonly={account.readonly}
-				account={account}
+				stakeStatus={stake.status}
+				readonly={stake.account.readonly}
+				account={stake.account}
 				balance={
 					<ErrorBoundary renderFallback={() => <>--</>}>
-						<RedactableBalance>{active?.toLocaleString()}</RedactableBalance>
+						<RedactableBalance>{active.toLocaleString()}</RedactableBalance>
 					</ErrorBoundary>
 				}
 				fiatBalance={
 					<ErrorBoundary renderFallback={() => <>--</>}>
-						<AnimatedFiatNumber
-							end={active && nativeTokenPrice ? active.toNumber() * nativeTokenPrice : 0}
-						/>
+						<AnimatedFiatNumber end={nativeTokenPrice ? active.toNumber() * nativeTokenPrice : 0} />
 					</ErrorBoundary>
 				}
 				rewards={
 					<ErrorBoundary renderFallback={() => <>--</>}>
-						<TotalRewards account={account} />
+						<TotalRewards account={stake.account} />
 					</ErrorBoundary>
 				}
 				fiatRewards={
 					<ErrorBoundary renderFallback={() => <>--</>}>
-						<TotalFiatRewards account={account} />
+						<TotalFiatRewards account={stake.account} />
 					</ErrorBoundary>
 				}
 				unstakeButton={
 					<ErrorBoundary renderFallback={() => <>--</>}>
-						<StakePosition.UnstakeButton onClick={onRequestUnstake} />
+						<StakePosition.UnstakeButton onClick={() => setIsUnstakeDialogOpen(true)} />
 					</ErrorBoundary>
 				}
 				withdrawButton={
-					stake.redeemable?.isZero() === false && (
+					stake.redeemable > 0n && (
 						<ErrorBoundary renderFallback={() => <>--</>}>
 							<StakePosition.WithdrawButton
 								amount={
 									<RedactableBalance>
-										{decimal?.fromPlanck(stake.redeemable.toBigInt()).toLocaleString()}
+										{decimal.fromPlanck(stake.redeemable).toLocaleString()}
 									</RedactableBalance>
 								}
 								onClick={() => {
-									void withdrawExtrinsic.signAndSend(stake.controllerId ?? "", slashingSpan)
+									void withdrawExtrinsic.signAndSend(stake.controller)
 								}}
 								loading={withdrawExtrinsic.state === "loading"}
 							/>
@@ -175,74 +109,23 @@ const ValidatorStakeItem = ({
 				}
 				unstakingStatus={
 					<ErrorBoundary renderFallback={() => <>--</>}>
-						{totalUnlocking?.isZero() === false ? (
-							inFastUnstakeHead || inFastUnstakeQueue ? (
-								<StakePosition.FastUnstakingStatus
-									amount={
-										<RedactableBalance>
-											{decimal?.fromPlanck(totalUnlocking.toString()).toLocaleString()}
-										</RedactableBalance>
-									}
-									status={
-										inFastUnstakeHead ? "in-head" : inFastUnstakeQueue ? "in-queue" : undefined
-									}
-								/>
-							) : (
-								<StakePosition.UnstakingStatus
-									amount={
-										<RedactableBalance>
-											{decimal?.fromPlanck(totalUnlocking.toString()).toLocaleString()}
-										</RedactableBalance>
-									}
-									unlocks={unlocks ?? []}
-								/>
-							)
+						{stake.totalUnlocking > 0n ? (
+							<StakePosition.UnstakingStatus
+								amount={
+									<RedactableBalance>
+										{decimal.fromPlanck(stake.totalUnlocking).toLocaleString()}
+									</RedactableBalance>
+								}
+								unlocks={unlocks}
+							/>
 						) : undefined}
 					</ErrorBoundary>
 				}
 			/>
 			<ValidatorUnstakeDialog
-				accountAddress={stake.controllerId?.toString() ?? account.address}
+				controller={stake.controller}
 				open={isUnstakeDialogOpen}
 				onRequestDismiss={() => setIsUnstakeDialogOpen(false)}
-			/>
-			<FastUnstakeDialog
-				open={isFastUnstakeDialogOpen}
-				fastUnstakeEligibility={useMemo(() => {
-					switch (eligibleForFastUnstake) {
-						case undefined:
-							return "pending"
-						case true:
-							return hasEnoughDepositForFastUnstake
-								? "eligible"
-								: "insufficient-balance-for-deposit"
-						case false:
-							return "ineligible"
-					}
-				}, [hasEnoughDepositForFastUnstake, eligibleForFastUnstake])}
-				amount={amount.decimalAmount?.toLocaleString() ?? "..."}
-				fiatAmount={amount.localizedFiatAmount ?? "..."}
-				lockDuration={lockDuration}
-				depositAmount={decimal
-					?.fromPlanckOrUndefined(fastUnstakeDeposit?.toString())
-					?.toLocaleString()}
-				onDismiss={() => {
-					setIsFastUnstakeDialogOpen(false)
-				}}
-				onSkip={() => {
-					setIsFastUnstakeDialogOpen(false)
-					setIsUnstakeDialogOpen(true)
-				}}
-				onConfirm={() => {
-					if (eligibleForFastUnstake && hasEnoughDepositForFastUnstake) {
-						void fastUnstake.signAndSend(account.address)
-						setIsFastUnstakeDialogOpen(false)
-					} else {
-						setIsFastUnstakeDialogOpen(false)
-						setIsUnstakeDialogOpen(true)
-					}
-				}}
-				learnMoreHref="https://wiki.polkadot.network/docs/learn-staking#fast-unstake"
 			/>
 		</>
 	)
