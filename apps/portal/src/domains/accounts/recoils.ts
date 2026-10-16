@@ -8,6 +8,7 @@ import {
 	injectedAccounts$,
 	lookupAccountAddress$,
 	ownAccounts$,
+	ownPortfolioAccounts$,
 	portfolioAccounts$,
 	type ReadonlyAccount,
 	readonlyAccounts$,
@@ -54,6 +55,12 @@ export const readOnlyAccountsState = selector<Account[]>({
 export const wagmiAccountsState = atomFromSubject("WagmiAccounts", wagmiAccounts$)
 
 export const ownAccountsState = atomFromObservable("OwnAccounts", ownAccounts$, NO_ACCOUNTS)
+
+export const ownPortfolioAccountsState = atomFromObservable(
+	"OwnPortfolioAccounts",
+	ownPortfolioAccounts$,
+	NO_ACCOUNTS
+)
 
 export const accountsState = atomFromObservable("Accounts", accounts$, NO_ACCOUNTS)
 

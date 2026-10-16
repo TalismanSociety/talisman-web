@@ -9,7 +9,7 @@ const { toast, capture } = vi.hoisted(() => ({
 	capture: vi.fn(),
 }))
 vi.mock("@/ui/molecules/Toaster", () => ({ toast }))
-vi.mock("posthog-js", () => ({ default: { capture } }))
+vi.mock("@/domains/analytics/client", () => ({ track: capture }))
 
 describe("substrate wallet connection", () => {
 	let harness: Awaited<ReturnType<typeof load>>
@@ -50,9 +50,7 @@ describe("substrate wallet connection", () => {
 		)
 		expect(talisman.enable).toHaveBeenCalledWith("Talisman")
 		expect(localStorage.getItem("connected-substrate-extension")).toBe('"talisman"')
-		expect(capture).toHaveBeenCalledWith("Substrate extensions connected", {
-			$set: { substrateExtensions: ["talisman"] },
-		})
+		expect(capture).toHaveBeenCalledWith("Substrate extensions connected", { wallet: "talisman" })
 	})
 
 	it("connects nothing on a fresh profile without Talisman", async () => {

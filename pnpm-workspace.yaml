@@ -4,6 +4,7 @@ packages:
 allowBuilds:
   "@swc/core": false
   bufferutil: false
+  core-js: false
   es5-ext: false
   esbuild: false
   keccak: false

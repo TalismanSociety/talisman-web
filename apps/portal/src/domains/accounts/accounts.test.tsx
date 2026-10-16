@@ -7,7 +7,7 @@ const { toast, capture } = vi.hoisted(() => ({
 	capture: vi.fn(),
 }))
 vi.mock("@/ui/molecules/Toaster", () => ({ toast }))
-vi.mock("posthog-js", () => ({ default: { capture } }))
+vi.mock("@/domains/analytics/client", () => ({ track: capture }))
 
 const substrateAddress = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
 const evmAddress = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"

@@ -4,38 +4,15 @@ import type { PropsWithChildren } from "react"
 import { useEffect, useMemo, useState } from "react"
 import type { EIP1193Provider } from "viem"
 import { createConfig, fallback, http, WagmiProvider } from "wagmi"
-import {
-	arbitrum,
-	blast,
-	bsc,
-	mainnet,
-	manta,
-	moonbeam,
-	moonriver,
-	optimism,
-	polygon,
-} from "wagmi/chains"
 import { injected } from "wagmi/connectors"
-
 import { useNetworksById } from "@/domains/chains/chaindata-provider"
+import { evmChains as chains } from "./evmChains"
 
 declare global {
 	interface Window {
 		talismanEth?: EIP1193Provider
 	}
 }
-
-const chains = [
-	bsc,
-	mainnet,
-	moonbeam,
-	moonriver,
-	arbitrum,
-	polygon,
-	optimism,
-	blast,
-	manta,
-] as const
 
 // Create wagmi config with chaindata RPCs
 const createWagmiConfigWithChaindata = (evmNetworks: EthNetwork[]) =>

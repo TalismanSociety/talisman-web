@@ -109,6 +109,12 @@ export const ownAccounts$: Observable<Account[]> = shared(
 	)
 )
 
+export const ownPortfolioAccounts$ = shared(
+	ownAccounts$.pipe(
+		map((accounts) => accounts.filter((account) => !account.readonly || account.partOfPortfolio))
+	)
+)
+
 export const accounts$: Observable<Account[]> = shared(
 	combineLatest([signetAccount$, ownAccounts$, lookupAccounts$]).pipe(
 		map(([signetAccount, own, lookup]) =>

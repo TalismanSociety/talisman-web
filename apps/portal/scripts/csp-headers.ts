@@ -17,7 +17,7 @@ export const cspHeader = (html: string) => {
 
 	const directives: ReadonlyArray<readonly [string, readonly string[]]> = [
 		["default-src", ["'self'"]],
-		["script-src", ["'self'", "'wasm-unsafe-eval'", ...hashes, "https://us-assets.i.posthog.com"]],
+		["script-src", ["'self'", "'wasm-unsafe-eval'", ...hashes]],
 		["style-src", ["'self'", "'unsafe-inline'"]],
 		["img-src", ["'self'", "data:", "blob:", "https:"]],
 		["font-src", ["'self'"]],

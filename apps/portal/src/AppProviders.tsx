@@ -6,14 +6,14 @@ import "@talismn/astar-types/types-lookup"
 import { Subscribe } from "@react-rxjs/core"
 import * as Sentry from "@sentry/react"
 import { PolkadotApiProvider } from "@talismn/react-polkadot-api"
-import { PostHogProvider } from "posthog-js/react"
 import { type ReactNode, Suspense } from "react"
 import { RecoilRoot } from "recoil"
 import ThemeProvider from "@/App.Theme"
-import { FairyBreadBanner } from "@/components/legacy/widgets/FairyBreadBanner"
+import { ConsentBanner } from "@/app-shell/ConsentBanner"
 import { FullscreenLoader } from "@/components/molecules/FullscreenLoader"
 import { Development } from "@/components/widgets/development/Development"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
+import { PrivacySettingsDialog } from "@/components/widgets/PrivacySettings/PrivacySettingsDialog"
 import { AccountWatcher } from "@/domains/accounts/AccountWatcher"
 import { BalancesReporter, BalancesWatcher } from "@/domains/balances/BalancesWatcher"
 import {
@@ -42,26 +42,25 @@ const AppProviders = ({ children }: { children: ReactNode }) => (
 				<Suspense fallback={<FullscreenLoader />}>
 					<Subscribe>
 						<JotaiProvider>
-							<PostHogProvider apiKey={import.meta.env.VITE_POSTHOG_AUTH_TOKEN}>
-								<EvmProvider>
-									<PolkadotApiProvider
-										queryState={chainQueryState}
-										deriveState={chainDeriveState}
-										queryMultiState={chainQueryMultiState}
-									>
-										<ExtensionWatcher />
-										<AccountWatcher />
-										<BalancesWatcher />
-										<BalancesReporter />
-										<Suspense fallback={<FullscreenLoader />}>
-											{children}
-											<Toaster position="bottom-right" />
-										</Suspense>
-										<FairyBreadBanner />
-										<Development />
-									</PolkadotApiProvider>
-								</EvmProvider>
-							</PostHogProvider>
+							<EvmProvider>
+								<PolkadotApiProvider
+									queryState={chainQueryState}
+									deriveState={chainDeriveState}
+									queryMultiState={chainQueryMultiState}
+								>
+									<ExtensionWatcher />
+									<AccountWatcher />
+									<BalancesWatcher />
+									<BalancesReporter />
+									<Suspense fallback={<FullscreenLoader />}>
+										{children}
+										<Toaster position="bottom-right" />
+									</Suspense>
+									<ConsentBanner />
+									<PrivacySettingsDialog />
+									<Development />
+								</PolkadotApiProvider>
+							</EvmProvider>
 						</JotaiProvider>
 					</Subscribe>
 				</Suspense>

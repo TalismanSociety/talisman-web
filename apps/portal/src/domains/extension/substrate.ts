@@ -3,7 +3,6 @@ import { type PolkadotAccount, type PolkadotWallet, polkadot } from "@kheopskit/
 import type { Signer } from "@polkadot/types/types"
 import { bind } from "@react-rxjs/core"
 import type { InjectedPolkadotAccount } from "polkadot-api/pjs-signer"
-import posthog from "posthog-js"
 import {
 	auditTime,
 	BehaviorSubject,
@@ -28,6 +27,8 @@ import {
 import { z } from "zod"
 import polkadotJsWalletLogo from "@/assets/polkadot-js-wallet.svg"
 import talismanWalletLogo from "@/assets/talisman-wallet.svg"
+import { track } from "@/domains/analytics/client"
+import { substrateWalletOf } from "@/domains/analytics/events/extensions"
 import { atomFromObservable } from "@/domains/common/recoil-bridge"
 import { toast } from "@/ui/molecules/Toaster"
 import { persistedState } from "@/util/persistedState"
@@ -103,9 +104,7 @@ const connectOnce = (wallet: PolkadotWallet) => {
 		.connect()
 		.then(
 			() => {
-				posthog.capture("Substrate extensions connected", {
-					$set: { substrateExtensions: [wallet.sourceId] },
-				})
+				track("Substrate extensions connected", { wallet: substrateWalletOf(wallet.sourceId) })
 			},
 			(error) => {
 				if (isWalletError(error, "WALLET_ALREADY_CONNECTED")) return
