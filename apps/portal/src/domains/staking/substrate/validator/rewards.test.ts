@@ -1,26 +1,47 @@
 import { describe, expect, it } from "vitest"
 
-import { type EraInputs, type ExposurePage, eraExposureOf, stakerRewardsOf } from "./rewards"
+import {
+	type EraInputs,
+	type ExposurePage,
+	eraExposureOf,
+	stakerRewardsOf,
+	type ValidatorExposure,
+} from "./rewards"
 
 const NOMINATOR = "nominator"
 const OTHER = "other"
 const VALIDATOR = "validator"
 const SECOND = "second"
 
-const page = (others: [string, bigint][], pageTotal?: bigint): ExposurePage => ({
-	pageTotal: pageTotal ?? others.reduce((total, [, value]) => total + value, 0n),
+type Pages = [string, ExposurePage][]
+
+const page = (others: [string, bigint][]): ExposurePage => ({
+	pageTotal: others.reduce((total, [, value]) => total + value, 0n),
 	others: others.map(([who, value]) => ({ who, value })),
 })
+
+const overviewOf = (pages: Pages, own: Record<string, bigint>) => {
+	const totals = new Map<string, ValidatorExposure>()
+	for (const [validator, { pageTotal }] of pages) {
+		const entry = totals.get(validator) ?? {
+			total: own[validator] ?? 0n,
+			own: own[validator] ?? 0n,
+		}
+		totals.set(validator, { ...entry, total: entry.total + pageTotal })
+	}
+	return [...totals]
+}
 
 const era = (
 	index: number,
 	{
 		pages = [],
+		own = {},
 		...inputs
-	}: Partial<Omit<EraInputs, "exposure">> & { pages?: [string, ExposurePage][] }
+	}: Partial<Omit<EraInputs, "exposure">> & { pages?: Pages; own?: Record<string, bigint> }
 ): EraInputs => ({
 	era: index,
-	exposure: eraExposureOf(pages),
+	exposure: eraExposureOf(overviewOf(pages, own), pages),
 	eraPoints: 20n,
 	validatorPoints: new Map([[VALIDATOR, 10n]]),
 	commissions: new Map([[VALIDATOR, 100_000_000n]]),
@@ -32,16 +53,12 @@ const staker = (
 	stash: string,
 	claimedRewardsEras: number[] = [],
 	legacyClaimedRewards: number[] = []
-) => ({
-	stash,
-	claimedRewardsEras,
-	legacyClaimedRewards,
-})
+) => ({ stash, claimedRewardsEras, legacyClaimedRewards })
 
 const noClaims = new Map<string, number[]>()
 
-describe("staker rewards, as pjs stakerRewardsMultiEras sums them", () => {
-	it("pays a nominator its page share of the validator reward after commission", () => {
+describe("staker rewards, the share the chain pays out", () => {
+	it("pays a nominator its share of the validator reward after commission", () => {
 		const inputs = era(1, {
 			pages: [
 				[
@@ -56,37 +73,35 @@ describe("staker rewards, as pjs stakerRewardsMultiEras sums them", () => {
 		expect(stakerRewardsOf([inputs], staker(NOMINATOR), noClaims)).toBe(45n)
 	})
 
-	it("divides by the page total, not the validator total", () => {
+	it("divides by the validator's whole exposure, own stake included", () => {
 		const inputs = era(1, {
 			pages: [
 				[
 					VALIDATOR,
-					page(
-						[
-							[NOMINATOR, 100n],
-							[OTHER, 900n],
-						],
-						2_000n
-					),
+					page([
+						[NOMINATOR, 100n],
+						[OTHER, 900n],
+					]),
 				],
 			],
+			own: { [VALIDATOR]: 1_000n },
 		})
 		expect(stakerRewardsOf([inputs], staker(NOMINATOR), noClaims)).toBe(22n)
 	})
 
-	it("keeps only the last enumerated page of a validator, so an earlier page earns nothing", () => {
+	it("finds the nominator on any page of a validator", () => {
 		const first = page([
 			[NOMINATOR, 100n],
-			[OTHER, 900n],
+			[OTHER, 400n],
 		])
-		const last = page([[OTHER, 1_000n]])
+		const last = page([[OTHER, 500n]])
 		const inputs = era(1, {
 			pages: [
 				[VALIDATOR, first],
 				[VALIDATOR, last],
 			],
 		})
-		expect(stakerRewardsOf([inputs], staker(NOMINATOR), noClaims)).toBe(0n)
+		expect(stakerRewardsOf([inputs], staker(NOMINATOR), noClaims)).toBe(45n)
 		const reversed = era(1, {
 			pages: [
 				[VALIDATOR, last],
@@ -96,9 +111,12 @@ describe("staker rewards, as pjs stakerRewardsMultiEras sums them", () => {
 		expect(stakerRewardsOf([reversed], staker(NOMINATOR), noClaims)).toBe(45n)
 	})
 
-	it("pays a validator stash its commission only", () => {
-		const inputs = era(1, { pages: [[VALIDATOR, page([[NOMINATOR, 1_000n]])]] })
-		expect(stakerRewardsOf([inputs], staker(VALIDATOR), noClaims)).toBe(50n)
+	it("pays a validator stash its commission and its own stake's share", () => {
+		const inputs = era(1, {
+			pages: [[VALIDATOR, page([[NOMINATOR, 900n]])]],
+			own: { [VALIDATOR]: 100n },
+		})
+		expect(stakerRewardsOf([inputs], staker(VALIDATOR), noClaims)).toBe(50n + 45n)
 	})
 
 	it("sums every nominated validator over every era", () => {
@@ -138,8 +156,8 @@ describe("staker rewards, as pjs stakerRewardsMultiEras sums them", () => {
 		expect(stakerRewardsOf([one, two], staker(NOMINATOR), noClaims)).toBe(45n + 250n + 45n)
 	})
 
-	it("earns nothing in an era without points, reward or page total", () => {
-		const exposure: [string, ExposurePage][] = [[VALIDATOR, page([[NOMINATOR, 100n]])]]
+	it("earns nothing in an era without points, reward or exposure total", () => {
+		const exposure: Pages = [[VALIDATOR, page([[NOMINATOR, 100n]])]]
 		expect(
 			stakerRewardsOf([era(1, { pages: exposure, eraPoints: 0n })], staker(NOMINATOR), noClaims)
 		).toBe(0n)
@@ -155,7 +173,7 @@ describe("staker rewards, as pjs stakerRewardsMultiEras sums them", () => {
 		).toBe(0n)
 		expect(
 			stakerRewardsOf(
-				[era(1, { pages: [[VALIDATOR, page([[NOMINATOR, 100n]], 0n)]] })],
+				[era(1, { pages: [[VALIDATOR, page([[NOMINATOR, 0n]])]] })],
 				staker(NOMINATOR),
 				noClaims
 			)

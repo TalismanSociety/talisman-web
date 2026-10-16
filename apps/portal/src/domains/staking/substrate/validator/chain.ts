@@ -5,7 +5,13 @@ import { from, map, type Observable, of } from "rxjs"
 import { type ChainRuntime, hasStorage } from "@/domains/chains/chain-runtime"
 import type { SlashingSpansValue, StakingLedgerValue } from "@/domains/chains/portal-runtime"
 
-import { type EraInputs, type ExposurePage, eraExposureOf, type StakerInputs } from "./rewards"
+import {
+	type EraInputs,
+	type ExposurePage,
+	eraExposureOf,
+	type StakerInputs,
+	type ValidatorExposure,
+} from "./rewards"
 
 const BEST = { at: "best" } as const
 
@@ -56,7 +62,7 @@ const ledgersOf = async ({ api }: ChainRuntime, stashes: SS58String[]) => {
 }
 
 const UNPAID_ERA: Omit<EraInputs, "era"> = {
-	exposure: eraExposureOf([]),
+	exposure: eraExposureOf([], []),
 	eraPoints: 0n,
 	validatorPoints: new Map(),
 	commissions: new Map(),
@@ -66,7 +72,8 @@ const UNPAID_ERA: Omit<EraInputs, "era"> = {
 export const eraInputs = async ({ api }: ChainRuntime, era: number): Promise<EraInputs> => {
 	const reward = await api.query.Staking.ErasValidatorReward.getValue(era, BEST)
 	if (reward === undefined) return { era, ...UNPAID_ERA }
-	const [paged, points, prefs] = await Promise.all([
+	const [overview, paged, points, prefs] = await Promise.all([
+		api.query.Staking.ErasStakersOverview.getEntries(era, BEST),
 		api.query.Staking.ErasStakersPaged.getEntries(era, BEST),
 		api.query.Staking.ErasRewardPoints.getValue(era, BEST),
 		api.query.Staking.ErasValidatorPrefs.getEntries(era, BEST),
@@ -74,6 +81,10 @@ export const eraInputs = async ({ api }: ChainRuntime, era: number): Promise<Era
 	return {
 		era,
 		exposure: eraExposureOf(
+			overview.map(
+				({ keyArgs: [, validator], value }) =>
+					[validator, { total: value.total, own: value.own }] as [SS58String, ValidatorExposure]
+			),
 			paged.map(
 				({ keyArgs: [, validator], value }) =>
 					[validator, { pageTotal: value.page_total, others: value.others }] as [
