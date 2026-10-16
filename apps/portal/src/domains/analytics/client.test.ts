@@ -587,12 +587,31 @@ describe("portal events", () => {
 		untyped("Report portfolio balances", {
 			$set: { portfolioBalances: [{ addressDigest: "ab".repeat(64), usdValue: 12 }] },
 		})
+		untyped("Report portfolio balances", {
+			tokens: 2,
+			chains: 2,
+			tokenId: "polkadot:substrate-native",
+			tokenIds: ["1:evm-erc20:0x6B175474E89094C44Da98b954EedeAC495271d0F"],
+		})
 		await clientReady()
 		await flush()
 
-		expect(sentEventNames()).toEqual(["Write to EVM contract", "Report portfolio balances"])
+		expect(sentEventNames()).toEqual([
+			"Write to EVM contract",
+			"Report portfolio balances",
+			"Report portfolio balances",
+		])
 		const body = JSON.stringify(requests)
-		for (const leak of ["ab12ab12", "9858", "amount", "addressDigest", "portfolioBalances"])
+		for (const leak of [
+			"ab12ab12",
+			"9858",
+			"amount",
+			"addressDigest",
+			"portfolioBalances",
+			"tokenId",
+			"substrate-native",
+			"6B175474",
+		])
 			expect(body).not.toContain(leak)
 	})
 })
