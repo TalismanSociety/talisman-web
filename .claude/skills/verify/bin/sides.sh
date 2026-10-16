@@ -71,6 +71,7 @@ prepare_sides() {
     app=${side}_app
     if is_url "${!app}"; then echo "$side ${!app}: served from its URL"; else "ensure_$side"; fi
   done
+  [[ " $* " != *" baseline "* ]] || is_url "$baseline_app" || echo "baseline $baseline_sha"
   [[ " $* " != *" candidate "* ]] || is_url "$candidate_app" ||
     echo "candidate $(git -C "$root" rev-parse HEAD)$( [[ -n $(git -C "$root" status --porcelain -- . ':!.claude') ]] && echo ' with local changes')"
 }
