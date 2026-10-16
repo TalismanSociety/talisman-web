@@ -26,6 +26,24 @@ export const callEncoderOf = (lookup: MetadataLookup) => {
 	return (call: TxCallData) => codec.enc(call)
 }
 
+export const txFromCall = (runtime: ChainRuntime, call: TxCallData) =>
+	runtime.api.txFromCallData(runtime.encodeCall(call))
+
+const palletOf = (lookup: MetadataLookup, pallet: string) =>
+	lookup.metadata.pallets.find(({ name }) => name === pallet)
+
+export const hasPallet = (lookup: MetadataLookup, pallet: string) =>
+	palletOf(lookup, pallet) !== undefined
+
+export const hasStorage = (lookup: MetadataLookup, pallet: string, item: string) =>
+	palletOf(lookup, pallet)?.storage?.items.some(({ name }) => name === item) ?? false
+
+export const constantOf = <T>(lookup: MetadataLookup, pallet: string, name: string) => {
+	const constant = palletOf(lookup, pallet)?.constants.find((entry) => entry.name === name)
+	if (!constant) return undefined
+	return getDynamicBuilder(lookup).buildConstant(pallet, name).dec(constant.value) as T
+}
+
 const loadChainRuntime = async (client: PolkadotClient): Promise<ChainRuntime> => {
 	const api = client.getUnsafeApi<PortalRuntime>()
 	const [chainSpec, { hash }] = await Promise.all([

@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 
 import { NominationPoolsUnstakeDialog } from "@/components/recipes/UnstakeDialog"
-import { useExtrinsicInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
+import { useTxInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
 import { usePoolUnstakeForm } from "@/domains/staking/substrate/nominationPools/hooks"
 import { useLocalizedUnlockDuration } from "@/domains/staking/substrate/nominationPools/hooks/useUnlockDuration"
 
@@ -19,7 +19,7 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
 		error: inputError,
 	} = usePoolUnstakeForm(props.account)
 
-	useExtrinsicInBlockOrErrorEffect(() => {
+	useTxInBlockOrErrorEffect(() => {
 		props.onDismiss()
 	}, unbondExtrinsic)
 
@@ -43,7 +43,7 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
 						unbondExtrinsic.unbondMax(props.account, props.account).finally(() => props.onDismiss())
 					} else {
 						unbondExtrinsic
-							.signAndSend(props.account, props.account, decimalAmount?.planck)
+							.signAndSend(props.account, props.account, decimalAmount.planck)
 							.finally(() => props.onDismiss())
 					}
 				}

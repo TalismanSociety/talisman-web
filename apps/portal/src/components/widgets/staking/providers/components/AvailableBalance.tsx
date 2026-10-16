@@ -5,8 +5,9 @@ import { Text } from "@/ui/atoms/Text"
 import { Decimal } from "@/util/Decimal"
 
 import useLidoAvailableBalance from "../hooks/lido/useAvailableBalance"
-import useAvailableBalance from "../hooks/nominationPools/useAvailableBalance"
+import usePoolAvailableBalance from "../hooks/nominationPools/usePoolAvailableBalance"
 import useGetSeekAvailableBalance from "../hooks/seek/useGetSeekAvailableBalance"
+import useSubstrateAvailableBalance from "../hooks/substrate/useAvailableBalance"
 import type { StakeProviderTypeId } from "../hooks/types"
 
 type AvailableBalanceProps = {
@@ -22,7 +23,7 @@ type AvailableBalance = {
 	availableBalance: Decimal
 	fiatAmount: number
 }
-type hookMapKey = "substrate" | "liquidStakingLido" | "talisman"
+type hookMapKey = "nominationPool" | "substrate" | "liquidStakingLido" | "talisman"
 
 // This component is used to get around the react rules of conditional hooks
 const AvailableBalanceDisplay = ({
@@ -31,13 +32,16 @@ const AvailableBalanceDisplay = ({
 	setAvailableBalanceValue,
 }: AvailableBalanceDisplayProps) => {
 	const hookMap: Record<hookMapKey, (arg0?: any, arg1?: boolean) => AvailableBalance> = {
-		substrate: useAvailableBalance,
+		nominationPool: usePoolAvailableBalance,
+		substrate: useSubstrateAvailableBalance,
 		liquidStakingLido: useLidoAvailableBalance,
 		talisman: useGetSeekAvailableBalance,
 	}
 	let balanceValue: AvailableBalance
 	switch (typeId) {
 		case "nominationPool":
+			balanceValue = hookMap["nominationPool"]()
+			break
 		case "delegationSubtensor":
 		case "dappStaking":
 			balanceValue = hookMap["substrate"]()

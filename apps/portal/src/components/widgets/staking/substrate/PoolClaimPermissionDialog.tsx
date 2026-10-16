@@ -1,34 +1,36 @@
-import { useQueryMultiState } from "@talismn/react-polkadot-api"
 import { useState } from "react"
 import { useRecoilValue } from "recoil"
+import { combineLatest, switchMap } from "rxjs"
 import {
 	PoolClaimPermissionDialog as PoolClaimPermissionDialogComponent,
 	PoolClaimPermissionForm as PoolClaimPermissionFormComponent,
 } from "@/components/recipes/PoolClaimPermissionForm"
 import type { Account } from "@/domains/accounts/recoils"
+import { txFromCall } from "@/domains/chains/chain-runtime"
 import { useChainState } from "@/domains/chains/hooks"
 import { assertChain } from "@/domains/chains/utils"
-import { useExtrinsic } from "@/domains/common/hooks/useExtrinsic"
-import { useExtrinsicInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
+import { useTxInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
+import { useTx } from "@/domains/common/hooks/useTx"
+import {
+	type ClaimPermission,
+	setClaimPermissionCall,
+} from "@/domains/staking/substrate/nominationPools/calls"
+import {
+	watchClaimPermission,
+	watchPoolMember,
+} from "@/domains/staking/substrate/nominationPools/chain"
+import {
+	chainRuntimes$,
+	useGenesisHash,
+} from "@/domains/staking/substrate/nominationPools/hooks/useRuntimes"
+import { bindSuspended } from "@/util/loadable"
 
 type PoolClaimPermissionDialogProps = {
 	account: Account
 	onRequestDismiss: () => unknown
 }
 
-type PoolClaimPermission =
-	| "Permissioned"
-	| "PermissionlessCompound"
-	| "PermissionlessWithdraw"
-	| "PermissionlessAll"
-
-export const toUiPermission = (
-	permission:
-		| "Permissioned"
-		| "PermissionlessCompound"
-		| "PermissionlessWithdraw"
-		| "PermissionlessAll"
-) => {
+export const toUiPermission = (permission: ClaimPermission) => {
 	switch (permission) {
 		case "Permissioned":
 			return undefined
@@ -41,36 +43,44 @@ export const toUiPermission = (
 	}
 }
 
-const toSubstratePermission = (permission: "compound" | "withdraw" | "all" | undefined) => {
+const toSubstratePermission = (
+	permission: "compound" | "withdraw" | "all" | undefined
+): ClaimPermission => {
 	switch (permission) {
 		case undefined:
 			return "Permissioned"
 		case "compound":
-			return "PermissionlessCompound" as const
+			return "PermissionlessCompound"
 		case "withdraw":
-			return "PermissionlessWithdraw" as const
+			return "PermissionlessWithdraw"
 		case "all":
-			return "PermissionlessAll" as const
+			return "PermissionlessAll"
 	}
 }
+
+const [useMemberClaimPermission] = bindSuspended((genesisHash: string, address: string) =>
+	chainRuntimes$(genesisHash).pipe(
+		switchMap(({ runtime }) =>
+			combineLatest([watchPoolMember(runtime, address), watchClaimPermission(runtime, address)])
+		)
+	)
+)
 
 const PoolClaimPermissionForm = (props: { account: Account; onRequestDismiss: () => unknown }) => {
 	const chain = useRecoilValue(useChainState())
 
 	assertChain(chain, { hasNominationPools: true })
 
-	const [poolMember, claimPermission] = useRecoilValue(
-		useQueryMultiState([
-			["nominationPools.poolMembers", props.account.address],
-			["nominationPools.claimPermissions", props.account.address],
-		])
+	const genesisHash = useGenesisHash()
+	const [poolMember, claimPermission] = useMemberClaimPermission(genesisHash, props.account.address)
+
+	const [permission, setPermission] = useState<ClaimPermission>(claimPermission.type)
+
+	const extrinsic = useTx(genesisHash, (runtime) =>
+		txFromCall(runtime, setClaimPermissionCall(permission))
 	)
 
-	const [permission, setPermission] = useState<PoolClaimPermission>(claimPermission.type)
-
-	const extrinsic = useExtrinsic("nominationPools", "setClaimPermission", [permission])
-
-	useExtrinsicInBlockOrErrorEffect(() => {
+	useTxInBlockOrErrorEffect(() => {
 		props.onRequestDismiss()
 	}, extrinsic)
 
@@ -83,8 +93,7 @@ const PoolClaimPermissionForm = (props: { account: Account; onRequestDismiss: ()
 			}}
 			submitPending={extrinsic.state === "loading"}
 			isTalismanPool={
-				poolMember.isSome &&
-				(chain.talismanPools?.includes(poolMember.unwrapOrDefault().poolId.toNumber()) ?? false)
+				poolMember !== undefined && (chain.talismanPools?.includes(poolMember.pool_id) ?? false)
 			}
 		/>
 	)
@@ -97,8 +106,8 @@ const PoolClaimPermissionDialog = (props: PoolClaimPermissionDialogProps) => (
 )
 
 type PoolClaimPermissionControlledDialogProps = {
-	permission: PoolClaimPermission
-	onChangePermission: (permission: PoolClaimPermission) => unknown
+	permission: ClaimPermission
+	onChangePermission: (permission: ClaimPermission) => unknown
 	poolId?: number
 	onRequestDismiss: () => unknown
 }
@@ -110,7 +119,7 @@ export const PoolClaimPermissionControlledDialog = (
 
 	assertChain(chain, { hasNominationPools: true })
 
-	const [permission, setPermission] = useState<PoolClaimPermission>(props.permission)
+	const [permission, setPermission] = useState<ClaimPermission>(props.permission)
 
 	return (
 		<PoolClaimPermissionDialogComponent onRequestDismiss={props.onRequestDismiss}>

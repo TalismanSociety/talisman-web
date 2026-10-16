@@ -42,11 +42,3 @@ export const expectedSessionTime = (api: ApiPromise) => {
 			)
 	}
 }
-
-export const expectedEraTime = (api: ApiPromise) => {
-	const sessionsPerEra =
-		api.consts.staking?.sessionsPerEra ?? api.registry.createType("SessionIndex", 1)
-	const sessionTime = expectedSessionTime(api)
-
-	return sessionsPerEra.mul(sessionTime).toNumber()
-}

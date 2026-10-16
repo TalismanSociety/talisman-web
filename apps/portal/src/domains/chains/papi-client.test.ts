@@ -14,12 +14,17 @@ vi.mock("@polkadot-api/ws-provider", () => ({ getWsProvider }))
 vi.mock("@polkadot-api/ws-middleware", () => ({ withLegacy }))
 
 const substrate = networks.flatMap((network) =>
-	"genesisHash" in network && typeof network.genesisHash === "string" && network.id !== "bittensor"
+	"genesisHash" in network &&
+	typeof network.genesisHash === "string" &&
+	network.id !== "bittensor" &&
+	network.id !== "avail"
 		? [{ genesisHash: network.genesisHash, rpcs: network.rpcs }]
 		: []
 )
 const bittensor = networks.find((network) => network.id === "bittensor")
 if (!bittensor || !("genesisHash" in bittensor)) throw new Error("bittensor must be shipped")
+const avail = networks.find((network) => network.id === "avail")
+if (!avail || !("genesisHash" in avail)) throw new Error("avail must be shipped")
 const [chain, otherChain] = substrate
 if (!chain || !otherChain) throw new Error("two shipped substrate networks are required")
 
@@ -46,6 +51,7 @@ describe("getPapiClient", () => {
 		const metadataCache = expect.objectContaining({
 			getMetadata: expect.any(Function),
 			setMetadata: expect.any(Function),
+			timeout: 20_000,
 		})
 		expect(createWsClient.mock.calls).toEqual([
 			[chain.rpcs, metadataCache],
@@ -57,9 +63,12 @@ describe("getPapiClient", () => {
 	it("opens Bittensor through the legacy JSON-RPC translation, behind its load balancers", () => {
 		const client = papi.getPapiClient(bittensor.genesisHash as string)
 
-		expect(getWsProvider).toHaveBeenCalledWith(bittensor.rpcs, { middleware: withLegacy })
+		expect(getWsProvider).toHaveBeenCalledWith(bittensor.rpcs, {
+			middleware: withLegacy,
+			timeout: 20_000,
+		})
 		expect(client).toEqual({
-			provider: { rpcs: bittensor.rpcs, options: { middleware: withLegacy } },
+			provider: { rpcs: bittensor.rpcs, options: { middleware: withLegacy, timeout: 20_000 } },
 		})
 		expect(createClient.mock.calls[0]?.[1]).toEqual(
 			expect.objectContaining({
@@ -67,6 +76,19 @@ describe("getPapiClient", () => {
 				setMetadata: expect.any(Function),
 			})
 		)
+		expect(createWsClient).not.toHaveBeenCalled()
+	})
+
+	it("opens Avail through the legacy translation with its header extension folded in", () => {
+		const client = papi.getPapiClient(avail.genesisHash as string)
+
+		const [rpcs, options] = getWsProvider.mock.calls[0] as [string[], { middleware: unknown }]
+		expect(rpcs).toEqual(avail.rpcs)
+		const middleware = options.middleware
+		expect(middleware).not.toBe(withLegacy)
+		expect(client).toEqual({
+			provider: { rpcs: avail.rpcs, options: { middleware, timeout: 20_000 } },
+		})
 		expect(createWsClient).not.toHaveBeenCalled()
 	})
 
