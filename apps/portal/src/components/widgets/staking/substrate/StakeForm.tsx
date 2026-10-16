@@ -1,45 +1,56 @@
-import type { ApiPromise } from "@polkadot/api"
+import { bind } from "@react-rxjs/core"
 import BN from "bn.js"
 import type { ReactNode } from "react"
 import { memo, Suspense, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react"
 import { useLocation } from "react-use"
-import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from "recoil"
+import { useRecoilValue, waitForAll } from "recoil"
+import { combineLatest, map, of, switchMap } from "rxjs"
 import { StakeForm as StakeFormComponent } from "@/components/recipes/StakeForm"
 import type { StakeStatus } from "@/components/recipes/StakeStatusIndicator"
 import { PoolSelectorDialog } from "@/components/recipes/StakeTargetSelectorDialog"
 import { useAccountSelector } from "@/components/widgets/AccountSelector"
 import type { Account } from "@/domains/accounts/recoils"
 import { writeableSubstrateAccountsState } from "@/domains/accounts/recoils"
+import { txFromCall } from "@/domains/chains/chain-runtime"
 import { claimPermissionUnsupportedChainIds } from "@/domains/chains/config"
 import { useChainState as useChainRecoilState } from "@/domains/chains/hooks"
 import { type ChainInfo, useNativeTokenDecimalState } from "@/domains/chains/recoils"
 import { assertChain } from "@/domains/chains/utils"
-import { useChainState } from "@/domains/common/hooks/useChainState"
-import { useEraEtaFormatter } from "@/domains/common/hooks/useEraEta"
-import {
-	useExtrinsic,
-	useSubmittableResultLoadableState,
-} from "@/domains/common/hooks/useExtrinsic"
-import { useSubstrateApiEndpoint } from "@/domains/common/hooks/useSubstrateApiEndpoint"
-import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
-import { useTxLoadableState } from "@/domains/common/hooks/useTx"
+import { useTx, useTxLoadableState } from "@/domains/common/hooks/useTx"
+import {
+	type ClaimPermission,
+	joinCall,
+	withdrawUnbondedCall,
+} from "@/domains/staking/substrate/nominationPools/calls"
+import {
+	nominatesActiveValidator,
+	poolNames,
+	poolStash,
+	watchActiveEra,
+	watchBondedPool,
+	watchNominators,
+	watchPoolMember,
+} from "@/domains/staking/substrate/nominationPools/chain"
 import {
 	useApr,
 	usePoolAddForm,
+	usePoolCommission,
 	usePoolStakes,
+	useRecommendedPools,
 } from "@/domains/staking/substrate/nominationPools/hooks"
-import { usePoolCommission } from "@/domains/staking/substrate/nominationPools/hooks/usePoolCommission"
+import { useEraEtaFormatter } from "@/domains/staking/substrate/nominationPools/hooks/useEraEta"
 import {
-	eraStakersState,
-	useRecommendedPoolsState,
-} from "@/domains/staking/substrate/nominationPools/recoils"
-import { createAccounts } from "@/domains/staking/substrate/nominationPools/utils"
+	chainRuntimes$,
+	useGenesisHash,
+} from "@/domains/staking/substrate/nominationPools/hooks/useRuntimes"
+import { poolStatus } from "@/domains/staking/substrate/nominationPools/positions"
 import { Info } from "@/icons"
 import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 import { Tooltip } from "@/ui/atoms/Tooltip"
 import { Select } from "@/ui/molecules/Select"
 import type { Decimal } from "@/util/Decimal"
+import { LOADING, toLoadable } from "@/util/loadable"
 import { Maybe } from "@/util/monads"
 
 import AddStakeDialog from "./AddStakeDialog"
@@ -60,10 +71,13 @@ const ExistingPool = (props: { account: Account; showClaimPermission: boolean })
 
 	const [claimDialogOpen, setClaimDialogOpen] = useState(false)
 	const [claimPayoutLoadable, setClaimPayoutLoadable] = useTxLoadableState()
-	const [restakeLoadable, setRestakeLoadable] = useSubmittableResultLoadableState()
+	const [restakeLoadable, setRestakeLoadable] = useTxLoadableState()
 
 	const [unstakeDialogAddress, setUnstakeDialogAddress] = useState<string>()
-	const withdrawExtrinsic = useExtrinsic("nominationPools", "withdrawUnbonded")
+	const genesisHash = useGenesisHash()
+	const withdrawExtrinsic = useTx(genesisHash, (runtime) =>
+		txFromCall(runtime, withdrawUnbondedCall(props.account.address, pool?.slashingSpan ?? 0))
+	)
 
 	const [claimPermissionDialogOpen, setClaimPermissionDialogOpen] = useState(false)
 
@@ -87,7 +101,8 @@ const ExistingPool = (props: { account: Account; showClaimPermission: boolean })
 				rewards={pendingRewards.decimalAmount?.toLocaleString()}
 				rewardsFiatAmount={pendingRewards.localizedFiatAmount}
 				claimChip={
-					pool?.pendingRewards?.isZero() === false && (
+					pool?.pendingRewards !== undefined &&
+					pool.pendingRewards !== 0n && (
 						<StakeFormComponent.ExistingPool.ClaimChip
 							onClick={() => setClaimDialogOpen(true)}
 							loading={
@@ -108,11 +123,7 @@ const ExistingPool = (props: { account: Account; showClaimPermission: boolean })
 				withdrawChip={
 					<StakeFormComponent.ExistingPool.WithdrawChip
 						onClick={() => {
-							void withdrawExtrinsic.signAndSend(
-								props.account.address,
-								props.account.address,
-								pool?.slashingSpan ?? 0
-							)
+							void withdrawExtrinsic.signAndSend(props.account.address)
 						}}
 						loading={withdrawExtrinsic.state === "loading"}
 					/>
@@ -120,14 +131,12 @@ const ExistingPool = (props: { account: Account; showClaimPermission: boolean })
 				claimPermission={
 					props.showClaimPermission && (
 						<StakeFormComponent.ClaimPermission
-							permission={toUiPermission(pool?.claimPermission?.type ?? "Permissioned")}
+							permission={toUiPermission(pool?.claimPermission ?? "Permissioned")}
 							onChangeRequest={() => setClaimPermissionDialogOpen(true)}
 						/>
 					)
 				}
 				addButton={
-					// Allow adding (bondExtra) to any pool the account is still a member of, even after a full
-					// unstake (points === 0) — you remain a member until withdrawal, so re-bonding is valid.
 					pool !== undefined && (
 						<StakeFormComponent.ExistingPool.AddButton
 							onClick={() => setAddStakeAddress(props.account.address)}
@@ -135,8 +144,7 @@ const ExistingPool = (props: { account: Account; showClaimPermission: boolean })
 					)
 				}
 				unstakeButton={
-					// Fully unbonding pool can't be interacted with
-					!pool?.poolMember.points.isZero() && (
+					pool?.poolMember.points !== 0n && (
 						<StakeFormComponent.ExistingPool.UnstakeButton
 							onClick={() => setUnstakeDialogAddress(props.account.address)}
 						/>
@@ -173,9 +181,10 @@ const PoolSelector = (props: {
 	onDismiss: () => unknown
 }) => {
 	const [newPoolId, setNewPoolId] = useState<number>()
-	const [chain, recommendedPools, nativeTokenDecimal] = useRecoilValue(
-		waitForAll([useChainRecoilState(), useRecommendedPoolsState(), useNativeTokenDecimalState()])
+	const [chain, nativeTokenDecimal] = useRecoilValue(
+		waitForAll([useChainRecoilState(), useNativeTokenDecimalState()])
 	)
+	const recommendedPools = useRecommendedPools()
 	const { getCurrentCommission } = usePoolCommission()
 
 	return (
@@ -206,9 +215,9 @@ const PoolSelector = (props: {
 								? new URL(`nomination_pool/${pool.poolId}`, chain.subscanUrl).toString()
 								: undefined
 						}
-						balance={`${nativeTokenDecimal.fromPlanck(pool.bondedPool.points.toBigInt()).toLocaleString()} staked`}
+						balance={`${nativeTokenDecimal.fromPlanck(pool.points).toLocaleString()} staked`}
 						rating={3}
-						count={pool.bondedPool.memberCounter.toString()}
+						count={pool.memberCounter.toString()}
 						onClick={() => setNewPoolId(pool.poolId)}
 						commissionFeeDescription="Commission shown is only for the nomination pool, but actual earnings will reflect fees charged by both validators and nomination pools. The total amount of fees can change regularly and can't be determined by Talisman."
 						commissionFee={`${getCurrentCommission(pool.poolId).toString()}%`}
@@ -313,6 +322,53 @@ const CommissionFee = ({ poolId }: { poolId: number }) => {
 	)
 }
 
+const [useExistingPoolId] = bind(
+	(genesisHash: string, address: string) =>
+		toLoadable(
+			chainRuntimes$(genesisHash).pipe(
+				switchMap(({ runtime }) =>
+					address === ""
+						? of(undefined)
+						: watchPoolMember(runtime, address).pipe(map((member) => member?.pool_id))
+				)
+			)
+		),
+	LOADING
+)
+
+const [useSelectedPool] = bind(
+	(genesisHash: string, poolId: number) =>
+		toLoadable(
+			chainRuntimes$(genesisHash).pipe(
+				switchMap(({ runtime }) =>
+					combineLatest([
+						watchBondedPool(runtime, poolId),
+						poolNames(runtime, [poolId]),
+						combineLatest([
+							watchNominators(runtime, poolStash(runtime, poolId)),
+							watchActiveEra(runtime),
+						]).pipe(
+							switchMap(([nominations, activeEra]) => {
+								const targets = nominations?.targets ?? []
+								return nominatesActiveValidator(runtime, activeEra?.index ?? 0, targets).pipe(
+									map((active) => poolStatus(1n, targets, active))
+								)
+							})
+						),
+					]).pipe(
+						map(([bondedPool, [name], status]) => ({
+							points: bondedPool?.points,
+							memberCounter: bondedPool?.member_counter,
+							name,
+							status,
+						}))
+					)
+				)
+			)
+		),
+	LOADING
+)
+
 export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?: string }) => {
 	const location = useLocation()
 
@@ -328,11 +384,9 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 		[location.search]
 	)
 
-	const apiEndpoint = useSubstrateApiEndpoint()
-
-	const [chain, api, recommendedPools] = useRecoilValue(
-		waitForAll([useChainRecoilState(), useSubstrateApiState(), useRecommendedPoolsState()])
-	)
+	const chain = useRecoilValue(useChainRecoilState())
+	const recommendedPools = useRecommendedPools()
+	const genesisHash = useGenesisHash()
 
 	const showClaimPermission = !claimPermissionUnsupportedChainIds.includes(chain.id)
 
@@ -348,9 +402,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 		(accounts) =>
 			props.account !== undefined
 				? accounts?.find((account) => account.address === props.account)
-				: // We don't want to select the first account when poolId is present in the URL
-					// because we want to showcase that pool & the first account might have already joined one
-					poolIdFromSearch === undefined
+				: poolIdFromSearch === undefined
 					? accounts?.[0]
 					: undefined
 	)
@@ -363,85 +415,21 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 		setAmount,
 	} = usePoolAddForm("join", selectedAccount?.address)
 
-	const poolMembersLoadable = useChainState(
-		"query",
-		"nominationPools",
-		"poolMembers",
-		[selectedAccount?.address ?? ""],
-		{ enabled: selectedAccount !== undefined }
-	)
-
-	const activeEraLoadable = useChainState("query", "staking", "activeEra", [])
-	const eraStakersLoadable = useRecoilValueLoadable(
-		activeEraLoadable.state !== "hasValue"
-			? constSelector(undefined)
-			: eraStakersState({
-					endpoint: apiEndpoint,
-					era: activeEraLoadable.contents.unwrapOrDefault().index,
-				})
-	).map((value) => new Set(value?.map((x) => x.toString())))
-
+	const existingPoolLoadable = useExistingPoolId(genesisHash, selectedAccount?.address ?? "")
 	const existingPool =
-		poolMembersLoadable.state === "hasValue"
-			? poolMembersLoadable.contents.unwrapOr(undefined)
-			: undefined
+		existingPoolLoadable.status === "success" ? existingPoolLoadable.data : undefined
 
-	const poolNominatorsLoadable = useChainState(
-		"query",
-		"staking",
-		"nominators",
-		[createAccounts(api, new BN(selectedPoolId ?? 0)).stashId],
-		{ enabled: selectedPoolId !== undefined }
-	)
+	const selectedPool = useSelectedPool(genesisHash, selectedPoolId ?? 0)
+	const pool = selectedPool.status === "success" ? selectedPool.data : undefined
 
-	const poolStatus = useMemo<StakeStatus>(() => {
-		if (poolNominatorsLoadable.state !== "hasValue" || eraStakersLoadable.state !== "hasValue") {
-			return
-		}
+	const poolStatusValue: StakeStatus = pool?.status
 
-		if (poolNominatorsLoadable.contents.unwrapOrDefault().targets.length === 0) {
-			return "not_nominating"
-		}
-
-		return poolNominatorsLoadable.contents
-			.unwrapOrDefault()
-			.targets.some((x) => eraStakersLoadable.contents.has(x.toHuman()))
-			? "earning_rewards"
-			: "waiting"
-	}, [eraStakersLoadable, poolNominatorsLoadable])
-
-	const bondedPoolLoadable = useChainState(
-		"query",
-		"nominationPools",
-		"bondedPools",
-		[selectedPoolId!],
-		{
-			enabled: selectedPoolId !== undefined,
-		}
-	)
-
-	const { decimalAmount: poolTotalStaked } = useTokenAmountFromPlanck(
-		bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().points
-	)
-
-	const poolMetadataLoadable = useChainState(
-		"query",
-		"nominationPools",
-		"metadata.multi",
-		existingPool === undefined
-			? [selectedPoolId!]
-			: selectedPoolId === undefined
-				? [existingPool.poolId, existingPool.poolId]
-				: [selectedPoolId, existingPool.poolId],
-		{
-			enabled: selectedPoolId !== undefined || existingPool !== undefined,
-		}
-	)
+	const { decimalAmount: poolTotalStaked } = useTokenAmountFromPlanck(pool?.points)
 
 	const isReady =
 		selectedAccount !== undefined &&
 		decimalAmount !== undefined &&
-		poolMembersLoadable.state === "hasValue" &&
+		existingPoolLoadable.status === "success" &&
 		isInputReady
 
 	useEffect(() => {
@@ -449,9 +437,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 	}, [initialPoolId, recommendedPools])
 
 	const [claimPermissionDialogOpen, setClaimPermisssionDialogOpen] = useState(false)
-	const [claimPermission, setClaimPermission] = useState<
-		"Permissioned" | "PermissionlessCompound" | "PermissionlessWithdraw" | "PermissionlessAll"
-	>("Permissioned")
+	const [claimPermission, setClaimPermission] = useState<ClaimPermission>("Permissioned")
 
 	useEffect(() => {
 		if (selectedPoolId !== undefined && chain.talismanPools?.includes(selectedPoolId)) {
@@ -461,25 +447,12 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 		}
 	}, [selectedPoolId])
 
-	const joinPoolExtrinsic = useExtrinsic(
-		useCallback(
-			(api: ApiPromise) => {
-				if (decimalAmount === undefined || selectedPoolId === undefined) {
-					return undefined
-				}
-
-				if (claimPermission === undefined) {
-					return api.tx.nominationPools.join(decimalAmount.planck, selectedPoolId)
-				} else {
-					return api.tx.utility.batchAll([
-						api.tx.nominationPools.join(decimalAmount.planck, selectedPoolId),
-						api.tx.nominationPools.setClaimPermission(claimPermission),
-					])
-				}
-			},
-			[claimPermission, decimalAmount, selectedPoolId]
-		)
-	)
+	const joinPoolExtrinsic = useTx(genesisHash, (runtime) => {
+		if (decimalAmount === undefined || selectedPoolId === undefined) {
+			throw new Error("Unable to construct extrinsic nominationPools:join")
+		}
+		return txFromCall(runtime, joinCall(decimalAmount.planck, selectedPoolId, claimPermission))
+	})
 
 	return (
 		<>
@@ -517,12 +490,10 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 				}
 				poolInfo={
 					<StakeFormComponent.PoolInfo
-						name={poolMetadataLoadable.valueMaybe()?.[0]?.toUtf8() ?? ""}
-						status={poolStatus}
+						name={pool?.name ?? ""}
+						status={poolStatusValue}
 						totalStaked={poolTotalStaked?.toLocaleString() ?? ""}
-						memberCount={
-							bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ""
-						}
+						memberCount={pool?.memberCounter?.toString() ?? ""}
 						onRequestPoolChange={() => setShowPoolSelector(true)}
 						chain={chain.id.toString() ?? ""}
 					/>

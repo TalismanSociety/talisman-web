@@ -1,63 +1,34 @@
 import { encodeAnyAddress } from "@talismn/util"
 import request from "graphql-request"
-import { atom, useAtomValue } from "jotai"
-import { atomFamily } from "jotai/utils"
 import { useRecoilValue } from "recoil"
-
-import type { Account } from "@/domains/accounts/recoils"
+import { defer } from "rxjs"
+import type { Account } from "@/domains/accounts/accounts"
 import { useChainState } from "@/domains/chains/hooks"
 import { assertChain } from "@/domains/chains/utils"
 import { graphql } from "@/generated/gql/nova/gql"
 import { Decimal } from "@/util/Decimal"
+import { bindSuspended } from "@/util/loadable"
 
-export const useTotalNominationPoolRewards = (account: Account) => {
-	const chain = useRecoilValue(useChainState())
-	assertChain(chain, { hasNominationPools: true })
-
-	return useAtomValue(
-		totalNompoolRewardsAtomFamily({
-			chain,
-			address: encodeAnyAddress(account.address, chain.prefix),
-		})
-	)
-}
-
-type TotalNompoolRewardsProps = {
-	chain: {
-		id: string
-		novaIndexerUrl: string
-		nativeToken:
-			| {
-					symbol: string
-					decimals: number
-			  }
-			| undefined
-	}
+type RewardsSource = {
+	chainId: string
+	indexerUrl: string | undefined
+	decimals: number
+	currency: string | undefined
 	address: string
 }
 
-const totalNompoolRewardsAtomFamily = atomFamily(
-	({ chain, address }: TotalNompoolRewardsProps) =>
-		atom(async () => {
-			if (chain.id === "analog-timechain")
-				return await fetchAnalogTotalNompoolRewards({ chain, address })
-			return await fetchTotalNompoolRewards({ chain, address })
-		}),
-	(a, b) => a.chain.id === b.chain.id && a.address === b.address
-)
-
 const fetchTotalNompoolRewards = async ({
-	chain,
+	chainId,
+	indexerUrl,
+	decimals,
+	currency,
 	address,
-}: TotalNompoolRewardsProps): Promise<Decimal | undefined> => {
-	const decimals = chain.nativeToken?.decimals ?? 0
-	const currency = chain.nativeToken?.symbol
-
-	if (!chain.novaIndexerUrl)
-		throw new Error(`Cannot fetch totalNominationPoolRewards for chain ${chain.id}: no indexer`)
+}: RewardsSource): Promise<Decimal | undefined> => {
+	if (!indexerUrl)
+		throw new Error(`Cannot fetch totalNominationPoolRewards for chain ${chainId}: no indexer`)
 
 	const response = await request(
-		chain.novaIndexerUrl,
+		indexerUrl,
 		graphql(`
       query PoolRewards($address: String!) {
         accumulatedPoolReward(id: $address) {
@@ -81,20 +52,15 @@ const fetchTotalNompoolRewards = async ({
 	return Decimal.fromPlanck(amount ?? 0, decimals, { currency })
 }
 
-// Analog's API expects addresses to be formatted with this prefix,
-// Even if the chain runtime switches to a unified address prefix, this API might keep using the old prefix for a while!
-// Thus, we should hardcode the prefix here instead of using the one from chaindata.
-const analogPrefix = 12850
+const ANALOG_PREFIX = 12850
 const analogTotalNompoolRewardsApiUrl = (address: string) =>
-	`https://explorer-api.analog.one/api/nominationPayouts/${encodeAnyAddress(address, analogPrefix)}`
+	`https://explorer-api.analog.one/api/nominationPayouts/${encodeAnyAddress(address, ANALOG_PREFIX)}`
 
 const fetchAnalogTotalNompoolRewards = async ({
-	chain,
+	decimals,
+	currency,
 	address,
-}: TotalNompoolRewardsProps): Promise<Decimal | undefined> => {
-	const decimals = chain.nativeToken?.decimals ?? 0
-	const currency = chain.nativeToken?.symbol
-
+}: RewardsSource): Promise<Decimal | undefined> => {
 	const response = await fetch(analogTotalNompoolRewardsApiUrl(address))
 	const json = await response.json()
 	if (
@@ -115,4 +81,32 @@ const fetchAnalogTotalNompoolRewards = async ({
 		)
 
 	return Decimal.fromUserInputOrUndefined(String(amount), decimals, { currency })
+}
+
+const [useTotalRewards] = bindSuspended(
+	(
+		chainId: string,
+		indexerUrl: string | undefined,
+		decimals: number,
+		currency: string | undefined,
+		address: string
+	) =>
+		defer(() => {
+			const source = { chainId, indexerUrl, decimals, currency, address }
+			return chainId === "analog-timechain"
+				? fetchAnalogTotalNompoolRewards(source)
+				: fetchTotalNompoolRewards(source)
+		})
+)
+
+export const useTotalNominationPoolRewards = (account: Account) => {
+	const chain = useRecoilValue(useChainState())
+	assertChain(chain, { hasNominationPools: true })
+	return useTotalRewards(
+		chain.id,
+		chain.novaIndexerUrl,
+		chain.nativeToken?.decimals ?? 0,
+		chain.nativeToken?.symbol,
+		encodeAnyAddress(account.address, chain.prefix)
+	)
 }

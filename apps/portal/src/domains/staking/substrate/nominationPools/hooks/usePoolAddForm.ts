@@ -1,114 +1,95 @@
-import { BN } from "@polkadot/util"
-import { useQueryMultiState } from "@talismn/react-polkadot-api"
+import { bind } from "@react-rxjs/core"
+import BN from "bn.js"
 import { useEffect, useMemo } from "react"
-import { constSelector, useRecoilValue, useRecoilValueLoadable } from "recoil"
-import { useSubstrateApiEndpoint } from "@/domains/common/hooks/useSubstrateApiEndpoint"
-import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
+import { combineLatest, from, map, switchMap } from "rxjs"
+
+import { txFromCall } from "@/domains/chains/chain-runtime"
 import {
 	useTokenAmountFromPlanck,
 	useTokenAmountState,
 } from "@/domains/common/hooks/useTokenAmount"
-import { paymentInfoState } from "@/domains/common/recoils"
+import { estimateTxFee } from "@/domains/common/hooks/useTx"
 import { useSearchParams } from "@/hooks/useSearchParams"
-import { Maybe } from "@/util/monads"
+import { LOADING, toLoadable } from "@/util/loadable"
 import usePrevious from "@/util/usePrevious"
+
+import { bondExtraCall, joinCall } from "../calls"
+import { existentialDeposit, watchAccount, watchMinJoinBond, watchPoolMember } from "../chain"
+import { chainRuntimes$, useGenesisHash } from "./useRuntimes"
 
 const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.5
 
-export const usePoolAddForm = (action: "bondExtra" | "join", account?: string) => {
-	const api = useRecoilValue(useSubstrateApiState())
-	const apiEndpoint = useSubstrateApiEndpoint()
+export type PoolAddAction = "bondExtra" | "join"
 
+const maxCall = (action: PoolAddAction, available: bigint) =>
+	action === "bondExtra"
+		? bondExtraCall(available)
+		: joinCall(available, 0, "PermissionlessCompound")
+
+const [useAddFormInputs] = bind(
+	(genesisHash: string, address: string, action: PoolAddAction) =>
+		toLoadable(
+			chainRuntimes$(genesisHash).pipe(
+				switchMap(({ runtime }) =>
+					combineLatest([
+						watchPoolMember(runtime, address),
+						watchMinJoinBond(runtime),
+						watchAccount(runtime, address).pipe(
+							map(({ data }) => (data.free > data.frozen ? data.free - data.frozen : 0n))
+						),
+					]).pipe(
+						switchMap(([poolMember, minJoinBond, available]) =>
+							from(txFromCall(runtime, maxCall(action, available))).pipe(
+								switchMap((tx) => estimateTxFee(genesisHash, address, tx)),
+								map((fee) => ({
+									points: poolMember?.points,
+									minJoinBond,
+									available,
+									fee,
+									existentialDeposit: existentialDeposit(runtime),
+								}))
+							)
+						)
+					)
+				)
+			)
+		),
+	LOADING
+)
+
+const withFeeMargin = (fee: bigint) =>
+	BigInt(new BN(fee.toString()).muln(1 + ESTIMATED_FEE_MARGIN_OF_ERROR).toString())
+
+export const usePoolAddForm = (action: PoolAddAction, account?: string) => {
+	const genesisHash = useGenesisHash()
 	const prevAccount = usePrevious(account)
-
-	const queriesLoadable = useRecoilValueLoadable(
-		useQueryMultiState(
-			[
-				["nominationPools.poolMembers", account],
-				"nominationPools.minJoinBond",
-				["system.account", account],
-			],
-			{ enabled: account !== undefined }
-		)
-	)
-
-	const balancesReady = queriesLoadable.state === "hasValue"
-
-	// Available (transferable) balance derived from `system.account` instead of the `balances.all`
-	// derive — the derive throws "Balance: Negative number passed to unsigned type" on Asset Hub
-	// chains (post-migration frozen/holds model), which left the stake form permanently not-ready.
-	const availableBalanceBn = useMemo(() => {
-		const accountInfo = queriesLoadable.valueMaybe()?.[2]
-		if (accountInfo === undefined) return undefined
-		const data = accountInfo.data as {
-			free: { toBn: () => BN }
-			frozen?: { toBn: () => BN }
-			miscFrozen?: { toBn: () => BN }
-		}
-		const frozen = (data.frozen ?? data.miscFrozen)?.toBn() ?? new BN(0)
-		return BN.max(data.free.toBn().sub(frozen), new BN(0))
-	}, [queriesLoadable])
-
-	// TODO: have hook return extrinsic as well
-	const maxSubmittableForFeeEstimation = useMemo(() => {
-		switch (action) {
-			case "bondExtra":
-				return api.tx.nominationPools.bondExtra({ FreeBalance: availableBalanceBn ?? 0 })
-			case "join":
-				return api.tx.utility.batchAll([
-					api.tx.nominationPools.join(availableBalanceBn ?? 0, 0),
-					api.tx.nominationPools.setClaimPermission("PermissionlessCompound"),
-				])
-		}
-	}, [action, api.tx.nominationPools, api.tx.utility, availableBalanceBn])
-
-	const paymentInfoLoadable = useRecoilValueLoadable(
-		account === undefined || !balancesReady
-			? constSelector(undefined)
-			: paymentInfoState([
-					apiEndpoint,
-					// @ts-expect-error
-					maxSubmittableForFeeEstimation.method.section,
-					// @ts-expect-error
-					maxSubmittableForFeeEstimation.method.method,
-					account,
-					...maxSubmittableForFeeEstimation.args,
-				])
-	)
+	const inputs = useAddFormInputs(genesisHash, account ?? "", action)
+	const ready = account !== undefined && inputs.status === "success"
+	const data = inputs.status === "success" ? inputs.data : undefined
 
 	const [input, setAmount] = useTokenAmountState("")
 
 	const availableBalance = useTokenAmountFromPlanck(
-		paymentInfoLoadable.state !== "hasValue" || paymentInfoLoadable.contents === undefined
-			? undefined
-			: availableBalanceBn?.lt(
-						api.consts.balances.existentialDeposit.add(
-							paymentInfoLoadable.contents.partialFee.muln(1 + ESTIMATED_FEE_MARGIN_OF_ERROR)
-						)
-					)
-				? new BN(0)
-				: availableBalanceBn
-						?.sub(api.consts.balances.existentialDeposit)
-						.sub(paymentInfoLoadable.contents.partialFee.muln(1 + ESTIMATED_FEE_MARGIN_OF_ERROR))
+		useMemo(() => {
+			if (!data) return undefined
+			const reserve = data.existentialDeposit + withFeeMargin(data.fee)
+			return data.available < reserve ? 0n : data.available - reserve
+		}, [data])
 	)
 
 	const resulting = useTokenAmountFromPlanck(
 		useMemo(
 			() =>
-				Maybe.of(
-					queriesLoadable.valueMaybe()?.[0]?.unwrapOrDefault().points.toBigInt()
-				).mapOrUndefined((x) => x + (input.decimalAmount?.planck ?? 0n)),
-			[input.decimalAmount?.planck, queriesLoadable]
+				data?.points === undefined ? undefined : data.points + (input.decimalAmount?.planck ?? 0n),
+			[data?.points, input.decimalAmount?.planck]
 		)
 	)
 
-	const minimum = useTokenAmountFromPlanck(queriesLoadable.valueMaybe()?.[1])
+	const minimum = useTokenAmountFromPlanck(data?.minJoinBond)
 
 	const error = useMemo(() => {
-		if (!balancesReady) return
-
+		if (!ready) return
 		if (input.amount.trim() === "") return
-
 		if (
 			availableBalance.decimalAmount !== undefined &&
 			input.decimalAmount !== undefined &&
@@ -116,7 +97,6 @@ export const usePoolAddForm = (action: "bondExtra" | "join", account?: string) =
 		) {
 			return new Error("Insufficient balance")
 		}
-
 		if (
 			action === "join" &&
 			minimum.decimalAmount !== undefined &&
@@ -125,12 +105,11 @@ export const usePoolAddForm = (action: "bondExtra" | "join", account?: string) =
 		) {
 			return new Error(`Minimum ${minimum.decimalAmount.toLocaleString()} needed`)
 		}
-
 		return undefined
 	}, [
 		action,
 		availableBalance.decimalAmount,
-		balancesReady,
+		ready,
 		input.amount,
 		input.decimalAmount,
 		minimum.decimalAmount,
@@ -146,27 +125,14 @@ export const usePoolAddForm = (action: "bondExtra" | "join", account?: string) =
 	}, [account, defaultAmount, prevAccount, setAmount])
 
 	useEffect(() => {
-		//
-		// When an `amount` is prefilled via the querystring variable `amount`, we should
-		// use either the qs `amount` or the user's `available` amount, whichever is smaller
-		//
 		const amount = input.amount
 		const amountDec = input.decimalAmount?.toNumber()
 		const available = availableBalance.decimalAmount?.toNumber()
-
 		if (amountDec === undefined || available === undefined) return
 		if (amount !== defaultAmount) return
 		if (available >= amountDec) return
-
 		setAmount(available.toString())
 	}, [availableBalance.decimalAmount, defaultAmount, input.amount, input.decimalAmount, setAmount])
 
-	return {
-		input,
-		availableBalance,
-		resulting,
-		setAmount,
-		error,
-		isReady: queriesLoadable.state === "hasValue",
-	}
+	return { input, availableBalance, resulting, setAmount, error, isReady: ready }
 }

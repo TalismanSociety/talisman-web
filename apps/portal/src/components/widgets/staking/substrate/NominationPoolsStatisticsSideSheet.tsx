@@ -1,9 +1,8 @@
 import { useTheme } from "@emotion/react"
-import { encodeAddress } from "@polkadot/util-crypto"
 import { eachDayOfInterval, isSameDay, subDays } from "date-fns"
 import type { ReactNode } from "react"
 import { useMemo } from "react"
-import { useRecoilValue, waitForAll } from "recoil"
+import { useRecoilValue } from "recoil"
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryTooltip } from "victory"
 import { AccountIcon } from "@/components/molecules/AccountIcon"
 import type { StakeStatus } from "@/components/recipes/StakeStatusIndicator"
@@ -11,19 +10,18 @@ import { RedactableBalance } from "@/components/widgets/RedactableBalance"
 import type { Account } from "@/domains/accounts/recoils"
 import { useChainState } from "@/domains/chains/hooks"
 import { useNativeTokenDecimalState } from "@/domains/chains/recoils"
-import { useEraEtaFormatter } from "@/domains/common/hooks/useEraEta"
-import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import {
 	type DerivedPool,
 	useApr,
 	usePoolStakes,
 } from "@/domains/staking/substrate/nominationPools/hooks"
+import { useChainToken } from "@/domains/staking/substrate/nominationPools/hooks/useBalances"
+import { useEraEtaFormatter } from "@/domains/staking/substrate/nominationPools/hooks/useEraEta"
 import {
-	mostRecentPoolPayoutsState,
-	poolPayoutsState,
-	totalPoolPayoutsState,
-} from "@/domains/staking/substrate/nominationPools/recoils"
+	useChainAddress,
+	usePoolPayouts,
+} from "@/domains/staking/substrate/nominationPools/hooks/usePayouts"
 import { BarChart, Clock, Earn, ExternalLink, Percent, Zap } from "@/icons"
 import { TonalIcon } from "@/ui/atoms/Icon"
 import { useSurfaceColorAtElevation } from "@/ui/atoms/Surface"
@@ -31,6 +29,7 @@ import { Text } from "@/ui/atoms/Text"
 import { DescriptionList } from "@/ui/molecules/DescriptionList"
 import { ListItem } from "@/ui/molecules/ListItem"
 import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from "@/ui/molecules/SideSheet"
+import { Decimal } from "@/util/Decimal"
 import { truncateAddress } from "@/util/truncateAddress"
 
 type NominationPoolsStatisticsSideSheetProps = {
@@ -297,28 +296,39 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
 
 	const today = useMemo(() => new Date(), [])
 
-	const payoutsStateParams = {
-		account: props.account.address,
-		poolId: props.pool.poolMember.poolId.toNumber(),
-		chain,
-		fromDate: subDays(today, 15),
-		toDate: today,
-	}
-
 	const eraEtaFormatter = useEraEtaFormatter()
 
 	const stakedReturn = useApr()
 
-	const [api, decimal, last15DaysPayouts, last15DaysTotalPayouts, mostRecentPayouts] =
-		useRecoilValue(
-			waitForAll([
-				useSubstrateApiState(),
-				useNativeTokenDecimalState(),
-				poolPayoutsState(payoutsStateParams),
-				totalPoolPayoutsState(payoutsStateParams),
-				mostRecentPoolPayoutsState(payoutsStateParams),
-			])
-		)
+	const decimal = useRecoilValue(useNativeTokenDecimalState())
+	const poolId = props.pool.poolMember.pool_id
+	const fromDate = subDays(today, 15)
+	const last15DaysPayouts = usePoolPayouts(
+		chain.genesisHash,
+		chain.subscanUrl,
+		props.account.address,
+		poolId,
+		fromDate,
+		today
+	)
+	const mostRecentPayouts = usePoolPayouts(
+		chain.genesisHash,
+		chain.subscanUrl,
+		props.account.address,
+		poolId
+	)
+	const chainAddress = useChainAddress(chain.genesisHash, props.account.address)
+	const token = useChainToken(chain.genesisHash)
+
+	const last15DaysTotalPayouts = useMemo(
+		() =>
+			Decimal.fromPlanck(
+				last15DaysPayouts.reduce((prev, curr) => prev + curr.amount.planck, 0n),
+				token.decimals,
+				{ currency: token.symbol }
+			),
+		[last15DaysPayouts, token]
+	)
 
 	const balance = useTokenAmountFromPlanck(props.pool.poolMember.points)
 
@@ -358,12 +368,8 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
 				[mostRecentPayouts]
 			)}
 			subscanPayoutsUrl={useMemo(
-				() =>
-					new URL(
-						`account/${encodeAddress(props.account.address, api.registry.chainSS58)}?tab=paidout`,
-						chain.subscanUrl
-					).toString(),
-				[api.registry.chainSS58, chain.subscanUrl, props.account.address]
+				() => new URL(`account/${chainAddress}?tab=paidout`, chain.subscanUrl).toString(),
+				[chainAddress, chain.subscanUrl]
 			)}
 			onRequestDismiss={props.onRequestDismiss}
 		/>

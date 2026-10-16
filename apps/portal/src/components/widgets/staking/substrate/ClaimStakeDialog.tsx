@@ -1,29 +1,30 @@
-import { useContext, useEffect } from "react"
+import { useEffect } from "react"
 import { ClaimStakeDialog as ClaimStakeDialogComponent } from "@/components/recipes/ClaimStakeDialog"
 import type { Account } from "@/domains/accounts/recoils"
-import { ChainContext } from "@/domains/chains/contexts"
-import { type SubmittableResultLoadable, useExtrinsic } from "@/domains/common/hooks/useExtrinsic"
+import { txFromCall } from "@/domains/chains/chain-runtime"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import { type TxLoadable, useTx } from "@/domains/common/hooks/useTx"
+import { bondRewardsCall, claimPayoutCall } from "@/domains/staking/substrate/nominationPools/calls"
 import { usePoolStakes } from "@/domains/staking/substrate/nominationPools/hooks"
+import { useGenesisHash } from "@/domains/staking/substrate/nominationPools/hooks/useRuntimes"
 
 type ClaimStakeDialogProps = {
 	open?: boolean
 	account: Account
 	onRequestDismiss: () => unknown
 	onChangeClaimPayoutLoadable: (loadable: TxLoadable) => unknown
-	onChangeRestakeLoadable: (loadable: SubmittableResultLoadable) => unknown
+	onChangeRestakeLoadable: (loadable: TxLoadable) => unknown
 }
 
 const ClaimStakeDialog = (props: ClaimStakeDialogProps) => {
 	const pool = usePoolStakes(props.account)
 	const rewards = useTokenAmountFromPlanck(pool?.pendingRewards)
 
-	const { genesisHash } = useContext(ChainContext)
+	const genesisHash = useGenesisHash()
 	const claimPayoutExtrinsic = useTx(genesisHash, (runtime) =>
-		runtime.api.tx.NominationPools.claim_payout()
+		txFromCall(runtime, claimPayoutCall())
 	)
-	const restakeExtrinsic = useExtrinsic("nominationPools", "bondExtra", [{ Rewards: true }])
+	const restakeExtrinsic = useTx(genesisHash, (runtime) => txFromCall(runtime, bondRewardsCall()))
 
 	useEffect(() => {
 		props.onChangeClaimPayoutLoadable(claimPayoutExtrinsic)

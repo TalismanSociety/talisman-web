@@ -4,7 +4,7 @@ import { StakePositionErrorBoundary } from "@/components/recipes/StakePosition"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { selectedSubstrateAccountsState } from "@/domains/accounts/recoils"
 import { useChainState } from "@/domains/chains/hooks"
-import { usePoolStakeLoadable } from "@/domains/staking/substrate/nominationPools/hooks"
+import { usePoolStakeLoadable } from "@/domains/staking/substrate/nominationPools/hooks/usePoolStake"
 
 import PoolStakeItem from "./PoolStakeItem"
 

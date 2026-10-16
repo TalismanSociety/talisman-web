@@ -17,7 +17,6 @@ import {
 	selectedEvmAccounts$,
 	selectedSubstrateAccounts$,
 	setStoredReadonlyAccounts,
-	substrateAccounts$,
 	writeableAccounts$,
 	writeableEvmAccounts$,
 	writeableSubstrateAccounts$,
@@ -88,12 +87,6 @@ export const writeableEvmAccountsState = atomFromObservable(
 export const evmSignableAccountsState = atomFromObservable(
 	"EvmSignableAccounts",
 	writeableEvmAccounts$,
-	NO_ACCOUNTS
-)
-
-export const substrateAccountsState = atomFromObservable(
-	"SubstrateAccounts",
-	substrateAccounts$,
 	NO_ACCOUNTS
 )
 

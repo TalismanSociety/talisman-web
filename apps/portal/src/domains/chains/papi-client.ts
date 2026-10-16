@@ -1,22 +1,36 @@
 import { withLegacy } from "@polkadot-api/ws-middleware"
-import { getWsProvider } from "@polkadot-api/ws-provider"
+import { getWsProvider, type Middleware } from "@polkadot-api/ws-provider"
 import { createClient, type PolkadotClient } from "polkadot-api"
 import { createWsClient } from "polkadot-api/ws"
 
 import { networks } from "../../../public/chaindata.json"
+import { withAvailHeaders } from "./avail-headers"
 import { chainMetadataCache } from "./metadata-cache"
 
 type ShippedNetwork = { id: string; genesisHash?: string; rpcs?: string[] }
 
-const LOAD_BALANCED_RPC_NETWORKS = new Set(["astar", "bittensor"])
+const LEGACY_RPC_MIDDLEWARES: Record<string, Middleware> = {
+	astar: withLegacy,
+	bittensor: withLegacy,
+	avail: (base) => withLegacy(withAvailHeaders(base)),
+}
 
 const networkOf = (genesisHash: string) =>
 	(networks as ShippedNetwork[]).find((network) => network.genesisHash === genesisHash)
 
-const openClient = (networkId: string, rpcs: string[]) =>
-	LOAD_BALANCED_RPC_NETWORKS.has(networkId)
-		? createClient(getWsProvider(rpcs, { middleware: withLegacy }), chainMetadataCache)
-		: createWsClient(rpcs, chainMetadataCache)
+const CONNECT_TIMEOUT_MS = 20_000
+
+const clientConfig = { ...chainMetadataCache, timeout: CONNECT_TIMEOUT_MS }
+
+const openClient = (networkId: string, rpcs: string[]) => {
+	const middleware = LEGACY_RPC_MIDDLEWARES[networkId]
+	return middleware
+		? createClient(
+				getWsProvider(rpcs, { middleware, timeout: CONNECT_TIMEOUT_MS }),
+				chainMetadataCache
+			)
+		: createWsClient(rpcs, clientConfig)
+}
 
 const clientsByRpcs = new Map<string, PolkadotClient>()
 

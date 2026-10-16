@@ -5,20 +5,19 @@ import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { RedactableBalance } from "@/components/widgets/RedactableBalance"
 import type { Account } from "@/domains/accounts/recoils"
+import { txFromCall } from "@/domains/chains/chain-runtime"
 import {
 	claimPermissionUnsupportedChainIds,
 	statisticsUnsupportedChainIds,
 } from "@/domains/chains/config"
 import { useChainState } from "@/domains/chains/hooks"
 import { useNativeTokenDecimalState, useNativeTokenPriceState } from "@/domains/chains/recoils"
-import { useEraEtaFormatter } from "@/domains/common/hooks/useEraEta"
-import {
-	useExtrinsic,
-	useSubmittableResultLoadableState,
-} from "@/domains/common/hooks/useExtrinsic"
 import { useNativeTokenLocalizedFiatAmount } from "@/domains/common/hooks/useLocalizedFiatAmount"
-import { useTxLoadableState } from "@/domains/common/hooks/useTx"
-import type { usePoolStakes } from "@/domains/staking/substrate/nominationPools/hooks/usePoolStake"
+import { useTx, useTxLoadableState } from "@/domains/common/hooks/useTx"
+import { withdrawUnbondedCall } from "@/domains/staking/substrate/nominationPools/calls"
+import { useEraEtaFormatter } from "@/domains/staking/substrate/nominationPools/hooks/useEraEta"
+import type { DerivedPool } from "@/domains/staking/substrate/nominationPools/hooks/usePoolStake"
+import { useGenesisHash } from "@/domains/staking/substrate/nominationPools/hooks/useRuntimes"
 import { useTotalNominationPoolRewards } from "@/domains/staking/substrate/nominationPools/hooks/useTotalRewards"
 
 import AddStakeDialog from "./AddStakeDialog"
@@ -38,7 +37,7 @@ const PoolTotalFiatRewards = (props: { account: Account }) => {
 	return totalLocalisedFiat ?? undefined
 }
 
-const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account[]>>[number] }) => {
+const PoolStakeItem = ({ item }: { item: DerivedPool }) => {
 	const [chain, decimal, nativeTokenPrice] = useRecoilValue(
 		waitForAll([useChainState(), useNativeTokenDecimalState(), useNativeTokenPriceState()])
 	)
@@ -48,9 +47,12 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
 
 	const [claimDialogOpen, setClaimDialogOpen] = useState(false)
 	const [claimPayoutLoadable, setClaimPayoutLoadable] = useTxLoadableState()
-	const [restakeLoadable, setRestakeLoadable] = useSubmittableResultLoadableState()
+	const [restakeLoadable, setRestakeLoadable] = useTxLoadableState()
 
-	const withdrawExtrinsic = useExtrinsic("nominationPools", "withdrawUnbonded")
+	const genesisHash = useGenesisHash()
+	const withdrawExtrinsic = useTx(genesisHash, (runtime) =>
+		txFromCall(runtime, withdrawUnbondedCall(item.account.address, item.slashingSpan))
+	)
 
 	const eraEtaFormatter = useEraEtaFormatter()
 	const unlocks = item.unlockings?.map((x) => ({
@@ -80,7 +82,7 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
 				balance={
 					<ErrorBoundary renderFallback={() => <>--</>}>
 						<RedactableBalance>
-							{decimal.fromPlanckOrUndefined(item.poolMember.points.toBigInt())?.toLocaleString()}
+							{decimal.fromPlanckOrUndefined(item.poolMember.points)?.toLocaleString()}
 						</RedactableBalance>
 					</ErrorBoundary>
 				}
@@ -88,8 +90,8 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
 					<ErrorBoundary renderFallback={() => <>--</>}>
 						<AnimatedFiatNumber
 							end={
-								(decimal.fromPlanckOrUndefined(item.poolMember.points.toBigInt())?.toNumber() ??
-									0) * nativeTokenPrice
+								(decimal.fromPlanckOrUndefined(item.poolMember.points)?.toNumber() ?? 0) *
+								nativeTokenPrice
 							}
 						/>
 					</ErrorBoundary>
@@ -107,12 +109,13 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
 				provider={item.poolName ?? ""}
 				shortProvider="Nomination pool"
 				claimButton={
-					item.pendingRewards?.isZero() === false && (
+					item.pendingRewards !== undefined &&
+					item.pendingRewards !== 0n && (
 						<ErrorBoundary renderFallback={() => <>--</>}>
 							<StakePosition.ClaimButton
 								amount={
 									<RedactableBalance>
-										{decimal.fromPlanck(item.pendingRewards.toBigInt()).toLocaleString()}
+										{decimal.fromPlanck(item.pendingRewards).toLocaleString()}
 									</RedactableBalance>
 								}
 								onClick={() => setClaimDialogOpen(true)}
@@ -124,16 +127,14 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
 					)
 				}
 				unstakeButton={
-					// Fully unbonding pool can't be interacted with
-					!item.poolMember.points.isZero() && (
+					item.poolMember.points !== 0n && (
 						<ErrorBoundary renderFallback={() => <>--</>}>
 							<StakePosition.UnstakeButton onClick={() => setIsUnstaking(true)} />
 						</ErrorBoundary>
 					)
 				}
 				increaseStakeButton={
-					// Fully unbonding pool can't be interacted with
-					!item.poolMember.points.isZero() && (
+					item.poolMember.points !== 0n && (
 						<ErrorBoundary renderFallback={() => <>--</>}>
 							<StakePosition.IncreaseStakeButton onClick={() => setIsAddingStake(true)} />
 						</ErrorBoundary>
@@ -149,11 +150,7 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
 									</RedactableBalance>
 								}
 								onClick={() => {
-									void withdrawExtrinsic.signAndSend(
-										item.account?.address ?? "",
-										item.account?.address ?? "",
-										item.slashingSpan
-									)
+									void withdrawExtrinsic.signAndSend(item.account.address)
 								}}
 								loading={withdrawExtrinsic.state === "loading"}
 							/>
@@ -195,11 +192,11 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
 				}
 			/>
 			<AddStakeDialog
-				account={isAddingStake ? item.account?.address : undefined}
+				account={isAddingStake ? item.account.address : undefined}
 				onDismiss={useCallback(() => setIsAddingStake(false), [])}
 			/>
 			<UnstakeDialog
-				account={isUnstaking ? item.account?.address : undefined}
+				account={isUnstaking ? item.account.address : undefined}
 				onDismiss={useCallback(() => setIsUnstaking(false), [])}
 			/>
 			<ClaimStakeDialog

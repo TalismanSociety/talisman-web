@@ -1,29 +1,47 @@
+import { bind } from "@react-rxjs/core"
 import { useMemo } from "react"
+import { combineLatest, map, switchMap } from "rxjs"
 
-import { useExtrinsic } from "@/domains/common/hooks/useExtrinsic"
-import { useQueryMulti } from "@/domains/common/hooks/useQueryMulti"
+import { txFromCall } from "@/domains/chains/chain-runtime"
 import {
 	useTokenAmountFromPlanck,
 	useTokenAmountState,
 } from "@/domains/common/hooks/useTokenAmount"
+import { useTx } from "@/domains/common/hooks/useTx"
+import { LOADING, toLoadable } from "@/util/loadable"
+
+import { unbondCall } from "../calls"
+import { watchMinJoinBond, watchPoolMember } from "../chain"
+import { chainRuntimes$, useGenesisHash } from "./useRuntimes"
+
+const [useUnstakeFormInputs] = bind(
+	(genesisHash: string, address: string) =>
+		toLoadable(
+			chainRuntimes$(genesisHash).pipe(
+				switchMap(({ runtime }) =>
+					combineLatest([watchMinJoinBond(runtime), watchPoolMember(runtime, address)]).pipe(
+						map(([minJoinBond, poolMember]) => ({ minJoinBond, points: poolMember?.points ?? 0n }))
+					)
+				)
+			)
+		),
+	LOADING
+)
 
 export const usePoolUnstakeForm = (account?: string) => {
-	const unbondExtrinsic = useExtrinsic("nominationPools", "unbond")
+	const genesisHash = useGenesisHash()
+	const inputs = useUnstakeFormInputs(genesisHash, account ?? "")
+	const ready = account !== undefined && inputs.status === "success"
+	const data = inputs.status === "success" ? inputs.data : undefined
 
-	const queriesLoadable = useQueryMulti(
-		["nominationPools.minJoinBond", ["nominationPools.poolMembers", account]],
-		{
-			enabled: account !== undefined,
-		}
+	const unbondExtrinsic = useTx(genesisHash, (runtime, member: string, points: bigint) =>
+		txFromCall(runtime, unbondCall(member, points))
 	)
 
 	const [input, setAmount] = useTokenAmountState("")
 
-	const minNeededForMembership = useTokenAmountFromPlanck(queriesLoadable.valueMaybe()?.[0])
-
-	const available = useTokenAmountFromPlanck(
-		queriesLoadable.valueMaybe()?.[1]?.unwrapOrDefault().points
-	)
+	const minNeededForMembership = useTokenAmountFromPlanck(data?.minJoinBond)
+	const available = useTokenAmountFromPlanck(data?.points)
 
 	const resulting = useTokenAmountFromPlanck(
 		useMemo(
@@ -45,8 +63,7 @@ export const usePoolUnstakeForm = (account?: string) => {
 	)
 
 	const error = useMemo(() => {
-		if (queriesLoadable.state !== "hasValue") return
-
+		if (!ready) return
 		if (!isLeaving) {
 			if (
 				available.decimalAmount !== undefined &&
@@ -55,7 +72,6 @@ export const usePoolUnstakeForm = (account?: string) => {
 			) {
 				return new Error("Insufficient balance")
 			}
-
 			if (
 				available.decimalAmount !== undefined &&
 				input.decimalAmount !== undefined &&
@@ -69,31 +85,21 @@ export const usePoolUnstakeForm = (account?: string) => {
 				)
 			}
 		}
-
 		return undefined
 	}, [
 		available.decimalAmount,
 		input.decimalAmount,
 		isLeaving,
 		minNeededForMembership.decimalAmount,
-		queriesLoadable.state,
+		ready,
 	])
 
 	return {
 		extrinsic: {
 			...unbondExtrinsic,
 			unbondMax: async (account: string, memberAccount: string) => {
-				const pool = queriesLoadable.valueMaybe()?.[1]
-
-				if (pool === undefined) {
-					throw new Error("Extrinsic not ready yet")
-				}
-
-				return await unbondExtrinsic.signAndSend(
-					account,
-					memberAccount,
-					pool.unwrapOrDefault().points
-				)
+				if (data === undefined) throw new Error("Extrinsic not ready yet")
+				return await unbondExtrinsic.signAndSend(account, memberAccount, data.points)
 			},
 		},
 		input,
@@ -102,6 +108,6 @@ export const usePoolUnstakeForm = (account?: string) => {
 		setAmount,
 		error,
 		isLeaving,
-		isReady: queriesLoadable.state === "hasValue",
+		isReady: ready,
 	}
 }

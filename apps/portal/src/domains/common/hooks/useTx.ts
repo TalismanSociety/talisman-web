@@ -11,13 +11,13 @@ import { type ChainRuntime, getChainRuntime$ } from "@/domains/chains/chain-runt
 import { networksByGenesisHash$ } from "@/domains/chains/chaindata-provider"
 import { customSignedExtensionsFor } from "@/domains/chains/signed-extensions"
 import { type SubmitWatch, TxInvalidError, type TxResult, watchTx } from "@/domains/chains/submit"
+import { txCreatorFor } from "@/domains/chains/tx-creator"
 import { isSubscanUrl } from "@/domains/chains/utils"
 import { AnalyticsContext } from "@/domains/common/analytics"
 import { bumpChainReadId } from "@/domains/common/chainReadId"
 import { HarmlessError } from "@/domains/common/errors"
 import { toastExtrinsic } from "@/domains/common/utils/toast"
 import { signetAccount$, signetSdk } from "@/domains/extension/signet"
-import { txCreatorOf } from "@/domains/extension/substrate"
 
 export type TxLoadable =
 	| { state: "idle"; contents: undefined }
@@ -86,7 +86,7 @@ const submitTx = async (
 	runtime: ChainRuntime,
 	watch: SubmitWatch
 ) => {
-	const txCreator = await txCreatorOf(address)
+	const txCreator = await txCreatorFor(genesisHash, address)
 	if (!txCreator) throw new Error(`No connected wallet can sign for ${address}`)
 	return watchTx(
 		tx.createSubmitAndWatch(txCreator, {

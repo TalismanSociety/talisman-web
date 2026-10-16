@@ -1,4 +1,3 @@
-import BN from "bn.js"
 import { Suspense, useState, useTransition } from "react"
 import { useRecoilValue } from "recoil"
 import { StakeDialog as StakeDialogComponent } from "@/components/recipes/StakeDialog"
@@ -7,8 +6,8 @@ import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { ChainProvider } from "@/domains/chains/provider"
 import type { ChainInfo } from "@/domains/chains/recoils"
 import { nominationPoolsEnabledChainsState } from "@/domains/chains/recoils"
-import { useEraEtaFormatter } from "@/domains/common/hooks/useEraEta"
 import { useApr } from "@/domains/staking/substrate/nominationPools/hooks"
+import { useEraEtaFormatter } from "@/domains/staking/substrate/nominationPools/hooks/useEraEta"
 import { useSearchParams } from "@/hooks/useSearchParams"
 import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 
@@ -19,7 +18,7 @@ const Rewards = () => (
 )
 
 const EraEta = () => {
-	return <>{useEraEtaFormatter()(new BN(1))}</>
+	return <>{useEraEtaFormatter()(1)}</>
 }
 
 const InnerStakeDialog = () => {
