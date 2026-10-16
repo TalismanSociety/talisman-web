@@ -4,7 +4,6 @@ import "@talismn/astar-types/augment-api"
 import "@talismn/astar-types/types-lookup"
 
 import { Subscribe } from "@react-rxjs/core"
-import * as Sentry from "@sentry/react"
 import { PolkadotApiProvider } from "@talismn/react-polkadot-api"
 import { type ReactNode, Suspense } from "react"
 import { RecoilRoot } from "recoil"
@@ -21,13 +20,10 @@ import {
 	chainQueryMultiState,
 	chainQueryState,
 } from "@/domains/common/recoils/query"
-import { initSentry } from "@/domains/common/sentry"
 import { ExtensionWatcher } from "@/domains/extension/main"
 import { EvmProvider } from "@/domains/extension/wagmi"
 import { Toaster } from "@/ui/molecules/Toaster"
 import { JotaiProvider } from "@/util/jotaiStore"
-
-initSentry()
 
 const AppProviders = ({ children }: { children: ReactNode }) => (
 	<ThemeProvider>
@@ -70,4 +66,4 @@ const AppProviders = ({ children }: { children: ReactNode }) => (
 	</ThemeProvider>
 )
 
-export default Sentry.withProfiler(AppProviders)
+export default AppProviders

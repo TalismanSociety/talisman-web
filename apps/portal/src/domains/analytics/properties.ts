@@ -3,6 +3,7 @@ type Described = { readonly description: string; readonly optional?: true }
 export type PropertyDef = Described &
 	(
 		| { readonly posthogType: "String"; readonly values: readonly string[]; readonly list?: true }
+		| { readonly posthogType: "Boolean" }
 		| { readonly posthogType: "Numeric" }
 	)
 
@@ -12,7 +13,9 @@ type ValueOf<D> = D extends { readonly values: readonly (infer V)[] }
 	? D extends { readonly list: true }
 		? readonly V[]
 		: V
-	: number
+	: D extends { readonly posthogType: "Boolean" }
+		? boolean
+		: number
 
 type OptionalKeys<Defs> = {
 	[K in keyof Defs]: Defs[K] extends { readonly optional: true } ? K : never
@@ -27,6 +30,7 @@ export const p = {
 		({ posthogType: "String", description, values }) as const,
 	enumList: <const V extends string>(values: readonly V[], description: string) =>
 		({ posthogType: "String", description, values, list: true }) as const,
+	bool: (description: string) => ({ posthogType: "Boolean", description }) as const,
 	count: (description: string) => ({ posthogType: "Numeric", description }) as const,
 } satisfies Record<string, (...args: never[]) => PropertyDef>
 
@@ -47,6 +51,8 @@ export const isPropertyValue = (property: PropertyDef, value: unknown) => {
 			return property.list
 				? isEnumList(property.values, value)
 				: isEnumValue(property.values, value)
+		case "Boolean":
+			return typeof value === "boolean"
 		case "Numeric":
 			return typeof value === "number" && Number.isFinite(value)
 	}

@@ -1,9 +1,9 @@
-import * as Sentry from "@sentry/react"
-import type { PropsWithChildren, ReactElement, ReactNode } from "react"
-import { createContext, useContext, useState } from "react"
+import type { ErrorInfo, PropsWithChildren, ReactElement, ReactNode } from "react"
+import { Component, createContext, useContext, useState } from "react"
 import { atom, useRecoilCallback, useRecoilValue } from "recoil"
 import type { ErrorMessageProps } from "@/components/recipes/ErrorMessage"
 import { ErrorMessage } from "@/components/recipes/ErrorMessage"
+import { captureError } from "@/domains/analytics/client"
 import { Button, SurfaceButton } from "@/ui/atoms/Button"
 
 const OrientationContext = createContext<ErrorMessageProps["orientation"]>(undefined)
@@ -11,7 +11,6 @@ const OrientationContext = createContext<ErrorMessageProps["orientation"]>(undef
 type ErrorElementProps = {
 	error: Error
 	componentStack: string | null
-	eventId: string | null
 	resetError: () => void
 }
 
@@ -29,7 +28,6 @@ const ErrorElement = (props: ErrorElementProps) => {
 			message={
 				<div className="flex flex-col items-center">
 					<span className="text-secondary">Sorry, an error occurred in Talisman.</span>
-					{props.eventId ? <span className="opacity-60">{props.eventId}</span> : ""}
 				</div>
 			}
 			actions={
@@ -48,6 +46,42 @@ const ErrorElement = (props: ErrorElementProps) => {
 			}
 		/>
 	)
+}
+
+type CapturingErrorBoundaryProps = PropsWithChildren<{
+	fallback: (props: ErrorElementProps) => ReactElement
+	onReset: (error: Error) => void
+}>
+
+type CapturingErrorBoundaryState = { error?: Error; componentStack: string | null }
+
+class CapturingErrorBoundary extends Component<
+	CapturingErrorBoundaryProps,
+	CapturingErrorBoundaryState
+> {
+	override state: CapturingErrorBoundaryState = { componentStack: null }
+
+	static getDerivedStateFromError(error: Error): Partial<CapturingErrorBoundaryState> {
+		return { error }
+	}
+
+	override componentDidCatch(error: Error, { componentStack }: ErrorInfo) {
+		this.setState({ componentStack: componentStack ?? null })
+		captureError(error, "error_boundary")
+	}
+
+	resetError = () => {
+		const { error } = this.state
+		if (error !== undefined) this.props.onReset(error)
+		this.setState({ error: undefined, componentStack: null })
+	}
+
+	override render() {
+		const { error, componentStack } = this.state
+		return error === undefined
+			? this.props.children
+			: this.props.fallback({ error, componentStack, resetError: this.resetError })
+	}
 }
 
 export const debugErrorBoundaryState = atom({
@@ -76,14 +110,14 @@ const ErrorBoundaryDebuggerChildren = (
 	)
 }
 
-const ErrorBoundaryDebugger = ({ children, ...props }: Sentry.ErrorBoundaryProps) => {
+const ErrorBoundaryDebugger = ({ children, onReset, fallback }: CapturingErrorBoundaryProps) => {
 	const [error, setError] = useState<Error>()
 
 	return (
-		<Sentry.ErrorBoundary
-			{...props}
-			onReset={(...args) => {
-				props.onReset?.(...args)
+		<CapturingErrorBoundary
+			fallback={fallback}
+			onReset={(resetError) => {
+				onReset(resetError)
 				setError(undefined)
 			}}
 		>
@@ -91,24 +125,25 @@ const ErrorBoundaryDebugger = ({ children, ...props }: Sentry.ErrorBoundaryProps
 				error={error}
 				onTriggerError={() => setError(new Error("This is a mock error"))}
 			>
-				{typeof children === "function" ? children() : children}
+				{children}
 			</ErrorBoundaryDebuggerChildren>
-		</Sentry.ErrorBoundary>
+		</CapturingErrorBoundary>
 	)
 }
 
-type ErrorBoundaryProps = Sentry.ErrorBoundaryProps &
+type ErrorBoundaryProps = PropsWithChildren<
 	Pick<ErrorMessageProps, "orientation"> & {
 		renderFallback?: (fallback: ReactNode) => ReactElement
 	}
+>
 
-export const ErrorBoundary = ({ orientation, renderFallback, ...props }: ErrorBoundaryProps) => {
+export const ErrorBoundary = ({ orientation, renderFallback, children }: ErrorBoundaryProps) => {
 	const fallback = (errorProps: ErrorElementProps) =>
 		renderFallback?.(<ErrorElement {...errorProps} />) ?? <ErrorElement {...errorProps} />
 
 	const resetError = useRecoilCallback(
 		({ snapshot, refresh }) =>
-			(error: Error | null) => {
+			(error: Error) => {
 				for (const node of snapshot.getNodes_UNSTABLE({ isInitialized: true })) {
 					const { loadable, type } = snapshot.getInfo_UNSTABLE(node)
 					if (loadable?.state === "hasError" && loadable.contents === error) {
@@ -131,9 +166,13 @@ export const ErrorBoundary = ({ orientation, renderFallback, ...props }: ErrorBo
 	return (
 		<OrientationContext.Provider value={orientation}>
 			{useRecoilValue(debugErrorBoundaryState) ? (
-				<ErrorBoundaryDebugger {...props} fallback={fallback} onReset={resetError} />
+				<ErrorBoundaryDebugger fallback={fallback} onReset={resetError}>
+					{children}
+				</ErrorBoundaryDebugger>
 			) : (
-				<Sentry.ErrorBoundary {...props} fallback={fallback} onReset={resetError} />
+				<CapturingErrorBoundary fallback={fallback} onReset={resetError}>
+					{children}
+				</CapturingErrorBoundary>
 			)}
 		</OrientationContext.Provider>
 	)

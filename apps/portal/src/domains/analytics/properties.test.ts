@@ -21,6 +21,18 @@ describe("enum properties", () => {
 	})
 })
 
+describe("boolean properties", () => {
+	const handled = p.bool("Handled")
+
+	it.each([true, false])("accepts %j", (value) => {
+		expect(isPropertyValue(handled, value)).toBe(true)
+	})
+
+	it.each(["true", 1, 0, null, undefined])("rejects %j", (value) => {
+		expect(isPropertyValue(handled, value)).toBe(false)
+	})
+})
+
 describe("enum list properties", () => {
 	const symbols = p.enumList(["DOT", "TAO", "other"], "Symbols")
 
