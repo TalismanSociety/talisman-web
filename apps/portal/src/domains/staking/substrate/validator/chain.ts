@@ -1,9 +1,10 @@
-import { AccountId } from "@polkadot-api/substrate-bindings"
+import { AccountId, getSs58AddressInfo } from "@polkadot-api/substrate-bindings"
 import type { SS58String } from "polkadot-api"
 import { from, map, type Observable, of } from "rxjs"
 
 import { type ChainRuntime, hasStorage } from "@/domains/chains/chain-runtime"
 import type { SlashingSpansValue, StakingLedgerValue } from "@/domains/chains/portal-runtime"
+import { ss58PrefixOf } from "../nominationPools/chain"
 
 import {
 	type EraInputs,
@@ -22,11 +23,17 @@ const GENERIC_SS58_PREFIX = 42
 export const chainAddressOf = (prefix: number, address: string) =>
 	AccountId(prefix).dec(AccountId().enc(address))
 
-export const genericAddressOf = (address: string) => chainAddressOf(GENERIC_SS58_PREFIX, address)
+export const chainAddressFor = (runtime: ChainRuntime, address: string) =>
+	chainAddressOf(ss58PrefixOf(runtime) ?? GENERIC_SS58_PREFIX, address)
+
+export const inFormatOf = (reference: string, address: string) => {
+	const info = getSs58AddressInfo(reference)
+	return chainAddressOf(info.isValid ? info.ss58Format : GENERIC_SS58_PREFIX, address)
+}
 
 export const spanCountOf = (spans: SlashingSpansValue | undefined) => (spans?.prior.length ?? 0) + 1
 
-export const withdrawSlashingSpans = ({ api, lookup }: ChainRuntime, stash: SS58String) =>
+export const withdrawSpanCount = ({ api, lookup }: ChainRuntime, stash: SS58String) =>
 	hasStorage(lookup, "Staking", "SlashingSpans")
 		? from(api.query.Staking.SlashingSpans.getValue(stash, BEST)).pipe(map(spanCountOf))
 		: of(0)
@@ -87,10 +94,7 @@ export const eraInputs = async ({ api }: ChainRuntime, era: number): Promise<Era
 			),
 			paged.map(
 				({ keyArgs: [, validator], value }) =>
-					[validator, { pageTotal: value.page_total, others: value.others }] as [
-						SS58String,
-						ExposurePage,
-					]
+					[validator, { others: value.others }] as [SS58String, ExposurePage]
 			)
 		),
 		eraPoints: BigInt(points.total),

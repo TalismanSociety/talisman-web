@@ -1,5 +1,3 @@
-import { getPapiClient } from "@/domains/chains/papi-client"
-
 import {
 	type StakerRewardsRequest,
 	type StakerRewardsResponse,
@@ -9,10 +7,8 @@ import {
 const respond = (response: StakerRewardsResponse) => self.postMessage(response)
 
 self.onmessage = ({ data }: MessageEvent<StakerRewardsRequest>) => {
-	stakerRewards(data)
-		.then(
-			(rewards) => respond({ rewards }),
-			(error: unknown) => respond({ error: error instanceof Error ? error.message : String(error) })
-		)
-		.finally(() => getPapiClient(data.genesisHash).destroy())
+	stakerRewards(data).then(
+		(rewards) => respond({ rewards }),
+		(error: unknown) => respond({ error: error instanceof Error ? error.message : String(error) })
+	)
 }

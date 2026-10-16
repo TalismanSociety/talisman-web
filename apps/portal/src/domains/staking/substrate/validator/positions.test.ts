@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { chainAddressOf, genericAddressOf, spanCountOf } from "./chain"
+import { chainAddressOf, inFormatOf, spanCountOf } from "./chain"
 import { redeemableOf, unlockingOf } from "./positions"
 
 const chunks = [
@@ -58,8 +58,9 @@ describe("address formats at the chain boundary", () => {
 		expect(chainAddressOf(0, kusama)).toBe(polkadot)
 	})
 
-	it("brings a chain-prefixed controller back to the wallet's generic form", () => {
-		expect(genericAddressOf(kusama)).toBe(generic)
-		expect(genericAddressOf(generic)).toBe(generic)
+	it("brings a chain-prefixed controller into the format of the stash it was looked up from", () => {
+		expect(inFormatOf(generic, kusama)).toBe(generic)
+		expect(inFormatOf(polkadot, generic)).toBe(polkadot)
+		expect(inFormatOf(generic, generic)).toBe(generic)
 	})
 })

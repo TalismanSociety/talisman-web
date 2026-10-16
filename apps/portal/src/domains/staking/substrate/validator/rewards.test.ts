@@ -16,17 +16,17 @@ const SECOND = "second"
 type Pages = [string, ExposurePage][]
 
 const page = (others: [string, bigint][]): ExposurePage => ({
-	pageTotal: others.reduce((total, [, value]) => total + value, 0n),
 	others: others.map(([who, value]) => ({ who, value })),
 })
 
 const overviewOf = (pages: Pages, own: Record<string, bigint>) => {
 	const totals = new Map<string, ValidatorExposure>()
-	for (const [validator, { pageTotal }] of pages) {
+	for (const [validator, { others }] of pages) {
 		const entry = totals.get(validator) ?? {
 			total: own[validator] ?? 0n,
 			own: own[validator] ?? 0n,
 		}
+		const pageTotal = others.reduce((total, { value }) => total + value, 0n)
 		totals.set(validator, { ...entry, total: entry.total + pageTotal })
 	}
 	return [...totals]

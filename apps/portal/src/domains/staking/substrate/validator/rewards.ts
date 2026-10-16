@@ -1,4 +1,4 @@
-export type ExposurePage = { pageTotal: bigint; others: { who: string; value: bigint }[] }
+export type ExposurePage = { others: { who: string; value: bigint }[] }
 
 export type ValidatorExposure = { total: bigint; own: bigint }
 

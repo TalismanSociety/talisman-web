@@ -5,11 +5,11 @@ import type { StakingLedgerValue } from "@/domains/chains/portal-runtime"
 
 import { watchActiveEra } from "../nominationPools/chain"
 import {
-	genericAddressOf,
+	inFormatOf,
 	watchController,
 	watchCurrentEra,
 	watchLedger,
-	withdrawSlashingSpans,
+	withdrawSpanCount,
 } from "./chain"
 
 export type Unlocking = { remainingEras: number; value: bigint }
@@ -48,7 +48,7 @@ const watchBonded = (runtime: ChainRuntime, address: string): Observable<Bonded 
 				? of(undefined)
 				: watchLedger(runtime, controller).pipe(
 						map((ledger) =>
-							ledger ? { address, controller: genericAddressOf(controller), ledger } : undefined
+							ledger ? { address, controller: inFormatOf(address, controller), ledger } : undefined
 						)
 					)
 		)
@@ -60,7 +60,7 @@ const position$ = (
 	activeEra: number,
 	currentEra: number
 ): Observable<ValidatorPosition> =>
-	withdrawSlashingSpans(runtime, address).pipe(
+	withdrawSpanCount(runtime, address).pipe(
 		map((slashingSpan) => {
 			const unlocking = unlockingOf(ledger.unlocking, activeEra)
 			return {
