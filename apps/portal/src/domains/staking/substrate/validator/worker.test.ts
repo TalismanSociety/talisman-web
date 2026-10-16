@@ -19,7 +19,10 @@ const recordStringEvaluations = () => {
 	return evaluated
 }
 
-afterEach(() => vi.unstubAllGlobals())
+afterEach(() => {
+	vi.unstubAllGlobals()
+	z.config({ jitless: true })
+})
 
 describe("staker-rewards worker", () => {
 	it("boots without evaluating a string as code", async () => {
@@ -30,6 +33,6 @@ describe("staker-rewards worker", () => {
 
 		z.config({ jitless: false })
 		z.object({})
-		expect(evaluated).toEqual([[""]])
+		expect(evaluated, "the recorder sees Zod's eval probe once jitless is off").toEqual([[""]])
 	})
 })
