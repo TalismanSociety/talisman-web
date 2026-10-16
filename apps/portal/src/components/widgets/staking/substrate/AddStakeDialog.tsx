@@ -1,7 +1,10 @@
 import { NominationPoolsAddStakeDialog } from "@/components/recipes/AddStakeDialog"
-import { useExtrinsic } from "@/domains/common/hooks/useExtrinsic"
-import { useExtrinsicInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
+import { txFromCall } from "@/domains/chains/chain-runtime"
+import { useTxInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
+import { useTx } from "@/domains/common/hooks/useTx"
+import { bondExtraCall } from "@/domains/staking/substrate/nominationPools/calls"
 import { usePoolAddForm } from "@/domains/staking/substrate/nominationPools/hooks"
+import { useGenesisHash } from "@/domains/staking/substrate/nominationPools/hooks/useRuntimes"
 
 const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) => {
 	const {
@@ -13,13 +16,12 @@ const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) =
 		error: inputError,
 	} = usePoolAddForm("bondExtra", props.account)
 
-	const bondExtraExtrinsic = useExtrinsic("nominationPools", "bondExtra", [
-		{
-			FreeBalance: decimalAmount?.planck?.toString() ?? "0",
-		},
-	])
+	const genesisHash = useGenesisHash()
+	const bondExtraExtrinsic = useTx(genesisHash, (runtime) =>
+		txFromCall(runtime, bondExtraCall(decimalAmount?.planck ?? 0n))
+	)
 
-	useExtrinsicInBlockOrErrorEffect(() => {
+	useTxInBlockOrErrorEffect(() => {
 		props.onDismiss()
 	}, bondExtraExtrinsic)
 

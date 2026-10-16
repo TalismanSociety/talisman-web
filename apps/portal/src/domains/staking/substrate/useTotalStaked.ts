@@ -4,7 +4,8 @@ import { useRecoilValue, useRecoilValueLoadable, waitForAll, waitForAny } from "
 import { selectedSubstrateAccountsState } from "@/domains/accounts/recoils"
 import { nativeTokenPriceState, nominationPoolsEnabledChainsState } from "@/domains/chains/recoils"
 import { substrateApiState } from "@/domains/common/recoils/api"
-import { chainDeriveState, chainQueryState } from "@/domains/common/recoils/query"
+import { chainDeriveState } from "@/domains/common/recoils/query"
+import { usePoolStakeFiatTotal } from "@/domains/staking/substrate/nominationPools/hooks/useTotalPoolStaked"
 import { Decimal } from "@/util/Decimal"
 
 export const useTotalStaked = () => {
@@ -25,11 +26,6 @@ export const useTotalStaked = () => {
 	const validatorStakes = useRecoilValueLoadable(
 		waitForAny(
 			chains.map((x) => chainDeriveState(x.rpc, "staking", "accounts", [addresses, undefined]))
-		)
-	)
-	const poolStakes = useRecoilValueLoadable(
-		waitForAny(
-			chains.map((x) => chainQueryState(x.rpc, "nominationPools", "poolMembers.multi", addresses))
 		)
 	)
 
@@ -57,30 +53,7 @@ export const useTotalStaked = () => {
 					.map((x) => Decimal.fromPlanck(x.amount, x.decimals).toNumber() * x.price)
 					.reduce((prev, curr) => prev + curr, 0)
 
-	const poolStakeFiatTotal =
-		poolStakes.state !== "hasValue"
-			? 0
-			: poolStakes.contents
-					.map((x, index) => ({
-						decimals: decimals[index]!,
-						price: nativeTokenPrices[index]!,
-						loadable: x,
-					}))
-					.filter((x) => x.loadable.state === "hasValue")
-					.map((x) => ({
-						price: x.price,
-						decimals: x.decimals,
-						amount:
-							x.loadable.state === "hasValue"
-								? x.loadable.contents
-										.map((x) => x.unwrapOrDefault())
-										.flatMap((x) => x.points)
-										.map((x) => x.toBigInt())
-										.reduce((prev, curr) => prev + curr, 0n)
-								: 0n,
-					}))
-					.map((x) => Decimal.fromPlanck(x.amount, x.decimals).toNumber() * x.price)
-					.reduce((prev, curr) => prev + curr, 0)
+	const poolStakeFiatTotal = usePoolStakeFiatTotal()
 
 	return {
 		validatorStakeFiatTotal,

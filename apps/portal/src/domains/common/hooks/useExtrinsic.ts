@@ -19,22 +19,17 @@ import { useConnectedSubstrateWallet } from "@/domains/extension/substrate"
 
 type Promisable<T> = T | PromiseLike<T>
 
-export type SubmittableResultLoadable =
+type SubmittableResultLoadable =
 	| { state: "idle"; contents: undefined }
 	| { state: "loading"; contents: ISubmittableResult | undefined }
 	| { state: "hasValue"; contents: ISubmittableResult }
 	| { state: "hasError"; contents: any }
 
-export type ExtrinsicLoadable = (
-	| { state: "idle"; contents: undefined }
-	| { state: "loading"; contents: ISubmittableResult | undefined }
-	| { state: "hasValue"; contents: ISubmittableResult }
-	| { state: "hasError"; contents: any }
-) & {
+export type ExtrinsicLoadable = SubmittableResultLoadable & {
 	signAndSend: (account: AddressOrPair) => Promise<ISubmittableResult>
 }
 
-export const useSubmittableResultLoadableState = () =>
+const useSubmittableResultLoadableState = () =>
 	useState<SubmittableResultLoadable>({ state: "idle", contents: undefined })
 
 /**

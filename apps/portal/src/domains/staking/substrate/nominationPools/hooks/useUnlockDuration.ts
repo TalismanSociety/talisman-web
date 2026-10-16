@@ -1,66 +1,43 @@
-import { useDeriveState } from "@talismn/react-polkadot-api"
 import { formatDistance } from "date-fns"
-import { constSelector, useRecoilValue, waitForAll } from "recoil"
-
+import { useRecoilValue } from "recoil"
+import { switchMap } from "rxjs"
 import { useChainState } from "@/domains/chains/hooks"
-import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
-import { expectedBlockTime, expectedSessionTime } from "@/domains/common/utils/substratePolyfills"
-import { Maybe } from "@/util/monads"
+import { bindSuspended } from "@/util/loadable"
 
-import { areNominatorsSlashableState } from "../recoils"
-import { getNominatorBondingDurationEras, getStakingBondingDurationMs } from "../utils/helpers"
-import { useBabeApi } from "./useBabeApi"
+import { areNominatorsSlashable } from "../chain"
+import {
+	expectedBlockTimeMs,
+	expectedSessionTimeMs,
+	fastUnbondDuration,
+	nominatorBondingDurationEras,
+	stakingEraDurationMs,
+} from "../era-timing"
+import { chainRuntimes$, useRuntimes, useSessionProgress } from "./useRuntimes"
 
-export const useLocalizedUnlockDuration = () => {
-	const unlockDuration = useUnlockDuration()
+const ASSET_HUB_CHAIN_IDS = new Set(["kusama-asset-hub", "polkadot-asset-hub"])
 
-	return formatDistance(0, unlockDuration)
-}
+const [useAreNominatorsSlashable] = bindSuspended((genesisHash: string) =>
+	chainRuntimes$(genesisHash).pipe(
+		switchMap(({ runtime }) =>
+			fastUnbondDuration(runtime.lookup) === undefined ? [true] : areNominatorsSlashable(runtime)
+		)
+	)
+)
 
-const KUSAMA_ASSET_HUB_CHAIN_ID = "kusama-asset-hub"
-const POLKADOT_ASSET_HUB_CHAIN_ID = "polkadot-asset-hub"
+export const useLocalizedUnlockDuration = () => formatDistance(0, useUnlockDuration())
 
 export const useUnlockDuration = () => {
-	const [api, sessionProgress] = useRecoilValue(
-		waitForAll([useSubstrateApiState(), useDeriveState("session", "progress", [])])
-	)
 	const chain = useRecoilValue(useChainState())
-	const isAssetHub =
-		chain.id === KUSAMA_ASSET_HUB_CHAIN_ID || chain.id === POLKADOT_ASSET_HUB_CHAIN_ID
+	const { runtime, babeRuntime } = useRuntimes(chain.genesisHash)
+	const sessionProgress = useSessionProgress(chain.genesisHash)
+	const slashable = useAreNominatorsSlashable(chain.genesisHash)
+	const eras = nominatorBondingDurationEras(runtime.lookup, slashable)
 
-	const babeApi = useBabeApi(chain.id)
-
-	// Only relevant when the fast-unbond constant exists; otherwise skip the storage read entirely.
-	const hasFastUnbondDuration =
-		(api.consts.staking as unknown as Record<string, unknown>)["nominatorFastUnbondDuration"] !==
-		undefined
-	const areNominatorsSlashable = useRecoilValue(
-		hasFastUnbondDuration ? areNominatorsSlashableState(chain.rpc) : constSelector(true)
-	)
-
-	if (isAssetHub) {
-		const bondingDuration = getStakingBondingDurationMs({
-			stakingApi: api,
-			babeApi,
-			areNominatorsSlashable,
-		})
-
-		return Number(bondingDuration.toString())
+	if (ASSET_HUB_CHAIN_IDS.has(chain.id)) {
+		return eras * stakingEraDurationMs(babeRuntime.lookup, runtime.lookup)
 	}
-	const erasOrSessions = sessionProgress.eraLength.muln(
-		getNominatorBondingDurationEras(api, areNominatorsSlashable)
-	)
-
-	if (!sessionProgress.isEpoch) {
-		return Number(
-			Maybe.of(expectedSessionTime(api)).mapOr(
-				`${erasOrSessions.toString()} sessions`,
-				(sessionLength) => erasOrSessions.mul(sessionLength).toString()
-			)
-		)
-	}
-
-	const ms = erasOrSessions.mul(expectedBlockTime(api))
-
-	return ms.toNumber()
+	const erasOrSessions = sessionProgress.eraLength * eras
+	return sessionProgress.isEpoch
+		? erasOrSessions * expectedBlockTimeMs(runtime.lookup)
+		: erasOrSessions * expectedSessionTimeMs(runtime.lookup)
 }

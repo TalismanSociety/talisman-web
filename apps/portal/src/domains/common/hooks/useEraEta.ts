@@ -4,8 +4,8 @@ import { useCallback, useMemo } from "react"
 import { useRecoilValue } from "recoil"
 
 import { useChainState } from "@/domains/chains/hooks"
+import { useBabeApi } from "@/domains/common/hooks/useBabeApi"
 import { expectedBlockTime, expectedSessionTime } from "@/domains/common/utils/substratePolyfills"
-import { useBabeApi } from "@/domains/staking/substrate/nominationPools/hooks/useBabeApi"
 import { Maybe } from "@/util/monads"
 
 import { chainDeriveState } from "../recoils/query"

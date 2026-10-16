@@ -280,6 +280,9 @@ importers:
       '@polkadot-api/metadata-builders':
         specifier: 0.15.2
         version: 0.15.2
+      '@polkadot-api/signers-common':
+        specifier: 0.4.0
+        version: 0.4.0(rxjs@7.8.2)
       '@polkadot-api/substrate-bindings':
         specifier: 0.21.2
         version: 0.21.2

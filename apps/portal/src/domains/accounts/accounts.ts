@@ -145,10 +145,6 @@ export const writeableEvmAccounts$ = shared(
 	writeableAccounts$.pipe(map((accounts) => accounts.filter(isEvm)))
 )
 
-export const substrateAccounts$ = shared(
-	accounts$.pipe(map((accounts) => accounts.filter(isSubstrate)))
-)
-
 export const selectedAccountAddresses$ = new BehaviorSubject<string[] | undefined>(undefined)
 
 export const selectedAccounts$: Observable<Account[]> = shared(
