@@ -74,6 +74,17 @@ describe("useCombinedBittensorValidatorsData", () => {
 
 		await waitFor(() => expect(getValidatorYields).toHaveBeenCalledWith({ data: { netuid: 0 } }))
 	})
+
+	it("reports an error with no validators on a host that answers server functions with the SPA shell", async () => {
+		const shell = new Response("<!DOCTYPE html>", { headers: { "Content-Type": "text/html" } })
+		getBittensorValidators.mockResolvedValue(shell)
+		getValidatorYields.mockResolvedValue(shell)
+
+		const { result } = renderHook(() => useCombinedBittensorValidatorsData(), { wrapper })
+
+		await waitFor(() => expect(result.current.isError).toBe(true))
+		expect(result.current.combinedValidatorsData).toEqual([])
+	})
 })
 
 describe("useCombineSubnetData", () => {
