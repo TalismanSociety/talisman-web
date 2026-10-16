@@ -19,18 +19,18 @@ import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/use
 
 import { setFeeEstimate } from "../breakdown"
 import { placeholderCall, stakeCall, txOf, unstakeCall } from "../calls"
-import { useSubtensorBalance } from "../chain"
+import type { SubtensorBalance } from "../chain"
 import type { StakeItem } from "./useStake"
 
 export const useAddStakeForm = (
 	account: Account,
+	{ balance, existentialDeposit }: SubtensorBalance,
 	stake: StakeItem | undefined,
 	delegate: string | undefined,
 	netuid: number | undefined
 ) => {
 	const [input, setInput] = useState("")
 	const { genesisHash } = useContext(ChainContext)
-	const { balance, existentialDeposit } = useSubtensorBalance(genesisHash, account.address)
 	const amount = useTokenAmount(input)
 
 	const isRootnetStake = netuid === ROOT_NETUID

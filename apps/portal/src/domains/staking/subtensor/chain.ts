@@ -31,6 +31,11 @@ export const fetchSubnetPool = async (
 	)
 }
 
+export type SubtensorBalance = {
+	balance: { free: bigint; reserved: bigint; frozen: bigint }
+	existentialDeposit: bigint
+}
+
 export const [useSubtensorBalance] = bind((genesisHash: string, address: string) =>
 	defer(() => {
 		const api = subtensorApi(genesisHash)
@@ -38,5 +43,12 @@ export const [useSubtensorBalance] = bind((genesisHash: string, address: string)
 			api.query.System.Account.watchValue(address, { at: "best" }),
 			api.constants.Balances.ExistentialDeposit(),
 		])
-	}).pipe(map(([{ value }, existentialDeposit]) => ({ balance: value.data, existentialDeposit })))
+	}).pipe(
+		map(
+			([{ value }, existentialDeposit]): SubtensorBalance => ({
+				balance: value.data,
+				existentialDeposit,
+			})
+		)
+	)
 )
