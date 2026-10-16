@@ -37,9 +37,12 @@ export const toValidators = (payload: unknown): BittensorValidator[] =>
 	tdaValidators
 		.parse(payload)
 		.filter((validator) => validator.active_subnets > 0)
-		.flatMap(({ hotkey, name, global_weighted_stake, global_nominators }) =>
-			name === null ? [] : [{ hotkey, name, global_weighted_stake, global_nominators }]
-		)
+		.map(({ hotkey, name, global_weighted_stake, global_nominators }) => ({
+			hotkey,
+			name: name ?? "",
+			global_weighted_stake,
+			global_nominators,
+		}))
 
 export const toSubnetPools = (payload: unknown): SubnetPool[] =>
 	tdaPools.parse(payload).map(({ netuid, total_tao, total_alpha }) => ({

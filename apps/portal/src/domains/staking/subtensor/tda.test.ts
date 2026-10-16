@@ -13,7 +13,7 @@ describe("toValidators", () => {
 		rank: 2,
 	}
 
-	it("keeps the named validators active on a subnet, with the fields the portal shows", () => {
+	it("keeps the validators active on a subnet, unnamed ones with an empty name as on Taostats", () => {
 		expect(
 			toValidators([
 				yuma,
@@ -24,6 +24,12 @@ describe("toValidators", () => {
 			{
 				hotkey: "5DXdHixxtCvoa6GHKs2Jgrdzc61882Ftx1zN2sYFQuwgL1S1",
 				name: "Yuma, a DCG Company",
+				global_weighted_stake: "328303810249707",
+				global_nominators: 2647,
+			},
+			{
+				hotkey: "5Unnamed",
+				name: "",
 				global_weighted_stake: "328303810249707",
 				global_nominators: 2647,
 			},
