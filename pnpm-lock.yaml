@@ -248,9 +248,6 @@ importers:
       '@kheopskit/core':
         specifier: 5.3.0
         version: 5.3.0(@reown/appkit@1.7.8(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.6.3)(utf-8-validate@5.0.10)(zod@4.6.7))(@solana/kit@3.0.3(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.6.3)(ws@8.22.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(mipd@0.0.7(typescript@5.6.3))(polkadot-api@3.2.1(bufferutil@4.0.8)(esbuild@0.28.2)(rxjs@7.8.2)(supports-color@10.0.0)(utf-8-validate@5.0.10))(rxjs@7.8.2)(viem@2.41.2(bufferutil@4.0.8)(typescript@5.6.3)(utf-8-validate@5.0.10)(zod@4.6.7))
-      '@noble/hashes':
-        specifier: 2.4.0
-        version: 2.4.0
       '@polkadot-api/metadata-builders':
         specifier: 0.15.2
         version: 0.15.2
@@ -278,9 +275,6 @@ importers:
       '@recoiljs/refine':
         specifier: ^0.1.1
         version: 0.1.1
-      '@scure/base':
-        specifier: 2.4.0
-        version: 2.4.0
       '@talismn/balances':
         specifier: 3.0.6
         version: 3.0.6(@solana/sysvars@8.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.6.3))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.6.3)(utf-8-validate@5.0.10)

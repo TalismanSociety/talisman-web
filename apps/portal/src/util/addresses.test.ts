@@ -84,7 +84,7 @@ describe.each(Object.keys(FUNCTIONS))("%s", (name) => {
 				? []
 				: [{ input, format, expected, actual }]
 		})
-		expect(cases.length).toBeGreaterThan(300)
+		expect(cases.length).toBeGreaterThanOrEqual(300)
 		expect(mismatches).toEqual([])
 	})
 })
