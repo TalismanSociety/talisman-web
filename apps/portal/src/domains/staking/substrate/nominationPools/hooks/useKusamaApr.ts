@@ -1,7 +1,7 @@
 import type { ApiPromise } from "@polkadot/api"
 import type { Option } from "@polkadot/types"
 import type { ActiveEraInfo } from "@polkadot/types/interfaces"
-import type { ChainId } from "@talismn/chaindata-provider"
+import type { NetworkId } from "@talismn/chaindata-provider"
 import { useQueryState } from "@talismn/react-polkadot-api"
 import { range } from "lodash"
 import { useMemo } from "react"
@@ -19,7 +19,7 @@ export const useKusamaApr = ({
 }: {
 	activeEra: Option<ActiveEraInfo>
 	stakingApi: ApiPromise
-	chainId: ChainId
+	chainId: NetworkId
 }) => {
 	const babeApi = useBabeApi(chainId)
 

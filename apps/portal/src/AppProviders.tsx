@@ -3,6 +3,7 @@ import "@polkadot/api-augment/substrate"
 import "@talismn/astar-types/augment-api"
 import "@talismn/astar-types/types-lookup"
 
+import { Subscribe } from "@react-rxjs/core"
 import * as Sentry from "@sentry/react"
 import { PolkadotApiProvider } from "@talismn/react-polkadot-api"
 import { PostHogProvider } from "posthog-js/react"
@@ -14,8 +15,7 @@ import { FullscreenLoader } from "@/components/molecules/FullscreenLoader"
 import { Development } from "@/components/widgets/development/Development"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { AccountWatcher, SignetWatcher } from "@/domains/accounts/recoils"
-import { BalancesWatcher } from "@/domains/balances/BalancesWatcher"
-import { PortalBalancesProvider } from "@/domains/balances/PortalBalancesProvider"
+import { BalancesReporter, BalancesWatcher } from "@/domains/balances/BalancesWatcher"
 import {
 	chainDeriveState,
 	chainQueryMultiState,
@@ -23,7 +23,6 @@ import {
 } from "@/domains/common/recoils/query"
 import { initSentry } from "@/domains/common/sentry"
 import { ExtensionWatcher } from "@/domains/extension/main"
-import { TalismanExtensionSynchronizer } from "@/domains/extension/TalismanExtensionSynchronizer"
 import { EvmProvider } from "@/domains/extension/wagmi"
 import { Toaster } from "@/ui/molecules/Toaster"
 import { JotaiProvider } from "@/util/jotaiStore"
@@ -41,31 +40,31 @@ const AppProviders = ({ children }: { children: ReactNode }) => (
 				)}
 			>
 				<Suspense fallback={<FullscreenLoader />}>
-					<JotaiProvider>
-						<PostHogProvider apiKey={import.meta.env.VITE_POSTHOG_AUTH_TOKEN}>
-							<EvmProvider>
-								<PolkadotApiProvider
-									queryState={chainQueryState}
-									deriveState={chainDeriveState}
-									queryMultiState={chainQueryMultiState}
-								>
-									<PortalBalancesProvider>
+					<Subscribe>
+						<JotaiProvider>
+							<PostHogProvider apiKey={import.meta.env.VITE_POSTHOG_AUTH_TOKEN}>
+								<EvmProvider>
+									<PolkadotApiProvider
+										queryState={chainQueryState}
+										deriveState={chainDeriveState}
+										queryMultiState={chainQueryMultiState}
+									>
 										<ExtensionWatcher />
 										<AccountWatcher />
 										<SignetWatcher />
-										<TalismanExtensionSynchronizer />
 										<BalancesWatcher />
+										<BalancesReporter />
 										<Suspense fallback={<FullscreenLoader />}>
 											{children}
 											<Toaster position="bottom-right" />
 										</Suspense>
 										<FairyBreadBanner />
 										<Development />
-									</PortalBalancesProvider>
-								</PolkadotApiProvider>
-							</EvmProvider>
-						</PostHogProvider>
-					</JotaiProvider>
+									</PolkadotApiProvider>
+								</EvmProvider>
+							</PostHogProvider>
+						</JotaiProvider>
+					</Subscribe>
 				</Suspense>
 			</ErrorBoundary>
 		</RecoilRoot>

@@ -1,3 +1,5 @@
+import "./zod-jitless"
+
 import { createRouter, type ErrorComponentProps, type RouterHistory } from "@tanstack/react-router"
 
 import { parseSearch, stringifySearch } from "@/util/search"

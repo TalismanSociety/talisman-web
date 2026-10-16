@@ -1,4 +1,4 @@
-import { evmErc20TokenId } from "@talismn/balances-react"
+import { evmErc20TokenId } from "@talismn/chaindata-provider"
 import { formatDecimals } from "@talismn/util"
 import { useMemo } from "react"
 import { useRecoilValue, useRecoilValueLoadable } from "recoil"
