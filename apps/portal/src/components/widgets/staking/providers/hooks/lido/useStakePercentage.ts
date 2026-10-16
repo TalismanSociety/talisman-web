@@ -1,11 +1,10 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import BigNumber from "bignumber.js"
 import { useMemo } from "react"
-import { useRecoilValue } from "recoil"
 import { useConfig } from "wagmi"
 import { getTokenQueryOptions } from "wagmi/query"
 
-import { selectedBalancesState } from "@/domains/balances/recoils"
+import { useSelectedBalances } from "@/domains/balances/hooks"
 
 type StakePercentageProps = {
 	chainId: string | number
@@ -14,7 +13,7 @@ type StakePercentageProps = {
 }
 
 const useStakePercentage = ({ chainId, nativeTokenAddress, symbol }: StakePercentageProps) => {
-	const balances = useRecoilValue(selectedBalancesState)
+	const balances = useSelectedBalances()
 
 	const config = useConfig()
 	const liquidToken = useSuspenseQuery(

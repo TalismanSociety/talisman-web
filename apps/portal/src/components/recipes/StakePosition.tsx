@@ -32,7 +32,7 @@ export type StakePositionProps = {
 	shortProvider?: ReactNode
 	stakeStatus: StakeStatus
 	assetSymbol: ReactNode
-	assetLogoSrc: string
+	assetLogoSrc?: string
 	chain: ReactNode
 	chainId: string | number
 	balance: ReactNode
@@ -405,7 +405,7 @@ export const StakePosition = Object.assign(
 export type StakePositionErrorBoundaryProps = {
 	chain: ReactNode
 	assetSymbol: ReactNode
-	assetLogoSrc: string
+	assetLogoSrc?: string
 	account: Account
 	provider: ReactNode
 	stakeStatus?: StakeStatus

@@ -7,7 +7,7 @@ import { useTheme } from "@/ui/theme"
 
 type ErrorBoundaryFallbackProps = {
 	symbol: string
-	logo: string
+	logo?: string
 	provider: string
 	list?: "stakes" | "positions"
 }

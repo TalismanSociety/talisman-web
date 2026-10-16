@@ -1,5 +1,4 @@
-import { evmErc20TokenId, evmNativeTokenId } from "@talismn/balances-react"
-import { githubChainLogoUrl } from "@talismn/chaindata-provider"
+import { evmErc20TokenId, evmNativeTokenId } from "@talismn/chaindata-provider"
 import { useRecoilValue } from "recoil"
 
 import { lidoSuitesState } from "@/domains/staking/lido/recoils"
@@ -10,19 +9,21 @@ import type { Provider } from "../types"
 // This is not used for Lido
 const SUBSTRATE_GENESIS_HASH = "0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b"
 
+const ETHEREUM_LOGO_URL =
+	"https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/chains/1.svg"
+
 const useLidoProviders = () => {
 	const lidoSuites = useRecoilValue(lidoSuitesState)
 
 	const lidoProviders: Provider[] = lidoSuites.map((lidoSuite) => {
 		const { symbol, decimals } = lidoSuite.chain.nativeCurrency
-		const logo = githubChainLogoUrl("1")
 		return {
 			balancesTokenIds: [
 				evmNativeTokenId(String(lidoSuite.chain.id)),
 				evmErc20TokenId(String(lidoSuite.chain.id), lidoSuite.token.address),
 			],
 			symbol: symbol,
-			logo,
+			logo: ETHEREUM_LOGO_URL,
 			chainName: lidoSuite.chain.name,
 			chainId: lidoSuite.chain.id,
 			type: "Liquid staking",

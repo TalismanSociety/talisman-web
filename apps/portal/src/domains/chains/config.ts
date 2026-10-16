@@ -2,26 +2,6 @@ type BaseChain = {
 	genesisHash: `0x${string}`
 }
 
-/**
- * RPC endpoint overrides keyed by chaindata chain id.
- *
- * Chaindata's first-listed RPCs for these chains (the `ibp.network` endpoints) are currently
- * unreachable, which left the staking page stuck on a loading spinner. These overrides take
- * precedence over the chaindata-sourced RPCs everywhere we connect to these chains:
- *  - the substrate API used by staking (see chainState in recoils.ts)
- *  - the relay-chain API used for Babe/era timing (see useBabeApi.ts)
- *  - the nomination-pools query endpoint (see useNominationPoolsEndpoint.ts)
- *
- * The relay chains (polkadot/kusama) are included because the Asset Hubs delegate Babe constants
- * to their relay chain, whose chaindata RPC is stale too.
- */
-export const rpcOverrides: Record<string, string> = {
-	"polkadot-asset-hub": "wss://polkadot-asset-hub-rpc.polkadot.io",
-	"kusama-asset-hub": "wss://kusama-asset-hub-rpc.polkadot.io",
-	polkadot: "wss://rpc.polkadot.io",
-	kusama: "wss://kusama-rpc.polkadot.io",
-}
-
 type ChainWithNominationPools = {
 	hasNominationPools: true
 	priorityPool: number | number[] | undefined
@@ -117,13 +97,6 @@ export const chainConfigs: ChainConfig[] = [
 		talismanPools: undefined,
 		// From https://github.com/novasamatech/nova-utils/blob/3f3568fd9c2e068b45b5b378c4d58287d2cda68e/chains/v21/chains_dev.json#L335C29-L335C92
 		novaIndexerUrl: "https://api.subquery.network/sq/nova-wallet/nova-wallet-westend",
-	},
-	// Shibuya
-	{
-		genesisHash: "0xddb89973361a170839f80f152d2e9e38a376a5a7eccefcade763f46a8e567019",
-		hasDappStaking: true,
-		dappStakingApi: "https://api.astar.network/api/v3/shibuya/dapps-staking/",
-		priorityDapp: undefined,
 	},
 ]
 

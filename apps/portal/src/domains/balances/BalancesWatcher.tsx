@@ -1,28 +1,37 @@
-import { useBalances, useSetBalancesAddresses } from "@talismn/balances-react"
-import { useEffect, useMemo } from "react"
-import { useRecoilCallback, useRecoilValue } from "recoil"
+import { useEffect } from "react"
+import { useRecoilValue } from "recoil"
 
-import { accountsState } from "@/domains/accounts/recoils"
+import { useStakingBalancesEnabledTokens } from "@/components/widgets/staking/providers/hooks/useProvidersData"
+import { accountsState, ownAccountsState } from "@/domains/accounts/recoils"
 
+import {
+	balancesCacheWrites$,
+	setBalancesAddresses,
+	setBalancesTokenIds,
+	setCacheableBalancesAddresses,
+} from "./balances"
 import { useBalancesReportEffect } from "./hooks"
-import { balancesState } from "./recoils"
 
 export const BalancesWatcher = () => {
 	const accounts = useRecoilValue(accountsState)
-	const addresses = useMemo(() => accounts.map((x) => x.address), [accounts])
-	useSetBalancesAddresses(addresses)
+	const ownAccounts = useRecoilValue(ownAccountsState)
+	const tokenIds = useStakingBalancesEnabledTokens()
 
-	const unfilteredBalances = useBalances()
-	const balances = useMemo(() => unfilteredBalances, [unfilteredBalances])
-
+	useEffect(() => setBalancesAddresses(accounts.map(({ address }) => address)), [accounts])
 	useEffect(
-		useRecoilCallback(({ set }) => () => {
-			set(balancesState, balances)
-		}),
-		[balances]
+		() => setCacheableBalancesAddresses(ownAccounts.map(({ address }) => address)),
+		[ownAccounts]
 	)
+	useEffect(() => setBalancesTokenIds(tokenIds), [tokenIds])
+	useEffect(() => {
+		const subscription = balancesCacheWrites$.subscribe()
+		return () => subscription.unsubscribe()
+	}, [])
 
+	return null
+}
+
+export const BalancesReporter = () => {
 	useBalancesReportEffect()
-
 	return null
 }

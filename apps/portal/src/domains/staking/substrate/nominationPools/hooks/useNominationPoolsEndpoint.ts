@@ -1,36 +1,19 @@
-import { chainsAtom } from "@talismn/balances-react"
-import type { ChainId } from "@talismn/chaindata-provider"
-import { useAtomValue } from "jotai"
+import { isNetworkDot, type NetworkId } from "@talismn/chaindata-provider"
 import { useMemo } from "react"
 
-import { rpcOverrides } from "@/domains/chains/config"
+import { useNetworksById } from "@/domains/chains/chaindata-provider"
 
-/**
- * Custom hook to get the RPC endpoint for querying nomination pools.
- * For parachains, it returns the relay chain's RPC endpoint since nomination pools
- * are only available on relay chains, not on parachains.
- *
- * @param chainId - The current chain ID
- * @returns RPC endpoint for nomination pool queries (relay chain endpoint for parachains, current chain endpoint otherwise)
- */
-export const useNominationPoolsEndpoint = (chainId: ChainId | null | undefined): string | null => {
-	const chains = useAtomValue(chainsAtom)
+export const useNominationPoolsEndpoint = (
+	chainId: NetworkId | null | undefined
+): string | null => {
+	const networks = useNetworksById()
 
 	return useMemo(() => {
-		if (!chainId) return null
+		const network = chainId ? networks[chainId] : undefined
+		if (!network || !isNetworkDot(network)) return null
 
-		const chain = chains.find((c) => c.id === chainId)
-		if (!chain) return null
-
-		// For parachains, use the relay chain RPC endpoint for staking queries
-		// (Parachains don't have the staking pallet - relay chains do)
-		if (chain.paraId !== null && chain.relay?.id) {
-			const relayId = chain.relay.id
-			const relayChain = chains.find((c) => c.id === relayId)
-			return rpcOverrides[relayId] ?? relayChain?.rpcs?.[0]?.url ?? null
-		}
-
-		// For relay chains and standalone chains, use the chain's own RPC endpoint
-		return rpcOverrides[chain.id] ?? chain.rpcs?.[0]?.url ?? null
-	}, [chainId, chains])
+		const stakingNetwork =
+			network.topology.type === "parachain" ? networks[network.topology.relayId] : network
+		return stakingNetwork?.rpcs?.[0] ?? null
+	}, [chainId, networks])
 }

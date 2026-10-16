@@ -13,7 +13,8 @@
     "postbuild": "node scripts/csp-headers.ts",
     "typecheck": "NODE_OPTIONS='--max-old-space-size=8192' tsc --noEmit && tsc --noEmit -p tsconfig.node.json",
     "e2e": "playwright test",
-    "codegen:nova": "graphql-codegen --require dotenv/config --config codegen.nova.ts"
+    "codegen:nova": "graphql-codegen --require dotenv/config --config codegen.nova.ts",
+    "chaindata": "node scripts/chaindata.ts && biome format --write public/chaindata.json"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -25,7 +26,6 @@
     "@polkadot-onboard/injected-wallets": "^1.1.0",
     "@polkadot/api": "^14.0.1",
     "@polkadot/api-augment": "^16.4.1",
-    "@polkadot/api-contract": "^14.0.1",
     "@polkadot/api-derive": "^16.4.1",
     "@polkadot/extension-inject": "^0.53.1",
     "@polkadot/keyring": "^13.1.1",
@@ -35,17 +35,17 @@
     "@polkadot/util": "^13.1.1",
     "@polkadot/util-crypto": "^13.1.1",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
+    "@react-rxjs/core": "0.10.8",
     "@recoiljs/refine": "^0.1.1",
     "@sentry/react": "^7.85.0",
     "@sentry/tracing": "^7.85.0",
-    "@substrate/txwrapper-core": "^5.0.0",
-    "@talismn/balances": "0.9.11",
-    "@talismn/balances-react": "0.9.11",
-    "@talismn/chaindata-provider": "0.11.0",
-    "@talismn/on-chain-id": "0.1.17",
+    "@talismn/balances": "3.0.6",
+    "@talismn/chain-connectors": "1.0.6",
+    "@talismn/chaindata-provider": "2.2.0",
+    "@talismn/on-chain-id": "1.0.6",
     "@talismn/react-polkadot-api": "workspace:^",
     "@talismn/signet-apps-sdk": "0.0.7",
-    "@talismn/token-rates": "2.0.11",
+    "@talismn/token-rates": "4.0.6",
     "@talismn/util": "0.4.2",
     "@tanstack/react-query": "^5.32.0",
     "@tanstack/react-router": "1.170.42",
@@ -63,7 +63,6 @@
     "graphql": "^16.8.1",
     "graphql-request": "^6.1.0",
     "jotai": "^2.8.0",
-    "jotai-effect": "^1.0.0",
     "lodash": "^4.18.1",
     "lucide-react": "^0.394.0",
     "md5": "^2.3.0",
@@ -77,14 +76,15 @@
     "react-use": "^17.4.0",
     "react-winbox": "^1.5.0",
     "recoil": "^0.7.7",
-    "rxjs": "^7.8.1",
+    "rxjs": "^7.8.2",
     "scale-ts": "^1.6.0",
     "tailwind-merge": "^2.5.4",
     "threads": "^1.7.0",
     "victory": "^36.6.8",
     "viem": "^2.23.0",
     "wagmi": "^2.19.5",
-    "winbox": "^0.2.6"
+    "winbox": "^0.2.6",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.64.0",
@@ -114,6 +114,7 @@
     "vite-plugin-node-polyfills": "^0.22.0",
     "vite-plugin-svgr": "^4.2.0",
     "vite-plugin-wasm": "^3.3.0",
-    "wrangler": "^4.151.0"
+    "wrangler": "^4.151.0",
+    "yaml": "2.9.1"
   }
 }

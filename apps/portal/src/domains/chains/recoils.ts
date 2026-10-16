@@ -1,40 +1,41 @@
-import { chainsByGenesisHashAtom, tokensByIdAtom } from "@talismn/balances-react"
-import type { Chain } from "@talismn/chaindata-provider"
+import type { DotNetwork } from "@talismn/chaindata-provider"
 import { useContext } from "react"
 import type { RecoilValueReadOnly } from "recoil"
 import { atom, selector, selectorFamily, waitForAll } from "recoil"
+import { firstValueFrom } from "rxjs"
 
 import { selectedCurrencyState } from "@/domains/balances/currency"
 import { storageEffect } from "@/domains/common/effects"
 import { useSubstrateApiEndpoint } from "@/domains/common/hooks/useSubstrateApiEndpoint"
 import { substrateApiState } from "@/domains/common/recoils/api"
 import { Decimal } from "@/util/Decimal"
-import { jotaiStore } from "@/util/jotaiStore"
 import { nullToUndefined } from "@/util/nullToUndefined"
 
-import { chainConfigs, rpcOverrides } from "./config"
+import { networksByGenesisHash$, tokensById$ } from "./chaindata-provider"
+import { chainConfigs } from "./config"
 import { ChainContext } from "./contexts"
+
+const isSubscanUrl = (url: string) => new URL(url).hostname.endsWith(".subscan.io")
 
 export const chainState = selectorFamily({
 	key: "Chain",
 	get:
 		({ genesisHash }: { genesisHash: string }) =>
 		async () => {
-			const chaindataChainsByGenesisHash = await jotaiStore.get(chainsByGenesisHashAtom)
-			const chain = chaindataChainsByGenesisHash?.[genesisHash] as Chain
-			const nativeToken = chain?.nativeToken
-				? (await jotaiStore.get(tokensByIdAtom))[chain.nativeToken.id]
-				: undefined
-
-			const chainConfig = chainConfigs.find((config) => config.genesisHash === chain?.genesisHash)
+			const [networks, tokens] = await Promise.all([
+				firstValueFrom(networksByGenesisHash$),
+				firstValueFrom(tokensById$),
+			])
+			const network = networks[genesisHash as `0x${string}`] as DotNetwork
+			const chainConfig = chainConfigs.find((config) => config.genesisHash === network?.genesisHash)
 
 			const result = nullToUndefined({
-				...chain,
+				...network,
 				genesisHash: genesisHash as `0x${string}`,
-				nativeToken,
+				nativeToken: network ? tokens[network.nativeTokenId] : undefined,
+				subscanUrl: network?.blockExplorerUrls.find(isSubscanUrl),
 				...chainConfig,
-				// Prefer an explicit RPC override over the (possibly stale) chaindata RPC.
-				rpc: (chain?.id && rpcOverrides[chain.id]) || chain?.rpcs?.at(0)?.url,
+				rpc: network?.rpcs.at(0),
 			})
 			return result as typeof result & { isDisabled?: boolean }
 		},
