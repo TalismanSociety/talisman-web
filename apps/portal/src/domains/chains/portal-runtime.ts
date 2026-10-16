@@ -25,6 +25,15 @@ type AccountInfo = {
 	data: { free: bigint; reserved: bigint; frozen: bigint; flags: bigint }
 }
 
+type SubtensorStakeInfo = {
+	hotkey: SS58String
+	coldkey: SS58String
+	netuid: number
+	stake: bigint
+}
+
+type SubnetMetagraph = { alpha_in: bigint; alpha_out: bigint; tao_in: bigint }
+
 export type SmartContract = Enum<{ Evm: SizedHex<20>; Wasm: SS58String }>
 
 export type StakeAmount = { voting: bigint; build_and_earn: bigint; era: number; period: number }
@@ -152,6 +161,12 @@ type Apis = ApisTypedef<{
 		eras_per_voting_subperiod: RuntimeDescriptor<[], number>
 		eras_per_build_and_earn_subperiod: RuntimeDescriptor<[], number>
 		blocks_per_era: RuntimeDescriptor<[], number>
+	}
+	StakeInfoRuntimeApi: {
+		get_stake_info_for_coldkey: RuntimeDescriptor<[coldkey: SS58String], SubtensorStakeInfo[]>
+	}
+	SubnetInfoRuntimeApi: {
+		get_metagraph: RuntimeDescriptor<[netuid: number], SubnetMetagraph | undefined>
 	}
 }>
 

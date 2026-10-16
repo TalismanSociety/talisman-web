@@ -4,7 +4,7 @@ import { useRecoilValue } from "recoil"
 import { UnstakeDialog as UnstakeDialogComponent } from "@/components/recipes/UnstakeDialog"
 import type { Account } from "@/domains/accounts/recoils"
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
-import { useExtrinsicInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
+import { useTxInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
 import { useUnstakeForm } from "@/domains/staking/subtensor/hooks/forms"
 import { useCombineSubnetData } from "@/domains/staking/subtensor/hooks/useCombineSubnetData"
 import type { StakeItem } from "@/domains/staking/subtensor/hooks/useStake"
@@ -36,7 +36,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
 	} = useUnstakeForm(props.account, props.stake, props.delegate)
 	const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
 
-	useExtrinsicInBlockOrErrorEffect(() => props.onRequestDismiss(), extrinsic)
+	useTxInBlockOrErrorEffect(() => props.onRequestDismiss(), extrinsic)
 	const { subnetData } = useCombineSubnetData()
 
 	const queryClient = useQueryClient()

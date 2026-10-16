@@ -1,14 +1,15 @@
 import { classNames } from "@talismn/util"
-import { useAtom } from "jotai"
 import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
 import { useGetSeekDiscount } from "@/domains/staking/seek/hooks/useGetSeekDiscount"
-import { dTaoConversionRateAtom } from "@/domains/staking/subtensor/atoms/dTaoConversionRate"
-import { expectedAlphaAmountAtom } from "@/domains/staking/subtensor/atoms/expectedAlphaAmount"
-import { feeEstimateAtom } from "@/domains/staking/subtensor/atoms/feeEstimate"
-import { netuidAtom } from "@/domains/staking/subtensor/atoms/netuid"
-import { talismanTokenFeeAtom } from "@/domains/staking/subtensor/atoms/talismanTokenFee"
+import {
+	useDTaoConversionRate,
+	useExpectedAlphaAmount,
+	useFeeEstimate,
+	useNetuid,
+	useTalismanTokenFee,
+} from "@/domains/staking/subtensor/breakdown"
 import { useCombineSubnetData } from "@/domains/staking/subtensor/hooks/useCombineSubnetData"
 import { Info } from "@/icons"
 import { Tooltip } from "@/ui/atoms/Tooltip"
@@ -21,11 +22,11 @@ type StakeTxBreakdownProps = {
 }
 
 export const StakeTxBreakdown = ({ shouldHideExpectedAmount }: StakeTxBreakdownProps) => {
-	const [talismanFeeTokenAmount] = useAtom(talismanTokenFeeAtom)
-	const [expectedAlphaAmount] = useAtom(expectedAlphaAmountAtom)
-	const [dTaoConversionRate] = useAtom(dTaoConversionRateAtom)
-	const [feeEstimate] = useAtom(feeEstimateAtom)
-	const [netuid] = useAtom(netuidAtom)
+	const talismanFeeTokenAmount = useTalismanTokenFee()
+	const expectedAlphaAmount = useExpectedAlphaAmount()
+	const dTaoConversionRate = useDTaoConversionRate()
+	const feeEstimate = useFeeEstimate()
+	const netuid = useNetuid()
 	const { subnetData } = useCombineSubnetData()
 	const { tier } = useGetSeekDiscount()
 

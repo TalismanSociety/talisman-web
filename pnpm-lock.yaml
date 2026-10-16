@@ -286,6 +286,12 @@ importers:
       '@polkadot-api/utils':
         specifier: ^0.1.0
         version: 0.1.2
+      '@polkadot-api/ws-middleware':
+        specifier: 0.4.2
+        version: 0.4.2(rxjs@7.8.2)
+      '@polkadot-api/ws-provider':
+        specifier: 0.9.1
+        version: 0.9.1(rxjs@7.8.2)
       '@polkadot/api':
         specifier: 16.4.1
         version: 16.4.1(bufferutil@4.0.8)(supports-color@10.0.0)(utf-8-validate@5.0.10)
@@ -433,9 +439,6 @@ importers:
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
-      scale-ts:
-        specifier: ^1.6.0
-        version: 1.6.1
       tailwind-merge:
         specifier: ^2.5.4
         version: 2.5.4

@@ -1,9 +1,9 @@
-import { useAtom, useAtomValue } from "jotai"
 import { useCallback, useEffect, useRef, useState } from "react"
 import {
-	bittensorSlippageAtom,
-	maxSlippageAtom,
-} from "@/domains/staking/subtensor/atoms/bittensorSlippage"
+	setMaxSlippage,
+	useBittensorSlippage,
+	useMaxSlippage,
+} from "@/domains/staking/subtensor/breakdown"
 import { AlertTriangle, Info, Settings } from "@/icons"
 import { Text } from "@/ui/atoms/Text"
 import { Tooltip } from "@/ui/atoms/Tooltip"
@@ -11,8 +11,8 @@ import { TextInput } from "@/ui/molecules/TextInput"
 import { cn } from "@/util/cn"
 
 export const SlippageDropdown = () => {
-	const [slippage, setSlippage] = useAtom(maxSlippageAtom)
-	const bittensorSlippage = useAtomValue(bittensorSlippageAtom)
+	const slippage = useMaxSlippage()
+	const bittensorSlippage = useBittensorSlippage()
 	const [isOpen, setIsOpen] = useState<boolean>(false)
 	const [isAuto, setIsAuto] = useState<boolean>(true)
 	const dropdownRef = useRef<HTMLDivElement>(null)
@@ -21,11 +21,11 @@ export const SlippageDropdown = () => {
 
 	const handleClose = useCallback(() => {
 		if (!slippage) {
-			setSlippage(bittensorSlippage)
+			setMaxSlippage(bittensorSlippage)
 			setIsAuto(true)
 		}
 		setIsOpen(false)
-	}, [bittensorSlippage, setSlippage, slippage])
+	}, [bittensorSlippage, slippage])
 
 	// Close dropdown when clicking outside
 	useEffect(() => {
@@ -37,7 +37,7 @@ export const SlippageDropdown = () => {
 
 		document.addEventListener("mousedown", handleClickOutside)
 		return () => document.removeEventListener("mousedown", handleClickOutside)
-	}, [bittensorSlippage, handleClose, setSlippage, slippage])
+	}, [bittensorSlippage, handleClose, slippage])
 
 	const leadingSupportingText = () => {
 		if (slippage >= 20) {
@@ -123,7 +123,7 @@ export const SlippageDropdown = () => {
 									<div
 										className="bg-gray-750 cursor-pointer rounded-[16px] border border-gray-500 px-[1rem] py-[0.5rem] text-gray-300"
 										onClick={() => {
-											setSlippage(bittensorSlippage)
+											setMaxSlippage(bittensorSlippage)
 											setIsAuto(true)
 										}}
 									>
@@ -136,7 +136,7 @@ export const SlippageDropdown = () => {
 								const val = parseFloat(e.target.value)
 								setIsAuto(false)
 								if (val < 0 || val > 100) return
-								setSlippage(val)
+								setMaxSlippage(val)
 							}}
 							value={slippage}
 							containerClassName="w-[20rem] text-[14px]"

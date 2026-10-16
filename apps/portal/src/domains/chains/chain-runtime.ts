@@ -1,6 +1,10 @@
-import { getLookupFn, type MetadataLookup } from "@polkadot-api/metadata-builders"
-import { decAnyMetadata, unifyMetadata } from "@polkadot-api/substrate-bindings"
-import type { PolkadotClient, TypedApi } from "polkadot-api"
+import {
+	getDynamicBuilder,
+	getLookupFn,
+	type MetadataLookup,
+} from "@polkadot-api/metadata-builders"
+import { type Codec, decAnyMetadata, unifyMetadata } from "@polkadot-api/substrate-bindings"
+import type { PolkadotClient, TxCallData, TypedApi } from "polkadot-api"
 import { defer } from "rxjs"
 
 import { getPapiClient } from "./papi-client"
@@ -13,6 +17,13 @@ export type ChainRuntime = {
 	api: TypedApi<PortalRuntime, false>
 	lookup: MetadataLookup
 	chainSpec: ChainSpecData
+	encodeCall: (call: TxCallData) => Uint8Array
+}
+
+export const callEncoderOf = (lookup: MetadataLookup) => {
+	if (lookup.call === null) throw new Error("Metadata has no runtime call type")
+	const codec = getDynamicBuilder(lookup).buildDefinition(lookup.call) as Codec<TxCallData>
+	return (call: TxCallData) => codec.enc(call)
 }
 
 const loadChainRuntime = async (client: PolkadotClient): Promise<ChainRuntime> => {
@@ -23,7 +34,7 @@ const loadChainRuntime = async (client: PolkadotClient): Promise<ChainRuntime> =
 	])
 	const metadata = await client.getMetadata(hash)
 	const lookup = getLookupFn(unifyMetadata(decAnyMetadata(metadata)))
-	return { client, api, lookup, chainSpec }
+	return { client, api, lookup, chainSpec, encodeCall: callEncoderOf(lookup) }
 }
 
 const runtimesByClient = new WeakMap<PolkadotClient, Promise<ChainRuntime>>()
