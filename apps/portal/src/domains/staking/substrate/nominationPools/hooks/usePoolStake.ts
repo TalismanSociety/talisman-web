@@ -6,18 +6,15 @@ import type { Account } from "@/domains/accounts/accounts"
 import { bindSuspended, LOADING, toLoadable } from "@/util/loadable"
 
 import { type PoolPosition, poolPositions$ } from "../positions"
+import { addressesKey, splitAddresses } from "./useBalances"
 import { chainRuntimes$, useGenesisHash } from "./useRuntimes"
 
 export type DerivedPool = PoolPosition & { account: Account }
 
-const ADDRESS_SEPARATOR = ","
-
 const [usePoolPositions, poolPositionsFor$] = bindSuspended(
 	(genesisHash: string, addresses: string) =>
 		chainRuntimes$(genesisHash).pipe(
-			switchMap(({ runtime }) =>
-				poolPositions$(runtime, addresses === "" ? [] : addresses.split(ADDRESS_SEPARATOR))
-			)
+			switchMap(({ runtime }) => poolPositions$(runtime, splitAddresses(addresses)))
 		)
 )
 
@@ -26,8 +23,7 @@ const [usePoolPositionsLoadable] = bind(
 	LOADING
 )
 
-const addressesKey = (accounts: Account[]) =>
-	accounts.map(({ address }) => address).join(ADDRESS_SEPARATOR)
+const accountsKey = (accounts: Account[]) => addressesKey(accounts.map(({ address }) => address))
 
 const withAccounts = (positions: PoolPosition[], accounts: Account[]): DerivedPool[] =>
 	positions.flatMap((position) => {
@@ -41,7 +37,7 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
 		() => (Array.isArray(account) ? (account as Account[]) : [account as Account]),
 		[account]
 	)
-	const positions = usePoolPositions(genesisHash, addressesKey(accounts))
+	const positions = usePoolPositions(genesisHash, accountsKey(accounts))
 	type Return = T extends Account[] ? DerivedPool[] : DerivedPool | undefined
 	return useMemo(() => {
 		const pools = withAccounts(positions, accounts)
@@ -51,7 +47,7 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
 
 export const usePoolStakeLoadable = (accounts: Account[]) => {
 	const genesisHash = useGenesisHash()
-	const loadable = usePoolPositionsLoadable(genesisHash, addressesKey(accounts))
+	const loadable = usePoolPositionsLoadable(genesisHash, accountsKey(accounts))
 	return useMemo(
 		() => ({
 			state:

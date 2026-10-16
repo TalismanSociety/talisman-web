@@ -8,7 +8,8 @@ const ADDRESS_SEPARATOR = ","
 
 export const addressesKey = (addresses: string[]) => addresses.join(ADDRESS_SEPARATOR)
 
-const split = (addresses: string) => (addresses === "" ? [] : addresses.split(ADDRESS_SEPARATOR))
+export const splitAddresses = (addresses: string) =>
+	addresses === "" ? [] : addresses.split(ADDRESS_SEPARATOR)
 
 export type AccountBalance = { free: bigint; frozen: bigint; transferable: bigint }
 
@@ -21,7 +22,7 @@ const balanceOf = ({ free, frozen }: { free: bigint; frozen: bigint }): AccountB
 export const [useAccountBalances] = bindSuspended((genesisHash: string, addresses: string) =>
 	chainRuntimes$(genesisHash).pipe(
 		switchMap(({ runtime }) => {
-			const list = split(addresses)
+			const list = splitAddresses(addresses)
 			return list.length === 0
 				? of([] as AccountBalance[])
 				: combineLatest(
@@ -37,7 +38,7 @@ export const [usePoolPoints, poolPoints$] = bindSuspended(
 	(genesisHash: string, addresses: string) =>
 		chainRuntimes$(genesisHash).pipe(
 			switchMap(({ runtime }) => {
-				const list = split(addresses)
+				const list = splitAddresses(addresses)
 				return list.length === 0
 					? of([] as bigint[])
 					: combineLatest(

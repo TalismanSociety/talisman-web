@@ -101,8 +101,7 @@ const [usePayouts] = bindSuspended(
 						})
 					)
 				)
-			}),
-			map((payouts) => payouts)
+			})
 		)
 )
 
