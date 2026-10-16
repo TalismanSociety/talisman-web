@@ -55,12 +55,21 @@ const ledgersOf = async ({ api }: ChainRuntime, stashes: SS58String[]) => {
 	return new Map(bonded.map(({ stash }, index) => [stash, ledgers[index]]))
 }
 
+const UNPAID_ERA: Omit<EraInputs, "era"> = {
+	exposure: eraExposureOf([]),
+	eraPoints: 0n,
+	validatorPoints: new Map(),
+	commissions: new Map(),
+	eraReward: 0n,
+}
+
 export const eraInputs = async ({ api }: ChainRuntime, era: number): Promise<EraInputs> => {
-	const [paged, points, prefs, reward] = await Promise.all([
+	const reward = await api.query.Staking.ErasValidatorReward.getValue(era, BEST)
+	if (reward === undefined) return { era, ...UNPAID_ERA }
+	const [paged, points, prefs] = await Promise.all([
 		api.query.Staking.ErasStakersPaged.getEntries(era, BEST),
 		api.query.Staking.ErasRewardPoints.getValue(era, BEST),
 		api.query.Staking.ErasValidatorPrefs.getEntries(era, BEST),
-		api.query.Staking.ErasValidatorReward.getValue(era, BEST),
 	])
 	return {
 		era,
@@ -80,7 +89,7 @@ export const eraInputs = async ({ api }: ChainRuntime, era: number): Promise<Era
 		commissions: new Map(
 			prefs.map(({ keyArgs: [, validator], value }) => [validator, BigInt(value.commission)])
 		),
-		eraReward: reward ?? 0n,
+		eraReward: reward,
 	}
 }
 
