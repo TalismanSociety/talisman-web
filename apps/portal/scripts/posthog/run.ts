@@ -16,7 +16,7 @@ import {
 import { TEST_ACCOUNT_FILTERS, withInlineTestAccountFilter } from "./queries"
 import { isSame } from "./reconcile"
 import {
-	findGeoip,
+	enabledGeoips,
 	PRIVATE_SETTINGS,
 	type ProjectSettings,
 	projectSettingsPatch,
@@ -84,16 +84,16 @@ const syncProjectSettings = async ({ api, log }: SyncContext) => {
 
 const checkTransformations = async ({ api, log }: SyncContext) => {
 	const transformations = await api.listAll<Transformation>(TRANSFORMATIONS_PATH)
-	const geoip = findGeoip(transformations)
+	const geoips = enabledGeoips(transformations)
 	const filters = await Promise.all(
 		propertyFilterIds(transformations).map((id) => api.get<Transformation>(`/hog_functions/${id}/`))
 	)
-	const problems = transformationProblems(geoip, filters)
+	const problems = transformationProblems(geoips, filters)
 	if (problems.length) throw new StepFailure(problems.join("; "))
 	log(
-		geoip?.enabled
-			? `  GeoIP (order ${geoip.execution_order}) runs before a property filter that drops every precise field`
-			: "  GeoIP is off, so no location is derived"
+		geoips.length
+			? `  ${geoips.length} enabled GeoIP transformation(s), each followed by a property filter that drops every precise field`
+			: "  no GeoIP transformation is enabled, so no location is derived"
 	)
 }
 

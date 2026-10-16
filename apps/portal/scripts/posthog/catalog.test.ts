@@ -42,7 +42,7 @@ describe("catalogOf", () => {
 	it("declares $exception with no properties yet, never seeded", () => {
 		expect(catalog.events.find((e) => e.name === "$exception")).toEqual({
 			name: "$exception",
-			description: "An error report sent under the Error reporting consent, never its message",
+			description: "An error report: its kind and where it was caught, never its message",
 			properties: [],
 			seedable: false,
 		})

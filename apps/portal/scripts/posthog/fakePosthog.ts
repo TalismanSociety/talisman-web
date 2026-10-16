@@ -49,6 +49,7 @@ export const emptyProject = (overrides: Partial<FakeProject> = {}): FakeProject 
 export class FakePosthog implements Api {
 	readonly host = "https://posthog.test"
 	readonly writes: Write[] = []
+	readonly queries: unknown[] = []
 	#nextDryRunId = 900_000
 
 	constructor(
@@ -132,7 +133,8 @@ export class FakePosthog implements Api {
 		return clone(list()) as T[]
 	}
 
-	async query<T>(): Promise<T> {
+	async query<T>(source: unknown): Promise<T> {
+		this.queries.push(clone(source))
 		return { results: [] } as T
 	}
 

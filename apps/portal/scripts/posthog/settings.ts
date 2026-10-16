@@ -23,7 +23,7 @@ export const projectSettingsPatch = (current: ProjectSettings) =>
 		test_account_filters_default_checked: true,
 	})
 
-const GEOIP_TEMPLATE = "template-geoip"
+const GEOIP_TEMPLATES = ["template-geoip", "plugin-posthog-plugin-geoip"]
 export const PROPERTY_FILTER_TEMPLATE = "template-filter-properties"
 
 const PRECISE_GEOIP_FIELDS_AND_THEIR_PERSON_COPIES = [
@@ -56,8 +56,10 @@ export type Transformation = {
 
 const templateOf = (fn: Transformation) => fn.template?.id ?? fn.template_id
 
-export const findGeoip = (transformations: readonly Transformation[]) =>
-	transformations.find((fn) => templateOf(fn) === GEOIP_TEMPLATE)
+export const enabledGeoips = (transformations: readonly Transformation[]) =>
+	transformations.filter(
+		(fn) => fn.enabled && GEOIP_TEMPLATES.some((template) => template === templateOf(fn))
+	)
 
 export const propertyFilterIds = (transformations: readonly Transformation[]) =>
 	transformations.filter((fn) => templateOf(fn) === PROPERTY_FILTER_TEMPLATE).map((fn) => fn.id)
@@ -79,16 +81,17 @@ const filterProblems = (geoip: Transformation, filter: Transformation): string[]
 	]
 }
 
-export const transformationProblems = (
-	geoip: Transformation | undefined,
-	filters: readonly Transformation[]
-): string[] => {
-	if (!geoip?.enabled) return []
+const geoipProblems = (geoip: Transformation, filters: readonly Transformation[]) => {
 	const problems = filters.map((filter) => filterProblems(geoip, filter))
 	if (problems.some((list) => list.length === 0)) return []
 	return (
 		problems[0] ?? [
-			"GeoIP is enabled with no property filter after it: drop the precise GeoIP fields or disable GeoIP",
+			`"${geoip.name}" is enabled with no "${PROPERTY_FILTER_TEMPLATE}" filter after it: drop the precise GeoIP fields or disable GeoIP`,
 		]
 	)
 }
+
+export const transformationProblems = (
+	geoips: readonly Transformation[],
+	filters: readonly Transformation[]
+): string[] => geoips.flatMap((geoip) => geoipProblems(geoip, filters))

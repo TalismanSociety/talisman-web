@@ -63,7 +63,7 @@ Descriptions come from the catalog. To change one, edit the catalog, not PostHog
 
 1. Lists the dashboards and insights.
 2. Project settings (`settings.ts`). It writes only the private value of each privacy key, so a run can tighten a setting and never loosen it: IP anonymization on, and autocapture, heatmaps, dead clicks, console logs, performance, web vitals, exception autocapture, session replay and surveys off. It sets the test-account filter to the production hosts (`$host` is `app.talisman.xyz` or `talisman.pages.dev`, the hosts `environment.ts` maps to `production`) and checks it by default. Builds from before the consent banner send no `environment`, so the filter reads the host. It never changes the primary dashboard. It prints each setting before and after.
-3. Transformations. With GeoIP off, nothing is checked. With GeoIP on, a property filter must run after it and drop every precise GeoIP field and `$set`/`$set_once`. It never writes a transformation.
+3. Transformations. With no GeoIP enabled, nothing is checked. Each enabled GeoIP, the `template-geoip` function or the legacy `plugin-posthog-plugin-geoip`, must be followed by a `template-filter-properties` filter that drops every precise GeoIP field and `$set`/`$set_once`. It never writes a transformation.
 4. Seed events, with `--seed`.
 5. Event and property definitions: description, `verified`, the `managed-by-code` tag, `super` on `environment`, and the PostHog property type. An enum list is typed `String`.
 6. Each dashboard, its insights and the tile layout. A 403 on the layout fails the step, and any other layout error is only reported.

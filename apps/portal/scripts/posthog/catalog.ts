@@ -40,7 +40,7 @@ export const SUPER_PROPERTIES = {
 } as const satisfies Readonly<Record<string, PropertyDef>>
 
 const exceptionEvent: EventDef = {
-	description: "An error report sent under the Error reporting consent, never its message",
+	description: "An error report: its kind and where it was caught, never its message",
 	properties: {},
 }
 

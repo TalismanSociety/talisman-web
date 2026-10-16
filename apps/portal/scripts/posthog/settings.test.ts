@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { CLIENT_CONFIG } from "../../src/domains/analytics/client"
 import {
-	findGeoip,
+	enabledGeoips,
 	PRIVATE_SETTINGS,
 	PROPERTY_FILTER_TEMPLATE,
 	projectSettingsPatch,
@@ -88,6 +88,13 @@ describe("transformationProblems", () => {
 		execution_order: 1,
 		template: { id: "template-geoip" },
 	})
+	const legacyGeoip: Transformation = {
+		id: "legacy",
+		name: "GeoIP (legacy)",
+		enabled: true,
+		execution_order: 1,
+		template_id: "plugin-posthog-plugin-geoip",
+	}
 	const filter = (value: string, order = 2): Transformation => ({
 		id: "filter",
 		name: "Keep country and continent only",
@@ -99,30 +106,35 @@ describe("transformationProblems", () => {
 	const allDropped =
 		"$geoip_city_name,$geoip_city_confidence,$geoip_subdivision_1_code,$geoip_subdivision_1_name,$geoip_subdivision_2_code,$geoip_subdivision_2_name,$geoip_subdivision_3_code,$geoip_subdivision_3_name,$geoip_postal_code,$geoip_latitude,$geoip_longitude,$geoip_accuracy_radius,$geoip_time_zone,$set,$set_once"
 
-	it("passes a project with GeoIP missing or disabled, since no location is derived", () => {
-		expect(transformationProblems(undefined, [])).toEqual([])
-		expect(transformationProblems(geoip(false), [])).toEqual([])
-	})
+	const noFilter = (name: string) =>
+		`"${name}" is enabled with no "${PROPERTY_FILTER_TEMPLATE}" filter after it: drop the precise GeoIP fields or disable GeoIP`
 
-	it("finds GeoIP and the property filters by their templates", () => {
-		const fns = [{ id: "other" }, geoip(), filter(allDropped)]
-		expect(findGeoip(fns)?.id).toBe("geoip")
+	it("finds every enabled GeoIP, legacy plugin included, and the property filters", () => {
+		const fns = [{ id: "other" }, geoip(false), legacyGeoip, filter(allDropped)]
+		expect(enabledGeoips(fns).map((fn) => fn.id)).toEqual(["legacy"])
+		expect(enabledGeoips([geoip(), legacyGeoip]).map((fn) => fn.id)).toEqual(["geoip", "legacy"])
 		expect(propertyFilterIds(fns)).toEqual(["filter"])
 	})
 
+	it("passes a project with no enabled GeoIP, since no location is derived", () => {
+		expect(transformationProblems(enabledGeoips([geoip(false)]), [])).toEqual([])
+	})
+
 	it("passes GeoIP followed by a filter dropping every precise field", () => {
-		expect(transformationProblems(geoip(), [filter(allDropped)])).toEqual([])
-		expect(transformationProblems(geoip(), [filter(""), filter(allDropped)])).toEqual([])
+		expect(transformationProblems([geoip()], [filter(allDropped)])).toEqual([])
+		expect(transformationProblems([geoip()], [filter(""), filter(allDropped)])).toEqual([])
+	})
+
+	it("fails a legacy GeoIP plugin with no filter after it", () => {
+		expect(transformationProblems([legacyGeoip], [])).toEqual([noFilter("GeoIP (legacy)")])
 	})
 
 	it("names GeoIP with no filter, a precise field kept and a filter running first", () => {
-		expect(transformationProblems(geoip(), [])).toEqual([
-			"GeoIP is enabled with no property filter after it: drop the precise GeoIP fields or disable GeoIP",
-		])
+		expect(transformationProblems([geoip()], [])).toEqual([noFilter("GeoIP")])
 		expect(
-			transformationProblems(geoip(), [filter(allDropped.replace("$geoip_city_name,", ""))])
+			transformationProblems([geoip()], [filter(allDropped.replace("$geoip_city_name,", ""))])
 		).toEqual(['"Keep country and continent only" keeps $geoip_city_name'])
-		expect(transformationProblems(geoip(), [filter(allDropped, 0)])).toEqual([
+		expect(transformationProblems([geoip()], [filter(allDropped, 0)])).toEqual([
 			'GeoIP must run before "Keep country and continent only" (orders 1 and 0)',
 		])
 	})

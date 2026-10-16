@@ -285,6 +285,23 @@ describe("provisioning against a recording fake", () => {
 		expect(result.failedSteps).toEqual(["Dashboard Overview [overview]"])
 	})
 
+	it("inlines the production-host filter in every checked query but the environment split", async () => {
+		const store = liveLikeProject()
+		const api = new FakePosthog(store, true)
+		const lines: string[] = []
+
+		await run(api, lines, { checkQueries: true })
+
+		const hostFiltered = (api.queries as Record<string, unknown>[]).map((source) =>
+			JSON.stringify(source).includes('"key":"$host"')
+		)
+		const tiles = dashboards.flatMap((d) => d.tiles.map((t) => t.name))
+		expect(tiles.filter((_, i) => !hostFiltered[i])).toEqual(["Pageviews by environment"])
+		expect(lines).toContain(
+			"  the project's test-account filter is not the spec's yet, so each query carries the spec's filter"
+		)
+	})
+
 	it("restores the query of a managed insight edited in PostHog", async () => {
 		const store = liveLikeProject()
 		await run(new FakePosthog(store))
