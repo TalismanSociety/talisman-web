@@ -1,14 +1,21 @@
 import type { SS58String } from "polkadot-api"
-import { map, type Observable } from "rxjs"
+import { from, map, type Observable, of } from "rxjs"
 
-import type { ChainRuntime } from "@/domains/chains/chain-runtime"
-import type { StakingLedgerValue } from "@/domains/chains/portal-runtime"
+import { type ChainRuntime, hasStorage } from "@/domains/chains/chain-runtime"
+import type { SlashingSpansValue, StakingLedgerValue } from "@/domains/chains/portal-runtime"
 
 import type { EraInputs, ExposurePage, StakerInputs } from "./rewards"
 
 const BEST = { at: "best" } as const
 
 const valueOf = <T>(source$: Observable<{ value: T }>) => source$.pipe(map(({ value }) => value))
+
+export const spanCountOf = (spans: SlashingSpansValue | undefined) => (spans?.prior.length ?? 0) + 1
+
+export const slashingSpanCount = ({ api, lookup }: ChainRuntime, stash: SS58String) =>
+	hasStorage(lookup, "Staking", "SlashingSpans")
+		? from(api.query.Staking.SlashingSpans.getValue(stash, BEST)).pipe(map(spanCountOf))
+		: of(0)
 
 export const watchController = ({ api }: ChainRuntime, stash: SS58String) =>
 	valueOf(api.query.Staking.Bonded.watchValue(stash, BEST))

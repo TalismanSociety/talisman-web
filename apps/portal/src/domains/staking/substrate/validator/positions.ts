@@ -3,8 +3,8 @@ import { combineLatest, map, type Observable, of, switchMap } from "rxjs"
 import type { ChainRuntime } from "@/domains/chains/chain-runtime"
 import type { StakingLedgerValue } from "@/domains/chains/portal-runtime"
 
-import { slashingSpanCount, watchActiveEra } from "../nominationPools/chain"
-import { watchController, watchCurrentEra, watchLedger } from "./chain"
+import { watchActiveEra } from "../nominationPools/chain"
+import { slashingSpanCount, watchController, watchCurrentEra, watchLedger } from "./chain"
 
 export type Unlocking = { remainingEras: number; value: bigint }
 

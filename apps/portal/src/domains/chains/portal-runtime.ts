@@ -60,7 +60,7 @@ type ActiveEraInfo = { index: number; start?: bigint }
 
 type NominationsValue = { targets: SS58String[]; submitted_in: number; suppressed: boolean }
 
-type SlashingSpansValue = {
+export type SlashingSpansValue = {
 	span_index: number
 	last_start: number
 	last_nonzero_slash: number

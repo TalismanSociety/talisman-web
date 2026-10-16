@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 
+import { spanCountOf } from "./chain"
 import { redeemableOf, unlockingOf } from "./positions"
 
 const chunks = [
@@ -35,5 +36,14 @@ describe("redeemable, as pjs derive.staking.account sums it", () => {
 
 	it("is zero before the first chunk matures", () => {
 		expect(redeemableOf(chunks, 98)).toBe(0n)
+	})
+})
+
+describe("slashing span count, as main's withdraw argument", () => {
+	it("is one more than the prior spans, and one for a stash with no spans entry", () => {
+		expect(
+			spanCountOf({ span_index: 3, last_start: 10, last_nonzero_slash: 0, prior: [1, 2] })
+		).toBe(3)
+		expect(spanCountOf(undefined)).toBe(1)
 	})
 })
