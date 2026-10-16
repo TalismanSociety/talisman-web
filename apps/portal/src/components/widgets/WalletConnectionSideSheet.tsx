@@ -14,9 +14,10 @@ import {
 import { useConnectEvm, useEvmConnectors } from "@/domains/extension/evm"
 import {
 	connectedSubstrateWalletState,
+	connectSubstrateWallet,
+	disconnectSubstrateWallet,
 	useConnectedSubstrateWallet,
 	useInstalledSubstrateWallets,
-	useSubstrateWalletConnect,
 } from "@/domains/extension/substrate"
 import { Ethereum, Eye, Polkadot, Wallet } from "@/icons"
 import { Chip } from "@/ui/atoms/Chip"
@@ -171,7 +172,6 @@ const InstallTalisman = () => {
 const SubstrateWalletConnection = () => {
 	const wallets = useInstalledSubstrateWallets()
 	const connectedWallet = useConnectedSubstrateWallet()
-	const { connect, disconnect } = useSubstrateWalletConnect()
 
 	const hasSubWallet = useRecoilValue(connectedSubstrateWalletState) !== undefined
 	const hasSubAccounts = useRecoilValue(substrateInjectedAccountsState).length !== 0
@@ -187,11 +187,11 @@ const SubstrateWalletConnection = () => {
 				{wallets.map((x, index) => (
 					<WalletConnection
 						key={index}
-						name={x.metadata.title}
-						iconUrl={x.metadata.iconUrl}
-						connected={x.metadata.id === connectedWallet?.metadata.id}
-						onConnectRequest={() => connect(x)}
-						onDisconnectRequest={() => disconnect()}
+						name={x.title}
+						iconUrl={x.iconUrl}
+						connected={x.id === connectedWallet?.id}
+						onConnectRequest={() => connectSubstrateWallet(x)}
+						onDisconnectRequest={() => disconnectSubstrateWallet()}
 					/>
 				))}
 			</div>

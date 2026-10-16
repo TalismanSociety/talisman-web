@@ -1,35 +1,31 @@
 import { useCallback, useMemo, useState } from "react"
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import { useRecoilValue } from "recoil"
 import { useResolveNsName } from "@/libs/onChainId"
 import { toast } from "@/ui/molecules/Toaster"
 import { tryParseSubstrateOrEthereumAddress } from "@/util/addressValidation"
 import { isNilOrWhitespace } from "@/util/nil"
 
-import type { ReadonlyAccount } from "./recoils"
+import {
+	type ReadonlyAccount,
+	setStoredReadonlyAccounts,
+	storedReadonlyAccounts$,
+} from "./accounts"
 import { readOnlyAccountsState } from "./recoils"
 
-export const useSetReadonlyAccounts = () => {
-	const setReadonlyAccounts = useSetRecoilState(readOnlyAccountsState)
-
-	return {
-		add: useCallback(
-			(account: ReadonlyAccount) => {
-				setReadonlyAccounts((accounts) => [
-					...accounts.filter((x) => x.address !== account.address),
-					{ ...account, name: isNilOrWhitespace(account.name) ? undefined : account.name },
-				])
-				toast.success("Watched account added successfully")
-			},
-			[setReadonlyAccounts]
-		),
-		remove: useCallback(
-			(account: ReadonlyAccount) => {
-				setReadonlyAccounts((accounts) => accounts.filter((x) => x.address !== account.address))
-			},
-			[setReadonlyAccounts]
-		),
-	}
-}
+export const useSetReadonlyAccounts = () => ({
+	add: useCallback((account: ReadonlyAccount) => {
+		setStoredReadonlyAccounts([
+			...storedReadonlyAccounts$.value.filter((x) => x.address !== account.address),
+			{ ...account, name: isNilOrWhitespace(account.name) ? undefined : account.name },
+		])
+		toast.success("Watched account added successfully")
+	}, []),
+	remove: useCallback((account: ReadonlyAccount) => {
+		setStoredReadonlyAccounts(
+			storedReadonlyAccounts$.value.filter((x) => x.address !== account.address)
+		)
+	}, []),
+})
 
 export const useAddReadonlyAccountForm = () => {
 	const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
