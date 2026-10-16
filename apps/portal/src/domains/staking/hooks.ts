@@ -7,7 +7,6 @@ import { useSelectedBalances } from "@/domains/balances/hooks"
 import { useTotalStaked as useDappStakingTotalStaked } from "./dappStaking/hooks/useTotalStaked"
 import { lidoSuitesState } from "./lido/recoils"
 import { useTotalStaked as useSubstrateTotalStaked } from "./substrate/useTotalStaked"
-import { useTotalStaked as useSubtensorTotalStaked } from "./subtensor/hooks/useTotalStaked"
 
 export const useTotalStaked = () => {
 	const [lidoSuites, currency] = useRecoilValue(
@@ -16,7 +15,6 @@ export const useTotalStaked = () => {
 	const balances = useSelectedBalances()
 	const { fiatTotal: substrateFiatTotal } = useSubstrateTotalStaked()
 	const dappStakingTotal = useDappStakingTotalStaked()
-	const subtensorTotal = useSubtensorTotalStaked()
 
 	return useMemo(
 		() =>
@@ -28,8 +26,7 @@ export const useTotalStaked = () => {
 				)
 				.sum.fiat(currency).total +
 			substrateFiatTotal +
-			dappStakingTotal +
-			subtensorTotal,
-		[balances, currency, dappStakingTotal, lidoSuites, substrateFiatTotal, subtensorTotal]
+			dappStakingTotal,
+		[balances, currency, dappStakingTotal, lidoSuites, substrateFiatTotal]
 	)
 }
