@@ -56,6 +56,7 @@ Descriptions come from the catalog. To change one, edit the catalog, not PostHog
 | `--only <slug>` | Reconcile one dashboard: `overview`, `wallets`, `portfolio`, `transactions` or `errors`. Repeatable |
 | `--prune` | Soft-delete managed insights that left the spec, and delete their alerts. Skipped when any dashboard step fails |
 | `--skip-definitions` | Leave the event and property definitions alone |
+| `--skip-settings` | Leave the project settings and the test-account filter alone |
 | `--show-test-accounts` | Save every insight, and run every query check, with the test-account filter off. The alerts still count production only |
 | `--verbose` | Print request bodies |
 

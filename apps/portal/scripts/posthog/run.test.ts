@@ -82,6 +82,7 @@ const run = (api: FakePosthog, lines: string[] = [], options: Partial<Options> =
 			checkQueries: false,
 			prune: true,
 			skipDefinitions: false,
+			skipSettings: false,
 			filterTestAccounts: true,
 			verbose: false,
 			ingest: () => Promise.reject(new Error("no seed in this test")),
@@ -170,6 +171,15 @@ describe("provisioning against a recording fake", () => {
 			],
 			test_account_filters_default_checked: true,
 		})
+	})
+
+	it("leaves the project settings and test-account filter alone with skipSettings", async () => {
+		const store = liveLikeProject()
+		const before = structuredClone(store.project)
+		const result = await run(new FakePosthog(store), [], { skipSettings: true })
+		expect(result.failedSteps).toEqual([])
+		expect(store.project).toEqual(before)
+		expect(managed(store.dashboards)).toHaveLength(5)
 	})
 
 	it("stops only the steps the missing scopes deny, and reports PostHog's message", async () => {
