@@ -35,26 +35,21 @@ app_env_of() {
     "$1/apps/portal/.env.example"
 }
 
-static_output_of() {
-  local root=$1 candidate
-  for candidate in build dist/client dist; do
-    [[ -f $root/apps/portal/$candidate/index.html ]] && { echo "$root/apps/portal/$candidate"; return; }
-  done
-  echo "no index.html under $root/apps/portal/{build,dist/client,dist} after the build" >&2
-  return 1
-}
-
-build_static() {
-  local root=$1 out=$2 log=$3 env_lines cmd output started=$SECONDS
+build_worker() {
+  local root=$1 out=$2 log=$3 env_lines cmd dist=$1/apps/portal/dist started=$SECONDS
   mapfile -t env_lines < <(app_env_of "$root")
   mapfile -t cmd < <(pm_command "$root")
-  rm -rf "$root/apps/portal/build" "$root/apps/portal/dist"
-  if ! (cd "$root/apps/portal" && env "${env_lines[@]}" NODE_OPTIONS=--max_old_space_size=10240 "${cmd[@]}" run build) > "$log" 2>&1; then
+  rm -rf "$dist"
+  if ! (cd "$root" && env "${env_lines[@]}" CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV=false "${cmd[@]}" run build:portal) > "$log" 2>&1; then
     tail -30 "$log" >&2
-    echo "the build of $root failed (log: $log)" >&2
+    echo "the build:portal of $root failed (log: $log)" >&2
     return 1
   fi
-  output=$(static_output_of "$root") || return 1
-  rm -rf "$out" && mkdir -p "$(dirname "$out")" && cp -a "$output" "$out"
-  echo "built $root in $((SECONDS - started))s into $out"
+  [[ -f $dist/server/wrangler.json && -f $dist/client/index.html ]] || {
+    echo "$root built no Worker: no apps/portal/dist/server/wrangler.json with dist/client/index.html" >&2
+    return 1
+  }
+  [[ ! -e $dist/server/.dev.vars ]] || { echo "the build of $root wrote local secrets to $dist/server/.dev.vars" >&2; return 1; }
+  rm -rf "$out" && mkdir -p "$(dirname "$out")" && cp -a "$dist" "$out"
+  echo "built the Worker of $root in $((SECONDS - started))s into $out"
 }

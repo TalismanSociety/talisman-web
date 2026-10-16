@@ -64,10 +64,7 @@ compare_flow() {
 
 one_line() { tr '\t\n' '  ' | sed 's/  */ /g; s/^ //; s/ $//'; }
 
-mkdir -p "$cache"
-ensure_baseline
-ensure_candidate
-echo "baseline $baseline_sha, candidate $(git -C "$root" rev-parse HEAD)$( [[ -n $(git -C "$root" status --porcelain -- . ':!.claude') ]] && echo ' with local changes')"
+prepare_sides baseline candidate
 [[ -z $submit ]] || ensure_tools
 start_state connected
 
@@ -101,5 +98,6 @@ if [[ -n $submit ]]; then
   done
   echo "submitted: $out/submitted.tsv"
 fi
+scan_for_key || status=1
 echo "summary: $out/summary.tsv"
 exit "$status"

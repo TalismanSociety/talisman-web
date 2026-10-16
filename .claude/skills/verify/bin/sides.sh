@@ -5,15 +5,15 @@
 baseline_sha=$(git -C "$root" rev-parse --verify "${baseline_rev:?}^{commit}")
 cache=$root/.tmp/verify/parity
 baseline_src=$cache/baseline-src
-baseline_static=$cache/baseline-$baseline_sha
-candidate_static=$cache/candidate
+baseline_app=${BASELINE_URL:-$cache/baseline-$baseline_sha}
+candidate_app=${CANDIDATE_URL:-$cache/candidate}
 sub_name=${PARITY_SUB_ACCOUNT:-Guardians SUB}
 evm_name=${PARITY_EVM_ACCOUNT:-Guardians EVM}
 consent=${CONSENT:-reject}
 [[ $consent =~ ^(reject|accept|unset)$ ]] || { echo "CONSENT must be reject, accept or unset, not \"$consent\"" >&2; exit 2; }
 
 ensure_baseline() {
-  [[ -f $baseline_static/index.html ]] && { echo "baseline $baseline_sha: cached build $baseline_static"; return; }
+  [[ -f $baseline_app/server/wrangler.json ]] && { echo "baseline $baseline_sha: cached Worker build $baseline_app"; return; }
   if [[ ! -e $baseline_src/.git ]]; then
     git -C "$root" worktree add --detach "$baseline_src" "$baseline_sha" >/dev/null
   elif [[ $(git -C "$baseline_src" rev-parse HEAD) != "$baseline_sha" ]]; then
@@ -28,7 +28,7 @@ ensure_baseline() {
     echo "installing the baseline $baseline_sha failed (log: $cache/baseline-install.log)" >&2
     exit 1
   }
-  build_static "$baseline_src" "$baseline_static" "$cache/baseline-build.log"
+  build_worker "$baseline_src" "$baseline_app" "$cache/baseline-build.log"
 }
 
 checkout_fingerprint() {
@@ -44,8 +44,8 @@ checkout_fingerprint() {
 ensure_candidate() {
   local fingerprint
   fingerprint=$(checkout_fingerprint)
-  if [[ -f $candidate_static/index.html && $(cat "$cache/candidate.fingerprint" 2>/dev/null) == "$fingerprint" ]]; then
-    echo "candidate: the checkout is unchanged since the last build, reusing $candidate_static"
+  if [[ -f $candidate_app/server/wrangler.json && $(cat "$cache/candidate.fingerprint" 2>/dev/null) == "$fingerprint" ]]; then
+    echo "candidate: the checkout is unchanged since the last build, reusing $candidate_app"
     return
   fi
   install_deps "$root" > "$cache/candidate-install.log" 2>&1 || {
@@ -54,8 +54,34 @@ ensure_candidate() {
     exit 1
   }
   rm -f "$cache/candidate.fingerprint"
-  build_static "$root" "$candidate_static" "$cache/candidate-build.log"
+  build_worker "$root" "$candidate_app" "$cache/candidate-build.log"
   echo "$fingerprint" > "$cache/candidate.fingerprint"
+}
+
+is_url() { [[ $1 == https://* ]]; }
+
+prepare_sides() {
+  local side app
+  for side; do
+    app=${side}_app
+    is_url "${!app}" || { node "$bin/tda-key.mjs" check >/dev/null || exit 1; break; }
+  done
+  mkdir -p "$cache"
+  for side; do
+    app=${side}_app
+    if is_url "${!app}"; then echo "$side ${!app}: served from its URL"; else "ensure_$side"; fi
+  done
+  [[ " $* " != *" candidate "* ]] || is_url "$candidate_app" ||
+    echo "candidate $(git -C "$root" rev-parse HEAD)$( [[ -n $(git -C "$root" status --porcelain -- . ':!.claude') ]] && echo ' with local changes')"
+}
+
+scan_for_key() {
+  local built=() side app
+  for side in baseline candidate; do
+    app=${side}_app
+    is_url "${!app}" || built+=("${!app}")
+  done
+  node "$bin/tda-key.mjs" scan "$out" "$root/.tmp/verify"/*.log "$cache"/*.log "${built[@]}"
 }
 
 account_address() {
@@ -97,9 +123,9 @@ start_state() {
   local wallet_flag=''
   [[ $1 == signed-out ]] && wallet_flag=--no-wallet
   local baseline_pid candidate_pid
-  start_side baseline "$baseline_static" "$wallet_flag" &
+  start_side baseline "$baseline_app" "$wallet_flag" &
   baseline_pid=$!
-  start_side candidate "$candidate_static" "$wallet_flag" &
+  start_side candidate "$candidate_app" "$wallet_flag" &
   candidate_pid=$!
   wait "$baseline_pid" && wait "$candidate_pid" || { echo "could not start the $1 browsers" >&2; exit 1; }
   if [[ $1 == connected ]]; then

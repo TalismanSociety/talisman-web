@@ -162,16 +162,7 @@ selected() {
 }
 
 command -v magick >/dev/null || { echo "ImageMagick 7 (magick) is required: see Setup in $skill/SKILL.md" >&2; exit 1; }
-mkdir -p "$cache"
-if [[ -n ${BASELINE_URL:-}${CANDIDATE_URL:-} ]]; then
-  [[ -n ${BASELINE_URL:-} && -n ${CANDIDATE_URL:-} ]] || { echo "BASELINE_URL and CANDIDATE_URL go together: both sides are served from a URL, or neither" >&2; exit 1; }
-  baseline_static=$BASELINE_URL candidate_static=$CANDIDATE_URL
-  echo "baseline $baseline_static, candidate $candidate_static: both served from their URL"
-else
-  ensure_baseline
-  ensure_candidate
-  echo "baseline $baseline_sha, candidate $(git -C "$root" rev-parse HEAD)$( [[ -n $(git -C "$root" status --porcelain -- . ':!.claude') ]] && echo ' with local changes')"
-fi
+prepare_sides baseline candidate
 sub_address=$(account_address "$sub_name")
 evm_address=$(account_address "$evm_name")
 echo "connected state uses \"$sub_name\" $sub_address and \"$evm_name\" $evm_address"
@@ -194,5 +185,6 @@ while IFS= read -r line <&3 || [[ -n $line ]]; do
     printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$name" "$viewport" "$different" "$total" "${#counts[@]}" "$result" "$detail" | tee -a "$out/summary.tsv"
   done
 done 3<"$routes"
+scan_for_key || status=1
 echo "summary: $out/summary.tsv"
 exit "$status"

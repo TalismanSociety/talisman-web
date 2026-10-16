@@ -18,6 +18,7 @@ declare -A viewport_size=([desktop]="1440 900" [mobile]="390 844")
 attempts=${ATTEMPTS:-3}
 only=("$@")
 side=candidate
+policy_checked=''
 scratch=$(mktemp -d)
 watcher=''
 trap '[[ -z $watcher ]] || kill "$watcher" 2>/dev/null || true; rm -rf "$scratch"' EXIT
@@ -34,11 +35,20 @@ one_line() { tr '\t\n' '  ' | sed 's/  */ /g; s/^ //; s/ $//'; }
 start_candidate() {
   local wallet_flag=''
   [[ $1 == signed-out ]] && wallet_flag=--no-wallet
-  start_side candidate "$candidate_static" "$wallet_flag" || { echo "could not start the $1 browser" >&2; exit 1; }
+  start_side candidate "$candidate_app" "$wallet_flag" || { echo "could not start the $1 browser" >&2; exit 1; }
+  [[ -n $policy_checked ]] || check_policy
   if [[ $1 == connected ]]; then
     connect_side candidate || { echo "could not connect the browser: $reply" >&2; exit 1; }
   fi
   echo "state $1: browser ready, consent $consent"
+}
+
+check_policy() {
+  local port
+  port=$(sed -n 's/^APP_PORT=//p' "$root/.tmp/verify/$sides-candidate.env")
+  curl -sS -D - -o /dev/null "http://localhost:$port/" | grep -qiE '^content-security-policy(-report-only)?:.*default-src' ||
+    { echo "the candidate sends no Content-Security-Policy header with a default-src, so no violation could be reported" >&2; exit 1; }
+  policy_checked=yes
 }
 
 watch() {
@@ -123,17 +133,7 @@ step_run() {
   record_step "$name" "$kind" "$loaded" "$earlier$(one_line < "$scratch/step.out")"
 }
 
-mkdir -p "$cache"
-if [[ -n ${CANDIDATE_URL:-} ]]; then
-  candidate_static=$CANDIDATE_URL
-  echo "candidate $candidate_static: served from its URL"
-else
-  ensure_candidate
-  echo "candidate $(git -C "$root" rev-parse HEAD)$( [[ -n $(git -C "$root" status --porcelain -- . ':!.claude') ]] && echo ' with local changes')"
-fi
-if [[ -n ${CANDIDATE_URL:-} ]]; then policy=$(curl -sS -D - -o /dev/null "$CANDIDATE_URL/"); else policy=$(cat "$candidate_static/_headers"); fi
-grep -qi '^ *content-security-policy' <<<"$policy" ||
-  { echo "the candidate sends no Content-Security-Policy header, so no violation could be reported" >&2; exit 1; }
+prepare_sides candidate
 sub_address=$(account_address "$sub_name")
 evm_address=$(account_address "$evm_name")
 
@@ -160,5 +160,6 @@ for flow in "${flows[@]}"; do
   step_run "$flow" "flow" run_flow "$flow"
 done
 [[ $(wc -l < "$out/summary.tsv") -gt 1 ]] || { echo "no route or flow matched: ${only[*]}" >&2; exit 1; }
+scan_for_key || status=1
 echo "summary: $out/summary.tsv"
 exit "$status"
