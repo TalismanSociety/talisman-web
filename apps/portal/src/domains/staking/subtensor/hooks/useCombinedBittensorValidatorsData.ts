@@ -1,50 +1,41 @@
-import { useEffect, useState } from "react"
+import { useMemo } from "react"
 import { useSearchParams } from "@/hooks/useSearchParams"
 
 import type { BondOption } from "../types"
-import { useGetBittensorValidators } from "./useGetBittensorInfiniteValidators"
-import { useGetInfiniteValidatorsYieldByNetuid } from "./useGetInfiniteValidatorsYield"
+import { useBittensorValidators, useValidatorYields } from "./useTaoData"
 
 export const useCombinedBittensorValidatorsData = (netuid?: number) => {
-	const [validatorsData, setValidatorsData] = useState<BondOption[]>([])
 	const [searchParams] = useSearchParams()
 	const netuidParam = netuid ?? Number(searchParams.get("netuid"))
 
 	const { data: validatorsYieldData, isLoading: isValidatorsYieldLoading } =
-		useGetInfiniteValidatorsYieldByNetuid({
-			netuid: netuidParam,
-		})
+		useValidatorYields(netuidParam)
 
 	const {
-		data: infiniteValidators,
+		data: validators,
 		isLoading: isValidatorsLoading,
-		isError: isInfiniteValidatorsError,
-	} = useGetBittensorValidators()
+		isError: isValidatorsError,
+	} = useBittensorValidators()
 
-	useEffect(() => {
-		const combined: BondOption[] =
-			infiniteValidators?.map((validator) => {
-				const validatorYield = validatorsYieldData?.find(
-					(yieldData) => yieldData?.hotkey?.ss58 === validator.hotkey?.ss58
-				)
-
-				return {
-					poolId: validator.hotkey?.ss58 ?? "",
-					name: validator?.name ?? "",
-					totalStaked: parseFloat(validator?.global_weighted_stake ?? "0"),
-					totalStakers: validator?.global_nominators ?? 0,
-					hasData: !!validator,
-					isError: isInfiniteValidatorsError,
-					validatorYield,
-				}
-			}) ?? []
-		setValidatorsData(combined)
-	}, [infiniteValidators, isInfiniteValidatorsError, validatorsYieldData])
+	const combinedValidatorsData = useMemo<BondOption[]>(() => {
+		const yieldByHotkey = new Map(validatorsYieldData?.map((entry) => [entry.hotkey, entry]))
+		return (
+			validators?.map((validator) => ({
+				poolId: validator.hotkey,
+				name: validator.name,
+				totalStaked: parseFloat(validator.global_weighted_stake),
+				totalStakers: validator.global_nominators,
+				hasData: true,
+				isError: isValidatorsError,
+				validatorYield: yieldByHotkey.get(validator.hotkey),
+			})) ?? []
+		)
+	}, [validators, isValidatorsError, validatorsYieldData])
 
 	return {
-		combinedValidatorsData: validatorsData,
+		combinedValidatorsData,
 		isLoading: isValidatorsLoading,
-		isError: isInfiniteValidatorsError,
+		isError: isValidatorsError,
 		isValidatorsYieldLoading,
 	}
 }
