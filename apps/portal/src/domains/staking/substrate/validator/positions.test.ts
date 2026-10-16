@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { spanCountOf } from "./chain"
+import { chainAddressOf, genericAddressOf, spanCountOf } from "./chain"
 import { redeemableOf, unlockingOf } from "./positions"
 
 const chunks = [
@@ -45,5 +45,21 @@ describe("slashing span count, as main's withdraw argument", () => {
 			spanCountOf({ span_index: 3, last_start: 10, last_nonzero_slash: 0, prior: [1, 2] })
 		).toBe(3)
 		expect(spanCountOf(undefined)).toBe(1)
+	})
+})
+
+describe("address formats at the chain boundary", () => {
+	const generic = "5G24oH9LoJkBDuR4Hm7EUWiy2rPrsUSCTzY7fRcmxQNu6R1C"
+	const kusama = "GXgTbVDRfm6yZEW4TvHNU5yBSg6g9FNvNNs45tjSCbPqNr7"
+	const polkadot = "14xMwcQQf61efSRaFQAEcfZ7tUPWZmzLYVGbpic8WVQRH1yu"
+
+	it("re-encodes a wallet address with the chain's prefix for storage comparisons", () => {
+		expect(chainAddressOf(2, generic)).toBe(kusama)
+		expect(chainAddressOf(0, kusama)).toBe(polkadot)
+	})
+
+	it("brings a chain-prefixed controller back to the wallet's generic form", () => {
+		expect(genericAddressOf(kusama)).toBe(generic)
+		expect(genericAddressOf(generic)).toBe(generic)
 	})
 })

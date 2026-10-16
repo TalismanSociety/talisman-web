@@ -1,18 +1,26 @@
+import { AccountId } from "@polkadot-api/substrate-bindings"
 import type { SS58String } from "polkadot-api"
 import { from, map, type Observable, of } from "rxjs"
 
 import { type ChainRuntime, hasStorage } from "@/domains/chains/chain-runtime"
 import type { SlashingSpansValue, StakingLedgerValue } from "@/domains/chains/portal-runtime"
 
-import type { EraInputs, ExposurePage, StakerInputs } from "./rewards"
+import { type EraInputs, type ExposurePage, eraExposureOf, type StakerInputs } from "./rewards"
 
 const BEST = { at: "best" } as const
 
 const valueOf = <T>(source$: Observable<{ value: T }>) => source$.pipe(map(({ value }) => value))
 
+const GENERIC_SS58_PREFIX = 42
+
+export const chainAddressOf = (prefix: number, address: string) =>
+	AccountId(prefix).dec(AccountId().enc(address))
+
+export const genericAddressOf = (address: string) => chainAddressOf(GENERIC_SS58_PREFIX, address)
+
 export const spanCountOf = (spans: SlashingSpansValue | undefined) => (spans?.prior.length ?? 0) + 1
 
-export const slashingSpanCount = ({ api, lookup }: ChainRuntime, stash: SS58String) =>
+export const withdrawSlashingSpans = ({ api, lookup }: ChainRuntime, stash: SS58String) =>
 	hasStorage(lookup, "Staking", "SlashingSpans")
 		? from(api.query.Staking.SlashingSpans.getValue(stash, BEST)).pipe(map(spanCountOf))
 		: of(0)
@@ -56,12 +64,14 @@ export const eraInputs = async ({ api }: ChainRuntime, era: number): Promise<Era
 	])
 	return {
 		era,
-		pages: paged.map(
-			({ keyArgs: [, validator], value }) =>
-				[validator, { pageTotal: value.page_total, others: value.others }] as [
-					SS58String,
-					ExposurePage,
-				]
+		exposure: eraExposureOf(
+			paged.map(
+				({ keyArgs: [, validator], value }) =>
+					[validator, { pageTotal: value.page_total, others: value.others }] as [
+						SS58String,
+						ExposurePage,
+					]
+			)
 		),
 		eraPoints: BigInt(points.total),
 		validatorPoints: new Map(
@@ -75,6 +85,7 @@ export const eraInputs = async ({ api }: ChainRuntime, era: number): Promise<Era
 }
 
 const claimedRewardsEras = async ({ api }: ChainRuntime, stash: SS58String, era: number) => {
+	if (era < 0) return []
 	const [pages, overview] = await Promise.all([
 		api.query.Staking.ClaimedRewards.getValue(era, stash, BEST),
 		api.query.Staking.ErasStakersOverview.getValue(era, stash, BEST),

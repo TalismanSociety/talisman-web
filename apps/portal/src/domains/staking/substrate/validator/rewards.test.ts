@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { type EraInputs, type ExposurePage, stakerRewardsOf } from "./rewards"
+import { type EraInputs, type ExposurePage, eraExposureOf, stakerRewardsOf } from "./rewards"
 
 const NOMINATOR = "nominator"
 const OTHER = "other"
@@ -12,9 +12,15 @@ const page = (others: [string, bigint][], pageTotal?: bigint): ExposurePage => (
 	others: others.map(([who, value]) => ({ who, value })),
 })
 
-const era = (index: number, inputs: Partial<EraInputs>): EraInputs => ({
+const era = (
+	index: number,
+	{
+		pages = [],
+		...inputs
+	}: Partial<Omit<EraInputs, "exposure">> & { pages?: [string, ExposurePage][] }
+): EraInputs => ({
 	era: index,
-	pages: [],
+	exposure: eraExposureOf(pages),
 	eraPoints: 20n,
 	validatorPoints: new Map([[VALIDATOR, 10n]]),
 	commissions: new Map([[VALIDATOR, 100_000_000n]]),
