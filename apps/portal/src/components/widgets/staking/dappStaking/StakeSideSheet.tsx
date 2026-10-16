@@ -291,7 +291,6 @@ const _StakeSideSheet = (props: StakeSideSheetProps) => {
 				<Suspense
 					fallback={
 						<div>
-							{/* Dummy spacer */}
 							<div css={{ visibility: "hidden", height: 0, overflow: "hidden" }}>
 								<InCompleteSelectionStakeForm
 									accountSelector={<Select />}
