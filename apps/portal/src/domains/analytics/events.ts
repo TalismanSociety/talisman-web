@@ -72,5 +72,8 @@ export const isCatalogValue = (eventName: string, key: string, value: unknown) =
 	return property !== undefined && isPropertyValue(property, value)
 }
 
-export const consentKindOf = (eventName: string): ConsentKind | undefined =>
-	Object.hasOwn(EVENTS, eventName) ? "analytics" : undefined
+export const consentKindOf = (eventName: string): ConsentKind | undefined => {
+	if (eventName === "$exception") return "errors"
+	if (Object.hasOwn(EVENTS, eventName)) return "analytics"
+	return undefined
+}

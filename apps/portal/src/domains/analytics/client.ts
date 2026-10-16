@@ -1,8 +1,22 @@
 import type { CaptureResult, PostHog, PostHogConfig } from "posthog-js/no-external"
 import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map } from "rxjs"
-import { type Consent, consent$, currentConsent, decisionHolds, isGranted } from "./consent"
+import {
+	type Consent,
+	type ConsentKind,
+	consent$,
+	currentConsent,
+	decisionHolds,
+	isGranted,
+} from "./consent"
 import { type AnalyticsEnvironment, environmentOf, isAnalyticsEnabled } from "./environment"
+import { classifyError, isIgnoredError } from "./errorCategory"
 import { consentKindOf, type EventName, type TrackArgs } from "./events"
+import {
+	createExceptionThrottle,
+	type ExceptionMechanism,
+	toExceptionProperties,
+} from "./exception"
+import { type IsLoadedScript, watchLoadedScripts } from "./loadedScripts"
 import { POSTHOG_API_HOST, POSTHOG_UI_HOST } from "./posthogProject"
 import { type RoutePattern, routePatternOfPathname } from "./routePatterns"
 import { scrubEvent } from "./scrub"
@@ -38,7 +52,9 @@ export const CLIENT_CONFIG = {
 
 const route$ = new BehaviorSubject<RoutePattern | undefined>(undefined)
 
-let environment: AnalyticsEnvironment | undefined
+type Started = { environment: AnalyticsEnvironment; isLoadedScript: IsLoadedScript }
+
+let started: Started | undefined
 let client: Promise<PostHog | undefined> | undefined
 
 const enabledEnvironment = () => {
@@ -54,12 +70,29 @@ const isConsented = (eventName: unknown) => {
 	return kind !== undefined && isGranted(currentConsent(), kind)
 }
 
+const superProperties = (environment: AnalyticsEnvironment) => ({
+	environment,
+	app_version: import.meta.env.VITE_APP_COMMIT || "unknown",
+})
+
+const exceptionThrottle = createExceptionThrottle()
+
+const admitException = (key: string) => exceptionThrottle(key, Date.now())
+
+const builtProperties = ({ event, properties }: CaptureResult, isLoadedScript: IsLoadedScript) =>
+	event === "$exception" ? toExceptionProperties(properties, isLoadedScript, admitException) : {}
+
 const beforeSend =
-	(environment: AnalyticsEnvironment) =>
+	({ environment, isLoadedScript }: Started) =>
 	(event: CaptureResult | null): CaptureResult | null => {
 		if (!event || !isConsented(event.event)) return null
+		const built = builtProperties(event, isLoadedScript)
+		if (!built) return null
 		const scrubbed = scrubEvent(event, location.origin)
-		return { ...scrubbed, properties: { ...scrubbed.properties, environment } }
+		return {
+			...scrubbed,
+			properties: { ...scrubbed.properties, ...built, ...superProperties(environment) },
+		}
 	}
 
 type SdkRequest = Parameters<PostHog["_send_request"]>[0]
@@ -85,20 +118,20 @@ const gateDispatch = (posthog: PostHog) => {
 	retryQueue.retriableRequest = consentGated(retryQueue.retriableRequest.bind(retryQueue))
 }
 
-const createClient = async (environment: AnalyticsEnvironment) => {
+const createClient = async (started: Started) => {
 	const { PostHog } = await import("posthog-js/no-external")
 	const posthog = new PostHog()
 	posthog.init(POSTHOG_PROJECT_TOKEN, {
 		...CLIENT_CONFIG,
 		disable_persistence: !isGranted(currentConsent(), "analytics"),
-		before_send: beforeSend(environment),
+		before_send: beforeSend(started),
 	})
 	gateDispatch(posthog)
 	return posthog
 }
 
-const loadClient = (environment: AnalyticsEnvironment) => {
-	client ??= createClient(environment).catch((error: unknown) => {
+const loadClient = (started: Started) => {
+	client ??= createClient(started).catch((error: unknown) => {
 		console.error("Analytics is off", error)
 		return undefined
 	})
@@ -137,16 +170,35 @@ const syncPersistence = (posthog: PostHog | undefined) => {
 const unchangedSince = (decision: Consent | null) => (posthog: PostHog | undefined) =>
 	decisionHolds(decision) ? posthog : undefined
 
-const analyticsClient = () => {
+const clientFor = (kind: ConsentKind) => {
 	startAnalytics()
 	const decision = currentConsent()
-	return environment && isGranted(decision, "analytics")
-		? loadClient(environment).then(unchangedSince(decision))
+	return started && isGranted(decision, kind)
+		? loadClient(started).then(unchangedSince(decision))
 		: undefined
 }
 
 export const track = <E extends EventName>(name: E, ...[props]: TrackArgs<E>) => {
-	void analyticsClient()?.then((posthog) => posthog?.capture(name, props))
+	void clientFor("analytics")?.then((posthog) => posthog?.capture(name, props))
+}
+
+const reportedErrors = new WeakSet<object>()
+
+const claimFirstReport = (error: unknown) => {
+	if (typeof error !== "object" || error === null) return true
+	if (reportedErrors.has(error)) return false
+	reportedErrors.add(error)
+	return true
+}
+
+export const captureError = (error: unknown, mechanism: ExceptionMechanism = "caught") => {
+	if (isIgnoredError(error)) return
+	const client = clientFor("errors")
+	if (!client) return
+	const report = { error_category: classifyError(error), mechanism }
+	void client.then((posthog) => {
+		if (posthog && claimFirstReport(error)) posthog.captureException(error, report)
+	})
 }
 
 export const trackPageview = (pathname: string) => route$.next(routePatternOfPathname(pathname))
@@ -156,16 +208,35 @@ const analyticsGranted$ = consent$.pipe(
 	distinctUntilChanged()
 )
 
+const isOwnScript = (filename: string) =>
+	URL.canParse(filename) && new URL(filename).origin === location.origin
+
+const reportUncaughtErrors = () => {
+	window.addEventListener("error", ({ error, message, filename }) => {
+		if (isOwnScript(filename)) captureError(error ?? message, "uncaught")
+	})
+	window.addEventListener("unhandledrejection", ({ reason }) =>
+		captureError(reason, "unhandled_rejection")
+	)
+}
+
 export const startAnalytics = () => {
-	if (environment) return
-	const enabled = enabledEnvironment()
-	if (!enabled) return
-	environment = enabled
+	if (started) return
+	const environment = enabledEnvironment()
+	if (!environment) return
+	const enabled = { environment, isLoadedScript: watchLoadedScripts() }
+	started = enabled
+	reportUncaughtErrors()
 
 	analyticsGranted$.pipe(filter((granted) => !granted)).subscribe(removeSdkStorage)
 
 	consent$
-		.pipe(filter((consent) => client !== undefined || isGranted(consent, "analytics")))
+		.pipe(
+			filter(
+				(consent) =>
+					client !== undefined || isGranted(consent, "analytics") || isGranted(consent, "errors")
+			)
+		)
 		.subscribe(() => void loadClient(enabled).then(syncPersistence))
 
 	combineLatest([route$, analyticsGranted$]).subscribe(([route, granted]) => {

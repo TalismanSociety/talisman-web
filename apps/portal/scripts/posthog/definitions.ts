@@ -61,16 +61,21 @@ export const eventsToSeed = (
 	return missing.length || !superMissing ? missing : seedable.slice(0, 1)
 }
 
-type SeedValue = string | number | readonly string[]
+type SeedValue = string | number | boolean | readonly string[]
 
 const SEED_SUPER_PROPERTIES = {
 	environment: "development",
-} as const satisfies Record<keyof typeof SUPER_PROPERTIES, AnalyticsEnvironment>
+	app_version: "unknown",
+} as const satisfies Record<keyof typeof SUPER_PROPERTIES, string> & {
+	readonly environment: AnalyticsEnvironment
+}
 
 const seedValue = (property: PropertyDef): SeedValue => {
 	switch (property.posthogType) {
 		case "Numeric":
 			return 0
+		case "Boolean":
+			return false
 		case "String": {
 			const first = property.values[0] ?? ""
 			return property.list ? [first] : first
@@ -83,7 +88,7 @@ export type SeedEvent = {
 	readonly distinct_id: string
 	readonly uuid: string
 	readonly timestamp: string
-	readonly properties: Readonly<Record<string, SeedValue | boolean>>
+	readonly properties: Readonly<Record<string, SeedValue>>
 }
 
 export const seedBatch = (
