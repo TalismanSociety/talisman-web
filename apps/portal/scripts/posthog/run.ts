@@ -38,6 +38,7 @@ type RunOptions = {
 	readonly checkQueries: boolean
 	readonly prune: boolean
 	readonly skipDefinitions: boolean
+	readonly skipSettings: boolean
 	readonly filterTestAccounts: boolean
 	readonly verbose: boolean
 	readonly ingest: (batch: readonly SeedEvent[]) => Promise<void>
@@ -292,7 +293,7 @@ export const runProvisioning = async (input: RunInput): Promise<RunResult> => {
 	}
 
 	const state: State | undefined = await step("Dashboards and insights", () => loadState(ctx))
-	await step("Project settings", () => syncProjectSettings(ctx))
+	if (!options.skipSettings) await step("Project settings", () => syncProjectSettings(ctx))
 	await step("Transformations", () => checkTransformations(ctx))
 	if (options.seed) await step("Seed", () => seed(input))
 	if (!options.skipDefinitions) await step("Definitions", () => syncDefinitions(ctx, catalog))

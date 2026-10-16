@@ -29,6 +29,7 @@ Flags:
   --only <slug>         Reconcile one dashboard (repeatable)
   --prune               Soft-delete managed insights and alerts no longer in the spec
   --skip-definitions    Leave event and property definitions alone
+  --skip-settings       Leave the project settings and test-account filter alone
   --show-test-accounts  Save insights with the test-account filter off
   --verbose             Print request bodies
   --help                Print this help
@@ -56,6 +57,7 @@ const parseCli = () => {
 			only: { type: "string", multiple: true, default: [] },
 			prune: { type: "boolean", default: false },
 			"skip-definitions": { type: "boolean", default: false },
+			"skip-settings": { type: "boolean", default: false },
 			"show-test-accounts": { type: "boolean", default: false },
 			verbose: { type: "boolean", default: false },
 			help: { type: "boolean", short: "h", default: false },
@@ -74,6 +76,7 @@ const parseCli = () => {
 		only: values.only ?? [],
 		prune: values.prune === true,
 		skipDefinitions: values["skip-definitions"] === true,
+		skipSettings: values["skip-settings"] === true,
 		filterTestAccounts: values["show-test-accounts"] !== true,
 		verbose: values.verbose === true,
 		apiKey: process.env["POSTHOG_API_KEY"] || undefined,
@@ -154,6 +157,7 @@ const main = async () => {
 			checkQueries: cli.checkQueries,
 			prune: cli.prune,
 			skipDefinitions: cli.skipDefinitions,
+			skipSettings: cli.skipSettings,
 			filterTestAccounts: cli.filterTestAccounts,
 			verbose: cli.verbose,
 			ingest: (batch) => ingest(`${POSTHOG_API_HOST}/batch/`, projectToken ?? "", batch),
