@@ -71,7 +71,22 @@
         "useParseIntRadix": "off"
       },
       "style": {
-        "noNonNullAssertion": "off"
+        "noNonNullAssertion": "off",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "@talismn/react-polkadot-api": "Chain access goes through polkadot-api (domains/chains/papi-client.ts); polkadot.js is gone.",
+              "avail-js-sdk": "Chain access goes through polkadot-api (domains/chains/papi-client.ts); polkadot.js is gone."
+            },
+            "patterns": [
+              {
+                "group": ["@polkadot/**"],
+                "message": "Chain access goes through polkadot-api (domains/chains/papi-client.ts); polkadot.js is gone."
+              }
+            ]
+          }
+        }
       },
       "suspicious": {
         "noArrayIndexKey": "off",

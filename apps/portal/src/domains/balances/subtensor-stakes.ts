@@ -9,10 +9,9 @@ import {
 } from "@polkadot-api/substrate-bindings"
 import { toHex } from "@polkadot-api/utils"
 import type { Balance, ExtraAmount } from "@talismn/balances"
-import { encodeAnyAddress, isEthereumAddress } from "@talismn/util"
 import { catchError, defer, EMPTY, exhaustMap, type Observable, timer } from "rxjs"
-
 import { chainConnectors } from "@/domains/chains/chain-connectors"
+import { encodeAnyAddress, isEthereumAddress } from "@/util/addresses"
 
 export const BITTENSOR_NETWORK_ID = "bittensor"
 const SUBTENSOR_STAKE_LABEL = "subtensor-staking"

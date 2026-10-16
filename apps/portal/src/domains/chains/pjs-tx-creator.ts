@@ -1,4 +1,3 @@
-import type { Signer, SignerPayloadJSON } from "@polkadot/types/types"
 import { createV4Tx, withCommonExtensions, withNonce } from "@polkadot-api/signers-common"
 import {
 	AccountId,
@@ -12,14 +11,17 @@ import {
 	unifyMetadata,
 } from "@polkadot-api/substrate-bindings"
 import { fromHex, toHex } from "@polkadot-api/utils"
+import type { SignerPayloadJSON } from "polkadot-api/pjs-signer"
 
-import type { TxCreator } from "@/domains/extension/substrate"
+import type { PjsSigner, TxCreator } from "@/domains/extension/substrate"
 
 type PayloadExtension = { id: string; extra: string; additionalSigned: string }
 
-type Mapper = (extension: PayloadExtension, bestBlockHeight: number) => Partial<SignerPayloadJSON>
-
 type Hex = `0x${string}`
+
+type PjsPayload = Omit<SignerPayloadJSON, "assetId"> & { assetId?: Hex; appId?: number }
+
+type Mapper = (extension: PayloadExtension, bestBlockHeight: number) => Partial<PjsPayload>
 
 const hex = (value: string) => value as Hex
 
@@ -54,7 +56,7 @@ const MAPPERS: Record<string, Mapper> = {
 		fromHex(extra)[0]
 			? { mode: 1, metadataHash: hex(toHex(fromHex(additionalSigned).slice(1))) }
 			: {},
-	CheckAppId: ({ extra }) => ({ appId: Number(compact.dec(extra)) }) as Partial<SignerPayloadJSON>,
+	CheckAppId: ({ extra }) => ({ appId: Number(compact.dec(extra)) }),
 }
 
 const SIGNATURE_TYPES = { ed25519: "Ed25519", sr25519: "Sr25519", ecdsa: "Ecdsa" } as const
@@ -67,7 +69,7 @@ type Creator = Parameters<typeof withCommonExtensions>[0]
 
 export const pjsTxCreator = (
 	address: string,
-	signer: Pick<Signer, "signPayload" | "signRaw">,
+	signer: PjsSigner,
 	type: SignatureType = "sr25519"
 ): TxCreator => {
 	const publicKey = address.startsWith("0x") ? fromHex(address) : AccountId().enc(address)
@@ -76,7 +78,7 @@ export const pjsTxCreator = (
 		if ((payload.txExtVersion ?? 0) !== 0)
 			throw new Error("Only txExtVersion 0 is allowed for extrinsic v4")
 		if (!metadata.extrinsic.version.includes(4)) throw new Error("Only extrinsic v4 is supported")
-		const pjs: Partial<SignerPayloadJSON> & { signedExtensions: string[] } = {
+		const pjs: Partial<PjsPayload> & { signedExtensions: string[] } = {
 			signedExtensions: [],
 		}
 		const extra: Uint8Array[] = []
@@ -101,7 +103,7 @@ export const pjsTxCreator = (
 		} as SignerPayloadJSON
 		const signed = mocked
 			? { signature: type === "ecdsa" ? ECDSA_MOCK : SR_MOCK }
-			: await signer.signPayload!(signerPayload)
+			: await signer.signPayload(signerPayload)
 		const tx = "signedTransaction" in signed ? signed.signedTransaction : undefined
 		if (tx) return typeof tx === "string" ? tx : toHex(tx)
 		return toHex(
@@ -116,9 +118,9 @@ export const pjsTxCreator = (
 		)
 	}
 	const signBytes = (data: Uint8Array) =>
-		signer.signRaw!({ address, data: toHex(data), type: "bytes" }).then(({ signature }) =>
-			fromHex(signature)
-		)
+		signer
+			.signRaw({ address, data: toHex(data), type: "bytes" })
+			.then(({ signature }) => fromHex(signature))
 	return Object.assign(withNonce(publicKey)(withCommonExtensions(creator)), {
 		publicKey,
 		signBytes,

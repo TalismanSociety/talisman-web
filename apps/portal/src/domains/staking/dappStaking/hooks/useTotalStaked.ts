@@ -43,11 +43,7 @@ const [useStakedPerAccountByChain] = bind(
 export const useTotalStaked = () => {
 	const chains = useRecoilValue(dappStakingEnabledChainsState)
 	const nativeTokenAmounts = useRecoilValueLoadable(
-		waitForAny(
-			chains.map((chain) =>
-				nativeTokenAmountState({ genesisHash: chain.genesisHash, apiEndpoint: chain.rpc! })
-			)
-		)
+		waitForAny(chains.map((chain) => nativeTokenAmountState(chain.genesisHash)))
 	)
 	const stakedByChain = useStakedPerAccountByChain()
 

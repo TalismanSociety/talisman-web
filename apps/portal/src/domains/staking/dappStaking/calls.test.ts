@@ -1,8 +1,6 @@
 // @vitest-environment node
 import { readFileSync } from "node:fs"
 import { gunzipSync } from "node:zlib"
-import { Metadata, TypeRegistry } from "@polkadot/types"
-import { expandMetadata } from "@polkadot/types/metadata/decorate"
 import { getDynamicBuilder, getLookupFn } from "@polkadot-api/metadata-builders"
 import { type Codec, decAnyMetadata, unifyMetadata } from "@polkadot-api/substrate-bindings"
 import { toHex } from "@polkadot-api/utils"
@@ -10,6 +8,7 @@ import type { Transaction, TxCallData } from "polkadot-api"
 import { describe, expect, it } from "vitest"
 
 import type { SmartContract } from "@/domains/chains/portal-runtime"
+import { loadPjsOracle } from "@/test/pjs-oracle"
 
 import {
 	type AddStake,
@@ -48,82 +47,7 @@ const recordingTx = new Proxy(
 const papiHex = (tx: Transaction | undefined) =>
 	tx === undefined ? undefined : toHex(callCodec.enc(tx.decodedCall))
 
-const registry = new TypeRegistry()
-const pjsMetadata = new Metadata(registry, metadataBytes)
-registry.setMetadata(pjsMetadata)
-const tx = expandMetadata(registry, pjsMetadata).tx as any
-
-type MainStake = {
-	totalRewards: { decimalAmount: { planck: bigint } }
-	stakerRewards: { decimalAmount: { planck: bigint } }
-	claimableSpanCount: number
-	bonusRewards: Array<{ dapp: unknown }>
-}
-
-const mainStakeOf = ({ stakerRewards, claimableSpanCount }: RewardClaims): MainStake => ({
-	totalRewards: { decimalAmount: { planck: stakerRewards } },
-	stakerRewards: { decimalAmount: { planck: stakerRewards } },
-	claimableSpanCount,
-	bonusRewards: [],
-})
-
-const getAllRewardsClaimExtrinsics = (stake: MainStake) =>
-	(stake.totalRewards?.decimalAmount?.planck ?? 0n) < 0n
-		? []
-		: [
-				...(stake?.stakerRewards?.decimalAmount?.planck === 0n
-					? []
-					: Array.from({ length: stake.claimableSpanCount }).map(() =>
-							tx.dappStaking.claimStakerRewards()
-						)),
-				...stake.bonusRewards.map((x) => tx.dappStaking.claimBonusReward(x.dapp)),
-			]
-
-const mainClaimAll = (stake: MainStake) => {
-	const exs = getAllRewardsClaimExtrinsics(stake)
-	if (exs.length === 0) return undefined
-	if (exs.length === 1) return exs.at(0)
-	return tx.utility.batchAll(exs)
-}
-
-const pjsContract = (contract: SmartContract) =>
-	contract.type === "Evm" ? { Evm: contract.value } : { Wasm: contract.value }
-
-const BigIntMax = (...values: bigint[]) => values.reduce((a, b) => (b > a ? b : a))
-
-const mainAddStake = (stake: AddStake) => {
-	const dapp = pjsContract(stake.contract)
-	const amountToLock = BigIntMax(stake.amount - stake.lockedAvailableForStake, 0n)
-	const exs = [
-		...getAllRewardsClaimExtrinsics(mainStakeOf(stake)),
-		...(amountToLock === undefined || amountToLock === 0n
-			? []
-			: [tx.dappStaking.lock(amountToLock ?? 0)]),
-		...(stake.cleanup ? [tx.dappStaking.cleanupExpiredEntries()] : []),
-		tx.dappStaking.stake(dapp, stake.amount ?? 0),
-	]
-	return exs.length <= 1 ? exs.at(0) : tx.utility.batchAll(exs)
-}
-
-const mainMaxSubmittable = (stake: Omit<AddStake, "cleanup">) => {
-	const dapp = pjsContract(stake.contract)
-	const amountToLock = BigIntMax(stake.amount - stake.lockedAvailableForStake, 0n)
-	if (amountToLock === 0n) return tx.dappStaking.stake(dapp, stake.amount)
-	return tx.utility.batchAll([
-		...getAllRewardsClaimExtrinsics(mainStakeOf(stake)),
-		tx.dappStaking.lock(amountToLock ?? 0n),
-		tx.dappStaking.stake(dapp, stake.amount),
-	])
-}
-
-const mainUnstake = (unstake: RewardClaims & { contract: SmartContract; amount: bigint }) =>
-	tx.utility.batchAll([
-		...getAllRewardsClaimExtrinsics(mainStakeOf(unstake)),
-		tx.dappStaking.unstake(pjsContract(unstake.contract), unstake.amount ?? 0),
-		tx.dappStaking.unlock(unstake.amount ?? 0),
-	])
-
-const pjsHex = (call: { toHex: () => string } | undefined) => call?.toHex()
+const pjsHex = loadPjsOracle(new URL("./fixtures/calls.pjs.json.gz", import.meta.url))
 
 const CONTRACTS: SmartContract[] = [
 	{ type: "Wasm", value: "ZdpeaiK28o6DzkdVJardFTZEJTAHKG3HgJn5ZPgsPh345Hg" },
@@ -178,13 +102,13 @@ describe("dApp staking calls", () => {
 
 	it("unlocks 500 ASTR as main does", () => {
 		expect(papiHex(unlockTx(recordingTx, 500n * 10n ** 18n))).toBe(
-			pjsHex(tx.dappStaking.unlock(500n * 10n ** 18n))
+			pjsHex("unlock", 500n * 10n ** 18n)
 		)
 		expect(papiHex(unlockTx(recordingTx, 500n * 10n ** 18n))).toBe("0x220817000050efe2d6e41a1b")
 	})
 
 	it("withdraws unbonded funds as main does", () => {
-		expect(papiHex(withdrawUnbondedTx(recordingTx))).toBe(pjsHex(tx.dappStaking.withdrawUnbonded()))
+		expect(papiHex(withdrawUnbondedTx(recordingTx))).toBe(pjsHex("withdrawUnbonded"))
 		expect(papiHex(withdrawUnbondedTx(recordingTx))).toBe("0x2205")
 	})
 
@@ -193,9 +117,7 @@ describe("dApp staking calls", () => {
 			({ stakerRewards, claimableSpanCount }) => stakerRewards > 0n && claimableSpanCount > 0
 		)
 	)("claims all rewards like main: %o", (claims) => {
-		expect(papiHex(claimAllRewardsTx(recordingTx, claims))).toBe(
-			pjsHex(mainClaimAll(mainStakeOf(claims)))
-		)
+		expect(papiHex(claimAllRewardsTx(recordingTx, claims))).toBe(pjsHex("claimAll", claims))
 	})
 
 	it("batches two claims and keeps one claim bare", () => {
@@ -208,17 +130,17 @@ describe("dApp staking calls", () => {
 	})
 
 	it.each(addStakes)("adds stake like main: %o", (stake) => {
-		expect(papiHex(addStakeTx(recordingTx, stake))).toBe(pjsHex(mainAddStake(stake)))
+		expect(papiHex(addStakeTx(recordingTx, stake))).toBe(pjsHex("addStake", stake))
 	})
 
 	it.each(addStakes.filter(({ cleanup }) => !cleanup))(
 		"builds the fee estimate of the maximum stake like main: %o",
 		(stake) => {
-			expect(papiHex(maxStakeTx(recordingTx, stake))).toBe(pjsHex(mainMaxSubmittable(stake)))
+			expect(papiHex(maxStakeTx(recordingTx, stake))).toBe(pjsHex("maxStake", stake))
 		}
 	)
 
 	it.each(unstakes)("unstakes like main: %o", (unstake) => {
-		expect(papiHex(unstakeTx(recordingTx, unstake))).toBe(pjsHex(mainUnstake(unstake)))
+		expect(papiHex(unstakeTx(recordingTx, unstake))).toBe(pjsHex("unstake", unstake))
 	})
 })

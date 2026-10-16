@@ -1,14 +1,13 @@
 // @vitest-environment node
 import { readFileSync } from "node:fs"
 import { gunzipSync } from "node:zlib"
-import { Metadata, TypeRegistry } from "@polkadot/types"
-import { expandMetadata } from "@polkadot/types/metadata/decorate"
 import { getLookupFn } from "@polkadot-api/metadata-builders"
 import { decAnyMetadata, unifyMetadata } from "@polkadot-api/substrate-bindings"
 import { toHex } from "@polkadot-api/utils"
 import { describe, expect, it } from "vitest"
 
 import { callEncoderOf } from "@/domains/chains/chain-runtime"
+import { loadPjsOracle } from "@/test/pjs-oracle"
 
 import {
 	bondExtraCall,
@@ -35,19 +34,15 @@ const loadChain = (chain: string) => {
 		gunzipSync(readFileSync(new URL(`./fixtures/${chain}-metadata.scale.gz`, import.meta.url)))
 	)
 	const encode = callEncoderOf(getLookupFn(unifyMetadata(decAnyMetadata(metadata))))
-	const registry = new TypeRegistry()
-	const pjsMetadata = new Metadata(registry, metadata)
-	registry.setMetadata(pjsMetadata)
-	const tx = expandMetadata(registry, pjsMetadata).tx as any
 	return {
 		chain,
 		papi: (call: Parameters<typeof encode>[0]) => toHex(encode(call)),
-		pjs: (call: { toHex: () => string }) => call.toHex(),
-		tx,
 	}
 }
 
 const chains = CHAINS.map(loadChain)
+
+const pjsHex = loadPjsOracle(new URL("./fixtures/calls.pjs.json.gz", import.meta.url))
 
 const ADDRESSES = [
 	"5CcU6DRpocLUWYJHuNLjB4gGyHJrkWuruQD5XFbRYffCfSAP",
@@ -71,7 +66,7 @@ it("encodes the Kusama Asset Hub smoke flows as the lane recorded them on main",
 	expect(kusamaAssetHub.papi(claimPayoutCall())).toBe("0x5002")
 })
 
-describe.each(chains)("nomination pool calls on $chain", ({ papi, pjs, tx }) => {
+describe.each(chains)("nomination pool calls on $chain", ({ chain, papi }) => {
 	it.each(
 		AMOUNTS.flatMap((amount) =>
 			POOL_IDS.flatMap((poolId) =>
@@ -80,35 +75,26 @@ describe.each(chains)("nomination pool calls on $chain", ({ papi, pjs, tx }) => 
 		)
 	)("joins pool %i with %s and %s like main", (amount, poolId, permission) => {
 		expect(papi(joinCall(amount, poolId, permission))).toBe(
-			pjs(
-				tx.utility.batchAll([
-					tx.nominationPools.join(amount, poolId),
-					tx.nominationPools.setClaimPermission(permission),
-				])
-			)
+			pjsHex(chain, "join", amount, poolId, permission)
 		)
 	})
 
 	it.each(AMOUNTS)("bonds %s more from the free balance like main", (amount) => {
-		expect(papi(bondExtraCall(amount))).toBe(
-			pjs(tx.nominationPools.bondExtra({ FreeBalance: amount.toString() }))
-		)
+		expect(papi(bondExtraCall(amount))).toBe(pjsHex(chain, "bondExtra", amount))
 	})
 
 	it("re-stakes the rewards like main", () => {
-		expect(papi(bondRewardsCall())).toBe(pjs(tx.nominationPools.bondExtra({ Rewards: true })))
+		expect(papi(bondRewardsCall())).toBe(pjsHex(chain, "bondRewards"))
 	})
 
 	it("claims the payout like main", () => {
-		expect(papi(claimPayoutCall())).toBe(pjs(tx.nominationPools.claimPayout()))
+		expect(papi(claimPayoutCall())).toBe(pjsHex(chain, "claimPayout"))
 	})
 
 	it.each(ADDRESSES.flatMap((address) => AMOUNTS.map((points) => [address, points] as const)))(
 		"unbonds %s points of %s like main",
 		(address, points) => {
-			expect(papi(unbondCall(address, points))).toBe(
-				pjs(tx.nominationPools.unbond(address, points))
-			)
+			expect(papi(unbondCall(address, points))).toBe(pjsHex(chain, "unbond", address, points))
 		}
 	)
 
@@ -116,14 +102,14 @@ describe.each(chains)("nomination pool calls on $chain", ({ papi, pjs, tx }) => 
 		"withdraws unbonded for %s with %i slashing spans like main",
 		(address, spans) => {
 			expect(papi(withdrawUnbondedCall(address, spans))).toBe(
-				pjs(tx.nominationPools.withdrawUnbonded(address, spans))
+				pjsHex(chain, "withdrawUnbonded", address, spans)
 			)
 		}
 	)
 
 	it.each(PERMISSIONS)("sets the claim permission %s like main", (permission) => {
 		expect(papi(setClaimPermissionCall(permission))).toBe(
-			pjs(tx.nominationPools.setClaimPermission(permission))
+			pjsHex(chain, "setClaimPermission", permission)
 		)
 	})
 })

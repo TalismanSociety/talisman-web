@@ -1,10 +1,8 @@
 import type { Balances } from "@talismn/balances"
-import { encodeAnyAddress } from "@talismn/util"
 import { useMemo, useState } from "react"
 import { useUpdateEffect } from "react-use"
 import type { RecoilValueReadOnly } from "recoil"
 import { useRecoilValue } from "recoil"
-
 import {
 	type Account,
 	ownPortfolioAccountsState,
@@ -15,6 +13,7 @@ import { track } from "@/domains/analytics/client"
 import { portfolioReportOf } from "@/domains/analytics/events/portfolio"
 import { useDebounce } from "@/hooks/useDebounce"
 import { useThrottle } from "@/hooks/useThrottle"
+import { encodeAnyAddress } from "@/util/addresses"
 
 import { useBalances } from "./balances"
 

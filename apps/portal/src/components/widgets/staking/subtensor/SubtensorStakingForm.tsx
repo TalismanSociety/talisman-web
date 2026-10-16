@@ -1,5 +1,4 @@
 import { useTheme } from "@emotion/react"
-import { classNames } from "@talismn/util"
 import clsx from "clsx"
 import type { ReactNode } from "react"
 import { Suspense } from "react"
@@ -142,7 +141,7 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
 				</div>
 			)}
 			<div
-				className={classNames(isValidatorSelectDisabled ? "cursor-not-allowed" : "cursor-pointer")}
+				className={cn(isValidatorSelectDisabled ? "cursor-not-allowed" : "cursor-pointer")}
 				onClick={isValidatorSelectDisabled ? () => null : props.onRequestChange}
 			>
 				<label css={{ pointerEvents: "none" }}>

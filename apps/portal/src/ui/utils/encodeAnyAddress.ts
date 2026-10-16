@@ -1,8 +1,10 @@
-import { encodeAddress, ethereumEncode, isEthereumAddress } from "@polkadot/util-crypto"
+import { checksumAddress } from "viem"
+
+import { encodeAddress, isValidEthereumAddress } from "@/util/addresses"
 
 export const encodeAnyAddress = (key: string, ss58Format?: number | undefined) => {
-	if (typeof key === "string" && isEthereumAddress(key)) {
-		return { type: "ethereum", address: ethereumEncode(key) } as const
+	if (typeof key === "string" && isValidEthereumAddress(key)) {
+		return { type: "ethereum", address: checksumAddress(key as `0x${string}`) } as const
 	}
 
 	try {

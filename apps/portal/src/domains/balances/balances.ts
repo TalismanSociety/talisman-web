@@ -2,7 +2,6 @@ import { bind } from "@react-rxjs/core"
 import { Balances, BalancesProvider, type BalancesResult, type IBalance } from "@talismn/balances"
 import { subNativeTokenId, type TokenId, type TokenList } from "@talismn/chaindata-provider"
 import { fetchTokenRates, type TokenRateCurrency, type TokenRatesList } from "@talismn/token-rates"
-import { encodeAnyAddress } from "@talismn/util"
 import { isEqual } from "lodash"
 import {
 	BehaviorSubject,
@@ -23,9 +22,9 @@ import {
 	tap,
 	timer,
 } from "rxjs"
-
 import { chainConnectors } from "@/domains/chains/chain-connectors"
 import { chaindataProvider, networksById$, tokensById$ } from "@/domains/chains/chaindata-provider"
+import { encodeAnyAddress } from "@/util/addresses"
 
 import { keepAddresses, readBalancesCache, writeBalancesCache } from "./balances-cache"
 import { currencyConfig } from "./currency"

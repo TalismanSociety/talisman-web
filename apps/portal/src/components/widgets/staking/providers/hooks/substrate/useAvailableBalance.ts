@@ -1,49 +1,44 @@
-import { usePolkadotApiId } from "@talismn/react-polkadot-api"
-import { useMemo } from "react"
-import { useRecoilValue, waitForAll } from "recoil"
+import type { SS58String } from "polkadot-api"
+import { useContext, useMemo } from "react"
+import { useRecoilValue } from "recoil"
+import { combineLatest, defer, map, of } from "rxjs"
 
 import { selectedSubstrateAccountsState } from "@/domains/accounts/recoils"
+import { ChainContext } from "@/domains/chains/contexts"
+import { getPapiClient } from "@/domains/chains/papi-client"
+import type { PortalRuntime } from "@/domains/chains/portal-runtime"
+import { useNativeTokenDecimalState } from "@/domains/chains/recoils"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
-import { substrateApiState } from "@/domains/common/recoils/api"
-import { chainQueryState } from "@/domains/common/recoils/query"
-import { Decimal } from "@/util/Decimal"
+import { bindSuspended } from "@/util/loadable"
 
-/**
- * The relevant fields of `system.account`'s `data`, covering both the current (`frozen`) and the
- * legacy (`miscFrozen`) substrate balance models.
- */
-type AccountBalanceData = {
-	free: { toBigInt: () => bigint }
-	frozen?: { toBigInt: () => bigint }
-	miscFrozen?: { toBigInt: () => bigint }
-}
+const ADDRESS_SEPARATOR = ","
+
+const transferable$ = (genesisHash: string, address: SS58String) =>
+	defer(() =>
+		getPapiClient(genesisHash)
+			.getUnsafeApi<PortalRuntime>()
+			.query.System.Account.watchValue(address, { at: "best" })
+	).pipe(map(({ value: { data } }) => (data.free > data.frozen ? data.free - data.frozen : 0n)))
+
+const [useTransferable] = bindSuspended((genesisHash: string, addresses: string) => {
+	const list = addresses === "" ? [] : addresses.split(ADDRESS_SEPARATOR)
+	return list.length === 0
+		? of(0n)
+		: combineLatest(list.map((address) => transferable$(genesisHash, address))).pipe(
+				map((amounts) => amounts.reduce((total, amount) => total + amount, 0n))
+			)
+})
 
 const useAvailableBalance = () => {
-	const apiId = usePolkadotApiId()
-	const api = useRecoilValue(substrateApiState(apiId as string | undefined))
+	const { genesisHash } = useContext(ChainContext)
 	const accounts = useRecoilValue(selectedSubstrateAccountsState)
-	const addresses = useMemo(() => accounts.map((x) => x.address), [accounts])
-
-	// Query `system.account` directly instead of `api.derive.balances.all`: the derive throws
-	// "Balance: Negative number passed to unsigned type" on Asset Hub chains, whose post-migration
-	// frozen/holds balance model it doesn't understand.
-	const accountInfos = useRecoilValue(
-		waitForAll(addresses.map((address) => chainQueryState(apiId, "system", "account", [address])))
+	const addresses = useMemo(
+		() => accounts.map((x) => x.address).join(ADDRESS_SEPARATOR),
+		[accounts]
 	)
-	const availableBalance = useMemo(
-		() =>
-			Decimal.fromPlanck(
-				accountInfos.reduce((prev, curr) => {
-					const data: AccountBalanceData = curr.data
-					const free = data.free.toBigInt()
-					const frozen = (data.frozen ?? data.miscFrozen)?.toBigInt() ?? 0n
-					return prev + (free > frozen ? free - frozen : 0n)
-				}, 0n),
-				api.registry.chainDecimals.at(0) ?? 0,
-				{ currency: api.registry.chainTokens.at(0) }
-			),
-		[accountInfos, api.registry.chainDecimals, api.registry.chainTokens]
-	)
+	const decimal = useRecoilValue(useNativeTokenDecimalState())
+	const transferable = useTransferable(genesisHash, addresses)
+	const availableBalance = useMemo(() => decimal.fromPlanck(transferable), [decimal, transferable])
 
 	const fiatAmount = useTokenAmountFromPlanck(availableBalance.planck).fiatAmount
 
