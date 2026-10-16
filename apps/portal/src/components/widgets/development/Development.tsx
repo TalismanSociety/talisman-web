@@ -1,12 +1,9 @@
-import { lazy, Suspense, useEffect } from "react"
-import { useRecoilState } from "recoil"
-
-import { developmentState } from "@/domains/common/recoils/development"
+import { lazy, Suspense, useEffect, useState } from "react"
 
 const DevMenu = lazy(async () => await import("./DevMenu"))
 
 export const Development = () => {
-	const [isDevelopment, setIsDevelopment] = useRecoilState(developmentState)
+	const [isDevelopment, setIsDevelopment] = useState(false)
 
 	useEffect(() => {
 		const search = new URLSearchParams(window.location.search)
@@ -18,7 +15,7 @@ export const Development = () => {
 		if (JSON.parse(sessionStorage.getItem("development") ?? JSON.stringify(false))) {
 			setIsDevelopment(true)
 		}
-	}, [setIsDevelopment])
+	}, [])
 
 	if (!isDevelopment) {
 		return null
