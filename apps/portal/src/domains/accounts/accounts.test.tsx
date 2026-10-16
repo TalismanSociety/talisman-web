@@ -1,0 +1,128 @@
+import { firstValueFrom, type Observable } from "rxjs"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { alice, bob, evm, fakeWallet, load } from "@/domains/extension/fakeInjectedWeb3"
+
+const { toast, capture } = vi.hoisted(() => ({
+	toast: { error: vi.fn(), success: vi.fn() },
+	capture: vi.fn(),
+}))
+vi.mock("@/ui/molecules/Toaster", () => ({ toast }))
+vi.mock("posthog-js", () => ({ default: { capture } }))
+
+const substrateAddress = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
+const evmAddress = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+
+function current<T>(source$: Observable<T>) {
+	return firstValueFrom(source$)
+}
+
+describe("accounts", () => {
+	let harness: Awaited<ReturnType<typeof load>>
+
+	beforeEach(() => localStorage.clear())
+
+	afterEach(() => {
+		harness.dispose()
+		vi.unstubAllGlobals()
+	})
+
+	it("reads the readonly accounts main stored and keeps their stored shape on write", async () => {
+		localStorage.setItem(
+			"readonly_accounts",
+			JSON.stringify([{ address: substrateAddress, name: "Alice" }, { address: evmAddress }])
+		)
+		harness = await load(undefined)
+
+		expect(await current(harness.readonlyAccounts$)).toEqual([
+			{
+				address: substrateAddress,
+				name: "Alice",
+				origin: "local",
+				readonly: true,
+				partOfPortfolio: false,
+				type: undefined,
+			},
+			{
+				address: evmAddress,
+				origin: "local",
+				readonly: true,
+				partOfPortfolio: false,
+				type: "ethereum",
+			},
+		])
+
+		harness.setStoredReadonlyAccounts([{ address: substrateAddress, name: "Alice" }])
+
+		expect(localStorage.getItem("readonly_accounts")).toBe(
+			`[{"address":"${substrateAddress}","name":"Alice"}]`
+		)
+	})
+
+	it("names the wagmi account after the matching injected account", async () => {
+		harness = await load({ talisman: fakeWallet([alice, evm]) })
+		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(2))
+
+		harness.setWagmiAccounts([evm.address])
+
+		expect(await current(harness.ownAccounts$)).toEqual([
+			{ address: evm.address, type: "ethereum", canSignEvm: true, name: "Guardians EVM" },
+			{ address: alice.address, name: "Guardians SUB", type: "sr25519", origin: "injected" },
+		])
+	})
+
+	it("shows the connected accounts by default and only the chosen ones once selected", async () => {
+		harness = await load({ talisman: fakeWallet([alice, bob]) })
+		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(2))
+
+		expect((await current(harness.selectedAccounts$)).map((x) => x.name)).toEqual([
+			"Guardians SUB",
+			"Bob",
+		])
+
+		harness.selectedAccountAddresses$.next([bob.address])
+
+		expect((await current(harness.selectedAccounts$)).map((x) => x.name)).toEqual(["Bob"])
+	})
+
+	it("falls back to the first watched account when nothing is connected", async () => {
+		localStorage.setItem(
+			"readonly_accounts",
+			JSON.stringify([{ address: substrateAddress, name: "Alice" }, { address: evmAddress }])
+		)
+		harness = await load(undefined)
+
+		expect((await current(harness.selectedAccounts$)).map((x) => x.address)).toEqual([
+			substrateAddress,
+		])
+	})
+
+	it("shows the lookup address instead of the connected accounts", async () => {
+		harness = await load({ talisman: fakeWallet([alice]) })
+		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(1))
+
+		harness.setLookupAccountAddress(` ${evmAddress},`)
+
+		expect(await current(harness.selectedAccounts$)).toEqual([
+			{ address: evmAddress, readonly: true, partOfPortfolio: false, type: "ethereum" },
+		])
+		expect((await current(harness.accounts$)).map((x) => x.address)).toEqual([
+			alice.address,
+			evmAddress,
+		])
+		expect((await current(harness.writeableAccounts$)).map((x) => x.address)).toEqual([
+			alice.address,
+		])
+	})
+
+	it("clears the lookup address when the selection changes", async () => {
+		harness = await load(undefined)
+		harness.setLookupAccountAddress(evmAddress)
+		const { AccountWatcher } = await import("./AccountWatcher")
+		const { render } = await import("@testing-library/react")
+		render(<AccountWatcher />)
+
+		harness.selectedAccountAddresses$.next([substrateAddress])
+
+		expect(harness.lookupAccountAddress$.value).toBeUndefined()
+	})
+})

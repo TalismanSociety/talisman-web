@@ -1,144 +1,273 @@
-import type { InjectedWindow } from "@polkadot/extension-inject/types"
-import type { BaseWallet } from "@polkadot-onboard/core"
-import { WalletAggregator } from "@polkadot-onboard/core"
-import { InjectedWalletProvider } from "@polkadot-onboard/injected-wallets"
-import { jsonParser, string } from "@recoiljs/refine"
-import { usePostHog } from "posthog-js/react"
-import { useEffect } from "react"
-import { atom, selector, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
+import { getKheopskit$, isInjectedWallet, KheopskitError } from "@kheopskit/core"
+import { type PolkadotAccount, type PolkadotWallet, polkadot } from "@kheopskit/core/polkadot"
+import type { Signer } from "@polkadot/types/types"
+import { bind } from "@react-rxjs/core"
+import type { InjectedPolkadotAccount } from "polkadot-api/pjs-signer"
+import posthog from "posthog-js"
+import {
+	auditTime,
+	BehaviorSubject,
+	combineLatest,
+	defer,
+	distinctUntilChanged,
+	filter,
+	firstValueFrom,
+	from,
+	fromEvent,
+	ignoreElements,
+	map,
+	merge,
+	type Observable,
+	of,
+	shareReplay,
+	switchMap,
+	take,
+	tap,
+	timeout,
+} from "rxjs"
+import { z } from "zod"
 import polkadotJsWalletLogo from "@/assets/polkadot-js-wallet.svg"
 import talismanWalletLogo from "@/assets/talisman-wallet.svg"
-import { substrateInjectedAccountsState } from "@/domains/accounts/recoils"
-import { storageEffect } from "@/domains/common/effects"
+import { atomFromObservable } from "@/domains/common/recoil-bridge"
 import { toast } from "@/ui/molecules/Toaster"
+import { persistedState } from "@/util/persistedState"
 
-const walletAggregator = new WalletAggregator([
-	new InjectedWalletProvider(
-		{
-			supported: [
-				{
-					id: "talisman",
-					title: "Talisman",
-					iconUrl: talismanWalletLogo,
-				},
-				{
-					id: "polkadot-js",
-					title: "Polkadot.js",
-					iconUrl: polkadotJsWalletLogo,
-				},
-			],
-		},
-		import.meta.env.VITE_APPLICATION_NAME ?? "Talisman"
+export type SubstrateWallet = { id: string; title: string; iconUrl?: string }
+
+export type InjectedSubstrateAccount = {
+	address: string
+	name?: string
+	type?: PolkadotAccount["type"]
+	genesisHash?: string | null
+} & ({ readonly?: false } | { readonly: true; partOfPortfolio: boolean })
+
+type TalismanInjectedAccount = PolkadotAccount & { readonly?: boolean; partOfPortfolio?: boolean }
+
+export type SubstrateWalletConnection = { id: string; signer: Signer }
+
+export type TxCreator = InjectedPolkadotAccount["txCreator"]
+
+const WALLET_METADATA: Record<string, Omit<SubstrateWallet, "id">> = {
+	talisman: { title: "Talisman", iconUrl: talismanWalletLogo },
+	"polkadot-js": { title: "Polkadot.js", iconUrl: polkadotJsWalletLogo },
+}
+
+const AUTO_CONNECT_WALLET_ID = "talisman"
+const INJECTION_GRACE_MS = 1_000
+const settledPastKheopskitThrottleMs = 20
+
+const appName = import.meta.env.VITE_APPLICATION_NAME ?? "Talisman"
+
+export const connectedSubstrateWalletId$ = persistedState(
+	"connected-substrate-extension",
+	z.string().optional(),
+	undefined
+)
+
+const pageLoaded$ = defer(() =>
+	document.readyState === "complete" ? of(undefined) : fromEvent(window, "load").pipe(take(1))
+)
+
+const kheopskit$ = pageLoaded$.pipe(
+	switchMap(() =>
+		getKheopskit$({
+			appName,
+			platforms: [polkadot({ accountTypes: ["sr25519", "ed25519", "ecdsa", "ethereum"] })],
+			autoReconnect: false,
+			hydrationGracePeriod: 0,
+		})
 	),
-])
+	auditTime(settledPastKheopskitThrottleMs),
+	shareReplay({ bufferSize: 1, refCount: false })
+)
 
-export const initialisedSubstrateWalletsState = atom({
-	key: "InitialisedSubstrateWallets",
-	default: false,
-})
+const injectionOrder = (wallet: PolkadotWallet) =>
+	Object.keys(window.injectedWeb3 ?? {}).indexOf(wallet.sourceId)
 
-const installedSubstrateWalletsState = selector({
-	key: "InstalledSubstrateWallets",
-	get: async () => await walletAggregator.getWallets(),
-})
+const injectedWallets$ = kheopskit$.pipe(
+	map(({ wallets }) =>
+		wallets.filter(isInjectedWallet).sort((a, b) => injectionOrder(a) - injectionOrder(b))
+	),
+	shareReplay({ bufferSize: 1, refCount: true })
+)
 
-export const connectedSubstrateWalletIdState = atom<string | undefined>({
-	key: "ConnectedSubstrateSubstrateWalletId",
-	default: undefined,
-	effects: [
-		storageEffect(localStorage, {
-			key: "connected-substrate-extension",
-			parser: jsonParser(string()),
-		}),
-	],
-})
+const isWalletError = (error: unknown, code: KheopskitError["code"]) =>
+	error instanceof KheopskitError && error.code === code
 
-export const connectedSubstrateWalletState = atom<BaseWallet | undefined>({
-	key: "ConnectedSubstrateWallets",
-	default: undefined,
-})
+const connectRequests = new Map<string, Promise<void>>()
 
-export const useConnectedSubstrateWallet = () => useRecoilValue(connectedSubstrateWalletState)
-
-export const useInstalledSubstrateWallets = () => useRecoilValue(installedSubstrateWalletsState)
-
-export const useSubstrateWalletConnect = () => {
-	const setConnectedWalletId = useSetRecoilState(connectedSubstrateWalletIdState)
-
-	return {
-		connect: (wallet: BaseWallet) => setConnectedWalletId(wallet.metadata.id),
-		disconnect: () => setConnectedWalletId(undefined),
-	}
-}
-
-export const useSubstrateExtensionEffect = () => {
-	const connectedWallet = useRecoilValue(connectedSubstrateWalletState)
-	const setInjectedAccounts = useSetRecoilState(substrateInjectedAccountsState)
-	const setWalletConnectionInitialised = useSetRecoilState(initialisedSubstrateWalletsState)
-
-	useEffect(() => {
-		const subscriptions = connectedWallet?.subscribeAccounts((accounts) =>
-			setInjectedAccounts(accounts)
-		)
-
-		return () => {
-			void subscriptions?.then((unsubscribe) => unsubscribe())
-		}
-	}, [connectedWallet, setInjectedAccounts])
-
-	const [connectedWalletId, setConnectedWalletId] = useRecoilState(connectedSubstrateWalletIdState)
-	const setConnectedWallet = useSetRecoilState(connectedSubstrateWalletState)
-
-	useEffect(() => {
-		if (connectedWalletId === undefined) {
-			setConnectedWallet(undefined)
-			setInjectedAccounts([])
-		}
-	}, [connectedWalletId, setConnectedWallet, setInjectedAccounts])
-
-	const posthog = usePostHog()
-
-	useEffect(() => {
-		void (async () => {
-			const wallets = await walletAggregator.getWallets()
-			await Promise.all(wallets.map(async (x) => await x.disconnect()))
-
-			if (connectedWalletId !== undefined) {
-				const walletToConnect = wallets.find((x) => x.metadata.id === connectedWalletId)
-
-				if (walletToConnect !== undefined) {
-					try {
-						await walletToConnect.connect()
-						setConnectedWallet(walletToConnect)
-						posthog.capture("Substrate extensions connected", {
-							$set: { substrateExtensions: [walletToConnect.metadata.id] },
-						})
-					} catch (error) {
-						setConnectedWalletId(undefined)
-						toast.error("Wallet connection declined")
-						console.error(error)
-					}
-				}
+const connectOnce = (wallet: PolkadotWallet) => {
+	const pending = connectRequests.get(wallet.sourceId)
+	if (pending) return pending
+	const request = wallet
+		.connect()
+		.then(
+			() => {
+				posthog.capture("Substrate extensions connected", {
+					$set: { substrateExtensions: [wallet.sourceId] },
+				})
+			},
+			(error) => {
+				if (isWalletError(error, "WALLET_ALREADY_CONNECTED")) return
+				connectedSubstrateWalletId$.next(undefined)
+				toast.error("Wallet connection declined")
+				console.error(error)
 			}
-
-			setWalletConnectionInitialised(true)
-		})()
-	}, [
-		connectedWalletId,
-		posthog,
-		setConnectedWallet,
-		setConnectedWalletId,
-		setWalletConnectionInitialised,
-	])
-
-	// Auto connect on launch if Talisman extension is installed
-	// and user has not explicitly disable wallet connection
-	useEffect(() => {
-		if (
-			(globalThis as InjectedWindow).injectedWeb3?.["talisman"] !== undefined &&
-			connectedWalletId === undefined
-		) {
-			setConnectedWalletId("talisman")
-		}
-	}, [])
+		)
+		.finally(() => connectRequests.delete(wallet.sourceId))
+	connectRequests.set(wallet.sourceId, request)
+	return request
 }
+
+const disconnectUnwanted = (wallets: PolkadotWallet[], wantedId: string | undefined) => {
+	for (const wallet of wallets)
+		if (wallet.isConnected && wallet.sourceId !== wantedId)
+			wallet.disconnect().catch((error) => {
+				if (!isWalletError(error, "WALLET_NOT_CONNECTED")) console.error(error)
+			})
+}
+
+const initialised$ = new BehaviorSubject(false)
+
+const listsWallet = (wallets: PolkadotWallet[], id: string | undefined) =>
+	wallets.some((wallet) => wallet.sourceId === id)
+
+const walletsSettled$ = kheopskit$.pipe(
+	take(1),
+	switchMap(() =>
+		injectedWallets$.pipe(
+			filter((wallets) =>
+				listsWallet(wallets, connectedSubstrateWalletId$.value ?? AUTO_CONNECT_WALLET_ID)
+			),
+			take(1),
+			timeout({ first: INJECTION_GRACE_MS, with: () => of(undefined) })
+		)
+	)
+)
+
+const boot$ = walletsSettled$.pipe(
+	switchMap(async () => {
+		const wallets = await firstValueFrom(injectedWallets$)
+		if (
+			connectedSubstrateWalletId$.value === undefined &&
+			listsWallet(wallets, AUTO_CONNECT_WALLET_ID)
+		)
+			connectedSubstrateWalletId$.next(AUTO_CONNECT_WALLET_ID)
+		const wanted = wallets.find((wallet) => wallet.sourceId === connectedSubstrateWalletId$.value)
+		if (wanted && !wanted.isConnected) await connectOnce(wanted)
+		initialised$.next(true)
+	})
+)
+
+const driver$ = combineLatest([injectedWallets$, connectedSubstrateWalletId$]).pipe(
+	tap(([wallets, wantedId]) => {
+		disconnectUnwanted(wallets, wantedId)
+		const wanted = wallets.find((wallet) => wallet.sourceId === wantedId)
+		if (wanted && !wanted.isConnected) void connectOnce(wanted)
+	})
+)
+
+export const substrateWalletLifecycle$: Observable<never> = merge(boot$, driver$).pipe(
+	ignoreElements()
+)
+
+const connectedWallet$ = combineLatest([injectedWallets$, connectedSubstrateWalletId$]).pipe(
+	map(([wallets, id]) => wallets.find((wallet) => wallet.sourceId === id && wallet.isConnected)),
+	distinctUntilChanged(),
+	switchMap((wallet) =>
+		wallet
+			? from(pjsSignerOf(wallet.sourceId)).pipe(
+					map((signer): SubstrateWalletConnection => ({ id: wallet.sourceId, signer }))
+				)
+			: of(undefined)
+	),
+	shareReplay({ bufferSize: 1, refCount: true })
+)
+
+const pjsSigners = new Map<string, Promise<Signer>>()
+
+const pjsSignerOf = (source: string) => {
+	const cached = pjsSigners.get(source)
+	if (cached) return cached
+	const signer = (async () => {
+		const extension = await window.injectedWeb3?.[source]?.enable(appName)
+		if (!extension) throw new Error(`${source} is not available`)
+		return extension.signer as Signer
+	})()
+	signer.catch(() => pjsSigners.delete(source))
+	pjsSigners.set(source, signer)
+	return signer
+}
+
+const toInjectedAccount = ({
+	address,
+	name,
+	type,
+	genesisHash,
+	readonly,
+	partOfPortfolio,
+}: TalismanInjectedAccount): InjectedSubstrateAccount =>
+	readonly
+		? { address, name, type, genesisHash, readonly, partOfPortfolio: partOfPortfolio ?? false }
+		: { address, name, type, genesisHash }
+
+const walletOrder = (wallet: PolkadotWallet) => {
+	const addresses = (wallet.extension?.getAccounts() ?? []).map((account) => account.address)
+	return (a: PolkadotAccount, b: PolkadotAccount) =>
+		addresses.indexOf(a.address) - addresses.indexOf(b.address)
+}
+
+export const injectedSubstrateAccounts$: Observable<InjectedSubstrateAccount[]> = combineLatest([
+	kheopskit$,
+	connectedSubstrateWalletId$,
+]).pipe(
+	map(([{ wallets, accounts }, id]) => {
+		const wallet = wallets.filter(isInjectedWallet).find((wallet) => wallet.sourceId === id)
+		return wallet?.isConnected
+			? accounts
+					.filter((account) => account.walletId === wallet.id)
+					.sort(walletOrder(wallet))
+					.map(toInjectedAccount)
+			: []
+	}),
+	shareReplay({ bufferSize: 1, refCount: true })
+)
+
+export const txCreatorOf = async (address: string): Promise<TxCreator | undefined> => {
+	const { accounts } = await firstValueFrom(kheopskit$)
+	return accounts.find((account) => account.address === address)?.txCreator
+}
+
+const toSubstrateWallet = (wallet: PolkadotWallet): SubstrateWallet => ({
+	id: wallet.sourceId,
+	...(WALLET_METADATA[wallet.sourceId] ?? { title: wallet.sourceId }),
+})
+
+export const [useInstalledSubstrateWallets, installedSubstrateWallets$] = bind(
+	injectedWallets$.pipe(map((wallets) => wallets.map(toSubstrateWallet))),
+	[]
+)
+
+export const [useConnectedSubstrateWallet, connectedSubstrateWallet$] = bind(
+	connectedWallet$,
+	undefined
+)
+
+export const initialisedSubstrateWallets$: Observable<boolean> = initialised$
+
+export const connectSubstrateWallet = (wallet: SubstrateWallet) =>
+	connectedSubstrateWalletId$.next(wallet.id)
+
+export const disconnectSubstrateWallet = () => connectedSubstrateWalletId$.next(undefined)
+
+export const connectedSubstrateWalletState = atomFromObservable(
+	"ConnectedSubstrateWallets",
+	connectedWallet$,
+	undefined
+)
+
+export const initialisedSubstrateWalletsState = atomFromObservable(
+	"InitialisedSubstrateWallets",
+	initialised$,
+	false
+)

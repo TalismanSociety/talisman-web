@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { useRecoilValue } from "recoil"
 import { useAccount as useWagmiAccount } from "wagmi"
 
@@ -5,11 +6,14 @@ import { useEvmExtensionEffect } from "./evm"
 import {
 	connectedSubstrateWalletState,
 	initialisedSubstrateWalletsState,
-	useSubstrateExtensionEffect,
+	substrateWalletLifecycle$,
 } from "./substrate"
 
 export const ExtensionWatcher = () => {
-	useSubstrateExtensionEffect()
+	useEffect(() => {
+		const subscription = substrateWalletLifecycle$.subscribe()
+		return () => subscription.unsubscribe()
+	}, [])
 	useEvmExtensionEffect()
 
 	return null
