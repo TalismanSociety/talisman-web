@@ -23,6 +23,7 @@ import {
 import { useSubstrateApiEndpoint } from "@/domains/common/hooks/useSubstrateApiEndpoint"
 import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
+import { useTxLoadableState } from "@/domains/common/hooks/useTx"
 import {
 	useApr,
 	usePoolAddForm,
@@ -58,7 +59,7 @@ const ExistingPool = (props: { account: Account; showClaimPermission: boolean })
 	const [addStakeAddress, setAddStakeAddress] = useState<string>()
 
 	const [claimDialogOpen, setClaimDialogOpen] = useState(false)
-	const [claimPayoutLoadable, setClaimPayoutLoadable] = useSubmittableResultLoadableState()
+	const [claimPayoutLoadable, setClaimPayoutLoadable] = useTxLoadableState()
 	const [restakeLoadable, setRestakeLoadable] = useSubmittableResultLoadableState()
 
 	const [unstakeDialogAddress, setUnstakeDialogAddress] = useState<string>()

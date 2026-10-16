@@ -59,7 +59,7 @@ const settledPastKheopskitThrottleMs = 20
 
 const appName = import.meta.env.VITE_APPLICATION_NAME ?? "Talisman"
 
-export const connectedSubstrateWalletId$ = persistedState(
+const connectedSubstrateWalletId$ = persistedState(
 	"connected-substrate-extension",
 	z.string().optional(),
 	undefined

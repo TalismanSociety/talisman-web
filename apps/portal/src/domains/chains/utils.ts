@@ -1,6 +1,8 @@
 import type { ChainConfig } from "./config"
 import type { ChainInfo } from "./recoils"
 
+export const isSubscanUrl = (url: string) => new URL(url).hostname.endsWith(".subscan.io")
+
 export function assertChain<
 	TChain extends ChainConfig | ChainInfo,
 	TPredicate extends {

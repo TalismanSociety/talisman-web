@@ -10,7 +10,7 @@ export const signetSdk = () => {
 	return sdk
 }
 
-export const inSignet$ = defer(() => signetSdk().init()).pipe(
+const inSignet$ = defer(() => signetSdk().init()).pipe(
 	shareReplay({ bufferSize: 1, refCount: false })
 )
 

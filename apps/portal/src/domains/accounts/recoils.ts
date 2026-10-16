@@ -18,7 +18,6 @@ import {
 	selectedSubstrateAccounts$,
 	setStoredReadonlyAccounts,
 	substrateAccounts$,
-	wagmiAccounts$,
 	writeableAccounts$,
 	writeableEvmAccounts$,
 	writeableSubstrateAccounts$,
@@ -51,8 +50,6 @@ export const readOnlyAccountsState = selector<Account[]>({
 	get: ({ get }) => get(readonlyAccountsAtom),
 	set: (_, accounts) => setStoredReadonlyAccounts(accounts as ReadonlyAccount[]),
 })
-
-export const wagmiAccountsState = atomFromSubject("WagmiAccounts", wagmiAccounts$)
 
 export const ownAccountsState = atomFromObservable("OwnAccounts", ownAccounts$, NO_ACCOUNTS)
 
@@ -88,7 +85,11 @@ export const writeableEvmAccountsState = atomFromObservable(
 	NO_ACCOUNTS
 )
 
-export const evmSignableAccountsState = writeableEvmAccountsState
+export const evmSignableAccountsState = atomFromObservable(
+	"EvmSignableAccounts",
+	writeableEvmAccounts$,
+	NO_ACCOUNTS
+)
 
 export const substrateAccountsState = atomFromObservable(
 	"SubstrateAccounts",

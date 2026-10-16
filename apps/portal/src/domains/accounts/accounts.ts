@@ -32,7 +32,7 @@ const isDefined = <T>(value: T | undefined): value is T => value !== undefined
 
 const addressType = (address: string) => (isEvmAddress(address) ? ("ethereum" as const) : undefined)
 
-export const lookupAccounts$: Observable<Account[]> = shared(
+const lookupAccounts$: Observable<Account[]> = shared(
 	lookupAccountAddress$.pipe(
 		map((lookup) =>
 			(lookup ?? "")
@@ -90,7 +90,7 @@ export const readonlyAccounts$: Observable<Account[]> = shared(
 	)
 )
 
-export const wagmiAccounts$ = new BehaviorSubject<Account[]>([])
+const wagmiAccounts$ = new BehaviorSubject<Account[]>([])
 
 export const setWagmiAccounts = (addresses: readonly string[]) =>
 	wagmiAccounts$.next(addresses.map((address) => ({ address, type: "ethereum", canSignEvm: true })))

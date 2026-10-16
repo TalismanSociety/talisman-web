@@ -17,6 +17,7 @@ import {
 	useSubmittableResultLoadableState,
 } from "@/domains/common/hooks/useExtrinsic"
 import { useNativeTokenLocalizedFiatAmount } from "@/domains/common/hooks/useLocalizedFiatAmount"
+import { useTxLoadableState } from "@/domains/common/hooks/useTx"
 import type { usePoolStakes } from "@/domains/staking/substrate/nominationPools/hooks/usePoolStake"
 import { useTotalNominationPoolRewards } from "@/domains/staking/substrate/nominationPools/hooks/useTotalRewards"
 
@@ -46,7 +47,7 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
 	const [isAddingStake, setIsAddingStake] = useState(false)
 
 	const [claimDialogOpen, setClaimDialogOpen] = useState(false)
-	const [claimPayoutLoadable, setClaimPayoutLoadable] = useSubmittableResultLoadableState()
+	const [claimPayoutLoadable, setClaimPayoutLoadable] = useTxLoadableState()
 	const [restakeLoadable, setRestakeLoadable] = useSubmittableResultLoadableState()
 
 	const withdrawExtrinsic = useExtrinsic("nominationPools", "withdrawUnbonded")
