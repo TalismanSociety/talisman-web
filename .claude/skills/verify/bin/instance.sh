@@ -288,8 +288,8 @@ serve() {
     server=(node "$bin/proxy.mjs" "$dir")
   else
     dir=$(cd "$2" && pwd)
-    [[ -f $dir/index.html ]] || { echo "$dir has no index.html: not a static build, nor an https://host origin" >&2; exit 1; }
-    server=(node "$bin/serve.mjs" "$dir")
+    [[ -f $dir/server/wrangler.json ]] || { echo "$dir has no server/wrangler.json: not a Worker build, nor an https://host origin" >&2; exit 1; }
+    server=(node "$bin/worker.mjs" "$dir")
   fi
   [[ ${3:-} == --no-wallet ]] && wallet=off
   prepare
