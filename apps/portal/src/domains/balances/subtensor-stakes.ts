@@ -1,9 +1,16 @@
+import {
+	AccountId,
+	bool,
+	compact,
+	Option,
+	Struct,
+	u16,
+	Vector,
+} from "@polkadot-api/substrate-bindings"
 import { toHex } from "@polkadot-api/utils"
 import type { Balance, ExtraAmount } from "@talismn/balances"
 import { encodeAnyAddress, isEthereumAddress } from "@talismn/util"
-import { AccountId } from "polkadot-api"
 import { catchError, defer, EMPTY, exhaustMap, type Observable, timer } from "rxjs"
-import { bool, compact, Option, Struct, u16, Vector } from "scale-ts"
 
 import { chainConnectors } from "@/domains/chains/chain-connectors"
 
