@@ -38,7 +38,7 @@ start_candidate() {
   if [[ $1 == connected ]]; then
     connect_side candidate || { echo "could not connect the browser: $reply" >&2; exit 1; }
   fi
-  echo "state $1: browser ready"
+  echo "state $1: browser ready, consent $consent"
 }
 
 watch() {
