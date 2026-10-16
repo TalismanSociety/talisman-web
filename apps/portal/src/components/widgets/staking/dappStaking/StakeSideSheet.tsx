@@ -1,10 +1,8 @@
-import type { AstarPrimitivesDappStakingSmartContract } from "@polkadot/types/lookup"
-import { useQueryState } from "@talismn/react-polkadot-api"
 import BN from "bn.js"
 import { formatDistance } from "date-fns"
 import type { ReactNode } from "react"
 import { Suspense, useMemo, useState, useTransition } from "react"
-import { useRecoilValue, waitForAll } from "recoil"
+import { useRecoilValue } from "recoil"
 import { TalismanHandLoader } from "@/components/legacy/TalismanHandLoader"
 import { DappStakingForm, DappStakingSideSheet } from "@/components/recipes/DappStakingForm"
 import { DappSelectorDialog as DappSelectorDialogComponent } from "@/components/recipes/StakeTargetSelectorDialog"
@@ -13,6 +11,7 @@ import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import type { Account } from "@/domains/accounts/recoils"
 import { writeableSubstrateAccountsState } from "@/domains/accounts/recoils"
 import { useChainState } from "@/domains/chains/hooks"
+import type { SmartContract } from "@/domains/chains/portal-runtime"
 import { ChainProvider } from "@/domains/chains/provider"
 import {
 	type ChainInfo,
@@ -21,12 +20,16 @@ import {
 	useNativeTokenDecimalState,
 } from "@/domains/chains/recoils"
 import { useEraEta } from "@/domains/common/hooks/useEraEta"
-import { useSubstrateApiState } from "@/domains/common/hooks/useSubstrateApiState"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
+import { type DappInfo, useRegisteredDapps } from "@/domains/staking/dappStaking/dapps"
 import { useAddStakeForm } from "@/domains/staking/dappStaking/hooks/forms"
 import { useApr } from "@/domains/staking/dappStaking/hooks/useApr"
+import {
+	useDappsWithStake,
+	useMinimumStakeAmount,
+} from "@/domains/staking/dappStaking/hooks/useDappsWithStake"
 import { useStake } from "@/domains/staking/dappStaking/hooks/useStake"
-import { type DappInfo, useRegisteredDappsState } from "@/domains/staking/dappStaking/recoils"
+import { smartContractOf } from "@/domains/staking/dappStaking/stake"
 import { useSearchParams } from "@/hooks/useSearchParams"
 import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 import { Select } from "@/ui/molecules/Select"
@@ -41,49 +44,15 @@ type DappSelectorDialogProps = {
 }
 
 const DappSelectorDialog = (props: DappSelectorDialogProps) => {
-	const [dapps, decimal] = useRecoilValue(
-		waitForAll([useRegisteredDappsState(), useNativeTokenDecimalState()])
-	)
+	const decimal = useRecoilValue(useNativeTokenDecimalState())
+	const dapps = useRegisteredDapps()
 
 	const [highlightedDapp, setHighlightedDapp] = useState(dapps[0])
 
-	const [dappInfos, activeProtocol] = useRecoilValue(
-		waitForAll([
-			useQueryState(
-				"dappStaking",
-				"integratedDApps.multi",
-				useMemo(
-					() =>
-						dapps.map((x) =>
-							x.address.startsWith("0x") ? { Evm: x.address } : { Wasm: x.address }
-						),
-					[dapps]
-				)
-			),
-			useQueryState("dappStaking", "activeProtocolState", []),
-		])
-	)
-
-	const dappStakes = useRecoilValue(
-		useQueryState(
-			"dappStaking",
-			"contractStake.multi",
-			useMemo(() => dappInfos.map((x) => x.unwrapOrDefault().id.unwrap()), [dappInfos])
-		)
-	)
-
-	const dappsWithStake = dapps.map((dapp, index) => {
-		const staked = Maybe.of(dappStakes.at(index)).mapOr(decimal.fromPlanck(0), (x) =>
-			decimal.fromPlanck(
-				Maybe.of(
-					[x.stakedFuture.unwrapOrDefault(), x.staked].find((y) =>
-						y.period.unwrap().eq(activeProtocol.periodInfo.number.unwrap())
-					)
-				).mapOr(0n, (y) => y.voting.toBigInt() + y.buildAndEarn.toBigInt())
-			)
-		)
-		return { ...dapp, staked }
-	})
+	const dappsWithStake = useDappsWithStake().map((dapp) => ({
+		...dapp,
+		staked: decimal.fromPlanck(dapp.staked),
+	}))
 
 	return (
 		<DappSelectorDialogComponent
@@ -153,7 +122,7 @@ const EstimatedRewards = (props: { amount: bigint }) => {
 
 type StakeFormProps = IncompleteStakeFormProps & {
 	account: Account
-	dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
+	dapp: SmartContract
 }
 
 const StakeForm = (props: StakeFormProps) => {
@@ -196,14 +165,16 @@ const StakeForm = (props: StakeFormProps) => {
 				<Suspense fallback={<CircularProgressIndicator size="1em" />}>
 					<EstimatedRewards
 						amount={
-							(input.decimalAmount?.planck ?? 0n) + (stake.totalStaked.decimalAmount?.planck ?? 0n)
+							(input.decimalAmount?.planck ?? 0n) +
+							(stake.amounts.totalStaked.decimalAmount?.planck ?? 0n)
 						}
 					/>
 				</Suspense>
 			}
 			currentStakedBalance={
-				stake.totalStaked.decimalAmount !== undefined && stake.totalStaked.decimalAmount.planck > 0n
-					? stake.totalStaked.decimalAmount.toLocaleString()
+				stake.amounts.totalStaked.decimalAmount !== undefined &&
+				stake.amounts.totalStaked.decimalAmount.planck > 0n
+					? stake.amounts.totalStaked.decimalAmount.toLocaleString()
 					: undefined
 			}
 		/>
@@ -219,7 +190,8 @@ type StakeSideSheetProps = {
 const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, "onRequestDismiss">) => {
 	const [searchParams] = useSearchParams()
 
-	const [chain, dapps] = useRecoilValue(waitForAll([useChainState(), useRegisteredDappsState()]))
+	const chain = useRecoilValue(useChainState())
+	const dapps = useRegisteredDapps()
 	const [[account], accountSelector] = useAccountSelector(
 		useRecoilValue(writeableSubstrateAccountsState),
 		searchParams.get("account") === null
@@ -267,7 +239,7 @@ const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, "onRequestDismis
 			{account !== undefined && dapp !== undefined ? (
 				<StakeForm
 					account={account}
-					dapp={dapp.address.startsWith("0x") ? { Evm: dapp.address } : { Wasm: dapp.address }}
+					dapp={smartContractOf(dapp.address)}
 					accountSelector={accountSelector}
 					assetSelector={assetSelector}
 					dappSelectionInProgress={dappSelectorDialogInTransition}
@@ -302,11 +274,7 @@ const Rewards = () => (
 const NextEraEta = () => <>{useEraEta(1)}</>
 
 const MinimumStake = () => (
-	<>
-		{useTokenAmountFromPlanck(
-			useRecoilValue(useSubstrateApiState()).consts.dappStaking.minimumStakeAmount
-		).decimalAmount.toLocaleString()}
-	</>
+	<>{useTokenAmountFromPlanck(useMinimumStakeAmount()).decimalAmount.toLocaleString()}</>
 )
 
 const _StakeSideSheet = (props: StakeSideSheetProps) => {

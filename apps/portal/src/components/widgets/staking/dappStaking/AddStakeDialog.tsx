@@ -1,18 +1,18 @@
-import type { AstarPrimitivesDappStakingSmartContract } from "@polkadot/types/lookup"
 import { useState } from "react"
 import { DappStakingAddStakeDialog } from "@/components/recipes/AddStakeDialog"
 import type { Account } from "@/domains/accounts/recoils"
-import { useExtrinsicInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
+import type { SmartContract } from "@/domains/chains/portal-runtime"
+import { useTxInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
 import { useAddStakeForm } from "@/domains/staking/dappStaking/hooks/forms"
-import type { StakeLoadable } from "@/domains/staking/dappStaking/hooks/useStakeLoadable"
+import type { Stake } from "@/domains/staking/dappStaking/hooks/useStake"
 import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 
 import DappPickerDialog from "./DappPickerDialog"
 
 type DappAddStakeDialogProps = {
 	account: Account
-	stake: StakeLoadable["data"]
-	dapp: string | AstarPrimitivesDappStakingSmartContract | Uint8Array | { Evm: any } | { Wasm: any }
+	stake: Stake
+	dapp: SmartContract
 	onRequestDismiss: () => void
 }
 
@@ -23,7 +23,7 @@ const DappAddStakeDialog = (props: DappAddStakeDialogProps) => {
 		props.dapp
 	)
 
-	useExtrinsicInBlockOrErrorEffect(() => props.onRequestDismiss(), extrinsic)
+	useTxInBlockOrErrorEffect(() => props.onRequestDismiss(), extrinsic)
 
 	return (
 		<DappStakingAddStakeDialog
@@ -49,12 +49,12 @@ const DappAddStakeDialog = (props: DappAddStakeDialogProps) => {
 
 type MultiDappsAddStakeDialogProps = {
 	account: Account
-	stake: StakeLoadable["data"]
+	stake: Stake
 	onRequestDismiss: () => void
 }
 
 const MultiDappAddStakeDialog = (props: MultiDappsAddStakeDialogProps) => {
-	const [dapp, setDapp] = useState<AstarPrimitivesDappStakingSmartContract>()
+	const [dapp, setDapp] = useState<SmartContract>()
 
 	return dapp === undefined ? (
 		<DappPickerDialog
@@ -75,7 +75,7 @@ const MultiDappAddStakeDialog = (props: MultiDappsAddStakeDialogProps) => {
 
 type AddStakeDialogProps = {
 	account: Account
-	stake: StakeLoadable["data"]
+	stake: Stake
 	onRequestDismiss: () => void
 }
 

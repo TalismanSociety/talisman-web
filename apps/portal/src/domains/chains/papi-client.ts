@@ -10,6 +10,7 @@ import { chainMetadataCache } from "./metadata-cache"
 type ShippedNetwork = { id: string; genesisHash?: string; rpcs?: string[] }
 
 const LEGACY_RPC_MIDDLEWARES: Record<string, Middleware> = {
+	astar: withLegacy,
 	bittensor: withLegacy,
 	avail: (base) => withLegacy(withAvailHeaders(base)),
 }
