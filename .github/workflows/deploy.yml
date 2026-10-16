@@ -48,20 +48,8 @@ jobs:
       - name: Build portal
         run: >-
           NODE_OPTIONS=--max_old_space_size=10240
-          VITE_SENTRY_RELEASE=${{ github.sha }}
-          pnpm --filter @talismn/portal build --sourcemap
-
-      - name: Upload sourcemaps to Sentry
-        if: vars.SENTRY_PROJECT != null
-        uses: getsentry/action-release@a74facf8a080ecbdf1cb355f16743530d712abb7 # v1.11.0
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
-        with:
-          environment: ${{ github.ref_name == github.event.repository.default_branch && 'production' || 'preview' }}
-          version: ${{ github.sha }}
-          sourcemaps: apps/portal/dist/client
+          VITE_APP_COMMIT=${{ github.sha }}
+          pnpm --filter @talismn/portal build
 
       - name: Strip sourcemaps before deploy
         run: find apps/portal/dist -name '*.map' -type f -delete

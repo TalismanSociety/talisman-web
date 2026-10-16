@@ -1,5 +1,11 @@
 import type { AnalyticsEnvironment } from "../../src/domains/analytics/environment"
+import { ERROR_CATEGORIES } from "../../src/domains/analytics/errorCategory"
 import type { EventDef } from "../../src/domains/analytics/events"
+import {
+	ERROR_CLASSES,
+	EXCEPTION_MECHANISMS,
+	type ExceptionProperties,
+} from "../../src/domains/analytics/exception"
 import { type PropertyDef, p } from "../../src/domains/analytics/properties"
 
 export type PosthogType = PropertyDef["posthogType"]
@@ -37,11 +43,34 @@ export const SUPER_PROPERTIES = {
 		ENVIRONMENTS,
 		"Where the portal ran: production, a preview Worker or localhost"
 	),
-} as const satisfies Readonly<Record<string, PropertyDef>>
+	app_version: {
+		posthogType: "String",
+		description: "Git commit the portal was built from, or unknown",
+	},
+} as const satisfies Readonly<
+	Record<string, { readonly posthogType: PosthogType; readonly description: string }>
+>
+
+const EXCEPTION_PROPERTIES = {
+	exception_type: p.enum(
+		[...ERROR_CLASSES],
+		"Class of the thrown error from the allowlist, or Error for any other thrown value"
+	),
+	error_category: p.enum(ERROR_CATEGORIES, "Category of the error, never its message"),
+	mechanism: p.enum(
+		EXCEPTION_MECHANISMS,
+		"How the error reached the reporter: caught by a call site, uncaught, an unhandled rejection or an error boundary"
+	),
+	handled: p.bool(
+		"Whether the app recovered: a call site caught it or an error boundary showed it"
+	),
+} as const satisfies {
+	readonly [K in Exclude<keyof ExceptionProperties, `$${string}`>]: PropertyDef
+}
 
 const exceptionEvent: EventDef = {
-	description: "An error report: its kind and where it was caught, never its message",
-	properties: {},
+	description: "An error report: its class, category and how it was caught, never its message",
+	properties: EXCEPTION_PROPERTIES,
 }
 
 const propertiesOf = (events: Readonly<Record<string, EventDef>>) => {

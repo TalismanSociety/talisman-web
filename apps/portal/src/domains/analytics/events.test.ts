@@ -26,18 +26,16 @@ describe("event catalog", () => {
 		for (const name of Object.keys(EVENTS)) expect(consentKindOf(name)).toBe("analytics")
 	})
 
-	it.each([
-		"$exception",
-		"$opt_in",
-		"$identify",
-		"$set",
-		"$web_vitals",
-		"$pageleave",
-		"toString",
-		"custom",
-	])("gates nothing on %s", (eventName) => {
-		expect(consentKindOf(eventName)).toBeUndefined()
+	it("gates $exception on error reporting", () => {
+		expect(consentKindOf("$exception")).toBe("errors")
 	})
+
+	it.each(["$opt_in", "$identify", "$set", "$web_vitals", "$pageleave", "toString", "custom"])(
+		"gates nothing on %s",
+		(eventName) => {
+			expect(consentKindOf(eventName)).toBeUndefined()
+		}
+	)
 
 	it("lists route patterns, not URLs, as $pageview routes", () => {
 		expect(EVENTS.$pageview.properties.route.values).toContain("/portfolio/:rest")

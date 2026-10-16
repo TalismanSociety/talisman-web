@@ -1,6 +1,10 @@
 import type { PostHog, PostHogConfig } from "posthog-js/no-external"
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest"
+
+import { ERROR_CATEGORIES } from "./errorCategory"
 import { consentKindOf } from "./events"
+import { ERROR_CLASSES, EXCEPTION_MECHANISMS } from "./exception"
+import { watchLoadedScripts } from "./loadedScripts"
 import { POSTHOG_API_HOST } from "./posthogProject"
 import { ROUTE_PATTERN_VALUES } from "./routePatterns"
 import { SDK_FIELDS } from "./scrub"
@@ -45,6 +49,47 @@ vi.mock("posthog-js/no-external", async (importOriginal) => {
 })
 
 const TOKEN = "phc_portalTestToken4f9a2c7e1b3d5f8a0c2e4b6d8f1a"
+const LOADED_SCRIPT = `${location.origin}/assets/index-Ab12Cd34.js`
+const APP_COMMIT = "d42cae12ca014a1d5116ca8ce87dd0c385c437d5"
+
+type ResourceEntry = { name: string; responseStatus?: number }
+
+const resources = {
+	buffered: [] as ResourceEntry[],
+	observers: [] as ((entries: ResourceEntry[]) => void)[],
+	buffer(entry: ResourceEntry) {
+		this.buffered.push(entry)
+	},
+	load(entry: ResourceEntry) {
+		this.buffered.push(entry)
+		for (const observer of this.observers) observer([entry])
+	},
+}
+
+const served = (name: string): ResourceEntry => ({ name, responseStatus: 200 })
+
+const FORGED_ASSET = `${location.origin}/assets/AliceStash-Ab12Cd34.js`
+
+class FakePerformanceObserver {
+	static supportedEntryTypes = ["resource"]
+	constructor(private readonly callback: (list: { getEntries: () => ResourceEntry[] }) => void) {}
+	observe({ buffered }: { buffered?: boolean }) {
+		const deliver = (entries: ResourceEntry[]) => this.callback({ getEntries: () => entries })
+		resources.observers.push(deliver)
+		if (buffered) deliver(resources.buffered)
+	}
+}
+
+vi.stubGlobal("PerformanceObserver", FakePerformanceObserver)
+
+const errorListeners: [string, EventListenerOrEventListenerObject][] = []
+const addEventListener = window.addEventListener.bind(window)
+vi.spyOn(window, "addEventListener").mockImplementation(
+	(type: string, listener: EventListenerOrEventListenerObject, options?: unknown) => {
+		if (type === "error" || type === "unhandledrejection") errorListeners.push([type, listener])
+		addEventListener(type, listener, options as AddEventListenerOptions)
+	}
+)
 
 const requests: { url: string; body: unknown }[] = []
 
@@ -141,6 +186,12 @@ beforeEach(() => {
 	vi.resetModules()
 	vi.stubEnv("VITE_ANALYTICS_LOCAL", "true")
 	vi.stubEnv("VITE_POSTHOG_AUTH_TOKEN", TOKEN)
+	vi.stubEnv("VITE_APP_COMMIT", APP_COMMIT)
+	for (const [type, listener] of errorListeners.splice(0))
+		window.removeEventListener(type, listener)
+	resources.buffered = []
+	resources.observers.length = 0
+	resources.buffer(served(LOADED_SCRIPT))
 	localStorage.clear()
 	sessionStorage.clear()
 	requests.length = 0
@@ -178,6 +229,7 @@ const isAppUrl: Shape = (value) =>
 const isHost: Shape = (value) => value === "$direct" || HOST.test(value)
 const isReferrer: Shape = (value) =>
 	value === "$direct" || isAppUrl(value) || isHost(OTHER_ORIGIN.exec(value)?.[1] ?? "")
+const isLoadedScript: Shape = (value) => watchLoadedScripts()(value)
 
 const SDK_SHAPES: Record<string, Shape> = {
 	token: oneOf(TOKEN),
@@ -235,6 +287,20 @@ const SDK_SHAPES: Record<string, Shape> = {
 	$recording_status: oneOf("disabled"),
 	title: oneOf("Talisman Portal"),
 	environment: oneOf("production", "preview", "development"),
+	app_version: oneOf(APP_COMMIT),
+	$exception_level: oneOf("error"),
+	exception_type: (value) => ERROR_CLASSES.has(value),
+	error_category: oneOf(...ERROR_CATEGORIES),
+	mechanism: oneOf(...EXCEPTION_MECHANISMS),
+	"$exception_list[].type": (value) => ERROR_CLASSES.has(value),
+	"$exception_list[].value": oneOf("", ...ERROR_CATEGORIES),
+	"$exception_list[].mechanism.type": oneOf("chained", ...EXCEPTION_MECHANISMS),
+	"$exception_list[].mechanism.source": oneOf("cause", "member"),
+	"$exception_list[].stacktrace.type": oneOf("raw"),
+	"$exception_list[].stacktrace.frames[].platform": oneOf("web:javascript"),
+	"$exception_list[].stacktrace.frames[].filename": isLoadedScript,
+	"$exception_list[].stacktrace.frames[].function": oneOf("?"),
+	"$exception_list[].stacktrace.frames[].chunk_id": matches(UUID),
 }
 
 const EVENT_SHAPES: Record<string, Shape> = {
@@ -280,10 +346,11 @@ afterEach(async () => {
 
 describe("analytics consent gating", () => {
 	it("loads, sends and stores nothing while the user is undecided", async () => {
-		const { startAnalytics, trackPageview, track } = await loadDomain()
+		const { startAnalytics, trackPageview, track, captureError } = await loadDomain()
 		startAnalytics()
 		trackPageview("/staking/providers")
 		track("$pageview", { route: "/staking/providers" })
+		captureError(new Error("boom"))
 		await flush()
 
 		expect(sdk.imports).toBe(0)
@@ -291,35 +358,54 @@ describe("analytics consent gating", () => {
 	})
 
 	it("loads, sends and stores nothing after a reject", async () => {
-		const { rejectAll, startAnalytics, trackPageview, track } = await loadDomain()
+		const { rejectAll, startAnalytics, trackPageview, track, captureError } = await loadDomain()
 		rejectAll()
 		startAnalytics()
 		trackPageview("/staking/providers")
 		track("$pageview", { route: "/staking/providers" })
+		captureError(new Error("boom"))
 		await flush()
 
 		expect(sdk.imports).toBe(0)
 		expectNothingSentOrStored()
 	})
 
-	it("loads, sends and stores nothing with errors-only consent", async () => {
+	it("sends and stores nothing with errors-only consent while no error is reported", async () => {
 		const { setConsent, startAnalytics, trackPageview, track } = await loadDomain()
 		setConsent({ analytics: false, errors: true })
 		startAnalytics()
 		trackPageview("/staking/providers")
 		track("Substrate extensions connected", { wallet: "talisman" })
+		await clientReady()
 		await flush()
 
-		expect(sdk.imports).toBe(0)
 		expectNothingSentOrStored()
+	})
+
+	it("sends only $exception events with errors-only consent, and stores nothing", async () => {
+		const { setConsent, startAnalytics, trackPageview, track, captureError } = await loadDomain()
+		setConsent({ analytics: false, errors: true })
+		startAnalytics()
+		trackPageview("/staking/providers")
+		track("$pageview", { route: "/staking/providers" })
+		captureError(new Error(`failed for ${SS58} in pool ${DAVE}`))
+		await clientReady()
+		sdk.instance?.capture("$pageview", { route: "/staking/providers" })
+		await flush()
+
+		expect(sentEventNames()).toEqual(["$exception"])
+		const body = JSON.stringify(sentEvents())
+		for (const leak of ["failed for", SS58, DAVE]) expect(body).not.toContain(leak)
+		expectNothingStored()
 	})
 
 	it("sends nothing in development without the local flag, whatever the consent", async () => {
 		vi.stubEnv("VITE_ANALYTICS_LOCAL", "")
-		const { acceptAll, startAnalytics, trackPageview } = await loadDomain()
+		const { acceptAll, startAnalytics, trackPageview, captureError } = await loadDomain()
 		acceptAll()
 		startAnalytics()
 		trackPageview("/staking/providers")
+		captureError(new Error("boom"))
 		await flush()
 
 		expect(sdk.imports).toBe(0)
@@ -328,10 +414,11 @@ describe("analytics consent gating", () => {
 
 	it("sends nothing from a build without a project token, whatever the consent", async () => {
 		vi.stubEnv("VITE_POSTHOG_AUTH_TOKEN", "")
-		const { acceptAll, startAnalytics, trackPageview } = await loadDomain()
+		const { acceptAll, startAnalytics, trackPageview, captureError } = await loadDomain()
 		acceptAll()
 		startAnalytics()
 		trackPageview("/staking/providers")
+		captureError(new Error("boom"))
 		await flush()
 
 		expect(sdk.imports).toBe(0)
@@ -339,32 +426,25 @@ describe("analytics consent gating", () => {
 	})
 
 	it("drops every event outside the catalog, whatever the consent", async () => {
-		const { acceptAll, startAnalytics, track } = await loadDomain()
+		const { acceptAll, startAnalytics, captureError } = await loadDomain()
 		acceptAll()
 		startAnalytics()
-		track("Substrate extensions connected", { wallet: "talisman" })
+		captureError(new Error("boom"))
 		await clientReady()
-		for (const event of [
-			"$exception",
-			"$opt_in",
-			"$identify",
-			"$web_vitals",
-			"$pageleave",
-			"$set",
-			"custom",
-		])
+		for (const event of ["$opt_in", "$identify", "$web_vitals", "$pageleave", "$set", "custom"])
 			sdk.instance?.capture(event)
 		await flush()
 
-		expect(sentEventNames()).toEqual(["Substrate extensions connected"])
+		expect(sentEventNames()).toEqual(["$exception"])
 	})
 
 	it("sends scrubbed pageviews with analytics consent and persists the anonymous id", async () => {
-		const { setConsent, startAnalytics, trackPageview } = await loadDomain()
+		const { setConsent, startAnalytics, trackPageview, captureError } = await loadDomain()
 		setConsent({ analytics: true, errors: false })
 		startAnalytics()
 		navigateTo(`/portfolio/${SS58}?account=${DAVE}#history`)
 		trackPageview(location.pathname)
+		captureError(new Error("boom"))
 		await clientReady()
 		await flush()
 
@@ -375,6 +455,7 @@ describe("analytics consent gating", () => {
 			$current_url: `${location.origin}/portfolio/:rest`,
 			$pathname: "/portfolio/:rest",
 			environment: "development",
+			app_version: APP_COMMIT,
 		})
 
 		const stored = posthogStorageKeys().map((key) => localStorage.getItem(key) ?? "")
@@ -423,7 +504,8 @@ describe("analytics consent gating", () => {
 	})
 
 	it("stops capture and clears persistence when analytics is withdrawn", async () => {
-		const { acceptAll, setConsent, startAnalytics, trackPageview, track } = await loadDomain()
+		const { acceptAll, setConsent, startAnalytics, trackPageview, track, captureError } =
+			await loadDomain()
 		acceptAll()
 		startAnalytics()
 		trackPageview("/staking/providers")
@@ -431,6 +513,7 @@ describe("analytics consent gating", () => {
 		await flush()
 		expect(sentEventNames()).toEqual(["$pageview"])
 		expect(posthogStorageKeys()).not.toEqual([])
+		const analyticsId = sentEvents()[0]?.properties["distinct_id"]
 
 		setConsent({ analytics: false, errors: true })
 		await flush(0)
@@ -438,15 +521,19 @@ describe("analytics consent gating", () => {
 
 		trackPageview("/staking/positions")
 		track("Substrate extensions connected", { wallet: "talisman" })
+		captureError(new Error("boom"))
 		await flush()
 
-		expect(sentEventNames()).toEqual(["$pageview"])
+		const [, exception] = sentEvents()
+		expect(sentEventNames()).toEqual(["$pageview", "$exception"])
+		expect(exception?.properties["distinct_id"]).not.toBe(analyticsId)
 		expect(posthogStorageKeys()).toEqual([])
 		expect(document.cookie).toBe("")
 	})
 
 	it("sends nothing more after a reject that follows consent", async () => {
-		const { acceptAll, rejectAll, startAnalytics, trackPageview, track } = await loadDomain()
+		const { acceptAll, rejectAll, startAnalytics, trackPageview, track, captureError } =
+			await loadDomain()
 		acceptAll()
 		startAnalytics()
 		trackPageview("/staking/providers")
@@ -457,6 +544,7 @@ describe("analytics consent gating", () => {
 		track("$pageview", { route: "/staking/positions" })
 		rejectAll()
 		trackPageview("/portfolio")
+		captureError(new Error("boom"))
 		await flush()
 
 		expect(sentEvents()).toHaveLength(1)
@@ -553,7 +641,8 @@ describe("portal events", () => {
 				event,
 				Object.fromEntries(
 					Object.entries(properties).filter(
-						([key]) => !Object.hasOwn(SDK_FIELDS, key) && key !== "environment"
+						([key]) =>
+							!Object.hasOwn(SDK_FIELDS, key) && key !== "environment" && key !== "app_version"
 					)
 				),
 			])
@@ -638,6 +727,52 @@ describe("portal events", () => {
 })
 
 describe("consent withdrawn while the SDK loads", () => {
+	it("captures no error raised under errors consent once it is withdrawn", async () => {
+		const { acceptAll, setConsent, startAnalytics, captureError } = await loadDomain()
+		acceptAll()
+		startAnalytics()
+		captureError(new Error("raised while loading"))
+		setConsent({ analytics: true, errors: false })
+		await clientReady()
+		await flush()
+
+		expect(sdk.unscrubbed).toEqual([])
+		expect(sentEvents()).toEqual([])
+	})
+
+	it("sends an error captured again after consent returns while the SDK still loads", async () => {
+		const { acceptAll, rejectAll, startAnalytics, captureError } = await loadDomain()
+		const error = new Error("raised while loading")
+		acceptAll()
+		startAnalytics()
+		captureError(error)
+		rejectAll()
+		acceptAll()
+		captureError(error, "error_boundary")
+		await clientReady()
+		await flush()
+
+		expect(sentEvents().map(({ properties }) => properties["mechanism"])).toEqual([
+			"error_boundary",
+		])
+	})
+
+	it("sends an error dropped by a withdrawal when it is captured again after consent returns", async () => {
+		const { acceptAll, setConsent, startAnalytics, captureError } = await loadDomain()
+		const error = new Error("raised while loading")
+		acceptAll()
+		startAnalytics()
+		captureError(error)
+		setConsent({ analytics: true, errors: false })
+		await clientReady()
+		await flush()
+		acceptAll()
+		captureError(error)
+		await flush()
+
+		expect(sentEventNames()).toEqual(["$exception"])
+	})
+
 	it("captures no event tracked under analytics consent once it is withdrawn", async () => {
 		const { acceptAll, rejectAll, startAnalytics, track } = await loadDomain()
 		acceptAll()
@@ -665,6 +800,343 @@ describe("consent withdrawn while the SDK loads", () => {
 	})
 })
 
+const ORIGIN = location.origin
+const IPV4 = "192.168.1.42"
+const IPV6 = "2001:db8:85a3::8a2e:370:7334"
+const EMAIL = "bob.smith+portal@example.co.uk"
+const EVM = "0x9858EfFD232B4033E47d90003D41EC34EcaEda94"
+const BARE_EVM = "d8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+const TX_HASH = `0x${"ab12".repeat(16)}`
+
+const THROWN_TEXT = [
+	"Stake from Alice to Secret Pool failed",
+	`signer ${SS58} evm ${EVM} bare ${BARE_EVM}`,
+	`tx ${TX_HASH} for pool ${DAVE}`,
+	`RPC ${IPV4}:30333 and [${IPV6}] for ${EMAIL}`,
+	`GET https://${IPV4}/portfolio?lookup-address=${SS58} failed`,
+	"Guardians Bob rejected the request",
+	"kumquat",
+]
+
+const MESSAGE = THROWN_TEXT.join("\n")
+
+const NOT_SENT = [
+	"Alice",
+	"Secret Pool",
+	"Guardians Bob",
+	"kumquat",
+	"Stake from",
+	"rejected the request",
+	SS58,
+	EVM,
+	BARE_EVM,
+	TX_HASH,
+	DAVE,
+	IPV4,
+	IPV6,
+	EMAIL,
+	"my pool",
+	"evil.example",
+	"$exception_message",
+	"AliceStash",
+	"MySecretPool",
+	"Guardian",
+	"PoolError",
+]
+
+class PoolError extends Error {
+	override name = "PoolError"
+}
+
+const withStack = (error: Error, stack: string) => Object.assign(error, { stack })
+
+const STACK_WITH_TEXT = [
+	`Error: ${MESSAGE}`,
+	`    at Alice.stake (https://evil.example/assets/${SS58}.js:1:2)`,
+	`    at my pool (${ORIGIN}/assets/index-Ab12Cd34.js:3:4)`,
+	`    at ${EMAIL} (https://${IPV4}/assets/x.js:5:6)`,
+	`    at send (${ORIGIN}/portfolio?lookup-address=${SS58}:7:8)`,
+	`    at submit (${ORIGIN}/assets/index-Ab12Cd34.js:9:10)`,
+	`    at MySecretPool (${ORIGIN}/assets/index-Ab12Cd34.js:11:12)`,
+].join("\n")
+
+const THROWN: [string, unknown][] = [
+	["an Error", new Error(MESSAGE)],
+	["an error named with free text", Object.assign(new Error(MESSAGE), { name: "Secret Pool" })],
+	["an error named with an email", Object.assign(new Error(MESSAGE), { name: EMAIL })],
+	["an error named with an address", Object.assign(new Error(MESSAGE), { name: `E${BARE_EVM}` })],
+	["a custom error class", new PoolError(MESSAGE)],
+	["a chained cause", new Error(MESSAGE, { cause: new TypeError(MESSAGE, { cause: MESSAGE }) })],
+	["a plain object", { name: "Secret Pool", message: MESSAGE }],
+	["a string", MESSAGE],
+	["a stack whose frames hold text", withStack(new Error(MESSAGE), STACK_WITH_TEXT)],
+	["an aggregate", new AggregateError([new Error(MESSAGE)], MESSAGE)],
+	["an error named like a class", Object.assign(new Error(MESSAGE), { name: "MySecretPool" })],
+	[
+		"a forged own-origin stack line in the message",
+		new Error(`x\n    at MySecretPool (${ORIGIN}/assets/AliceStash.js:1:1)`),
+	],
+	[
+		"a forged stack line with a hash-shaped script name",
+		new Error(`x\n    at MySecretPool (${ORIGIN}/assets/AliceStash-Ab12Cd34.js:1:1)`),
+	],
+	[
+		"a forged stack line with a dotted hash-shaped script name",
+		new Error(`x\n    at send (${ORIGIN}/assets/kumquat.Guardians-abcdefgh.js:1:1)`),
+	],
+	[
+		"a forged stack line with a name of eight letters as the hash",
+		new Error(`x\n    at send (${ORIGIN}/assets/Alice-Guardian.js:1:1)`),
+	],
+	[
+		"a forged stack line naming a loaded script",
+		new Error(`x\n    at MySecretPool (${ORIGIN}/assets/index-Ab12Cd34.js:1:1)`),
+	],
+	[
+		"a forged stack naming an address as the script",
+		withStack(new Error("x"), `Error: x\n    at send (${ORIGIN}/assets/${SS58}.js:1:1)`),
+	],
+]
+
+type SentException = {
+	type: string
+	value: string
+	mechanism: { type: string; handled: boolean }
+	stacktrace?: { frames: Record<string, unknown>[] }
+}
+
+const sentExceptions = () =>
+	sentEvents().flatMap(({ properties }) => properties["$exception_list"] as SentException[])
+
+const startWithErrorsConsent = async () => {
+	const domain = await loadDomain()
+	domain.setConsent({ analytics: false, errors: true })
+	domain.startAnalytics()
+	return domain
+}
+
+describe("error reporting", () => {
+	it.each(THROWN)(
+		"sends no text of %s, only its category, class and code positions",
+		async (_, thrown) => {
+			const { captureError } = await startWithErrorsConsent()
+			captureError(thrown)
+			await clientReady()
+			await flush()
+
+			expect(sentEventNames()).toEqual(["$exception"])
+			const body = JSON.stringify(requests)
+			for (const text of NOT_SENT) expect(body).not.toContain(text)
+			const [root, ...causes] = sentExceptions()
+			expect(root?.value).toBe("unknown")
+			for (const cause of causes) expect(cause.value).toBe("")
+		}
+	)
+
+	it("sends the category, class and mechanism as top-level properties", async () => {
+		const { captureError } = await startWithErrorsConsent()
+		captureError(new TypeError("Failed to fetch"))
+		await clientReady()
+		await flush()
+
+		const [event] = sentEvents()
+		expect(event?.properties).toMatchObject({
+			exception_type: "TypeError",
+			error_category: "network",
+			mechanism: "caught",
+			handled: true,
+			environment: "development",
+			app_version: APP_COMMIT,
+		})
+		expect(sentExceptions().map(({ type, value }) => [type, value])).toEqual([
+			["TypeError", "network"],
+		])
+	})
+
+	it("keeps only the frames of scripts the page loaded, without function names", async () => {
+		const { captureError } = await startWithErrorsConsent()
+		captureError(withStack(new Error(MESSAGE), STACK_WITH_TEXT))
+		await clientReady()
+		await flush()
+
+		const frames = sentExceptions().flatMap(({ stacktrace }) => stacktrace?.frames ?? [])
+		const frame = (lineno: number, colno: number) => ({
+			platform: "web:javascript",
+			filename: LOADED_SCRIPT,
+			function: "?",
+			lineno,
+			colno,
+			in_app: true,
+		})
+		expect(frames).toHaveLength(3)
+		expect(frames).toEqual(expect.arrayContaining([frame(3, 4), frame(9, 10), frame(11, 12)]))
+	})
+
+	it.each([
+		["reported before start, from the resource buffer", "buffer"],
+		["loaded after start, as the observer reports it", "load"],
+	] as const)("keeps the frame of a chunk %s", async (_, when) => {
+		const chunk = `${ORIGIN}/assets/late-Zz99Yy88.js`
+		if (when === "buffer") resources.buffer(served(chunk))
+		const { captureError } = await startWithErrorsConsent()
+		if (when === "load") resources.load(served(chunk))
+		captureError(withStack(new Error("x"), `Error: x\n    at send (${chunk}:5:6)`))
+		await clientReady()
+		await flush()
+
+		expect(sentExceptions()[0]?.stacktrace?.frames).toEqual([
+			{
+				platform: "web:javascript",
+				filename: chunk,
+				function: "?",
+				lineno: 5,
+				colno: 6,
+				in_app: true,
+			},
+		])
+	})
+
+	it.each([
+		["the server refused", { name: FORGED_ASSET, responseStatus: 404 }],
+		["whose status the browser did not expose", { name: FORGED_ASSET, responseStatus: 0 }],
+		["with no status", { name: FORGED_ASSET }],
+	])(
+		"keeps no frame of a script %s, even one the page fetched",
+		async (_, entry: ResourceEntry) => {
+			resources.buffer(entry)
+			const { captureError } = await startWithErrorsConsent()
+			resources.load(entry)
+			captureError(withStack(new Error("x"), `Error: x\n    at MySecretPool (${FORGED_ASSET}:1:1)`))
+			await clientReady()
+			await flush()
+
+			expect(sentExceptions()[0]?.stacktrace?.frames ?? []).toEqual([])
+			const body = JSON.stringify(requests)
+			for (const text of ["AliceStash", "Ab12Cd34", "MySecretPool"])
+				expect(body).not.toContain(text)
+		}
+	)
+
+	it.each([
+		["uncaught", "error", "uncaught", false],
+		["unhandled_rejection", "unhandledrejection", "unhandled_rejection", false],
+	] as const)("reports a %s error with its mechanism", async (_, type, mechanism, handled) => {
+		await startWithErrorsConsent()
+		await clientReady()
+		const error = new Error(MESSAGE)
+		window.dispatchEvent(
+			type === "error"
+				? new ErrorEvent("error", { error, message: MESSAGE, filename: LOADED_SCRIPT })
+				: Object.assign(new Event("unhandledrejection"), { reason: error })
+		)
+		await flush()
+
+		expect(sentEvents()[0]?.properties).toMatchObject({ mechanism, handled })
+		expect(sentExceptions()[0]?.mechanism).toMatchObject({ type: mechanism, handled })
+		expect(JSON.stringify(requests)).not.toContain("kumquat")
+	})
+
+	it("reports nothing uncaught before consent", async () => {
+		const { startAnalytics } = await loadDomain()
+		startAnalytics()
+		window.dispatchEvent(
+			new ErrorEvent("error", { error: new Error("boom"), filename: LOADED_SCRIPT })
+		)
+		window.dispatchEvent(
+			Object.assign(new Event("unhandledrejection"), { reason: new Error("boom") })
+		)
+		await flush()
+
+		expectNothingSentOrStored()
+		expect(sdk.imports).toBe(0)
+	})
+
+	it.each([
+		["an extension's page script", "chrome-extension://abcdefghijklmnop/inpage.js"],
+		["another origin", "https://example.com/assets/index-Ab12Cd34.js"],
+		["a script whose error the browser muted", ""],
+	])("reports nothing uncaught from %s", async (_, filename) => {
+		await startWithErrorsConsent()
+		await clientReady()
+		window.dispatchEvent(new ErrorEvent("error", { error: new Error("boom"), filename }))
+		await flush()
+
+		expect(sentEventNames()).toEqual([])
+	})
+
+	it.each([
+		[
+			"a harmless error",
+			async () => {
+				const { HarmlessError } = await import("@/domains/common/errors")
+				return new HarmlessError("Please ignore this message")
+			},
+		],
+		[
+			"an RPC socket closed normally",
+			async () => new Error("disconnected from wss://rpc.polkadot.io: 1000:: Normal Closure"),
+		],
+		[
+			"an RPC unsubscription",
+			async () => new Error("unsubscribed from wss://rpc.polkadot.io: 1006:: Abnormal Closure"),
+		],
+		[
+			"an extension that is gone",
+			async () => new Error("Could not establish connection. Receiving end does not exist."),
+		],
+	])("reports nothing for %s, wherever it is raised", async (_, raise) => {
+		const { captureError } = await startWithErrorsConsent()
+		await clientReady()
+		const error = await raise()
+		captureError(error)
+		captureError(error, "error_boundary")
+		window.dispatchEvent(new ErrorEvent("error", { error, filename: LOADED_SCRIPT }))
+		window.dispatchEvent(Object.assign(new Event("unhandledrejection"), { reason: error }))
+		await flush()
+
+		expect(sdk.unscrubbed).toEqual([])
+		expect(requests).toEqual([])
+	})
+
+	it("reports an error once when its caller reports it and rethrows it", async () => {
+		const { captureError } = await startWithErrorsConsent()
+		await clientReady()
+		const error = new TypeError("Failed to fetch")
+		captureError(error)
+		captureError(error, "error_boundary")
+		window.dispatchEvent(Object.assign(new Event("unhandledrejection"), { reason: error }))
+		await flush()
+
+		expect(sentEvents().map(({ properties }) => properties["mechanism"])).toEqual(["caught"])
+	})
+
+	it("keeps an error reported once its report is sent, when it is rethrown later", async () => {
+		const { captureError } = await startWithErrorsConsent()
+		await clientReady()
+		const error = new TypeError("Failed to fetch")
+		captureError(error)
+		await flush()
+		captureError(error, "error_boundary")
+		await flush()
+
+		expect(sentEvents().map(({ properties }) => properties["mechanism"])).toEqual(["caught"])
+	})
+
+	it("sends the same error at most three times per window, and at most thirty errors", async () => {
+		const { captureError } = await startWithErrorsConsent()
+		for (let i = 0; i < 5; i++) captureError(new Error("same"))
+		for (let i = 0; i < 40; i++) captureError(new Error(`distinct ${i}`))
+		await clientReady()
+		await flush()
+
+		expect(sentEventNames()).toHaveLength(30)
+		await vi.advanceTimersByTimeAsync(10 * 60_000)
+		captureError(new Error("same"))
+		await flush()
+		expect(sentEventNames()).toHaveLength(31)
+	})
+})
+
 const sdkOwnKeys = (event: string, properties: Record<string, unknown>) =>
 	Object.keys(properties).filter(
 		(key) => !Object.hasOwn(SDK_FIELDS, key) && !(event === "$pageview" && key === "route")
@@ -672,11 +1144,12 @@ const sdkOwnKeys = (event: string, properties: Record<string, unknown>) =>
 
 describe("the SDK field table", () => {
 	it("lists every field the SDK fills in, so a new one is a decision rather than a silent drop", async () => {
-		const { acceptAll, startAnalytics, trackPageview } = await loadDomain()
+		const { acceptAll, startAnalytics, trackPageview, captureError } = await loadDomain()
 		acceptAll()
 		startAnalytics()
 		trackPageview("/staking/providers")
 		trackPageview("/staking/positions")
+		captureError(new Error("outer", { cause: new TypeError("inner") }))
 		await clientReady()
 		await flush()
 
@@ -685,12 +1158,13 @@ describe("the SDK field table", () => {
 		).toEqual([
 			["$pageview", []],
 			["$pageview", []],
+			["$exception", ["$exception_list", "$exception_level", "error_category", "mechanism"]],
 		])
 	})
 })
 
 describe("the before_send consent gate", () => {
-	it("drops a catalog event without analytics consent and an event outside the catalog with it", async () => {
+	it("keeps a pageview under analytics consent and drops it after a reject", async () => {
 		const { acceptAll, rejectAll, startAnalytics } = await loadDomain()
 		acceptAll()
 		startAnalytics()
@@ -701,9 +1175,27 @@ describe("the before_send consent gate", () => {
 			({ uuid: "uuid", event: name, properties: {} }) as Parameters<typeof beforeSend>[0]
 
 		expect(beforeSend(event("$pageview"))?.event).toBe("$pageview")
-		expect(beforeSend(event("$exception"))).toBeNull()
+		expect(beforeSend(event("custom"))).toBeNull()
 		rejectAll()
 		expect(beforeSend(event("$pageview"))).toBeNull()
+	})
+
+	it("drops a pageview and keeps an exception under errors-only consent", async () => {
+		const { setConsent, startAnalytics } = await loadDomain()
+		setConsent({ analytics: false, errors: true })
+		startAnalytics()
+		await clientReady()
+		const beforeSend = sdk.instance?.config.before_send
+		if (typeof beforeSend !== "function") throw new Error("before_send is not set")
+		const event = (name: string) =>
+			({
+				uuid: "uuid",
+				event: name,
+				properties: { $exception_list: [{ type: "Error", value: "boom" }] },
+			}) as Parameters<typeof beforeSend>[0]
+
+		expect(beforeSend(event("$pageview"))).toBeNull()
+		expect(beforeSend(event("$exception"))?.event).toBe("$exception")
 	})
 })
 
@@ -713,10 +1205,11 @@ describe("an SDK without its retry queue", () => {
 	it("never runs, so nothing is captured or sent", async () => {
 		sdk.withoutRetryQueue = true
 		const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined)
-		const { acceptAll, startAnalytics, trackPageview } = await loadDomain()
+		const { acceptAll, startAnalytics, trackPageview, captureError } = await loadDomain()
 		acceptAll()
 		startAnalytics()
 		trackPageview("/staking/providers")
+		captureError(new Error("boom"))
 		await clientReady()
 		await flush(60_000)
 		unloadPage()
@@ -776,6 +1269,18 @@ describe("withdrawing analytics consent with events still queued", () => {
 		await flush(0)
 
 		expect(sentEvents()).toEqual([])
+	})
+
+	it("forwards a queued exception that errors-only consent still allows", async () => {
+		const domain = await loadDomain()
+		await captureQueuedEvents(domain)
+		domain.captureError(new Error("boom"))
+		await flush(0)
+
+		domain.setConsent({ analytics: false, errors: true })
+		await flush()
+
+		expect(sentEventNames()).toEqual(["$exception"])
 	})
 
 	it.each(WITHDRAWALS)("drops failed events retried after %s", async (_, withdraw) => {
