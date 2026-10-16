@@ -21,7 +21,8 @@ export const withRootHeader = (headers: string, name: string, value: string) => 
 
 	const [rootBlock = "", ...otherBlocks] = headers.split("\n\n")
 	if (!rootBlock.startsWith("/*\n")) throw new Error("_headers does not start with the /* block")
-	if (headerRules(rootBlock).get("/*")?.has(name))
+	const rootNames = [...(headerRules(rootBlock).get("/*")?.keys() ?? [])]
+	if (rootNames.some((rootName) => rootName.toLowerCase() === name.toLowerCase()))
 		throw new Error(`The /* block of _headers already sets ${name}`)
 	return [`${rootBlock}\n${line}`, ...otherBlocks].join("\n\n")
 }

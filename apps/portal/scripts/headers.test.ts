@@ -72,6 +72,9 @@ describe("withFrameAncestors", () => {
 		expect(() => withFrameAncestors(workerHeaders)).toThrow(
 			"The /* block of _headers already sets Content-Security-Policy"
 		)
+		expect(() => withFrameAncestors("/*\n  content-security-policy: default-src 'self'")).toThrow(
+			"The /* block of _headers already sets Content-Security-Policy"
+		)
 	})
 })
 

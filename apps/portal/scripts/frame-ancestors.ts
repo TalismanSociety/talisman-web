@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from "node:fs"
 import { fileURLToPath } from "node:url"
 import { withRootHeader } from "./headers-file.ts"
 
-export const frameAncestors =
+const frameAncestors =
 	"frame-ancestors 'self' https://signet.talisman.xyz https://*.talismn.workers.dev"
 
 export const withFrameAncestors = (headers: string) =>
