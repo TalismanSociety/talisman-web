@@ -128,7 +128,7 @@ export type EraRewardSpan = {
 	last_era: number
 }
 
-type PeriodEndInfo = { bonus_reward_pool: bigint; total_vp_stake: bigint; final_era: number }
+export type PeriodEndInfo = { bonus_reward_pool: bigint; total_vp_stake: bigint; final_era: number }
 
 export type EraInfo = {
 	total_locked: bigint
@@ -244,6 +244,7 @@ type Calls = {
 		withdraw_unbonded: TxDescriptor<undefined>
 		cleanup_expired_entries: TxDescriptor<undefined>
 		claim_staker_rewards: TxDescriptor<undefined>
+		claim_bonus_reward: TxDescriptor<{ smart_contract: SmartContract }>
 	}
 	Utility: { batch_all: TxDescriptor<{ calls: TxCallData[] }> }
 }

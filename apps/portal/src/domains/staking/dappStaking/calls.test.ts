@@ -56,7 +56,11 @@ const CONTRACTS: SmartContract[] = [
 ]
 const AMOUNTS = [0n, 1n, 500n * 10n ** 18n, 123_456_789_012_345_678_901n, 2n ** 128n - 1n]
 const LOCKED_AVAILABLE = [0n, 1n, 500n * 10n ** 18n, 2n ** 128n - 1n]
-const CLAIMS: RewardClaims[] = [
+type MainClaims = Omit<RewardClaims, "bonusRewards">
+
+const withoutBonus = <T extends MainClaims>(claims: T) => ({ ...claims, bonusRewards: [] })
+
+const CLAIMS: MainClaims[] = [
 	{ stakerRewards: 0n, claimableSpanCount: 0 },
 	{ stakerRewards: 0n, claimableSpanCount: 3 },
 	{ stakerRewards: 7n, claimableSpanCount: 0 },
@@ -65,7 +69,7 @@ const CLAIMS: RewardClaims[] = [
 	{ stakerRewards: 1n, claimableSpanCount: 16 },
 ]
 
-const addStakes: AddStake[] = CONTRACTS.flatMap((contract) =>
+const addStakes: Array<Omit<AddStake, "bonusRewards">> = CONTRACTS.flatMap((contract) =>
 	AMOUNTS.flatMap((amount) =>
 		LOCKED_AVAILABLE.flatMap((lockedAvailableForStake) =>
 			CLAIMS.flatMap((claims) =>
@@ -94,6 +98,7 @@ describe("dApp staking calls", () => {
 			cleanup: false,
 			stakerRewards: 0n,
 			claimableSpanCount: 0,
+			bonusRewards: [],
 		}
 		expect(papiHex(addStakeTx(recordingTx, stake))).toBe(
 			"0x220b01a39cb3cdc4259f886d407d1b4ab792a7df13d510079dad926758eff96a4043f617000050efe2d6e41a1b"
@@ -117,30 +122,105 @@ describe("dApp staking calls", () => {
 			({ stakerRewards, claimableSpanCount }) => stakerRewards > 0n && claimableSpanCount > 0
 		)
 	)("claims all rewards like main: %o", (claims) => {
-		expect(papiHex(claimAllRewardsTx(recordingTx, claims))).toBe(pjsHex("claimAll", claims))
+		expect(papiHex(claimAllRewardsTx(recordingTx, withoutBonus(claims)))).toBe(
+			pjsHex("claimAll", claims)
+		)
 	})
 
 	it("batches two claims and keeps one claim bare", () => {
 		expect(
-			papiHex(claimAllRewardsTx(recordingTx, { stakerRewards: 5n, claimableSpanCount: 2 }))
+			papiHex(
+				claimAllRewardsTx(recordingTx, withoutBonus({ stakerRewards: 5n, claimableSpanCount: 2 }))
+			)
 		).toBe("0x0b0208220d220d")
 		expect(
-			papiHex(claimAllRewardsTx(recordingTx, { stakerRewards: 5n, claimableSpanCount: 1 }))
+			papiHex(
+				claimAllRewardsTx(recordingTx, withoutBonus({ stakerRewards: 5n, claimableSpanCount: 1 }))
+			)
 		).toBe("0x220d")
 	})
 
 	it.each(addStakes)("adds stake like main: %o", (stake) => {
-		expect(papiHex(addStakeTx(recordingTx, stake))).toBe(pjsHex("addStake", stake))
+		expect(papiHex(addStakeTx(recordingTx, withoutBonus(stake)))).toBe(pjsHex("addStake", stake))
 	})
 
 	it.each(addStakes.filter(({ cleanup }) => !cleanup))(
 		"builds the fee estimate of the maximum stake like main: %o",
 		(stake) => {
-			expect(papiHex(maxStakeTx(recordingTx, stake))).toBe(pjsHex("maxStake", stake))
+			expect(papiHex(maxStakeTx(recordingTx, withoutBonus(stake)))).toBe(pjsHex("maxStake", stake))
 		}
 	)
 
 	it.each(unstakes)("unstakes like main: %o", (unstake) => {
-		expect(papiHex(unstakeTx(recordingTx, unstake))).toBe(pjsHex("unstake", unstake))
+		expect(papiHex(unstakeTx(recordingTx, withoutBonus(unstake)))).toBe(pjsHex("unstake", unstake))
+	})
+
+	describe("bonus rewards", () => {
+		const TALISMAN = CONTRACTS[0]!
+		const EVM_DAPP = CONTRACTS[1]!
+		const CLAIM_TALISMAN_BONUS =
+			"220e01a39cb3cdc4259f886d407d1b4ab792a7df13d510079dad926758eff96a4043f6"
+		const CLAIM_EVM_BONUS = "220e00e0713a1d29fdaa2dec57179378e1002466cf4208"
+		const CLAIM_STAKER_REWARDS = "220d"
+		const bonus = { bonusRewards: [{ contract: TALISMAN }, { contract: EVM_DAPP }] }
+
+		it("claims a lone bonus as a bare call for Wasm and Evm dApps", () => {
+			for (const [contract, call] of [
+				[TALISMAN, CLAIM_TALISMAN_BONUS],
+				[EVM_DAPP, CLAIM_EVM_BONUS],
+			] as const) {
+				expect(
+					papiHex(
+						claimAllRewardsTx(recordingTx, {
+							stakerRewards: 0n,
+							claimableSpanCount: 3,
+							bonusRewards: [{ contract }],
+						})
+					)
+				).toBe(`0x${call}`)
+			}
+		})
+
+		it("claims staker rewards before every dApp bonus in one batch", () => {
+			expect(
+				papiHex(
+					claimAllRewardsTx(recordingTx, { stakerRewards: 5n, claimableSpanCount: 2, ...bonus })
+				)
+			).toBe(
+				`0x0b0210${CLAIM_STAKER_REWARDS}${CLAIM_STAKER_REWARDS}${CLAIM_TALISMAN_BONUS}${CLAIM_EVM_BONUS}`
+			)
+		})
+
+		it("claims bonuses before locking and staking", () => {
+			const stake: AddStake = {
+				contract: TALISMAN,
+				amount: 500n * 10n ** 18n,
+				lockedAvailableForStake: 0n,
+				cleanup: false,
+				stakerRewards: 5n,
+				claimableSpanCount: 1,
+				...bonus,
+			}
+			const lockAndStake = papiHex(addStakeTx(recordingTx, { ...stake, bonusRewards: [] }))
+			expect(lockAndStake?.startsWith(`0x0b020c${CLAIM_STAKER_REWARDS}`)).toBe(true)
+			expect(papiHex(addStakeTx(recordingTx, stake))).toBe(
+				`0x0b0214${CLAIM_STAKER_REWARDS}${CLAIM_TALISMAN_BONUS}${CLAIM_EVM_BONUS}${lockAndStake?.slice(12)}`
+			)
+			expect(papiHex(maxStakeTx(recordingTx, stake))).toBe(papiHex(addStakeTx(recordingTx, stake)))
+		})
+
+		it("claims bonuses before unstaking", () => {
+			const unstake = {
+				contract: TALISMAN,
+				amount: 500n * 10n ** 18n,
+				stakerRewards: 0n,
+				claimableSpanCount: 0,
+			}
+			const plain = papiHex(unstakeTx(recordingTx, withoutBonus(unstake)))
+			expect(plain?.startsWith("0x0b0208")).toBe(true)
+			expect(papiHex(unstakeTx(recordingTx, { ...unstake, ...bonus }))).toBe(
+				`0x0b0210${CLAIM_TALISMAN_BONUS}${CLAIM_EVM_BONUS}${plain?.slice(8)}`
+			)
+		})
 	})
 })
