@@ -66,7 +66,7 @@ const decorateText = <T extends object>(
 				<BaseText
 					as="a"
 					alpha="high"
-					{...props}
+					{...(props as TextProps<React.ElementType>)}
 					css={[
 						typographyClass === undefined
 							? {}
@@ -84,7 +84,7 @@ const decorateText = <T extends object>(
 				<BaseText
 					as="del"
 					alpha="disabled"
-					{...props}
+					{...(props as TextProps<React.ElementType>)}
 					css={[
 						typographyClass === undefined || typographyClass === "noop"
 							? {}
@@ -106,30 +106,56 @@ const decorateText = <T extends object>(
 
 export const Text = Object.assign(BaseText, {
 	H1: decorateText("h1", <T extends React.ElementType = "h1">(props: TextProps<T>) => (
-		<BaseText as="h1" alpha="high" {...props} css={useTheme().typography.h1} />
+		<BaseText
+			as="h1"
+			alpha="high"
+			{...(props as TextProps<React.ElementType>)}
+			css={useTheme().typography.h1}
+		/>
 	)),
 	H2: decorateText("h2", <T extends React.ElementType = "h2">(props: TextProps<T>) => (
-		<BaseText as="h2" alpha="high" {...props} css={useTheme().typography.h2} />
+		<BaseText
+			as="h2"
+			alpha="high"
+			{...(props as TextProps<React.ElementType>)}
+			css={useTheme().typography.h2}
+		/>
 	)),
 	H3: decorateText("h3", <T extends React.ElementType = "h3">(props: TextProps<T>) => (
-		<BaseText as="h3" alpha="high" {...props} css={useTheme().typography.h3} />
+		<BaseText
+			as="h3"
+			alpha="high"
+			{...(props as TextProps<React.ElementType>)}
+			css={useTheme().typography.h3}
+		/>
 	)),
 	H4: decorateText("h4", <T extends React.ElementType = "h4">(props: TextProps<T>) => (
-		<BaseText as="h4" alpha="high" {...props} css={useTheme().typography.h4} />
+		<BaseText
+			as="h4"
+			alpha="high"
+			{...(props as TextProps<React.ElementType>)}
+			css={useTheme().typography.h4}
+		/>
 	)),
 	BodyLarge: decorateText(
 		"bodyLarge",
 		<T extends React.ElementType = "span">(props: TextProps<T>) => (
-			<BaseText {...props} css={useTheme().typography.bodyLarge} />
+			<BaseText
+				{...(props as TextProps<React.ElementType>)}
+				css={useTheme().typography.bodyLarge}
+			/>
 		)
 	),
 	Body: decorateText("body", <T extends React.ElementType = "span">(props: TextProps<T>) => (
-		<BaseText {...props} css={useTheme().typography.body} />
+		<BaseText {...(props as TextProps<React.ElementType>)} css={useTheme().typography.body} />
 	)),
 	BodySmall: decorateText(
 		"bodySmall",
 		<T extends React.ElementType = "span">(props: TextProps<T>) => (
-			<BaseText {...props} css={useTheme().typography.bodySmall} />
+			<BaseText
+				{...(props as TextProps<React.ElementType>)}
+				css={useTheme().typography.bodySmall}
+			/>
 		)
 	),
 	Noop: decorateText("noop", NoopText),

@@ -24,7 +24,7 @@ export const SiteNavItem = ({
 	target,
 	...destination
 }: Destination & {
-	icon: ReactElement
+	icon: ReactElement<{ className?: string }>
 	label: ReactNode
 	onClick?: MouseEventHandler<HTMLAnchorElement>
 	target?: HTMLAttributeAnchorTarget
