@@ -1,11 +1,10 @@
 import { useEffect, useMemo } from "react"
-import { useRecoilValue, useRecoilValueLoadable } from "recoil"
 import { useWaitForTransactionReceipt } from "wagmi"
 import { mainnet } from "wagmi/chains"
 
 import type { Account } from "@/domains/accounts/accounts"
-import { selectedCurrencyState } from "@/domains/balances/currency"
-import { tokenPriceState } from "@/domains/chains/recoils"
+import { useSelectedCurrency } from "@/domains/balances/currency"
+import { useTokenPriceLoadable } from "@/domains/chains/chains"
 import { useWagmiWriteContract } from "@/domains/common/hooks/useWagmiWriteContract"
 import {
 	CHAIN_ID,
@@ -16,6 +15,7 @@ import {
 } from "@/domains/staking/seek/constants"
 import seekSinglePoolStakingAbi from "@/domains/staking/seek/seekSinglePoolStakingAbi"
 import { Decimal } from "@/util/Decimal"
+import { loadableData } from "@/util/loadable"
 
 import useGetSeekPoolAccountInfo from "./useGetSeekPoolAccountInfo"
 import useGetSeekStaked from "./useGetSeekStaked"
@@ -37,11 +37,8 @@ const useRequestWithdrawalSeek = ({
 	const { refetch: refetchSeekStaked } = useGetSeekStaked()
 	const { data, isFetched, refetch } = useGetSeekPoolAccountInfo({ account })
 	const [staked] = data || [0n, 0n, 0n, 0n]
-	const currency = useRecoilValue(selectedCurrencyState)
-	const tokenPriceLoadable = useRecoilValueLoadable(
-		tokenPriceState({ coingeckoId: SEEK_COIN_GECKO_ID })
-	)
-	const tokenPrice = tokenPriceLoadable.valueMaybe()
+	const currency = useSelectedCurrency()
+	const tokenPrice = loadableData(useTokenPriceLoadable(SEEK_COIN_GECKO_ID))
 
 	const stakedBalance = useMemo(() => {
 		const availableBalance = Decimal.fromPlanck(staked, DECIMALS ?? 0, { currency: SEEK_TICKER })

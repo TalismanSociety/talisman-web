@@ -1,11 +1,16 @@
 import { bind } from "@react-rxjs/core"
 import { isEqual } from "lodash"
-import { useRecoilValue, useRecoilValueLoadable, waitForAny } from "recoil"
 import { catchError, combineLatest, distinctUntilChanged, map, of, switchMap } from "rxjs"
 
 import { selectedSubstrateAccounts$ } from "@/domains/accounts/accounts"
+import {
+	genesisHashesKey,
+	type NativeTokenAmount,
+	useDappStakingEnabledChains,
+	useNativeTokenAmountLoadables,
+} from "@/domains/chains/chains"
 import { chainConfigs } from "@/domains/chains/config"
-import { dappStakingEnabledChainsState, nativeTokenAmountState } from "@/domains/chains/recoils"
+import { type Loadable, loadableData } from "@/util/loadable"
 
 import { ledgers$, protocolState$ } from "../chain"
 import { stakeInPeriod } from "../stake"
@@ -40,22 +45,25 @@ const [useStakedPerAccountByChain] = bind(
 	undefined
 )
 
+const amountAt = (amounts: Loadable<NativeTokenAmount>[], index: number) => {
+	const amount = amounts[index]
+	return amount === undefined ? undefined : loadableData(amount)
+}
+
 export const useTotalStaked = () => {
-	const chains = useRecoilValue(dappStakingEnabledChainsState)
-	const nativeTokenAmounts = useRecoilValueLoadable(
-		waitForAny(chains.map((chain) => nativeTokenAmountState(chain.genesisHash)))
+	const chains = useDappStakingEnabledChains()
+	const nativeTokenAmounts = useNativeTokenAmountLoadables(
+		genesisHashesKey(chains.map((chain) => chain.genesisHash))
 	)
 	const stakedByChain = useStakedPerAccountByChain()
 
-	if (nativeTokenAmounts.state !== "hasValue" || stakedByChain === undefined) return 0
+	if (stakedByChain === undefined) return 0
 
 	return chains
 		.map((chain, chainIndex) =>
 			(stakedByChain[chain.genesisHash] ?? [])
 				.map(
-					(staked) =>
-						nativeTokenAmounts.contents.at(chainIndex)?.valueMaybe()?.fromPlanck(staked)
-							.fiatAmount ?? 0
+					(staked) => amountAt(nativeTokenAmounts, chainIndex)?.fromPlanck(staked).fiatAmount ?? 0
 				)
 				.reduce((prev, curr) => prev + curr, 0)
 		)

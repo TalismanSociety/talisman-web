@@ -1,13 +1,12 @@
 import { useMemo } from "react"
-import { useRecoilValue } from "recoil"
 
-import { selectedCurrencyState } from "@/domains/balances/currency"
+import { useSelectedCurrency } from "@/domains/balances/currency"
 import { useSelectedBalances } from "@/domains/balances/hooks"
 import { Decimal } from "@/util/Decimal"
 
 const useAvailableBalance = (symbol: string) => {
 	const balances = useSelectedBalances()
-	const currency = useRecoilValue(selectedCurrencyState)
+	const currency = useSelectedCurrency()
 	const nativeBalance = balances.find((x) => x.token?.symbol.toLowerCase() === symbol.toLowerCase())
 	return useMemo(
 		() => ({

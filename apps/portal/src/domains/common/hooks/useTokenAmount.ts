@@ -1,8 +1,6 @@
 import type BN from "bn.js"
 import { useMemo, useState } from "react"
-import { useRecoilValue, waitForAll } from "recoil"
-import { selectedCurrencyState } from "@/domains/balances/currency"
-import { useNativeTokenDecimalState, useNativeTokenPriceState } from "@/domains/chains/recoils"
+import { useNativeTokenAmountInputs } from "@/domains/chains/chains"
 import type { Decimal } from "@/util/Decimal"
 
 type Options<TAllowInvalid extends boolean = boolean> = {
@@ -24,9 +22,7 @@ export const useTokenAmount = <TAllowInvalid extends boolean = true>(
 			}
 		: { decimalAmount: Decimal; fiatAmount: number; localizedFiatAmount: string }
 
-	const [nativeTokenDecimal, nativeTokenPrice, selectedCurrency] = useRecoilValue(
-		waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState(), selectedCurrencyState])
-	)
+	const [nativeTokenDecimal, nativeTokenPrice, selectedCurrency] = useNativeTokenAmountInputs()
 
 	const currency = options.currency ?? selectedCurrency
 
@@ -85,9 +81,7 @@ export const useTokenAmountFromPlanck = <
 			? NullableReturn
 			: NonNullableReturn
 
-	const [nativeTokenDecimal, nativeTokenPrice, selectedCurrency] = useRecoilValue(
-		waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState(), selectedCurrencyState])
-	)
+	const [nativeTokenDecimal, nativeTokenPrice, selectedCurrency] = useNativeTokenAmountInputs()
 
 	const currency = options.currency ?? selectedCurrency
 

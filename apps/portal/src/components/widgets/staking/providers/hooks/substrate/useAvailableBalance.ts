@@ -1,13 +1,12 @@
 import type { SS58String } from "polkadot-api"
 import { useContext, useMemo } from "react"
-import { useRecoilValue } from "recoil"
 import { combineLatest, defer, map, of } from "rxjs"
 
 import { useSelectedSubstrateAccounts } from "@/domains/accounts/accounts"
+import { useNativeTokenDecimal } from "@/domains/chains/chains"
 import { ChainContext } from "@/domains/chains/contexts"
 import { getPapiClient } from "@/domains/chains/papi-client"
 import type { PortalRuntime } from "@/domains/chains/portal-runtime"
-import { useNativeTokenDecimalState } from "@/domains/chains/recoils"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import { bindSuspended } from "@/util/loadable"
 
@@ -36,7 +35,7 @@ const useAvailableBalance = () => {
 		() => accounts.map((x) => x.address).join(ADDRESS_SEPARATOR),
 		[accounts]
 	)
-	const decimal = useRecoilValue(useNativeTokenDecimalState())
+	const decimal = useNativeTokenDecimal()
 	const transferable = useTransferable(genesisHash, addresses)
 	const availableBalance = useMemo(() => decimal.fromPlanck(transferable), [decimal, transferable])
 

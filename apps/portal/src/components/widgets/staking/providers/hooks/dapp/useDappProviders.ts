@@ -1,11 +1,9 @@
-import { useRecoilValue } from "recoil"
-
-import { dappStakingEnabledChainsState } from "@/domains/chains/recoils"
+import { useDappStakingEnabledChains } from "@/domains/chains/chains"
 
 import type { Provider } from "../types"
 
 const useDappProviders = (): Provider[] => {
-	const chains = useRecoilValue(dappStakingEnabledChainsState)
+	const chains = useDappStakingEnabledChains()
 	const dappProviders: Provider[] = chains.map((chain) => {
 		return {
 			balancesTokenIds: [chain.nativeToken?.id ?? ""],

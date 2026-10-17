@@ -1,11 +1,10 @@
 import { Suspense, useState, useTransition } from "react"
-import { useRecoilValue } from "recoil"
 import { StakeDialog as StakeDialogComponent } from "@/components/recipes/StakeDialog"
 import { StakeForm } from "@/components/recipes/StakeForm"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
+import type { ChainInfo } from "@/domains/chains/chains"
+import { useNominationPoolsEnabledChains } from "@/domains/chains/chains"
 import { ChainProvider } from "@/domains/chains/provider"
-import type { ChainInfo } from "@/domains/chains/recoils"
-import { nominationPoolsEnabledChainsState } from "@/domains/chains/recoils"
 import { useApr } from "@/domains/staking/substrate/nominationPools/hooks"
 import { useEraEtaFormatter } from "@/domains/staking/substrate/nominationPools/hooks/useEraEta"
 import { useSearchParams } from "@/hooks/useSearchParams"
@@ -29,7 +28,7 @@ const InnerStakeDialog = () => {
 	const initialChain = searchParams.get("chain")
 	const account = searchParams.get("account") ?? undefined
 
-	const chains = useRecoilValue(nominationPoolsEnabledChainsState)
+	const chains = useNominationPoolsEnabledChains()
 	const [chain, setChain] = useState<ChainInfo | undefined>(
 		chains.find((x) => x.id === initialChain) ?? chains[0]
 	)

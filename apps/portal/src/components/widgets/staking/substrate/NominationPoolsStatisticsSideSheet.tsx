@@ -2,14 +2,12 @@ import { useTheme } from "@emotion/react"
 import { eachDayOfInterval, isSameDay, subDays } from "date-fns"
 import type { ReactNode } from "react"
 import { useMemo } from "react"
-import { useRecoilValue } from "recoil"
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryTooltip } from "victory"
 import { AccountIcon } from "@/components/molecules/AccountIcon"
 import type { StakeStatus } from "@/components/recipes/StakeStatusIndicator"
 import { RedactableBalance } from "@/components/widgets/RedactableBalance"
 import type { Account } from "@/domains/accounts/accounts"
-import { useChainState } from "@/domains/chains/hooks"
-import { useNativeTokenDecimalState } from "@/domains/chains/recoils"
+import { useChain, useNativeTokenDecimal } from "@/domains/chains/chains"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import {
 	type DerivedPool,
@@ -292,7 +290,7 @@ const Stats = (props: {
 
 // TODO: Extract to reuseable recipe component
 const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: DerivedPool }) => {
-	const chain = useRecoilValue(useChainState())
+	const chain = useChain()
 
 	const today = useMemo(() => new Date(), [])
 
@@ -300,7 +298,7 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
 
 	const stakedReturn = useApr()
 
-	const decimal = useRecoilValue(useNativeTokenDecimalState())
+	const decimal = useNativeTokenDecimal()
 	const poolId = props.pool.poolMember.pool_id
 	const fromDate = subDays(today, 15)
 	const last15DaysPayouts = usePoolPayouts(

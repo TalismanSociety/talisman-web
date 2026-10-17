@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from "react"
-import { useRecoilValue } from "recoil"
 
 import SeekLogo from "@/assets/seek.svg"
 import { StakePosition, StakePositionErrorBoundary } from "@/components/recipes/StakePosition"
@@ -7,7 +6,7 @@ import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { RedactableBalance } from "@/components/widgets/RedactableBalance"
 import { type Account, useWriteableEvmAccounts } from "@/domains/accounts/accounts"
-import { selectedCurrencyState } from "@/domains/balances/currency"
+import { useSelectedCurrency } from "@/domains/balances/currency"
 import { CHAIN_ID, CHAIN_NAME, SEEK_TICKER } from "@/domains/staking/seek/constants"
 import { Decimal } from "@/util/Decimal"
 
@@ -58,7 +57,7 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
 		isReady: isCompleteWithdrawalReady,
 	} = useCompleteWithdrawalSeek({ account })
 	const { cancelWithdrawal } = useCancelWithdrawalSeek({ account })
-	const currency = useRecoilValue(selectedCurrencyState)
+	const currency = useSelectedCurrency()
 	const { totalRewardsClaimedDecimal, totalRewardsClaimedFiat } = useGetSeekRewardsPaidByUser(
 		account.address
 	)

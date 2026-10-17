@@ -1,15 +1,13 @@
 import { useNavigate } from "@tanstack/react-router"
 import { formatDistance } from "date-fns"
 import { useState, useTransition } from "react"
-import { useRecoilValue, useRecoilValueLoadable } from "recoil"
 import { DappStakingLockedAmountDialog } from "@/components/recipes/DappStakingLockedAmountDialog"
 import { StakePosition, StakePositionErrorBoundary } from "@/components/recipes/StakePosition"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import type { Account } from "@/domains/accounts/accounts"
 import { useSelectedSubstrateAccounts } from "@/domains/accounts/accounts"
-import { useChainState } from "@/domains/chains/hooks"
+import { useChain, useDappStakingEnabledChainsLoadable } from "@/domains/chains/chains"
 import { ChainProvider } from "@/domains/chains/provider"
-import { dappStakingEnabledChainsState } from "@/domains/chains/recoils"
 import { useNativeTokenLocalizedFiatAmount } from "@/domains/common/hooks/useLocalizedFiatAmount"
 import { usePreloadRegisteredDapps } from "@/domains/staking/dappStaking/dapps"
 import { useStakeLoadable } from "@/domains/staking/dappStaking/hooks/useStake"
@@ -19,6 +17,7 @@ import {
 	useWithdrawUnbondedTx,
 } from "@/domains/staking/dappStaking/hooks/useStakeTxs"
 import { useTotalDappStakingRewards } from "@/domains/staking/dappStaking/hooks/useTotalRewards"
+import { loadableData } from "@/util/loadable"
 
 import useUnlockDuration from "../providers/hooks/dapp/useUnlockDuration"
 import AddStakeDialog from "./AddStakeDialog"
@@ -45,7 +44,7 @@ const Stake = ({
 
 	const navigate = useNavigate()
 
-	const chain = useRecoilValue(useChainState())
+	const chain = useChain()
 	const { data: stake, isLoading } = useStakeLoadable(account)
 
 	const claimAllRewardsExtrinsic = useClaimAllRewardsTx()
@@ -223,10 +222,9 @@ type StakesProps = {
 }
 
 const Stakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
-	const chainsLoadable = useRecoilValueLoadable(dappStakingEnabledChainsState)
+	const chains = loadableData(useDappStakingEnabledChainsLoadable())
 
 	const accounts = useSelectedSubstrateAccounts()
-	const chains = chainsLoadable.valueMaybe()
 
 	return (
 		<>

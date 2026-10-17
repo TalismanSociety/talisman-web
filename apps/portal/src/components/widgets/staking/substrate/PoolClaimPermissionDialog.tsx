@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { useRecoilValue } from "recoil"
 import { combineLatest, switchMap } from "rxjs"
 import {
 	PoolClaimPermissionDialog as PoolClaimPermissionDialogComponent,
@@ -7,7 +6,7 @@ import {
 } from "@/components/recipes/PoolClaimPermissionForm"
 import type { Account } from "@/domains/accounts/accounts"
 import { txFromCall } from "@/domains/chains/chain-runtime"
-import { useChainState } from "@/domains/chains/hooks"
+import { useChain } from "@/domains/chains/chains"
 import { assertChain } from "@/domains/chains/utils"
 import { useTxInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
 import { useTx } from "@/domains/common/hooks/useTx"
@@ -67,7 +66,7 @@ const [useMemberClaimPermission] = bindSuspended((genesisHash: string, address: 
 )
 
 const PoolClaimPermissionForm = (props: { account: Account; onRequestDismiss: () => unknown }) => {
-	const chain = useRecoilValue(useChainState())
+	const chain = useChain()
 
 	assertChain(chain, { hasNominationPools: true })
 
@@ -115,7 +114,7 @@ type PoolClaimPermissionControlledDialogProps = {
 export const PoolClaimPermissionControlledDialog = (
 	props: PoolClaimPermissionControlledDialogProps
 ) => {
-	const chain = useRecoilValue(useChainState())
+	const chain = useChain()
 
 	assertChain(chain, { hasNominationPools: true })
 

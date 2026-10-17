@@ -1,7 +1,8 @@
 import { Subscribe } from "@react-rxjs/core"
 import { fireEvent, render, screen } from "@testing-library/react"
 import type { ReactNode } from "react"
-import { defer, of, throwError } from "rxjs"
+import { Suspense } from "react"
+import { defer, map, of, throwError, timer } from "rxjs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { ThemeProvider, theme } from "@/ui/theme"
 import { bindSuspended } from "@/util/loadable"
@@ -87,6 +88,33 @@ describe("ErrorBoundary", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Refresh" }))
 
 		expect(await screen.findByText("12 DOT")).not.toBeNull()
+		expect(screen.queryByText("Oops!")).toBeNull()
+	})
+
+	it("re-runs a stream whose retried source emits later, on one Refresh", async () => {
+		const rpc = { down: true }
+		const [useStakedAmount] = bindSuspended((address: string) =>
+			defer(() =>
+				rpc.down
+					? throwError(() => new Error(`${address}: rpc down`))
+					: timer(20).pipe(map(() => "12 DOT"))
+			)
+		)
+		const StakedAmount = () => <p>{useStakedAmount("alice")}</p>
+
+		renderBoundary(
+			<ErrorBoundary>
+				<Suspense fallback={<p>Loading</p>}>
+					<StakedAmount />
+				</Suspense>
+			</ErrorBoundary>
+		)
+
+		expect(await screen.findByText("Oops!")).not.toBeNull()
+		rpc.down = false
+		fireEvent.click(screen.getByRole("button", { name: "Refresh" }))
+
+		expect(await screen.findByText("12 DOT", {}, { timeout: 2_000 })).not.toBeNull()
 		expect(screen.queryByText("Oops!")).toBeNull()
 	})
 

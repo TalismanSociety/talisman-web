@@ -1,5 +1,5 @@
+import type { ChainInfo } from "./chains"
 import type { ChainConfig } from "./config"
-import type { ChainInfo } from "./recoils"
 
 export const isSubscanUrl = (url: string) => new URL(url).hostname.endsWith(".subscan.io")
 

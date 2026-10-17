@@ -1,7 +1,6 @@
 import { useMemo } from "react"
-import { useRecoilValue } from "recoil"
-import { selectedCurrencyState } from "@/domains/balances/currency"
-import { useNativeTokenPriceState } from "@/domains/chains/recoils"
+import { useSelectedCurrency } from "@/domains/balances/currency"
+import { useNativeTokenPrice } from "@/domains/chains/chains"
 import type { Decimal } from "@/util/Decimal"
 
 /**
@@ -9,8 +8,8 @@ import type { Decimal } from "@/util/Decimal"
  * refactor this to take a token object instead
  */
 export const useNativeTokenLocalizedFiatAmount = (tokenAmount: Decimal | undefined) => {
-	const currency = useRecoilValue(selectedCurrencyState)
-	const price = useRecoilValue(useNativeTokenPriceState())
+	const currency = useSelectedCurrency()
+	const price = useNativeTokenPrice()
 
 	return useMemo(
 		() =>

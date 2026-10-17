@@ -1,6 +1,5 @@
 import { Subscribe } from "@react-rxjs/core"
 import { type ReactNode, Suspense } from "react"
-import { RecoilRoot } from "recoil"
 import ThemeProvider from "@/App.Theme"
 import { ConsentBanner } from "@/app-shell/ConsentBanner"
 import { FullscreenLoader } from "@/components/molecules/FullscreenLoader"
@@ -12,39 +11,34 @@ import { BalancesReporter, BalancesWatcher } from "@/domains/balances/BalancesWa
 import { ExtensionWatcher } from "@/domains/extension/main"
 import { EvmProvider } from "@/domains/extension/wagmi"
 import { Toaster } from "@/ui/molecules/Toaster"
-import { JotaiProvider } from "@/util/jotaiStore"
 
 const AppProviders = ({ children }: { children: ReactNode }) => (
 	<ThemeProvider>
-		<RecoilRoot>
-			<ErrorBoundary
-				renderFallback={(fallback) => (
-					<div className="flex h-[100dvh]">
-						<div className="m-auto">{fallback}</div>
-					</div>
-				)}
-			>
-				<Suspense fallback={<FullscreenLoader />}>
-					<Subscribe>
-						<JotaiProvider>
-							<EvmProvider>
-								<ExtensionWatcher />
-								<AccountWatcher />
-								<BalancesWatcher />
-								<BalancesReporter />
-								<Suspense fallback={<FullscreenLoader />}>
-									{children}
-									<Toaster position="bottom-right" />
-								</Suspense>
-								<ConsentBanner />
-								<PrivacySettingsDialog />
-								<Development />
-							</EvmProvider>
-						</JotaiProvider>
-					</Subscribe>
-				</Suspense>
-			</ErrorBoundary>
-		</RecoilRoot>
+		<ErrorBoundary
+			renderFallback={(fallback) => (
+				<div className="flex h-[100dvh]">
+					<div className="m-auto">{fallback}</div>
+				</div>
+			)}
+		>
+			<Suspense fallback={<FullscreenLoader />}>
+				<Subscribe>
+					<EvmProvider>
+						<ExtensionWatcher />
+						<AccountWatcher />
+						<BalancesWatcher />
+						<BalancesReporter />
+						<Suspense fallback={<FullscreenLoader />}>
+							{children}
+							<Toaster position="bottom-right" />
+						</Suspense>
+						<ConsentBanner />
+						<PrivacySettingsDialog />
+						<Development />
+					</EvmProvider>
+				</Subscribe>
+			</Suspense>
+		</ErrorBoundary>
 	</ThemeProvider>
 )
 

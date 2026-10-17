@@ -1,7 +1,6 @@
 import { BalanceFormatter } from "@talismn/balances"
 import { formatDecimals } from "@talismn/util"
-import { useRecoilValue } from "recoil"
-import { useNativeTokenAmountState } from "@/domains/chains/recoils"
+import { useNativeTokenAmount } from "@/domains/chains/chains"
 import type { SubnetData } from "@/domains/staking/subtensor/types"
 import { useSurfaceColor, useSurfaceColorAtElevation } from "@/ui/atoms/Surface"
 import { Text } from "@/ui/atoms/Text"
@@ -25,7 +24,7 @@ export const SubnetSelectorCard = ({
 }: SubnetSelectorCardProps) => {
 	const surfaceVariant = useSurfaceColorAtElevation((x) => x + 1)
 	const surfaceColor = useSurfaceColor()
-	const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
+	const nativeTokenAmount = useNativeTokenAmount()
 	const nativeTokenDecimals = nativeTokenAmount.fromPlanckOrUndefined(0).decimalAmount?.decimals
 
 	const isHighlighted = highlighted || selected

@@ -1,9 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query"
 import { useMemo } from "react"
-import { useRecoilValue } from "recoil"
 import { UnstakeDialog as UnstakeDialogComponent } from "@/components/recipes/UnstakeDialog"
 import type { Account } from "@/domains/accounts/accounts"
-import { useNativeTokenAmountState } from "@/domains/chains/recoils"
+import { useNativeTokenAmount } from "@/domains/chains/chains"
 import { useTxInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
 import { useUnstakeForm } from "@/domains/staking/subtensor/hooks/forms"
 import { useCombineSubnetData } from "@/domains/staking/subtensor/hooks/useCombineSubnetData"
@@ -34,7 +33,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
 		isLoading,
 		resultingAlphaInTaoAmount,
 	} = useUnstakeForm(props.account, props.stake, props.delegate)
-	const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
+	const nativeTokenAmount = useNativeTokenAmount()
 
 	useTxInBlockOrErrorEffect(() => props.onRequestDismiss(), extrinsic)
 	const { subnetData } = useCombineSubnetData()
