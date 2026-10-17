@@ -205,14 +205,9 @@ settings:
 
 overrides:
   '@types/react': 18.3.3
-  jotai: 2.8.4
-  jotai-effect: 1.0.0
   json-stream-stringify: 2.0.4
 
 packageExtensionsChecksum: sha256-5OCEJOO4ef//iIXyPpIzn7hwIXQZh5KbDivwBxK6uNk=
-
-patchedDependencies:
-  recoil@0.7.7: 1d31579c44b1c99592ff5d440f1658c4417916ab0f4bb225f1fcce5f8e4b8d6e
 
 importers:
 
@@ -272,9 +267,6 @@ importers:
       '@react-rxjs/core':
         specifier: 0.10.8
         version: 0.10.8(react@18.3.1)(rxjs@7.8.2)
-      '@recoiljs/refine':
-        specifier: ^0.1.1
-        version: 0.1.1
       '@talismn/balances':
         specifier: 3.0.6
         version: 3.0.6(@solana/sysvars@8.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.6.3))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.6.3)(utf-8-validate@5.0.10)
@@ -335,9 +327,6 @@ importers:
       graphql-request:
         specifier: ^6.1.0
         version: 6.1.0(graphql@16.9.0)
-      jotai:
-        specifier: 2.8.4
-        version: 2.8.4(@types/react@18.3.3)(react@18.3.1)
       lodash:
         specifier: ^4.18.1
         version: 4.18.1
@@ -371,9 +360,6 @@ importers:
       react-winbox:
         specifier: ^1.5.0
         version: 1.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      recoil:
-        specifier: ^0.7.7
-        version: 0.7.7(patch_hash=1d31579c44b1c99592ff5d440f1658c4417916ab0f4bb225f1fcce5f8e4b8d6e)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -2707,9 +2693,6 @@ packages:
     peerDependencies:
       react: '>=16.8.0'
       rxjs: '>=7'
-
-  '@recoiljs/refine@0.1.1':
-    resolution: {integrity: sha512-ry02rHswJePYkH1o8K99qL4O6TBntF9/g7W5wXVwaOUrIJEZUGfl/I3+btPXbUgyyEZvNs5xcwvOw13AufmFQw==}
 
   '@reown/appkit-common@1.7.8':
     resolution: {integrity: sha512-ridIhc/x6JOp7KbDdwGKY4zwf8/iK8EYBl+HtWrruutSLwZyVi5P8WaZa+8iajL6LcDcDF7LoyLwMTym7SRuwQ==}
@@ -5539,9 +5522,6 @@ packages:
       crossws:
         optional: true
 
-  hamt_plus@1.0.2:
-    resolution: {integrity: sha512-t2JXKaehnMb9paaYA7J0BX8QQAY8lwfQ9Gjf4pg/mk4krt+cmwmU652HOoWonf+7+EQV97ARPMhhVgU1ra2GhA==}
-
   has-flag@4.0.0:
     resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
     engines: {node: '>=8'}
@@ -5889,18 +5869,6 @@ packages:
 
   jose@6.1.3:
     resolution: {integrity: sha512-0TpaTfihd4QMNwrz/ob2Bp7X04yuxJkjRGi4aKmOqwhov54i6u79oCv7T+C7lo70MKH6BesI3vscD1yb/yzKXQ==}
-
-  jotai@2.8.4:
-    resolution: {integrity: sha512-f6jwjhBJcDtpeauT2xH01gnqadKEySwwt1qNBLvAXcnojkmb76EdqRt05Ym8IamfHGAQz2qMKAwftnyjeSoHAA==}
-    engines: {node: '>=12.20.0'}
-    peerDependencies:
-      '@types/react': 18.3.3
-      react: '>=17.0.0'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      react:
-        optional: true
 
   js-cookie@2.2.1:
     resolution: {integrity: sha512-HvdH2LzI/EAZcUwA8+0nKNtWHqS+ZmijLA30RwZA0bo7ToCckjK5MkGhjED9KoRcXO6BaGI3I9UIzSA1FKFPOQ==}
@@ -6995,18 +6963,6 @@ packages:
   real-require@0.1.0:
     resolution: {integrity: sha512-r/H9MzAWtrv8aSVjPCMFpDMl5q66GqtmmRkRjpHTsp4zBAa+snZyiQNlMONiUmEJcsnaw0wCauJ2GWODr/aFkg==}
     engines: {node: '>= 12.13.0'}
-
-  recoil@0.7.7:
-    resolution: {integrity: sha512-8Og5KPQW9LwC577Vc7Ug2P0vQshkv1y3zG3tSSkWMqkWSwHmE+by06L8JtnGocjW6gcCvfwB3YtrJG6/tWivNQ==}
-    peerDependencies:
-      react: '>=16.13.1'
-      react-dom: '*'
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
 
   regenerator-runtime@0.14.1:
     resolution: {integrity: sha512-dYnhHh0nJoMfnkZs6GmmhFknAGRrLznOu5nc9ML+EJxGvrx6H7teuevqVqCuPcPK//3eDrrjQhehXVx9cnkGdw==}
@@ -10936,8 +10892,6 @@ snapshots:
       react: 18.3.1
       rxjs: 7.8.2
       use-sync-external-store: 1.7.0(react@18.3.1)
-
-  '@recoiljs/refine@0.1.1': {}
 
   '@reown/appkit-common@1.7.8(bufferutil@4.0.8)(typescript@5.6.3)(utf-8-validate@5.0.10)(zod@3.22.4)':
     dependencies:
@@ -14892,8 +14846,6 @@ snapshots:
       rou3: 0.8.1
       srvx: 0.11.22
 
-  hamt_plus@1.0.2: {}
-
   has-flag@4.0.0: {}
 
   has-property-descriptors@1.0.2:
@@ -15213,11 +15165,6 @@ snapshots:
   jose@5.6.2: {}
 
   jose@6.1.3: {}
-
-  jotai@2.8.4(@types/react@18.3.3)(react@18.3.1):
-    optionalDependencies:
-      '@types/react': 18.3.3
-      react: 18.3.1
 
   js-cookie@2.2.1: {}
 
@@ -16476,13 +16423,6 @@ snapshots:
   readdirp@5.1.1: {}
 
   real-require@0.1.0: {}
-
-  recoil@0.7.7(patch_hash=1d31579c44b1c99592ff5d440f1658c4417916ab0f4bb225f1fcce5f8e4b8d6e)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      hamt_plus: 1.0.2
-      react: 18.3.1
-    optionalDependencies:
-      react-dom: 18.3.1(react@18.3.1)
 
   regenerator-runtime@0.14.1: {}
 
