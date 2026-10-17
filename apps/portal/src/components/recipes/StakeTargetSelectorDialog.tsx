@@ -1,4 +1,4 @@
-import { LayoutGroup, motion } from "framer-motion"
+import { LayoutGroup, motion } from "motion/react"
 import type { ReactElement, ReactNode } from "react"
 import React, { useState } from "react"
 import { ChevronLeft, ChevronRight, Search } from "@/icons"

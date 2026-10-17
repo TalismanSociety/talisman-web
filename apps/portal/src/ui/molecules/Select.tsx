@@ -9,7 +9,7 @@ import {
 	useFloating,
 	useInteractions,
 } from "@floating-ui/react"
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import type { ReactElement, ReactNode } from "react"
 import React, {
 	forwardRef,

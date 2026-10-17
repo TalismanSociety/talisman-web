@@ -13,7 +13,7 @@ import {
 	useInteractions,
 	useRole,
 } from "@floating-ui/react"
-import { motion } from "framer-motion"
+import { motion, stagger } from "motion/react"
 import type { DetailedHTMLProps, HTMLAttributes, HTMLProps, ReactElement, ReactNode } from "react"
 import { createContext, useContext, useEffect, useState, useTransition } from "react"
 
@@ -114,8 +114,7 @@ const MenuItems = (props: MenuItemsProps) => {
 							scale: 1,
 							opacity: 1,
 							transition: {
-								delayChildren: 0.15,
-								staggerChildren: 0.025,
+								delayChildren: stagger(0.025, { startDelay: 0.15 }),
 							},
 							transitionEnd: {
 								overflow: "auto",

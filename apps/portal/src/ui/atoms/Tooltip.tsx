@@ -12,7 +12,7 @@ import {
 	useInteractions,
 	useRole,
 } from "@floating-ui/react"
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import type { PropsWithChildren, ReactNode } from "react"
 import { useState } from "react"
 
