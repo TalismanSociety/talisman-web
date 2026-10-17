@@ -1,6 +1,6 @@
 import { useTheme } from "@emotion/react"
 import { formatDistanceToNowStrict } from "date-fns"
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import type { ReactNode } from "react"
 import { isValidElement, useEffect, useMemo, useRef, useState } from "react"
 import type { Toast, ToastPosition } from "react-hot-toast/headless"

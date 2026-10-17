@@ -1,7 +1,7 @@
 // NOTE: modified version of https://github.com/timolins/react-hot-toast/blob/main/src/components/toaster.tsx
 // to allow customizability later on
 import type { CSSObject } from "@emotion/react"
-import { useReducedMotion } from "framer-motion"
+import { useReducedMotion } from "motion/react"
 import type { CSSProperties, ReactNode, RefCallback } from "react"
 import { useCallback } from "react"
 import type { ToasterProps, ToastPosition } from "react-hot-toast/headless"
