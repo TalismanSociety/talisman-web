@@ -17,6 +17,7 @@ import { chainReadId$ } from "@/domains/common/chainReadId"
 
 import {
 	type AprInput,
+	bonusPeriodsOf,
 	type DappStake,
 	dappStakeOf,
 	type EraLengths,
@@ -88,10 +89,14 @@ const rewardSpans$ = (genesisHash: string, address: SS58String) =>
 			api.constants.DappStaking.RewardRetentionInPeriods(),
 		]).pipe(
 			switchMap(async ([protocol, ledger, eraRewardSpanLength, rewardRetentionInPeriods]) => {
-				const lastStakedPeriodEnd = await api.query.DappStaking.PeriodEnd.getValue(
-					lastStakedPeriodOf(ledger),
-					BEST
-				)
+				const bonusPeriods = bonusPeriodsOf(protocol.period_info.number, rewardRetentionInPeriods)
+				const [lastStakedPeriodEnd, bonusPeriodEnds] = await Promise.all([
+					api.query.DappStaking.PeriodEnd.getValue(lastStakedPeriodOf(ledger), BEST),
+					api.query.DappStaking.PeriodEnd.getValues(
+						bonusPeriods.map((period) => [period]),
+						BEST
+					),
+				])
 				const plan: RewardPlan = rewardPlanOf(
 					{ protocol, ledger, eraRewardSpanLength, rewardRetentionInPeriods },
 					lastStakedPeriodEnd?.final_era
@@ -100,7 +105,13 @@ const rewardSpans$ = (genesisHash: string, address: SS58String) =>
 					plan.spanIndexes.map((index) => [index]),
 					BEST
 				)
-				return { protocol, ledger, plan, spans }
+				const periodEnds = new Map(
+					bonusPeriods.flatMap((period, index) => {
+						const periodEnd = bonusPeriodEnds[index]
+						return periodEnd === undefined ? [] : [[period, periodEnd] as const]
+					})
+				)
+				return { protocol, ledger, plan, spans, rewardRetentionInPeriods, periodEnds }
 			})
 		)
 	})

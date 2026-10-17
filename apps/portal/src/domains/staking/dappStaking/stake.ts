@@ -8,6 +8,7 @@ import type {
 	EraRewardSpan,
 	InflationConfiguration,
 	InflationParameters,
+	PeriodEndInfo,
 	ProtocolState,
 	SingularStakingInfo,
 	SmartContract,
@@ -46,7 +47,7 @@ export type RewardPlanInput = {
 export const lastStakedPeriodOf = (ledger: AccountLedger) =>
 	Math.max(ledger.staked.period, (ledger.staked_future ?? ZERO_STAKE).period)
 
-export type RewardPlan = { spanIndexes: number[]; claimableSpanCount: number }
+export type RewardPlan = { spanIndexes: number[]; claimableSpanCount: number; lastEra: number }
 
 const firstStakedEraOf = (ledger: AccountLedger) => {
 	const stakedEra = ledger.staked.era === 0 ? undefined : ledger.staked.era
@@ -64,11 +65,11 @@ export const rewardPlanOf = (
 	const lastStakedPeriod = lastStakedPeriodOf(ledger)
 	const lastStakedEra =
 		lastStakedPeriod === currentPeriod ? protocol.era - 1 : (lastStakedPeriodFinalEra ?? 0)
-	const rewardsExpired = lastStakedPeriod <= currentPeriod - rewardRetentionInPeriods
+	const rewardsExpired = lastStakedPeriod < currentPeriod - rewardRetentionInPeriods
 	const firstStakedEra = firstStakedEraOf(ledger)
 
 	if (rewardsExpired || firstStakedEra === undefined)
-		return { spanIndexes: [], claimableSpanCount: 0 }
+		return { spanIndexes: [], claimableSpanCount: 0, lastEra: lastStakedEra }
 
 	const firstSpanIndex = firstStakedEra - (firstStakedEra % eraRewardSpanLength)
 	const lastSpanIndex = lastStakedEra - (lastStakedEra % eraRewardSpanLength)
@@ -78,7 +79,19 @@ export const rewardPlanOf = (
 			(index) => index % eraRewardSpanLength === 0
 		),
 		claimableSpanCount: (lastSpanIndex - firstSpanIndex) / eraRewardSpanLength + 1,
+		lastEra: lastStakedEra,
 	}
+}
+
+const PERBILL = 1_000_000_000n
+
+const perbillOf = (part: bigint, whole: bigint) =>
+	part >= whole ? PERBILL : (part * PERBILL) / whole
+
+const perbillTimes = (parts: bigint, amount: bigint) => {
+	const remainder = (amount % PERBILL) * parts
+	const roundUp = remainder % PERBILL > PERBILL / 2n ? 1n : 0n
+	return (amount / PERBILL) * parts + remainder / PERBILL + roundUp
 }
 
 const stakeEligibleInEra = (ledger: AccountLedger, era: number) => {
@@ -89,26 +102,54 @@ const stakeEligibleInEra = (ledger: AccountLedger, era: number) => {
 	return stakedEra <= era ? totalOf(ledger.staked) : 0n
 }
 
-export const stakerRewardsOf = (ledger: AccountLedger, spans: Array<EraRewardSpan | undefined>) =>
+export const stakerRewardsOf = (
+	ledger: AccountLedger,
+	spans: Array<EraRewardSpan | undefined>,
+	lastEra: number
+) =>
 	spans
 		.filter((span): span is EraRewardSpan => span !== undefined)
 		.map((span) =>
-			range(span.first_era, span.last_era + 1)
+			range(span.first_era, Math.min(span.last_era, lastEra) + 1)
 				.map((era) => {
 					const eraSpan = span.span[era - span.first_era]
 					return eraSpan === undefined || eraSpan.staked === 0n
 						? 0n
-						: BigInt(
-								new BigNumber(eraSpan.staker_reward_pool.toString())
-									.times(stakeEligibleInEra(ledger, era).toString())
-									.div(eraSpan.staked.toString())
-									.integerValue()
-									.toString()
+						: perbillTimes(
+								perbillOf(stakeEligibleInEra(ledger, era), eraSpan.staked),
+								eraSpan.staker_reward_pool
 							)
 				})
 				.reduce((prev, curr) => prev + curr, 0n)
 		)
 		.reduce((prev, curr) => prev + curr, 0n)
+
+export const bonusPeriodsOf = (currentPeriod: number, rewardRetentionInPeriods: number) =>
+	range(Math.max(0, currentPeriod - rewardRetentionInPeriods), currentPeriod)
+
+export type BonusReward = { contract: SmartContract; period: number; amount: bigint }
+
+export const bonusRewardsOf = (
+	currentPeriod: number,
+	rewardRetentionInPeriods: number,
+	stakerInfos: StakerInfoEntry[],
+	periodEnds: ReadonlyMap<number, PeriodEndInfo>
+): BonusReward[] => {
+	const claimablePeriods = new Set(bonusPeriodsOf(currentPeriod, rewardRetentionInPeriods))
+	return stakerInfos.flatMap(({ keyArgs: [, contract], value }) => {
+		const period = value.staked.period
+		const periodEnd = periodEnds.get(period)
+		if (
+			value.bonus_status === 0 ||
+			!claimablePeriods.has(period) ||
+			periodEnd === undefined ||
+			periodEnd.total_vp_stake === 0n
+		)
+			return []
+		const share = perbillOf(value.staked.voting, periodEnd.total_vp_stake)
+		return [{ contract, period, amount: perbillTimes(share, periodEnd.bonus_reward_pool) }]
+	})
+}
 
 export type DappStakeInput = {
 	protocol: ProtocolState
@@ -116,6 +157,8 @@ export type DappStakeInput = {
 	stakerInfos: StakerInfoEntry[]
 	plan: RewardPlan
 	spans: Array<EraRewardSpan | undefined>
+	rewardRetentionInPeriods: number
+	periodEnds: ReadonlyMap<number, PeriodEndInfo>
 	bestNumber: number
 	blockTime: number
 }
@@ -126,6 +169,8 @@ export const dappStakeOf = ({
 	stakerInfos,
 	plan,
 	spans,
+	rewardRetentionInPeriods,
+	periodEnds,
 	bestNumber,
 	blockTime,
 }: DappStakeInput) => {
@@ -135,13 +180,23 @@ export const dappStakeOf = ({
 	const dapps = stakerInfos
 		.map(({ keyArgs, value }) => [keyArgs[1], value] as const)
 		.filter(([, info]) => info.staked.period === protocol.period_info.number)
+	const stakerRewards = stakerRewardsOf(ledger, spans, plan.lastEra)
+	const bonusRewards = bonusRewardsOf(
+		protocol.period_info.number,
+		rewardRetentionInPeriods,
+		stakerInfos,
+		periodEnds
+	)
+	const totalBonusRewards = bonusRewards.reduce((prev, curr) => prev + curr.amount, 0n)
 
 	return {
 		ledger,
 		totalStaked,
 		locked,
-		stakerRewards: stakerRewardsOf(ledger, spans),
+		stakerRewards,
 		claimableSpanCount: plan.claimableSpanCount,
+		bonusRewards,
+		totalRewards: stakerRewards + totalBonusRewards,
 		pendingUnlocks: pending.map((chunk) => ({
 			amount: chunk.amount,
 			remainingMs: (chunk.unlock_block - bestNumber) * blockTime,
@@ -151,7 +206,8 @@ export const dappStakeOf = ({
 			.filter((chunk) => chunk.unlock_block <= bestNumber)
 			.reduce((prev, curr) => prev + curr.amount, 0n),
 		dapps,
-		active: dapps.length > 0 || ledger.unlocking.length > 0 || locked > 0n,
+		active:
+			dapps.length > 0 || ledger.unlocking.length > 0 || locked > 0n || totalBonusRewards > 0n,
 		earningRewards: totalStaked !== undefined && totalStaked > 0n,
 	}
 }
