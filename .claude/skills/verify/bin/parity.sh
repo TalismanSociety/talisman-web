@@ -105,7 +105,10 @@ capture() {
     step eval "$(unmatched_js "$masks")" || return
   unmatched=$(jq -r '.result | join(", ")' <<<"$reply")
   [[ -z $unmatched ]] || { echo "mask matched nothing: $unmatched"; return 1; }
+  { step eval "$header_js" > /dev/null && jq -r .result <<<"$reply"; } > "${png%.png}.header.txt" || echo unreadable > "${png%.png}.header.txt"
 }
+
+header_js='(() => { const originals = window.__parityOriginals ?? new Map(); const text = []; const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); while (walker.nextNode()) text.push(originals.get(walker.currentNode) ?? walker.currentNode.data); return (text.join(" ").match(/[0-9]+\s+Connected|Connect wallet/) ?? ["none"])[0]; })()'
 
 compare() {
   local shot=$1 path=$2 wait_text=$3 masks=$4 click=$5 size=$6 side reply failed='' pid
