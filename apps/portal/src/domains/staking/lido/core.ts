@@ -113,7 +113,7 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
 		})
 	)
 
-	const blockNumber = useBlockNumber({ watch: true })
+	const { data: blockNumber } = useBlockNumber({ watch: true })
 
 	useEffect(() => {
 		;[...firstQueryBatch, ...secondQueryBatch].forEach((query) => {
