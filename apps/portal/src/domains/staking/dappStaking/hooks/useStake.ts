@@ -19,7 +19,7 @@ const withTokenAmounts = (stake: DappStake, tokenAmount: NativeTokenAmount) => (
 	amounts: {
 		totalStaked: tokenAmount.fromPlanckOrUndefined(stake.totalStaked),
 		locked: tokenAmount.fromPlanck(stake.locked),
-		totalRewards: tokenAmount.fromPlanck(stake.stakerRewards),
+		totalRewards: tokenAmount.fromPlanck(stake.totalRewards),
 		totalUnlocking: tokenAmount.fromPlanck(stake.totalUnlocking),
 		withdrawable: tokenAmount.fromPlanck(stake.withdrawable),
 	},

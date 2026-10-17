@@ -20,6 +20,12 @@ const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.5
 const contractOf = (type: SmartContract["type"], value: string) =>
 	({ type, value }) as SmartContract
 
+const bonusContractsKeyOf = (bonusRewards: RewardClaims["bonusRewards"]) =>
+	JSON.stringify(bonusRewards.map(({ contract }) => contract))
+
+const bonusRewardsOfKey = (key: string): RewardClaims["bonusRewards"] =>
+	(JSON.parse(key) as SmartContract[]).map((contract) => ({ contract }))
+
 const [useAddStakeChainState] = bind(
 	(genesisHash: string, address: string, type: SmartContract["type"], value: string) =>
 		defer(() => {
@@ -54,7 +60,8 @@ const [useMaxStakeFee] = bind(
 		amount: bigint,
 		lockedAvailableForStake: bigint,
 		stakerRewards: bigint,
-		claimableSpanCount: number
+		claimableSpanCount: number,
+		bonusContracts: string
 	) =>
 		toLoadable(
 			defer(() =>
@@ -67,6 +74,7 @@ const [useMaxStakeFee] = bind(
 						lockedAvailableForStake,
 						stakerRewards,
 						claimableSpanCount,
+						bonusRewards: bonusRewardsOfKey(bonusContracts),
 					})
 				)
 			)
@@ -77,6 +85,7 @@ const [useMaxStakeFee] = bind(
 const rewardClaimsOf = (stake: Stake): RewardClaims => ({
 	stakerRewards: stake.stakerRewards,
 	claimableSpanCount: stake.claimableSpanCount,
+	bonusRewards: stake.bonusRewards,
 })
 
 const stakedOf = (stakerInfo: { staked: { voting: bigint; build_and_earn: bigint } } | undefined) =>
@@ -116,7 +125,8 @@ export const useAddStakeForm = (account: Account, stake: Stake, dapp: SmartContr
 		availableBeforeFee.decimalAmount.planck,
 		lockedAvailableForStake,
 		stake.stakerRewards,
-		stake.claimableSpanCount
+		stake.claimableSpanCount,
+		bonusContractsKeyOf(stake.bonusRewards)
 	)
 
 	const available = useTokenAmountFromPlanck(

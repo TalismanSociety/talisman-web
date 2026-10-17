@@ -8,6 +8,7 @@ import type {
 	EraRewardSpan,
 	InflationConfiguration,
 	InflationParameters,
+	PeriodEndInfo,
 	ProtocolState,
 	SingularStakingInfo,
 	SmartContract,
@@ -110,12 +111,52 @@ export const stakerRewardsOf = (ledger: AccountLedger, spans: Array<EraRewardSpa
 		)
 		.reduce((prev, curr) => prev + curr, 0n)
 
+const PERBILL = 1_000_000_000n
+
+const perbillOf = (part: bigint, whole: bigint) =>
+	part >= whole ? PERBILL : (part * PERBILL) / whole
+
+const perbillTimes = (parts: bigint, amount: bigint) => {
+	const remainder = (amount % PERBILL) * parts
+	const roundUp = remainder % PERBILL > PERBILL / 2n ? 1n : 0n
+	return (amount / PERBILL) * parts + remainder / PERBILL + roundUp
+}
+
+export const bonusPeriodsOf = (currentPeriod: number, rewardRetentionInPeriods: number) =>
+	range(Math.max(0, currentPeriod - rewardRetentionInPeriods), currentPeriod)
+
+export type BonusReward = { contract: SmartContract; period: number; amount: bigint }
+
+export const bonusRewardsOf = (
+	currentPeriod: number,
+	rewardRetentionInPeriods: number,
+	stakerInfos: StakerInfoEntry[],
+	periodEnds: ReadonlyMap<number, PeriodEndInfo>
+): BonusReward[] => {
+	const claimablePeriods = new Set(bonusPeriodsOf(currentPeriod, rewardRetentionInPeriods))
+	return stakerInfos.flatMap(({ keyArgs: [, contract], value }) => {
+		const period = value.staked.period
+		const periodEnd = periodEnds.get(period)
+		if (
+			value.bonus_status === 0 ||
+			!claimablePeriods.has(period) ||
+			periodEnd === undefined ||
+			periodEnd.total_vp_stake === 0n
+		)
+			return []
+		const share = perbillOf(value.staked.voting, periodEnd.total_vp_stake)
+		return [{ contract, period, amount: perbillTimes(share, periodEnd.bonus_reward_pool) }]
+	})
+}
+
 export type DappStakeInput = {
 	protocol: ProtocolState
 	ledger: AccountLedger
 	stakerInfos: StakerInfoEntry[]
 	plan: RewardPlan
 	spans: Array<EraRewardSpan | undefined>
+	rewardRetentionInPeriods: number
+	periodEnds: ReadonlyMap<number, PeriodEndInfo>
 	bestNumber: number
 	blockTime: number
 }
@@ -126,6 +167,8 @@ export const dappStakeOf = ({
 	stakerInfos,
 	plan,
 	spans,
+	rewardRetentionInPeriods,
+	periodEnds,
 	bestNumber,
 	blockTime,
 }: DappStakeInput) => {
@@ -135,13 +178,23 @@ export const dappStakeOf = ({
 	const dapps = stakerInfos
 		.map(({ keyArgs, value }) => [keyArgs[1], value] as const)
 		.filter(([, info]) => info.staked.period === protocol.period_info.number)
+	const stakerRewards = stakerRewardsOf(ledger, spans)
+	const bonusRewards = bonusRewardsOf(
+		protocol.period_info.number,
+		rewardRetentionInPeriods,
+		stakerInfos,
+		periodEnds
+	)
+	const totalBonusRewards = bonusRewards.reduce((prev, curr) => prev + curr.amount, 0n)
 
 	return {
 		ledger,
 		totalStaked,
 		locked,
-		stakerRewards: stakerRewardsOf(ledger, spans),
+		stakerRewards,
 		claimableSpanCount: plan.claimableSpanCount,
+		bonusRewards,
+		totalRewards: stakerRewards + totalBonusRewards,
 		pendingUnlocks: pending.map((chunk) => ({
 			amount: chunk.amount,
 			remainingMs: (chunk.unlock_block - bestNumber) * blockTime,
@@ -151,7 +204,8 @@ export const dappStakeOf = ({
 			.filter((chunk) => chunk.unlock_block <= bestNumber)
 			.reduce((prev, curr) => prev + curr.amount, 0n),
 		dapps,
-		active: dapps.length > 0 || ledger.unlocking.length > 0 || locked > 0n,
+		active:
+			dapps.length > 0 || ledger.unlocking.length > 0 || locked > 0n || totalBonusRewards > 0n,
 		earningRewards: totalStaked !== undefined && totalStaked > 0n,
 	}
 }
