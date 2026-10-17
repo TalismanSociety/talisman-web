@@ -16,11 +16,7 @@ packageExtensions:
       "@polkadot-api/json-rpc-provider": 0.2.0
 overrides:
   "@types/react": 18.3.3
-  "jotai": 2.8.4
-  "jotai-effect": 1.0.0
   "json-stream-stringify": 2.0.4
-patchedDependencies:
-  recoil@0.7.7: patches/recoil@0.7.7.patch
 auditConfig:
   ignoreGhsas:
     - GHSA-95m3-7q98-8xr5

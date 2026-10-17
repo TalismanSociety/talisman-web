@@ -1,16 +1,20 @@
-import { useRecoilState } from "recoil"
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/molecules/DropdownMenu"
-import { currencyConfig, selectedCurrencyState } from "@/domains/balances/currency"
+import {
+	currencyConfig,
+	type SelectableCurrency,
+	setSelectedCurrency,
+	useSelectedCurrency,
+} from "@/domains/balances/currency"
 import { Clickable } from "@/ui/atoms/Clickable"
 import { cn } from "@/util/cn"
 
 export const CurrencySelect = ({ className }: { className?: string }) => {
-	const [currentCurrency, setCurrency] = useRecoilState(selectedCurrencyState)
+	const currentCurrency = useSelectedCurrency()
 	const symbol = currencyConfig[currentCurrency]?.symbol ?? "?"
 
 	return (
@@ -36,7 +40,7 @@ export const CurrencySelect = ({ className }: { className?: string }) => {
 							"focus:bg-white/15",
 							currency === currentCurrency && "bg-white/10"
 						)}
-						onClick={() => setCurrency(currency as keyof typeof currencyConfig)}
+						onClick={() => setSelectedCurrency(currency as SelectableCurrency)}
 					>
 						<div className="font-mono text-xl">{config.symbol}</div>
 						<div className="text-2xl">{config.name}</div>

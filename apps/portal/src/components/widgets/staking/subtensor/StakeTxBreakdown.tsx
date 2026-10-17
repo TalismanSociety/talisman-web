@@ -1,6 +1,5 @@
 import { useMemo } from "react"
-import { useRecoilValue } from "recoil"
-import { useNativeTokenAmountState } from "@/domains/chains/recoils"
+import { useNativeTokenAmount } from "@/domains/chains/chains"
 import { useGetSeekDiscount } from "@/domains/staking/seek/hooks/useGetSeekDiscount"
 import {
 	useDTaoConversionRate,
@@ -30,7 +29,7 @@ export const StakeTxBreakdown = ({ shouldHideExpectedAmount }: StakeTxBreakdownP
 	const { subnetData } = useCombineSubnetData()
 	const { tier } = useGetSeekDiscount()
 
-	const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
+	const nativeTokenAmount = useNativeTokenAmount()
 
 	const discountPercent = `${tier.discount * 100}%`
 

@@ -1,17 +1,14 @@
 import { useMemo } from "react"
-import { useRecoilValue, waitForAll } from "recoil"
 
-import { selectedCurrencyState } from "@/domains/balances/currency"
+import { useSelectedCurrency } from "@/domains/balances/currency"
 import { useSelectedBalances } from "@/domains/balances/hooks"
 
 import { useTotalStaked as useDappStakingTotalStaked } from "./dappStaking/hooks/useTotalStaked"
-import { lidoSuitesState } from "./lido/recoils"
+import { lidoSuites } from "./lido/config"
 import { useTotalStaked as useSubstrateTotalStaked } from "./substrate/useTotalStaked"
 
 export const useTotalStaked = () => {
-	const [lidoSuites, currency] = useRecoilValue(
-		waitForAll([lidoSuitesState, selectedCurrencyState])
-	)
+	const currency = useSelectedCurrency()
 	const balances = useSelectedBalances()
 	const substrateFiatTotal = useSubstrateTotalStaked()
 	const dappStakingTotal = useDappStakingTotalStaked()
@@ -27,6 +24,6 @@ export const useTotalStaked = () => {
 				.sum.fiat(currency).total +
 			substrateFiatTotal +
 			dappStakingTotal,
-		[balances, currency, dappStakingTotal, lidoSuites, substrateFiatTotal]
+		[balances, currency, dappStakingTotal, substrateFiatTotal]
 	)
 }

@@ -1,8 +1,7 @@
 import type { ReactNode } from "react"
 import { useState, useTransition } from "react"
-import { useRecoilValue } from "recoil"
+import { useNativeTokenAmount } from "@/domains/chains/chains"
 import type { SmartContract } from "@/domains/chains/portal-runtime"
-import { useNativeTokenAmountState } from "@/domains/chains/recoils"
 import { useRegisteredDapps } from "@/domains/staking/dappStaking/dapps"
 import type { Stake } from "@/domains/staking/dappStaking/hooks/useStake"
 import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
@@ -20,7 +19,7 @@ type DappPickerDialogProps = {
 }
 
 const DappPickerDialog = (props: DappPickerDialogProps) => {
-	const tokenAmount = useRecoilValue(useNativeTokenAmountState())
+	const tokenAmount = useNativeTokenAmount()
 	const registeredDapps = useRegisteredDapps()
 
 	const [dappInTransition, setDappInTransition] = useState<SmartContract>()

@@ -1,12 +1,11 @@
 import { useContext, useMemo } from "react"
-import { useRecoilValue } from "recoil"
 
 import {
 	MIN_SUBTENSOR_ROOTNET_STAKE,
 	ROOT_NETUID,
 } from "@/components/widgets/staking/subtensor/constants"
+import { useNativeTokenAmount } from "@/domains/chains/chains"
 import { ChainContext } from "@/domains/chains/contexts"
-import { useNativeTokenAmountState } from "@/domains/chains/recoils"
 import { useTokenAmount } from "@/domains/common/hooks/useTokenAmount"
 import { useTx } from "@/domains/common/hooks/useTx"
 import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo"
@@ -21,7 +20,7 @@ type MoveItem = {
 
 export const useMoveStake = ({ stake, destinationHotkey }: MoveItem) => {
 	const { genesisHash } = useContext(ChainContext)
-	const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
+	const nativeTokenAmount = useNativeTokenAmount()
 
 	const { hotkey: originHotkey, stake: alphaAmount, netuid, symbol } = stake || {}
 	const formattedAlphaAmount = nativeTokenAmount.fromPlanckOrUndefined(alphaAmount, symbol)

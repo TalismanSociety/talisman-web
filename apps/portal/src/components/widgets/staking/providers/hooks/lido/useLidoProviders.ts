@@ -1,7 +1,6 @@
 import { evmErc20TokenId, evmNativeTokenId } from "@talismn/chaindata-provider"
-import { useRecoilValue } from "recoil"
 
-import { lidoSuitesState } from "@/domains/staking/lido/recoils"
+import { lidoSuites } from "@/domains/staking/lido/config"
 
 import type { Provider } from "../types"
 
@@ -13,8 +12,6 @@ const ETHEREUM_LOGO_URL =
 	"https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/chains/1.svg"
 
 const useLidoProviders = () => {
-	const lidoSuites = useRecoilValue(lidoSuitesState)
-
 	const lidoProviders: Provider[] = lidoSuites.map((lidoSuite) => {
 		const { symbol, decimals } = lidoSuite.chain.nativeCurrency
 		return {

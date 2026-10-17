@@ -3,10 +3,9 @@ import { useNavigate } from "@tanstack/react-router"
 import BN from "bn.js"
 import type { ReactNode } from "react"
 import { Suspense, useContext, useMemo } from "react"
-import { useRecoilValue } from "recoil"
 import type { Account } from "@/domains/accounts/accounts"
+import { useNativeTokenAmount } from "@/domains/chains/chains"
 import { ChainContext } from "@/domains/chains/contexts"
-import { useNativeTokenAmountState } from "@/domains/chains/recoils"
 import { useSubtensorBalance } from "@/domains/staking/subtensor/chain"
 import { useAddStakeForm } from "@/domains/staking/subtensor/hooks/forms"
 import { useDelegateApr } from "@/domains/staking/subtensor/hooks/useApr"
@@ -128,7 +127,7 @@ export const IncompleteSelectionStakeForm = ({
 )
 
 const EstimatedRewards = (props: { amount: bigint; delegateHotkey: string }) => {
-	const tokenAmount = useRecoilValue(useNativeTokenAmountState())
+	const tokenAmount = useNativeTokenAmount()
 	const delegateApr = useDelegateApr(props.delegateHotkey) || 0
 
 	const amount = useMemo(

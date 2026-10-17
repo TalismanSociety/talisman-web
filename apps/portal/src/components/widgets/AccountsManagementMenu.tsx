@@ -2,7 +2,6 @@ import { useTheme } from "@emotion/react"
 import type React from "react"
 import type { ReactNode } from "react"
 import { useMemo } from "react"
-import { useRecoilValue } from "recoil"
 import Logo from "@/assets/logo.svg?react"
 import { AccountIcon } from "@/components/molecules/AccountIcon"
 import { AddReadOnlyAccountDialog } from "@/components/widgets/AddReadOnlyAccountDialog"
@@ -19,7 +18,7 @@ import {
 	useSelectedAccounts,
 } from "@/domains/accounts/accounts"
 import { useBalances } from "@/domains/balances/balances"
-import { selectedCurrencyState } from "@/domains/balances/currency"
+import { useSelectedCurrency } from "@/domains/balances/currency"
 import { filterBalancesByAddresses, usePortfolioBalances } from "@/domains/balances/hooks"
 import { copyAddressToClipboard } from "@/domains/common/utils/clipboard"
 import { Copy, Ethereum, Eye, EyePlus, Trash2, Users, Wallet, X } from "@/icons"
@@ -100,7 +99,7 @@ export const AccountsManagementMenu = Object.assign(
 	(props: { className?: string; button: ReactNode }) => {
 		const theme = useTheme()
 
-		const currency = useRecoilValue(selectedCurrencyState)
+		const currency = useSelectedCurrency()
 		const portfolioFiatTotal = usePortfolioBalances().sum.fiat(currency).total
 
 		const portfolioAccounts = usePortfolioAccounts()

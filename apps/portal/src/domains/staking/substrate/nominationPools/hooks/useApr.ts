@@ -1,6 +1,5 @@
-import { useRecoilValue } from "recoil"
 import { switchMap } from "rxjs"
-import { useChainState } from "@/domains/chains/hooks"
+import { useChain } from "@/domains/chains/chains"
 import { bindSuspended } from "@/util/loadable"
 
 import { type AprSource, apr$, aprSourceOf } from "../apr"
@@ -11,6 +10,6 @@ const [usePoolApr] = bindSuspended((genesisHash: string, source: AprSource) =>
 )
 
 export const useApr = () => {
-	const chain = useRecoilValue(useChainState())
+	const chain = useChain()
 	return usePoolApr(chain.genesisHash, aprSourceOf(chain.id))
 }

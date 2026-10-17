@@ -1,10 +1,9 @@
-import { useRecoilValueLoadable } from "recoil"
-
 import { StakePositionErrorBoundary } from "@/components/recipes/StakePosition"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { useSelectedSubstrateAccounts } from "@/domains/accounts/accounts"
-import { useChainState } from "@/domains/chains/hooks"
+import { useChainLoadable } from "@/domains/chains/chains"
 import { useValidatorStakeLoadable } from "@/domains/staking/substrate/validator/hooks/useValidatorStakes"
+import { loadableData } from "@/util/loadable"
 
 import ValidatorStakeItem from "./ValidatorStakeItem"
 
@@ -14,8 +13,7 @@ type ValidatorStakesProps = {
 
 const ValidatorStakes = ({ setShouldRenderLoadingSkeleton }: ValidatorStakesProps) => {
 	const { data: stakes, state } = useValidatorStakeLoadable(useSelectedSubstrateAccounts())
-	const chainLoadable = useRecoilValueLoadable(useChainState())
-	const chain = chainLoadable.valueMaybe()
+	const chain = loadableData(useChainLoadable())
 
 	if (state === "hasValue" || stakes.length) {
 		setShouldRenderLoadingSkeleton(false)

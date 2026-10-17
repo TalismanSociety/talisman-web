@@ -1,8 +1,7 @@
 import request from "graphql-request"
-import { useRecoilValue } from "recoil"
 import { defer } from "rxjs"
 import type { Account } from "@/domains/accounts/accounts"
-import { useChainState } from "@/domains/chains/hooks"
+import { useChain } from "@/domains/chains/chains"
 import { assertChain } from "@/domains/chains/utils"
 import { graphql } from "@/generated/gql/nova/gql"
 import { encodeAnyAddress } from "@/util/addresses"
@@ -100,7 +99,7 @@ const [useTotalRewards] = bindSuspended(
 )
 
 export const useTotalNominationPoolRewards = (account: Account) => {
-	const chain = useRecoilValue(useChainState())
+	const chain = useChain()
 	assertChain(chain, { hasNominationPools: true })
 	return useTotalRewards(
 		chain.id,

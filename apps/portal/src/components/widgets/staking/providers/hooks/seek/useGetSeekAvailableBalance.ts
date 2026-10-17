@@ -1,13 +1,12 @@
 import { evmErc20TokenId } from "@talismn/chaindata-provider"
 import { formatDecimals } from "@talismn/util"
 import { useMemo } from "react"
-import { useRecoilValue, useRecoilValueLoadable } from "recoil"
 import { erc20Abi, formatUnits } from "viem"
 import { useReadContracts } from "wagmi"
 
 import { useWriteableEvmAccounts } from "@/domains/accounts/accounts"
-import { selectedCurrencyState } from "@/domains/balances/currency"
-import { tokenPriceState } from "@/domains/chains/recoils"
+import { useSelectedCurrency } from "@/domains/balances/currency"
+import { useTokenPriceLoadable } from "@/domains/chains/chains"
 import {
 	CHAIN_ID,
 	DECIMALS,
@@ -16,6 +15,7 @@ import {
 	SEEK_TOKEN_ADDRESS,
 } from "@/domains/staking/seek/constants"
 import { Decimal } from "@/util/Decimal"
+import { loadableData } from "@/util/loadable"
 
 const useGetSeekAvailableBalance = () => {
 	const ethAccounts = useWriteableEvmAccounts()
@@ -41,15 +41,12 @@ const useGetSeekAvailableBalance = () => {
 	const totalAvailableFormatted = formatDecimals(formatUnits(totalAvailable, DECIMALS))
 	const availableBalance = Decimal.fromPlanck(totalAvailable, 18, { currency: SEEK_TICKER })
 
-	const tokenPriceLoadable = useRecoilValueLoadable(
-		tokenPriceState({ coingeckoId: SEEK_COIN_GECKO_ID })
-	)
-	const tokenPrice = tokenPriceLoadable.valueMaybe()
+	const tokenPrice = loadableData(useTokenPriceLoadable(SEEK_COIN_GECKO_ID))
 	const fiatAmount = useMemo(
 		() => availableBalance.toNumber() * (tokenPrice ?? 0),
 		[availableBalance, tokenPrice]
 	)
-	const currency = useRecoilValue(selectedCurrencyState)
+	const currency = useSelectedCurrency()
 	const tokenId = evmErc20TokenId(CHAIN_ID.toString(), SEEK_TOKEN_ADDRESS)
 
 	const seekBalances = useMemo(() => {

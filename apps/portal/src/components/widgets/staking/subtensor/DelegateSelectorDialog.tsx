@@ -1,9 +1,8 @@
 import { type ReactElement, useEffect, useMemo, useState } from "react"
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from "recoil"
 
 import { StakeTargetSelectorDialog } from "@/components/recipes/StakeTargetSelectorDialog"
 import type { StakeTargetSelectorItemProps } from "@/components/recipes/StakeTargetSelectorItem"
-import { useNativeTokenAmountState } from "@/domains/chains/recoils"
+import { useNativeTokenAmount } from "@/domains/chains/chains"
 import { useCombinedBittensorValidatorsData } from "@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData"
 import type { BondOption } from "@/domains/staking/subtensor/types"
 
@@ -48,7 +47,7 @@ export const DelegateSelectorDialog = (props: DelegateSelectorDialogProps) => {
 		setSearch(search)
 	}
 
-	const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
+	const nativeTokenAmount = useNativeTokenAmount()
 
 	const sortMethods: {
 		[key: string]: (

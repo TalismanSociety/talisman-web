@@ -3,7 +3,6 @@ import BN from "bn.js"
 import type { ReactNode } from "react"
 import { memo, Suspense, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react"
 import { useLocation } from "react-use"
-import { useRecoilValue, waitForAll } from "recoil"
 import { combineLatest, map, of, switchMap } from "rxjs"
 import { StakeForm as StakeFormComponent } from "@/components/recipes/StakeForm"
 import type { StakeStatus } from "@/components/recipes/StakeStatusIndicator"
@@ -12,9 +11,8 @@ import { useAccountSelector } from "@/components/widgets/AccountSelector"
 import type { Account } from "@/domains/accounts/accounts"
 import { useWriteableSubstrateAccounts } from "@/domains/accounts/accounts"
 import { txFromCall } from "@/domains/chains/chain-runtime"
+import { type ChainInfo, useChain, useNativeTokenDecimal } from "@/domains/chains/chains"
 import { claimPermissionUnsupportedChainIds } from "@/domains/chains/config"
-import { useChainState as useChainRecoilState } from "@/domains/chains/hooks"
-import { type ChainInfo, useNativeTokenDecimalState } from "@/domains/chains/recoils"
 import { assertChain } from "@/domains/chains/utils"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import { useTx, useTxLoadableState } from "@/domains/common/hooks/useTx"
@@ -81,7 +79,7 @@ const ExistingPool = (props: { account: Account; showClaimPermission: boolean })
 
 	const [claimPermissionDialogOpen, setClaimPermissionDialogOpen] = useState(false)
 
-	const decimal = useRecoilValue(useNativeTokenDecimalState())
+	const decimal = useNativeTokenDecimal()
 	const eraEtaFormatter = useEraEtaFormatter()
 	const unlocks = pool?.unlockings?.map((x) => ({
 		amount: decimal.fromPlanck(x.amount).toLocaleString(),
@@ -181,9 +179,8 @@ const PoolSelector = (props: {
 	onDismiss: () => unknown
 }) => {
 	const [newPoolId, setNewPoolId] = useState<number>()
-	const [chain, nativeTokenDecimal] = useRecoilValue(
-		waitForAll([useChainRecoilState(), useNativeTokenDecimalState()])
-	)
+	const chain = useChain()
+	const nativeTokenDecimal = useNativeTokenDecimal()
 	const recommendedPools = useRecommendedPools()
 	const { getCurrentCommission } = usePoolCommission()
 
@@ -384,7 +381,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 		[location.search]
 	)
 
-	const chain = useRecoilValue(useChainRecoilState())
+	const chain = useChain()
 	const recommendedPools = useRecommendedPools()
 	const genesisHash = useGenesisHash()
 

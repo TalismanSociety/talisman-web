@@ -1,13 +1,11 @@
 import { useState } from "react"
-import { useRecoilValue, waitForAll } from "recoil"
 import { StakePosition } from "@/components/recipes/StakePosition"
 import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { RedactableBalance } from "@/components/widgets/RedactableBalance"
 import type { Account } from "@/domains/accounts/accounts"
 import { txFromCall } from "@/domains/chains/chain-runtime"
-import { useChainState } from "@/domains/chains/hooks"
-import { useNativeTokenDecimalState, useNativeTokenPriceState } from "@/domains/chains/recoils"
+import { useChain, useNativeTokenDecimal, useNativeTokenPrice } from "@/domains/chains/chains"
 import { useNativeTokenLocalizedFiatAmount } from "@/domains/common/hooks/useLocalizedFiatAmount"
 import { useTx } from "@/domains/common/hooks/useTx"
 import { useEraEtaFormatter } from "@/domains/staking/substrate/nominationPools/hooks/useEraEta"
@@ -34,9 +32,9 @@ const TotalFiatRewards = ({ account }: { account: Account }) => {
 }
 
 const ValidatorStakeItem = ({ stake }: { stake: ValidatorStake }) => {
-	const [chain, decimal, nativeTokenPrice] = useRecoilValue(
-		waitForAll([useChainState(), useNativeTokenDecimalState(), useNativeTokenPriceState()])
-	)
+	const chain = useChain()
+	const decimal = useNativeTokenDecimal()
+	const nativeTokenPrice = useNativeTokenPrice()
 	const genesisHash = useGenesisHash()
 	const withdrawExtrinsic = useTx(genesisHash, (runtime) =>
 		txFromCall(runtime, withdrawUnbondedCall(stake.slashingSpan))

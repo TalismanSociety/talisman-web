@@ -1,11 +1,9 @@
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from "recoil"
 import {
 	MIN_SUBTENSOR_ALPHA_STAKE,
 	ROOT_NETUID,
 } from "@/components/widgets/staking/subtensor/constants"
 import type { Account } from "@/domains/accounts/accounts"
-import { useChainState } from "@/domains/chains/hooks"
-import { useNativeTokenAmountState } from "@/domains/chains/recoils"
+import { useChain, useNativeTokenAmount } from "@/domains/chains/chains"
 import { useTokenAmount } from "@/domains/common/hooks/useTokenAmount"
 import type { SubnetData } from "@/domains/staking/subtensor/types"
 import type { Decimal } from "@/util/Decimal"
@@ -31,8 +29,8 @@ export type Stake = {
 }
 
 export const useStake = (account: Account): Stake => {
-	const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
-	const nativeToken = useRecoilValue(useChainState()).nativeToken?.symbol || "TAO"
+	const nativeTokenAmount = useNativeTokenAmount()
+	const nativeToken = useChain().nativeToken?.symbol || "TAO"
 	const { subnetData } = useCombineSubnetData()
 	const { data: stakeInfoForColdKey } = useGetStakeInfoForColdKey(account.address)
 

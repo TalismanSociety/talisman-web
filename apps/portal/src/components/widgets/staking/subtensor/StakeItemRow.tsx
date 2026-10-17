@@ -6,7 +6,7 @@ import {
 	TALISMAN_WALLET_DOWNLOAD_URL,
 } from "@/components/widgets/staking/subtensor/constants"
 import type { Account } from "@/domains/accounts/accounts"
-import type { ChainInfo } from "@/domains/chains/recoils"
+import type { ChainInfo } from "@/domains/chains/chains"
 import { useCombinedBittensorValidatorsData } from "@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData"
 import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo"
 import { useMoveStake } from "@/domains/staking/subtensor/hooks/useMoveStake"

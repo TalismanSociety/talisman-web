@@ -3,12 +3,33 @@ import { render } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { alice, fakeWallet, load } from "./fakeInjectedWeb3"
 
-const { toast, capture } = vi.hoisted(() => ({
+const { toast, capture, bridge } = vi.hoisted(() => ({
 	toast: { error: vi.fn(), success: vi.fn() },
 	capture: vi.fn(),
+	bridge: { failAfterAccounts: false },
 }))
 vi.mock("@/ui/molecules/Toaster", () => ({ toast }))
 vi.mock("@/domains/analytics/client", () => ({ track: capture }))
+vi.mock("@kheopskit/core", async (importOriginal) => {
+	const original = await importOriginal<typeof import("@kheopskit/core")>()
+	const { concat, concatMap, of, switchMap, throwError, timer } = await import("rxjs")
+	return {
+		...original,
+		getKheopskit$: (...args: Parameters<typeof original.getKheopskit$>) =>
+			original
+				.getKheopskit$(...args)
+				.pipe(
+					concatMap((state) =>
+						bridge.failAfterAccounts && state.accounts.length > 0
+							? concat(
+									of(state),
+									timer(50).pipe(switchMap(() => throwError(() => new Error("wallet bridge died"))))
+								)
+							: of(state)
+					)
+				),
+	}
+})
 
 describe("substrate wallet hooks", () => {
 	let harness: Awaited<ReturnType<typeof load>>
@@ -47,6 +68,40 @@ describe("substrate wallet hooks", () => {
 
 		expect(renders).toEqual(["talisman"])
 		lifecycle.unsubscribe()
+	})
+
+	it("keeps the last accounts and wallet, and the retained lists, when the wallet bridge errors", async () => {
+		bridge.failAfterAccounts = true
+		vi.spyOn(console, "error").mockImplementation(() => undefined)
+		harness = await load({ talisman: fakeWallet([alice]) })
+		const { AccountWatcher } = await import("@/domains/accounts/AccountWatcher")
+		render(<AccountWatcher />)
+		const renders: Array<[string | undefined, string[]]> = []
+		const Wallet = () => {
+			renders.push([
+				harness.useConnectedSubstrateWallet()?.id,
+				harness.useSelectedAccounts().map((account) => account.name ?? ""),
+			])
+			return null
+		}
+		const first = render(
+			<Subscribe>
+				<Wallet />
+			</Subscribe>
+		)
+
+		await vi.waitFor(() => expect(renders.at(-1)).toEqual(["talisman", ["Guardians SUB"]]))
+		await vi.waitFor(() => expect(console.error).toHaveBeenCalled())
+		first.unmount()
+		renders.length = 0
+		render(
+			<Subscribe>
+				<Wallet />
+			</Subscribe>
+		)
+
+		expect(renders).toEqual([["talisman", ["Guardians SUB"]]])
+		bridge.failAfterAccounts = false
 	})
 
 	it("reports the wallet lifecycle as initialised once the stored wallet is connected", async () => {

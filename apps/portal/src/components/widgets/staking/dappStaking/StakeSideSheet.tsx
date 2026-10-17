@@ -2,7 +2,6 @@ import BN from "bn.js"
 import { formatDistance } from "date-fns"
 import type { ReactNode } from "react"
 import { Suspense, useMemo, useState, useTransition } from "react"
-import { useRecoilValue } from "recoil"
 import { TalismanHandLoader } from "@/components/legacy/TalismanHandLoader"
 import { DappStakingForm, DappStakingSideSheet } from "@/components/recipes/DappStakingForm"
 import { DappSelectorDialog as DappSelectorDialogComponent } from "@/components/recipes/StakeTargetSelectorDialog"
@@ -10,15 +9,15 @@ import { useAccountSelector } from "@/components/widgets/AccountSelector"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import type { Account } from "@/domains/accounts/accounts"
 import { useWriteableSubstrateAccounts } from "@/domains/accounts/accounts"
-import { useChainState } from "@/domains/chains/hooks"
-import type { SmartContract } from "@/domains/chains/portal-runtime"
-import { ChainProvider } from "@/domains/chains/provider"
 import {
 	type ChainInfo,
-	dappStakingEnabledChainsState,
-	useNativeTokenAmountState,
-	useNativeTokenDecimalState,
-} from "@/domains/chains/recoils"
+	useChain,
+	useDappStakingEnabledChains,
+	useNativeTokenAmount,
+	useNativeTokenDecimal,
+} from "@/domains/chains/chains"
+import type { SmartContract } from "@/domains/chains/portal-runtime"
+import { ChainProvider } from "@/domains/chains/provider"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import { type DappInfo, useRegisteredDapps } from "@/domains/staking/dappStaking/dapps"
 import { useAddStakeForm } from "@/domains/staking/dappStaking/hooks/forms"
@@ -44,7 +43,7 @@ type DappSelectorDialogProps = {
 }
 
 const DappSelectorDialog = (props: DappSelectorDialogProps) => {
-	const decimal = useRecoilValue(useNativeTokenDecimalState())
+	const decimal = useNativeTokenDecimal()
 	const dapps = useRegisteredDapps()
 
 	const [highlightedDapp, setHighlightedDapp] = useState(dapps[0])
@@ -102,7 +101,7 @@ const InCompleteSelectionStakeForm = (props: IncompleteStakeFormProps) => (
 )
 
 const EstimatedRewards = (props: { amount: bigint }) => {
-	const tokenAmount = useRecoilValue(useNativeTokenAmountState())
+	const tokenAmount = useNativeTokenAmount()
 	const apr = useApr()
 	const amount = useMemo(
 		() => tokenAmount.fromPlanck(new BN(props.amount.toString()).muln(apr.totalApr).toString()),
@@ -190,7 +189,7 @@ type StakeSideSheetProps = {
 const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, "onRequestDismiss">) => {
 	const [searchParams] = useSearchParams()
 
-	const chain = useRecoilValue(useChainState())
+	const chain = useChain()
 	const dapps = useRegisteredDapps()
 	const [[account], accountSelector] = useAccountSelector(
 		useWriteableSubstrateAccounts(),
@@ -281,7 +280,7 @@ const _StakeSideSheet = (props: StakeSideSheetProps) => {
 	return (
 		<DappStakingSideSheet
 			onRequestDismiss={props.onRequestDismiss}
-			chainName={useRecoilValue(useChainState()).chainName}
+			chainName={useChain().chainName}
 			rewards={<Rewards />}
 			nextEraEta={<NextEraEta />}
 			minimumStake={<MinimumStake />}
@@ -315,7 +314,7 @@ const StakeSideSheet = () => {
 	const [searchParams, setSearchParams] = useSearchParams()
 	const initialChain = searchParams.get("chain")
 
-	const chains = useRecoilValue(dappStakingEnabledChainsState)
+	const chains = useDappStakingEnabledChains()
 
 	const [chain, setChain] = useState(
 		Maybe.of(initialChain).mapOrUndefined((x) => chains.find((y) => y.id === x)) ?? chains.at(0)

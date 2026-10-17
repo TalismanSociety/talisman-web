@@ -1,12 +1,9 @@
 import { useMemo } from "react"
-import { useRecoilValue } from "recoil"
+import { lidoSuites } from "@/domains/staking/lido/config"
 import { useSearchParams } from "@/hooks/useSearchParams"
-
-import { lidoSuitesState } from "../../../../domains/staking/lido/recoils"
 import LidoWidgetSideSheet from "./LidoWidgetSideSheet"
 
 const StakeSideSheet = () => {
-	const lidoSuites = useRecoilValue(lidoSuitesState)
 	const [searchParams, setSearchParams] = useSearchParams()
 
 	const open = useMemo(
