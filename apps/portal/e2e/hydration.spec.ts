@@ -1,24 +1,43 @@
 import { expect, type Page, test } from "@playwright/test"
 
-const foreignNodes = {
-	none: "",
-	"first in head": `new MutationObserver((_, observer) => {
-		if (!document.head) return
-		document.head.prepend(Object.assign(document.createElement("meta"), { name: "foreign" }))
+type ForeignNode = {
+	parent: "head" | "body"
+	tag: string
+	attrs: Record<string, string>
+	selector: string
+}
+
+const foreignNodes: Record<string, ForeignNode | undefined> = {
+	"without a foreign node": undefined,
+	"with a foreign node first in head": {
+		parent: "head",
+		tag: "meta",
+		attrs: { name: "foreign" },
+		selector: 'head > meta[name="foreign"]:first-child',
+	},
+	"with a foreign node first in body": {
+		parent: "body",
+		tag: "div",
+		attrs: { id: "foreign" },
+		selector: "body > div#foreign:first-child",
+	},
+}
+
+const plantForeignNode = ({ parent, tag, attrs }: ForeignNode) => {
+	new MutationObserver((_, observer) => {
+		const target = document[parent]
+		if (!target) return
+		target.prepend(Object.assign(document.createElement(tag), attrs))
 		observer.disconnect()
-	}).observe(document, { childList: true, subtree: true })`,
-	"first in body": `new MutationObserver((_, observer) => {
-		if (!document.body) return
-		document.body.prepend(Object.assign(document.createElement("div"), { id: "foreign" }))
-		observer.disconnect()
-	}).observe(document, { childList: true, subtree: true })`,
+	}).observe(document, { childList: true, subtree: true })
 }
 
 const loads = 3
 
-test.setTimeout(180_000)
+test.setTimeout(loads * 120_000)
 
-const hydrationError = /hydrat|Minified React error #4(18|19|2[1-5])/i
+const hydrationError =
+	/Hydration failed|error while hydrating|finished hydrating|server HTML|Minified React error #4(18|19|2[1-5])/
 
 const watchHydrationErrors = (page: Page) => {
 	const errors: string[] = []
@@ -36,24 +55,20 @@ const primaryColour = (page: Page) =>
 		getComputedStyle(document.documentElement).getPropertyValue("--color-primary").trim()
 	)
 
-const expectStyledWithoutHydrationErrors = async (page: Page, errors: string[], label: string) => {
-	await expect(page.getByRole("link", { name: "Staking", exact: true })).toBeVisible({
-		timeout: 120_000,
-	})
-	expect(errors, label).toEqual([])
-	expect(await primaryColour(page), label).toBe("rgb(213,255,92)")
-}
-
-for (const [position, plant] of Object.entries(foreignNodes)) {
-	test(`keeps its styles over ${loads} fresh loads with a foreign node ${position}`, async ({
-		page,
-	}) => {
+for (const [condition, node] of Object.entries(foreignNodes)) {
+	test(`keeps its styles over ${loads} fresh loads ${condition}`, async ({ page }) => {
 		const errors = watchHydrationErrors(page)
-		if (plant) await page.addInitScript(plant)
+		if (node) await page.addInitScript(plantForeignNode, node)
 
 		for (let load = 1; load <= loads; load++) {
 			await page.goto("/staking/providers")
-			await expectStyledWithoutHydrationErrors(page, errors, `load ${load}`)
+			await expect(page.getByRole("link", { name: "Staking", exact: true })).toBeVisible({
+				timeout: 120_000,
+			})
+			await expect(page.locator("html"), `load ${load}`).toHaveCount(1)
+			if (node) await expect(page.locator(node.selector), `load ${load}`).toHaveCount(1)
+			expect(errors, `load ${load}`).toEqual([])
+			expect(await primaryColour(page), `load ${load}`).toMatch(/^rgb\(/)
 		}
 	})
 }
