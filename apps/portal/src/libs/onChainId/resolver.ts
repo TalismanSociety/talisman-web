@@ -1,10 +1,10 @@
 import { bind } from "@react-rxjs/core"
 import { OnChainId } from "@talismn/on-chain-id"
-import { of } from "rxjs"
+import { type Observable, of } from "rxjs"
 
 import { chainConnectors } from "@/domains/chains/chain-connectors"
 import { getCachedQuery$ } from "@/util/getCachedQuery"
-import { LOADING, type Loadable, toLoadable } from "@/util/loadable"
+import { type Loadable, toLoadable } from "@/util/loadable"
 
 const onChainId = new OnChainId({ chainConnectors })
 
@@ -20,12 +20,11 @@ const lookupAddress$ = (address: string) =>
 const idle = <T>(): Loadable<T | undefined> => ({ status: "success", data: undefined })
 
 export const [useNsNameResolution] = bind(
-	(name: string) => (name === "" ? of(idle<NameResolutions>()) : toLoadable(resolveNsName$(name))),
-	LOADING as Loadable<NameResolutions | undefined>
+	(name: string): Observable<Loadable<NameResolutions | undefined>> =>
+		name === "" ? of(idle<NameResolutions>()) : toLoadable(resolveNsName$(name))
 )
 
 export const [useAddressLookup] = bind(
-	(address: string) =>
-		address === "" ? of(idle<AddressLookups>()) : toLoadable(lookupAddress$(address)),
-	LOADING as Loadable<AddressLookups | undefined>
+	(address: string): Observable<Loadable<AddressLookups | undefined>> =>
+		address === "" ? of(idle<AddressLookups>()) : toLoadable(lookupAddress$(address))
 )

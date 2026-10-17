@@ -7,7 +7,7 @@ import { z } from "zod"
 import { selectedCurrency$ } from "@/domains/balances/currency"
 import { Decimal } from "@/util/Decimal"
 import { getCachedQuery$ } from "@/util/getCachedQuery"
-import { bindSuspended, LOADING, type Loadable, toLoadable } from "@/util/loadable"
+import { bindSuspended, type Loadable, toLoadable } from "@/util/loadable"
 import { nullToUndefined } from "@/util/nullToUndefined"
 import { persistedState } from "@/util/persistedState"
 
@@ -36,19 +36,18 @@ const toChainInfo = (
 export type ChainInfo = ReturnType<typeof toChainInfo>
 
 export const chain$ = (genesisHash: string): Observable<ChainInfo> =>
-	combineLatest([networksByGenesisHash$, tokensById$]).pipe(
-		take(1),
-		map(([networks, tokens]) => toChainInfo(genesisHash, networks, tokens))
+	getCachedQuery$("chain", genesisHash, () =>
+		combineLatest([networksByGenesisHash$, tokensById$]).pipe(
+			take(1),
+			map(([networks, tokens]) => toChainInfo(genesisHash, networks, tokens))
+		)
 	)
 
 export const [useChainOf] = bindSuspended(chain$)
 
 export const useChain = () => useChainOf(useContext(ChainContext).genesisHash)
 
-export const [useChainLoadableOf] = bind(
-	(genesisHash: string) => toLoadable(chain$(genesisHash)),
-	LOADING
-)
+export const [useChainLoadableOf] = bind((genesisHash: string) => toLoadable(chain$(genesisHash)))
 
 export const useChainLoadable = () => useChainLoadableOf(useContext(ChainContext).genesisHash)
 
@@ -102,14 +101,10 @@ export const [useSubtensorStakingEnabledChains] = bindSuspended(
 )
 
 export const [useNominationPoolsEnabledChainsLoadable] = bind(
-	toLoadable(nominationPoolsEnabledChains$),
-	LOADING
+	toLoadable(nominationPoolsEnabledChains$)
 )
 
-export const [useDappStakingEnabledChainsLoadable] = bind(
-	toLoadable(dappStakingEnabledChains$),
-	LOADING
-)
+export const [useDappStakingEnabledChainsLoadable] = bind(toLoadable(dappStakingEnabledChains$))
 
 const coinGeckoHeaders = (): HeadersInit | undefined => {
 	if (import.meta.env.VITE_COIN_GECKO_API_KEY === undefined) return undefined
@@ -146,9 +141,8 @@ export const tokenPrice$ = (coingeckoId: string, currency?: string): Observable<
 
 export const [useTokenPrice] = bindSuspended(tokenPrice$)
 
-export const [useTokenPriceLoadable] = bind(
-	(coingeckoId: string) => toLoadable(tokenPrice$(coingeckoId)),
-	LOADING
+export const [useTokenPriceLoadable] = bind((coingeckoId: string) =>
+	toLoadable(tokenPrice$(coingeckoId))
 )
 
 export const nativeTokenPrice$ = (genesisHash: string, currency?: string): Observable<number> =>
@@ -249,9 +243,8 @@ export const [useNativeTokenAmountOf] = bindSuspended(nativeTokenAmount$)
 export const useNativeTokenAmount = () =>
 	useNativeTokenAmountOf(useContext(ChainContext).genesisHash)
 
-export const [useNativeTokenAmountLoadableOf] = bind(
-	(genesisHash: string) => toLoadable(nativeTokenAmount$(genesisHash)),
-	LOADING
+export const [useNativeTokenAmountLoadableOf] = bind((genesisHash: string) =>
+	toLoadable(nativeTokenAmount$(genesisHash))
 )
 
 export const useNativeTokenAmountLoadable = () =>
@@ -267,6 +260,5 @@ export const [useNativeTokenAmountLoadables] = bind(
 					genesisHashes
 						.split(GENESIS_SEPARATOR)
 						.map((genesisHash) => toLoadable(nativeTokenAmount$(genesisHash)))
-				),
-	NO_AMOUNTS
+				)
 )
