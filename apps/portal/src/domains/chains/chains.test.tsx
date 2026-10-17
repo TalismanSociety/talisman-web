@@ -63,12 +63,13 @@ const chaindata: ChaindataFile = {
 			decimals: 10,
 			name: "Test",
 			existentialDeposit: "1",
+			coingeckoId: "testnet-coin",
 		},
 	],
 	miniMetadatas: [],
 }
 
-const prices = { "portal-coin": { usd: 2.5, eur: 2 } }
+const prices = { "portal-coin": { usd: 2.5, eur: 2 }, "testnet-coin": { usd: 9, eur: 9 } }
 
 const fetchStub = () =>
 	vi.fn(async (input: RequestInfo | URL) => {

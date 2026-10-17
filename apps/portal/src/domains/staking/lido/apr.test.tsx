@@ -48,7 +48,7 @@ describe("lido APR", () => {
 		renderApr("https://a.lido.test")
 		renderApr("https://a.lido.test")
 
-		expect((await screen.findAllByText("3.21 %")).length).toBe(2)
+		await vi.waitFor(() => expect(screen.getAllByText("3.21 %")).toHaveLength(2))
 		expect(fetch.mock.calls.map(([input]) => String(input))).toEqual([
 			"https://a.lido.test/v1/protocol/steth/apr/sma",
 		])
