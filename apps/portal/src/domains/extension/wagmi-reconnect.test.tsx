@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react"
 import { afterEach, beforeEach, expect, it, vi } from "vitest"
-import { useAccount } from "wagmi"
+import { useConnection } from "wagmi"
 
 vi.mock("@/domains/chains/chaindata-provider", () => {
 	const networks = { "1": { id: "1", platform: "ethereum", rpcs: ["https://rpc.example/eth"] } }
@@ -30,7 +30,7 @@ afterEach(() => {
 	Reflect.deleteProperty(window, "ethereum")
 })
 
-const Status = () => <p>{useAccount().isConnected ? "connected" : "disconnected"}</p>
+const Status = () => <p>{useConnection().isConnected ? "connected" : "disconnected"}</p>
 
 it("reconnects the rendered wagmi config when the wallet answers slowly", async () => {
 	const { EvmProvider } = await import("./wagmi")
