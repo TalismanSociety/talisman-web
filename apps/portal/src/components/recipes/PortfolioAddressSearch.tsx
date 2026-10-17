@@ -1,4 +1,4 @@
-import { LayoutGroup } from "framer-motion"
+import { LayoutGroup } from "motion/react"
 import { useEffect, useRef, useState } from "react"
 import { setLookupAccountAddress, useLookupAccountAddress } from "@/domains/accounts/accounts"
 import { Search } from "@/icons"

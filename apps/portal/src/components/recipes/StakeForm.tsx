@@ -1,4 +1,4 @@
-import { LayoutGroup, motion } from "framer-motion"
+import { LayoutGroup, motion } from "motion/react"
 import type { ReactNode } from "react"
 import { createContext, useContext, useId, useState } from "react"
 import type { PoolClaimPermission } from "@/components/recipes/PoolClaimPermissionForm"

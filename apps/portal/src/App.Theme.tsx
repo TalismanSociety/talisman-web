@@ -1,4 +1,6 @@
+import isPropValid from "@emotion/is-prop-valid"
 import { css, Global } from "@emotion/react"
+import { MotionConfig } from "motion/react"
 import type { PropsWithChildren } from "react"
 import ATApocRevelations from "@/assets/fonts/AT-Apoc-Revelations.woff"
 import SurtRegular from "@/assets/fonts/Surt-Regular.woff"
@@ -224,7 +226,7 @@ const appTheme = {
 const Provider = ({ children }: PropsWithChildren) => (
 	<ThemeProvider theme={appTheme}>
 		<Global styles={globalStyle} />
-		{children}
+		<MotionConfig isValidProp={isPropValid}>{children}</MotionConfig>
 	</ThemeProvider>
 )
 
