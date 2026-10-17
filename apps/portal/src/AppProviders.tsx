@@ -1,5 +1,6 @@
 import { Subscribe } from "@react-rxjs/core"
-import { type ReactNode, Suspense } from "react"
+import { type ReactNode, Suspense, useDeferredValue } from "react"
+import { useTimeout } from "react-use"
 import ThemeProvider from "@/App.Theme"
 import { ConsentBanner } from "@/app-shell/ConsentBanner"
 import { FullscreenLoader } from "@/components/molecules/FullscreenLoader"
@@ -12,6 +13,15 @@ import { ExtensionWatcher } from "@/domains/extension/main"
 import { EvmProvider } from "@/domains/extension/wagmi"
 import { Toaster } from "@/ui/molecules/Toaster"
 
+const LOADER_DELAY_MS = 500
+
+const RevealWithDelayedLoader = ({ children }: { children: ReactNode }) => {
+	const revealed = useDeferredValue(true, false)
+	const [isLoaderDue] = useTimeout(LOADER_DELAY_MS)
+	if (revealed) return children
+	return isLoaderDue() ? <FullscreenLoader /> : null
+}
+
 const AppProviders = ({ children }: { children: ReactNode }) => (
 	<ThemeProvider>
 		<ErrorBoundary
@@ -21,23 +31,25 @@ const AppProviders = ({ children }: { children: ReactNode }) => (
 				</div>
 			)}
 		>
-			<Suspense fallback={<FullscreenLoader />}>
-				<Subscribe>
-					<EvmProvider>
-						<ExtensionWatcher />
-						<AccountWatcher />
-						<BalancesWatcher />
-						<BalancesReporter />
-						<Suspense fallback={<FullscreenLoader />}>
-							{children}
-							<Toaster position="bottom-right" />
-						</Suspense>
-						<ConsentBanner />
-						<PrivacySettingsDialog />
-						<Development />
-					</EvmProvider>
-				</Subscribe>
-			</Suspense>
+			<Subscribe>
+				<Suspense fallback={<FullscreenLoader />}>
+					<RevealWithDelayedLoader>
+						<EvmProvider>
+							<ExtensionWatcher />
+							<AccountWatcher />
+							<BalancesWatcher />
+							<BalancesReporter />
+							<Suspense fallback={<FullscreenLoader />}>
+								{children}
+								<Toaster position="bottom-right" />
+							</Suspense>
+							<ConsentBanner />
+							<PrivacySettingsDialog />
+							<Development />
+						</EvmProvider>
+					</RevealWithDelayedLoader>
+				</Suspense>
+			</Subscribe>
 		</ErrorBoundary>
 	</ThemeProvider>
 )

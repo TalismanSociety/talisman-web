@@ -90,7 +90,9 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
 
 SelectItem.displayName = "SelectItem"
 
-const findOption = (children: ReactElement): ReactElement<SelectItemProps>[] => {
+type ElementWithChildren = ReactElement<{ children?: ReactNode }>
+
+const findOption = (children: ElementWithChildren): ReactElement<SelectItemProps>[] => {
 	if (!children) return []
 	if (typeof children === "string") return []
 	if (Array.isArray(children)) return children.flatMap(findOption)
@@ -102,7 +104,7 @@ const findOption = (children: ReactElement): ReactElement<SelectItemProps>[] => 
 	) {
 		return [children as React.ReactElement<SelectItemProps>]
 	}
-	return findOption(children.props.children as React.ReactElement)
+	return findOption(children.props.children as ElementWithChildren)
 }
 
 export const Select = Object.assign(
@@ -227,7 +229,7 @@ export const Select = Object.assign(
 		const cappedShape = `min(2rem, ${theme.shape.full})`
 
 		const injectChildren = useCallback(
-			(children: ReactElement, index: number): React.ReactNode => {
+			(children: ElementWithChildren, index: number): React.ReactNode => {
 				if (!children) return null
 
 				if (typeof children === "string") return children
@@ -270,7 +272,7 @@ export const Select = Object.assign(
 				return React.cloneElement(children, {
 					key: children.key ?? index,
 					children: children.props.children
-						? injectChildren(children.props.children, index)
+						? injectChildren(children.props.children as ElementWithChildren, index)
 						: children.props.children,
 				})
 			},

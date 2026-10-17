@@ -1,5 +1,5 @@
 import { useTheme } from "@emotion/react"
-import type { ComponentPropsWithRef, ElementType, JSXElementConstructor, Ref } from "react"
+import type { ComponentPropsWithRef, ElementType, JSX, JSXElementConstructor, Ref } from "react"
 import { createContext, forwardRef, useContext } from "react"
 
 type PropsOf<T extends keyof JSX.IntrinsicElements | JSXElementConstructor<unknown>> =
