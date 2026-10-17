@@ -55,6 +55,17 @@ describe("persistedState", () => {
 		)
 	})
 
+	it("keeps a session-scoped key in sessionStorage with the same JSON format", () => {
+		sessionStorage.setItem("EnableTestnets", "true")
+
+		const state = persistedState("EnableTestnets", z.boolean(), false, "session")
+
+		expect(state.value).toBe(true)
+		state.next(false)
+		expect(sessionStorage.getItem("EnableTestnets")).toBe("false")
+		expect(localStorage.getItem("EnableTestnets")).toBeNull()
+	})
+
 	it("removes the entry when set to undefined", () => {
 		const state = persistedState("connected-substrate-extension", walletId, undefined)
 		state.next("talisman")

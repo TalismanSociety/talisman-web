@@ -1,6 +1,5 @@
-import { useRecoilValue } from "recoil"
 import { switchMap } from "rxjs"
-import { useChainState } from "@/domains/chains/hooks"
+import { useChain } from "@/domains/chains/chains"
 import { assertChain } from "@/domains/chains/utils"
 import { bindSuspended } from "@/util/loadable"
 
@@ -14,7 +13,7 @@ const [useRecommendedPoolsFor] = bindSuspended((genesisHash: string, priority: s
 )
 
 export const useRecommendedPools = () => {
-	const chain = useRecoilValue(useChainState())
+	const chain = useChain()
 	assertChain(chain, { hasNominationPools: true })
 	return useRecommendedPoolsFor(chain.genesisHash, JSON.stringify(chain.priorityPool ?? null))
 }

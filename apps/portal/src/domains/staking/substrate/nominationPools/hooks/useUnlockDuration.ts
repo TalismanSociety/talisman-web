@@ -1,7 +1,6 @@
 import { formatDistance } from "date-fns"
-import { useRecoilValue } from "recoil"
 import { switchMap } from "rxjs"
-import { useChainState } from "@/domains/chains/hooks"
+import { useChain } from "@/domains/chains/chains"
 import { bindSuspended } from "@/util/loadable"
 
 import { areNominatorsSlashable } from "../chain"
@@ -27,7 +26,7 @@ const [useAreNominatorsSlashable] = bindSuspended((genesisHash: string) =>
 export const useLocalizedUnlockDuration = () => formatDistance(0, useUnlockDuration())
 
 export const useUnlockDuration = () => {
-	const chain = useRecoilValue(useChainState())
+	const chain = useChain()
 	const { runtime, babeRuntime } = useRuntimes(chain.genesisHash)
 	const sessionProgress = useSessionProgress(chain.genesisHash)
 	const slashable = useAreNominatorsSlashable(chain.genesisHash)

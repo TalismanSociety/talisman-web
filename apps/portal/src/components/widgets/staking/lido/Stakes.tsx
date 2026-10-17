@@ -1,13 +1,12 @@
 import { useState } from "react"
-import { useRecoilValueLoadable } from "recoil"
 
 import { StakePosition, StakePositionErrorBoundary } from "@/components/recipes/StakePosition"
 import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { RedactableBalance } from "@/components/widgets/RedactableBalance"
 import { useSelectedEvmAccounts } from "@/domains/accounts/accounts"
+import { lidoSuites } from "@/domains/staking/lido/config"
 import { useStakes } from "@/domains/staking/lido/core"
-import { lidoSuitesState } from "@/domains/staking/lido/recoils"
 import type { LidoSuite } from "@/domains/staking/lido/types"
 
 import LidoWidgetSideSheet from "./LidoWidgetSideSheet"
@@ -160,13 +159,9 @@ type StakesProps = {
 }
 
 const Stakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
-	const lidoSuitesLoadable = useRecoilValueLoadable(lidoSuitesState)
-
-	const lidoSuites = lidoSuitesLoadable.valueMaybe()
-
 	return (
 		<>
-			{lidoSuites?.map((lidoSuite, index) => (
+			{lidoSuites.map((lidoSuite, index) => (
 				<LidoStakes
 					key={index}
 					lidoSuite={lidoSuite}

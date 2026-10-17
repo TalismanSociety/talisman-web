@@ -1,12 +1,10 @@
 import { useQueryClient } from "@tanstack/react-query"
 import { useCallback, useEffect, useState } from "react"
-import { useRecoilValue } from "recoil"
 
 import type { Account } from "@/domains/accounts/accounts"
 import { useSelectedSubstrateAccounts } from "@/domains/accounts/accounts"
-import { useChainState } from "@/domains/chains/hooks"
+import { useChain, useSubtensorStakingEnabledChains } from "@/domains/chains/chains"
 import { ChainProvider } from "@/domains/chains/provider"
-import { subtensorStakingEnabledChainsState } from "@/domains/chains/recoils"
 import { useCombinedBittensorValidatorsData } from "@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData"
 import { useMoveStake } from "@/domains/staking/subtensor/hooks/useMoveStake"
 import type { StakeItem } from "@/domains/staking/subtensor/hooks/useStake"
@@ -22,7 +20,7 @@ type StakesProps = {
 	setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
 }
 const Stakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
-	const chains = useRecoilValue(subtensorStakingEnabledChainsState)
+	const chains = useSubtensorStakingEnabledChains()
 	const accounts = useSelectedSubstrateAccounts()
 
 	return (
@@ -64,7 +62,7 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
 
 	const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
 
-	const chain = useRecoilValue(useChainState())
+	const chain = useChain()
 	const { stakes = [] } = useStake(account)
 
 	useEffect(() => {

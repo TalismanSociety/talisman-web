@@ -2,7 +2,6 @@ import { BigMath } from "@talismn/util"
 import { useQuery } from "@tanstack/react-query"
 import type { TxCallData } from "polkadot-api"
 import { useContext, useEffect, useMemo, useState } from "react"
-import { useRecoilValue } from "recoil"
 import { firstValueFrom } from "rxjs"
 import {
 	MIN_SUBTENSOR_ALPHA_STAKE,
@@ -11,8 +10,8 @@ import {
 } from "@/components/widgets/staking/subtensor/constants"
 import type { Account } from "@/domains/accounts/accounts"
 import { getChainRuntime$ } from "@/domains/chains/chain-runtime"
+import { useNativeTokenAmount } from "@/domains/chains/chains"
 import { ChainContext } from "@/domains/chains/contexts"
-import { useNativeTokenAmountState } from "@/domains/chains/recoils"
 import { useTokenAmount, useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import { estimateTxFee, useTx } from "@/domains/common/hooks/useTx"
 import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo"
@@ -187,7 +186,7 @@ export const useAddStakeForm = (
 
 export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: string) => {
 	const { genesisHash } = useContext(ChainContext)
-	const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
+	const nativeTokenAmount = useNativeTokenAmount()
 
 	const [input, setInput] = useState("")
 	const amount = useTokenAmount(input)

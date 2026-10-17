@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import request from "graphql-request"
 import { useMemo } from "react"
-import { useRecoilValueLoadable } from "recoil"
 
-import { tokenPriceState } from "@/domains/chains/recoils"
+import { useTokenPriceLoadable } from "@/domains/chains/chains"
 import { DECIMALS, SEEK_COIN_GECKO_ID, SEEK_TICKER } from "@/domains/staking/seek/constants"
 import { Decimal } from "@/util/Decimal"
+import { loadableData } from "@/util/loadable"
 
 export const SEEK_REWARDS_PAID_BY_USER_QUERY_KEY = "seekRewardsPaidByUser"
 
@@ -69,10 +69,7 @@ const useGetSeekRewardsPaidByUser = (address: string) => {
 		currency: SEEK_TICKER,
 	})
 
-	const tokenPriceLoadable = useRecoilValueLoadable(
-		tokenPriceState({ coingeckoId: SEEK_COIN_GECKO_ID })
-	)
-	const tokenPrice = tokenPriceLoadable.valueMaybe()
+	const tokenPrice = loadableData(useTokenPriceLoadable(SEEK_COIN_GECKO_ID))
 	const totalRewardsClaimedFiat = useMemo(
 		() => totalRewardsClaimedDecimal.toNumber() * (tokenPrice ?? 0),
 		[totalRewardsClaimedDecimal, tokenPrice]

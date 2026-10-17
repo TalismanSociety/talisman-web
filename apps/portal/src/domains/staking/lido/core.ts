@@ -1,6 +1,5 @@
 import { useQueries, useQuery } from "@tanstack/react-query"
 import { useEffect } from "react"
-import { useRecoilValueLoadable } from "recoil"
 import { useBlockNumber, useConfig } from "wagmi"
 import {
 	getTokenQueryOptions,
@@ -9,8 +8,9 @@ import {
 } from "wagmi/query"
 
 import type { Account } from "@/domains/accounts/accounts"
-import { tokenPriceState } from "@/domains/chains/recoils"
+import { useTokenPriceLoadable } from "@/domains/chains/chains"
 import { Decimal } from "@/util/Decimal"
+import { loadableData } from "@/util/loadable"
 import { lidoTokenAbi, withdrawalQueueAbi } from "./abi"
 import type { LidoSuite } from "./types"
 
@@ -127,10 +127,8 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
 		claimable: claimables?.at(index),
 	}))
 
-	const tokenPriceLoadable = useRecoilValueLoadable(
-		tokenPriceState({ coingeckoId: lidoSuite.token.coingeckoId })
-	)
-	const tokenPrice = tokenPriceLoadable.valueMaybe()
+	const tokenPriceLoadable = useTokenPriceLoadable(lidoSuite.token.coingeckoId)
+	const tokenPrice = loadableData(tokenPriceLoadable)
 
 	const data = filteredAccounts
 		.map((account, index) => {
@@ -178,6 +176,6 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
 		isLoading:
 			firstQueryBatch.some((x) => x.isLoading) ||
 			secondQueryBatch.some((x) => x.isLoading) ||
-			tokenPriceLoadable.state === "loading",
+			tokenPriceLoadable.status === "loading",
 	}
 }

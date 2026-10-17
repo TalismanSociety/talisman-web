@@ -1,10 +1,9 @@
-import { useRecoilValueLoadable } from "recoil"
-
 import { StakePositionErrorBoundary } from "@/components/recipes/StakePosition"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { useSelectedSubstrateAccounts } from "@/domains/accounts/accounts"
-import { useChainState } from "@/domains/chains/hooks"
+import { useChainLoadable } from "@/domains/chains/chains"
 import { usePoolStakeLoadable } from "@/domains/staking/substrate/nominationPools/hooks/usePoolStake"
+import { loadableData } from "@/util/loadable"
 
 import PoolStakeItem from "./PoolStakeItem"
 
@@ -14,8 +13,7 @@ type PoolStakeProps = {
 
 const PoolStakes = ({ setShouldRenderLoadingSkeleton }: PoolStakeProps) => {
 	const { data: pools, state } = usePoolStakeLoadable(useSelectedSubstrateAccounts())
-	const chainLoadable = useRecoilValueLoadable(useChainState())
-	const chain = chainLoadable.valueMaybe()
+	const chain = loadableData(useChainLoadable())
 
 	if (state === "hasValue" || pools.length) {
 		setShouldRenderLoadingSkeleton(false)

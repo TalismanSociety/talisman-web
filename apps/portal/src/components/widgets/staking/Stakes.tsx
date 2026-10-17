@@ -1,13 +1,12 @@
 import { Link } from "@tanstack/react-router"
 import type { PropsWithChildren } from "react"
 import { Fragment, Suspense, useState } from "react"
-import { useRecoilValue } from "recoil"
 import { SectionHeader } from "@/components/molecules/SectionHeader"
 import { StakePosition, StakePositionList } from "@/components/recipes/StakePosition"
 import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
+import { useNominationPoolsEnabledChains } from "@/domains/chains/chains"
 import { ChainProvider } from "@/domains/chains/provider"
-import { nominationPoolsEnabledChainsState } from "@/domains/chains/recoils"
 import { useTotalStaked } from "@/domains/staking/hooks"
 import { Button } from "@/ui/atoms/Button"
 import { Text } from "@/ui/atoms/Text"
@@ -76,7 +75,7 @@ const SuspenseSkeleton = (props: PropsWithChildren) => (
 )
 
 const Stakes = (props: { hideHeader?: boolean }) => {
-	const chains = useRecoilValue(nominationPoolsEnabledChainsState)
+	const chains = useNominationPoolsEnabledChains()
 	const [shouldRenderLoadingSkeleton, setShouldRenderLoadingSkeleton] = useState<boolean>(true)
 
 	return (

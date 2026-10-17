@@ -1,7 +1,6 @@
 import { InfoIcon } from "lucide-react"
 import type { ReactNode } from "react"
-import { useRecoilValue } from "recoil"
-import { useChainState } from "@/domains/chains/hooks"
+import { useChain } from "@/domains/chains/chains"
 import { ChainProvider } from "@/domains/chains/provider"
 import { useApr as useDappApr } from "@/domains/staking/dappStaking/hooks/useApr"
 import { useApr as useNominationPoolApr } from "@/domains/staking/substrate/nominationPools/hooks/useApr"
@@ -100,7 +99,7 @@ const Apr = ({
  * calculated APR which links to the rewards docs for the chain.
  */
 const WithAprDocsLink = ({ children }: { children: ReactNode }) => {
-	const chain = useRecoilValue(useChainState())
+	const chain = useChain()
 
 	// return the APR
 	if (chain?.id !== "analog-timechain") return children

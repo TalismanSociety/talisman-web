@@ -1,13 +1,9 @@
-import { useRecoilValue } from "recoil"
-
-import { lidoAprState } from "@/domains/staking/lido/recoils"
+import { useLidoApr } from "@/domains/staking/lido/apr"
 
 type UseAprProps = {
 	apiEndpoint: string
 }
 
-const useApr = ({ apiEndpoint }: UseAprProps) => {
-	return useRecoilValue(lidoAprState(apiEndpoint ?? ""))
-}
+const useApr = ({ apiEndpoint }: UseAprProps) => useLidoApr(apiEndpoint ?? "")
 
 export default useApr

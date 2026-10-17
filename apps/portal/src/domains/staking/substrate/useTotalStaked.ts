@@ -1,10 +1,13 @@
 import { bind } from "@react-rxjs/core"
 import { useMemo } from "react"
-import { useRecoilValue, waitForAll } from "recoil"
 import { combineLatest, map, of } from "rxjs"
 
 import { useSelectedSubstrateAccounts } from "@/domains/accounts/accounts"
-import { nativeTokenPriceState, nominationPoolsEnabledChainsState } from "@/domains/chains/recoils"
+import {
+	genesisHashesKey,
+	useNativeTokenPrices,
+	useNominationPoolsEnabledChains,
+} from "@/domains/chains/chains"
 import { Decimal } from "@/util/Decimal"
 import { toLoadable } from "@/util/loadable"
 
@@ -39,11 +42,9 @@ const [useValidatorStakedAmounts] = bind(
 )
 
 export const useTotalStaked = () => {
-	const chains = useRecoilValue(nominationPoolsEnabledChainsState)
+	const chains = useNominationPoolsEnabledChains()
 	const accounts = useSelectedSubstrateAccounts()
-	const prices = useRecoilValue(
-		waitForAll(chains.map((chain) => nativeTokenPriceState({ genesisHash: chain.genesisHash })))
-	)
+	const prices = useNativeTokenPrices(genesisHashesKey(chains.map((chain) => chain.genesisHash)))
 	const amounts = useValidatorStakedAmounts(
 		chains.map((chain) => chain.genesisHash).join(GENESIS_SEPARATOR),
 		addressesKey(accounts.map(({ address }) => address))

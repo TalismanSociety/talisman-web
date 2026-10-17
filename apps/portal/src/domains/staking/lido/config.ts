@@ -12,3 +12,5 @@ export const lidoMainnet = {
 	withdrawalQueue: "0x889edC2eDab5f40e902b864aD4d7AdE8E412F9B1",
 	apiEndpoint: "https://eth-api.lido.fi",
 } as const satisfies LidoSuite
+
+export const lidoSuites: LidoSuite[] = [lidoMainnet]

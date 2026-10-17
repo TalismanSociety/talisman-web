@@ -1,13 +1,11 @@
 import { useLocation, useNavigate } from "@tanstack/react-router"
 import { Suspense, useEffect, useMemo, useState, useTransition } from "react"
-import { useRecoilValue } from "recoil"
 import { TalismanHandLoader } from "@/components/legacy/TalismanHandLoader"
 import { useAccountSelector } from "@/components/widgets/AccountSelector"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { useWriteableSubstrateAccounts } from "@/domains/accounts/accounts"
-import { useChainState } from "@/domains/chains/hooks"
+import { type ChainInfo, useChain, useSubtensorStakingEnabledChains } from "@/domains/chains/chains"
 import { ChainProvider } from "@/domains/chains/provider"
-import { type ChainInfo, subtensorStakingEnabledChainsState } from "@/domains/chains/recoils"
 import { useCombinedBittensorValidatorsData } from "@/domains/staking/subtensor/hooks/useCombinedBittensorValidatorsData"
 import { useCombineSubnetData } from "@/domains/staking/subtensor/hooks/useCombineSubnetData"
 import type { BondOption, SubnetData } from "@/domains/staking/subtensor/types"
@@ -52,7 +50,7 @@ const StakeSideSheetContent = ({
 }: StakeSideSheetContentProps) => {
 	const [searchParams] = useSearchParams()
 
-	const chain = useRecoilValue(useChainState())
+	const chain = useChain()
 	const [[account], accountSelector] = useAccountSelector(
 		useWriteableSubstrateAccounts(),
 		searchParams.get("account") === null
@@ -158,7 +156,7 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
 	const { subnetData } = useCombineSubnetData()
 	const [delegate, setDelegate] = useState<BondOption | undefined>(DEFAULT_VALIDATOR)
 	const [subnet, setSubnet] = useState<SubnetData | undefined>()
-	const { nativeToken } = useRecoilValue(useChainState())
+	const { nativeToken } = useChain()
 	const { combinedValidatorsData } = useCombinedBittensorValidatorsData(subnet?.netuid)
 
 	useEffect(() => {
@@ -181,7 +179,7 @@ const StakeSideSheetForChain = (props: StakeSideSheetProps) => {
 	return (
 		<SubtensorStakingSideSheet
 			onRequestDismiss={props.onRequestDismiss}
-			chainName={useRecoilValue(useChainState()).chainName}
+			chainName={useChain().chainName}
 			minimumStake={
 				<>
 					{props.hasDTaoStaking ? MIN_SUBTENSOR_ALPHA_STAKE : MIN_SUBTENSOR_ROOTNET_STAKE}{" "}
@@ -228,7 +226,7 @@ const StakeSideSheetOpen = () => {
 	const initialChain = searchParams.get("chain")
 	const hasDTaoStaking = searchParams.get("hasDTaoStaking") === "true"
 
-	const chains = useRecoilValue(subtensorStakingEnabledChainsState)
+	const chains = useSubtensorStakingEnabledChains()
 	const [chain, setChain] = useState(
 		Maybe.of(initialChain).mapOrUndefined((x) => chains.find((y) => y.id === x)) ?? chains.at(0)
 	)

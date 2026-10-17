@@ -5,10 +5,9 @@ import { useCallback } from "react"
 import { useSessionStorage } from "react-use"
 import type { WinBoxPropType } from "react-winbox"
 import WinBox from "react-winbox"
-import { useRecoilState } from "recoil"
 import { sepolia } from "wagmi/chains"
 import { setDebugErrorBoundary, useDebugErrorBoundary } from "@/components/widgets/ErrorBoundary"
-import { enableTestnetsState } from "@/domains/chains/recoils"
+import { setEnableTestnets, useEnableTestnets } from "@/domains/chains/chains"
 import { useWagmiWriteContract } from "@/domains/common/hooks/useWagmiWriteContract"
 import { toastExtrinsic } from "@/domains/common/utils/toast"
 import { useSurfaceColor } from "@/ui/atoms/Surface"
@@ -56,7 +55,7 @@ const DevMenu = () => {
 
 	const [hidden, setHidden] = useSessionStorage("dev-menu-hidden", false)
 
-	const [enableTestnets, setEnableTestnets] = useRecoilState(enableTestnetsState)
+	const enableTestnets = useEnableTestnets()
 	const debugErrorBoundary = useDebugErrorBoundary()
 
 	return (
@@ -90,7 +89,7 @@ const DevMenu = () => {
 					<input
 						type="checkbox"
 						checked={enableTestnets}
-						onChange={() => setEnableTestnets((x) => !x)}
+						onChange={() => setEnableTestnets(!enableTestnets)}
 					/>{" "}
 					Enable testnets
 				</label>

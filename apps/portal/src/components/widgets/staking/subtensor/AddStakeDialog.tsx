@@ -1,10 +1,9 @@
 import { useQueryClient } from "@tanstack/react-query"
 import { useContext, useMemo } from "react"
-import { useRecoilValue } from "recoil"
 import { AddStakeDialog as _AddStakeDialog } from "@/components/recipes/AddStakeDialog"
 import type { Account } from "@/domains/accounts/accounts"
+import { useNativeTokenAmount } from "@/domains/chains/chains"
 import { ChainContext } from "@/domains/chains/contexts"
-import { useNativeTokenAmountState } from "@/domains/chains/recoils"
 import { useTxInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
 import { useSubtensorBalance } from "@/domains/staking/subtensor/chain"
 import { useAddStakeForm } from "@/domains/staking/subtensor/hooks/forms"
@@ -47,7 +46,7 @@ const SubtensorAddStakeDialog = ({
 
 	const { subnetData } = useCombineSubnetData()
 	const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
-	const nativeTokenAmount = useRecoilValue(useNativeTokenAmountState())
+	const nativeTokenAmount = useNativeTokenAmount()
 	const queryClient = useQueryClient()
 
 	const handleStakeInfoRefetch = () => {

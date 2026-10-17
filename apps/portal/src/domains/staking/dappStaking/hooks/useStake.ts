@@ -1,18 +1,18 @@
 import { bind } from "@react-rxjs/core"
 import { addMilliseconds, formatDistanceToNow } from "date-fns"
 import { useContext, useMemo } from "react"
-import { type RecoilValueReadOnly, useRecoilValueLoadable } from "recoil"
 
 import type { Account } from "@/domains/accounts/accounts"
+import {
+	type NativeTokenAmount,
+	useNativeTokenAmount,
+	useNativeTokenAmountLoadable,
+} from "@/domains/chains/chains"
 import { ChainContext } from "@/domains/chains/contexts"
-import { type nativeTokenAmountState, useNativeTokenAmountState } from "@/domains/chains/recoils"
-import { LOADING, toLoadable } from "@/util/loadable"
+import { LOADING, loadableData, toLoadable } from "@/util/loadable"
 
 import { dappStake$ } from "../chain"
 import type { DappStake } from "../stake"
-
-type NativeTokenAmount =
-	ReturnType<typeof nativeTokenAmountState> extends RecoilValueReadOnly<infer R> ? R : never
 
 const withTokenAmounts = (stake: DappStake, tokenAmount: NativeTokenAmount) => ({
 	...stake,
@@ -39,15 +39,14 @@ const [useDappStakeLoadable] = bind(
 )
 
 export const useStake = (account: Account) => {
-	const tokenAmount = useRecoilValueLoadable(useNativeTokenAmountState())
+	const nativeTokenAmount = useNativeTokenAmount()
 	const stake = useDappStake(useContext(ChainContext).genesisHash, account.address)
-	const nativeTokenAmount = tokenAmount.getValue()
 	return useMemo(() => withTokenAmounts(stake, nativeTokenAmount), [nativeTokenAmount, stake])
 }
 
 export const useStakeLoadable = (account: Account) => {
-	const tokenAmountLoadable = useRecoilValueLoadable(useNativeTokenAmountState())
-	const tokenAmount = tokenAmountLoadable.valueMaybe()
+	const tokenAmountLoadable = useNativeTokenAmountLoadable()
+	const tokenAmount = loadableData(tokenAmountLoadable)
 	const stake = useDappStakeLoadable(useContext(ChainContext).genesisHash, account.address)
 	const data = useMemo(
 		() =>
@@ -58,6 +57,6 @@ export const useStakeLoadable = (account: Account) => {
 	)
 	return {
 		data,
-		isLoading: stake.status === "loading" || tokenAmountLoadable.state === "loading",
+		isLoading: stake.status === "loading" || tokenAmountLoadable.status === "loading",
 	}
 }
