@@ -65,7 +65,7 @@ export const rewardPlanOf = (
 	const lastStakedPeriod = lastStakedPeriodOf(ledger)
 	const lastStakedEra =
 		lastStakedPeriod === currentPeriod ? protocol.era - 1 : (lastStakedPeriodFinalEra ?? 0)
-	const rewardsExpired = lastStakedPeriod <= currentPeriod - rewardRetentionInPeriods
+	const rewardsExpired = lastStakedPeriod < currentPeriod - rewardRetentionInPeriods
 	const firstStakedEra = firstStakedEraOf(ledger)
 
 	if (rewardsExpired || firstStakedEra === undefined)

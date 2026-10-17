@@ -103,6 +103,15 @@ describe("rewardPlanOf", () => {
 		expect(plan(ledger, protocolOf(1493, 7)).spanIndexes).toEqual([1472, 1488])
 	})
 
+	it("still claims the oldest period within reward retention", () => {
+		const ledger = ledgerOf({ staked_future: amount({ era: 876, period: 3, voting: ASTR }) })
+		expect(plan(ledger, protocolOf(1494, 7), 986)).toEqual({
+			spanIndexes: [864, 880, 896, 912, 928, 944, 960, 976],
+			claimableSpanCount: 8,
+			lastEra: 986,
+		})
+	})
+
 	it("claims nothing once rewards expired or without any stake", () => {
 		const expired = ledgerOf({ staked: amount({ era: 867, period: 2, voting: ASTR }) })
 		expect(plan(expired, protocolOf(1493, 7), 900)).toEqual({
