@@ -1,11 +1,4 @@
-import {
-	ClientOnly,
-	createRootRoute,
-	HeadContent,
-	Navigate,
-	Outlet,
-	Scripts,
-} from "@tanstack/react-router"
+import { createRootRoute, HeadContent, Navigate, Outlet, Scripts } from "@tanstack/react-router"
 import { lazy, type ReactNode, Suspense } from "react"
 import indexCss from "@/index.css?url"
 import { validateSearch } from "@/util/search"
@@ -47,7 +40,7 @@ export const Route = createRootRoute({
 			{ rel: "stylesheet", href: indexCss },
 		],
 	}),
-	shellComponent: RootShell,
+	shellComponent: import.meta.env.SSR ? RootShell : undefined,
 	component: RootComponent,
 	notFoundComponent: () => <Navigate to="/" />,
 })
@@ -71,12 +64,10 @@ const AppProviders = lazy(() => import("@/AppProviders"))
 
 function RootComponent() {
 	return (
-		<ClientOnly>
-			<Suspense>
-				<AppProviders>
-					<Outlet />
-				</AppProviders>
-			</Suspense>
-		</ClientOnly>
+		<Suspense>
+			<AppProviders>
+				<Outlet />
+			</AppProviders>
+		</Suspense>
 	)
 }
