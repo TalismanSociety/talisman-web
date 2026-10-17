@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react"
 
 const usePrevious = <T>(value: T): T => {
-	const ref = useRef<T>() as any
+	const ref = useRef<T | undefined>(undefined) as any
 
 	useEffect(() => {
 		if (value !== ref.current) {

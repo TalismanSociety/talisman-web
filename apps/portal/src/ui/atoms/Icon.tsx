@@ -63,7 +63,13 @@ export const TonalIcon = <T extends IconElementType>(props: IconProps<T>) => {
 	const containerColor =
 		props.containerColor ?? `color-mix(in srgb, ${contentColor}, transparent 90%)`
 
-	return <Icon {...props} containerColor={containerColor} contentColor={contentColor} />
+	return (
+		<Icon
+			{...(props as IconProps<IconElementType>)}
+			containerColor={containerColor}
+			contentColor={contentColor}
+		/>
+	)
 }
 
 export const SurfaceIcon = <T extends IconElementType>(props: IconProps<T>) => {
@@ -72,5 +78,11 @@ export const SurfaceIcon = <T extends IconElementType>(props: IconProps<T>) => {
 	const contentColor = props.contentColor ?? theme.color.onSurface
 	const containerColor = props.containerColor ?? surfaceColor
 
-	return <Icon {...props} containerColor={containerColor} contentColor={contentColor} />
+	return (
+		<Icon
+			{...(props as IconProps<IconElementType>)}
+			containerColor={containerColor}
+			contentColor={contentColor}
+		/>
+	)
 }

@@ -1,7 +1,7 @@
 import { type EthNetwork, isNetworkEth } from "@talismn/chaindata-provider"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import type { PropsWithChildren } from "react"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo } from "react"
 import type { EIP1193Provider } from "viem"
 import { createConfig, fallback, http, WagmiProvider } from "wagmi"
 import { injected } from "wagmi/connectors"
@@ -54,17 +54,27 @@ migrate()
 
 const queryClient = new QueryClient()
 
+const rpcsByChain = (evmNetworks: EthNetwork[]) =>
+	JSON.stringify(
+		chains.map((chain) => evmNetworks.find((n) => n.id === chain.id.toString())?.rpcs ?? [])
+	)
+
+let chaindataConfig: { rpcs: string; config: typeof defaultConfig } | undefined
+
+const wagmiConfigFor = (evmNetworks: EthNetwork[]) => {
+	if (evmNetworks.length === 0) return defaultConfig
+	const rpcs = rpcsByChain(evmNetworks)
+	if (chaindataConfig?.rpcs !== rpcs)
+		chaindataConfig = { rpcs, config: createWagmiConfigWithChaindata(evmNetworks) }
+	return chaindataConfig.config
+}
+
 export const EvmProvider = (props: PropsWithChildren) => {
 	const networks = useNetworksById()
-	const evmNetworks = useMemo(() => Object.values(networks).filter(isNetworkEth), [networks])
-	const [config, setConfig] = useState(defaultConfig)
-
-	useEffect(() => {
-		if (evmNetworks.length > 0) {
-			const newConfig = createWagmiConfigWithChaindata(evmNetworks)
-			setConfig(newConfig)
-		}
-	}, [evmNetworks])
+	const config = useMemo(
+		() => wagmiConfigFor(Object.values(networks).filter(isNetworkEth)),
+		[networks]
+	)
 
 	return (
 		<WagmiProvider config={config} reconnectOnMount>
