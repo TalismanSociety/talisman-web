@@ -128,7 +128,7 @@ import appConfig from "../../vite.config.ts"
 export default mergeConfig(appConfig, { cacheDir: "node_modules/.vite-verify/deps" })
 CONFIG
   local app_env=() pm_cmd
-  [[ -f $app_dir/.env ]] || mapfile -t app_env < <(app_env_of "$root"; grep -v '^#' "$bin/../dev-server.env")
+  [[ -f $app_dir/.env ]] || mapfile -t app_env < <(app_env_of "$root")
   mapfile -t pm_cmd < <(pm_command "$root")
   server=(env "${app_env[@]}" "${pm_cmd[@]}" exec vite dev --config node_modules/.vite-verify/vite.config.mjs --strictPort --port)
 }
