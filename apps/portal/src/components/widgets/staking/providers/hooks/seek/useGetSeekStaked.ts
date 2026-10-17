@@ -2,13 +2,13 @@ import { formatUnits } from "viem"
 import { useReadContracts } from "wagmi"
 
 import { useWriteableEvmAccounts } from "@/domains/accounts/accounts"
-import { useTokenPriceLoadable } from "@/domains/chains/chains"
+import { useTokenPriceLoadable } from "@/domains/balances/token-rates"
 import {
 	CHAIN_ID,
 	DECIMALS,
-	SEEK_COIN_GECKO_ID,
 	SEEK_SINGLE_POOL_STAKING_ADDRESS,
 	SEEK_TICKER,
+	SEEK_TOKEN_ID,
 } from "@/domains/staking/seek/constants"
 import seekSinglePoolStakingAbi from "@/domains/staking/seek/seekSinglePoolStakingAbi"
 import { Decimal } from "@/util/Decimal"
@@ -16,7 +16,7 @@ import { loadableData } from "@/util/loadable"
 
 const useGetSeekStaked = () => {
 	const ethAccounts = useWriteableEvmAccounts()
-	const tokenPrice = loadableData(useTokenPriceLoadable(SEEK_COIN_GECKO_ID))
+	const tokenPrice = loadableData(useTokenPriceLoadable(SEEK_TOKEN_ID))
 
 	const { data, isLoading, isError, refetch } = useReadContracts({
 		allowFailure: false,

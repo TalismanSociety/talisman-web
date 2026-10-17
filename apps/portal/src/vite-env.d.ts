@@ -3,9 +3,6 @@
 
 interface ImportMetaEnv {
 	VITE_APPLICATION_NAME: string
-	VITE_COIN_GECKO_API: string
-	VITE_COIN_GECKO_API_KEY?: string
-	VITE_COIN_GECKO_API_TIER?: "pro" | "demo"
 	VITE_ONFINALITY_API_KEY?: string
 	VITE_POSTHOG_AUTH_TOKEN?: string
 	VITE_ANALYTICS_LOCAL?: string

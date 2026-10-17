@@ -4,14 +4,14 @@ import { mainnet } from "wagmi/chains"
 
 import type { Account } from "@/domains/accounts/accounts"
 import { useSelectedCurrency } from "@/domains/balances/currency"
-import { useTokenPriceLoadable } from "@/domains/chains/chains"
+import { useTokenPriceLoadable } from "@/domains/balances/token-rates"
 import { useWagmiWriteContract } from "@/domains/common/hooks/useWagmiWriteContract"
 import {
 	CHAIN_ID,
 	DECIMALS,
-	SEEK_COIN_GECKO_ID,
 	SEEK_SINGLE_POOL_STAKING_ADDRESS,
 	SEEK_TICKER,
+	SEEK_TOKEN_ID,
 } from "@/domains/staking/seek/constants"
 import seekSinglePoolStakingAbi from "@/domains/staking/seek/seekSinglePoolStakingAbi"
 import { Decimal } from "@/util/Decimal"
@@ -38,7 +38,7 @@ const useRequestWithdrawalSeek = ({
 	const { data, isFetched, refetch } = useGetSeekPoolAccountInfo({ account })
 	const [staked] = data || [0n, 0n, 0n, 0n]
 	const currency = useSelectedCurrency()
-	const tokenPrice = loadableData(useTokenPriceLoadable(SEEK_COIN_GECKO_ID))
+	const tokenPrice = loadableData(useTokenPriceLoadable(SEEK_TOKEN_ID))
 
 	const stakedBalance = useMemo(() => {
 		const availableBalance = Decimal.fromPlanck(staked, DECIMALS ?? 0, { currency: SEEK_TICKER })

@@ -5,6 +5,8 @@ import type { ReactNode } from "react"
 import { Suspense } from "react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
+import { COINS_API_URL, coinsApiReply } from "@/test/coins-api"
+
 const MAINNET = `0x${"11".repeat(32)}` as const
 const TESTNET = `0x${"22".repeat(32)}` as const
 
@@ -72,10 +74,10 @@ const chaindata: ChaindataFile = {
 const prices = { "portal-coin": { usd: 2.5, eur: 2 }, "testnet-coin": { usd: 9, eur: 9 } }
 
 const fetchStub = () =>
-	vi.fn(async (input: RequestInfo | URL) => {
+	vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
 		const url = String(input)
 		if (url === `${location.origin}/chaindata.json`) return new Response(JSON.stringify(chaindata))
-		if (url.includes("/api/v3/simple/price")) return new Response(JSON.stringify(prices))
+		if (url === COINS_API_URL) return coinsApiReply(init, prices)
 		return new Response(null, { status: 404 })
 	})
 
@@ -98,12 +100,10 @@ describe("chains", () => {
 		sessionStorage.clear()
 		fetch = fetchStub()
 		vi.stubGlobal("fetch", fetch)
-		vi.stubEnv("VITE_COIN_GECKO_API", "https://coingecko.test")
 	})
 
 	afterEach(() => {
 		vi.unstubAllGlobals()
-		vi.unstubAllEnvs()
 	})
 
 	it("builds the chain from chaindata, the native token and the chain config", async () => {
@@ -142,28 +142,18 @@ describe("chains", () => {
 		expect(result.current.map((chain) => chain.id)).toEqual(["mainnet"])
 	})
 
-	it("fetches a token price once per currency and follows the selected currency", async () => {
-		const chains = await load()
+	it("prices the native token from the coins api and follows the selected currency", async () => {
+		const { useNativeTokenPriceOf } = await load()
 		const currency = await import("@/domains/balances/currency")
 
-		const { result } = renderHook(() => chains.useTokenPrice("portal-coin"), { wrapper })
+		const { result } = renderHook(() => useNativeTokenPriceOf(MAINNET), { wrapper })
 
 		await vi.waitFor(() => expect(result.current).toBe(2.5))
 		act(() => currency.setSelectedCurrency("eur"))
 		await vi.waitFor(() => expect(result.current).toBe(2))
-		act(() => currency.setSelectedCurrency("usd"))
-		await vi.waitFor(() => expect(result.current).toBe(2.5))
-
-		const priceCalls = fetch.mock.calls
-			.map(([input]) => String(input))
-			.filter((url) => url.includes("/api/v3/simple/price"))
-		expect(priceCalls).toEqual([
-			"https://coingecko.test/api/v3/simple/price?ids=portal-coin&vs_currencies=usd",
-			"https://coingecko.test/api/v3/simple/price?ids=portal-coin&vs_currencies=eur",
-		])
 	})
 
-	it("prices a token at 0 when CoinGecko fails, without throwing", async () => {
+	it("prices a token at 0 when the coins api fails, without throwing", async () => {
 		fetch.mockImplementation(async (input: RequestInfo | URL) =>
 			String(input) === `${location.origin}/chaindata.json`
 				? new Response(JSON.stringify(chaindata))
@@ -176,15 +166,12 @@ describe("chains", () => {
 		await vi.waitFor(() => expect(result.current).toBe(0))
 	})
 
-	it("prices a testnet's native token at 0 without fetching", async () => {
+	it("prices a testnet's native token at 0 though the coins api has a rate for it", async () => {
 		const { useNativeTokenPriceOf } = await load()
 
 		const { result } = renderHook(() => useNativeTokenPriceOf(TESTNET), { wrapper })
 
 		await vi.waitFor(() => expect(result.current).toBe(0))
-		expect(
-			fetch.mock.calls.map(([input]) => String(input)).filter((url) => url.includes("/price"))
-		).toEqual([])
 	})
 
 	it("converts planck to a decimal and a localized fiat amount in the selected currency", async () => {

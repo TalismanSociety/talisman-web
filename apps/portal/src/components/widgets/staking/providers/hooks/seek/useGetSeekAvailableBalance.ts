@@ -1,4 +1,3 @@
-import { evmErc20TokenId } from "@talismn/chaindata-provider"
 import { formatDecimals } from "@talismn/util"
 import { useMemo } from "react"
 import { erc20Abi, formatUnits } from "viem"
@@ -6,13 +5,13 @@ import { useReadContracts } from "wagmi"
 
 import { useWriteableEvmAccounts } from "@/domains/accounts/accounts"
 import { useSelectedCurrency } from "@/domains/balances/currency"
-import { useTokenPriceLoadable } from "@/domains/chains/chains"
+import { useTokenPriceLoadable } from "@/domains/balances/token-rates"
 import {
 	CHAIN_ID,
 	DECIMALS,
-	SEEK_COIN_GECKO_ID,
 	SEEK_TICKER,
 	SEEK_TOKEN_ADDRESS,
+	SEEK_TOKEN_ID,
 } from "@/domains/staking/seek/constants"
 import { Decimal } from "@/util/Decimal"
 import { loadableData } from "@/util/loadable"
@@ -41,17 +40,16 @@ const useGetSeekAvailableBalance = () => {
 	const totalAvailableFormatted = formatDecimals(formatUnits(totalAvailable, DECIMALS))
 	const availableBalance = Decimal.fromPlanck(totalAvailable, 18, { currency: SEEK_TICKER })
 
-	const tokenPrice = loadableData(useTokenPriceLoadable(SEEK_COIN_GECKO_ID))
+	const tokenPrice = loadableData(useTokenPriceLoadable(SEEK_TOKEN_ID))
 	const fiatAmount = useMemo(
 		() => availableBalance.toNumber() * (tokenPrice ?? 0),
 		[availableBalance, tokenPrice]
 	)
 	const currency = useSelectedCurrency()
-	const tokenId = evmErc20TokenId(CHAIN_ID.toString(), SEEK_TOKEN_ADDRESS)
 
 	const seekBalances = useMemo(() => {
 		return {
-			tokenId,
+			tokenId: SEEK_TOKEN_ID,
 			each: ethAccounts.map((account, index) => {
 				const planckBalance = (data as bigint[])?.[index] || 0n
 				const accountAvailableBalance = Decimal.fromPlanck(planckBalance, 18, {
@@ -72,7 +70,7 @@ const useGetSeekAvailableBalance = () => {
 				}
 			}),
 		}
-	}, [currency, data, ethAccounts, tokenId, tokenPrice])
+	}, [currency, data, ethAccounts, tokenPrice])
 
 	return {
 		availableBalance,

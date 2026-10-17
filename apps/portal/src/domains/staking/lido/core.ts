@@ -1,3 +1,4 @@
+import { evmErc20TokenId } from "@talismn/chaindata-provider"
 import { useQueries, useQuery } from "@tanstack/react-query"
 import { useEffect } from "react"
 import { useBlockNumber, useConfig } from "wagmi"
@@ -8,7 +9,7 @@ import {
 } from "wagmi/query"
 
 import type { Account } from "@/domains/accounts/accounts"
-import { useTokenPriceLoadable } from "@/domains/chains/chains"
+import { useTokenPriceLoadable } from "@/domains/balances/token-rates"
 import { Decimal } from "@/util/Decimal"
 import { loadableData } from "@/util/loadable"
 import { lidoTokenAbi, withdrawalQueueAbi } from "./abi"
@@ -127,7 +128,9 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
 		claimable: claimables?.at(index),
 	}))
 
-	const tokenPriceLoadable = useTokenPriceLoadable(lidoSuite.token.coingeckoId)
+	const tokenPriceLoadable = useTokenPriceLoadable(
+		evmErc20TokenId(String(lidoSuite.chain.id), lidoSuite.token.address)
+	)
 	const tokenPrice = loadableData(tokenPriceLoadable)
 
 	const data = filteredAccounts
