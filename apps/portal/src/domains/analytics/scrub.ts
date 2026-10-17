@@ -14,7 +14,7 @@ const REDACTIONS: readonly [RegExp, string][] = [
 	[/0x[0-9a-f]{41,}/gi, "<hash>"],
 	[/0x[0-9a-f]{40}/gi, "<address>"],
 	[/[0-9a-f]{64,}/gi, "<hash>"],
-	[/(?<![0-9a-z])[0-9a-f]{40}(?![0-9a-z])/gi, "<address>"],
+	[/(^|[^0-9a-z])[0-9a-f]{40}(?![0-9a-z])/gi, "$1<address>"],
 	[/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, "<id>"],
 	[/[1-9A-HJ-NP-Za-km-z]{40,}/g, "<address>"],
 ]

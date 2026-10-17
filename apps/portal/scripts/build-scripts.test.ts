@@ -38,12 +38,21 @@ describe("build scripts", () => {
 	})
 
 	it("hides the client's maps at the top level, the option vite:css-post reads", () => {
-		expect(viteConfig).toContain('\tbuild: { sourcemap: "hidden" },\n')
-		expect(viteConfig).not.toMatch(/client: \{ build: \{ sourcemap/)
+		expect(viteConfig).toMatch(/^\tbuild: \{ sourcemap: "hidden"[,}]/m)
+		expect(viteConfig).not.toMatch(/client: \{ build: \{[^\n]*sourcemap/)
 		expect(pagesWorkflow).not.toContain("--sourcemap")
 	})
 
 	it("keeps the Worker's maps linked as the Cloudflare plugin emits them without a root sourcemap", () => {
-		expect(viteConfig).toContain("environments: { ssr: { build: { sourcemap: true } } }")
+		expect(viteConfig).toMatch(/^\t\tssr: \{ build: \{ sourcemap: true \} \},$/m)
+	})
+
+	it("keeps vite 7's browser floor for the client's JS, and for CSS at the top level the minifier reads, leaving the Worker on the Cloudflare plugin's target", () => {
+		expect(viteConfig).toContain(
+			'const viteSevenBrowserFloor = ["chrome107", "edge107", "firefox104", "safari16"]'
+		)
+		expect(viteConfig).toMatch(/^\t\tclient: \{ build: \{ target: viteSevenBrowserFloor \} \},$/m)
+		expect(viteConfig).toMatch(/^\tbuild: \{[^\n]*cssTarget: viteSevenBrowserFloor/m)
+		expect(viteConfig).not.toMatch(/^\tbuild: \{[^\n]*\btarget:/m)
 	})
 })
