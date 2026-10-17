@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
 
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import { selectedCurrencyState } from "@/domains/balances/currency"
 import { DECIMALS, SEEK_TICKER } from "@/domains/staking/seek/constants"
 import { Decimal } from "@/util/Decimal"

@@ -9,7 +9,12 @@ export default mergeConfig(
 			react({ jsxImportSource: "@emotion/react", babel: { plugins: ["@emotion/babel-plugin"] } }),
 			svgr(),
 		],
-		resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
+		resolve: {
+			alias: {
+				"@": path.resolve(__dirname, "./src"),
+				"cloudflare:workers": path.resolve(__dirname, "./src/test/cloudflare-workers.ts"),
+			},
+		},
 	},
 	defineConfig({
 		test: {
@@ -17,6 +22,7 @@ export default mergeConfig(
 			environment: "jsdom",
 			include: ["src/**/*.test.{ts,tsx}", "scripts/**/*.test.ts"],
 			setupFiles: ["src/vitest.setup.ts"],
+			server: { deps: { inline: ["@talismn/balances"] } },
 		},
 	})
 )

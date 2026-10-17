@@ -1,36 +1,33 @@
 import type { ReactNode } from "react"
 import { useState } from "react"
-import { useRecoilValue, useSetRecoilState } from "recoil"
 
 import { Welcome } from "@/components/recipes/Welcome"
-import { popularAccounts } from "@/domains/accounts/consts"
-import { lookupAccountAddressState, readOnlyAccountsState } from "@/domains/accounts/recoils"
 import {
-	useHasActiveWalletConnection,
-	useWalletConnectionInitialised,
-} from "@/domains/extension/main"
+	setLookupAccountAddress,
+	useLookupAccountAddress,
+	useReadonlyAccounts,
+} from "@/domains/accounts/accounts"
+import { popularAccounts } from "@/domains/accounts/consts"
+import { useHasActiveWalletConnection } from "@/domains/extension/main"
+import { useInitialisedSubstrateWallets } from "@/domains/extension/substrate"
 import { truncateAddress } from "@/util/truncateAddress"
 
-import { walletConnectionSideSheetOpenState } from "./WalletConnectionSideSheet"
+import { openWalletConnectionSideSheet } from "./WalletConnectionSideSheet"
 
 export type AccountConnectionGuardProps = { children?: ReactNode; noSuspense?: boolean }
 
 const useShouldShowAccountConnectionGuard = () => {
 	const hasActiveWalletConnection = useHasActiveWalletConnection()
-	const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
-	const lookupAccount = useRecoilValue(lookupAccountAddressState)
+	const readonlyAccounts = useReadonlyAccounts()
+	const lookupAccount = useLookupAccountAddress()
 
 	return !hasActiveWalletConnection && readonlyAccounts.length === 0 && lookupAccount === undefined
 }
 
 export const AccountConnectionGuard = ({ children, noSuspense }: AccountConnectionGuardProps) => {
 	const shouldShowGuard = useShouldShowAccountConnectionGuard()
-	const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
-
 	const [addressInput, setAddressInput] = useState("")
-	const setLookupAddress = useSetRecoilState(lookupAccountAddressState)
-
-	const walletConnectionInitialised = useWalletConnectionInitialised()
+	const walletConnectionInitialised = useInitialisedSubstrateWallets()
 	// triggers parent <Suspense />
 	if (!walletConnectionInitialised && !noSuspense) throw new Promise<void>((resolve) => resolve())
 
@@ -39,12 +36,12 @@ export const AccountConnectionGuard = ({ children, noSuspense }: AccountConnecti
 	return (
 		<div css={{ display: "flex", width: "100%", height: "100%", alignItems: "center" }}>
 			<Welcome
-				walletButton={
-					<Welcome.WalletButton onClick={() => setWalletConnectionSideSheetOpen(true)} />
-				}
+				walletButton={<Welcome.WalletButton onClick={openWalletConnectionSideSheet} />}
 				addressInput={<Welcome.AddressInput value={addressInput} onChangeText={setAddressInput} />}
 				addressInputConfirmButton={
-					<Welcome.AddressInputConfirmButton onClick={() => setLookupAddress(addressInput)} />
+					<Welcome.AddressInputConfirmButton
+						onClick={() => setLookupAccountAddress(addressInput)}
+					/>
 				}
 				popularAccounts={popularAccounts.map((x, index) => (
 					<Welcome.PopularAccount
@@ -52,7 +49,7 @@ export const AccountConnectionGuard = ({ children, noSuspense }: AccountConnecti
 						name={x.name ?? truncateAddress(x.address)}
 						address={x.address}
 						description={x.description}
-						onClick={() => setLookupAddress(x.address)}
+						onClick={() => setLookupAccountAddress(x.address)}
 					/>
 				))}
 				css={{ flex: 1, margin: "auto" }}

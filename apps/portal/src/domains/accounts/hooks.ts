@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from "react"
-import { useRecoilValue } from "recoil"
 import { useResolveNsName } from "@/libs/onChainId"
 import { toast } from "@/ui/molecules/Toaster"
 import { tryParseSubstrateOrEthereumAddress } from "@/util/addressValidation"
@@ -9,8 +8,8 @@ import {
 	type ReadonlyAccount,
 	setStoredReadonlyAccounts,
 	storedReadonlyAccounts$,
+	useReadonlyAccounts,
 } from "./accounts"
-import { readOnlyAccountsState } from "./recoils"
 
 export const useSetReadonlyAccounts = () => ({
 	add: useCallback((account: ReadonlyAccount) => {
@@ -28,7 +27,7 @@ export const useSetReadonlyAccounts = () => ({
 })
 
 export const useAddReadonlyAccountForm = () => {
-	const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
+	const readonlyAccounts = useReadonlyAccounts()
 	const { add } = useSetReadonlyAccounts()
 	const [address, setAddress] = useState("")
 	const [name, setName] = useState("")

@@ -1,8 +1,10 @@
+import { Subscribe } from "@react-rxjs/core"
 import { fireEvent, render, screen } from "@testing-library/react"
 import type { ReactNode } from "react"
-import { RecoilRoot } from "recoil"
+import { defer, of, throwError } from "rxjs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { ThemeProvider, theme } from "@/ui/theme"
+import { bindSuspended } from "@/util/loadable"
 import { ErrorBoundary } from "./ErrorBoundary"
 
 const { captureError } = vi.hoisted(() => ({ captureError: vi.fn() }))
@@ -20,7 +22,7 @@ const Child = () => {
 const renderBoundary = (boundary: ReactNode) =>
 	render(
 		<ThemeProvider theme={theme.greenDark}>
-			<RecoilRoot>{boundary}</RecoilRoot>
+			<Subscribe>{boundary}</Subscribe>
 		</ThemeProvider>
 	)
 
@@ -65,6 +67,27 @@ describe("ErrorBoundary", () => {
 		expect(screen.getByText("Staked")).not.toBeNull()
 		expect(screen.queryByText("Oops!")).toBeNull()
 		expect(captureError).toHaveBeenCalledOnce()
+	})
+
+	it("re-runs the stream that failed on Refresh", async () => {
+		const rpc = { down: true }
+		const [useStakedAmount] = bindSuspended((address: string) =>
+			defer(() => (rpc.down ? throwError(() => new Error(`${address}: rpc down`)) : of("12 DOT")))
+		)
+		const StakedAmount = () => <p>{useStakedAmount("alice")}</p>
+
+		renderBoundary(
+			<ErrorBoundary>
+				<StakedAmount />
+			</ErrorBoundary>
+		)
+
+		expect(await screen.findByText("Oops!")).not.toBeNull()
+		rpc.down = false
+		fireEvent.click(screen.getByRole("button", { name: "Refresh" }))
+
+		expect(await screen.findByText("12 DOT")).not.toBeNull()
+		expect(screen.queryByText("Oops!")).toBeNull()
 	})
 
 	it("hands the message to renderFallback", () => {

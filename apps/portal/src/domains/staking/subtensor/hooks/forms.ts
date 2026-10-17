@@ -9,7 +9,7 @@ import {
 	MIN_SUBTENSOR_ROOTNET_STAKE,
 	ROOT_NETUID,
 } from "@/components/widgets/staking/subtensor/constants"
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import { getChainRuntime$ } from "@/domains/chains/chain-runtime"
 import { ChainContext } from "@/domains/chains/contexts"
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"

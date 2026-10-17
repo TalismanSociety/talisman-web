@@ -5,7 +5,7 @@ import {
 	PoolClaimPermissionDialog as PoolClaimPermissionDialogComponent,
 	PoolClaimPermissionForm as PoolClaimPermissionFormComponent,
 } from "@/components/recipes/PoolClaimPermissionForm"
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import { txFromCall } from "@/domains/chains/chain-runtime"
 import { useChainState } from "@/domains/chains/hooks"
 import { assertChain } from "@/domains/chains/utils"

@@ -1,11 +1,11 @@
 import { useState } from "react"
-import { useRecoilValue, useRecoilValueLoadable } from "recoil"
+import { useRecoilValueLoadable } from "recoil"
 
 import { StakePosition, StakePositionErrorBoundary } from "@/components/recipes/StakePosition"
 import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { RedactableBalance } from "@/components/widgets/RedactableBalance"
-import { selectedEvmAccountsState } from "@/domains/accounts/recoils"
+import { useSelectedEvmAccounts } from "@/domains/accounts/accounts"
 import { useStakes } from "@/domains/staking/lido/core"
 import { lidoSuitesState } from "@/domains/staking/lido/recoils"
 import type { LidoSuite } from "@/domains/staking/lido/types"
@@ -47,10 +47,7 @@ const LidoStakes = (props: {
 	const [unstakeSideSheetOpen, setUnstakeSideSheetOpen] = useState(false)
 	const [claimSideSheetOpen, setClaimSideSheetOpen] = useState(false)
 
-	const { data: stakes, isLoading } = useStakes(
-		useRecoilValue(selectedEvmAccountsState),
-		props.lidoSuite
-	)
+	const { data: stakes, isLoading } = useStakes(useSelectedEvmAccounts(), props.lidoSuite)
 
 	if (stakes.length || !isLoading) {
 		props.setShouldRenderLoadingSkeleton(false)

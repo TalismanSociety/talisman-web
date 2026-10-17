@@ -1,8 +1,7 @@
 import { useEffect } from "react"
-import { useRecoilValue } from "recoil"
 
 import { useStakingBalancesEnabledTokens } from "@/components/widgets/staking/providers/hooks/useProvidersData"
-import { accountsState, ownAccountsState } from "@/domains/accounts/recoils"
+import { useAccounts, useOwnAccounts } from "@/domains/accounts/accounts"
 
 import {
 	balancesCacheWrites$,
@@ -13,8 +12,8 @@ import {
 import { useBalancesReportEffect } from "./hooks"
 
 export const BalancesWatcher = () => {
-	const accounts = useRecoilValue(accountsState)
-	const ownAccounts = useRecoilValue(ownAccountsState)
+	const accounts = useAccounts()
+	const ownAccounts = useOwnAccounts()
 	const tokenIds = useStakingBalancesEnabledTokens()
 
 	useEffect(() => setBalancesAddresses(accounts.map(({ address }) => address)), [accounts])

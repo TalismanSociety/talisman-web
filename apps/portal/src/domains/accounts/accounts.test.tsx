@@ -1,3 +1,5 @@
+import { Subscribe } from "@react-rxjs/core"
+import { render } from "@testing-library/react"
 import { firstValueFrom, type Observable } from "rxjs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { alice, bob, evm, fakeWallet, load } from "@/domains/extension/fakeInjectedWeb3"
@@ -133,8 +135,59 @@ describe("accounts", () => {
 		const { render } = await import("@testing-library/react")
 		render(<AccountWatcher />)
 
-		harness.selectedAccountAddresses$.next(undefined)
+		harness.resetSelectedAccountAddresses()
 
 		expect(harness.lookupAccountAddress$.value).toBe(evmAddress)
+	})
+
+	it("selects the chosen accounts through the writer and the default ones again on reset", async () => {
+		harness = await load({ talisman: fakeWallet([alice, bob]) })
+		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(2))
+		const renders: string[][] = []
+		const SelectedNames = () => {
+			renders.push(harness.useSelectedAccounts().map((account) => account.name ?? ""))
+			return null
+		}
+		render(
+			<Subscribe>
+				<SelectedNames />
+			</Subscribe>
+		)
+		await vi.waitFor(() => expect(renders.at(-1)).toEqual(["Guardians SUB", "Bob"]))
+
+		harness.setSelectedAccountAddresses([bob.address])
+		await vi.waitFor(() => expect(renders.at(-1)).toEqual(["Bob"]))
+
+		harness.resetSelectedAccountAddresses()
+		await vi.waitFor(() => expect(renders.at(-1)).toEqual(["Guardians SUB", "Bob"]))
+	})
+
+	it("renders the current selection on the first render of a consumer that mounts after the last one left", async () => {
+		harness = await load({ talisman: fakeWallet([alice, bob]) })
+		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(2))
+		harness.setSelectedAccountAddresses([bob.address])
+		const { AccountWatcher } = await import("./AccountWatcher")
+		render(<AccountWatcher />)
+		const renders: string[][] = []
+		const SelectedNames = () => {
+			renders.push(harness.useSelectedSubstrateAccounts().map((account) => account.name ?? ""))
+			return null
+		}
+
+		const first = render(
+			<Subscribe>
+				<SelectedNames />
+			</Subscribe>
+		)
+		await vi.waitFor(() => expect(renders.at(-1)).toEqual(["Bob"]))
+		first.unmount()
+		renders.length = 0
+		render(
+			<Subscribe>
+				<SelectedNames />
+			</Subscribe>
+		)
+
+		expect(renders).toEqual([["Bob"]])
 	})
 })

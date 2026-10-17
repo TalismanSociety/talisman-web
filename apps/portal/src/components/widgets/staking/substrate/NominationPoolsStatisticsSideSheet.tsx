@@ -7,7 +7,7 @@ import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryTooltip } f
 import { AccountIcon } from "@/components/molecules/AccountIcon"
 import type { StakeStatus } from "@/components/recipes/StakeStatusIndicator"
 import { RedactableBalance } from "@/components/widgets/RedactableBalance"
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import { useChainState } from "@/domains/chains/hooks"
 import { useNativeTokenDecimalState } from "@/domains/chains/recoils"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"

@@ -1,4 +1,4 @@
-import type { ReadonlyAccount } from "./recoils"
+import type { ReadonlyAccount } from "./accounts"
 
 export const popularAccounts: Array<ReadonlyAccount & { description?: string }> = [
 	{

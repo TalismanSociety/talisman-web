@@ -8,7 +8,7 @@ import {
 	readContractsQueryOptions,
 } from "wagmi/query"
 
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import { tokenPriceState } from "@/domains/chains/recoils"
 import { Decimal } from "@/util/Decimal"
 import { lidoTokenAbi, withdrawalQueueAbi } from "./abi"

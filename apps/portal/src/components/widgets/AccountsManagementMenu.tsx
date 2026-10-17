@@ -2,20 +2,22 @@ import { useTheme } from "@emotion/react"
 import type React from "react"
 import type { ReactNode } from "react"
 import { useMemo } from "react"
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil"
+import { useRecoilValue } from "recoil"
 import Logo from "@/assets/logo.svg?react"
 import { AccountIcon } from "@/components/molecules/AccountIcon"
 import { AddReadOnlyAccountDialog } from "@/components/widgets/AddReadOnlyAccountDialog"
 import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
 import { RemoveWatchedAccountConfirmationDialog } from "@/components/widgets/RemoveWatchedAccountConfirmationDialog"
-import { walletConnectionSideSheetOpenState } from "@/components/widgets/WalletConnectionSideSheet"
+import { openWalletConnectionSideSheet } from "@/components/widgets/WalletConnectionSideSheet"
 import {
-	lookupAccountAddressState,
-	portfolioAccountsState,
-	readOnlyAccountsState,
-	selectedAccountAddressesState,
-	selectedAccountsState,
-} from "@/domains/accounts/recoils"
+	resetLookupAccountAddress,
+	resetSelectedAccountAddresses,
+	setSelectedAccountAddresses,
+	usePortfolioAccounts,
+	useReadonlyAccounts,
+	useSelectedAccountAddresses,
+	useSelectedAccounts,
+} from "@/domains/accounts/accounts"
 import { useBalances } from "@/domains/balances/balances"
 import { selectedCurrencyState } from "@/domains/balances/currency"
 import { filterBalancesByAddresses, usePortfolioBalances } from "@/domains/balances/hooks"
@@ -49,7 +51,7 @@ const EvmChip = () => {
 
 const AccountsManagementSurfaceIconButton = (props: { size?: number | string }) => {
 	const theme = useTheme()
-	const selectedAccounts = useRecoilValue(selectedAccountsState)
+	const selectedAccounts = useSelectedAccounts()
 
 	if (selectedAccounts.length === 1) {
 		return (
@@ -101,15 +103,9 @@ export const AccountsManagementMenu = Object.assign(
 		const currency = useRecoilValue(selectedCurrencyState)
 		const portfolioFiatTotal = usePortfolioBalances().sum.fiat(currency).total
 
-		const setSelectedAccountAddresses = useSetRecoilState(selectedAccountAddressesState)
-		const resetSelectedAccountAddresses = useResetRecoilState(selectedAccountAddressesState)
-		const resetLookupAccountAddress = useResetRecoilState(lookupAccountAddressState)
-
-		const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
-
-		const portfolioAccounts = useRecoilValue(portfolioAccountsState)
-		const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
-		const selectedAddresses = useRecoilValue(selectedAccountAddressesState)
+		const portfolioAccounts = usePortfolioAccounts()
+		const readonlyAccounts = useReadonlyAccounts()
+		const selectedAddresses = useSelectedAccountAddresses()
 
 		const balances = useBalances()
 		const fiatBalance = (address: string) =>
@@ -126,7 +122,7 @@ export const AccountsManagementMenu = Object.assign(
 								<Wallet />
 							</SurfaceIcon>
 						}
-						onClick={() => setWalletConnectionSideSheetOpen(true)}
+						onClick={openWalletConnectionSideSheet}
 					/>
 				)
 			}
@@ -146,15 +142,7 @@ export const AccountsManagementMenu = Object.assign(
 					}}
 				/>
 			)
-		}, [
-			portfolioAccounts.length,
-			portfolioFiatTotal,
-			props.className,
-			resetLookupAccountAddress,
-			resetSelectedAccountAddresses,
-			setWalletConnectionSideSheetOpen,
-			theme.color.primary,
-		])
+		}, [portfolioAccounts.length, portfolioFiatTotal, props.className, theme.color.primary])
 
 		return (
 			<Menu>
@@ -222,7 +210,7 @@ export const AccountsManagementMenu = Object.assign(
 												<Copy />
 											</SurfaceIcon>
 										}
-										onClick={() => setSelectedAccountAddresses(() => [x.address])}
+										onClick={() => setSelectedAccountAddresses([x.address])}
 									/>
 								))}
 							</section>
@@ -286,7 +274,7 @@ export const AccountsManagementMenu = Object.assign(
 														</Tooltip>
 													</div>
 												}
-												onClick={() => setSelectedAccountAddresses(() => [account.address])}
+												onClick={() => setSelectedAccountAddresses([account.address])}
 											/>
 										)}
 									</RemoveWatchedAccountConfirmationDialog>

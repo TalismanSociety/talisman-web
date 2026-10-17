@@ -1,8 +1,8 @@
-import { useRecoilValue, useRecoilValueLoadable } from "recoil"
+import { useRecoilValueLoadable } from "recoil"
 import { formatUnits } from "viem"
 import { useReadContracts } from "wagmi"
 
-import { writeableEvmAccountsState } from "@/domains/accounts/recoils"
+import { useWriteableEvmAccounts } from "@/domains/accounts/accounts"
 import { tokenPriceState } from "@/domains/chains/recoils"
 import {
 	CHAIN_ID,
@@ -15,7 +15,7 @@ import seekSinglePoolStakingAbi from "@/domains/staking/seek/seekSinglePoolStaki
 import { Decimal } from "@/util/Decimal"
 
 const useGetSeekStaked = () => {
-	const ethAccounts = useRecoilValue(writeableEvmAccountsState)
+	const ethAccounts = useWriteableEvmAccounts()
 	const tokenPriceLoadable = useRecoilValueLoadable(
 		tokenPriceState({ coingeckoId: SEEK_COIN_GECKO_ID })
 	)

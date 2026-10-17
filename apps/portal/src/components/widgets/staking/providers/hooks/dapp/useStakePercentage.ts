@@ -1,9 +1,8 @@
 import { bind } from "@react-rxjs/core"
 import { useContext } from "react"
-import { useRecoilValue } from "recoil"
 import { combineLatest, map, of } from "rxjs"
 
-import { selectedSubstrateAccountsState } from "@/domains/accounts/recoils"
+import { useSelectedSubstrateAccounts } from "@/domains/accounts/accounts"
 import { ChainContext } from "@/domains/chains/contexts"
 import { account$, ledgers$, protocolState$ } from "@/domains/staking/dappStaking/chain"
 import { stakeInPeriod, stakePercentageOf } from "@/domains/staking/dappStaking/stake"
@@ -34,7 +33,7 @@ const [useStakePercentageOf] = bind((genesisHash: string, addressList: string) =
 const useStakePercentage = () =>
 	useStakePercentageOf(
 		useContext(ChainContext).genesisHash,
-		useRecoilValue(selectedSubstrateAccountsState)
+		useSelectedSubstrateAccounts()
 			.map((account) => account.address)
 			.join(ADDRESS_SEPARATOR)
 	)

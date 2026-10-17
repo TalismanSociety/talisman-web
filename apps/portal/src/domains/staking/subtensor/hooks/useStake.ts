@@ -3,7 +3,7 @@ import {
 	MIN_SUBTENSOR_ALPHA_STAKE,
 	ROOT_NETUID,
 } from "@/components/widgets/staking/subtensor/constants"
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import { useChainState } from "@/domains/chains/hooks"
 import { useNativeTokenAmountState } from "@/domains/chains/recoils"
 import { useTokenAmount } from "@/domains/common/hooks/useTokenAmount"

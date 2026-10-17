@@ -1,11 +1,10 @@
 import { useNavigate } from "@tanstack/react-router"
 import { formatDistance } from "date-fns"
 import { useCallback } from "react"
-import { useRecoilValue, useSetRecoilState } from "recoil"
 import { AddStakeForm } from "@/components/recipes/AddStakeDialog"
 import { useAccountSelector } from "@/components/widgets/AccountSelector"
-import { walletConnectionSideSheetOpenState } from "@/components/widgets/WalletConnectionSideSheet"
-import { evmSignableAccountsState } from "@/domains/accounts/recoils"
+import { openWalletConnectionSideSheet } from "@/components/widgets/WalletConnectionSideSheet"
+import { useWriteableEvmAccounts } from "@/domains/accounts/accounts"
 import { SEEK_TICKER } from "@/domains/staking/seek/constants"
 import { useSearchParams } from "@/hooks/useSearchParams"
 import { Clock, Zap } from "@/icons"
@@ -25,9 +24,8 @@ const AddStakeSideSheet = () => {
 	const [searchParams, setSearchParams] = useSearchParams()
 	const open = searchParams.get("action") === "stake" && searchParams.get("type") === "seek"
 
-	const evmSignableAccounts = useRecoilValue(evmSignableAccountsState).filter((x) => x.canSignEvm)
+	const evmSignableAccounts = useWriteableEvmAccounts().filter((x) => x.canSignEvm)
 	const [[account], accountSelector] = useAccountSelector(evmSignableAccounts, 0)
-	const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
 	const unlockDuration = useGetSeekStakeUnlockDuration()
 	const apr = useGetSeekStakeApr()
 
@@ -114,10 +112,7 @@ const AddStakeSideSheet = () => {
 						evmSignableAccounts.length > 0 ? (
 							accountSelector
 						) : (
-							<Button
-								className="!w-full !rounded-[12px]"
-								onClick={() => setWalletConnectionSideSheetOpen(true)}
-							>
+							<Button className="!w-full !rounded-[12px]" onClick={openWalletConnectionSideSheet}>
 								Connect Ethereum Wallet
 							</Button>
 						)

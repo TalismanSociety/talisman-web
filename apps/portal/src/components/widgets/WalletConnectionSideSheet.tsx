@@ -1,19 +1,16 @@
 import { ClassNames, useTheme } from "@emotion/react"
+import { bind } from "@react-rxjs/core"
 import { useSignetSdk } from "@talismn/signet-apps-sdk"
 import { disconnect as disconnectCore } from "@wagmi/core"
 import type { ButtonHTMLAttributes, DetailedHTMLProps } from "react"
 import { Suspense, useState } from "react"
-import { atom, useRecoilState, useRecoilValue } from "recoil"
+import { BehaviorSubject } from "rxjs"
 import { useConfig, useDisconnect as useDisconnectEvm, useAccount as useEvmAccount } from "wagmi"
 import talismanWalletLogo from "@/assets/talisman-wallet.svg"
 import { AddReadOnlyAccountDialog } from "@/components/widgets/AddReadOnlyAccountDialog"
-import {
-	substrateInjectedAccountsState,
-	writeableEvmAccountsState,
-} from "@/domains/accounts/recoils"
+import { useInjectedAccounts, useWriteableEvmAccounts } from "@/domains/accounts/accounts"
 import { useConnectEvm, useEvmConnectors } from "@/domains/extension/evm"
 import {
-	connectedSubstrateWalletState,
 	connectSubstrateWallet,
 	disconnectSubstrateWallet,
 	useConnectedSubstrateWallet,
@@ -173,8 +170,8 @@ const SubstrateWalletConnection = () => {
 	const wallets = useInstalledSubstrateWallets()
 	const connectedWallet = useConnectedSubstrateWallet()
 
-	const hasSubWallet = useRecoilValue(connectedSubstrateWalletState) !== undefined
-	const hasSubAccounts = useRecoilValue(substrateInjectedAccountsState).length !== 0
+	const hasSubWallet = connectedWallet !== undefined
+	const hasSubAccounts = useInjectedAccounts().length !== 0
 
 	return (
 		<section>
@@ -210,7 +207,7 @@ const EvmWalletConnections = () => {
 	const { connectAsync } = useConnectEvm()
 	const { disconnectAsync } = useDisconnectEvm()
 	const config = useConfig()
-	const writeableEvmAccounts = useRecoilValue(writeableEvmAccountsState)
+	const writeableEvmAccounts = useWriteableEvmAccounts()
 
 	return (
 		<section>
@@ -325,17 +322,20 @@ const WalletConnectionSideSheetComponent = (props: WalletConnectionSideSheetProp
 	)
 }
 
-export const walletConnectionSideSheetOpenState = atom({
-	key: "WalletConnectionSideSheetOpen",
-	default: false,
-})
+const walletConnectionSideSheetOpen$ = new BehaviorSubject(false)
+
+const [useWalletConnectionSideSheetOpen] = bind(walletConnectionSideSheetOpen$)
+
+export const openWalletConnectionSideSheet = () => walletConnectionSideSheetOpen$.next(true)
+
+const closeWalletConnectionSideSheet = () => walletConnectionSideSheetOpen$.next(false)
 
 export const WalletConnectionSideSheet = () => {
-	const [open, setOpen] = useRecoilState(walletConnectionSideSheetOpenState)
+	const open = useWalletConnectionSideSheetOpen()
 
 	if (!open) {
 		return null
 	}
 
-	return <WalletConnectionSideSheetComponent onRequestDismiss={() => setOpen(false)} />
+	return <WalletConnectionSideSheetComponent onRequestDismiss={closeWalletConnectionSideSheet} />
 }

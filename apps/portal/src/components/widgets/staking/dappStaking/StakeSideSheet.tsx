@@ -8,8 +8,8 @@ import { DappStakingForm, DappStakingSideSheet } from "@/components/recipes/Dapp
 import { DappSelectorDialog as DappSelectorDialogComponent } from "@/components/recipes/StakeTargetSelectorDialog"
 import { useAccountSelector } from "@/components/widgets/AccountSelector"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
-import type { Account } from "@/domains/accounts/recoils"
-import { writeableSubstrateAccountsState } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
+import { useWriteableSubstrateAccounts } from "@/domains/accounts/accounts"
 import { useChainState } from "@/domains/chains/hooks"
 import type { SmartContract } from "@/domains/chains/portal-runtime"
 import { ChainProvider } from "@/domains/chains/provider"
@@ -193,7 +193,7 @@ const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, "onRequestDismis
 	const chain = useRecoilValue(useChainState())
 	const dapps = useRegisteredDapps()
 	const [[account], accountSelector] = useAccountSelector(
-		useRecoilValue(writeableSubstrateAccountsState),
+		useWriteableSubstrateAccounts(),
 		searchParams.get("account") === null
 			? 0
 			: (accounts) => accounts?.find((x) => x.address === searchParams.get("account"))

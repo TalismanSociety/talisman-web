@@ -28,7 +28,6 @@ import polkadotJsWalletLogo from "@/assets/polkadot-js-wallet.svg"
 import talismanWalletLogo from "@/assets/talisman-wallet.svg"
 import { track } from "@/domains/analytics/client"
 import { substrateWalletOf } from "@/domains/analytics/events/extensions"
-import { atomFromObservable } from "@/domains/common/recoil-bridge"
 import { toast } from "@/ui/molecules/Toaster"
 import { persistedState } from "@/util/persistedState"
 
@@ -167,10 +166,6 @@ const driver$ = combineLatest([injectedWallets$, connectedSubstrateWalletId$]).p
 	})
 )
 
-export const substrateWalletLifecycle$: Observable<never> = merge(boot$, driver$).pipe(
-	ignoreElements()
-)
-
 const connectedWallet$ = combineLatest([injectedWallets$, connectedSubstrateWalletId$]).pipe(
 	map(([wallets, id]) => wallets.find((wallet) => wallet.sourceId === id && wallet.isConnected)),
 	distinctUntilChanged(),
@@ -183,6 +178,17 @@ const connectedWallet$ = combineLatest([injectedWallets$, connectedSubstrateWall
 	),
 	shareReplay({ bufferSize: 1, refCount: true })
 )
+
+export const [useConnectedSubstrateWallet, connectedSubstrateWallet$] = bind(
+	connectedWallet$,
+	undefined
+)
+
+export const substrateWalletLifecycle$: Observable<never> = merge(
+	boot$,
+	driver$,
+	connectedSubstrateWallet$
+).pipe(ignoreElements())
 
 const pjsSigners = new Map<string, Promise<PjsSigner>>()
 
@@ -248,26 +254,11 @@ export const [useInstalledSubstrateWallets, installedSubstrateWallets$] = bind(
 	[]
 )
 
-export const [useConnectedSubstrateWallet, connectedSubstrateWallet$] = bind(
-	connectedWallet$,
-	undefined
-)
-
 export const initialisedSubstrateWallets$: Observable<boolean> = initialised$
+
+export const [useInitialisedSubstrateWallets] = bind(initialised$)
 
 export const connectSubstrateWallet = (wallet: SubstrateWallet) =>
 	connectedSubstrateWalletId$.next(wallet.id)
 
 export const disconnectSubstrateWallet = () => connectedSubstrateWalletId$.next(undefined)
-
-export const connectedSubstrateWalletState = atomFromObservable(
-	"ConnectedSubstrateWallets",
-	connectedWallet$,
-	undefined
-)
-
-export const initialisedSubstrateWalletsState = atomFromObservable(
-	"InitialisedSubstrateWallets",
-	initialised$,
-	false
-)

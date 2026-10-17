@@ -1,8 +1,7 @@
 import BigNumber from "bignumber.js"
 import { useContext, useMemo } from "react"
-import { useRecoilValue } from "recoil"
 
-import { selectedSubstrateAccountsState } from "@/domains/accounts/recoils"
+import { useSelectedSubstrateAccounts } from "@/domains/accounts/accounts"
 import { ChainContext } from "@/domains/chains/contexts"
 import {
 	addressesKey,
@@ -12,7 +11,7 @@ import {
 
 const useStakePercentage = () => {
 	const { genesisHash } = useContext(ChainContext)
-	const accounts = useRecoilValue(selectedSubstrateAccountsState)
+	const accounts = useSelectedSubstrateAccounts()
 	const addresses = useMemo(() => addressesKey(accounts.map((x) => x.address)), [accounts])
 	const balances = useAccountBalances(genesisHash, addresses)
 	const points = usePoolPoints(genesisHash, addresses)

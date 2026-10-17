@@ -1,14 +1,12 @@
 import type { Balances } from "@talismn/balances"
 import { useMemo, useState } from "react"
 import { useUpdateEffect } from "react-use"
-import type { RecoilValueReadOnly } from "recoil"
-import { useRecoilValue } from "recoil"
 import {
 	type Account,
-	ownPortfolioAccountsState,
-	portfolioAccountsState,
-	selectedAccountsState,
-} from "@/domains/accounts/recoils"
+	useOwnPortfolioAccounts,
+	usePortfolioAccounts,
+	useSelectedAccounts,
+} from "@/domains/accounts/accounts"
 import { track } from "@/domains/analytics/client"
 import { portfolioReportOf } from "@/domains/analytics/events/portfolio"
 import { useDebounce } from "@/hooks/useDebounce"
@@ -22,9 +20,9 @@ export const filterBalancesByAddresses = (balances: Balances, addresses: string[
 	return balances.find((balance) => encoded.has(encodeAnyAddress(balance.address)))
 }
 
-const useAccountsBalances = (accountsState: RecoilValueReadOnly<Account[]>) => {
+const useAccountsBalances = (useAccounts: () => Account[]) => {
 	const balances = useBalances()
-	const accounts = useRecoilValue(accountsState)
+	const accounts = useAccounts()
 	return useMemo(
 		() =>
 			filterBalancesByAddresses(
@@ -35,11 +33,11 @@ const useAccountsBalances = (accountsState: RecoilValueReadOnly<Account[]>) => {
 	)
 }
 
-export const useSelectedBalances = () => useAccountsBalances(selectedAccountsState)
+export const useSelectedBalances = () => useAccountsBalances(useSelectedAccounts)
 
-export const usePortfolioBalances = () => useAccountsBalances(portfolioAccountsState)
+export const usePortfolioBalances = () => useAccountsBalances(usePortfolioAccounts)
 
-const useOwnPortfolioBalances = () => useAccountsBalances(ownPortfolioAccountsState)
+const useOwnPortfolioBalances = () => useAccountsBalances(useOwnPortfolioAccounts)
 
 export const useBalancesReportEffect = () => {
 	const balances = useThrottle(useDebounce(useOwnPortfolioBalances(), 5_000), 15_000)

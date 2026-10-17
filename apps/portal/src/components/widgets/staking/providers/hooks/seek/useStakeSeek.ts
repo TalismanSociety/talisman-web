@@ -3,7 +3,7 @@ import { erc20Abi } from "viem"
 import { useReadContract, useWaitForTransactionReceipt } from "wagmi"
 import { mainnet } from "wagmi/chains"
 
-import type { Account } from "@/domains/accounts/recoils"
+import type { Account } from "@/domains/accounts/accounts"
 import { useWagmiWriteContract } from "@/domains/common/hooks/useWagmiWriteContract"
 import {
 	CHAIN_ID,
