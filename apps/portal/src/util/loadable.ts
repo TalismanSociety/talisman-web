@@ -1,5 +1,16 @@
-import { bind } from "@react-rxjs/core"
-import { catchError, map, type Observable, of, Subject, startWith, switchMap, tap } from "rxjs"
+import { bind, SUSPENSE } from "@react-rxjs/core"
+import {
+	catchError,
+	concat,
+	filter,
+	map,
+	type Observable,
+	of,
+	Subject,
+	startWith,
+	switchMap,
+	tap,
+} from "rxjs"
 
 export type Loadable<T> =
 	| { status: "loading" }
@@ -16,6 +27,9 @@ const toSettled = <T>(source$: Observable<T>): Observable<Loadable<T>> =>
 
 export const toLoadable = <T>(source$: Observable<T>): Observable<Loadable<T>> =>
 	toSettled(source$).pipe(startWith(LOADING))
+
+export const loadableData = <T>(loadable: Loadable<T>): T | undefined =>
+	loadable.status === "success" ? loadable.data : undefined
 
 const settledData = <T>(loadable: Loadable<T>): T => {
 	if (loadable.status === "error") throw loadable.error
@@ -39,13 +53,18 @@ export const retryStreamError = (error: unknown) => {
 	for (const retry of retriesByError.get(error) ?? []) retry()
 }
 
-const retryable = <T>(source: () => Observable<T>): Observable<Loadable<T>> => {
+type Settling<T> = Loadable<T> | typeof SUSPENSE
+
+const isSettled = <T>(value: Settling<T>): value is Loadable<T> => value !== SUSPENSE
+
+const retryable = <T>(source: () => Observable<T>): Observable<Settling<T>> => {
 	const retry$ = new Subject<void>()
 	return retry$.pipe(
 		startWith(undefined),
-		switchMap(() => toSettled(source())),
-		tap((loadable) => {
-			if (loadable.status === "error") rememberRetry(loadable.error, () => retry$.next())
+		switchMap(() => concat(of(SUSPENSE), toSettled(source()))),
+		tap((value) => {
+			if (isSettled(value) && value.status === "error")
+				rememberRetry(value.error, () => retry$.next())
 		})
 	)
 }
@@ -53,10 +72,11 @@ const retryable = <T>(source: () => Observable<T>): Observable<Loadable<T>> => {
 export const bindSuspended = <Args extends unknown[], T>(
 	factory: (...args: Args) => Observable<T>
 ) => {
-	const [useLoadable, loadable$] = bind((...args: Args) => retryable(() => factory(...args)))
-	const useSettled = useLoadable as unknown as (...args: Args) => Loadable<T>
-	const settled$ = loadable$ as unknown as (...args: Args) => Observable<Loadable<T>>
+	const [useSettling, settling$] = bind((...args: Args) => retryable(() => factory(...args)))
+	const useSettled = useSettling as unknown as (...args: Args) => Loadable<T>
+	const settled$ = settling$ as unknown as (...args: Args) => Observable<Settling<T>>
 	const useValue = (...args: Args): T => settledData(useSettled(...args))
-	const value$ = (...args: Args): Observable<T> => settled$(...args).pipe(map(settledData))
+	const value$ = (...args: Args): Observable<T> =>
+		settled$(...args).pipe(filter(isSettled), map(settledData))
 	return [useValue, value$] as const
 }
