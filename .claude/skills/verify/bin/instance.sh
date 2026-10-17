@@ -37,6 +37,14 @@ serves_this_checkout() {
   pid=$(listener_pid "$1")
   [[ -n $pid && $(pid_cwd "$pid") == "$app_dir" ]]
 }
+group_runs_here() {
+  local pid
+  [[ -n $1 ]] || return 1
+  for pid in $(pgrep -g "$1"); do
+    [[ $(pid_cwd "$pid") == "$app_dir" ]] && return 0
+  done
+  return 1
+}
 owns_app_server() {
   local pgid=$1 pid
   [[ -n $pgid && -n $2 ]] || return 1
@@ -310,7 +318,7 @@ down() {
     state=$file
     cdp_port=$(state_get CDP_PORT) app_port=$(state_get APP_PORT) app_pgid=$(state_get APP_PGID)
     [[ -n $cdp_port ]] && { agent-browser --session "talisman-web-$cdp_port" close >/dev/null 2>&1 || true; }
-    if owns_app_server "$app_pgid" "$app_port"; then
+    if owns_app_server "$app_pgid" "$app_port" || group_runs_here "$app_pgid"; then
       stop_app_server "$app_pgid" && echo "stopped the app server of $(state_get INSTANCE) (process group $app_pgid)"
     fi
     rm -f "$file"
