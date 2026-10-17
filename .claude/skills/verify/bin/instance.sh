@@ -183,7 +183,7 @@ create_container() {
   mkdir -p "$app_socket_dir"
   for _ in 1 2 3 4 5; do
     error=$(docker run -d --init --name "$name" --label "$label=$root" --label "talisman-web-verify.instance=$instance_id" \
-      --network "$network" --shm-size=2g \
+      --network "$network" --shm-size=2g --memory=4g --memory-swap=4g \
       -p "127.0.0.1:$(free_port 9500 9599):9224" -e "APP_PORT=$1" -e "APP_UPSTREAM=$(app_upstream "$1")" -e "WALLET=$wallet" \
       -v "$app_socket_dir:/run/app-socket" \
       --add-host=host.docker.internal:host-gateway "$image" 2>&1 >/dev/null) && return
