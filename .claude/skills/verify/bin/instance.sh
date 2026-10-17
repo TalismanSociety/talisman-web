@@ -128,7 +128,7 @@ import appConfig from "../../vite.config.ts"
 export default mergeConfig(appConfig, { cacheDir: "node_modules/.vite-verify/deps" })
 CONFIG
   local app_env=() pm_cmd
-  [[ -f $app_dir/.env ]] || mapfile -t app_env < <(app_env_of "$root"; grep -v '^#' "$bin/../dev-server.env")
+  [[ -f $app_dir/.env ]] || mapfile -t app_env < <(app_env_of "$root")
   mapfile -t pm_cmd < <(pm_command "$root")
   server=(env "${app_env[@]}" "${pm_cmd[@]}" exec vite dev --config node_modules/.vite-verify/vite.config.mjs --strictPort --port)
 }
@@ -311,6 +311,17 @@ serve() {
   echo "$name serves $dir (wallet $wallet) as http://localhost:3002, CDP on :$cdp_port"
 }
 
+report_memory() {
+  local cgroup peak cap oom_kills
+  cgroup=$(docker exec "$1" cat /sys/fs/cgroup/memory.peak /sys/fs/cgroup/memory.max /sys/fs/cgroup/memory.events 2>/dev/null) || return 0
+  peak=$(sed -n 1p <<<"$cgroup") cap=$(sed -n 2p <<<"$cgroup")
+  oom_kills=$(awk '$1 == "oom_kill" { print $2 }' <<<"$cgroup")
+  [[ $cap == max ]] && cap=uncapped || cap="of its $((cap / 1048576)) MiB cap"
+  echo "$1 peaked at $((peak / 1048576)) MiB $cap"
+  [[ ${oom_kills:-0} == 0 ]] ||
+    echo "WARNING: $1 hit its memory cap and the kernel killed $oom_kills process(es) in it: a lane that ran on it may have failed for that reason alone" >&2
+}
+
 down() {
   local file cdp_port app_port app_pgid
   for file in "$state_dir"/*.env; do
@@ -324,6 +335,7 @@ down() {
     rm -f "$file"
   done
   docker ps -a --filter "label=$label=$root" --format '{{.Names}}' | while read -r container; do
+    report_memory "$container"
     docker rm -f "$container" >/dev/null && echo "removed $container"
   done
 }

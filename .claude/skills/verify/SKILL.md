@@ -54,7 +54,7 @@ A test account is an account of `~/.talisman-dev/verify-backup.json`, and nothin
 
 It installs the checkout when `node_modules` is missing, starts the dev server (or reuses the one it started before), starts or reuses the container, closes leftover `about:blank` tabs, unlocks the wallet, runs the doctor, and records the instance in `.tmp/verify/instance.env`. Ready means the doctor printed only `PASS` lines: `up` exits 1 when the doctor fails. A container whose image, app server port, upstream or network changed is recreated, which resets its wallet to the baked state. Containers run on the Docker network `talisman-web-verify`, created with inter-container traffic off, so only the port published on the host's loopback reaches CDP. Each container is capped at 4 GB of memory with no swap (peak seen: 2.6 GB), so a lane pair never takes more than 8 GB plus its two host app servers (about 0.5 GB each).
 
-Without a local `apps/portal/.env`, the dev server runs with the committed `apps/portal/.env.example` plus `dev-server.env`, whose placeholders stand in for the SimpleSwap keys that `vite dev` refuses to boot without. With a local `.env`, Vite reads that file alone.
+Without a local `apps/portal/.env`, the dev server runs with the committed `apps/portal/.env.example`. With a local `.env`, Vite reads that file alone.
 
 When `up` reports that it reused the dev server or container, write `reused` in `$RUN/notes.md`: cleanup then leaves them for the next run of this checkout.
 
@@ -89,7 +89,7 @@ Everything goes in `$RUN`, under the gitignored `.tmp/`. Cleanup never deletes i
 ## 5. Cleanup
 
 1. Close the tabs the run opened: `ab tab list`, then `ab tab close <id>`.
-2. If this run started the instance: `.claude/skills/verify/bin/instance.sh down`. It removes every container of this checkout and stops the app servers its instances started, by process group, when the process listening on the recorded port still belongs to that group or when a process of that group still runs from this checkout's `apps/portal`, such as the socket relay of a server that died. It never touches another checkout's container or a server it did not start.
+2. If this run started the instance: `.claude/skills/verify/bin/instance.sh down`. It removes every container of this checkout and stops the app servers its instances started, by process group, when the process listening on the recorded port still belongs to that group or when a process of that group still runs from this checkout's `apps/portal`, such as the socket relay of a server that died. It never touches another checkout's container or a server it did not start. Before removing a container it prints the container's memory peak against its cap, and a WARNING when the kernel killed a process in it at the cap: say so in your report, since a lane that ran on it may have failed for that reason alone.
 3. Leave `$RUN` in place and name it in your report.
 
 ## Visual parity
