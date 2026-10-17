@@ -89,7 +89,7 @@ Everything goes in `$RUN`, under the gitignored `.tmp/`. Cleanup never deletes i
 ## 5. Cleanup
 
 1. Close the tabs the run opened: `ab tab list`, then `ab tab close <id>`.
-2. If this run started the instance: `.claude/skills/verify/bin/instance.sh down`. It removes every container of this checkout and stops the app servers its instances started, by process group, when the process listening on the recorded port still belongs to that group or when a process of that group still runs from this checkout's `apps/portal`, such as the socket relay of a server that died. It never touches another checkout's container or a server it did not start.
+2. If this run started the instance: `.claude/skills/verify/bin/instance.sh down`. It removes every container of this checkout and stops the app servers its instances started, by process group, when the process listening on the recorded port still belongs to that group or when a process of that group still runs from this checkout's `apps/portal`, such as the socket relay of a server that died. It never touches another checkout's container or a server it did not start. Before removing a container it prints the container's memory peak against its cap, and a WARNING when the kernel killed a process in it at the cap: say so in your report, since a lane that ran on it may have failed for that reason alone.
 3. Leave `$RUN` in place and name it in your report.
 
 ## Visual parity
