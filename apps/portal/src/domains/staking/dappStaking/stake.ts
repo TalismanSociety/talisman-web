@@ -47,7 +47,7 @@ export type RewardPlanInput = {
 export const lastStakedPeriodOf = (ledger: AccountLedger) =>
 	Math.max(ledger.staked.period, (ledger.staked_future ?? ZERO_STAKE).period)
 
-export type RewardPlan = { spanIndexes: number[]; claimableSpanCount: number }
+export type RewardPlan = { spanIndexes: number[]; claimableSpanCount: number; lastEra: number }
 
 const firstStakedEraOf = (ledger: AccountLedger) => {
 	const stakedEra = ledger.staked.era === 0 ? undefined : ledger.staked.era
@@ -69,7 +69,7 @@ export const rewardPlanOf = (
 	const firstStakedEra = firstStakedEraOf(ledger)
 
 	if (rewardsExpired || firstStakedEra === undefined)
-		return { spanIndexes: [], claimableSpanCount: 0 }
+		return { spanIndexes: [], claimableSpanCount: 0, lastEra: lastStakedEra }
 
 	const firstSpanIndex = firstStakedEra - (firstStakedEra % eraRewardSpanLength)
 	const lastSpanIndex = lastStakedEra - (lastStakedEra % eraRewardSpanLength)
@@ -79,37 +79,9 @@ export const rewardPlanOf = (
 			(index) => index % eraRewardSpanLength === 0
 		),
 		claimableSpanCount: (lastSpanIndex - firstSpanIndex) / eraRewardSpanLength + 1,
+		lastEra: lastStakedEra,
 	}
 }
-
-const stakeEligibleInEra = (ledger: AccountLedger, era: number) => {
-	const stakedEra = ledger.staked.era
-	const stakedFuture = ledger.staked_future
-	if (stakedFuture === undefined) return stakedEra <= era ? totalOf(ledger.staked) : 0n
-	if (stakedFuture.era <= era) return totalOf(stakedFuture)
-	return stakedEra <= era ? totalOf(ledger.staked) : 0n
-}
-
-export const stakerRewardsOf = (ledger: AccountLedger, spans: Array<EraRewardSpan | undefined>) =>
-	spans
-		.filter((span): span is EraRewardSpan => span !== undefined)
-		.map((span) =>
-			range(span.first_era, span.last_era + 1)
-				.map((era) => {
-					const eraSpan = span.span[era - span.first_era]
-					return eraSpan === undefined || eraSpan.staked === 0n
-						? 0n
-						: BigInt(
-								new BigNumber(eraSpan.staker_reward_pool.toString())
-									.times(stakeEligibleInEra(ledger, era).toString())
-									.div(eraSpan.staked.toString())
-									.integerValue()
-									.toFixed()
-							)
-				})
-				.reduce((prev, curr) => prev + curr, 0n)
-		)
-		.reduce((prev, curr) => prev + curr, 0n)
 
 const PERBILL = 1_000_000_000n
 
@@ -121,6 +93,36 @@ const perbillTimes = (parts: bigint, amount: bigint) => {
 	const roundUp = remainder % PERBILL > PERBILL / 2n ? 1n : 0n
 	return (amount / PERBILL) * parts + remainder / PERBILL + roundUp
 }
+
+const stakeEligibleInEra = (ledger: AccountLedger, era: number) => {
+	const stakedEra = ledger.staked.era
+	const stakedFuture = ledger.staked_future
+	if (stakedFuture === undefined) return stakedEra <= era ? totalOf(ledger.staked) : 0n
+	if (stakedFuture.era <= era) return totalOf(stakedFuture)
+	return stakedEra <= era ? totalOf(ledger.staked) : 0n
+}
+
+export const stakerRewardsOf = (
+	ledger: AccountLedger,
+	spans: Array<EraRewardSpan | undefined>,
+	lastEra: number
+) =>
+	spans
+		.filter((span): span is EraRewardSpan => span !== undefined)
+		.map((span) =>
+			range(span.first_era, Math.min(span.last_era, lastEra) + 1)
+				.map((era) => {
+					const eraSpan = span.span[era - span.first_era]
+					return eraSpan === undefined || eraSpan.staked === 0n
+						? 0n
+						: perbillTimes(
+								perbillOf(stakeEligibleInEra(ledger, era), eraSpan.staked),
+								eraSpan.staker_reward_pool
+							)
+				})
+				.reduce((prev, curr) => prev + curr, 0n)
+		)
+		.reduce((prev, curr) => prev + curr, 0n)
 
 export const bonusPeriodsOf = (currentPeriod: number, rewardRetentionInPeriods: number) =>
 	range(Math.max(0, currentPeriod - rewardRetentionInPeriods), currentPeriod)
@@ -178,7 +180,7 @@ export const dappStakeOf = ({
 	const dapps = stakerInfos
 		.map(({ keyArgs, value }) => [keyArgs[1], value] as const)
 		.filter(([, info]) => info.staked.period === protocol.period_info.number)
-	const stakerRewards = stakerRewardsOf(ledger, spans)
+	const stakerRewards = stakerRewardsOf(ledger, spans, plan.lastEra)
 	const bonusRewards = bonusRewardsOf(
 		protocol.period_info.number,
 		rewardRetentionInPeriods,

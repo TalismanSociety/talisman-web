@@ -82,6 +82,7 @@ describe("rewardPlanOf", () => {
 		expect(plan(ledger, protocolOf(1493, 7))).toEqual({
 			spanIndexes: [1456, 1472, 1488],
 			claimableSpanCount: 3,
+			lastEra: 1492,
 		})
 	})
 
@@ -90,6 +91,7 @@ describe("rewardPlanOf", () => {
 		expect(plan(ledger, protocolOf(1493, 7), 1340)).toEqual({
 			spanIndexes: [1296, 1312, 1328],
 			claimableSpanCount: 3,
+			lastEra: 1340,
 		})
 	})
 
@@ -106,10 +108,12 @@ describe("rewardPlanOf", () => {
 		expect(plan(expired, protocolOf(1493, 7), 900)).toEqual({
 			spanIndexes: [],
 			claimableSpanCount: 0,
+			lastEra: 900,
 		})
 		expect(plan(ledgerOf({}), protocolOf(1493, 7))).toEqual({
 			spanIndexes: [],
 			claimableSpanCount: 0,
+			lastEra: 0,
 		})
 	})
 
@@ -124,6 +128,7 @@ describe("rewardPlanOf", () => {
 				208, 192, 176, 160, 144, 128, 112, 96, 80, 64, 48, 32, 16,
 			],
 			claimableSpanCount: -80,
+			lastEra: 0,
 		})
 	})
 })
@@ -149,7 +154,7 @@ describe("stakerRewardsOf", () => {
 			]),
 			undefined,
 		]
-		expect(stakerRewardsOf(ledger, spans)).toBe(100n + 333n)
+		expect(stakerRewardsOf(ledger, spans, 2000)).toBe(100n + 333n)
 	})
 
 	it("switches to the future stake from its era and skips empty eras", () => {
@@ -164,17 +169,42 @@ describe("stakerRewardsOf", () => {
 				[1000n, 100n],
 			]),
 		]
-		expect(stakerRewardsOf(ledger, spans)).toBe(100n + 400n)
+		expect(stakerRewardsOf(ledger, spans, 2000)).toBe(100n + 400n)
+	})
+
+	it("stops at the last era the stake can claim", () => {
+		const ledger = ledgerOf({ staked: amount({ era: 100, period: 4, voting: 10n }) })
+		const spans = [
+			span(96, [
+				[1000n, 100n],
+				[1000n, 100n],
+				[1000n, 100n],
+				[1000n, 100n],
+				[1000n, 100n],
+				[1000n, 100n],
+			]),
+		]
+		expect(stakerRewardsOf(ledger, spans, 99)).toBe(0n)
+		expect(stakerRewardsOf(ledger, spans, 100)).toBe(100n)
+		expect(stakerRewardsOf(ledger, spans, 2000)).toBe(200n)
 	})
 
 	it("pays era shares above 10^21 planck", () => {
 		const ledger = ledgerOf({ staked: amount({ era: 1, period: 7, voting: 1n }) })
-		expect(stakerRewardsOf(ledger, [span(1, [[30_000n * ASTR, 1n]])])).toBe(30_000n * ASTR)
+		expect(stakerRewardsOf(ledger, [span(1, [[30_000n * ASTR, 1n]])], 2000)).toBe(30_000n * ASTR)
 	})
 
-	it("rounds each era share half up like bignumber.js", () => {
+	it("rounds each era share down to a Perbill before multiplying, as the pallet does", () => {
 		const ledger = ledgerOf({ staked: amount({ era: 1, period: 7, voting: 1n }) })
-		expect(stakerRewardsOf(ledger, [span(1, [[5n, 2n]])])).toBe(3n)
+		expect(stakerRewardsOf(ledger, [span(1, [[5n, 2n]])], 2000)).toBe(2n)
+		expect(stakerRewardsOf(ledger, [span(1, [[3_000_000_000n, 3n]])], 2000)).toBe(999_999_999n)
+		expect(
+			stakerRewardsOf(
+				ledgerOf({ staked: amount({ era: 1, period: 7, voting: 1000n * ASTR }) }),
+				[span(1, [[200_000n * ASTR, 1_200_000_000n * ASTR]])],
+				2000
+			)
+		).toBe(166_600_000_000_000_000n)
 	})
 })
 
@@ -333,7 +363,7 @@ describe("dappStakeOf", () => {
 					value: { previous_staked: amount({}), staked: amount({ period: 6 }), bonus_status: 0 },
 				},
 			],
-			plan: { spanIndexes: [], claimableSpanCount: 2 },
+			plan: { spanIndexes: [], claimableSpanCount: 2, lastEra: 1492 },
 			spans: [],
 			rewardRetentionInPeriods: 4,
 			periodEnds: new Map(),
@@ -359,7 +389,7 @@ describe("dappStakeOf", () => {
 			protocol: protocolOf(1493, 7),
 			ledger: ledgerOf({}),
 			stakerInfos: [],
-			plan: { spanIndexes: [], claimableSpanCount: 0 },
+			plan: { spanIndexes: [], claimableSpanCount: 0, lastEra: 1492 },
 			spans: [],
 			rewardRetentionInPeriods: 4,
 			periodEnds: new Map(),
@@ -377,7 +407,7 @@ describe("dappStakeOf", () => {
 				stakerInfo(TALISMAN, { period: 5, voting: 2n }),
 				stakerInfo(EVM_DAPP, { period: 4, voting: 1n }),
 			],
-			plan: { spanIndexes: [], claimableSpanCount: 0 },
+			plan: { spanIndexes: [], claimableSpanCount: 0, lastEra: 1492 },
 			spans: [],
 			rewardRetentionInPeriods: 4,
 			periodEnds: new Map([
@@ -401,7 +431,7 @@ describe("dappStakeOf", () => {
 			protocol: protocolOf(1493, 7),
 			ledger: ledgerOf({}),
 			stakerInfos: [stakerInfo(TALISMAN, { period: 6, voting: ASTR })],
-			plan: { spanIndexes: [], claimableSpanCount: 0 },
+			plan: { spanIndexes: [], claimableSpanCount: 0, lastEra: 1492 },
 			spans: [],
 			rewardRetentionInPeriods: 4,
 			periodEnds: new Map([[6, periodEnd(0n, ASTR)]]),
