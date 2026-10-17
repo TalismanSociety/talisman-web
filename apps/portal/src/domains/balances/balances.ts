@@ -1,42 +1,32 @@
 import { bind } from "@react-rxjs/core"
 import { Balances, BalancesProvider, type BalancesResult, type IBalance } from "@talismn/balances"
-import { subNativeTokenId, type TokenId, type TokenList } from "@talismn/chaindata-provider"
-import { fetchTokenRates, type TokenRateCurrency, type TokenRatesList } from "@talismn/token-rates"
+import { subNativeTokenId, type TokenId } from "@talismn/chaindata-provider"
 import { isEqual } from "lodash"
 import {
 	BehaviorSubject,
 	combineLatest,
 	debounceTime,
-	defer,
 	distinctUntilChanged,
-	exhaustMap,
 	filter,
 	map,
-	type Observable,
 	of,
-	retry,
-	scan,
 	shareReplay,
 	startWith,
 	switchMap,
 	tap,
-	timer,
 } from "rxjs"
 import { chainConnectors } from "@/domains/chains/chain-connectors"
 import { chaindataProvider, networksById$, tokensById$ } from "@/domains/chains/chaindata-provider"
 import { encodeAnyAddress } from "@/util/addresses"
 
 import { keepAddresses, readBalancesCache, writeBalancesCache } from "./balances-cache"
-import { currencyConfig } from "./currency"
 import {
 	BITTENSOR_NETWORK_ID,
 	type SubtensorStakesByAddress,
 	subtensorStakes$,
 } from "./subtensor-stakes"
+import { tokenRates$ } from "./token-rates"
 
-const RATE_CURRENCIES = Object.keys(currencyConfig) as TokenRateCurrency[]
-const RATES_POLL_INTERVAL = 300_000
-const RATES_RETRY_DELAY = 5_000
 const NO_BALANCES: BalancesResult = { status: "live", balances: [], failedBalanceIds: [] }
 const BITTENSOR_NATIVE_TOKEN_ID = subNativeTokenId(BITTENSOR_NETWORK_ID)
 const CACHE_WRITE_DEBOUNCE = 1_000
@@ -56,23 +46,6 @@ export const setBalancesAddresses = (addresses: string[]) => addresses$.next(add
 export const setCacheableBalancesAddresses = (addresses: string[]) =>
 	cacheableAddresses$.next(addresses)
 export const setBalancesTokenIds = (tokenIds: TokenId[]) => tokenIds$.next(tokenIds)
-
-const pollTokenRates$ = (tokens: TokenList): Observable<TokenRatesList> =>
-	timer(0, RATES_POLL_INTERVAL).pipe(
-		exhaustMap(() =>
-			defer(() => fetchTokenRates(tokens, RATE_CURRENCIES)).pipe(
-				retry({ delay: RATES_RETRY_DELAY })
-			)
-		),
-		scan((previous, next) => ({ ...previous, ...next }), cache.tokenRates),
-		startWith(cache.tokenRates)
-	)
-
-const tokenRates$ = tokensById$.pipe(
-	distinctUntilChanged(isEqual),
-	switchMap((tokens) => pollTokenRates$(tokens)),
-	shareReplay({ bufferSize: 1, refCount: true })
-)
 
 const addressesByTokenId$ = combineLatest([addresses$, tokenIds$, tokensById$, networksById$]).pipe(
 	map(([addresses, tokenIds, tokens, networks]) =>

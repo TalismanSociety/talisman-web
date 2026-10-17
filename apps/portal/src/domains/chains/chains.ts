@@ -5,6 +5,7 @@ import { combineLatest, map, type Observable, of, shareReplay, switchMap, take }
 import { z } from "zod"
 
 import { selectedCurrency$ } from "@/domains/balances/currency"
+import { tokenPrice$ } from "@/domains/balances/token-rates"
 import { Decimal } from "@/util/Decimal"
 import { getCachedQuery$ } from "@/util/getCachedQuery"
 import { bindSuspended, type Loadable, toLoadable } from "@/util/loadable"
@@ -106,62 +107,16 @@ export const [useNominationPoolsEnabledChainsLoadable] = bind(
 
 export const [useDappStakingEnabledChainsLoadable] = bind(toLoadable(dappStakingEnabledChains$))
 
-const coinGeckoHeaders = (): HeadersInit | undefined => {
-	if (import.meta.env.VITE_COIN_GECKO_API_KEY === undefined) return undefined
-	if (import.meta.env.VITE_COIN_GECKO_API_TIER === "pro")
-		return { "x-cg-pro-api-key": import.meta.env.VITE_COIN_GECKO_API_KEY }
-	if (import.meta.env.VITE_COIN_GECKO_API_TIER === "demo")
-		return { "x-cg-demo-api-key": import.meta.env.VITE_COIN_GECKO_API_KEY }
-	return undefined
-}
-
-const fetchTokenPrice = async (coingeckoId: string, currency: string): Promise<number> => {
-	try {
-		const url = new URL("/api/v3/simple/price", import.meta.env.VITE_COIN_GECKO_API)
-		url.searchParams.set("ids", coingeckoId)
-		url.searchParams.set("vs_currencies", currency)
-		const result = await fetch(url, { headers: coinGeckoHeaders() }).then(
-			async (response) => await response.json()
-		)
-		return result[coingeckoId][currency] as number
-	} catch {
-		return 0
-	}
-}
-
-const tokenPriceQuery$ = (coingeckoId: string, currency: string) =>
-	getCachedQuery$("tokenPrice", `${coingeckoId}:${currency}`, () =>
-		fetchTokenPrice(coingeckoId, currency)
-	)
-
-export const tokenPrice$ = (coingeckoId: string, currency?: string): Observable<number> =>
-	(currency === undefined ? selectedCurrency$ : of(currency)).pipe(
-		switchMap((vsCurrency) => tokenPriceQuery$(coingeckoId, vsCurrency))
-	)
-
-export const [useTokenPrice] = bindSuspended(tokenPrice$)
-
-export const [useTokenPriceLoadable] = bind((coingeckoId: string) =>
-	toLoadable(tokenPrice$(coingeckoId))
-)
-
-export const nativeTokenPrice$ = (genesisHash: string, currency?: string): Observable<number> =>
+export const nativeTokenPrice$ = (genesisHash: string): Observable<number> =>
 	chain$(genesisHash).pipe(
-		switchMap((chain) => {
-			if (chain.isTestnet) return of(0)
-			const coingeckoId = chain.nativeToken?.coingeckoId
-			if (coingeckoId === undefined) {
-				console.error("Chain missing CoinGecko id")
-				return of(0)
-			}
-			return tokenPrice$(coingeckoId, currency).pipe(map((price) => price || 0))
-		})
+		switchMap((chain) =>
+			chain.isTestnet || chain.nativeToken === undefined ? of(0) : tokenPrice$(chain.nativeToken.id)
+		)
 	)
 
 export const [useNativeTokenPriceOf] = bindSuspended(nativeTokenPrice$)
 
-export const useNativeTokenPrice = (currency?: string) =>
-	useNativeTokenPriceOf(useContext(ChainContext).genesisHash, currency)
+export const useNativeTokenPrice = () => useNativeTokenPriceOf(useContext(ChainContext).genesisHash)
 
 const GENESIS_SEPARATOR = ","
 
