@@ -21,8 +21,8 @@ const AppProviders = ({ children }: { children: ReactNode }) => (
 				</div>
 			)}
 		>
-			<Suspense fallback={<FullscreenLoader />}>
-				<Subscribe>
+			<Subscribe>
+				<Suspense fallback={<FullscreenLoader />}>
 					<EvmProvider>
 						<ExtensionWatcher />
 						<AccountWatcher />
@@ -36,8 +36,8 @@ const AppProviders = ({ children }: { children: ReactNode }) => (
 						<PrivacySettingsDialog />
 						<Development />
 					</EvmProvider>
-				</Subscribe>
-			</Suspense>
+				</Suspense>
+			</Subscribe>
 		</ErrorBoundary>
 	</ThemeProvider>
 )
