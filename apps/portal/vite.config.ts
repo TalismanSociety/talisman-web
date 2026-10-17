@@ -14,6 +14,8 @@ import { nodePolyfills } from "vite-plugin-node-polyfills"
 import svgr from "vite-plugin-svgr"
 import wasm from "vite-plugin-wasm"
 
+const viteSevenBrowserFloor = ["chrome107", "edge107", "firefox104", "safari16"]
+
 const isBrowser = (environment: { name: string }) => environment.name === "client"
 
 const inBrowser = (plugin: Plugin): Plugin => ({ ...plugin, applyToEnvironment: isBrowser })
@@ -53,8 +55,11 @@ const browserNodePolyfills = (): Plugin[] => {
 }
 
 export default defineConfig({
-	build: { sourcemap: "hidden" },
-	environments: { ssr: { build: { sourcemap: true } } },
+	build: { sourcemap: "hidden", cssTarget: viteSevenBrowserFloor },
+	environments: {
+		client: { build: { target: viteSevenBrowserFloor } },
+		ssr: { build: { sourcemap: true } },
+	},
 	optimizeDeps: {
 		// getting dev error without this setting
 		exclude: ["node_modules/.vite/deps"],
