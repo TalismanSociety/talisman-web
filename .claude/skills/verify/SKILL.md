@@ -89,7 +89,7 @@ Everything goes in `$RUN`, under the gitignored `.tmp/`. Cleanup never deletes i
 ## 5. Cleanup
 
 1. Close the tabs the run opened: `ab tab list`, then `ab tab close <id>`.
-2. If this run started the instance: `.claude/skills/verify/bin/instance.sh down`. It removes every container of this checkout and stops the app servers its instances started, by process group, when the process listening on the recorded port still belongs to that group. It never touches another checkout's container or a server it did not start.
+2. If this run started the instance: `.claude/skills/verify/bin/instance.sh down`. It removes every container of this checkout and stops the app servers its instances started, by process group, when the process listening on the recorded port still belongs to that group or when a process of that group still runs from this checkout's `apps/portal`, such as the socket relay of a server that died. It never touches another checkout's container or a server it did not start.
 3. Leave `$RUN` in place and name it in your report.
 
 ## Visual parity
@@ -101,7 +101,7 @@ Everything goes in `$RUN`, under the gitignored `.tmp/`. Cleanup never deletes i
 .claude/skills/verify/bin/parity.sh providers positions   # only these routes
 ```
 
-**The baseline.** `parity-baseline.sha` names the baseline commit: `8a52f759` (U15b, validator nomination on papi), main after U22 moved the Bittensor data to TanStack Start server functions, served as a Worker. A migration unit never edits it: only the program coordinator moves it, and only to a main commit whose rendering is the reference. On first use, parity adds a detached git worktree of that commit at `.tmp/verify/parity/baseline-src`, installs it with that commit's own toolchain (`--frozen-lockfile`), builds it, and caches the build at `.tmp/verify/parity/baseline-<sha>/`. Later runs reuse that build. The candidate is this checkout, built with the toolchain it declares. Its build is reused only while `HEAD`, the diff and the untracked files outside `.claude/` are unchanged, so a stale build is never compared.
+**The baseline.** `parity-baseline.sha` names the baseline commit: `f7ab488e` (main with Vite 8 and TypeScript 7, served as a Worker). The earlier pin `8a52f759` no longer renders Bittensor data. A migration unit never edits it: only the program coordinator moves it, and only to a main commit whose rendering is the reference. On first use, parity adds a detached git worktree of that commit at `.tmp/verify/parity/baseline-src`, installs it with that commit's own toolchain (`--frozen-lockfile`), builds it, and caches the build at `.tmp/verify/parity/baseline-<sha>/`. Later runs reuse that build. The candidate is this checkout, built with the toolchain it declares. Its build is reused only while `HEAD`, the diff and the untracked files outside `.claude/` are unchanged, so a stale build is never compared.
 
 **The build.** Each side runs the root `build:portal`, the command Workers Builds runs, with its own committed `apps/portal/.env.example` exported so that a local `.env` cannot override a value it sets, and with `CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV=false` so that the Cloudflare Vite plugin does not copy the local `.env` secrets into `dist/server/.dev.vars`. The build fails when `apps/portal/dist` lacks `server/wrangler.json` or `client/index.html`, or holds a `server/.dev.vars`. The whole `dist` is cached. A commit older than the Worker cannot be a side.
 
