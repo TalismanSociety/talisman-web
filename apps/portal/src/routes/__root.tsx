@@ -47,7 +47,7 @@ export const Route = createRootRoute({
 			{ rel: "stylesheet", href: indexCss },
 		],
 	}),
-	shellComponent: RootShell,
+	shellComponent: import.meta.env.SSR ? RootShell : undefined,
 	component: RootComponent,
 	notFoundComponent: () => <Navigate to="/" />,
 })
