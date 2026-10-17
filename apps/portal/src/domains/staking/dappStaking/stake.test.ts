@@ -167,6 +167,11 @@ describe("stakerRewardsOf", () => {
 		expect(stakerRewardsOf(ledger, spans)).toBe(100n + 400n)
 	})
 
+	it("pays era shares above 10^21 planck", () => {
+		const ledger = ledgerOf({ staked: amount({ era: 1, period: 7, voting: 1n }) })
+		expect(stakerRewardsOf(ledger, [span(1, [[30_000n * ASTR, 1n]])])).toBe(30_000n * ASTR)
+	})
+
 	it("rounds each era share half up like bignumber.js", () => {
 		const ledger = ledgerOf({ staked: amount({ era: 1, period: 7, voting: 1n }) })
 		expect(stakerRewardsOf(ledger, [span(1, [[5n, 2n]])])).toBe(3n)

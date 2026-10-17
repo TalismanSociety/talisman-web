@@ -104,7 +104,7 @@ export const stakerRewardsOf = (ledger: AccountLedger, spans: Array<EraRewardSpa
 									.times(stakeEligibleInEra(ledger, era).toString())
 									.div(eraSpan.staked.toString())
 									.integerValue()
-									.toString()
+									.toFixed()
 							)
 				})
 				.reduce((prev, curr) => prev + curr, 0n)
