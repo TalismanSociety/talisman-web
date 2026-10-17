@@ -1,3 +1,4 @@
+import type { Theme } from "@emotion/react"
 import { createLink } from "@tanstack/react-router"
 import type { AnchorHTMLAttributes, ElementType } from "react"
 import { Zap } from "@/icons"
@@ -10,7 +11,7 @@ const StakeButton = <T extends ElementType>(props: Omit<ButtonProps<T>, "childre
 		{...props}
 		variant="surface"
 		leadingIcon={<Zap />}
-		css={(theme) => ({ color: theme.color.primary })}
+		css={(theme: Theme) => ({ color: theme.color.primary })}
 	>
 		Stake
 	</Button>

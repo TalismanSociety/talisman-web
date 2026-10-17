@@ -1,8 +1,15 @@
 import path from "node:path"
 import { cloudflare } from "@cloudflare/vite-plugin"
+import babel from "@rolldown/plugin-babel"
 import { tanstackStart } from "@tanstack/react-start/plugin/vite"
 import react from "@vitejs/plugin-react"
-import { type ConfigEnv, defineConfig, type Plugin, type UserConfig } from "vite"
+import {
+	type ConfigEnv,
+	type ConfigPluginContext,
+	defineConfig,
+	type Plugin,
+	type UserConfig,
+} from "vite"
 import { nodePolyfills } from "vite-plugin-node-polyfills"
 import svgr from "vite-plugin-svgr"
 import wasm from "vite-plugin-wasm"
@@ -11,15 +18,20 @@ const isBrowser = (environment: { name: string }) => environment.name === "clien
 
 const inBrowser = (plugin: Plugin): Plugin => ({ ...plugin, applyToEnvironment: isBrowser })
 
+type PolyfillConfig = (this: ConfigPluginContext, config: UserConfig, env: ConfigEnv) => UserConfig
+
 const browserNodePolyfills = (): Plugin[] => {
-	const plugin = nodePolyfills()
-	const polyfillConfig = plugin.config as (config: UserConfig, env: ConfigEnv) => UserConfig
+	const plugins = nodePolyfills()
+	const polyfills = plugins.find((plugin) => plugin.name === "vite-plugin-node-polyfills")
+	if (!polyfills) throw new Error("vite-plugin-node-polyfills no longer has its config plugin")
+	const polyfillConfig = polyfills.config as PolyfillConfig
 	let aliases: [string, string][] = []
 	return [
+		...plugins.filter((plugin) => plugin !== polyfills).map(inBrowser),
 		{
 			name: "browser-node-polyfills",
-			config: (userConfig, env) => {
-				const { resolve, ...config } = polyfillConfig(userConfig, env)
+			config(userConfig, env) {
+				const { resolve, ...config } = polyfillConfig.call(this, userConfig, env)
 				aliases = Object.entries(resolve?.alias ?? {})
 				return config
 			},
@@ -50,12 +62,8 @@ export default defineConfig({
 	plugins: [
 		cloudflare({ viteEnvironment: { name: "ssr" } }),
 		tanstackStart({ spa: { enabled: true, prerender: { outputPath: "/index" } } }),
-		react({
-			jsxImportSource: "@emotion/react",
-			babel: {
-				plugins: ["@emotion/babel-plugin"],
-			},
-		}),
+		react({ jsxImportSource: "@emotion/react" }),
+		babel({ plugins: ["@emotion/babel-plugin"] }),
 		svgr(),
 		browserNodePolyfills(),
 		inBrowser(wasm()),
@@ -67,7 +75,7 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			"@": path.resolve(__dirname, "./src"),
+			"@": path.resolve(import.meta.dirname, "./src"),
 		},
 	},
 })

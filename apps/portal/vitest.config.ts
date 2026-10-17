@@ -1,4 +1,5 @@
 import path from "node:path"
+import babel from "@rolldown/plugin-babel"
 import react from "@vitejs/plugin-react"
 import svgr from "vite-plugin-svgr"
 import { defineConfig, mergeConfig } from "vitest/config"
@@ -6,13 +7,14 @@ import { defineConfig, mergeConfig } from "vitest/config"
 export default mergeConfig(
 	{
 		plugins: [
-			react({ jsxImportSource: "@emotion/react", babel: { plugins: ["@emotion/babel-plugin"] } }),
+			react({ jsxImportSource: "@emotion/react" }),
+			babel({ plugins: ["@emotion/babel-plugin"] }),
 			svgr(),
 		],
 		resolve: {
 			alias: {
-				"@": path.resolve(__dirname, "./src"),
-				"cloudflare:workers": path.resolve(__dirname, "./src/test/cloudflare-workers.ts"),
+				"@": path.resolve(import.meta.dirname, "./src"),
+				"cloudflare:workers": path.resolve(import.meta.dirname, "./src/test/cloudflare-workers.ts"),
 			},
 		},
 	},
