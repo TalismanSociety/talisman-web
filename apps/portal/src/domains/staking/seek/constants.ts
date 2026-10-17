@@ -1,3 +1,5 @@
+import { type EvmErc20Token, evmErc20TokenId } from "@talismn/chaindata-provider"
+
 export const DECIMALS = 18
 export const SEEK_SINGLE_POOL_STAKING_ADDRESS =
 	"0x52b8969F9C1d1EFFd4f0ABeA2104dF02B65c165C" as const
@@ -5,7 +7,18 @@ export const SEEK_TOKEN_ADDRESS = "0x07C3E739C65f81Ea79d19A88d27de4C9f15f8Df0" a
 export const SEEK_TICKER = "SEEK"
 export const CHAIN_ID = 1 // Eth mainnet
 export const CHAIN_NAME = "Ethereum"
-export const SEEK_COIN_GECKO_ID = "talisman"
+export const SEEK_TOKEN_ID = evmErc20TokenId(String(CHAIN_ID), SEEK_TOKEN_ADDRESS)
+
+export const SEEK_TOKEN: EvmErc20Token = {
+	id: SEEK_TOKEN_ID,
+	type: "evm-erc20",
+	platform: "ethereum",
+	networkId: String(CHAIN_ID),
+	contractAddress: SEEK_TOKEN_ADDRESS,
+	symbol: SEEK_TICKER,
+	decimals: DECIMALS,
+	coingeckoId: "talisman",
+}
 
 export const DISCOUNT_TIERS = [
 	{ tier: 0, min: 0n, discount: 0 },
