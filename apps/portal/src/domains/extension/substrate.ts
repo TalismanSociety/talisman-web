@@ -5,6 +5,7 @@ import type { InjectedPolkadotAccount, SignPayload, SignRaw } from "polkadot-api
 import {
 	auditTime,
 	BehaviorSubject,
+	catchError,
 	combineLatest,
 	defer,
 	distinctUntilChanged,
@@ -15,6 +16,7 @@ import {
 	ignoreElements,
 	map,
 	merge,
+	NEVER,
 	type Observable,
 	of,
 	shareReplay,
@@ -79,6 +81,10 @@ const kheopskit$ = pageLoaded$.pipe(
 		})
 	),
 	auditTime(settledPastKheopskitThrottleMs),
+	catchError((error) => {
+		console.error("The wallet bridge stopped; keeping the last known wallets and accounts", error)
+		return NEVER
+	}),
 	shareReplay({ bufferSize: 1, refCount: false })
 )
 
