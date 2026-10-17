@@ -4,7 +4,7 @@
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true
+    "types": ["node"]
   },
   "include": ["playwright.config.ts", "vite.config.ts", "vitest.config.ts"]
 }
