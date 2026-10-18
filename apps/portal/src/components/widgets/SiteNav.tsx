@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router"
 import { type MouseEventHandler, useCallback, useState } from "react"
 import { CurrencySelect } from "@/components/molecules/CurrencySelect"
 import { WalletConnectionButton } from "@/components/molecules/WalletConnectionButton"
-import { CreditCard, Menu, PieChart, Zap } from "@/icons"
+import { CreditCard, Menu, PieChart, Repeat, Zap } from "@/icons"
 import { toast } from "@/ui/molecules/Toaster"
 import { cn } from "@/util/cn"
 
@@ -62,6 +62,7 @@ export const SiteNav = ({
 				</Link>
 				<div className="hidden items-center gap-8 md:flex lg:gap-14">
 					<SiteNavItem label="Staking" icon={<Zap />} to="/staking" />
+					<SiteNavItem label="Swap" icon={<Repeat />} to="/transport" />
 					<SiteNavItem label="Portfolio" icon={<PieChart />} to="/portfolio" />
 					<SiteNavItem
 						label="Buy/Sell"
@@ -92,6 +93,9 @@ export const SiteNav = ({
 			>
 				<Link to="/staking">
 					<SiteMobileNav.Item label="Staking" icon={<Zap />} />
+				</Link>
+				<Link to="/transport">
+					<SiteMobileNav.Item label="Swap" icon={<Repeat />} />
 				</Link>
 				<Link to="/portfolio">
 					<SiteMobileNav.Item label="Portfolio" icon={<PieChart />} />
