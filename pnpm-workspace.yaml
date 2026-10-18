@@ -35,3 +35,5 @@ auditConfig:
     - GHSA-95m3-7q98-8xr5
     - GHSA-86w9-cpqp-85rv
     - GHSA-vfj7-8cjw-p6xm
+minimumReleaseAgeExclude:
+  - '@kheopskit/core@6.0.0-rc.1'
