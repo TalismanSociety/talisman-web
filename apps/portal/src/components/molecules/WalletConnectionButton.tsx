@@ -1,4 +1,4 @@
-import { useAccount as useWagmiAccount } from "wagmi"
+import { useConnection } from "wagmi"
 import { openWalletConnectionSideSheet } from "@/components/widgets/WalletConnectionSideSheet"
 import { useInjectedAccounts, useWriteableAccounts } from "@/domains/accounts/accounts"
 import { useConnectedSubstrateWallet } from "@/domains/extension/substrate"
@@ -10,7 +10,7 @@ export const WalletConnectionButton = () => {
 	const hasSubWallet = useConnectedSubstrateWallet() !== undefined
 	const hasSubAccounts = useInjectedAccounts().length !== 0
 	const subConnected = hasSubWallet && hasSubAccounts
-	const evmConnected = useWagmiAccount().isConnected
+	const evmConnected = useConnection().isConnected
 
 	const hasActiveConnection = subConnected || evmConnected
 	const accounts = useWriteableAccounts()
