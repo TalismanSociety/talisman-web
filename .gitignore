@@ -16,3 +16,6 @@ apps/*/playwright.config.d.ts
 .tmp/
 
 .wrangler/
+
+# Leftover from husky, hooks are managed by simple-git-hooks
+.husky/

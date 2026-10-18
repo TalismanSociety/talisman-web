@@ -1,12 +1,16 @@
 import {
 	type CellContext,
+	type Column,
 	type ColumnDef,
+	columnVisibilityFeature,
+	createSortedRowModel,
 	flexRender,
-	getCoreRowModel,
-	getSortedRowModel,
 	type Row,
+	rowSortingFeature,
 	type SortingState,
-	useReactTable,
+	sortFn_text,
+	tableFeatures,
+	useTable,
 } from "@tanstack/react-table"
 import { Suspense, useCallback, useMemo, useState } from "react"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
@@ -28,6 +32,12 @@ import PercentageBar from "./PercentageBar"
 import StakeButton, { StakeLinkButton } from "./StakeButton"
 import StakePercentage from "./StakePercentage"
 import UnbondingPeriod from "./UnbondingPeriod"
+
+const features = tableFeatures({
+	rowSortingFeature,
+	columnVisibilityFeature,
+	sortedRowModel: createSortedRowModel(),
+})
 
 type StakeProviderProps = {
 	dataQuery: Provider[]
@@ -64,10 +74,12 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
 		[getValuesForSortType]
 	)
 
-	const columns = useMemo<ColumnDef<Provider>[]>(
+	const columns = useMemo<ColumnDef<typeof features, Provider>[]>(
 		() => [
 			{
 				accessorKey: "symbol",
+				sortFn: sortFn_text,
+				sortDescFirst: false,
 				header: "Asset",
 				cell: ({ row }) => (
 					<Asset
@@ -95,10 +107,14 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
 						</Suspense>
 					)
 				},
-				sortingFn: sortingFn("apr"),
+				sortFn: sortingFn("apr"),
+				sortUndefined: false,
+				sortDescFirst: true,
 			},
 			{
 				accessorKey: "type",
+				sortFn: sortFn_text,
+				sortDescFirst: false,
 				header: "Type",
 				cell: ({ row }) => (
 					<Text.BodySmall as="div" alpha="high">
@@ -108,6 +124,8 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
 			},
 			{
 				accessorKey: "provider",
+				sortFn: sortFn_text,
+				sortDescFirst: false,
 				header: "Provider",
 				cell: ({ row }) => (
 					<Text.BodySmall as="div" alpha="high">
@@ -128,7 +146,9 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
 						/>
 					</Suspense>
 				),
-				sortingFn: sortingFn("unbondingPeriod"),
+				sortFn: sortingFn("unbondingPeriod"),
+				sortUndefined: false,
+				sortDescFirst: true,
 			},
 			{
 				accessorKey: "availableBalance",
@@ -146,7 +166,9 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
 						</Suspense>
 					)
 				},
-				sortingFn: sortingFn("availableBalance"),
+				sortFn: sortingFn("availableBalance"),
+				sortUndefined: false,
+				sortDescFirst: true,
 			},
 			{
 				accessorKey: "stakePercentage",
@@ -166,7 +188,9 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
 						</Suspense>
 					)
 				},
-				sortingFn: sortingFn("stakePercentage"),
+				sortFn: sortingFn("stakePercentage"),
+				sortUndefined: false,
+				sortDescFirst: true,
 			},
 			{
 				accessorKey: "action",
@@ -185,23 +209,27 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
 		[setValues, sortingFn]
 	).map((col) => ({
 		...col,
-		cell: (props: CellContext<Provider, unknown>) => (
+		cell: (props: CellContext<typeof features, Provider, unknown>) => (
 			<ErrorBoundary renderFallback={() => <>--</>}>
 				{typeof col.cell === "function" ? col.cell(props) : null}
 			</ErrorBoundary>
 		),
 	}))
 
-	const table = useReactTable({
+	const table = useTable({
+		features,
 		data: sortedData,
 		columns,
-		getCoreRowModel: getCoreRowModel(),
-		getSortedRowModel: getSortedRowModel(),
 		onSortingChange: setSorting,
 		state: {
 			sorting,
 		},
 	})
+
+	const toggleColumnSorting = (column: Column<typeof features, Provider>, isMulti: boolean) =>
+		isMulti || sorting.at(-1)?.id === column.id
+			? column.toggleSorting(undefined, true)
+			: column.toggleSorting(column.getNextSortingOrder() === "desc", false)
 
 	return (
 		<div className="flex w-full flex-1 flex-col gap-[0.8rem]">
@@ -218,7 +246,11 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
 								header.column.id === "apr" && "col-span-1"
 							)}
 							key={header.id}
-							onClick={header.column.getToggleSortingHandler()}
+							onClick={
+								header.column.getCanSort()
+									? (event) => toggleColumnSorting(header.column, event.shiftKey)
+									: undefined
+							}
 							title={
 								header.column.getCanSort()
 									? header.column.getNextSortingOrder() === "asc"
@@ -279,7 +311,7 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
 	)
 }
 
-const RenderCard = ({ row }: { row: Row<Provider> }) => {
+const RenderCard = ({ row }: { row: Row<typeof features, Provider> }) => {
 	const [symbol, apr, type, action] = row.getVisibleCells().filter((cell) => {
 		const { id } = cell.column
 		return id === "symbol" || id === "apr" || id === "type" || id === "action"
