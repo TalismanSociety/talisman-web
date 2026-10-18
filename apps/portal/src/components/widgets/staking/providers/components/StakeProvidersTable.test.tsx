@@ -173,3 +173,90 @@ describe("StakeProvidersTable sorting", () => {
 		])
 	})
 })
+
+const typeAsc = "bnc ASTR KSM GLMR aUSD vDOT ETH DOT AZERO VARA avail TAO"
+const typeDesc = "TAO DOT AZERO VARA avail aUSD vDOT ETH KSM GLMR bnc ASTR"
+const assetAsc = "ASTR aUSD avail AZERO bnc DOT ETH GLMR KSM TAO VARA vDOT"
+const providerAsc = "aUSD AZERO ASTR avail vDOT bnc TAO KSM ETH GLMR DOT VARA"
+const typeAscAssetAsc = "ASTR bnc GLMR KSM aUSD ETH vDOT avail AZERO DOT VARA TAO"
+const typeAscAssetDesc = "bnc ASTR KSM GLMR vDOT ETH aUSD VARA DOT AZERO avail TAO"
+const typeDescAssetAsc = "TAO avail AZERO DOT VARA aUSD ETH vDOT GLMR KSM ASTR bnc"
+const typeAscReturnDesc = "bnc ASTR KSM GLMR vDOT aUSD ETH DOT AZERO VARA avail TAO"
+const typeAscReturnAsc = "ASTR bnc GLMR KSM ETH aUSD vDOT avail VARA AZERO DOT TAO"
+
+describe("StakeProvidersTable multi-column sorting", () => {
+	it.each([
+		{
+			sequence: "shift-click on an unsorted table",
+			steps: [{ click: "shift+Asset", order: assetAsc }],
+		},
+		{
+			sequence: "shift-add, then shift-toggle and shift-remove the added column",
+			steps: [
+				{ click: "Type", order: typeAsc },
+				{ click: "shift+Asset", order: typeAscAssetAsc },
+				{ click: "shift+Asset", order: typeAscAssetDesc },
+				{ click: "shift+Asset", order: typeAsc },
+			],
+		},
+		{
+			sequence: "plain clicks on the last sorted column toggle and remove it in place",
+			steps: [
+				{ click: "Type", order: typeAsc },
+				{ click: "shift+Asset", order: typeAscAssetAsc },
+				{ click: "Asset", order: typeAscAssetDesc },
+				{ click: "Asset", order: typeAsc },
+			],
+		},
+		{
+			sequence: "plain clicks on a descending-first last sorted column",
+			steps: [
+				{ click: "Type", order: typeAsc },
+				{ click: "shift+Est. return", order: typeAscReturnDesc },
+				{ click: "Est. return", order: typeAscReturnAsc },
+				{ click: "Est. return", order: typeAsc },
+			],
+		},
+		{
+			sequence: "plain click on an earlier sorted column replaces the sort",
+			steps: [
+				{ click: "Type", order: typeAsc },
+				{ click: "shift+Asset", order: typeAscAssetAsc },
+				{ click: "Type", order: typeDesc },
+			],
+		},
+		{
+			sequence: "plain click on an earlier sorted column due for removal sorts it ascending",
+			steps: [
+				{ click: "Type", order: typeAsc },
+				{ click: "Type", order: typeDesc },
+				{ click: "shift+Asset", order: typeDescAssetAsc },
+				{ click: "Type", order: typeAsc },
+			],
+		},
+		{
+			sequence: "plain click on an unsorted column replaces the sort",
+			steps: [
+				{ click: "Type", order: typeAsc },
+				{ click: "shift+Asset", order: typeAscAssetAsc },
+				{ click: "Provider", order: providerAsc },
+			],
+		},
+		{
+			sequence: "shift-toggle and shift-remove an earlier sorted column",
+			steps: [
+				{ click: "Type", order: typeAsc },
+				{ click: "shift+Asset", order: typeAscAssetAsc },
+				{ click: "shift+Type", order: typeDescAssetAsc },
+				{ click: "shift+Type", order: assetAsc },
+			],
+		},
+	])("$sequence", ({ steps }) => {
+		const { container } = renderTable()
+		const orders = steps.map(({ click }) => {
+			fireEvent.click(header(click.replace("shift+", "")), { shiftKey: click.startsWith("shift+") })
+			return symbolOrder(container).join(" ")
+		})
+		expect(orders).toEqual(steps.map(({ order }) => order))
+	})
+})

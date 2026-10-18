@@ -1,5 +1,6 @@
 import {
 	type CellContext,
+	type Column,
 	type ColumnDef,
 	columnVisibilityFeature,
 	createSortedRowModel,
@@ -225,6 +226,11 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
 		},
 	})
 
+	const toggleColumnSorting = (column: Column<typeof features, Provider>, isMulti: boolean) =>
+		isMulti || sorting.at(-1)?.id === column.id
+			? column.toggleSorting(undefined, true)
+			: column.toggleSorting(column.getNextSortingOrder() === "desc", false)
+
 	return (
 		<div className="flex w-full flex-1 flex-col gap-[0.8rem]">
 			{/* Column Headers */}
@@ -240,7 +246,11 @@ const StakeProvidersTable = ({ dataQuery }: StakeProviderProps) => {
 								header.column.id === "apr" && "col-span-1"
 							)}
 							key={header.id}
-							onClick={header.column.getToggleSortingHandler()}
+							onClick={
+								header.column.getCanSort()
+									? (event) => toggleColumnSorting(header.column, event.shiftKey)
+									: undefined
+							}
 							title={
 								header.column.getCanSort()
 									? header.column.getNextSortingOrder() === "asc"
