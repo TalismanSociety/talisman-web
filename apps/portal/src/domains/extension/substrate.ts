@@ -26,6 +26,7 @@ import {
 	switchMap,
 	take,
 	tap,
+	timeout,
 } from "rxjs"
 import { z } from "zod"
 import polkadotJsWalletLogo from "@/assets/polkadot-js-wallet.svg"
@@ -58,6 +59,7 @@ const WALLET_METADATA: Record<string, Omit<SubstrateWallet, "id">> = {
 }
 
 const AUTO_CONNECT_WALLET_ID = "talisman"
+const INJECTION_GRACE_MS = 1_000
 
 const appName = import.meta.env.VITE_APPLICATION_NAME ?? "Talisman"
 
@@ -135,17 +137,16 @@ const listsWallet = (wallets: LivePolkadotWallet[], id: string | undefined) =>
 	wallets.some((wallet) => wallet.sourceId === id)
 
 const walletsSettled$ = kheopskit$.pipe(
-	map(({ isDiscovering, wallets }) => ({
-		isDiscovering,
-		wallets: wallets.filter(isLiveInjectedWallet),
-	})),
-	filter(
-		({ isDiscovering, wallets }) =>
-			!isDiscovering ||
-			listsWallet(wallets, connectedSubstrateWalletId$.value ?? AUTO_CONNECT_WALLET_ID)
-	),
 	take(1),
-	map(({ wallets }) => wallets)
+	switchMap(() =>
+		injectedWallets$.pipe(
+			filter((wallets) =>
+				listsWallet(wallets, connectedSubstrateWalletId$.value ?? AUTO_CONNECT_WALLET_ID)
+			),
+			timeout({ first: INJECTION_GRACE_MS, with: () => injectedWallets$ }),
+			take(1)
+		)
+	)
 )
 
 const boot$ = walletsSettled$.pipe(
