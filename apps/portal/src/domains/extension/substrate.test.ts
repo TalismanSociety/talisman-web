@@ -69,6 +69,71 @@ describe("substrate wallet connection", () => {
 		])
 	})
 
+	const guardiansSub = {
+		address: "5CcU6DRpocLUWYJHuNLjB4gGyHJrkWuruQD5XFbRYffCfSAP",
+		name: "Guardians SUB",
+		type: "sr25519",
+	}
+	const kheopskitStoreFromMain = JSON.stringify({
+		cachedWallets: [
+			{
+				id: "polkadot:talisman",
+				platform: "polkadot",
+				type: "injected",
+				name: "Talisman",
+				isConnected: true,
+			},
+		],
+		cachedAccounts: [
+			{
+				id: `polkadot:talisman::${guardiansSub.address}`,
+				platform: "polkadot",
+				address: guardiansSub.address,
+				name: "Guardians SUB",
+				polkadotAccountType: "sr25519",
+				walletId: "polkadot:talisman",
+				walletName: "Talisman",
+			},
+		],
+		autoReconnect: ["polkadot:talisman"],
+	})
+
+	it.each([
+		["prod's keys and no kheopskit store", undefined],
+		["main's keys and kheopskit 5's store", kheopskitStoreFromMain],
+	])("reconnects from %s", async (_, kheopskitStore) => {
+		if (kheopskitStore) localStorage.setItem("kheopskit", kheopskitStore)
+		localStorage.setItem("connected-substrate-extension", '"talisman"')
+		localStorage.setItem(
+			"readonly_accounts",
+			`[{"address":"${alice.address}","name":"Watched Alice"}]`
+		)
+		const talisman = fakeWallet([guardiansSub])
+		harness = await load({ talisman })
+		const readonly: string[] = []
+		const subscription = harness.readonlyAccounts$.subscribe((accounts) => {
+			readonly.splice(0, readonly.length, ...accounts.map((account) => account.name ?? ""))
+		})
+
+		await vi.waitFor(() =>
+			expect(harness.accounts()).toEqual([["Guardians SUB", guardiansSub.address, "sr25519"]])
+		)
+		subscription.unsubscribe()
+		expect(talisman.enable.mock.calls).toEqual([["Talisman"]])
+		expect(readonly).toEqual(["Watched Alice"])
+		await vi.waitFor(
+			() =>
+				expect(JSON.parse(localStorage.getItem("kheopskit") ?? "{}")).toMatchObject({
+					remembered: ["polkadot:talisman"],
+					cachedAccounts: [expect.objectContaining({ address: guardiansSub.address })],
+				}),
+			{ timeout: 3_000 }
+		)
+		expect(JSON.parse(localStorage.getItem("kheopskit") ?? "{}")).not.toHaveProperty(
+			"autoReconnect"
+		)
+	})
+
 	it("auto-connects Talisman on a fresh profile and stores the id JSON-encoded", async () => {
 		const talisman = fakeWallet([alice, evm])
 		harness = await load({ "polkadot-js": fakeWallet([bob]), talisman })
