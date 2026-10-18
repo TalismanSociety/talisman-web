@@ -103,7 +103,7 @@ describe("seedBatch", () => {
 
 	it("seeds an enum list with its first value and every optional bucket", () => {
 		expect(batch.find((e) => e.event === "Report portfolio balances")?.properties).toMatchObject({
-			symbols: ["ANLOG"],
+			symbols: ["ASTR"],
 			chains: ["1"],
 			total_usd: "<10",
 			usd_dot: "<10",

@@ -51,37 +51,6 @@ const fetchTotalNompoolRewards = async ({
 	return Decimal.fromPlanck(amount ?? 0, decimals, { currency })
 }
 
-const ANALOG_PREFIX = 12850
-const analogTotalNompoolRewardsApiUrl = (address: string) =>
-	`https://explorer-api.analog.one/api/nominationPayouts/${encodeAnyAddress(address, ANALOG_PREFIX)}`
-
-const fetchAnalogTotalNompoolRewards = async ({
-	decimals,
-	currency,
-	address,
-}: RewardsSource): Promise<Decimal | undefined> => {
-	const response = await fetch(analogTotalNompoolRewardsApiUrl(address))
-	const json = await response.json()
-	if (
-		json?.status === 404 &&
-		json?.message?.startsWith("Payout for this") &&
-		json?.message?.endsWith("not found")
-	) {
-		return Decimal.fromPlanck(0, decimals, { currency })
-	}
-
-	if (json?.status !== 200)
-		throw new Error(`Analog total rewards request failed ${JSON.stringify(json)}`)
-
-	const amount = json?.data?.totalRewards
-	if (typeof amount !== "number")
-		throw new Error(
-			`Analog total rewards request failed (totalRewards type is not number) ${JSON.stringify(json)}`
-		)
-
-	return Decimal.fromUserInputOrUndefined(String(amount), decimals, { currency })
-}
-
 const [useTotalRewards] = bindSuspended(
 	(
 		chainId: string,
@@ -89,13 +58,7 @@ const [useTotalRewards] = bindSuspended(
 		decimals: number,
 		currency: string | undefined,
 		address: string
-	) =>
-		defer(() => {
-			const source = { chainId, indexerUrl, decimals, currency, address }
-			return chainId === "analog-timechain"
-				? fetchAnalogTotalNompoolRewards(source)
-				: fetchTotalNompoolRewards(source)
-		})
+	) => defer(() => fetchTotalNompoolRewards({ chainId, indexerUrl, decimals, currency, address }))
 )
 
 export const useTotalNominationPoolRewards = (account: Account) => {

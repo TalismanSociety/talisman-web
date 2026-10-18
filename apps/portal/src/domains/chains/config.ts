@@ -26,14 +26,6 @@ export type ChainConfig =
 	| (BaseChain & { isDisabled?: true })
 
 export const chainConfigs: ChainConfig[] = [
-	// Analog Timechain
-	{
-		genesisHash: "0x1459b0204b92719ffc978c5da3d6a2057973916bd548f8076df2064bc1cb4cfc",
-		hasNominationPools: true,
-		priorityPool: 1,
-		// TODO: Add novaIndexerUrl for totalRewards calculation
-		// novaIndexerUrl: '',
-	},
 	// Polkadot Asset Hub (staking on relay chain)
 	{
 		genesisHash: "0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f",
@@ -77,13 +69,6 @@ export const chainConfigs: ChainConfig[] = [
 		// From https://github.com/novasamatech/nova-utils/blob/3f3568fd9c2e068b45b5b378c4d58287d2cda68e/chains/v21/chains_dev.json#L11271C29-L11271C90
 		novaIndexerUrl: "https://api.subquery.network/sq/nova-wallet/nova-wallet-avail",
 	},
-	// Cere
-	{
-		genesisHash: "0x81443836a9a24caaa23f1241897d1235717535711d1d3fe24eae4fdc942c092c",
-		hasNominationPools: true,
-		priorityPool: [1],
-		talismanPools: [1],
-	},
 	// Bittensor Mainnet
 	{
 		genesisHash: "0x2f0555cc76fc2840a25a6ea3b9637146806f1f44b090c175ffde2a7e5ab36c03",
@@ -100,8 +85,4 @@ export const chainConfigs: ChainConfig[] = [
 	},
 ]
 
-export const statisticsUnsupportedChainIds: string[] = [
-	"analog-temporary-testnet",
-	"analog-timechain",
-]
 export const claimPermissionUnsupportedChainIds: string[] = []

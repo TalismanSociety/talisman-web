@@ -6,10 +6,7 @@ import { RedactableBalance } from "@/components/widgets/RedactableBalance"
 import type { Account } from "@/domains/accounts/accounts"
 import { txFromCall } from "@/domains/chains/chain-runtime"
 import { useChain, useNativeTokenDecimal, useNativeTokenPrice } from "@/domains/chains/chains"
-import {
-	claimPermissionUnsupportedChainIds,
-	statisticsUnsupportedChainIds,
-} from "@/domains/chains/config"
+import { claimPermissionUnsupportedChainIds } from "@/domains/chains/config"
 import { useNativeTokenLocalizedFiatAmount } from "@/domains/common/hooks/useLocalizedFiatAmount"
 import { useTx, useTxLoadableState } from "@/domains/common/hooks/useTx"
 import { withdrawUnbondedCall } from "@/domains/staking/substrate/nominationPools/calls"
@@ -64,7 +61,6 @@ const PoolStakeItem = ({ item }: { item: DerivedPool }) => {
 
 	const { name = "", nativeToken: { symbol, logo } = { symbol: "", logo: "" } } = chain || {}
 
-	const showStatistics = !statisticsUnsupportedChainIds.includes(chain.id)
 	const showClaimPermission = !claimPermissionUnsupportedChainIds.includes(chain.id)
 
 	return (
@@ -158,13 +154,11 @@ const PoolStakeItem = ({ item }: { item: DerivedPool }) => {
 				menuButton={
 					<ErrorBoundary renderFallback={() => <>--</>}>
 						<StakePosition.MenuButton>
-							{showStatistics && (
-								<StakePosition.MenuButton.Item.Button
-									headlineContent="Statistics"
-									onClick={() => setStatsDialogOpen(true)}
-									withTransition
-								/>
-							)}
+							<StakePosition.MenuButton.Item.Button
+								headlineContent="Statistics"
+								onClick={() => setStatsDialogOpen(true)}
+								withTransition
+							/>
 							{!item.account.readonly && showClaimPermission && (
 								<StakePosition.MenuButton.Item.Button
 									headlineContent="Claim settings"
