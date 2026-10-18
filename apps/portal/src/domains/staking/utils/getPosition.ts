@@ -12,11 +12,9 @@ const orderedProviders: string[] = [
 	"bittensor_testnet_testtao",
 	"kusama_asset_hub_ksm",
 	"astar_astr",
-	"analog_timechain_anlog",
 	"aleph_zero_azero",
 	"vara_vara",
 	"avail_avail",
-	"cere_cere",
 	"lido_eth",
 ]
 
