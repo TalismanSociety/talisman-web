@@ -42,8 +42,6 @@ export type InjectedSubstrateAccount = {
 	genesisHash?: string | null
 } & ({ readonly?: false } | { readonly: true; partOfPortfolio: boolean })
 
-type TalismanInjectedAccount = PolkadotAccount & { readonly?: boolean; partOfPortfolio?: boolean }
-
 type LivePolkadotWallet = Exclude<PolkadotWallet, { isPlaceholder: true }>
 
 export type PjsSigner = PolkadotInjected["signer"]
@@ -191,7 +189,7 @@ const toInjectedAccount = ({
 	genesisHash,
 	readonly,
 	partOfPortfolio,
-}: TalismanInjectedAccount): InjectedSubstrateAccount =>
+}: PolkadotAccount): InjectedSubstrateAccount =>
 	readonly
 		? { address, name, type, genesisHash, readonly, partOfPortfolio: partOfPortfolio ?? false }
 		: { address, name, type, genesisHash }
