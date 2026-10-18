@@ -19,12 +19,6 @@
     "submit": "network fee; moves the pending pool rewards to the free balance"
   },
   {
-    "name": "pools-claim-cere",
-    "account": "Guardians SUB",
-    "path": "/staking/positions",
-    "steps": [["row", "Cere", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Claim"]]
-  },
-  {
     "name": "pools-bond-extra",
     "account": "Guardians SUB",
     "path": "/staking/positions",
@@ -41,7 +35,7 @@
     "name": "pools-restake",
     "account": "Guardians SUB",
     "path": "/staking/positions",
-    "steps": [["row", "Cere", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Re-stake"]]
+    "steps": [["row", "Kusama Asset Hub", "Talisman Pool"], ["press", "Claim"], ["dialog"], ["press", "Re-stake"]]
   },
   {
     "name": "pools-unbond",

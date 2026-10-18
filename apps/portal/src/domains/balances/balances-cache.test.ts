@@ -88,7 +88,7 @@ describe("balances cache", () => {
 				balances: [],
 				subtensorStakes: [],
 				tokenRates: {
-					"analog-timechain:substrate-native": {
+					"vara:substrate-native": {
 						usd: { price: 0.0000203, marketCap: 183854, change24h: null },
 					},
 					"westend-testnet:substrate-native": null,
@@ -97,7 +97,7 @@ describe("balances cache", () => {
 		)
 
 		expect(readBalancesCache().tokenRates).toEqual({
-			"analog-timechain:substrate-native": {
+			"vara:substrate-native": {
 				...newTokenRates(),
 				usd: { price: 0.0000203, marketCap: 183854, change24h: null },
 			},

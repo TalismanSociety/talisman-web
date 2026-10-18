@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js"
 import { hoursToMilliseconds } from "date-fns"
 import range from "lodash/range"
-import { combineLatest, from, map, type Observable, switchMap } from "rxjs"
+import { combineLatest, map, type Observable, switchMap } from "rxjs"
 
 import type { ChainRuntime } from "@/domains/chains/chain-runtime"
 
@@ -75,31 +75,9 @@ const inflationApr$ = (runtime: ChainRuntime, activeEra: number) => {
 	)
 }
 
-const ANALOG_APY_URL = "https://explorer-api.analog.one/api/nominations?projection=apy"
-
-const analogApr = async () => {
-	try {
-		const result = await (await fetch(ANALOG_APY_URL)).json()
-		if (result?.status !== 200) {
-			console.warn("Failed to fetch analog apy (non-200 status)", result)
-			return 0
-		}
-		const apy = result?.data?.apy
-		if (typeof apy !== "number") {
-			console.warn("Failed to fetch analog apy (apy is not number)", result)
-			return 0
-		}
-		return apy / 100
-	} catch (cause) {
-		console.warn("Failed to fetch analog apy (fetch error)", cause)
-		return 0
-	}
-}
-
-export type AprSource = "analog" | "asset-hub" | "inflation"
+export type AprSource = "asset-hub" | "inflation"
 
 export const apr$ = (runtimes: Runtimes, source: AprSource): Observable<number> => {
-	if (source === "analog") return from(analogApr())
 	return watchActiveEra(runtimes.runtime).pipe(
 		switchMap((activeEra) => {
 			const era = activeEra?.index ?? 0
@@ -111,8 +89,4 @@ export const apr$ = (runtimes: Runtimes, source: AprSource): Observable<number> 
 }
 
 export const aprSourceOf = (chainId: string): AprSource =>
-	chainId === "analog-timechain"
-		? "analog"
-		: chainId === "kusama-asset-hub" || chainId === "polkadot-asset-hub"
-			? "asset-hub"
-			: "inflation"
+	chainId === "kusama-asset-hub" || chainId === "polkadot-asset-hub" ? "asset-hub" : "inflation"

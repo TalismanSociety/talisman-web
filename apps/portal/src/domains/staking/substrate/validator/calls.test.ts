@@ -11,14 +11,7 @@ import { loadPjsOracle } from "@/test/pjs-oracle"
 
 import { unbondActionCall, unbondAllCall, unbondCall, withdrawUnbondedCall } from "./calls"
 
-const CHAINS = [
-	"polkadot-asset-hub",
-	"kusama-asset-hub",
-	"analog-timechain",
-	"vara",
-	"avail",
-	"cere",
-]
+const CHAINS = ["polkadot-asset-hub", "kusama-asset-hub", "vara", "avail"]
 
 const loadChain = (chain: string) => {
 	const metadata = new Uint8Array(
