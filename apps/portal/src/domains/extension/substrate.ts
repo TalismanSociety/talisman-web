@@ -1,4 +1,4 @@
-import { getKheopskit$, isInjectedWallet, KheopskitError } from "@kheopskit/core"
+import { getKheopskit$, isInjectedWallet, type WalletConnectWallet } from "@kheopskit/core"
 import { type PolkadotAccount, type PolkadotWallet, polkadot } from "@kheopskit/core/polkadot"
 import { bind } from "@react-rxjs/core"
 import type { InjectedPolkadotAccount, SignPayload, SignRaw } from "polkadot-api/pjs-signer"
@@ -44,6 +44,8 @@ export type InjectedSubstrateAccount = {
 
 type TalismanInjectedAccount = PolkadotAccount & { readonly?: boolean; partOfPortfolio?: boolean }
 
+type LivePolkadotWallet = Exclude<PolkadotWallet, { isPlaceholder: true }>
+
 export type PjsSigner = { signPayload: SignPayload; signRaw: SignRaw }
 
 export type SubstrateWalletConnection = { id: string; signer: PjsSigner }
@@ -88,22 +90,23 @@ const kheopskit$ = pageLoaded$.pipe(
 	shareReplay({ bufferSize: 1, refCount: false })
 )
 
-const injectionOrder = (wallet: PolkadotWallet) =>
+const injectionOrder = (wallet: LivePolkadotWallet) =>
 	Object.keys(window.injectedWeb3 ?? {}).indexOf(wallet.sourceId)
+
+const isLiveInjectedWallet = (
+	wallet: PolkadotWallet | WalletConnectWallet
+): wallet is LivePolkadotWallet => isInjectedWallet(wallet) && !wallet.isPlaceholder
 
 const injectedWallets$ = kheopskit$.pipe(
 	map(({ wallets }) =>
-		wallets.filter(isInjectedWallet).sort((a, b) => injectionOrder(a) - injectionOrder(b))
+		wallets.filter(isLiveInjectedWallet).sort((a, b) => injectionOrder(a) - injectionOrder(b))
 	),
 	shareReplay({ bufferSize: 1, refCount: true })
 )
 
-const isWalletError = (error: unknown, code: KheopskitError["code"]) =>
-	error instanceof KheopskitError && error.code === code
-
 const connectRequests = new Map<string, Promise<void>>()
 
-const connectOnce = (wallet: PolkadotWallet) => {
+const connectOnce = (wallet: LivePolkadotWallet) => {
 	const pending = connectRequests.get(wallet.sourceId)
 	if (pending) return pending
 	const request = wallet
@@ -113,7 +116,6 @@ const connectOnce = (wallet: PolkadotWallet) => {
 				track("Substrate extensions connected", { wallet: substrateWalletOf(wallet.sourceId) })
 			},
 			(error) => {
-				if (isWalletError(error, "WALLET_ALREADY_CONNECTED")) return
 				connectedSubstrateWalletId$.next(undefined)
 				toast.error("Wallet connection declined")
 				console.error(error)
@@ -124,17 +126,15 @@ const connectOnce = (wallet: PolkadotWallet) => {
 	return request
 }
 
-const disconnectUnwanted = (wallets: PolkadotWallet[], wantedId: string | undefined) => {
+const disconnectUnwanted = (wallets: LivePolkadotWallet[], wantedId: string | undefined) => {
 	for (const wallet of wallets)
 		if (wallet.isConnected && wallet.sourceId !== wantedId)
-			wallet.disconnect().catch((error) => {
-				if (!isWalletError(error, "WALLET_NOT_CONNECTED")) console.error(error)
-			})
+			wallet.disconnect().catch((error) => console.error(error))
 }
 
 const initialised$ = new BehaviorSubject(false)
 
-const listsWallet = (wallets: PolkadotWallet[], id: string | undefined) =>
+const listsWallet = (wallets: LivePolkadotWallet[], id: string | undefined) =>
 	wallets.some((wallet) => wallet.sourceId === id)
 
 const walletsSettled$ = kheopskit$.pipe(
@@ -223,23 +223,14 @@ const toInjectedAccount = ({
 		? { address, name, type, genesisHash, readonly, partOfPortfolio: partOfPortfolio ?? false }
 		: { address, name, type, genesisHash }
 
-const walletOrder = (wallet: PolkadotWallet) => {
-	const addresses = (wallet.extension?.getAccounts() ?? []).map((account) => account.address)
-	return (a: PolkadotAccount, b: PolkadotAccount) =>
-		addresses.indexOf(a.address) - addresses.indexOf(b.address)
-}
-
 export const injectedSubstrateAccounts$: Observable<InjectedSubstrateAccount[]> = combineLatest([
 	kheopskit$,
 	connectedSubstrateWalletId$,
 ]).pipe(
 	map(([{ wallets, accounts }, id]) => {
-		const wallet = wallets.filter(isInjectedWallet).find((wallet) => wallet.sourceId === id)
+		const wallet = wallets.filter(isLiveInjectedWallet).find((wallet) => wallet.sourceId === id)
 		return wallet?.isConnected
-			? accounts
-					.filter((account) => account.walletId === wallet.id)
-					.sort(walletOrder(wallet))
-					.map(toInjectedAccount)
+			? accounts.filter((account) => account.walletId === wallet.id).map(toInjectedAccount)
 			: []
 	}),
 	shareReplay({ bufferSize: 1, refCount: true })
@@ -250,7 +241,7 @@ export const txCreatorOf = async (address: string): Promise<TxCreator | undefine
 	return accounts.find((account) => account.address === address)?.txCreator
 }
 
-const toSubstrateWallet = (wallet: PolkadotWallet): SubstrateWallet => ({
+const toSubstrateWallet = (wallet: LivePolkadotWallet): SubstrateWallet => ({
 	id: wallet.sourceId,
 	...(WALLET_METADATA[wallet.sourceId] ?? { title: wallet.sourceId }),
 })
