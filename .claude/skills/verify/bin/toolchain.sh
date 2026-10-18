@@ -1,3 +1,4 @@
+((BASH_VERSINFO[0] >= 4)) || { echo "Bash 4 or later is required, $BASH runs $BASH_VERSION (macOS: brew install bash): see Setup in $(dirname "${BASH_SOURCE[0]}")/../SKILL.md" >&2; exit 1; }
 
 pm_command() {
   local root=$1 yarn_path
