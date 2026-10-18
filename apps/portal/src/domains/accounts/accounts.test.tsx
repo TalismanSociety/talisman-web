@@ -2,7 +2,7 @@ import { Subscribe } from "@react-rxjs/core"
 import { render } from "@testing-library/react"
 import { firstValueFrom, type Observable } from "rxjs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { alice, bob, evm, fakeWallet, load } from "@/domains/extension/fakeInjectedWeb3"
+import { alice, bob, evm, fakeExtension, load } from "@/domains/extension/fakeInjectedWeb3"
 
 const { toast, capture } = vi.hoisted(() => ({
 	toast: { error: vi.fn(), success: vi.fn() },
@@ -25,7 +25,6 @@ describe("accounts", () => {
 
 	afterEach(() => {
 		harness.dispose()
-		vi.unstubAllGlobals()
 	})
 
 	it("reads the readonly accounts main stored and keeps their stored shape on write", async () => {
@@ -33,7 +32,7 @@ describe("accounts", () => {
 			"readonly_accounts",
 			JSON.stringify([{ address: substrateAddress, name: "Alice" }, { address: evmAddress }])
 		)
-		harness = await load(undefined)
+		harness = await load()
 
 		expect(await current(harness.readonlyAccounts$)).toEqual([
 			{
@@ -61,7 +60,8 @@ describe("accounts", () => {
 	})
 
 	it("names the wagmi account after the matching injected account", async () => {
-		harness = await load({ talisman: fakeWallet([alice, evm]) })
+		fakeExtension("talisman", [alice, evm])
+		harness = await load()
 		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(2))
 
 		harness.setWagmiAccounts([evm.address])
@@ -73,7 +73,8 @@ describe("accounts", () => {
 	})
 
 	it("shows the connected accounts by default and only the chosen ones once selected", async () => {
-		harness = await load({ talisman: fakeWallet([alice, bob]) })
+		fakeExtension("talisman", [alice, bob])
+		harness = await load()
 		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(2))
 
 		expect((await current(harness.selectedAccounts$)).map((x) => x.name)).toEqual([
@@ -91,7 +92,7 @@ describe("accounts", () => {
 			"readonly_accounts",
 			JSON.stringify([{ address: substrateAddress, name: "Alice" }, { address: evmAddress }])
 		)
-		harness = await load(undefined)
+		harness = await load()
 
 		expect((await current(harness.selectedAccounts$)).map((x) => x.address)).toEqual([
 			substrateAddress,
@@ -99,7 +100,8 @@ describe("accounts", () => {
 	})
 
 	it("shows the lookup address instead of the connected accounts", async () => {
-		harness = await load({ talisman: fakeWallet([alice]) })
+		fakeExtension("talisman", [alice])
+		harness = await load()
 		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(1))
 
 		harness.setLookupAccountAddress(` ${evmAddress},`)
@@ -117,7 +119,7 @@ describe("accounts", () => {
 	})
 
 	it("clears the lookup address when the selection changes", async () => {
-		harness = await load(undefined)
+		harness = await load()
 		harness.setLookupAccountAddress(evmAddress)
 		const { AccountWatcher } = await import("./AccountWatcher")
 		const { render } = await import("@testing-library/react")
@@ -129,7 +131,7 @@ describe("accounts", () => {
 	})
 
 	it("keeps the lookup address when the selection is reset to what it already was", async () => {
-		harness = await load(undefined)
+		harness = await load()
 		harness.setLookupAccountAddress(evmAddress)
 		const { AccountWatcher } = await import("./AccountWatcher")
 		const { render } = await import("@testing-library/react")
@@ -141,7 +143,8 @@ describe("accounts", () => {
 	})
 
 	it("selects the chosen accounts through the writer and the default ones again on reset", async () => {
-		harness = await load({ talisman: fakeWallet([alice, bob]) })
+		fakeExtension("talisman", [alice, bob])
+		harness = await load()
 		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(2))
 		const renders: string[][] = []
 		const SelectedNames = () => {
@@ -163,7 +166,8 @@ describe("accounts", () => {
 	})
 
 	it("renders the current selection on the first render of a consumer that mounts after the last one left", async () => {
-		harness = await load({ talisman: fakeWallet([alice, bob]) })
+		fakeExtension("talisman", [alice, bob])
+		harness = await load()
 		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(2))
 		harness.setSelectedAccountAddresses([bob.address])
 		const { AccountWatcher } = await import("./AccountWatcher")
