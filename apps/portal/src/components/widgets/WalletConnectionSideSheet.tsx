@@ -5,7 +5,7 @@ import { disconnect as disconnectCore } from "@wagmi/core"
 import type { ButtonHTMLAttributes, DetailedHTMLProps } from "react"
 import { Suspense, useState } from "react"
 import { BehaviorSubject } from "rxjs"
-import { useConfig, useDisconnect as useDisconnectEvm, useAccount as useEvmAccount } from "wagmi"
+import { useConfig, useConnection, useDisconnect } from "wagmi"
 import talismanWalletLogo from "@/assets/talisman-wallet.svg"
 import { AddReadOnlyAccountDialog } from "@/components/widgets/AddReadOnlyAccountDialog"
 import { useInjectedAccounts, useWriteableEvmAccounts } from "@/domains/accounts/accounts"
@@ -203,9 +203,9 @@ const SubstrateWalletConnection = () => {
 
 const EvmWalletConnections = () => {
 	const connectors = useEvmConnectors()
-	const { connector } = useEvmAccount()
-	const { connectAsync } = useConnectEvm()
-	const { disconnectAsync } = useDisconnectEvm()
+	const { connector } = useConnection()
+	const connect = useConnectEvm()
+	const disconnect = useDisconnect()
 	const config = useConfig()
 	const writeableEvmAccounts = useWriteableEvmAccounts()
 
@@ -224,17 +224,15 @@ const EvmWalletConnections = () => {
 						iconUrl={x.icon}
 						connected={x.id === connector?.id && writeableEvmAccounts.length > 0}
 						onConnectRequest={async () => {
-							const res = await connectAsync({ connector: x })
+							const res = await connect.mutateAsync({ connector: x })
 							if (res.accounts.length === 0) {
 								toast.error("Please enable an ethereum account in your wallet.")
 							}
 						}}
 						onDisconnectRequest={async () => {
 							try {
-								await disconnectAsync()
+								await disconnect.mutateAsync()
 							} catch (error) {
-								// Some connectors (like injected) don't support programmatic disconnect
-								// Fall back to using disconnect from @wagmi/core which handles this gracefully
 								if (
 									error instanceof Error &&
 									error.message.includes("disconnect is not a function")

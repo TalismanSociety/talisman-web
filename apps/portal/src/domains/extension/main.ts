@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useAccount as useWagmiAccount } from "wagmi"
+import { useConnection } from "wagmi"
 
 import { useEvmExtensionEffect } from "./evm"
 import { substrateWalletLifecycle$, useConnectedSubstrateWallet } from "./substrate"
@@ -15,6 +15,6 @@ export const ExtensionWatcher = () => {
 }
 
 export const useHasActiveWalletConnection = () => {
-	const evmConnected = useWagmiAccount().isConnected
+	const evmConnected = useConnection().isConnected
 	return useConnectedSubstrateWallet() !== undefined || evmConnected
 }

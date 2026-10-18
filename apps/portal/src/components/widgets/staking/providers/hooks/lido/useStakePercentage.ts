@@ -2,9 +2,9 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import BigNumber from "bignumber.js"
 import { useMemo } from "react"
 import { useConfig } from "wagmi"
-import { getTokenQueryOptions } from "wagmi/query"
 
 import { useSelectedBalances } from "@/domains/balances/hooks"
+import { erc20TokenQueryOptions } from "@/domains/staking/lido/core"
 
 type StakePercentageProps = {
 	chainId: string | number
@@ -17,7 +17,7 @@ const useStakePercentage = ({ chainId, nativeTokenAddress, symbol }: StakePercen
 
 	const config = useConfig()
 	const liquidToken = useSuspenseQuery(
-		getTokenQueryOptions(config, {
+		erc20TokenQueryOptions(config, {
 			chainId: Number(chainId),
 			address: nativeTokenAddress,
 		})
