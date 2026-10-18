@@ -23,7 +23,17 @@ describe("substrate wallet connection", () => {
 	afterEach(() => {
 		harness.dispose()
 		vi.unstubAllGlobals()
+		vi.restoreAllMocks()
 	})
+
+	const injectBeforePageLoad = async (injectedWeb3: Record<string, { enable: unknown }>) => {
+		const readyState = vi.spyOn(document, "readyState", "get").mockReturnValue("interactive")
+		harness = await load(undefined)
+		await new Promise((resolve) => setTimeout(resolve, 1_300))
+		vi.stubGlobal("injectedWeb3", injectedWeb3)
+		readyState.mockReturnValue("complete")
+		window.dispatchEvent(new Event("load"))
+	}
 
 	it("reconnects the wallet stored by main under connected-substrate-extension", async () => {
 		localStorage.setItem("connected-substrate-extension", '"polkadot-js"')
@@ -72,6 +82,26 @@ describe("substrate wallet connection", () => {
 		expect(talisman.enable).toHaveBeenCalledWith("Talisman")
 		expect(localStorage.getItem("connected-substrate-extension")).toBe('"talisman"')
 		expect(capture).toHaveBeenCalledWith("Substrate extensions connected", { wallet: "talisman" })
+	})
+
+	it("reconnects a stored wallet that injects late, before the page load", async () => {
+		localStorage.setItem("connected-substrate-extension", '"talisman"')
+		await injectBeforePageLoad({ talisman: fakeWallet([alice]) })
+
+		await vi.waitFor(() =>
+			expect(harness.accounts()).toEqual([["Guardians SUB", alice.address, "sr25519"]])
+		)
+		expect(harness.initialised()).toBe(true)
+	})
+
+	it("auto-connects Talisman when it injects late, before the page load", async () => {
+		const talisman = fakeWallet([alice])
+		await injectBeforePageLoad({ talisman })
+
+		await vi.waitFor(() =>
+			expect(harness.accounts()).toEqual([["Guardians SUB", alice.address, "sr25519"]])
+		)
+		expect(localStorage.getItem("connected-substrate-extension")).toBe('"talisman"')
 	})
 
 	it("connects nothing on a fresh profile without Talisman", async () => {
