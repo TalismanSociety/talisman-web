@@ -257,8 +257,8 @@ importers:
         specifier: ^3.2.0
         version: 3.2.0(graphql@16.9.0)
       '@kheopskit/core':
-        specifier: 6.0.0-rc.1
-        version: 6.0.0-rc.1(@reown/appkit@1.7.8(@types/react@19.3.0)(bufferutil@4.0.8)(react@19.3.1)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))(@solana/kit@8.3.0(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@7.0.2)(utf-8-validate@5.0.10))(mipd@0.0.7(typescript@7.0.2))(polkadot-api@3.2.1(bufferutil@4.0.8)(esbuild@0.28.2)(rxjs@7.8.2)(supports-color@10.0.0)(utf-8-validate@5.0.10))(rxjs@7.8.2)(viem@2.57.7(bufferutil@4.0.8)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))
+        specifier: 6.0.0-rc.2
+        version: 6.0.0-rc.2(@reown/appkit@1.7.8(@types/react@19.3.0)(bufferutil@4.0.8)(react@19.3.1)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))(@solana/kit@8.3.0(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@7.0.2)(utf-8-validate@5.0.10))(mipd@0.0.7(typescript@7.0.2))(polkadot-api@3.2.1(bufferutil@4.0.8)(esbuild@0.28.2)(rxjs@7.8.2)(supports-color@10.0.0)(utf-8-validate@5.0.10))(rxjs@7.8.2)(viem@2.57.7(bufferutil@4.0.8)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))
       '@polkadot-api/metadata-builders':
         specifier: 0.15.2
         version: 0.15.2
@@ -1634,8 +1634,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
 
-  '@kheopskit/core@6.0.0-rc.1':
-    resolution: {integrity: sha512-GAjNsWXHMxl29hMKw9xbQrdTSDkJd22wQ59lhAwWTU0z4KeHr3VxfeJyXZKK5KxZpVAGAOpk01iToV0XK5ADlQ==}
+  '@kheopskit/core@6.0.0-rc.2':
+    resolution: {integrity: sha512-Y017YkSrIqKvQf+W/OtfzKRrco9WiEa0dNpl2dZ2IJzbab/Q8ICUeG+mwwzeOSfMUMj4Xr9uZB1tDse9esf3nw==}
     peerDependencies:
       '@reown/appkit': '>=1.7.0'
       '@solana/kit': '>=6.0.0'
@@ -8808,7 +8808,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
 
-  '@kheopskit/core@6.0.0-rc.1(@reown/appkit@1.7.8(@types/react@19.3.0)(bufferutil@4.0.8)(react@19.3.1)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))(@solana/kit@8.3.0(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@7.0.2)(utf-8-validate@5.0.10))(mipd@0.0.7(typescript@7.0.2))(polkadot-api@3.2.1(bufferutil@4.0.8)(esbuild@0.28.2)(rxjs@7.8.2)(supports-color@10.0.0)(utf-8-validate@5.0.10))(rxjs@7.8.2)(viem@2.57.7(bufferutil@4.0.8)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))':
+  '@kheopskit/core@6.0.0-rc.2(@reown/appkit@1.7.8(@types/react@19.3.0)(bufferutil@4.0.8)(react@19.3.1)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))(@solana/kit@8.3.0(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@7.0.2)(utf-8-validate@5.0.10))(mipd@0.0.7(typescript@7.0.2))(polkadot-api@3.2.1(bufferutil@4.0.8)(esbuild@0.28.2)(rxjs@7.8.2)(supports-color@10.0.0)(utf-8-validate@5.0.10))(rxjs@7.8.2)(viem@2.57.7(bufferutil@4.0.8)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))':
     dependencies:
       '@noble/hashes': 2.4.0
       '@scure/base': 2.4.0

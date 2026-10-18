@@ -15,18 +15,15 @@ import {
 	distinctUntilChanged,
 	filter,
 	firstValueFrom,
-	fromEvent,
 	ignoreElements,
 	map,
 	merge,
 	NEVER,
 	type Observable,
-	of,
 	shareReplay,
 	switchMap,
 	take,
 	tap,
-	timeout,
 } from "rxjs"
 import { z } from "zod"
 import polkadotJsWalletLogo from "@/assets/polkadot-js-wallet.svg"
@@ -59,7 +56,6 @@ const WALLET_METADATA: Record<string, Omit<SubstrateWallet, "id">> = {
 }
 
 const AUTO_CONNECT_WALLET_ID = "talisman"
-const INJECTION_GRACE_MS = 1_000
 
 const appName = import.meta.env.VITE_APPLICATION_NAME ?? "Talisman"
 
@@ -69,19 +65,14 @@ const connectedSubstrateWalletId$ = persistedState(
 	undefined
 )
 
-const pageLoaded$ = defer(() =>
-	document.readyState === "complete" ? of(undefined) : fromEvent(window, "load").pipe(take(1))
-)
-
-const kheopskit$ = pageLoaded$.pipe(
-	switchMap(() =>
-		getKheopskit$({
-			appName,
-			platforms: [polkadot({ accountTypes: ["sr25519", "ed25519", "ecdsa", "ethereum"] })],
-			autoReconnect: false,
-			hydrationGracePeriod: 0,
-		})
-	),
+const kheopskit$ = defer(() =>
+	getKheopskit$({
+		appName,
+		platforms: [polkadot({ accountTypes: ["sr25519", "ed25519", "ecdsa", "ethereum"] })],
+		autoReconnect: false,
+		hydrationGracePeriod: 0,
+	})
+).pipe(
 	catchError((error) => {
 		console.error("The wallet bridge stopped; keeping the last known wallets and accounts", error)
 		return NEVER
@@ -137,16 +128,17 @@ const listsWallet = (wallets: LivePolkadotWallet[], id: string | undefined) =>
 	wallets.some((wallet) => wallet.sourceId === id)
 
 const walletsSettled$ = kheopskit$.pipe(
+	map(({ isDiscovering, wallets }) => ({
+		isDiscovering,
+		wallets: wallets.filter(isLiveInjectedWallet),
+	})),
+	filter(
+		({ isDiscovering, wallets }) =>
+			!isDiscovering ||
+			listsWallet(wallets, connectedSubstrateWalletId$.value ?? AUTO_CONNECT_WALLET_ID)
+	),
 	take(1),
-	switchMap(() =>
-		injectedWallets$.pipe(
-			filter((wallets) =>
-				listsWallet(wallets, connectedSubstrateWalletId$.value ?? AUTO_CONNECT_WALLET_ID)
-			),
-			timeout({ first: INJECTION_GRACE_MS, with: () => injectedWallets$ }),
-			take(1)
-		)
-	)
+	map(({ wallets }) => wallets)
 )
 
 const boot$ = walletsSettled$.pipe(

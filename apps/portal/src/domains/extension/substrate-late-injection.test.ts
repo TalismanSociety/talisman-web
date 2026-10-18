@@ -8,7 +8,7 @@ const { toast, capture } = vi.hoisted(() => ({
 vi.mock("@/ui/molecules/Toaster", () => ({ toast }))
 vi.mock("@/domains/analytics/client", () => ({ track: capture }))
 
-describe("a wallet that injects late", () => {
+describe("a wallet that injects around the page load", () => {
 	let harness: Awaited<ReturnType<typeof load>>
 	let talisman: ReturnType<typeof fakeExtension> | undefined
 	let enabledAtInitialised: string[][]
@@ -52,6 +52,17 @@ describe("a wallet that injects late", () => {
 		await vi.advanceTimersByTimeAsync(3_000)
 	}
 
+	it("reconnects a stored wallet that is already injected before the page load fires", async () => {
+		localStorage.setItem("connected-substrate-extension", '"talisman"')
+		vi.spyOn(document, "readyState", "get").mockReturnValue("interactive")
+		talisman = fakeExtension("talisman", [alice])
+		harness = await load()
+		await vi.advanceTimersByTimeAsync(500)
+
+		expect(talisman.enableCalls()).toEqual(["Talisman"])
+		expect(harness.accounts()).toEqual([["Guardians SUB", alice.address, "sr25519"]])
+	})
+
 	it("auto-connects Talisman on a fresh profile when it injects 50 ms after the page load", async () => {
 		await loadThenInject({ pageLoadMs: 1_500, injectMs: 1_550 })
 
@@ -65,6 +76,14 @@ describe("a wallet that injects late", () => {
 
 		expect(enabledAtInitialised).toEqual([["Talisman"]])
 		expect(harness.accounts()).toEqual([["Guardians SUB", alice.address, "sr25519"]])
+	})
+
+	it("auto-connects Talisman before reporting the wallets initialised when it injects just before kheopskit's last read, 1.1 s after the page load", async () => {
+		await loadThenInject({ pageLoadMs: 1_500, injectMs: 2_550 })
+
+		expect(enabledAtInitialised).toEqual([["Talisman"]])
+		expect(harness.accounts()).toEqual([["Guardians SUB", alice.address, "sr25519"]])
+		expect(localStorage.getItem("connected-substrate-extension")).toBe('"talisman"')
 	})
 
 	it("reconnects a stored wallet that injects 200 ms after a page load 1.5 s after the subscribe", async () => {
