@@ -55,14 +55,17 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
 			allowFailure: false,
 		})
 	)
+	const withdrawalQueue = {
+		chainId: lidoSuite.chain.id,
+		address: lidoSuite.withdrawalQueue,
+		abi: withdrawalQueueAbi,
+	} as const
 	const withdrawalIdsQuery = useQuery(
 		readContractsQueryOptions(config, {
 			contracts: filteredAccounts.map(
 				(x) =>
 					({
-						chainId: lidoSuite.chain.id,
-						address: lidoSuite.withdrawalQueue,
-						abi: withdrawalQueueAbi,
+						...withdrawalQueue,
 						functionName: "getWithdrawalRequests",
 						args: [x.address],
 					}) as const
@@ -70,55 +73,44 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
 			allowFailure: false,
 		})
 	)
-	const lastCheckpointIndexQuery = useQuery(
-		readContractQueryOptions(config, {
-			chainId: lidoSuite.chain.id,
-			address: lidoSuite.withdrawalQueue,
-			abi: withdrawalQueueAbi,
-			functionName: "getLastCheckpointIndex",
+	const queueStateQuery = useQuery(
+		readContractsQueryOptions(config, {
+			contracts: [
+				{ ...withdrawalQueue, functionName: "getLastFinalizedRequestId" },
+				{ ...withdrawalQueue, functionName: "getLastCheckpointIndex" },
+			] as const,
+			allowFailure: false,
 		})
 	)
-	const firstQueryBatch = [tokenQuery, balancesQuery, withdrawalIdsQuery, lastCheckpointIndexQuery]
+	const firstQueryBatch = [tokenQuery, balancesQuery, withdrawalIdsQuery, queueStateQuery]
 
 	const token = tokenQuery.data
 	const balances = balancesQuery.data
 	const withdrawalIds = withdrawalIdsQuery.data
-	const lastCheckpointIndex = lastCheckpointIndexQuery.data
+	const [lastFinalizedRequestId, lastCheckpointIndex] = queueStateQuery.data ?? []
 
-	const sortedWithdrawalIds =
-		withdrawalIds
-			?.flat()
-			.map(serializableBigInt)
-			.sort((a, b) => (a > b ? 1 : -1)) ?? []
+	const sortedWithdrawalIds = withdrawalIds?.flat().sort((a, b) => (a > b ? 1 : -1)) ?? []
+	const claimableIds =
+		lastFinalizedRequestId === undefined
+			? []
+			: sortedWithdrawalIds.filter((id) => id <= lastFinalizedRequestId)
 
 	const withdrawalStatusesQuery = useQuery(
 		readContractQueryOptions(config, {
-			chainId: lidoSuite.chain.id,
-			address: lidoSuite.withdrawalQueue,
-			abi: withdrawalQueueAbi,
+			...withdrawalQueue,
 			functionName: "getWithdrawalStatus",
-			args: [sortedWithdrawalIds],
+			args: [sortedWithdrawalIds.map(serializableBigInt)],
 		})
 	)
-	const withdrawalStatuses = withdrawalStatusesQuery.data
-
-	const statusById = new Map(
-		withdrawalStatuses?.map(
-			(status, index) => [String(sortedWithdrawalIds[index]), status] as const
-		)
-	)
-	const claimableIds = sortedWithdrawalIds.filter((id) => {
-		const status = statusById.get(String(id))
-		return status !== undefined && status.isFinalized && !status.isClaimed
-	})
-
 	const hintsQuery = useQuery(
 		readContractQueryOptions(config, {
-			chainId: lidoSuite.chain.id,
-			address: lidoSuite.withdrawalQueue,
-			abi: withdrawalQueueAbi,
+			...withdrawalQueue,
 			functionName: "findCheckpointHints",
-			args: [claimableIds, serializableBigInt(1n), serializableBigInt(lastCheckpointIndex ?? 0n)],
+			args: [
+				claimableIds.map(serializableBigInt),
+				serializableBigInt(1n),
+				serializableBigInt(lastCheckpointIndex ?? 0n),
+			],
 		})
 	)
 	const secondQueryBatch = [withdrawalStatusesQuery, hintsQuery]
@@ -127,11 +119,9 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
 
 	const { data: claimables, refetch: refetchClaimables } = useQuery(
 		readContractQueryOptions(config, {
-			chainId: lidoSuite.chain.id,
-			address: lidoSuite.withdrawalQueue,
-			abi: withdrawalQueueAbi,
+			...withdrawalQueue,
 			functionName: "getClaimableEther",
-			args: [claimableIds, hints ?? []],
+			args: hints === undefined ? [[], []] : [claimableIds.map(serializableBigInt), hints],
 		})
 	)
 
@@ -144,8 +134,13 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
 		void refetchClaimables()
 	}, [blockNumber])
 
+	const amountById = new Map(
+		withdrawalStatusesQuery.data?.map(
+			(status, index) => [sortedWithdrawalIds[index], status.amountOfStETH] as const
+		)
+	)
 	const claimableById = new Map(
-		claimables?.map((claimable, index) => [String(claimableIds[index]), claimable] as const)
+		claimables?.map((claimable, index) => [claimableIds[index], claimable] as const)
 	)
 
 	const tokenPriceLoadable = useTokenPriceLoadable(
@@ -159,18 +154,20 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
 	const data = filteredAccounts
 		.map((account, index) => {
 			const balance = stEth(balances?.at(index) ?? 0n)
-			const requestIds = withdrawalIds?.at(index)?.map(String) ?? []
-			const pending = requestIds.flatMap((id) => {
-				const status = statusById.get(id)
-				return status !== undefined && !status.isFinalized && !status.isClaimed ? [status] : []
-			})
+			const requestIds = withdrawalIds?.at(index) ?? []
+			const pendingAmounts =
+				lastFinalizedRequestId === undefined
+					? []
+					: requestIds
+							.filter((id) => id > lastFinalizedRequestId)
+							.map((id) => amountById.get(id) ?? 0n)
 
 			return {
 				account,
 				balance,
 				fiatBalance: balance.toNumber() * (tokenPrice ?? 0),
-				totalUnlocking: stEth(pending.reduce((total, status) => total + status.amountOfStETH, 0n)),
-				unlockings: pending.map((status) => ({ amount: stEth(status.amountOfStETH) })),
+				totalUnlocking: stEth(pendingAmounts.reduce((total, amount) => total + amount, 0n)),
+				unlockings: pendingAmounts.map((amount) => ({ amount: stEth(amount) })),
 				claimable: stEth(
 					requestIds.reduce((total, id) => total + (claimableById.get(id) ?? 0n), 0n)
 				),
