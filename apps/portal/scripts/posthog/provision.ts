@@ -43,7 +43,7 @@ const fail = (message: string): never => {
 
 const loadEnv = (path: string | undefined) => {
 	const file = path ?? DEFAULT_ENV_FILE
-	if (existsSync(file)) config({ path: file })
+	if (existsSync(file)) config({ path: file, quiet: true })
 	else if (path !== undefined) fail(`--env-file ${path} does not exist`)
 }
 
