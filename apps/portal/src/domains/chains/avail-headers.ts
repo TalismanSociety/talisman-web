@@ -50,7 +50,7 @@ export const foldAvailExtension = <T extends JsonHeader>(header: T): T => {
 	if (!header.extension || header.digest.logs.length === 0) return header
 	const logs = [...header.digest.logs]
 	const last = logs.length - 1
-	logs[last] = toHex(mergeUint8(fromHex(logs[last]!), encodeExtension(header.extension)))
+	logs[last] = toHex(mergeUint8([fromHex(logs[last]!), encodeExtension(header.extension)]))
 	const { extension: _, ...rest } = header
 	return { ...rest, digest: { logs } } as T
 }
