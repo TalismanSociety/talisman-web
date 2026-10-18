@@ -1,6 +1,6 @@
 import { ClassNames } from "@emotion/react"
 import { useEffect } from "react"
-import { useAccount, useSwitchChain } from "wagmi"
+import { useConnection, useSwitchChain } from "wagmi"
 import type { LidoSuite } from "@/domains/staking/lido/types"
 import { Zap } from "@/icons"
 import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from "@/ui/molecules/SideSheet"
@@ -12,8 +12,8 @@ type LidoWidgetSideSheetProps = {
 }
 
 const LidoWidgetSideSheet = (props: LidoWidgetSideSheetProps) => {
-	const { chain } = useAccount()
-	const { switchChain } = useSwitchChain()
+	const { chain } = useConnection()
+	const { mutate: switchChain } = useSwitchChain()
 
 	useEffect(() => {
 		if (chain?.id !== props.lidoSuite.chain.id) {
