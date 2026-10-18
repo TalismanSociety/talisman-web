@@ -1,7 +1,7 @@
 import type { MutateOptions } from "@tanstack/react-query"
 import type { Abi, ContractFunctionArgs, ContractFunctionName, WriteContractErrorType } from "viem"
 import type { Config, ResolvedRegister, UseWriteContractParameters } from "wagmi"
-import { useAccount, useSwitchChain, useWriteContract } from "wagmi"
+import { useConnection, useSwitchChain, useWriteContract } from "wagmi"
 import type { WriteContractData, WriteContractVariables } from "wagmi/query"
 import { track } from "@/domains/analytics/client"
 import { contractFunctionOf, evmChainOf } from "@/domains/analytics/events/transactions"
@@ -15,8 +15,8 @@ export const useWagmiWriteContract = <
 >(
 	config?: UseWriteContractParameters<TConfig, TContext>
 ) => {
-	const { switchChainAsync } = useSwitchChain()
-	const { chain } = useAccount()
+	const switchChain = useSwitchChain()
+	const { chain } = useConnection()
 
 	const { writeContract: _, ...base } = useWriteContract(config)
 
@@ -52,10 +52,10 @@ export const useWagmiWriteContract = <
 				| undefined
 		) => {
 			if (variables.chainId !== undefined && chain?.id !== variables.chainId) {
-				await switchChainAsync({ chainId: variables.chainId })
+				await switchChain.mutateAsync({ chainId: variables.chainId })
 			}
 
-			const promise = base.writeContractAsync(
+			const promise = base.mutateAsync(
 				// @ts-expect-error
 				variables,
 				options

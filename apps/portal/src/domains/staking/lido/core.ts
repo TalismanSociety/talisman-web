@@ -1,12 +1,9 @@
 import { evmErc20TokenId } from "@talismn/chaindata-provider"
-import { useQueries, useQuery } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import { useEffect } from "react"
-import { useBlockNumber, useConfig } from "wagmi"
-import {
-	getTokenQueryOptions,
-	readContractQueryOptions,
-	readContractsQueryOptions,
-} from "wagmi/query"
+import { erc20Abi } from "viem"
+import { type Config, useBlockNumber, useConfig } from "wagmi"
+import { readContractQueryOptions, readContractsQueryOptions } from "wagmi/query"
 
 import type { Account } from "@/domains/accounts/accounts"
 import { useTokenPriceLoadable } from "@/domains/balances/token-rates"
@@ -19,87 +16,107 @@ import type { LidoSuite } from "./types"
 const serializableBigInt = (value: bigint) =>
 	Object.assign(value, { toJSON: () => value.toString() })
 
+export const erc20TokenQueryOptions = (
+	config: Config,
+	token: { chainId: number; address: `0x${string}` }
+) =>
+	readContractsQueryOptions(config, {
+		contracts: [
+			{ ...token, abi: erc20Abi, functionName: "decimals" },
+			{ ...token, abi: erc20Abi, functionName: "symbol" },
+		],
+		allowFailure: false,
+		query: { select: ([decimals, symbol]) => ({ decimals, symbol }) },
+	})
+
 export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
 	const filteredAccounts = accounts.filter((x) => x.type === "ethereum")
 
 	const config = useConfig()
 
-	// @ts-expect-error
-	const firstQueryBatch = useQueries({
-		queries: [
-			getTokenQueryOptions(config, {
-				chainId: lidoSuite.chain.id,
-				address: lidoSuite.token.address,
-			}),
-			readContractsQueryOptions(config, {
-				contracts: filteredAccounts.map(
-					(x) =>
-						({
-							chainId: lidoSuite.chain.id,
-							address: lidoSuite.token.address,
-							abi: lidoTokenAbi,
-							functionName: "balanceOf",
-							args: [x.address],
-						}) as const
-				),
-				allowFailure: false,
-			}),
-			readContractsQueryOptions(config, {
-				contracts: filteredAccounts.map((x) => ({
-					chainId: lidoSuite.chain.id,
-					address: lidoSuite.withdrawalQueue,
-					abi: withdrawalQueueAbi,
-					functionName: "getWithdrawalRequests",
-					args: [x.address],
-				})),
-				allowFailure: false,
-			}),
-			readContractQueryOptions(config, {
-				chainId: lidoSuite.chain.id,
-				address: lidoSuite.withdrawalQueue,
-				abi: withdrawalQueueAbi,
-				functionName: "getLastCheckpointIndex",
-			}),
-		],
-	})
+	const tokenQuery = useQuery(
+		erc20TokenQueryOptions(config, {
+			chainId: lidoSuite.chain.id,
+			address: lidoSuite.token.address,
+		})
+	)
+	const balancesQuery = useQuery(
+		readContractsQueryOptions(config, {
+			contracts: filteredAccounts.map(
+				(x) =>
+					({
+						chainId: lidoSuite.chain.id,
+						address: lidoSuite.token.address,
+						abi: lidoTokenAbi,
+						functionName: "balanceOf",
+						args: [x.address],
+					}) as const
+			),
+			allowFailure: false,
+		})
+	)
+	const withdrawalIdsQuery = useQuery(
+		readContractsQueryOptions(config, {
+			contracts: filteredAccounts.map(
+				(x) =>
+					({
+						chainId: lidoSuite.chain.id,
+						address: lidoSuite.withdrawalQueue,
+						abi: withdrawalQueueAbi,
+						functionName: "getWithdrawalRequests",
+						args: [x.address],
+					}) as const
+			),
+			allowFailure: false,
+		})
+	)
+	const lastCheckpointIndexQuery = useQuery(
+		readContractQueryOptions(config, {
+			chainId: lidoSuite.chain.id,
+			address: lidoSuite.withdrawalQueue,
+			abi: withdrawalQueueAbi,
+			functionName: "getLastCheckpointIndex",
+		})
+	)
+	const firstQueryBatch = [tokenQuery, balancesQuery, withdrawalIdsQuery, lastCheckpointIndexQuery]
 
-	const [
-		{ data: token },
-		{ data: balances },
-		{ data: withdrawalIds },
-		{ data: lastCheckpointIndex },
-	] = firstQueryBatch
+	const token = tokenQuery.data
+	const balances = balancesQuery.data
+	const withdrawalIds = withdrawalIdsQuery.data
+	const lastCheckpointIndex = lastCheckpointIndexQuery.data
 
 	const sortedWithdrawalIds =
 		withdrawalIds
-			?.flatMap((x) => x as any as bigint[])
+			?.flat()
 			.map(serializableBigInt)
 			.sort((a, b) => (a > b ? 1 : -1)) ?? []
 
-	const secondQueryBatch = useQueries({
-		queries: [
-			readContractQueryOptions(config, {
-				chainId: lidoSuite.chain.id,
-				address: lidoSuite.withdrawalQueue,
-				abi: withdrawalQueueAbi,
-				functionName: "getWithdrawalStatus",
-				args: [sortedWithdrawalIds],
-			}),
-			readContractQueryOptions(config, {
-				chainId: lidoSuite.chain.id,
-				address: lidoSuite.withdrawalQueue,
-				abi: withdrawalQueueAbi,
-				functionName: "findCheckpointHints",
-				args: [
-					sortedWithdrawalIds,
-					serializableBigInt(1n),
-					serializableBigInt(lastCheckpointIndex ?? 0n),
-				],
-			}),
-		],
-	})
+	const withdrawalStatusesQuery = useQuery(
+		readContractQueryOptions(config, {
+			chainId: lidoSuite.chain.id,
+			address: lidoSuite.withdrawalQueue,
+			abi: withdrawalQueueAbi,
+			functionName: "getWithdrawalStatus",
+			args: [sortedWithdrawalIds],
+		})
+	)
+	const hintsQuery = useQuery(
+		readContractQueryOptions(config, {
+			chainId: lidoSuite.chain.id,
+			address: lidoSuite.withdrawalQueue,
+			abi: withdrawalQueueAbi,
+			functionName: "findCheckpointHints",
+			args: [
+				sortedWithdrawalIds,
+				serializableBigInt(1n),
+				serializableBigInt(lastCheckpointIndex ?? 0n),
+			],
+		})
+	)
+	const secondQueryBatch = [withdrawalStatusesQuery, hintsQuery]
 
-	const [{ data: withdrawalStatuses }, { data: _hints }] = secondQueryBatch
+	const withdrawalStatuses = withdrawalStatusesQuery.data
+	const _hints = hintsQuery.data
 
 	const hints = _hints?.map(serializableBigInt)
 
@@ -122,8 +139,7 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
 		void refetchClaimables()
 	}, [blockNumber])
 
-	const withdrawals = withdrawalIds?.map((id, index) => ({
-		id: id as bigint,
+	const withdrawals = withdrawalIds?.map((_, index) => ({
 		status: withdrawalStatuses?.at(index),
 		claimable: claimables?.at(index),
 	}))

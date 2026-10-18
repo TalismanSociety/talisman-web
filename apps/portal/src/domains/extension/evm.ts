@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useAccount, useConnect, useConnections, useConnectors } from "wagmi"
+import { useConnect, useConnection, useConnections, useConnectors } from "wagmi"
 import { setWagmiAccounts } from "@/domains/accounts/accounts"
 import { track } from "@/domains/analytics/client"
 import { evmWalletOf } from "@/domains/analytics/events/extensions"
@@ -33,7 +33,7 @@ export const useEvmExtensionEffect = () => {
 		}
 	}, [connections])
 
-	const { addresses } = useAccount()
+	const { addresses } = useConnection()
 
 	useEffect(() => {
 		setWagmiAccounts(addresses ?? [])
