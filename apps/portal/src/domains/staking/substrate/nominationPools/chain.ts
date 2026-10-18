@@ -55,7 +55,7 @@ const poolAccount = (runtime: ChainRuntime, poolId: number, index: number): SS58
 	const poolIdBytes = new Uint8Array(4)
 	new DataView(poolIdBytes.buffer).setUint32(0, poolId, true)
 	return AccountId(ss58PrefixOf(runtime)).dec(
-		mergeUint8(MOD_PREFIX, fromHex(palletId), new Uint8Array([index]), poolIdBytes, EMPTY_H256)
+		mergeUint8([MOD_PREFIX, fromHex(palletId), new Uint8Array([index]), poolIdBytes, EMPTY_H256])
 	)
 }
 

@@ -22,14 +22,14 @@ const legacyMiddlewareHash = ({
 }: typeof header) =>
 	toHex(
 		Blake2256(
-			mergeUint8(
+			mergeUint8([
 				fromHex(parentHash),
 				compact.enc(Number(number)),
 				fromHex(stateRoot),
 				fromHex(extrinsicsRoot),
 				compact.enc(digest.logs.length),
-				...digest.logs.map(fromHex)
-			)
+				...digest.logs.map(fromHex),
+			])
 		)
 	)
 

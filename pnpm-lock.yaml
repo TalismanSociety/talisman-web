@@ -257,8 +257,8 @@ importers:
         specifier: 0.21.2
         version: 0.21.2
       '@polkadot-api/utils':
-        specifier: ^0.1.0
-        version: 0.1.2
+        specifier: ^0.4.0
+        version: 0.4.0
       '@polkadot-api/ws-middleware':
         specifier: 0.4.2
         version: 0.4.2(rxjs@7.8.2)
@@ -308,8 +308,8 @@ importers:
         specifier: ^3.6.5
         version: 3.6.5(@tanstack/query-core@5.104.3)(@types/react@19.3.0)(react@19.3.1)(typescript@7.0.2)(use-sync-external-store@1.7.0(react@19.3.1))(viem@2.57.7(bufferutil@4.0.8)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))
       bignumber.js:
-        specifier: ^9.1.2
-        version: 9.1.2
+        specifier: ^11.1.5
+        version: 11.1.5
       bn.js:
         specifier: ^5.2.1
         version: 5.2.1
@@ -317,11 +317,11 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       colorjs.io:
-        specifier: ^0.4.5
-        version: 0.4.5
+        specifier: ^0.7.1
+        version: 0.7.1
       date-fns:
-        specifier: ^3.6.0
-        version: 3.6.0
+        specifier: ^4.4.0
+        version: 4.4.0
       graphql:
         specifier: ^16.8.1
         version: 16.9.0
@@ -441,8 +441,8 @@ importers:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.5.26)
       dotenv:
-        specifier: ^16.3.1
-        version: 16.4.5
+        specifier: ^18.0.8
+        version: 18.0.8
       fake-indexeddb:
         specifier: 6.2.5
         version: 6.2.5
@@ -2188,9 +2188,6 @@ packages:
 
   '@polkadot-api/tx-utils@0.5.0':
     resolution: {integrity: sha512-yPS+XzeKIRSE684N+12fHxNl53fGGXY08LXUUIyI/J3OWhM9WR6DQ1mVmlveeXWC9FXRsFUpxoU4QyNJ3goeEA==}
-
-  '@polkadot-api/utils@0.1.2':
-    resolution: {integrity: sha512-yhs5k2a8N1SBJcz7EthZoazzLQUkZxbf+0271Xzu42C5AEM9K9uFLbsB+ojzHEM72O5X8lPtSwGKNmS7WQyDyg==}
 
   '@polkadot-api/utils@0.4.0':
     resolution: {integrity: sha512-9b/hwRM0UloLWV7SfpNaSD/4k8UQAHoaACAk7Xe+1MlfAm2JtnmPiB1GfGrfTyBlsrJVUIBCZpEmbmxVMaIqBA==}
@@ -4135,9 +4132,6 @@ packages:
   bignumber.js@11.1.5:
     resolution: {integrity: sha512-6WmzCNtUnfKpbozq+hOgWaZMMzORmYBwF1xZScyoIX3QRYWeKTtxxwDOW5tIz7C9BdjkIYHGTcelCLkXg0mndw==}
 
-  bignumber.js@9.1.2:
-    resolution: {integrity: sha512-2/mKyZH9K85bzOEfhXDBFZTGd1CTs+5IHpeFQo9luiBG7hghdC851Pj2WAhb6E3R6b9tZj/XKhbg4fum+Kepug==}
-
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
@@ -4321,8 +4315,8 @@ packages:
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
 
-  colorjs.io@0.4.5:
-    resolution: {integrity: sha512-yCtUNCmge7llyfd/Wou19PMAcf5yC3XXhgFoAh6zsO2pGswhUPBaaUh8jzgHnXtXuZyFKzXZNAnyF5i+apICow==}
+  colorjs.io@0.7.1:
+    resolution: {integrity: sha512-LY7OHnJZxHwT5UlzNa9bbhHHDbzB6yE5+3MIPwJEQKRvSCt/T4G7epsj+9j2BExUIIfXFIJGsIXUKdfrK9Q5tA==}
 
   commander@15.0.0:
     resolution: {integrity: sha512-z67u4ZhzCL/Tydu1lJARtEZYWbWaN7oYLHbsuzocr6y4N6WZAagG3RQ4FW61V1/0+jImpj293XfrcYnd1qxtPg==}
@@ -4517,8 +4511,8 @@ packages:
   dataloader@2.2.3:
     resolution: {integrity: sha512-y2krtASINtPFS1rSDjacrFgn1dcUuoREVabwlOGOe4SdxenREqwjwjElAdwvbGM7kgZz9a3KVicWR7vcz8rnzA==}
 
-  date-fns@3.6.0:
-    resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
+  date-fns@4.4.0:
+    resolution: {integrity: sha512-+1UMbeh68lH1SegH83CGWwpb6OHHbpSgr3+s5Eww5M4CAgswBpoWS0AjTOfEJ33HiYKz1hdj/KTFprzXHmq/6w==}
 
   dayjs@1.11.13:
     resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
@@ -4642,9 +4636,10 @@ packages:
   dot-case@3.0.4:
     resolution: {integrity: sha512-Kv5nKlh6yRrdrGvxeJ2e5y2eRUpkUosIW4A2AS38zwSz27zu7ufDwQPi5Jhs3XAlGNetl3bmnGhQsMtkKJnj3w==}
 
-  dotenv@16.4.5:
-    resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
+  dotenv@18.0.8:
+    resolution: {integrity: sha512-2KDeoFoK/zRtcnbunCDlLG5VWVMcyqeQc6iK65o231nfNAcuGrKoqUQfJFUtBI+QlShk5HKIHxwebBtUl3rEfA==}
     engines: {node: '>=12'}
+    hasBin: true
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -9278,8 +9273,6 @@ snapshots:
       '@polkadot-api/substrate-bindings': 0.20.3
       '@polkadot-api/utils': 0.4.0
 
-  '@polkadot-api/utils@0.1.2': {}
-
   '@polkadot-api/utils@0.4.0': {}
 
   '@polkadot-api/wasm-executor@0.2.3': {}
@@ -11914,8 +11907,6 @@ snapshots:
 
   bignumber.js@11.1.5: {}
 
-  bignumber.js@9.1.2: {}
-
   binary-extensions@2.3.0: {}
 
   blake3-wasm@2.1.5: {}
@@ -12138,7 +12129,7 @@ snapshots:
 
   color-name@1.1.4: {}
 
-  colorjs.io@0.4.5: {}
+  colorjs.io@0.7.1: {}
 
   commander@15.0.0: {}
 
@@ -12335,7 +12326,7 @@ snapshots:
 
   dataloader@2.2.3: {}
 
-  date-fns@3.6.0: {}
+  date-fns@4.4.0: {}
 
   dayjs@1.11.13:
     optional: true
@@ -12442,7 +12433,7 @@ snapshots:
       no-case: 3.0.4
       tslib: 2.8.1
 
-  dotenv@16.4.5: {}
+  dotenv@18.0.8: {}
 
   dunder-proto@1.0.1:
     dependencies:
