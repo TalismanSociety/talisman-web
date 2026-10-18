@@ -46,6 +46,8 @@ On Linux with Docker Engine, `host.docker.internal` is the Docker bridge, where 
 
 A test account is an account of `~/.talisman-dev/verify-backup.json`, and nothing else. Read the names with `bin/talisman.mjs accounts`; never write or assume one. `talisman.mjs connect --account <name>` and `approve --signer <name>` refuse any name that is not a test account.
 
+`Guardians SUB` still holds nomination pool stakes on Cere and Analog Timechain. The portal dropped both chains in #1484, so no providers or positions row shows them, and a Cere or Analog row is a regression. A baseline older than #1484 still shows both rows, so `providers` and `positions` differ against it.
+
 ## 1. Launch
 
 ```sh

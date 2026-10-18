@@ -54,6 +54,7 @@ describe("era timing constants", () => {
 		expect(nominatorBondingDurationEras(polkadotAssetHub, true)).toBe(28)
 		expect(nominatorBondingDurationEras(polkadotAssetHub, false)).toBe(2)
 		expect(nominatorBondingDurationEras(kusamaAssetHub, false)).toBe(28)
+		expect(nominatorBondingDurationEras(vara, false)).toBe(14)
 	})
 
 	it("measures an Asset Hub era with the relay babe constants and the hub sessions per era", () => {
