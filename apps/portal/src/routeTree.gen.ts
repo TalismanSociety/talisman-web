@@ -19,7 +19,9 @@ import { Route as AppPortfolioSplatRouteImport } from './routes/_app/portfolio/$
 import { Route as AppStakingIndexRouteImport } from './routes/_app/staking/index'
 import { Route as AppStakingPositionsRouteImport } from './routes/_app/staking/positions'
 import { Route as AppStakingProvidersRouteImport } from './routes/_app/staking/providers'
+import { Route as AppTransportIndexRouteImport } from './routes/_app/transport/index'
 import { Route as AppTransportSplatRouteImport } from './routes/_app/transport/$'
+import { Route as AppTransportSwapRouteImport } from './routes/_app/transport/swap'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -70,9 +72,19 @@ const AppStakingProvidersRoute = AppStakingProvidersRouteImport.update({
   path: '/providers',
   getParentRoute: () => AppStakingRouteRoute,
 } as any)
+const AppTransportIndexRoute = AppTransportIndexRouteImport.update({
+  id: '/transport/',
+  path: '/transport/',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppTransportSplatRoute = AppTransportSplatRouteImport.update({
   id: '/transport/$',
   path: '/transport/$',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTransportSwapRoute = AppTransportSwapRouteImport.update({
+  id: '/transport/swap',
+  path: '/transport/swap',
   getParentRoute: () => AppRoute,
 } as any)
 
@@ -85,8 +97,10 @@ export interface FileRoutesByFullPath {
   '/staking/positions': typeof AppStakingPositionsRoute
   '/staking/providers': typeof AppStakingProvidersRoute
   '/transport/$': typeof AppTransportSplatRoute
+  '/transport/swap': typeof AppTransportSwapRoute
   '/portfolio/': typeof AppPortfolioIndexRoute
   '/staking/': typeof AppStakingIndexRoute
+  '/transport/': typeof AppTransportIndexRoute
 }
 export interface FileRoutesByTo {
   '/admin': typeof AppAdminRoute
@@ -96,8 +110,10 @@ export interface FileRoutesByTo {
   '/staking/positions': typeof AppStakingPositionsRoute
   '/staking/providers': typeof AppStakingProvidersRoute
   '/transport/$': typeof AppTransportSplatRoute
+  '/transport/swap': typeof AppTransportSwapRoute
   '/portfolio': typeof AppPortfolioIndexRoute
   '/staking': typeof AppStakingIndexRoute
+  '/transport': typeof AppTransportIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -110,8 +126,10 @@ export interface FileRoutesById {
   '/_app/staking/positions': typeof AppStakingPositionsRoute
   '/_app/staking/providers': typeof AppStakingProvidersRoute
   '/_app/transport/$': typeof AppTransportSplatRoute
+  '/_app/transport/swap': typeof AppTransportSwapRoute
   '/_app/portfolio/': typeof AppPortfolioIndexRoute
   '/_app/staking/': typeof AppStakingIndexRoute
+  '/_app/transport/': typeof AppTransportIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -124,8 +142,10 @@ export interface FileRouteTypes {
     | '/staking/positions'
     | '/staking/providers'
     | '/transport/$'
+    | '/transport/swap'
     | '/portfolio/'
     | '/staking/'
+    | '/transport/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/admin'
@@ -135,8 +155,10 @@ export interface FileRouteTypes {
     | '/staking/positions'
     | '/staking/providers'
     | '/transport/$'
+    | '/transport/swap'
     | '/portfolio'
     | '/staking'
+    | '/transport'
   id:
     | '__root__'
     | '/_app'
@@ -148,8 +170,10 @@ export interface FileRouteTypes {
     | '/_app/staking/positions'
     | '/_app/staking/providers'
     | '/_app/transport/$'
+    | '/_app/transport/swap'
     | '/_app/portfolio/'
     | '/_app/staking/'
+    | '/_app/transport/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -228,11 +252,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppStakingProvidersRouteImport
       parentRoute: typeof AppStakingRouteRoute
     }
+    '/_app/transport/': {
+      id: '/_app/transport/'
+      path: '/transport'
+      fullPath: '/transport/'
+      preLoaderRoute: typeof AppTransportIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/transport/$': {
       id: '/_app/transport/$'
       path: '/transport/$'
       fullPath: '/transport/$'
       preLoaderRoute: typeof AppTransportSplatRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/transport/swap': {
+      id: '/_app/transport/swap'
+      path: '/transport/swap'
+      fullPath: '/transport/swap'
+      preLoaderRoute: typeof AppTransportSwapRouteImport
       parentRoute: typeof AppRoute
     }
   }
@@ -261,7 +299,9 @@ interface AppRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
   AppPortfolioSplatRoute: typeof AppPortfolioSplatRoute
   AppTransportSplatRoute: typeof AppTransportSplatRoute
+  AppTransportSwapRoute: typeof AppTransportSwapRoute
   AppPortfolioIndexRoute: typeof AppPortfolioIndexRoute
+  AppTransportIndexRoute: typeof AppTransportIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -271,7 +311,9 @@ const AppRouteChildren: AppRouteChildren = {
   AppIndexRoute: AppIndexRoute,
   AppPortfolioSplatRoute: AppPortfolioSplatRoute,
   AppTransportSplatRoute: AppTransportSplatRoute,
+  AppTransportSwapRoute: AppTransportSwapRoute,
   AppPortfolioIndexRoute: AppPortfolioIndexRoute,
+  AppTransportIndexRoute: AppTransportIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
