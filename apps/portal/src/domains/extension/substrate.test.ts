@@ -41,7 +41,7 @@ describe("substrate wallet connection", () => {
 		harness = await load({ talisman: fakeWallet([alice]), "polkadot-js": polkadotJs })
 
 		await vi.waitFor(() => expect(harness.accounts()).toEqual([["Bob", bob.address, "sr25519"]]))
-		expect(polkadotJs.enable).toHaveBeenCalledWith("Talisman")
+		expect(polkadotJs.enable.mock.calls).toEqual([["Talisman"]])
 		expect(harness.connected()?.id).toBe("polkadot-js")
 		expect(harness.connected()?.signer).toBe(polkadotJs.signer)
 		expect(localStorage.getItem("connected-substrate-extension")).toBe('"polkadot-js"')

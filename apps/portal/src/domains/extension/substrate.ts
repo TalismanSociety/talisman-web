@@ -1,7 +1,12 @@
 import { getKheopskit$, isInjectedWallet, type WalletConnectWallet } from "@kheopskit/core"
-import { type PolkadotAccount, type PolkadotWallet, polkadot } from "@kheopskit/core/polkadot"
+import {
+	type PolkadotAccount,
+	type PolkadotInjected,
+	type PolkadotWallet,
+	polkadot,
+} from "@kheopskit/core/polkadot"
 import { bind } from "@react-rxjs/core"
-import type { InjectedPolkadotAccount, SignPayload, SignRaw } from "polkadot-api/pjs-signer"
+import type { InjectedPolkadotAccount } from "polkadot-api/pjs-signer"
 import {
 	BehaviorSubject,
 	catchError,
@@ -10,13 +15,11 @@ import {
 	distinctUntilChanged,
 	filter,
 	firstValueFrom,
-	from,
 	ignoreElements,
 	map,
 	merge,
 	NEVER,
 	type Observable,
-	of,
 	shareReplay,
 	switchMap,
 	take,
@@ -43,7 +46,7 @@ type TalismanInjectedAccount = PolkadotAccount & { readonly?: boolean; partOfPor
 
 type LivePolkadotWallet = Exclude<PolkadotWallet, { isPlaceholder: true }>
 
-export type PjsSigner = { signPayload: SignPayload; signRaw: SignRaw }
+export type PjsSigner = PolkadotInjected["signer"]
 
 export type SubstrateWalletConnection = { id: string; signer: PjsSigner }
 
@@ -164,12 +167,8 @@ const driver$ = combineLatest([injectedWallets$, connectedSubstrateWalletId$]).p
 const connectedWallet$ = combineLatest([injectedWallets$, connectedSubstrateWalletId$]).pipe(
 	map(([wallets, id]) => wallets.find((wallet) => wallet.sourceId === id && wallet.isConnected)),
 	distinctUntilChanged(),
-	switchMap((wallet) =>
-		wallet
-			? from(pjsSignerOf(wallet.sourceId)).pipe(
-					map((signer): SubstrateWalletConnection => ({ id: wallet.sourceId, signer }))
-				)
-			: of(undefined)
+	map((wallet): SubstrateWalletConnection | undefined =>
+		wallet?.extension ? { id: wallet.sourceId, signer: wallet.extension.signer } : undefined
 	),
 	shareReplay({ bufferSize: 1, refCount: true })
 )
@@ -184,21 +183,6 @@ export const substrateWalletLifecycle$: Observable<never> = merge(
 	driver$,
 	connectedSubstrateWallet$
 ).pipe(ignoreElements())
-
-const pjsSigners = new Map<string, Promise<PjsSigner>>()
-
-const pjsSignerOf = (source: string) => {
-	const cached = pjsSigners.get(source)
-	if (cached) return cached
-	const signer = (async () => {
-		const extension = await window.injectedWeb3?.[source]?.enable(appName)
-		if (!extension) throw new Error(`${source} is not available`)
-		return extension.signer
-	})()
-	signer.catch(() => pjsSigners.delete(source))
-	pjsSigners.set(source, signer)
-	return signer
-}
 
 const toInjectedAccount = ({
 	address,
