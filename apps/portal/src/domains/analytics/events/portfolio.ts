@@ -10,10 +10,8 @@ import {
 } from "../properties"
 
 export const PORTFOLIO_SYMBOLS = [
-	"ANLOG",
 	"ASTR",
 	"AVAIL",
-	"CERE",
 	"DOT",
 	"ETH",
 	"KSM",
@@ -26,10 +24,8 @@ export const PORTFOLIO_SYMBOLS = [
 export type PortfolioSymbol = (typeof PORTFOLIO_SYMBOLS)[number]
 
 const SYMBOL_BUCKET_KEYS = {
-	ANLOG: "usd_anlog",
 	ASTR: "usd_astr",
 	AVAIL: "usd_avail",
-	CERE: "usd_cere",
 	DOT: "usd_dot",
 	ETH: "usd_eth",
 	KSM: "usd_ksm",
@@ -41,11 +37,9 @@ const SYMBOL_BUCKET_KEYS = {
 
 export const PORTFOLIO_CHAINS = [
 	"1",
-	"analog-timechain",
 	"astar",
 	"avail",
 	"bittensor",
-	"cere",
 	"kusama",
 	"kusama-asset-hub",
 	"polkadot",
@@ -72,10 +66,8 @@ export const portfolioEvents = {
 			symbols: p.enumList(SYMBOLS, "Token symbols held, from the shipped chaindata"),
 			chains: p.enumList(CHAINS, "Networks with a balance, from the shipped chaindata"),
 			total_usd: p.enum(USD_BUCKETS, "Total USD value held, as a bucket"),
-			usd_anlog: symbolBucket("ANLOG"),
 			usd_astr: symbolBucket("ASTR"),
 			usd_avail: symbolBucket("AVAIL"),
-			usd_cere: symbolBucket("CERE"),
 			usd_dot: symbolBucket("DOT"),
 			usd_eth: symbolBucket("ETH"),
 			usd_ksm: symbolBucket("KSM"),

@@ -3,13 +3,11 @@ import type { EventGroup } from "../events"
 import { optional, p, parseEnum } from "../properties"
 
 const SUBSTRATE_CHAINS = [
-	"analog-timechain",
 	"polkadot-asset-hub",
 	"kusama-asset-hub",
 	"astar",
 	"vara",
 	"avail",
-	"cere",
 	"bittensor",
 	"westend-testnet",
 	"shibuya-testnet",
