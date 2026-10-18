@@ -308,8 +308,8 @@ importers:
         specifier: ^2.22.1
         version: 2.22.1(@tanstack/query-core@5.104.3)(@types/react@19.3.0)(react@19.3.1)(typescript@7.0.2)(use-sync-external-store@1.4.0(react@19.3.1))(viem@2.41.2(bufferutil@4.0.8)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))
       bignumber.js:
-        specifier: ^9.1.2
-        version: 9.1.2
+        specifier: ^11.1.5
+        version: 11.1.5
       bn.js:
         specifier: ^5.2.1
         version: 5.2.1
@@ -4681,9 +4681,6 @@ packages:
 
   bignumber.js@11.1.5:
     resolution: {integrity: sha512-6WmzCNtUnfKpbozq+hOgWaZMMzORmYBwF1xZScyoIX3QRYWeKTtxxwDOW5tIz7C9BdjkIYHGTcelCLkXg0mndw==}
-
-  bignumber.js@9.1.2:
-    resolution: {integrity: sha512-2/mKyZH9K85bzOEfhXDBFZTGd1CTs+5IHpeFQo9luiBG7hghdC851Pj2WAhb6E3R6b9tZj/XKhbg4fum+Kepug==}
 
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
@@ -14059,8 +14056,6 @@ snapshots:
   big.js@6.2.2: {}
 
   bignumber.js@11.1.5: {}
-
-  bignumber.js@9.1.2: {}
 
   binary-extensions@2.3.0: {}
 
