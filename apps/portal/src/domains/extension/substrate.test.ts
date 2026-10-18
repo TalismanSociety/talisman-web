@@ -38,6 +38,27 @@ describe("substrate wallet connection", () => {
 		await vi.waitFor(() => expect(harness.initialised()).toBe(true), { timeout: 2_000 })
 	})
 
+	it("reports the wallets initialised only once the stored wallet shows connected with its accounts", async () => {
+		localStorage.setItem("connected-substrate-extension", '"talisman"')
+		harness = await load({ talisman: fakeWallet([alice, evm]) })
+		const atInitialised: unknown[] = []
+		const subscription = harness.initialisedSubstrateWallets$.subscribe((initialised) => {
+			if (initialised) atInitialised.push([harness.connected()?.id, harness.accounts()])
+		})
+
+		await vi.waitFor(() => expect(atInitialised).toHaveLength(1), { timeout: 2_000 })
+		subscription.unsubscribe()
+		expect(atInitialised).toEqual([
+			[
+				"talisman",
+				[
+					["Guardians SUB", alice.address, "sr25519"],
+					["Guardians EVM", evm.address, "ethereum"],
+				],
+			],
+		])
+	})
+
 	it("auto-connects Talisman on a fresh profile and stores the id JSON-encoded", async () => {
 		const talisman = fakeWallet([alice, evm])
 		harness = await load({ "polkadot-js": fakeWallet([bob]), talisman })

@@ -3,7 +3,6 @@ import { type PolkadotAccount, type PolkadotWallet, polkadot } from "@kheopskit/
 import { bind } from "@react-rxjs/core"
 import type { InjectedPolkadotAccount, SignPayload, SignRaw } from "polkadot-api/pjs-signer"
 import {
-	auditTime,
 	BehaviorSubject,
 	catchError,
 	combineLatest,
@@ -59,7 +58,6 @@ const WALLET_METADATA: Record<string, Omit<SubstrateWallet, "id">> = {
 
 const AUTO_CONNECT_WALLET_ID = "talisman"
 const INJECTION_GRACE_MS = 1_000
-const settledPastKheopskitThrottleMs = 20
 
 const appName = import.meta.env.VITE_APPLICATION_NAME ?? "Talisman"
 
@@ -82,7 +80,6 @@ const kheopskit$ = pageLoaded$.pipe(
 			hydrationGracePeriod: 0,
 		})
 	),
-	auditTime(settledPastKheopskitThrottleMs),
 	catchError((error) => {
 		console.error("The wallet bridge stopped; keeping the last known wallets and accounts", error)
 		return NEVER
