@@ -257,8 +257,8 @@ importers:
         specifier: 0.21.2
         version: 0.21.2
       '@polkadot-api/utils':
-        specifier: ^0.1.0
-        version: 0.1.2
+        specifier: ^0.4.0
+        version: 0.4.0
       '@polkadot-api/ws-middleware':
         specifier: 0.4.2
         version: 0.4.2(rxjs@7.8.2)
@@ -2394,9 +2394,6 @@ packages:
 
   '@polkadot-api/tx-utils@0.5.0':
     resolution: {integrity: sha512-yPS+XzeKIRSE684N+12fHxNl53fGGXY08LXUUIyI/J3OWhM9WR6DQ1mVmlveeXWC9FXRsFUpxoU4QyNJ3goeEA==}
-
-  '@polkadot-api/utils@0.1.2':
-    resolution: {integrity: sha512-yhs5k2a8N1SBJcz7EthZoazzLQUkZxbf+0271Xzu42C5AEM9K9uFLbsB+ojzHEM72O5X8lPtSwGKNmS7WQyDyg==}
 
   '@polkadot-api/utils@0.4.0':
     resolution: {integrity: sha512-9b/hwRM0UloLWV7SfpNaSD/4k8UQAHoaACAk7Xe+1MlfAm2JtnmPiB1GfGrfTyBlsrJVUIBCZpEmbmxVMaIqBA==}
@@ -10893,8 +10890,6 @@ snapshots:
       '@polkadot-api/signers-common': 0.2.3
       '@polkadot-api/substrate-bindings': 0.20.3
       '@polkadot-api/utils': 0.4.0
-
-  '@polkadot-api/utils@0.1.2': {}
 
   '@polkadot-api/utils@0.4.0': {}
 
