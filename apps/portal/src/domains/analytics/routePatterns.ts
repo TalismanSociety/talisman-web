@@ -12,7 +12,9 @@ const ROUTE_PATTERNS = {
 	"/staking/": "/staking",
 	"/staking/positions": "/staking/positions",
 	"/staking/providers": "/staking/providers",
+	"/transport/": "/transport",
 	"/transport/$": "/transport/:rest",
+	"/transport/swap": "/transport/swap",
 } as const satisfies Record<AppFullPath, string>
 
 const UNKNOWN_ROUTE = "/:unknown"
@@ -34,10 +36,16 @@ const segmentSource = (segment: string) => {
 	return escapeRegExp(segment)
 }
 
-const MATCHERS = Object.entries(ROUTE_PATTERNS).map(([fullPath, pattern]) => ({
-	regExp: new RegExp(`^${withoutTrailingSlash(fullPath).split("/").map(segmentSource).join("/")}$`),
-	pattern,
-}))
+const isSplat = (fullPath: string) => fullPath.endsWith("/$")
+
+const MATCHERS = Object.entries(ROUTE_PATTERNS)
+	.sort(([a], [b]) => Number(isSplat(a)) - Number(isSplat(b)))
+	.map(([fullPath, pattern]) => ({
+		regExp: new RegExp(
+			`^${withoutTrailingSlash(fullPath).split("/").map(segmentSource).join("/")}$`
+		),
+		pattern,
+	}))
 
 export const routePatternOfPathname = (pathname: string): RoutePattern => {
 	const path = withoutTrailingSlash(pathname)
