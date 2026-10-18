@@ -5,7 +5,7 @@
   "type": "module",
   "packageManager": "pnpm@11.24.0",
   "scripts": {
-    "prepare": "test ! -d .git || simple-git-hooks",
+    "prepare": "test ! -d .git || { git config --local --unset core.hooksPath '^\\.husky'; simple-git-hooks; }",
     "dev": "pnpm --filter @talismn/portal dev",
     "build": "pnpm -r build",
     "build:portal": "VITE_APP_COMMIT=${WORKERS_CI_COMMIT_SHA:-} NODE_OPTIONS=--max_old_space_size=6144 pnpm --filter @talismn/portal build:worker && pnpm run wrangler:redirect",
