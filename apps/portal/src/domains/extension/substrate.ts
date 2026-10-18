@@ -15,11 +15,13 @@ import {
 	distinctUntilChanged,
 	filter,
 	firstValueFrom,
+	fromEvent,
 	ignoreElements,
 	map,
 	merge,
 	NEVER,
 	type Observable,
+	of,
 	shareReplay,
 	switchMap,
 	take,
@@ -65,14 +67,19 @@ const connectedSubstrateWalletId$ = persistedState(
 	undefined
 )
 
-const kheopskit$ = defer(() =>
-	getKheopskit$({
-		appName,
-		platforms: [polkadot({ accountTypes: ["sr25519", "ed25519", "ecdsa", "ethereum"] })],
-		autoReconnect: false,
-		hydrationGracePeriod: 0,
-	})
-).pipe(
+const pageLoaded$ = defer(() =>
+	document.readyState === "complete" ? of(undefined) : fromEvent(window, "load").pipe(take(1))
+)
+
+const kheopskit$ = pageLoaded$.pipe(
+	switchMap(() =>
+		getKheopskit$({
+			appName,
+			platforms: [polkadot({ accountTypes: ["sr25519", "ed25519", "ecdsa", "ethereum"] })],
+			autoReconnect: false,
+			hydrationGracePeriod: 0,
+		})
+	),
 	catchError((error) => {
 		console.error("The wallet bridge stopped; keeping the last known wallets and accounts", error)
 		return NEVER
