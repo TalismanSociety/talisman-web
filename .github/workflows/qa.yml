@@ -16,7 +16,7 @@ jobs:
           persist-credentials: false
       - uses: ./.github/actions/setup
       - run: pnpm verify
-      - run: pnpm audit --prod --audit-level critical
+      - run: pnpm audit --prod --audit-level high
 
   e2e:
     runs-on: ubuntu-latest
