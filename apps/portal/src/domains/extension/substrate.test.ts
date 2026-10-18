@@ -79,9 +79,9 @@ describe("substrate wallet connection", () => {
 				["Guardians EVM", evm.address, "ethereum"],
 			])
 		)
-		expect(talisman.enable).toHaveBeenCalledWith("Talisman")
+		expect(talisman.enable.mock.calls).toEqual([["Talisman"]])
 		expect(localStorage.getItem("connected-substrate-extension")).toBe('"talisman"')
-		expect(capture).toHaveBeenCalledWith("Substrate extensions connected", { wallet: "talisman" })
+		expect(capture.mock.calls).toEqual([["Substrate extensions connected", { wallet: "talisman" }]])
 	})
 
 	it("reconnects a stored wallet that injects late, before the page load", async () => {
@@ -174,10 +174,12 @@ describe("substrate wallet connection", () => {
 
 	it("forgets a wallet whose connection the user declined and says so", async () => {
 		localStorage.setItem("connected-substrate-extension", '"talisman"')
-		harness = await load({ talisman: refusingWallet() })
+		const talisman = refusingWallet()
+		harness = await load({ talisman })
 
 		await vi.waitFor(() => expect(harness.initialised()).toBe(true), { timeout: 2_000 })
-		expect(toast.error).toHaveBeenCalledWith("Wallet connection declined")
+		expect(talisman.enable.mock.calls).toEqual([["Talisman"]])
+		expect(toast.error.mock.calls).toEqual([["Wallet connection declined"]])
 		expect(localStorage.getItem("connected-substrate-extension")).toBeNull()
 		expect(harness.accounts()).toEqual([])
 	})
