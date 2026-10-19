@@ -1,7 +1,7 @@
-import { act, render } from "@testing-library/react"
+import { act, createEvent, fireEvent, render } from "@testing-library/react"
 import { AnimatePresence } from "motion/react"
 import type { ReactNode } from "react"
-import { beforeEach, describe, expect, it } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import { Dialog } from "./Dialog"
 
 let finishExit: () => void
@@ -50,5 +50,16 @@ describe("Dialog", () => {
 		rerender(view(null))
 
 		await expectExitToPlayBeforeUnmount()
+	})
+
+	it("requests dismissal on Escape instead of letting the browser close it at once", () => {
+		const onRequestDismiss = vi.fn()
+		render(<Dialog onRequestDismiss={onRequestDismiss}>Content</Dialog>)
+
+		const escape = createEvent.keyDown(dialog() as HTMLDialogElement, { key: "Escape" })
+		fireEvent(dialog() as HTMLDialogElement, escape)
+
+		expect(onRequestDismiss).toHaveBeenCalledOnce()
+		expect(escape.defaultPrevented).toBe(true)
 	})
 })

@@ -110,6 +110,14 @@ export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function 
 			}}
 			data-closing={phase === "closing" || undefined}
 			{...props}
+			onKeyDown={(event) => {
+				props.onKeyDown?.(event)
+				if (event.key !== "Escape" || event.defaultPrevented || onRequestDismiss === undefined) {
+					return
+				}
+				event.preventDefault()
+				onRequestDismiss()
+			}}
 			onCancel={(event) => {
 				props.onCancel?.(event)
 				if (onRequestDismiss === undefined) return
