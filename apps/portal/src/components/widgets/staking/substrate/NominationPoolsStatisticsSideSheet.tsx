@@ -145,7 +145,12 @@ const Stats = (props: {
 										<Text.Noop.A
 											href={props.subscanPayoutsUrl}
 											target="_blank"
-											css={{ color: theme.color.primary }}
+											css={{
+												color: theme.color.primary,
+												display: "inline-flex",
+												alignItems: "center",
+												gap: "0.25em",
+											}}
 										>
 											View all on Subscan <ExternalLink size="1em" />
 										</Text.Noop.A>
