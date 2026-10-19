@@ -202,14 +202,19 @@ export const injectedSubstrateAccounts$: Observable<InjectedSubstrateAccount[]> 
 	shareReplay({ bufferSize: 1, refCount: true })
 )
 
+const settledStateFor = (address: string) =>
+	firstValueFrom(
+		kheopskit$.pipe(filter(({ accounts }) => !preferredListingOf(accounts, address)?.isPlaceholder))
+	)
+
 export const txCreatorOf = async (address: string): Promise<TxCreator | undefined> => {
-	const { accounts } = await firstValueFrom(kheopskit$)
+	const { accounts } = await settledStateFor(address)
 	const account = preferredListingOf(accounts, address)
 	return account?.isPlaceholder ? undefined : account?.txCreator
 }
 
 export const pjsSignerOf = async (address: string): Promise<PjsSigner | undefined> => {
-	const { accounts, wallets } = await firstValueFrom(kheopskit$)
+	const { accounts, wallets } = await settledStateFor(address)
 	const listing = preferredListingOf(accounts, address)
 	const connected = wallets.filter(isLiveInjectedWallet).filter((wallet) => wallet.isConnected)
 	const signingWallet = listing

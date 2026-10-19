@@ -401,22 +401,21 @@ describe("substrate wallet connection", () => {
 		expect(await harness.txCreatorOf(alice.address)).toEqual(expect.any(Function))
 	})
 
-	it("waits for the reconnecting wallet that lists an address instead of handing it to another wallet", async () => {
+	it("waits for the reconnecting wallet that lists an address before handing out its signer", async () => {
 		const talisman = reconnectingTalismanListing(alice.address, alice.name)
 		createFakePolkadotExtension({ name: "polkadot-js", accounts: [bob] })
 		harness = await load()
 		await harness.wallet("polkadot:polkadot-js").connect()
+		const settled: string[] = []
+		const signer = harness.pjsSignerOf(alice.address).finally(() => settled.push("signer"))
+		const txCreator = harness.txCreatorOf(alice.address).finally(() => settled.push("txCreator"))
 
-		expect(await harness.pjsSignerOf(alice.address)).toBeUndefined()
+		await new Promise((resolve) => setTimeout(resolve, 100))
+		expect(settled).toEqual([])
 		talisman.resolveEnable()
-		await vi.waitFor(() =>
-			expect(harness.connected()).toEqual(["polkadot:talisman", "polkadot:polkadot-js"])
-		)
-		await (await harness.pjsSignerOf(alice.address))?.signRaw({
-			address: alice.address,
-			data: "0x00",
-			type: "bytes",
-		})
+
+		expect(await txCreator).toEqual(expect.any(Function))
+		await (await signer)?.signRaw({ address: alice.address, data: "0x00", type: "bytes" })
 		expect(talisman.signRawCalls()).toHaveLength(1)
 	})
 
