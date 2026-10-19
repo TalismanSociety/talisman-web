@@ -8,6 +8,7 @@ import {
 	useTokenAmountState,
 } from "@/domains/common/hooks/useTokenAmount"
 import { useTx } from "@/domains/common/hooks/useTx"
+import type { Signer } from "@/domains/extension/substrate"
 import { LOADING, toLoadable } from "@/util/loadable"
 
 import { unbondCall } from "../calls"
@@ -97,9 +98,9 @@ export const usePoolUnstakeForm = (account?: string) => {
 	return {
 		extrinsic: {
 			...unbondExtrinsic,
-			unbondMax: async (account: string, memberAccount: string) => {
+			unbondMax: async (signer: Signer, memberAccount: string) => {
 				if (data === undefined) throw new Error("Extrinsic not ready yet")
-				return await unbondExtrinsic.signAndSend(account, memberAccount, data.points)
+				return await unbondExtrinsic.signAndSend(signer, memberAccount, data.points)
 			},
 		},
 		input,

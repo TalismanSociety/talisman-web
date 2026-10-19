@@ -184,11 +184,11 @@ const PoolStakeItem = ({ item }: { item: DerivedPool }) => {
 				}
 			/>
 			<AddStakeDialog
-				account={isAddingStake ? item.account.address : undefined}
+				account={isAddingStake ? item.account : undefined}
 				onDismiss={useCallback(() => setIsAddingStake(false), [])}
 			/>
 			<UnstakeDialog
-				account={isUnstaking ? item.account.address : undefined}
+				account={isUnstaking ? item.account : undefined}
 				onDismiss={useCallback(() => setIsUnstaking(false), [])}
 			/>
 			<ClaimStakeDialog

@@ -65,13 +65,13 @@ const ExistingPool = (props: { account: SignerAccount; showClaimPermission: bool
 	const amount = useTokenAmountFromPlanck(pool?.poolMember.points)
 	const pendingRewards = useTokenAmountFromPlanck(pool?.pendingRewards)
 
-	const [addStakeAddress, setAddStakeAddress] = useState<string>()
+	const [addStakeAccount, setAddStakeAccount] = useState<SignerAccount>()
 
 	const [claimDialogOpen, setClaimDialogOpen] = useState(false)
 	const [claimPayoutLoadable, setClaimPayoutLoadable] = useTxLoadableState()
 	const [restakeLoadable, setRestakeLoadable] = useTxLoadableState()
 
-	const [unstakeDialogAddress, setUnstakeDialogAddress] = useState<string>()
+	const [unstakeAccount, setUnstakeAccount] = useState<SignerAccount>()
 	const genesisHash = useGenesisHash()
 	const withdrawExtrinsic = useTx(genesisHash, (runtime) =>
 		txFromCall(runtime, withdrawUnbondedCall(props.account.address, pool?.slashingSpan ?? 0))
@@ -137,20 +137,20 @@ const ExistingPool = (props: { account: SignerAccount; showClaimPermission: bool
 				addButton={
 					pool !== undefined && (
 						<StakeFormComponent.ExistingPool.AddButton
-							onClick={() => setAddStakeAddress(props.account.address)}
+							onClick={() => setAddStakeAccount(props.account)}
 						/>
 					)
 				}
 				unstakeButton={
 					pool?.poolMember.points !== 0n && (
 						<StakeFormComponent.ExistingPool.UnstakeButton
-							onClick={() => setUnstakeDialogAddress(props.account.address)}
+							onClick={() => setUnstakeAccount(props.account)}
 						/>
 					)
 				}
 				readonly={props.account.readonly}
 			/>
-			<AddStakeDialog account={addStakeAddress} onDismiss={() => setAddStakeAddress(undefined)} />
+			<AddStakeDialog account={addStakeAccount} onDismiss={() => setAddStakeAccount(undefined)} />
 			<ClaimStakeDialog
 				open={claimDialogOpen}
 				onRequestDismiss={() => setClaimDialogOpen(false)}
@@ -158,10 +158,7 @@ const ExistingPool = (props: { account: SignerAccount; showClaimPermission: bool
 				onChangeClaimPayoutLoadable={setClaimPayoutLoadable}
 				onChangeRestakeLoadable={setRestakeLoadable}
 			/>
-			<UnstakeDialog
-				account={unstakeDialogAddress}
-				onDismiss={() => setUnstakeDialogAddress(undefined)}
-			/>
+			<UnstakeDialog account={unstakeAccount} onDismiss={() => setUnstakeAccount(undefined)} />
 			{claimPermissionDialogOpen && (
 				<PoolClaimPermissionDialog
 					account={props.account}

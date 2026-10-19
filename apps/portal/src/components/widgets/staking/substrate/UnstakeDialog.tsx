@@ -1,11 +1,12 @@
 import { useCallback } from "react"
 
 import { NominationPoolsUnstakeDialog } from "@/components/recipes/UnstakeDialog"
+import type { SignerAccount } from "@/domains/accounts/accounts"
 import { useTxInBlockOrErrorEffect } from "@/domains/common/hooks/useExtrinsicEffect"
 import { usePoolUnstakeForm } from "@/domains/staking/substrate/nominationPools/hooks"
 import { useLocalizedUnlockDuration } from "@/domains/staking/substrate/nominationPools/hooks/useUnlockDuration"
 
-const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) => {
+const UnstakeDialog = (props: { account?: SignerAccount; onDismiss: () => unknown }) => {
 	const lockDuration = useLocalizedUnlockDuration()
 
 	const {
@@ -17,7 +18,7 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
 		setAmount,
 		isLeaving,
 		error: inputError,
-	} = usePoolUnstakeForm(props.account)
+	} = usePoolUnstakeForm(props.account?.address)
 
 	useTxInBlockOrErrorEffect(() => {
 		props.onDismiss()
@@ -40,10 +41,12 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
 			onConfirm={useCallback(() => {
 				if (props.account !== undefined && decimalAmount !== undefined) {
 					if (isLeaving) {
-						unbondExtrinsic.unbondMax(props.account, props.account).finally(() => props.onDismiss())
+						unbondExtrinsic
+							.unbondMax(props.account, props.account.address)
+							.finally(() => props.onDismiss())
 					} else {
 						unbondExtrinsic
-							.signAndSend(props.account, props.account, decimalAmount.planck)
+							.signAndSend(props.account, props.account.address, decimalAmount.planck)
 							.finally(() => props.onDismiss())
 					}
 				}
