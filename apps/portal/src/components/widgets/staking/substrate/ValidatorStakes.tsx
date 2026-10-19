@@ -5,19 +5,14 @@ import { useChainLoadable } from "@/domains/chains/chains"
 import { useValidatorStakeLoadable } from "@/domains/staking/substrate/validator/hooks/useValidatorStakes"
 import { loadableData } from "@/util/loadable"
 
+import { StakesLoading } from "../StakesLoading"
 import ValidatorStakeItem from "./ValidatorStakeItem"
 
-type ValidatorStakesProps = {
-	setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-const ValidatorStakes = ({ setShouldRenderLoadingSkeleton }: ValidatorStakesProps) => {
+const ValidatorStakes = () => {
 	const { data: stakes, state } = useValidatorStakeLoadable(useSelectedSubstrateAccounts())
 	const chain = loadableData(useChainLoadable())
 
-	if (state === "hasValue" || stakes.length) {
-		setShouldRenderLoadingSkeleton(false)
-	}
+	if (state === "loading") return <StakesLoading />
 
 	const { name = "", nativeToken: { symbol, logo } = { symbol: "", logo: "" } } = chain || {}
 

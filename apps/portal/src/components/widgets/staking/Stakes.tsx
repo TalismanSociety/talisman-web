@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router"
 import type { PropsWithChildren } from "react"
-import { Fragment, Suspense, useState } from "react"
+import { Fragment, Suspense } from "react"
 import { SectionHeader } from "@/components/molecules/SectionHeader"
 import { StakePosition, StakePositionList } from "@/components/recipes/StakePosition"
 import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
@@ -15,6 +15,7 @@ import { HiddenDetails } from "@/ui/molecules/HiddenDetails"
 import DappStakes from "./dappStaking/Stakes"
 import LidoStakes from "./lido/Stakes"
 import SeekStakes from "./providers/seek/SeekStakes"
+import { StakesLoading, StakesLoadingSkeleton } from "./StakesLoading"
 import PoolStakes from "./substrate/PoolStakes"
 import ValidatorStakes from "./substrate/ValidatorStakes"
 import SubtensorStakes from "./subtensor/Stakes"
@@ -65,75 +66,58 @@ const StakeHeader = () => {
 	)
 }
 
-const skellyClassName = "staking-skeleton"
-
-const SuspenseSkeleton = (props: PropsWithChildren) => (
-	<Suspense
-		fallback={<StakePosition.Skeleton className={skellyClassName} css={{ order: 1 }} />}
-		{...props}
-	/>
+const LoadingSuspense = (props: PropsWithChildren) => (
+	<Suspense fallback={<StakesLoading />} {...props} />
 )
 
 const Stakes = (props: { hideHeader?: boolean }) => {
 	const chains = useNominationPoolsEnabledChains()
-	const [shouldRenderLoadingSkeleton, setShouldRenderLoadingSkeleton] = useState<boolean>(true)
 
 	return (
 		<div id="staking">
 			{!props.hideHeader && <StakeHeader />}
-			<StakePositionList
-				css={{
-					[`[class~=${skellyClassName}]:not(:nth-last-child(1 of [class~=${skellyClassName}]))`]: {
-						display: "none",
-					},
-				}}
-			>
-				{shouldRenderLoadingSkeleton && (
-					<StakePosition.Skeleton className={skellyClassName} css={{ order: 1 }} />
-				)}
+			<StakePositionList>
+				<StakesLoadingSkeleton>
+					<ErrorBoundary orientation="horizontal">
+						<LoadingSuspense>
+							<SeekStakes />
+						</LoadingSuspense>
+					</ErrorBoundary>
 
-				<ErrorBoundary orientation="horizontal">
-					{" "}
-					<SuspenseSkeleton>
-						<SeekStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
-					</SuspenseSkeleton>
-				</ErrorBoundary>
-
-				{chains.map((chain, index) => {
-					return (
-						<Fragment key={index}>
-							<ChainProvider chain={chain}>
-								<ErrorBoundary orientation="horizontal">
-									<SuspenseSkeleton>
-										<PoolStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
-									</SuspenseSkeleton>
-								</ErrorBoundary>
-								<ErrorBoundary orientation="horizontal">
-									<SuspenseSkeleton>
-										<ValidatorStakes
-											setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton}
-										/>
-									</SuspenseSkeleton>
-								</ErrorBoundary>
-							</ChainProvider>
-						</Fragment>
-					)
-				})}
-				<ErrorBoundary orientation="horizontal">
-					<SuspenseSkeleton>
-						<SubtensorStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
-					</SuspenseSkeleton>
-				</ErrorBoundary>
-				<ErrorBoundary orientation="horizontal">
-					<SuspenseSkeleton>
-						<DappStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
-					</SuspenseSkeleton>
-				</ErrorBoundary>
-				<ErrorBoundary orientation="horizontal">
-					<SuspenseSkeleton>
-						<LidoStakes setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton} />
-					</SuspenseSkeleton>
-				</ErrorBoundary>
+					{chains.map((chain, index) => {
+						return (
+							<Fragment key={index}>
+								<ChainProvider chain={chain}>
+									<ErrorBoundary orientation="horizontal">
+										<LoadingSuspense>
+											<PoolStakes />
+										</LoadingSuspense>
+									</ErrorBoundary>
+									<ErrorBoundary orientation="horizontal">
+										<LoadingSuspense>
+											<ValidatorStakes />
+										</LoadingSuspense>
+									</ErrorBoundary>
+								</ChainProvider>
+							</Fragment>
+						)
+					})}
+					<ErrorBoundary orientation="horizontal">
+						<LoadingSuspense>
+							<SubtensorStakes />
+						</LoadingSuspense>
+					</ErrorBoundary>
+					<ErrorBoundary orientation="horizontal">
+						<LoadingSuspense>
+							<DappStakes />
+						</LoadingSuspense>
+					</ErrorBoundary>
+					<ErrorBoundary orientation="horizontal">
+						<LoadingSuspense>
+							<LidoStakes />
+						</LoadingSuspense>
+					</ErrorBoundary>
+				</StakesLoadingSkeleton>
 				<NoStakePrompt css={{ display: "none", ":only-child": { display: "revert" } }} />
 			</StakePositionList>
 		</div>

@@ -9,6 +9,7 @@ import { lidoSuites } from "@/domains/staking/lido/config"
 import { useStakes } from "@/domains/staking/lido/core"
 import type { LidoSuite } from "@/domains/staking/lido/types"
 
+import { StakesLoading } from "../StakesLoading"
 import LidoWidgetSideSheet from "./LidoWidgetSideSheet"
 
 const IncreaseStakeSideSheet = (props: {
@@ -38,19 +39,14 @@ const ClaimSideSheet = (props: { onRequestDismiss: () => unknown; lidoSuite: Lid
 	/>
 )
 
-const LidoStakes = (props: {
-	lidoSuite: LidoSuite
-	setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
-}) => {
+const LidoStakes = (props: { lidoSuite: LidoSuite }) => {
 	const [increaseStakeSideSheetOpen, setIncreaseStakeSideSheetOpen] = useState(false)
 	const [unstakeSideSheetOpen, setUnstakeSideSheetOpen] = useState(false)
 	const [claimSideSheetOpen, setClaimSideSheetOpen] = useState(false)
 
 	const { data: stakes, isLoading } = useStakes(useSelectedEvmAccounts(), props.lidoSuite)
 
-	if (stakes.length || !isLoading) {
-		props.setShouldRenderLoadingSkeleton(false)
-	}
+	if (isLoading && !stakes.length) return <StakesLoading />
 
 	const logo =
 		"https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/tokens/eth.svg"
@@ -154,19 +150,11 @@ const LidoStakes = (props: {
 	)
 }
 
-type StakesProps = {
-	setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-const Stakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
+const Stakes = () => {
 	return (
 		<>
 			{lidoSuites.map((lidoSuite, index) => (
-				<LidoStakes
-					key={index}
-					lidoSuite={lidoSuite}
-					setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton}
-				/>
+				<LidoStakes key={index} lidoSuite={lidoSuite} />
 			))}
 		</>
 	)

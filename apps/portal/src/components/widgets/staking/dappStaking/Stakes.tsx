@@ -20,6 +20,7 @@ import { useTotalDappStakingRewards } from "@/domains/staking/dappStaking/hooks/
 import { loadableData } from "@/util/loadable"
 
 import useUnlockDuration from "../providers/hooks/dapp/useUnlockDuration"
+import { StakesLoading } from "../StakesLoading"
 import AddStakeDialog from "./AddStakeDialog"
 import UnstakeDialog from "./UnstakeDialog"
 
@@ -29,13 +30,7 @@ const TotalRewards = (props: { account: Account }) =>
 const TotalFiatRewards = (props: { account: Account }) =>
 	useNativeTokenLocalizedFiatAmount(useTotalDappStakingRewards(props.account))
 
-const Stake = ({
-	account,
-	setShouldRenderLoadingSkeleton,
-}: {
-	account: Account
-	setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
-}) => {
+const Stake = ({ account }: { account: Account }) => {
 	const [addStakeDialogOpen, setAddStakeDialogOpen] = useState(false)
 	const [unstakeDialogOpen, setUnstakeDialogOpen] = useState(false)
 	const [lockedDialogOpen, setLockedDialogOpen] = useState(false)
@@ -56,12 +51,8 @@ const Stake = ({
 
 	const { name = "", nativeToken: { symbol, logo } = { symbol: "", logo: "" } } = chain || {}
 
-	if (stake?.active || !isLoading) {
-		setShouldRenderLoadingSkeleton(false)
-	}
-
 	if (!stake?.active) {
-		return null
+		return isLoading ? <StakesLoading /> : null
 	}
 
 	const { amounts } = stake
@@ -217,11 +208,7 @@ const Stake = ({
 	)
 }
 
-type StakesProps = {
-	setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-const Stakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
+const Stakes = () => {
 	const chains = loadableData(useDappStakingEnabledChainsLoadable())
 
 	const accounts = useSelectedSubstrateAccounts()
@@ -247,10 +234,7 @@ const Stakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
 									/>
 								)}
 							>
-								<Stake
-									account={account}
-									setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton}
-								/>
+								<Stake account={account} />
 							</ErrorBoundary>
 						)
 					})}
