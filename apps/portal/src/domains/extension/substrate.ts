@@ -1,4 +1,9 @@
-import { getKheopskit$, isInjectedWallet, type WalletConnectWallet } from "@kheopskit/core"
+import {
+	getKheopskit$,
+	isInjectedWallet,
+	KheopskitError,
+	type WalletConnectWallet,
+} from "@kheopskit/core"
 import {
 	type PolkadotAccount,
 	type PolkadotInjected,
@@ -10,7 +15,6 @@ import type { InjectedPolkadotAccount } from "polkadot-api/pjs-signer"
 import {
 	BehaviorSubject,
 	catchError,
-	combineLatest,
 	defer,
 	distinctUntilChanged,
 	filter,
@@ -21,9 +25,6 @@ import {
 	NEVER,
 	type Observable,
 	shareReplay,
-	switchMap,
-	take,
-	tap,
 } from "rxjs"
 import { z } from "zod"
 import polkadotJsWalletLogo from "@/assets/polkadot-js-wallet.svg"
@@ -94,81 +95,52 @@ const injectedWallets$ = kheopskit$.pipe(
 	shareReplay({ bufferSize: 1, refCount: true })
 )
 
-const connectRequests = new Map<string, Promise<void>>()
-
-const connectOnce = (wallet: LivePolkadotWallet) => {
-	const pending = connectRequests.get(wallet.sourceId)
-	if (pending) return pending
-	const request = wallet
-		.connect()
-		.then(
-			() => {
-				track("Substrate extensions connected", { wallet: substrateWalletOf(wallet.sourceId) })
-			},
-			(error) => {
-				connectedSubstrateWalletId$.next(undefined)
-				toast.error("Wallet connection declined")
-				console.error(error)
-			}
-		)
-		.finally(() => connectRequests.delete(wallet.sourceId))
-	connectRequests.set(wallet.sourceId, request)
-	return request
+const connect = (wallet: LivePolkadotWallet) => {
+	connectedSubstrateWalletId$.next(wallet.sourceId)
+	return wallet.connect().then(
+		() => {
+			track("Substrate extensions connected", { wallet: substrateWalletOf(wallet.sourceId) })
+		},
+		(error) => {
+			if (error instanceof KheopskitError && error.code === "ABORTED") return
+			connectedSubstrateWalletId$.next(undefined)
+			toast.error("Wallet connection declined")
+			console.error(error)
+		}
+	)
 }
 
-const disconnectUnwanted = (wallets: LivePolkadotWallet[], wantedId: string | undefined) => {
-	for (const wallet of wallets)
-		if (wallet.isConnected && wallet.sourceId !== wantedId)
-			wallet.disconnect().catch((error) => console.error(error))
-}
+const disconnectAllBut = (wallets: LivePolkadotWallet[], keptId?: string) =>
+	Promise.all(
+		wallets
+			.filter((wallet) => wallet.status !== "disconnected" && wallet.sourceId !== keptId)
+			.map((wallet) => wallet.disconnect().catch((error) => console.error(error)))
+	)
 
 const initialised$ = new BehaviorSubject(false)
 
-const listsWallet = (wallets: LivePolkadotWallet[], id: string | undefined) =>
-	wallets.some((wallet) => wallet.sourceId === id)
-
-const walletsSettled$ = kheopskit$.pipe(
-	map(({ isDiscovering, wallets }) => ({
-		isDiscovering,
-		wallets: wallets.filter(isLiveInjectedWallet),
-	})),
-	filter(
-		({ isDiscovering, wallets }) =>
-			!isDiscovering ||
-			listsWallet(wallets, connectedSubstrateWalletId$.value ?? AUTO_CONNECT_WALLET_ID)
-	),
-	take(1),
-	map(({ wallets }) => wallets)
-)
-
-const boot$ = walletsSettled$.pipe(
-	switchMap(async (wallets) => {
-		if (
-			connectedSubstrateWalletId$.value === undefined &&
-			listsWallet(wallets, AUTO_CONNECT_WALLET_ID)
+const boot = async () => {
+	const wantedId = connectedSubstrateWalletId$.value ?? AUTO_CONNECT_WALLET_ID
+	const wanted = await firstValueFrom(
+		kheopskit$.pipe(
+			map(({ isDiscovering, wallets }) => ({
+				isDiscovering,
+				wanted: wallets.filter(isLiveInjectedWallet).find((wallet) => wallet.sourceId === wantedId),
+			})),
+			filter(({ isDiscovering, wanted }) => !isDiscovering || wanted !== undefined),
+			map(({ wanted }) => wanted)
 		)
-			connectedSubstrateWalletId$.next(AUTO_CONNECT_WALLET_ID)
-		const wanted = wallets.find((wallet) => wallet.sourceId === connectedSubstrateWalletId$.value)
-		if (wanted && !wanted.isConnected) await connectOnce(wanted)
-		initialised$.next(true)
-	})
-)
+	)
+	if (wanted) await connect(wanted)
+	initialised$.next(true)
+}
 
-const driver$ = combineLatest([injectedWallets$, connectedSubstrateWalletId$]).pipe(
-	tap(([wallets, wantedId]) => {
-		disconnectUnwanted(wallets, wantedId)
-		const wanted = wallets.find((wallet) => wallet.sourceId === wantedId)
-		if (wanted && !wanted.isConnected) void connectOnce(wanted)
-	})
-)
-
-const connectedWallet$ = combineLatest([injectedWallets$, connectedSubstrateWalletId$]).pipe(
-	map(([wallets, id]) => wallets.find((wallet) => wallet.sourceId === id && wallet.isConnected)),
+const connectedWallet$ = injectedWallets$.pipe(
+	map((wallets) => wallets.find((wallet) => wallet.isConnected)),
 	distinctUntilChanged(),
 	map((wallet): SubstrateWalletConnection | undefined =>
 		wallet?.extension ? { id: wallet.sourceId, signer: wallet.extension.signer } : undefined
-	),
-	shareReplay({ bufferSize: 1, refCount: true })
+	)
 )
 
 export const [useConnectedSubstrateWallet, connectedSubstrateWallet$] = bind(
@@ -176,9 +148,10 @@ export const [useConnectedSubstrateWallet, connectedSubstrateWallet$] = bind(
 	undefined
 )
 
+const boot$ = defer(boot).pipe(shareReplay({ bufferSize: 1, refCount: false }))
+
 export const substrateWalletLifecycle$: Observable<never> = merge(
 	boot$,
-	driver$,
 	connectedSubstrateWallet$
 ).pipe(ignoreElements())
 
@@ -194,16 +167,8 @@ const toInjectedAccount = ({
 		? { address, name, type, genesisHash, readonly, partOfPortfolio: partOfPortfolio ?? false }
 		: { address, name, type, genesisHash }
 
-export const injectedSubstrateAccounts$: Observable<InjectedSubstrateAccount[]> = combineLatest([
-	kheopskit$,
-	connectedSubstrateWalletId$,
-]).pipe(
-	map(([{ wallets, accounts }, id]) => {
-		const wallet = wallets.filter(isLiveInjectedWallet).find((wallet) => wallet.sourceId === id)
-		return wallet?.isConnected
-			? accounts.filter((account) => account.walletId === wallet.id).map(toInjectedAccount)
-			: []
-	}),
+export const injectedSubstrateAccounts$: Observable<InjectedSubstrateAccount[]> = kheopskit$.pipe(
+	map(({ accounts }) => accounts.map(toInjectedAccount)),
 	shareReplay({ bufferSize: 1, refCount: true })
 )
 
@@ -222,11 +187,16 @@ export const [useInstalledSubstrateWallets, installedSubstrateWallets$] = bind(
 	[]
 )
 
-export const initialisedSubstrateWallets$: Observable<boolean> = initialised$
+export const [useInitialisedSubstrateWallets, initialisedSubstrateWallets$] = bind(initialised$)
 
-export const [useInitialisedSubstrateWallets] = bind(initialised$)
+export const connectSubstrateWallet = async ({ id }: SubstrateWallet) => {
+	const wallets = await firstValueFrom(injectedWallets$)
+	await disconnectAllBut(wallets, id)
+	const wallet = wallets.find((wallet) => wallet.sourceId === id)
+	if (wallet) await connect(wallet)
+}
 
-export const connectSubstrateWallet = (wallet: SubstrateWallet) =>
-	connectedSubstrateWalletId$.next(wallet.id)
-
-export const disconnectSubstrateWallet = () => connectedSubstrateWalletId$.next(undefined)
+export const disconnectSubstrateWallet = async () => {
+	connectedSubstrateWalletId$.next(undefined)
+	await disconnectAllBut(await firstValueFrom(injectedWallets$))
+}

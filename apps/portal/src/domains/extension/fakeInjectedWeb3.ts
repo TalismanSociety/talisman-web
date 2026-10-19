@@ -29,7 +29,7 @@ export const watched = {
 export const fakeExtension = (
 	name: string,
 	accounts: FakePolkadotAccount[] = [],
-	enable?: "reject"
+	enable?: "reject" | "hold"
 ) => createFakePolkadotExtension({ name, accounts, enable })
 
 export const load = async () => {
