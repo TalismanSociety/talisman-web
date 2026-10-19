@@ -26,6 +26,7 @@ describe("substrate wallet connection", () => {
 
 	afterEach(() => {
 		harness.dispose()
+		vi.useRealTimers()
 		vi.restoreAllMocks()
 	})
 
@@ -335,7 +336,7 @@ describe("substrate wallet connection", () => {
 		expect(atInitialised).toEqual([["polkadot:talisman", "polkadot:polkadot-js"]])
 	})
 
-	it("signs each account through the wallet that lists it, and any other address through the first connected wallet", async () => {
+	it("signs each account through the wallet that lists it, and no other address", async () => {
 		const talisman = createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
 		const polkadotJs = createFakePolkadotExtension({ name: "polkadot-js", accounts: [bob] })
 		harness = await load()
@@ -346,13 +347,23 @@ describe("substrate wallet connection", () => {
 
 		await signRaw(bob.address)
 		await signRaw(alice.address)
-		await signRaw(watched.address)
 
 		expect(polkadotJs.signRawCalls().map(({ address }) => address)).toEqual([bob.address])
-		expect(talisman.signRawCalls().map(({ address }) => address)).toEqual([
-			alice.address,
-			watched.address,
-		])
+		expect(talisman.signRawCalls().map(({ address }) => address)).toEqual([alice.address])
+		expect(await harness.pjsSignerOf(watched.address)).toBeUndefined()
+		expect(await harness.txCreatorOf(watched.address)).toBeUndefined()
+	})
+
+	it("has no signer for an address its wallet only watches", async () => {
+		createFakePolkadotExtension({
+			name: "talisman",
+			accounts: [{ ...alice, readonly: true, partOfPortfolio: false }],
+		})
+		harness = await load()
+		await vi.waitFor(() => expect(harness.connected()).toEqual(["polkadot:talisman"]))
+
+		expect(await harness.pjsSignerOf(alice.address)).toBeUndefined()
+		expect(await harness.txCreatorOf(alice.address)).toBeUndefined()
 	})
 
 	it("signs an address through the wallet that holds its key when another wallet only watches it", async () => {
@@ -377,12 +388,16 @@ describe("substrate wallet connection", () => {
 		expect(talisman.signRawCalls()).toEqual([])
 	})
 
-	const reconnectingTalismanListing = (address: string, name: string) => {
+	const cacheTalismanListing = (address: string, name: string) => {
 		const seed = createKheopskitStore()
 		const wallet = cachedWalletOf("polkadot:talisman", "Talisman")
 		seed.rememberWallet(wallet.id)
 		seed.setCachedState([wallet], [cachedAccountOf(wallet, address, name)])
 		seed.destroy()
+	}
+
+	const reconnectingTalismanListing = (address: string, name: string) => {
+		cacheTalismanListing(address, name)
 		return createFakePolkadotExtension({ name: "talisman", accounts: [alice], enable: "hold" })
 	}
 
@@ -417,6 +432,60 @@ describe("substrate wallet connection", () => {
 		expect(await txCreator).toEqual(expect.any(Function))
 		await (await signer)?.signRaw({ address: alice.address, data: "0x00", type: "bytes" })
 		expect(talisman.signRawCalls()).toHaveLength(1)
+	})
+
+	it("keeps waiting for a wallet that still reconnects after the cached accounts expire instead of handing its address to another wallet", async () => {
+		vi.useFakeTimers()
+		const talisman = reconnectingTalismanListing(alice.address, alice.name)
+		const polkadotJs = createFakePolkadotExtension({ name: "polkadot-js", accounts: [bob] })
+		harness = await load()
+		await vi.advanceTimersByTimeAsync(1_000)
+		const polkadotJsConnected = harness.wallet("polkadot:polkadot-js").connect()
+		await vi.advanceTimersByTimeAsync(4_000)
+		await polkadotJsConnected
+		const settled: string[] = []
+		const signer = harness.pjsSignerOf(alice.address).finally(() => settled.push("signer"))
+
+		await vi.advanceTimersByTimeAsync(1_000)
+		expect(settled).toEqual([])
+		talisman.resolveEnable()
+		await vi.advanceTimersByTimeAsync(1_000)
+
+		await (await signer)?.signRaw({ address: alice.address, data: "0x00", type: "bytes" })
+		expect(talisman.signRawCalls()).toHaveLength(1)
+		expect(polkadotJs.signRawCalls()).toEqual([])
+	})
+
+	it("gives up on signing when the wallet bridge stops while the wallet reconnects", async () => {
+		vi.useFakeTimers()
+		vi.spyOn(console, "error").mockImplementation(() => undefined)
+		cacheTalismanListing(alice.address, alice.name)
+		Reflect.set(globalThis, "injectedWeb3", {
+			talisman: {
+				version: "1.0.0",
+				enable: async () => ({
+					accounts: {
+						get: async () => [],
+						subscribe: () => {
+							throw new Error("Bridge stopped")
+						},
+					},
+					signer: { signPayload: async () => undefined, signRaw: async () => undefined },
+				}),
+			},
+		})
+		harness = await load()
+		await expect(vi.advanceTimersByTimeAsync(5_000)).rejects.toThrow("Bridge stopped")
+		await vi.advanceTimersByTimeAsync(5_000)
+		let lookups: unknown[] | undefined
+		void Promise.all([harness.pjsSignerOf(alice.address), harness.txCreatorOf(alice.address)]).then(
+			(results) => {
+				lookups = results
+			}
+		)
+
+		await vi.advanceTimersByTimeAsync(10_000)
+		expect(lookups).toEqual([undefined, undefined])
 	})
 
 	it("connects nothing when the user disconnects while the prompt is open", async () => {

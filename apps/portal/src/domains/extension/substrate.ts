@@ -33,6 +33,7 @@ import {
 	shareReplay,
 	startWith,
 	tap,
+	timeout,
 } from "rxjs"
 import { z } from "zod"
 import { track } from "@/domains/analytics/client"
@@ -54,6 +55,8 @@ export type PjsSigner = PolkadotInjected["signer"]
 export type TxCreator = InjectedPolkadotAccount["txCreator"]
 
 const AUTO_CONNECT_WALLET_ID = getWalletId("polkadot", "talisman")
+
+const SIGNING_WALLET_WAIT_MS = 10_000
 
 const appName = import.meta.env.VITE_APPLICATION_NAME ?? "Talisman"
 
@@ -87,8 +90,13 @@ const isLiveInjectedWallet = (
 	wallet: PolkadotWallet | WalletConnectWallet
 ): wallet is SubstrateWallet => isInjectedWallet(wallet) && !wallet.isPlaceholder
 
-const showsCachedAccounts = ({ isHydrating, accounts }: ObservedValueOf<typeof kheopskit$>) =>
+type KheopskitState = ObservedValueOf<typeof kheopskit$>
+
+const showsCachedAccounts = ({ isHydrating, accounts }: KheopskitState) =>
 	isHydrating && accounts.length > 0
+
+const isSettled = ({ isHydrating, wallets }: KheopskitState) =>
+	!isHydrating && wallets.every((wallet) => wallet.status !== "connecting")
 
 const injectedWallets$ = kheopskit$.pipe(
 	map(({ wallets }) => wallets.filter(isLiveInjectedWallet)),
@@ -112,14 +120,7 @@ const boot = async () => {
 	)
 	if (remembered.length === 0)
 		await Promise.all(wanted.map((wallet) => wallet.connect().catch(() => undefined)))
-	await firstValueFrom(
-		kheopskit$.pipe(
-			filter(
-				({ isHydrating, wallets }) =>
-					!isHydrating && wallets.every((wallet) => wallet.status !== "connecting")
-			)
-		)
-	)
+	await firstValueFrom(kheopskit$.pipe(filter(isSettled)))
 	return true
 }
 
@@ -202,25 +203,30 @@ export const injectedSubstrateAccounts$: Observable<InjectedSubstrateAccount[]> 
 	shareReplay({ bufferSize: 1, refCount: true })
 )
 
-const settledStateFor = (address: string) =>
-	firstValueFrom(
-		kheopskit$.pipe(filter(({ accounts }) => !preferredListingOf(accounts, address)?.isPlaceholder))
-	)
-
-export const txCreatorOf = async (address: string): Promise<TxCreator | undefined> => {
-	const { accounts } = await settledStateFor(address)
-	const account = preferredListingOf(accounts, address)
-	return account?.isPlaceholder ? undefined : account?.txCreator
+const signableListingOf = (accounts: PolkadotAccount[], address: string) => {
+	const listing = preferredListingOf(accounts, address)
+	return listing && !listing.isPlaceholder && !listing.readonly ? listing : undefined
 }
 
+const signingStateFor = (address: string) =>
+	firstValueFrom(
+		kheopskit$.pipe(
+			filter((state) => isSettled(state) || !!signableListingOf(state.accounts, address)),
+			timeout({ first: SIGNING_WALLET_WAIT_MS, with: () => kheopskit$ }),
+			map(({ accounts, wallets }) => ({
+				listing: signableListingOf(accounts, address),
+				wallets: wallets.filter(isLiveInjectedWallet),
+			}))
+		)
+	)
+
+export const txCreatorOf = async (address: string): Promise<TxCreator | undefined> =>
+	(await signingStateFor(address)).listing?.txCreator
+
 export const pjsSignerOf = async (address: string): Promise<PjsSigner | undefined> => {
-	const { accounts, wallets } = await settledStateFor(address)
-	const listing = preferredListingOf(accounts, address)
-	const connected = wallets.filter(isLiveInjectedWallet).filter((wallet) => wallet.isConnected)
-	const signingWallet = listing
-		? connected.find((wallet) => wallet.id === listing.walletId)
-		: connected[0]
-	return signingWallet?.extension?.signer
+	const { listing, wallets } = await signingStateFor(address)
+	return wallets.find((wallet) => wallet.isConnected && wallet.id === listing?.walletId)?.extension
+		?.signer
 }
 
 export const [useInstalledSubstrateWallets, installedSubstrateWallets$] = bind(injectedWallets$, [])
