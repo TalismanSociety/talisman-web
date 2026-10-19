@@ -2,7 +2,7 @@ import { ExternalLink, ZapPlus } from "@/icons"
 
 const talismanWalletLink = "https://talisman.xyz/download"
 
-export const BannerStakingMovingToWallet = ({ className }: { className?: string }) => (
+export const BannerStakeWithTalismanWallet = ({ className }: { className?: string }) => (
 	<a
 		href={talismanWalletLink}
 		target="_blank"
@@ -16,11 +16,10 @@ export const BannerStakingMovingToWallet = ({ className }: { className?: string 
 		<ZapPlus className="h-8 w-8 flex-shrink-0 text-[#D5FF5C]" />
 		<div className="flex flex-col gap-1">
 			<div className="text-[14px] font-semibold leading-[140%] text-white">
-				Staking is moving to Talisman Wallet
+				Get the full staking experience in Talisman Wallet
 			</div>
 			<div className="text-[11px] leading-[140%] text-[#BABABA]">
-				In the coming weeks, Portal’s staking service will be migrated to a dedicated experience in
-				Talisman Wallet. To continue staking and manage your assets, please use{" "}
+				Stake and manage all your assets in one place with{" "}
 				<span className="font-medium text-[#DDFF76]">Talisman Wallet</span>.
 			</div>
 		</div>
