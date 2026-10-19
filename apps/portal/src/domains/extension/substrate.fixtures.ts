@@ -65,6 +65,7 @@ export const load = async () => {
 			return wallet
 		},
 		remembered,
+		unmountLifecycle: () => lifecycle.unsubscribe(),
 		connected: () => wallets.filter((wallet) => wallet.isConnected).map((wallet) => wallet.id),
 		initialised: () => initialised,
 		accounts: () => accounts.map((account) => [account.name, account.address, account.type]),

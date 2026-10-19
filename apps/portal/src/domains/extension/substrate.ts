@@ -19,6 +19,7 @@ import {
 	distinct,
 	distinctUntilChanged,
 	filter,
+	first,
 	firstValueFrom,
 	groupBy,
 	ignoreElements,
@@ -27,6 +28,7 @@ import {
 	mergeMap,
 	NEVER,
 	type Observable,
+	type ObservedValueOf,
 	share,
 	shareReplay,
 	startWith,
@@ -85,6 +87,9 @@ const isLiveInjectedWallet = (
 	wallet: PolkadotWallet | WalletConnectWallet
 ): wallet is SubstrateWallet => isInjectedWallet(wallet) && !wallet.isPlaceholder
 
+const showsCachedAccounts = ({ isHydrating, accounts }: ObservedValueOf<typeof kheopskit$>) =>
+	isHydrating && accounts.length > 0
+
 const injectedWallets$ = kheopskit$.pipe(
 	map(({ wallets }) => wallets.filter(isLiveInjectedWallet)),
 	shareReplay({ bufferSize: 1, refCount: true })
@@ -109,17 +114,18 @@ const boot = async () => {
 		await Promise.all(wanted.map((wallet) => wallet.connect().catch(() => undefined)))
 	await firstValueFrom(
 		kheopskit$.pipe(
-			filter(({ isHydrating, accounts, wallets }) =>
-				isHydrating
-					? accounts.length > 0
-					: wallets.every((wallet) => wallet.status !== "connecting")
+			filter(
+				({ isHydrating, wallets }) =>
+					!isHydrating && wallets.every((wallet) => wallet.status !== "connecting")
 			)
 		)
 	)
 	return true
 }
 
-const initialised$ = defer(boot).pipe(
+const initialised$ = merge(defer(boot), kheopskit$.pipe(filter(showsCachedAccounts))).pipe(
+	first(),
+	map(() => true),
 	startWith(false),
 	shareReplay({ bufferSize: 1, refCount: false })
 )
@@ -127,8 +133,10 @@ const initialised$ = defer(boot).pipe(
 export const [useInitialisedSubstrateWallets, initialisedSubstrateWallets$] = bind(initialised$)
 
 export const [useHasConnectedSubstrateWallet, hasConnectedSubstrateWallet$] = bind(
-	injectedWallets$.pipe(
-		map((wallets) => wallets.some((wallet) => wallet.isConnected)),
+	kheopskit$.pipe(
+		map(
+			(state) => showsCachedAccounts(state) || state.wallets.some((wallet) => wallet.isConnected)
+		),
 		distinctUntilChanged()
 	),
 	false
@@ -176,20 +184,28 @@ const toInjectedAccount = ({
 		? { address, name, type, genesisHash, readonly, partOfPortfolio: partOfPortfolio ?? false }
 		: { address, name, type, genesisHash }
 
+const preferredListingOf = (accounts: PolkadotAccount[], address: string) =>
+	accounts.find((account) => account.address === address && !account.readonly) ??
+	accounts.find((account) => account.address === address)
+
 export const injectedSubstrateAccounts$: Observable<InjectedSubstrateAccount[]> = kheopskit$.pipe(
-	map(({ accounts }) => accounts.map(toInjectedAccount)),
+	map(({ accounts }) =>
+		accounts
+			.filter((account) => preferredListingOf(accounts, account.address) === account)
+			.map(toInjectedAccount)
+	),
 	shareReplay({ bufferSize: 1, refCount: true })
 )
 
 export const txCreatorOf = async (address: string): Promise<TxCreator | undefined> => {
 	const { accounts } = await firstValueFrom(kheopskit$)
-	const account = accounts.find((account) => account.address === address)
+	const account = preferredListingOf(accounts, address)
 	return account?.isPlaceholder ? undefined : account?.txCreator
 }
 
 export const pjsSignerOf = async (address: string): Promise<PjsSigner | undefined> => {
 	const { accounts, wallets } = await firstValueFrom(kheopskit$)
-	const listingWalletId = accounts.find((account) => account.address === address)?.walletId
+	const listingWalletId = preferredListingOf(accounts, address)?.walletId
 	const connected = wallets.filter(isLiveInjectedWallet).filter((wallet) => wallet.isConnected)
 	return (connected.find((wallet) => wallet.id === listingWalletId) ?? connected[0])?.extension
 		?.signer
