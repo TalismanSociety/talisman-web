@@ -72,6 +72,8 @@ export const load = async () => {
 			lifecycle.unsubscribe()
 			for (const subscription of subscriptions) subscription.unsubscribe()
 			Reflect.deleteProperty(globalThis, "injectedWeb3")
+			localStorage.clear()
+			window.dispatchEvent(new StorageEvent("storage", { key: "kheopskit", newValue: null }))
 		},
 	}
 }
