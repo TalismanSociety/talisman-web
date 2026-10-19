@@ -1,4 +1,4 @@
-import { cleanup, screen } from "@testing-library/react"
+import { cleanup, fireEvent, screen } from "@testing-library/react"
 import { Suspense } from "react"
 import { of } from "rxjs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
@@ -10,9 +10,10 @@ import NominationPoolsStatisticsSideSheet from "./NominationPoolsStatisticsSideS
 
 const KUSAMA_ASSET_HUB_SUBSCAN = "https://assethub-kusama.subscan.io/"
 
-const { chain, apr } = vi.hoisted(() => ({
+const { chain, apr, poolLookup } = vi.hoisted(() => ({
 	chain: { genesisHash: "0x01", subscanUrl: undefined as string | undefined },
-	apr: { fail: false },
+	apr: { state: "loaded" as "loaded" | "failed" | "loading" },
+	poolLookup: { fail: false },
 }))
 
 const account = { ...alice, origin: "substrate" } as unknown as DerivedPool["account"]
@@ -37,9 +38,13 @@ vi.mock("@/domains/common/hooks/useTokenAmount", () => ({
 	}),
 }))
 vi.mock("@/domains/staking/substrate/nominationPools/hooks", () => ({
-	usePoolStakes: () => pool,
+	usePoolStakes: () => {
+		if (poolLookup.fail) throw new Error("Pool lookup failed")
+		return pool
+	},
 	useApr: () => {
-		if (apr.fail) throw new Error("APR unavailable")
+		if (apr.state === "failed") throw new Error("APR unavailable")
+		if (apr.state === "loading") throw new Promise(() => {})
 		return 0.12
 	},
 }))
@@ -65,7 +70,7 @@ const subscanAnswers = (status: number, body: unknown) =>
 
 const renderSheet = () =>
 	renderInPortal(
-		<Suspense>
+		<Suspense fallback="Positions skeleton">
 			<NominationPoolsStatisticsSideSheet account={account} onRequestDismiss={() => {}} />
 		</Suspense>
 	)
@@ -92,7 +97,8 @@ describe("nomination pool statistics sheet", () => {
 			removeEventListener: () => {},
 		}))
 		chain.subscanUrl = KUSAMA_ASSET_HUB_SUBSCAN
-		apr.fail = false
+		apr.state = "loaded"
+		poolLookup.fail = false
 	})
 
 	afterEach(() => {
@@ -151,12 +157,34 @@ describe("nomination pool statistics sheet", () => {
 	})
 
 	it("keeps a failing section inside the sheet", async () => {
-		apr.fail = true
+		apr.state = "failed"
 		subscanAnswers(200, {})
 
 		renderSheet()
 
 		expect(await screen.findByText("Sorry, an error occurred in Talisman.")).toBeTruthy()
 		expect(screen.getByText("Statistics")).toBeTruthy()
+	})
+
+	it("keeps a refreshing section inside the sheet", async () => {
+		apr.state = "failed"
+		subscanAnswers(200, {})
+		renderSheet()
+		await screen.findByText("Sorry, an error occurred in Talisman.")
+
+		apr.state = "loading"
+		fireEvent.click(screen.getByRole("button", { name: "Refresh" }))
+
+		expect(await screen.findByText("Statistics")).toBeTruthy()
+		expect(screen.queryByText("Positions skeleton")).toBeNull()
+	})
+
+	it("keeps a failing pool lookup inside the sheet", async () => {
+		poolLookup.fail = true
+		subscanAnswers(200, {})
+
+		renderSheet()
+
+		await expectOnChainStats()
 	})
 })
