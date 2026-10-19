@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router"
 import BN from "bn.js"
 import type { ReactNode } from "react"
 import { Suspense, useContext, useMemo } from "react"
-import type { Account } from "@/domains/accounts/accounts"
+import type { SignerAccount } from "@/domains/accounts/accounts"
 import { useNativeTokenAmount } from "@/domains/chains/chains"
 import { ChainContext } from "@/domains/chains/contexts"
 import { useSubtensorBalance } from "@/domains/staking/subtensor/chain"
@@ -15,7 +15,7 @@ import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 import { SubtensorStakingForm } from "./SubtensorStakingForm"
 
 type StakeFormProps = IncompleteSelectionStakeFormProps & {
-	account: Account
+	account: SignerAccount
 	delegate: string | undefined
 	netuid: number | undefined
 	isSelectSubnetDisabled: boolean
@@ -65,7 +65,7 @@ export const StakeForm = (props: StakeFormProps) => {
 					disabled={!ready}
 					loading={isLoading}
 					onClick={() => {
-						extrinsic.signAndSend(props.account.address).then(() => {
+						extrinsic.signAndSend(props.account).then(() => {
 							handleStakeInfoRefetch()
 
 							navigate({ to: "/staking/positions" })

@@ -15,6 +15,8 @@ import { signetAccount$ } from "@/domains/extension/signet"
 import {
 	type InjectedSubstrateAccount,
 	injectedSubstrateAccounts$,
+	type WalletAccountRef,
+	walletAccounts$,
 } from "@/domains/extension/substrate"
 import { tryParseSubstrateOrEthereumAddress } from "@/util/addressValidation"
 import { persistedState } from "@/util/persistedState"
@@ -22,6 +24,8 @@ import { persistedState } from "@/util/persistedState"
 type AccountWithOrigin = InjectedSubstrateAccount & { origin?: "injected" | "local" }
 
 export type Account = AccountWithOrigin & { canSignEvm?: boolean }
+
+export type SignerAccount = Account & Partial<WalletAccountRef>
 
 export type ReadonlyAccount = Pick<Account, "address" | "name">
 
@@ -151,8 +155,14 @@ export const writeableAccounts$ = shared(
 	accounts$.pipe(map((accounts) => accounts.filter(isWriteable)))
 )
 
-export const writeableSubstrateAccounts$ = shared(
-	writeableAccounts$.pipe(map((accounts) => accounts.filter(isSubstrate)))
+export const writeableSubstrateAccounts$: Observable<SignerAccount[]> = shared(
+	combineLatest([signetAccount$, walletAccounts$]).pipe(
+		map(([signetAccount, listed]) =>
+			signetAccount !== undefined
+				? [signetAccount]
+				: listed.filter(isSubstrate).map((account) => ({ ...account, origin: "injected" as const }))
+		)
+	)
 )
 
 export const writeableEvmAccounts$ = shared(
@@ -195,12 +205,11 @@ export const selectedEvmAccounts$ = shared(
 	selectedAccounts$.pipe(map((accounts) => accounts.filter(isEvm)))
 )
 
-const NO_ACCOUNTS: Account[] = []
-
 const retainedAccountLists: Observable<Account[]>[] = []
 
-const bindRetained = (list$: Observable<Account[]>) => {
-	const [useList, listState$] = bind(list$, NO_ACCOUNTS)
+const bindRetained = <T extends Account>(list$: Observable<T[]>) => {
+	const noAccounts: T[] = []
+	const [useList, listState$] = bind(list$, noAccounts)
 	retainedAccountLists.push(listState$)
 	return useList
 }

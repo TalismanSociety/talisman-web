@@ -8,7 +8,7 @@ import { StakeForm as StakeFormComponent } from "@/components/recipes/StakeForm"
 import type { StakeStatus } from "@/components/recipes/StakeStatusIndicator"
 import { PoolSelectorDialog } from "@/components/recipes/StakeTargetSelectorDialog"
 import { useAccountSelector } from "@/components/widgets/AccountSelector"
-import type { Account } from "@/domains/accounts/accounts"
+import type { SignerAccount } from "@/domains/accounts/accounts"
 import { useWriteableSubstrateAccounts } from "@/domains/accounts/accounts"
 import { txFromCall } from "@/domains/chains/chain-runtime"
 import { type ChainInfo, useChain, useNativeTokenDecimal } from "@/domains/chains/chains"
@@ -59,7 +59,7 @@ import PoolClaimPermissionDialog, {
 } from "./PoolClaimPermissionDialog"
 import UnstakeDialog from "./UnstakeDialog"
 
-const ExistingPool = (props: { account: Account; showClaimPermission: boolean }) => {
+const ExistingPool = (props: { account: SignerAccount; showClaimPermission: boolean }) => {
 	const pool = usePoolStakes({ address: props.account.address })
 
 	const amount = useTokenAmountFromPlanck(pool?.poolMember.points)
@@ -121,7 +121,7 @@ const ExistingPool = (props: { account: Account; showClaimPermission: boolean })
 				withdrawChip={
 					<StakeFormComponent.ExistingPool.WithdrawChip
 						onClick={() => {
-							void withdrawExtrinsic.signAndSend(props.account.address)
+							void withdrawExtrinsic.signAndSend(props.account)
 						}}
 						loading={withdrawExtrinsic.state === "loading"}
 					/>
@@ -521,7 +521,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 								decimalAmount?.planck !== undefined &&
 								selectedPoolId !== undefined
 							) {
-								void joinPoolExtrinsic.signAndSend(selectedAccount.address)
+								void joinPoolExtrinsic.signAndSend(selectedAccount)
 							}
 						}}
 					/>
