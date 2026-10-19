@@ -11,9 +11,7 @@ import { AddReadOnlyAccountDialog } from "@/components/widgets/AddReadOnlyAccoun
 import { useInjectedAccounts, useWriteableEvmAccounts } from "@/domains/accounts/accounts"
 import { useConnectEvm, useEvmConnectors } from "@/domains/extension/evm"
 import {
-	connectSubstrateWallet,
-	disconnectSubstrateWallet,
-	useConnectedSubstrateWallet,
+	useHasConnectedSubstrateWallet,
 	useInstalledSubstrateWallets,
 } from "@/domains/extension/substrate"
 import { Ethereum, Eye, Polkadot, Wallet } from "@/icons"
@@ -168,7 +166,7 @@ const InstallTalisman = () => {
 
 const SubstrateWalletConnection = () => {
 	const wallets = useInstalledSubstrateWallets()
-	const hasSubWallet = useConnectedSubstrateWallet() !== undefined
+	const hasSubWallet = useHasConnectedSubstrateWallet()
 	const hasSubAccounts = useInjectedAccounts().length !== 0
 
 	return (
@@ -185,8 +183,8 @@ const SubstrateWalletConnection = () => {
 						name={wallet.name}
 						iconUrl={wallet.icon}
 						connected={wallet.isConnected}
-						onConnectRequest={() => connectSubstrateWallet(wallet)}
-						onDisconnectRequest={() => disconnectSubstrateWallet()}
+						onConnectRequest={() => wallet.connect().catch(() => undefined)}
+						onDisconnectRequest={() => wallet.disconnect().catch(console.error)}
 					/>
 				))}
 			</div>

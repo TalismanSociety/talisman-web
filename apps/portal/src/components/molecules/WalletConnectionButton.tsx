@@ -1,13 +1,13 @@
 import { useConnection } from "wagmi"
 import { openWalletConnectionSideSheet } from "@/components/widgets/WalletConnectionSideSheet"
 import { useInjectedAccounts, useWriteableAccounts } from "@/domains/accounts/accounts"
-import { useConnectedSubstrateWallet } from "@/domains/extension/substrate"
+import { useHasConnectedSubstrateWallet } from "@/domains/extension/substrate"
 import { ChevronDown, Ethereum, Polkadot } from "@/icons"
 import { Clickable } from "@/ui/atoms/Clickable"
 import { cn } from "@/util/cn"
 
 export const WalletConnectionButton = () => {
-	const hasSubWallet = useConnectedSubstrateWallet() !== undefined
+	const hasSubWallet = useHasConnectedSubstrateWallet()
 	const hasSubAccounts = useInjectedAccounts().length !== 0
 	const subConnected = hasSubWallet && hasSubAccounts
 	const evmConnected = useConnection().isConnected

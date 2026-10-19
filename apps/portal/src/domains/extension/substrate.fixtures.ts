@@ -42,15 +42,11 @@ export const load = async () => {
 	const accountsModule = await import("@/domains/accounts/accounts")
 	const lifecycle = extension.substrateWalletLifecycle$.subscribe()
 	let wallets: SubstrateWallet[] = []
-	let connected: SubstrateWallet | undefined
 	let accounts: Account[] = []
 	let initialised = false
 	const subscriptions = [
 		extension.installedSubstrateWallets$.subscribe((next) => {
 			wallets = next
-		}),
-		extension.connectedSubstrateWallet$.subscribe((next) => {
-			connected = next
 		}),
 		extension.initialisedSubstrateWallets$.subscribe((next) => {
 			initialised = next
@@ -69,7 +65,7 @@ export const load = async () => {
 			return wallet
 		},
 		remembered,
-		connected: () => connected,
+		connected: () => wallets.filter((wallet) => wallet.isConnected).map((wallet) => wallet.id),
 		initialised: () => initialised,
 		accounts: () => accounts.map((account) => [account.name, account.address, account.type]),
 		dispose: () => {

@@ -5,14 +5,14 @@ import { txCreatorFor } from "./tx-creator"
 const KUSAMA_ASSET_HUB = "0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a"
 const AVAIL = "0xb91746b45e0346cc2f815a520b9c6cb4d5c0902af848db0a80f85932d2e8276a"
 
-const { CONNECTED, CONTROLLER, wallet$, kheopskitCreator, pjsTxCreator, signer, of } =
+const { CONNECTED, CONTROLLER, walletSigner, kheopskitCreator, pjsTxCreator, signer, of } =
 	await vi.hoisted(async () => {
-		const { BehaviorSubject, of } = await import("rxjs")
+		const { of } = await import("rxjs")
 		const signer = { signPayload: vi.fn(), signRaw: vi.fn() }
 		return {
 			CONNECTED: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
 			CONTROLLER: "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
-			wallet$: new BehaviorSubject<{ extension: { signer: typeof signer } } | undefined>(undefined),
+			walletSigner: { current: undefined as typeof signer | undefined },
 			kheopskitCreator: { from: "kheopskit" },
 			pjsTxCreator: vi.fn((address: string, _signer: unknown, type: string) => ({ address, type })),
 			signer,
@@ -21,8 +21,8 @@ const { CONNECTED, CONTROLLER, wallet$, kheopskitCreator, pjsTxCreator, signer, 
 	})
 
 vi.mock("@/domains/extension/substrate", () => ({
-	connectedSubstrateWallet$: wallet$,
 	injectedSubstrateAccounts$: of([{ address: CONNECTED, type: "ed25519" }]),
+	pjsSignerOf: async () => walletSigner.current,
 	txCreatorOf: async (address: string) => (address === CONNECTED ? kheopskitCreator : undefined),
 }))
 vi.mock("./pjs-tx-creator", () => ({ pjsTxCreator }))
@@ -30,7 +30,7 @@ vi.mock("./pjs-tx-creator", () => ({ pjsTxCreator }))
 describe("txCreatorFor", () => {
 	beforeEach(() => {
 		pjsTxCreator.mockClear()
-		wallet$.next({ extension: { signer } })
+		walletSigner.current = signer
 	})
 
 	it("signs a connected account through kheopskit", async () => {
@@ -51,7 +51,7 @@ describe("txCreatorFor", () => {
 	})
 
 	it("has no creator without a connected wallet", async () => {
-		wallet$.next(undefined)
+		walletSigner.current = undefined
 		expect(await txCreatorFor(KUSAMA_ASSET_HUB, CONTROLLER)).toBeUndefined()
 		expect(await txCreatorFor(AVAIL, CONNECTED)).toBeUndefined()
 	})

@@ -41,15 +41,15 @@ describe("substrate wallet hooks", () => {
 		harness.dispose()
 	})
 
-	it("renders the connected wallet on the first render of a consumer that mounts after the last one left, with only the lifecycle subscribed", async () => {
+	it("renders the wallet connection on the first render of a consumer that mounts after the last one left, with only the lifecycle subscribed", async () => {
 		createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
 		harness = await load()
-		await vi.waitFor(() => expect(harness.connected()?.id).toBe("polkadot:talisman"))
+		await vi.waitFor(() => expect(harness.connected()).toEqual(["polkadot:talisman"]))
 		harness.dispose()
 		const lifecycle = harness.substrateWalletLifecycle$.subscribe()
-		const renders: Array<string | undefined> = []
+		const renders: boolean[] = []
 		const ConnectedWallet = () => {
-			renders.push(harness.useConnectedSubstrateWallet()?.sourceId)
+			renders.push(harness.useHasConnectedSubstrateWallet())
 			return null
 		}
 
@@ -58,7 +58,7 @@ describe("substrate wallet hooks", () => {
 				<ConnectedWallet />
 			</Subscribe>
 		)
-		await vi.waitFor(() => expect(renders.at(-1)).toBe("talisman"))
+		await vi.waitFor(() => expect(renders.at(-1)).toBe(true))
 		first.unmount()
 		renders.length = 0
 		render(
@@ -67,7 +67,7 @@ describe("substrate wallet hooks", () => {
 			</Subscribe>
 		)
 
-		expect(renders).toEqual(["talisman"])
+		expect(renders).toEqual([true])
 		lifecycle.unsubscribe()
 	})
 
@@ -78,10 +78,10 @@ describe("substrate wallet hooks", () => {
 		harness = await load()
 		const { AccountWatcher } = await import("@/domains/accounts/AccountWatcher")
 		render(<AccountWatcher />)
-		const renders: Array<[string | undefined, string[]]> = []
+		const renders: Array<[boolean, string[]]> = []
 		const Wallet = () => {
 			renders.push([
-				harness.useConnectedSubstrateWallet()?.sourceId,
+				harness.useHasConnectedSubstrateWallet(),
 				harness.useSelectedAccounts().map((account) => account.name ?? ""),
 			])
 			return null
@@ -92,7 +92,7 @@ describe("substrate wallet hooks", () => {
 			</Subscribe>
 		)
 
-		await vi.waitFor(() => expect(renders.at(-1)).toEqual(["talisman", ["Guardians SUB"]]))
+		await vi.waitFor(() => expect(renders.at(-1)).toEqual([true, ["Guardians SUB"]]))
 		await vi.waitFor(() => expect(console.error).toHaveBeenCalled())
 		first.unmount()
 		renders.length = 0
@@ -102,7 +102,7 @@ describe("substrate wallet hooks", () => {
 			</Subscribe>
 		)
 
-		expect(renders).toEqual([["talisman", ["Guardians SUB"]]])
+		expect(renders).toEqual([[true, ["Guardians SUB"]]])
 		bridge.failAfterAccounts = false
 	})
 

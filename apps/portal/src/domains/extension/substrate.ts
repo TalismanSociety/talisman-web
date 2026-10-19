@@ -20,6 +20,7 @@ import {
 	distinctUntilChanged,
 	filter,
 	firstValueFrom,
+	groupBy,
 	ignoreElements,
 	map,
 	merge,
@@ -89,31 +90,23 @@ const injectedWallets$ = kheopskit$.pipe(
 	shareReplay({ bufferSize: 1, refCount: true })
 )
 
-const disconnectAllBut = (wallets: SubstrateWallet[], keptId?: string) =>
-	Promise.all(
-		wallets
-			.filter((wallet) => wallet.status !== "disconnected" && wallet.id !== keptId)
-			.map(async (wallet) => {
-				await wallet.disconnect().catch((error) => console.error(error))
-				store.forgetWallet(wallet.id)
-			})
-	)
-
 const boot = async () => {
 	const { remembered = [] } = await firstValueFrom(store.observable)
+	const wantedIds = remembered.length > 0 ? remembered : [AUTO_CONNECT_WALLET_ID]
 	const wanted = await firstValueFrom(
 		kheopskit$.pipe(
 			map(({ isDiscovering, wallets }) => ({
 				isDiscovering,
 				wanted: wallets
 					.filter(isLiveInjectedWallet)
-					.find((wallet) => wallet.id === (remembered[0] ?? AUTO_CONNECT_WALLET_ID)),
+					.filter((wallet) => wantedIds.includes(wallet.id)),
 			})),
-			filter(({ isDiscovering, wanted }) => !isDiscovering || wanted !== undefined),
+			filter(({ isDiscovering, wanted }) => !isDiscovering || wanted.length === wantedIds.length),
 			map(({ wanted }) => wanted)
 		)
 	)
-	if (wanted && remembered.length === 0) await wanted.connect().catch(() => undefined)
+	if (remembered.length === 0)
+		await Promise.all(wanted.map((wallet) => wallet.connect().catch(() => undefined)))
 	await firstValueFrom(
 		kheopskit$.pipe(
 			filter(({ isHydrating, accounts, wallets }) =>
@@ -133,17 +126,26 @@ const initialised$ = defer(boot).pipe(
 
 export const [useInitialisedSubstrateWallets, initialisedSubstrateWallets$] = bind(initialised$)
 
-export const [useConnectedSubstrateWallet, connectedSubstrateWallet$] = bind(
-	injectedWallets$.pipe(map((wallets) => wallets.find((wallet) => wallet.isConnected))),
-	undefined
+export const [useHasConnectedSubstrateWallet, hasConnectedSubstrateWallet$] = bind(
+	injectedWallets$.pipe(
+		map((wallets) => wallets.some((wallet) => wallet.isConnected)),
+		distinctUntilChanged()
+	),
+	false
 )
 
-const connectionTracking$ = connectedSubstrateWallet$.pipe(
-	distinctUntilChanged((previous, next) => previous?.id === next?.id),
-	tap((wallet) => {
-		if (wallet)
-			track("Substrate extensions connected", { wallet: substrateWalletOf(wallet.sourceId) })
-	})
+const connectionTracking$ = injectedWallets$.pipe(
+	mergeMap((wallets) => wallets),
+	groupBy((wallet) => wallet.id),
+	mergeMap((walletUpdates) =>
+		walletUpdates.pipe(
+			distinctUntilChanged((previous, next) => previous.isConnected === next.isConnected),
+			filter((wallet) => wallet.isConnected)
+		)
+	),
+	tap((wallet) =>
+		track("Substrate extensions connected", { wallet: substrateWalletOf(wallet.sourceId) })
+	)
 )
 
 const connectionErrors$ = injectedWallets$.pipe(
@@ -157,6 +159,7 @@ const connectionErrors$ = injectedWallets$.pipe(
 
 export const substrateWalletLifecycle$: Observable<never> = merge(
 	initialised$,
+	hasConnectedSubstrateWallet$,
 	connectionTracking$,
 	connectionErrors$
 ).pipe(ignoreElements(), share({ resetOnRefCountZero: false }))
@@ -184,12 +187,12 @@ export const txCreatorOf = async (address: string): Promise<TxCreator | undefine
 	return account?.isPlaceholder ? undefined : account?.txCreator
 }
 
-export const [useInstalledSubstrateWallets, installedSubstrateWallets$] = bind(injectedWallets$, [])
-
-export const connectSubstrateWallet = async (wallet: SubstrateWallet) => {
-	await disconnectAllBut(await firstValueFrom(injectedWallets$), wallet.id)
-	await wallet.connect().catch(() => undefined)
+export const pjsSignerOf = async (address: string): Promise<PjsSigner | undefined> => {
+	const { accounts, wallets } = await firstValueFrom(kheopskit$)
+	const listingWalletId = accounts.find((account) => account.address === address)?.walletId
+	const connected = wallets.filter(isLiveInjectedWallet).filter((wallet) => wallet.isConnected)
+	return (connected.find((wallet) => wallet.id === listingWalletId) ?? connected[0])?.extension
+		?.signer
 }
 
-export const disconnectSubstrateWallet = async () =>
-	disconnectAllBut(await firstValueFrom(injectedWallets$))
+export const [useInstalledSubstrateWallets, installedSubstrateWallets$] = bind(injectedWallets$, [])
