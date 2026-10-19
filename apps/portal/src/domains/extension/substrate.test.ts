@@ -377,6 +377,49 @@ describe("substrate wallet connection", () => {
 		expect(talisman.signRawCalls()).toEqual([])
 	})
 
+	const reconnectingTalismanListing = (address: string, name: string) => {
+		const seed = createKheopskitStore()
+		const wallet = cachedWalletOf("polkadot:talisman", "Talisman")
+		seed.rememberWallet(wallet.id)
+		seed.setCachedState([wallet], [cachedAccountOf(wallet, address, name)])
+		seed.destroy()
+		return createFakePolkadotExtension({ name: "talisman", accounts: [alice], enable: "hold" })
+	}
+
+	it("signs through a connected wallet's listing while another wallet that lists the address reconnects", async () => {
+		reconnectingTalismanListing(alice.address, alice.name)
+		const polkadotJs = createFakePolkadotExtension({ name: "polkadot-js", accounts: [alice] })
+		harness = await load()
+		await harness.wallet("polkadot:polkadot-js").connect()
+
+		await (await harness.pjsSignerOf(alice.address))?.signRaw({
+			address: alice.address,
+			data: "0x00",
+			type: "bytes",
+		})
+		expect(polkadotJs.signRawCalls()).toHaveLength(1)
+		expect(await harness.txCreatorOf(alice.address)).toEqual(expect.any(Function))
+	})
+
+	it("waits for the reconnecting wallet that lists an address instead of handing it to another wallet", async () => {
+		const talisman = reconnectingTalismanListing(alice.address, alice.name)
+		createFakePolkadotExtension({ name: "polkadot-js", accounts: [bob] })
+		harness = await load()
+		await harness.wallet("polkadot:polkadot-js").connect()
+
+		expect(await harness.pjsSignerOf(alice.address)).toBeUndefined()
+		talisman.resolveEnable()
+		await vi.waitFor(() =>
+			expect(harness.connected()).toEqual(["polkadot:talisman", "polkadot:polkadot-js"])
+		)
+		await (await harness.pjsSignerOf(alice.address))?.signRaw({
+			address: alice.address,
+			data: "0x00",
+			type: "bytes",
+		})
+		expect(talisman.signRawCalls()).toHaveLength(1)
+	})
+
 	it("connects nothing when the user disconnects while the prompt is open", async () => {
 		const talisman = createFakePolkadotExtension({
 			name: "talisman",

@@ -184,9 +184,14 @@ const toInjectedAccount = ({
 		? { address, name, type, genesisHash, readonly, partOfPortfolio: partOfPortfolio ?? false }
 		: { address, name, type, genesisHash }
 
-const preferredListingOf = (accounts: PolkadotAccount[], address: string) =>
-	accounts.find((account) => account.address === address && !account.readonly) ??
-	accounts.find((account) => account.address === address)
+const preferredListingOf = (accounts: PolkadotAccount[], address: string) => {
+	const listings = accounts.filter((account) => account.address === address)
+	return (
+		listings.find((account) => !account.isPlaceholder && !account.readonly) ??
+		listings.find((account) => !account.readonly) ??
+		listings[0]
+	)
+}
 
 export const injectedSubstrateAccounts$: Observable<InjectedSubstrateAccount[]> = kheopskit$.pipe(
 	map(({ accounts }) =>
@@ -205,10 +210,12 @@ export const txCreatorOf = async (address: string): Promise<TxCreator | undefine
 
 export const pjsSignerOf = async (address: string): Promise<PjsSigner | undefined> => {
 	const { accounts, wallets } = await firstValueFrom(kheopskit$)
-	const listingWalletId = preferredListingOf(accounts, address)?.walletId
+	const listing = preferredListingOf(accounts, address)
 	const connected = wallets.filter(isLiveInjectedWallet).filter((wallet) => wallet.isConnected)
-	return (connected.find((wallet) => wallet.id === listingWalletId) ?? connected[0])?.extension
-		?.signer
+	const signingWallet = listing
+		? connected.find((wallet) => wallet.id === listing.walletId)
+		: connected[0]
+	return signingWallet?.extension?.signer
 }
 
 export const [useInstalledSubstrateWallets, installedSubstrateWallets$] = bind(injectedWallets$, [])
