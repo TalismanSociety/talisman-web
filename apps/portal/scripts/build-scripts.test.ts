@@ -5,7 +5,6 @@ import { describe, expect, it } from "vitest"
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8")
 const rootScripts = JSON.parse(read("../../../package.json")).scripts
 const portalScripts = JSON.parse(read("../package.json")).scripts
-const pagesWorkflow = read("../../../.github/workflows/deploy.yml")
 const viteConfig = read("../vite.config.ts")
 
 describe("build scripts", () => {
@@ -14,33 +13,19 @@ describe("build scripts", () => {
 		expect(portalScripts["build:worker"]).toBe("pnpm run build && node scripts/frame-ancestors.ts")
 	})
 
-	it("builds the manual Pages deploy without frame-ancestors", () => {
-		expect(portalScripts.build).toBe("tsc -b && vite build")
-		expect(pagesWorkflow).toContain("pnpm --filter @talismn/portal build\n")
-		expect(pagesWorkflow).not.toMatch(/build:worker|build:portal|frame-ancestors/)
-	})
-
-	it("refuses every Pages deploy until the DNS switch", () => {
-		expect(pagesWorkflow).toMatch(/^ {2}frozen:\n(?: {4}.*\n)*? {10}exit 1$/m)
-		expect(pagesWorkflow).toMatch(/^ {2}deploy:\n {4}needs: \[frozen, qa\]$/m)
-	})
-
 	it("uploads the source maps of every build, then strips them, checks the client for server secrets, before the CSP header", () => {
 		expect(portalScripts.postbuild).toBe(
 			"node scripts/posthog-sourcemaps.ts && node scripts/client-secrets.ts && node scripts/csp-headers.ts"
 		)
-		expect(pagesWorkflow).toContain("find apps/portal/dist -name '*.map' -type f -delete")
 	})
 
-	it("names the release after the commit that Workers Builds and the Pages deploy build", () => {
+	it("names the release after the commit that Workers Builds builds", () => {
 		expect(rootScripts["build:portal"]).toMatch(/^VITE_APP_COMMIT=\$\{WORKERS_CI_COMMIT_SHA:-\} /)
-		expect(pagesWorkflow).toMatch(/^ +VITE_APP_COMMIT=\$\{\{ github\.sha \}\}$/m)
 	})
 
 	it("hides the client's maps at the top level, the option vite:css-post reads", () => {
 		expect(viteConfig).toMatch(/^\tbuild: \{ sourcemap: "hidden"[,}]/m)
 		expect(viteConfig).not.toMatch(/client: \{ build: \{[^\n]*sourcemap/)
-		expect(pagesWorkflow).not.toContain("--sourcemap")
 	})
 
 	it("keeps the Worker's maps linked as the Cloudflare plugin emits them without a root sourcemap", () => {

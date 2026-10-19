@@ -13,8 +13,8 @@ const shell = [
 	"<script>document.currentScript.remove()</script></body></html>",
 ].join("")
 
-const pagesHeaders = withCspHeader(sourceHeaders, cspHeader(shell))
-const workerHeaders = withFrameAncestors(pagesHeaders)
+const cspHeaders = withCspHeader(sourceHeaders, cspHeader(shell))
+const workerHeaders = withFrameAncestors(cspHeaders)
 const rules = headerRules(workerHeaders)
 
 describe("_headers", () => {
@@ -26,7 +26,7 @@ describe("_headers", () => {
 		expect(rules.get("/assets/*")?.get("Vary")).toBe("Sec-Fetch-Dest")
 	})
 
-	it("leaves the shell and every other path on Cloudflare's revalidating default, as Pages serves them", () => {
+	it("leaves the shell and every other path on Cloudflare's revalidating default", () => {
 		const cachedPaths = [...rules].filter(([, headers]) => headers.has("Cache-Control"))
 		expect(cachedPaths.map(([path]) => path)).toEqual(["/assets/*"])
 	})
@@ -60,10 +60,6 @@ describe("_headers", () => {
 
 	it("never sends X-Frame-Options", () => {
 		expect(workerHeaders).not.toMatch(/x-frame-options/i)
-	})
-
-	it("keeps framing open on the Pages build", () => {
-		expect(pagesHeaders).not.toMatch(/frame-ancestors|x-frame-options/i)
 	})
 })
 
