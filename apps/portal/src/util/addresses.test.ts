@@ -3,7 +3,6 @@ import { readFileSync } from "node:fs"
 import { gunzipSync } from "node:zlib"
 import { describe, expect, it } from "vitest"
 
-import { encodeAnyAddress as encodeAnyAddressTyped } from "@/ui/utils/encodeAnyAddress"
 import { tryParseSubstrateOrEthereumAddress } from "@/util/addressValidation"
 
 import { encodeAnyAddress, isEthereumAddress } from "./addresses"
@@ -25,10 +24,6 @@ describe("address helpers, as polkadot.js wrote them on main", () => {
 
 	it("checksums Ethereum addresses", () => {
 		expect(encodeAnyAddress(VITALIK.toLowerCase(), 0)).toBe(VITALIK)
-		expect(encodeAnyAddressTyped(VITALIK.toUpperCase().replace("0X", "0x"))).toEqual({
-			type: "ethereum",
-			address: VITALIK,
-		})
 		expect(isEthereumAddress(VITALIK)).toBe(true)
 	})
 
@@ -36,10 +31,6 @@ describe("address helpers, as polkadot.js wrote them on main", () => {
 		expect(() => encodeAnyAddress("alice.eth")).toThrow()
 		expect(() => encodeAnyAddress(`${ALICE_GENERIC.slice(0, -1)}Z`)).toThrow()
 		expect(() => encodeAnyAddress(`${VITALIK.slice(0, -1)}6`, 0)).toThrow()
-		expect(encodeAnyAddressTyped(`${VITALIK.slice(0, -1)}6`)).toEqual({
-			type: undefined,
-			address: `${VITALIK.slice(0, -1)}6`,
-		})
 		expect(tryParseSubstrateOrEthereumAddress(`${ALICE_GENERIC.slice(0, -1)}Z`)).toBeUndefined()
 		expect(
 			tryParseSubstrateOrEthereumAddress(ALICE, { acceptSubstratePublicKey: false })
@@ -53,7 +44,6 @@ type FrozenCase = { fn: string; input: string; format?: number } & (
 )
 
 const FUNCTIONS: Record<string, (input: string, format?: number) => unknown> = {
-	"ui encodeAnyAddress": encodeAnyAddressTyped,
 	"@talismn/util encodeAnyAddress": encodeAnyAddress,
 	"@talismn/util isEthereumAddress": isEthereumAddress,
 	tryParseSubstrateOrEthereumAddress: (input) => tryParseSubstrateOrEthereumAddress(input),
