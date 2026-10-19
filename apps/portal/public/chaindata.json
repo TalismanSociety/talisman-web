@@ -52,7 +52,11 @@
       "latestMetadataQrUrl": "https://metadata.novasama.io/qr/astar_metadata_latest.apng",
       "prefix": 5,
       "oldPrefix": 5,
-      "rpcs": ["wss://rpc.astar.network", "wss://astar-rpc.n.dwellir.com"],
+      "rpcs": [
+        "wss://rpc.astar.network",
+        "wss://astar.api.onfinality.io/public-ws",
+        "wss://astar-rpc.n.dwellir.com"
+      ],
       "hasCheckMetadataHash": true,
       "topology": {
         "type": "parachain",
@@ -411,7 +415,11 @@
       "chainspecQrUrl": "https://metadata.novasama.io/qr/vara_specs.png",
       "latestMetadataQrUrl": "https://metadata.novasama.io/qr/vara_metadata_latest.apng",
       "prefix": 137,
-      "rpcs": ["wss://rpc.vara.network", "wss://archive-rpc.vara.network"],
+      "rpcs": [
+        "wss://rpc.vara.network",
+        "wss://rpc.vara-network.io",
+        "wss://archive-rpc.vara.network"
+      ],
       "hasCheckMetadataHash": true,
       "topology": {
         "type": "standalone"
