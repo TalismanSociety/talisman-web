@@ -185,28 +185,20 @@ const toInjectedAccount = ({
 		? { address, name, type, genesisHash, readonly, partOfPortfolio: partOfPortfolio ?? false }
 		: { address, name, type, genesisHash }
 
-const preferredListingOf = (accounts: PolkadotAccount[], address: string) => {
-	const listings = accounts.filter((account) => account.address === address)
-	return (
-		listings.find((account) => !account.isPlaceholder && !account.readonly) ??
-		listings.find((account) => !account.readonly) ??
-		listings[0]
-	)
-}
+const isWatchOnlyCopy = (account: PolkadotAccount, accounts: PolkadotAccount[]) =>
+	account.readonly && accounts.some((other) => other.address === account.address && !other.readonly)
 
 export const injectedSubstrateAccounts$: Observable<InjectedSubstrateAccount[]> = kheopskit$.pipe(
 	map(({ accounts }) =>
-		accounts
-			.filter((account) => preferredListingOf(accounts, account.address) === account)
-			.map(toInjectedAccount)
+		accounts.filter((account) => !isWatchOnlyCopy(account, accounts)).map(toInjectedAccount)
 	),
 	shareReplay({ bufferSize: 1, refCount: true })
 )
 
-const signableListingOf = (accounts: PolkadotAccount[], address: string) => {
-	const listing = preferredListingOf(accounts, address)
-	return listing && !listing.isPlaceholder && !listing.readonly ? listing : undefined
-}
+const signableListingOf = (accounts: PolkadotAccount[], address: string) =>
+	accounts.find(
+		(account) => account.address === address && !account.isPlaceholder && !account.readonly
+	)
 
 const signingStateFor = (address: string) =>
 	firstValueFrom(
@@ -225,8 +217,7 @@ export const txCreatorOf = async (address: string): Promise<TxCreator | undefine
 
 export const pjsSignerOf = async (address: string): Promise<PjsSigner | undefined> => {
 	const { listing, wallets } = await signingStateFor(address)
-	return wallets.find((wallet) => wallet.isConnected && wallet.id === listing?.walletId)?.extension
-		?.signer
+	return wallets.find((wallet) => wallet.id === listing?.walletId)?.extension?.signer
 }
 
 export const [useInstalledSubstrateWallets, installedSubstrateWallets$] = bind(injectedWallets$, [])
