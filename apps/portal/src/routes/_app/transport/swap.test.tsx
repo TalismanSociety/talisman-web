@@ -26,8 +26,8 @@ vi.mock("@/components/recipes/PortfolioAddressSearch", () => ({
 vi.mock("@/components/widgets/AccountsManagementMenu", () => ({
 	AccountsManagementMenu: () => null,
 }))
-vi.mock("@/components/widgets/staking/BannerStakingMovingToWallet", () => ({
-	BannerStakingMovingToWallet: () => null,
+vi.mock("@/components/widgets/staking/BannerStakeWithTalismanWallet", () => ({
+	BannerStakeWithTalismanWallet: () => null,
 }))
 vi.mock("@/components/widgets/staking/Stakes", () => ({ default: () => null }))
 vi.mock("@/components/widgets/staking/providers/StakeProviders", () => ({

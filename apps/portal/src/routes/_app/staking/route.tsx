@@ -6,7 +6,7 @@ import { AccountValueInfo } from "@/components/recipes/AccountValueInfo"
 import { PortfolioAddressSearch } from "@/components/recipes/PortfolioAddressSearch"
 import { AccountConnectionGuard } from "@/components/widgets/AccountConnectionGuard"
 import { AccountsManagementMenu } from "@/components/widgets/AccountsManagementMenu"
-import { BannerStakingMovingToWallet } from "@/components/widgets/staking/BannerStakingMovingToWallet"
+import { BannerStakeWithTalismanWallet } from "@/components/widgets/staking/BannerStakeWithTalismanWallet"
 import { useSelectedAccounts } from "@/domains/accounts/accounts"
 import { Surface } from "@/ui/atoms/Surface"
 
@@ -18,7 +18,7 @@ function Layout() {
 	return (
 		<AccountConnectionGuard>
 			<div className="flex w-full flex-col gap-8">
-				<BannerStakingMovingToWallet />
+				<BannerStakeWithTalismanWallet />
 				<PageHeader>
 					<PageHeaderItem>
 						<AccountsManagementMenu
