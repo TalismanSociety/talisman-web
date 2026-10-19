@@ -41,9 +41,7 @@ const UnstakeDialog = (props: { account?: SignerAccount; onDismiss: () => unknow
 			onConfirm={useCallback(() => {
 				if (props.account !== undefined && decimalAmount !== undefined) {
 					if (isLeaving) {
-						unbondExtrinsic
-							.unbondMax(props.account, props.account.address)
-							.finally(() => props.onDismiss())
+						unbondExtrinsic.unbondMax(props.account).finally(() => props.onDismiss())
 					} else {
 						unbondExtrinsic
 							.signAndSend(props.account, props.account.address, decimalAmount.planck)

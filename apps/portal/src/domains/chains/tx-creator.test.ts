@@ -24,7 +24,7 @@ const { CONNECTED, signing, kheopskitCreator, pjsTxCreator, signer } = vi.hoiste
 	}
 })
 
-vi.mock("@/domains/extension/substrate", () => ({
+vi.mock("@/domains/extension/signer", () => ({
 	signingAccountFor: async () => signing.current,
 }))
 vi.mock("./pjs-tx-creator", () => ({ pjsTxCreator }))
@@ -39,12 +39,15 @@ describe("txCreatorFor", () => {
 	})
 
 	it("signs through the kheopskit account the signer resolves to", async () => {
-		expect(await txCreatorFor(KUSAMA_ASSET_HUB, CONNECTED)).toBe(kheopskitCreator)
+		expect(await txCreatorFor(KUSAMA_ASSET_HUB, { address: CONNECTED })).toBe(kheopskitCreator)
 		expect(pjsTxCreator).not.toHaveBeenCalled()
 	})
 
 	it("signs Avail through the wallet signer with the account's own key type", async () => {
-		expect(await txCreatorFor(AVAIL, CONNECTED)).toEqual({ address: CONNECTED, type: "ed25519" })
+		expect(await txCreatorFor(AVAIL, { address: CONNECTED })).toEqual({
+			address: CONNECTED,
+			type: "ed25519",
+		})
 		expect(pjsTxCreator).toHaveBeenCalledWith(CONNECTED, signer, "ed25519")
 	})
 
@@ -53,12 +56,12 @@ describe("txCreatorFor", () => {
 			account: { address: CONNECTED, type: "sr25519", txCreator: kheopskitCreator },
 			pjsSigner: undefined,
 		}
-		expect(await txCreatorFor(AVAIL, CONNECTED)).toBeUndefined()
+		expect(await txCreatorFor(AVAIL, { address: CONNECTED })).toBeUndefined()
 	})
 
 	it("has no creator when no connected wallet can sign", async () => {
 		signing.current = undefined
-		expect(await txCreatorFor(KUSAMA_ASSET_HUB, CONNECTED)).toBeUndefined()
-		expect(await txCreatorFor(AVAIL, CONNECTED)).toBeUndefined()
+		expect(await txCreatorFor(KUSAMA_ASSET_HUB, { address: CONNECTED })).toBeUndefined()
+		expect(await txCreatorFor(AVAIL, { address: CONNECTED })).toBeUndefined()
 	})
 })

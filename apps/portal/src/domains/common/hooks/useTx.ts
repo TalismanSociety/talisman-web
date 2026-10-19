@@ -17,8 +17,8 @@ import { AnalyticsContext } from "@/domains/common/analytics"
 import { bumpChainReadId } from "@/domains/common/chainReadId"
 import { HarmlessError } from "@/domains/common/errors"
 import { toastExtrinsic } from "@/domains/common/utils/toast"
+import type { Signer } from "@/domains/extension/signer"
 import { signetAccount$, signetSdk } from "@/domains/extension/signet"
-import type { Signer } from "@/domains/extension/substrate"
 
 export type TxLoadable =
 	| { state: "idle"; contents: undefined }
@@ -80,8 +80,6 @@ const sendThroughSignet = async (tx: Transaction): Promise<TxResult> => {
 	throw new HarmlessError("Signet did not confirm the transaction")
 }
 
-const addressOf = (signer: Signer) => (typeof signer === "string" ? signer : signer.address)
-
 const submitTx = async (
 	genesisHash: string,
 	signer: Signer,
@@ -90,7 +88,7 @@ const submitTx = async (
 	watch: SubmitWatch
 ) => {
 	const txCreator = await txCreatorFor(genesisHash, signer)
-	if (!txCreator) throw new Error(`No connected wallet can sign for ${addressOf(signer)}`)
+	if (!txCreator) throw new Error(`No connected wallet can sign for ${signer.address}`)
 	return watchTx(
 		tx.createSubmitAndWatch(txCreator, {
 			customSignedExtensions: customSignedExtensionsFor(genesisHash),
@@ -130,7 +128,7 @@ export const useTx = <Args extends unknown[]>(
 					firstValueFrom(signetAccount$),
 				])
 				const tx = await builder.current(runtime, ...args)
-				const signingWithSignet = signetAccount?.address === addressOf(signer)
+				const signingWithSignet = signetAccount?.address === signer.address
 				const promise = signingWithSignet
 					? sendThroughSignet(tx)
 					: submitTx(genesisHash, signer, tx, runtime, {

@@ -156,11 +156,14 @@ export const writeableAccounts$ = shared(
 )
 
 export const writeableSubstrateAccounts$: Observable<SignerAccount[]> = shared(
-	combineLatest([signetAccount$, walletAccounts$]).pipe(
-		map(([signetAccount, listed]) =>
-			signetAccount !== undefined
-				? [signetAccount]
-				: listed.filter(isSubstrate).map((account) => ({ ...account, origin: "injected" as const }))
+	combineLatest([writeableAccounts$, walletAccounts$]).pipe(
+		map(([accounts, walletAccounts]) =>
+			accounts.filter(isSubstrate).flatMap((account): SignerAccount[] => {
+				const held = walletAccounts.filter(({ address }) => address === account.address)
+				return held.length > 0
+					? held.map((walletAccount) => ({ ...account, ...walletAccount }))
+					: [account]
+			})
 		)
 	)
 )

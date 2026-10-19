@@ -3,7 +3,14 @@ import { Subscribe } from "@react-rxjs/core"
 import { render } from "@testing-library/react"
 import { firstValueFrom, type Observable } from "rxjs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { alice, bob, evm, load, watched } from "@/domains/extension/substrate.fixtures"
+import {
+	alice,
+	bob,
+	evm,
+	load,
+	loadWithAliceInTwoWallets,
+	watched,
+} from "@/domains/extension/substrate.fixtures"
 
 const { toast, capture, signetAccount$ } = await vi.hoisted(async () => {
 	const { BehaviorSubject } = await import("rxjs")
@@ -82,11 +89,7 @@ describe("accounts", () => {
 	})
 
 	it("offers each wallet's copy of an address to the account pickers while the portfolio counts the address once", async () => {
-		createFakePolkadotExtension({ name: "talisman", accounts: [alice, bob, evm, watched] })
-		createFakePolkadotExtension({ name: "polkadot-js", accounts: [alice] })
-		harness = await load()
-		await vi.waitFor(() => expect(harness.connected()).toEqual(["polkadot:talisman"]))
-		await harness.wallet("polkadot:polkadot-js").connect()
+		harness = (await loadWithAliceInTwoWallets([alice, bob, evm, watched])).harness
 		await vi.waitFor(async () =>
 			expect(await current(harness.writeableSubstrateAccounts$)).toHaveLength(3)
 		)
@@ -98,8 +101,8 @@ describe("accounts", () => {
 			])
 		).toEqual([
 			["Talisman", alice.address],
-			["Talisman", bob.address],
 			["Polkadot.js", alice.address],
+			["Talisman", bob.address],
 		])
 		expect(await current(harness.portfolioAccounts$)).toEqual([
 			{ address: alice.address, name: "Guardians SUB", type: "sr25519", origin: "injected" },
@@ -115,7 +118,7 @@ describe("accounts", () => {
 		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(1))
 
 		expect(await current(harness.writeableSubstrateAccounts$)).toEqual([
-			{ address: bob.address, name: "Vault" },
+			{ address: bob.address, name: "Vault", readonly: false, partOfPortfolio: true },
 		])
 	})
 

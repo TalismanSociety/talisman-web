@@ -1,8 +1,6 @@
-import { createFakePolkadotExtension } from "@kheopskit/core/testing"
 import { cleanup, fireEvent, screen } from "@testing-library/react"
-import { firstValueFrom } from "rxjs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { alice, load } from "@/domains/extension/substrate.fixtures"
+import { alice, type load, loadWithAliceInTwoWallets } from "@/domains/extension/substrate.fixtures"
 import { renderInPortal, stubModalDialogs } from "./PrivacySettings/testShell"
 
 const { toast, capture } = vi.hoisted(() => ({
@@ -26,18 +24,13 @@ describe("WalletChoiceDialog", () => {
 	})
 
 	const signAliceHeldByTwoWallets = async () => {
-		const talisman = createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
-		const polkadotJs = createFakePolkadotExtension({ name: "polkadot-js", accounts: [alice] })
-		harness = await load()
-		await vi.waitFor(() => expect(harness.connected()).toEqual(["polkadot:talisman"]))
-		await harness.wallet("polkadot:polkadot-js").connect()
-		await vi.waitFor(async () =>
-			expect(await firstValueFrom(harness.walletAccounts$)).toHaveLength(2)
-		)
+		const loaded = await loadWithAliceInTwoWallets()
+		harness = loaded.harness
+		const { talisman, polkadotJs } = loaded
 		const { WalletChoiceDialog } = await import("./WalletChoiceDialog")
 		renderInPortal(<WalletChoiceDialog />)
 		const signed = harness
-			.signingAccountFor(alice.address)
+			.signingAccountFor({ address: alice.address })
 			.then((signing) =>
 				signing?.pjsSigner?.signRaw({ address: alice.address, data: "0x00", type: "bytes" })
 			)

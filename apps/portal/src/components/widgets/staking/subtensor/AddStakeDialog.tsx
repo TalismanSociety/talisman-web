@@ -94,7 +94,7 @@ const SubtensorAddStakeDialog = ({
 			}
 			newFiatAmount={newFiatAmount.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
 			onConfirm={() => {
-				extrinsic.signAndSend(account.address).then(() => {
+				extrinsic.signAndSend(account).then(() => {
 					handleStakeInfoRefetch()
 					onRequestDismiss()
 				})

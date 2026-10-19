@@ -1,5 +1,5 @@
 import { AccountIcon } from "@/components/molecules/AccountIcon"
-import { useWalletChoice } from "@/domains/extension/substrate"
+import { useWalletChoice } from "@/domains/extension/signer"
 import { Clickable } from "@/ui/atoms/Clickable"
 import { Surface } from "@/ui/atoms/Surface"
 import { AlertDialog } from "@/ui/molecules/AlertDialog"

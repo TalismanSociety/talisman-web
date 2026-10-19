@@ -11,11 +11,11 @@ import { Select } from "@/ui/molecules/Select"
 import { encodeAnyAddress } from "@/util/addresses"
 import { truncateAddress } from "@/util/truncateAddress"
 
-export type AccountSelectorProps<T extends SignerAccount = SignerAccount> = {
-	accounts: T[]
+export type AccountSelectorProps = {
+	accounts: SignerAccount[]
 	prefix?: number
-	selectedAccount?: T
-	onChangeSelectedAccount: (account: T | undefined) => unknown
+	selectedAccount?: SignerAccount
+	onChangeSelectedAccount: (account: SignerAccount | undefined) => unknown
 	inTransition?: boolean
 	withBalance?: boolean
 }
@@ -23,14 +23,14 @@ export type AccountSelectorProps<T extends SignerAccount = SignerAccount> = {
 const optionKey = (account: SignerAccount) =>
 	account.walletAccountId ?? encodeAnyAddress(account.address)
 
-const AccountSelector = <T extends SignerAccount>({
+const AccountSelector = ({
 	accounts,
 	prefix = 42,
 	selectedAccount,
 	onChangeSelectedAccount,
 	inTransition,
 	withBalance,
-}: AccountSelectorProps<T>) => {
+}: AccountSelectorProps) => {
 	const hasActiveWalletConnection = useHasActiveWalletConnection()
 	const balances = useBalances()
 	const accountOf = useCallback(
@@ -121,11 +121,14 @@ const AccountSelector = <T extends SignerAccount>({
 	)
 }
 
-export const useAccountSelector = <T extends SignerAccount>(
-	accounts: T[],
-	initialAccount?: T | number | ((accounts?: T[]) => T | undefined),
+export const useAccountSelector = (
+	accounts: SignerAccount[],
+	initialAccount?:
+		| SignerAccount
+		| number
+		| ((accounts?: SignerAccount[]) => SignerAccount | undefined),
 	accountSelectorProps?: Omit<
-		AccountSelectorProps<T>,
+		AccountSelectorProps,
 		"accounts" | "selectedAccount" | "onChangeSelectedAccount"
 	>,
 	withToken?: boolean
@@ -134,7 +137,7 @@ export const useAccountSelector = <T extends SignerAccount>(
 	const [inTransition] = useTransition()
 
 	const getInitialAccount = useCallback(
-		(accounts: T[]) =>
+		(accounts: SignerAccount[]) =>
 			typeof initialAccount === "function"
 				? initialAccount(accounts)
 				: typeof initialAccount === "number"
@@ -143,7 +146,7 @@ export const useAccountSelector = <T extends SignerAccount>(
 		[initialAccount]
 	)
 
-	const [account, setAccount] = useState<T | undefined>(getInitialAccount(accounts))
+	const [account, setAccount] = useState<SignerAccount | undefined>(getInitialAccount(accounts))
 
 	const previousAccounts = usePrevious(accounts)
 	const accountsUpdated = useMemo(

@@ -1,4 +1,5 @@
-import { type Signer, signingAccountFor, type TxCreator } from "@/domains/extension/substrate"
+import { type Signer, signingAccountFor } from "@/domains/extension/signer"
+import type { TxCreator } from "@/domains/extension/substrate"
 
 import { pjsTxCreator, type SignatureType } from "./pjs-tx-creator"
 import { AVAIL_GENESIS_HASH } from "./signed-extensions"

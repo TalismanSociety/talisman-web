@@ -144,7 +144,7 @@ const PoolStakeItem = ({ item }: { item: DerivedPool }) => {
 									</RedactableBalance>
 								}
 								onClick={() => {
-									void withdrawExtrinsic.signAndSend(item.account.address)
+									void withdrawExtrinsic.signAndSend(item.account)
 								}}
 								loading={withdrawExtrinsic.state === "loading"}
 							/>

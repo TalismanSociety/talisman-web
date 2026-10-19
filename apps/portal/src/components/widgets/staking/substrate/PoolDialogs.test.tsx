@@ -1,9 +1,9 @@
-import { getWalletAccountId } from "@kheopskit/core"
 import { cleanup, fireEvent, screen } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { renderInPortal, stubModalDialogs } from "@/components/widgets/PrivacySettings/testShell"
-import type { SignerAccount } from "@/domains/accounts/accounts"
-import { alice } from "@/domains/extension/substrate.fixtures"
+import { alice, aliceIn } from "@/domains/extension/substrate.fixtures"
+import AddStakeDialog from "./AddStakeDialog"
+import UnstakeDialog from "./UnstakeDialog"
 
 const { signAndSend, unbondMax, unstakeForm } = vi.hoisted(() => ({
 	signAndSend: vi.fn(async () => {}),
@@ -42,12 +42,7 @@ vi.mock("@/domains/common/hooks/useExtrinsicEffect", () => ({
 	useTxInBlockOrErrorEffect: () => {},
 }))
 
-const polkadotJsAlice: SignerAccount = {
-	...alice,
-	origin: "injected",
-	walletName: "Polkadot.js",
-	walletAccountId: getWalletAccountId("polkadot:polkadot-js", alice.address),
-}
+const polkadotJsAlice = aliceIn("Polkadot.js", "polkadot:polkadot-js")
 
 describe("nomination pool dialogs", () => {
 	beforeEach(() => {
@@ -60,8 +55,7 @@ describe("nomination pool dialogs", () => {
 		vi.clearAllMocks()
 	})
 
-	it("adds stake through the picked wallet account", async () => {
-		const { default: AddStakeDialog } = await import("./AddStakeDialog")
+	it("adds stake through the picked wallet account", () => {
 		renderInPortal(<AddStakeDialog account={polkadotJsAlice} onDismiss={() => {}} />)
 
 		fireEvent.click(screen.getByRole("button", { name: "Stake" }))
@@ -69,8 +63,7 @@ describe("nomination pool dialogs", () => {
 		expect(signAndSend).toHaveBeenCalledWith(polkadotJsAlice)
 	})
 
-	it("unstakes through the picked wallet account", async () => {
-		const { default: UnstakeDialog } = await import("./UnstakeDialog")
+	it("unstakes through the picked wallet account", () => {
 		renderInPortal(<UnstakeDialog account={polkadotJsAlice} onDismiss={() => {}} />)
 
 		fireEvent.click(screen.getByRole("button", { name: "Unstake" }))
@@ -78,13 +71,12 @@ describe("nomination pool dialogs", () => {
 		expect(signAndSend).toHaveBeenCalledWith(polkadotJsAlice, alice.address, 1n)
 	})
 
-	it("leaves the pool through the picked wallet account", async () => {
+	it("leaves the pool through the picked wallet account", () => {
 		unstakeForm.isLeaving = true
-		const { default: UnstakeDialog } = await import("./UnstakeDialog")
 		renderInPortal(<UnstakeDialog account={polkadotJsAlice} onDismiss={() => {}} />)
 
 		fireEvent.click(screen.getByRole("button", { name: "Leave pool" }))
 
-		expect(unbondMax).toHaveBeenCalledWith(polkadotJsAlice, alice.address)
+		expect(unbondMax).toHaveBeenCalledWith(polkadotJsAlice)
 	})
 })

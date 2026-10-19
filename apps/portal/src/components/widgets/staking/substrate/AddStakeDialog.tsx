@@ -38,9 +38,10 @@ const AddStakeDialog = (props: { account?: SignerAccount; onDismiss: () => unkno
 			newFiatAmount={resulting.localizedFiatAmount ?? "..."}
 			inputSupportingText={inputError?.message}
 			onDismiss={props.onDismiss}
-			onConfirm={async () =>
-				await bondExtraExtrinsic.signAndSend(props.account ?? "").finally(() => props.onDismiss())
-			}
+			onConfirm={async () => {
+				if (props.account !== undefined)
+					await bondExtraExtrinsic.signAndSend(props.account).finally(() => props.onDismiss())
+			}}
 			onRequestMaxAmount={() => {
 				if (availableBalance.decimalAmount !== undefined) {
 					setAmount(availableBalance.decimalAmount?.toString())

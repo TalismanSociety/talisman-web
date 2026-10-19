@@ -6,8 +6,16 @@ import {
 } from "@kheopskit/core/testing"
 import { filter, firstValueFrom } from "rxjs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import type { Signer, WalletChoice } from "./substrate"
-import { alice, bob, evm, load, remember, watched } from "./substrate.fixtures"
+import type { Signer, WalletChoice } from "./signer"
+import {
+	alice,
+	bob,
+	evm,
+	load,
+	loadWithAliceInTwoWallets,
+	remember,
+	watched,
+} from "./substrate.fixtures"
 
 const { toast, capture } = vi.hoisted(() => ({
 	toast: { error: vi.fn(), success: vi.fn() },
@@ -31,7 +39,7 @@ describe("substrate wallet connection", () => {
 		vi.restoreAllMocks()
 	})
 
-	const signRaw = async (address: string, signer: Signer = address) =>
+	const signRaw = async (address: string, signer: Signer = { address }) =>
 		(await harness.signingAccountFor(signer))?.pjsSigner?.signRaw({
 			address,
 			data: "0x00",
@@ -40,6 +48,14 @@ describe("substrate wallet connection", () => {
 
 	const txCreatorOf = async (signer: Signer) =>
 		(await harness.signingAccountFor(signer))?.account.txCreator
+
+	const lookupOf = (signer: Signer) => {
+		const lookup: { result: unknown } = { result: "pending" }
+		void harness.signingAccountFor(signer).then((result) => {
+			lookup.result = result
+		})
+		return lookup
+	}
 
 	const nextChoice = (after?: WalletChoice) =>
 		firstValueFrom(
@@ -362,7 +378,7 @@ describe("substrate wallet connection", () => {
 
 		expect(polkadotJs.signRawCalls().map(({ address }) => address)).toEqual([bob.address])
 		expect(talisman.signRawCalls().map(({ address }) => address)).toEqual([alice.address])
-		expect(await harness.signingAccountFor(watched.address)).toBeUndefined()
+		expect(await harness.signingAccountFor({ address: watched.address })).toBeUndefined()
 	})
 
 	it("has no signer for an address its wallet only watches", async () => {
@@ -373,7 +389,7 @@ describe("substrate wallet connection", () => {
 		harness = await load()
 		await vi.waitFor(() => expect(harness.connected()).toEqual(["polkadot:talisman"]))
 
-		expect(await harness.signingAccountFor(alice.address)).toBeUndefined()
+		expect(await harness.signingAccountFor({ address: alice.address })).toBeUndefined()
 		expect(
 			await harness.signingAccountFor({
 				address: alice.address,
@@ -401,15 +417,9 @@ describe("substrate wallet connection", () => {
 	})
 
 	const aliceInTwoWallets = async () => {
-		const talisman = createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
-		const polkadotJs = createFakePolkadotExtension({ name: "polkadot-js", accounts: [alice] })
-		harness = await load()
-		await vi.waitFor(() => expect(harness.connected()).toEqual(["polkadot:talisman"]))
-		await harness.wallet("polkadot:polkadot-js").connect()
-		await vi.waitFor(async () =>
-			expect(await firstValueFrom(harness.walletAccounts$)).toHaveLength(2)
-		)
-		return { talisman, polkadotJs }
+		const loaded = await loadWithAliceInTwoWallets()
+		harness = loaded.harness
+		return loaded
 	}
 
 	it("asks which wallet signs an address two wallets hold and signs only through the chosen one", async () => {
@@ -454,10 +464,10 @@ describe("substrate wallet connection", () => {
 
 	it("cancels an unanswered wallet choice when another signing asks, and ignores its late answer", async () => {
 		const { talisman, polkadotJs } = await aliceInTwoWallets()
-		const first = harness.signingAccountFor(alice.address)
+		const first = harness.signingAccountFor({ address: alice.address })
 		const firstChoice = await nextChoice()
 
-		const second = harness.signingAccountFor(alice.address)
+		const second = harness.signingAccountFor({ address: alice.address })
 		const secondChoice = await nextChoice(firstChoice)
 		await expect(first).rejects.toThrow("Cancelled")
 		firstChoice.choose(firstChoice.options[0])
@@ -513,7 +523,9 @@ describe("substrate wallet connection", () => {
 		await harness.wallet("polkadot:polkadot-js").connect()
 		const settled: string[] = []
 		const signed = signRaw(alice.address).finally(() => settled.push("signed"))
-		const txCreator = txCreatorOf(alice.address).finally(() => settled.push("txCreator"))
+		const txCreator = txCreatorOf({ address: alice.address }).finally(() =>
+			settled.push("txCreator")
+		)
 
 		await new Promise((resolve) => setTimeout(resolve, 100))
 		expect(settled).toEqual([])
@@ -555,17 +567,14 @@ describe("substrate wallet connection", () => {
 		const polkadotJsConnected = harness.wallet("polkadot:polkadot-js").connect()
 		await vi.advanceTimersByTimeAsync(1_000)
 		await polkadotJsConnected
-		let lookup: unknown = "pending"
-		void harness.signingAccountFor(alice.address).then((result) => {
-			lookup = result
-		})
+		const lookup = lookupOf({ address: alice.address })
 		const choice = await nextChoice()
 		choice.choose(choice.options.find(({ walletName }) => walletName === "Talisman"))
 
 		await vi.advanceTimersByTimeAsync(9_000)
-		expect(lookup).toBe("pending")
+		expect(lookup.result).toBe("pending")
 		await vi.advanceTimersByTimeAsync(1_000)
-		expect(lookup).toBeUndefined()
+		expect(lookup.result).toBeUndefined()
 	})
 
 	it("gives up on signing when the wallet bridge stops while the wallet reconnects", async () => {
@@ -589,13 +598,10 @@ describe("substrate wallet connection", () => {
 		harness = await load()
 		await expect(vi.advanceTimersByTimeAsync(5_000)).rejects.toThrow("Bridge stopped")
 		await vi.advanceTimersByTimeAsync(5_000)
-		let lookup: unknown = "pending"
-		void harness.signingAccountFor(alice.address).then((result) => {
-			lookup = result
-		})
+		const lookup = lookupOf({ address: alice.address })
 
 		await vi.advanceTimersByTimeAsync(10_000)
-		expect(lookup).toBeUndefined()
+		expect(lookup.result).toBeUndefined()
 	})
 
 	it("connects nothing when the user disconnects while the prompt is open", async () => {
@@ -623,7 +629,7 @@ describe("substrate wallet connection", () => {
 		harness = await load()
 
 		await vi.waitFor(() => expect(harness.initialised()).toBe(true), { timeout: 2_000 })
-		expect(await harness.signingAccountFor(bob.address)).toBeUndefined()
+		expect(await harness.signingAccountFor({ address: bob.address })).toBeUndefined()
 	})
 
 	it("forgets a wallet whose connection the user declined and says so", async () => {
@@ -677,7 +683,7 @@ describe("substrate wallet connection", () => {
 		harness = await load()
 		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(1))
 
-		expect(await txCreatorOf(alice.address)).toEqual(expect.any(Function))
-		expect(await txCreatorOf(bob.address)).toBeUndefined()
+		expect(await txCreatorOf({ address: alice.address })).toEqual(expect.any(Function))
+		expect(await txCreatorOf({ address: bob.address })).toBeUndefined()
 	})
 })

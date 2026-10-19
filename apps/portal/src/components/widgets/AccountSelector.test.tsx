@@ -1,26 +1,16 @@
-import { fireEvent, render, screen } from "@testing-library/react"
+import { fireEvent, screen } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
-import type { SignerAccount } from "@/domains/accounts/accounts"
-import { alice } from "@/domains/extension/substrate.fixtures"
-import { ThemeProvider, theme } from "@/ui/theme"
+import { aliceIn } from "@/domains/extension/substrate.fixtures"
 import { useAccountSelector } from "./AccountSelector"
+import { renderInPortal } from "./PrivacySettings/testShell"
 
 vi.mock("@/domains/extension/main", () => ({ useHasActiveWalletConnection: () => true }))
 vi.mock("@/domains/balances/balances", () => ({ useBalances: () => [] }))
 vi.mock("./WalletConnectionSideSheet", () => ({ openWalletConnectionSideSheet: () => undefined }))
 
-const pairOf = (walletName: string, walletId: string): SignerAccount => ({
-	address: alice.address,
-	name: alice.name,
-	type: "sr25519",
-	origin: "injected",
-	walletName,
-	walletAccountId: `${walletId}::${alice.address}`,
-})
-
 const accounts = [
-	pairOf("Talisman", "polkadot:talisman"),
-	pairOf("Polkadot.js", "polkadot:polkadot-js"),
+	aliceIn("Talisman", "polkadot:talisman"),
+	aliceIn("Polkadot.js", "polkadot:polkadot-js"),
 ]
 
 const Picker = () => {
@@ -35,11 +25,7 @@ const Picker = () => {
 
 describe("useAccountSelector", () => {
 	it("offers each wallet's copy of an address as its own option and selects the one picked", async () => {
-		render(
-			<ThemeProvider theme={theme.greenDark}>
-				<Picker />
-			</ThemeProvider>
-		)
+		renderInPortal(<Picker />)
 		expect(screen.getByRole("status").textContent).toBe(accounts[0]?.walletAccountId)
 
 		fireEvent.click(screen.getByRole("button"))

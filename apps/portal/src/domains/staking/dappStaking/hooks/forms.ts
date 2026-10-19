@@ -8,7 +8,7 @@ import { ChainContext } from "@/domains/chains/contexts"
 import type { SmartContract } from "@/domains/chains/portal-runtime"
 import { useTokenAmount, useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import { estimateTxFee, useTx } from "@/domains/common/hooks/useTx"
-import type { Signer } from "@/domains/extension/substrate"
+import type { Signer } from "@/domains/extension/signer"
 import { BigIntMath } from "@/util/BigIntMath"
 import { LOADING, toLoadable } from "@/util/loadable"
 
