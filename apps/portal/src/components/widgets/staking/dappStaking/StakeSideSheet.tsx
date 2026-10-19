@@ -1,5 +1,6 @@
 import BN from "bn.js"
 import { formatDistance } from "date-fns"
+import { AnimatePresence } from "motion/react"
 import type { ReactNode } from "react"
 import { Suspense, useMemo, useState, useTransition } from "react"
 import { TalismanHandLoader } from "@/components/legacy/TalismanHandLoader"
@@ -255,13 +256,15 @@ const StakeSideSheetContent = (props: Omit<StakeSideSheetProps, "onRequestDismis
 					onRequestDappChange={openDappSelectorDialog}
 				/>
 			)}
-			{dappSelectorDialogOpen && (
-				<DappSelectorDialog
-					selectedDapp={dapp}
-					onRequestDismiss={() => setDappSelectorDialogOpen(false)}
-					onConfirm={setDapp}
-				/>
-			)}
+			<AnimatePresence>
+				{dappSelectorDialogOpen && (
+					<DappSelectorDialog
+						selectedDapp={dapp}
+						onRequestDismiss={() => setDappSelectorDialogOpen(false)}
+						onConfirm={setDapp}
+					/>
+				)}
+			</AnimatePresence>
 		</>
 	)
 }
@@ -347,9 +350,5 @@ export default () => {
 	const [searchParams] = useSearchParams()
 	const open = searchParams.get("action") === "stake" && searchParams.get("type") === "dapp-staking"
 
-	if (!open) {
-		return null
-	}
-
-	return <StakeSideSheet />
+	return <AnimatePresence>{open && <StakeSideSheet />}</AnimatePresence>
 }

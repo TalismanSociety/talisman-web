@@ -1,3 +1,4 @@
+import { AnimatePresence } from "motion/react"
 import type { ReactNode } from "react"
 import { useCallback, useState } from "react"
 
@@ -31,38 +32,40 @@ export const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) =
 			{typeof props.children === "function"
 				? props.children({ onToggleOpen: toggle })
 				: props.children}
-			{open && (
-				<AddReadOnlyAccountDialogComponent
-					onRequestDismiss={() => setOpen(false)}
-					address={address}
-					onChangeAddress={setAddress}
-					resultingAddress={resultingAddress}
-					name={name}
-					onChangeName={setName}
-					confirmState={confirmState}
-					addressLoading={loading}
-					addressError={error}
-					onConfirm={() => {
-						if (isNilOrWhitespace(resultingAddress)) {
-							return
-						}
-						submit()
-						setOpen(false)
-					}}
-					popularAccounts={popularAccounts.map((x) => (
-						<AddReadOnlyAccountDialogComponent.PopularAccount
-							key={x.address}
-							address={x.address}
-							name={x.name ?? ""}
-							description={x.description}
-							onClick={() => {
-								addReadonlyAccount(x)
-								setOpen(false)
-							}}
-						/>
-					))}
-				/>
-			)}
+			<AnimatePresence>
+				{open && (
+					<AddReadOnlyAccountDialogComponent
+						onRequestDismiss={() => setOpen(false)}
+						address={address}
+						onChangeAddress={setAddress}
+						resultingAddress={resultingAddress}
+						name={name}
+						onChangeName={setName}
+						confirmState={confirmState}
+						addressLoading={loading}
+						addressError={error}
+						onConfirm={() => {
+							if (isNilOrWhitespace(resultingAddress)) {
+								return
+							}
+							submit()
+							setOpen(false)
+						}}
+						popularAccounts={popularAccounts.map((x) => (
+							<AddReadOnlyAccountDialogComponent.PopularAccount
+								key={x.address}
+								address={x.address}
+								name={x.name ?? ""}
+								description={x.description}
+								onClick={() => {
+									addReadonlyAccount(x)
+									setOpen(false)
+								}}
+							/>
+						))}
+					/>
+				)}
+			</AnimatePresence>
 		</>
 	)
 }

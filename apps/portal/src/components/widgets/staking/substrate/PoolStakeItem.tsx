@@ -1,3 +1,4 @@
+import { AnimatePresence } from "motion/react"
 import { useCallback, useState } from "react"
 import { StakePosition } from "@/components/recipes/StakePosition"
 import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
@@ -198,18 +199,22 @@ const PoolStakeItem = ({ item }: { item: DerivedPool }) => {
 				onChangeClaimPayoutLoadable={setClaimPayoutLoadable}
 				onChangeRestakeLoadable={setRestakeLoadable}
 			/>
-			{statsDialogOpen && (
-				<NominationPoolsStatisticsSideSheet
-					pool={item}
-					onRequestDismiss={() => setStatsDialogOpen(false)}
-				/>
-			)}
-			{claimPermissionDialogOpen && (
-				<PoolClaimPermissionDialog
-					account={item.account}
-					onRequestDismiss={() => setClaimPermissionDialogOpen(false)}
-				/>
-			)}
+			<AnimatePresence>
+				{statsDialogOpen && (
+					<NominationPoolsStatisticsSideSheet
+						pool={item}
+						onRequestDismiss={() => setStatsDialogOpen(false)}
+					/>
+				)}
+			</AnimatePresence>
+			<AnimatePresence>
+				{claimPermissionDialogOpen && (
+					<PoolClaimPermissionDialog
+						account={item.account}
+						onRequestDismiss={() => setClaimPermissionDialogOpen(false)}
+					/>
+				)}
+			</AnimatePresence>
 		</>
 	)
 }

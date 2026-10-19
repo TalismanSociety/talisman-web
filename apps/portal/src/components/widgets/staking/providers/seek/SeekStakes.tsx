@@ -1,3 +1,4 @@
+import { AnimatePresence } from "motion/react"
 import { useCallback, useMemo, useState } from "react"
 
 import SeekLogo from "@/assets/seek.svg"
@@ -164,12 +165,16 @@ const SeekStakePosition = ({ account }: { account: Account }) => {
 					)
 				}
 			/>
-			{increaseStakeDialogOpen && (
-				<SeekAddStakeDialog account={account} onRequestDismiss={handleCloseIncreaseStakeDialog} />
-			)}
-			{unstakeDialogOpen && (
-				<SeekUnstakeDialog account={account} onRequestDismiss={handleCloseUnstakeDialog} />
-			)}
+			<AnimatePresence>
+				{increaseStakeDialogOpen && (
+					<SeekAddStakeDialog account={account} onRequestDismiss={handleCloseIncreaseStakeDialog} />
+				)}
+			</AnimatePresence>
+			<AnimatePresence>
+				{unstakeDialogOpen && (
+					<SeekUnstakeDialog account={account} onRequestDismiss={handleCloseUnstakeDialog} />
+				)}
+			</AnimatePresence>
 		</ErrorBoundary>
 	)
 }

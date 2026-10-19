@@ -1,5 +1,6 @@
 import { useNavigate } from "@tanstack/react-router"
 import { formatDistance } from "date-fns"
+import { AnimatePresence } from "motion/react"
 import { useCallback } from "react"
 import { AddStakeForm } from "@/components/recipes/AddStakeDialog"
 import { useAccountSelector } from "@/components/widgets/AccountSelector"
@@ -49,10 +50,6 @@ const AddStakeSideSheet = () => {
 		input: { amountInput },
 	} = useStakeSeek({ account, onTransactionSuccess: handleTransactionSuccess })
 
-	if (!open) {
-		return null
-	}
-
 	const handleRequestDismiss = () =>
 		setSearchParams((sp) => {
 			sp.delete("action")
@@ -62,116 +59,125 @@ const AddStakeSideSheet = () => {
 		})
 
 	return (
-		<SideSheet
-			title={
-				<div className="flex items-center gap-2">
-					<Zap />
-					Stake
-				</div>
-			}
-			subtitle="Talisman Staking"
-			onRequestDismiss={handleRequestDismiss}
-			css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { width: "48rem" } }}
-		>
-			<div
-				css={{
-					display: "flex",
-					gap: "1.6rem",
-					marginBottom: "1.6rem",
-					flexWrap: "wrap",
-					"> *": { flex: 1 },
-				}}
-			>
-				<InfoCard
-					overlineContent="Rewards APR"
-					headlineContent={
-						<div>
-							{apr.toLocaleString(undefined, { style: "percent", maximumFractionDigits: 2 })}
+		<AnimatePresence>
+			{open && (
+				<SideSheet
+					title={
+						<div className="flex items-center gap-2">
+							<Zap />
+							Stake
 						</div>
 					}
-				/>
-				<InfoCard
-					overlineContent="Unbonding period"
-					headlineContent={<div>{formatDistance(0, unlockDuration)}</div>}
-				/>
-			</div>
-			<Surface css={{ padding: "1.6rem", borderRadius: "1.6rem" }}>
-				<AddStakeForm
-					confirmState={
-						!isReady || Number(amountInput) === 0
-							? "disabled"
-							: stake.isPending ||
-									stakeTransaction.isLoading ||
-									approve.isPending ||
-									approveTransaction.isLoading
-								? "pending"
-								: undefined
-					}
-					approvalNeeded={approvalNeeded}
-					accountSelector={
-						evmSignableAccounts.length > 0 ? (
-							accountSelector
-						) : (
-							<Button className="!w-full !rounded-[12px]" onClick={openWalletConnectionSideSheet}>
-								Connect Ethereum Wallet
-							</Button>
-						)
-					}
-					availableToStake={availableBalance?.toLocaleString()}
-					amount={amountInput}
-					fiatAmount={fiatAmountFormatted}
-					newAmount={newStakedTotal.toLocaleString()}
-					newFiatAmount={null}
-					onChangeAmount={setAmountInput}
-					onRequestMaxAmount={() => setAmountInput(availableBalance?.toString() ?? "")}
-					onConfirm={async () => {
-						if (approvalNeeded) {
-							try {
-								await approve.writeContractAsync()
-							} catch (error) {
-								console.error(
-									`An error occurred while approving allowance for asset: ${SEEK_TICKER}`,
-									error
+					subtitle="Talisman Staking"
+					onRequestDismiss={handleRequestDismiss}
+					css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { width: "48rem" } }}
+				>
+					<div
+						css={{
+							display: "flex",
+							gap: "1.6rem",
+							marginBottom: "1.6rem",
+							flexWrap: "wrap",
+							"> *": { flex: 1 },
+						}}
+					>
+						<InfoCard
+							overlineContent="Rewards APR"
+							headlineContent={
+								<div>
+									{apr.toLocaleString(undefined, { style: "percent", maximumFractionDigits: 2 })}
+								</div>
+							}
+						/>
+						<InfoCard
+							overlineContent="Unbonding period"
+							headlineContent={<div>{formatDistance(0, unlockDuration)}</div>}
+						/>
+					</div>
+					<Surface css={{ padding: "1.6rem", borderRadius: "1.6rem" }}>
+						<AddStakeForm
+							confirmState={
+								!isReady || Number(amountInput) === 0
+									? "disabled"
+									: stake.isPending ||
+											stakeTransaction.isLoading ||
+											approve.isPending ||
+											approveTransaction.isLoading
+										? "pending"
+										: undefined
+							}
+							approvalNeeded={approvalNeeded}
+							accountSelector={
+								evmSignableAccounts.length > 0 ? (
+									accountSelector
+								) : (
+									<Button
+										className="!w-full !rounded-[12px]"
+										onClick={openWalletConnectionSideSheet}
+									>
+										Connect Ethereum Wallet
+									</Button>
 								)
 							}
-						} else {
-							try {
-								await stake.writeContractAsync()
-							} catch (error) {
-								console.error(`An error occurred while staking asset: ${SEEK_TICKER}`, error)
-							}
-						}
-					}}
-					isError={error !== undefined}
-					inputSupportingText={error?.message}
-				/>
-			</Surface>
-			<div className="mt-[4.8rem] flex flex-col gap-[1.6rem]">
-				<Text.Body as="p">
-					Stake your SEEK tokens to earn rewards and unlock exclusive access across the Talisman
-					ecosystem.
-				</Text.Body>
-				<Text.Body as="p">
-					More than just a staking token, SEEK is the alignment layer powering Talisman’s AI-driven
-					future.
-				</Text.Body>
-				<Text.Body as="p">
-					Stake early to maximize your rewards.{" "}
-					<Text.Noop.A target="blank" href="https://talisman.xyz/seek">
-						Learn more
-					</Text.Noop.A>
-				</Text.Body>
-				<Text.Body as="p">You’ll need ETH on Ethereum Mainnet to cover transaction fees.</Text.Body>
-			</div>
-			<div className="mt-2 flex justify-end">
-				<Tooltip content="Transaction may take several minutes to complete">
-					<SurfaceChip className="cursor-default">
-						<Clock />
-						1-2 minutes
-					</SurfaceChip>
-				</Tooltip>
-			</div>
-		</SideSheet>
+							availableToStake={availableBalance?.toLocaleString()}
+							amount={amountInput}
+							fiatAmount={fiatAmountFormatted}
+							newAmount={newStakedTotal.toLocaleString()}
+							newFiatAmount={null}
+							onChangeAmount={setAmountInput}
+							onRequestMaxAmount={() => setAmountInput(availableBalance?.toString() ?? "")}
+							onConfirm={async () => {
+								if (approvalNeeded) {
+									try {
+										await approve.writeContractAsync()
+									} catch (error) {
+										console.error(
+											`An error occurred while approving allowance for asset: ${SEEK_TICKER}`,
+											error
+										)
+									}
+								} else {
+									try {
+										await stake.writeContractAsync()
+									} catch (error) {
+										console.error(`An error occurred while staking asset: ${SEEK_TICKER}`, error)
+									}
+								}
+							}}
+							isError={error !== undefined}
+							inputSupportingText={error?.message}
+						/>
+					</Surface>
+					<div className="mt-[4.8rem] flex flex-col gap-[1.6rem]">
+						<Text.Body as="p">
+							Stake your SEEK tokens to earn rewards and unlock exclusive access across the Talisman
+							ecosystem.
+						</Text.Body>
+						<Text.Body as="p">
+							More than just a staking token, SEEK is the alignment layer powering Talisman’s
+							AI-driven future.
+						</Text.Body>
+						<Text.Body as="p">
+							Stake early to maximize your rewards.{" "}
+							<Text.Noop.A target="blank" href="https://talisman.xyz/seek">
+								Learn more
+							</Text.Noop.A>
+						</Text.Body>
+						<Text.Body as="p">
+							You’ll need ETH on Ethereum Mainnet to cover transaction fees.
+						</Text.Body>
+					</div>
+					<div className="mt-2 flex justify-end">
+						<Tooltip content="Transaction may take several minutes to complete">
+							<SurfaceChip className="cursor-default">
+								<Clock />
+								1-2 minutes
+							</SurfaceChip>
+						</Tooltip>
+					</div>
+				</SideSheet>
+			)}
+		</AnimatePresence>
 	)
 }
 

@@ -1,4 +1,5 @@
 import { useTheme } from "@emotion/react"
+import { AnimatePresence } from "motion/react"
 import { useId, useState } from "react"
 import { type Consent, type ConsentKind, setConsent, useConsent } from "@/domains/analytics/consent"
 import { Button } from "@/ui/atoms/Button"
@@ -117,5 +118,7 @@ const PrivacySettingsBody = () => {
 	)
 }
 
-export const PrivacySettingsDialog = () =>
-	usePrivacySettingsOpen() ? <PrivacySettingsBody /> : null
+export const PrivacySettingsDialog = () => {
+	const open = usePrivacySettingsOpen()
+	return <AnimatePresence>{open && <PrivacySettingsBody />}</AnimatePresence>
+}

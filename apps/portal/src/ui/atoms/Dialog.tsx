@@ -1,3 +1,4 @@
+import { usePresence } from "motion/react"
 import React, { useEffect, useState } from "react"
 
 export type DialogProps = Omit<
@@ -14,30 +15,52 @@ export type DialogProps = Omit<
 	 * by enabling the `keepMounted` prop
 	 */
 	keepMounted?: boolean
-	onClickBackdrop?: () => unknown
+	onRequestDismiss?: () => unknown
 }
 
+type Phase = "open" | "closing" | "closed"
+
+const ownAnimations = (element: HTMLDialogElement) =>
+	element
+		.getAnimations({ subtree: true })
+		.filter((animation) => (animation.effect as KeyframeEffect | null)?.target === element)
+
 export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function Dialog(
-	{ open = true, isModal = true, keepMounted = false, onClickBackdrop, ...props },
+	{ open = true, isModal = true, keepMounted = false, onRequestDismiss, ...props },
 	ref
 ) {
+	const [isPresent, safeToRemove] = usePresence()
+	const shown = open && isPresent
+	const [phase, setPhase] = useState<Phase>(shown ? "open" : "closed")
 	const [element, setElement] = useState<HTMLDialogElement | null>(null)
 
+	if (shown && phase !== "open") setPhase("open")
+	if (!shown && phase === "open") setPhase("closing")
+
 	useEffect(() => {
-		if (open) {
-			if (element?.open === false) {
-				if (isModal) {
-					element.showModal()
-				} else {
-					element.show()
-				}
-			}
+		if (element === null || phase !== "open" || element.open) return
+
+		if (isModal) {
+			element.showModal()
 		} else {
-			if (element?.open) {
-				element.close()
-			}
+			element.show()
 		}
-	}, [element, isModal, open])
+	}, [element, isModal, phase])
+
+	useEffect(() => {
+		if (element === null || phase !== "closing") return
+
+		let interrupted = false
+		Promise.allSettled(ownAnimations(element).map((animation) => animation.finished)).then(() => {
+			if (interrupted) return
+			element.close()
+			setPhase("closed")
+			safeToRemove?.()
+		})
+		return () => {
+			interrupted = true
+		}
+	}, [element, phase, safeToRemove])
 
 	useEffect(() => {
 		const listener = function (this: HTMLDialogElement, event: MouseEvent) {
@@ -52,16 +75,16 @@ export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function 
 				event.clientX < rect.left ||
 				event.clientX > rect.right
 			) {
-				onClickBackdrop?.()
+				onRequestDismiss?.()
 			}
 		}
 
 		element?.addEventListener("click", listener)
 
 		return () => element?.removeEventListener("click", listener)
-	}, [element, onClickBackdrop])
+	}, [element, onRequestDismiss])
 
-	if (!open && !keepMounted) {
+	if (phase === "closed" && !keepMounted) {
 		return null
 	}
 
@@ -85,7 +108,22 @@ export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function 
 					overscrollBehavior: "contain",
 				},
 			}}
+			data-closing={phase === "closing" || undefined}
 			{...props}
+			onKeyDown={(event) => {
+				props.onKeyDown?.(event)
+				if (event.key !== "Escape" || event.defaultPrevented || onRequestDismiss === undefined) {
+					return
+				}
+				event.preventDefault()
+				onRequestDismiss()
+			}}
+			onCancel={(event) => {
+				props.onCancel?.(event)
+				if (onRequestDismiss === undefined) return
+				event.preventDefault()
+				onRequestDismiss()
+			}}
 		/>
 	)
 })
