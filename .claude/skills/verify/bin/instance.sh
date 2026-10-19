@@ -63,7 +63,7 @@ app_socket_answers() {
   native_linux_engine || return 0
   curl -sf -o /dev/null --max-time 5 --unix-socket "$app_socket_dir/app.sock" http://localhost/
 }
-usage() { sed -n '2,9p' "$0" | cut -c3-; }
+usage() { echo "usage: $0 build | up | serve <id> <Worker build dir or https://host> [--no-wallet] | down | ls"; }
 container_state() { docker inspect -f '{{.State.Status}}' "$name" 2>/dev/null || echo absent; }
 attached_networks() { docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{println $k}}{{end}}' "$name" | sed '/^$/d'; }
 container_env() { docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' "$name" | sed -n "s/^$1=//p"; }
@@ -213,7 +213,8 @@ check_prerequisites() {
     command -v "$tool" >/dev/null || { echo "$tool is not installed: $setup" >&2; exit 1; }
   done
   command -v agent-browser >/dev/null || { echo "agent-browser is not installed (npm install -g agent-browser): $setup" >&2; exit 1; }
-  [[ $(node -p 'process.versions.node.split(".")[0]') -ge 22 ]] || { echo "Node 22 or later is required: $setup" >&2; exit 1; }
+  node -e 'const [major, minor] = process.versions.node.split(".").map(Number); process.exit(major > 22 || (major === 22 && minor >= 18) ? 0 : 1)' ||
+    { echo "Node 22.18 or later is required: $setup" >&2; exit 1; }
   [[ -f $backup ]] || { echo "missing $backup: $setup" >&2; exit 1; }
   [[ -f $seed/verify-password ]] || { echo "missing $seed/verify-password: $setup" >&2; exit 1; }
 }
