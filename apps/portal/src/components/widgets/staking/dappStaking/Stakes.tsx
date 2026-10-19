@@ -1,5 +1,6 @@
 import { useNavigate } from "@tanstack/react-router"
 import { formatDistance } from "date-fns"
+import { AnimatePresence } from "motion/react"
 import { useState, useTransition } from "react"
 import { DappStakingLockedAmountDialog } from "@/components/recipes/DappStakingLockedAmountDialog"
 import { StakePosition, StakePositionErrorBoundary } from "@/components/recipes/StakePosition"
@@ -159,51 +160,57 @@ const Stake = ({ account }: { account: Account }) => {
 					)
 				}
 			/>
-			{addStakeDialogOpen && (
-				<AddStakeDialog
-					account={account}
-					stake={stake}
-					onRequestDismiss={() => setAddStakeDialogOpen(false)}
-				/>
-			)}
-			{unstakeDialogOpen && (
-				<UnstakeDialog
-					account={account}
-					stake={stake}
-					onRequestDismiss={() => setUnstakeDialogOpen(false)}
-				/>
-			)}
-			{lockedDialogOpen && (
-				<DappStakingLockedAmountDialog
-					amount={amounts.locked.decimalAmount?.toLocaleString()}
-					fiatAmount={amounts.locked.localizedFiatAmount}
-					unlockDuration={unlockDuration}
-					onRequestDismiss={() => setLockedDialogOpen(false)}
-					onRequestReStake={() => {
-						startRequestRestakeTransition(() => {
-							if (stake.dapps.length > 0) {
-								setAddStakeDialogOpen(true)
-							} else {
-								navigate({
-									to: ".",
-									search: {
-										action: "stake",
-										type: "dapp-staking",
-										chain: chain.id,
-										account: account.address,
-									},
-								})
-							}
+			<AnimatePresence>
+				{addStakeDialogOpen && (
+					<AddStakeDialog
+						account={account}
+						stake={stake}
+						onRequestDismiss={() => setAddStakeDialogOpen(false)}
+					/>
+				)}
+			</AnimatePresence>
+			<AnimatePresence>
+				{unstakeDialogOpen && (
+					<UnstakeDialog
+						account={account}
+						stake={stake}
+						onRequestDismiss={() => setUnstakeDialogOpen(false)}
+					/>
+				)}
+			</AnimatePresence>
+			<AnimatePresence>
+				{lockedDialogOpen && (
+					<DappStakingLockedAmountDialog
+						amount={amounts.locked.decimalAmount?.toLocaleString()}
+						fiatAmount={amounts.locked.localizedFiatAmount}
+						unlockDuration={unlockDuration}
+						onRequestDismiss={() => setLockedDialogOpen(false)}
+						onRequestReStake={() => {
+							startRequestRestakeTransition(() => {
+								if (stake.dapps.length > 0) {
+									setAddStakeDialogOpen(true)
+								} else {
+									navigate({
+										to: ".",
+										search: {
+											action: "stake",
+											type: "dapp-staking",
+											chain: chain.id,
+											account: account.address,
+										},
+									})
+								}
+								setLockedDialogOpen(false)
+							})
+						}}
+						requestReStakeInTransition={requestReStakeInTransition}
+						onRequestUnlock={() => {
+							void unlockExtrinsic.signAndSend(account, stake.locked)
 							setLockedDialogOpen(false)
-						})
-					}}
-					requestReStakeInTransition={requestReStakeInTransition}
-					onRequestUnlock={() => {
-						void unlockExtrinsic.signAndSend(account, stake.locked)
-						setLockedDialogOpen(false)
-					}}
-				/>
-			)}
+						}}
+					/>
+				)}
+			</AnimatePresence>
 		</>
 	)
 }

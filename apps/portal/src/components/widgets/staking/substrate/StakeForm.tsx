@@ -1,5 +1,6 @@
 import { bind } from "@react-rxjs/core"
 import BN from "bn.js"
+import { AnimatePresence } from "motion/react"
 import type { ReactNode } from "react"
 import { memo, Suspense, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react"
 import { useLocation } from "react-use"
@@ -159,12 +160,14 @@ const ExistingPool = (props: { account: SignerAccount; showClaimPermission: bool
 				onChangeRestakeLoadable={setRestakeLoadable}
 			/>
 			<UnstakeDialog account={unstakeAccount} onDismiss={() => setUnstakeAccount(undefined)} />
-			{claimPermissionDialogOpen && (
-				<PoolClaimPermissionDialog
-					account={props.account}
-					onRequestDismiss={() => setClaimPermissionDialogOpen(false)}
-				/>
-			)}
+			<AnimatePresence>
+				{claimPermissionDialogOpen && (
+					<PoolClaimPermissionDialog
+						account={props.account}
+						onRequestDismiss={() => setClaimPermissionDialogOpen(false)}
+					/>
+				)}
+			</AnimatePresence>
 		</>
 	)
 }
@@ -456,14 +459,16 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 				onChangePoolId={setSelectedPoolId}
 				onDismiss={() => setShowPoolSelector(false)}
 			/>
-			{claimPermissionDialogOpen && (
-				<PoolClaimPermissionControlledDialog
-					permission={claimPermission}
-					onChangePermission={setClaimPermission}
-					poolId={selectedPoolId}
-					onRequestDismiss={() => setClaimPermisssionDialogOpen(false)}
-				/>
-			)}
+			<AnimatePresence>
+				{claimPermissionDialogOpen && (
+					<PoolClaimPermissionControlledDialog
+						permission={claimPermission}
+						onChangePermission={setClaimPermission}
+						poolId={selectedPoolId}
+						onRequestDismiss={() => setClaimPermisssionDialogOpen(false)}
+					/>
+				)}
+			</AnimatePresence>
 			<StakeFormComponent
 				assetSelector={props.assetSelector}
 				accountSelector={accountSelector}

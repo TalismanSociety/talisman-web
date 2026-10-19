@@ -1,3 +1,4 @@
+import { AnimatePresence } from "motion/react"
 import { Suspense, useState, useTransition } from "react"
 import { StakeDialog as StakeDialogComponent } from "@/components/recipes/StakeDialog"
 import { StakeForm } from "@/components/recipes/StakeForm"
@@ -23,8 +24,6 @@ const EraEta = () => {
 const InnerStakeDialog = () => {
 	const [searchParams, setSearchParams] = useSearchParams()
 
-	const open =
-		searchParams.get("action") === "stake" && searchParams.get("type") === "nomination-pools"
 	const initialChain = searchParams.get("chain")
 	const account = searchParams.get("account") ?? undefined
 
@@ -35,10 +34,6 @@ const InnerStakeDialog = () => {
 
 	const [inTransition, startTransition] = useTransition()
 
-	if (!open) {
-		return null
-	}
-
 	if (chain === undefined) {
 		throw new Error(`Missing chain configs`)
 	}
@@ -46,7 +41,6 @@ const InnerStakeDialog = () => {
 	return (
 		<ChainProvider chain={chain}>
 			<StakeDialogComponent
-				open={open}
 				onRequestDismiss={() =>
 					setSearchParams((sp) => {
 						sp.delete("action")
@@ -111,13 +105,10 @@ const InnerStakeDialog = () => {
 // this is right now the safest change
 const NominationPoolsStakeSideSheet = () => {
 	const [searchParams] = useSearchParams()
-	const open = searchParams.get("action") === "stake"
+	const open =
+		searchParams.get("action") === "stake" && searchParams.get("type") === "nomination-pools"
 
-	if (!open) {
-		return null
-	}
-
-	return <InnerStakeDialog />
+	return <AnimatePresence>{open && <InnerStakeDialog />}</AnimatePresence>
 }
 
 export default NominationPoolsStakeSideSheet

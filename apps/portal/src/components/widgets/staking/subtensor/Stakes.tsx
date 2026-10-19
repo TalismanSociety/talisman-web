@@ -1,4 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query"
+import { AnimatePresence } from "motion/react"
 import { useCallback, useState } from "react"
 
 import type { Account } from "@/domains/accounts/accounts"
@@ -104,28 +105,34 @@ const Stake = ({ account }: { account: Account }) => {
 					/>
 				)
 			})}
-			{addStakeDialogOpen && selectedStake && (
-				<AddStakeDialog
-					account={account}
-					stake={selectedStake}
-					onRequestDismiss={() => setAddStakeDialogOpen(false)}
-				/>
-			)}
-			{unstakeDialogOpen && selectedStake && (
-				<UnstakeDialog
-					account={account}
-					stake={selectedStake}
-					onRequestDismiss={() => handleToggleUnstakeDialog()}
-				/>
-			)}
-			{delegateSelectorOpen && (
-				<DelegateSelectorDialog
-					selected={selectedDelegate}
-					onRequestDismiss={() => setDelegateSelectorOpen(false)}
-					onConfirm={handleChangeValidator}
-					setHighlightedDelegate={setHighlightedDelegate}
-				/>
-			)}
+			<AnimatePresence>
+				{addStakeDialogOpen && selectedStake && (
+					<AddStakeDialog
+						account={account}
+						stake={selectedStake}
+						onRequestDismiss={() => setAddStakeDialogOpen(false)}
+					/>
+				)}
+			</AnimatePresence>
+			<AnimatePresence>
+				{unstakeDialogOpen && selectedStake && (
+					<UnstakeDialog
+						account={account}
+						stake={selectedStake}
+						onRequestDismiss={() => handleToggleUnstakeDialog()}
+					/>
+				)}
+			</AnimatePresence>
+			<AnimatePresence>
+				{delegateSelectorOpen && (
+					<DelegateSelectorDialog
+						selected={selectedDelegate}
+						onRequestDismiss={() => setDelegateSelectorOpen(false)}
+						onConfirm={handleChangeValidator}
+						setHighlightedDelegate={setHighlightedDelegate}
+					/>
+				)}
+			</AnimatePresence>
 		</>
 	)
 }

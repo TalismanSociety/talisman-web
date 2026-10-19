@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "@tanstack/react-router"
+import { AnimatePresence } from "motion/react"
 import { Suspense, useEffect, useMemo, useState, useTransition } from "react"
 import { TalismanHandLoader } from "@/components/legacy/TalismanHandLoader"
 import { useAccountSelector } from "@/components/widgets/AccountSelector"
@@ -132,20 +133,24 @@ const StakeSideSheetContent = ({
 					isSelectSubnetDisabled={isSelectSubnetDisabled}
 				/>
 			)}
-			{delegateSelectorOpen && (
-				<DelegateSelectorDialog
-					selected={delegate}
-					onRequestDismiss={() => setDelegateSelectorOpen(false)}
-					onConfirm={setDelegate}
-				/>
-			)}
-			{subnetSelectorOpen && (
-				<SubnetSelectorDialog
-					selected={subnet}
-					onRequestDismiss={() => setSubnetSelectorOpen(false)}
-					onHandleSubnetSelectConfirm={onHandleSubnetSelectConfirm}
-				/>
-			)}
+			<AnimatePresence>
+				{delegateSelectorOpen && (
+					<DelegateSelectorDialog
+						selected={delegate}
+						onRequestDismiss={() => setDelegateSelectorOpen(false)}
+						onConfirm={setDelegate}
+					/>
+				)}
+			</AnimatePresence>
+			<AnimatePresence>
+				{subnetSelectorOpen && (
+					<SubnetSelectorDialog
+						selected={subnet}
+						onRequestDismiss={() => setSubnetSelectorOpen(false)}
+						onHandleSubnetSelectConfirm={onHandleSubnetSelectConfirm}
+					/>
+				)}
+			</AnimatePresence>
 		</>
 	)
 }
@@ -259,6 +264,5 @@ export const StakeSideSheet = () => {
 	const [searchParams] = useSearchParams()
 	const open = searchParams.get("action") === "stake" && searchParams.get("type") === "subtensor"
 
-	if (!open) return null
-	return <StakeSideSheetOpen />
+	return <AnimatePresence>{open && <StakeSideSheetOpen />}</AnimatePresence>
 }

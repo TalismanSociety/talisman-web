@@ -1,3 +1,4 @@
+import { AnimatePresence } from "motion/react"
 import { useState } from "react"
 
 import { StakePosition, StakePositionErrorBoundary } from "@/components/recipes/StakePosition"
@@ -128,24 +129,30 @@ const LidoStakes = (props: { lidoSuite: LidoSuite }) => {
 					</ErrorBoundary>
 				)
 			})}
-			{increaseStakeSideSheetOpen && (
-				<IncreaseStakeSideSheet
-					onRequestDismiss={() => setIncreaseStakeSideSheetOpen(false)}
-					lidoSuite={props.lidoSuite}
-				/>
-			)}
-			{unstakeSideSheetOpen && (
-				<UnstakeSideSheet
-					onRequestDismiss={() => setUnstakeSideSheetOpen(false)}
-					lidoSuite={props.lidoSuite}
-				/>
-			)}
-			{claimSideSheetOpen && (
-				<ClaimSideSheet
-					onRequestDismiss={() => setClaimSideSheetOpen(false)}
-					lidoSuite={props.lidoSuite}
-				/>
-			)}
+			<AnimatePresence>
+				{increaseStakeSideSheetOpen && (
+					<IncreaseStakeSideSheet
+						onRequestDismiss={() => setIncreaseStakeSideSheetOpen(false)}
+						lidoSuite={props.lidoSuite}
+					/>
+				)}
+			</AnimatePresence>
+			<AnimatePresence>
+				{unstakeSideSheetOpen && (
+					<UnstakeSideSheet
+						onRequestDismiss={() => setUnstakeSideSheetOpen(false)}
+						lidoSuite={props.lidoSuite}
+					/>
+				)}
+			</AnimatePresence>
+			<AnimatePresence>
+				{claimSideSheetOpen && (
+					<ClaimSideSheet
+						onRequestDismiss={() => setClaimSideSheetOpen(false)}
+						lidoSuite={props.lidoSuite}
+					/>
+				)}
+			</AnimatePresence>
 		</>
 	)
 }
