@@ -116,9 +116,10 @@ const boot = async () => {
 	if (wanted && remembered.length === 0) await wanted.connect().catch(() => undefined)
 	await firstValueFrom(
 		kheopskit$.pipe(
-			filter(
-				({ isHydrating, wallets }) =>
-					!isHydrating && wallets.every((wallet) => wallet.status !== "connecting")
+			filter(({ isHydrating, accounts, wallets }) =>
+				isHydrating
+					? accounts.length > 0
+					: wallets.every((wallet) => wallet.status !== "connecting")
 			)
 		)
 	)

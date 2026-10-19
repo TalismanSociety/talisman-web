@@ -1,4 +1,9 @@
-import { createFakePolkadotExtension } from "@kheopskit/core/testing"
+import { createKheopskitStore } from "@kheopskit/core"
+import {
+	cachedAccountOf,
+	cachedWalletOf,
+	createFakePolkadotExtension,
+} from "@kheopskit/core/testing"
 import { firstValueFrom } from "rxjs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { alice, bob, evm, load, remember, watched } from "./substrate.fixtures"
@@ -138,6 +143,28 @@ describe("substrate wallet connection", () => {
 		expect(JSON.parse(localStorage.getItem("kheopskit") ?? "{}")).not.toHaveProperty(
 			"autoReconnect"
 		)
+	})
+
+	it("reports the wallets initialised with the previous visit's accounts while the wallet reconnects", async () => {
+		const seed = createKheopskitStore()
+		const wallet = cachedWalletOf("polkadot:talisman", "Talisman")
+		seed.rememberWallet(wallet.id)
+		seed.setCachedState([wallet], [cachedAccountOf(wallet, alice.address, alice.name)])
+		seed.destroy()
+		const talisman = createFakePolkadotExtension({
+			name: "talisman",
+			accounts: [alice],
+			enable: "hold",
+		})
+		harness = await load()
+
+		await vi.waitFor(() => expect(harness.initialised()).toBe(true))
+		expect(harness.accounts().map(([name, address]) => [name, address])).toEqual([
+			["Guardians SUB", alice.address],
+		])
+		expect(harness.connected()).toBeUndefined()
+		talisman.resolveEnable()
+		await vi.waitFor(() => expect(harness.connected()?.id).toBe("polkadot:talisman"))
 	})
 
 	it("auto-connects Talisman on a fresh profile and stores the id JSON-encoded", async () => {
