@@ -26,13 +26,14 @@ export type StakeItem = SubnetData & {
 
 export type Stake = {
 	stakes: StakeItem[] | undefined
+	isLoading: boolean
 }
 
 export const useStake = (account: Account): Stake => {
 	const nativeTokenAmount = useNativeTokenAmount()
 	const nativeToken = useChain().nativeToken?.symbol || "TAO"
 	const { subnetData } = useCombineSubnetData()
-	const { data: stakeInfoForColdKey } = useGetStakeInfoForColdKey(account.address)
+	const { data: stakeInfoForColdKey, isLoading } = useGetStakeInfoForColdKey(account.address)
 
 	const minimumStakeAmount = useTokenAmount(String(MIN_SUBTENSOR_ALPHA_STAKE))
 
@@ -55,5 +56,5 @@ export const useStake = (account: Account): Stake => {
 				(totalStaked.decimalAmount?.planck ?? 0n) > (minimumStakeAmount.decimalAmount?.planck ?? 0n)
 		)
 
-	return { stakes }
+	return { stakes, isLoading }
 }
