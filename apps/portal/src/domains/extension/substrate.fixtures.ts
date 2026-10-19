@@ -1,7 +1,8 @@
-import { createKheopskitStore } from "@kheopskit/core"
-import type { FakePolkadotAccount } from "@kheopskit/core/testing"
-import { vi } from "vitest"
-import type { Account } from "@/domains/accounts/accounts"
+import { createKheopskitStore, getWalletAccountId } from "@kheopskit/core"
+import { createFakePolkadotExtension, type FakePolkadotAccount } from "@kheopskit/core/testing"
+import { firstValueFrom } from "rxjs"
+import { expect, vi } from "vitest"
+import type { Account, SignerAccount } from "@/domains/accounts/accounts"
 import type { SubstrateWallet } from "./substrate"
 
 export const alice = {
@@ -27,6 +28,13 @@ export const watched = {
 	partOfPortfolio: false,
 } satisfies FakePolkadotAccount
 
+export const aliceIn = (walletName: string, walletId: string): SignerAccount => ({
+	...alice,
+	origin: "injected",
+	walletName,
+	walletAccountId: getWalletAccountId(walletId, alice.address),
+})
+
 export const remember = (walletId: string) => {
 	const seed = createKheopskitStore()
 	seed.rememberWallet(walletId)
@@ -39,6 +47,7 @@ const remembered = (): unknown =>
 export const load = async () => {
 	vi.resetModules()
 	const extension = await import("./substrate")
+	const signer = await import("./signer")
 	const accountsModule = await import("@/domains/accounts/accounts")
 	const lifecycle = extension.substrateWalletLifecycle$.subscribe()
 	let wallets: SubstrateWallet[] = []
@@ -57,6 +66,7 @@ export const load = async () => {
 	]
 	return {
 		...extension,
+		...signer,
 		...accountsModule,
 		wallets: () => wallets,
 		wallet: (id: string) => {
@@ -77,4 +87,22 @@ export const load = async () => {
 			window.dispatchEvent(new StorageEvent("storage", { key: "kheopskit", newValue: null }))
 		},
 	}
+}
+
+export const loadWithAliceInTwoWallets = async (
+	talismanAccounts: FakePolkadotAccount[] = [alice]
+) => {
+	const talisman = createFakePolkadotExtension({ name: "talisman", accounts: talismanAccounts })
+	const polkadotJs = createFakePolkadotExtension({ name: "polkadot-js", accounts: [alice] })
+	const harness = await load()
+	await vi.waitFor(() => expect(harness.connected()).toEqual(["polkadot:talisman"]))
+	await harness.wallet("polkadot:polkadot-js").connect()
+	await vi.waitFor(async () =>
+		expect(
+			(await firstValueFrom(harness.walletAccounts$)).filter(
+				({ address }) => address === alice.address
+			)
+		).toHaveLength(2)
+	)
+	return { harness, talisman, polkadotJs }
 }

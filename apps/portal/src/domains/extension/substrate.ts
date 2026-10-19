@@ -3,6 +3,7 @@ import {
 	getKheopskit$,
 	getWalletId,
 	isInjectedWallet,
+	type WalletAccountId,
 	type WalletConnectWallet,
 } from "@kheopskit/core"
 import {
@@ -195,29 +196,53 @@ export const injectedSubstrateAccounts$: Observable<InjectedSubstrateAccount[]> 
 	shareReplay({ bufferSize: 1, refCount: true })
 )
 
-const signableListingOf = (accounts: PolkadotAccount[], address: string) =>
-	accounts.find(
-		(account) => account.address === address && !account.isPlaceholder && !account.readonly
-	)
+export type WalletAccountRef = { walletAccountId: WalletAccountId; walletName: string }
 
-const signingStateFor = (address: string) =>
-	firstValueFrom(
+export type WalletAccount = InjectedSubstrateAccount & WalletAccountRef
+
+type LivePolkadotAccount = Exclude<PolkadotAccount, { isPlaceholder: true }>
+
+const toWalletAccount = (account: PolkadotAccount): WalletAccount => ({
+	...toInjectedAccount(account),
+	walletAccountId: account.id,
+	walletName: account.walletName,
+})
+
+const isWritable = (account: PolkadotAccount) => !account.readonly
+
+export const walletAccounts$: Observable<WalletAccount[]> = kheopskit$.pipe(
+	map(({ accounts }) => accounts.filter(isWritable).map(toWalletAccount)),
+	shareReplay({ bufferSize: 1, refCount: true })
+)
+
+const listingsWhen = async (matches: (account: PolkadotAccount) => boolean) => {
+	const { accounts, wallets } = await firstValueFrom(
 		kheopskit$.pipe(
-			filter((state) => isSettled(state) || !!signableListingOf(state.accounts, address)),
-			timeout({ first: SIGNING_WALLET_WAIT_MS, with: () => kheopskit$ }),
-			map(({ accounts, wallets }) => ({
-				listing: signableListingOf(accounts, address),
-				wallets: wallets.filter(isLiveInjectedWallet),
-			}))
+			filter((state) => isSettled(state) || state.accounts.some(matches)),
+			timeout({ first: SIGNING_WALLET_WAIT_MS, with: () => kheopskit$ })
 		)
 	)
+	return { listings: accounts.filter(matches), wallets }
+}
 
-export const txCreatorOf = async (address: string): Promise<TxCreator | undefined> =>
-	(await signingStateFor(address)).listing?.txCreator
+export const signableWalletAccountsOf = async (address: string) => {
+	const { listings } = await listingsWhen(
+		(account) => account.address === address && isWritable(account)
+	)
+	return listings.map(toWalletAccount)
+}
 
-export const pjsSignerOf = async (address: string): Promise<PjsSigner | undefined> => {
-	const { listing, wallets } = await signingStateFor(address)
-	return wallets.find((wallet) => wallet.id === listing?.walletId)?.extension?.signer
+const isLiveListingOf =
+	(walletAccountId: WalletAccountId) =>
+	(account: PolkadotAccount): account is LivePolkadotAccount =>
+		account.id === walletAccountId && isWritable(account) && !account.isPlaceholder
+
+export const waitForSigningAccount = async (walletAccountId: WalletAccountId) => {
+	const { listings, wallets } = await listingsWhen(isLiveListingOf(walletAccountId))
+	const account = listings.find(isLiveListingOf(walletAccountId))
+	if (!account) return undefined
+	const wallet = wallets.filter(isLiveInjectedWallet).find(({ id }) => id === account.walletId)
+	return { account, pjsSigner: wallet?.extension?.signer }
 }
 
 export const [useInstalledSubstrateWallets, installedSubstrateWallets$] = bind(injectedWallets$, [])

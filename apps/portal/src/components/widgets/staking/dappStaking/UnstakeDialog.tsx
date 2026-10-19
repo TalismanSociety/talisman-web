@@ -41,7 +41,7 @@ const DappUnstakeDialog = (props: DappUnstakeDialogProps) => {
 			}
 			newFiatAmount={resulting.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
 			onConfirm={() => {
-				void extrinsic.signAndSend(props.account.address)
+				void extrinsic.signAndSend(props.account)
 			}}
 			inputSupportingText={error?.message}
 			onDismiss={props.onRequestDismiss}

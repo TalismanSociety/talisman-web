@@ -17,6 +17,7 @@ import { AnalyticsContext } from "@/domains/common/analytics"
 import { bumpChainReadId } from "@/domains/common/chainReadId"
 import { HarmlessError } from "@/domains/common/errors"
 import { toastExtrinsic } from "@/domains/common/utils/toast"
+import type { Signer } from "@/domains/extension/signer"
 import { signetAccount$, signetSdk } from "@/domains/extension/signet"
 
 export type TxLoadable =
@@ -81,13 +82,13 @@ const sendThroughSignet = async (tx: Transaction): Promise<TxResult> => {
 
 const submitTx = async (
 	genesisHash: string,
-	address: string,
+	signer: Signer,
 	tx: Transaction,
 	runtime: ChainRuntime,
 	watch: SubmitWatch
 ) => {
-	const txCreator = await txCreatorFor(genesisHash, address)
-	if (!txCreator) throw new Error(`No connected wallet can sign for ${address}`)
+	const txCreator = await txCreatorFor(genesisHash, signer)
+	if (!txCreator) throw new Error(`No connected wallet can sign for ${signer.address}`)
 	return watchTx(
 		tx.createSubmitAndWatch(txCreator, {
 			customSignedExtensions: customSignedExtensionsFor(genesisHash),
@@ -115,7 +116,7 @@ export const useTx = <Args extends unknown[]>(
 	builder.current = build
 
 	const signAndSend = useCallback(
-		async (address: string, ...args: Args) => {
+		async (signer: Signer, ...args: Args) => {
 			setLoadable((previous) => ({
 				state: "loading",
 				contents: previous.state === "loading" ? previous.contents : undefined,
@@ -127,10 +128,10 @@ export const useTx = <Args extends unknown[]>(
 					firstValueFrom(signetAccount$),
 				])
 				const tx = await builder.current(runtime, ...args)
-				const signingWithSignet = signetAccount?.address === address
+				const signingWithSignet = signetAccount?.address === signer.address
 				const promise = signingWithSignet
 					? sendThroughSignet(tx)
-					: submitTx(genesisHash, address, tx, runtime, {
+					: submitTx(genesisHash, signer, tx, runtime, {
 							onEvent: (event) => setLoadable({ state: "loading", contents: event }),
 							onInBestBlock: (event) => {
 								if (event.ok && analytics.enabled && network)

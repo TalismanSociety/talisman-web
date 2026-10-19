@@ -1,3 +1,4 @@
+import { getWalletAccountId } from "@kheopskit/core"
 import type { MetadataLookup } from "@polkadot-api/metadata-builders"
 import { act, renderHook, waitFor } from "@testing-library/react"
 import type { Transaction, TxEvent, TxInBestBlock } from "polkadot-api"
@@ -37,10 +38,11 @@ vi.mock("@/domains/chains/chaindata-provider", () => ({
 		},
 	}),
 }))
-vi.mock("@/domains/extension/substrate", () => ({
-	txCreatorOf: async (address: string) => (address === alice ? txCreator : undefined),
-	pjsSignerOf: async () => undefined,
-	injectedSubstrateAccounts$: of([]),
+vi.mock("@/domains/extension/signer", () => ({
+	signingAccountFor: async (signer: { address: string }) =>
+		signer.address === alice
+			? { account: { address: alice, txCreator }, pjsSigner: undefined }
+			: undefined,
 }))
 vi.mock("@/domains/extension/signet", () => ({ signetAccount$, signetSdk: () => ({ send }) }))
 vi.mock("@/domains/common/utils/toast", () => ({ toastExtrinsic }))
@@ -93,7 +95,7 @@ describe("useTx", () => {
 
 		let submission: Promise<unknown> | undefined
 		act(() => {
-			submission = result.current.signAndSend(alice)
+			submission = result.current.signAndSend({ address: alice })
 		})
 		await waitFor(() => expect(result.current.state).toBe("loading"))
 		await waitFor(() => expect(calls.createSubmitAndWatch).toHaveBeenCalled())
@@ -129,7 +131,7 @@ describe("useTx", () => {
 
 		let submission: Promise<unknown> | undefined
 		act(() => {
-			submission = result.current.signAndSend(alice)
+			submission = result.current.signAndSend({ address: alice })
 		})
 		await waitFor(() => expect(calls.createSubmitAndWatch).toHaveBeenCalled())
 		act(() => finalize(events$, included({ ok: true })))
@@ -152,7 +154,7 @@ describe("useTx", () => {
 		} as never)
 		const { result } = renderHook(() => useTx(GENESIS, () => tx))
 
-		const submission = result.current.signAndSend(alice)
+		const submission = result.current.signAndSend({ address: alice })
 		await waitFor(() => expect(toastExtrinsic).toHaveBeenCalled())
 		act(() => finalize(events$, included({ ok: true })))
 		await submission
@@ -186,7 +188,7 @@ describe("useTx", () => {
 		const { events$, tx } = fakeTx()
 		const { result } = renderHook(() => useTx(GENESIS, () => tx))
 
-		const submission = result.current.signAndSend(alice)
+		const submission = result.current.signAndSend({ address: alice })
 		await waitFor(() => expect(toastExtrinsic).toHaveBeenCalled())
 		act(() => events$.error(new Error("Cancelled")))
 
@@ -199,7 +201,7 @@ describe("useTx", () => {
 		const { events$, tx } = fakeTx()
 		const { result } = renderHook(() => useTx(GENESIS, () => tx))
 
-		const submission = result.current.signAndSend(alice)
+		const submission = result.current.signAndSend({ address: alice })
 		await waitFor(() => expect(toastExtrinsic).toHaveBeenCalled())
 		act(() =>
 			finalize(
@@ -221,7 +223,13 @@ describe("useTx", () => {
 		const { result } = renderHook(() => useTx(GENESIS, () => tx))
 
 		await expect(
-			result.current.signAndSend("5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty")
+			result.current.signAndSend({
+				address: "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
+				walletAccountId: getWalletAccountId(
+					"polkadot:talisman",
+					"5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
+				),
+			})
 		).rejects.toThrow(
 			"No connected wallet can sign for 5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
 		)
@@ -233,11 +241,27 @@ describe("useTx", () => {
 		const { tx, calls } = fakeTx()
 		const { result } = renderHook(() => useTx(GENESIS, () => tx))
 
-		await expect(result.current.signAndSend(alice)).rejects.toBeInstanceOf(HarmlessError)
+		await expect(result.current.signAndSend({ address: alice })).rejects.toBeInstanceOf(
+			HarmlessError
+		)
 
 		expect(send).toHaveBeenCalledWith("0x2912")
 		expect(calls.createSubmitAndWatch).not.toHaveBeenCalled()
 		expect(toastExtrinsic).not.toHaveBeenCalled()
+	})
+
+	it("hands the call data to Signet for the Signet account picked in an account selector", async () => {
+		signetAccount$.next({ address: alice })
+		send.mockResolvedValue({ ok: true, receipt: { txHash } })
+		const { tx, calls } = fakeTx()
+		const { result } = renderHook(() => useTx(GENESIS, () => tx))
+
+		await expect(result.current.signAndSend({ address: alice })).rejects.toBeInstanceOf(
+			HarmlessError
+		)
+
+		expect(send).toHaveBeenCalledWith("0x2912")
+		expect(calls.createSubmitAndWatch).not.toHaveBeenCalled()
 	})
 
 	it("fails loudly when Signet rejects the call", async () => {
@@ -246,7 +270,7 @@ describe("useTx", () => {
 		const { tx } = fakeTx()
 		const { result } = renderHook(() => useTx(GENESIS, () => tx))
 
-		await expect(result.current.signAndSend(alice)).rejects.toThrow(
+		await expect(result.current.signAndSend({ address: alice })).rejects.toThrow(
 			"Failed to approve transaction in Signet"
 		)
 	})
