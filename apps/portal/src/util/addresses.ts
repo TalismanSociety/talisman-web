@@ -21,7 +21,7 @@ export const decodeAddress = (address: string) => {
 export const encodeAddress = (key: string | Uint8Array, ss58Format = 42) =>
 	fromBufferToBase58(ss58Format)(accountIdOf(typeof key === "string" ? decodeAddress(key) : key))
 
-export const isValidEthereumAddress = (address: string) =>
+const isValidEthereumAddress = (address: string) =>
 	/^0x([0-9a-f]{40}|[0-9A-F]{40})$/.test(address) ||
 	(/^0x[0-9a-fA-F]{40}$/.test(address) && checksumAddress(address as `0x${string}`) === address)
 

@@ -18,27 +18,15 @@ import useGetSeekStaked from "../hooks/seek/useGetSeekStaked"
 import SeekAddStakeDialog from "./SeekAddStakeDialog"
 import SeekUnstakeDialog from "./SeekUnstakeDialog"
 
-type StakesProps = {
-	setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-type SeekStakePositionProps = StakesProps & {
-	account: Account
-}
-
-const SeekStakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
+const SeekStakes = () => {
 	const evmSignableAccounts = useWriteableEvmAccounts()
 
 	return evmSignableAccounts.map((account, index) => (
-		<SeekStakePosition
-			key={index}
-			account={account}
-			setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton}
-		/>
+		<SeekStakePosition key={index} account={account} />
 	))
 }
 
-const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStakePositionProps) => {
+const SeekStakePosition = ({ account }: { account: Account }) => {
 	const [increaseStakeDialogOpen, setIncreaseStakeDialogOpen] = useState<boolean>(false)
 	const [unstakeDialogOpen, setUnstakeDialogOpen] = useState<boolean>(false)
 
@@ -79,8 +67,6 @@ const SeekStakePosition = ({ account, setShouldRenderLoadingSkeleton }: SeekStak
 	}, [setUnstakeDialogOpen])
 
 	if (!shouldDisplayAssetRow) return null
-
-	setShouldRenderLoadingSkeleton(false)
 
 	const { amountDecimal, fiatBalance = 0 } = stakedBalance ?? {
 		amountDecimal: Decimal.fromPlanck(0n, 0),
