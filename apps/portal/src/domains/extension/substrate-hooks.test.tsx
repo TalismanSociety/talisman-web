@@ -1,7 +1,8 @@
+import { createFakePolkadotExtension } from "@kheopskit/core/testing"
 import { Subscribe } from "@react-rxjs/core"
 import { render } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { alice, fakeExtension, load } from "./fakeInjectedWeb3"
+import { alice, load } from "./substrate.fixtures"
 
 const { toast, capture, bridge } = vi.hoisted(() => ({
 	toast: { error: vi.fn(), success: vi.fn() },
@@ -40,15 +41,15 @@ describe("substrate wallet hooks", () => {
 		harness.dispose()
 	})
 
-	it("renders the connected wallet on the first render of a consumer that mounts after the last one left, with only the lifecycle subscribed", async () => {
-		fakeExtension("talisman", [alice])
+	it("renders the wallet connection on the first render of a consumer that mounts after the last one left, with only the lifecycle subscribed", async () => {
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
 		harness = await load()
-		await vi.waitFor(() => expect(harness.connected()?.id).toBe("talisman"))
+		await vi.waitFor(() => expect(harness.connected()).toEqual(["polkadot:talisman"]))
 		harness.dispose()
 		const lifecycle = harness.substrateWalletLifecycle$.subscribe()
-		const renders: Array<string | undefined> = []
+		const renders: boolean[] = []
 		const ConnectedWallet = () => {
-			renders.push(harness.useConnectedSubstrateWallet()?.id)
+			renders.push(harness.useHasConnectedSubstrateWallet())
 			return null
 		}
 
@@ -57,7 +58,7 @@ describe("substrate wallet hooks", () => {
 				<ConnectedWallet />
 			</Subscribe>
 		)
-		await vi.waitFor(() => expect(renders.at(-1)).toBe("talisman"))
+		await vi.waitFor(() => expect(renders.at(-1)).toBe(true))
 		first.unmount()
 		renders.length = 0
 		render(
@@ -66,21 +67,21 @@ describe("substrate wallet hooks", () => {
 			</Subscribe>
 		)
 
-		expect(renders).toEqual(["talisman"])
+		expect(renders).toEqual([true])
 		lifecycle.unsubscribe()
 	})
 
 	it("keeps the last accounts and wallet, and the retained lists, when the wallet bridge errors", async () => {
 		bridge.failAfterAccounts = true
 		vi.spyOn(console, "error").mockImplementation(() => undefined)
-		fakeExtension("talisman", [alice])
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
 		harness = await load()
 		const { AccountWatcher } = await import("@/domains/accounts/AccountWatcher")
 		render(<AccountWatcher />)
-		const renders: Array<[string | undefined, string[]]> = []
+		const renders: Array<[boolean, string[]]> = []
 		const Wallet = () => {
 			renders.push([
-				harness.useConnectedSubstrateWallet()?.id,
+				harness.useHasConnectedSubstrateWallet(),
 				harness.useSelectedAccounts().map((account) => account.name ?? ""),
 			])
 			return null
@@ -91,7 +92,7 @@ describe("substrate wallet hooks", () => {
 			</Subscribe>
 		)
 
-		await vi.waitFor(() => expect(renders.at(-1)).toEqual(["talisman", ["Guardians SUB"]]))
+		await vi.waitFor(() => expect(renders.at(-1)).toEqual([true, ["Guardians SUB"]]))
 		await vi.waitFor(() => expect(console.error).toHaveBeenCalled())
 		first.unmount()
 		renders.length = 0
@@ -101,12 +102,12 @@ describe("substrate wallet hooks", () => {
 			</Subscribe>
 		)
 
-		expect(renders).toEqual([["talisman", ["Guardians SUB"]]])
+		expect(renders).toEqual([[true, ["Guardians SUB"]]])
 		bridge.failAfterAccounts = false
 	})
 
 	it("reports the wallet lifecycle as initialised once the stored wallet is connected", async () => {
-		fakeExtension("talisman", [alice])
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
 		harness = await load()
 		const renders: boolean[] = []
 		const Initialised = () => {

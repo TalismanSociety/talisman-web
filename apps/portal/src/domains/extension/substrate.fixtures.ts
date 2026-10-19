@@ -1,7 +1,8 @@
-import { createFakePolkadotExtension, type FakePolkadotAccount } from "@kheopskit/core/testing"
+import { createKheopskitStore } from "@kheopskit/core"
+import type { FakePolkadotAccount } from "@kheopskit/core/testing"
 import { vi } from "vitest"
 import type { Account } from "@/domains/accounts/accounts"
-import type { SubstrateWallet, SubstrateWalletConnection } from "./substrate"
+import type { SubstrateWallet } from "./substrate"
 
 export const alice = {
 	address: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
@@ -26,11 +27,14 @@ export const watched = {
 	partOfPortfolio: false,
 } satisfies FakePolkadotAccount
 
-export const fakeExtension = (
-	name: string,
-	accounts: FakePolkadotAccount[] = [],
-	enable?: "reject"
-) => createFakePolkadotExtension({ name, accounts, enable })
+export const remember = (walletId: string) => {
+	const seed = createKheopskitStore()
+	seed.rememberWallet(walletId)
+	seed.destroy()
+}
+
+const remembered = (): unknown =>
+	JSON.parse(localStorage.getItem("kheopskit") ?? "{}").remembered ?? []
 
 export const load = async () => {
 	vi.resetModules()
@@ -38,15 +42,11 @@ export const load = async () => {
 	const accountsModule = await import("@/domains/accounts/accounts")
 	const lifecycle = extension.substrateWalletLifecycle$.subscribe()
 	let wallets: SubstrateWallet[] = []
-	let connected: SubstrateWalletConnection | undefined
 	let accounts: Account[] = []
 	let initialised = false
 	const subscriptions = [
 		extension.installedSubstrateWallets$.subscribe((next) => {
 			wallets = next
-		}),
-		extension.connectedSubstrateWallet$.subscribe((next) => {
-			connected = next
 		}),
 		extension.initialisedSubstrateWallets$.subscribe((next) => {
 			initialised = next
@@ -59,13 +59,22 @@ export const load = async () => {
 		...extension,
 		...accountsModule,
 		wallets: () => wallets,
-		connected: () => connected,
+		wallet: (id: string) => {
+			const wallet = wallets.find((wallet) => wallet.id === id)
+			if (!wallet) throw new Error(`${id} is not installed`)
+			return wallet
+		},
+		remembered,
+		unmountLifecycle: () => lifecycle.unsubscribe(),
+		connected: () => wallets.filter((wallet) => wallet.isConnected).map((wallet) => wallet.id),
 		initialised: () => initialised,
 		accounts: () => accounts.map((account) => [account.name, account.address, account.type]),
 		dispose: () => {
 			lifecycle.unsubscribe()
 			for (const subscription of subscriptions) subscription.unsubscribe()
 			Reflect.deleteProperty(globalThis, "injectedWeb3")
+			localStorage.clear()
+			window.dispatchEvent(new StorageEvent("storage", { key: "kheopskit", newValue: null }))
 		},
 	}
 }
