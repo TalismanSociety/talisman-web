@@ -168,9 +168,7 @@ const InstallTalisman = () => {
 
 const SubstrateWalletConnection = () => {
 	const wallets = useInstalledSubstrateWallets()
-	const connectedWallet = useConnectedSubstrateWallet()
-
-	const hasSubWallet = connectedWallet !== undefined
+	const hasSubWallet = useConnectedSubstrateWallet() !== undefined
 	const hasSubAccounts = useInjectedAccounts().length !== 0
 
 	return (
@@ -181,13 +179,13 @@ const SubstrateWalletConnection = () => {
 			</div>
 			<div css={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
 				<InstallTalisman />
-				{wallets.map((x, index) => (
+				{wallets.map((wallet) => (
 					<WalletConnection
-						key={index}
-						name={x.title}
-						iconUrl={x.iconUrl}
-						connected={x.id === connectedWallet?.id}
-						onConnectRequest={() => connectSubstrateWallet(x)}
+						key={wallet.id}
+						name={wallet.name}
+						iconUrl={wallet.icon}
+						connected={wallet.isConnected}
+						onConnectRequest={() => connectSubstrateWallet(wallet)}
 						onDisconnectRequest={() => disconnectSubstrateWallet()}
 					/>
 				))}

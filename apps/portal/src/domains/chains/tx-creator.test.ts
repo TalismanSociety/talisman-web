@@ -12,7 +12,7 @@ const { CONNECTED, CONTROLLER, wallet$, kheopskitCreator, pjsTxCreator, signer, 
 		return {
 			CONNECTED: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
 			CONTROLLER: "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
-			wallet$: new BehaviorSubject<{ id: string; signer: typeof signer } | undefined>(undefined),
+			wallet$: new BehaviorSubject<{ extension: { signer: typeof signer } } | undefined>(undefined),
 			kheopskitCreator: { from: "kheopskit" },
 			pjsTxCreator: vi.fn((address: string, _signer: unknown, type: string) => ({ address, type })),
 			signer,
@@ -30,7 +30,7 @@ vi.mock("./pjs-tx-creator", () => ({ pjsTxCreator }))
 describe("txCreatorFor", () => {
 	beforeEach(() => {
 		pjsTxCreator.mockClear()
-		wallet$.next({ id: "talisman", signer })
+		wallet$.next({ extension: { signer } })
 	})
 
 	it("signs a connected account through kheopskit", async () => {

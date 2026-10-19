@@ -1,8 +1,7 @@
+import { createFakePolkadotExtension } from "@kheopskit/core/testing"
 import { firstValueFrom } from "rxjs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import polkadotJsWalletLogo from "@/assets/polkadot-js-wallet.svg"
-import talismanWalletLogo from "@/assets/talisman-wallet.svg"
-import { alice, bob, evm, fakeExtension, load, watched } from "./fakeInjectedWeb3"
+import { alice, bob, evm, load, remember, watched } from "./substrate.fixtures"
 
 const { toast, capture } = vi.hoisted(() => ({
 	toast: { error: vi.fn(), success: vi.fn() },
@@ -29,31 +28,34 @@ describe("substrate wallet connection", () => {
 		const readyState = vi.spyOn(document, "readyState", "get").mockReturnValue("interactive")
 		harness = await load()
 		await new Promise((resolve) => setTimeout(resolve, 1_300))
-		fakeExtension("talisman", [alice])
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
 		readyState.mockReturnValue("complete")
 		window.dispatchEvent(new Event("load"))
 	}
 
-	it("reconnects the wallet stored by main under connected-substrate-extension", async () => {
+	it("moves the wallet stored by prod under connected-substrate-extension into kheopskit", async () => {
 		localStorage.setItem("connected-substrate-extension", '"polkadot-js"')
-		fakeExtension("talisman", [alice])
-		const polkadotJs = fakeExtension("polkadot-js", [bob])
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
+		const polkadotJs = createFakePolkadotExtension({ name: "polkadot-js", accounts: [bob] })
 		harness = await load()
 
 		await vi.waitFor(() => expect(harness.accounts()).toEqual([["Bob", bob.address, "sr25519"]]))
 		expect(polkadotJs.enableCalls()).toEqual(["Talisman"])
-		expect(harness.connected()?.id).toBe("polkadot-js")
-		await harness.connected()?.signer.signRaw({ address: bob.address, data: "0x00", type: "bytes" })
+		expect(harness.connected()?.id).toBe("polkadot:polkadot-js")
+		await harness
+			.connected()
+			?.extension?.signer.signRaw({ address: bob.address, data: "0x00", type: "bytes" })
 		expect(polkadotJs.signRawCalls()).toEqual([
 			{ address: bob.address, data: "0x00", type: "bytes" },
 		])
-		expect(localStorage.getItem("connected-substrate-extension")).toBe('"polkadot-js"')
+		expect(localStorage.getItem("connected-substrate-extension")).toBeNull()
+		expect(harness.remembered()).toEqual(["polkadot:polkadot-js"])
 		await vi.waitFor(() => expect(harness.initialised()).toBe(true), { timeout: 2_000 })
 	})
 
 	it("reports the wallets initialised only once the stored wallet shows connected with its accounts", async () => {
-		localStorage.setItem("connected-substrate-extension", '"talisman"')
-		fakeExtension("talisman", [alice, evm])
+		remember("polkadot:talisman")
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice, evm] })
 		harness = await load()
 		const atInitialised: unknown[] = []
 		const subscription = harness.initialisedSubstrateWallets$.subscribe((initialised) => {
@@ -64,7 +66,7 @@ describe("substrate wallet connection", () => {
 		subscription.unsubscribe()
 		expect(atInitialised).toEqual([
 			[
-				"talisman",
+				"polkadot:talisman",
 				[
 					["Guardians SUB", alice.address, "sr25519"],
 					["Guardians EVM", evm.address, "ethereum"],
@@ -112,7 +114,7 @@ describe("substrate wallet connection", () => {
 			"readonly_accounts",
 			`[{"address":"${alice.address}","name":"Watched Alice"}]`
 		)
-		const talisman = fakeExtension("talisman", [guardiansSub])
+		const talisman = createFakePolkadotExtension({ name: "talisman", accounts: [guardiansSub] })
 		harness = await load()
 		const readonly: string[] = []
 		const subscription = harness.readonlyAccounts$.subscribe((accounts) => {
@@ -139,8 +141,8 @@ describe("substrate wallet connection", () => {
 	})
 
 	it("auto-connects Talisman on a fresh profile and stores the id JSON-encoded", async () => {
-		fakeExtension("polkadot-js", [bob])
-		const talisman = fakeExtension("talisman", [alice, evm])
+		createFakePolkadotExtension({ name: "polkadot-js", accounts: [bob] })
+		const talisman = createFakePolkadotExtension({ name: "talisman", accounts: [alice, evm] })
 		harness = await load()
 
 		await vi.waitFor(() =>
@@ -150,12 +152,12 @@ describe("substrate wallet connection", () => {
 			])
 		)
 		expect(talisman.enableCalls()).toEqual(["Talisman"])
-		expect(localStorage.getItem("connected-substrate-extension")).toBe('"talisman"')
+		expect(harness.remembered()).toEqual(["polkadot:talisman"])
 		expect(capture.mock.calls).toEqual([["Substrate extensions connected", { wallet: "talisman" }]])
 	})
 
 	it("reconnects a stored wallet that injects late, before the page load", async () => {
-		localStorage.setItem("connected-substrate-extension", '"talisman"')
+		remember("polkadot:talisman")
 		await injectBeforePageLoad()
 
 		await vi.waitFor(() =>
@@ -170,17 +172,17 @@ describe("substrate wallet connection", () => {
 		await vi.waitFor(() =>
 			expect(harness.accounts()).toEqual([["Guardians SUB", alice.address, "sr25519"]])
 		)
-		expect(localStorage.getItem("connected-substrate-extension")).toBe('"talisman"')
+		expect(harness.remembered()).toEqual(["polkadot:talisman"])
 	})
 
 	it("connects nothing on a fresh profile without Talisman", async () => {
-		const polkadotJs = fakeExtension("polkadot-js", [bob])
+		const polkadotJs = createFakePolkadotExtension({ name: "polkadot-js", accounts: [bob] })
 		harness = await load()
 
 		await vi.waitFor(() => expect(harness.initialised()).toBe(true), { timeout: 2_000 })
 		expect(polkadotJs.enableCalls()).toEqual([])
 		expect(harness.accounts()).toEqual([])
-		expect(localStorage.getItem("connected-substrate-extension")).toBeNull()
+		expect(harness.remembered()).toEqual([])
 	})
 
 	it("initialises without any wallet installed", async () => {
@@ -190,27 +192,25 @@ describe("substrate wallet connection", () => {
 		expect(harness.wallets()).toEqual([])
 	})
 
-	it("lists installed wallets with the portal's titles and logos, in injection order", async () => {
-		fakeExtension("polkadot-js")
-		fakeExtension("talisman", [alice])
-		fakeExtension("subwallet")
+	it("lists installed wallets as kheopskit names and orders them, Talisman first", async () => {
+		createFakePolkadotExtension({ name: "polkadot-js" })
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
+		createFakePolkadotExtension({ name: "subwallet" })
 		harness = await load()
 
 		await vi.waitFor(() => expect(harness.wallets()).toHaveLength(3))
-		expect(harness.wallets().map(({ id, title }) => [id, title])).toEqual([
-			["polkadot-js", "Polkadot.js"],
-			["talisman", "Talisman"],
-			["subwallet", "subwallet"],
+		expect(harness.wallets().map(({ id, name }) => [id, name])).toEqual([
+			["polkadot:talisman", "Talisman"],
+			["polkadot:polkadot-js", "Polkadot.js"],
+			["polkadot:subwallet", "subwallet"],
 		])
-		expect(harness.wallets().map((wallet) => wallet.iconUrl)).toEqual([
-			polkadotJsWalletLogo,
-			talismanWalletLogo,
-			undefined,
-		])
+		expect(harness.wallets().map((wallet) => wallet.icon.startsWith("data:image/svg+xml"))).toEqual(
+			[true, true, false]
+		)
 	})
 
 	it("keeps the wallet's watched accounts marked readonly", async () => {
-		fakeExtension("talisman", [alice, watched])
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice, watched] })
 		harness = await load()
 
 		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(2))
@@ -226,40 +226,67 @@ describe("substrate wallet connection", () => {
 	})
 
 	it("switches wallets on connect and clears the key on disconnect", async () => {
-		fakeExtension("talisman", [alice])
-		fakeExtension("polkadot-js", [bob])
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
+		createFakePolkadotExtension({ name: "polkadot-js", accounts: [bob] })
 		harness = await load()
-		await vi.waitFor(() => expect(harness.connected()?.id).toBe("talisman"))
+		await vi.waitFor(() => expect(harness.connected()?.id).toBe("polkadot:talisman"))
 
-		harness.connectSubstrateWallet({ id: "polkadot-js", title: "Polkadot.js" })
+		harness.connectSubstrateWallet(harness.wallet("polkadot:polkadot-js"))
 		await vi.waitFor(() => expect(harness.accounts()).toEqual([["Bob", bob.address, "sr25519"]]))
-		expect(localStorage.getItem("connected-substrate-extension")).toBe('"polkadot-js"')
+		expect(harness.remembered()).toEqual(["polkadot:polkadot-js"])
 
 		harness.disconnectSubstrateWallet()
 		await vi.waitFor(() => expect(harness.accounts()).toEqual([]))
 		expect(harness.connected()).toBeUndefined()
-		expect(localStorage.getItem("connected-substrate-extension")).toBeNull()
+		expect(harness.remembered()).toEqual([])
 	})
 
 	it("connects only the wallet the user switches to while the previous prompt is open", async () => {
-		const talisman = fakeExtension("talisman", [alice], "hold")
-		fakeExtension("polkadot-js", [bob])
+		const talisman = createFakePolkadotExtension({
+			name: "talisman",
+			accounts: [alice],
+			enable: "hold",
+		})
+		createFakePolkadotExtension({ name: "polkadot-js", accounts: [bob] })
 		harness = await load()
 		await vi.waitFor(() => expect(talisman.enableCalls()).toEqual(["Talisman"]))
 
-		await harness.connectSubstrateWallet({ id: "polkadot-js", title: "Polkadot.js" })
+		await harness.connectSubstrateWallet(harness.wallet("polkadot:polkadot-js"))
 		talisman.resolveEnable()
 
 		await vi.waitFor(() => expect(harness.initialised()).toBe(true), { timeout: 2_000 })
 		await new Promise((resolve) => setTimeout(resolve, 100))
-		expect(harness.connected()?.id).toBe("polkadot-js")
+		expect(harness.connected()?.id).toBe("polkadot:polkadot-js")
 		expect(harness.accounts()).toEqual([["Bob", bob.address, "sr25519"]])
-		expect(localStorage.getItem("connected-substrate-extension")).toBe('"polkadot-js"')
+		expect(harness.remembered()).toEqual(["polkadot:polkadot-js"])
 		expect(toast.error).not.toHaveBeenCalled()
 	})
 
+	it("forgets the remembered wallet whose reconnect prompt is open when the user switches", async () => {
+		remember("polkadot:talisman")
+		const talisman = createFakePolkadotExtension({
+			name: "talisman",
+			accounts: [alice],
+			enable: "hold",
+		})
+		createFakePolkadotExtension({ name: "polkadot-js", accounts: [bob] })
+		harness = await load()
+		await vi.waitFor(() => expect(talisman.enableCalls()).toEqual(["Talisman"]))
+
+		await harness.connectSubstrateWallet(harness.wallet("polkadot:polkadot-js"))
+		talisman.resolveEnable()
+
+		await vi.waitFor(() => expect(harness.initialised()).toBe(true), { timeout: 2_000 })
+		expect(harness.connected()?.id).toBe("polkadot:polkadot-js")
+		expect(harness.remembered()).toEqual(["polkadot:polkadot-js"])
+	})
+
 	it("connects nothing when the user disconnects while the prompt is open", async () => {
-		const talisman = fakeExtension("talisman", [alice], "hold")
+		const talisman = createFakePolkadotExtension({
+			name: "talisman",
+			accounts: [alice],
+			enable: "hold",
+		})
 		harness = await load()
 		await vi.waitFor(() => expect(talisman.enableCalls()).toEqual(["Talisman"]))
 
@@ -270,24 +297,32 @@ describe("substrate wallet connection", () => {
 		await new Promise((resolve) => setTimeout(resolve, 100))
 		expect(harness.connected()).toBeUndefined()
 		expect(harness.accounts()).toEqual([])
-		expect(localStorage.getItem("connected-substrate-extension")).toBeNull()
+		expect(harness.remembered()).toEqual([])
 		expect(toast.error).not.toHaveBeenCalled()
 	})
 
 	it("forgets a wallet whose connection the user declined and says so", async () => {
-		localStorage.setItem("connected-substrate-extension", '"talisman"')
-		const talisman = fakeExtension("talisman", [], "reject")
+		remember("polkadot:talisman")
+		const talisman = createFakePolkadotExtension({
+			name: "talisman",
+			accounts: [],
+			enable: "reject",
+		})
 		harness = await load()
 
 		await vi.waitFor(() => expect(harness.initialised()).toBe(true), { timeout: 2_000 })
 		expect(talisman.enableCalls()).toEqual(["Talisman"])
 		expect(toast.error.mock.calls).toEqual([["Wallet connection declined"]])
-		expect(localStorage.getItem("connected-substrate-extension")).toBeNull()
+		expect(harness.remembered()).toEqual([])
 		expect(harness.accounts()).toEqual([])
 	})
 
 	it("asks and warns once when the lifecycle is subscribed again before the wallets settle", async () => {
-		const talisman = fakeExtension("talisman", [], "reject")
+		const talisman = createFakePolkadotExtension({
+			name: "talisman",
+			accounts: [],
+			enable: "reject",
+		})
 		harness = await load()
 		harness.substrateWalletLifecycle$.subscribe().unsubscribe()
 		const remount = harness.substrateWalletLifecycle$.subscribe()
@@ -299,7 +334,7 @@ describe("substrate wallet connection", () => {
 	})
 
 	it("drops an account the wallet removes", async () => {
-		const talisman = fakeExtension("talisman", [alice, bob])
+		const talisman = createFakePolkadotExtension({ name: "talisman", accounts: [alice, bob] })
 		harness = await load()
 		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(2))
 
@@ -311,7 +346,7 @@ describe("substrate wallet connection", () => {
 	})
 
 	it("hands out the papi tx creator of a connected account", async () => {
-		fakeExtension("talisman", [alice])
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
 		harness = await load()
 		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(1))
 

@@ -1,5 +1,6 @@
+import { createFakePolkadotExtension, type FakePolkadotExtension } from "@kheopskit/core/testing"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { alice, fakeExtension, load } from "./fakeInjectedWeb3"
+import { alice, load, remember } from "./substrate.fixtures"
 
 const { toast, capture } = vi.hoisted(() => ({
 	toast: { error: vi.fn(), success: vi.fn() },
@@ -10,7 +11,7 @@ vi.mock("@/domains/analytics/client", () => ({ track: capture }))
 
 describe("a wallet that injects around the page load", () => {
 	let harness: Awaited<ReturnType<typeof load>>
-	let talisman: ReturnType<typeof fakeExtension> | undefined
+	let talisman: FakePolkadotExtension | undefined
 	let enabledAtInitialised: string[][]
 
 	beforeEach(() => {
@@ -48,14 +49,14 @@ describe("a wallet that injects around the page load", () => {
 			window.dispatchEvent(new Event("load"))
 		}
 		await vi.advanceTimersByTimeAsync(injectMs - pageLoadMs)
-		talisman = fakeExtension("talisman", [alice])
+		talisman = createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
 		await vi.advanceTimersByTimeAsync(3_000)
 	}
 
 	it("reconnects a stored wallet that is already injected before the page load fires", async () => {
-		localStorage.setItem("connected-substrate-extension", '"talisman"')
+		remember("polkadot:talisman")
 		vi.spyOn(document, "readyState", "get").mockReturnValue("interactive")
-		talisman = fakeExtension("talisman", [alice])
+		talisman = createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
 		harness = await load()
 		await vi.advanceTimersByTimeAsync(500)
 
@@ -67,11 +68,11 @@ describe("a wallet that injects around the page load", () => {
 		await loadThenInject({ pageLoadMs: 1_500, injectMs: 1_550 })
 
 		expect(harness.accounts()).toEqual([["Guardians SUB", alice.address, "sr25519"]])
-		expect(localStorage.getItem("connected-substrate-extension")).toBe('"talisman"')
+		expect(harness.remembered()).toEqual(["polkadot:talisman"])
 	})
 
 	it("reports the wallets initialised only after the stored wallet that injects 50 ms after the page load is asked to connect", async () => {
-		localStorage.setItem("connected-substrate-extension", '"talisman"')
+		remember("polkadot:talisman")
 		await loadThenInject({ pageLoadMs: 1_500, injectMs: 1_550 })
 
 		expect(enabledAtInitialised).toEqual([["Talisman"]])
@@ -83,15 +84,15 @@ describe("a wallet that injects around the page load", () => {
 
 		expect(enabledAtInitialised).toEqual([["Talisman"]])
 		expect(harness.accounts()).toEqual([["Guardians SUB", alice.address, "sr25519"]])
-		expect(localStorage.getItem("connected-substrate-extension")).toBe('"talisman"')
+		expect(harness.remembered()).toEqual(["polkadot:talisman"])
 	})
 
 	it("reconnects a stored wallet that injects 200 ms after a page load 1.5 s after the subscribe", async () => {
-		localStorage.setItem("connected-substrate-extension", '"talisman"')
+		remember("polkadot:talisman")
 		await loadThenInject({ pageLoadMs: 1_500, injectMs: 1_700 })
 
 		expect(harness.accounts()).toEqual([["Guardians SUB", alice.address, "sr25519"]])
-		expect(localStorage.getItem("connected-substrate-extension")).toBe('"talisman"')
+		expect(harness.remembered()).toEqual(["polkadot:talisman"])
 	})
 
 	it("auto-connects Talisman when it injects 50 ms after a subscribe on an already loaded page", async () => {
@@ -99,6 +100,6 @@ describe("a wallet that injects around the page load", () => {
 
 		expect(enabledAtInitialised).toEqual([["Talisman"]])
 		expect(harness.accounts()).toEqual([["Guardians SUB", alice.address, "sr25519"]])
-		expect(localStorage.getItem("connected-substrate-extension")).toBe('"talisman"')
+		expect(harness.remembered()).toEqual(["polkadot:talisman"])
 	})
 })

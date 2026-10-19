@@ -1,8 +1,9 @@
+import { createFakePolkadotExtension } from "@kheopskit/core/testing"
 import { Subscribe } from "@react-rxjs/core"
 import { render } from "@testing-library/react"
 import { firstValueFrom, type Observable } from "rxjs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { alice, bob, evm, fakeExtension, load } from "@/domains/extension/fakeInjectedWeb3"
+import { alice, bob, evm, load } from "@/domains/extension/substrate.fixtures"
 
 const { toast, capture } = vi.hoisted(() => ({
 	toast: { error: vi.fn(), success: vi.fn() },
@@ -60,7 +61,7 @@ describe("accounts", () => {
 	})
 
 	it("names the wagmi account after the matching injected account", async () => {
-		fakeExtension("talisman", [alice, evm])
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice, evm] })
 		harness = await load()
 		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(2))
 
@@ -73,7 +74,7 @@ describe("accounts", () => {
 	})
 
 	it("shows the connected accounts by default and only the chosen ones once selected", async () => {
-		fakeExtension("talisman", [alice, bob])
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice, bob] })
 		harness = await load()
 		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(2))
 
@@ -100,7 +101,7 @@ describe("accounts", () => {
 	})
 
 	it("shows the lookup address instead of the connected accounts", async () => {
-		fakeExtension("talisman", [alice])
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
 		harness = await load()
 		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(1))
 
@@ -143,7 +144,7 @@ describe("accounts", () => {
 	})
 
 	it("selects the chosen accounts through the writer and the default ones again on reset", async () => {
-		fakeExtension("talisman", [alice, bob])
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice, bob] })
 		harness = await load()
 		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(2))
 		const renders: string[][] = []
@@ -166,7 +167,7 @@ describe("accounts", () => {
 	})
 
 	it("renders the current selection on the first render of a consumer that mounts after the last one left", async () => {
-		fakeExtension("talisman", [alice, bob])
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice, bob] })
 		harness = await load()
 		await vi.waitFor(() => expect(harness.accounts()).toHaveLength(2))
 		harness.setSelectedAccountAddresses([bob.address])

@@ -18,9 +18,10 @@ const walletTxCreator = async (address: string): Promise<TxCreator | undefined> 
 		firstValueFrom(connectedSubstrateWallet$),
 		firstValueFrom(injectedSubstrateAccounts$),
 	])
-	if (!wallet) return undefined
+	const signer = wallet?.extension?.signer
+	if (!signer) return undefined
 	const account = accounts.find((injected) => injected.address === address)
-	return pjsTxCreator(address, wallet.signer, signatureTypeOf(account?.type))
+	return pjsTxCreator(address, signer, signatureTypeOf(account?.type))
 }
 
 export const txCreatorFor = async (genesisHash: string, address: string) =>

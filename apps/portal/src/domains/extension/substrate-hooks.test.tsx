@@ -1,7 +1,8 @@
+import { createFakePolkadotExtension } from "@kheopskit/core/testing"
 import { Subscribe } from "@react-rxjs/core"
 import { render } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { alice, fakeExtension, load } from "./fakeInjectedWeb3"
+import { alice, load } from "./substrate.fixtures"
 
 const { toast, capture, bridge } = vi.hoisted(() => ({
 	toast: { error: vi.fn(), success: vi.fn() },
@@ -41,14 +42,14 @@ describe("substrate wallet hooks", () => {
 	})
 
 	it("renders the connected wallet on the first render of a consumer that mounts after the last one left, with only the lifecycle subscribed", async () => {
-		fakeExtension("talisman", [alice])
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
 		harness = await load()
-		await vi.waitFor(() => expect(harness.connected()?.id).toBe("talisman"))
+		await vi.waitFor(() => expect(harness.connected()?.id).toBe("polkadot:talisman"))
 		harness.dispose()
 		const lifecycle = harness.substrateWalletLifecycle$.subscribe()
 		const renders: Array<string | undefined> = []
 		const ConnectedWallet = () => {
-			renders.push(harness.useConnectedSubstrateWallet()?.id)
+			renders.push(harness.useConnectedSubstrateWallet()?.sourceId)
 			return null
 		}
 
@@ -73,14 +74,14 @@ describe("substrate wallet hooks", () => {
 	it("keeps the last accounts and wallet, and the retained lists, when the wallet bridge errors", async () => {
 		bridge.failAfterAccounts = true
 		vi.spyOn(console, "error").mockImplementation(() => undefined)
-		fakeExtension("talisman", [alice])
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
 		harness = await load()
 		const { AccountWatcher } = await import("@/domains/accounts/AccountWatcher")
 		render(<AccountWatcher />)
 		const renders: Array<[string | undefined, string[]]> = []
 		const Wallet = () => {
 			renders.push([
-				harness.useConnectedSubstrateWallet()?.id,
+				harness.useConnectedSubstrateWallet()?.sourceId,
 				harness.useSelectedAccounts().map((account) => account.name ?? ""),
 			])
 			return null
@@ -106,7 +107,7 @@ describe("substrate wallet hooks", () => {
 	})
 
 	it("reports the wallet lifecycle as initialised once the stored wallet is connected", async () => {
-		fakeExtension("talisman", [alice])
+		createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
 		harness = await load()
 		const renders: boolean[] = []
 		const Initialised = () => {
