@@ -22,7 +22,7 @@ type SubscanNominationPoolRewardsResponse = {
 	code: number
 	message: string
 	generated_at: number
-	data: { count: number; list: readonly SubscanPayout[] }
+	data?: { count: number; list: readonly SubscanPayout[] }
 }
 
 type PoolPayout = { date: Date; amount: Decimal }
@@ -45,6 +45,8 @@ async function* subscanPayouts(
 			}
 		).then(async (x) => await x.json())
 
+		if (response.data === undefined) throw new Error(response.message)
+
 		yield* response.data.list
 
 		if (response.data.list.length === 0 || response.data.list.length < PAGE_SIZE) break
@@ -61,12 +63,13 @@ async function* subscanPayouts(
 }
 
 const fetchPayouts = async (
-	subscanUrl: string,
+	subscanUrl: string | undefined,
 	address: string,
 	poolId: number,
 	fromDate: Date | undefined,
 	toDate: Date | undefined
 ) => {
+	if (subscanUrl === undefined) return undefined
 	const payouts: SubscanPayout[] = []
 	for await (const payout of subscanPayouts(subscanUrl, address, poolId, fromDate)) {
 		const date = startOfDay(fromUnixTime(payout.block_timestamp))
@@ -83,7 +86,7 @@ const dayOf = (time: number) => (time === 0 ? undefined : startOfDay(new Date(ti
 const [usePayouts] = bindSuspended(
 	(
 		genesisHash: string,
-		subscanUrl: string,
+		subscanUrl: string | undefined,
 		account: string,
 		poolId: number,
 		from: number,
@@ -93,14 +96,16 @@ const [usePayouts] = bindSuspended(
 			switchMap(({ runtime }) => {
 				const { decimals, symbol } = chainTokenOf(runtime)
 				const address = AccountId(ss58PrefixOf(runtime)).dec(AccountId().enc(account))
-				return fetchPayouts(subscanUrl, address, poolId, dayOf(from), dayOf(to)).then((payouts) =>
-					payouts.map(
-						(payout): PoolPayout => ({
-							date: fromUnixTime(payout.block_timestamp),
-							amount: Decimal.fromPlanck(payout.amount, decimals, { currency: symbol }),
-						})
+				return fetchPayouts(subscanUrl, address, poolId, dayOf(from), dayOf(to))
+					.then((payouts) =>
+						payouts?.map(
+							(payout): PoolPayout => ({
+								date: fromUnixTime(payout.block_timestamp),
+								amount: Decimal.fromPlanck(payout.amount, decimals, { currency: symbol }),
+							})
+						)
 					)
-				)
+					.catch(() => undefined)
 			})
 		)
 )
@@ -115,7 +120,7 @@ export const usePoolPayouts = (
 ) =>
 	usePayouts(
 		genesisHash,
-		subscanUrl ?? "",
+		subscanUrl,
 		account,
 		poolId,
 		fromDate ? startOfDay(fromDate).getTime() : 0,

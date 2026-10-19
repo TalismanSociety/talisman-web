@@ -1,19 +1,16 @@
 import { useTheme } from "@emotion/react"
 import { eachDayOfInterval, isSameDay, subDays } from "date-fns"
 import type { ReactNode } from "react"
-import { useMemo } from "react"
+import { Suspense, useMemo } from "react"
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryTooltip } from "victory"
 import { AccountIcon } from "@/components/molecules/AccountIcon"
 import type { StakeStatus } from "@/components/recipes/StakeStatusIndicator"
+import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { RedactableBalance } from "@/components/widgets/RedactableBalance"
 import type { Account } from "@/domains/accounts/accounts"
 import { useChain, useNativeTokenDecimal } from "@/domains/chains/chains"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
-import {
-	type DerivedPool,
-	useApr,
-	usePoolStakes,
-} from "@/domains/staking/substrate/nominationPools/hooks"
+import { type DerivedPool, useApr } from "@/domains/staking/substrate/nominationPools/hooks"
 import { useChainToken } from "@/domains/staking/substrate/nominationPools/hooks/useBalances"
 import { useEraEtaFormatter } from "@/domains/staking/substrate/nominationPools/hooks/useEraEta"
 import {
@@ -21,6 +18,7 @@ import {
 	usePoolPayouts,
 } from "@/domains/staking/substrate/nominationPools/hooks/usePayouts"
 import { BarChart, Clock, Earn, ExternalLink, Percent, Zap } from "@/icons"
+import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 import { TonalIcon } from "@/ui/atoms/Icon"
 import { useSurfaceColorAtElevation } from "@/ui/atoms/Surface"
 import { Text } from "@/ui/atoms/Text"
@@ -31,7 +29,7 @@ import { Decimal } from "@/util/Decimal"
 import { truncateAddress } from "@/util/truncateAddress"
 
 type NominationPoolsStatisticsSideSheetProps = {
-	account: Account
+	pool: DerivedPool
 	onRequestDismiss: () => unknown
 }
 
@@ -43,77 +41,56 @@ const Stats = (props: {
 	poolName: ReactNode
 	poolStatus: StakeStatus
 	balance: ReactNode
-	rewards: ReactNode
+	rewards?: ReactNode
 	apr: ReactNode
 	nextEraEta: ReactNode
 	currentDate?: Date
-	last15DaysPayouts: readonly PayoutEntry[]
-	mostRecentPayouts: readonly PayoutEntry[]
+	last15DaysPayouts?: readonly PayoutEntry[]
+	mostRecentPayouts?: readonly PayoutEntry[]
 	unbondings: Array<{ eta: string; amount: string }>
 	subscanPayoutsUrl?: string
-	onRequestDismiss: () => unknown
 }) => {
 	const theme = useTheme()
 
 	const now = useMemo(() => props.currentDate ?? new Date(), [props.currentDate?.getTime()])
 
-	const groupedPayouts = useMemo(() => {
-		const days = eachDayOfInterval({ start: subDays(now, 15), end: now })
-			.sort((a, b) => a.getTime() - b.getTime())
-			.slice(-15)
-
-		return days.map((x) => ({
-			date: x.toISOString(),
-			amount: props.last15DaysPayouts
-				.filter((y) => isSameDay(x, y.date))
-				.reduce((prev, curr) => prev + curr.amount, 0),
-		}))
-	}, [now, props.last15DaysPayouts])
-
 	return (
-		<SideSheet
-			title={
-				<div css={{ display: "flex", alignItems: "center", gap: "0.25em" }}>
-					<BarChart /> Statistics
-				</div>
-			}
-			onRequestDismiss={props.onRequestDismiss}
+		<div
+			css={{
+				display: "flex",
+				flexDirection: "column",
+				gap: "2.4rem",
+				[SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { width: "40rem" },
+			}}
 		>
+			<ListItem
+				headlineContent={props.account.name ?? truncateAddress(props.account.address)}
+				supportingContent={truncateAddress(props.account.address)}
+				leadingContent={<AccountIcon account={props.account} size="4rem" />}
+				css={{ paddingRight: 0, paddingLeft: 0 }}
+			/>
+			<Text.Body css={{ display: "flex", justifyContent: "space-between", gap: "0.8rem" }}>
+				<Text.Body>Pool</Text.Body>
+				<Text.Body>{props.poolName}</Text.Body>
+			</Text.Body>
 			<div
 				css={{
-					display: "flex",
-					flexDirection: "column",
-					gap: "2.4rem",
-					[SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { width: "40rem" },
+					display: "grid",
+					gridTemplateColumns: "repeat(auto-fit, minmax(min(15rem, 100%), 1fr))",
+					gap: "2.4rem 0.8rem",
 				}}
 			>
 				<ListItem
-					headlineContent={props.account.name ?? truncateAddress(props.account.address)}
-					supportingContent={truncateAddress(props.account.address)}
-					leadingContent={<AccountIcon account={props.account} size="4rem" />}
-					css={{ paddingRight: 0, paddingLeft: 0 }}
+					css={{ padding: 0 }}
+					leadingContent={
+						<TonalIcon>
+							<Zap />
+						</TonalIcon>
+					}
+					overlineContent="Total balance"
+					headlineContent={props.balance}
 				/>
-				<Text.Body css={{ display: "flex", justifyContent: "space-between", gap: "0.8rem" }}>
-					<Text.Body>Pool</Text.Body>
-					<Text.Body>{props.poolName}</Text.Body>
-				</Text.Body>
-				<div
-					css={{
-						display: "grid",
-						gridTemplateColumns: "repeat(auto-fit, minmax(min(15rem, 100%), 1fr))",
-						gap: "2.4rem 0.8rem",
-					}}
-				>
-					<ListItem
-						css={{ padding: 0 }}
-						leadingContent={
-							<TonalIcon>
-								<Zap />
-							</TonalIcon>
-						}
-						overlineContent="Total balance"
-						headlineContent={props.balance}
-					/>
+				{props.rewards !== undefined && (
 					<ListItem
 						css={{ padding: 0 }}
 						leadingContent={
@@ -124,137 +101,38 @@ const Stats = (props: {
 						overlineContent="15 days rewards"
 						headlineContent={props.rewards}
 					/>
-					<ListItem
-						css={{ padding: 0 }}
-						leadingContent={
-							<TonalIcon>
-								<Percent />
-							</TonalIcon>
-						}
-						overlineContent="APR"
-						headlineContent={props.apr}
-					/>
-					<ListItem
-						css={{ padding: 0 }}
-						leadingContent={
-							<TonalIcon>
-								<Clock />
-							</TonalIcon>
-						}
-						overlineContent="Current era ends"
-						headlineContent={props.nextEraEta}
-					/>
-				</div>
-				<section
-					css={{
-						flex: "2 1 auto",
-						display: "flex",
-						flexDirection: "column",
-						borderRadius: "0.8rem",
-						border: `solid 2px ${useSurfaceColorAtElevation((x) => x + 1)}`,
-						padding: "1.6rem",
-					}}
-				>
-					<header css={{ display: "contents" }}>
-						<Text.H4>Payouts over last 15 days</Text.H4>
-					</header>
-					<div css={{ flex: 1 }}>
-						<VictoryChart
-							domainPadding={25}
-							height={225}
-							padding={{ top: 5, right: 0, bottom: 40, left: 50 }}
-						>
-							<VictoryAxis
-								tickFormat={(x: any) =>
-									new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short" }).format(
-										new Date(x)
-									)
-								}
-								tickLabelComponent={
-									<VictoryLabel
-										angle={-35}
-										textAnchor="end"
-										style={{
-											fontFamily: "'Surt', sans-serif",
-											fontSize: 10,
-											fill: `color-mix(in srgb, ${theme.color.onSurface}, transparent 50%)`,
-											padding: 1000,
-										}}
-									/>
-								}
-								style={{
-									axis: { stroke: `color-mix(in srgb, ${theme.color.onSurface}, transparent 90%)` },
-									ticks: { stroke: "transparent" },
-								}}
-							/>
-							<VictoryAxis
-								dependentAxis
-								tickValues={useMemo(
-									() =>
-										groupedPayouts.every((x) => x.amount === 0) ? [0.2, 0.4, 0.6, 0.8] : undefined,
-									[groupedPayouts]
-								)}
-								style={{
-									axis: { stroke: "transparent" },
-									ticks: { stroke: "transparent" },
-									tickLabels: {
-										fill: theme.color.onSurface,
-										fontFamily: "'Surt', sans-serif",
-										fontSize: 12,
-									},
-									grid: {
-										stroke: `color-mix(in srgb, ${theme.color.onSurface}, transparent 90%)`,
-										strokeDasharray: 4,
-									},
-								}}
-							/>
-							<VictoryBar
-								style={{ data: { fill: "#E6007A" } }}
-								data={groupedPayouts}
-								x="date"
-								y="amount"
-								labels={({ datum }) => datum.amount}
-								cornerRadius={2}
-								labelComponent={
-									<VictoryTooltip
-										flyoutStyle={{ fill: useSurfaceColorAtElevation((x) => x + 2) }}
-										labelComponent={
-											<VictoryLabel
-												style={{
-													fill: theme.color.onSurface,
-													fontFamily: "'Surt', sans-serif",
-													fontSize: 10,
-												}}
-											/>
-										}
-									/>
-								}
-							/>
-						</VictoryChart>
-					</div>
-				</section>
-				<div css={{ flex: "33rem" }}>
-					<section>
+				)}
+				<ListItem
+					css={{ padding: 0 }}
+					leadingContent={
+						<TonalIcon>
+							<Percent />
+						</TonalIcon>
+					}
+					overlineContent="APR"
+					headlineContent={props.apr}
+				/>
+				<ListItem
+					css={{ padding: 0 }}
+					leadingContent={
+						<TonalIcon>
+							<Clock />
+						</TonalIcon>
+					}
+					overlineContent="Current era ends"
+					headlineContent={props.nextEraEta}
+				/>
+			</div>
+			{props.last15DaysPayouts !== undefined && (
+				<PayoutsChart now={now} payouts={props.last15DaysPayouts} />
+			)}
+			<div css={{ flex: "33rem" }}>
+				{props.subscanPayoutsUrl !== undefined && (
+					<section css={{ marginBottom: "2.4rem" }}>
 						<Text.H4>Latest payouts</Text.H4>
 						<DescriptionList css={{ marginTop: "1.6rem", marginBottom: "1.6rem" }}>
-							{props.mostRecentPayouts.length <= 0 && <Text.Body>No payouts found</Text.Body>}
-							{useMemo(
-								() =>
-									[...props.mostRecentPayouts]
-										.sort((a, b) => b.date.getTime() - a.date.getTime())
-										.slice(0, 5)
-										.map((x, index) => (
-											<DescriptionList.Description key={index}>
-												<DescriptionList.Term>{x.displayAmount}</DescriptionList.Term>
-												<DescriptionList.Details>
-													{new Intl.DateTimeFormat(undefined, {
-														timeStyle: "short",
-														dateStyle: "short",
-													}).format(x.date)}
-												</DescriptionList.Details>
-											</DescriptionList.Description>
-										)),
-								[props.mostRecentPayouts]
+							{props.mostRecentPayouts !== undefined && (
+								<LatestPayouts payouts={props.mostRecentPayouts} />
 							)}
 							<DescriptionList.Description>
 								<DescriptionList.Term></DescriptionList.Term>
@@ -262,7 +140,12 @@ const Stats = (props: {
 									<Text.Noop.A
 										href={props.subscanPayoutsUrl}
 										target="_blank"
-										css={{ color: theme.color.primary }}
+										css={{
+											color: theme.color.primary,
+											display: "inline-flex",
+											alignItems: "center",
+											gap: "0.25em",
+										}}
 									>
 										View all on Subscan <ExternalLink size="1em" />
 									</Text.Noop.A>
@@ -270,26 +153,158 @@ const Stats = (props: {
 							</DescriptionList.Description>
 						</DescriptionList>
 					</section>
-					<section css={{ marginTop: "2.4rem" }}>
-						<Text.H4>Unbondings</Text.H4>
-						<DescriptionList>
-							{props.unbondings.length <= 0 && <Text.Body>No active unbonding</Text.Body>}
-							{props.unbondings.map((x, index) => (
-								<DescriptionList.Description key={index} className="payout">
-									<DescriptionList.Term>{x.amount}</DescriptionList.Term>
-									<DescriptionList.Details>{x.eta}</DescriptionList.Details>
-								</DescriptionList.Description>
-							))}
-						</DescriptionList>
-					</section>
-				</div>
+				)}
+				<section>
+					<Text.H4>Unbondings</Text.H4>
+					<DescriptionList>
+						{props.unbondings.length <= 0 && <Text.Body>No active unbonding</Text.Body>}
+						{props.unbondings.map((x, index) => (
+							<DescriptionList.Description key={index} className="payout">
+								<DescriptionList.Term>{x.amount}</DescriptionList.Term>
+								<DescriptionList.Details>{x.eta}</DescriptionList.Details>
+							</DescriptionList.Description>
+						))}
+					</DescriptionList>
+				</section>
 			</div>
-		</SideSheet>
+		</div>
 	)
 }
 
+const PayoutsChart = (props: { now: Date; payouts: readonly PayoutEntry[] }) => {
+	const theme = useTheme()
+
+	const groupedPayouts = useMemo(() => {
+		const days = eachDayOfInterval({ start: subDays(props.now, 15), end: props.now })
+			.sort((a, b) => a.getTime() - b.getTime())
+			.slice(-15)
+
+		return days.map((x) => ({
+			date: x.toISOString(),
+			amount: props.payouts
+				.filter((y) => isSameDay(x, y.date))
+				.reduce((prev, curr) => prev + curr.amount, 0),
+		}))
+	}, [props.now, props.payouts])
+
+	return (
+		<section
+			css={{
+				flex: "2 1 auto",
+				display: "flex",
+				flexDirection: "column",
+				borderRadius: "0.8rem",
+				border: `solid 2px ${useSurfaceColorAtElevation((x) => x + 1)}`,
+				padding: "1.6rem",
+			}}
+		>
+			<header css={{ display: "contents" }}>
+				<Text.H4>Payouts over last 15 days</Text.H4>
+			</header>
+			<div css={{ flex: 1 }}>
+				<VictoryChart
+					domainPadding={25}
+					height={225}
+					padding={{ top: 5, right: 0, bottom: 40, left: 50 }}
+				>
+					<VictoryAxis
+						tickFormat={(x: any) =>
+							new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short" }).format(
+								new Date(x)
+							)
+						}
+						tickLabelComponent={
+							<VictoryLabel
+								angle={-35}
+								textAnchor="end"
+								style={{
+									fontFamily: "'Surt', sans-serif",
+									fontSize: 10,
+									fill: `color-mix(in srgb, ${theme.color.onSurface}, transparent 50%)`,
+									padding: 1000,
+								}}
+							/>
+						}
+						style={{
+							axis: { stroke: `color-mix(in srgb, ${theme.color.onSurface}, transparent 90%)` },
+							ticks: { stroke: "transparent" },
+						}}
+					/>
+					<VictoryAxis
+						dependentAxis
+						tickValues={useMemo(
+							() =>
+								groupedPayouts.every((x) => x.amount === 0) ? [0.2, 0.4, 0.6, 0.8] : undefined,
+							[groupedPayouts]
+						)}
+						style={{
+							axis: { stroke: "transparent" },
+							ticks: { stroke: "transparent" },
+							tickLabels: {
+								fill: theme.color.onSurface,
+								fontFamily: "'Surt', sans-serif",
+								fontSize: 12,
+							},
+							grid: {
+								stroke: `color-mix(in srgb, ${theme.color.onSurface}, transparent 90%)`,
+								strokeDasharray: 4,
+							},
+						}}
+					/>
+					<VictoryBar
+						style={{ data: { fill: "#E6007A" } }}
+						data={groupedPayouts}
+						x="date"
+						y="amount"
+						labels={({ datum }) => datum.amount}
+						cornerRadius={2}
+						labelComponent={
+							<VictoryTooltip
+								flyoutStyle={{ fill: useSurfaceColorAtElevation((x) => x + 2) }}
+								labelComponent={
+									<VictoryLabel
+										style={{
+											fill: theme.color.onSurface,
+											fontFamily: "'Surt', sans-serif",
+											fontSize: 10,
+										}}
+									/>
+								}
+							/>
+						}
+					/>
+				</VictoryChart>
+			</div>
+		</section>
+	)
+}
+
+const LatestPayouts = (props: { payouts: readonly PayoutEntry[] }) => (
+	<>
+		{props.payouts.length <= 0 && <Text.Body>No payouts found</Text.Body>}
+		{useMemo(
+			() =>
+				[...props.payouts]
+					.sort((a, b) => b.date.getTime() - a.date.getTime())
+					.slice(0, 5)
+					.map((x, index) => (
+						<DescriptionList.Description key={index}>
+							<DescriptionList.Term>{x.displayAmount}</DescriptionList.Term>
+							<DescriptionList.Details>
+								{new Intl.DateTimeFormat(undefined, {
+									timeStyle: "short",
+									dateStyle: "short",
+								}).format(x.date)}
+							</DescriptionList.Details>
+						</DescriptionList.Description>
+					)),
+			[props.payouts]
+		)}
+	</>
+)
+
 // TODO: Extract to reuseable recipe component
-const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: DerivedPool }) => {
+const ExistingPool = (props: { pool: DerivedPool }) => {
 	const chain = useChain()
 
 	const today = useMemo(() => new Date(), [])
@@ -304,7 +319,7 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
 	const last15DaysPayouts = usePoolPayouts(
 		chain.genesisHash,
 		chain.subscanUrl,
-		props.account.address,
+		props.pool.account.address,
 		poolId,
 		fromDate,
 		today
@@ -312,14 +327,15 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
 	const mostRecentPayouts = usePoolPayouts(
 		chain.genesisHash,
 		chain.subscanUrl,
-		props.account.address,
+		props.pool.account.address,
 		poolId
 	)
-	const chainAddress = useChainAddress(chain.genesisHash, props.account.address)
+	const chainAddress = useChainAddress(chain.genesisHash, props.pool.account.address)
 	const token = useChainToken(chain.genesisHash)
 
 	const last15DaysTotalPayouts = useMemo(
 		() =>
+			last15DaysPayouts &&
 			Decimal.fromPlanck(
 				last15DaysPayouts.reduce((prev, curr) => prev + curr.amount.planck, 0n),
 				token.decimals,
@@ -332,11 +348,15 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
 
 	return (
 		<Stats
-			account={props.account}
+			account={props.pool.account}
 			poolName={props.pool.poolName}
 			poolStatus={props.pool.status}
 			balance={<RedactableBalance>{balance.decimalAmount.toLocaleString()}</RedactableBalance>}
-			rewards={<RedactableBalance>{last15DaysTotalPayouts.toLocaleString()}</RedactableBalance>}
+			rewards={
+				last15DaysTotalPayouts && (
+					<RedactableBalance>{last15DaysTotalPayouts.toLocaleString()}</RedactableBalance>
+				)
+			}
 			apr={stakedReturn.toLocaleString(undefined, { style: "percent" })}
 			nextEraEta={useEraEtaFormatter()(1)}
 			unbondings={useMemo(
@@ -349,7 +369,7 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
 			)}
 			last15DaysPayouts={useMemo(
 				() =>
-					last15DaysPayouts.map((x) => ({
+					last15DaysPayouts?.map((x) => ({
 						date: x.date,
 						amount: x.amount.toNumber(),
 						displayAmount: <RedactableBalance>{x.amount.toLocaleString()}</RedactableBalance>,
@@ -358,7 +378,7 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
 			)}
 			mostRecentPayouts={useMemo(
 				() =>
-					mostRecentPayouts.map((x) => ({
+					mostRecentPayouts?.map((x) => ({
 						date: x.date,
 						amount: x.amount.toNumber(),
 						displayAmount: <RedactableBalance>{x.amount.toLocaleString()}</RedactableBalance>,
@@ -366,22 +386,42 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
 				[mostRecentPayouts]
 			)}
 			subscanPayoutsUrl={useMemo(
-				() => new URL(`account/${chainAddress}?tab=paidout`, chain.subscanUrl).toString(),
+				() =>
+					chain.subscanUrl &&
+					new URL(`account/${chainAddress}?tab=paidout`, chain.subscanUrl).toString(),
 				[chainAddress, chain.subscanUrl]
 			)}
-			onRequestDismiss={props.onRequestDismiss}
 		/>
 	)
 }
 
-const NominationPoolsStatisticsSideSheet = (props: NominationPoolsStatisticsSideSheetProps) => {
-	const pool = usePoolStakes(props.account)
-
-	if (pool === undefined) {
-		return null
-	}
-
-	return <ExistingPool {...props} pool={pool} />
-}
+const NominationPoolsStatisticsSideSheet = (props: NominationPoolsStatisticsSideSheetProps) => (
+	<SideSheet
+		title={
+			<div css={{ display: "flex", alignItems: "center", gap: "0.25em" }}>
+				<BarChart /> Statistics
+			</div>
+		}
+		onRequestDismiss={props.onRequestDismiss}
+	>
+		<ErrorBoundary>
+			<Suspense
+				fallback={
+					<div
+						css={{
+							display: "flex",
+							justifyContent: "center",
+							[SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { width: "40rem" },
+						}}
+					>
+						<CircularProgressIndicator size="4rem" />
+					</div>
+				}
+			>
+				<ExistingPool pool={props.pool} />
+			</Suspense>
+		</ErrorBoundary>
+	</SideSheet>
+)
 
 export default NominationPoolsStatisticsSideSheet
