@@ -5,19 +5,14 @@ import { useChainLoadable } from "@/domains/chains/chains"
 import { usePoolStakeLoadable } from "@/domains/staking/substrate/nominationPools/hooks/usePoolStake"
 import { loadableData } from "@/util/loadable"
 
+import { StakesLoading } from "../StakesLoading"
 import PoolStakeItem from "./PoolStakeItem"
 
-type PoolStakeProps = {
-	setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-const PoolStakes = ({ setShouldRenderLoadingSkeleton }: PoolStakeProps) => {
+const PoolStakes = () => {
 	const { data: pools, state } = usePoolStakeLoadable(useSelectedSubstrateAccounts())
 	const chain = loadableData(useChainLoadable())
 
-	if (state === "hasValue" || pools.length) {
-		setShouldRenderLoadingSkeleton(false)
-	}
+	if (state === "loading") return <StakesLoading />
 
 	const { name = "", nativeToken: { symbol, logo } = { symbol: "", logo: "" } } = chain || {}
 

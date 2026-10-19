@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 
 import type { Account } from "@/domains/accounts/accounts"
 import { useSelectedSubstrateAccounts } from "@/domains/accounts/accounts"
@@ -11,15 +11,13 @@ import type { StakeItem } from "@/domains/staking/subtensor/hooks/useStake"
 import { useStake } from "@/domains/staking/subtensor/hooks/useStake"
 import type { BondOption } from "@/domains/staking/subtensor/types"
 
+import { StakesLoading } from "../StakesLoading"
 import AddStakeDialog from "./AddStakeDialog"
 import { DelegateSelectorDialog } from "./DelegateSelectorDialog"
 import { StakeItemRow } from "./StakeItemRow"
 import UnstakeDialog from "./UnstakeDialog"
 
-type StakesProps = {
-	setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
-}
-const Stakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
+const Stakes = () => {
 	const chains = useSubtensorStakingEnabledChains()
 	const accounts = useSelectedSubstrateAccounts()
 
@@ -28,11 +26,7 @@ const Stakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
 			{chains.map((chain, index) => (
 				<ChainProvider key={index} chain={chain}>
 					{accounts.map((account, index) => (
-						<Stake
-							key={index}
-							account={account}
-							setShouldRenderLoadingSkeleton={setShouldRenderLoadingSkeleton}
-						/>
+						<Stake key={index} account={account} />
 					))}
 				</ChainProvider>
 			))}
@@ -41,11 +35,7 @@ const Stakes = ({ setShouldRenderLoadingSkeleton }: StakesProps) => {
 }
 export default Stakes
 
-type StakeProps = {
-	account: Account
-	setShouldRenderLoadingSkeleton: React.Dispatch<React.SetStateAction<boolean>>
-}
-const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
+const Stake = ({ account }: { account: Account }) => {
 	const [addStakeDialogOpen, setAddStakeDialogOpen] = useState<boolean>(false)
 	const [unstakeDialogOpen, setUnstakeDialogOpen] = useState<boolean>(false)
 	const [delegateSelectorOpen, setDelegateSelectorOpen] = useState<boolean>(false)
@@ -63,12 +53,7 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
 	const { combinedValidatorsData } = useCombinedBittensorValidatorsData()
 
 	const chain = useChain()
-	const { stakes = [] } = useStake(account)
-
-	useEffect(() => {
-		if (!stakes || stakes.length === 0) return
-		setShouldRenderLoadingSkeleton(false)
-	}, [setShouldRenderLoadingSkeleton, stakes])
+	const { stakes = [], isLoading } = useStake(account)
 
 	const handleToggleAddStakeDialog = (stakeItem?: StakeItem | undefined) => {
 		setAddStakeDialogOpen((prev) => !prev)
@@ -101,7 +86,7 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
 				})
 	}, [account.address, extrinsic, isReady, queryClient])
 
-	if (stakes.length === 0) return null
+	if (stakes.length === 0) return isLoading ? <StakesLoading /> : null
 
 	return (
 		<>
