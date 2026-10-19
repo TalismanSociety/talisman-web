@@ -3,6 +3,7 @@ import {
 	getKheopskit$,
 	getWalletId,
 	isInjectedWallet,
+	type WalletAccountId,
 	type WalletConnectWallet,
 } from "@kheopskit/core"
 import {
@@ -14,6 +15,7 @@ import {
 import { bind } from "@react-rxjs/core"
 import type { InjectedPolkadotAccount } from "polkadot-api/pjs-signer"
 import {
+	BehaviorSubject,
 	catchError,
 	defer,
 	distinct,
@@ -195,29 +197,85 @@ export const injectedSubstrateAccounts$: Observable<InjectedSubstrateAccount[]> 
 	shareReplay({ bufferSize: 1, refCount: true })
 )
 
-const signableListingOf = (accounts: PolkadotAccount[], address: string) =>
-	accounts.find(
-		(account) => account.address === address && !account.isPlaceholder && !account.readonly
-	)
+export type WalletAccountRef = { walletAccountId: WalletAccountId; walletName: string }
 
-const signingStateFor = (address: string) =>
+export type WalletAccount = InjectedSubstrateAccount & WalletAccountRef
+
+export type Signer = string | { address: string; walletAccountId?: WalletAccountId }
+
+type LivePolkadotAccount = Exclude<PolkadotAccount, { isPlaceholder: true }>
+
+export type SigningAccount = { account: LivePolkadotAccount; pjsSigner: PjsSigner | undefined }
+
+export type WalletChoice = {
+	options: WalletAccount[]
+	choose: (option: WalletAccount | undefined) => void
+}
+
+const toWalletAccount = (account: PolkadotAccount): WalletAccount => ({
+	...toInjectedAccount(account),
+	walletAccountId: account.id,
+	walletName: account.walletName,
+})
+
+export const walletAccounts$: Observable<WalletAccount[]> = kheopskit$.pipe(
+	map(({ accounts }) => accounts.filter((account) => !account.readonly).map(toWalletAccount)),
+	shareReplay({ bufferSize: 1, refCount: true })
+)
+
+const walletChoiceSubject$ = new BehaviorSubject<WalletChoice | undefined>(undefined)
+
+export const [useWalletChoice, walletChoice$] = bind(walletChoiceSubject$)
+
+const askWhichWallet = (options: WalletAccount[]) =>
+	new Promise<WalletAccount | undefined>((resolve) => {
+		walletChoiceSubject$.value?.choose(undefined)
+		const choice: WalletChoice = {
+			options,
+			choose: (option) => {
+				if (walletChoiceSubject$.value === choice) walletChoiceSubject$.next(undefined)
+				resolve(option)
+			},
+		}
+		walletChoiceSubject$.next(choice)
+	})
+
+const stateWhen = (ready: (state: KheopskitState) => boolean) =>
 	firstValueFrom(
 		kheopskit$.pipe(
-			filter((state) => isSettled(state) || !!signableListingOf(state.accounts, address)),
-			timeout({ first: SIGNING_WALLET_WAIT_MS, with: () => kheopskit$ }),
-			map(({ accounts, wallets }) => ({
-				listing: signableListingOf(accounts, address),
-				wallets: wallets.filter(isLiveInjectedWallet),
-			}))
+			filter((state) => isSettled(state) || ready(state)),
+			timeout({ first: SIGNING_WALLET_WAIT_MS, with: () => kheopskit$ })
 		)
 	)
 
-export const txCreatorOf = async (address: string): Promise<TxCreator | undefined> =>
-	(await signingStateFor(address)).listing?.txCreator
+const isWritableListingOf = (address: string) => (account: PolkadotAccount) =>
+	account.address === address && !account.readonly
 
-export const pjsSignerOf = async (address: string): Promise<PjsSigner | undefined> => {
-	const { listing, wallets } = await signingStateFor(address)
-	return wallets.find((wallet) => wallet.id === listing?.walletId)?.extension?.signer
+const liveListing = (accounts: PolkadotAccount[], id: WalletAccountId) =>
+	accounts.find(
+		(account): account is LivePolkadotAccount =>
+			account.id === id && !account.isPlaceholder && !account.readonly
+	)
+
+const pairFor = async (signer: Signer): Promise<WalletAccountId | undefined> => {
+	if (typeof signer !== "string" && signer.walletAccountId) return signer.walletAccountId
+	const address = typeof signer === "string" ? signer : signer.address
+	const { accounts } = await stateWhen((state) => state.accounts.some(isWritableListingOf(address)))
+	const listings = accounts.filter(isWritableListingOf(address))
+	if (listings.length < 2) return listings[0]?.id
+	const chosen = await askWhichWallet(listings.map(toWalletAccount))
+	if (!chosen) throw new Error("Cancelled")
+	return chosen.walletAccountId
+}
+
+export const signingAccountFor = async (signer: Signer): Promise<SigningAccount | undefined> => {
+	const id = await pairFor(signer)
+	if (!id) return undefined
+	const { accounts, wallets } = await stateWhen((state) => !!liveListing(state.accounts, id))
+	const account = liveListing(accounts, id)
+	if (!account) return undefined
+	const wallet = wallets.filter(isLiveInjectedWallet).find(({ id }) => id === account.walletId)
+	return { account, pjsSigner: wallet?.extension?.signer }
 }
 
 export const [useInstalledSubstrateWallets, installedSubstrateWallets$] = bind(injectedWallets$, [])

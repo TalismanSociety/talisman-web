@@ -10,6 +10,7 @@ import LidoStakeSideSheet from "@/components/widgets/staking/lido/StakeSideSheet
 import SeekStakeSideSheet from "@/components/widgets/staking/providers/seek/SeekStakeSideSheet"
 import NominationPoolsStakeSideSheet from "@/components/widgets/staking/substrate/NominationPoolsStakeSideSheet"
 import { StakeSideSheet as SubtensorStakeSideSheet } from "@/components/widgets/staking/subtensor/StakeSideSheet"
+import { WalletChoiceDialog } from "@/components/widgets/WalletChoiceDialog"
 import { WalletConnectionSideSheet } from "@/components/widgets/WalletConnectionSideSheet"
 
 export const Layout = () => {
@@ -47,6 +48,7 @@ export const Layout = () => {
 					<SubtensorStakeSideSheet />
 					<LidoStakeSideSheet />
 					<WalletConnectionSideSheet />
+					<WalletChoiceDialog />
 				</main>
 
 				<SiteFooter className="mx-auto mt-16 w-full max-w-screen-xl px-8" />

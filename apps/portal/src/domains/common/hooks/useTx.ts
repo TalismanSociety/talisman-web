@@ -18,6 +18,7 @@ import { bumpChainReadId } from "@/domains/common/chainReadId"
 import { HarmlessError } from "@/domains/common/errors"
 import { toastExtrinsic } from "@/domains/common/utils/toast"
 import { signetAccount$, signetSdk } from "@/domains/extension/signet"
+import type { Signer } from "@/domains/extension/substrate"
 
 export type TxLoadable =
 	| { state: "idle"; contents: undefined }
@@ -79,15 +80,17 @@ const sendThroughSignet = async (tx: Transaction): Promise<TxResult> => {
 	throw new HarmlessError("Signet did not confirm the transaction")
 }
 
+const addressOf = (signer: Signer) => (typeof signer === "string" ? signer : signer.address)
+
 const submitTx = async (
 	genesisHash: string,
-	address: string,
+	signer: Signer,
 	tx: Transaction,
 	runtime: ChainRuntime,
 	watch: SubmitWatch
 ) => {
-	const txCreator = await txCreatorFor(genesisHash, address)
-	if (!txCreator) throw new Error(`No connected wallet can sign for ${address}`)
+	const txCreator = await txCreatorFor(genesisHash, signer)
+	if (!txCreator) throw new Error(`No connected wallet can sign for ${addressOf(signer)}`)
 	return watchTx(
 		tx.createSubmitAndWatch(txCreator, {
 			customSignedExtensions: customSignedExtensionsFor(genesisHash),
@@ -115,7 +118,7 @@ export const useTx = <Args extends unknown[]>(
 	builder.current = build
 
 	const signAndSend = useCallback(
-		async (address: string, ...args: Args) => {
+		async (signer: Signer, ...args: Args) => {
 			setLoadable((previous) => ({
 				state: "loading",
 				contents: previous.state === "loading" ? previous.contents : undefined,
@@ -127,10 +130,10 @@ export const useTx = <Args extends unknown[]>(
 					firstValueFrom(signetAccount$),
 				])
 				const tx = await builder.current(runtime, ...args)
-				const signingWithSignet = signetAccount?.address === address
+				const signingWithSignet = signetAccount?.address === addressOf(signer)
 				const promise = signingWithSignet
 					? sendThroughSignet(tx)
-					: submitTx(genesisHash, address, tx, runtime, {
+					: submitTx(genesisHash, signer, tx, runtime, {
 							onEvent: (event) => setLoadable({ state: "loading", contents: event }),
 							onInBestBlock: (event) => {
 								if (event.ok && analytics.enabled && network)

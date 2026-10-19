@@ -38,9 +38,8 @@ vi.mock("@/domains/chains/chaindata-provider", () => ({
 	}),
 }))
 vi.mock("@/domains/extension/substrate", () => ({
-	txCreatorOf: async (address: string) => (address === alice ? txCreator : undefined),
-	pjsSignerOf: async () => undefined,
-	injectedSubstrateAccounts$: of([]),
+	signingAccountFor: async (signer: string | { address: string }) =>
+		signer === alice ? { account: { address: alice, txCreator }, pjsSigner: undefined } : undefined,
 }))
 vi.mock("@/domains/extension/signet", () => ({ signetAccount$, signetSdk: () => ({ send }) }))
 vi.mock("@/domains/common/utils/toast", () => ({ toastExtrinsic }))
@@ -221,7 +220,10 @@ describe("useTx", () => {
 		const { result } = renderHook(() => useTx(GENESIS, () => tx))
 
 		await expect(
-			result.current.signAndSend("5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty")
+			result.current.signAndSend({
+				address: "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
+				walletAccountId: "polkadot:talisman::5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
+			})
 		).rejects.toThrow(
 			"No connected wallet can sign for 5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
 		)
@@ -238,6 +240,20 @@ describe("useTx", () => {
 		expect(send).toHaveBeenCalledWith("0x2912")
 		expect(calls.createSubmitAndWatch).not.toHaveBeenCalled()
 		expect(toastExtrinsic).not.toHaveBeenCalled()
+	})
+
+	it("hands the call data to Signet for the Signet account picked in an account selector", async () => {
+		signetAccount$.next({ address: alice })
+		send.mockResolvedValue({ ok: true, receipt: { txHash } })
+		const { tx, calls } = fakeTx()
+		const { result } = renderHook(() => useTx(GENESIS, () => tx))
+
+		await expect(result.current.signAndSend({ address: alice })).rejects.toBeInstanceOf(
+			HarmlessError
+		)
+
+		expect(send).toHaveBeenCalledWith("0x2912")
+		expect(calls.createSubmitAndWatch).not.toHaveBeenCalled()
 	})
 
 	it("fails loudly when Signet rejects the call", async () => {
