@@ -2,6 +2,7 @@ import { ClassNames, useTheme } from "@emotion/react"
 import { bind } from "@react-rxjs/core"
 import { useSignetSdk } from "@talismn/signet-apps-sdk"
 import { disconnect as disconnectCore } from "@wagmi/core"
+import { AnimatePresence } from "motion/react"
 import type { ButtonHTMLAttributes, DetailedHTMLProps } from "react"
 import { Suspense, useState } from "react"
 import { BehaviorSubject } from "rxjs"
@@ -327,9 +328,11 @@ const closeWalletConnectionSideSheet = () => walletConnectionSideSheetOpen$.next
 export const WalletConnectionSideSheet = () => {
 	const open = useWalletConnectionSideSheetOpen()
 
-	if (!open) {
-		return null
-	}
-
-	return <WalletConnectionSideSheetComponent onRequestDismiss={closeWalletConnectionSideSheet} />
+	return (
+		<AnimatePresence>
+			{open && (
+				<WalletConnectionSideSheetComponent onRequestDismiss={closeWalletConnectionSideSheet} />
+			)}
+		</AnimatePresence>
+	)
 }

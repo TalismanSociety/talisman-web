@@ -23,8 +23,20 @@ const slideInRight = keyframes`
   }
 `
 
+const slideOutRight = keyframes`
+  to {
+    transform: translateX(100%);
+  }
+`
+
 const slideUp = keyframes`
   from {
+    transform: translateY(100%);
+  }
+`
+
+const slideDown = keyframes`
+  to {
     transform: translateY(100%);
   }
 `
@@ -40,6 +52,13 @@ const backdropKeyframes = keyframes`
   }
 `
 
+const backdropOutKeyframes = keyframes`
+  to {
+    background: rgba(0,0,0,0);
+    backdrop-filter: blur(0);
+  }
+`
+
 const SIDE_SHEET_WIDE_BREAK_POINT = "768px"
 
 export const SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR = `@media(min-width: ${SIDE_SHEET_WIDE_BREAK_POINT})`
@@ -49,7 +68,6 @@ export const SideSheet = ({ title, children, ...props }: SideSheetProps) => {
 	return (
 		<Dialog
 			{...props}
-			onClickBackdrop={props.onRequestDismiss}
 			css={{
 				background: theme.color.background,
 				border: "none",
@@ -66,12 +84,21 @@ export const SideSheet = ({ title, children, ...props }: SideSheetProps) => {
 						animation: `${backdropKeyframes} .5s forwards`,
 					},
 				},
+				"&[data-closing]": {
+					animation: `${slideDown} .3s forwards`,
+					"::backdrop": {
+						animation: `${backdropOutKeyframes} .3s forwards`,
+					},
+				},
 				[`${SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR}`]: {
 					width: "min-content",
 					marginLeft: "auto",
 					marginRight: 0,
 					"&[open]": {
 						animation: `${slideInRight} .5s`,
+					},
+					"&[data-closing]": {
+						animation: `${slideOutRight} .3s forwards`,
 					},
 				},
 			}}

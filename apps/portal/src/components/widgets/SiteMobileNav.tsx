@@ -17,6 +17,18 @@ export type SiteMobileNavProps = {
 
 const Context = createContext<Pick<SiteMobileNavProps, "open" | "onRequestDismiss">>({})
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+`
+
+const fadeOut = keyframes`
+  to {
+    opacity: 0;
+  }
+`
+
 const backdropKeyframes = keyframes`
   from {
     background: rgba(18,18,18,0);
@@ -28,11 +40,18 @@ const backdropKeyframes = keyframes`
   }
 `
 
+const backdropOutKeyframes = keyframes`
+  to {
+    background: rgba(18,18,18,0);
+    backdrop-filter: blur(0);
+  }
+`
+
 export const SiteMobileNav = Object.assign(
 	({ open, onRequestDismiss, headerIcon, children, footer }: SiteMobileNavProps) => (
 		<Dialog
 			open={open}
-			onClickBackdrop={onRequestDismiss}
+			onRequestDismiss={onRequestDismiss}
 			css={{
 				width: "100%",
 				maxWidth: "100%",
@@ -43,10 +62,17 @@ export const SiteMobileNav = Object.assign(
 				padding: 0,
 				backgroundColor: "transparent",
 				"&[open]": {
+					animation: `${fadeIn} .5s ease`,
 					"::backdrop": {
 						background: "rgba(18,18,18,0.9)",
 						backdropFilter: "blur(32px)",
 						animation: `${backdropKeyframes} .5s ease forwards`,
+					},
+				},
+				"&[data-closing]": {
+					animation: `${fadeOut} .3s ease forwards`,
+					"::backdrop": {
+						animation: `${backdropOutKeyframes} .3s ease forwards`,
 					},
 				},
 			}}

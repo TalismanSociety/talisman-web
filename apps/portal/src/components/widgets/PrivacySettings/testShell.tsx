@@ -21,6 +21,7 @@ export const stubModalDialogs = () => {
 	HTMLDialogElement.prototype.close = function (this: HTMLDialogElement) {
 		this.removeAttribute("open")
 	}
+	HTMLDialogElement.prototype.getAnimations = () => []
 }
 
 export const renderInPortal = (children: ReactNode) =>

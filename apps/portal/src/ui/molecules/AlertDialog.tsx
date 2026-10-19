@@ -28,6 +28,13 @@ const show = keyframes`
   }
 `
 
+const hide = keyframes`
+  to {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+`
+
 const backdropKeyframes = keyframes`
   from {
     background: rgba(0,0,0,0);
@@ -36,6 +43,13 @@ const backdropKeyframes = keyframes`
   to {
     background: rgba(0,0,0,0.6);
     backdrop-filter: blur(16px);
+  }
+`
+
+const backdropOutKeyframes = keyframes`
+  to {
+    background: rgba(0,0,0,0);
+    backdrop-filter: blur(0);
   }
 `
 
@@ -56,9 +70,7 @@ export const AlertDialog = ({
 			elevation={0}
 			{...props}
 			title={undefined}
-			onClickBackdrop={onRequestDismiss}
-			onClose={onRequestDismiss}
-			onCancel={onRequestDismiss}
+			onRequestDismiss={onRequestDismiss}
 			css={{
 				padding: ALERT_DIALOG_PADDING,
 				border: "none",
@@ -69,6 +81,12 @@ export const AlertDialog = ({
 						background: "rgba(0,0,0,0.6)",
 						backdropFilter: "blur(16px)",
 						animation: `${backdropKeyframes} .5s ease forwards`,
+					},
+				},
+				"&[data-closing]": {
+					animation: `${hide} .3s ease forwards`,
+					"::backdrop": {
+						animation: `${backdropOutKeyframes} .3s ease forwards`,
 					},
 				},
 				width: "auto",
