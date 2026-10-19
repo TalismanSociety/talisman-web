@@ -71,7 +71,7 @@ const subscanAnswers = (status: number, body: unknown) =>
 const renderSheet = () =>
 	renderInPortal(
 		<Suspense fallback="Positions skeleton">
-			<NominationPoolsStatisticsSideSheet account={account} onRequestDismiss={() => {}} />
+			<NominationPoolsStatisticsSideSheet pool={pool} onRequestDismiss={() => {}} />
 		</Suspense>
 	)
 

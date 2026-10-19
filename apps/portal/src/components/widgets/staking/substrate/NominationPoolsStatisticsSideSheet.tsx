@@ -1,7 +1,7 @@
 import { useTheme } from "@emotion/react"
 import { eachDayOfInterval, isSameDay, subDays } from "date-fns"
-import type { PropsWithChildren, ReactNode } from "react"
-import { useMemo } from "react"
+import type { ReactNode } from "react"
+import { Suspense, useMemo } from "react"
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryTooltip } from "victory"
 import { AccountIcon } from "@/components/molecules/AccountIcon"
 import type { StakeStatus } from "@/components/recipes/StakeStatusIndicator"
@@ -10,11 +10,7 @@ import { RedactableBalance } from "@/components/widgets/RedactableBalance"
 import type { Account } from "@/domains/accounts/accounts"
 import { useChain, useNativeTokenDecimal } from "@/domains/chains/chains"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
-import {
-	type DerivedPool,
-	useApr,
-	usePoolStakes,
-} from "@/domains/staking/substrate/nominationPools/hooks"
+import { type DerivedPool, useApr } from "@/domains/staking/substrate/nominationPools/hooks"
 import { useChainToken } from "@/domains/staking/substrate/nominationPools/hooks/useBalances"
 import { useEraEtaFormatter } from "@/domains/staking/substrate/nominationPools/hooks/useEraEta"
 import {
@@ -22,6 +18,7 @@ import {
 	usePoolPayouts,
 } from "@/domains/staking/substrate/nominationPools/hooks/usePayouts"
 import { BarChart, Clock, Earn, ExternalLink, Percent, Zap } from "@/icons"
+import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 import { TonalIcon } from "@/ui/atoms/Icon"
 import { useSurfaceColorAtElevation } from "@/ui/atoms/Surface"
 import { Text } from "@/ui/atoms/Text"
@@ -32,7 +29,7 @@ import { Decimal } from "@/util/Decimal"
 import { truncateAddress } from "@/util/truncateAddress"
 
 type NominationPoolsStatisticsSideSheetProps = {
-	account: Account
+	pool: DerivedPool
 	onRequestDismiss: () => unknown
 }
 
@@ -52,143 +49,127 @@ const Stats = (props: {
 	mostRecentPayouts?: readonly PayoutEntry[]
 	unbondings: Array<{ eta: string; amount: string }>
 	subscanPayoutsUrl?: string
-	onRequestDismiss: () => unknown
 }) => {
 	const theme = useTheme()
 
 	const now = useMemo(() => props.currentDate ?? new Date(), [props.currentDate?.getTime()])
 
 	return (
-		<StatisticsSheet onRequestDismiss={props.onRequestDismiss}>
+		<div
+			css={{
+				display: "flex",
+				flexDirection: "column",
+				gap: "2.4rem",
+				[SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { width: "40rem" },
+			}}
+		>
+			<ListItem
+				headlineContent={props.account.name ?? truncateAddress(props.account.address)}
+				supportingContent={truncateAddress(props.account.address)}
+				leadingContent={<AccountIcon account={props.account} size="4rem" />}
+				css={{ paddingRight: 0, paddingLeft: 0 }}
+			/>
+			<Text.Body css={{ display: "flex", justifyContent: "space-between", gap: "0.8rem" }}>
+				<Text.Body>Pool</Text.Body>
+				<Text.Body>{props.poolName}</Text.Body>
+			</Text.Body>
 			<div
 				css={{
-					display: "flex",
-					flexDirection: "column",
-					gap: "2.4rem",
-					[SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { width: "40rem" },
+					display: "grid",
+					gridTemplateColumns: "repeat(auto-fit, minmax(min(15rem, 100%), 1fr))",
+					gap: "2.4rem 0.8rem",
 				}}
 			>
 				<ListItem
-					headlineContent={props.account.name ?? truncateAddress(props.account.address)}
-					supportingContent={truncateAddress(props.account.address)}
-					leadingContent={<AccountIcon account={props.account} size="4rem" />}
-					css={{ paddingRight: 0, paddingLeft: 0 }}
+					css={{ padding: 0 }}
+					leadingContent={
+						<TonalIcon>
+							<Zap />
+						</TonalIcon>
+					}
+					overlineContent="Total balance"
+					headlineContent={props.balance}
 				/>
-				<Text.Body css={{ display: "flex", justifyContent: "space-between", gap: "0.8rem" }}>
-					<Text.Body>Pool</Text.Body>
-					<Text.Body>{props.poolName}</Text.Body>
-				</Text.Body>
-				<div
-					css={{
-						display: "grid",
-						gridTemplateColumns: "repeat(auto-fit, minmax(min(15rem, 100%), 1fr))",
-						gap: "2.4rem 0.8rem",
-					}}
-				>
+				{props.rewards !== undefined && (
 					<ListItem
 						css={{ padding: 0 }}
 						leadingContent={
 							<TonalIcon>
-								<Zap />
+								<Earn />
 							</TonalIcon>
 						}
-						overlineContent="Total balance"
-						headlineContent={props.balance}
+						overlineContent="15 days rewards"
+						headlineContent={props.rewards}
 					/>
-					{props.rewards !== undefined && (
-						<ListItem
-							css={{ padding: 0 }}
-							leadingContent={
-								<TonalIcon>
-									<Earn />
-								</TonalIcon>
-							}
-							overlineContent="15 days rewards"
-							headlineContent={props.rewards}
-						/>
-					)}
-					<ListItem
-						css={{ padding: 0 }}
-						leadingContent={
-							<TonalIcon>
-								<Percent />
-							</TonalIcon>
-						}
-						overlineContent="APR"
-						headlineContent={props.apr}
-					/>
-					<ListItem
-						css={{ padding: 0 }}
-						leadingContent={
-							<TonalIcon>
-								<Clock />
-							</TonalIcon>
-						}
-						overlineContent="Current era ends"
-						headlineContent={props.nextEraEta}
-					/>
-				</div>
-				{props.last15DaysPayouts !== undefined && (
-					<PayoutsChart now={now} payouts={props.last15DaysPayouts} />
 				)}
-				<div css={{ flex: "33rem" }}>
-					{props.subscanPayoutsUrl !== undefined && (
-						<section css={{ marginBottom: "2.4rem" }}>
-							<Text.H4>Latest payouts</Text.H4>
-							<DescriptionList css={{ marginTop: "1.6rem", marginBottom: "1.6rem" }}>
-								{props.mostRecentPayouts !== undefined && (
-									<LatestPayouts payouts={props.mostRecentPayouts} />
-								)}
-								<DescriptionList.Description>
-									<DescriptionList.Term></DescriptionList.Term>
-									<DescriptionList.Details>
-										<Text.Noop.A
-											href={props.subscanPayoutsUrl}
-											target="_blank"
-											css={{
-												color: theme.color.primary,
-												display: "inline-flex",
-												alignItems: "center",
-												gap: "0.25em",
-											}}
-										>
-											View all on Subscan <ExternalLink size="1em" />
-										</Text.Noop.A>
-									</DescriptionList.Details>
-								</DescriptionList.Description>
-							</DescriptionList>
-						</section>
-					)}
-					<section>
-						<Text.H4>Unbondings</Text.H4>
-						<DescriptionList>
-							{props.unbondings.length <= 0 && <Text.Body>No active unbonding</Text.Body>}
-							{props.unbondings.map((x, index) => (
-								<DescriptionList.Description key={index} className="payout">
-									<DescriptionList.Term>{x.amount}</DescriptionList.Term>
-									<DescriptionList.Details>{x.eta}</DescriptionList.Details>
-								</DescriptionList.Description>
-							))}
+				<ListItem
+					css={{ padding: 0 }}
+					leadingContent={
+						<TonalIcon>
+							<Percent />
+						</TonalIcon>
+					}
+					overlineContent="APR"
+					headlineContent={props.apr}
+				/>
+				<ListItem
+					css={{ padding: 0 }}
+					leadingContent={
+						<TonalIcon>
+							<Clock />
+						</TonalIcon>
+					}
+					overlineContent="Current era ends"
+					headlineContent={props.nextEraEta}
+				/>
+			</div>
+			{props.last15DaysPayouts !== undefined && (
+				<PayoutsChart now={now} payouts={props.last15DaysPayouts} />
+			)}
+			<div css={{ flex: "33rem" }}>
+				{props.subscanPayoutsUrl !== undefined && (
+					<section css={{ marginBottom: "2.4rem" }}>
+						<Text.H4>Latest payouts</Text.H4>
+						<DescriptionList css={{ marginTop: "1.6rem", marginBottom: "1.6rem" }}>
+							{props.mostRecentPayouts !== undefined && (
+								<LatestPayouts payouts={props.mostRecentPayouts} />
+							)}
+							<DescriptionList.Description>
+								<DescriptionList.Term></DescriptionList.Term>
+								<DescriptionList.Details>
+									<Text.Noop.A
+										href={props.subscanPayoutsUrl}
+										target="_blank"
+										css={{
+											color: theme.color.primary,
+											display: "inline-flex",
+											alignItems: "center",
+											gap: "0.25em",
+										}}
+									>
+										View all on Subscan <ExternalLink size="1em" />
+									</Text.Noop.A>
+								</DescriptionList.Details>
+							</DescriptionList.Description>
 						</DescriptionList>
 					</section>
-				</div>
+				)}
+				<section>
+					<Text.H4>Unbondings</Text.H4>
+					<DescriptionList>
+						{props.unbondings.length <= 0 && <Text.Body>No active unbonding</Text.Body>}
+						{props.unbondings.map((x, index) => (
+							<DescriptionList.Description key={index} className="payout">
+								<DescriptionList.Term>{x.amount}</DescriptionList.Term>
+								<DescriptionList.Details>{x.eta}</DescriptionList.Details>
+							</DescriptionList.Description>
+						))}
+					</DescriptionList>
+				</section>
 			</div>
-		</StatisticsSheet>
+		</div>
 	)
 }
-
-const StatisticsSheet = (props: PropsWithChildren<{ onRequestDismiss: () => unknown }>) => (
-	<SideSheet
-		title={
-			<div css={{ display: "flex", alignItems: "center", gap: "0.25em" }}>
-				<BarChart /> Statistics
-			</div>
-		}
-		onRequestDismiss={props.onRequestDismiss}
-	>
-		{props.children}
-	</SideSheet>
-)
 
 const PayoutsChart = (props: { now: Date; payouts: readonly PayoutEntry[] }) => {
 	const theme = useTheme()
@@ -323,7 +304,7 @@ const LatestPayouts = (props: { payouts: readonly PayoutEntry[] }) => (
 )
 
 // TODO: Extract to reuseable recipe component
-const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: DerivedPool }) => {
+const ExistingPool = (props: { pool: DerivedPool }) => {
 	const chain = useChain()
 
 	const today = useMemo(() => new Date(), [])
@@ -338,7 +319,7 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
 	const last15DaysPayouts = usePoolPayouts(
 		chain.genesisHash,
 		chain.subscanUrl,
-		props.account.address,
+		props.pool.account.address,
 		poolId,
 		fromDate,
 		today
@@ -346,10 +327,10 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
 	const mostRecentPayouts = usePoolPayouts(
 		chain.genesisHash,
 		chain.subscanUrl,
-		props.account.address,
+		props.pool.account.address,
 		poolId
 	)
-	const chainAddress = useChainAddress(chain.genesisHash, props.account.address)
+	const chainAddress = useChainAddress(chain.genesisHash, props.pool.account.address)
 	const token = useChainToken(chain.genesisHash)
 
 	const last15DaysTotalPayouts = useMemo(
@@ -367,7 +348,7 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
 
 	return (
 		<Stats
-			account={props.account}
+			account={props.pool.account}
 			poolName={props.pool.poolName}
 			poolStatus={props.pool.status}
 			balance={<RedactableBalance>{balance.decimalAmount.toLocaleString()}</RedactableBalance>}
@@ -410,27 +391,37 @@ const ExistingPool = (props: NominationPoolsStatisticsSideSheetProps & { pool: D
 					new URL(`account/${chainAddress}?tab=paidout`, chain.subscanUrl).toString(),
 				[chainAddress, chain.subscanUrl]
 			)}
-			onRequestDismiss={props.onRequestDismiss}
 		/>
 	)
 }
 
-const NominationPoolsStatisticsSideSheet = (props: NominationPoolsStatisticsSideSheetProps) => {
-	const pool = usePoolStakes(props.account)
-
-	if (pool === undefined) {
-		return null
-	}
-
-	return (
-		<ErrorBoundary
-			renderFallback={(fallback) => (
-				<StatisticsSheet onRequestDismiss={props.onRequestDismiss}>{fallback}</StatisticsSheet>
-			)}
-		>
-			<ExistingPool {...props} pool={pool} />
+const NominationPoolsStatisticsSideSheet = (props: NominationPoolsStatisticsSideSheetProps) => (
+	<SideSheet
+		title={
+			<div css={{ display: "flex", alignItems: "center", gap: "0.25em" }}>
+				<BarChart /> Statistics
+			</div>
+		}
+		onRequestDismiss={props.onRequestDismiss}
+	>
+		<ErrorBoundary>
+			<Suspense
+				fallback={
+					<div
+						css={{
+							display: "flex",
+							justifyContent: "center",
+							[SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { width: "40rem" },
+						}}
+					>
+						<CircularProgressIndicator size="4rem" />
+					</div>
+				}
+			>
+				<ExistingPool pool={props.pool} />
+			</Suspense>
 		</ErrorBoundary>
-	)
-}
+	</SideSheet>
+)
 
 export default NominationPoolsStatisticsSideSheet

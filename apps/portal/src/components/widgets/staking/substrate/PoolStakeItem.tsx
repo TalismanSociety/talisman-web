@@ -200,7 +200,7 @@ const PoolStakeItem = ({ item }: { item: DerivedPool }) => {
 			/>
 			{statsDialogOpen && (
 				<NominationPoolsStatisticsSideSheet
-					account={item.account}
+					pool={item}
 					onRequestDismiss={() => setStatsDialogOpen(false)}
 				/>
 			)}
