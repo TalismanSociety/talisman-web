@@ -98,7 +98,7 @@ const ValidatorStakeItem = ({ stake }: { stake: ValidatorStake }) => {
 									</RedactableBalance>
 								}
 								onClick={() => {
-									void withdrawExtrinsic.signAndSend(stake.controller)
+									void withdrawExtrinsic.signAndSend({ address: stake.controller })
 								}}
 								loading={withdrawExtrinsic.state === "loading"}
 							/>

@@ -83,7 +83,7 @@ const DelegateUnstakeDialog = (props: DelegateUnstakeDialogProps) => {
 			}
 			newFiatAmount={newFiatAmount.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
 			onConfirm={() => {
-				void extrinsic.signAndSend(props.account.address).then(() => handleStakeInfoRefetch())
+				void extrinsic.signAndSend(props.account).then(() => handleStakeInfoRefetch())
 			}}
 			inputSupportingText={error?.message}
 			onDismiss={props.onRequestDismiss}

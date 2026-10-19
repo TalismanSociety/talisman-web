@@ -8,6 +8,7 @@ import { ChainContext } from "@/domains/chains/contexts"
 import type { SmartContract } from "@/domains/chains/portal-runtime"
 import { useTokenAmount, useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import { estimateTxFee, useTx } from "@/domains/common/hooks/useTx"
+import type { Signer } from "@/domains/extension/signer"
 import { BigIntMath } from "@/util/BigIntMath"
 import { LOADING, toLoadable } from "@/util/loadable"
 
@@ -211,7 +212,7 @@ export const useAddStakeForm = (account: Account, stake: Stake, dapp: SmartContr
 			inTransition ? undefined : stakedOf(stakerInfo) + (input.decimalAmount?.planck ?? 0n)
 		),
 		error,
-		extrinsic: { ...tx, signAndSend: (address: string) => tx.signAndSend(address, addStake) },
+		extrinsic: { ...tx, signAndSend: (signer: Signer) => tx.signAndSend(signer, addStake) },
 	}
 }
 
@@ -283,6 +284,6 @@ export const useUnstakeForm = (account: Account, stake: Stake, dapp: SmartContra
 			BigIntMath.max(0n, stakedOf(stakerInfo) - (input.decimalAmount?.planck ?? 0n))
 		),
 		error,
-		extrinsic: { ...tx, signAndSend: (address: string) => tx.signAndSend(address, unstake) },
+		extrinsic: { ...tx, signAndSend: (signer: Signer) => tx.signAndSend(signer, unstake) },
 	}
 }

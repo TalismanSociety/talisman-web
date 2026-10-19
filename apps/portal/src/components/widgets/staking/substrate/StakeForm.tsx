@@ -8,7 +8,7 @@ import { StakeForm as StakeFormComponent } from "@/components/recipes/StakeForm"
 import type { StakeStatus } from "@/components/recipes/StakeStatusIndicator"
 import { PoolSelectorDialog } from "@/components/recipes/StakeTargetSelectorDialog"
 import { useAccountSelector } from "@/components/widgets/AccountSelector"
-import type { Account } from "@/domains/accounts/accounts"
+import type { SignerAccount } from "@/domains/accounts/accounts"
 import { useWriteableSubstrateAccounts } from "@/domains/accounts/accounts"
 import { txFromCall } from "@/domains/chains/chain-runtime"
 import { type ChainInfo, useChain, useNativeTokenDecimal } from "@/domains/chains/chains"
@@ -59,19 +59,19 @@ import PoolClaimPermissionDialog, {
 } from "./PoolClaimPermissionDialog"
 import UnstakeDialog from "./UnstakeDialog"
 
-const ExistingPool = (props: { account: Account; showClaimPermission: boolean }) => {
+const ExistingPool = (props: { account: SignerAccount; showClaimPermission: boolean }) => {
 	const pool = usePoolStakes({ address: props.account.address })
 
 	const amount = useTokenAmountFromPlanck(pool?.poolMember.points)
 	const pendingRewards = useTokenAmountFromPlanck(pool?.pendingRewards)
 
-	const [addStakeAddress, setAddStakeAddress] = useState<string>()
+	const [addStakeAccount, setAddStakeAccount] = useState<SignerAccount>()
 
 	const [claimDialogOpen, setClaimDialogOpen] = useState(false)
 	const [claimPayoutLoadable, setClaimPayoutLoadable] = useTxLoadableState()
 	const [restakeLoadable, setRestakeLoadable] = useTxLoadableState()
 
-	const [unstakeDialogAddress, setUnstakeDialogAddress] = useState<string>()
+	const [unstakeAccount, setUnstakeAccount] = useState<SignerAccount>()
 	const genesisHash = useGenesisHash()
 	const withdrawExtrinsic = useTx(genesisHash, (runtime) =>
 		txFromCall(runtime, withdrawUnbondedCall(props.account.address, pool?.slashingSpan ?? 0))
@@ -121,7 +121,7 @@ const ExistingPool = (props: { account: Account; showClaimPermission: boolean })
 				withdrawChip={
 					<StakeFormComponent.ExistingPool.WithdrawChip
 						onClick={() => {
-							void withdrawExtrinsic.signAndSend(props.account.address)
+							void withdrawExtrinsic.signAndSend(props.account)
 						}}
 						loading={withdrawExtrinsic.state === "loading"}
 					/>
@@ -137,20 +137,20 @@ const ExistingPool = (props: { account: Account; showClaimPermission: boolean })
 				addButton={
 					pool !== undefined && (
 						<StakeFormComponent.ExistingPool.AddButton
-							onClick={() => setAddStakeAddress(props.account.address)}
+							onClick={() => setAddStakeAccount(props.account)}
 						/>
 					)
 				}
 				unstakeButton={
 					pool?.poolMember.points !== 0n && (
 						<StakeFormComponent.ExistingPool.UnstakeButton
-							onClick={() => setUnstakeDialogAddress(props.account.address)}
+							onClick={() => setUnstakeAccount(props.account)}
 						/>
 					)
 				}
 				readonly={props.account.readonly}
 			/>
-			<AddStakeDialog account={addStakeAddress} onDismiss={() => setAddStakeAddress(undefined)} />
+			<AddStakeDialog account={addStakeAccount} onDismiss={() => setAddStakeAccount(undefined)} />
 			<ClaimStakeDialog
 				open={claimDialogOpen}
 				onRequestDismiss={() => setClaimDialogOpen(false)}
@@ -158,10 +158,7 @@ const ExistingPool = (props: { account: Account; showClaimPermission: boolean })
 				onChangeClaimPayoutLoadable={setClaimPayoutLoadable}
 				onChangeRestakeLoadable={setRestakeLoadable}
 			/>
-			<UnstakeDialog
-				account={unstakeDialogAddress}
-				onDismiss={() => setUnstakeDialogAddress(undefined)}
-			/>
+			<UnstakeDialog account={unstakeAccount} onDismiss={() => setUnstakeAccount(undefined)} />
 			{claimPermissionDialogOpen && (
 				<PoolClaimPermissionDialog
 					account={props.account}
@@ -521,7 +518,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 								decimalAmount?.planck !== undefined &&
 								selectedPoolId !== undefined
 							) {
-								void joinPoolExtrinsic.signAndSend(selectedAccount.address)
+								void joinPoolExtrinsic.signAndSend(selectedAccount)
 							}
 						}}
 					/>

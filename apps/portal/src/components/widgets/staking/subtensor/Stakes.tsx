@@ -91,7 +91,7 @@ const Stake = ({ account, setShouldRenderLoadingSkeleton }: StakeProps) => {
 	const handleChangeValidator = useCallback(() => {
 		if (isReady)
 			extrinsic
-				.signAndSend(account.address)
+				.signAndSend(account)
 				.then(() => {
 					queryClient.invalidateQueries({ queryKey: ["stakeInfoForColdKey", account.address] })
 				})

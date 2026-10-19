@@ -4,7 +4,7 @@ import {
 	PoolClaimPermissionDialog as PoolClaimPermissionDialogComponent,
 	PoolClaimPermissionForm as PoolClaimPermissionFormComponent,
 } from "@/components/recipes/PoolClaimPermissionForm"
-import type { Account } from "@/domains/accounts/accounts"
+import type { SignerAccount } from "@/domains/accounts/accounts"
 import { txFromCall } from "@/domains/chains/chain-runtime"
 import { useChain } from "@/domains/chains/chains"
 import { assertChain } from "@/domains/chains/utils"
@@ -25,7 +25,7 @@ import {
 import { bindSuspended } from "@/util/loadable"
 
 type PoolClaimPermissionDialogProps = {
-	account: Account
+	account: SignerAccount
 	onRequestDismiss: () => unknown
 }
 
@@ -65,7 +65,10 @@ const [useMemberClaimPermission] = bindSuspended((genesisHash: string, address: 
 	)
 )
 
-const PoolClaimPermissionForm = (props: { account: Account; onRequestDismiss: () => unknown }) => {
+const PoolClaimPermissionForm = (props: {
+	account: SignerAccount
+	onRequestDismiss: () => unknown
+}) => {
 	const chain = useChain()
 
 	assertChain(chain, { hasNominationPools: true })
@@ -88,7 +91,7 @@ const PoolClaimPermissionForm = (props: { account: Account; onRequestDismiss: ()
 			permission={toUiPermission(permission)}
 			onChangePermission={(x) => setPermission(toSubstratePermission(x))}
 			onSubmit={() => {
-				void extrinsic.signAndSend(props.account.address)
+				void extrinsic.signAndSend(props.account)
 			}}
 			submitPending={extrinsic.state === "loading"}
 			isTalismanPool={

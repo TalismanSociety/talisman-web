@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { ClaimStakeDialog as ClaimStakeDialogComponent } from "@/components/recipes/ClaimStakeDialog"
-import type { Account } from "@/domains/accounts/accounts"
+import type { SignerAccount } from "@/domains/accounts/accounts"
 import { txFromCall } from "@/domains/chains/chain-runtime"
 import { useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import { type TxLoadable, useTx } from "@/domains/common/hooks/useTx"
@@ -10,7 +10,7 @@ import { useGenesisHash } from "@/domains/staking/substrate/nominationPools/hook
 
 type ClaimStakeDialogProps = {
 	open?: boolean
-	account: Account
+	account: SignerAccount
 	onRequestDismiss: () => unknown
 	onChangeClaimPayoutLoadable: (loadable: TxLoadable) => unknown
 	onChangeRestakeLoadable: (loadable: TxLoadable) => unknown
@@ -41,11 +41,11 @@ const ClaimStakeDialog = (props: ClaimStakeDialogProps) => {
 			fiatAmount={rewards.localizedFiatAmount ?? "..."}
 			onRequestDismiss={props.onRequestDismiss}
 			onRequestClaim={() => {
-				void claimPayoutExtrinsic.signAndSend(props.account.address)
+				void claimPayoutExtrinsic.signAndSend(props.account)
 				props.onRequestDismiss()
 			}}
 			onRequestReStake={() => {
-				void restakeExtrinsic.signAndSend(props.account.address)
+				void restakeExtrinsic.signAndSend(props.account)
 				props.onRequestDismiss()
 			}}
 		/>

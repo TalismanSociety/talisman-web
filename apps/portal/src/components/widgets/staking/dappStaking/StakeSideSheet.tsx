@@ -7,7 +7,7 @@ import { DappStakingForm, DappStakingSideSheet } from "@/components/recipes/Dapp
 import { DappSelectorDialog as DappSelectorDialogComponent } from "@/components/recipes/StakeTargetSelectorDialog"
 import { useAccountSelector } from "@/components/widgets/AccountSelector"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
-import type { Account } from "@/domains/accounts/accounts"
+import type { SignerAccount } from "@/domains/accounts/accounts"
 import { useWriteableSubstrateAccounts } from "@/domains/accounts/accounts"
 import {
 	type ChainInfo,
@@ -120,7 +120,7 @@ const EstimatedRewards = (props: { amount: bigint }) => {
 }
 
 type StakeFormProps = IncompleteStakeFormProps & {
-	account: Account
+	account: SignerAccount
 	dapp: SmartContract
 }
 
@@ -156,7 +156,7 @@ const StakeForm = (props: StakeFormProps) => {
 					disabled={!ready}
 					loading={extrinsic.state === "loading"}
 					onClick={() => {
-						void extrinsic.signAndSend(props.account.address)
+						void extrinsic.signAndSend(props.account)
 					}}
 				/>
 			}

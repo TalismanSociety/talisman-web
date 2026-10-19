@@ -106,13 +106,16 @@ export const useValidatorUnstakeForm = (controller?: string) => {
 		extrinsic: {
 			...unbondExtrinsic,
 			unbond: (controller: string, value: bigint) =>
-				unbondExtrinsic.signAndSend(controller, { type: "unbond", value }),
+				unbondExtrinsic.signAndSend({ address: controller }, { type: "unbond", value }),
 			unbondAll: async (controller: string) => {
 				if (data === undefined) throw new Error("Extrinsic not ready yet")
-				return await unbondExtrinsic.signAndSend(controller, {
-					type: "unbondAll",
-					active: data.active,
-				})
+				return await unbondExtrinsic.signAndSend(
+					{ address: controller },
+					{
+						type: "unbondAll",
+						active: data.active,
+					}
+				)
 			},
 		},
 		input,

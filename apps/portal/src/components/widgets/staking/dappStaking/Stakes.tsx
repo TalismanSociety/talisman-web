@@ -135,7 +135,7 @@ const Stake = ({
 								loading={claimAllRewardsExtrinsic.state === "loading"}
 								amount={amounts.totalRewards.decimalAmount?.toLocaleString()}
 								onClick={() => {
-									void claimAllRewardsExtrinsic.signAndSend(account.address, stake)
+									void claimAllRewardsExtrinsic.signAndSend(account, stake)
 								}}
 							/>
 						</ErrorBoundary>
@@ -148,7 +148,7 @@ const Stake = ({
 								loading={withdrawExtrinsic.state === "loading"}
 								amount={amounts.withdrawable.decimalAmount?.toLocaleString()}
 								onClick={() => {
-									void withdrawExtrinsic.signAndSend(account.address)
+									void withdrawExtrinsic.signAndSend(account)
 								}}
 							/>
 						</ErrorBoundary>
@@ -208,7 +208,7 @@ const Stake = ({
 					}}
 					requestReStakeInTransition={requestReStakeInTransition}
 					onRequestUnlock={() => {
-						void unlockExtrinsic.signAndSend(account.address, stake.locked)
+						void unlockExtrinsic.signAndSend(account, stake.locked)
 						setLockedDialogOpen(false)
 					}}
 				/>
