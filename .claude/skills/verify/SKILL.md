@@ -5,7 +5,7 @@ description: Drive the Talisman Portal (apps/portal, staking dashboard) the way 
 
 # Verify the Talisman Portal
 
-The user surface is the Vite SPA in `apps/portal`. A visitor lands on `/staking/providers`. With Talisman installed, the portal asks the wallet for its Substrate accounts on every load, and the visitor connects an Ethereum account from the wallet side sheet. There is no backend and no sign-in.
+The user surface is the Vite SPA in `apps/portal`. A connected visitor lands on `/staking/providers`; a visitor with no account stays on `/staking` behind the "Welcome to the Talisman Portal" guard. With Talisman installed, the portal asks the wallet for its Substrate accounts on every load, and the visitor connects an Ethereum account from the wallet side sheet. There is no backend and no sign-in.
 
 Each checkout, main or worktree, gets instances of its own. An instance is two things:
 
@@ -20,7 +20,7 @@ Run every command from the checkout root.
 
 A developer does this once, by hand. `instance.sh up` checks each item and names the one that is missing. An agent that hits a missing item reports it and stops: it never creates accounts, backups or passwords.
 
-1. **Tools**: Docker (Docker Engine on Linux, Docker Desktop or OrbStack on macOS), Node 22 or later, curl, lsof, jq, ImageMagick 7 (`magick`, for parity's pixel count), and the agent-browser CLI (`npm install -g agent-browser`). The checkout's own package manager runs from the checkout: yarn from `.yarnrc.yml`'s `yarnPath` through node, so corepack is not needed, or pnpm once the repo has a `pnpm-lock.yaml`.
+1. **Tools**: Docker (Docker Engine on Linux, Docker Desktop or OrbStack on macOS), Bash 4 or later (macOS ships 3.2: `brew install bash`), Node 22.18 or later (`.nvmrc` pins 24; the build runs `node scripts/*.ts`), pnpm, curl, lsof, jq, ImageMagick 7 (`magick`, for parity's pixel count), and the agent-browser CLI (`npm install -g agent-browser`). The repo uses pnpm. A baseline commit from before pnpm runs yarn from its `.yarnrc.yml`'s `yarnPath` through node, so corepack is not needed.
 2. **Test wallet**: in your browser's Talisman, use a recovery phrase made for testing only. It needs a Substrate account and an Ethereum account named so that `bin/talisman.mjs accounts` lists `Guardians SUB` and `Guardians EVM`, or set `PARITY_SUB_ACCOUNT` and `PARITY_EVM_ACCOUNT` to your names. Parity never signs anything.
 3. **Backup**: open `chrome-extension://fijngjgcjhjmmpcmkeiomlglpeiijkld/support.html` in the browser where Talisman is installed, click **Backup**, then **Save**. Then:
 
@@ -54,7 +54,7 @@ A test account is an account of `~/.talisman-dev/verify-backup.json`, and nothin
 .claude/skills/verify/bin/instance.sh up
 ```
 
-It installs the checkout when `node_modules` is missing, starts the dev server (or reuses the one it started before), starts or reuses the container, closes leftover `about:blank` tabs, unlocks the wallet, runs the doctor, and records the instance in `.tmp/verify/instance.env`. Ready means the doctor printed only `PASS` lines: `up` exits 1 when the doctor fails. A container whose image, app server port, upstream or network changed is recreated, which resets its wallet to the baked state. Containers run on the Docker network `talisman-web-verify`, created with inter-container traffic off, so only the port published on the host's loopback reaches CDP. Each container is capped at 4 GB of memory with no swap (peak seen: 2.6 GB), so a lane pair never takes more than 8 GB plus its two host app servers (about 0.5 GB each).
+It installs the checkout when `node_modules` is missing, starts the dev server (or reuses the one it started before), starts or reuses the container, closes leftover `about:blank` tabs, unlocks the wallet, runs the doctor, and records the instance in `.tmp/verify/instance.env`. Ready means the doctor printed only `PASS` lines: `up` exits 1 when the doctor fails. A container whose image, app server port, upstream or network changed is recreated, which resets its wallet to the baked state. Containers run on the Docker network `talisman-web-verify`, created with inter-container traffic off, so only the port published on the host's loopback reaches CDP. Each container is capped at 4 GB of memory with no swap (peak seen: 3.0 GB, on the CSP lane), so a lane pair never takes more than 8 GB plus its two host app servers (about 0.5 GB each).
 
 Without a local `apps/portal/.env`, the dev server runs with the committed `apps/portal/.env.example`. With a local `.env`, Vite reads that file alone.
 
@@ -76,7 +76,7 @@ RUN=.tmp/verify/runs/$(date +%Y%m%d-%H%M%S)-<feature>; mkdir -p "$RUN"
 
 - **The page**: `.claude/skills/verify/bin/ab <agent-browser command>` drives this checkout's browser. Open pages with `ab tab new http://localhost:3002/<route>`, then `ab wait --text "<heading>"`. `ab snapshot -i` lists the clickable elements with refs.
 - **Talisman popups**: agent-browser cannot see them. `bin/talisman.mjs text` prints `popup <id>`, then the pending request. `connect --account <name>` approves a connection request for exactly the named accounts (repeat `--account`), `site` prints the accounts the wallet connected to `localhost:3002`, `approve --signer <name> --popup <id>` signs that popup only when it is a signing request and that test account is its signer, `reject [--popup <id>]` cancels. Read the request (`text`) before approving.
-- **Connecting like a user**: the portal opens a Substrate connect popup on load; answer it with `talisman.mjs connect --account "Guardians SUB"`. For Ethereum, click the header's `Connected` button, then the Ethereum wallets' `Connect`, then `talisman.mjs connect --account "Guardians EVM"`.
+- **Connecting like a user**: until the wallet has authorised `localhost:3002`, the portal opens a Substrate connect popup on load; answer it with `talisman.mjs connect --account "Guardians SUB"`. For Ethereum, click the header's `Connected` button, then the Ethereum wallets' `Connect`, then `talisman.mjs connect --account "Guardians EVM"`.
 
 ## 4. Evidence
 
@@ -230,13 +230,13 @@ An Ethereum flow first waits for the header's `2 Connected`, and connects the Et
 | `seek-unstake`, `seek-cancel-unstake`, `seek-withdraw` | `requestWithdrawal`, `cancelWithdrawal`, `completeWithdrawal`                                                         | calldata only                                                                                                                                  |
 | `pools-join-avail`                                     | the Avail join with its `CheckAppId` extension                                                                        | calldata only: the account holds no AVAIL                                                                                                      |
 
-Not covered: Lido, whose every write happens inside the `stake.lido.fi` iframe, so the portal builds no Lido transaction; and dApp staking claim, unstake and withdraw, which need a staked position the account does not hold. `pools-join-avail` and `seek-unstake` report `unavailable` today: Avail's chaindata RPC is dead, so its form never renders, and Seek disables Unstake while a withdrawal is pending.
+Not covered: Lido, whose every write happens inside the `stake.lido.fi` iframe, so the portal builds no Lido transaction; and dApp staking claim, unstake and withdraw, which need a staked position the account does not hold. `pools-join-avail` and `seek-unstake` report `unavailable` today: `Guardians SUB` holds no AVAIL, so the Avail form reads "Insufficient balance" and keeps Stake disabled, and Seek disables Unstake while a withdrawal is pending.
 
 **Adding a flow.** Add it next to its product, run `smoke.sh <flow>` twice on an unmodified checkout, and see `same` both times. Then change one argument of its transaction builder in a scratch edit, see `differ` naming the flow, and revert.
 
 ## CSP violation check
 
-`bin/csp.sh` proves that the portal stays inside its Content Security Policy. The build appends a `Content-Security-Policy-Report-Only` line to `dist/client/_headers` (`apps/portal/scripts/csp-headers.ts`). A report-only policy blocks nothing, so this check is what shows it is safe to enforce.
+`bin/csp.sh` proves that the portal stays inside its Content Security Policy. The build appends a `Content-Security-Policy-Report-Only` line to `dist/client/_headers` (`apps/portal/scripts/csp-headers.ts`). A report-only policy blocks nothing, so this check is what shows it is safe to enforce. The enforced `Content-Security-Policy` beside it holds only `frame-ancestors` (`apps/portal/scripts/frame-ancestors.ts`).
 
 ```sh
 .claude/skills/verify/bin/csp.sh                          # every parity route, both viewports, then every smoke flow
@@ -272,6 +272,7 @@ All in `.claude/skills/verify/bin/`. Each finds this checkout's instance from `.
 | `worker.mjs`      | `worker.mjs <Worker build dir> <port>`, started by `instance.sh serve` with a build                                                                  | the build's Worker in `wrangler dev`, with the TDA key from the environment or the main checkout's `.env`, log redacted |
 | `tda-key.mjs`     | `check`, `scan <path>…`                                                                                                                              | whether a TDA key is found; which files hold its value (exit 1 on any)                 |
 | `proxy.mjs`       | `proxy.mjs <https://host> <port>`, started by `instance.sh serve` with an origin                                                                     | a deployed site, request by request                                                   |
+| `lib.mjs`         | imported by the `.mjs` helpers; `lib.mjs` alone prints the instance's CDP port (`ab` uses it)                                                        | CDP targets and evaluation, the instance env, the backup's test accounts              |
 | `toolchain.sh`    | sourced                                                                                                                                              | install, env and Worker build (`build:portal`) of a checkout with its own toolchain   |
 | `app-socket.mjs`  | `app-socket.mjs <socket> <port>`, started by `instance.sh`                                                                                           | on a native Linux engine, the app server through the unix socket the container mounts |
 
@@ -290,7 +291,8 @@ Rebuild after you replace `~/.talisman-dev/verify-backup.json` too. A Talisman u
 
 ## Gotchas
 
-- **The doctor fails "the portal renders" with a blank page on the dev server**: read the page errors (`ab errors`). `Error: env var VITE_SIMPLESWAP_API_KEY not set` means a local `apps/portal/.env` lacks the key: add it, then `instance.sh down` and `up`.
+- **The doctor fails "the portal renders" with a blank page on the dev server**: read the page errors (`ab errors`).
+- **Bittensor positions show validator addresses instead of names (`Yuma`) on the dev instance**: under `vite dev` the client calls each server function at `<page path>/undefined<id>` instead of `/_serverFn/<id>`, so no TDA data loads, key or not. Check Bittensor rows on a Worker instance (`instance.sh serve <id> <Worker build dir>`) or with the lanes.
 - **Wallet locked** (`talisman.mjs` exits 3, or the doctor fails "wallet is unlocked"): `talisman.mjs unlock`. Restarting a container locks the wallet; `up` and `serve` unlock it.
 - **A click reports `✓ Done` and nothing happens**: agent-browser drives the newest tab, so a tab that a script opened through CDP takes every later `ab` command. `ab tab list` marks the tab it drives with `→`. Switch back with `ab tab <id>`, or close the stray tab.
 - **The first `instance.sh build` fails with `ReferenceError: chrome is not defined`**: Talisman's service worker had not finished starting. `restore-backup.mjs` now waits for it; run `build` again if it still happens.
