@@ -1,6 +1,5 @@
 import {
-	createKheopskitStore,
-	getKheopskit$,
+	createKheopskit,
 	getWalletId,
 	isInjectedWallet,
 	type WalletAccountId,
@@ -61,7 +60,10 @@ const SIGNING_WALLET_WAIT_MS = 10_000
 
 const appName = import.meta.env.VITE_APPLICATION_NAME ?? "Talisman"
 
-const store = createKheopskitStore()
+const { kheopskit$: liveKheopskit$, store } = createKheopskit({
+	appName,
+	platforms: [polkadot({ accountTypes: ["sr25519", "ed25519", "ecdsa", "ethereum"] })],
+})
 
 const legacyWalletId$ = persistedState(
 	"connected-substrate-extension",
@@ -71,15 +73,7 @@ const legacyWalletId$ = persistedState(
 if (legacyWalletId$.value) store.rememberWallet(getWalletId("polkadot", legacyWalletId$.value))
 legacyWalletId$.next(undefined)
 
-const kheopskit$ = defer(() =>
-	getKheopskit$(
-		{
-			appName,
-			platforms: [polkadot({ accountTypes: ["sr25519", "ed25519", "ecdsa", "ethereum"] })],
-		},
-		{ store }
-	)
-).pipe(
+const kheopskit$ = liveKheopskit$.pipe(
 	catchError((error) => {
 		console.error("The wallet bridge stopped; keeping the last known wallets and accounts", error)
 		return NEVER

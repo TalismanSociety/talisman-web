@@ -1,3 +1,4 @@
+import { getWalletAccountId } from "@kheopskit/core"
 import { createFakePolkadotExtension } from "@kheopskit/core/testing"
 import { Subscribe } from "@react-rxjs/core"
 import { render } from "@testing-library/react"
@@ -16,10 +17,11 @@ vi.mock("@kheopskit/core", async (importOriginal) => {
 	const { concat, concatMap, of, switchMap, throwError, timer } = await import("rxjs")
 	return {
 		...original,
-		getKheopskit$: (...args: Parameters<typeof original.getKheopskit$>) =>
-			original
-				.getKheopskit$(...args)
-				.pipe(
+		createKheopskit: ((...args: Parameters<typeof original.createKheopskit>) => {
+			const kit = original.createKheopskit(...args)
+			return {
+				...kit,
+				kheopskit$: kit.kheopskit$.pipe(
 					concatMap((state) =>
 						bridge.failAfterAccounts && state.accounts.length > 0
 							? concat(
@@ -29,6 +31,8 @@ vi.mock("@kheopskit/core", async (importOriginal) => {
 							: of(state)
 					)
 				),
+			}
+		}) as typeof original.createKheopskit,
 	}
 })
 
@@ -103,6 +107,23 @@ describe("substrate wallet hooks", () => {
 		)
 
 		expect(renders).toEqual([[true, ["Guardians SUB"]]])
+		bridge.failAfterAccounts = false
+	})
+
+	it("signs through a wallet the portal keeps after the wallet bridge errors", async () => {
+		bridge.failAfterAccounts = true
+		vi.spyOn(console, "error").mockImplementation(() => undefined)
+		const talisman = createFakePolkadotExtension({ name: "talisman", accounts: [alice] })
+		harness = await load()
+		await vi.waitFor(() => expect(console.error).toHaveBeenCalled())
+
+		const signing = await harness.signingAccountFor({
+			address: alice.address,
+			walletAccountId: getWalletAccountId("polkadot:talisman", alice.address),
+		})
+		await signing?.pjsSigner?.signRaw({ address: alice.address, data: "0x00", type: "bytes" })
+
+		expect(talisman.signRawCalls()).toHaveLength(1)
 		bridge.failAfterAccounts = false
 	})
 
