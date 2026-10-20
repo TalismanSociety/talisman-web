@@ -66,7 +66,10 @@ export default defineConfig({
 	},
 	plugins: [
 		cloudflare({ viteEnvironment: { name: "ssr" } }),
-		tanstackStart({ spa: { enabled: true, prerender: { outputPath: "/index" } } }),
+		tanstackStart({
+			spa: { enabled: true, prerender: { outputPath: "/index" } },
+			router: { routeFileIgnorePattern: "\\.test\\.tsx?$" },
+		}),
 		react({ jsxImportSource: "@emotion/react" }),
 		babel({ plugins: ["@emotion/babel-plugin"] }),
 		svgr(),
