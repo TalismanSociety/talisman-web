@@ -25,13 +25,13 @@ jobs:
       - run: pnpm --filter @talismn/portal chaindata
       - run: pnpm verify
       - id: diff
-        run: git diff --quiet -- apps/portal/public/chaindata.json apps/portal/src/domains/staking/subtensor/subnets.json || echo "changed=true" >> "$GITHUB_OUTPUT"
+        run: git diff --quiet -- apps/portal/src/domains/chains/chaindata.json apps/portal/src/domains/staking/subtensor/subnets.json || echo "changed=true" >> "$GITHUB_OUTPUT"
       - if: steps.diff.outputs.changed == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: chaindata
           path: |
-            apps/portal/public/chaindata.json
+            apps/portal/src/domains/chains/chaindata.json
             apps/portal/src/domains/staking/subtensor/subnets.json
           if-no-files-found: error
           retention-days: 1
@@ -65,7 +65,7 @@ jobs:
           export GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $auth"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "🍱 Update chaindata" -- apps/portal/public/chaindata.json apps/portal/src/domains/staking/subtensor/subnets.json
+          git commit -m "🍱 Update chaindata" -- apps/portal/src/domains/chains/chaindata.json apps/portal/src/domains/staking/subtensor/subnets.json
           git push --force origin "HEAD:refs/heads/$BRANCH"
           if [ -z "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
             gh pr create --base "$GITHUB_REF_NAME" --head "$BRANCH" --title "🍱 Update chaindata" --body ""

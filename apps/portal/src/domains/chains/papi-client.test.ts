@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import { networks } from "../../../public/chaindata.json"
+import { networks } from "./chaindata.json"
 
 const { createWsClient, createClient, getWsProvider, withLegacy } = vi.hoisted(() => ({
 	createWsClient: vi.fn((rpcs: string | string[], _options?: object) => ({ rpcs })),

@@ -4,6 +4,7 @@ import { act, renderHook } from "@testing-library/react"
 import type { ReactNode } from "react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
+import chaindataPath from "@/domains/chains/chaindata.json?url"
 import { SEEK_TOKEN_ID } from "@/domains/staking/seek/constants"
 import {
 	COINS_API_URL,
@@ -14,6 +15,8 @@ import {
 
 import { BALANCES_CACHE_KEY } from "./balances-cache"
 import { currencyConfig } from "./currency"
+
+const chaindataUrl = new URL(chaindataPath, location.origin).href
 
 const nativeToken = (networkId: string, coingeckoId?: string) => ({
 	id: `${networkId}:substrate-native`,
@@ -64,8 +67,7 @@ describe("token prices", () => {
 		coins = async (init) => coinsApiReply(init, prices)
 		fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
 			const url = String(input)
-			if (url === `${location.origin}/chaindata.json`)
-				return new Response(JSON.stringify(chaindata))
+			if (url === chaindataUrl) return new Response(JSON.stringify(chaindata))
 			if (url === COINS_API_URL) return await coins(init)
 			return new Response(null, { status: 404 })
 		})

@@ -15,7 +15,7 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.node.json",
     "e2e": "playwright test",
     "codegen:nova": "graphql-codegen --require dotenv/config --config codegen.nova.ts",
-    "chaindata": "node scripts/chaindata.ts && biome format --write public/chaindata.json src/domains/staking/subtensor/subnets.json",
+    "chaindata": "node scripts/chaindata.ts && biome format --write src/domains/chains/chaindata.json src/domains/staking/subtensor/subnets.json",
     "posthog:provision": "tsx scripts/posthog/provision.ts"
   },
   "dependencies": {

@@ -2,6 +2,7 @@ import type { ChaindataFile } from "@talismn/chaindata-provider"
 import { firstValueFrom } from "rxjs"
 import { expect, it, vi } from "vitest"
 
+import chaindataUrl from "./chaindata.json?url"
 import { networksById$ } from "./chaindata-provider"
 
 const chaindata: ChaindataFile = {
@@ -38,7 +39,7 @@ const chaindata: ChaindataFile = {
 }
 
 it("loads chaindata from the app's own origin only", async () => {
-	const expectedUrl = `${location.origin}/chaindata.json`
+	const expectedUrl = new URL(chaindataUrl, location.origin).href
 	const fetch = vi.fn(async (input: RequestInfo | URL) =>
 		String(input) === expectedUrl
 			? new Response(JSON.stringify(chaindata))
