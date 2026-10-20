@@ -9,7 +9,7 @@ import { PORTAL_NETWORKS } from "../src/domains/chains/portal-networks.ts"
 import { bittensorSubnets } from "./chaindata/subnets.ts"
 import { trimChaindata } from "./chaindata/trim.ts"
 
-const OUTPUT_PATH = "public/chaindata.json"
+const OUTPUT_PATH = "src/domains/chains/chaindata.json"
 const SUBNETS_PATH = "src/domains/staking/subtensor/subnets.json"
 
 const response = await fetch(DEFAULT_CHAINDATA_URL)

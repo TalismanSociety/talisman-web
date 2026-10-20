@@ -2,7 +2,7 @@ import type { ChaindataFile } from "@talismn/chaindata-provider"
 import { firstValueFrom } from "rxjs"
 import { expect, it, vi } from "vitest"
 
-import { networksById$ } from "./chaindata-provider"
+import { chaindataUrl, networksById$ } from "./chaindata-provider"
 
 const chaindata: ChaindataFile = {
 	networks: [
@@ -38,9 +38,8 @@ const chaindata: ChaindataFile = {
 }
 
 it("loads chaindata from the app's own origin only", async () => {
-	const expectedUrl = `${location.origin}/chaindata.json`
 	const fetch = vi.fn(async (input: RequestInfo | URL) =>
-		String(input) === expectedUrl
+		String(input) === chaindataUrl()
 			? new Response(JSON.stringify(chaindata))
 			: new Response(null, { status: 404 })
 	)
@@ -49,5 +48,7 @@ it("loads chaindata from the app's own origin only", async () => {
 	const networks = await firstValueFrom(networksById$)
 
 	expect(Object.keys(networks)).toEqual(["portal-test"])
-	expect(fetch.mock.calls.map(([input]) => String(input))).toEqual([expectedUrl])
+	expect(fetch.mock.calls.map(([input]) => new URL(String(input)).origin)).toEqual([
+		location.origin,
+	])
 })

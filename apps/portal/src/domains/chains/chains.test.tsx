@@ -5,6 +5,7 @@ import type { ReactNode } from "react"
 import { Suspense } from "react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
+import { chaindataUrl } from "@/domains/chains/chaindata-provider"
 import { COINS_API_URL, coinsApiReply } from "@/test/coins-api"
 
 const MAINNET = `0x${"11".repeat(32)}` as const
@@ -76,7 +77,7 @@ const prices = { "portal-coin": { usd: 2.5, eur: 2 }, "testnet-coin": { usd: 9, 
 const fetchStub = () =>
 	vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
 		const url = String(input)
-		if (url === `${location.origin}/chaindata.json`) return new Response(JSON.stringify(chaindata))
+		if (url === chaindataUrl()) return new Response(JSON.stringify(chaindata))
 		if (url === COINS_API_URL) return coinsApiReply(init, prices)
 		return new Response(null, { status: 404 })
 	})
@@ -155,7 +156,7 @@ describe("chains", () => {
 
 	it("prices a token at 0 when the coins api fails, without throwing", async () => {
 		fetch.mockImplementation(async (input: RequestInfo | URL) =>
-			String(input) === `${location.origin}/chaindata.json`
+			String(input) === chaindataUrl()
 				? new Response(JSON.stringify(chaindata))
 				: new Response("down", { status: 503 })
 		)

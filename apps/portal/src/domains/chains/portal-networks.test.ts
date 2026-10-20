@@ -1,7 +1,7 @@
 import { ChaindataFileSchema } from "@talismn/chaindata-provider"
 import { expect, it } from "vitest"
 
-import chaindata from "../../../public/chaindata.json"
+import chaindata from "./chaindata.json"
 import { PORTAL_NETWORKS } from "./portal-networks"
 
 const parsed = ChaindataFileSchema.parse(chaindata)

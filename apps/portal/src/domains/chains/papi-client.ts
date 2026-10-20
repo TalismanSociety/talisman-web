@@ -2,9 +2,8 @@ import { withLegacy } from "@polkadot-api/ws-middleware"
 import { getWsProvider, type Middleware } from "@polkadot-api/ws-provider"
 import { createClient, type PolkadotClient } from "polkadot-api"
 import { createWsClient } from "polkadot-api/ws"
-
-import { networks } from "../../../public/chaindata.json"
 import { withAvailHeaders } from "./avail-headers"
+import { networks } from "./chaindata.json"
 import { chainMetadataCache } from "./metadata-cache"
 
 type ShippedNetwork = { id: string; genesisHash?: string; rpcs?: string[] }

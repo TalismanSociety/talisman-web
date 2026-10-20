@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
+import shippedChaindata from "@/domains/chains/chaindata.json"
 import { PORTAL_NETWORKS } from "@/domains/chains/portal-networks"
-import shippedChaindata from "../../../../public/chaindata.json"
 import { isCatalogValue } from "../events"
 import { PORTFOLIO_CHAINS, PORTFOLIO_SYMBOLS, portfolioReportOf } from "./portfolio"
 
