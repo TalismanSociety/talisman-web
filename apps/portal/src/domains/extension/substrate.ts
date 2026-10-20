@@ -2,6 +2,7 @@ import {
 	createKheopskit,
 	getWalletId,
 	isInjectedWallet,
+	isWalletConnectWallet,
 	type WalletAccountId,
 	type WalletConnectWallet,
 } from "@kheopskit/core"
@@ -40,6 +41,7 @@ import { track } from "@/domains/analytics/client"
 import { substrateWalletOf } from "@/domains/analytics/events/extensions"
 import { toast } from "@/ui/molecules/Toaster"
 import { persistedState } from "@/util/persistedState"
+import { appName, portalWalletConnect } from "./walletconnect"
 
 export type SubstrateWallet = Exclude<PolkadotWallet, { isPlaceholder: true }>
 
@@ -58,11 +60,10 @@ const AUTO_CONNECT_WALLET_ID = getWalletId("polkadot", "talisman")
 
 const SIGNING_WALLET_WAIT_MS = 10_000
 
-const appName = import.meta.env.VITE_APPLICATION_NAME ?? "Talisman"
-
 const { kheopskit$: liveKheopskit$, store } = createKheopskit({
 	appName,
 	platforms: [polkadot({ accountTypes: ["sr25519", "ed25519", "ecdsa", "ethereum"] })],
+	walletConnect: portalWalletConnect,
 })
 
 const legacyWalletId$ = persistedState(
@@ -84,6 +85,12 @@ const kheopskit$ = liveKheopskit$.pipe(
 const isLiveInjectedWallet = (
 	wallet: PolkadotWallet | WalletConnectWallet
 ): wallet is SubstrateWallet => isInjectedWallet(wallet) && !wallet.isPlaceholder
+
+type LiveWalletConnectWallet = Exclude<WalletConnectWallet, { isPlaceholder: true }>
+
+const isLiveWalletConnectWallet = (
+	wallet: PolkadotWallet | WalletConnectWallet
+): wallet is LiveWalletConnectWallet => isWalletConnectWallet(wallet) && !wallet.isPlaceholder
 
 type KheopskitState = ObservedValueOf<typeof kheopskit$>
 
@@ -152,12 +159,16 @@ const connectionTracking$ = injectedWallets$.pipe(
 	)
 )
 
-const connectionErrors$ = injectedWallets$.pipe(
-	mergeMap((wallets) => wallets.flatMap((wallet) => (wallet.error ? [wallet.error] : []))),
-	distinct(),
-	tap((error) => {
-		toast.error("Wallet connection declined")
-		console.error(error)
+const connectionErrors$ = kheopskit$.pipe(
+	mergeMap(({ wallets }) =>
+		wallets.flatMap((wallet) => (!wallet.isPlaceholder && wallet.error ? [wallet] : []))
+	),
+	distinct((wallet) => wallet.error),
+	tap((wallet) => {
+		toast.error(
+			isWalletConnectWallet(wallet) ? "WalletConnect failed to open" : "Wallet connection declined"
+		)
+		console.error(wallet.error)
 	})
 )
 
@@ -240,3 +251,8 @@ export const waitForSigningAccount = async (walletAccountId: WalletAccountId) =>
 }
 
 export const [useInstalledSubstrateWallets, installedSubstrateWallets$] = bind(injectedWallets$, [])
+
+export const [useWalletConnectWallet, walletConnectWallet$] = bind(
+	kheopskit$.pipe(map(({ wallets }) => wallets.find(isLiveWalletConnectWallet))),
+	undefined
+)

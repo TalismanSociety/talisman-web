@@ -14,6 +14,7 @@ import { useConnectEvm, useEvmConnectors } from "@/domains/extension/evm"
 import {
 	useHasConnectedSubstrateWallet,
 	useInstalledSubstrateWallets,
+	useWalletConnectWallet,
 } from "@/domains/extension/substrate"
 import { Ethereum, Eye, Polkadot, Wallet } from "@/icons"
 import { Chip } from "@/ui/atoms/Chip"
@@ -167,6 +168,7 @@ const InstallTalisman = () => {
 
 const SubstrateWalletConnection = () => {
 	const wallets = useInstalledSubstrateWallets()
+	const walletConnectWallet = useWalletConnectWallet()
 	const hasSubWallet = useHasConnectedSubstrateWallet()
 	const hasSubAccounts = useInjectedAccounts().length !== 0
 
@@ -188,6 +190,18 @@ const SubstrateWalletConnection = () => {
 						onDisconnectRequest={() => wallet.disconnect().catch(console.error)}
 					/>
 				))}
+				{walletConnectWallet && (
+					<WalletConnection
+						name={walletConnectWallet.name}
+						iconUrl={walletConnectWallet.icon}
+						connected={walletConnectWallet.isConnected}
+						onConnectRequest={() => {
+							closeWalletConnectionSideSheet()
+							walletConnectWallet.connect().catch(() => undefined)
+						}}
+						onDisconnectRequest={() => walletConnectWallet.disconnect().catch(console.error)}
+					/>
+				)}
 			</div>
 			{hasSubWallet && !hasSubAccounts && (
 				<div className="mt-2 text-center text-lg text-orange-400">

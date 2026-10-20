@@ -1,4 +1,8 @@
-import { createKheopskitStore, getWalletAccountId } from "@kheopskit/core"
+import {
+	clearAllCachedObservables,
+	createKheopskitStore,
+	getWalletAccountId,
+} from "@kheopskit/core"
 import { createFakePolkadotExtension, type FakePolkadotAccount } from "@kheopskit/core/testing"
 import { firstValueFrom } from "rxjs"
 import { expect, vi } from "vitest"
@@ -83,6 +87,7 @@ export const load = async () => {
 			lifecycle.unsubscribe()
 			for (const subscription of subscriptions) subscription.unsubscribe()
 			Reflect.deleteProperty(globalThis, "injectedWeb3")
+			clearAllCachedObservables()
 			localStorage.clear()
 			window.dispatchEvent(new StorageEvent("storage", { key: "kheopskit", newValue: null }))
 		},
