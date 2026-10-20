@@ -1,10 +1,12 @@
 import { bind } from "@react-rxjs/core"
 import { ChaindataProvider, getRemoteChaindata$ } from "@talismn/chaindata-provider"
 import { defer, filter, type Observable } from "rxjs"
-import chaindataUrl from "./chaindata.json?url"
+import chaindataPath from "./chaindata.json?url"
+
+export const chaindataUrl = () => new URL(chaindataPath, location.origin).href
 
 export const chaindataProvider = new ChaindataProvider({
-	chaindata$: defer(() => getRemoteChaindata$(new URL(chaindataUrl, location.origin).href)),
+	chaindata$: defer(() => getRemoteChaindata$(chaindataUrl())),
 })
 
 const loaded = <T extends object>(source$: Observable<T>) =>
