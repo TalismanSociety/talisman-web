@@ -1,6 +1,5 @@
 import { walletConnect } from "@kheopskit/core/walletconnect"
-import type { CreateAppKit } from "@reown/appkit/core"
-import { defineChain } from "@reown/appkit/networks"
+import type { CaipNetwork, CreateAppKit } from "@reown/appkit/core"
 
 export const appName = import.meta.env.VITE_APPLICATION_NAME ?? "Talisman"
 
@@ -66,16 +65,22 @@ export const walletConnectNetworks = [
 	},
 ] as const satisfies readonly [WalletConnectNetwork, ...WalletConnectNetwork[]]
 
-const toAppKitNetwork = ({ name, genesisHash, symbol, decimals, rpc }: WalletConnectNetwork) => {
+const toAppKitNetwork = ({
+	name,
+	genesisHash,
+	symbol,
+	decimals,
+	rpc,
+}: WalletConnectNetwork): CaipNetwork => {
 	const id = genesisHash.slice(2, 34)
-	return defineChain({
+	return {
 		id,
 		name,
 		nativeCurrency: { name: symbol, symbol, decimals },
 		rpcUrls: { default: { http: [rpc] } },
 		chainNamespace: "polkadot",
 		caipNetworkId: `polkadot:${id}`,
-	})
+	}
 }
 
 const [primaryNetwork, ...otherNetworks] = walletConnectNetworks
