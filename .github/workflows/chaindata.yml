@@ -54,7 +54,7 @@ jobs:
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: chaindata
-          path: apps/portal
+          path: apps/portal/src/domains
       - env:
           GH_TOKEN: ${{ github.token }}
         run: |
