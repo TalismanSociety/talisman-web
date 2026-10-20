@@ -1,4 +1,11 @@
-import { createRootRoute, HeadContent, Navigate, Outlet, Scripts } from "@tanstack/react-router"
+import {
+	ClientOnly,
+	createRootRoute,
+	HeadContent,
+	Navigate,
+	Outlet,
+	Scripts,
+} from "@tanstack/react-router"
 import { lazy, type ReactNode, Suspense } from "react"
 import indexCss from "@/index.css?url"
 import { validateSearch } from "@/util/search"
@@ -64,10 +71,12 @@ const AppProviders = lazy(() => import("@/AppProviders"))
 
 function RootComponent() {
 	return (
-		<Suspense>
-			<AppProviders>
-				<Outlet />
-			</AppProviders>
-		</Suspense>
+		<ClientOnly>
+			<Suspense>
+				<AppProviders>
+					<Outlet />
+				</AppProviders>
+			</Suspense>
+		</ClientOnly>
 	)
 }
