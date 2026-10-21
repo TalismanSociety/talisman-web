@@ -19,6 +19,7 @@ import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/use
 import { setFeeEstimate } from "../breakdown"
 import { placeholderCall, stakeCall, txOf, unstakeCall } from "../calls"
 import type { SubtensorBalance } from "../chain"
+import { unstakeError } from "../validation"
 import type { StakeItem } from "./useStake"
 
 export const useAddStakeForm = (
@@ -252,27 +253,14 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 	)
 
 	const error = useMemo(() => {
-		if (input === "" || !available.decimalAmount) return
+		if (input === "" || !available.decimalAmount || !minimumFormatted.decimalAmount) return
 
-		if ((amount.decimalAmount?.planck ?? 0n) > available.decimalAmount.planck)
-			return new Error("Insufficient balance")
-
-		if ((amount.decimalAmount?.planck ?? 0n) < (minimumFormatted.decimalAmount?.planck ?? 0n)) {
-			return new Error(
-				`Minimum unstake amount is ${minimumFormatted.decimalAmount?.toLocaleStringPrecision()}`
-			)
-		}
-
-		if (
-			amount.decimalAmount &&
-			available.decimalAmount.planck - amount.decimalAmount.planck > 0n &&
-			available.decimalAmount.planck - amount.decimalAmount.planck <
-				(minimumFormatted.decimalAmount?.planck ?? 0n)
-		) {
-			return new Error(
-				`You must keep ${minimumFormatted.decimalAmount?.toLocaleString?.()} to continue staking`
-			)
-		}
+		const validationError = unstakeError(
+			amount.decimalAmount?.planck ?? 0n,
+			available.decimalAmount.planck,
+			minimumFormatted.decimalAmount
+		)
+		if (validationError) return validationError
 
 		if (isDynamicTaoStakeInfoError) {
 			return new Error("Failed to fetch dynamic tao stake info")

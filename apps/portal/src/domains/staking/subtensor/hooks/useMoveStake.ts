@@ -11,6 +11,7 @@ import { useTx } from "@/domains/common/hooks/useTx"
 import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo"
 
 import { moveStakeCall, placeholderCall, txOf } from "../calls"
+import { moveStakeError } from "../validation"
 import type { StakeItem } from "./useStake"
 
 type MoveItem = {
@@ -41,23 +42,17 @@ export const useMoveStake = ({ stake, destinationHotkey }: MoveItem) => {
 		stake?.symbol
 	)
 
-	const { isError, errorMessage } = useMemo(() => {
-		const validations: Array<{ condition: boolean; message: string }> = [
-			{
-				condition:
-					(formattedAlphaAmount.decimalAmount?.planck ?? 0n) <
-					(minimumFormatted.decimalAmount?.planck ?? 0n),
-				message: `Minimum staked amount for changing validator is ${minimumFormatted.decimalAmount?.toLocaleStringPrecision()}`,
-			},
-		]
-
-		const firstError = validations.find((v) => v.condition)
-
-		return {
-			isError: Boolean(firstError),
-			errorMessage: firstError?.message ?? null,
-		}
-	}, [formattedAlphaAmount.decimalAmount, minimumFormatted.decimalAmount])
+	const errorMessage = useMemo(
+		() =>
+			(minimumFormatted.decimalAmount &&
+				moveStakeError(
+					formattedAlphaAmount.decimalAmount?.planck ?? 0n,
+					minimumFormatted.decimalAmount
+				)) ??
+			null,
+		[formattedAlphaAmount.decimalAmount, minimumFormatted.decimalAmount]
+	)
+	const isError = errorMessage !== null
 
 	const isReady = stake && destinationHotkey && originHotkey !== destinationHotkey
 
