@@ -254,9 +254,16 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 
 		const validationError = unstakeError({
 			amount: amountPlanck,
-			available: available.decimalAmount.planck,
+			available: available.decimalAmount,
 			taoReceived,
 			minStake: nativeTokenAmount.fromPlanck(minimums.stake).decimalAmount,
+			minKeep: isRootnetStake
+				? minimums.nominatorStake
+				: ceilDiv(
+						minimums.nominatorStake * 10n ** BigInt(available.decimalAmount.decimals),
+						BigMath.max(limitPrice, 1n)
+					),
+			nominatorMinStake: nativeTokenAmount.fromPlanck(minimums.nominatorStake).decimalAmount,
 		})
 		if (validationError) return validationError
 
@@ -270,7 +277,9 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 		available.decimalAmount,
 		input,
 		isDynamicTaoStakeInfoError,
+		isRootnetStake,
 		isSlippageLoading,
+		limitPrice,
 		minimums,
 		nativeTokenAmount,
 		taoReceived,
@@ -316,6 +325,9 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 		resultingAlphaInTaoAmount,
 	}
 }
+
+const ceilDiv = (numerator: bigint, denominator: bigint) =>
+	(numerator + denominator - 1n) / denominator
 
 const callKey = (call: TxCallData) =>
 	JSON.stringify(call, (_, value) => (typeof value === "bigint" ? value.toString() : value))

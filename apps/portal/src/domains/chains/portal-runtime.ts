@@ -165,6 +165,7 @@ export type InflationConfiguration = {
 
 type Storage = {
 	System: { Account: StorageDescriptor<[SS58String], AccountInfo, false, never> }
+	SubtensorModule: { NominatorMinRequiredStake: StorageDescriptor<[], bigint, false, never> }
 	Balances: { TotalIssuance: StorageDescriptor<[], bigint, false, never> }
 	NominationPools: {
 		PoolMembers: StorageDescriptor<[SS58String], PoolMemberValue, true, never>

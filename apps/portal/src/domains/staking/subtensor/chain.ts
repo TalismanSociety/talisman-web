@@ -31,15 +31,16 @@ export const fetchSubnetPool = async (
 	)
 }
 
-export type SubtensorMinimums = { stake: bigint; transfer: bigint }
+export type SubtensorMinimums = { stake: bigint; transfer: bigint; nominatorStake: bigint }
 
 export const fetchMinimums = async (genesisHash: string): Promise<SubtensorMinimums> => {
-	const { SubtensorModule } = subtensorApi(genesisHash).constants
-	const [stake, transfer] = await Promise.all([
-		SubtensorModule.InitialMinStake(),
-		SubtensorModule.InitialMinTransfer(),
+	const { constants, query } = subtensorApi(genesisHash)
+	const [stake, transfer, nominatorFactor] = await Promise.all([
+		constants.SubtensorModule.InitialMinStake(),
+		constants.SubtensorModule.InitialMinTransfer(),
+		query.SubtensorModule.NominatorMinRequiredStake.getValue({ at: "best" }),
 	])
-	return { stake, transfer }
+	return { stake, transfer, nominatorStake: (stake * nominatorFactor) / 1_000_000n }
 }
 
 export type SubtensorBalance = {
