@@ -22,7 +22,14 @@ export const cspHeader = (html: string) => {
 		["img-src", ["'self'", "data:", "blob:", "https:"]],
 		["font-src", ["'self'", "https://fonts.gstatic.com"]],
 		["connect-src", ["'self'", "https:", "wss:"]],
-		["frame-src", ["https://stake.lido.fi"]],
+		[
+			"frame-src",
+			[
+				"https://stake.lido.fi",
+				"https://verify.walletconnect.org",
+				"https://verify.walletconnect.com",
+			],
+		],
 		["worker-src", ["'self'", "blob:"]],
 		["object-src", ["'none'"]],
 		["base-uri", ["'none'"]],
