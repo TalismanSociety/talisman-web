@@ -11,10 +11,10 @@ import talismanWalletLogo from "@/assets/talisman-wallet.svg"
 import { AddReadOnlyAccountDialog } from "@/components/widgets/AddReadOnlyAccountDialog"
 import { useInjectedAccounts, useWriteableEvmAccounts } from "@/domains/accounts/accounts"
 import { useConnectEvm, useEvmConnectors } from "@/domains/extension/evm"
+import { useWalletConnectWallet } from "@/domains/extension/kheopskit"
 import {
 	useHasConnectedSubstrateWallet,
 	useInstalledSubstrateWallets,
-	useWalletConnectWallet,
 } from "@/domains/extension/substrate"
 import { Ethereum, Eye, Polkadot, Wallet } from "@/icons"
 import { Chip } from "@/ui/atoms/Chip"

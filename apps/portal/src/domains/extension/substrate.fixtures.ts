@@ -51,6 +51,7 @@ const remembered = (): unknown =>
 export const load = async () => {
 	vi.resetModules()
 	const extension = await import("./substrate")
+	const kheopskit = await import("./kheopskit")
 	const signer = await import("./signer")
 	const accountsModule = await import("@/domains/accounts/accounts")
 	const lifecycle = extension.substrateWalletLifecycle$.subscribe()
@@ -69,6 +70,7 @@ export const load = async () => {
 		}),
 	]
 	return {
+		...kheopskit,
 		...extension,
 		...signer,
 		...accountsModule,

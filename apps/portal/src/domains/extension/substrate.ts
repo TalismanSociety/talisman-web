@@ -1,21 +1,14 @@
 import {
-	createKheopskit,
 	getWalletId,
 	isInjectedWallet,
 	isWalletConnectWallet,
 	type WalletAccountId,
 	type WalletConnectWallet,
 } from "@kheopskit/core"
-import {
-	type PolkadotAccount,
-	type PolkadotInjected,
-	type PolkadotWallet,
-	polkadot,
-} from "@kheopskit/core/polkadot"
+import type { PolkadotAccount, PolkadotInjected, PolkadotWallet } from "@kheopskit/core/polkadot"
 import { bind } from "@react-rxjs/core"
 import type { InjectedPolkadotAccount } from "polkadot-api/pjs-signer"
 import {
-	catchError,
 	defer,
 	distinct,
 	distinctUntilChanged,
@@ -27,7 +20,6 @@ import {
 	map,
 	merge,
 	mergeMap,
-	NEVER,
 	type Observable,
 	type ObservedValueOf,
 	share,
@@ -36,12 +28,10 @@ import {
 	tap,
 	timeout,
 } from "rxjs"
-import { z } from "zod"
 import { track } from "@/domains/analytics/client"
 import { substrateWalletOf } from "@/domains/analytics/events/extensions"
 import { toast } from "@/ui/molecules/Toaster"
-import { persistedState } from "@/util/persistedState"
-import { appName, portalWalletConnect } from "./walletconnect"
+import { kheopskit$, store } from "./kheopskit"
 
 export type SubstrateWallet = Exclude<PolkadotWallet, { isPlaceholder: true }>
 
@@ -60,37 +50,9 @@ const AUTO_CONNECT_WALLET_ID = getWalletId("polkadot", "talisman")
 
 const SIGNING_WALLET_WAIT_MS = 10_000
 
-const { kheopskit$: liveKheopskit$, store } = createKheopskit({
-	appName,
-	platforms: [polkadot({ accountTypes: ["sr25519", "ed25519", "ecdsa", "ethereum"] })],
-	walletConnect: portalWalletConnect,
-})
-
-const legacyWalletId$ = persistedState(
-	"connected-substrate-extension",
-	z.string().optional(),
-	undefined
-)
-if (legacyWalletId$.value) store.rememberWallet(getWalletId("polkadot", legacyWalletId$.value))
-legacyWalletId$.next(undefined)
-
-const kheopskit$ = liveKheopskit$.pipe(
-	catchError((error) => {
-		console.error("The wallet bridge stopped; keeping the last known wallets and accounts", error)
-		return NEVER
-	}),
-	shareReplay({ bufferSize: 1, refCount: false })
-)
-
 const isLiveInjectedWallet = (
 	wallet: PolkadotWallet | WalletConnectWallet
 ): wallet is SubstrateWallet => isInjectedWallet(wallet) && !wallet.isPlaceholder
-
-type LiveWalletConnectWallet = Exclude<WalletConnectWallet, { isPlaceholder: true }>
-
-const isLiveWalletConnectWallet = (
-	wallet: PolkadotWallet | WalletConnectWallet
-): wallet is LiveWalletConnectWallet => isWalletConnectWallet(wallet) && !wallet.isPlaceholder
 
 type KheopskitState = ObservedValueOf<typeof kheopskit$>
 
@@ -251,8 +213,3 @@ export const waitForSigningAccount = async (walletAccountId: WalletAccountId) =>
 }
 
 export const [useInstalledSubstrateWallets, installedSubstrateWallets$] = bind(injectedWallets$, [])
-
-export const [useWalletConnectWallet, walletConnectWallet$] = bind(
-	kheopskit$.pipe(map(({ wallets }) => wallets.find(isLiveWalletConnectWallet))),
-	undefined
-)
