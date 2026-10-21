@@ -23,7 +23,7 @@
     "@emotion/react": "^11.14.0",
     "@floating-ui/react": "^0.27.20",
     "@graphql-typed-document-node/core": "^3.2.0",
-    "@kheopskit/core": "6.0.0-rc.5",
+    "@kheopskit/core": "6.0.0-rc.6",
     "@polkadot-api/metadata-builders": "0.15.2",
     "@polkadot-api/signers-common": "0.4.0",
     "@polkadot-api/substrate-bindings": "0.21.2",
