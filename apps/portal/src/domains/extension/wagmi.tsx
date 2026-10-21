@@ -7,6 +7,7 @@ import { createConfig, fallback, http, WagmiProvider } from "wagmi"
 import { injected } from "wagmi/connectors"
 import { useNetworksById } from "@/domains/chains/chaindata-provider"
 import { evmChains as chains } from "./evmChains"
+import { walletConnectEvm } from "./walletconnect-evm"
 
 declare global {
 	interface Window {
@@ -18,7 +19,7 @@ declare global {
 const createWagmiConfigWithChaindata = (evmNetworks: EthNetwork[]) =>
 	createConfig({
 		chains,
-		connectors: [injected()],
+		connectors: [injected(), walletConnectEvm()],
 		transports: Object.fromEntries(
 			chains.map((chain) => {
 				const network = evmNetworks.find((n) => n.id === chain.id.toString())
@@ -31,7 +32,7 @@ const createWagmiConfigWithChaindata = (evmNetworks: EthNetwork[]) =>
 // Default config without chaindata (used during initial load)
 const defaultConfig = createConfig({
 	chains,
-	connectors: [injected()],
+	connectors: [injected(), walletConnectEvm()],
 	transports: Object.fromEntries(chains.map((chain) => [chain.id, fallback([http()])])) as Record<
 		(typeof chains)[number]["id"],
 		ReturnType<typeof fallback>

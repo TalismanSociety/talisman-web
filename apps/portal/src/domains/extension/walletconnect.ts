@@ -1,5 +1,7 @@
 import { walletConnect } from "@kheopskit/core/walletconnect"
 import type { CaipNetwork, CreateAppKit } from "@reown/appkit/core"
+import type { Chain } from "viem"
+import { evmChains } from "./evmChains"
 
 export const appName = import.meta.env.VITE_APPLICATION_NAME ?? "Talisman"
 
@@ -65,7 +67,7 @@ export const walletConnectNetworks = [
 	},
 ] as const satisfies readonly [WalletConnectNetwork, ...WalletConnectNetwork[]]
 
-const toAppKitNetwork = ({
+const toPolkadotNetwork = ({
 	name,
 	genesisHash,
 	symbol,
@@ -83,6 +85,12 @@ const toAppKitNetwork = ({
 	}
 }
 
+export const toEvmWalletConnectNetwork = (chain: Chain): CaipNetwork => ({
+	...chain,
+	chainNamespace: "eip155",
+	caipNetworkId: `eip155:${chain.id}`,
+})
+
 const [primaryNetwork, ...otherNetworks] = walletConnectNetworks
 
 export const portalWalletConnect = walletConnect({
@@ -93,7 +101,11 @@ export const portalWalletConnect = walletConnect({
 		url: origin,
 		icons: [`${origin}/apple-touch-icon.png`],
 	},
-	networks: [toAppKitNetwork(primaryNetwork), ...otherNetworks.map(toAppKitNetwork)],
+	networks: [
+		toPolkadotNetwork(primaryNetwork),
+		...otherNetworks.map(toPolkadotNetwork),
+		...evmChains.map(toEvmWalletConnectNetwork),
+	],
 	themeMode: "dark",
 	themeVariables: {
 		"--w3m-accent": "rgb(213,255,92)",

@@ -62,6 +62,9 @@ const showsCachedAccounts = ({ isHydrating, accounts }: KheopskitState) =>
 const isSettled = ({ isHydrating, wallets }: KheopskitState) =>
 	!isHydrating && wallets.every((wallet) => wallet.status !== "connecting")
 
+const isConnectedToPolkadot = (wallet: PolkadotWallet | WalletConnectWallet) =>
+	wallet.isConnected && (!isWalletConnectWallet(wallet) || wallet.platforms.includes("polkadot"))
+
 const injectedWallets$ = kheopskit$.pipe(
 	map(({ wallets }) => wallets.filter(isLiveInjectedWallet)),
 	shareReplay({ bufferSize: 1, refCount: true })
@@ -99,9 +102,7 @@ export const [useInitialisedSubstrateWallets, initialisedSubstrateWallets$] = bi
 
 export const [useHasConnectedSubstrateWallet, hasConnectedSubstrateWallet$] = bind(
 	kheopskit$.pipe(
-		map(
-			(state) => showsCachedAccounts(state) || state.wallets.some((wallet) => wallet.isConnected)
-		),
+		map((state) => showsCachedAccounts(state) || state.wallets.some(isConnectedToPolkadot)),
 		distinctUntilChanged()
 	),
 	false
