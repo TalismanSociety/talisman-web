@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-for owned in /pnpm-store /side ${VERIFY_VOLUMES:-}; do
+IFS=: read -ra volumes <<<"${VERIFY_VOLUMES:-}"
+for owned in /pnpm-store /side "${volumes[@]}"; do
   [[ -d $owned ]] && chown "$HOST_UID:$HOST_GID" "$owned"
 done
 chown -R "$HOST_UID:$HOST_GID" /profile

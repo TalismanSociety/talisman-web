@@ -8,6 +8,11 @@ evm_name=${PARITY_EVM_ACCOUNT:-Guardians EVM}
 consent=${CONSENT:-reject}
 [[ $consent =~ ^(reject|accept|unset)$ ]] || { echo "CONSENT must be reject, accept or unset, not \"$consent\"" >&2; exit 2; }
 
+make_out() {
+  mkdir -p "$1" && out=$(cd "$1" && pwd)
+  [[ $out == "$root"/* ]] || { echo "OUT must be under $root, the only host folder the containers see: $out" >&2; exit 2; }
+}
+
 is_url() { [[ $1 == https://* ]]; }
 
 prepare_sides() {

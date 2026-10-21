@@ -99,13 +99,13 @@ container_args() {
     -v "$backup:/home/verify/.talisman-dev/verify-backup.json:ro" \
     -v "$password:/home/verify/.talisman-dev/verify-password:ro"
   printf -- '-v\n%s:/pnpm-store\n' "$store"
-  [[ $main == "$root" || ! -f $env_file ]] || printf -- '-v\n%s:%s:ro\n' "$env_file" "$env_file"
+  [[ ! -f $env_file ]] || printf -- '-v\n%s:%s:ro\n' "$env_file" "$env_file"
   [[ -z ${TDA_API_KEY:-} ]] || printf -- '-e\nTDA_API_KEY\n'
 }
 
 create_container() {
   local args=("$@") spec
-  spec=$(printf '%s\n' "$image" "${args[@]}" | git hash-object --stdin)
+  spec=$(printf '%s\n' "$(docker image inspect -f '{{.Id}}' "$image")" "${args[@]}" | git hash-object --stdin)
   if running && [[ $(docker inspect -f '{{index .Config.Labels "talisman-web-verify.spec"}}' "$container") == "$spec" ]]; then
     created=''
     return
@@ -156,7 +156,7 @@ cmd_up() {
     modules+=("$root/$dir/node_modules")
     mapfile -t -O "${#args[@]}" args < <(volume "$container-node_modules${dir:+-${dir//[^a-z0-9]/-}}" "$root/$dir/node_modules")
   done < <(git -C "$root" ls-files -- package.json '*/package.json' | xargs -n1 dirname | sed 's/^\.$//')
-  args+=(-e "VERIFY_VOLUMES=${modules[*]}")
+  args+=(-e "VERIFY_VOLUMES=$(IFS=:; echo "${modules[*]}")")
   create_container "${args[@]}"
   if [[ -z $created && $(app_status) == 200 ]]; then
     echo "reusing $container and its dev server"
@@ -182,7 +182,7 @@ checkout_fingerprint() {
     git -C "$root" rev-parse HEAD
     git -C "$root" diff HEAD -- . ':!.claude'
     git -C "$root" ls-files --others --exclude-standard -- . ':!.claude' | (cd "$root" && while IFS= read -r file; do
-      if [[ -f $file ]]; then git hash-object "$file"; fi
+      if [[ -f $file ]]; then printf '%s %s\n' "$(git hash-object "$file")" "$file"; fi
     done)
   } | git hash-object --stdin
 }

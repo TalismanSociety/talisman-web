@@ -11,8 +11,7 @@ baseline_rev=$(tr -d '[:space:]' < "$skill/parity-baseline.sha")
 routes=$skill/parity-routes.tsv
 flows_file=${SMOKE_FLOWS:-$skill/smoke-flows.json}
 export SMOKE_FLOWS=$flows_file
-out=${OUT:-$root/.tmp/verify/runs/$(date +%Y%m%d-%H%M%S)-csp}
-mkdir -p "$out" && out=$(cd "$out" && pwd)
+make_out "${OUT:-$root/.tmp/verify/runs/$(date +%Y%m%d-%H%M%S)-csp}"
 read -ra viewports <<<"${VIEWPORTS:-desktop mobile}"
 declare -A viewport_size=([desktop]="1440 900" [mobile]="390 844")
 attempts=${ATTEMPTS:-3}

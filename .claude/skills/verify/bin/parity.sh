@@ -9,13 +9,12 @@ baseline_rev=$(tr -d '[:space:]' < "$skill/parity-baseline.sha")
 . "$bin/sides.sh"
 
 routes=$skill/parity-routes.tsv
-out=${OUT:-$root/.tmp/verify/runs/$(date +%Y%m%d-%H%M%S)-parity}
-mkdir -p "$out" && out=$(cd "$out" && pwd)
+make_out "${OUT:-$root/.tmp/verify/runs/$(date +%Y%m%d-%H%M%S)-parity}"
 attempts=${ATTEMPTS:-3}
 read -ra viewports <<<"${VIEWPORTS:-desktop mobile}"
 declare -A viewport_size=([desktop]="1440 900" [mobile]="390 844")
 only=("$@")
-scratch=$(mktemp -d)
+scratch=$(mktemp -d "$root/.tmp/verify/parity.XXXXXX")
 trap 'rm -rf "$scratch"' EXIT
 
 style_js() {
