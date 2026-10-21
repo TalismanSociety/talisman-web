@@ -1,7 +1,6 @@
 import { useEffect } from "react"
 
 import {
-	MIN_SUBTENSOR_ALPHA_STAKE,
 	ROOT_NETUID,
 	TALISMAN_FEE_BITTENSOR,
 } from "@/components/widgets/staking/subtensor/constants"
@@ -19,6 +18,7 @@ import {
 } from "../breakdown"
 import type { RuntimePoolData } from "../types"
 import { useGetSubnetMetagraphByNetuid } from "./useGetSubnetMetagraphByNetuid"
+import { useSubtensorMinimums } from "./useSubtensorMinimums"
 
 type Amount = {
 	decimalAmount: Decimal | undefined
@@ -40,6 +40,11 @@ export const useGetDynamicTaoStakeInfo = ({
 	shouldUpdateFeeAndSlippage: boolean
 }) => {
 	const { data, isLoading, error } = useGetSubnetMetagraphByNetuid({ netuid })
+	const minimums = useSubtensorMinimums()
+	const minStakeTao = useTokenAmountFromPlanck(minimums.data?.stake ?? 0n).decimalAmount.toNumber()
+	const minTransferTao = useTokenAmountFromPlanck(
+		minimums.data?.transfer ?? 0n
+	).decimalAmount.toNumber()
 
 	const { tier } = useGetSeekDiscount()
 
@@ -56,11 +61,13 @@ export const useGetDynamicTaoStakeInfo = ({
 		slippage,
 	})
 
-	const minAlphaUnstake = calculateExpectedAlpha({
-		alphaPrice,
-		taoStaked: MIN_SUBTENSOR_ALPHA_STAKE,
-		slippage,
-	})
+	const isRootnet = netuid === ROOT_NETUID
+	const minUnstake = isRootnet
+		? minStakeTao
+		: calculateExpectedAlpha({ alphaPrice, taoStaked: minStakeTao, slippage })
+	const minMove = isRootnet
+		? minTransferTao
+		: calculateExpectedAlpha({ alphaPrice, taoStaked: minTransferTao, slippage: 0 })
 
 	// calculate the conversion rate of 1 Tao to alpha with zero slippage
 	const alphaToTaoConversionRate = calculateExpectedAlpha({
@@ -164,9 +171,10 @@ export const useGetDynamicTaoStakeInfo = ({
 		taoToAlphaTalismanFeeFormatted,
 		alphaToTaoTalismanFee,
 		alphaToTaoTalismanFeeFormatted,
-		isLoading,
-		error,
-		minAlphaUnstake,
+		isLoading: isLoading || minimums.isLoading,
+		error: error ?? minimums.error,
+		minUnstake,
+		minMove,
 		calculateExpectedTaoFromAlpha,
 	}
 }

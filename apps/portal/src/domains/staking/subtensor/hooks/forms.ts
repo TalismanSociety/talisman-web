@@ -198,7 +198,7 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 		isLoading: isSlippageLoading,
 		error: isDynamicTaoStakeInfoError,
 		expectedTaoAmount,
-		minAlphaUnstake,
+		minUnstake,
 		taoPriceWithSlippageFormatted,
 		alphaToTaoTalismanFee,
 		alphaToTaoTalismanFeeFormatted,
@@ -244,9 +244,7 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 
 	const available = nativeTokenAmount.fromPlanckOrUndefined(stake.stake, stake?.symbol)
 
-	const minimum = useTokenAmount(
-		String(isRootnetStake ? MIN_SUBTENSOR_ROOTNET_STAKE : minAlphaUnstake)
-	)
+	const minimum = useTokenAmount(String(minUnstake))
 	const minimumFormatted = nativeTokenAmount.fromPlanckOrUndefined(
 		minimum.decimalAmount?.planck ?? 0n,
 		stake?.symbol

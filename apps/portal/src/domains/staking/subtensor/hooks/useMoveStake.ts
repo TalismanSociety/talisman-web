@@ -1,9 +1,5 @@
 import { useContext, useMemo } from "react"
 
-import {
-	MIN_SUBTENSOR_ROOTNET_STAKE,
-	ROOT_NETUID,
-} from "@/components/widgets/staking/subtensor/constants"
 import { useNativeTokenAmount } from "@/domains/chains/chains"
 import { ChainContext } from "@/domains/chains/contexts"
 import { useTokenAmount } from "@/domains/common/hooks/useTokenAmount"
@@ -26,17 +22,14 @@ export const useMoveStake = ({ stake, destinationHotkey }: MoveItem) => {
 	const { hotkey: originHotkey, stake: alphaAmount, netuid, symbol } = stake || {}
 	const formattedAlphaAmount = nativeTokenAmount.fromPlanckOrUndefined(alphaAmount, symbol)
 
-	const { minAlphaUnstake } = useGetDynamicTaoStakeInfo({
+	const { minMove } = useGetDynamicTaoStakeInfo({
 		amount: formattedAlphaAmount,
 		netuid: netuid ?? 0,
 		direction: "alphaToTao",
 		shouldUpdateFeeAndSlippage: false,
 	})
 
-	const isRootnetStake = netuid === ROOT_NETUID
-	const minimum = useTokenAmount(
-		String(isRootnetStake ? MIN_SUBTENSOR_ROOTNET_STAKE : minAlphaUnstake)
-	)
+	const minimum = useTokenAmount(String(minMove))
 	const minimumFormatted = nativeTokenAmount.fromPlanckOrUndefined(
 		minimum.decimalAmount?.planck ?? 0n,
 		stake?.symbol

@@ -6,11 +6,8 @@ export const unstakeError = (
 	minimum: Decimal
 ): Error | undefined => {
 	if (amount > available) return new Error("Insufficient balance")
-	if (amount < minimum.planck)
+	if (amount < available && amount < minimum.planck)
 		return new Error(`Minimum unstake amount is ${minimum.toLocaleStringPrecision()}`)
-	const remainder = available - amount
-	if (remainder > 0n && remainder < minimum.planck)
-		return new Error(`You must keep ${minimum.toLocaleString()} to continue staking`)
 	return undefined
 }
 

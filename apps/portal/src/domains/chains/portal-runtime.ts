@@ -230,6 +230,10 @@ type Constants = {
 		UnlockingPeriod: PlainDescriptor<number>
 	}
 	Timestamp: { MinimumPeriod: PlainDescriptor<bigint> }
+	SubtensorModule: {
+		InitialMinStake: PlainDescriptor<bigint>
+		InitialMinTransfer: PlainDescriptor<bigint>
+	}
 }
 
 type ContractAmount = { smart_contract: SmartContract; amount: bigint }
