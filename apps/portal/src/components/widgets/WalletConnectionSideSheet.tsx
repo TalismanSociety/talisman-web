@@ -1,9 +1,10 @@
 import { ClassNames, useTheme } from "@emotion/react"
+import type { WalletPlatform } from "@kheopskit/core"
 import { bind } from "@react-rxjs/core"
 import { useSignetSdk } from "@talismn/signet-apps-sdk"
 import { disconnect as disconnectCore } from "@wagmi/core"
 import { AnimatePresence } from "motion/react"
-import type { ButtonHTMLAttributes, DetailedHTMLProps } from "react"
+import type { ButtonHTMLAttributes, DetailedHTMLProps, PropsWithChildren } from "react"
 import { Suspense, useState } from "react"
 import { BehaviorSubject } from "rxjs"
 import { useConfig, useConnection, useDisconnect } from "wagmi"
@@ -16,7 +17,7 @@ import {
 	useHasConnectedSubstrateWallet,
 	useInstalledSubstrateWallets,
 } from "@/domains/extension/substrate"
-import { Ethereum, Eye, Polkadot, Wallet } from "@/icons"
+import { Eye, Wallet } from "@/icons"
 import { Chip } from "@/ui/atoms/Chip"
 import { Hr } from "@/ui/atoms/Hr"
 import { Surface } from "@/ui/atoms/Surface"
@@ -26,6 +27,26 @@ import { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet } from "@/ui/molecules/
 import { toast } from "@/ui/molecules/Toaster"
 
 const talismanInstalled = "talismanEth" in globalThis
+
+const platformLabels = {
+	polkadot: "Polkadot",
+	ethereum: "Ethereum",
+	solana: "Solana",
+} satisfies Record<WalletPlatform, string>
+
+const PlatformLabel = (props: { platforms: readonly WalletPlatform[] }) =>
+	props.platforms.length > 0 && (
+		<Text.BodySmall alpha="medium" css={{ marginLeft: "0.4rem" }}>
+			({props.platforms.map((platform) => platformLabels[platform]).join(" + ")})
+		</Text.BodySmall>
+	)
+
+const WalletName = (props: { name: string; platforms: readonly WalletPlatform[] }) => (
+	<Text.BodyLarge alpha="high">
+		{props.name}
+		<PlatformLabel platforms={props.platforms} />
+	</Text.BodyLarge>
+)
 
 type ConnectionButtonProps = DetailedHTMLProps<
 	ButtonHTMLAttributes<HTMLButtonElement>,
@@ -84,6 +105,7 @@ const ConnectionChip = (props: ConnectionButtonProps) => {
 
 type WalletConnectionProps = {
 	name: string
+	platforms: readonly WalletPlatform[]
 	iconUrl?: string
 	connected?: boolean
 	onConnectRequest: () => unknown
@@ -114,7 +136,7 @@ const WalletConnection = (props: WalletConnectionProps) => {
 					<Wallet size="2.4rem" />
 				)
 			}
-			headlineContent={<Text.BodyLarge alpha="high">{props.name}</Text.BodyLarge>}
+			headlineContent={<WalletName name={props.name} platforms={props.platforms} />}
 			trailingContent={
 				<ConnectionChip connected={props.connected} hovered={!props.nonInteractive && hovered} />
 			}
@@ -140,7 +162,7 @@ const InstallTalisman = () => {
 		>
 			<Surface
 				as={ListItem}
-				headlineContent={<Text.BodyLarge alpha="high">Talisman</Text.BodyLarge>}
+				headlineContent={<WalletName name="Talisman" platforms={["polkadot", "ethereum"]} />}
 				leadingContent={
 					<img
 						src={talismanWalletLogo}
@@ -166,50 +188,27 @@ const InstallTalisman = () => {
 	)
 }
 
-const SubstrateWalletConnection = () => {
-	const wallets = useInstalledSubstrateWallets()
-	const walletConnectWallet = useWalletConnectWallet()
-	const hasSubWallet = useHasConnectedSubstrateWallet()
-	const hasSubAccounts = useInjectedAccounts().length !== 0
+const WalletSection = (props: PropsWithChildren<{ title: string }>) => (
+	<section>
+		<h4 className="mb-[16px] text-[1.8rem] font-bold">{props.title}</h4>
+		<div css={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>{props.children}</div>
+	</section>
+)
 
-	return (
-		<section>
-			<div className="mb-[16px] flex items-center justify-start gap-[8px] font-bold">
-				<Polkadot size="1.6rem" />
-				<h4 className="text-[1.8rem]">Substrate wallets</h4>
-			</div>
-			<div css={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-				<InstallTalisman />
-				{wallets.map((wallet) => (
-					<WalletConnection
-						key={wallet.id}
-						name={wallet.name}
-						iconUrl={wallet.icon}
-						connected={wallet.isConnected}
-						onConnectRequest={() => wallet.connect().catch(() => undefined)}
-						onDisconnectRequest={() => wallet.disconnect().catch(console.error)}
-					/>
-				))}
-				{walletConnectWallet && (
-					<WalletConnection
-						name={walletConnectWallet.name}
-						iconUrl={walletConnectWallet.icon}
-						connected={walletConnectWallet.isConnected}
-						onConnectRequest={() => {
-							closeWalletConnectionSideSheet()
-							walletConnectWallet.connect().catch(() => undefined)
-						}}
-						onDisconnectRequest={() => walletConnectWallet.disconnect().catch(console.error)}
-					/>
-				)}
-			</div>
-			{hasSubWallet && !hasSubAccounts && (
-				<div className="mt-2 text-center text-lg text-orange-400">
-					Please enable some substrate accounts in your wallet.
-				</div>
-			)}
-		</section>
-	)
+const SubstrateWalletConnections = () => {
+	const wallets = useInstalledSubstrateWallets()
+
+	return wallets.map((wallet) => (
+		<WalletConnection
+			key={wallet.id}
+			name={wallet.name}
+			platforms={["polkadot"]}
+			iconUrl={wallet.icon}
+			connected={wallet.isConnected}
+			onConnectRequest={() => wallet.connect().catch(() => undefined)}
+			onDisconnectRequest={() => wallet.disconnect().catch(console.error)}
+		/>
+	))
 }
 
 const EvmWalletConnections = () => {
@@ -220,44 +219,67 @@ const EvmWalletConnections = () => {
 	const config = useConfig()
 	const writeableEvmAccounts = useWriteableEvmAccounts()
 
+	return connectors.map((x) => (
+		<WalletConnection
+			key={x.uid}
+			name={x.name}
+			platforms={["ethereum"]}
+			iconUrl={x.icon}
+			connected={x.id === connector?.id && writeableEvmAccounts.length > 0}
+			onConnectRequest={async () => {
+				const res = await connect.mutateAsync({ connector: x })
+				if (res.accounts.length === 0) {
+					toast.error("Please enable an ethereum account in your wallet.")
+				}
+			}}
+			onDisconnectRequest={async () => {
+				try {
+					await disconnect.mutateAsync()
+				} catch (error) {
+					if (error instanceof Error && error.message.includes("disconnect is not a function")) {
+						await disconnectCore(config)
+					} else {
+						throw error
+					}
+				}
+			}}
+		/>
+	))
+}
+
+const ExternalWalletConnections = () => {
+	const walletConnectWallet = useWalletConnectWallet()
+
+	if (!walletConnectWallet) return null
+
 	return (
-		<section>
-			<div className="mb-[16px] flex items-center justify-start gap-[8px] font-bold">
-				<Ethereum size="1.6rem" />
-				<h4 className="text-[1.8rem]">Ethereum wallets</h4>
+		<WalletSection title="External wallets">
+			<WalletConnection
+				name={walletConnectWallet.name}
+				platforms={walletConnectWallet.platforms}
+				iconUrl={walletConnectWallet.icon}
+				connected={walletConnectWallet.isConnected}
+				onConnectRequest={() => {
+					closeWalletConnectionSideSheet()
+					walletConnectWallet.connect().catch(() => undefined)
+				}}
+				onDisconnectRequest={() => walletConnectWallet.disconnect().catch(console.error)}
+			/>
+		</WalletSection>
+	)
+}
+
+const SubstrateAccountsHint = () => {
+	const hasSubWallet = useHasConnectedSubstrateWallet()
+	const hasSubAccounts = useInjectedAccounts().length !== 0
+
+	return (
+		hasSubWallet &&
+		!hasSubAccounts && (
+			<div className="text-center text-lg text-orange-400">
+				Please enable some substrate accounts in your wallet.
 			</div>
-			<div css={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-				<InstallTalisman />
-				{connectors.map((x) => (
-					<WalletConnection
-						key={x.uid}
-						name={x.name}
-						iconUrl={x.icon}
-						connected={x.id === connector?.id && writeableEvmAccounts.length > 0}
-						onConnectRequest={async () => {
-							const res = await connect.mutateAsync({ connector: x })
-							if (res.accounts.length === 0) {
-								toast.error("Please enable an ethereum account in your wallet.")
-							}
-						}}
-						onDisconnectRequest={async () => {
-							try {
-								await disconnect.mutateAsync()
-							} catch (error) {
-								if (
-									error instanceof Error &&
-									error.message.includes("disconnect is not a function")
-								) {
-									await disconnectCore(config)
-								} else {
-									throw error
-								}
-							}
-						}}
-					/>
-				))}
-			</div>
-		</section>
+		)
 	)
 }
 
@@ -283,6 +305,7 @@ const WalletConnectionSideSheetComponent = (props: WalletConnectionSideSheetProp
 					{inSignet ? (
 						<WalletConnection
 							name="Signet"
+							platforms={[]}
 							// TODO: update to signet official domain for logo
 							iconUrl="https://legendary-griffin-27eef8.netlify.app/logo192.png"
 							connected
@@ -297,8 +320,13 @@ const WalletConnectionSideSheetComponent = (props: WalletConnectionSideSheetProp
 									<div css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: "40rem" } }} />
 								}
 							>
-								<SubstrateWalletConnection />
-								<EvmWalletConnections />
+								<WalletSection title="Installed wallets">
+									<InstallTalisman />
+									<SubstrateWalletConnections />
+									<EvmWalletConnections />
+								</WalletSection>
+								<ExternalWalletConnections />
+								<SubstrateAccountsHint />
 							</Suspense>
 							<div>
 								<Hr css={{ marginTop: "1.6rem", marginBottom: "1.6rem" }}>

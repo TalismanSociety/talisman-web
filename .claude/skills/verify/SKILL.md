@@ -76,7 +76,7 @@ RUN=.tmp/verify/runs/$(date +%Y%m%d-%H%M%S)-<feature>; mkdir -p "$RUN"
 
 - **The page**: `.claude/skills/verify/bin/ab <agent-browser command>` drives this checkout's browser. Open pages with `ab tab new http://localhost:3002/<route>`, then `ab wait --text "<heading>"`. `ab snapshot -i` lists the clickable elements with refs.
 - **Talisman popups**: agent-browser cannot see them. `bin/talisman.mjs text` prints `popup <id>`, then the pending request. `connect --account <name>` approves a connection request for exactly the named accounts (repeat `--account`), `site` prints the accounts the wallet connected to `localhost:3002`, `approve --signer <name> --popup <id>` signs that popup only when it is a signing request and that test account is its signer, `reject [--popup <id>]` cancels. Read the request (`text`) before approving.
-- **Connecting like a user**: until the wallet has authorised `localhost:3002`, the portal opens a Substrate connect popup on load; answer it with `talisman.mjs connect --account "Guardians SUB"`. For Ethereum, click the header's `Connected` button, then the Ethereum wallets' `Connect`, then `talisman.mjs connect --account "Guardians EVM"`.
+- **Connecting like a user**: until the wallet has authorised `localhost:3002`, the portal opens a Substrate connect popup on load; answer it with `talisman.mjs connect --account "Guardians SUB"`. For Ethereum, click the header's `Connected` button, then the `Connect` of the `Talisman (Ethereum)` row under Installed wallets, then `talisman.mjs connect --account "Guardians EVM"`. The WalletConnect row sits alone under External wallets.
 
 ## 4. Evidence
 
