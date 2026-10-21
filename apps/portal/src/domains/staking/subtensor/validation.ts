@@ -1,5 +1,10 @@
 import type { Decimal } from "@/util/Decimal"
 
+const roundDownToSignificantDigits = (planck: bigint, digits: number) => {
+	const scale = 10n ** BigInt(Math.max(planck.toString().length - digits, 0))
+	return (planck / scale) * scale
+}
+
 export const unstakeError = ({
 	amount,
 	available,
@@ -23,7 +28,7 @@ export const unstakeError = ({
 	if (remaining >= minKeep) return undefined
 
 	const closes = `Bittensor closes stakes worth less than ${nominatorMinStake.toLocaleStringPrecision()}.`
-	const maxPartial = available.planck - minKeep
+	const maxPartial = roundDownToSignificantDigits(available.planck - minKeep, 4)
 	return maxPartial > 0n && (maxPartial * taoReceived) / amount >= minStake.planck
 		? new Error(
 				`${closes} Unstake everything, or at most ${available.map(() => maxPartial).toLocaleStringPrecision()}.`

@@ -90,6 +90,21 @@ describe("unstakeError", () => {
 		)
 	})
 
+	it("rounds the largest partial down so typing it back keeps the nominator minimum", () => {
+		expect(
+			unstakeError({
+				amount: 9_000_000_000_000_000n,
+				available: alpha(10_000_000_000_000_000n),
+				taoReceived: 90_000_000_000_000n,
+				minStake,
+				minKeep: 1_611_391_999_999_999n,
+				nominatorMinStake,
+			})?.message
+		).toBe(
+			"Bittensor closes stakes worth less than 0.02 TAO. Unstake everything, or at most 8,388,000 SN46."
+		)
+	})
+
 	it("rejects a partial subnet unstake whose TAO received is below the chain minimum", () => {
 		expect(
 			unstakeError({
