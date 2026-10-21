@@ -43,7 +43,12 @@ export const useMoveStake = ({ stake, destinationHotkey }: MoveItem) => {
 	)
 
 	const isReady =
-		stake && destinationHotkey && originHotkey !== destinationHotkey && minimums && !error
+		stake &&
+		destinationHotkey &&
+		originHotkey !== destinationHotkey &&
+		minimums &&
+		!isLoading &&
+		!error
 
 	const call = useMemo(
 		() =>
