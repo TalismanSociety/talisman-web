@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-mkdir -p /tmp/logs
-/opt/verify/start-chromium.sh > /tmp/logs/chromium.log 2>&1 &
-socat TCP-LISTEN:9224,fork,reuseaddr TCP:127.0.0.1:9223 > /tmp/logs/cdp-relay.log 2>&1 &
-socat TCP-LISTEN:3002,bind=127.0.0.1,fork,reuseaddr "${APP_UPSTREAM:?}" > /tmp/logs/app-relay.log 2>&1 &
-wait -n
+for owned in /pnpm-store /side ${VERIFY_VOLUMES:-}; do
+  [[ -d $owned ]] && chown "$HOST_UID:$HOST_GID" "$owned"
+done
+chown -R "$HOST_UID:$HOST_GID" /profile
+exec setpriv --reuid="$HOST_UID" --regid="$HOST_GID" --clear-groups -- /opt/verify/start-chromium.sh

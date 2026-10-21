@@ -1,0 +1,315 @@
+#!/usr/bin/env bash
+set -euo pipefail
+((BASH_VERSINFO[0] >= 4)) || { echo "Bash 4 or later is required, $BASH runs $BASH_VERSION (macOS: brew install bash): see Setup in $(dirname "$0")/../SKILL.md" >&2; exit 1; }
+bin=$(cd "$(dirname "$0")" && pwd)
+skill=$(dirname "$bin")
+root=$(git -C "$bin" rev-parse --show-toplevel)
+main=$(dirname "$(git -C "$root" rev-parse --path-format=absolute --git-common-dir)")
+seed=$HOME/.talisman-dev
+backup=$seed/verify-backup.json
+password=$seed/verify-password
+label=talisman-web-verify.worktree
+network=talisman-web-verify
+store=talisman-web-verify-pnpm-store
+memory=6g
+slug=$(basename "$root" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9\n' '-')-$(printf %s "$root" | git hash-object --stdin | cut -c1-6)
+instance=${VERIFY_INSTANCE:-dev}
+[[ $instance =~ ^[a-z0-9-]+$ ]] || { echo "VERIFY_INSTANCE must match [a-z0-9-]+: $instance" >&2; exit 2; }
+container=talisman-web-verify-$slug-$instance
+image=talisman-web-verify:$({ cat "$skill"/docker/*; cat "$backup" 2>/dev/null || true; } | git hash-object --stdin | cut -c1-12)
+store_id=fijngjgcjhjmmpcmkeiomlglpeiijkld
+log=$root/.tmp/verify/$instance.log
+
+usage() {
+  cat <<EOF
+usage: verify <command>, for the instance VERIFY_INSTANCE (default dev) of $root
+
+  build                    build the image with the Chrome Web Store's Talisman and the wallet backup
+  up                       start or reuse the dev container: install, vite dev, unlock, doctor
+  serve <id> <source> [--no-wallet]
+                           (re)create instance <id> serving a Worker build of a commit or of this
+                           worktree (source: <commit>, worktree), or a deployed https://host
+  doctor                   PASS/FAIL per check of the instance
+  ab <args…>               agent-browser on the instance's Chromium
+  wallet <args…>           talisman.mjs on the instance: unlock, accounts, text, connect, approve, …
+  exec [-i] <cmd…>         a command in the instance's container, as you
+  shell                    an interactive shell in the instance's container
+  down                     remove every container and volume of this worktree
+  prune                    remove the containers and volumes of worktrees that no longer exist
+  ls                       every worktree's containers and volumes
+EOF
+}
+
+fail() { echo "$1" >&2; exit "${2:-1}"; }
+running() { [[ $(docker inspect -f '{{.State.Running}}' "$container" 2>/dev/null) == true ]]; }
+require_running() { running || fail "no running container $container: verify up, or the lane that serves $instance"; }
+workdir() { if [[ $PWD == "$root" || $PWD == "$root"/* ]]; then echo "$PWD"; else echo "$root"; fi; }
+in_container() { docker exec -u "$(id -u):$(id -g)" -w "$(workdir)" "$@"; }
+inside() { in_container "$container" "$@"; }
+
+check_prerequisites() {
+  local setup="see Setup in $skill/SKILL.md"
+  docker info >/dev/null 2>&1 || fail "Docker is not running or not installed: $setup"
+  for tool in curl jq; do command -v "$tool" >/dev/null || fail "$tool is not installed: $setup"; done
+  [[ -f $backup ]] || fail "missing $backup: $setup"
+  [[ -f $password ]] || fail "missing $password: $setup"
+}
+
+store_version() {
+  curl -fsS "https://clients2.google.com/service/update2/crx?response=updatecheck&prodversion=140.0&acceptformat=crx3&x=id%3D$store_id%26uc" |
+    sed -n 's/.*<updatecheck [^>]* version="\([0-9.]*\)".*/\1/p'
+}
+
+cmd_build() {
+  [[ -f $backup ]] || fail "missing $backup: see Setup in $skill/SKILL.md"
+  local version
+  version=$(store_version)
+  [[ -n $version ]] || fail "could not read Talisman's version from the Chrome Web Store"
+  docker build -t "$image" --build-arg "TALISMAN_VERSION=$version" \
+    --label "talisman-web-verify.talisman-version=$version" --build-context seed="$seed" "$skill/docker"
+  echo "image $image: Talisman $version from the Chrome Web Store, wallet restored from $backup"
+}
+
+ensure_isolated_network() {
+  docker network inspect "$network" >/dev/null 2>&1 ||
+    docker network create -o com.docker.network.bridge.enable_icc=false "$network" >/dev/null 2>&1 || true
+  [[ $(docker network inspect -f '{{index .Options "com.docker.network.bridge.enable_icc"}}' "$network") == false ]] ||
+    fail "network $network allows inter-container traffic: docker network rm $network once no container uses it, then retry"
+}
+
+prepare() {
+  check_prerequisites
+  ensure_isolated_network
+  docker image inspect "$image" >/dev/null 2>&1 || cmd_build
+  mkdir -p "$root/.tmp/verify"
+}
+
+volume() {
+  docker volume create --label "$label=$root" "$1" >/dev/null
+  printf -- '-v\n%s:%s\n' "$1" "$2"
+}
+
+container_args() {
+  local wallet=$1 serves=$2 env_file=$main/apps/portal/.env
+  printf -- '%s\n' --init --network "$network" --shm-size=2g "--memory=$memory" "--memory-swap=$memory" \
+    --label "$label=$root" --label "talisman-web-verify.instance=$instance" --label "talisman-web-verify.serves=$serves" \
+    -e "HOST_UID=$(id -u)" -e "HOST_GID=$(id -g)" -e "VERIFY_INSTANCE=$instance" -e "VERIFY_WORKTREE=$root" \
+    -e "VERIFY_MAIN_CHECKOUT=$main" -e "WALLET=$wallet" \
+    -v "$root:$root" \
+    -v "$backup:/home/verify/.talisman-dev/verify-backup.json:ro" \
+    -v "$password:/home/verify/.talisman-dev/verify-password:ro"
+  printf -- '-v\n%s:/pnpm-store\n' "$store"
+  [[ $main == "$root" || ! -f $env_file ]] || printf -- '-v\n%s:%s:ro\n' "$env_file" "$env_file"
+  [[ -z ${TDA_API_KEY:-} ]] || printf -- '-e\nTDA_API_KEY\n'
+}
+
+create_container() {
+  local args=("$@") spec
+  spec=$(printf '%s\n' "$image" "${args[@]}" | git hash-object --stdin)
+  if running && [[ $(docker inspect -f '{{index .Config.Labels "talisman-web-verify.spec"}}' "$container") == "$spec" ]]; then
+    created=''
+    return
+  fi
+  docker rm -f "$container" >/dev/null 2>&1 || true
+  docker run -d --name "$container" --label "talisman-web-verify.spec=$spec" "${args[@]}" "$image" >/dev/null
+  created=yes
+  local tries=0
+  until inside curl -sf -o /dev/null http://127.0.0.1:9223/json/version 2>/dev/null; do
+    ((++tries < 30)) || { docker logs --tail 20 "$container" >&2; fail "Chromium in $container does not answer CDP after 30s"; }
+    sleep 1
+  done
+}
+
+app_status() { inside curl -s -o /dev/null -w '%{http_code}' --max-time 20 http://localhost:3002/ || true; }
+
+start_server() {
+  : > "$log"
+  docker exec -d -u "$(id -u):$(id -g)" "$container" bash "$bin/container.sh" "$@"
+  local tries=0
+  until [[ $(app_status) == 200 ]]; do
+    if grep -q '^\[verify\] the server exited' "$log" || ((++tries >= 180)); then
+      tail -20 "$log" >&2
+      fail "the $instance server does not answer on http://localhost:3002 (log: $log)"
+    fi
+    sleep 1
+  done
+}
+
+close_blank_tabs() {
+  inside node --input-type=module -e '
+    const pages = (await (await fetch("http://127.0.0.1:9223/json/list")).json()).filter((t) => t.type === "page")
+    const blank = pages.filter((t) => t.url === "about:blank")
+    const stray = blank.slice(blank.length === pages.length ? 1 : 0)
+    for (const tab of stray) await fetch(`http://127.0.0.1:9223/json/close/${tab.id}`)
+    if (stray.length) console.log(`closed ${stray.length} about:blank tab${stray.length > 1 ? "s" : ""}`)
+  '
+}
+
+cmd_up() {
+  (($# == 0)) || { usage >&2; exit 2; }
+  [[ $instance == dev ]] || fail "up starts the dev instance: unset VERIFY_INSTANCE, or use serve for $instance"
+  prepare
+  local args dir modules=() started=$SECONDS created
+  mapfile -t args < <(container_args on dev)
+  while IFS= read -r dir; do
+    mkdir -p "$root/$dir/node_modules"
+    modules+=("$root/$dir/node_modules")
+    mapfile -t -O "${#args[@]}" args < <(volume "$container-node_modules${dir:+-${dir//[^a-z0-9]/-}}" "$root/$dir/node_modules")
+  done < <(git -C "$root" ls-files -- package.json '*/package.json' | xargs -n1 dirname | sed 's/^\.$//')
+  args+=(-e "VERIFY_VOLUMES=${modules[*]}")
+  create_container "${args[@]}"
+  if [[ -z $created && $(app_status) == 200 ]]; then
+    echo "reusing $container and its dev server"
+  else
+    [[ -n $created ]] || { docker rm -f "$container" >/dev/null; create_container "${args[@]}"; }
+    echo "started $container, installing $root"
+    inside bash "$bin/container.sh" install "$root"
+    start_server dev
+    echo "started the dev server in $((SECONDS - started))s (log: $log)"
+  fi
+  close_blank_tabs
+  inside node "$bin/talisman.mjs" unlock
+  local doctor_passed=yes
+  cmd_doctor || doctor_passed=''
+  echo
+  echo "$container serves $root with vite dev as http://localhost:3002"
+  echo "drive it with: .claude/skills/verify/bin/verify ab <agent-browser command>"
+  [[ -n $doctor_passed ]] || fail "the doctor failed: the instance is not ready"
+}
+
+checkout_fingerprint() {
+  {
+    git -C "$root" rev-parse HEAD
+    git -C "$root" diff HEAD -- . ':!.claude'
+    git -C "$root" ls-files --others --exclude-standard -- . ':!.claude' | (cd "$root" && while IFS= read -r file; do
+      if [[ -f $file ]]; then git hash-object "$file"; fi
+    done)
+  } | git hash-object --stdin
+}
+
+sync_source() {
+  case $1 in
+    worktree)
+      git -C "$root" ls-files -z --cached --others --exclude-standard -- . ':!.claude' |
+        docker exec -i -u "$(id -u):$(id -g)" "$container" bash "$bin/container.sh" sync-worktree
+      ;;
+    *) git -C "$root" archive --format=tar "$1" | docker exec -i -u "$(id -u):$(id -g)" "$container" bash "$bin/container.sh" sync-commit ;;
+  esac
+}
+
+cmd_serve() {
+  (($# >= 2)) || { usage >&2; exit 2; }
+  instance=$1 source=$2
+  [[ $instance =~ ^[a-z0-9-]+$ && $instance != dev ]] || fail "instance id must match [a-z0-9-]+ and not be dev: $instance" 2
+  container=talisman-web-verify-$slug-$instance log=$root/.tmp/verify/$instance.log
+  local wallet=on fingerprint='' build_volume='' serves args created
+  [[ ${3:-} == --no-wallet ]] && wallet=off
+  if [[ $source =~ ^https://[^/]+/?$ ]]; then
+    source=${source%/} serves=$source
+  elif [[ $source == worktree ]]; then
+    fingerprint=$(checkout_fingerprint) serves="worktree $fingerprint" build_volume=talisman-web-verify-$slug-build-worktree
+  else
+    source=$(git -C "$root" rev-parse --verify "$source^{commit}") || fail "not a commit, worktree or https://host: $2" 2
+    fingerprint=$source serves="commit $source" build_volume=talisman-web-verify-$slug-build-${source:0:12}
+  fi
+  prepare
+  mapfile -t args < <(container_args "$wallet" "$serves")
+  [[ -z $build_volume ]] || mapfile -t -O "${#args[@]}" args < <(volume "$build_volume" /side)
+  docker rm -f "$container" >/dev/null 2>&1 || true
+  create_container "${args[@]}"
+  if [[ -z $fingerprint ]]; then
+    start_server proxy "$source"
+  else
+    inside node "$bin/tda-key.mjs" check >/dev/null
+    if [[ $(inside cat /side/fingerprint 2>/dev/null) == "$fingerprint" ]]; then
+      echo "$instance: reusing the Worker build of $serves"
+    else
+      sync_source "$source"
+      inside bash "$bin/container.sh" build "$fingerprint"
+    fi
+    start_server worker
+  fi
+  [[ $wallet == off ]] || inside node "$bin/talisman.mjs" unlock
+  echo "$container serves $serves (wallet $wallet) as http://localhost:3002"
+}
+
+cmd_doctor() {
+  local status=0 worktree current
+  running || { echo "FAIL container $container runs: verify up"; return 1; }
+  echo "PASS container $container runs"
+  worktree=$(docker inspect -f "{{index .Config.Labels \"$label\"}}" "$container")
+  if [[ $worktree == "$root" ]]; then echo "PASS container belongs to this worktree"; else
+    echo "FAIL container belongs to $worktree, not $root"
+    status=1
+  fi
+  current=$(docker inspect -f '{{.Config.Image}}' "$container")
+  [[ $current == "$image" ]] || echo "WARN $container runs $current, docker/ and the backup now hash to $image: recreate it (verify up, or rerun the lane)"
+  inside node "$bin/doctor.mjs" || status=1
+  return "$status"
+}
+
+cmd_exec() {
+  local flags=()
+  [[ ${1:-} == -i ]] && { flags+=(-i); shift; }
+  require_running
+  local name
+  for name in CONSENT SMOKE_FLOWS SMOKE_STEP_TIMEOUT SMOKE_DEBUG; do
+    [[ -z ${!name:-} ]] || flags+=(-e "$name")
+  done
+  in_container "${flags[@]}" "$container" "$@"
+}
+
+report_memory() {
+  local cgroup peak cap oom_kills
+  cgroup=$(docker exec "$1" cat /sys/fs/cgroup/memory.peak /sys/fs/cgroup/memory.max /sys/fs/cgroup/memory.events 2>/dev/null) || return 0
+  peak=$(sed -n 1p <<<"$cgroup") cap=$(sed -n 2p <<<"$cgroup")
+  oom_kills=$(awk '$1 == "oom_kill" { print $2 }' <<<"$cgroup")
+  [[ $cap == max ]] && cap=uncapped || cap="of its $((cap / 1048576)) MiB cap"
+  echo "$1 peaked at $((peak / 1048576)) MiB $cap"
+  [[ ${oom_kills:-0} == 0 ]] ||
+    echo "WARNING: $1 hit its memory cap and the kernel killed $oom_kills process(es) in it: a lane that ran on it may have failed for that reason alone" >&2
+}
+
+remove_worktree() {
+  local name
+  docker ps -a --filter "label=$label=$1" --format '{{.Names}}' | while read -r name; do
+    report_memory "$name"
+    docker rm -f "$name" >/dev/null && echo "removed $name"
+  done
+  docker volume ls -q --filter "label=$label=$1" | while read -r name; do
+    docker volume rm "$name" >/dev/null && echo "removed volume $name"
+  done
+}
+
+cmd_prune() {
+  local worktree
+  { docker ps -a --filter "label=$label" --format "{{.Label \"$label\"}}"
+    docker volume ls --filter "label=$label" --format "{{.Label \"$label\"}}"; } | sort -u | while IFS= read -r worktree; do
+    [[ -z $worktree || -d $worktree ]] && continue
+    echo "pruning $worktree: the worktree is gone"
+    remove_worktree "$worktree"
+  done
+}
+
+cmd_ls() {
+  docker ps -a --filter "label=$label" --format "table {{.Names}}\t{{.Status}}\t{{.Label \"talisman-web-verify.serves\"}}\t{{.Label \"$label\"}}"
+  echo
+  docker volume ls --filter "label=$label" --format "table {{.Name}}\t{{.Label \"$label\"}}"
+}
+
+command=${1:-help}
+shift || true
+case $command in
+  build) cmd_build ;;
+  up) cmd_up "$@" ;;
+  serve) cmd_serve "$@" ;;
+  doctor) cmd_doctor ;;
+  ab) require_running && in_container "$container" agent-browser --cdp 9223 "$@" ;;
+  wallet) require_running && in_container "$container" node "$bin/talisman.mjs" "$@" ;;
+  exec) cmd_exec "$@" ;;
+  shell) require_running && docker exec -it -u "$(id -u):$(id -g)" -w "$(workdir)" "$container" bash ;;
+  down) remove_worktree "$root" ;;
+  prune) cmd_prune ;;
+  ls) cmd_ls ;;
+  *) usage; [[ $command == help ]] || exit 2 ;;
+esac

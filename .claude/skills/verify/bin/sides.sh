@@ -1,98 +1,45 @@
 # shellcheck shell=bash
-# shellcheck source=toolchain.sh
-. "$bin/toolchain.sh"
-
+verify=$bin/verify
 baseline_sha=$(git -C "$root" rev-parse --verify "${baseline_rev:?}^{commit}")
-cache=$root/.tmp/verify/parity
-baseline_src=$cache/baseline-src
-baseline_app=${BASELINE_URL:-$cache/baseline-$baseline_sha}
-candidate_app=${CANDIDATE_URL:-$cache/candidate}
+baseline_source=${BASELINE_URL:-$baseline_sha}
+candidate_source=${CANDIDATE_URL:-worktree}
 sub_name=${PARITY_SUB_ACCOUNT:-Guardians SUB}
 evm_name=${PARITY_EVM_ACCOUNT:-Guardians EVM}
 consent=${CONSENT:-reject}
 [[ $consent =~ ^(reject|accept|unset)$ ]] || { echo "CONSENT must be reject, accept or unset, not \"$consent\"" >&2; exit 2; }
 
-ensure_baseline() {
-  [[ -f $baseline_app/server/wrangler.json ]] && { echo "baseline $baseline_sha: cached Worker build $baseline_app"; return; }
-  if [[ ! -e $baseline_src/.git ]]; then
-    git -C "$root" worktree add --detach "$baseline_src" "$baseline_sha" >/dev/null
-  elif [[ $(git -C "$baseline_src" rev-parse HEAD) != "$baseline_sha" ]]; then
-    git -C "$baseline_src" checkout --detach "$baseline_sha" >/dev/null 2>&1 || {
-      echo "the baseline worktree $baseline_src has local changes and is not at $baseline_sha: remove it (git worktree remove --force $baseline_src)" >&2
-      exit 1
-    }
-    rm -rf "$baseline_src/node_modules"
-  fi
-  [[ -d $baseline_src/node_modules ]] || install_deps "$baseline_src" > "$cache/baseline-install.log" 2>&1 || {
-    tail -20 "$cache/baseline-install.log" >&2
-    echo "installing the baseline $baseline_sha failed (log: $cache/baseline-install.log)" >&2
-    exit 1
-  }
-  build_worker "$baseline_src" "$baseline_app" "$cache/baseline-build.log"
-}
-
-checkout_fingerprint() {
-  {
-    git -C "$root" rev-parse HEAD
-    git -C "$root" diff HEAD -- . ':!.claude'
-    git -C "$root" ls-files --others --exclude-standard -- . ':!.claude' | (cd "$root" && while IFS= read -r file; do
-      if [[ -f $file ]]; then sha1sum "$file"; fi
-    done)
-  } | sha1sum | cut -d' ' -f1
-}
-
-ensure_candidate() {
-  local fingerprint
-  fingerprint=$(checkout_fingerprint)
-  if [[ -f $candidate_app/server/wrangler.json && $(cat "$cache/candidate.fingerprint" 2>/dev/null) == "$fingerprint" ]]; then
-    echo "candidate: the checkout is unchanged since the last build, reusing $candidate_app"
-    return
-  fi
-  install_deps "$root" > "$cache/candidate-install.log" 2>&1 || {
-    tail -20 "$cache/candidate-install.log" >&2
-    echo "installing the candidate failed (log: $cache/candidate-install.log)" >&2
-    exit 1
-  }
-  rm -f "$cache/candidate.fingerprint"
-  build_worker "$root" "$candidate_app" "$cache/candidate-build.log"
-  echo "$fingerprint" > "$cache/candidate.fingerprint"
-}
-
 is_url() { [[ $1 == https://* ]]; }
 
 prepare_sides() {
-  local side app
+  local side source
   for side; do
-    app=${side}_app
-    is_url "${!app}" || { node "$bin/tda-key.mjs" check >/dev/null || exit 1; break; }
+    source=${side}_source
+    "$verify" serve "$sides-$side" "${!source}" --no-wallet
   done
-  mkdir -p "$cache"
-  for side; do
-    app=${side}_app
-    if is_url "${!app}"; then echo "$side ${!app}: served from its URL"; else "ensure_$side"; fi
-  done
-  [[ " $* " != *" baseline "* ]] || is_url "$baseline_app" || echo "baseline $baseline_sha"
-  [[ " $* " != *" candidate "* ]] || is_url "$candidate_app" ||
+  [[ " $* " != *" baseline "* ]] || is_url "$baseline_source" || echo "baseline $baseline_sha"
+  [[ " $* " != *" candidate "* ]] || is_url "$candidate_source" ||
     echo "candidate $(git -C "$root" rev-parse HEAD)$( [[ -n $(git -C "$root" status --porcelain -- . ':!.claude') ]] && echo ' with local changes')"
 }
 
 scan_for_key() {
-  local built=() side app
-  for side in baseline candidate; do
-    app=${side}_app
-    is_url "${!app}" || built+=("${!app}")
+  local side source builds status=0
+  for side; do
+    source=${side}_source
+    builds=()
+    is_url "${!source}" || builds=(/side/src/apps/portal/dist /side/install.log /side/build.log)
+    VERIFY_INSTANCE=$sides-$side "$verify" exec node "$bin/tda-key.mjs" scan "$out" "$root/.tmp/verify"/*.log "${builds[@]}" || status=1
   done
-  node "$bin/tda-key.mjs" scan "$out" "$root/.tmp/verify"/*.log "$cache"/*.log "${built[@]}"
+  return "$status"
 }
 
 account_address() {
-  VERIFY_INSTANCE=$sides-candidate "$bin/talisman.mjs" accounts | jq -er --arg want "$1" \
+  VERIFY_INSTANCE=$sides-candidate "$verify" wallet accounts | jq -er --arg want "$1" \
     'map(select(.name == $want)) | if length == 1 then .[0].address else error("no single test account named \($want): talisman.mjs accounts") end'
 }
 
 browser() {
   local reply err=$scratch/$1.stderr
-  reply=$(VERIFY_INSTANCE=$sides-$1 "$bin/ab" --json "${@:2}" 2>"$err") || true
+  reply=$(VERIFY_INSTANCE=$sides-$1 "$verify" ab --json "${@:2}" 2>"$err") || true
   if jq -e '.success == true' <<<"$reply" >/dev/null 2>&1; then
     jq -c .data <<<"$reply"
   else
@@ -116,17 +63,17 @@ bring_to_front() {
 }
 
 start_side() {
-  "$bin/instance.sh" serve "$sides-$1" "$2" ${3:+"$3"} >/dev/null &&
-    VERIFY_INSTANCE=$sides-$1 "$bin/consent.mjs" "$consent" >/dev/null
+  "$verify" serve "$sides-$1" "$2" ${3:+"$3"} >/dev/null &&
+    VERIFY_INSTANCE=$sides-$1 "$verify" exec node "$bin/consent.mjs" "$consent" >/dev/null
 }
 
 start_state() {
   local wallet_flag=''
   [[ $1 == signed-out ]] && wallet_flag=--no-wallet
   local baseline_pid candidate_pid
-  start_side baseline "$baseline_app" "$wallet_flag" &
+  start_side baseline "$baseline_source" "$wallet_flag" &
   baseline_pid=$!
-  start_side candidate "$candidate_app" "$wallet_flag" &
+  start_side candidate "$candidate_source" "$wallet_flag" &
   candidate_pid=$!
   wait "$baseline_pid" && wait "$candidate_pid" || { echo "could not start the $1 browsers" >&2; exit 1; }
   if [[ $1 == connected ]]; then
@@ -139,7 +86,7 @@ start_state() {
 }
 
 connect_side() {
-  local side=$1 talisman=("$bin/talisman.mjs") site wanted
+  local side=$1 talisman=("$verify" wallet) site wanted
   wanted=$(jq -cn --arg sub "$sub_name" --arg evm "$evm_name" '{host: "localhost:3002", substrate: [$sub], ethereum: [$evm]}')
   bring_to_front && step open http://localhost:3002/staking/providers || return
   reply=$(VERIFY_INSTANCE=$sides-$side "${talisman[@]}" connect --account "$sub_name" 2>&1) || return

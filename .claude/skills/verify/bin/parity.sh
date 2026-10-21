@@ -126,6 +126,8 @@ compare() {
   pixel_diff "$out/$shot.baseline.png" "$out/$shot.candidate.png" "$out/$shot.diff.png"
 }
 
+magick() { VERIFY_INSTANCE=$sides-candidate "$verify" exec "$@"; }
+
 pixel_diff() {
   local sizes report
   mapfile -t sizes < <(magick identify -format '%wx%h\n' "$1" "$2")
@@ -134,7 +136,7 @@ pixel_diff() {
     different=$total detail="size: baseline ${sizes[0]}, candidate ${sizes[1]}"
     return
   fi
-  report=$(magick "$1" "$2" -alpha off -compose difference -composite -separate -evaluate-sequence max -threshold 0 \
+  report=$(magick convert "$1" "$2" -alpha off -compose difference -composite -separate -evaluate-sequence max -threshold 0 \
     -precision 16 -format '%[fx:round(mean*w*h)]' info: 2>&1) || true
   [[ $report =~ ^[0-9]+$ ]] || { detail="magick: $report"; return; }
   different=$report
@@ -164,7 +166,6 @@ selected() {
   return 1
 }
 
-command -v magick >/dev/null || { echo "ImageMagick 7 (magick) is required: see Setup in $skill/SKILL.md" >&2; exit 1; }
 prepare_sides baseline candidate
 sub_address=$(account_address "$sub_name")
 evm_address=$(account_address "$evm_name")
@@ -188,6 +189,6 @@ while IFS= read -r line <&3 || [[ -n $line ]]; do
     printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$name" "$viewport" "$different" "$total" "${#counts[@]}" "$result" "$detail" | tee -a "$out/summary.tsv"
   done
 done 3<"$routes"
-scan_for_key || status=1
+scan_for_key baseline candidate || status=1
 echo "summary: $out/summary.tsv"
 exit "$status"

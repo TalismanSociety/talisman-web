@@ -85,7 +85,7 @@ const withPopup = async (action, id) => {
 	}
 	if (isLocked(text)) {
 		page.close()
-		fail("Talisman is locked: run talisman.mjs unlock, then retry", 3)
+		fail("Talisman is locked: run verify wallet unlock, then retry", 3)
 	}
 	await action(page, text, target)
 	page.close()
