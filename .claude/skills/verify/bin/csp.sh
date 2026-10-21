@@ -20,7 +20,7 @@ side=candidate
 policy_checked=''
 scratch=$(mktemp -d)
 watcher=''
-trap '[[ -z $watcher ]] || kill "$watcher" 2>/dev/null || true; rm -rf "$scratch"' EXIT
+trap '[[ -z $watcher ]] || kill "$watcher" 2>/dev/null || true; stop_sides candidate; rm -rf "$scratch"' EXIT
 mkfifo "$scratch/watch.in"
 
 selected() {

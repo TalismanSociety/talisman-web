@@ -26,6 +26,11 @@ prepare_sides() {
     echo "candidate $(git -C "$root" rev-parse HEAD)$( [[ -n $(git -C "$root" status --porcelain -- . ':!.claude') ]] && echo ' with local changes')"
 }
 
+stop_sides() {
+  local side
+  for side; do VERIFY_INSTANCE=$sides-$side "$verify" stop || true; done
+}
+
 scan_for_key() {
   local side source builds status=0
   for side; do
@@ -75,12 +80,14 @@ start_side() {
 start_state() {
   local wallet_flag=''
   [[ $1 == signed-out ]] && wallet_flag=--no-wallet
-  local baseline_pid candidate_pid
+  local baseline_pid candidate_pid started=yes
   start_side baseline "$baseline_source" "$wallet_flag" &
   baseline_pid=$!
   start_side candidate "$candidate_source" "$wallet_flag" &
   candidate_pid=$!
-  wait "$baseline_pid" && wait "$candidate_pid" || { echo "could not start the $1 browsers" >&2; exit 1; }
+  wait "$baseline_pid" || started=''
+  wait "$candidate_pid" || started=''
+  [[ -n $started ]] || { echo "could not start the $1 browsers" >&2; exit 1; }
   if [[ $1 == connected ]]; then
     local side
     for side in baseline candidate; do

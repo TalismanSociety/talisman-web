@@ -34,6 +34,7 @@ usage: verify <command>, for the instance VERIFY_INSTANCE (default dev) of $root
   wallet <args…>           talisman.mjs on the instance: unlock, accounts, text, connect, approve, …
   exec [-i] <cmd…>         a command in the instance's container, as you
   shell                    an interactive shell in the instance's container
+  stop                     stop the instance's container, keeping it and its volumes
   down                     remove every container and volume of this worktree
   prune                    remove the containers and volumes of worktrees that no longer exist
   ls                       every worktree's containers and volumes
@@ -251,6 +252,7 @@ cmd_doctor() {
 cmd_exec() {
   local flags=()
   [[ ${1:-} == -i ]] && { flags+=(-i); shift; }
+  running || ! docker inspect "$container" >/dev/null 2>&1 || docker start "$container" >/dev/null
   require_running
   local name
   for name in CONSENT SMOKE_FLOWS SMOKE_STEP_TIMEOUT SMOKE_DEBUG; do
@@ -268,6 +270,12 @@ report_memory() {
   echo "$1 peaked at $((peak / 1048576)) MiB $cap"
   [[ ${oom_kills:-0} == 0 ]] ||
     echo "WARNING: $1 hit its memory cap and the kernel killed $oom_kills process(es) in it: a lane that ran on it may have failed for that reason alone" >&2
+}
+
+cmd_stop() {
+  running || return 0
+  report_memory "$container"
+  docker stop -t 2 "$container" >/dev/null && echo "stopped $container"
 }
 
 remove_worktree() {
@@ -308,6 +316,7 @@ case $command in
   wallet) require_running && in_container "$container" node "$bin/talisman.mjs" "$@" ;;
   exec) cmd_exec "$@" ;;
   shell) require_running && docker exec -it -u "$(id -u):$(id -g)" -w "$(workdir)" "$container" bash ;;
+  stop) cmd_stop ;;
   down) remove_worktree "$root" ;;
   prune) cmd_prune ;;
   ls) cmd_ls ;;

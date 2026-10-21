@@ -15,7 +15,7 @@ read -ra viewports <<<"${VIEWPORTS:-desktop mobile}"
 declare -A viewport_size=([desktop]="1440 900" [mobile]="390 844")
 only=("$@")
 scratch=$(mktemp -d "$root/.tmp/verify/parity.XXXXXX")
-trap 'rm -rf "$scratch"' EXIT
+trap 'stop_sides baseline candidate; rm -rf "$scratch"' EXIT
 
 style_js() {
   cat <<JS

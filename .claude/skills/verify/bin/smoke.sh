@@ -18,7 +18,7 @@ for arg in "$@"; do
   if [[ $arg == --submit ]]; then submit=yes; else only+=("$arg"); fi
 done
 scratch=$(mktemp -d)
-trap 'rm -rf "$scratch"' EXIT
+trap 'stop_sides baseline candidate; rm -rf "$scratch"' EXIT
 
 selected() {
   ((${#only[@]} == 0)) && return
