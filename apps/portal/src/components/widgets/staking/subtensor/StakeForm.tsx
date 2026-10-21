@@ -1,6 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
-import BN from "bn.js"
 import type { ReactNode } from "react"
 import { Suspense, useContext, useMemo } from "react"
 import type { SignerAccount } from "@/domains/accounts/accounts"
@@ -11,6 +10,7 @@ import { useAddStakeForm } from "@/domains/staking/subtensor/hooks/forms"
 import { useDelegateApr } from "@/domains/staking/subtensor/hooks/useApr"
 import { useStake } from "@/domains/staking/subtensor/hooks/useStake"
 import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
+import { BigIntMath } from "@/util/BigIntMath"
 
 import { SubtensorStakingForm } from "./SubtensorStakingForm"
 
@@ -131,7 +131,7 @@ const EstimatedRewards = (props: { amount: bigint; delegateHotkey: string }) => 
 	const delegateApr = useDelegateApr(props.delegateHotkey) || 0
 
 	const amount = useMemo(
-		() => tokenAmount.fromPlanck(new BN(props.amount.toString()).muln(delegateApr).toString()),
+		() => tokenAmount.fromPlanck(BigIntMath.mulNumber(props.amount, delegateApr)),
 		[delegateApr, props.amount, tokenAmount]
 	)
 
