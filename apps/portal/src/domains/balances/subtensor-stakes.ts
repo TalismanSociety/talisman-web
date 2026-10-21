@@ -8,7 +8,8 @@ import {
 	Vector,
 } from "@polkadot-api/substrate-bindings"
 import { toHex } from "@polkadot-api/utils"
-import type { Balance, ExtraAmount } from "@talismn/balances"
+import { type Balance, BalanceFormatter, type Balances, type ExtraAmount } from "@talismn/balances"
+import type { TokenRateCurrency } from "@talismn/token-rates"
 import { catchError, defer, EMPTY, exhaustMap, type Observable, timer } from "rxjs"
 import { chainConnectors } from "@/domains/chains/chain-connectors"
 import { encodeAnyAddress, isEthereumAddress } from "@/util/addresses"
@@ -85,7 +86,7 @@ const fetchStakes = async (address: string): Promise<Stake[]> => {
 			alpha: BigInt(stake),
 			amountStaked: String(stake),
 		}))
-		.filter(({ alpha }) => alpha >= MIN_STAKE_PLANCK)
+		.filter(({ alpha }) => alpha > MIN_STAKE_PLANCK)
 }
 
 const fetchAlphaPrice = async (netuid: number) => {
@@ -142,6 +143,18 @@ export const getSubtensorStakes = (balance: Balance) =>
 	(balance.extra ?? [])
 		.filter(({ label }) => label === SUBTENSOR_STAKE_LABEL)
 		.map(({ amount, meta }) => ({ ...(meta as SubtensorStakeMeta), taoPlanck: BigInt(amount) }))
+
+export const subtensorStakesFiat = (balances: Balances, currency: TokenRateCurrency) =>
+	balances.each.reduce(
+		(total, balance) =>
+			total +
+			(new BalanceFormatter(
+				getSubtensorStakes(balance).reduce((sum, { taoPlanck }) => sum + taoPlanck, 0n),
+				balance.decimals ?? undefined,
+				balance.rates
+			).fiat(currency) ?? 0),
+		0
+	)
 
 export const subtensorStakes$ = (addresses: string[]): Observable<SubtensorStakesByAddress> => {
 	const substrateAddresses = addresses.filter((address) => !isEthereumAddress(address))
