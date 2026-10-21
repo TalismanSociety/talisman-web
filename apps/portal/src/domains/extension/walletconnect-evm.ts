@@ -30,8 +30,17 @@ export const walletConnectConnectorId = "walletConnect"
 
 type RequestArguments = { method: string; params?: unknown }
 
+type SessionEvent = {
+	topic: string
+	params: { chainId: string; event: { name: string; data: unknown } }
+}
+
 type UniversalProvider = {
-	session?: { namespaces: Record<string, { accounts?: string[] }> }
+	session?: { topic: string; namespaces: Record<string, { accounts?: string[] }> }
+	client: {
+		on(event: "session_event", listener: (event: SessionEvent) => void): void
+		off(event: "session_event", listener: (event: SessionEvent) => void): void
+	}
 	request(args: RequestArguments, chain: `eip155:${number}`): Promise<unknown>
 	setDefaultChain(chain: `eip155:${number}`): void
 	on(event: string, listener: () => void): void
@@ -57,6 +66,32 @@ const providerOf = (wallet: LiveWalletConnectWallet | undefined) =>
 const sessionAccountsOf = (provider: UniversalProvider) =>
 	(provider.session?.namespaces["eip155"]?.accounts ?? []).flatMap(parseEip155Account)
 
+const selectedAccounts = new WeakMap<UniversalProvider, { topic: string; addresses: Address[] }>()
+
+const isEvmAccountSelection = (provider: UniversalProvider, { topic, params }: SessionEvent) =>
+	topic === provider.session?.topic &&
+	params.event.name === "accountsChanged" &&
+	params.chainId.startsWith("eip155:")
+
+const selectAccounts = (provider: UniversalProvider, event: SessionEvent) => {
+	if (!isEvmAccountSelection(provider, event)) return
+	const { data } = event.params.event
+	const addresses = (Array.isArray(data) ? data : [])
+		.map((account) => String(account).split(":").at(-1) ?? "")
+		.filter((address) => isAddress(address))
+		.map((address) => getAddress(address))
+	selectedAccounts.set(provider, { topic: event.topic, addresses })
+}
+
+const preferSelected = (provider: UniversalProvider, approved: Address[]) => {
+	const selection = selectedAccounts.get(provider)
+	const selected =
+		selection && selection.topic === provider.session?.topic
+			? selection.addresses.filter((address) => approved.includes(address))
+			: []
+	return selected.length > 0 ? selected : approved
+}
+
 const chainIdOf = async (provider: UniversalProvider) => {
 	const [anyAccount] = sessionAccountsOf(provider)
 	if (!anyAccount) throw new ProviderNotFoundError()
@@ -67,11 +102,12 @@ const connectionOf = async (provider: UniversalProvider): Promise<EvmConnection 
 	const sessionAccounts = sessionAccountsOf(provider)
 	if (sessionAccounts.length === 0) return undefined
 	const chainId = await chainIdOf(provider)
-	const accounts = [
+	const approved = [
 		...new Set(
 			sessionAccounts.filter((account) => account.chainId === chainId).map(({ address }) => address)
 		),
 	]
+	const accounts = preferSelected(provider, approved)
 	return accounts.length > 0 ? { chainId, accounts } : undefined
 }
 
@@ -153,14 +189,26 @@ export const walletConnectEvm = () =>
 		}
 	})
 
-const sessionEvents = ["accountsChanged", "chainChanged", "session_update"] as const
+const sessionEvents = [
+	"accountsChanged",
+	"chainChanged",
+	"session_update",
+	"session_delete",
+	"disconnect",
+] as const
 
 const sessionChanges$ = (provider: UniversalProvider) =>
 	new Observable<void>((subscriber) => {
 		const next = () => subscriber.next()
+		const onSessionEvent = (event: SessionEvent) => {
+			selectAccounts(provider, event)
+			if (isEvmAccountSelection(provider, event)) subscriber.next()
+		}
 		for (const event of sessionEvents) provider.on(event, next)
+		provider.client.on("session_event", onSessionEvent)
 		return () => {
 			for (const event of sessionEvents) provider.off(event, next)
+			provider.client.off("session_event", onSessionEvent)
 		}
 	})
 

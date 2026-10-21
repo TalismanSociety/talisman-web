@@ -23,7 +23,7 @@ type WalletConnectRequest = { method: string; params?: unknown; chain?: string }
 
 type Pairing = {
 	session: Session
-	providers: { polkadot?: WalletConnectProvider; eip155?: Eip155Provider }
+	providers: { polkadot?: WalletConnectProvider; eip155?: WalletConnectProvider }
 }
 
 const pairing$ = new BehaviorSubject<Pairing | undefined>(undefined)
@@ -46,27 +46,37 @@ const polkadotProviderOf = ({ addresses }: Session): WalletConnectProvider => ({
 	off: () => undefined,
 })
 
-type Eip155Provider = WalletConnectProvider & {
-	setDefaultChain: (chain: string) => void
-	updateAccounts: (accounts: Eip155Account[]) => void
+type Listener = (...args: unknown[]) => void
+
+const eventEmitter = () => {
+	const listeners = new Map<string, Set<Listener>>()
+	return {
+		emit: (event: string, ...args: unknown[]) => {
+			for (const listener of listeners.get(event) ?? []) listener(...args)
+		},
+		on: (event: string, listener: Listener) => {
+			listeners.set(event, (listeners.get(event) ?? new Set()).add(listener))
+		},
+		off: (event: string, listener: Listener) => {
+			listeners.get(event)?.delete(listener)
+		},
+	}
 }
 
-const eip155ProviderOf = ({
-	accounts,
-	unresponsive,
-}: NonNullable<Session["evm"]>): Eip155Provider => {
-	const listeners = new Map<string, Set<(...args: unknown[]) => void>>()
-	const emit = (event: string, ...args: unknown[]) => {
-		for (const listener of listeners.get(event) ?? []) listener(...args)
-	}
-	let defaultChainId = Number(accounts[0].split(":")[1])
-	const session = {
-		topic: "fake-walletconnect-session",
-		namespaces: { eip155: { accounts: accounts as string[] } },
-	}
-	return {
-		session,
-		client: { request: cannotSign },
+const chainIdOf = (account: string) => Number(account.split(":")[1])
+
+const createEip155Wallet = () => {
+	const events = eventEmitter()
+	const clientEvents = eventEmitter()
+	let pairings = 0
+	let defaultChainId = 1
+	let unresponsive = false
+	const provider: WalletConnectProvider & {
+		session?: { topic: string; namespaces: { eip155: { accounts: string[] } } }
+		client: WalletConnectProvider["client"] & Pick<typeof clientEvents, "on" | "off">
+		setDefaultChain: (chain: string) => void
+	} = {
+		client: { request: cannotSign, on: clientEvents.on, off: clientEvents.off },
 		request: async (args: { method: string; params?: unknown }, chain?: string) => {
 			walletConnectRequests.push({ ...args, chain })
 			if (unresponsive) throw new Error("The fake WalletConnect wallet does not answer")
@@ -74,20 +84,61 @@ const eip155ProviderOf = ({
 			return `0x${"5".repeat(130)}`
 		},
 		setDefaultChain: (chain: string) => {
-			defaultChainId = Number(chain.split(":")[1])
-			emit("chainChanged", String(defaultChainId))
+			const previousChainId = defaultChainId
+			defaultChainId = chainIdOf(chain)
+			events.emit("chainChanged", String(defaultChainId))
+			if (previousChainId !== defaultChainId)
+				events.emit(
+					"accountsChanged",
+					(provider.session?.namespaces.eip155.accounts ?? [])
+						.filter((account) => chainIdOf(account) === defaultChainId)
+						.map((account) => account.split(":")[2])
+				)
 		},
-		updateAccounts: (accounts) => {
-			session.namespaces.eip155.accounts = accounts
-			emit("session_update")
+		on: events.on,
+		off: events.off,
+	}
+	return {
+		provider,
+		pair: (evm: NonNullable<Session["evm"]>) => {
+			provider.session = {
+				topic: `fake-walletconnect-session-${++pairings}`,
+				namespaces: { eip155: { accounts: [...evm.accounts] } },
+			}
+			defaultChainId = chainIdOf(evm.accounts[0])
+			unresponsive = evm.unresponsive ?? false
 		},
-		on: (event: string, listener: (...args: unknown[]) => void) => {
-			listeners.set(event, (listeners.get(event) ?? new Set()).add(listener))
+		updateAccounts: (accounts: Eip155Account[]) => {
+			if (!provider.session) return
+			provider.session.namespaces.eip155.accounts = accounts
+			events.emit("session_update")
 		},
-		off: (event: string, listener: (...args: unknown[]) => void) => {
-			listeners.get(event)?.delete(listener)
+		selectAccounts: (addresses: string[]) => {
+			const topic = provider.session?.topic
+			events.emit("accountsChanged", addresses)
+			clientEvents.emit("session_event", {
+				topic,
+				params: {
+					chainId: `eip155:${defaultChainId}`,
+					event: { name: "accountsChanged", data: addresses },
+				},
+			})
+		},
+		revoke: () => {
+			const topic = provider.session?.topic
+			provider.session = undefined
+			events.emit("session_delete", { topic })
+			events.emit("disconnect", { code: 6000, message: "User disconnected." })
 		},
 	}
+}
+
+let eip155Wallet: ReturnType<typeof createEip155Wallet> | undefined
+
+const pairEip155 = (evm: NonNullable<Session["evm"]>) => {
+	eip155Wallet ??= createEip155Wallet()
+	eip155Wallet.pair(evm)
+	return eip155Wallet.provider
 }
 
 const appKitOf = (pairing: Pairing | undefined) => ({
@@ -124,13 +175,18 @@ export const pairWalletConnect = (session: Session) => {
 		session,
 		providers: {
 			...(session.addresses.length > 0 && { polkadot: polkadotProviderOf(session) }),
-			...(session.evm && { eip155: eip155ProviderOf(session.evm) }),
+			...(session.evm && { eip155: pairEip155(session.evm) }),
 		},
 	})
 }
 
 export const updateEthereumAccounts = (accounts: Eip155Account[]) =>
-	pairing$.value?.providers.eip155?.updateAccounts(accounts)
+	eip155Wallet?.updateAccounts(accounts)
+
+export const selectEthereumAccounts = (addresses: string[]) =>
+	eip155Wallet?.selectAccounts(addresses)
+
+export const revokeEthereumSession = () => eip155Wallet?.revoke()
 
 export const endWalletConnectSession = () => pairing$.next(undefined)
 

@@ -187,6 +187,115 @@ describe("one WalletConnect pairing for Substrate and Ethereum", () => {
 		expect(await ownAddresses()).toEqual([bob.address])
 	})
 
+	it("drops the Ethereum connection when the wallet ends the session", async () => {
+		const { pairWalletConnect, revokeEthereumSession } = await loadPortal()
+		pairWalletConnect({
+			walletName: "Nova Wallet",
+			addresses: [bob.address],
+			evm: { accounts: [on(MAINNET)] },
+		})
+		await vi.waitFor(() => expect(evmAddresses()).toEqual([evmAddress]))
+
+		revokeEthereumSession()
+
+		await vi.waitFor(() => expect(connectionsByConnector()).toEqual([]))
+	})
+
+	it("follows the account the wallet selects among the approved ones", async () => {
+		const { pairWalletConnect, selectEthereumAccounts } = await loadPortal()
+		pairWalletConnect({
+			walletName: "Nova Wallet",
+			addresses: [bob.address],
+			evm: { accounts: [on(MAINNET), on(MAINNET, otherEvmAddress)] },
+		})
+		await vi.waitFor(() => expect(evmAddresses()).toEqual([evmAddress, otherEvmAddress]))
+
+		selectEthereumAccounts([otherEvmAddress.toLowerCase()])
+
+		await vi.waitFor(() => expect(evmAddresses()).toEqual([otherEvmAddress]))
+		expect(getConnection(config).address).toBe(otherEvmAddress)
+	})
+
+	it("keeps the selected account across a chain switch", async () => {
+		const { pairWalletConnect, selectEthereumAccounts } = await loadPortal()
+		pairWalletConnect({
+			walletName: "Nova Wallet",
+			addresses: [bob.address],
+			evm: {
+				accounts: [
+					on(MAINNET),
+					on(MAINNET, otherEvmAddress),
+					on(MOONBEAM),
+					on(MOONBEAM, otherEvmAddress),
+				],
+			},
+		})
+		await vi.waitFor(() => expect(evmAddresses()).toHaveLength(2))
+		selectEthereumAccounts([otherEvmAddress])
+		await vi.waitFor(() => expect(evmAddresses()).toEqual([otherEvmAddress]))
+
+		await switchChain(config, { chainId: MOONBEAM })
+
+		await vi.waitFor(() => expect(getConnection(config).chainId).toBe(MOONBEAM))
+		expect(evmAddresses()).toEqual([otherEvmAddress])
+	})
+
+	it("forgets the selected account once the wallet pairs a new session", async () => {
+		const { pairWalletConnect, selectEthereumAccounts, endWalletConnectSession } =
+			await loadPortal()
+		const session = {
+			walletName: "Nova Wallet",
+			addresses: [bob.address],
+			evm: {
+				accounts: [on(MAINNET), on(MAINNET, otherEvmAddress)] as [
+					ReturnType<typeof on>,
+					ReturnType<typeof on>,
+				],
+			},
+		}
+		pairWalletConnect(session)
+		await vi.waitFor(() => expect(evmAddresses()).toHaveLength(2))
+		selectEthereumAccounts([otherEvmAddress])
+		await vi.waitFor(() => expect(evmAddresses()).toEqual([otherEvmAddress]))
+		endWalletConnectSession()
+		await vi.waitFor(() => expect(evmAddresses()).toEqual([]))
+
+		pairWalletConnect(session)
+
+		await vi.waitFor(() => expect(evmAddresses()).toEqual([evmAddress, otherEvmAddress]))
+	})
+
+	it("exposes every approved account again once the wallet clears its selection", async () => {
+		const { pairWalletConnect, selectEthereumAccounts } = await loadPortal()
+		pairWalletConnect({
+			walletName: "Nova Wallet",
+			addresses: [bob.address],
+			evm: { accounts: [on(MAINNET), on(MAINNET, otherEvmAddress)] },
+		})
+		await vi.waitFor(() => expect(evmAddresses()).toHaveLength(2))
+		selectEthereumAccounts([otherEvmAddress])
+		await vi.waitFor(() => expect(evmAddresses()).toEqual([otherEvmAddress]))
+
+		selectEthereumAccounts([])
+
+		await vi.waitFor(() => expect(evmAddresses()).toEqual([evmAddress, otherEvmAddress]))
+	})
+
+	it("ignores a selection outside the session's approved accounts", async () => {
+		const { pairWalletConnect, selectEthereumAccounts } = await loadPortal()
+		pairWalletConnect({
+			walletName: "Nova Wallet",
+			addresses: [bob.address],
+			evm: { accounts: [on(MAINNET)] },
+		})
+		await vi.waitFor(() => expect(evmAddresses()).toEqual([evmAddress]))
+
+		selectEthereumAccounts([otherEvmAddress, bob.address])
+		await new Promise((resolve) => setTimeout(resolve, 50))
+
+		expect(evmAddresses()).toEqual([evmAddress])
+	})
+
 	it("connects once when the portal restarts the mirror mid-connect", async () => {
 		harness = await load()
 		const { pairWalletConnect } = await import("@/test/walletconnect")
