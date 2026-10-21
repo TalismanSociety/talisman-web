@@ -45,7 +45,7 @@ export const StakeItemRow = ({
 		shouldUpdateFeeAndSlippage: false,
 	})
 
-	const { isError, errorMessage } = useMoveStake({
+	const { error: changeValidatorError } = useMoveStake({
 		stake,
 		destinationHotkey: highlightedDelegate?.poolId,
 	})
@@ -86,8 +86,6 @@ export const StakeItemRow = ({
 				account={account}
 				provider={provider || providerTooltip}
 				stakeStatus={"earning_rewards"}
-				isError={isError}
-				errorMessage={errorMessage}
 				balance={
 					<ErrorBoundary renderFallback={() => <>--</>}>
 						{stake.totalStaked.decimalAmount?.toLocaleString()}
@@ -113,6 +111,7 @@ export const StakeItemRow = ({
 				changeValidatorButton={
 					<ErrorBoundary renderFallback={() => <>--</>}>
 						<StakePosition.ChangeValidatorButton
+							error={changeValidatorError}
 							onClick={() => handleToggleChangeValidator(stake)}
 							withTransition
 						/>

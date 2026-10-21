@@ -18,43 +18,68 @@ const minStake = tao(INITIAL_MIN_STAKE)
 const minTransfer = tao(INITIAL_MIN_TRANSFER)
 
 describe("unstakeError", () => {
+	const rootUnstake = (amount: bigint, available: bigint) =>
+		unstakeError({ amount, available, taoReceived: amount, minStake })
+
 	it("allows a full unstake of a root stake below the old 0.1 TAO floor", () => {
-		expect(unstakeError(99_900_000n, 99_900_000n, minStake)).toBeUndefined()
+		expect(rootUnstake(99_900_000n, 99_900_000n)).toBeUndefined()
 	})
 
 	it("allows a full unstake of a stake below the chain minimum", () => {
-		expect(unstakeError(1_000_000n, 1_000_000n, minStake)).toBeUndefined()
+		expect(rootUnstake(1_000_000n, 1_000_000n)).toBeUndefined()
 	})
 
 	it("allows a partial unstake leaving a remainder below the chain minimum", () => {
-		expect(unstakeError(249_000_000n, 250_000_000n, minStake)).toBeUndefined()
+		expect(rootUnstake(249_000_000n, 250_000_000n)).toBeUndefined()
 	})
 
 	it("rejects a partial unstake below the chain minimum", () => {
-		expect(unstakeError(1_000_000n, 250_000_000n, minStake)?.message).toBe(
+		expect(rootUnstake(1_000_000n, 250_000_000n)?.message).toBe(
 			"Minimum unstake amount is 0.002 TAO"
 		)
 	})
 
 	it("allows a partial unstake of exactly the chain minimum", () => {
-		expect(unstakeError(INITIAL_MIN_STAKE, 250_000_000n, minStake)).toBeUndefined()
+		expect(rootUnstake(INITIAL_MIN_STAKE, 250_000_000n)).toBeUndefined()
+	})
+
+	it("rejects a partial subnet unstake whose TAO received is below the chain minimum", () => {
+		expect(
+			unstakeError({
+				amount: 50_000_000n,
+				available: 900_000_000n,
+				taoReceived: 1_999_999n,
+				minStake,
+			})?.message
+		).toBe("Minimum unstake amount is 0.002 TAO")
+	})
+
+	it("allows a full subnet unstake whose TAO received is below the chain minimum", () => {
+		expect(
+			unstakeError({
+				amount: 50_000_000n,
+				available: 50_000_000n,
+				taoReceived: 1_000_000n,
+				minStake,
+			})
+		).toBeUndefined()
 	})
 
 	it("rejects an amount above the available stake", () => {
-		expect(unstakeError(250_000_001n, 250_000_000n, minStake)?.message).toBe("Insufficient balance")
+		expect(rootUnstake(250_000_001n, 250_000_000n)?.message).toBe("Insufficient balance")
 	})
 })
 
 describe("moveStakeError", () => {
-	it("allows moving a position above the transfer minimum", () => {
+	it("allows moving a position worth more than the transfer minimum", () => {
 		expect(moveStakeError(99_900_000n, minTransfer)).toBeUndefined()
 	})
 
-	it("allows moving a position of exactly the transfer minimum", () => {
+	it("allows moving a position worth exactly the transfer minimum", () => {
 		expect(moveStakeError(INITIAL_MIN_TRANSFER, minTransfer)).toBeUndefined()
 	})
 
-	it("rejects moving a position below the transfer minimum", () => {
+	it("rejects moving a position worth less than the transfer minimum", () => {
 		expect(moveStakeError(50_000n, minTransfer)).toBe(
 			"Minimum staked amount for changing validator is 0.0001 TAO"
 		)

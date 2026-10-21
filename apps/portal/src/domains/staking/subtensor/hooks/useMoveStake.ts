@@ -1,14 +1,15 @@
 import { useContext, useMemo } from "react"
 
+import { ROOT_NETUID } from "@/components/widgets/staking/subtensor/constants"
 import { useNativeTokenAmount } from "@/domains/chains/chains"
 import { ChainContext } from "@/domains/chains/contexts"
-import { useTokenAmount } from "@/domains/common/hooks/useTokenAmount"
 import { useTx } from "@/domains/common/hooks/useTx"
 import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo"
 
 import { moveStakeCall, placeholderCall, txOf } from "../calls"
 import { moveStakeError } from "../validation"
 import type { StakeItem } from "./useStake"
+import { useSubtensorMinimums } from "./useSubtensorMinimums"
 
 type MoveItem = {
 	stake: StakeItem | undefined
@@ -22,32 +23,27 @@ export const useMoveStake = ({ stake, destinationHotkey }: MoveItem) => {
 	const { hotkey: originHotkey, stake: alphaAmount, netuid, symbol } = stake || {}
 	const formattedAlphaAmount = nativeTokenAmount.fromPlanckOrUndefined(alphaAmount, symbol)
 
-	const { minMove } = useGetDynamicTaoStakeInfo({
+	const { taoAmountFromAlpha, isLoading } = useGetDynamicTaoStakeInfo({
 		amount: formattedAlphaAmount,
 		netuid: netuid ?? 0,
 		direction: "alphaToTao",
 		shouldUpdateFeeAndSlippage: false,
 	})
 
-	const minimum = useTokenAmount(String(minMove))
-	const minimumFormatted = nativeTokenAmount.fromPlanckOrUndefined(
-		minimum.decimalAmount?.planck ?? 0n,
-		stake?.symbol
-	)
+	const { data: minimums } = useSubtensorMinimums()
+	const taoValue =
+		netuid === ROOT_NETUID ? (alphaAmount ?? 0n) : (taoAmountFromAlpha.decimalAmount?.planck ?? 0n)
 
-	const errorMessage = useMemo(
+	const error = useMemo(
 		() =>
-			(minimumFormatted.decimalAmount &&
-				moveStakeError(
-					formattedAlphaAmount.decimalAmount?.planck ?? 0n,
-					minimumFormatted.decimalAmount
-				)) ??
-			null,
-		[formattedAlphaAmount.decimalAmount, minimumFormatted.decimalAmount]
+			minimums && !isLoading
+				? moveStakeError(taoValue, nativeTokenAmount.fromPlanck(minimums.transfer).decimalAmount)
+				: undefined,
+		[isLoading, minimums, nativeTokenAmount, taoValue]
 	)
-	const isError = errorMessage !== null
 
-	const isReady = stake && destinationHotkey && originHotkey !== destinationHotkey
+	const isReady =
+		stake && destinationHotkey && originHotkey !== destinationHotkey && minimums && !error
 
 	const call = useMemo(
 		() =>
@@ -64,5 +60,5 @@ export const useMoveStake = ({ stake, destinationHotkey }: MoveItem) => {
 
 	const extrinsic = useTx(genesisHash, (runtime) => txOf(runtime, call))
 
-	return { extrinsic, isReady, isError, errorMessage }
+	return { extrinsic, isReady, error }
 }
