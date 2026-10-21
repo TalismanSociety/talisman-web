@@ -222,9 +222,6 @@ overrides:
 
 packageExtensionsChecksum: sha256-5OCEJOO4ef//iIXyPpIzn7hwIXQZh5KbDivwBxK6uNk=
 
-patchedDependencies:
-  '@kheopskit/core@6.0.0-rc.4': ec6d0b8224cadfa283b4edeae55b485313af29e3a5ef891fc5c17e9fe352dc2c
-
 importers:
 
   .:
@@ -260,8 +257,8 @@ importers:
         specifier: ^3.2.0
         version: 3.2.0(graphql@16.9.0)
       '@kheopskit/core':
-        specifier: 6.0.0-rc.4
-        version: 6.0.0-rc.4(patch_hash=ec6d0b8224cadfa283b4edeae55b485313af29e3a5ef891fc5c17e9fe352dc2c)(@reown/appkit@1.7.8(@types/react@19.3.0)(bufferutil@4.0.8)(react@19.3.1)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))(@solana/kit@8.3.0(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@7.0.2)(utf-8-validate@5.0.10))(mipd@0.0.7(typescript@7.0.2))(polkadot-api@3.2.1(bufferutil@4.0.8)(esbuild@0.28.2)(rxjs@7.8.2)(supports-color@10.0.0)(utf-8-validate@5.0.10))(rxjs@7.8.2)(viem@2.57.7(bufferutil@4.0.8)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))
+        specifier: 6.0.0-rc.5
+        version: 6.0.0-rc.5(@reown/appkit@1.7.8(@types/react@19.3.0)(bufferutil@4.0.8)(react@19.3.1)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))(@solana/kit@8.3.0(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@7.0.2)(utf-8-validate@5.0.10))(mipd@0.0.7(typescript@7.0.2))(polkadot-api@3.2.1(bufferutil@4.0.8)(esbuild@0.28.2)(rxjs@7.8.2)(supports-color@10.0.0)(utf-8-validate@5.0.10))(rxjs@7.8.2)(viem@2.57.7(bufferutil@4.0.8)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))
       '@polkadot-api/metadata-builders':
         specifier: 0.15.2
         version: 0.15.2
@@ -1634,8 +1631,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
 
-  '@kheopskit/core@6.0.0-rc.4':
-    resolution: {integrity: sha512-8JMhbZuzVZU294FQDdgoHV2CPNq0oNjcxqbhV/z37/upKHMSXTCd6N0iZQpBBOB80x0tz3dMAWTTFqnrPDi+ng==}
+  '@kheopskit/core@6.0.0-rc.5':
+    resolution: {integrity: sha512-/FdwOzd3WMCnMP2FirAUDxIOVj0kg4E6JGu8xvlta69/tF4KhOJoOaqq1MtBuo/P0EGilcfosvcrOl8qPlul5Q==}
     peerDependencies:
       '@reown/appkit': '>=1.7.0'
       '@solana/kit': '>=6.0.0'
@@ -8814,7 +8811,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
 
-  '@kheopskit/core@6.0.0-rc.4(patch_hash=ec6d0b8224cadfa283b4edeae55b485313af29e3a5ef891fc5c17e9fe352dc2c)(@reown/appkit@1.7.8(@types/react@19.3.0)(bufferutil@4.0.8)(react@19.3.1)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))(@solana/kit@8.3.0(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@7.0.2)(utf-8-validate@5.0.10))(mipd@0.0.7(typescript@7.0.2))(polkadot-api@3.2.1(bufferutil@4.0.8)(esbuild@0.28.2)(rxjs@7.8.2)(supports-color@10.0.0)(utf-8-validate@5.0.10))(rxjs@7.8.2)(viem@2.57.7(bufferutil@4.0.8)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))':
+  '@kheopskit/core@6.0.0-rc.5(@reown/appkit@1.7.8(@types/react@19.3.0)(bufferutil@4.0.8)(react@19.3.1)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))(@solana/kit@8.3.0(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@7.0.2)(utf-8-validate@5.0.10))(mipd@0.0.7(typescript@7.0.2))(polkadot-api@3.2.1(bufferutil@4.0.8)(esbuild@0.28.2)(rxjs@7.8.2)(supports-color@10.0.0)(utf-8-validate@5.0.10))(rxjs@7.8.2)(viem@2.57.7(bufferutil@4.0.8)(typescript@7.0.2)(utf-8-validate@5.0.10)(zod@4.6.7))':
     dependencies:
       '@noble/hashes': 2.4.0
       '@scure/base': 2.4.0
