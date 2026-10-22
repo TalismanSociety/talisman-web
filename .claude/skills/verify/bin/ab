@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-port=$(node "$(dirname "$0")/lib.mjs")
-exec agent-browser --session "talisman-web-$port" --cdp "$port" "$@"

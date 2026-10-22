@@ -11,8 +11,7 @@ baseline_rev=$(tr -d '[:space:]' < "$skill/parity-baseline.sha")
 routes=$skill/parity-routes.tsv
 flows_file=${SMOKE_FLOWS:-$skill/smoke-flows.json}
 export SMOKE_FLOWS=$flows_file
-out=${OUT:-$root/.tmp/verify/runs/$(date +%Y%m%d-%H%M%S)-csp}
-mkdir -p "$out" && out=$(cd "$out" && pwd)
+make_out "${OUT:-$root/.tmp/verify/runs/$(date +%Y%m%d-%H%M%S)-csp}"
 read -ra viewports <<<"${VIEWPORTS:-desktop mobile}"
 declare -A viewport_size=([desktop]="1440 900" [mobile]="390 844")
 attempts=${ATTEMPTS:-3}
@@ -21,7 +20,8 @@ side=candidate
 policy_checked=''
 scratch=$(mktemp -d)
 watcher=''
-trap '[[ -z $watcher ]] || kill "$watcher" 2>/dev/null || true; rm -rf "$scratch"' EXIT
+trap '[[ -z $watcher ]] || kill "$watcher" 2>/dev/null || true; stop_sides candidate; rm -rf "$scratch"' EXIT
+mkfifo "$scratch/watch.in"
 
 selected() {
   ((${#only[@]} == 0)) && return
@@ -35,7 +35,7 @@ one_line() { tr '\t\n' '  ' | sed 's/  */ /g; s/^ //; s/ $//'; }
 start_candidate() {
   local wallet_flag=''
   [[ $1 == signed-out ]] && wallet_flag=--no-wallet
-  start_side candidate "$candidate_app" "$wallet_flag" || { echo "could not start the $1 browser" >&2; exit 1; }
+  start_side candidate "$candidate_source" "$wallet_flag" || { echo "could not start the $1 browser" >&2; exit 1; }
   [[ -n $policy_checked ]] || check_policy
   if [[ $1 == connected ]]; then
     connect_side candidate || { echo "could not connect the browser: $reply" >&2; exit 1; }
@@ -44,21 +44,21 @@ start_candidate() {
 }
 
 check_policy() {
-  local port
-  port=$(sed -n 's/^APP_PORT=//p' "$root/.tmp/verify/$sides-candidate.env")
-  curl -sS -D - -o /dev/null "http://localhost:$port/" | grep -qiE '^content-security-policy(-report-only)?:.*default-src' ||
+  VERIFY_INSTANCE=$sides-candidate "$verify" exec curl -sS -D - -o /dev/null http://localhost:3002/ | grep -qiE '^content-security-policy(-report-only)?:.*default-src' ||
     { echo "the candidate sends no Content-Security-Policy header with a default-src, so no violation could be reported" >&2; exit 1; }
   policy_checked=yes
 }
 
 watch() {
   : > "$scratch/watch.out"
-  VERIFY_INSTANCE=$sides-candidate node "$bin/csp.mjs" "$out/$1.jsonl" > "$scratch/watch.out" 2>&1 &
+  VERIFY_INSTANCE=$sides-candidate "$verify" exec -i node "$bin/csp.mjs" "$out/$1.jsonl" < "$scratch/watch.in" > "$scratch/watch.out" 2>&1 &
   watcher=$!
+  exec {watch_fd}> "$scratch/watch.in"
   local tries=0
   until grep -q '^ready' "$scratch/watch.out"; do
     kill -0 "$watcher" 2>/dev/null && ((++tries < 100)) || {
       echo "the CSP watcher did not start: $(one_line < "$scratch/watch.out")"
+      exec {watch_fd}>&-
       kill "$watcher" 2>/dev/null || true
       wait "$watcher" 2>/dev/null || true
       watcher=''
@@ -71,7 +71,7 @@ watch() {
 unwatch() {
   local alive=yes
   kill -0 "$watcher" 2>/dev/null || alive=''
-  kill "$watcher" 2>/dev/null || true
+  exec {watch_fd}>&-
   wait "$watcher" 2>/dev/null || true
   watcher=''
   [[ -n $alive ]] || { echo "the CSP watcher died during the step: $(one_line < "$scratch/watch.out")"; return 1; }
@@ -90,7 +90,7 @@ load_route() {
 
 run_flow() {
   step set viewport 1440 900 1 || return
-  VERIFY_INSTANCE=$sides-candidate "$bin/smoke.mjs" "$1" "$out/$1.flow.json" > "$scratch/flow.log" 2>&1 || true
+  VERIFY_INSTANCE=$sides-candidate "$verify" exec node "$bin/smoke.mjs" "$1" "$out/$1.flow.json" > "$scratch/flow.log" 2>&1 || true
   [[ -f $out/$1.flow.json ]] || { echo "smoke.mjs wrote no result: $(tail -3 "$scratch/flow.log" | one_line)"; return 1; }
   echo "flow $(jq -r '.status + (if .detail then ": " + .detail else "" end)' "$out/$1.flow.json")"
   jq -e '.status == "captured" or .status == "unavailable"' "$out/$1.flow.json" >/dev/null
@@ -160,6 +160,6 @@ for flow in "${flows[@]}"; do
   step_run "$flow" "flow" run_flow "$flow"
 done
 [[ $(wc -l < "$out/summary.tsv") -gt 1 ]] || { echo "no route or flow matched: ${only[*]}" >&2; exit 1; }
-scan_for_key || status=1
+scan_for_key candidate || status=1
 echo "summary: $out/summary.tsv"
 exit "$status"

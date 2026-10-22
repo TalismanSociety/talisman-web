@@ -1,18 +1,10 @@
 #!/usr/bin/env node
-import { execFileSync } from "node:child_process"
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs"
-import { dirname, join } from "node:path"
+import { join } from "node:path"
 import { fileURLToPath } from "node:url"
 import { parseEnv } from "node:util"
 
-const mainCheckout = () =>
-	dirname(
-		execFileSync("git", ["rev-parse", "--path-format=absolute", "--git-common-dir"], {
-			encoding: "utf8",
-		}).trim()
-	)
-
-export const envFile = () => join(mainCheckout(), "apps/portal/.env")
+export const envFile = () => join(process.env.VERIFY_MAIN_CHECKOUT, "apps/portal/.env")
 
 export const tdaKey = () => {
 	if (process.env.TDA_API_KEY) return process.env.TDA_API_KEY

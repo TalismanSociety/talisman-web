@@ -2,7 +2,7 @@
 import { createServer } from "node:http"
 import { request as httpsRequest } from "node:https"
 
-const [origin, port] = process.argv.slice(2)
+const [origin] = process.argv.slice(2)
 const target = new URL(origin)
 const hopByHop = ["connection", "keep-alive", "transfer-encoding", "upgrade"]
 
@@ -22,4 +22,4 @@ createServer((request, response) => {
 		response.end(`${target.origin}: ${error.message}`)
 	})
 	request.pipe(upstream)
-}).listen(Number(port), "localhost")
+}).listen(3002, "localhost")
