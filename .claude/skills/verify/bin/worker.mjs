@@ -1,33 +1,32 @@
 #!/usr/bin/env node
 import { spawn } from "node:child_process"
-import { existsSync, mkdirSync, mkdtempSync, rmSync } from "node:fs"
+import { existsSync, mkdtempSync, rmSync } from "node:fs"
 import { join } from "node:path"
 import { createInterface } from "node:readline"
-import { fail, repoRoot } from "./lib.mjs"
+import { fail } from "./lib.mjs"
 import { envFile, tdaKey } from "./tda-key.mjs"
 
-const [dir, port] = process.argv.slice(2)
+const [src] = process.argv.slice(2)
+const dir = join(src, "apps/portal/dist")
 const key = tdaKey()
 if (!key) fail(`no TDA_API_KEY in the environment or in ${envFile()}`)
 
 if (existsSync(join(dir, "server/.dev.vars")))
 	fail(`${dir}/server/.dev.vars would replace the key and holds local secrets: rebuild without it`)
 
-const scratchRoot = join(repoRoot(), ".tmp/verify/worker")
-mkdirSync(scratchRoot, { recursive: true })
-const scratch = mkdtempSync(join(scratchRoot, `${port}-`))
+const scratch = mkdtempSync("/tmp/worker-")
 const wrangler = spawn(
 	process.execPath,
 	[
 		"--no-warnings",
-		join(repoRoot(), "node_modules/wrangler/wrangler-dist/cli.js"),
+		join(src, "node_modules/wrangler/wrangler-dist/cli.js"),
 		"dev",
 		"--config",
 		join(dir, "server/wrangler.json"),
 		"--ip",
 		"localhost",
 		"--port",
-		port,
+		"3002",
 		"--inspector-port",
 		"0",
 		"--persist-to",

@@ -58,6 +58,7 @@ const pages = (await targets()).filter(
 if (!pages.length) fail("no page tab to watch: open the portal first")
 
 const watched = await Promise.all(pages.map(watch))
+process.stdin.on("end", () => process.exit(0)).resume()
 process.stdout.write(`ready: watching ${pages.length} tab(s)\n`)
 await Promise.race(watched.map((page) => page.closed))
 fail("a watched tab closed its CDP socket")

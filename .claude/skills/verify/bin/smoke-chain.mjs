@@ -38,7 +38,7 @@ async function ethereum({ chainId, hash }) {
 }
 
 async function substrate({ url, extrinsic }) {
-	const tools = process.env.SMOKE_TOOLS ?? fail("SMOKE_TOOLS names the directory holding @polkadot/api: smoke.sh sets it")
+	const tools = process.env.SMOKE_TOOLS ?? fail("SMOKE_TOOLS names the directory holding @polkadot/api: the verify image sets it")
 	const require = createRequire(`${tools}/package.json`)
 	const { ApiPromise, WsProvider } = require("@polkadot/api")
 	const { blake2AsHex } = require("@polkadot/util-crypto")

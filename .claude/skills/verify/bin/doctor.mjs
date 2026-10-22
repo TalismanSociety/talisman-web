@@ -1,12 +1,8 @@
 #!/usr/bin/env node
-import { execFileSync } from "node:child_process"
 import {
 	attach,
 	closeTarget,
-	instanceId,
 	openTarget,
-	readInstance,
-	repoRoot,
 	sleep,
 	TALISMAN,
 	talismanWorker,
@@ -21,78 +17,20 @@ const check = (name, ok, detail) => {
 	console.log(`${ok ? "PASS" : "FAIL"} ${name}${detail ? `: ${detail}` : ""}`)
 	return ok
 }
-const sh = (cmd, args) => {
-	try {
-		return execFileSync(cmd, args, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim()
-	} catch {
-		return ""
-	}
-}
 
-const root = repoRoot()
-const instance = readInstance()
-if (
-	!check(
-		`instance ${instanceId()} recorded for this checkout`,
-		!!instance,
-		instance ? "" : "run instance.sh up"
-	)
+const status = await fetch("http://localhost:3002/", { signal: AbortSignal.timeout(20_000) }).then(
+	(response) => String(response.status),
+	(error) => error.message
 )
-	process.exit(1)
-
-const labels = sh("docker", [
-	"inspect",
-	"-f",
-	'{{.State.Status}} {{index .Config.Labels "talisman-web-verify.checkout"}}',
-	instance.CONTAINER,
-])
-check(
-	`container ${instance.CONTAINER} runs for this checkout`,
-	labels === `running ${root}`,
-	labels || "absent: instance.sh up"
-)
-
-const serverPid = sh("lsof", ["-t", "-nP", `-iTCP:${instance.APP_PORT}`, "-sTCP:LISTEN"]).split(
-	"\n"
-)[0]
-const serverCwd = serverPid
-	? sh("lsof", ["-a", "-p", serverPid, "-d", "cwd", "-Fn"])
-			.split("\n")
-			.find((line) => line.startsWith("n"))
-			?.slice(1)
-	: undefined
-check(
-	`app server on :${instance.APP_PORT} runs from this checkout`,
-	serverCwd === `${root}/apps/portal`,
-	serverPid ? `pid ${serverPid} in ${serverCwd}` : "nothing listening: instance.sh up"
-)
-
-const inContainer = sh("docker", [
-	"exec",
-	instance.CONTAINER,
-	"curl",
-	"-s",
-	"-o",
-	"/dev/null",
-	"-w",
-	"%{http_code}",
-	"--max-time",
-	"20",
-	"http://localhost:3002/",
-])
-check(
-	"the browser reaches the app at http://localhost:3002",
-	inContainer === "200",
-	`HTTP ${inContainer}`
-)
+check("the browser reaches the app at http://localhost:3002", status === "200", `HTTP ${status}`)
 
 const cdpUp = await targets().then(
 	() => true,
 	() => false
 )
-if (!check(`browser answers CDP on :${instance.CDP_PORT}`, cdpUp)) process.exit(1)
+if (!check("the browser answers CDP", cdpUp)) process.exit(1)
 
-if (instance.WALLET !== "off") {
+if (process.env.WALLET !== "off") {
 	const worker = await talismanWorker()
 	const version = await worker.evaluate("chrome.runtime.getManifest().version")
 	worker.close()
@@ -106,7 +44,7 @@ if (instance.WALLET !== "off") {
 		.catch(() => undefined)
 	if (storeVersion !== version)
 		console.log(
-			`WARN Talisman v${version} in the image, the Chrome Web Store has ${storeVersion ?? "an unknown version"}: instance.sh build, then up (verify skill, Maintenance)`
+			`WARN Talisman v${version} in the image, the Chrome Web Store has ${storeVersion ?? "an unknown version"}: verify build, then up (verify skill, Maintenance)`
 		)
 
 	const walletAddresses = new Set((await walletAccounts()).map((account) => account.address))
@@ -115,7 +53,7 @@ if (instance.WALLET !== "off") {
 		"wallet holds every account of the backup",
 		missing.length === 0,
 		missing.length
-			? `missing ${missing.map((a) => a.name).join(", ")}: instance.sh build, then up`
+			? `missing ${missing.map((a) => a.name).join(", ")}: verify build, then up`
 			: ""
 	)
 
@@ -131,7 +69,7 @@ if (instance.WALLET !== "off") {
 	check(
 		"wallet is unlocked",
 		text.length > 0 && !text.includes("Unlock the Talisman"),
-		text.includes("Unlock the Talisman") ? "run talisman.mjs unlock" : ""
+		text.includes("Unlock the Talisman") ? "run verify wallet unlock" : ""
 	)
 }
 
