@@ -62,4 +62,46 @@ describe("Dialog", () => {
 		expect(onRequestDismiss).toHaveBeenCalledOnce()
 		expect(escape.defaultPrevented).toBe(true)
 	})
+
+	describe("backdrop", () => {
+		const inside = { clientX: 700, clientY: 300 }
+		const outside = { clientX: 100, clientY: 300 }
+
+		const renderSheet = () => {
+			const onRequestDismiss = vi.fn()
+			render(
+				<Dialog onRequestDismiss={onRequestDismiss}>
+					<input defaultValue="Content" />
+				</Dialog>
+			)
+			const element = dialog() as HTMLDialogElement
+			element.getBoundingClientRect = () => new DOMRect(500, 0, 500, 800)
+			return {
+				element,
+				content: element.querySelector("input") as HTMLInputElement,
+				onRequestDismiss,
+			}
+		}
+
+		it("requests dismissal when pressed and released on the backdrop", () => {
+			const { element, onRequestDismiss } = renderSheet()
+
+			fireEvent.pointerDown(element, outside)
+			fireEvent.click(element, outside)
+
+			expect(onRequestDismiss).toHaveBeenCalledOnce()
+		})
+
+		it.each([
+			["its content", (view: ReturnType<typeof renderSheet>) => view.content],
+			["its padding", (view: ReturnType<typeof renderSheet>) => view.element],
+		])("stays open when pressed on %s and released on the backdrop", (_, pressTarget) => {
+			const view = renderSheet()
+
+			fireEvent.pointerDown(pressTarget(view), inside)
+			fireEvent.click(view.element, outside)
+
+			expect(view.onRequestDismiss).not.toHaveBeenCalled()
+		})
+	})
 })
