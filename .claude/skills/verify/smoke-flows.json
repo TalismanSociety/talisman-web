@@ -96,7 +96,7 @@
       ["fill", "0.00", "0.1"],
       ["press", "Unstake"]
     ],
-    "submit": "network fee; unstakes 0.1 TAO from root, no unbonding period; needs 0.2 TAO staked so 0.1 stays above the minimum"
+    "submit": "network fee; unstakes 0.1 TAO from root, no unbonding period; needs 0.1 TAO staked"
   },
   {
     "name": "subtensor-stake",
