@@ -90,17 +90,20 @@ const CancelUnstakeButton = (props: Omit<MenuItemProps, "children">) => (
 	</StakePositionContext.Consumer>
 )
 
-const ChangeValidatorButton = (props: Omit<MenuItemProps, "children">) => (
+const ChangeValidatorButton = ({
+	error,
+	...props
+}: Omit<MenuItemProps, "children"> & { error?: string }) => (
 	<StakePositionContext.Consumer>
-		{({ readonly, isError, errorMessage }) => {
+		{({ readonly }) => {
 			return (
 				<Tooltip
-					content={readonly ? "Account is readonly" : errorMessage}
-					disabled={!readonly && !isError}
+					content={readonly ? "Account is readonly" : error}
+					disabled={!readonly && error === undefined}
 				>
 					<Menu.Item.Button
 						headlineContent="Change Validator"
-						disabled={readonly || isError}
+						disabled={readonly || error !== undefined}
 						{...props}
 					/>
 				</Tooltip>

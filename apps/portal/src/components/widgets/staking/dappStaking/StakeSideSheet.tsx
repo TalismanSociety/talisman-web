@@ -1,4 +1,3 @@
-import BN from "bn.js"
 import { formatDistance } from "date-fns"
 import { AnimatePresence } from "motion/react"
 import type { ReactNode } from "react"
@@ -33,6 +32,7 @@ import { useEraEta } from "@/domains/staking/substrate/nominationPools/hooks/use
 import { useSearchParams } from "@/hooks/useSearchParams"
 import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 import { Select } from "@/ui/molecules/Select"
+import { BigIntMath } from "@/util/BigIntMath"
 import { Maybe } from "@/util/monads"
 
 import useUnlockDuration from "../providers/hooks/dapp/useUnlockDuration"
@@ -105,7 +105,7 @@ const EstimatedRewards = (props: { amount: bigint }) => {
 	const tokenAmount = useNativeTokenAmount()
 	const apr = useApr()
 	const amount = useMemo(
-		() => tokenAmount.fromPlanck(new BN(props.amount.toString()).muln(apr.totalApr).toString()),
+		() => tokenAmount.fromPlanck(BigIntMath.mulNumber(props.amount, apr.totalApr)),
 		[apr.totalApr, props.amount, tokenAmount]
 	)
 

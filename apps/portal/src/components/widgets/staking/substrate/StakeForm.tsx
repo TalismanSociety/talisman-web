@@ -1,5 +1,4 @@
 import { bind } from "@react-rxjs/core"
-import BN from "bn.js"
 import { AnimatePresence } from "motion/react"
 import type { ReactNode } from "react"
 import { memo, Suspense, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react"
@@ -48,6 +47,7 @@ import { Info } from "@/icons"
 import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
 import { Tooltip } from "@/ui/atoms/Tooltip"
 import { Select } from "@/ui/molecules/Select"
+import { BigIntMath } from "@/util/BigIntMath"
 import type { Decimal } from "@/util/Decimal"
 import { LOADING, toLoadable } from "@/util/loadable"
 import { Maybe } from "@/util/monads"
@@ -274,7 +274,7 @@ const EstimatedYield = memo(
 		const stakedReturn = useApr()
 		const annualReturn = useMemo(
 			() =>
-				new BN(props.amount.planck.toString()).muln(Number.isNaN(stakedReturn) ? 0 : stakedReturn),
+				BigIntMath.mulNumber(props.amount.planck, Number.isNaN(stakedReturn) ? 0 : stakedReturn),
 			[props.amount.planck, stakedReturn]
 		)
 		const parsedAnnualReturn = useTokenAmountFromPlanck(annualReturn)
