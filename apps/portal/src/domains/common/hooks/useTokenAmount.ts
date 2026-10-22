@@ -1,4 +1,3 @@
-import type BN from "bn.js"
 import { useMemo, useState } from "react"
 import { useNativeTokenAmountInputs } from "@/domains/chains/chains"
 import type { Decimal } from "@/util/Decimal"
@@ -59,7 +58,7 @@ export const useTokenAmount = <TAllowInvalid extends boolean = true>(
 export type TokenAmountFromPlank = ReturnType<typeof useTokenAmountFromPlanck>
 
 export const useTokenAmountFromPlanck = <
-	T extends string | number | BN | bigint | undefined,
+	T extends string | number | bigint | undefined,
 	TAllowInvalid extends boolean = false,
 >(
 	planck: T,

@@ -215,8 +215,9 @@ function calculateAlphaPrice({ pool }: { pool: RuntimePoolData | null | undefine
 
 	const alphaIn = Number(alphaInRaw.replace(/,/g, ""))
 	const taoIn = Number(taoInRaw.replace(/,/g, ""))
+	const alphaPrice = taoIn / alphaIn
 
-	return taoIn / alphaIn
+	return Number.isFinite(alphaPrice) ? alphaPrice : 0
 }
 
 /**
