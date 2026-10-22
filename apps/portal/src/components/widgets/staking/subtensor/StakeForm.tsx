@@ -1,8 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
-import BN from "bn.js"
 import type { ReactNode } from "react"
 import { Suspense, useContext, useMemo } from "react"
+import { ROOT_NETUID } from "@/components/widgets/staking/subtensor/constants"
 import type { SignerAccount } from "@/domains/accounts/accounts"
 import { useNativeTokenAmount } from "@/domains/chains/chains"
 import { ChainContext } from "@/domains/chains/contexts"
@@ -11,6 +11,7 @@ import { useAddStakeForm } from "@/domains/staking/subtensor/hooks/forms"
 import { useDelegateApr } from "@/domains/staking/subtensor/hooks/useApr"
 import { useStake } from "@/domains/staking/subtensor/hooks/useStake"
 import { CircularProgressIndicator } from "@/ui/atoms/CircularProgressIndicator"
+import { BigIntMath } from "@/util/BigIntMath"
 
 import { SubtensorStakingForm } from "./SubtensorStakingForm"
 
@@ -28,8 +29,23 @@ export const StakeForm = (props: StakeFormProps) => {
 	const stake = stakes?.find(
 		(stake) => stake.hotkey === props.delegate && Number(stake.netuid) === Number(props.netuid)
 	)
-	const { input, amount, transferable, extrinsic, ready, error, isLoading, setInput } =
-		useAddStakeForm(props.account, balance, stake, props.delegate, props.netuid)
+	const {
+		input,
+		amount,
+		transferable,
+		resulting,
+		resultingTao,
+		alphaPrice,
+		extrinsic,
+		ready,
+		error,
+		isLoading,
+		setInput,
+	} = useAddStakeForm(props.account, balance, stake, props.delegate, props.netuid)
+	const resultingStakeInTao =
+		(props.netuid ?? ROOT_NETUID) === ROOT_NETUID
+			? (resultingTao.decimalAmount?.planck ?? 0n)
+			: BigIntMath.mulNumber(resulting.decimalAmount?.planck ?? 0n, alphaPrice)
 	const navigate = useNavigate()
 
 	const queryClient = useQueryClient()
@@ -75,13 +91,7 @@ export const StakeForm = (props: StakeFormProps) => {
 			}
 			estimatedRewards={
 				<Suspense fallback={<CircularProgressIndicator size="1em" />}>
-					<EstimatedRewards
-						delegateHotkey={props.delegate || ""}
-						amount={
-							(amount.decimalAmount?.planck ?? 0n) +
-							(stake?.totalStaked.decimalAmount?.planck ?? 0n)
-						}
-					/>
+					<EstimatedRewards delegateHotkey={props.delegate || ""} amount={resultingStakeInTao} />
 				</Suspense>
 			}
 			currentStakedBalance={
@@ -131,7 +141,7 @@ const EstimatedRewards = (props: { amount: bigint; delegateHotkey: string }) => 
 	const delegateApr = useDelegateApr(props.delegateHotkey) || 0
 
 	const amount = useMemo(
-		() => tokenAmount.fromPlanck(new BN(props.amount.toString()).muln(delegateApr).toString()),
+		() => tokenAmount.fromPlanck(BigIntMath.mulNumber(props.amount, delegateApr)),
 		[delegateApr, props.amount, tokenAmount]
 	)
 
