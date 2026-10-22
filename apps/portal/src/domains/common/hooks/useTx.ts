@@ -9,6 +9,7 @@ import { track } from "@/domains/analytics/client"
 import { callOf, palletOf, substrateChainOf } from "@/domains/analytics/events/transactions"
 import { type ChainRuntime, getChainRuntime$ } from "@/domains/chains/chain-runtime"
 import { networksByGenesisHash$ } from "@/domains/chains/chaindata-provider"
+import { feeSpendableBalance, InsufficientFeeBalanceError } from "@/domains/chains/fee-balance"
 import { customSignedExtensionsFor } from "@/domains/chains/signed-extensions"
 import { type SubmitWatch, TxInvalidError, type TxResult, watchTx } from "@/domains/chains/submit"
 import { txCreatorFor } from "@/domains/chains/tx-creator"
@@ -70,7 +71,8 @@ const trackInBlock = (chainId: string, call: TxCallData) => {
 
 const isHarmless = (error: unknown) =>
 	(error instanceof Error && error.message === "Cancelled") ||
-	(error instanceof TxInvalidError && error.reason === "Payment")
+	(error instanceof TxInvalidError && error.reason === "Payment") ||
+	error instanceof InsufficientFeeBalanceError
 
 const sendThroughSignet = async (tx: Transaction): Promise<TxResult> => {
 	const { ok, error, receipt } = await signetSdk().send(toHex(await tx.getEncodedData()))
@@ -79,6 +81,20 @@ const sendThroughSignet = async (tx: Transaction): Promise<TxResult> => {
 	if (ok && receipt !== undefined) throw new HarmlessError("Please ignore this message")
 	throw new HarmlessError("Signet did not confirm the transaction")
 }
+
+export const estimateTxFee = (genesisHash: string, address: string, tx: Transaction) =>
+	tx.getEstimatedFees(getFakeTxCreator(address), {
+		customSignedExtensions: customSignedExtensionsFor(genesisHash),
+	})
+
+const canPayFee = (genesisHash: string, address: string, tx: Transaction, runtime: ChainRuntime) =>
+	Promise.all([
+		estimateTxFee(genesisHash, address, tx),
+		feeSpendableBalance(runtime, address),
+	]).then(
+		([fee, spendable]) => fee <= spendable,
+		() => true
+	)
 
 const submitTx = async (
 	genesisHash: string,
@@ -89,6 +105,8 @@ const submitTx = async (
 ) => {
 	const txCreator = await txCreatorFor(genesisHash, signer)
 	if (!txCreator) throw new Error(`No connected wallet can sign for ${signer.address}`)
+	if (!(await canPayFee(genesisHash, signer.address, tx, runtime)))
+		throw new InsufficientFeeBalanceError()
 	return watchTx(
 		tx.createSubmitAndWatch(txCreator, {
 			customSignedExtensions: customSignedExtensionsFor(genesisHash),
@@ -97,11 +115,6 @@ const submitTx = async (
 		watch
 	)
 }
-
-export const estimateTxFee = (genesisHash: string, address: string, tx: Transaction) =>
-	tx.getEstimatedFees(getFakeTxCreator(address), {
-		customSignedExtensions: customSignedExtensionsFor(genesisHash),
-	})
 
 const networkOf = (genesisHash: `0x${string}`) =>
 	firstValueFrom(networksByGenesisHash$.pipe(map((networks) => networks[genesisHash])))
