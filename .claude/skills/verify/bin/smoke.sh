@@ -10,8 +10,7 @@ baseline_rev=${SMOKE_BASELINE:-$(tr -d '[:space:]' < "$skill/parity-baseline.sha
 
 flows_file=${SMOKE_FLOWS:-$skill/smoke-flows.json}
 export SMOKE_FLOWS=$flows_file
-out=${OUT:-$root/.tmp/verify/runs/$(date +%Y%m%d-%H%M%S)-smoke}
-mkdir -p "$out" && out=$(cd "$out" && pwd)
+make_out "${OUT:-$root/.tmp/verify/runs/$(date +%Y%m%d-%H%M%S)-smoke}"
 attempts=${ATTEMPTS:-3}
 submit=''
 only=()
@@ -19,7 +18,7 @@ for arg in "$@"; do
   if [[ $arg == --submit ]]; then submit=yes; else only+=("$arg"); fi
 done
 scratch=$(mktemp -d)
-trap 'rm -rf "$scratch"' EXIT
+trap 'stop_sides baseline candidate; rm -rf "$scratch"' EXIT
 
 selected() {
   ((${#only[@]} == 0)) && return
@@ -28,19 +27,8 @@ selected() {
   return 1
 }
 
-ensure_tools() {
-  export SMOKE_TOOLS=$cache/smoke-tools
-  [[ -d $SMOKE_TOOLS/node_modules/@polkadot/api ]] && return
-  mkdir -p "$SMOKE_TOOLS"
-  npm install --prefix "$SMOKE_TOOLS" --no-audit --no-fund --silent @polkadot/api@16.4.1 > "$cache/smoke-tools.log" 2>&1 || {
-    tail -20 "$cache/smoke-tools.log" >&2
-    echo "installing @polkadot/api into $SMOKE_TOOLS failed (log: $cache/smoke-tools.log)" >&2
-    exit 1
-  }
-}
-
 run_side() {
-  VERIFY_INSTANCE=$sides-$1 "$bin/smoke.mjs" "$2" "$out/$2.$3.json" "${@:4}" > "$scratch/$3.log" 2>&1
+  VERIFY_INSTANCE=$sides-$1 "$verify" exec node "$bin/smoke.mjs" "$2" "$out/$2.$3.json" "${@:4}" > "$scratch/$3.log" 2>&1
 }
 
 compare_flow() {
@@ -65,7 +53,6 @@ compare_flow() {
 one_line() { tr '\t\n' '  ' | sed 's/  */ /g; s/^ //; s/ $//'; }
 
 prepare_sides baseline candidate
-[[ -z $submit ]] || ensure_tools
 start_state connected
 
 status=0
@@ -98,6 +85,6 @@ if [[ -n $submit ]]; then
   done
   echo "submitted: $out/submitted.tsv"
 fi
-scan_for_key || status=1
+scan_for_key baseline candidate || status=1
 echo "summary: $out/summary.tsv"
 exit "$status"
