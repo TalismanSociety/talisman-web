@@ -1,17 +1,15 @@
 import { useContext, useMemo } from "react"
 
-import {
-	MIN_SUBTENSOR_ROOTNET_STAKE,
-	ROOT_NETUID,
-} from "@/components/widgets/staking/subtensor/constants"
+import { ROOT_NETUID } from "@/components/widgets/staking/subtensor/constants"
 import { useNativeTokenAmount } from "@/domains/chains/chains"
 import { ChainContext } from "@/domains/chains/contexts"
-import { useTokenAmount } from "@/domains/common/hooks/useTokenAmount"
 import { useTx } from "@/domains/common/hooks/useTx"
 import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo"
 
 import { moveStakeCall, placeholderCall, txOf } from "../calls"
+import { moveStakeError } from "../validation"
 import type { StakeItem } from "./useStake"
+import { useSubtensorMinimums } from "./useSubtensorMinimums"
 
 type MoveItem = {
 	stake: StakeItem | undefined
@@ -25,41 +23,32 @@ export const useMoveStake = ({ stake, destinationHotkey }: MoveItem) => {
 	const { hotkey: originHotkey, stake: alphaAmount, netuid, symbol } = stake || {}
 	const formattedAlphaAmount = nativeTokenAmount.fromPlanckOrUndefined(alphaAmount, symbol)
 
-	const { minAlphaUnstake } = useGetDynamicTaoStakeInfo({
+	const { taoAmountFromAlpha, isLoading } = useGetDynamicTaoStakeInfo({
 		amount: formattedAlphaAmount,
 		netuid: netuid ?? 0,
 		direction: "alphaToTao",
 		shouldUpdateFeeAndSlippage: false,
 	})
 
-	const isRootnetStake = netuid === ROOT_NETUID
-	const minimum = useTokenAmount(
-		String(isRootnetStake ? MIN_SUBTENSOR_ROOTNET_STAKE : minAlphaUnstake)
+	const { data: minimums } = useSubtensorMinimums()
+	const taoValue =
+		netuid === ROOT_NETUID ? (alphaAmount ?? 0n) : (taoAmountFromAlpha.decimalAmount?.planck ?? 0n)
+
+	const error = useMemo(
+		() =>
+			minimums && !isLoading
+				? moveStakeError(taoValue, nativeTokenAmount.fromPlanck(minimums.transfer).decimalAmount)
+				: undefined,
+		[isLoading, minimums, nativeTokenAmount, taoValue]
 	)
-	const minimumFormatted = nativeTokenAmount.fromPlanckOrUndefined(
-		minimum.decimalAmount?.planck ?? 0n,
-		stake?.symbol
-	)
 
-	const { isError, errorMessage } = useMemo(() => {
-		const validations: Array<{ condition: boolean; message: string }> = [
-			{
-				condition:
-					(formattedAlphaAmount.decimalAmount?.planck ?? 0n) <
-					(minimumFormatted.decimalAmount?.planck ?? 0n),
-				message: `Minimum staked amount for changing validator is ${minimumFormatted.decimalAmount?.toLocaleStringPrecision()}`,
-			},
-		]
-
-		const firstError = validations.find((v) => v.condition)
-
-		return {
-			isError: Boolean(firstError),
-			errorMessage: firstError?.message ?? null,
-		}
-	}, [formattedAlphaAmount.decimalAmount, minimumFormatted.decimalAmount])
-
-	const isReady = stake && destinationHotkey && originHotkey !== destinationHotkey
+	const isReady =
+		stake &&
+		destinationHotkey &&
+		originHotkey !== destinationHotkey &&
+		minimums &&
+		!isLoading &&
+		!error
 
 	const call = useMemo(
 		() =>
@@ -76,5 +65,5 @@ export const useMoveStake = ({ stake, destinationHotkey }: MoveItem) => {
 
 	const extrinsic = useTx(genesisHash, (runtime) => txOf(runtime, call))
 
-	return { extrinsic, isReady, isError, errorMessage }
+	return { extrinsic, isReady, error }
 }

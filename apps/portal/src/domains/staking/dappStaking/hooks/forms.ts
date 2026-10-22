@@ -1,5 +1,4 @@
 import { bind } from "@react-rxjs/core"
-import BN from "bn.js"
 import { useContext, useDeferredValue, useMemo, useState } from "react"
 import { combineLatest, defer } from "rxjs"
 
@@ -134,10 +133,9 @@ export const useAddStakeForm = (account: Account, stake: Stake, dapp: SmartContr
 		BigIntMath.max(
 			0n,
 			availableBeforeFee.decimalAmount.planck -
-				BigInt(
-					new BN(maxStakeFee.status === "success" ? maxStakeFee.data.toString() : 0)
-						.muln(ESTIMATED_FEE_MARGIN_OF_ERROR)
-						.toString()
+				BigIntMath.mulNumber(
+					maxStakeFee.status === "success" ? maxStakeFee.data : 0n,
+					1 + ESTIMATED_FEE_MARGIN_OF_ERROR
 				)
 		)
 	)

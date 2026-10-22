@@ -1,5 +1,4 @@
 import { bind } from "@react-rxjs/core"
-import BN from "bn.js"
 import { useEffect, useMemo } from "react"
 import { combineLatest, from, map, switchMap } from "rxjs"
 
@@ -10,6 +9,7 @@ import {
 } from "@/domains/common/hooks/useTokenAmount"
 import { estimateTxFee } from "@/domains/common/hooks/useTx"
 import { useSearchParams } from "@/hooks/useSearchParams"
+import { BigIntMath } from "@/util/BigIntMath"
 import { LOADING, toLoadable } from "@/util/loadable"
 import usePrevious from "@/util/usePrevious"
 
@@ -57,8 +57,7 @@ const [useAddFormInputs] = bind(
 	LOADING
 )
 
-const withFeeMargin = (fee: bigint) =>
-	BigInt(new BN(fee.toString()).muln(1 + ESTIMATED_FEE_MARGIN_OF_ERROR).toString())
+const withFeeMargin = (fee: bigint) => BigIntMath.mulNumber(fee, 1 + ESTIMATED_FEE_MARGIN_OF_ERROR)
 
 export const usePoolAddForm = (action: PoolAddAction, account?: string) => {
 	const genesisHash = useGenesisHash()
