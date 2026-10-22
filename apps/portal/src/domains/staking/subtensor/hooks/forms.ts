@@ -19,7 +19,9 @@ import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/use
 import { setFeeEstimate } from "../breakdown"
 import { placeholderCall, stakeCall, txOf, unstakeCall } from "../calls"
 import type { SubtensorBalance } from "../chain"
+import { unstakeError } from "../validation"
 import type { StakeItem } from "./useStake"
+import { useSubtensorMinimums } from "./useSubtensorMinimums"
 
 export const useAddStakeForm = (
 	account: Account,
@@ -199,7 +201,6 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 		isLoading: isSlippageLoading,
 		error: isDynamicTaoStakeInfoError,
 		expectedTaoAmount,
-		minAlphaUnstake,
 		taoPriceWithSlippageFormatted,
 		alphaToTaoTalismanFee,
 		alphaToTaoTalismanFeeFormatted,
@@ -245,36 +246,28 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 
 	const available = nativeTokenAmount.fromPlanckOrUndefined(stake.stake, stake?.symbol)
 
-	const minimum = useTokenAmount(
-		String(isRootnetStake ? MIN_SUBTENSOR_ROOTNET_STAKE : minAlphaUnstake)
-	)
-	const minimumFormatted = nativeTokenAmount.fromPlanckOrUndefined(
-		minimum.decimalAmount?.planck ?? 0n,
-		stake?.symbol
-	)
+	const { data: minimums } = useSubtensorMinimums()
+	const taoReceived = isRootnetStake
+		? amountPlanck
+		: (expectedTaoAmount.decimalAmount?.planck ?? 0n)
 
 	const error = useMemo(() => {
-		if (input === "" || !available.decimalAmount) return
+		if (input === "" || !available.decimalAmount || !minimums || isSlippageLoading) return
 
-		if ((amount.decimalAmount?.planck ?? 0n) > available.decimalAmount.planck)
-			return new Error("Insufficient balance")
-
-		if ((amount.decimalAmount?.planck ?? 0n) < (minimumFormatted.decimalAmount?.planck ?? 0n)) {
-			return new Error(
-				`Minimum unstake amount is ${minimumFormatted.decimalAmount?.toLocaleStringPrecision()}`
-			)
-		}
-
-		if (
-			amount.decimalAmount &&
-			available.decimalAmount.planck - amount.decimalAmount.planck > 0n &&
-			available.decimalAmount.planck - amount.decimalAmount.planck <
-				(minimumFormatted.decimalAmount?.planck ?? 0n)
-		) {
-			return new Error(
-				`You must keep ${minimumFormatted.decimalAmount?.toLocaleString?.()} to continue staking`
-			)
-		}
+		const validationError = unstakeError({
+			amount: amountPlanck,
+			available: available.decimalAmount,
+			taoReceived,
+			minStake: nativeTokenAmount.fromPlanck(minimums.stake).decimalAmount,
+			minKeep: isRootnetStake
+				? minimums.nominatorStake
+				: ceilDiv(
+						minimums.nominatorStake * 10n ** BigInt(available.decimalAmount.decimals),
+						BigMath.max(limitPrice, 1n)
+					),
+			nominatorMinStake: nativeTokenAmount.fromPlanck(minimums.nominatorStake).decimalAmount,
+		})
+		if (validationError) return validationError
 
 		if (isDynamicTaoStakeInfoError) {
 			return new Error("Failed to fetch dynamic tao stake info")
@@ -282,11 +275,16 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 
 		return undefined
 	}, [
-		amount.decimalAmount,
+		amountPlanck,
 		available.decimalAmount,
 		input,
 		isDynamicTaoStakeInfoError,
-		minimumFormatted.decimalAmount,
+		isRootnetStake,
+		isSlippageLoading,
+		limitPrice,
+		minimums,
+		nativeTokenAmount,
+		taoReceived,
 	])
 
 	const resulting = useTokenAmountFromPlanck(
@@ -309,6 +307,7 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 	const ready =
 		(amount.decimalAmount?.planck ?? 0n) > 0n &&
 		error === undefined &&
+		minimums !== undefined &&
 		!isSlippageLoading &&
 		!isDynamicTaoStakeInfoError
 
@@ -328,6 +327,9 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 		resultingAlphaInTaoAmount,
 	}
 }
+
+const ceilDiv = (numerator: bigint, denominator: bigint) =>
+	(numerator + denominator - 1n) / denominator
 
 const callKey = (call: TxCallData) =>
 	JSON.stringify(call, (_, value) => (typeof value === "bigint" ? value.toString() : value))

@@ -1,7 +1,6 @@
 import { useEffect } from "react"
 
 import {
-	MIN_SUBTENSOR_ALPHA_STAKE,
 	ROOT_NETUID,
 	TALISMAN_FEE_BITTENSOR,
 } from "@/components/widgets/staking/subtensor/constants"
@@ -53,12 +52,6 @@ export const useGetDynamicTaoStakeInfo = ({
 	const expectedAlpha = calculateExpectedAlpha({
 		alphaPrice,
 		taoStaked: amount?.decimalAmount?.toNumber() ?? 0,
-		slippage,
-	})
-
-	const minAlphaUnstake = calculateExpectedAlpha({
-		alphaPrice,
-		taoStaked: MIN_SUBTENSOR_ALPHA_STAKE,
 		slippage,
 	})
 
@@ -166,7 +159,7 @@ export const useGetDynamicTaoStakeInfo = ({
 		alphaToTaoTalismanFeeFormatted,
 		isLoading,
 		error,
-		minAlphaUnstake,
+		taoAmountFromAlpha: taoAmountFromAlphaTokenAmount,
 		calculateExpectedTaoFromAlpha,
 	}
 }
