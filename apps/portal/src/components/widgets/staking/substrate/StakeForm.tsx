@@ -59,6 +59,7 @@ import PoolClaimPermissionDialog, {
 	toUiPermission,
 } from "./PoolClaimPermissionDialog"
 import UnstakeDialog from "./UnstakeDialog"
+import { usePoolSelection } from "./usePoolSelection"
 
 const ExistingPool = (props: { account: SignerAccount; showClaimPermission: boolean }) => {
 	const pool = usePoolStakes({ address: props.account.address })
@@ -389,9 +390,11 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 
 	assertChain(chain, { hasNominationPools: true })
 
-	const initialPoolId = poolIdFromSearch ?? recommendedPools[0]?.poolId
-
-	const [selectedPoolId, setSelectedPoolId] = useState(initialPoolId)
+	const [selectedPoolId, setSelectedPoolId] = usePoolSelection({
+		genesisHash,
+		poolIdFromSearch,
+		recommendedPoolId: recommendedPools[0]?.poolId,
+	})
 	const [showPoolSelector, setShowPoolSelector] = useState(false)
 
 	const [[selectedAccount], accountSelector] = useAccountSelector(
@@ -428,10 +431,6 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 		decimalAmount !== undefined &&
 		existingPoolLoadable.status === "success" &&
 		isInputReady
-
-	useEffect(() => {
-		setSelectedPoolId(initialPoolId)
-	}, [initialPoolId, recommendedPools])
 
 	const [claimPermissionDialogOpen, setClaimPermisssionDialogOpen] = useState(false)
 	const [claimPermission, setClaimPermission] = useState<ClaimPermission>("Permissioned")
