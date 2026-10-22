@@ -1,7 +1,5 @@
-import { execFileSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 import { homedir } from "node:os"
-import { fileURLToPath } from "node:url"
 
 export const TALISMAN = "chrome-extension://eajedbpaeeicjfopdfclmfjjkhelgcod"
 
@@ -12,54 +10,22 @@ export const fail = (message, code = 1) => {
 	process.exit(code)
 }
 
-export const repoRoot = () =>
-	execFileSync("git", ["rev-parse", "--show-toplevel"], { encoding: "utf8" }).trim()
-
-export const instanceId = () => process.env.VERIFY_INSTANCE ?? "dev"
-
-const instanceFile = () =>
-	`${repoRoot()}/.tmp/verify/${instanceId() === "dev" ? "instance" : instanceId()}.env`
-
-export function readInstance() {
-	let text
-	try {
-		text = readFileSync(instanceFile(), "utf8")
-	} catch {
-		return undefined
-	}
-	return Object.fromEntries(
-		text
-			.split("\n")
-			.filter((line) => line.includes("="))
-			.map((line) => [line.slice(0, line.indexOf("=")), line.slice(line.indexOf("=") + 1)])
-	)
-}
-
-function cdpPort() {
-	const port = process.env.VERIFY_CDP_PORT ?? readInstance()?.CDP_PORT
-	if (!port)
-		fail(
-			`no verify instance for ${repoRoot()}: run .claude/skills/verify/bin/instance.sh up (verify skill, Launch)`
-		)
-	return port
-}
-
-const cdpUrl = () => `http://127.0.0.1:${cdpPort()}`
+const CDP = "http://127.0.0.1:9223"
 
 export async function targets() {
 	try {
-		return await (await fetch(`${cdpUrl()}/json/list`)).json()
+		return await (await fetch(`${CDP}/json/list`)).json()
 	} catch {
-		return fail(`no browser answers CDP on :${cdpPort()}: instance.sh up`)
+		return fail(`Chromium does not answer CDP in ${process.env.VERIFY_INSTANCE}: verify up, or rerun the lane`)
 	}
 }
 
 export async function openTarget(url) {
-	return (await fetch(`${cdpUrl()}/json/new?${url}`, { method: "PUT" })).json()
+	return (await fetch(`${CDP}/json/new?${url}`, { method: "PUT" })).json()
 }
 
 export async function closeTarget(id) {
-	await fetch(`${cdpUrl()}/json/close/${id}`)
+	await fetch(`${CDP}/json/close/${id}`)
 }
 
 export async function attach(target) {
@@ -114,7 +80,7 @@ export async function talismanWorker() {
 		if (attempt === 5) await openTarget(`${TALISMAN}/popup.html`)
 		await sleep(1000)
 	}
-	return fail("no Talisman service worker after 30s: instance.sh down, then up")
+	return fail("no Talisman service worker after 30s: verify down, then up")
 }
 
 export const BACKUP = `${homedir()}/.talisman-dev/verify-backup.json`
@@ -130,5 +96,3 @@ export async function walletAccounts() {
 	worker.close()
 	return (keyring?.accounts ?? []).map(({ name, address, type }) => ({ name, address, type }))
 }
-
-if (process.argv[1] === fileURLToPath(import.meta.url)) console.log(cdpPort())
