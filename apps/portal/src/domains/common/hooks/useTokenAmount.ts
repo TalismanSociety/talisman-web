@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react"
-import { useNativeTokenAmountInputs } from "@/domains/chains/chains"
+import { useMemo } from "react"
+import { useNativeTokenAmountInputs, useNativeTokenDecimal } from "@/domains/chains/chains"
+import { useAmountInputState } from "@/util/amountInput"
 import type { Decimal } from "@/util/Decimal"
 
 type Options<TAllowInvalid extends boolean = boolean> = {
@@ -120,11 +121,8 @@ export const useTokenAmountFromPlanck = <
 	return { decimalAmount, fiatAmount, localizedFiatAmount } as Return
 }
 
-export const useTokenAmountState = (
-	initialState: string | (() => string),
-	options: Options = { allowInvalidValue: true }
-) => {
-	const [amount, setAmount] = useState(initialState)
+export const useTokenAmountState = (options: Options = { allowInvalidValue: true }) => {
+	const [amount, setAmount] = useAmountInputState(useNativeTokenDecimal().decimals)
 
 	return [{ ...useTokenAmount(amount, options), amount }, setAmount] as const
 }

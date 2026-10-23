@@ -39,7 +39,7 @@ export const usePoolUnstakeForm = (account?: string) => {
 		txFromCall(runtime, unbondCall(member, points))
 	)
 
-	const [input, setAmount] = useTokenAmountState("")
+	const [input, setAmount] = useTokenAmountState()
 
 	const minNeededForMembership = useTokenAmountFromPlanck(data?.minJoinBond)
 	const available = useTokenAmountFromPlanck(data?.points)

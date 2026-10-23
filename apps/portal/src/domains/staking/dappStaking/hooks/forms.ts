@@ -1,13 +1,15 @@
 import { bind } from "@react-rxjs/core"
-import { useContext, useDeferredValue, useMemo, useState } from "react"
+import { useContext, useDeferredValue, useMemo } from "react"
 import { combineLatest, defer } from "rxjs"
 
 import type { Account } from "@/domains/accounts/accounts"
+import { useNativeTokenDecimal } from "@/domains/chains/chains"
 import { ChainContext } from "@/domains/chains/contexts"
 import type { SmartContract } from "@/domains/chains/portal-runtime"
 import { useTokenAmount, useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import { estimateTxFee, useTx } from "@/domains/common/hooks/useTx"
 import type { Signer } from "@/domains/extension/signer"
+import { useAmountInputState } from "@/util/amountInput"
 import { BigIntMath } from "@/util/BigIntMath"
 import { LOADING, toLoadable } from "@/util/loadable"
 
@@ -93,7 +95,7 @@ const stakedOf = (stakerInfo: { staked: { voting: bigint; build_and_earn: bigint
 
 export const useAddStakeForm = (account: Account, stake: Stake, dapp: SmartContract) => {
 	const { genesisHash } = useContext(ChainContext)
-	const [amount, setAmount] = useState("")
+	const [amount, setAmount] = useAmountInputState(useNativeTokenDecimal().decimals)
 	const deferredAmount = useDeferredValue(amount)
 	const input = useTokenAmount(deferredAmount)
 	const inTransition = amount !== deferredAmount
@@ -216,7 +218,7 @@ export const useAddStakeForm = (account: Account, stake: Stake, dapp: SmartContr
 
 export const useUnstakeForm = (account: Account, stake: Stake, dapp: SmartContract) => {
 	const { genesisHash } = useContext(ChainContext)
-	const [amount, setAmount] = useState("")
+	const [amount, setAmount] = useAmountInputState(useNativeTokenDecimal().decimals)
 	const deferredAmount = useDeferredValue(amount)
 	const input = useTokenAmount(deferredAmount)
 	const inTransition = amount !== deferredAmount

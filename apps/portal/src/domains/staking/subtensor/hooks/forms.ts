@@ -1,7 +1,7 @@
 import { BigMath } from "@talismn/util"
 import { useQuery } from "@tanstack/react-query"
 import type { TxCallData } from "polkadot-api"
-import { useContext, useEffect, useMemo, useState } from "react"
+import { useContext, useEffect, useMemo } from "react"
 import { firstValueFrom } from "rxjs"
 import {
 	MIN_SUBTENSOR_ALPHA_STAKE,
@@ -10,11 +10,12 @@ import {
 } from "@/components/widgets/staking/subtensor/constants"
 import type { Account } from "@/domains/accounts/accounts"
 import { getChainRuntime$ } from "@/domains/chains/chain-runtime"
-import { useNativeTokenAmount } from "@/domains/chains/chains"
+import { useNativeTokenAmount, useNativeTokenDecimal } from "@/domains/chains/chains"
 import { ChainContext } from "@/domains/chains/contexts"
 import { useTokenAmount, useTokenAmountFromPlanck } from "@/domains/common/hooks/useTokenAmount"
 import { estimateTxFee, useTx } from "@/domains/common/hooks/useTx"
 import { useGetDynamicTaoStakeInfo } from "@/domains/staking/subtensor/hooks/useGetDynamicTaoStakeInfo"
+import { useAmountInputState } from "@/util/amountInput"
 
 import { setFeeEstimate } from "../breakdown"
 import { placeholderCall, stakeCall, txOf, unstakeCall } from "../calls"
@@ -30,7 +31,7 @@ export const useAddStakeForm = (
 	delegate: string | undefined,
 	netuid: number | undefined
 ) => {
-	const [input, setInput] = useState("")
+	const [input, setInput] = useAmountInputState(useNativeTokenDecimal().decimals)
 	const { genesisHash } = useContext(ChainContext)
 	const amount = useTokenAmount(input)
 
@@ -192,7 +193,7 @@ export const useUnstakeForm = (account: Account, stake: StakeItem, delegate: str
 	const { genesisHash } = useContext(ChainContext)
 	const nativeTokenAmount = useNativeTokenAmount()
 
-	const [input, setInput] = useState("")
+	const [input, setInput] = useAmountInputState(useNativeTokenDecimal().decimals)
 	const amount = useTokenAmount(input)
 	const isRootnetStake = stake.netuid === ROOT_NETUID
 
