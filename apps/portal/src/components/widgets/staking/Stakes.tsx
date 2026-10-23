@@ -1,13 +1,10 @@
 import { Link } from "@tanstack/react-router"
 import type { PropsWithChildren } from "react"
 import { Fragment, Suspense } from "react"
-import { SectionHeader } from "@/components/molecules/SectionHeader"
 import { StakePosition, StakePositionList } from "@/components/recipes/StakePosition"
-import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
 import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { useNominationPoolsEnabledChains } from "@/domains/chains/chains"
 import { ChainProvider } from "@/domains/chains/provider"
-import { useTotalStaked } from "@/domains/staking/hooks"
 import { Button } from "@/ui/atoms/Button"
 import { Text } from "@/ui/atoms/Text"
 import { HiddenDetails } from "@/ui/molecules/HiddenDetails"
@@ -49,33 +46,15 @@ const NoStakePrompt = (props: { className?: string }) => (
 	</div>
 )
 
-const StakeTotal = () => <AnimatedFiatNumber end={useTotalStaked()} />
-
-const StakeHeader = () => {
-	return (
-		<SectionHeader
-			headlineContent="Staking"
-			supportingContent={
-				<ErrorBoundary>
-					<Suspense>
-						<StakeTotal />
-					</Suspense>
-				</ErrorBoundary>
-			}
-		/>
-	)
-}
-
 const LoadingSuspense = (props: PropsWithChildren) => (
 	<Suspense fallback={<StakesLoading />} {...props} />
 )
 
-const Stakes = (props: { hideHeader?: boolean }) => {
+const Stakes = () => {
 	const chains = useNominationPoolsEnabledChains()
 
 	return (
 		<div id="staking">
-			{!props.hideHeader && <StakeHeader />}
 			<StakePositionList>
 				<StakesLoadingSkeleton>
 					<ErrorBoundary orientation="horizontal">
