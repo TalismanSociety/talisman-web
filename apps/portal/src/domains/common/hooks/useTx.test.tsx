@@ -327,6 +327,18 @@ describe("useTx fee guard", () => {
 		await expect(submission).resolves.toMatchObject({ txHash })
 	})
 
+	it("keeps reserved funds from covering frozen ones on Vara, whose fees go through the Currency adapter", async () => {
+		const vara = "0xfe1b4c55fd4d668101126434206571a7838a8b6b93a6d1b95d607e78e6c53763"
+		const { tx, calls } = fakeTx()
+		calls.getEstimatedFees.mockResolvedValue(spendable)
+		const { result } = renderHook(() => useTx(vara, () => tx))
+
+		await expect(result.current.signAndSend({ address: alice })).rejects.toThrow(
+			"Insufficient balance to pay the network fee"
+		)
+		expect(calls.createSubmitAndWatch).not.toHaveBeenCalled()
+	})
+
 	it("signs when the fee cannot be estimated", async () => {
 		Object.assign(accountData, { free: 0n, reserved: 0n, frozen: 0n })
 		const { events$, tx, calls } = fakeTx()

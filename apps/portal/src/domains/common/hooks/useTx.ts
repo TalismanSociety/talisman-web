@@ -90,7 +90,7 @@ export const estimateTxFee = (genesisHash: string, address: string, tx: Transact
 const canPayFee = (genesisHash: string, address: string, tx: Transaction, runtime: ChainRuntime) =>
 	Promise.all([
 		estimateTxFee(genesisHash, address, tx),
-		feeSpendableBalance(runtime, address),
+		feeSpendableBalance(runtime, genesisHash, address),
 	]).then(
 		([fee, spendable]) => fee <= spendable,
 		() => true
