@@ -17,7 +17,7 @@ type None = Record<never, never>
 
 export type DispatchError = { type: string; value?: unknown }
 
-type AccountInfo = {
+export type AccountInfo = {
 	nonce: number
 	consumers: number
 	providers: number

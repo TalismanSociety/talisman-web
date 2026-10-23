@@ -66,7 +66,7 @@ export const usePoolAddForm = (action: PoolAddAction, account?: string) => {
 	const ready = account !== undefined && inputs.status === "success"
 	const data = inputs.status === "success" ? inputs.data : undefined
 
-	const [input, setAmount] = useTokenAmountState("")
+	const [input, setAmount] = useTokenAmountState()
 
 	const availableBalance = useTokenAmountFromPlanck(
 		useMemo(() => {

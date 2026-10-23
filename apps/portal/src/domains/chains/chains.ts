@@ -134,6 +134,7 @@ const decimalOf = (nativeToken: ChainInfo["nativeToken"]) => {
 	const decimals = nativeToken?.decimals ?? 0
 	const currency = nativeToken?.symbol
 	return {
+		decimals,
 		fromPlanck: (value: string | number | bigint) =>
 			Decimal.fromPlanck(value, decimals, { currency }),
 		fromPlanckOrUndefined: (value: string | number | bigint | undefined, symbol?: string) =>
