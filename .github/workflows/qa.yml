@@ -20,6 +20,9 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.45.0-noble
+      options: --user 1001
 
     environment: ${{ vars.PORTAL_PROJECT_NAME }} (${{ fromJSON('["Preview", "Production"]')[github.ref_name == github.event.repository.default_branch] }})
 
@@ -31,6 +34,14 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
+
+      - name: Install jq
+        run: |
+          mkdir -p "$HOME/bin"
+          curl -fsSL -o "$HOME/bin/jq" https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-amd64
+          echo "5942c9b0934e510ee61eb3e30273f1b3fe2590df93933a93d7c58b81d19c8ff5  $HOME/bin/jq" | sha256sum -c -
+          chmod +x "$HOME/bin/jq"
+          echo "$HOME/bin" >> "$GITHUB_PATH"
 
       # this will inject all github secrets and variables as environment variables
       - name: Set environment variables
@@ -49,7 +60,6 @@ jobs:
           done
 
       - uses: ./.github/actions/setup
-      - run: pnpm --filter @talismn/portal exec playwright install --with-deps
       - run: pnpm e2e
 
       - name: Upload test results
