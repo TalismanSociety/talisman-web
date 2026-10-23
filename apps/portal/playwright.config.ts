@@ -30,7 +30,7 @@ const config: PlaywrightTestConfig = {
 	},
 	projects: process.env.CI ? projects.slice(0, 1) : projects,
 	webServer: {
-		command: `pnpm dev --port ${PORT}`,
+		command: `pnpm exec vite build && pnpm exec vite preview --port ${PORT}`,
 		port: PORT,
 		timeout: process.env["CI"] ? 10 * 60000 : 5 * 60000,
 		reuseExistingServer: !process.env["CI"],
