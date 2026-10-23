@@ -73,14 +73,17 @@ export async function attach(target) {
 
 export async function talismanWorker() {
 	for (let attempt = 0; attempt < 30; attempt++) {
-		const worker = (await targets()).find(
+		const target = (await targets()).find(
 			(t) => t.type === "service_worker" && t.url.startsWith(TALISMAN)
 		)
-		if (worker) return attach(worker)
-		if (attempt === 5) await openTarget(`${TALISMAN}/popup.html`)
+		if (target) {
+			const worker = await attach(target)
+			if (await worker.evaluate("!!globalThis.chrome?.storage")) return worker
+			worker.close()
+		} else if (attempt === 5) await openTarget(`${TALISMAN}/popup.html`)
 		await sleep(1000)
 	}
-	return fail("no Talisman service worker after 30s: verify down, then up")
+	return fail("no Talisman service worker with chrome.storage after 30s: verify down, then up")
 }
 
 export const BACKUP = `${homedir()}/.talisman-dev/verify-backup.json`
