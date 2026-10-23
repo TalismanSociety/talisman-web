@@ -18,10 +18,29 @@ jobs:
       - run: pnpm verify
       - run: pnpm audit --prod --audit-level high
 
+  playwright-version:
+    runs-on: ubuntu-latest
+
+    outputs:
+      version: ${{ steps.lockfile.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+          sparse-checkout: pnpm-lock.yaml
+          sparse-checkout-cone-mode: false
+      - id: lockfile
+        run: |
+          version=$(grep -oP "^  '@playwright/test@\K[^']+(?=':$)" pnpm-lock.yaml | sort -u)
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
   e2e:
+    needs: playwright-version
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.45.0-noble
+      image: mcr.microsoft.com/playwright:v${{ needs.playwright-version.outputs.version }}-noble
       options: --user 1001
 
     environment: ${{ vars.PORTAL_PROJECT_NAME }} (${{ fromJSON('["Preview", "Production"]')[github.ref_name == github.event.repository.default_branch] }})
