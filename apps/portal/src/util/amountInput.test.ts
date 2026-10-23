@@ -68,4 +68,17 @@ describe("useAmountInputState", () => {
 		act(() => result.current[1]("1.2"))
 		expect(result.current[0]).toBe("1.2")
 	})
+
+	it("trims the amount to fewer decimals and accepts edits from there", () => {
+		const { result, rerender } = renderHook(({ decimals }) => useAmountInputState(decimals), {
+			initialProps: { decimals: 12 },
+		})
+
+		act(() => result.current[1]("100.123456789012"))
+		rerender({ decimals: 10 })
+		expect(result.current[0]).toBe("100.1234567890")
+
+		act(() => result.current[1]("100.123456789"))
+		expect(result.current[0]).toBe("100.123456789")
+	})
 })
