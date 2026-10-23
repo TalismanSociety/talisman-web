@@ -92,6 +92,16 @@ describe("Dialog", () => {
 			expect(onRequestDismiss).toHaveBeenCalledOnce()
 		})
 
+		it("requests dismissal once per backdrop press", () => {
+			const { element, onRequestDismiss } = renderSheet()
+
+			fireEvent.pointerDown(element, outside)
+			fireEvent.click(element, outside)
+			fireEvent.click(element, outside)
+
+			expect(onRequestDismiss).toHaveBeenCalledOnce()
+		})
+
 		it.each([
 			["its content", (view: ReturnType<typeof renderSheet>) => view.content],
 			["its padding", (view: ReturnType<typeof renderSheet>) => view.element],

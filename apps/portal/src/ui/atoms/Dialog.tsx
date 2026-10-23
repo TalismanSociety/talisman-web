@@ -85,7 +85,9 @@ export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function 
 		}
 
 		const onClick = (event: MouseEvent) => {
-			if (pressedOnBackdrop.current && isOnBackdrop(event)) {
+			const pressStartedOnBackdrop = pressedOnBackdrop.current
+			pressedOnBackdrop.current = false
+			if (pressStartedOnBackdrop && isOnBackdrop(event)) {
 				onRequestDismiss?.()
 			}
 		}
