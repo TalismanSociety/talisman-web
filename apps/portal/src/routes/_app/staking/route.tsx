@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router"
+import { Suspense } from "react"
 import { WalletTotal } from "@/components/legacy/widgets/WalletTotal"
 import { PageHeader, PageHeaderItem } from "@/components/molecules/PageHeader"
 import { PageTab, PageTabs } from "@/components/molecules/PageTabs"
@@ -6,11 +7,25 @@ import { AccountValueInfo } from "@/components/recipes/AccountValueInfo"
 import { PortfolioAddressSearch } from "@/components/recipes/PortfolioAddressSearch"
 import { AccountConnectionGuard } from "@/components/widgets/AccountConnectionGuard"
 import { AccountsManagementMenu } from "@/components/widgets/AccountsManagementMenu"
+import { AnimatedFiatNumber } from "@/components/widgets/AnimatedFiatNumber"
+import { ErrorBoundary } from "@/components/widgets/ErrorBoundary"
 import { BannerStakeWithTalismanWallet } from "@/components/widgets/staking/BannerStakeWithTalismanWallet"
 import { useSelectedAccounts } from "@/domains/accounts/accounts"
+import { useTotalStaked } from "@/domains/staking/hooks"
 import { Surface } from "@/ui/atoms/Surface"
+import { Text } from "@/ui/atoms/Text"
 
 export const Route = createFileRoute("/_app/staking")({ component: Layout })
+
+const TotalStakedValue = () => <AnimatedFiatNumber end={useTotalStaked()} />
+
+const TotalStaked = () => (
+	<ErrorBoundary>
+		<Suspense>
+			<TotalStakedValue />
+		</Suspense>
+	</ErrorBoundary>
+)
 
 function Layout() {
 	const accounts = useSelectedAccounts()
@@ -40,13 +55,12 @@ function Layout() {
 
 					<PageHeaderItem>
 						<PortfolioAddressSearch />
-						{/* TODO: Fix total stake calculation and display correct amount. */}
-						{/* <div>
-              <Text.BodyLarge as="div">Staking balance</Text.BodyLarge>
-              <Text.H3 as="div" css={{ marginTop: '0.125em' }}>
-                <TotalStaked />
-              </Text.H3>
-            </div> */}
+						<div>
+							<Text.BodyLarge as="div">Staking balance</Text.BodyLarge>
+							<Text.H3 as="div" css={{ marginTop: "0.125em" }}>
+								<TotalStaked />
+							</Text.H3>
+						</div>
 					</PageHeaderItem>
 				</PageHeader>
 				<Surface css={{ borderRadius: "1.6rem", padding: "1.6rem" }}>

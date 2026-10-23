@@ -23,6 +23,8 @@ vi.mock("@/components/recipes/AccountValueInfo", () => ({ AccountValueInfo: () =
 vi.mock("@/components/recipes/PortfolioAddressSearch", () => ({
 	PortfolioAddressSearch: () => null,
 }))
+vi.mock("@/components/widgets/AnimatedFiatNumber", () => ({ AnimatedFiatNumber: () => null }))
+vi.mock("@/domains/staking/hooks", () => ({ useTotalStaked: () => 0 }))
 vi.mock("@/components/widgets/AccountsManagementMenu", () => ({
 	AccountsManagementMenu: () => null,
 }))
