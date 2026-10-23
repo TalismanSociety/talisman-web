@@ -46,7 +46,7 @@ export const useValidatorUnstakeForm = (controller?: string) => {
 		txFromCall(runtime, unbondActionCall(action))
 	)
 
-	const [input, setAmount] = useTokenAmountState("")
+	const [input, setAmount] = useTokenAmountState()
 
 	const minNeededForMembership = useTokenAmountFromPlanck(data?.minNominatorBond)
 	const available = useTokenAmountFromPlanck(data?.active)
