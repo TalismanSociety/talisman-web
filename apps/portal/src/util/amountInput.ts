@@ -3,7 +3,7 @@ import { useCallback, useState } from "react"
 const MAX_INTEGER_DIGITS = 15
 
 export const isAmountInput = (input: string, decimals: number) =>
-	new RegExp(`^\\d{0,${MAX_INTEGER_DIGITS}}(\\.\\d{0,${decimals}})?$`).test(input)
+	new RegExp(`^\\d{0,${MAX_INTEGER_DIGITS}}(\\.\\d{0,${decimals}}0*)?$`).test(input)
 
 const trimDecimals = (amount: string, decimals: number) => {
 	const [integer, fraction] = amount.split(".")

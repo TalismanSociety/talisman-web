@@ -26,6 +26,11 @@ describe("isAmountInput", () => {
 		expect(isAmountInput("1.01234567891", 10)).toBe(false)
 	})
 
+	it("accepts trailing zeros past the token's decimals and rejects a non zero digit there", () => {
+		expect(isAmountInput("1.000000000000000000", 10)).toBe(true)
+		expect(isAmountInput("1.00000000001", 10)).toBe(false)
+	})
+
 	it("accepts a 15 digit integer part and rejects 16 digits", () => {
 		expect(isAmountInput("123456789012345", 10)).toBe(true)
 		expect(isAmountInput("1234567890123456", 10)).toBe(false)
@@ -67,6 +72,22 @@ describe("useAmountInputState", () => {
 
 		act(() => result.current[1]("1.2"))
 		expect(result.current[0]).toBe("1.2")
+	})
+
+	it("trims trailing zeros past the token's decimals", () => {
+		const { result } = renderHook(() => useAmountInputState(10))
+
+		act(() => result.current[1]("1.000000000000000000"))
+		expect(result.current[0]).toBe("1.0000000000")
+	})
+
+	it("keeps a full precision amount unchanged when a zero is typed after it", () => {
+		const { result } = renderHook(() => useAmountInputState(10))
+
+		act(() => result.current[1]("1.0123456789"))
+		act(() => result.current[1](`${result.current[0]}0`))
+		act(() => result.current[1](`${result.current[0]}0`))
+		expect(result.current[0]).toBe("1.0123456789")
 	})
 
 	it("trims the amount to fewer decimals and accepts edits from there", () => {
