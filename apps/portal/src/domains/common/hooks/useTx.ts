@@ -3,7 +3,7 @@ import { camelCase } from "lodash"
 import type { Transaction, TxCallData, TxEvent } from "polkadot-api"
 import { getFakeTxCreator } from "polkadot-api/tx-creator"
 import { useCallback, useContext, useMemo, useRef, useState } from "react"
-import { firstValueFrom, map } from "rxjs"
+import { catchError, firstValueFrom, from, map, of, timeout } from "rxjs"
 
 import { track } from "@/domains/analytics/client"
 import { callOf, palletOf, substrateChainOf } from "@/domains/analytics/events/transactions"
@@ -87,13 +87,20 @@ export const estimateTxFee = (genesisHash: string, address: string, tx: Transact
 		customSignedExtensions: customSignedExtensionsFor(genesisHash),
 	})
 
+const FEE_CHECK_TIMEOUT_MS = 5_000
+
 const canPayFee = (genesisHash: string, address: string, tx: Transaction, runtime: ChainRuntime) =>
-	Promise.all([
-		estimateTxFee(genesisHash, address, tx),
-		feeSpendableBalance(runtime, genesisHash, address),
-	]).then(
-		([fee, spendable]) => fee <= spendable,
-		() => true
+	firstValueFrom(
+		from(
+			Promise.all([
+				estimateTxFee(genesisHash, address, tx),
+				feeSpendableBalance(runtime, genesisHash, address),
+			])
+		).pipe(
+			map(([fee, spendable]) => fee <= spendable),
+			timeout(FEE_CHECK_TIMEOUT_MS),
+			catchError(() => of(true))
+		)
 	)
 
 const submitTx = async (

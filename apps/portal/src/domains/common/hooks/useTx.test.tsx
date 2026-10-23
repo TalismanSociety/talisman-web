@@ -103,7 +103,10 @@ beforeEach(() => {
 	Object.assign(accountData, { free: 10n ** 12n, reserved: 0n, frozen: 0n })
 })
 
-afterEach(() => vi.restoreAllMocks())
+afterEach(() => {
+	vi.useRealTimers()
+	vi.restoreAllMocks()
+})
 
 describe("useTx", () => {
 	it("signs with the account's wallet, toasts the call in polkadot.js casing and reports it", async () => {
@@ -337,6 +340,21 @@ describe("useTx fee guard", () => {
 			"Insufficient balance to pay the network fee"
 		)
 		expect(calls.createSubmitAndWatch).not.toHaveBeenCalled()
+	})
+
+	it("signs when the fee check does not answer in time", async () => {
+		vi.useFakeTimers()
+		const { tx, calls } = fakeTx()
+		calls.getEstimatedFees.mockReturnValue(new Promise<bigint>(() => {}))
+		const { result } = renderHook(() => useTx(GENESIS, () => tx))
+
+		void result.current.signAndSend({ address: alice }).catch(() => {})
+		await vi.advanceTimersByTimeAsync(4_000)
+		expect(calls.getEstimatedFees).toHaveBeenCalled()
+		expect(calls.createSubmitAndWatch).not.toHaveBeenCalled()
+		await vi.advanceTimersByTimeAsync(1_000)
+
+		expect(calls.createSubmitAndWatch).toHaveBeenCalled()
 	})
 
 	it("signs when the fee cannot be estimated", async () => {
