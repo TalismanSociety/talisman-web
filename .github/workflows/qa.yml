@@ -49,7 +49,7 @@ jobs:
           done
 
       - uses: ./.github/actions/setup
-      - run: pnpm --filter @talismn/portal exec playwright install --with-deps
+      - run: pnpm --filter @talismn/portal exec playwright install --with-deps chromium
       - run: pnpm e2e
 
       - name: Upload test results
