@@ -441,7 +441,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
 		} else {
 			setClaimPermission("Permissioned")
 		}
-	}, [selectedPoolId])
+	}, [selectedPoolId, chain.talismanPools])
 
 	const joinPoolExtrinsic = useTx(genesisHash, (runtime) => {
 		if (decimalAmount === undefined || selectedPoolId === undefined) {
