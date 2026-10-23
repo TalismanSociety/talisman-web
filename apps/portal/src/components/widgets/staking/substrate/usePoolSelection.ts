@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 
 export const usePoolSelection = ({
-	genesisHash: _genesisHash,
+	genesisHash,
 	poolIdFromSearch,
 	recommendedPoolId,
 }: {
@@ -9,8 +9,14 @@ export const usePoolSelection = ({
 	poolIdFromSearch: number | undefined
 	recommendedPoolId: number | undefined
 }) => {
-	const initialPoolId = poolIdFromSearch ?? recommendedPoolId
-	const [selectedPoolId, setSelectedPoolId] = useState(initialPoolId)
-	useEffect(() => setSelectedPoolId(initialPoolId), [initialPoolId])
-	return [selectedPoolId, setSelectedPoolId] as const
+	const [pickedPoolIds, setPickedPoolIds] = useState<Partial<Record<string, number>>>({})
+
+	const selectedPoolId = pickedPoolIds[genesisHash] ?? poolIdFromSearch ?? recommendedPoolId
+
+	const selectPoolId = useCallback(
+		(poolId: number) => setPickedPoolIds((picked) => ({ ...picked, [genesisHash]: poolId })),
+		[genesisHash]
+	)
+
+	return [selectedPoolId, selectPoolId] as const
 }
