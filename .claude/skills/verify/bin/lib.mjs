@@ -77,9 +77,9 @@ export async function talismanWorker() {
 			(t) => t.type === "service_worker" && t.url.startsWith(TALISMAN)
 		)
 		if (target) {
-			const worker = await attach(target)
-			if (await worker.evaluate("!!globalThis.chrome?.storage")) return worker
-			worker.close()
+			const worker = await attach(target).catch(() => undefined)
+			if (await worker?.evaluate("!!globalThis.chrome?.storage").catch(() => false)) return worker
+			worker?.close()
 		} else if (attempt === 5) await openTarget(`${TALISMAN}/popup.html`)
 		await sleep(1000)
 	}

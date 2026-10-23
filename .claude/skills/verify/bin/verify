@@ -268,7 +268,7 @@ cmd_run() {
   local dev=talisman-web-verify-$slug-dev
   docker inspect "$dev" >/dev/null 2>&1 || fail "no dev container $dev holds this worktree's node_modules: verify up"
   ensure_isolated_network
-  docker run --rm --init --name "talisman-web-verify-$slug-run" --label "$label=$root" --label "talisman-web-verify.instance=run" \
+  docker run --rm --init --label "$label=$root" --label "talisman-web-verify.instance=run" \
     --network "$network" "--memory=$memory" "--memory-swap=$memory" --volumes-from "$dev" \
     -u "$(id -u):$(id -g)" -w "$(workdir)" --entrypoint "" "$(docker inspect -f '{{.Image}}' "$dev")" "$@"
 }
@@ -294,7 +294,7 @@ remove_worktree() {
   local name
   docker ps -a --filter "label=$label=$1" --format '{{.Names}}' | while read -r name; do
     report_memory "$name"
-    docker rm -f "$name" >/dev/null && echo "removed $name"
+    if docker rm -f "$name" >/dev/null 2>&1 || ! docker inspect "$name" >/dev/null 2>&1; then echo "removed $name"; fi
   done
   docker volume ls -q --filter "label=$label=$1" | while read -r name; do
     docker volume rm "$name" >/dev/null && echo "removed volume $name"
