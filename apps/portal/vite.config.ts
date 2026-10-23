@@ -77,6 +77,7 @@ export default defineConfig({
 		inBrowser(wasm()),
 	],
 	server: { allowedHosts: [".orb.local"] },
+	preview: { host: "127.0.0.1" },
 	worker: {
 		// https://github.com/vitejs/vite/pull/12629
 		format: "es",
