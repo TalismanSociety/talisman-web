@@ -60,6 +60,8 @@ It starts the dev container or reuses it, installs the worktree with `--frozen-l
 
 Without a local `apps/portal/.env`, the dev server runs with the committed `apps/portal/.env.example`. With a local `.env`, Vite reads that file alone.
 
+Run `pnpm verify` and other heavy commands with `verify run <cmd…>`, such as `verify run pnpm verify`, never with `verify exec`. `run` starts a one-off container with the dev container's volumes and a 6 GiB cap of its own, and removes it when the command exits. Under `exec` the command shares the dev container's cap: `pnpm verify`'s build alone fills the rest of it, and the kernel kills processes there, `vite dev` or Chromium's included.
+
 When `up` reports that it reused the container, write `reused` in `$RUN/notes.md`: cleanup then leaves it for the next run of this worktree.
 
 ## 2. Doctor
@@ -260,7 +262,7 @@ All in `.claude/skills/verify/bin/`. `verify` runs on the host. Every other help
 
 | Helper            | Invocation                                                                                                                                           | Does                                                                                  |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `verify`          | `build`, `up`, `serve <id> <commit, worktree or https://host> [--no-wallet]`, `doctor`, `ab <args…>`, `wallet <args…>`, `exec [-i] <cmd…>`, `shell`, `stop`, `down`, `prune`, `ls` | the image, this worktree's containers and volumes, and the way into them               |
+| `verify`          | `build`, `up`, `serve <id> <commit, worktree or https://host> [--no-wallet]`, `doctor`, `ab <args…>`, `wallet <args…>`, `exec [-i] <cmd…>`, `run <cmd…>`, `shell`, `stop`, `down`, `prune`, `ls` | the image, this worktree's containers and volumes, and the way into them               |
 | `container.sh`    | `install <dir>`, `sync-commit`, `sync-worktree`, `build <fingerprint>`, `dev`, `worker`, `proxy <https://host>`, run by `verify` inside the container | install with the source's own toolchain, the side's source and Worker build (`build:portal`), the servers |
 | `doctor.mjs`      | run by `verify doctor`                                                                                                                               | `PASS`/`FAIL` per check, exit 1 on any `FAIL`                                         |
 | `talisman.mjs`    | `verify wallet` with `unlock`, `accounts`, `list`, `text`, `connect [--account <name>]…`, `site [host]`, `approve --signer <name> --popup <id>`, `reject [--popup <id>]` | Talisman popups; exit 2 when it refused, 3 when the wallet is locked                  |
@@ -297,6 +299,5 @@ Rebuild after you replace `~/.talisman-dev/verify-backup.json` too; `up` and `se
 - **Bittensor positions show validator addresses instead of names (`Yuma`) on the dev instance**: under `vite dev` the client calls each server function at `<page path>/undefined<id>` instead of `/_serverFn/<id>`, so no TDA data loads, key or not. Check Bittensor rows on a Worker instance (`verify serve <id> worktree`) or with the lanes.
 - **Wallet locked** (`verify wallet` exits 3, or the doctor fails "wallet is unlocked"): `verify wallet unlock`. Restarting a container locks the wallet; `up` and `serve` unlock it.
 - **A click reports `✓ Done` and nothing happens**: agent-browser drives the newest tab, so a tab that a script opened through CDP takes every later `ab` command. `verify ab tab list` marks the tab it drives with `→`. Switch back with `verify ab tab <id>`, or close the stray tab.
-- **The first `verify build` fails with `ReferenceError: chrome is not defined`**: Talisman's service worker had not finished starting. `restore-backup.mjs` now waits for it; run `build` again if it still happens.
 - **The VARA row of `providers` never loads on either side**, and the page's chain socket answers `Maximum number of chainHead_follow has been reached`: the Vara RPC caps follow subscriptions per public IP, and every Talisman in a container, or in your own browser, holds some. With the dev instance up beside a lane's two sides, the cap is reached. Lanes stop their own sides when they end. Stop the dev instance (`verify stop`, or `verify down`) before a connected lane, and expect the same when another worktree runs a connected lane at the same time.
 - **Run one lane at a time per worktree**: the sides of parity, smoke and csp share the worktree's build volumes, so two lanes at once would rebuild the same volume under each other.

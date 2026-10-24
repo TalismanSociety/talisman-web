@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 
 import type { Account } from "@/domains/accounts/accounts"
 import { useSelectedCurrency } from "@/domains/balances/currency"
 import { DECIMALS, SEEK_TICKER } from "@/domains/staking/seek/constants"
+import { useAmountInputState } from "@/util/amountInput"
 import { Decimal } from "@/util/Decimal"
 
 import useGetSeekAvailableBalance from "./useGetSeekAvailableBalance"
@@ -15,7 +16,7 @@ const useStakeSeekBase = ({
 	account: Account | undefined
 	direction: "stake" | "unstake"
 }) => {
-	const [amountInput, setAmountInput] = useState<string>("")
+	const [amountInput, setAmountInput] = useAmountInputState(DECIMALS)
 	const currency = useSelectedCurrency()
 
 	const { seekBalances, refetch: refetchSeekBalances } = useGetSeekAvailableBalance()

@@ -1,5 +1,5 @@
 import { usePresence } from "motion/react"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 export type DialogProps = Omit<
 	React.DetailedHTMLProps<React.DialogHTMLAttributes<HTMLDialogElement>, HTMLDialogElement>,
@@ -33,6 +33,7 @@ export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function 
 	const shown = open && isPresent
 	const [phase, setPhase] = useState<Phase>(shown ? "open" : "closed")
 	const [element, setElement] = useState<HTMLDialogElement | null>(null)
+	const pressedOnBackdrop = useRef(false)
 
 	if (shown && phase !== "open") setPhase("open")
 	if (!shown && phase === "open") setPhase("closing")
@@ -63,25 +64,41 @@ export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function 
 	}, [element, phase, safeToRemove])
 
 	useEffect(() => {
-		const listener = function (this: HTMLDialogElement, event: MouseEvent) {
+		if (element === null) return
+
+		const isOnBackdrop = (event: MouseEvent) => {
 			if (event.target !== element) {
-				return
+				return false
 			}
 
-			const rect = this.getBoundingClientRect()
-			if (
+			const rect = element.getBoundingClientRect()
+			return (
 				event.clientY < rect.top ||
 				event.clientY > rect.bottom ||
 				event.clientX < rect.left ||
 				event.clientX > rect.right
-			) {
+			)
+		}
+
+		const onPointerDown = (event: PointerEvent) => {
+			pressedOnBackdrop.current = isOnBackdrop(event)
+		}
+
+		const onClick = (event: MouseEvent) => {
+			const pressStartedOnBackdrop = pressedOnBackdrop.current
+			pressedOnBackdrop.current = false
+			if (pressStartedOnBackdrop && isOnBackdrop(event)) {
 				onRequestDismiss?.()
 			}
 		}
 
-		element?.addEventListener("click", listener)
+		element.addEventListener("pointerdown", onPointerDown)
+		element.addEventListener("click", onClick)
 
-		return () => element?.removeEventListener("click", listener)
+		return () => {
+			element.removeEventListener("pointerdown", onPointerDown)
+			element.removeEventListener("click", onClick)
+		}
 	}, [element, onRequestDismiss])
 
 	if (phase === "closed" && !keepMounted) {

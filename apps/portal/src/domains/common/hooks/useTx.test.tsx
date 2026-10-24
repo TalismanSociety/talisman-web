@@ -11,24 +11,41 @@ import { estimateTxFee, useTx } from "./useTx"
 const txHash = "0x01"
 const block = { hash: "0xb10c", number: 42, index: 3 }
 
-const { GENESIS, alice, txCreator, toastExtrinsic, track, signetAccount$, send, of } =
-	await vi.hoisted(async () => {
-		const { BehaviorSubject, of } = await import("rxjs")
-		return {
-			GENESIS: "0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a" as const,
-			alice: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-			txCreator: { sign: "alice" },
-			toastExtrinsic: vi.fn(),
-			track: vi.fn(),
-			signetAccount$: new BehaviorSubject<{ address: string } | undefined>(undefined),
-			send: vi.fn(),
-			of,
-		}
-	})
+const {
+	GENESIS,
+	alice,
+	txCreator,
+	toastExtrinsic,
+	track,
+	signetAccount$,
+	send,
+	of,
+	accountData,
+	EXISTENTIAL_DEPOSIT,
+} = await vi.hoisted(async () => {
+	const { BehaviorSubject, of } = await import("rxjs")
+	return {
+		GENESIS: "0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a" as const,
+		alice: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+		txCreator: { sign: "alice" },
+		toastExtrinsic: vi.fn(),
+		track: vi.fn(),
+		signetAccount$: new BehaviorSubject<{ address: string } | undefined>(undefined),
+		send: vi.fn(),
+		of,
+		accountData: { free: 0n, reserved: 0n, frozen: 0n },
+		EXISTENTIAL_DEPOSIT: 100n,
+	}
+})
 
 vi.mock("@/domains/chains/chain-runtime", () => ({
 	getChainRuntime$: () =>
-		of({ lookup: { metadata: { pallets: [] } } as unknown as MetadataLookup }),
+		of({
+			lookup: { metadata: { pallets: [] } } as unknown as MetadataLookup,
+			api: { query: { System: { Account: { getValue: async () => ({ data: accountData }) } } } },
+		}),
+	constantOf: (_lookup: MetadataLookup, pallet: string, name: string) =>
+		pallet === "Balances" && name === "ExistentialDeposit" ? EXISTENTIAL_DEPOSIT : undefined,
 }))
 vi.mock("@/domains/chains/chaindata-provider", () => ({
 	networksByGenesisHash$: of({
@@ -83,9 +100,13 @@ beforeEach(() => {
 	track.mockClear()
 	send.mockClear()
 	signetAccount$.next(undefined)
+	Object.assign(accountData, { free: 10n ** 12n, reserved: 0n, frozen: 0n })
 })
 
-afterEach(() => vi.restoreAllMocks())
+afterEach(() => {
+	vi.useRealTimers()
+	vi.restoreAllMocks()
+})
 
 describe("useTx", () => {
 	it("signs with the account's wallet, toasts the call in polkadot.js casing and reports it", async () => {
@@ -273,6 +294,80 @@ describe("useTx", () => {
 		await expect(result.current.signAndSend({ address: alice })).rejects.toThrow(
 			"Failed to approve transaction in Signet"
 		)
+	})
+})
+
+describe("useTx fee guard", () => {
+	const spendable = 700n
+
+	beforeEach(() => Object.assign(accountData, { free: 1000n, reserved: 100n, frozen: 400n }))
+
+	it("refuses to open the wallet when the fee exceeds the spendable balance", async () => {
+		const { tx, calls } = fakeTx()
+		calls.getEstimatedFees.mockResolvedValue(spendable + 1n)
+		const { result } = renderHook(() => useTx(GENESIS, () => tx))
+
+		const submission = result.current.signAndSend({ address: alice })
+
+		await expect(submission).rejects.toThrow("Insufficient balance to pay the network fee")
+		await expect(submission).rejects.toBeInstanceOf(HarmlessError)
+		await expect(toastExtrinsic.mock.calls[0]?.[1]).rejects.toThrow(
+			"Insufficient balance to pay the network fee"
+		)
+		expect(calls.createSubmitAndWatch).not.toHaveBeenCalled()
+		await waitFor(() => expect(result.current.state).toBe("hasError"))
+	})
+
+	it("signs when the spendable balance covers the fee", async () => {
+		const { events$, tx, calls } = fakeTx()
+		calls.getEstimatedFees.mockResolvedValue(spendable)
+		const { result } = renderHook(() => useTx(GENESIS, () => tx))
+
+		const submission = result.current.signAndSend({ address: alice })
+		await waitFor(() => expect(calls.createSubmitAndWatch).toHaveBeenCalled())
+		act(() => finalize(events$, included({ ok: true })))
+
+		await expect(submission).resolves.toMatchObject({ txHash })
+	})
+
+	it("keeps reserved funds from covering frozen ones on Vara, whose fees go through the Currency adapter", async () => {
+		const vara = "0xfe1b4c55fd4d668101126434206571a7838a8b6b93a6d1b95d607e78e6c53763"
+		const { tx, calls } = fakeTx()
+		calls.getEstimatedFees.mockResolvedValue(spendable)
+		const { result } = renderHook(() => useTx(vara, () => tx))
+
+		await expect(result.current.signAndSend({ address: alice })).rejects.toThrow(
+			"Insufficient balance to pay the network fee"
+		)
+		expect(calls.createSubmitAndWatch).not.toHaveBeenCalled()
+	})
+
+	it("signs when the fee check does not answer in time", async () => {
+		vi.useFakeTimers()
+		const { tx, calls } = fakeTx()
+		calls.getEstimatedFees.mockReturnValue(new Promise<bigint>(() => {}))
+		const { result } = renderHook(() => useTx(GENESIS, () => tx))
+
+		void result.current.signAndSend({ address: alice }).catch(() => {})
+		await vi.advanceTimersByTimeAsync(4_000)
+		expect(calls.getEstimatedFees).toHaveBeenCalled()
+		expect(calls.createSubmitAndWatch).not.toHaveBeenCalled()
+		await vi.advanceTimersByTimeAsync(1_000)
+
+		expect(calls.createSubmitAndWatch).toHaveBeenCalled()
+	})
+
+	it("signs when the fee cannot be estimated", async () => {
+		Object.assign(accountData, { free: 0n, reserved: 0n, frozen: 0n })
+		const { events$, tx, calls } = fakeTx()
+		calls.getEstimatedFees.mockRejectedValue(new Error("Runtime API unavailable"))
+		const { result } = renderHook(() => useTx(GENESIS, () => tx))
+
+		const submission = result.current.signAndSend({ address: alice })
+		await waitFor(() => expect(calls.createSubmitAndWatch).toHaveBeenCalled())
+		act(() => finalize(events$, included({ ok: true })))
+
+		await expect(submission).resolves.toMatchObject({ txHash })
 	})
 })
 
