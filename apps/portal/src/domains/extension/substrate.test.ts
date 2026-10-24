@@ -577,7 +577,7 @@ describe("substrate wallet connection", () => {
 		expect(lookup.result).toBeUndefined()
 	})
 
-	it("gives up on signing when the wallet cannot list its accounts while it reconnects", async () => {
+	it("drops the cached account and finds no signer when the reconnected wallet cannot list its accounts", async () => {
 		vi.useFakeTimers()
 		const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined)
 		cacheTalismanListing(alice.address, alice.name)
@@ -598,9 +598,12 @@ describe("substrate wallet connection", () => {
 		harness = await load()
 		await vi.advanceTimersByTimeAsync(5_000)
 		expect(warn).toHaveBeenCalledWith(expect.any(String), new Error("Bridge stopped"))
+		expect(harness.connected()).toEqual(["polkadot:talisman"])
+		expect(harness.accounts()).toEqual([])
+
 		const lookup = lookupOf({ address: alice.address })
 
-		await vi.advanceTimersByTimeAsync(10_000)
+		await vi.advanceTimersByTimeAsync(0)
 		expect(lookup.result).toBeUndefined()
 	})
 
