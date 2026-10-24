@@ -3,7 +3,7 @@ import type { CaipNetwork, CreateAppKit } from "@reown/appkit/core"
 import type { Chain } from "viem"
 import { evmChains } from "./evmChains"
 
-export const appName = import.meta.env.VITE_APPLICATION_NAME ?? "Talisman"
+const appName = import.meta.env.VITE_APPLICATION_NAME ?? "Talisman"
 
 const origin = globalThis.location?.origin ?? "https://app.talisman.xyz"
 

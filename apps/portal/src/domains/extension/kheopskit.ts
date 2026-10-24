@@ -9,10 +9,9 @@ import { bind } from "@react-rxjs/core"
 import { catchError, map, NEVER, shareReplay } from "rxjs"
 import { z } from "zod"
 import { persistedState } from "@/util/persistedState"
-import { appName, portalWalletConnect } from "./walletconnect"
+import { portalWalletConnect } from "./walletconnect"
 
 const { kheopskit$: liveKheopskit$, store } = createKheopskit({
-	appName,
 	platforms: [polkadot({ accountTypes: ["sr25519", "ed25519", "ecdsa", "ethereum"] })],
 	walletConnect: portalWalletConnect,
 })
