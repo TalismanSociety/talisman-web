@@ -1,4 +1,8 @@
-import { createKheopskitStore, getWalletAccountId } from "@kheopskit/core"
+import {
+	clearAllCachedObservables,
+	createKheopskitStore,
+	getWalletAccountId,
+} from "@kheopskit/core"
 import { createFakePolkadotExtension, type FakePolkadotAccount } from "@kheopskit/core/testing"
 import { firstValueFrom } from "rxjs"
 import { expect, vi } from "vitest"
@@ -47,6 +51,7 @@ const remembered = (): unknown =>
 export const load = async () => {
 	vi.resetModules()
 	const extension = await import("./substrate")
+	const kheopskit = await import("./kheopskit")
 	const signer = await import("./signer")
 	const accountsModule = await import("@/domains/accounts/accounts")
 	const lifecycle = extension.substrateWalletLifecycle$.subscribe()
@@ -65,6 +70,7 @@ export const load = async () => {
 		}),
 	]
 	return {
+		...kheopskit,
 		...extension,
 		...signer,
 		...accountsModule,
@@ -83,6 +89,7 @@ export const load = async () => {
 			lifecycle.unsubscribe()
 			for (const subscription of subscriptions) subscription.unsubscribe()
 			Reflect.deleteProperty(globalThis, "injectedWeb3")
+			clearAllCachedObservables()
 			localStorage.clear()
 			window.dispatchEvent(new StorageEvent("storage", { key: "kheopskit", newValue: null }))
 		},

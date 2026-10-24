@@ -80,7 +80,7 @@ RUN=.tmp/verify/runs/$(date +%Y%m%d-%H%M%S)-<feature>; mkdir -p "$RUN"
 
 - **The page**: `verify ab <agent-browser command>` drives the instance's browser. Open pages with `verify ab tab new http://localhost:3002/<route>`, then `verify ab wait --text "<heading>"`. `verify ab snapshot -i` lists the clickable elements with refs.
 - **Talisman popups**: agent-browser cannot see them. `verify wallet text` prints `popup <id>`, then the pending request. `connect --account <name>` approves a connection request for exactly the named accounts (repeat `--account`), `site` prints the accounts the wallet connected to `localhost:3002`, `approve --signer <name> --popup <id>` signs that popup only when it is a signing request and that test account is its signer, `reject [--popup <id>]` cancels. Read the request (`text`) before approving.
-- **Connecting like a user**: until the wallet has authorised `localhost:3002`, the portal opens a Substrate connect popup on load; answer it with `verify wallet connect --account "Guardians SUB"`. For Ethereum, click the header's `Connected` button, then the Ethereum wallets' `Connect`, then `verify wallet connect --account "Guardians EVM"`.
+- **Connecting like a user**: until the wallet has authorised `localhost:3002`, the portal opens a Substrate connect popup on load; answer it with `verify wallet connect --account "Guardians SUB"`. For Ethereum, click the header's `Connected` button, then the `Connect` of the `Talisman (Ethereum)` row under Installed wallets, then `verify wallet connect --account "Guardians EVM"`. The WalletConnect row sits alone under External wallets.
 
 ## 4. Evidence
 

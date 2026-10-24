@@ -22,6 +22,7 @@ const EVM_WALLETS = [
 	"com.coinbase.wallet",
 	"com.brave.wallet",
 	"com.okex.wallet",
+	"walletConnect",
 	"other",
 ] as const
 

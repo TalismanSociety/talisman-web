@@ -1,12 +1,15 @@
 import { useEffect } from "react"
-import { useConnect, useConnection, useConnections, useConnectors } from "wagmi"
+import { useConfig, useConnect, useConnection, useConnections, useConnectors } from "wagmi"
 import { setWagmiAccounts } from "@/domains/accounts/accounts"
 import { track } from "@/domains/analytics/client"
 import { evmWalletOf } from "@/domains/analytics/events/extensions"
 import { toast } from "@/ui/molecules/Toaster"
+import { mirrorWalletConnectSession, walletConnectConnectorId } from "./walletconnect-evm"
+
+const hiddenConnectorIds = new Set(["injected", walletConnectConnectorId])
 
 export const useEvmConnectors = () =>
-	useConnectors().filter((connector) => connector.id !== "injected")
+	useConnectors().filter((connector) => !hiddenConnectorIds.has(connector.id))
 
 export const useConnectEvm = () => {
 	const base = useConnect()
@@ -21,6 +24,10 @@ export const useConnectEvm = () => {
 }
 
 export const useEvmExtensionEffect = () => {
+	const config = useConfig()
+
+	useEffect(() => mirrorWalletConnectSession(config), [config])
+
 	const connections = useConnections()
 
 	useEffect(() => {
