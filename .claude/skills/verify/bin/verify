@@ -33,6 +33,8 @@ usage: verify <command>, for the instance VERIFY_INSTANCE (default dev) of $root
   ab <args…>               agent-browser on the instance's Chromium
   wallet <args…>           talisman.mjs on the instance: unlock, accounts, text, connect, approve, …
   exec [-i] <cmd…>         a command in the instance's container, as you
+  run <cmd…>               a command such as pnpm verify in a one-off container with the dev instance's
+                           node_modules and a memory cap of its own, so it never starves the dev server
   shell                    an interactive shell in the instance's container
   stop                     stop the instance's container, keeping it and its volumes
   down                     remove every container and volume of this worktree
@@ -261,6 +263,16 @@ cmd_exec() {
   in_container "${flags[@]}" "$container" "$@"
 }
 
+cmd_run() {
+  (($# > 0)) || { usage >&2; exit 2; }
+  local dev=talisman-web-verify-$slug-dev
+  docker inspect "$dev" >/dev/null 2>&1 || fail "no dev container $dev holds this worktree's node_modules: verify up"
+  ensure_isolated_network
+  docker run --rm --init --label "$label=$root" --label "talisman-web-verify.instance=run" \
+    --network "$network" "--memory=$memory" "--memory-swap=$memory" --volumes-from "$dev" \
+    -u "$(id -u):$(id -g)" -w "$(workdir)" --entrypoint "" "$(docker inspect -f '{{.Image}}' "$dev")" "$@"
+}
+
 report_memory() {
   local cgroup peak cap oom_kills
   cgroup=$(docker exec "$1" cat /sys/fs/cgroup/memory.peak /sys/fs/cgroup/memory.max /sys/fs/cgroup/memory.events 2>/dev/null) || return 0
@@ -282,7 +294,7 @@ remove_worktree() {
   local name
   docker ps -a --filter "label=$label=$1" --format '{{.Names}}' | while read -r name; do
     report_memory "$name"
-    docker rm -f "$name" >/dev/null && echo "removed $name"
+    if docker rm -f "$name" >/dev/null 2>&1 || ! docker inspect "$name" >/dev/null 2>&1; then echo "removed $name"; fi
   done
   docker volume ls -q --filter "label=$label=$1" | while read -r name; do
     docker volume rm "$name" >/dev/null && echo "removed volume $name"
@@ -315,6 +327,7 @@ case $command in
   ab) require_running && in_container "$container" agent-browser --cdp 9223 "$@" ;;
   wallet) require_running && in_container "$container" node "$bin/talisman.mjs" "$@" ;;
   exec) cmd_exec "$@" ;;
+  run) cmd_run "$@" ;;
   shell) require_running && docker exec -it -u "$(id -u):$(id -g)" -w "$(workdir)" "$container" bash ;;
   stop) cmd_stop ;;
   down) remove_worktree "$root" ;;
