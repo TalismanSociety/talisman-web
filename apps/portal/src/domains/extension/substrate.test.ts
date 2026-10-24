@@ -577,9 +577,9 @@ describe("substrate wallet connection", () => {
 		expect(lookup.result).toBeUndefined()
 	})
 
-	it("gives up on signing when the wallet bridge stops while the wallet reconnects", async () => {
+	it("gives up on signing when the wallet cannot list its accounts while it reconnects", async () => {
 		vi.useFakeTimers()
-		vi.spyOn(console, "error").mockImplementation(() => undefined)
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined)
 		cacheTalismanListing(alice.address, alice.name)
 		Reflect.set(globalThis, "injectedWeb3", {
 			talisman: {
@@ -596,8 +596,8 @@ describe("substrate wallet connection", () => {
 			},
 		})
 		harness = await load()
-		await expect(vi.advanceTimersByTimeAsync(5_000)).rejects.toThrow("Bridge stopped")
 		await vi.advanceTimersByTimeAsync(5_000)
+		expect(warn).toHaveBeenCalledWith(expect.any(String), new Error("Bridge stopped"))
 		const lookup = lookupOf({ address: alice.address })
 
 		await vi.advanceTimersByTimeAsync(10_000)
