@@ -37,4 +37,4 @@ auditConfig:
     - GHSA-vfj7-8cjw-p6xm
     - GHSA-mrhx-c7xc-m3w5
 minimumReleaseAgeExclude:
-  - '@kheopskit/core@6.0.0-rc.3 || 6.0.0-rc.4'
+  - '@kheopskit/core@6.0.0'

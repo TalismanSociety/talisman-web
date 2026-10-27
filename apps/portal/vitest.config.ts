@@ -15,6 +15,10 @@ export default mergeConfig(
 			alias: {
 				"@": path.resolve(import.meta.dirname, "./src"),
 				"cloudflare:workers": path.resolve(import.meta.dirname, "./src/test/cloudflare-workers.ts"),
+				"@kheopskit/core/walletconnect": path.resolve(
+					import.meta.dirname,
+					"./src/test/walletconnect.ts"
+				),
 			},
 		},
 	},
