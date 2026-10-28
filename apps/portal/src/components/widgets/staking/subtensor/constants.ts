@@ -4,7 +4,7 @@ export const ROOT_NETUID = 0
 export const MIN_SUBTENSOR_ALPHA_STAKE = 0.001
 export const MIN_SUBTENSOR_ROOTNET_STAKE = 0.1
 export const TALISMAN_FEE_RECEIVER_ADDRESS_BITTENSOR =
-	"5DzsVV2L4M9r4uWoyarzPyhfeCv6DDAEs5rM2bpHjmerPcGa"
+	"5FjP1T2Rn8Ymr3fynVqZEjhqR4wfbB6owY6Z2fgfkVngZYYE"
 export const TALISMAN_FEE_BITTENSOR = 0.3
 export const TALISMAN_STAKE_REMARK = "paprika005"
 export const TALISMAN_WALLET_DOWNLOAD_URL = "https://talisman.xyz/download"
