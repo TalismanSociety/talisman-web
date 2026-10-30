@@ -32,9 +32,7 @@ overrides:
   "ws@>=8.0.0 <8.21.0": ^8.22.0
 auditConfig:
   ignoreGhsas:
-    - GHSA-95m3-7q98-8xr5
     - GHSA-86w9-cpqp-85rv
-    - GHSA-vfj7-8cjw-p6xm
     - GHSA-mrhx-c7xc-m3w5
     - GHSA-qr28-fpjm-wq7f
 minimumReleaseAgeExclude:
