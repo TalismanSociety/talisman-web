@@ -1,0 +1,52 @@
+name: Production
+
+on:
+  push:
+    branches: [main, production]
+
+permissions: {}
+
+jobs:
+  deploy-pr:
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-deploy-pr
+      cancel-in-progress: true
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          changes=$(git log --no-merges --format='- %s' "origin/production..$GITHUB_SHA")
+          body=$(printf 'Merging deploys these changes to https://app.talisman.xyz. QA them on staging first: https://main-talisman-portal.talismn.workers.dev\n\n%s\n' "$changes")
+          pr=$(gh pr list --base production --head main --state open --json number --jq '.[].number')
+          if [ -z "$pr" ]; then
+            gh pr create --base production --head main --title "🚀 Production Deployment" --body "$body"
+          else
+            gh pr edit "$pr" --body "$body"
+          fi
+
+  release:
+    if: github.ref_name == 'production'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          notes=$(git log --no-merges --format='- %s' "$BEFORE..$GITHUB_SHA")
+          name="production-$(date -u +%Y-%m-%d-%H%M%S)"
+          gh release create "$name" --target "$GITHUB_SHA" --title "$name" --notes "$notes"
