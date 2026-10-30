@@ -5,6 +5,7 @@ on:
   push:
     branches: [main]
   pull_request:
+    branches-ignore: [production]
   merge_group:
 
 permissions:
