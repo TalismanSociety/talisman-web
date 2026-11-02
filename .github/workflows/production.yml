@@ -24,7 +24,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           changes=$(git log --no-merges --format='- %s' "origin/production..$GITHUB_SHA")
-          body=$(printf 'Two approvals deploy these changes to https://app.talisman.xyz: the second one fast-forwards the production branch to this commit, so there is nothing to merge. QA them on staging first: https://main-talisman-portal.talismn.workers.dev\n\n%s\n' "$changes")
+          body=$(printf 'Approving deploys these changes to https://app.talisman.xyz: once the required approvals are in, the production branch fast-forwards to this commit, so there is nothing to merge. QA them on staging first: https://main-talisman-portal.talismn.workers.dev\n\n%s\n' "$changes")
           pr=$(gh pr list --base production --head main --state open --json number --jq '.[].number')
           if [ -z "$pr" ]; then
             gh pr create --base production --head main --title "🚀 Production Deployment" --body "$body"
