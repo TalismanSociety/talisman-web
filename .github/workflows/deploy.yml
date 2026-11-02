@@ -41,7 +41,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ github.event.review.commit_id }}
         run: |
-          notes=$(git log --no-merges --format='- %s' "origin/production..$SHA")
+          if [ -n "$(git tag --points-at "$SHA" --list 'production-*')" ]; then
+            echo "$SHA is already released"
+            exit 0
+          fi
+          previous=$(git tag --list 'production-*' --sort=-refname | head -n 1)
+          notes=$(git log --no-merges --format='- %s' "$previous..$SHA")
           git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$SHA:refs/heads/production"
           name="production-$(date -u +%Y-%m-%d-%H%M%S)"
           gh release create "$name" --target "$SHA" --title "$name" --notes "$notes"
