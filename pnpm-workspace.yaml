@@ -25,14 +25,13 @@ overrides:
   "defu@<6.1.5": ^6.1.7
   "h3@<1.15.6": ^1.15.11
   "lodash@<4.18.1": ^4.18.1
-  "node-forge@<1.4.0": ^1.4.0
+  "node-forge@<1.4.2": ^1.4.2
   "picomatch@<2.3.2": ^2.3.2
   "react-use>js-cookie": ^3.0.8
   "ws@>=7.0.0 <7.5.11": ^7.5.13
   "ws@>=8.0.0 <8.21.0": ^8.22.0
 auditConfig:
   ignoreGhsas:
-    - GHSA-86w9-cpqp-85rv
     - GHSA-mrhx-c7xc-m3w5
     - GHSA-qr28-fpjm-wq7f
 minimumReleaseAgeExclude:
