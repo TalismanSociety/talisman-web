@@ -214,7 +214,7 @@ overrides:
   defu@<6.1.5: ^6.1.7
   h3@<1.15.6: ^1.15.11
   lodash@<4.18.1: ^4.18.1
-  node-forge@<1.4.0: ^1.4.0
+  node-forge@<1.4.2: ^1.4.2
   picomatch@<2.3.2: ^2.3.2
   react-use>js-cookie: ^3.0.8
   ws@>=7.0.0 <7.5.11: ^7.5.13
@@ -5715,8 +5715,8 @@ packages:
     resolution: {integrity: sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  node-forge@1.4.0:
-    resolution: {integrity: sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ==}
+  node-forge@1.4.2:
+    resolution: {integrity: sha512-rRtAR5XLJ8gCKd9du4qrKAsgCG1ObGP4gLeNJMa4vYSeq4bmBMOJk5IHkrviBV0q7uoAJlVd8HEQYQSVUb4FGQ==}
     engines: {node: '>= 6.13.0'}
 
   node-gyp-build@4.8.1:
@@ -13261,7 +13261,7 @@ snapshots:
       http-shutdown: 1.2.2
       jiti: 1.21.6
       mlly: 1.7.1
-      node-forge: 1.4.0
+      node-forge: 1.4.2
       pathe: 1.1.2
       std-env: 3.7.0
       ufo: 1.6.4
@@ -13510,7 +13510,7 @@ snapshots:
       fetch-blob: 3.2.0
       formdata-polyfill: 4.0.10
 
-  node-forge@1.4.0: {}
+  node-forge@1.4.2: {}
 
   node-gyp-build@4.8.1:
     optional: true
