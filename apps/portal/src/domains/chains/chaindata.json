@@ -18,9 +18,9 @@
       "platform": "ethereum",
       "rpcs": [
         "https://ethereum-rpc.publicnode.com",
+        "https://xrpc.cl/eth",
         "https://rpc.mevblocker.io",
-        "https://rpc.flashbots.net",
-        "https://eth.meowrpc.com"
+        "https://rpc.flashbots.net"
       ],
       "feeType": "eip-1559",
       "contracts": {
@@ -233,8 +233,8 @@
       "rpcs": [
         "wss://entrypoint-finney.opentensor.ai:443",
         "wss://lite.sub.latent.to:443",
-        "wss://lite.chain.opentensor.ai",
-        "wss://rpc.blockmachine.io"
+        "wss://rpc.blockmachine.io",
+        "wss://lite.chain.opentensor.ai"
       ],
       "hasCheckMetadataHash": true,
       "topology": {
