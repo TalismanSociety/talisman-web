@@ -1,0 +1,52 @@
+name: Deploy
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+permissions: {}
+
+jobs:
+  fast-forward:
+    if: >-
+      github.event.review.state == 'approved' &&
+      github.event.pull_request.base.ref == 'production' &&
+      github.event.pull_request.head.ref == 'main' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.event.review.commit_id }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check the approved commit is fully approved and still the deploy PR head
+        id: approved
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.review.commit_id }}
+        run: |
+          state=$(gh pr view "$PR" --json reviewDecision,headRefOid --jq '"\(.reviewDecision) \(.headRefOid)"')
+          echo "$state"
+          if [ "$state" = "APPROVED $SHA" ]; then echo "ready=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Fast-forward production and create the release
+        if: steps.approved.outputs.ready == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.review.commit_id }}
+        run: |
+          if [ -n "$(git tag --points-at "$SHA" --list 'production-*')" ]; then
+            echo "$SHA is already released"
+            exit 0
+          fi
+          previous=$(git tag --list 'production-*' --sort=-refname | head -n 1)
+          notes=$(git log --no-merges --format='- %s' "$previous..$SHA")
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$SHA:refs/heads/production"
+          name="production-$(date -u +%Y-%m-%d-%H%M%S)"
+          gh release create "$name" --target "$SHA" --title "$name" --notes "$notes"
