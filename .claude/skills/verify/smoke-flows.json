@@ -110,7 +110,7 @@
     "account": "Guardians SUB",
     "path": "/staking/positions",
     "steps": [
-      ["row", "SN46 Instant", "Yuma"],
+      ["row", "SN27 Orion", "Yuma"],
       ["press", "#icon"],
       ["dialog"],
       ["fill", "0.00", "0.01"],
@@ -122,12 +122,12 @@
     "account": "Guardians SUB",
     "path": "/staking/positions",
     "steps": [
-      ["row", "SN46 Instant", "Yuma"],
+      ["row", "SN27 Orion", "Yuma"],
       ["press", "#menu"],
       ["page"],
       ["press", "Unstake"],
       ["dialog"],
-      ["fill", "0.00", "1"],
+      ["press", "=Max"],
       ["press", "Unstake"]
     ]
   },
