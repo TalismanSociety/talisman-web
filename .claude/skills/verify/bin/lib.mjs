@@ -86,7 +86,7 @@ export async function talismanWorker() {
 	return fail("no Talisman service worker with chrome.storage after 30s: verify down, then up")
 }
 
-export const BACKUP = `${homedir()}/.talisman-dev/verify-backup.json`
+export const BACKUP = `${homedir()}/.config/talisman-dev/backup.json`
 
 export const testAccounts = () =>
 	JSON.parse(readFileSync(BACKUP, "utf8")).storage.keyring.accounts.map(

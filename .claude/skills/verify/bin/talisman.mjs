@@ -92,7 +92,7 @@ const withPopup = async (action, id) => {
 }
 
 async function unlock() {
-	const password = readFileSync(`${homedir()}/.talisman-dev/verify-password`, "utf8").trim()
+	const password = readFileSync(`${homedir()}/.config/talisman-dev/password.txt`, "utf8").trim()
 	const target = await openTarget(`${TALISMAN}/popup.html`)
 	const page = await attach(target)
 	try {
@@ -110,7 +110,7 @@ async function unlock() {
 			if (!isLocked(await readText(page).catch(() => "Unlock the Talisman")))
 				return console.log("unlocked")
 		}
-		fail("still locked after submitting ~/.talisman-dev/verify-password", 3)
+		fail("still locked after submitting ~/.config/talisman-dev/password.txt", 3)
 	} finally {
 		page.close()
 		await closeTarget(target.id)

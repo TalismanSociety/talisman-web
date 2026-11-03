@@ -5,9 +5,9 @@ bin=$(cd "$(dirname "$0")" && pwd)
 skill=$(dirname "$bin")
 root=$(git -C "$bin" rev-parse --show-toplevel)
 main=$(dirname "$(git -C "$root" rev-parse --path-format=absolute --git-common-dir)")
-seed=$HOME/.talisman-dev
-backup=$seed/verify-backup.json
-password=$seed/verify-password
+seed=$HOME/.config/talisman-dev
+backup=$seed/backup.json
+password=$seed/password.txt
 label=talisman-web-verify.worktree
 network=talisman-web-verify
 store=talisman-web-verify-pnpm-store
@@ -99,8 +99,8 @@ container_args() {
     -e "HOST_UID=$(id -u)" -e "HOST_GID=$(id -g)" -e "VERIFY_INSTANCE=$instance" -e "VERIFY_WORKTREE=$root" \
     -e "VERIFY_MAIN_CHECKOUT=$main" -e "WALLET=$wallet" \
     -v "$root:$root" \
-    -v "$backup:/home/verify/.talisman-dev/verify-backup.json:ro" \
-    -v "$password:/home/verify/.talisman-dev/verify-password:ro"
+    -v "$backup:/home/verify/.config/talisman-dev/backup.json:ro" \
+    -v "$password:/home/verify/.config/talisman-dev/password.txt:ro"
   printf -- '-v\n%s:/pnpm-store\n' "$store"
   [[ ! -f $env_file ]] || printf -- '-v\n%s:%s:ro\n' "$env_file" "$env_file"
   [[ -z ${TDA_API_KEY:-} ]] || printf -- '-e\nTDA_API_KEY\n'

@@ -29,9 +29,9 @@ A developer does this once, by hand. `verify up` checks each item and names the 
 3. **Backup**: open `chrome-extension://fijngjgcjhjmmpcmkeiomlglpeiijkld/support.html` in the browser where Talisman is installed, click **Backup**, then **Save**. Then:
 
    ```sh
-   mkdir -p ~/.talisman-dev
-   mv ~/Downloads/backup.talisman.*.json ~/.talisman-dev/verify-backup.json
-   chmod 600 ~/.talisman-dev/verify-backup.json
+   mkdir -p -m 700 ~/.config/talisman-dev
+   mv ~/Downloads/backup.talisman.*.json ~/.config/talisman-dev/backup.json
+   chmod 600 ~/.config/talisman-dev/backup.json
    ```
 
    The Signet and Talisman repositories' verify skills read the same file.
@@ -39,14 +39,14 @@ A developer does this once, by hand. `verify up` checks each item and names the 
 4. **Wallet password**, read only by `verify wallet unlock`:
 
    ```sh
-   (umask 177; printf '%s' 'the wallet password' > ~/.talisman-dev/verify-password)
+   (umask 177; printf '%s' 'the wallet password' > ~/.config/talisman-dev/password.txt)
    ```
 
 5. **Image**: `verify build`. It takes about a minute, and `up` and `serve` run it when the image is missing. The image holds your restored wallet: never push it to a registry.
 
 ### Test accounts
 
-A test account is an account of `~/.talisman-dev/verify-backup.json`, and nothing else. Read the names with `verify wallet accounts`; never write or assume one. `verify wallet connect --account <name>` and `approve --signer <name>` refuse any name that is not a test account.
+A test account is an account of `~/.config/talisman-dev/backup.json`, and nothing else. Read the names with `verify wallet accounts`; never write or assume one. `verify wallet connect --account <name>` and `approve --signer <name>` refuse any name that is not a test account.
 
 `Guardians SUB` still holds nomination pool stakes on Cere and Analog Timechain. The portal dropped both chains in #1484, so no providers or positions row shows them, and a Cere or Analog row is a regression. A baseline older than #1484 still shows both rows, so `providers` and `positions` differ against it.
 
@@ -291,7 +291,7 @@ The image pins the Talisman version the Chrome Web Store served when it was buil
 .claude/skills/verify/bin/verify up       # recreates this worktree's dev container on the new image
 ```
 
-Rebuild after you replace `~/.talisman-dev/verify-backup.json` too; `up` and `serve` build the new tag themselves, since the tag hashes `docker/` and the backup. Old tags stay until you remove them (`docker image ls talisman-web-verify`). A Talisman update can move pixels inside the wallet's own UI only; parity captures the portal page, which both sides render with the same image.
+Rebuild after you replace `~/.config/talisman-dev/backup.json` too; `up` and `serve` build the new tag themselves, since the tag hashes `docker/` and the backup. Old tags stay until you remove them (`docker image ls talisman-web-verify`). A Talisman update can move pixels inside the wallet's own UI only; parity captures the portal page, which both sides render with the same image.
 
 ## Gotchas
 
