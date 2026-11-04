@@ -20,11 +20,11 @@
     "e2e": "pnpm --filter @talismn/portal e2e"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.15",
-    "knip": "^6.41.0",
+    "@biomejs/biome": "^2.6.4",
+    "knip": "^6.44.1",
     "simple-git-hooks": "^2.14.0",
-    "vitest": "^5.0.5",
-    "wrangler": "^4.151.0"
+    "vitest": "^5.1.0",
+    "wrangler": "^4.157.0"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm exec biome check --error-on-warnings --no-errors-on-unmatched --staged"
