@@ -1,6 +1,7 @@
 packages:
   - apps/*
 allowBuilds:
+  "@reown/appkit": false
   "@swc/core": false
   bufferutil: false
   core-js: false
@@ -34,5 +35,3 @@ auditConfig:
   ignoreGhsas:
     - GHSA-mrhx-c7xc-m3w5
     - GHSA-qr28-fpjm-wq7f
-minimumReleaseAgeExclude:
-  - '@kheopskit/core@6.0.0'
