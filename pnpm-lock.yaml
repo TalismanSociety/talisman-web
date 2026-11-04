@@ -331,8 +331,8 @@ importers:
         specifier: ^19.3.1
         version: 19.3.1
       react-countup:
-        specifier: 6.5.3
-        version: 6.5.3(react@19.3.1)
+        specifier: 6.5.1
+        version: 6.5.1(react@19.3.1)
       react-dom:
         specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
@@ -6590,8 +6590,8 @@ packages:
   randomfill@1.0.4:
     resolution: {integrity: sha512-87lcbR8+MhcWcUiQ+9e+Rwx8MyR2P7qnt15ynUlbm3TU/fjbgz4GsvfSUDTemtCCtVCqb4ZcEFlyPNTh9bBTLw==}
 
-  react-countup@6.5.3:
-    resolution: {integrity: sha512-udnqVQitxC7QWADSPDOxVWULkLvKUWrDapn5i53HE4DPRVgs+Y5rr4bo25qEl8jSh+0l2cToJgGMx+clxPM3+w==}
+  react-countup@6.5.1:
+    resolution: {integrity: sha512-G+7zS3tzFn8azsj8M9FEnWKvB1s0euoGX7GOP8cFVZPXpP5MVh7zOun4/F/TM2RNOBEl2ApJrPuQOhyZ78s0AA==}
     peerDependencies:
       react: '>= 16.3.0'
 
@@ -15588,7 +15588,7 @@ snapshots:
       randombytes: 2.1.0
       safe-buffer: 5.2.1
 
-  react-countup@6.5.3(react@19.3.1):
+  react-countup@6.5.1(react@19.3.1):
     dependencies:
       countup.js: 2.10.1
       react: 19.3.1

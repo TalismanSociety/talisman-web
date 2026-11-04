@@ -57,7 +57,7 @@
     "polkadot-api": "3.3.0",
     "posthog-js": "1.445.1",
     "react": "^19.3.1",
-    "react-countup": "6.5.3",
+    "react-countup": "6.5.1",
     "react-dom": "^19.3.1",
     "react-hot-toast": "^2.6.1",
     "react-use": "^17.6.1",
