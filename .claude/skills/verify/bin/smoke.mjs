@@ -48,8 +48,40 @@ const publicKey = (ss58) => {
 	return `0x${hex.slice(prefixLength * 2, prefixLength * 2 + 64)}`
 }
 
+const littleEndian = (bytes) => bytes.reduceRight((sum, byte) => sum * 256n + BigInt(byte), 0n)
+
+const scaleCompact = (bytes) => {
+	const mode = bytes[0] & 3
+	if (mode === 3) {
+		const size = (bytes[0] >> 2) + 5
+		return { value: littleEndian(bytes.subarray(1, size)), size }
+	}
+	const size = 1 << mode
+	return { value: littleEndian(bytes.subarray(0, size)) >> 2n, size }
+}
+
+const hexBytes = (hex) => Buffer.from(hex.slice(2), "hex")
+
+const normalizeTxPayload = (request) => {
+	const extra = (id) => request.extensions.find((extension) => extension.id === id)?.extra
+	const payment = hexBytes(extra("ChargeAssetTxPayment") ?? extra("ChargeTransactionPayment") ?? "0x00")
+	const tip = scaleCompact(payment)
+	const [assetIsSet, ...assetId] = payment.subarray(tip.size)
+	const appId = extra("CheckAppId")
+	return {
+		kind: "substrate",
+		signer: publicKey(request.signer),
+		genesisHash: request.context.genesisHash,
+		method: request.callData,
+		tip: tip.value.toString(),
+		...(appId === undefined ? {} : { appId: Number(scaleCompact(hexBytes(appId)).value) }),
+		...(assetIsSet ? { assetId: `0x${Buffer.from(assetId).toString("hex")}` } : {}),
+	}
+}
+
 const normalize = (entry) => {
 	const request = entry.request
+	if (entry.kind === "pub(extrinsic.create)") return normalizeTxPayload(request)
 	if (entry.kind === "pub(extrinsic.sign)")
 		return {
 			kind: "substrate",
@@ -182,7 +214,7 @@ async function drive(flow, result) {
 			result.submission = submission
 			return true
 		})
-		const signer = result.payload.from ?? result.raw.address
+		const signer = result.payload.from ?? result.raw.signer ?? result.raw.address
 		result.onchain = result.submission.error
 			? { success: false, error: `the node refused it: ${result.submission.error}` }
 			: JSON.parse((await run(`${bin}smoke-chain.mjs`, [JSON.stringify(result.submission), signer], { timeout: 300_000 })).stdout)

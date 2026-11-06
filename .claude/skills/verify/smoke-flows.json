@@ -61,29 +61,6 @@
     ]
   },
   {
-    "name": "validator-unbond",
-    "account": "Guardians SUB",
-    "path": "/staking/positions",
-    "steps": [
-      ["row", "Kusama Asset Hub", "Validator staking"],
-      ["press", "#menu"],
-      ["page"],
-      ["press", "Unstake"],
-      ["dialog"],
-      ["fill", "0.00", "0.001"],
-      ["press", "Unstake"]
-    ]
-  },
-  {
-    "name": "validator-withdraw",
-    "account": "Guardians SUB",
-    "path": "/staking/positions",
-    "steps": [
-      ["row", "Vara", "Validator staking"],
-      ["press", "Withdraw"]
-    ]
-  },
-  {
     "name": "subtensor-unstake",
     "account": "Guardians SUB",
     "path": "/staking/positions",
@@ -93,24 +70,24 @@
       ["page"],
       ["press", "Unstake"],
       ["dialog"],
-      ["fill", "0.00", "0.1"],
+      ["fill", "0.00", "0.05"],
       ["press", "Unstake"]
     ],
-    "submit": "network fee; unstakes 0.1 TAO from root, no unbonding period; needs 0.1 TAO staked"
+    "submit": "network fee; unstakes 0.05 TAO from root, no unbonding period; needs 0.07 TAO staked"
   },
   {
     "name": "subtensor-stake",
     "account": "Guardians SUB",
     "path": "/staking/providers?action=stake&type=subtensor&chain=bittensor",
-    "steps": [["dialog"], ["fill", "0.00", "0.1"], ["press", "Stake"]],
-    "submit": "network fee; stakes the 0.1 TAO back on root"
+    "steps": [["dialog"], ["wait", "Already staked"], ["fill", "0.00", "0.1"], ["press", "Stake"]],
+    "submit": "network fee; stakes 0.1 TAO on root, the sheet's minimum, so the pair adds 0.05 TAO to the stake"
   },
   {
     "name": "subtensor-dtao-stake",
     "account": "Guardians SUB",
     "path": "/staking/positions",
     "steps": [
-      ["row", "SN46 Instant", "Yuma"],
+      ["row", "SN6 Numinous", "Kraken"],
       ["press", "#icon"],
       ["dialog"],
       ["fill", "0.00", "0.01"],
@@ -122,12 +99,12 @@
     "account": "Guardians SUB",
     "path": "/staking/positions",
     "steps": [
-      ["row", "SN46 Instant", "Yuma"],
+      ["row", "SN6 Numinous", "Kraken"],
       ["press", "#menu"],
       ["page"],
       ["press", "Unstake"],
       ["dialog"],
-      ["fill", "0.00", "1"],
+      ["press", "=Max"],
       ["press", "Unstake"]
     ]
   },

@@ -4,6 +4,7 @@
 
   const signing = message =>
     message.message === 'pub(extrinsic.sign)' ||
+    message.message === 'pub(extrinsic.create)' ||
     (message.message === 'pub(eth.request)' && message.request?.method === 'eth_sendTransaction')
   const post = window.postMessage.bind(window)
   window.postMessage = (message, ...rest) => {
