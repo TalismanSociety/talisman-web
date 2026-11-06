@@ -45,7 +45,7 @@ compare_flow() {
       if $b.payload == $c.payload then "same\t\($c.detail // "")"
       else "differ\t" + ([($b.payload | keys_unsorted[]), ($c.payload | keys_unsorted[])] | unique | map(select($b.payload[.] != $c.payload[.])) | map("\(.): baseline \($b.payload[.]) candidate \($c.payload[.])") | join("; "))
       end
-    elif $b.status != "captured" and $c.status != "captured" then "unavailable\tbaseline \($b.status): \($b.detail // ""); candidate \($c.status): \($c.detail // "")"
+    elif $b.status != "captured" and $c.status != "captured" then (if $b.status == "error" or $c.status == "error" then "error" else "unavailable" end) + "\tbaseline \($b.status): \($b.detail // ""); candidate \($c.status): \($c.detail // "")"
     else "differ\tbaseline \($b.status)\(if $b.detail then ": " + $b.detail else "" end); candidate \($c.status)\(if $c.detail then ": " + $c.detail else "" end)"
     end'
 }
@@ -65,10 +65,10 @@ for flow in "${flows[@]}"; do
   while :; do
     ((++tries))
     IFS=$'\t' read -r result detail < <(compare_flow "$flow")
-    [[ $result == differ && $tries -lt $attempts ]] || break
-    earlier+="attempt $tries differ: $detail; "
+    [[ $result =~ ^(differ|error)$ && $tries -lt $attempts ]] || break
+    earlier+="attempt $tries $result: $detail; "
   done
-  [[ $result == differ ]] && status=1
+  [[ $result =~ ^(differ|error)$ ]] && status=1
   [[ $result == same ]] && same+=("$flow")
   printf '%s\t%s\t%s\t%s\n' "$flow" "$result" "$tries" "$(one_line <<<"$earlier$detail")" | tee -a "$out/summary.tsv"
 done
