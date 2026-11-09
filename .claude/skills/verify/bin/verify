@@ -31,7 +31,7 @@ usage: verify <command>, for the instance VERIFY_INSTANCE (default dev) of $root
                            worktree (source: <commit>, worktree), or a deployed https://host
   doctor                   PASS/FAIL per check of the instance
   ab <args…>               agent-browser on the instance's Chromium
-  wallet <args…>           talisman.mjs on the instance: unlock, accounts, text, connect, approve, …
+  wallet <args…>           talisman.mjs on the instance: unlock, accounts, lane-accounts, text, connect, approve, …
   exec [-i] <cmd…>         a command in the instance's container, as you
   run <cmd…>               a command such as pnpm verify in a one-off container with the dev instance's
                            node_modules and a memory cap of its own, so it never starves the dev server
@@ -256,11 +256,22 @@ cmd_exec() {
   [[ ${1:-} == -i ]] && { flags+=(-i); shift; }
   running || ! docker inspect "$container" >/dev/null 2>&1 || docker start "$container" >/dev/null
   require_running
+  forward_env
+  in_container "${flags[@]}" "$container" "$@"
+}
+
+forward_env() {
   local name
-  for name in CONSENT SMOKE_FLOWS SMOKE_STEP_TIMEOUT SMOKE_DEBUG; do
+  for name in CONSENT SMOKE_FLOWS SMOKE_STEP_TIMEOUT SMOKE_DEBUG VERIFY_SUB_ACCOUNT VERIFY_EVM_ACCOUNT; do
     [[ -z ${!name:-} ]] || flags+=(-e "$name")
   done
-  in_container "${flags[@]}" "$container" "$@"
+}
+
+cmd_wallet() {
+  local flags=()
+  require_running
+  forward_env
+  in_container "${flags[@]}" "$container" node "$bin/talisman.mjs" "$@"
 }
 
 cmd_run() {
@@ -325,7 +336,7 @@ case $command in
   serve) cmd_serve "$@" ;;
   doctor) cmd_doctor ;;
   ab) require_running && in_container "$container" agent-browser --cdp 9223 "$@" ;;
-  wallet) require_running && in_container "$container" node "$bin/talisman.mjs" "$@" ;;
+  wallet) cmd_wallet "$@" ;;
   exec) cmd_exec "$@" ;;
   run) cmd_run "$@" ;;
   shell) require_running && docker exec -it -u "$(id -u):$(id -g)" -w "$(workdir)" "$container" bash ;;

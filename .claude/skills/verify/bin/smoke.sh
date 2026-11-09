@@ -53,6 +53,7 @@ compare_flow() {
 one_line() { tr '\t\n' '  ' | sed 's/  */ /g; s/^ //; s/ $//'; }
 
 prepare_sides baseline candidate
+resolve_lane_accounts
 start_state connected
 
 status=0
