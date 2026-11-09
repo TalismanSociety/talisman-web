@@ -166,9 +166,7 @@ selected() {
 }
 
 prepare_sides baseline candidate
-sub_address=$(account_address "$sub_name")
-evm_address=$(account_address "$evm_name")
-echo "connected state uses \"$sub_name\" $sub_address and \"$evm_name\" $evm_address"
+resolve_lane_accounts
 
 status=0
 current_state=''

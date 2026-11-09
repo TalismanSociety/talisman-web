@@ -134,8 +134,7 @@ step_run() {
 }
 
 prepare_sides candidate
-sub_address=$(account_address "$sub_name")
-evm_address=$(account_address "$evm_name")
+resolve_lane_accounts
 
 status=0
 current_state=''

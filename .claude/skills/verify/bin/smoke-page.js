@@ -53,16 +53,54 @@
     [...root.querySelectorAll('button, [role=menuitem], [role=option], [role=tab], a')].filter(
       element => visible(element) && !element.disabled && element.getAttribute('aria-disabled') !== 'true'
     )
-  const findRow = texts => {
+  const pendingPosition = '#staking > section > div:last-child > div:not(:has(button, a, img, svg))'
+  const positionsLoading = () => [...document.querySelectorAll(pendingPosition)].some(visible)
+  const holdsText = alternative => {
+    if (!alternative.startsWith('=')) return element => element.textContent.includes(alternative)
+    const holders = []
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT)
+    while (walker.nextNode())
+      if (walker.currentNode.data.trim() === alternative.slice(1)) holders.push(walker.currentNode.parentElement)
+    return element => holders.some(holder => element.contains(holder))
+  }
+  const holdsAny = text => {
+    const alternatives = text.split('|').map(holdsText)
+    return element => alternatives.some(holds => holds(element))
+  }
+  const menus = element => [...element.querySelectorAll('[aria-haspopup=menu]')].filter(visible).length
+  const findRows = texts => {
+    const wanted = texts.filter(text => !text.startsWith('!')).map(holdsAny)
+    const unwanted = texts.filter(text => text.startsWith('!')).map(text => holdsAny(text.slice(1)))
     const matches = [...document.body.querySelectorAll('*')].filter(
-      element => visible(element) && texts.every(text => element.textContent.includes(text))
+      element => visible(element) && wanted.every(holds => holds(element))
     )
-    const named = texts.map(text => `"${text}"`).join(', ')
-    const menus = element => [...element.querySelectorAll('[aria-haspopup=menu]')].filter(visible).length
-    let row = matches.find(element => !matches.some(other => other !== element && element.contains(other)))
-    while (row && menus(row) === 0) row = row.parentElement
-    if (!row) return `no position row with ${named}`
-    return menus(row) === 1 ? row : `${menus(row)} positions hold ${named}: not one row yet`
+    const rows = new Set()
+    for (const match of matches) {
+      if (matches.some(other => other !== match && match.contains(other))) continue
+      let row = match
+      while (row && menus(row) === 0) row = row.parentElement
+      if (row && menus(row) === 1 && !unwanted.some(holds => holds(row))) rows.add(row)
+    }
+    return rows.size ? [...rows] : `no position row with ${texts.map(text => `"${text}"`).join(', ')}`
+  }
+  const rowScope = (texts, from = 0) => {
+    let rows
+    let committed
+    const scope = () => {
+      rows = findRows(texts)
+      if (typeof rows === 'string') return rows
+      if (committed !== undefined)
+        return rows[committed] ?? `position row ${committed + 1} with ${texts.join(', ')} is gone`
+      return rows.slice(from)
+    }
+    scope.commit = root => {
+      if (committed === undefined) committed = rows.indexOf(root)
+    }
+    scope.next = () =>
+      committed === undefined || typeof rows === 'string' || committed + 1 >= rows.length
+        ? undefined
+        : rowScope(texts, committed + 1)
+    return scope
   }
   const findDialog = () =>
     [...document.querySelectorAll('dialog:modal')].filter(dialog => visible(dialog) && label(dialog)).at(-1) ??
@@ -74,7 +112,21 @@
     const { x, y, width, height } = box.getBoundingClientRect()
     return { x: x + width / 2, y: y + height / 2 }
   }
-  const scopeRoot = () => (smoke.scope ? smoke.scope() : document.body)
+  const scopeRoots = () => {
+    const roots = smoke.scope ? smoke.scope() : document.body
+    return typeof roots === 'string' ? roots : [roots].flat()
+  }
+  const inScope = find => {
+    const roots = scopeRoots()
+    if (typeof roots === 'string') return roots
+    for (const root of roots) {
+      const found = find(root)
+      if (found) {
+        smoke.scope?.commit?.(root)
+        return found
+      }
+    }
+  }
   const named = (element, name) =>
     name === '#icon'
       ? !label(element) && !element.closest('[aria-haspopup]')
@@ -85,19 +137,17 @@
       : name.startsWith('~')
       ? label(element).replace(/\s/g, '').includes(name.slice(1).replace(/\s/g, ''))
       : label(element) === name || label(element).startsWith(`${name} `)
-  const button = name => {
-    const root = scopeRoot()
-    if (typeof root === 'string') return root
-    const target = clickables(root).find(element => name.split('|').some(alternative => named(element, alternative)))
-    return target ?? `no enabled ${name} button${smoke.scope ? ' in the scope' : ''}`
-  }
+  const button = name =>
+    inScope(root => clickables(root).find(element => name.split('|').some(alternative => named(element, alternative)))) ??
+    `no enabled ${name} button${smoke.scope ? ' in the scope' : ''}`
 
   const steps = {
     wait: text => document.body.innerText.includes(text) || `no visible text "${text}"`,
     row: (...texts) => {
-      const row = findRow(texts)
-      if (typeof row === 'string') return row
-      smoke.scope = () => findRow(texts)
+      if (positionsLoading()) return 'positions still loading'
+      const rows = findRows(texts)
+      if (typeof rows === 'string') return rows
+      smoke.scope = smoke.rows = rowScope(texts)
       return true
     },
     page: () => {
@@ -119,14 +169,20 @@
       return typeof target === 'string' ? target : { click: center(target) }
     },
     fill: (placeholder, value) => {
-      const root = scopeRoot()
-      if (typeof root === 'string') return root
-      const input = [...root.querySelectorAll(`input[placeholder="${placeholder}"]`)].find(visible)
-      if (!input) return `no input with placeholder "${placeholder}"`
+      const input =
+        inScope(root => [...root.querySelectorAll(`input[placeholder="${placeholder}"]`)].find(visible)) ??
+        `no input with placeholder "${placeholder}"`
+      if (typeof input === 'string') return input
       input.focus()
       input.select()
       return { type: value }
     },
+  }
+  window.__smokeNextRow = () => {
+    const next = smoke.rows?.next()
+    if (!next) return false
+    smoke.scope = smoke.rows = next
+    return true
   }
   window.__smokeStep = step => {
     const [name, ...args] = step
