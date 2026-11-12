@@ -64,7 +64,7 @@
     "react-winbox": "^1.5.0",
     "rxjs": "^7.8.2",
     "tailwind-merge": "^2.6.1",
-    "victory": "^37.4.1",
+    "victory": "^38.0.1",
     "viem": "^2.57.18",
     "wagmi": "^3.7.11",
     "winbox": "^0.2.82",
