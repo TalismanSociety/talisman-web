@@ -165,7 +165,6 @@ settings:
 overrides:
   '@talismn/signet-apps-sdk>react': ^19.3.1
   deepmerge-ts@<8.0.0: ^8.0.2
-  ws@>=8.0.0 <8.21.0: ^8.22.0
 
 packageExtensionsChecksum: sha256-5OCEJOO4ef//iIXyPpIzn7hwIXQZh5KbDivwBxK6uNk=
 
@@ -5194,7 +5193,7 @@ packages:
       '@fastify/websocket': ^10 || ^11
       crossws: ~0.3 || ~0.4
       graphql: ^15.10.1 || ^16 || ^17
-      ws: ^8.22.0
+      ws: ^8
     peerDependenciesMeta:
       '@fastify/websocket':
         optional: true
@@ -5452,17 +5451,17 @@ packages:
   isomorphic-ws@5.0.0:
     resolution: {integrity: sha512-muId7Zzn9ywDsyXgTIafTry2sV3nySZeUDe6YedVd1Hvuuep5AsIlqK+XefWpYTyJG5e503F2xIuT2lcU6rCSw==}
     peerDependencies:
-      ws: ^8.22.0
+      ws: '*'
 
   isows@1.0.7:
     resolution: {integrity: sha512-I1fSfDCZL5P0v33sVqeTDSpcstAg/N+wF5HS033mogOVIp4B+oHC7oOCsA3axAbBSGTJ8QubbNmnIRN/h8U7hg==}
     peerDependencies:
-      ws: ^8.22.0
+      ws: '*'
 
   isows@1.0.8:
     resolution: {integrity: sha512-as4gJW0jnuVyp0jZWq+w9n7LawMPRMb2Hd7m5lSuzDgJYYUFBRBrcR6L3q5bl/B2aSXFEZJq+hdylE8J9aji5Q==}
     peerDependencies:
-      ws: ^8.22.0
+      ws: '*'
 
   jiti@1.21.7:
     resolution: {integrity: sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==}
