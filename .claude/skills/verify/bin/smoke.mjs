@@ -2,7 +2,7 @@
 import { execFile } from "node:child_process"
 import { readFileSync, writeFileSync } from "node:fs"
 import { promisify } from "node:util"
-import { attach, fail, sleep, targets, testAccounts } from "./lib.mjs"
+import { attach, fail, laneAccount, sleep, targets } from "./lib.mjs"
 
 const bin = new URL(".", import.meta.url).pathname
 const skill = new URL("..", import.meta.url).pathname
@@ -33,10 +33,6 @@ const until = async (what, timeout, probe) => {
 	throw new Error(`${what}: ${last}`)
 }
 
-const account = (flow) =>
-	testAccounts().find((candidate) => candidate.name === flow.account) ??
-	fail(`${flow.name}: "${flow.account}" is not a test account (talisman.mjs accounts)`, 2)
-
 const BASE58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 
 const publicKey = (ss58) => {
@@ -48,8 +44,40 @@ const publicKey = (ss58) => {
 	return `0x${hex.slice(prefixLength * 2, prefixLength * 2 + 64)}`
 }
 
+const littleEndian = (bytes) => bytes.reduceRight((sum, byte) => sum * 256n + BigInt(byte), 0n)
+
+const scaleCompact = (bytes) => {
+	const mode = bytes[0] & 3
+	if (mode === 3) {
+		const size = (bytes[0] >> 2) + 5
+		return { value: littleEndian(bytes.subarray(1, size)), size }
+	}
+	const size = 1 << mode
+	return { value: littleEndian(bytes.subarray(0, size)) >> 2n, size }
+}
+
+const hexBytes = (hex) => Buffer.from(hex.slice(2), "hex")
+
+const normalizeTxPayload = (request) => {
+	const extra = (id) => request.extensions.find((extension) => extension.id === id)?.extra
+	const payment = hexBytes(extra("ChargeAssetTxPayment") ?? extra("ChargeTransactionPayment") ?? "0x00")
+	const tip = scaleCompact(payment)
+	const [assetIsSet, ...assetId] = payment.subarray(tip.size)
+	const appId = extra("CheckAppId")
+	return {
+		kind: "substrate",
+		signer: publicKey(request.signer),
+		genesisHash: request.context.genesisHash,
+		method: request.callData,
+		tip: tip.value.toString(),
+		...(appId === undefined ? {} : { appId: Number(scaleCompact(hexBytes(appId)).value) }),
+		...(assetIsSet ? { assetId: `0x${Buffer.from(assetId).toString("hex")}` } : {}),
+	}
+}
+
 const normalize = (entry) => {
 	const request = entry.request
+	if (entry.kind === "pub(extrinsic.create)") return normalizeTxPayload(request)
 	if (entry.kind === "pub(extrinsic.sign)")
 		return {
 			kind: "substrate",
@@ -112,11 +140,20 @@ async function drive(flow, result) {
 			await page.send("Input.dispatchKeyEvent", { type: "keyDown", ...key })
 			await page.send("Input.dispatchKeyEvent", { type: "keyUp", ...key })
 		}
+		const nextRow = async () => {
+			await until("a dialog stayed open", STEP_TIMEOUT, async () => {
+				if ((await page.evaluate(`window.__smokeStep(["dialog"])`)) !== true) return true
+				await escape()
+				return "closing"
+			})
+			await escape()
+			return page.evaluate("window.__smokeNextRow()")
+		}
 		const bothConnected = ["see", "~2 Connected"]
-		for (let attempt = 1; account(flow).address.startsWith("0x"); attempt++) {
+		for (let attempt = 1; flow.account === "ethereum"; attempt++) {
 			await step(["page"])
 			if (await step(bothConnected, 20_000).then(() => true, () => false)) break
-			if (attempt > 3) throw new Error(`the portal did not reconnect ${flow.account} after 3 attempts`)
+			if (attempt > 3) throw new Error(`the portal did not reconnect ${signer.name} after 3 attempts`)
 			await until("the wallet sheet did not open", STEP_TIMEOUT, async () => {
 				if ((await page.evaluate(`window.__smokeStep(["dialog"])`)) === true) return true
 				await page.evaluate(`window.__smokeStep(["page"])`)
@@ -125,17 +162,25 @@ async function drive(flow, result) {
 				return "opening"
 			})
 			await step(["press", "=Connect"])
-			await talisman("connect", "--account", flow.account, "--timeout", "15").catch(() => {})
+			await talisman("connect", "--account", signer.name, "--timeout", "15").catch(() => {})
 			await escape()
 			await step(["page"])
 			await step(bothConnected, 15_000).catch(() => {})
 		}
-		for (const args of flow.steps) {
+		let rowStep
+		let tried = 1
+		for (let index = 0; index < flow.steps.length; index++) {
 			try {
-				await step(args)
+				await step(flow.steps[index])
+				if (flow.steps[index][0] === "row") rowStep = index
 			} catch (error) {
+				if (rowStep !== undefined && (await nextRow())) {
+					tried++
+					index = rowStep
+					continue
+				}
 				result.status = "unavailable"
-				result.detail = error.message
+				result.detail = rowStep === undefined ? error.message : `${error.message} (on each of ${tried} position row(s))`
 				return
 			}
 			await sleep(300)
@@ -165,8 +210,7 @@ async function drive(flow, result) {
 			result.status = "captured"
 			return
 		}
-		if (!flow.account.includes("Guardians")) throw new Error(`refusing to sign with "${flow.account}": not a Guardians account`)
-		result.approve = await talisman("approve", "--signer", flow.account, "--popup", popup)
+		result.approve = await talisman("approve", "--signer", signer.name, "--popup", popup)
 		await until("the dapp did not submit the signed transaction", REQUEST_TIMEOUT, async () => {
 			const state = await page.evaluate("({ requests: window.__smoke.requests, submissions: window.__smoke.submissions })")
 			const signed = state.requests[0]
@@ -182,10 +226,10 @@ async function drive(flow, result) {
 			result.submission = submission
 			return true
 		})
-		const signer = result.payload.from ?? result.raw.address
+		const signerAddress = result.payload.from ?? result.raw.signer ?? result.raw.address
 		result.onchain = result.submission.error
 			? { success: false, error: `the node refused it: ${result.submission.error}` }
-			: JSON.parse((await run(`${bin}smoke-chain.mjs`, [JSON.stringify(result.submission), signer], { timeout: 300_000 })).stdout)
+			: JSON.parse((await run(`${bin}smoke-chain.mjs`, [JSON.stringify(result.submission), signerAddress], { timeout: 300_000 })).stdout)
 		result.status = result.onchain.success ? "submitted" : "failed"
 	} finally {
 		if (!["captured", "submitted"].includes(result.status)) {
@@ -199,6 +243,7 @@ async function drive(flow, result) {
 const [flowName, outFile, ...flags] = process.argv.slice(2)
 if (!flowName || !outFile) fail("usage: smoke.mjs <flow> <out.json> [--submit]", 2)
 const flow = flows().find((candidate) => candidate.name === flowName) ?? fail(`no flow ${flowName} in ${flowsFile}`, 2)
+const signer = laneAccount(flow.account)
 const screenshotFile = outFile.replace(/\.json$/, ".png")
 const result = { flow: flow.name, instance: process.env.VERIFY_INSTANCE, submit: flags.includes("--submit"), status: "error" }
 try {

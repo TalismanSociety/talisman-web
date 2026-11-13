@@ -1,38 +1,18 @@
 packages:
   - apps/*
 allowBuilds:
-  "@swc/core": false
-  bufferutil: false
+  "@reown/appkit": false
   core-js: false
-  es5-ext: false
   esbuild: false
-  keccak: false
   simple-git-hooks: false
-  utf-8-validate: false
   workerd: false
 packageExtensions:
   "@polkadot-api/json-rpc-provider-proxy@0.4.1":
     dependencies:
       "@polkadot-api/json-rpc-provider": 0.2.0
 overrides:
-  "@types/react": 19.3.0
-  "json-stream-stringify": 2.0.4
   "@talismn/signet-apps-sdk>react": ^19.3.1
-  "base-x@5.0.0": 5.0.1
-  "browserslist@<4.28.7": ^4.29.3
-  "cross-spawn@>=7.0.0 <7.0.5": ^7.0.6
   "deepmerge-ts@<8.0.0": ^8.0.2
-  "defu@<6.1.5": ^6.1.7
-  "h3@<1.15.6": ^1.15.11
-  "lodash@<4.18.1": ^4.18.1
-  "node-forge@<1.4.2": ^1.4.2
-  "picomatch@<2.3.2": ^2.3.2
-  "react-use>js-cookie": ^3.0.8
-  "ws@>=7.0.0 <7.5.11": ^7.5.13
-  "ws@>=8.0.0 <8.21.0": ^8.22.0
 auditConfig:
   ignoreGhsas:
     - GHSA-mrhx-c7xc-m3w5
-    - GHSA-qr28-fpjm-wq7f
-minimumReleaseAgeExclude:
-  - '@kheopskit/core@6.0.0'

@@ -86,12 +86,31 @@ export async function talismanWorker() {
 	return fail("no Talisman service worker with chrome.storage after 30s: verify down, then up")
 }
 
-export const BACKUP = `${homedir()}/.talisman-dev/verify-backup.json`
+export const BACKUP = `${homedir()}/.config/talisman-dev/backup.json`
 
 export const testAccounts = () =>
 	JSON.parse(readFileSync(BACKUP, "utf8")).storage.keyring.accounts.map(
-		({ name, address, type }) => ({ name, address, type })
+		({ name, address, type, curve }) => ({ name, address, type, curve })
 	)
+
+const LANE_KINDS = {
+	substrate: { curves: ["sr25519", "ed25519", "ecdsa"], override: "VERIFY_SUB_ACCOUNT" },
+	ethereum: { curves: ["ethereum"], override: "VERIFY_EVM_ACCOUNT" },
+}
+
+export const laneAccount = (kind) => {
+	const { curves, override } = LANE_KINDS[kind] ?? fail(`no account kind "${kind}": substrate or ethereum`, 2)
+	const fits = (account) => account.type === "keypair" && curves.includes(account.curve)
+	const wanted = process.env[override]
+	const account = wanted
+		? testAccounts().find((candidate) => candidate.name === wanted && fits(candidate)) ??
+			fail(`${override}="${wanted}" names no ${kind} keypair account of ${BACKUP} (talisman.mjs accounts)`, 2)
+		: testAccounts().find(fits) ??
+			fail(`${BACKUP} holds no ${kind} keypair account, which every lane needs: see Setup in the verify skill`, 2)
+	return { name: account.name, address: account.address }
+}
+
+export const laneAccounts = () => ({ substrate: laneAccount("substrate"), ethereum: laneAccount("ethereum") })
 
 export async function walletAccounts() {
 	const worker = await talismanWorker()
