@@ -3,7 +3,7 @@
   "name": "talisman-web",
   "license": "GPL-3.0-or-later",
   "type": "module",
-  "packageManager": "pnpm@12.16.1",
+  "packageManager": "pnpm@12.18.0",
   "scripts": {
     "prepare": "test ! -d .git || { git config --local --unset core.hooksPath '^\\.husky'; simple-git-hooks; }",
     "dev": "pnpm --filter @talismn/portal dev",
@@ -20,11 +20,11 @@
     "e2e": "pnpm --filter @talismn/portal e2e"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.6.4",
-    "knip": "^6.44.1",
+    "@biomejs/biome": "^2.6.6",
+    "knip": "^6.45.1",
     "simple-git-hooks": "^2.14.0",
     "vitest": "^5.1.0",
-    "wrangler": "^4.157.0"
+    "wrangler": "^4.160.1"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm exec biome check --error-on-warnings --no-errors-on-unmatched --staged"

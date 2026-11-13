@@ -2,11 +2,9 @@ packages:
   - apps/*
 allowBuilds:
   "@reown/appkit": false
-  bufferutil: false
   core-js: false
   esbuild: false
   simple-git-hooks: false
-  utf-8-validate: false
   workerd: false
 packageExtensions:
   "@polkadot-api/json-rpc-provider-proxy@0.4.1":
@@ -15,8 +13,6 @@ packageExtensions:
 overrides:
   "@talismn/signet-apps-sdk>react": ^19.3.1
   "deepmerge-ts@<8.0.0": ^8.0.2
-  "ws@>=8.0.0 <8.21.0": ^8.22.0
 auditConfig:
   ignoreGhsas:
     - GHSA-mrhx-c7xc-m3w5
-    - GHSA-qr28-fpjm-wq7f
