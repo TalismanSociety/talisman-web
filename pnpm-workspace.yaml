@@ -13,6 +13,7 @@ packageExtensions:
 overrides:
   "@talismn/signet-apps-sdk>react": ^19.3.1
   "deepmerge-ts@<8.0.0": ^8.0.2
+  "graphql-config>minimatch": ^11.0.8
 auditConfig:
   ignoreGhsas:
     - GHSA-mrhx-c7xc-m3w5
