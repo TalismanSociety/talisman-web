@@ -3,8 +3,6 @@ verify=$bin/verify
 baseline_sha=$(git -C "$root" rev-parse --verify "${baseline_rev:?}^{commit}")
 baseline_source=${BASELINE_URL:-$baseline_sha}
 candidate_source=${CANDIDATE_URL:-worktree}
-sub_name=${PARITY_SUB_ACCOUNT:-Guardians SUB}
-evm_name=${PARITY_EVM_ACCOUNT:-Guardians EVM}
 consent=${CONSENT:-reject}
 [[ $consent =~ ^(reject|accept|unset)$ ]] || { echo "CONSENT must be reject, accept or unset, not \"$consent\"" >&2; exit 2; }
 
@@ -42,9 +40,12 @@ scan_for_key() {
   return "$status"
 }
 
-account_address() {
-  VERIFY_INSTANCE=$sides-candidate "$verify" wallet accounts | jq -er --arg want "$1" \
-    'map(select(.name == $want)) | if length == 1 then .[0].address else error("no single test account named \($want): talisman.mjs accounts") end'
+resolve_lane_accounts() {
+  local accounts
+  accounts=$(VERIFY_INSTANCE=$sides-candidate "$verify" wallet lane-accounts) || exit 2
+  sub_name=$(jq -r .substrate.name <<<"$accounts") sub_address=$(jq -r .substrate.address <<<"$accounts")
+  evm_name=$(jq -r .ethereum.name <<<"$accounts") evm_address=$(jq -r .ethereum.address <<<"$accounts")
+  echo "lanes use \"$sub_name\" $sub_address and \"$evm_name\" $evm_address"
 }
 
 browser() {
@@ -114,7 +115,7 @@ connect_side() {
 }
 
 ready_js() {
-  printf '(() => { const text = []; const originals = window.__parityOriginals ?? new Map(); const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, { acceptNode: (node) => ["SCRIPT", "STYLE", "TEMPLATE"].includes(node.parentElement?.tagName) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT }); while (walker.nextNode()) text.push(originals.get(walker.currentNode) ?? walker.currentNode.data); const counted = (spec) => { const [, n, ...regex] = spec.split(":"); const re = new RegExp(regex.join(":")); return text.filter((data) => re.test(data.trim())).length >= Number(n); }; return %s.some((wanted) => wanted.startsWith("css:") ? document.querySelector(wanted.slice(4)) !== null : wanted.startsWith("path:") ? location.pathname + location.search === wanted.slice(5) : wanted.startsWith("count:") ? counted(wanted) : text.some((data) => data.includes(wanted))); })()' "$1"
+  printf '(() => { const text = []; const originals = window.__parityOriginals ?? new Map(); const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, { acceptNode: (node) => ["SCRIPT", "STYLE", "TEMPLATE"].includes(node.parentElement?.tagName) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT }); while (walker.nextNode()) text.push(originals.get(walker.currentNode) ?? walker.currentNode.data); const counted = (spec) => { const [, n, ...regex] = spec.split(":"); const re = new RegExp(regex.join(":")); return text.filter((data) => re.test(data.trim())).length >= Number(n); }; const visible = (element) => element.getClientRects().length > 0 && getComputedStyle(element).visibility !== "hidden"; return %s.some((wanted) => wanted.startsWith("css:") ? document.querySelector(wanted.slice(4)) !== null : wanted.startsWith("none:") ? ![...document.querySelectorAll(wanted.slice(5))].some(visible) : wanted.startsWith("path:") ? location.pathname + location.search === wanted.slice(5) : wanted.startsWith("count:") ? counted(wanted) : text.some((data) => data.includes(wanted))); })()' "$1"
 }
 
 wait_ready() {

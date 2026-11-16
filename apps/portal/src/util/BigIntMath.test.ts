@@ -29,3 +29,15 @@ describe("BigIntMath.mulNumber", () => {
 		expect(BigIntMath.mulNumber(10n ** 30n, 0.05)).toBe(5n * 10n ** 28n)
 	})
 })
+
+describe("BigIntMath.min and BigIntMath.max", () => {
+	it.each([
+		["no values", [], 0n, 0n],
+		["one value", [5n], 5n, 5n],
+		["mixed signs", [3n, -7n, 12n, 0n], -7n, 12n],
+		["beyond Number precision", [TAO * TAO, 1n], 1n, TAO * TAO],
+	])("of %s", (_, values, min, max) => {
+		expect(BigIntMath.min(...values)).toBe(min)
+		expect(BigIntMath.max(...values)).toBe(max)
+	})
+})
