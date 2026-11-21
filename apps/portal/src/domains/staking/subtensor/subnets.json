@@ -131,7 +131,7 @@
   },
   {
     "netuid": 26,
-    "descriptionName": "Perturb",
+    "descriptionName": "Pocket",
     "symbol": "ב"
   },
   {
@@ -196,7 +196,7 @@
   },
   {
     "netuid": 39,
-    "descriptionName": "deprecated",
+    "descriptionName": "Kokoah",
     "symbol": "מ"
   },
   {
@@ -236,7 +236,7 @@
   },
   {
     "netuid": 47,
-    "descriptionName": "GPUForge",
+    "descriptionName": "Optia",
     "symbol": "צ"
   },
   {
@@ -391,7 +391,7 @@
   },
   {
     "netuid": 78,
-    "descriptionName": "Subnet 78",
+    "descriptionName": "",
     "symbol": "و"
   },
   {
@@ -496,7 +496,7 @@
   },
   {
     "netuid": 99,
-    "descriptionName": "Subnet 99",
+    "descriptionName": "Axonry",
     "symbol": "გ"
   },
   {
@@ -546,7 +546,7 @@
   },
   {
     "netuid": 109,
-    "descriptionName": "Finsight",
+    "descriptionName": "Subnet 109",
     "symbol": "՞"
   },
   {
@@ -566,7 +566,7 @@
   },
   {
     "netuid": 113,
-    "descriptionName": "",
+    "descriptionName": "Subnet 113",
     "symbol": "Ѓ"
   },
   {
