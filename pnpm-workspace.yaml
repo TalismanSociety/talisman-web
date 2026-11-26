@@ -7,19 +7,26 @@ allowBuilds:
   esbuild: false
   simple-git-hooks: false
   workerd: false
+# Agent skills that dependencies ship stay out of the repo
+permissions:
+  "@tanstack/react-router":
+    skills: false
+  "@tanstack/react-start":
+    skills: false
+  "@tanstack/react-table":
+    skills: false
 packageExtensions:
   # dist/get-proxy.js imports @polkadot-api/json-rpc-provider without declaring it; without this, pnpm's hidden hoist picks any version in the tree
   "@polkadot-api/json-rpc-provider-proxy@0.4.1":
     dependencies:
       "@polkadot-api/json-rpc-provider": 0.2.0
 overrides:
-  # keeps a single React: signet-apps-sdk otherwise pulls react 18
+  # keeps a single React: signet-apps-sdk asks for react ^18.2.0
   "@talismn/signet-apps-sdk>react": ^19.3.1
-  # GHSA-ggr8-5vv4-36mx (high), via @polkadot-api/cli>write-package
+  # GHSA-ggr8-5vv4-36mx (high): write-package, under @polkadot-api/cli, asks for ^7.1.0
   "deepmerge-ts@<8.0.0": ^8.0.2
-  # GHSA-g3hv-75wg-m249 (moderate), via @graphql-codegen/cli
+  # GHSA-g3hv-75wg-m249 (moderate): graphql-config, under @graphql-codegen/cli, asks for ^10.0.0
   "graphql-config>minimatch": ^11.0.8
-auditConfig:
-  ignoreGhsas:
-    # zod 3 is pinned by @reown/appkit-wallet and @coinbase/cdp-sdk; the fix exists only in zod 4
-    - GHSA-mrhx-c7xc-m3w5
+  # GHSA-mrhx-c7xc-m3w5 (high), which no zod 3 release patches: @reown/appkit-wallet pins 3.22.4,
+  # and @coinbase/cdp-sdk, under AppKit's Base Account, asks for ^3.25.76
+  "zod@<4.6.6": ^4.6.6
