@@ -149,8 +149,11 @@ The build's log needs a Cloudflare API token that can read Workers Builds:
 ```sh
 details=$(gh api "repos/:owner/:repo/commits/$(git merge-base HEAD origin/main)/check-runs?per_page=100" --jq '.check_runs[] | select(.name == "Workers Builds: talisman-portal") | .details_url')
 curl -fsS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$(cut -d/ -f4 <<<"$details")/builds/builds/${details##*/}/logs" |
-  jq -r '.result.lines[][1] | select(startswith("Unique Deployment URL:"))'
+  jq -r '.result.lines[][1] | select(startswith("Unique Deployment URL:"))' |
+  sed -E 's#https://([0-9a-f]+)-talisman-portal\.[^./]+\.workers\.dev#https://\1.app.talisman.party#'
 ```
+
+A build from before the move to `app.talisman.party` logs a retired `workers.dev` URL; the `sed` rewrites it to the same deployment's current host.
 
 ### The route file
 

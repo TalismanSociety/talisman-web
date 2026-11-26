@@ -9,7 +9,7 @@ describe("wrangler.jsonc", () => {
 		expect(config.main).toBe("src/server.ts")
 	})
 
-	it("keeps the Worker name the preview noindex rule in _headers matches", () => {
+	it("keeps the configured Worker name", () => {
 		expect(config.name).toBe("talisman-portal")
 	})
 
@@ -18,6 +18,11 @@ describe("wrangler.jsonc", () => {
 			binding: "ASSETS",
 			not_found_handling: "single-page-application",
 		})
+	})
+
+	it("keeps the retired workers.dev production and preview hosts off on every deploy", () => {
+		expect(config.workers_dev).toBe(false)
+		expect(config.preview_urls).toBe(false)
 	})
 
 	it("binds no route, custom domain or zone, so a deploy never reaches a talisman.xyz host", () => {
