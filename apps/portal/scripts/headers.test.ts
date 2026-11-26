@@ -34,7 +34,7 @@ describe("_headers", () => {
 	it("keeps preview and version hosts out of search, and nothing else", () => {
 		const noindexPaths = [...rules].filter(([, headers]) => headers.has("X-Robots-Tag"))
 		expect(noindexPaths.map(([path, headers]) => [path, headers.get("X-Robots-Tag")])).toEqual([
-			["https://:preview-talisman-portal.:subdomain.workers.dev/*", "noindex"],
+			["https://:preview.app.talisman.party/*", "noindex"],
 		])
 	})
 

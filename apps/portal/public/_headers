@@ -7,5 +7,5 @@
   Cache-Control: public, max-age=31536000, immutable
   Vary: Sec-Fetch-Dest
 
-https://:preview-talisman-portal.:subdomain.workers.dev/*
+https://:preview.app.talisman.party/*
   X-Robots-Tag: noindex
