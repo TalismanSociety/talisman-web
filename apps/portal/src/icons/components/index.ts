@@ -1,7 +1,6 @@
 export { default as Activity } from "./Activity"
 export { default as AlertTriangle } from "./AlertTriangle"
 export { default as ArrowDown } from "./ArrowDown"
-export { default as ArrowRight } from "./ArrowRight"
 export { default as BarChart } from "./BarChart"
 export { default as Calculate } from "./Calculate"
 export { default as Check } from "./Check"
