@@ -2,7 +2,6 @@ import { useTheme } from "@emotion/react"
 import clsx from "clsx"
 import type { ReactNode } from "react"
 import { Suspense } from "react"
-import { SeekDiscountBanner } from "@/domains/staking/seek/SeekDiscountBanner"
 import { useSearchParams } from "@/hooks/useSearchParams"
 import { Zap } from "@/icons"
 import type { ButtonProps } from "@/ui/atoms/Button"
@@ -194,12 +193,7 @@ export const SubtensorStakingForm = (props: SubtensorStakingFormProps) => {
 				</DescriptionList>
 			</div>
 			{props.stakeButton}
-			{hasDTaoStaking && (
-				<>
-					<SeekDiscountBanner />
-					<StakeTxBreakdown />
-				</>
-			)}
+			{hasDTaoStaking && <StakeTxBreakdown />}
 		</Surface>
 	)
 }
