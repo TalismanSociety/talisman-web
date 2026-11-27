@@ -1,7 +1,7 @@
 export type AnalyticsEnvironment = "production" | "preview" | "development"
 
 export const PRODUCTION_HOSTS = ["app.talisman.xyz", "talisman.pages.dev"] as const
-const PREVIEW_HOST_SUFFIX = ".talismn.workers.dev"
+const PREVIEW_HOST_SUFFIX = ".app.talisman.party"
 
 export const environmentOf = (hostname: string): AnalyticsEnvironment => {
 	if (PRODUCTION_HOSTS.some((host) => host === hostname)) return "production"

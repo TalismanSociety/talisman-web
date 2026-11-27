@@ -10,6 +10,7 @@ import {
 	sleep,
 	TALISMAN,
 	talismanWorker,
+	laneAccounts,
 	targets,
 	testAccounts,
 } from "./lib.mjs"
@@ -92,7 +93,7 @@ const withPopup = async (action, id) => {
 }
 
 async function unlock() {
-	const password = readFileSync(`${homedir()}/.talisman-dev/verify-password`, "utf8").trim()
+	const password = readFileSync(`${homedir()}/.config/talisman-dev/password.txt`, "utf8").trim()
 	const target = await openTarget(`${TALISMAN}/popup.html`)
 	const page = await attach(target)
 	try {
@@ -110,7 +111,7 @@ async function unlock() {
 			if (!isLocked(await readText(page).catch(() => "Unlock the Talisman")))
 				return console.log("unlocked")
 		}
-		fail("still locked after submitting ~/.talisman-dev/verify-password", 3)
+		fail("still locked after submitting ~/.config/talisman-dev/password.txt", 3)
 	} finally {
 		page.close()
 		await closeTarget(target.id)
@@ -130,6 +131,9 @@ switch (command) {
 	case "accounts":
 		console.log(JSON.stringify(testAccounts(), null, 2))
 		break
+	case "lane-accounts":
+		console.log(JSON.stringify(laneAccounts()))
+		break
 	case "list":
 		for (const popup of await listPopups()) console.log(`${popup.id} ${popup.url}`)
 		break
@@ -146,15 +150,16 @@ switch (command) {
 		await withPopup(async (page, _text, target) => {
 			if (wanted.length === 0) await tryClick(page, `(t) => t === "Connect All"`)
 			else {
-				const offered = await page.evaluate(`[...document.querySelectorAll("button")].map((b) => b.innerText.trim())`)
+				const offered = await page.evaluate(`[...document.querySelectorAll("button")].map((b) => b.innerText.trim().split("\\n")[0])`)
 				const missing = wanted.filter((name) => !offered.includes(name))
 				if (missing.length) fail(`the popup does not offer ${missing.join(", ")}:\n${offered.join("\n")}`, 2)
 				const toggled = await page.evaluate(`(() => {
 					const wanted = ${JSON.stringify(wanted)};
 					const rows = [...document.querySelectorAll("button")].filter((b) => b.querySelector("svg") && !b.querySelector("button") && /\\bh-24\\b/.test(b.className));
-					const flip = rows.filter((b) => wanted.includes(b.innerText.trim()) === b.classList.contains("text-body-secondary"));
+					const accountName = (b) => b.innerText.trim().split("\\n")[0];
+					const flip = rows.filter((b) => wanted.includes(accountName(b)) === b.classList.contains("text-body-secondary"));
 					flip.forEach((b) => b.click());
-					return flip.map((b) => b.innerText.trim());
+					return flip.map(accountName);
 				})()`)
 				if (toggled.length) await sleep(500)
 				const label = `Connect ${wanted.length}`
@@ -220,6 +225,6 @@ switch (command) {
 		break
 	default:
 		fail(
-			"usage: talisman.mjs unlock | accounts | list | text | connect [--account <name>]... | site [host] | approve --signer <name> --popup <id> | reject [--popup <id>]"
+			"usage: talisman.mjs unlock | accounts | lane-accounts | list | text | connect [--account <name>]... | site [host] | approve --signer <name> --popup <id> | reject [--popup <id>]"
 		)
 }

@@ -215,13 +215,6 @@ export const Button = <T extends ButtonElementType = "button">({
 	)
 }
 
-export const OutlinedButton = <T extends ButtonElementType = "button">(
-	props: Omit<ButtonProps<T>, "variant">
-) => (
-	// @ts-expect-error
-	<Button {...props} variant="outlined" />
-)
-
 export const TonalButton = <T extends ButtonElementType = "button">(
 	props: Omit<ButtonProps<T>, "variant">
 ) => (

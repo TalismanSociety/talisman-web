@@ -1,38 +1,32 @@
+minimumReleaseAge: 4320
 packages:
   - apps/*
 allowBuilds:
-  "@swc/core": false
-  bufferutil: false
+  "@reown/appkit": false
   core-js: false
-  es5-ext: false
   esbuild: false
-  keccak: false
   simple-git-hooks: false
-  utf-8-validate: false
   workerd: false
+# Agent skills that dependencies ship stay out of the repo
+permissions:
+  "@tanstack/react-router":
+    skills: false
+  "@tanstack/react-start":
+    skills: false
+  "@tanstack/react-table":
+    skills: false
 packageExtensions:
+  # dist/get-proxy.js imports @polkadot-api/json-rpc-provider without declaring it; without this, pnpm's hidden hoist picks any version in the tree
   "@polkadot-api/json-rpc-provider-proxy@0.4.1":
     dependencies:
       "@polkadot-api/json-rpc-provider": 0.2.0
 overrides:
-  "@types/react": 19.3.0
-  "json-stream-stringify": 2.0.4
+  # keeps a single React: signet-apps-sdk asks for react ^18.2.0
   "@talismn/signet-apps-sdk>react": ^19.3.1
-  "base-x@5.0.0": 5.0.1
-  "browserslist@<4.28.7": ^4.29.3
-  "cross-spawn@>=7.0.0 <7.0.5": ^7.0.6
+  # GHSA-ggr8-5vv4-36mx (high): write-package, under @polkadot-api/cli, asks for ^7.1.0
   "deepmerge-ts@<8.0.0": ^8.0.2
-  "defu@<6.1.5": ^6.1.7
-  "h3@<1.15.6": ^1.15.11
-  "lodash@<4.18.1": ^4.18.1
-  "node-forge@<1.4.2": ^1.4.2
-  "picomatch@<2.3.2": ^2.3.2
-  "react-use>js-cookie": ^3.0.8
-  "ws@>=7.0.0 <7.5.11": ^7.5.13
-  "ws@>=8.0.0 <8.21.0": ^8.22.0
-auditConfig:
-  ignoreGhsas:
-    - GHSA-mrhx-c7xc-m3w5
-    - GHSA-qr28-fpjm-wq7f
-minimumReleaseAgeExclude:
-  - '@kheopskit/core@6.0.0'
+  # GHSA-g3hv-75wg-m249 (moderate): graphql-config, under @graphql-codegen/cli, asks for ^10.0.0
+  "graphql-config>minimatch": ^11.0.8
+  # GHSA-mrhx-c7xc-m3w5 (high), which no zod 3 release patches: @reown/appkit-wallet pins 3.22.4,
+  # and @coinbase/cdp-sdk, under AppKit's Base Account, asks for ^3.25.76
+  "zod@<4.6.6": ^4.6.6

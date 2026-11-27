@@ -5,12 +5,14 @@ describe("environmentOf", () => {
 	it.each([
 		["app.talisman.xyz", "production"],
 		["talisman.pages.dev", "production"],
-		["talisman-portal.talismn.workers.dev", "preview"],
-		["abc123-talisman-portal.talismn.workers.dev", "preview"],
+		["main.app.talisman.party", "preview"],
+		["abc123.app.talisman.party", "preview"],
 		["3f2a9c1e.talisman.pages.dev", "development"],
 		["localhost", "development"],
 		["127.0.0.1", "development"],
-		["talismn.workers.dev.evil.com", "development"],
+		["app.talisman.party", "development"],
+		["main-talisman-portal.talismn.workers.dev", "development"],
+		["app.talisman.party.evil.com", "development"],
 		["app.talisman.xyz.evil.com", "development"],
 	] as const)("%s is %s", (hostname, environment) => {
 		expect(environmentOf(hostname)).toBe(environment)

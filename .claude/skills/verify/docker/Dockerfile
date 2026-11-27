@@ -18,10 +18,10 @@ RUN curl -fsSL -o /tmp/talisman.crx "$TALISMAN_CRX_URL" \
   && rm /tmp/talisman.crx
 
 COPY start-chromium.sh restore-backup.mjs bake-profile.sh entrypoint.sh /opt/verify/
-RUN --mount=type=bind,from=seed,source=verify-backup.json,target=/seed/backup.json \
+RUN --mount=type=bind,from=seed,source=backup.json,target=/seed/backup.json \
   /opt/verify/bake-profile.sh /seed/backup.json
 
-RUN mkdir -p /home/verify /pnpm-store /side && chmod 1777 /home/verify \
+RUN mkdir -p /home/verify/.config /pnpm-store /side && chmod 1777 /home/verify /home/verify/.config \
   && echo "precedence ::ffff:0:0/96 100" >> /etc/gai.conf
 ENV HOME=/home/verify \
   SMOKE_TOOLS=/opt/smoke-tools \

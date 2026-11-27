@@ -1,11 +1,18 @@
 import { walletConnect } from "@kheopskit/core/walletconnect"
 import type { CaipNetwork, CreateAppKit } from "@reown/appkit/core"
 import type { Chain } from "viem"
+import { environmentOf } from "@/domains/analytics/environment"
 import { evmChains } from "./evmChains"
 
 const appName = import.meta.env.VITE_APPLICATION_NAME ?? "Talisman"
 
 const origin = globalThis.location?.origin ?? "https://app.talisman.xyz"
+
+const PRODUCTION_PROJECT_ID = "bf8b7e7ceb10eb8c769504ea0b547565"
+const STAGING_PROJECT_ID = "95873e3ae0aa053a36f2eebfe6d8a78f"
+
+export const walletConnectProjectIdOf = (hostname: string) =>
+	environmentOf(hostname) === "production" ? PRODUCTION_PROJECT_ID : STAGING_PROJECT_ID
 
 type WalletConnectNetwork = {
 	name: string
@@ -94,7 +101,7 @@ export const toEvmWalletConnectNetwork = (chain: Chain): CaipNetwork => ({
 const [primaryNetwork, ...otherNetworks] = walletConnectNetworks
 
 export const portalWalletConnect = walletConnect({
-	projectId: "bf8b7e7ceb10eb8c769504ea0b547565",
+	projectId: walletConnectProjectIdOf(new URL(origin).hostname),
 	metadata: {
 		name: appName,
 		description: "Talisman Portal",

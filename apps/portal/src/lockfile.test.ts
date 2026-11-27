@@ -7,6 +7,6 @@ const BANNED =
 
 it("keeps polkadot.js, recoil and jotai out of the dependency tree", () => {
 	const lockfile = readFileSync(new URL("../../../pnpm-lock.yaml", import.meta.url), "utf8")
-	expect(lockfile).toContain("polkadot-api@3.2.1")
+	expect(lockfile).toMatch(/^ {2}polkadot-api@\d/m)
 	expect([...new Set(lockfile.match(BANNED))]).toEqual([])
 })

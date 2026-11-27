@@ -6,11 +6,11 @@
 
 1. Put these variables in `apps/portal/.env`, or in another file you pass with `--env-file <path>`:
 
-   | Variable | Value |
-   | --- | --- |
-   | `POSTHOG_API_KEY` | A personal API key with the scopes listed under "API key scopes" |
-   | `POSTHOG_PROJECT_ID` | `13668` |
-   | `VITE_POSTHOG_AUTH_TOKEN` | The project token, read by `--seed` only |
+   | Variable                  | Value                                                            |
+   | ------------------------- | ---------------------------------------------------------------- |
+   | `POSTHOG_API_KEY`         | A personal API key with the scopes listed under "API key scopes" |
+   | `POSTHOG_PROJECT_ID`      | `13668`                                                          |
+   | `VITE_POSTHOG_AUTH_TOKEN` | The project token, read by `--seed` only                         |
 
 2. Read what a run would change:
 
@@ -47,18 +47,18 @@ Descriptions come from the catalog. To change one, edit the catalog, not PostHog
 
 ### Flags
 
-| Flag | Effect |
-| --- | --- |
-| `--env-file <path>` | Read the env from this file instead of `.env` |
-| `--dry-run` | Read the live project and print each write instead of sending it. Without credentials, print the plan only |
-| `--check-queries` | Run every tile's query through `/query/`, recomputed rather than cached. Before a real run has written the test-account filter, each query carries the spec's filter inline |
-| `--seed` | Seed the missing definitions, then wait for them |
-| `--only <slug>` | Reconcile one dashboard: `overview`, `wallets`, `portfolio`, `transactions` or `errors`. Repeatable |
-| `--prune` | Soft-delete managed insights that left the spec, and delete their alerts. Skipped when any dashboard step fails |
-| `--skip-definitions` | Leave the event and property definitions alone |
-| `--skip-settings` | Leave the project settings and the test-account filter alone |
-| `--show-test-accounts` | Save every insight, and run every query check, with the test-account filter off. The alerts still count production only |
-| `--verbose` | Print request bodies |
+| Flag                   | Effect                                                                                                                                                                      |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--env-file <path>`    | Read the env from this file instead of `.env`                                                                                                                               |
+| `--dry-run`            | Read the live project and print each write instead of sending it. Without credentials, print the plan only                                                                  |
+| `--check-queries`      | Run every tile's query through `/query/`, recomputed rather than cached. Before a real run has written the test-account filter, each query carries the spec's filter inline |
+| `--seed`               | Seed the missing definitions, then wait for them                                                                                                                            |
+| `--only <slug>`        | Reconcile one dashboard: `overview`, `wallets`, `portfolio`, `transactions` or `errors`. Repeatable                                                                         |
+| `--prune`              | Soft-delete managed insights that left the spec, and delete their alerts. Skipped when any dashboard step fails                                                             |
+| `--skip-definitions`   | Leave the event and property definitions alone                                                                                                                              |
+| `--skip-settings`      | Leave the project settings and the test-account filter alone                                                                                                                |
+| `--show-test-accounts` | Save every insight, and run every query check, with the test-account filter off. The alerts still count production only                                                     |
+| `--verbose`            | Print request bodies                                                                                                                                                        |
 
 ### What a run does, in order
 
@@ -84,13 +84,13 @@ The script owns every dashboard and insight tagged `managed-by-code`, and never 
 
 ### Files
 
-| File | Owns |
-| --- | --- |
-| `provision.ts` | The CLI: flags, env, the real PostHog client and the exit code |
-| `run.ts` | The steps, each behind the 403 guard, and the query check |
-| `catalog.ts` | The snapshot of the app catalog: events, merged properties, `$exception` and the super property |
-| `dashboards.ts`, `queries.ts` | The dashboards and alerts as data, the query builders and the spec check |
-| `sync.ts`, `reconcile.ts` | Matching and writing dashboards, insights, layouts and alerts |
-| `settings.ts`, `definitions.ts` | The project settings patch, the transformation check, definitions and seed events |
-| `api.ts` | The `Api` interface, the HTTP client and the ingest call |
-| `fakePosthog.ts` | An in-memory PostHog that records writes, for the tests |
+| File                            | Owns                                                                                            |
+| ------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `provision.ts`                  | The CLI: flags, env, the real PostHog client and the exit code                                  |
+| `run.ts`                        | The steps, each behind the 403 guard, and the query check                                       |
+| `catalog.ts`                    | The snapshot of the app catalog: events, merged properties, `$exception` and the super property |
+| `dashboards.ts`, `queries.ts`   | The dashboards and alerts as data, the query builders and the spec check                        |
+| `sync.ts`, `reconcile.ts`       | Matching and writing dashboards, insights, layouts and alerts                                   |
+| `settings.ts`, `definitions.ts` | The project settings patch, the transformation check, definitions and seed events               |
+| `api.ts`                        | The `Api` interface, the HTTP client and the ingest call                                        |
+| `fakePosthog.ts`                | An in-memory PostHog that records writes, for the tests                                         |
